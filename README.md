@@ -1,2 +1,2 @@
 # tabulator
-A table generation JQuery Plugin
+A table generation JQuery UI Plugin
