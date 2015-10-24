@@ -22,13 +22,22 @@
 
 	$("#exampleTable").tabulator({
 		columns:[
-			{title:"Name", field:"name"},
-			{title:"Age", field:"age"},
-			{title:"Gender", field:"gender"},
-			{title:"Height", field:"height"},
-			{title:"Favourite Color", field:"col"},
+		{title:"Name", field:"name"},
+		{title:"Age", field:"age"},
+		{title:"Gender", field:"gender"},
+		{title:"Height", field:"height"},
+		{title:"Favourite Color", field:"col"},
 		],
 	});
+
+	$("#exampleTable").tabulator("setData",[
+	{name:"Billy Bob", age:"12", gender:"male", height:123, col:"red",},
+	{name:"Mary May", age:"1", gender:"female", height:15, col:"blue",},
+	{name:"Christine Lobowski", age:"42", height:124, col:"green",},
+	{name:"Brendon Philips", age:"25", gender:"male", height:150, col:"orange",},
+	{name:"Margret Marmajuke", age:"16", gender:"female", height:199, col:"yellow",},
+	]);
+
 
 	</script>
 
