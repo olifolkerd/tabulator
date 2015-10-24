@@ -34,7 +34,8 @@ options: {
 
 	ajaxURL:false, //url for ajax loading
 
-	rowClick:function(){} //do action on row click
+	rowClick:function(){}, //do action on row click
+	rowContext:function(){}, //context menu action
 },
 
 //constructor
@@ -191,8 +192,9 @@ _renderTable:function(){
 		//bind row data to row
 		row.data("data", item);
 
-		//bind row click event
+		//bind row click events
 		row.on("click", function(e){self._rowClick(e, row)});
+		row.on("contextmenu", function(e){self._rowContext(e, row)});
 
 		$.each(self.options.columns, function(i, column) {
 			//deal with values that arnt declared
@@ -246,6 +248,11 @@ _renderTable:function(){
 //carry out action on row click
 _rowClick: function(e, row){
 	this.options.rowClick(e, row.data("id"), row.data("data"), row);
+},
+
+//carry out action on row context
+_rowContext: function(e, row){
+	this.options.rowContext(e, row.data("id"), row.data("data"), row);
 },
 
 //carry out action on cell click
