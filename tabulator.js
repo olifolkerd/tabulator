@@ -19,7 +19,7 @@ options: {
 	rowTextColor:"#333", //table text color
 	rowHoverBackground:"#bbb", //row background color on hover
 
-	height:"300", //height of tabulator
+	height:false, //height of tabulator
 	fitColumns:true, //fit colums to width of screen;
 
 	columns:[],//stor for colum header info
@@ -44,14 +44,16 @@ _create: function() {
 	var options = self.options;
 	var element = self.element;
 
-	options.height = isNaN(options.height) ? options.height : options.height + "px"
+	if(options.height){
+		options.height = isNaN(options.height) ? options.height : options.height + "px";
+		element.css({"height": options.height});
+	}
 
 	element.css({
 		position:"relative",
 		"box-sizing" : "border-box",
 		"background-color": options.backgroundColor,
 		"border": "1px solid " + options.borderColor,
-		"height": options.height,
 		"overflow-x":"auto",
 	})
 
