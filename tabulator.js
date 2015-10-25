@@ -4,6 +4,9 @@ $.widget("ui.tabulator", {
 data:[],//array to hold data for table
 sortCurrrent:{col:null,dir:null}, //column name of currently sorted column
 firstRender:true, //layout table widths correctly on first render
+mouseDrag:false, //mouse drag tracker;
+mouseDragWidth:false, //starting width of colum on mouse drag
+mouseDragElement:false, //column being dragged
 
 //setup options
 options: {
@@ -24,6 +27,7 @@ options: {
 	rowHoverBackground:"#bbb", //row background color on hover
 
 	colMinWidth:"20px", //minimum global width for a column
+	colResizable:true, //resizable columns
 
 	height:false, //height of tabulator
 	fitColumns:false, //fit colums to width of screen;
@@ -91,9 +95,9 @@ _create: function() {
 	});
 
 
-	var tableHolder = $("<div class='tabulator-tableHolder'></div>");
+	self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
-	tableHolder.css({
+	self.tableHolder.css({
 		position:"absolute",
 		"z-index":"1",
 		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
@@ -135,7 +139,7 @@ _create: function() {
 		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
 
-		var col = $('<span class="tabulator-col" style="display:inline-block" data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + column.title + '</span>');
+		var col = $('<div class="tabulator-col" style="display:inline-block" data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + column.title + '</div>');
 
 		if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -157,8 +161,8 @@ _create: function() {
 	});
 
 	element.append(self.header);
-	tableHolder.append(self.table);
-	element.append(tableHolder);
+	self.tableHolder.append(self.table);
+	element.append(self.tableHolder);
 
 	//layout headers
 	$(".tabulator-col", self.header).css({
@@ -171,21 +175,55 @@ _create: function() {
 		"white-space": "nowrap",
 		"overflow": "hidden",
 		"text-overflow": "ellipsis",
+		// "resize":"horizontal",
 	});
+
+	//handle resizable columns
+	if(self.options.colResizable){
+		//create resize handle
+		var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>")
+		handle.on("mousedown", function(e){
+			console.log("mousedown", e)
+			self.mouseDrag = e.screenX;
+			self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
+			self.mouseDragElement = $(this).closest(".tabulator-col");
+		})
+		$(".tabulator-col", self.header).on("mousemove", function(e){
+			if(self.mouseDrag){
+				self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
+				self._resizeCol(self.mouseDragElement.data("field"), self.mouseDragElement.outerWidth());
+			}
+		})
+		self.element.on("mouseup", function(e){
+
+			if(self.mouseDrag){
+				self._resizeCol(self.mouseDragElement.data("field"), self.mouseDragElement.outerWidth());
+
+				self.mouseDrag = false;
+				self.mouseDragWidth = false;
+				self.mouseDragElement = false;
+			}
+		});
+
+		$(".tabulator-col", self.header).append(handle);
+
+		$(".tabulator-col", self.header).on("mouseup", function(){
+
+		});
+	}
+
 
 	//append sortable arrows to sortable headers
 	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"30px"})
 	.data("sortdir", "desc")
-	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
-	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
+	//.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
+	//.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 	.append(arrow.clone());
 
-	//render or resize;
-
-	element.resize(function(){
-		console.log("resize");
-	})
-	//_firstRender
+	//add resizable headers
+	/*$(".tabulator-col", self.header).resizable({
+    	handles: 'e',
+    })*/
 
 },
 
@@ -343,6 +381,11 @@ redraw:function(){
 	}
 },
 
+//resize a colum to specified width
+_resizeCol:function(field, width){
+	$(".tabulator-cell[data-field=" + field + "], .tabulator-col[data-field=" + field + "]",this.element).css({width:width})
+},
+
 //layout coluns on first render
 _firstRender:function(){
 	var self = this;
@@ -391,47 +434,6 @@ _firstRender:function(){
 			col.css({width:max});
 		});
 	}
-
-
-
-	//set minimum width of cells
-	/*if(options.colMinWidth){
-		$(".tabulator-cell", self.table).css({"min-width": options.colMinWidth});
-	}
-
-	if(options.fitColumns){
-		//full width resize
-		//resize table to match header
-		$.each(options.columns, function(i, column) {
-			$("td[data-field=" + column.field + "]", table).css({"width": $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()});
-		});
-	}else{
-		table.css({"table-layout":"fixed"});
-		table.css({"table-layout":"header"});
-
-
-
-		//part width resize
-		//resize header to match table
-		$.each(options.columns, function(i, column) {
-			if(column.width){
-				//if col width set match table to header
-				$("td[data-field=" + column.field + "]", table).css({"width": column.width});
-
-			}else{
-				$(".tabulator-col[data-field=" + column.field + "]", header).css({"width": $("tr:first td[data-field=" + column.field + "]", table).outerWidth() + "px"});
-			}
-		});
-
-		//if table col narrower than col heading title resize table columns
-		$.each(options.columns, function(i, column) {
-			if($("tr:first td[data-field=" + column.field + "]", table).outerWidth() < $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()){
-				$("td[data-field=" + column.field + "]", table).css({"width": $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()});
-			}
-		});
-}*/
-
-
 },
 
 //style rows of the table
@@ -458,6 +460,11 @@ _styleRows:function(){
 	$(".tabulator-cell", self.table).css({
 		"border-right":"1px solid " + self.options.rowBorderColor,
 	});
+
+	if(!self.options.height){
+		console.log("barp", self.table.outerHeight())
+		self.element.css({height:self.table.outerHeight() + self.options.headerHeight + 3})
+	}
 },
 
 //format cell contents
