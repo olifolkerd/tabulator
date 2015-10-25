@@ -94,7 +94,6 @@ _create: function() {
 		"z-index":"1",
 	});
 
-
 	self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
 	self.tableHolder.css({
@@ -132,7 +131,6 @@ _create: function() {
 		"border-right": "6px solid transparent",
 		"border-bottom": "6px solid " + options.sortArrows.inactive,
 	});
-
 
 	$.each(options.columns, function(i, column) {
 
@@ -175,7 +173,6 @@ _create: function() {
 		"white-space": "nowrap",
 		"overflow": "hidden",
 		"text-overflow": "ellipsis",
-		// "resize":"horizontal",
 	});
 
 	//handle resizable columns
@@ -188,7 +185,7 @@ _create: function() {
 			self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
 			self.mouseDragElement = $(this).closest(".tabulator-col");
 		})
-		$(".tabulator-col", self.header).on("mousemove", function(e){
+		self.element.on("mousemove", function(e){
 			if(self.mouseDrag){
 				self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
 				self._resizeCol(self.mouseDragElement.data("field"), self.mouseDragElement.outerWidth());
@@ -212,18 +209,12 @@ _create: function() {
 		});
 	}
 
-
 	//append sortable arrows to sortable headers
 	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"30px"})
 	.data("sortdir", "desc")
-	//.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
-	//.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
+	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
+	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 	.append(arrow.clone());
-
-	//add resizable headers
-	/*$(".tabulator-col", self.header).resizable({
-    	handles: 'e',
-    })*/
 
 },
 
@@ -348,8 +339,8 @@ _renderTable:function(){
 			row.append(cell);
 		});
 
-self.table.append(row);
-});
+		self.table.append(row);//
+	});
 
 	self.table.css({//
 		"background-color":self.options.rowBackgroundColor,
@@ -470,7 +461,7 @@ _styleRows:function(){
 //format cell contents
 _formatCell:function(formatter, value, data, cell, row){
 	var formatter = typeof(formatter) == 'undefined' ? "plaintext" : formatter;
-	var formatter = typeof(formatter) == 'string' ? this.formatters[formatter] : formatter;
+	formatter = typeof(formatter) == 'string' ? this.formatters[formatter] : formatter;
 
 	return formatter(value, data, cell, row,  this.options);
 },
@@ -544,44 +535,44 @@ _sorter: function(column, dir){
 		el1 = dir == "asc" ? data[$(a).data("id")] : data[$(b).data("id")]
 		el2 = dir == "asc" ? data[$(b).data("id")] : data[$(a).data("id")]
 
-		//sorting functions
-		switch(column.sorter){
+		//workaround to format dates correctly
+		a = column.sorter == "date" ? self._formatDate(el1[column.field]) : el1[column.field];
+		b = column.sorter == "date" ? self._formatDate(el2[column.field]) : el2[column.field];
 
-			case "number": //sort numbers
-			return parseFloat(el1[column.field]) - parseFloat(el2[column.field]);
-			break;
+		//run sorter
+		var sorter = typeof(column.sorter) == 'undefined' ? "plaintext" : column.sorter;
+		sorter = typeof(sorter) == 'string' ? self.sorters[sorter] : sorter;
+		return sorter(a, b);
 
-			case "string": //sort strings
-			return el1[column.field].toLowerCase().localeCompare(el2[column.field].toLowerCase());
-			break;
-
-			case "date": //sort dates
-			return self._formatDate(el1[column.field]) - self._formatDate(el2[column.field]);
-			break;
-
-			case "boolean":
-			el1 = el1[column.field] === true || el1[column.field] === 'true' || el1[column.field] === 'True' || el1[column.field] === 1 ? 1 : 0;
-			el2 = el2[column.field] === true || el2[column.field] === 'true' || el2[column.field] === 'True' || el2[column.field] === 1 ? 1 : 0;
-
-			return el1 - el2
-
-			break
-
-			default:
-			//handle custom sorter functions
-			if(typeof(column.sorter) == "function"){
-				return column.sorter(el1, el2);
-			}
-		}
 	}).appendTo(table);
 
 	//style table rows
 	self._styleRows();
 },
 
+//custom data sorters
+sorters:{
+	number:function(a, b){ //sort numbers
+		return parseFloat(a) - parseFloat(b);
+	},
+	string:function(a, b){ //sort strings
+		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+	},
+	date:function(a, b){ //sort dates
+		return a - b;
+	},
+	boolean:function(a, b){ //sort booleans
+		el1 = a === true || a === 'true' || a === 'True' || a === 1 ? 1 : 0;
+		el2 = b === true || b === 'true' || b === 'True' || b === 1 ? 1 : 0;
+
+		return el1 - el2
+	},
+},
+
 
 //format date for date comparison
 _formatDate:function(dateString){
+	console.log("dateString", dateString)
 	var format = this.options.dateFormat
 
 	var ypos = format.indexOf("yyyy");
