@@ -108,28 +108,7 @@ _create: function() {
 		if(column.sortable){
 			col.on("click", function(){
 
-				//reset all column sorts
-				$("th[data-sortable=true][data-field!=" + column.field + "]", self.table).data("sortdir", "desc");
-				$("th .tabular-arrow", self.table).css({
-					"border-top": "none",
-					"border-bottom": "6px solid " + options.sortArrows.inactive,
-				})
-
-				if (col.data("sortdir") == "desc"){
-					col.data("sortdir", "asc");
-					$(".tabular-arrow", col).css({
-						"border-top": "none",
-						"border-bottom": "6px solid " + options.sortArrows.active,
-					});
-				}else{
-					col.data("sortdir", "desc");
-					$(".tabular-arrow", col).css({
-						"border-top": "6px solid " + options.sortArrows.active,
-						"border-bottom": "none",
-					});
-				}
-
-				self._sort(column, col.data("sortdir"));
+				self._sortClick(column, col);
 			})
 		}
 
@@ -137,7 +116,7 @@ _create: function() {
 
 	});
 
-element.append(self.table);
+	element.append(self.table);
 
 	//layout headers
 	$("th", self.table).css({
@@ -336,7 +315,36 @@ _safeString: function(value){
 	return String(value).replace(/'/g, "&#39;");
 },
 
-_sort: function(column, dir){
+_sortClick: function(column, element){
+	var self = this;
+	var table = self.table;
+	var options = this.options;
+
+	//reset all column sorts
+	$("th[data-sortable=true][data-field!=" + column.field + "]", self.table).data("sortdir", "desc");
+	$("th .tabular-arrow", self.table).css({
+		"border-top": "none",
+		"border-bottom": "6px solid " + options.sortArrows.inactive,
+	})
+
+	if (element.data("sortdir") == "desc"){
+		element.data("sortdir", "asc");
+		$(".tabular-arrow", element).css({
+			"border-top": "none",
+			"border-bottom": "6px solid " + options.sortArrows.active,
+		});
+	}else{
+		element.data("sortdir", "desc");
+		$(".tabular-arrow", element).css({
+			"border-top": "6px solid " + options.sortArrows.active,
+			"border-bottom": "none",
+		});
+	}
+
+	self._sorter(column, element.data("sortdir"));
+},
+
+_sorter: function(column, dir){
 
 	var self = this;
 	var table = $("table tbody", self.element);
@@ -372,7 +380,7 @@ _sort: function(column, dir){
 	}).appendTo(table);
 
 	//style table rows
-		self._styleRows();
+	self._styleRows();
 },
 
 
