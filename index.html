@@ -15,7 +15,6 @@
 
 	.tabulator{
 		font-family: sans-serif;
-		/*font-size: 14px !important;*/
 	}
 
 	.tabulator-handle:hover{
@@ -48,7 +47,6 @@
 		rowContext:function(){console.log("Show Context Menu")}
 	});
 
-
 	$("#exampleTable").tabulator("setData",[
 		{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
 		{id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
@@ -62,10 +60,10 @@
 		{id:10, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
 		]);
 
+
 $( window ).resize(function(){
 	$("#exampleTable").tabulator("redraw");
 });
-
 
 </script>
 
