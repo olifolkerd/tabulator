@@ -25,6 +25,7 @@ options: {
 	columns:[],//stor for colum header info
 
 	sortable:true, //global default for sorting
+	dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 	sortArrows:{ //colors for sorting arrows
 		active: "#000",
 		inactive: "#bbb",
@@ -92,22 +93,51 @@ _create: function() {
 		height: 0,
 		"border-left": "6px solid transparent",
 		"border-right": "6px solid transparent",
-		"border-top": "6px solid " + options.sortArrows.inactive,
+		"border-bottom": "6px solid " + options.sortArrows.inactive,
 	});
 
 
 	$.each(options.columns, function(i, column) {
 
-		column.sortType = typeof(column.sortType) == "undefined" ? "string" : column.sortType;
+		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
 
-		var col = $('<th data-field="' + column.field + '" data-sortable=' + column.sortable + ' data-sorttype="' + column.sortType + '">' + column.title + '</th>');
+		var col = $('<th data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + column.title + '</th>');
+
+		//sort tabl click binding
+		if(column.sortable){
+			col.on("click", function(){
+
+				//reset all column sorts
+				$("th[data-sortable=true][data-field!=" + column.field + "]", self.table).data("sortdir", "desc");
+				$("th .tabular-arrow", self.table).css({
+					"border-top": "none",
+					"border-bottom": "6px solid " + options.sortArrows.inactive,
+				})
+
+				if (col.data("sortdir") == "desc"){
+					col.data("sortdir", "asc");
+					$(".tabular-arrow", col).css({
+						"border-top": "none",
+						"border-bottom": "6px solid " + options.sortArrows.active,
+					});
+				}else{
+					col.data("sortdir", "desc");
+					$(".tabular-arrow", col).css({
+						"border-top": "6px solid " + options.sortArrows.active,
+						"border-bottom": "none",
+					});
+				}
+
+				self._sort(column, col.data("sortdir"));
+			})
+		}
 
 		$("thead>tr", self.table).append(col);
 
 	});
 
-	element.append(self.table);
+element.append(self.table);
 
 	//layout headers
 	$("th", self.table).css({
@@ -116,10 +146,12 @@ _create: function() {
 		"position":"relative",
 		"border-right":"1px solid " + options.headerBorderColor,
 		"border-bottom":"1px solid " + options.headerSeperatorColor,
+		"user-select":"none",
 	});
 
 	//append sortable arrows to sortable headers
 	$("th[data-sortable=true]", self.table).css({"padding-right":"30px"})
+	.data("sortdir", "desc")
 	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
 	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 	.append(arrow.clone());
@@ -142,26 +174,39 @@ setData:function(data){
 			this._getAjaxData(this.options.ajaxURL);
 		}else{
 			//assume data is a json encoded string
-			this.data = jQuery.parseJSON(data);
+			this._parseData(jQuery.parseJSON(data));
 			this._renderTable();
 		}
 	}else{
 		if(data){
 			//asume data is already an object
-			this.data = data;
+			this._parseData(data);
 		}else{
 			//no data provided, check if ajaxURL is present;
 			if(this.options.ajaxURL){
 				this._getAjaxData(this.options.ajaxURL);
 			}else{
 				//empty data
-				this.data = [];
+				this._parseData([]);
 			}
 		}
 		this._renderTable();
 	}
 },
 
+//parse and index data
+_parseData:function(data){
+
+	var newData = [];
+
+	$.each(data, function(i, item) {
+		newData[item.id] = item;
+	});
+
+	this.data = newData;
+},
+
+//get json data via ajax
 _getAjaxData:function(url){
 
 	var self = this;
@@ -172,7 +217,7 @@ _getAjaxData:function(url){
 		async: true,
 		dataType:'json',
 		success: function (data) {
-			self.data = data;
+			this._parseData(data);
 			self._renderTable();
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
@@ -187,20 +232,28 @@ _renderTable:function(){
 	//hide table while building
 	$("tbody", self.table).hide();
 
+	console.log("data", self.data)
 	//build rows of table
-	$.each(self.data, function(i, item) {
+	self.data.forEach( function(item, i) {
+		console.log("item",item);
 		var row = $('<tr data-id="' + item.id + '"></tr>');
 
 		//bind row data to row
 		row.data("data", item);
 
 		//bind row click events
-		row.on("click", function(e){self._rowClick(e, row)});
-		row.on("contextmenu", function(e){self._rowContext(e, row)});
+		row.on("click", function(e){self._rowClick(e, row, item)});
+		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
 		$.each(self.options.columns, function(i, column) {
 			//deal with values that arnt declared
+
 			var value = typeof(item[column.field]) == 'undefined' ? "" : item[column.field];
+
+			// set empty values to not break search
+			if(typeof(item[column.field]) == 'undefined'){
+				 item[column.field] = "";
+			}
 
 			var cell = $("<td data-field='" + column.field + "' data-value='" + self._safeString(value) + "' >" + value + "</td>");
 
@@ -248,13 +301,13 @@ _renderTable:function(){
 },
 
 //carry out action on row click
-_rowClick: function(e, row){
-	this.options.rowClick(e, row.data("id"), row.data("data"), row);
+_rowClick: function(e, row, data){
+	this.options.rowClick(e, row.data("id"), data, row);
 },
 
 //carry out action on row context
-_rowContext: function(e, row){
-	this.options.rowContext(e, row.data("id"), row.data("data"), row);
+_rowContext: function(e, row, data){
+	this.options.rowContext(e, row.data("id"), data, row);
 },
 
 //carry out action on cell click
@@ -272,7 +325,60 @@ _safeString: function(value){
 	return String(value).replace(/'/g, "&#39;");
 },
 
-//decontructor
+_sort: function(column, dir){
+
+	var self = this;
+	var table = $("table tbody", self.element);
+	var data = self.data;
+
+	$("tr", table).sort(function(a,b) {
+
+		//switch elements depending on search direction
+		el1 = dir == "asc" ? data[$(a).data("id")] : data[$(b).data("id")]
+		el2 = dir == "asc" ? data[$(b).data("id")] : data[$(a).data("id")]
+
+		//sorting functions
+		switch(column.sorter){
+
+			case "number": //sort numbers
+			return parseFloat(el1[column.field]) - parseFloat(el2[column.field]);
+			break;
+
+			case "string": //sort strings
+			return el1[column.field].toLowerCase().localeCompare(el2[column.field].toLowerCase());
+			break;
+
+			case "date": //sort dates
+			return self._formatDate(el1[column.field]) - self._formatDate(el2[column.field]);
+			break;
+
+			default:
+			//handle custom sorter functions
+			if(typeof(column.sorter) == "function"){
+				return column.sorter(el1, el2);
+			}
+
+		}
+
+
+	}).appendTo(table);
+},
+
+
+//format date for date comparison
+_formatDate:function(dateString){
+	var format = this.options.dateFormat
+
+	var ypos = format.indexOf("yyyy");
+	var mpos = format.indexOf("mm");
+	var dpos = format.indexOf("dd");
+
+	var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
+
+	return Date.parse(formattedString);
+},
+
+//deconstructor
 destroy: function() {
 
 },

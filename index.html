@@ -7,7 +7,7 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-	<script type="text/javascript" src="/tabulator.js"></script>
+	<script type="text/javascript" src="tabulator.js"></script>
 </head>
 <body>
 
@@ -17,6 +17,7 @@
 		font-family: sans-serif;
 		font-size: 14px !important;
 	}
+
 	</style>
 
 	<div id="exampleTable"></div>
@@ -24,17 +25,17 @@
 	<script type="text/javascript">
 
 	$("#exampleTable").tabulator({
-		height:300,
+		height:"100%",
 		columns:[
-		{title:"Name", field:"name", sortType:"string"},
-		{title:"Age", field:"age", sortType:"number"},
-		{title:"Gender", field:"gender", sortType:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)},},
+		{title:"Name", field:"name", sorter:"string"},
+		{title:"Age", field:"age", sorter:"number"},
+		{title:"Gender", field:"gender", sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)},},
 		{title:"Height", field:"height", sortable:false},
-		{title:"Favourite Color", field:"col", sortType:"string"},
-		{title:"Date Of Birth", field:"dob", sortType:"date"},
+		{title:"Favourite Color", field:"col", sorter:"string"},
+		{title:"Date Of Birth", field:"dob", sorter:"date"},
 		],
 		rowClick:function(e, id, data, row){
-			console.log("row click - " + id, row);
+			console.log("row click - " + id, data);
 		},
 		rowContext:function(){console.log("Show Context Menu")}
 	});
