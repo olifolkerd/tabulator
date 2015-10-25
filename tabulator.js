@@ -26,7 +26,7 @@ options: {
 	colMinWidth:"20px", //minimum global width for a column
 
 	height:false, //height of tabulator
-	fitColumns:true, //fit colums to width of screen;
+	fitColumns:false, //fit colums to width of screen;
 
 	columns:[],//stor for colum header info
 
@@ -99,6 +99,7 @@ _create: function() {
 		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"white-space": "nowrap",
 		"overflow-y":"auto",
+		"overflow-x":"hidden",
 		"width":"100%",
 	});
 
@@ -154,11 +155,6 @@ _create: function() {
 		self.header.append(col);
 
 	});
-
-	if(options.fitColumns){
-		self.header.css({width:"100%"});
-		self.table.css({width:"100%"});
-	}
 
 	element.append(self.header);
 	tableHolder.append(self.table);
@@ -298,6 +294,9 @@ _renderTable:function(){
 				"display":"inline-block",
 				"vertical-align":"middle",
 				"min-height":self.options.headerHeight,
+				"white-space":"nowrap",
+				"overflow":"hidden",
+				"text-overflow":"ellipsis",
 			})
 
 			//format cell contents
@@ -311,8 +310,8 @@ _renderTable:function(){
 			row.append(cell);
 		});
 
-		self.table.append(row);
-	});
+self.table.append(row);
+});
 
 	self.table.css({//
 		"background-color":self.options.rowBackgroundColor,
@@ -337,7 +336,14 @@ _renderTable:function(){
 
 },
 
-//l;ayout coluns on first render
+//redraw list without updating data
+redraw:function(){
+	if(this.options.fitColumns){
+		this._firstRender();
+	}
+},
+
+//layout coluns on first render
 _firstRender:function(){
 	var self = this;
 	var options = self.options;
@@ -348,19 +354,45 @@ _firstRender:function(){
 	console.log("FIRST RENDER")
 	self.firstRender = false;
 
-	$.each(options.columns, function(i, column) {
+	if(options.fitColumns){
+		//resize columns to fit in window
+		var totWidth= self.element.innerWidth();
+		var colCount = options.columns.length;
+		var colWidth = totWidth / colCount;
 
-		var max = 0;
 
-		var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
+		var col = $(".tabulator-cell, .tabulator-col",element);
+		col.css({width:colWidth});
 
-		col.each(function(){
-			max = $(this).outerWidth() > max ? $(this).outerWidth() : max
+	}else{
+		//free sized table
+		$.each(options.columns, function(i, column) {
+
+			var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
+
+			if(column.width){
+				//reseize to match specified column width
+				max = column.width;
+			}else{
+				//resize columns to widest element
+
+				var max = 0;
+
+				col.each(function(){
+					max = $(this).outerWidth() > max ? $(this).outerWidth() : max
+				});
+
+				if(options.colMinWidth){
+					max = max < options.colMinWidth ? options.colMinWidth : max;
+				}
+
+			}
+
+			col.css({width:max});
 		});
+	}
 
-		col.css({width:max});
 
-	});
 
 	//set minimum width of cells
 	/*if(options.colMinWidth){
@@ -397,7 +429,7 @@ _firstRender:function(){
 				$("td[data-field=" + column.field + "]", table).css({"width": $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()});
 			}
 		});
-	}*/
+}*/
 
 
 },
