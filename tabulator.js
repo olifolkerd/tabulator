@@ -396,6 +396,14 @@ _sorter: function(column, dir){
 			return self._formatDate(el1[column.field]) - self._formatDate(el2[column.field]);
 			break;
 
+			case "boolean":
+				el1 = el1[column.field] === true || el1[column.field] === 'true' || el1[column.field] === 'True' || el1[column.field] === 1 ? 1 : 0;
+				el2 = el2[column.field] === true || el2[column.field] === 'true' || el2[column.field] === 'True' || el2[column.field] === 1 ? 1 : 0;
+
+				return el1 - el2
+
+			break
+
 			default:
 			//handle custom sorter functions
 			if(typeof(column.sorter) == "function"){
