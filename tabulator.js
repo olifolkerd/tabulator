@@ -45,12 +45,40 @@ options: {
 
 	ajaxURL:false, //url for ajax loading
 
+	showLoader:true, //show loader while data loading
+	loader:"<div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'>Loading Data</div>", //loader element
+	loaderError:"<div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'>Loading Error</div>", //loader element
+
 	rowClick:function(){}, //do action on row click
 	rowContext:function(){}, //context menu action
-	dataLoaded:function(){},  //callback for when data has been dataLoaded
-	renderComplete:function(){},  //callback for when table is rendered
-	sortComplete:function(){},  //callback for when sorting is complete
 },
+
+//loader blockout div
+loaderDiv: $("<div class='tablulator-loader' style='position:absolute; top:0; left:0; z-index:100; height:100%; width:100%; background:rgba(0,0,0,.4); text-align:center;'><div class='tabulator-loader-msg'></div></div>"),
+
+//show loader blockout div
+_showLoader:function(self, msg){
+	if(self.options.showLoader){
+		$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
+		$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) + ($(".tabulator-loader-msg", msg).outerHeight()/2)})
+		self.element.append(self.loaderDiv);
+	}
+},
+
+
+_hideLoader:function(self){
+	$(".tablulator-loader", self.element).remove();
+},
+
+
+//event triggers
+dataLoading:function(){},  //callback for when data is being loaded
+dataLoaded:function(){},  //callback for when data has been Loaded
+dataLoadError:function(){},  //callback for when there is adata loading error
+renderStarted:function(){},  //callback for when table is starting to render
+renderComplete:function(){},  //callback for when table is rendered
+sortStarted:function(){},  //callback for when sorting has begun
+sortComplete:function(){},  //callback for when sorting is complete
 
 //constructor
 _create: function() {
@@ -229,6 +257,8 @@ _setOption: function(option, value) {
 //load data
 setData:function(data){
 
+	this._trigger("dataLoading");
+
 	if(typeof(data) === "string"){
 		if (data.indexOf("http") == 0){
 			//make ajax call to url to get data
@@ -237,6 +267,7 @@ setData:function(data){
 			//assume data is a json encoded string
 			this._parseData(jQuery.parseJSON(data));
 			this._renderTable();
+			this._trigger("dataLoaded");
 		}
 	}else{
 		if(data){
@@ -252,6 +283,7 @@ setData:function(data){
 			}
 		}
 		this._renderTable();
+		this._trigger("dataLoaded");
 	}
 },
 
@@ -278,11 +310,15 @@ _getAjaxData:function(url){
 		async: true,
 		dataType:'json',
 		success: function (data) {
-			this._parseData(data);
+			self._parseData(data);
 			self._renderTable();
+			self._trigger("dataLoaded");
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
+			self._trigger("dataLoadError", xhr, thrownError);
+
+			self._showLoader(self, self.options.loaderError);
 		},
 	});
 },
@@ -290,8 +326,16 @@ _getAjaxData:function(url){
 _renderTable:function(){
 	var self = this;
 
+	this._trigger("renderStarted");
+
 	//hide table while building
 	self.table.hide();
+
+	//show loader if needed
+	self._showLoader(self, self.options.loader)
+
+	//clear data from table before loading new
+	self.table.empty();
 
 	//build rows of table
 	self.data.forEach( function(item, i) {
@@ -362,9 +406,13 @@ _renderTable:function(){
 	//show table once loading complete
 	self.table.show();
 
+	self._hideLoader(self);
+
 	if(self.firstRender){
 		self._firstRender();
 	}
+
+	self._trigger("renderComplete");
 
 },
 
@@ -529,6 +577,8 @@ _sorter: function(column, dir){
 	var table = self.table;
 	var data = self.data;
 
+	self._trigger("sortStarted");
+
 	self.sortCurrrent.col = column;
 	self.sortCurrrent.dir = dir;
 
@@ -551,6 +601,8 @@ _sorter: function(column, dir){
 
 	//style table rows
 	self._styleRows();
+
+	self._trigger("sortComplete");
 },
 
 //format date for date comparison
