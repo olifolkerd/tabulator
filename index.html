@@ -26,11 +26,11 @@
 		height:"100%",
 		columns:[
 		{title:"Name", field:"name", sorter:"string"},
-		{title:"Age", field:"age", sorter:"number"},
+		{title:"Age", field:"age", sorter:"number", align:"right"},
 		{title:"Gender", field:"gender", sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)},},
 		{title:"Height", field:"height", sortable:false},
 		{title:"Favourite Color", field:"col", sorter:"string"},
-		{title:"Date Of Birth", field:"dob", sorter:"date"},
+		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
 		],
 		rowClick:function(e, id, data, row){
 			console.log("row click - " + id, data);

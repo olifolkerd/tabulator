@@ -234,10 +234,14 @@ _renderTable:function(){
 				item[column.field] = "";
 			}
 
+			//set column text alignment
+			var align = typeof(column.align) == 'undefined' ? "left" : column.align;
+
 			var cell = $("<td data-field='" + column.field + "' data-value='" + self._safeString(value) + "' >" + value + "</td>");
 
 			cell.css({
-				padding:"4px",
+				padding: "4px",
+				"text-align": align,
 			})
 
 			//bind cell click function
