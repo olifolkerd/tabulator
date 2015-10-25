@@ -9,6 +9,8 @@ options: {
 	backgroundColor: "#777", //background color of tabulator
 	borderColor:"#ccc", //border to tablulator
 
+	textSize: "14px", //table text size
+
 	headerBackgroundColor:"#e6e6e6", //border to tablulator
 	headerTextColor:"#555", //header text colour
 	headerBorderColor:"#aaa", //header border color
@@ -45,6 +47,8 @@ _create: function() {
 	var options = self.options;
 	var element = self.element;
 
+	options.textSize = isNaN(options.textSize) ? options.textSize : options.textSize + "px";
+
 	if(options.height){
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
 		element.css({"height": options.height});
@@ -55,6 +59,7 @@ _create: function() {
 		"box-sizing" : "border-box",
 		"background-color": options.backgroundColor,
 		"border": "1px solid " + options.borderColor,
+		"font-size":options.textSize,
 		"overflow-x":"auto",
 	})
 
@@ -145,8 +150,6 @@ _setOption: function(option, value) {
 //load data
 setData:function(data){
 
-	console.log("greddata", data);
-
 	if(typeof(data) === "string"){
 		if (data.indexOf("http") == 0){
 			//make ajax call to url to get data
@@ -211,10 +214,8 @@ _renderTable:function(){
 	//hide table while building
 	$("tbody", self.table).hide();
 
-	console.log("data", self.data)
 	//build rows of table
 	self.data.forEach( function(item, i) {
-		console.log("item",item);
 		var row = $('<tr data-id="' + item.id + '"></tr>');
 
 		//bind row data to row
@@ -237,12 +238,15 @@ _renderTable:function(){
 			//set column text alignment
 			var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
-			var cell = $("<td data-field='" + column.field + "' data-value='" + self._safeString(value) + "' >" + value + "</td>");
+			var cell = $("<td data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></td>");
 
 			cell.css({
 				padding: "4px",
 				"text-align": align,
 			})
+
+			//format cell contents
+			cell.html(self._formatCell(column.formatter, value, item, cell, row));
 
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
@@ -255,10 +259,10 @@ _renderTable:function(){
 		$("tbody", self.table).append(row);
 	});
 
-	$("tbody", self.table).css({
-		"background-color":self.options.rowBackgroundColor,
-		"color":self.options.rowTextColor,
-	});
+$("tbody", self.table).css({
+	"background-color":self.options.rowBackgroundColor,
+	"color":self.options.rowTextColor,
+});
 
 	//style table rows
 	self._styleRows();
@@ -298,6 +302,14 @@ _styleRows:function(){
 	$("tbody td", self.table).css({
 		"border-right":"1px solid " + self.options.rowBorderColor,
 	});
+},
+
+//format cell contents
+_formatCell:function(formatter, value, data, cell, row){
+	var formatter = typeof(formatter) == 'undefined' ? "plaintext" : formatter;
+	var formatter = typeof(formatter) == 'string' ? this.formatters[formatter] : formatter;
+
+	return formatter(value, data, cell, row,  this.options);
 },
 
 //carry out action on row click
@@ -413,12 +425,59 @@ _formatDate:function(dateString){
 
 //custom data formatters
 formatters:{
-	email:function(){},
-	link:function(){},
-	tick:function(){},
-	tickCross:function(){},
-	star:function(){},
-	progress:function(){},
+	plaintext:function(value, data, cell, row, options){ //plain text value
+		return value;
+	},
+	email:function(value, data, cell, row, options){
+		return "<a href='mailto:" + value + "'>" + value + "</a>";
+	},
+	link:function(value, data, cell, row, options){
+		return "<a href='" + value + "'>" + value + "</a>";
+	},
+	tick:function(value, data, cell, row, options){
+
+		var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+
+		if(value === true || value === 'true' || value === 'True' || value === 1){
+			return tick;
+		}
+
+
+	},
+	tickCross:function(value, data, cell, row, options){
+		var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+		var cross = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+
+		if(value === true || value === 'true' || value === 'True' || value === 1){
+			return tick;
+		}else{
+			return cross;
+		}
+	},
+	star:function(value, data, cell, row, options){
+		var maxStars = 5;
+		var stars=$("<span></span>");
+
+		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+
+		var starActive = $('<svg width="' + options.textSize + '" height="' + options.textSize + '" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		var starInactive = $('<svg width="' + options.textSize + '" height="' + options.textSize + '" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+
+		for(i=1;i<= maxStars;i++){
+
+			var nextStar = i <= value ? starActive : starInactive;
+
+			stars.append(nextStar.clone());
+		}
+		console.log("stars",stars.html())
+		return stars.html();
+	},
+	progress:function(value, data, cell, row, options){ //progress bar
+
+		value = parseFloat(value) <= 100 ? parseFloat(value) : 100;
+
+		return "<div style='height:10px; background-color:#2DC214; width:" + value + "%;'></div>"
+	},
 },
 
 //deconstructor
