@@ -93,14 +93,10 @@ _create: function() {
 	headerMargin = parseInt(options.headerMargin.replace("px",""));
 	options.headerHeight =  options.textSizeNum + (headerMargin*2) + 2;
 
-	console.log("headerHeight",headerMargin )
-
 	if(options.height){
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
 		element.css({"height": options.height});
 	}
-
-	console.log("font-size:" +options.textSize)
 
 	element.addClass("tabulator");
 	element.css({
@@ -211,7 +207,6 @@ _create: function() {
 		//create resize handle
 		var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>")
 		handle.on("mousedown", function(e){
-			console.log("mousedown", e)
 			self.mouseDrag = e.screenX;
 			self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
 			self.mouseDragElement = $(this).closest(".tabulator-col");
@@ -259,6 +254,9 @@ setData:function(data){
 
 	this._trigger("dataLoading");
 
+	//show loader if needed
+	this._showLoader(this, this.options.loader)
+
 	if(typeof(data) === "string"){
 		if (data.indexOf("http") == 0){
 			//make ajax call to url to get data
@@ -273,6 +271,9 @@ setData:function(data){
 		if(data){
 			//asume data is already an object
 			this._parseData(data);
+			this._renderTable();
+			this._trigger("dataLoaded");
+
 		}else{
 			//no data provided, check if ajaxURL is present;
 			if(this.options.ajaxURL){
@@ -280,10 +281,11 @@ setData:function(data){
 			}else{
 				//empty data
 				this._parseData([]);
+				this._renderTable();
+				this._trigger("dataLoaded");
+
 			}
 		}
-		this._renderTable();
-		this._trigger("dataLoaded");
 	}
 },
 
@@ -406,11 +408,12 @@ _renderTable:function(){
 	//show table once loading complete
 	self.table.show();
 
+	//hide loader div
 	self._hideLoader(self);
 
-	if(self.firstRender){
-		self._firstRender();
-	}
+	//align column widths
+	self._colRender(!self.firstRender);
+
 
 	self._trigger("renderComplete");
 
@@ -419,7 +422,7 @@ _renderTable:function(){
 //redraw list without updating data
 redraw:function(){
 	if(this.options.fitColumns){
-		this._firstRender();
+		this._colRender();
 	}
 },
 
@@ -429,17 +432,25 @@ _resizeCol:function(field, width){
 },
 
 //layout coluns on first render
-_firstRender:function(){
+_colRender:function(fixedwidth){
 	var self = this;
 	var options = self.options;
 	var table = self.table;
 	var header = self.header;
 	var element = self.element;
 
-	console.log("FIRST RENDER")
 	self.firstRender = false;
 
-	if(options.fitColumns){
+	if(fixedwidth){ //it columns have been resized and now data needs to match them
+		//free sized table
+		$.each(options.columns, function(i, column) {
+			colWidth = $(".tabulator-col[data-field=" + column.field + "]").outerWidth();
+			var col = $(".tabulator-cell[data-field=" + column.field + "]",element);
+			col.css({width:colWidth});
+		});
+	}else{
+
+		if(options.fitColumns){
 		//resize columns to fit in window
 		var totWidth= self.element.innerWidth();
 		var colCount = options.columns.length;
@@ -456,25 +467,25 @@ _firstRender:function(){
 			var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
 
 			if(column.width){
-				//reseize to match specified column width
-				max = column.width;
-			}else{
-				//resize columns to widest element
+					//reseize to match specified column width
+					max = column.width;
+				}else{
+					//resize columns to widest element
 
-				var max = 0;
+					var max = 0;
 
-				col.each(function(){
-					max = $(this).outerWidth() > max ? $(this).outerWidth() : max
-				});
+					col.each(function(){
+						max = $(this).outerWidth() > max ? $(this).outerWidth() : max
+					});
 
-				if(options.colMinWidth){
-					max = max < options.colMinWidth ? options.colMinWidth : max;
+					if(options.colMinWidth){
+						max = max < options.colMinWidth ? options.colMinWidth : max;
+					}
+
 				}
-
-			}
-
-			col.css({width:max});
-		});
+				col.css({width:max});
+			});
+		}//
 	}
 },
 
@@ -504,7 +515,6 @@ _styleRows:function(){
 	});
 
 	if(!self.options.height){
-		console.log("barp", self.table.outerHeight())
 		self.element.css({height:self.table.outerHeight() + self.options.headerHeight + 3})
 	}
 },
@@ -607,7 +617,6 @@ _sorter: function(column, dir){
 
 //format date for date comparison
 _formatDate:function(dateString){
-	console.log("dateString", dateString)
 	var format = this.options.dateFormat
 
 	var ypos = format.indexOf("yyyy");

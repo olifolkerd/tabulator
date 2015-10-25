@@ -32,6 +32,7 @@
 		 height:"100%",
 		// fitColumns:true,
 		// colMinWidth:"100px",
+		// ajaxURL:"/ajax.php",
 		columns:[
 		{title:"Name", field:"name", sorter:"string", width:200},
 		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
@@ -46,6 +47,7 @@
 		},
 		rowContext:function(){console.log("Show Context Menu")}
 	});
+
 
 	$("#exampleTable").tabulator("setData",[
 		{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
