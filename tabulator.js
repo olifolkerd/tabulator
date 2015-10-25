@@ -72,13 +72,13 @@ _hideLoader:function(self){
 
 
 //event triggers
-dataLoading:function(){},  //callback for when data is being loaded
-dataLoaded:function(){},  //callback for when data has been Loaded
-dataLoadError:function(){},  //callback for when there is adata loading error
-renderStarted:function(){},  //callback for when table is starting to render
-renderComplete:function(){},  //callback for when table is rendered
-sortStarted:function(){},  //callback for when sorting has begun
-sortComplete:function(){},  //callback for when sorting is complete
+//dataLoading:-  callback for when data is being loaded
+//dataLoaded:-  callback for when data has been Loaded
+//dataLoadError:-  callback for when there is adata loading error
+//renderStarted:-  callback for when table is starting to render
+//renderComplete:-  callback for when table is rendered
+//sortStarted:-  callback for when sorting has begun
+//sortComplete:-  callback for when sorting is complete
 
 //constructor
 _create: function() {
