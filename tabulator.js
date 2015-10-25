@@ -2,7 +2,7 @@ $.widget("ui.tabulator", {
 
 
 data:[],//array to hold data for table
-sortcol:null, //column name of currently sorted column
+sortCurrrent:{col:null,dir:null}, //column name of currently sorted column
 
 //setup options
 options: {
@@ -259,6 +259,12 @@ _renderTable:function(){
 	//style table rows
 	self._styleRows();
 
+	//sort data if already sorted
+	if(self.sortCurrrent.col){
+		self._sorter(self.sortCurrrent.col, self.sortCurrrent.dir);
+	}
+
+
 	//show table once loading complete
 	$("tbody", self.table).show();
 
@@ -349,6 +355,9 @@ _sorter: function(column, dir){
 	var self = this;
 	var table = $("table tbody", self.element);
 	var data = self.data;
+
+	self.sortCurrrent.col = column;
+	self.sortCurrrent.dir = dir;
 
 	$("tr", table).sort(function(a,b) {
 
