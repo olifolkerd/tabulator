@@ -7,6 +7,7 @@ firstRender:true, //layout table widths correctly on first render
 mouseDrag:false, //mouse drag tracker;
 mouseDragWidth:false, //starting width of colum on mouse drag
 mouseDragElement:false, //column being dragged
+mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on sort
 
 //setup options
 options: {
@@ -177,7 +178,10 @@ _create: function() {
 		//sort tabl click binding
 		if(column.sortable){
 			col.on("click", function(){
-				self._sortClick(column, col);
+				if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
+					self._sortClick(column, col); //trigger sort
+				}
+				self.mouseDragOut = false;
 			})
 		}
 
@@ -220,6 +224,11 @@ _create: function() {
 		self.element.on("mouseup", function(e){
 
 			if(self.mouseDrag){
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+
+				self.mouseDragOut = true;
+
 				self._resizeCol(self.mouseDragElement.data("field"), self.mouseDragElement.outerWidth());
 
 				self.mouseDrag = false;
