@@ -550,6 +550,22 @@ _sorter: function(column, dir){
 	self._styleRows();
 },
 
+//format date for date comparison
+_formatDate:function(dateString){
+	console.log("dateString", dateString)
+	var format = this.options.dateFormat
+
+	var ypos = format.indexOf("yyyy");
+	var mpos = format.indexOf("mm");
+	var dpos = format.indexOf("dd");
+
+	var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
+
+	var newDate = Date.parse(formattedString)
+
+	return isNaN(newDate) ? 0 : newDate;
+},
+
 //custom data sorters
 sorters:{
 	number:function(a, b){ //sort numbers
@@ -570,23 +586,6 @@ sorters:{
 },
 
 
-//format date for date comparison
-_formatDate:function(dateString){
-	console.log("dateString", dateString)
-	var format = this.options.dateFormat
-
-	var ypos = format.indexOf("yyyy");
-	var mpos = format.indexOf("mm");
-	var dpos = format.indexOf("dd");
-
-	var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
-
-	var newDate = Date.parse(formattedString)
-
-	return isNaN(newDate) ? 0 : newDate;
-},
-
-
 //custom data formatters
 formatters:{
 	plaintext:function(value, data, cell, row, options){ //plain text value
@@ -599,14 +598,11 @@ formatters:{
 		return "<a href='" + value + "'>" + value + "</a>";
 	},
 	tick:function(value, data, cell, row, options){
-
 		var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 		if(value === true || value === 'true' || value === 'True' || value === 1){
 			return tick;
 		}
-
-
 	},
 	tickCross:function(value, data, cell, row, options){
 		var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
@@ -643,7 +639,6 @@ formatters:{
 		return stars.html();
 	},
 	progress:function(value, data, cell, row, options){ //progress bar
-
 		value = parseFloat(value) <= 100 ? parseFloat(value) : 100;
 
 		cell.css({
@@ -658,6 +653,5 @@ formatters:{
 destroy: function() {
 
 },
-
 
 });
