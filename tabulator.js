@@ -3,6 +3,7 @@ $.widget("ui.tabulator", {
 
 data:[],//array to hold data for table
 sortCurrrent:{col:null,dir:null}, //column name of currently sorted column
+firstRender:true, //layout table widths correctly on first render
 
 //setup options
 options: {
@@ -21,6 +22,8 @@ options: {
 	rowBorderColor:"#aaa", //table border color
 	rowTextColor:"#333", //table text color
 	rowHoverBackground:"#bbb", //row background color on hover
+
+	colMinWidth:"20px", //minimum global width for a column
 
 	height:false, //height of tabulator
 	fitColumns:true, //fit colums to width of screen;
@@ -49,9 +52,13 @@ _create: function() {
 	var element = self.element;
 
 	options.textSize = isNaN(options.textSize) ? options.textSize : options.textSize + "px";
+	options.colMinWidth = isNaN(options.colMinWidth) ? options.colMinWidth : options.colMinWidth + "px";
 
 	options.textSizeNum = parseInt(options.textSize.replace("px",""));
-	options.headerHeight =  options.textSizeNum + options.headerMargin + 2;
+	headerMargin = parseInt(options.headerMargin.replace("px",""));
+	options.headerHeight =  options.textSizeNum + (headerMargin*2) + 2;
+
+	console.log("headerHeight",headerMargin )
 
 	if(options.height){
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
@@ -81,8 +88,15 @@ _create: function() {
 
 	element.append(headerfill);
 
+	self.header = $("<table><thead><tr style='background-color:" + options.headerBackgroundColor + "; color: " + options.headerTextColor + "'></tr></thead></table")
+
+	//create scrollable table holder
+	var tableHolder = $("<div style='position:absolute; top:" + (options.headerHeight + 1) + "px; calc(100% - " + (options.headerHeight + 1) + "px); width:100%; overflow-y:auto;'></div>")
+
 	//create table
-	self.table = $("<table><thead><tr style='background-color:" + options.headerBackgroundColor + "; color: " + options.headerTextColor + "'></tr></thead><tbody></tbody></table>");
+	self.table = $("<table><tbody></tbody></table>");
+
+	tableHolder.append(self.table);
 
 	self.table.css({
 		position:"relative",
@@ -91,7 +105,12 @@ _create: function() {
 		"z-index":"1",
 	});
 
-	if(options.fitColumns) self.table.css({width:"100%"});
+	self.header.css({
+		position:"absolute",
+		"border-collapse": "collapse",
+		"font-size":options.textSize,
+		"z-index":"1",
+	});
 
 	//create sortable arrow chevrons
 	var arrow = $("<div class='tabular-arrow'></div>");
@@ -115,6 +134,14 @@ _create: function() {
 
 		var col = $('<th data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + column.title + '</th>');
 
+		if(typeof(column.width) != "undefined"){
+			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
+
+			col.data("width", column.width);
+
+			col.css({width:column.width});
+		}
+
 		//sort tabl click binding
 		if(column.sortable){
 			col.on("click", function(){
@@ -123,28 +150,45 @@ _create: function() {
 			})
 		}
 
-		$("thead>tr", self.table).append(col);
+		$("tr", self.header).append(col);
 
 	});
 
-	element.append(self.table);
+	if(options.fitColumns){
+		self.header.css({width:"100%"});
+		self.table.css({width:"100%"});
+	}
+
+	element.append(self.header);
+	element.append(tableHolder);
 
 	//layout headers
-	$("th", self.table).css({
+	$("th", self.headder).css({
 		"padding":"4px",
 		"text-align":"left",
 		"position":"relative",
 		"border-right":"1px solid " + options.headerBorderColor,
 		"border-bottom":"1px solid " + options.headerSeperatorColor,
+		"box-sizing":"border-box",
 		"user-select":"none",
+		"white-space": "nowrap",
+		"overflow": "hidden",
+		"text-overflow": "ellipsis",
 	});
 
 	//append sortable arrows to sortable headers
-	$("th[data-sortable=true]", self.table).css({"padding-right":"30px"})
+	$("th[data-sortable=true]", self.header).css({"padding-right":"30px"})
 	.data("sortdir", "desc")
 	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
 	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 	.append(arrow.clone());
+
+	//render or resize;
+
+	element.resize(function(){
+		console.log("resize");
+	})
+	//_firstRender
 
 },
 
@@ -249,6 +293,7 @@ _renderTable:function(){
 			cell.css({
 				padding: "4px",
 				"text-align": align,
+				"box-sizing":"border-box",
 			})
 
 			//format cell contents
@@ -265,10 +310,10 @@ _renderTable:function(){
 		$("tbody", self.table).append(row);
 	});
 
-$("tbody", self.table).css({
-	"background-color":self.options.rowBackgroundColor,
-	"color":self.options.rowTextColor,
-});
+	$("tbody", self.table).css({//
+		"background-color":self.options.rowBackgroundColor,
+		"color":self.options.rowTextColor,
+	});
 
 	//style table rows
 	self._styleRows();
@@ -281,6 +326,60 @@ $("tbody", self.table).css({
 
 	//show table once loading complete
 	$("tbody", self.table).show();
+
+	if(self.firstRender){
+		self._firstRender();
+	}
+
+},
+
+//l;ayout coluns on first render
+_firstRender:function(){
+	var self = this;
+	var options = self.options;
+	var table = self.table;
+	var header = self.header;
+
+	console.log("FIRST RENDER")
+	self.firstRender = false;
+
+	//set minimum width of cells
+	if(options.colMinWidth){
+		$("td", self.table).css({"min-width": options.colMinWidth});
+	}
+
+	if(options.fitColumns){
+		//full width resize
+		//resize table to match header
+		$.each(options.columns, function(i, column) {
+			$("td[data-field=" + column.field + "]", table).css({"width": $("th[data-field=" + column.field + "]", header).outerWidth()});
+		});
+	}else{
+		table.css({"table-layout":"fixed"});
+		table.css({"table-layout":"header"});
+
+
+
+		//part width resize
+		//resize header to match table
+		$.each(options.columns, function(i, column) {
+			if(column.width){
+				//if col width set match table to header
+				$("td[data-field=" + column.field + "]", table).css({"width": column.width});
+
+			}else{
+				$("th[data-field=" + column.field + "]", header).css({"width": $("tr:first td[data-field=" + column.field + "]", table).outerWidth() + "px"});
+			}
+		});
+
+		//if table col narrower than col heading title resize table columns
+		$.each(options.columns, function(i, column) {
+			if($("tr:first td[data-field=" + column.field + "]", table).outerWidth() < $("th[data-field=" + column.field + "]", header).outerWidth()){
+				$("td[data-field=" + column.field + "]", table).css({"width": $("th[data-field=" + column.field + "]", header).outerWidth()});
+			}
+		});
+	}
+
 
 },
 
@@ -403,10 +502,10 @@ _sorter: function(column, dir){
 			break;
 
 			case "boolean":
-				el1 = el1[column.field] === true || el1[column.field] === 'true' || el1[column.field] === 'True' || el1[column.field] === 1 ? 1 : 0;
-				el2 = el2[column.field] === true || el2[column.field] === 'true' || el2[column.field] === 'True' || el2[column.field] === 1 ? 1 : 0;
+			el1 = el1[column.field] === true || el1[column.field] === 'true' || el1[column.field] === 'True' || el1[column.field] === 1 ? 1 : 0;
+			el2 = el2[column.field] === true || el2[column.field] === 'true' || el2[column.field] === 'True' || el2[column.field] === 1 ? 1 : 0;
 
-				return el1 - el2
+			return el1 - el2
 
 			break
 
@@ -433,7 +532,9 @@ _formatDate:function(dateString){
 
 	var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
 
-	return Date.parse(formattedString);
+	var newDate = Date.parse(formattedString)
+
+	return isNaN(newDate) ? 0 : newDate;
 },
 
 
@@ -483,11 +584,22 @@ formatters:{
 
 			stars.append(nextStar.clone());
 		}
+
+		cell.css({
+			"white-space": "nowrap",
+			"overflow": "hidden",
+			"text-overflow": "ellipsis",
+		})
+
 		return stars.html();
 	},
 	progress:function(value, data, cell, row, options){ //progress bar
 
 		value = parseFloat(value) <= 100 ? parseFloat(value) : 100;
+
+		cell.css({
+			"min-width":"30px",
+		});
 
 		return "<div style='height:10px; background-color:#2DC214; width:" + value + "%;'></div>"
 	},
