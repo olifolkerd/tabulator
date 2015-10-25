@@ -648,7 +648,7 @@ formatters:{
 			"min-width":"30px",
 		});
 
-		return "<div style='height:10px; background-color:#2DC214; width:" + value + "%;'></div>"
+		return "<div style='margin-top:3px; height:10px; width:" + value + "%; background-color:#2DC214; '></div>"
 	},
 },
 
