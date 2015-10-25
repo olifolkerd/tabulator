@@ -54,12 +54,13 @@ _create: function() {
 		element.css({"height": options.height});
 	}
 
+	console.log("font-size:" +options.textSize)
+
 	element.css({
 		position:"relative",
 		"box-sizing" : "border-box",
 		"background-color": options.backgroundColor,
 		"border": "1px solid " + options.borderColor,
-		"font-size":options.textSize,
 		"overflow-x":"auto",
 	})
 
@@ -82,6 +83,7 @@ _create: function() {
 	self.table.css({
 		position:"relative",
 		"border-collapse": "collapse",
+		"font-size":options.textSize,
 		"z-index":"1",
 	});
 
@@ -477,7 +479,6 @@ formatters:{
 
 			stars.append(nextStar.clone());
 		}
-		console.log("stars",stars.html())
 		return stars.html();
 	},
 	progress:function(value, data, cell, row, options){ //progress bar
