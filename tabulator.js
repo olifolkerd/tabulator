@@ -267,14 +267,14 @@ setData:function(data){
 	this._showLoader(this, this.options.loader)
 
 	if(typeof(data) === "string"){
-		if (data.indexOf("http") == 0){
-			//make ajax call to url to get data
-			this._getAjaxData(this.options.ajaxURL);
-		}else{
-			//assume data is a json encoded string
+		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+			//data is a json encoded string
 			this._parseData(jQuery.parseJSON(data));
 			this._renderTable();
 			this._trigger("dataLoaded");
+		}else{
+			//assume data is url, make ajax call to url to get data
+			this._getAjaxData(this.options.ajaxURL);
 		}
 	}else{
 		if(data){
