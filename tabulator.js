@@ -67,6 +67,7 @@ _create: function() {
 
 	console.log("font-size:" +options.textSize)
 
+	element.addClass("tabulator");
 	element.css({
 		position:"relative",
 		"box-sizing" : "border-box",
@@ -75,45 +76,46 @@ _create: function() {
 		"overflow-x":"auto",
 	})
 
-	//create header bar to fill full width of screen
-	var headerfill = $("<div></div>");
-	headerfill.css({
-		position:"absolute",
-		height: options.headerHeight + "px",
+	self.header = $("<div class='tabulator-header'</div>")
+
+	self.header.css({
+		position:"relative",
 		width:"100%",
 		"background-color": options.headerBackgroundColor,
 		"border-bottom":"1px solid " + options.headerSeperatorColor,
-		"z-index":"0",
-	})
+		"color": options.headerTextColor,
+		"font-size":options.textSize,
+		"font-weight":"bold",
+		"white-space": "nowrap",
+		"z-index":"1",
+	});
 
-	element.append(headerfill);
 
-	self.header = $("<table><thead><tr style='background-color:" + options.headerBackgroundColor + "; color: " + options.headerTextColor + "'></tr></thead></table")
+	var tableHolder = $("<div class='tabulator-tableHolder'></div>");
+
+	tableHolder.css({
+		position:"absolute",
+		"z-index":"1",
+		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
+		"white-space": "nowrap",
+		"overflow-y":"auto",
+		"width":"100%",
+	});
 
 	//create scrollable table holder
-	var tableHolder = $("<div style='position:absolute; top:" + (options.headerHeight + 1) + "px; calc(100% - " + (options.headerHeight + 1) + "px); width:100%; overflow-y:auto;'></div>")
+	self.table = $("<div class='tabulator-table'></div>");
 
-	//create table
-	self.table = $("<table><tbody></tbody></table>");
-
-	tableHolder.append(self.table);
 
 	self.table.css({
 		position:"relative",
-		"border-collapse": "collapse",
 		"font-size":options.textSize,
+		"white-space": "nowrap",
 		"z-index":"1",
-	});
-
-	self.header.css({
-		position:"absolute",
-		"border-collapse": "collapse",
-		"font-size":options.textSize,
-		"z-index":"1",
+		display:"inline-block",
 	});
 
 	//create sortable arrow chevrons
-	var arrow = $("<div class='tabular-arrow'></div>");
+	var arrow = $("<div class='tabulator-arrow'></div>");
 	arrow.css({
 		display: "inline-block",
 		position: "absolute",
@@ -132,7 +134,7 @@ _create: function() {
 		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
 
-		var col = $('<th data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + column.title + '</th>');
+		var col = $('<span class="tabulator-col" style="display:inline-block" data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + column.title + '</span>');
 
 		if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -145,12 +147,11 @@ _create: function() {
 		//sort tabl click binding
 		if(column.sortable){
 			col.on("click", function(){
-
 				self._sortClick(column, col);
 			})
 		}
 
-		$("tr", self.header).append(col);
+		self.header.append(col);
 
 	});
 
@@ -160,15 +161,15 @@ _create: function() {
 	}
 
 	element.append(self.header);
+	tableHolder.append(self.table);
 	element.append(tableHolder);
 
 	//layout headers
-	$("th", self.headder).css({
+	$(".tabulator-col", self.header).css({
 		"padding":"4px",
 		"text-align":"left",
 		"position":"relative",
 		"border-right":"1px solid " + options.headerBorderColor,
-		"border-bottom":"1px solid " + options.headerSeperatorColor,
 		"box-sizing":"border-box",
 		"user-select":"none",
 		"white-space": "nowrap",
@@ -177,7 +178,7 @@ _create: function() {
 	});
 
 	//append sortable arrows to sortable headers
-	$("th[data-sortable=true]", self.header).css({"padding-right":"30px"})
+	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"30px"})
 	.data("sortdir", "desc")
 	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
 	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
@@ -262,11 +263,11 @@ _renderTable:function(){
 	var self = this;
 
 	//hide table while building
-	$("tbody", self.table).hide();
+	self.table.hide();
 
 	//build rows of table
 	self.data.forEach( function(item, i) {
-		var row = $('<tr data-id="' + item.id + '"></tr>');
+		var row = $('<div class="tabulator-row" data-id="' + item.id + '"></div>');
 
 		//bind row data to row
 		row.data("data", item);
@@ -288,12 +289,15 @@ _renderTable:function(){
 			//set column text alignment
 			var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
-			var cell = $("<td data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></td>");
+			var cell = $("<div class='tabulator-cell' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 			cell.css({
 				padding: "4px",
 				"text-align": align,
 				"box-sizing":"border-box",
+				"display":"inline-block",
+				"vertical-align":"middle",
+				"min-height":self.options.headerHeight,
 			})
 
 			//format cell contents
@@ -307,10 +311,10 @@ _renderTable:function(){
 			row.append(cell);
 		});
 
-		$("tbody", self.table).append(row);
+		self.table.append(row);
 	});
 
-	$("tbody", self.table).css({//
+	self.table.css({//
 		"background-color":self.options.rowBackgroundColor,
 		"color":self.options.rowTextColor,
 	});
@@ -325,7 +329,7 @@ _renderTable:function(){
 
 
 	//show table once loading complete
-	$("tbody", self.table).show();
+	self.table.show();
 
 	if(self.firstRender){
 		self._firstRender();
@@ -339,20 +343,35 @@ _firstRender:function(){
 	var options = self.options;
 	var table = self.table;
 	var header = self.header;
+	var element = self.element;
 
 	console.log("FIRST RENDER")
 	self.firstRender = false;
 
+	$.each(options.columns, function(i, column) {
+
+		var max = 0;
+
+		var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
+
+		col.each(function(){
+			max = $(this).outerWidth() > max ? $(this).outerWidth() : max
+		});
+
+		col.css({width:max});
+
+	});
+
 	//set minimum width of cells
-	if(options.colMinWidth){
-		$("td", self.table).css({"min-width": options.colMinWidth});
+	/*if(options.colMinWidth){
+		$(".tabulator-cell", self.table).css({"min-width": options.colMinWidth});
 	}
 
 	if(options.fitColumns){
 		//full width resize
 		//resize table to match header
 		$.each(options.columns, function(i, column) {
-			$("td[data-field=" + column.field + "]", table).css({"width": $("th[data-field=" + column.field + "]", header).outerWidth()});
+			$("td[data-field=" + column.field + "]", table).css({"width": $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()});
 		});
 	}else{
 		table.css({"table-layout":"fixed"});
@@ -368,17 +387,17 @@ _firstRender:function(){
 				$("td[data-field=" + column.field + "]", table).css({"width": column.width});
 
 			}else{
-				$("th[data-field=" + column.field + "]", header).css({"width": $("tr:first td[data-field=" + column.field + "]", table).outerWidth() + "px"});
+				$(".tabulator-col[data-field=" + column.field + "]", header).css({"width": $("tr:first td[data-field=" + column.field + "]", table).outerWidth() + "px"});
 			}
 		});
 
 		//if table col narrower than col heading title resize table columns
 		$.each(options.columns, function(i, column) {
-			if($("tr:first td[data-field=" + column.field + "]", table).outerWidth() < $("th[data-field=" + column.field + "]", header).outerWidth()){
-				$("td[data-field=" + column.field + "]", table).css({"width": $("th[data-field=" + column.field + "]", header).outerWidth()});
+			if($("tr:first td[data-field=" + column.field + "]", table).outerWidth() < $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()){
+				$("td[data-field=" + column.field + "]", table).css({"width": $(".tabulator-col[data-field=" + column.field + "]", header).outerWidth()});
 			}
 		});
-	}
+	}*/
 
 
 },
@@ -388,23 +407,23 @@ _styleRows:function(){
 
 	var self = this;
 
-	$("tbody tr", self.table).css({"background-color":"transparent"})
+	$(".tabulator-row", self.table).css({"background-color":"transparent"})
 
 	//hover over rows
 	if(self.options.selectable){
-		$("tbody tr", self.table)
+		$(".tabulator-row", self.table)
 		.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":self.options.rowHoverBackground})})
 		.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 	}
 
 	//color odd rows
-	$("tbody tr:nth-of-type(even)", self.table).css({
+	$(".tabulator-row:nth-of-type(even)", self.table).css({
 		"background-color": "rgba(0,0,0,.1);" //shade even numbered rows
 	})
 	.on("mouseout", function(){$(this).css({"background-color": "rgba(0,0,0,.1);"})}); //make sure odd rows revert back to color after hover
 
 	//add column borders to rows
-	$("tbody td", self.table).css({
+	$(".tabulator-cell", self.table).css({
 		"border-right":"1px solid " + self.options.rowBorderColor,
 	});
 },
@@ -444,25 +463,25 @@ _safeString: function(value){
 
 _sortClick: function(column, element){
 	var self = this;
-	var table = self.table;
+	var header = self.header;
 	var options = this.options;
 
 	//reset all column sorts
-	$("th[data-sortable=true][data-field!=" + column.field + "]", self.table).data("sortdir", "desc");
-	$("th .tabular-arrow", self.table).css({
+	$(".tabulator-col[data-sortable=true][data-field!=" + column.field + "]", self.header).data("sortdir", "desc");
+	$(".tabulator-col .tabulator-arrow", self.header).css({
 		"border-top": "none",
 		"border-bottom": "6px solid " + options.sortArrows.inactive,
 	})
 
 	if (element.data("sortdir") == "desc"){
 		element.data("sortdir", "asc");
-		$(".tabular-arrow", element).css({
+		$(".tabulator-arrow", element).css({
 			"border-top": "none",
 			"border-bottom": "6px solid " + options.sortArrows.active,
 		});
 	}else{
 		element.data("sortdir", "desc");
-		$(".tabular-arrow", element).css({
+		$(".tabulator-arrow", element).css({
 			"border-top": "6px solid " + options.sortArrows.active,
 			"border-bottom": "none",
 		});
@@ -474,13 +493,13 @@ _sortClick: function(column, element){
 _sorter: function(column, dir){
 
 	var self = this;
-	var table = $("table tbody", self.element);
+	var table = self.table;
 	var data = self.data;
 
 	self.sortCurrrent.col = column;
 	self.sortCurrrent.dir = dir;
 
-	$("tr", table).sort(function(a,b) {
+	$(".tabulator-row", table).sort(function(a,b) {
 
 		//switch elements depending on search direction
 		el1 = dir == "asc" ? data[$(a).data("id")] : data[$(b).data("id")]
