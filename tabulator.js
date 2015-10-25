@@ -47,6 +47,9 @@ options: {
 
 	rowClick:function(){}, //do action on row click
 	rowContext:function(){}, //context menu action
+	dataLoaded:function(){},  //callback for when data has been dataLoaded
+	renderComplete:function(){},  //callback for when table is rendered
+	sortComplete:function(){},  //callback for when sorting is complete
 },
 
 //constructor
