@@ -406,6 +406,17 @@ _formatDate:function(dateString){
 	return Date.parse(formattedString);
 },
 
+
+//custom data formatters
+formatters:{
+	email:function(){},
+	link:function(){},
+	tick:function(){},
+	tickCross:function(){},
+	star:function(){},
+	progress:function(){},
+},
+
 //deconstructor
 destroy: function() {
 
