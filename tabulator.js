@@ -252,7 +252,7 @@ _renderTable:function(){
 
 			// set empty values to not break search
 			if(typeof(item[column.field]) == 'undefined'){
-				 item[column.field] = "";
+				item[column.field] = "";
 			}
 
 			var cell = $("<td data-field='" + column.field + "' data-value='" + self._safeString(value) + "' >" + value + "</td>");
@@ -277,6 +277,21 @@ _renderTable:function(){
 		"color":self.options.rowTextColor,
 	});
 
+	//style table rows
+	self._styleRows();
+
+	//show table once loading complete
+	$("tbody", self.table).show();
+
+},
+
+//style rows of the table
+_styleRows:function(){
+
+	var self = this;
+
+	$("tbody tr", self.table).css({"background-color":"transparent"})
+
 	//hover over rows
 	if(self.options.selectable){
 		$("tbody tr", self.table)
@@ -294,10 +309,6 @@ _renderTable:function(){
 	$("tbody td", self.table).css({
 		"border-right":"1px solid " + self.options.rowBorderColor,
 	});
-
-	//show table once loading complete
-	$("tbody", self.table).show();
-
 },
 
 //carry out action on row click
@@ -357,11 +368,11 @@ _sort: function(column, dir){
 			if(typeof(column.sorter) == "function"){
 				return column.sorter(el1, el2);
 			}
-
 		}
-
-
 	}).appendTo(table);
+
+	//style table rows
+		self._styleRows();
 },
 
 
