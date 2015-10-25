@@ -15,6 +15,7 @@ options: {
 	headerTextColor:"#555", //header text colour
 	headerBorderColor:"#aaa", //header border color
 	headerSeperatorColor:"#999", //header bottom seperator color
+	headerMargin:"4px",
 
 	rowBackgroundColor:"#fff", //table row background color
 	rowBorderColor:"#aaa", //table border color
@@ -49,6 +50,9 @@ _create: function() {
 
 	options.textSize = isNaN(options.textSize) ? options.textSize : options.textSize + "px";
 
+	options.textSizeNum = parseInt(options.textSize.replace("px",""));
+	options.headerHeight =  options.textSizeNum + options.headerMargin + 2;
+
 	if(options.height){
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
 		element.css({"height": options.height});
@@ -68,7 +72,7 @@ _create: function() {
 	var headerfill = $("<div></div>");
 	headerfill.css({
 		position:"absolute",
-		height:"24px",
+		height: options.headerHeight + "px",
 		width:"100%",
 		"background-color": options.headerBackgroundColor,
 		"border-bottom":"1px solid " + options.headerSeperatorColor,
