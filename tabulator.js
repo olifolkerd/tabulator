@@ -503,6 +503,9 @@ _styleRows:function(){
 
 	var self = this;
 
+	//fixes IE rendering bug on table redraw
+	$(".tabulator-tableHolder", self.element).css({height:$(".tabulator-table", self.element).height()});
+
 	$(".tabulator-row", self.table).css({"background-color":"transparent"})
 
 	//hover over rows
