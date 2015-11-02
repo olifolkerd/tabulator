@@ -105,14 +105,15 @@ _create: function() {
 		"box-sizing" : "border-box",
 		"background-color": options.backgroundColor,
 		"border": "1px solid " + options.borderColor,
-		"overflow-x":"auto",
+		//"overflow-x":"auto",
+		"overflow":"hidden",
 	})
 
-	self.header = $("<div class='tabulator-header'</div>")
+	self.header = $("<div class='tabulator-header'></div>")
 
 	self.header.css({
 		position:"relative",
-		width:"100%",
+
 		"background-color": options.headerBackgroundColor,
 		"border-bottom":"1px solid " + options.headerSeperatorColor,
 		"color": options.headerTextColor,
@@ -120,6 +121,7 @@ _create: function() {
 		"font-weight":"bold",
 		"white-space": "nowrap",
 		"z-index":"1",
+		"overflow":"visible",
 	});
 
 	self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
@@ -129,10 +131,21 @@ _create: function() {
 		"z-index":"1",
 		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"white-space": "nowrap",
-		"overflow-y":"auto",
-		"overflow-x":"hidden",
+		"overflow":"auto",
+
 		"width":"100%",
 	});
+
+	self.tableHolder.scroll(function(){
+		self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
+	});
+
+	/*self.header.scroll(function(){
+		console.log("scroll leftB", $(this).scrollLeft());
+		self.tableHolder.scrollLeft($(this).scrollLeft());
+
+		console.log("scroll leftH",self.tableHolder.scrollLeft());
+	});*/
 
 	//create scrollable table holder
 	self.table = $("<div class='tabulator-table'></div>");
