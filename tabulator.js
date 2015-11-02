@@ -129,23 +129,16 @@ _create: function() {
 	self.tableHolder.css({
 		position:"absolute",
 		"z-index":"1",
+		"min-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"white-space": "nowrap",
 		"overflow":"auto",
-
 		"width":"100%",
 	});
 
 	self.tableHolder.scroll(function(){
 		self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
 	});
-
-	/*self.header.scroll(function(){
-		console.log("scroll leftB", $(this).scrollLeft());
-		self.tableHolder.scrollLeft($(this).scrollLeft());
-
-		console.log("scroll leftH",self.tableHolder.scrollLeft());
-	});*/
 
 	//create scrollable table holder
 	self.table = $("<div class='tabulator-table'></div>");
@@ -498,7 +491,7 @@ _colRender:function(fixedwidth){
 			}
 		});
 
-		var proposedWidth = (totWidth - widthIdeal) / (colCount - widthIdealCount)
+		var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
 
 		if(proposedWidth >= parseInt(options.colMinWidth)){
 			console.log("winner")
