@@ -474,7 +474,14 @@ _colRender:function(fixedwidth){
 
 		if(options.fitColumns){
 		//resize columns to fit in window
-		var totWidth= self.element.innerWidth();
+
+		if(self.options.fitColumns){
+			self.table.css({
+				"width":"100%",
+			})
+		}
+
+		var totWidth= self.table.innerWidth();
 		var colCount = options.columns.length;
 		var colWidth = totWidth / colCount;
 
