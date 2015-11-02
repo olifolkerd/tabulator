@@ -27,7 +27,7 @@ options: {
 	rowTextColor:"#333", //table text color
 	rowHoverBackground:"#bbb", //row background color on hover
 
-	colMinWidth:"20px", //minimum global width for a column
+	colMinWidth:"40px", //minimum global width for a column
 	colResizable:true, //resizable columns
 
 	height:false, //height of tabulator
@@ -481,13 +481,44 @@ _colRender:function(fixedwidth){
 			})
 		}
 
-		var totWidth= self.table.innerWidth();
+		var totWidth = self.table.innerWidth();
 		var colCount = options.columns.length;
 		var colWidth = totWidth / colCount;
 
+		var widthIdeal = 0;
+		var widthIdealCount = 0;
 
-		var col = $(".tabulator-cell, .tabulator-col",element);
-		col.css({width:colWidth});
+		$.each(options.columns, function(i, column) {
+			if(column.width){
+
+				var thisWidth = typeof(column.width) == "string" ? parseInt(column.width) : column.width;
+
+				widthIdeal += thisWidth;
+				widthIdealCount++;
+			}
+		});
+
+		var proposedWidth = (totWidth - widthIdeal) / (colCount - widthIdealCount)
+
+		if(proposedWidth >= parseInt(options.colMinWidth)){
+			console.log("winner")
+			$.each(options.columns, function(i, column) {
+				if(column.width){
+
+				}else{
+
+				}
+
+				var newWidth = column.width ? column.width : proposedWidth;
+
+				var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element);
+				col.css({width:newWidth});
+			});
+
+		}else{
+			var col = $(".tabulator-cell, .tabulator-col",element);
+			col.css({width:colWidth});
+		}
 
 	}else{
 		//free sized table
