@@ -11,7 +11,7 @@ mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on s
 
 //setup options
 options: {
-	backgroundColor: "#ccc", //background color of tabulator
+	backgroundColor: "#888", //background color of tabulator
 	borderColor:"#999", //border to tablulator
 
 	textSize: "14px", //table text size
