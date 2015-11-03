@@ -262,6 +262,9 @@ _create: function() {
 	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 	.append(arrow.clone());
 
+	//render column headings
+	self._colRender();
+
 },
 
 //set options
