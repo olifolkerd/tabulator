@@ -470,7 +470,7 @@ _colRender:function(fixedwidth){
 
 	self.firstRender = false;
 
-	if(fixedwidth){ //it columns have been resized and now data needs to match them
+	if(fixedwidth && !options.fitColumns){ //it columns have been resized and now data needs to match them
 		//free sized table
 		$.each(options.columns, function(i, column) {
 			colWidth = $(".tabulator-col[data-field=" + column.field + "]").outerWidth();
@@ -488,7 +488,7 @@ _colRender:function(fixedwidth){
 			})
 		}
 
-		var totWidth = self.table.innerWidth();
+		var totWidth = self.element.innerWidth();
 		var colCount = options.columns.length;
 		var colWidth = totWidth / colCount;
 
