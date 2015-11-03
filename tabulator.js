@@ -212,6 +212,7 @@ _create: function() {
 		"white-space": "nowrap",
 		"overflow": "hidden",
 		"text-overflow": "ellipsis",
+		"vertical-align": "bottom",
 	});
 
 	//handle resizable columns
