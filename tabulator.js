@@ -11,8 +11,8 @@ mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on s
 
 //setup options
 options: {
-	backgroundColor: "#777", //background color of tabulator
-	borderColor:"#ccc", //border to tablulator
+	backgroundColor: "#ccc", //background color of tabulator
+	borderColor:"#999", //border to tablulator
 
 	textSize: "14px", //table text size
 
@@ -38,7 +38,7 @@ options: {
 	sortable:true, //global default for sorting
 	dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 	sortArrows:{ //colors for sorting arrows
-		active: "#000",
+		active: "#666",
 		inactive: "#bbb",
 	},
 
@@ -150,7 +150,8 @@ _create: function() {
 		"font-size":options.textSize,
 		"white-space": "nowrap",
 		"z-index":"1",
-		display:"inline-block",
+		"display":"inline-block",
+		"border-bottom":"1px solid " + options.rowBorderColor
 	});
 
 	//create sortable arrow chevrons
