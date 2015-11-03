@@ -288,7 +288,7 @@ setData:function(data){
 			this._trigger("dataLoaded");
 		}else{
 			//assume data is url, make ajax call to url to get data
-			this._getAjaxData(this.options.ajaxURL);
+			this._getAjaxData(data);
 		}
 	}else{
 		if(data){
