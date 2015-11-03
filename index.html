@@ -44,8 +44,11 @@
 		rowClick:function(e, id, data, row){
 			console.log("row click - " + id, data);
 		},
-		rowContext:function(){console.log("Show Context Menu")}
+		rowContext:function(){console.log("Show Context Menu")},
+		dataLoaded:function(data){console.log("Data Loaded", data)}
+
 	});
+
 
 	$("#exampleTable").tabulator("setData",[
 		{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},

@@ -52,6 +52,7 @@ options: {
 
 	rowClick:function(){}, //do action on row click
 	rowContext:function(){}, //context menu action
+	dataLoaded:function(){},  //callback for when data has been Loaded
 },
 
 //loader blockout div
@@ -74,7 +75,7 @@ _hideLoader:function(self){
 
 //event triggers
 //dataLoading:-  callback for when data is being loaded
-//dataLoaded:-  callback for when data has been Loaded
+
 //dataLoadError:-  callback for when there is adata loading error
 //renderStarted:-  callback for when table is starting to render
 //renderComplete:-  callback for when table is rendered
@@ -285,7 +286,6 @@ setData:function(data){
 			//data is a json encoded string
 			this._parseData(jQuery.parseJSON(data));
 			this._renderTable();
-			this._trigger("dataLoaded");
 		}else{
 			//assume data is url, make ajax call to url to get data
 			this._getAjaxData(data);
@@ -295,7 +295,6 @@ setData:function(data){
 			//asume data is already an object
 			this._parseData(data);
 			this._renderTable();
-			this._trigger("dataLoaded");
 
 		}else{
 			//no data provided, check if ajaxURL is present;
@@ -305,8 +304,6 @@ setData:function(data){
 				//empty data
 				this._parseData([]);
 				this._renderTable();
-				this._trigger("dataLoaded");
-
 			}
 		}
 	}
@@ -322,6 +319,8 @@ _parseData:function(data){
 	});
 
 	this.data = newData;
+
+	this.options.dataLoaded(this.data);
 },
 
 //get json data via ajax
@@ -337,7 +336,7 @@ _getAjaxData:function(url){
 		success: function (data) {
 			self._parseData(data);
 			self._renderTable();
-			self._trigger("dataLoaded");
+			self.options.dataLoaded(data);
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
@@ -508,14 +507,8 @@ _colRender:function(fixedwidth){
 		var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
 
 		if(proposedWidth >= parseInt(options.colMinWidth)){
-			console.log("winner")
+
 			$.each(options.columns, function(i, column) {
-				if(column.width){
-
-				}else{
-
-				}
-
 				var newWidth = column.width ? column.width : proposedWidth;
 
 				var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element);
