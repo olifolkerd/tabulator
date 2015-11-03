@@ -442,6 +442,12 @@ _renderTable:function(){
 
 },
 
+//get number of elements in dataset
+dataCount:function(){
+	return this.data.length;
+},
+
+
 //redraw list without updating data
 redraw:function(){
 	if(this.options.fitColumns){
