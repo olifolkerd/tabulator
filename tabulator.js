@@ -246,6 +246,8 @@ _create: function() {
 			}
 		});
 
+		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
+
 		$(".tabulator-col", self.header).append(handle);
 
 		$(".tabulator-col", self.header).on("mouseup", function(){
