@@ -239,6 +239,7 @@ In addition to the features mentioned above Tabulator has a range of aditional o
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
+
 Option | Data Type | Default Value | Definition
 ---|---|---|---
 backgroundColor|string|#888| A valid css color(rgb,hex,etc...) for the background of the tabulator element
@@ -257,6 +258,7 @@ rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table r
 
 ####Sort Arrow Theming
 The ***sortArrows*** option contains two values
+
 Option | Data Type | Default Value | Definition
 ---|---|---|---
 active|string|#666| A valid css color(rgb,hex,etc...) for the sorter arrow on currently sorted column
@@ -265,6 +267,7 @@ inactive|string|#bbb|A valid css color(rgb,hex,etc...) for the sorter arrow on u
 
 ###Table Size
 The ***sortArrows*** option contains two values
+
 Option | Data Type | Default Value | Definition
 ---|---|---|---
 height|string/int|false|Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will match to fit the table data.
