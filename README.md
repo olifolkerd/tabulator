@@ -6,6 +6,17 @@ Tabulator allows you to creat a table with in seconds from any JSON formatted da
 
 It relys on no external css or images, simply include the library in your jquery ui project and you're away!
 
+it is packed with usefult features including:
+
+- JSON, array or AJAX data loading
+- Column sorting
+- Custom data formatting
+- Resizable columns
+- Auto scalling to fit data/element
+- Many themeing options
+- Custom click and context Events
+- Callbacks at every stage of data processing and rendering
+
 
 Setup
 ================================
@@ -89,7 +100,7 @@ $("example-table").tabulator("setData",[
 ```
 
 ###Set data using AJAX
-If you wish to reteive your data from a remote source, pass the URL to the set data method and it will perform the ajax request for you. The URL can be absolute or relative.
+If you wish to reteive your data from a remote source, pass the URL to the ***setData*** method and it will perform the ajax request for you. The URL can be absolute or relative.
 
 ```js
 $("example-table").tabulator("setData","http://www.getmydata.com/now");
@@ -99,7 +110,7 @@ Data must be provided in the form of a JSON formatted array of objects.
 If you always request the same url for your data then you can set it in the ***ajaxURL*** option when you create your Tabulator
 ```js
 $("example-table").tabulator({
-	ajaxURL,"http://www.getmydata.com/now",
+	ajaxURL:"http://www.getmydata.com/now",
 });
 ```
 and call ***setData*** to refresh the data at any point
@@ -109,7 +120,34 @@ $("example-table").tabulator("setData");
 
 Sorting Data
 ================================
-*more info comming soon*
+Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globaly using the ***sortable*** option when you create your Tabulator.
+```js
+$("example-table").tabulator({
+	sortable:false, // this option takes a boolean value (default = true),
+});
+
+you can set sorting on a per column basis using the ***sortable*** option in the column data.
+```js
+{title:"Name", field:"name", sortable:true, sorter:"string"}}
+```
+
+### Sorter type
+By default all data is sorted as a string. if you wish to specify a different sorting method then you should include the ***sorter*** option in the column data.
+
+This option comes with a number of preconfigured sorters including:
+- **string** - sorts column as strings of characters
+- **number** - sorts column as numbers (integer or float)
+- **boolean** - sorts column as boolean
+- **date** - sorts column of date (for this you will need to set the date format in the options list when you create your table default format is dd/mm/yyyy)
+
+You can define a custom sorter function instead of a string in the sorter option:
+```js
+{title:"Name", field:"name", sortable:true, sorter:function(a, b){
+		//a and b are the two values being compared
+		return a - b; //you must return the difference between the two values
+	},
+}
+```
 
 Formatting Data
 ================================
@@ -136,6 +174,7 @@ Comming Soon
 Tabulator is activly under development and i plan to have even more useful features implemented soon, including:
 
 - Grouping Data
+- Filtering Data
 - Editable Cells
 - Extra Formatters
 - Extra Sorters
