@@ -257,7 +257,7 @@ rowTextColor|string|#333|A valid css color(rgb,hex,etc...) for the table row tex
 rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table row background when hovered over.
 
 #####Sort Arrow Theming
-The ***sortArrows*** option contains two values
+The ***sortArrows*** option contains two options
 
 Option | Data Type | Default Value | Description
 ---|---|---|---
@@ -266,7 +266,6 @@ inactive|string|#bbb|A valid css color(rgb,hex,etc...) for the sorter arrow on u
 
 
 ###Table Size
-The ***sortArrows*** option contains two values
 
 Option | Data Type | Default Value | Description
 ---|---|---|---
