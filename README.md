@@ -34,7 +34,7 @@ Create an element to hold the table
 
 Turn the element into a tabulator with some simple javascript
 ```js
-$("example-table").tabulator();
+$("#example-table").tabulator();
 ```
 
 Define Column Headers
@@ -42,7 +42,7 @@ Define Column Headers
 Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator
 
 ```js
-$("example-table").tabulator({
+$("#example-table").tabulator({
 	columns:[
 		{title:"Name", field:"name", sortable:true, sorter:"string", width:200},
 		{title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
@@ -93,7 +93,7 @@ an example JSON data set:
 You can pass an array directly to the table using the ***setData*** method.
 
 ```js
-$("example-table").tabulator("setData",[
+$("#example-table").tabulator("setData",[
 	{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
 	{id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
 ]);
@@ -103,26 +103,26 @@ $("example-table").tabulator("setData",[
 If you wish to retrieve your data from a remote source, pass the URL to the ***setData*** method and it will perform the AJAX request for you. The URL can be absolute or relative.
 
 ```js
-$("example-table").tabulator("setData","http://www.getmydata.com/now");
+$("#example-table").tabulator("setData","http://www.getmydata.com/now");
 ```
 Data must be provided in the form of a JSON formatted array of objects.
 
 If you always request the same url for your data then you can set it in the ***ajaxURL*** option when you create your Tabulator
 ```js
-$("example-table").tabulator({
+$("#example-table").tabulator({
 	ajaxURL:"http://www.getmydata.com/now",
 });
 ```
 and call ***setData*** to refresh the data at any point
 ```js
-$("example-table").tabulator("setData");
+$("#example-table").tabulator("setData");
 ```
 
 Sorting Data
 ================================
 Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the ***sortable*** option when you create your Tabulator.
 ```js
-$("example-table").tabulator({
+$("#example-table").tabulator({
 	sortable:false, // this option takes a boolean value (default = true)
 });
 
@@ -198,28 +198,40 @@ In this layout style at least one column must ***not*** have a width specified s
 
 to enable this layout mode set the ***fitColumns*** option to true when you create your Tabulator.
 ```js
-$("example-table").tabulator({
+$("#example-table").tabulator({
 	fitColumns:true, // this option takes a boolean value (default = false)
 });
+```
 
 ###Resizable columns
 By default it is possible to manually resize columns by dragging the borders of the column headers.
 
 To disable this option globally set the ***colResizable*** option to false when you create your Tabulator.
 ```js
-$("example-table").tabulator({
+$("#example-table").tabulator({
 	colResizable:false, // this option takes a boolean value (default = true)
 });
+```
 
 ##colMinWidth
 It is possible to set a minimum column width to prevent resizing columns from becoming too small.
 
 This can be set globally, by setting the ***colMinWidth*** option to the column width when you create your Tabulator.
 ```js
-$("example-table").tabulator({
+$("#example-table").tabulator({
 	colMinWidth:80, //Minimum column width in px (default = 40)
 });
+```
 
+###Redrawing the table
+If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit their new sized table.
+
+This can be done by calling the ***redraw*** method. For example, to trigger a redraw whenever the viewport width is changed:
+```js
+$(window).resize(function(){
+	$("#example-table").tabulator("redraw");
+});
+```
 
 Options
 ================================
