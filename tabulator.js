@@ -490,7 +490,7 @@ _colRender:function(fixedwidth){
 		//resize columns to fit in window
 
 		if(self.options.fitColumns){
-			self.table.css({
+			$(".tabulator-row", self.table).css({
 				"width":"100%",
 			})
 		}
