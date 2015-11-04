@@ -2,17 +2,17 @@ Tabulator
 ================================
 An easy to use table generation JQuery UI Plugin
 
-Tabulator allows you to creat a table with in seconds from any JSON formatted data.
+Tabulator allows you to create  a table with in seconds from any JSON formatted data.
 
-It relys on no external css or images, simply include the library in your jquery ui project and you're away!
+It relies on no external css or images, simply include the library in your JQuery UI project and you're away!
 
-it is packed with usefult features including:
+Tabulator is packed with useful  features including:
 
 - JSON, array or AJAX data loading
 - Column sorting
 - Custom data formatting
 - Resizable columns
-- Auto scalling to fit data/element
+- Auto scaling  to fit data/element
 - Many themeing options
 - Custom click and context Events
 - Callbacks at every stage of data processing and rendering
@@ -20,7 +20,7 @@ it is packed with usefult features including:
 
 Setup
 ================================
-Seting up tabulator couldnt be simpler
+Setting up tabulator could not be simpler.
 
 Include the library
 ```html
@@ -54,10 +54,10 @@ $("example-table").tabulator({
 	],
 });
 ```
-There are a number of parameters that can be passed in with each column to dertermin how it is displayed:
+There are a number of parameters that can be passed in with each column to determine how it is displayed:
 
 - **title** - ***Required*** This is the title that will be displayed in the header for this column
-- **field** - ***Required*** this is the key for this coulmn in the data array
+- **field** - ***Required*** this is the key for this column in the data array
 - **align** - sets the text alignment for this column (left|center|right)
 - **width** - sets the width of this column (if not set the system will determine the best)
 - **sortable** - determines if the user can sort data by this column (see [Sorting Data](#sorting-data) for more details)
@@ -67,9 +67,9 @@ There are a number of parameters that can be passed in with each column to derte
 
 Set Table Data
 ================================
-Tabulator row data is defined as an array of objects, that can either be passed as an array or retreived as a JSON formatted string via AJAX from a url.
+Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved  as a JSON formatted string via AJAX from a URL.
 
-The data can contain more columns that are defined in the columns options, these will be sotred with the rest of the data, but not rendered to screen.
+The data can contain more columns that are defined in the columns options, these will be sorted with the rest of the data, but not rendered to screen.
 
 A unique "id" value must be present for each row of data, if it is missing Tabluator will add one.
 
@@ -100,7 +100,7 @@ $("example-table").tabulator("setData",[
 ```
 
 ###Set data using AJAX
-If you wish to reteive your data from a remote source, pass the URL to the ***setData*** method and it will perform the ajax request for you. The URL can be absolute or relative.
+If you wish to retrieve your data from a remote source, pass the URL to the ***setData*** method and it will perform the AJAX request for you. The URL can be absolute or relative.
 
 ```js
 $("example-table").tabulator("setData","http://www.getmydata.com/now");
@@ -120,7 +120,7 @@ $("example-table").tabulator("setData");
 
 Sorting Data
 ================================
-Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globaly using the ***sortable*** option when you create your Tabulator.
+Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the ***sortable*** option when you create your Tabulator.
 ```js
 $("example-table").tabulator({
 	sortable:false, // this option takes a boolean value (default = true),
@@ -128,19 +128,19 @@ $("example-table").tabulator({
 
 you can set sorting on a per column basis using the ***sortable*** option in the column data.
 ```js
-{title:"Name", field:"name", sortable:true, sorter:"string"}}
+{title:"Name", field:"name", sortable:true, sorter:"string"}
 ```
 
 ### Sorter type
 By default all data is sorted as a string. if you wish to specify a different sorting method then you should include the ***sorter*** option in the column data.
 
-This option comes with a number of preconfigured sorters including:
+Tabulator comes with a number of preconfigured sorters including:
 - **string** - sorts column as strings of characters
 - **number** - sorts column as numbers (integer or float)
-- **boolean** - sorts column as boolean
-- **date** - sorts column of date (for this you will need to set the date format in the options list when you create your table default format is dd/mm/yyyy)
+- **boolean** - sorts column as booleans
+- **date** - sorts column as dates (for this you will need to set the date format using the ***dateFormat*** option when you create your table. default format is "dd/mm/yyyy")
 
-You can define a custom sorter function instead of a string in the sorter option:
+You can define a custom sorter function in the sorter option:
 ```js
 {title:"Name", field:"name", sortable:true, sorter:function(a, b){
 		//a and b are the two values being compared
@@ -151,31 +151,59 @@ You can define a custom sorter function instead of a string in the sorter option
 
 Formatting Data
 ================================
-*more info comming soon*
+Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.
+
+you can set formatters on a per column basis using the ***formatter*** option in the column data.
+```js
+{title:"Name", field:"name", formatter:"tick"}
+```
+
+Tabulator comes with a number of preconfigured formatters including:
+- **email** - renders data as an anchor with a mailto: link to the given value
+- **link** - renders data as an anchor with a link to the given value
+- **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
+- **tickCross** - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not
+- **star** - displays a graphical 0-5 star rating based on integer values from 0-5;
+- **progress** - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width
+
+You can define a custom formatter function in the formatter option:
+```js
+{title:"Name", field:"name", formatter:function(value, data, cell, row, options){
+		//value - the value of the cell
+		//data - the data for the row the cell is in
+		//the DOM element of the cell
+		//the DOM element of the row
+		//the options set for this tabulator
+		return "<div></div>"; // must return the html or jquery element of the html for the contents of the cell;
+	},
+}
+```
 
 Table Layout
 ================================
-*more info comming soon*
+*more info coming  soon*
 
 Options
 ================================
-*more info comming soon*
+*more info coming  soon*
 
 Callbacks
 ================================
-*more info comming soon*
+*more info coming  soon*
 
 Events
 ================================
-*more info comming soon*
+*more info coming  soon*
 
-Comming Soon
+Coming Soon
 ================================
-Tabulator is activly under development and i plan to have even more useful features implemented soon, including:
+Tabulator is actively under development and i plan to have even more useful features implemented soon, including:
 
 - Grouping Data
 - Filtering Data
 - Editable Cells
+- Movable Rows
+- Deleteable Rows
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
