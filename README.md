@@ -224,7 +224,7 @@ $("#example-table").tabulator({
 ```
 
 ###Redrawing the table
-If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit their new sized table.
+If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit the new dimensions.
 
 This can be done by calling the ***redraw*** method. For example, to trigger a redraw whenever the viewport width is changed:
 ```js
