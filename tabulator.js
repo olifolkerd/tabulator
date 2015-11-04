@@ -151,7 +151,7 @@ _create: function() {
 		"white-space": "nowrap",
 		"z-index":"1",
 		"display":"inline-block",
-		"border-bottom":"1px solid " + options.rowBorderColor
+		//"border-bottom":"1px solid " + options.rowBorderColor
 	});
 
 	//create sortable arrow chevrons
