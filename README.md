@@ -123,7 +123,7 @@ Sorting Data
 Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the ***sortable*** option when you create your Tabulator.
 ```js
 $("example-table").tabulator({
-	sortable:false, // this option takes a boolean value (default = true),
+	sortable:false, // this option takes a boolean value (default = true)
 });
 
 you can set sorting on a per column basis using the ***sortable*** option in the column data.
@@ -181,7 +181,45 @@ You can define a custom formatter function in the formatter option:
 
 Table Layout
 ================================
-*more info coming  soon*
+Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:
+
+- Fit columns to data (default)
+- Fit columns to container
+
+###Fit Columns to data
+This is the default table layout style and will cause columns to resize to fit the widest element they contain (unless a column width was set in the column options). This can cause the table to be wider than its containing element, in this case a scroll bar will appear;
+
+###Fit Columns to container
+This option will resize columns so that they fit perfectly inside the width of the container.
+
+If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
+
+In this layout style at least one column must ***not*** have a width specified so it can be resized to fill any spare space.
+
+to enable this layout mode set the ***fitColumns*** option to true when you create your Tabulator.
+```js
+$("example-table").tabulator({
+	fitColumns:true, // this option takes a boolean value (default = false)
+});
+
+###Resizable columns
+By default it is possible to manually resize columns by dragging the borders of the column headers.
+
+To disable this option globally set the ***colResizable*** option to false when you create your Tabulator.
+```js
+$("example-table").tabulator({
+	colResizable:false, // this option takes a boolean value (default = true)
+});
+
+##colMinWidth
+It is possible to set a minimum column width to prevent resizing columns from becoming too small.
+
+This can be set globally, by setting the ***colMinWidth*** option to the column width when you create your Tabulator.
+```js
+$("example-table").tabulator({
+	colMinWidth:80, //Minimum column width in px (default = 40)
+});
+
 
 Options
 ================================
