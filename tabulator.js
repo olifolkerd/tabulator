@@ -427,16 +427,15 @@ _renderTable:function(){
 		self._sorter(self.sortCurrrent.col, self.sortCurrrent.dir);
 	}
 
-
 	//show table once loading complete
 	self.table.show();
-
-	//hide loader div
-	self._hideLoader(self);
 
 	//align column widths
 	self._colRender(!self.firstRender);
 
+
+	//hide loader div
+	self._hideLoader(self);
 
 	self._trigger("renderComplete");
 
