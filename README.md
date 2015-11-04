@@ -45,14 +45,14 @@ $("example-table").tabulator({
 ```
 There are a number of parameters that can be passed in with each column to dertermin how it is displayed:
 
-- **title** - ***REQUIRED*** This is the title that will be displayed in the header for this column
-- **field** - ***REQUIRED*** this is the key for this coulmn in the data array
+- **title** - ***Required*** This is the title that will be displayed in the header for this column
+- **field** - ***Required*** this is the key for this coulmn in the data array
 - **align** - sets the text alignment for this column (left|center|right)
 - **width** - sets the width of this column (if not set the system will determine the best)
-- **sortable** - determines if the user can sort data by this column (see *Sorting Section* for more details)
-- **sorter** - determines how to sort data in this column (see *Sorting Section* for more details)
-- **formatter** - set how you would like the data to be formatted (see *Formatting Section* for more details)
-- **onClick** - callback for when user clicks on a cell in this column (see [*Callback Section*](#callbacks) for more details)
+- **sortable** - determines if the user can sort data by this column (see [Sorting Section](#sorting-data) for more details)
+- **sorter** - determines how to sort data in this column (see [Sorting Section](#sorting-data) for more details)
+- **formatter** - set how you would like the data to be formatted (see [Formatting Section](#formatting-data) for more details)
+- **onClick** - callback for when user clicks on a cell in this column (see [Callback Section](#callbacks) for more details)
 
 Set Table Data
 ================================
