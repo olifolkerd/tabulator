@@ -62,7 +62,7 @@ loaderDiv: $("<div class='tablulator-loader' style='position:absolute; top:0; le
 _showLoader:function(self, msg){
 	if(self.options.showLoader){
 		$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
-		$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) + ($(".tabulator-loader-msg", msg).outerHeight()/2)})
+		$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 		self.element.append(self.loaderDiv);
 	}
 },
@@ -450,8 +450,16 @@ dataCount:function(){
 
 //redraw list without updating data
 redraw:function(){
-	if(this.options.fitColumns){
-		this._colRender();
+	var self = this
+
+	//redraw columns
+	if(self.options.fitColumns){
+		self._colRender();
+	}
+
+	//reposition loader if present
+	if(self.element.innerHeight() > 0){
+		$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 	}
 },
 
