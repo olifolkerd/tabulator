@@ -238,7 +238,7 @@ Themeing Options
 Tabulator allows you to set a number of global options that can help theme your table.
 
 Option | Data Type | Default Value | Definition
--|-|-|-
+---|---|---|---
 1|2|3|4
 
 backgroundColor
