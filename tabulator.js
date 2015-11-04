@@ -258,7 +258,7 @@ _create: function() {
 	}
 
 	//append sortable arrows to sortable headers
-	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"30px"})
+	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"25px"})
 	.data("sortdir", "desc")
 	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
 	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
