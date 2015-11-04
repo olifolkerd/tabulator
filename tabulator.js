@@ -321,7 +321,7 @@ _parseData:function(data){
 
 	this.data = newData;
 
-	this.options.dataLoaded(this.data);
+	this.options.dataLoaded(data);
 },
 
 //get json data via ajax
