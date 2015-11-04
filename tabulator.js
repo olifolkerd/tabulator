@@ -616,7 +616,7 @@ _cellClick: function(e, cell){
 		return column.field == cell.data("field");
 	});
 
-	column[0].onClick(e, cell.data("value"), cell, cell.closest("tr"));
+	column[0].onClick(e, cell, cell.data("value"), cell.closest("tr").data("data")  );
 },
 
 //return escaped string for attribute
