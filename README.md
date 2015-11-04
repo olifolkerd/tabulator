@@ -13,7 +13,7 @@ Tabulator is packed with useful  features including:
 - Custom data formatting
 - Resizable columns
 - Auto scaling  to fit data/element
-- Many themeing options
+- Many theming options
 - Custom click and context Events
 - Callbacks at every stage of data processing and rendering
 
@@ -233,30 +233,42 @@ $(window).resize(function(){
 });
 ```
 
-Themeing Options
+Table Options
 ================================
-Tabulator allows you to set a number of global options that can help theme your table.
+In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.
 
+###Table Theming
+Tabulator allows you to set a number of global options that can help theme your table.
 Option | Data Type | Default Value | Definition
 ---|---|---|---
 backgroundColor|string|#888| A valid css color(rgb,hex,etc...) for the background of the tabulator element
 borderColor|string|#999| A valid css color(rgb,hex,etc...) for the border of the tabulator element
 textSize|int/string|14| the text size for all text in the tabulator
-headerBackgroundColor|||
-headerTextColor|||
-headerBorderColor|||
-headerSeperatorColor|||
-headerMargin|||
-rowBackgroundColor|||
-rowBorderColor|||
-rowTextColor|||
-rowHoverBackground|||
-height|||
-sortArrows|||
-active|||
-inactive|||
-loader|||
-loaderError|||
+headerBackgroundColor|string|#e6e6e6|A valid css color(rgb,hex,etc...) for the header cells
+headerTextColor|string|#555|A valid css color(rgb,hex,etc...) for the header cells text
+headerBorderColor|string|#aaa|A valid css color(rgb,hex,etc...) for the header cells border
+headerSeperatorColor|string|#999|A valid css color(rgb,hex,etc...) for the header row bottom border
+headerMargin|int/string|4|The size in pixels for the header cells margin
+sortArrows|object||an object containing two options for theming the sorter arrows in the header *(see next table)*
+rowBackgroundColor|string|#fff|A valid css color(rgb,hex,etc...) for the background colour of the table rows
+rowBorderColor|string|#fff|A valid css color(rgb,hex,etc...) for the table row borders
+rowTextColor|string|#333|A valid css color(rgb,hex,etc...) for the table row text
+rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table row background when hovered over.
+
+####Sort Arrow Theming
+The ***sortArrows*** option contains two values
+Option | Data Type | Default Value | Definition
+---|---|---|---
+active|string|#666| A valid css color(rgb,hex,etc...) for the sorter arrow on currently sorted column
+inactive|string|#bbb|A valid css color(rgb,hex,etc...) for the sorter arrow on unsorted column
+
+
+###Table Size
+The ***sortArrows*** option contains two values
+Option | Data Type | Default Value | Definition
+---|---|---|---
+height|string/int|false|Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will match to fit the table data.
+
 
 Callbacks
 ================================
@@ -268,7 +280,7 @@ Events
 
 Coming Soon
 ================================
-Tabulator is actively under development and i plan to have even more useful features implemented soon, including:
+Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
 - Grouping Data
 - Filtering Data
