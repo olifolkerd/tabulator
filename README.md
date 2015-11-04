@@ -213,7 +213,7 @@ $("#example-table").tabulator({
 });
 ```
 
-##colMinWidth
+###Minimum Column Width
 It is possible to set a minimum column width to prevent resizing columns from becoming too small.
 
 This can be set globally, by setting the ***colMinWidth*** option to the column width when you create your Tabulator.
@@ -233,9 +233,32 @@ $(window).resize(function(){
 });
 ```
 
-Options
+Themeing Options
 ================================
-*more info coming  soon*
+Tabulator allows you to set a number of global options that can help theme your table.
+
+Option | Data Type | Default Value | Definition
+-|-|-|-
+1|2|3|4
+
+backgroundColor
+borderColor
+textSize
+headerBackgroundColor
+headerTextColor
+headerBorderColor
+headerSeperatorColor
+headerMargin
+rowBackgroundColor
+rowBorderColor
+rowTextColor
+rowHoverBackground
+height
+sortArrows
+active
+inactive
+loader
+loaderError
 
 Callbacks
 ================================
