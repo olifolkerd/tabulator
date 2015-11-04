@@ -78,8 +78,7 @@ an example JSON data set:
 ]
 ```
 
-Set data using array
---------------------------------
+###Set data using array
 You can pass an array of data directly to the table using the ***setData*** method.
 
 ```js
@@ -89,8 +88,7 @@ $("example-table").tabulator("setData",[
 ]);
 ```
 
-Set data using AJAX
---------------------------------
+###Set data using AJAX
 if you wish to reteive your data from a remote source then simply pass the url to the set data method and it will perform the ajax request for you.
 
 ```js
