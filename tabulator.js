@@ -605,6 +605,7 @@ _rowClick: function(e, row, data){
 
 //carry out action on row context
 _rowContext: function(e, row, data){
+	e.preventDefault();
 	this.options.rowContext(e, row.data("id"), data, row);
 },
 
