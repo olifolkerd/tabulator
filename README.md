@@ -35,7 +35,7 @@ $("example-table").tabulator({
 	columns:[
 		{title:"Name", field:"name", sortable:true, sorter:"string", width:200},
 		{title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
-		{title:"Gender", field:"gender", sortable:true, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)},},
+		{title:"Gender", field:"gender", sortable:true, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click")},},
 		{title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
 		{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
 		{title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
@@ -109,3 +109,37 @@ and call ***setData*** to refresh the data at any point
 ```js
 $("example-table").tabulator("setData");
 ```
+
+Sorting Data
+================================
+*more info comming soon*
+
+Formatting Data
+================================
+*more info comming soon*
+
+Table Layout
+================================
+*more info comming soon*
+
+Options
+================================
+*more info comming soon*
+
+Callbacks
+================================
+*more info comming soon*
+
+Events
+================================
+*more info comming soon*
+
+Comming Soon
+================================
+Tabulator is activly under development and i plan to have even more useful features implemented soon, including:
+
+- Grouping Data
+- Editable Cells
+- Extra Formatters
+- Extra Sorters
+- More Theming Options
