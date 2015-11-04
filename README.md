@@ -79,7 +79,7 @@ an example JSON data set:
 ```
 
 ###Set data using array
-You can pass an array of data directly to the table using the ***setData*** method.
+You can pass an array directly to the table using the ***setData*** method.
 
 ```js
 $("example-table").tabulator("setData",[
@@ -89,15 +89,14 @@ $("example-table").tabulator("setData",[
 ```
 
 ###Set data using AJAX
-if you wish to reteive your data from a remote source then simply pass the url to the set data method and it will perform the ajax request for you.
+If you wish to reteive your data from a remote source, pass the URL to the set data method and it will perform the ajax request for you. The URL can be absolute or relative.
 
 ```js
 $("example-table").tabulator("setData","http://www.getmydata.com/now");
 ```
-Data must be provided in the form of a JSON formatted array of objects;
+Data must be provided in the form of a JSON formatted array of objects.
 
-If you will allways request the same url for your data then you can set it in the ***ajaxURL*** option when you create your Tabulator
-
+If you always request the same url for your data then you can set it in the ***ajaxURL*** option when you create your Tabulator
 ```js
 $("example-table").tabulator({
 	ajaxURL,"http://www.getmydata.com/now",
