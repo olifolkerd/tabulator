@@ -327,7 +327,7 @@ $("#example-table").tabulator({
 
 Events
 ================================
-A number of events are fired as a table is loaded and rendered:
+A number of events are fired as the Tabulator is loaded and rendered:
 
 Event | Description
 ---|---
