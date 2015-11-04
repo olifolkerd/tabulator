@@ -33,13 +33,13 @@ Column headers are defined as an array of JSON objects passed into the columns o
 ```js
 $("example-table").tabulator({
 	columns:[
-		{title:"Name", field:"name", sorter:"string", width:200},
-		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
-		{title:"Gender", field:"gender", sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)},},
-		{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+		{title:"Name", field:"name", sortable:true, sorter:"string", width:200},
+		{title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
+		{title:"Gender", field:"gender", sortable:true, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)},},
+		{title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
 		{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-		{title:"Cheese Preference", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+		{title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
+		{title:"Cheese Preference", field:"cheese", sortable:true, sorter:"boolean", align:"center", formatter:"tickCross"},
 	],
 });
 ```
@@ -47,8 +47,12 @@ There are a number of parameters that can be passed in with each column to derte
 
 - **title** - **REQUIRED** This is the title that will be displayed in the header for this column
 - **field** - **REQUIRED** this is the key for this coulmn in the data array
-
-
+- **align** - sets the text alignment for this column (left|center|right)
+- **width** - sets the width of this column (if not set the system will determine the best)
+- **sortable** - determines if the user can sort data by this column (see *Sorting Section* for more details)
+- **sorter** - determines how to sort data in this column (see *Sorting Section* for more details)
+- **formatter** - set how you would like the data to be formatted (see *Formatting Section* for more details)
+- **onClick** - callback for when user clicks on a cell in this column (see *Callback Section* for more details)
 
 Set Data
 ================================
