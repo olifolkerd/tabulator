@@ -171,9 +171,9 @@ You can define a custom formatter function in the formatter option:
 {title:"Name", field:"name", formatter:function(value, data, cell, row, options){
 		//value - the value of the cell
 		//data - the data for the row the cell is in
-		//the DOM element of the cell
-		//the DOM element of the row
-		//the options set for this tabulator
+		//cell - the DOM element of the cell
+		//row - the DOM element of the row
+		//options - the options set for this tabulator
 		return "<div></div>"; // must return the html or jquery element of the html for the contents of the cell;
 	},
 }
@@ -256,7 +256,7 @@ rowBorderColor|string|#fff|A valid css color(rgb,hex,etc...) for the table row b
 rowTextColor|string|#333|A valid css color(rgb,hex,etc...) for the table row text
 rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table row background when hovered over.
 
-####Sort Arrow Theming
+#####Sort Arrow Theming
 The ***sortArrows*** option contains two values
 
 Option | Data Type | Default Value | Definition
@@ -275,7 +275,56 @@ height|string/int|false|Sets the height of the containing element, can be set to
 
 Callbacks
 ================================
-*more info coming  soon*
+Tabulator features a range of callbacks to allow you to handle user interaction.
+
+###Cell Click
+The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the ***onClick*** option in the columns data.
+
+```js
+{title:"Name", field:"name", onClick:function(e, cell, value, data){
+		//e - the click event object
+		//cell - the DOM element of the cell
+		//value - the value of the cell
+		//data - the data for the row the cell is in
+	},
+}
+```
+
+###Row Click
+The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the ***rowClick*** option when you create your Tabulator.
+```js
+$("#example-table").tabulator({
+	rowClick:function(e, id, data, row){
+		//e - the click event object
+		//id - the id of the row
+		//data - the data for the row
+		//row - the DOM element of the row
+	},
+});
+```
+
+###Row Context Menu
+The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the ***rowContext*** option when you create your Tabulator.
+```js
+$("#example-table").tabulator({
+	rowContext:function(e, id, data, row){
+		//e - the click event object
+		//id - the id of the row
+		//data - the data for the row
+		//row - the DOM element of the row
+	},
+});
+```
+
+###Data Loaded
+The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the ***dataLoaded*** option when you create your
+```js
+$("#example-table").tabulator({
+	dataLoaded:function(data){
+		//data - the data for the row
+	},
+});
+```
 
 Events
 ================================
