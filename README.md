@@ -52,7 +52,7 @@ There are a number of parameters that can be passed in with each column to derte
 - **sortable** - determines if the user can sort data by this column (see *Sorting Section* for more details)
 - **sorter** - determines how to sort data in this column (see *Sorting Section* for more details)
 - **formatter** - set how you would like the data to be formatted (see *Formatting Section* for more details)
-- **onClick** - callback for when user clicks on a cell in this column (see *Callback Section* for more details)
+- **onClick** - callback for when user clicks on a cell in this column (see [*Callback Section*](#callbacks) for more details)
 
 Set Table Data
 ================================
