@@ -239,26 +239,24 @@ Tabulator allows you to set a number of global options that can help theme your 
 
 Option | Data Type | Default Value | Definition
 ---|---|---|---
-1|2|3|4
-
-backgroundColor
-borderColor
-textSize
-headerBackgroundColor
-headerTextColor
-headerBorderColor
-headerSeperatorColor
-headerMargin
-rowBackgroundColor
-rowBorderColor
-rowTextColor
-rowHoverBackground
-height
-sortArrows
-active
-inactive
-loader
-loaderError
+backgroundColor|string|#888| A valid css color(rgb,hex,etc...) for the background of the tabulator element
+borderColor|string|#999| A valid css color(rgb,hex,etc...) for the border of the tabulator element
+textSize|int/string|14| the text size for all text in the tabulator
+headerBackgroundColor|||
+headerTextColor|||
+headerBorderColor|||
+headerSeperatorColor|||
+headerMargin|||
+rowBackgroundColor|||
+rowBorderColor|||
+rowTextColor|||
+rowHoverBackground|||
+height|||
+sortArrows|||
+active|||
+inactive|||
+loader|||
+loaderError|||
 
 Callbacks
 ================================
