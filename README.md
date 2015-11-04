@@ -269,7 +269,7 @@ inactive|string|#bbb|A valid css color(rgb,hex,etc...) for the sorter arrow on u
 
 Option | Data Type | Default Value | Description
 ---|---|---|---
-height|string/int|false|Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will match to fit the table data.
+height|string/int|false|Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.
 
 
 Callbacks
