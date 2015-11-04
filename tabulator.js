@@ -578,7 +578,7 @@ _styleRows:function(){
 	$(".tabulator-row:nth-of-type(even)", self.table).css({
 		"background-color": "rgba(0,0,0,.1);" //shade even numbered rows
 	})
-	.on("mouseout", function(){$(this).css({"background-color": "rgba(0,0,0,.1);"})}); //make sure odd rows revert back to color after hover
+	.on("mouseout", function(){$(this).css({"background-color": "rgba(0,0,0,.08);"})}); //make sure odd rows revert back to color after hover
 
 	//add column borders to rows
 	$(".tabulator-cell", self.table).css({
