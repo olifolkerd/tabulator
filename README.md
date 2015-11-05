@@ -273,7 +273,7 @@ height|string/int|false|Sets the height of the containing element, can be set to
 
 
 ###Data Loaders
-When loading data, Tabulator can display a loading overlay over the table. This cosistis of a modal background and a loader element. The loader element can be set globaly in the options and should be specified as a div with a ***display*** style of ***inline-block***.
+When loading data, Tabulator can display a loading overlay over the table. This consists of a modal background and a loader element. The loader element can be set globally in the options and should be specified as a div with a ***display*** style of ***inline-block***.
 
 Option | Data Type | Default Value | Description
 ---|---|---|---
