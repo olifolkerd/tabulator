@@ -1,0 +1,254 @@
+<html>
+<head>
+	<title>Sample Tabulator Layout</title>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+	<script type="text/javascript" src="tabulator.js"></script>
+</head>
+<body>
+
+	<style type="text/css">
+
+	body{
+		padding:20px 40px;
+		font-family: 'Montserrat', sans-serif;
+	}
+
+	.tabulator{
+
+	}
+
+	header{
+		font-weight: bold;
+		font-size: 30px;
+	}
+
+	section:first-of-type header{
+		font-size: 50px;
+	}
+
+	section{
+		margin-bottom:20px;
+	}
+
+	span>bold{
+		font-style: italic;
+	}
+
+	</style>
+	<script type="text/javascript">
+
+	var tabledata = [
+	{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+	{id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+	{id:3, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true"},
+	{id:4, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980"},
+	{id:5, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
+	{id:6, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+	{id:7, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+	{id:8, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true"},
+	{id:9, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980"},
+	{id:10, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
+	]
+
+	</script>
+
+	<section>
+		<header>Tabulator</header>
+
+		<p>An easy to use table generation JQuery UI Plugin</p>
+
+		<p>Tabulator allows you to create  a table with in seconds from any JSON formatted data.</p>
+
+		<p>It relies on no external css or images, simply include the library in your JQuery UI project and you're away!</p>
+
+		<p>Tabulator is packed with useful features including:
+			<ul>
+				<li>JSON, array or AJAX data loading</li>
+				<li>Column sorting</li>
+				<li>Custom data formatting</li>
+				<li>Resizable columns</li>
+				<li>Auto scaling  to fit data/element</li>
+				<li>Many theming options</li>
+				<li>Custom click and context Events</li>
+				<li>Callbacks at every stage of data processing and rendering</li>
+			</ul>
+		</p>
+		<div id="example-table-1"></div>
+		<script type="text/javascript">
+		$("#example-table-1").tabulator({
+			height:"320px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", sorter:"string", width:150},
+			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+			{title:"Gender", field:"gender", width:80, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)}},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+			],
+			rowClick:function(e, id, data, row){
+				alert("Row " + data.id + " Clicked!!!!")
+			},
+			rowContext:function(e, id, data, row){
+				alert("Row " + data.id + " Context Clicked!!!!")
+			},
+		});
+
+		$("#example-table-1").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-1").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
+		<header>Simple Table</header>
+		<p>
+			In its simplest form, all you need to set in the options are the column titles and field names.
+		</p>
+		<div id="example-table-2"></div>
+		<script type="text/javascript">
+
+		$("#example-table-2").tabulator({
+			height:"300px",
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", width:80},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob"},
+			{title:"Likes Cheese", field:"cheese"},
+			],
+		});
+
+		$("#example-table-2").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-2").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
+		<header>Fit To Data</header>
+		<p>
+			Tables will automatically resize to fit the data
+		</p>
+		<div id="example-table-3"></div>
+		<script type="text/javascript">
+
+		$("#example-table-3").tabulator({
+			height:"300px",
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", align:"right"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", align:"center", width:80},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center"},
+			],
+		});
+
+		$("#example-table-3").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-3").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+
+	<section>
+		<header>Fit To Width</header>
+		<p>
+			By setting the <span><strong>fitColumns</strong></span> to true, the table will resize columns so that they fit perfectly inside the width of the container.
+		</p>
+		<p>
+			If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
+		</p>
+		<div id="example-table-4"></div>
+		<script type="text/javascript">
+		$("#example-table-4").tabulator({
+			height:"300px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", align:"right"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", align:"center", width:60},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center"},
+			],
+		});
+
+		$("#example-table-4").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-4").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
+		<header>Sorters</header>
+		<p>Sorting is enabled by default, and can be toggled on or off by column using the <span><strong>sortable</strong></span> option.</p>
+
+		<p>By default all columns are sorted as text, different sort functions can be set using the <span><strong>sorter</strong></span> option
+
+			<ul>
+				<li><strong>string</strong> - sorts column as strings of characters</li>
+				<li><strong>number</strong> - sorts column as numbers (integer or float)</li>
+				<li><strong>boolean</strong> - sorts column as booleans</li>
+				<li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span><strong>dateFormat</strong></span> option when you create your table. default format is "dd/mm/yyyy")</li>
+			</ul>
+
+		</p>
+
+		<p>You can define a custom sorter functions in the sorter option if you need besposke sorting functionality.</p>
+
+		<div id="example-table-5"></div>
+		<script type="text/javascript">
+		$("#example-table-5").tabulator({
+			height:"300px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", sorter:"string", width:200},
+			{title:"Age", field:"age", sorter:"number", align:"right"},
+			{title:"Gender", field:"gender", sorter:"string"},
+			{title:"Height", field:"height",  align:"center", width:100},
+			{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
+				return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+			}},
+			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", sorter:"boolean"},
+			],
+		});
+
+		$("#example-table-5").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-5").tabulator("redraw");
+		});
+
+
+		</script>
+	</section>
+
+</body>
+</html>

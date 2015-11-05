@@ -530,7 +530,6 @@ _colRender:function(fixedwidth){
 
 		}else{
 
-				console.log("col width")
 			//free sized table
 			$.each(options.columns, function(i, column) {
 

@@ -37,6 +37,9 @@ Turn the element into a tabulator with some simple javascript
 $("#example-table").tabulator();
 ```
 
+###Examples
+A selection of demo tables can be found in the ***examples.html*** file.
+
 Define Column Headers
 ================================
 Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator
