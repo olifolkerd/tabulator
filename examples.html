@@ -14,7 +14,6 @@
 <body>
 
 	<style type="text/css">
-
 	body{
 		padding:20px 40px;
 		font-family: 'Montserrat', sans-serif;
@@ -37,10 +36,9 @@
 		margin-bottom:20px;
 	}
 
-	span>bold{
-		font-style: italic;
+	ul>li{
+		margin-bottom:2px;
 	}
-
 	</style>
 	<script type="text/javascript">
 
@@ -124,7 +122,7 @@
 		<script type="text/javascript">
 
 		$("#example-table-2").tabulator({
-			height:"300px",
+			height:"320px",
 			columns:[
 			{title:"Name", field:"name", width:200},
 			{title:"Age", field:"age"},
@@ -154,7 +152,7 @@
 		<script type="text/javascript">
 
 		$("#example-table-3").tabulator({
-			height:"300px",
+			height:"320px",
 			columns:[
 			{title:"Name", field:"name", width:200},
 			{title:"Age", field:"age", align:"right"},
@@ -187,7 +185,7 @@
 		<div id="example-table-4"></div>
 		<script type="text/javascript">
 		$("#example-table-4").tabulator({
-			height:"300px",
+			height:"320px",
 			fitColumns:true,
 			columns:[
 			{title:"Name", field:"name", width:200},
@@ -224,12 +222,12 @@
 
 		</p>
 
-		<p>You can define a custom sorter functions in the sorter option if you need besposke sorting functionality.</p>
+		<p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
 
 		<div id="example-table-5"></div>
 		<script type="text/javascript">
 		$("#example-table-5").tabulator({
-			height:"300px",
+			height:"320px",
 			fitColumns:true,
 			columns:[
 			{title:"Name", field:"name", sorter:"string", width:200},
@@ -257,10 +255,28 @@
 	<section>
 		<header>Formatters</header>
 		<p></p>
+		<p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
+
+		<p>you can set formatters on a per column basis using the <span><strong>formatter</strong></span> option in the column data.</p>
+
+		<p>
+			Tabulator comes with a number of preconfigured formatters including:
+			<ul>
+				<li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
+				<li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
+				<li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
+				<li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
+				<li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
+				<li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
+			</ul>
+		</p>
+
+		<p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
+
 		<div id="example-table-6"></div>
 		<script type="text/javascript">
 		$("#example-table-6").tabulator({
-			height:"300px",
+			height:"320px",
 			fitColumns:true,
 			columns:[
 			{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
@@ -296,13 +312,18 @@
 
 	<section>
 		<header>AJAX Data Loading</header>
-		<p></p>
+		<p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
+
+		<p>If you always request the same URL for your data then you can set it in the <span><strong>ajaxURL</strong></span> option when you create your Tabulator</p>
+
+		<p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
+		<p><input id="ajax-trigger" type="button" value="Load Data via AJAX"></p>
 		<div id="example-table-7"></div>
 		<script type="text/javascript">
 		$("#example-table-7").tabulator({
-			height:"300px",
+			height:"320px",
 			fitColumns:true,
-			ajaxURL:"/ajax_sim.json",
+			ajaxURL:"/ajax_sim.php",
 			columns:[
 			{title:"Name", field:"name", sorter:"string", width:200},
 			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
@@ -314,7 +335,9 @@
 			],
 		});
 
-		$("#example-table-7").tabulator("setData");
+		$("#ajax-trigger").click(function(){
+			$("#example-table-7").tabulator("setData");
+		})
 
 		$(window).resize(function(){
 			$("#example-table-7").tabulator("redraw");
@@ -325,28 +348,87 @@
 
 	<section>
 		<header>Callbacks</header>
-		<p></p>
+		<p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
+
+		<ul>
+			<li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>onClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
+			<li><strong>Row Click</strong> - The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the<span><strong>rowClick</strong></span>option when you create your Tabulator. (left click any row in this example)</li>
+			<li><strong>Row Context Menu</strong> - The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span><strong>rowContext</strong></span> option when you create your Tabulator. (right click any row in this example)</li>
+			<li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span><strong>dataLoaded</strong></span> option when you create your</li>
+		</ul>
+
 		<div id="example-table-8"></div>
 		<script type="text/javascript">
-		/*$("#example-table-8").tabulator("setData", tabledata);
+		$("#example-table-8").tabulator({
+			height:"320px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", sorter:"string", width:150},
+			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, row){alert("cell clicked - " + val)}},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+			],
+			rowClick:function(e, id, data, row){
+				alert("Row " + data.id + " Clicked!!!!")
+			},
+			rowContext:function(e, id, data, row){
+				alert("Row " + data.id + " Context Clicked!!!!")
+			},
+		});
+
+		$("#example-table-8").tabulator("setData", tabledata);
 
 		$(window).resize(function(){
 			$("#example-table-8").tabulator("redraw");
-		});*/
+		});
 
-</script>
+		</script>
+
+	</script>
 </section>
 
 <section>
-	<header>Themeing</header>
-	<p></p>
+	<header>Theming</header>
+	<p>Tabulator has a range of additional options to help customise your table. A full list of these can be found in the GitHub readme.md file</p>
 	<div id="example-table-9"></div>
 	<script type="text/javascript">
-		/*$("#example-table-9").tabulator("setData", tabledata);
+	$("#example-table-9").tabulator({
+		backgroundColor:"#ccc",
+		borderColor:"#333",
 
-		$(window).resize(function(){
-			$("#example-table-9").tabulator("redraw");
-		});*/
+		headerBackgroundColor: "#333",
+		headerTextColor: "#fff",
+
+		rowBackgroundColor:"#666",
+		rowTextColor:"#fff",
+
+		height:"320px",
+		fitColumns:true,
+		columns:[
+		{title:"Name", field:"name", sorter:"string", width:150},
+		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+		{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, row){alert("cell clicked - " + val)}},
+		{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+		{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+		{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+		],
+		rowClick:function(e, id, data, row){
+			alert("Row " + data.id + " Clicked!!!!")
+		},
+		rowContext:function(e, id, data, row){
+			alert("Row " + data.id + " Context Clicked!!!!")
+		},
+	});
+
+$("#example-table-9").tabulator("setData", tabledata);
+
+$(window).resize(function(){
+	$("#example-table-9").tabulator("redraw");
+});
 
 </script>
 </section>

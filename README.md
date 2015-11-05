@@ -4,7 +4,7 @@ An easy to use table generation JQuery UI Plugin
 
 Tabulator allows you to create  a table with in seconds from any JSON formatted data.
 
-It relies on no external css or images, simply include the library in your JQuery UI project and you're away!
+It is not dependant on any external css or images, simply include the library in your JQuery UI project and you're away!
 
 ![Tabluator Table](/example_table.jpg?raw=true")
 
@@ -168,7 +168,7 @@ Tabulator comes with a number of preconfigured formatters including:
 - **link** - renders data as an anchor with a link to the given value
 - **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
 - **tickCross** - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not
-- **star** - displays a graphical 0-5 star rating based on integer values from 0-5;
+- **star** - displays a graphical 0-5 star rating based on integer values from 0-5
 - **progress** - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width
 
 You can define a custom formatter function in the formatter option:
