@@ -480,61 +480,63 @@ _colRender:function(fixedwidth){
 	if(fixedwidth && !options.fitColumns){ //it columns have been resized and now data needs to match them
 		//free sized table
 		$.each(options.columns, function(i, column) {
-			colWidth = $(".tabulator-col[data-field=" + column.field + "]").outerWidth();
+			colWidth = $(".tabulator-col[data-field=" + column.field + "]", element).outerWidth();
 			var col = $(".tabulator-cell[data-field=" + column.field + "]",element);
 			col.css({width:colWidth});
 		});
 	}else{
 
 		if(options.fitColumns){
-		//resize columns to fit in window
+			//resize columns to fit in window
 
-		if(self.options.fitColumns){
-			$(".tabulator-row", self.table).css({
-				"width":"100%",
-			})
-		}
-
-		var totWidth = self.element.innerWidth();
-		var colCount = options.columns.length;
-		var colWidth = totWidth / colCount;
-
-		var widthIdeal = 0;
-		var widthIdealCount = 0;
-
-		$.each(options.columns, function(i, column) {
-			if(column.width){
-
-				var thisWidth = typeof(column.width) == "string" ? parseInt(column.width) : column.width;
-
-				widthIdeal += thisWidth;
-				widthIdealCount++;
+			if(self.options.fitColumns){
+				$(".tabulator-row", self.table).css({
+					"width":"100%",
+				})
 			}
-		});
 
-		var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
+			var totWidth = self.element.innerWidth();
+			var colCount = options.columns.length;
+			var colWidth = totWidth / colCount;
 
-		if(proposedWidth >= parseInt(options.colMinWidth)){
+			var widthIdeal = 0;
+			var widthIdealCount = 0;
 
 			$.each(options.columns, function(i, column) {
-				var newWidth = column.width ? column.width : proposedWidth;
+				if(column.width){
 
-				var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element);
-				col.css({width:newWidth});
+					var thisWidth = typeof(column.width) == "string" ? parseInt(column.width) : column.width;
+
+					widthIdeal += thisWidth;
+					widthIdealCount++;
+				}
 			});
 
+			var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
+
+			if(proposedWidth >= parseInt(options.colMinWidth)){
+
+				$.each(options.columns, function(i, column) {
+					var newWidth = column.width ? column.width : proposedWidth;
+
+					var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element);
+					col.css({width:newWidth});
+				});
+
+			}else{
+				var col = $(".tabulator-cell, .tabulator-col",element);
+				col.css({width:colWidth});
+			}
+
 		}else{
-			var col = $(".tabulator-cell, .tabulator-col",element);
-			col.css({width:colWidth});
-		}
 
-	}else{
-		//free sized table
-		$.each(options.columns, function(i, column) {
+				console.log("col width")
+			//free sized table
+			$.each(options.columns, function(i, column) {
 
-			var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
+				var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
 
-			if(column.width){
+				if(column.width){
 					//reseize to match specified column width
 					max = column.width;
 				}else{
