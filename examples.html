@@ -44,6 +44,7 @@
 	</style>
 	<script type="text/javascript">
 
+	//sample data to be used in all tabulators
 	var tabledata = [
 	{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
 	{id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
@@ -55,7 +56,7 @@
 	{id:8, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true"},
 	{id:9, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980"},
 	{id:10, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
-	]
+	];
 
 	</script>
 
@@ -88,7 +89,7 @@
 			columns:[
 			{title:"Name", field:"name", sorter:"string", width:150},
 			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
-			{title:"Gender", field:"gender", width:80, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)}},
+			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)}},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
 			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -116,6 +117,9 @@
 		<p>
 			In its simplest form, all you need to set in the options are the column titles and field names.
 		</p>
+		<p>
+			By default columns are resizable (using edge of column header) and sortable (as strings).
+		</P>
 		<div id="example-table-2"></div>
 		<script type="text/javascript">
 
@@ -249,6 +253,103 @@
 
 		</script>
 	</section>
+
+	<section>
+		<header>Formatters</header>
+		<p></p>
+		<div id="example-table-6"></div>
+		<script type="text/javascript">
+		$("#example-table-6").tabulator({
+			height:"300px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
+				if(value.indexOf("o") > 0){
+					return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
+				}else{
+					return value;
+				}
+			}},
+			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+			rowClick:function(e, id, data, row){
+				alert("Row " + data.id + " Clicked!!!!")
+			},
+			rowContext:function(e, id, data, row){
+				alert("Row " + data.id + " Context Clicked!!!!")
+			},
+		});
+
+		$("#example-table-6").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-6").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
+		<header>AJAX Data Loading</header>
+		<p></p>
+		<div id="example-table-7"></div>
+		<script type="text/javascript">
+		$("#example-table-7").tabulator({
+			height:"300px",
+			fitColumns:true,
+			ajaxURL:"/ajax_sim.json",
+			columns:[
+			{title:"Name", field:"name", sorter:"string", width:200},
+			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+			{title:"Gender", field:"gender", sorter:"string"},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+			],
+		});
+
+		$("#example-table-7").tabulator("setData");
+
+		$(window).resize(function(){
+			$("#example-table-7").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
+		<header>Callbacks</header>
+		<p></p>
+		<div id="example-table-8"></div>
+		<script type="text/javascript">
+		/*$("#example-table-8").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-8").tabulator("redraw");
+		});*/
+
+</script>
+</section>
+
+<section>
+	<header>Themeing</header>
+	<p></p>
+	<div id="example-table-9"></div>
+	<script type="text/javascript">
+		/*$("#example-table-9").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-9").tabulator("redraw");
+		});*/
+
+</script>
+</section>
 
 </body>
 </html>

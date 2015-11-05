@@ -6,6 +6,8 @@ Tabulator allows you to create  a table with in seconds from any JSON formatted 
 
 It relies on no external css or images, simply include the library in your JQuery UI project and you're away!
 
+![Tabluator Table](/example_table.jpg?raw=true")
+
 Tabulator is packed with useful  features including:
 
 - JSON, array or AJAX data loading
