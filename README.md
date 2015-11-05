@@ -272,6 +272,25 @@ Option | Data Type | Default Value | Description
 height|string/int|false|Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.
 
 
+###Data Loaders
+When loading data, Tabulator can display a loading overlay over the table. This cosistis of a modal background and a loader element. The loader element can be set globaly in the options and should be specified as a div with a ***display*** style of ***inline-block***.
+
+Option | Data Type | Default Value | Description
+---|---|---|---
+showLoader|boolean|true| Show loader while data is loading
+loader|string|html (see below)| html for loader element
+loaderError|string|html (see below)| html for the loader element in the event of an error
+
+#####Default loader element
+```html
+<div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'>Loading Data</div>
+```
+
+#####Default loader error element
+```html
+<div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'>Loading Error</div>
+```
+
 Callbacks
 ================================
 Tabulator features a range of callbacks to allow you to handle user interaction.
