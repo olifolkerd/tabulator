@@ -39,6 +39,12 @@ Turn the element into a tabulator with some simple javascript
 $("#example-table").tabulator();
 ```
 
+####Bower Installation
+If you want to install this plugin using bower, run the follwoing command in your project folder
+```
+bower install tabulator
+```
+
 ###Examples
 A selection of demo tables can be found in the ***examples.html*** file.
 
