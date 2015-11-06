@@ -128,7 +128,7 @@ _create: function() {
 	self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
 	self.tableHolder.css({
-		position:"absolute",
+		"position":"absolute",
 		"z-index":"1",
 		"min-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
@@ -146,12 +146,11 @@ _create: function() {
 
 
 	self.table.css({
-		position:"relative",
+		"position":"relative",
 		"font-size":options.textSize,
 		"white-space": "nowrap",
 		"z-index":"1",
 		"display":"inline-block",
-		//"border-bottom":"1px solid " + options.rowBorderColor
 	});
 
 	//create sortable arrow chevrons
@@ -175,7 +174,7 @@ _create: function() {
 
 		var title = column.title ? column.title : "&nbsp";
 
-		var col = $('<div class="tabulator-col" style="display:inline-block" data-field="' + column.field + '" data-sortable=' + column.sortable + '>' + title + '</div>');
+		var col = $("<div class='tabulator-col' style='display:inline-block' data-field='" + column.field + "' data-sortable=" + column.sortable + ">" + title + "</div>");
 
 		if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -364,7 +363,7 @@ _renderTable:function(){
 
 	//build rows of table
 	self.data.forEach( function(item, i) {
-		var row = $('<div class="tabulator-row" data-id="' + item.id + '"></div>');
+		var row = $("<div class='tabulator-row' data-id='" + item.id + "'></div>");
 
 		//bind row data to row
 		row.data("data", item);
@@ -376,15 +375,15 @@ _renderTable:function(){
 		$.each(self.options.columns, function(i, column) {
 			//deal with values that arnt declared
 
-			var value = typeof(item[column.field]) == 'undefined' ? "" : item[column.field];
+			var value = typeof(item[column.field]) == "undefined" ? "" : item[column.field];
 
 			// set empty values to not break search
-			if(typeof(item[column.field]) == 'undefined'){
+			if(typeof(item[column.field]) == "undefined"){
 				item[column.field] = "";
 			}
 
 			//set column text alignment
-			var align = typeof(column.align) == 'undefined' ? "left" : column.align;
+			var align = typeof(column.align) == "undefined" ? "left" : column.align;
 
 			var cell = $("<div class='tabulator-cell' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
@@ -593,8 +592,8 @@ _styleRows:function(){
 
 //format cell contents
 _formatCell:function(formatter, value, data, cell, row){
-	var formatter = typeof(formatter) == 'undefined' ? "plaintext" : formatter;
-	formatter = typeof(formatter) == 'string' ? this.formatters[formatter] : formatter;
+	var formatter = typeof(formatter) == "undefined" ? "plaintext" : formatter;
+	formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
 
 	return formatter(value, data, cell, row,  this.options);
 },
@@ -676,8 +675,8 @@ _sorter: function(column, dir){
 		b = column.sorter == "date" ? self._formatDate(el2[column.field]) : el2[column.field];
 
 		//run sorter
-		var sorter = typeof(column.sorter) == 'undefined' ? "plaintext" : column.sorter;
-		sorter = typeof(sorter) == 'string' ? self.sorters[sorter] : sorter;
+		var sorter = typeof(column.sorter) == "undefined" ? "plaintext" : column.sorter;
+		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
 		return sorter(a, b);
 
 	}).appendTo(table);
@@ -715,8 +714,8 @@ sorters:{
 		return a - b;
 	},
 	boolean:function(a, b){ //sort booleans
-		el1 = a === true || a === 'true' || a === 'True' || a === 1 ? 1 : 0;
-		el2 = b === true || b === 'true' || b === 'True' || b === 1 ? 1 : 0;
+		el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
+		el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
 
 		return el1 - el2
 	},
