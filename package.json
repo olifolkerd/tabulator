@@ -1,5 +1,5 @@
 {
-  "name": "tabulator",
+  "name": "@username/tabulator",
   "version": "1.0.1",
   "description": "An easy to use table generation JQuery UI Plugin",
   "main": "tabulator.js",
