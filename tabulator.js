@@ -43,8 +43,10 @@ options: {
 		inactive: "#bbb",
 	},
 
-	sortBy:"id",
-	sortDir:"desc",
+	sortBy:"id", //defualt column to sort by
+	sortDir:"desc", //default sort direction
+
+	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 	selectable:true, //highlight rows on hover
 
@@ -55,6 +57,9 @@ options: {
 	loaderError:"<div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'>Loading Error</div>", //loader element
 
 	rowClick:function(){}, //do action on row click
+	rowAdded:function(){}, //do action on row add
+	rowEdit:function(){}, //do action on row edit
+	rowDelete:function(){}, //do action on row delete
 	rowContext:function(){}, //context menu action
 	dataLoaded:function(){},  //callback for when data has been Loaded
 },
@@ -267,6 +272,10 @@ element.append(self.tableHolder);
 		$(".tabulator-col", self.header).on("mouseup", function(){
 
 		});
+
+		element.on("change", ".tabulator-cell input", function(e){
+			self._cellDataChange($(this));
+		})
 	}
 
 	//append sortable arrows to sortable headers
@@ -284,6 +293,113 @@ element.append(self.tableHolder);
 //set options
 _setOption: function(option, value) {
 	$.Widget.prototype._setOption.apply( this, arguments );
+},
+
+//handle cell data change
+_cellDataChange: function(input){
+
+	var self = this;
+
+	var cell = input.closest(".tabulator-cell");
+	var row = cell.closest(".tabulator-row");
+
+	//update cell data value
+	cell.data("value", input.val());
+
+	//update row data
+	var rowData =  row.data("data");
+	rowData[cell.data("field")] = input.val();
+	row.data("data", rowData);
+
+	if(rowData.id){
+		//update tabulator data
+		self.data[rowData.id] = rowData;
+	}
+
+
+	//triger event
+	self.options.rowEdit(rowData.id, rowData, row);
+
+},
+
+//delete row from table by id
+deleteRow: function(item){
+	var self = this;
+
+	var id = typeof(item) == "number" ? item : item.data("data").id;
+
+	if(self.data[id]){
+		//remove row from data
+		self.data.splice(id, 1);
+	}
+
+	if(id){
+		//remove row from table
+		$("[data-id=" + id + "]", self.element).remove();
+	}else{
+		//remove row from table
+		item.remove();
+	}
+
+	//style table rows
+	self._styleRows();
+
+	//align column widths
+	self._colRender(!self.firstRender);
+	self._trigger("renderComplete");
+
+	self.options.rowDelete(id);
+},
+
+//add blank row to table
+addRow:function(item){
+	var self = this;
+
+	if(item){
+		item.id = item.id ? item.id : 0;
+	}else{
+		item = {id:0}
+	}
+
+	//create blank row
+	var row = self._renderRow(item);
+
+	//append to top or bottom of table based on preference
+	if(self.options.addRowPos == "top"){
+		self.table.prepend(row);
+	}else{
+		self.table.append(row);
+	}
+	//style table rows
+	self._styleRows();
+
+	//align column widths
+	self._colRender(!self.firstRender);
+	self._trigger("renderComplete");
+
+	//triger event
+	self.options.rowAdded(item);
+
+},
+
+//get array of data from the table
+getData:function(){
+	var self = this;
+
+
+	var allData = [];
+
+	//get all data from array
+	self.data.forEach( function(item, i) {
+		allData.push(item);
+	});
+
+	//get all new elements from list
+	$("[data-id=0]", self.element).each(function(){
+		allData.push($(this).data("data"));
+	});
+
+	return allData;
 },
 
 //load data
