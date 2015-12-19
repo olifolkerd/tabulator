@@ -43,6 +43,9 @@ options: {
 		inactive: "#bbb",
 	},
 
+	sortBy:"id",
+	sortDir:"desc",
+
 	selectable:true, //highlight rows on hover
 
 	ajaxURL:false, //url for ajax loading
@@ -147,11 +150,12 @@ _create: function() {
 
 
 	self.table.css({
-		"position":"relative",
+		position:"relative",
 		"font-size":options.textSize,
 		"white-space": "nowrap",
 		"z-index":"1",
 		"display":"inline-block",
+		"overflow":"visible",
 	});
 
 	//create sortable arrow chevrons
