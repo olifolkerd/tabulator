@@ -771,7 +771,7 @@ _cellClick: function(e, cell){
 		return column.field == cell.data("field");
 	});
 
-	column[0].onClick(e, cell, cell.data("value"), cell.closest("tr").data("data")  );
+	column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data")  );
 },
 
 //return escaped string for attribute
