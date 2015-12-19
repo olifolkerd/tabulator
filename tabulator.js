@@ -319,6 +319,12 @@ setData:function(data){
 	}
 },
 
+//clear data
+clear:function(){
+	this.table.empty();
+	this._renderTable();
+},
+
 //parse and index data
 _parseData:function(data){
 
