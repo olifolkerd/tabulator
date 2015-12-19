@@ -251,7 +251,7 @@ When data is loaded into the table it can be automatically sorted by a specified
 Option | Data Type | Default Value | Description
 ---|---|---|---
 sortBy|string|"id"| the name of the field to be sorted
-sortDir|string (DESC|ASC)|"DESC"| The direction of the sort (ASC or DESC).
+sortDir|string (DESC/ASC)|"DESC"| The direction of the sort (ASC or DESC).
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
