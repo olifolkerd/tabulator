@@ -153,6 +153,9 @@ You can define a custom sorter function in the sorter option:
 	},
 }
 ```
+### Sort Data on load
+When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the ***sortBy*** and ***sortDir*** parameters. see [Initial Data Sorting](#initial-data-sorting) for more details)
+
 
 Formatting Data
 ================================
@@ -241,6 +244,14 @@ $(window).resize(function(){
 Table Options
 ================================
 In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.
+
+###Initial Data Sorting
+When data is loaded into the table it can be automatically sorted by a specified field
+
+Option | Data Type | Default Value | Description
+---|---|---|---
+sortBy|string|"id"| the name of the field to be sorted
+sortDir|string (DESC|ASC)|"DESC"| The direction of the sort (ASC or DESC).
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
