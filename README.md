@@ -251,7 +251,7 @@ When data is loaded into the table it can be automatically sorted by a specified
 Option | Data Type | Default Value | Description
 ---|---|---|---
 sortBy|string|"id"| the name of the field to be sorted
-sortDir|string (DESC/ASC)|"DESC"| The direction of the sort (ASC or DESC).
+sortDir|string|"DESC"| The direction of the sort (ASC or DESC).
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
@@ -333,6 +333,38 @@ $("#example-table").tabulator({
 		//id - the id of the row
 		//data - the data for the row
 		//row - the DOM element of the row
+	},
+});
+```
+
+###Row Added
+The row added callback is triggered when a row is added to the table by the ***addRow** function.
+```js
+$("#example-table").tabulator({
+	rowAdded:function(data){
+		//data - the data for the row
+	},
+});
+```
+
+###Row Edit
+The row edit callback is triggered when data in an editable row is changed.
+```js
+$("#example-table").tabulator({
+	rowEdit:function(id, data, row){
+		//id - the id of the row
+		//data - the data for the row
+		//row - the DOM element of the row
+	},
+});
+```
+
+###Row Deleted
+The row deleted callback is triggered when a row is deleted from the table by the ***deleteRow*** function.
+```js
+$("#example-table").tabulator({
+	rowDelete:function(id){
+		//id - the id of the row
 	},
 });
 ```
