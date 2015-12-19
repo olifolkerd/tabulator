@@ -438,6 +438,7 @@ setData:function(data){
 //clear data
 clear:function(){
 	this.table.empty();
+	this.data = [];
 	this._renderTable();
 },
 
