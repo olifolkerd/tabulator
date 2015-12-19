@@ -822,8 +822,8 @@ _sorter: function(column, dir){
 	$(".tabulator-row", table).sort(function(a,b) {
 
 		//switch elements depending on search direction
-		el1 = dir == "asc" ? data[$(a).data("id")] : data[$(b).data("id")]
-		el2 = dir == "asc" ? data[$(b).data("id")] : data[$(a).data("id")]
+		el1 = dir == "asc" ? $(a).data("data") : $(b).data("data")
+		el2 = dir == "asc" ? $(b).data("data") : $(a).data("data")
 
 		//workaround to format dates correctly
 		a = column.sorter == "date" ? self._formatDate(el1[column.field]) : el1[column.field];
@@ -850,9 +850,13 @@ _formatDate:function(dateString){
 	var mpos = format.indexOf("mm");
 	var dpos = format.indexOf("dd");
 
-	var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
+	if(dateString){
+		var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
 
-	var newDate = Date.parse(formattedString)
+		var newDate = Date.parse(formattedString)
+	}else{
+		var newDate = 0;
+	}
 
 	return isNaN(newDate) ? 0 : newDate;
 },
