@@ -12,6 +12,8 @@ Tabulator is packed with useful  features including:
 
 - JSON, array or AJAX data loading
 - Column sorting
+- Editable data
+- Adding/Deleting Rows
 - Custom data formatting
 - Resizable columns
 - Auto scaling  to fit data/element
@@ -49,7 +51,7 @@ Column headers are defined as an array of JSON objects passed into the columns o
 ```js
 $("#example-table").tabulator({
 	columns:[
-		{title:"Name", field:"name", sortable:true, sorter:"string", width:200},
+		{title:"Name", field:"name", sortable:true, sorter:"string", width:200, editable:true},
 		{title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
 		{title:"Gender", field:"gender", sortable:true, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click")},},
 		{title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
@@ -69,6 +71,7 @@ There are a number of parameters that can be passed in with each column to deter
 - **sorter** - determines how to sort data in this column (see [Sorting Data](#sorting-data) for more details)
 - **formatter** - set how you would like the data to be formatted (see [Formatting Data](#formatting-data) for more details)
 - **onClick** - callback for when user clicks on a cell in this column (see [Callbacks](#callbacks) for more details)
+- **editable** - (boolean, default - false) determines if this data is editable by the user. (see [Manipulating Data](#manipulating-data) for more details)
 
 Set Table Data
 ================================
@@ -187,6 +190,47 @@ You can define a custom formatter function in the formatter option:
 }
 ```
 
+
+Manipulating Data
+================================
+Tabulator allows you to manipulate the data in the table in a number of different ways
+
+### Clear Table
+You can clear all data in the table using the ***clear** function:
+```js
+$("#example-table").tabulator("clear");
+```
+
+### Editable Data
+Columns of the table can be set as editable using the ***editable*** parameter in the column definition. (see [Define Column Headers](#define-column-headers) for more details).
+
+**Note** - Only columns without formatters can be set as editable.
+
+When a user clicks on an editable column the will be able to edit the text in that cell. for the moment only plain text can be edited, support for custom editors willl be comming in a future version.
+
+### Add Row
+Additional rows can be added to the table at any point using the ***addRow*** function:
+```js
+$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12", gender:"male", height:1});
+```
+If you do not pass data for a colum, it will be left empty. to create a blank row (ie for a user to fill in), pass an empty object to the function.
+
+By default any new rows will be added to the bottom of the table, to change this to the top set the ***addRowPos*** option to "top";
+
+### Delete Row
+You can delete any row in the table using the ***deleteRow** function;
+```js
+$("#example-table").tabulator("deleteRow", 15);
+```
+You can either pass the function the id of the row you wish to delete or the data object that represnts that row.
+
+### Retreiving Data
+You can retreive the data stored in the table using the ***getData** function.
+```js
+var data = $("#example-table").tabulator("getData");
+```
+This will return an array containing the data objects for each row in the table.
+
 Table Layout
 ================================
 Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:
@@ -252,6 +296,13 @@ Option | Data Type | Default Value | Description
 ---|---|---|---
 sortBy|string|"id"| the name of the field to be sorted
 sortDir|string|"DESC"| The direction of the sort (ASC or DESC).
+
+
+###Added Rows
+Option | Data Type | Default Value | Description
+---|---|---|---
+addRowPos|string|"bottom"| The position in the table for new rows to be added, "bottom" or "top"
+
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
@@ -411,9 +462,7 @@ Tabulator is actively under development and I plan to have even more useful feat
 
 - Grouping Data
 - Filtering Data
-- Editable Cells
 - Movable Rows
-- Deleteable Rows
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
