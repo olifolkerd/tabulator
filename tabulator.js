@@ -294,7 +294,6 @@ setData:function(data){
 		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
 			//data is a json encoded string
 			this._parseData(jQuery.parseJSON(data));
-			this._renderTable();
 		}else{
 			//assume data is url, make ajax call to url to get data
 			this._getAjaxData(data);
@@ -303,7 +302,6 @@ setData:function(data){
 		if(data){
 			//asume data is already an object
 			this._parseData(data);
-			this._renderTable();
 
 		}else{
 			//no data provided, check if ajaxURL is present;
@@ -312,7 +310,6 @@ setData:function(data){
 			}else{
 				//empty data
 				this._parseData([]);
-				this._renderTable();
 			}
 		}
 	}
@@ -330,6 +327,7 @@ _parseData:function(data){
 	this.data = newData;
 
 	this.options.dataLoaded(data);
+	this._renderTable();
 },
 
 //get json data via ajax
@@ -344,8 +342,6 @@ _getAjaxData:function(url){
 		dataType:'json',
 		success: function (data) {
 			self._parseData(data);
-			self._renderTable();
-			self.options.dataLoaded(data);
 		},
 		error: function (xhr, ajaxOptions, thrownError) {
 			console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
@@ -363,7 +359,6 @@ _renderTable:function(){
 
 	//hide table while building
 	self.table.hide();
-
 	//show loader if needed
 	self._showLoader(self, self.options.loader)
 
@@ -372,54 +367,7 @@ _renderTable:function(){
 
 	//build rows of table
 	self.data.forEach( function(item, i) {
-		var row = $("<div class='tabulator-row' data-id='" + item.id + "'></div>");
-
-		//bind row data to row
-		row.data("data", item);
-
-		//bind row click events
-		row.on("click", function(e){self._rowClick(e, row, item)});
-		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
-
-		$.each(self.options.columns, function(i, column) {
-			//deal with values that arnt declared
-
-			var value = typeof(item[column.field]) == "undefined" ? "" : item[column.field];
-
-			// set empty values to not break search
-			if(typeof(item[column.field]) == "undefined"){
-				item[column.field] = "";
-			}
-
-			//set column text alignment
-			var align = typeof(column.align) == "undefined" ? "left" : column.align;
-
-			var cell = $("<div class='tabulator-cell' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
-
-			cell.css({
-				padding: "4px",
-				"text-align": align,
-				"box-sizing":"border-box",
-				"display":"inline-block",
-				"vertical-align":"middle",
-				"min-height":self.options.headerHeight,
-				"white-space":"nowrap",
-				"overflow":"hidden",
-				"text-overflow":"ellipsis",
-			})
-
-			//format cell contents
-			cell.html(self._formatCell(column.formatter, value, item, cell, row));
-
-			//bind cell click function
-			if(typeof(column.onClick) == "function"){
-				cell.on("click", function(e){self._cellClick(e, cell)});
-			}
-
-			row.append(cell);
-		});
-
-		self.table.append(row);//
+		self.table.append(self._renderRow(item));
 	});
 
 	self.table.css({//
@@ -442,12 +390,83 @@ _renderTable:function(){
 	//align column widths
 	self._colRender(!self.firstRender);
 
-
 	//hide loader div
 	self._hideLoader(self);
 
 	self._trigger("renderComplete");
 
+},
+
+//render individual rows
+_renderRow:function(item){
+
+	var self = this;
+
+	var row = $('<div class="tabulator-row" data-id="' + item.id + '"></div>');
+
+	//bind row data to row
+	row.data("data", item);
+
+	//bind row click events
+	row.on("click", function(e){self._rowClick(e, row, item)});
+	row.on("contextmenu", function(e){self._rowContext(e, row, item)});
+
+	$.each(self.options.columns, function(i, column) {
+		//deal with values that arnt declared
+
+		var value = typeof(item[column.field]) == 'undefined' ? "" : item[column.field];
+
+		// set empty values to not break search
+		if(typeof(item[column.field]) == 'undefined'){
+			item[column.field] = "";
+		}
+
+		//set column text alignment
+		var align = typeof(column.align) == 'undefined' ? "left" : column.align;
+
+		var cell = $("<div class='tabulator-cell' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+
+		cell.css({
+
+			"text-align": align,
+			"box-sizing":"border-box",
+			"display":"inline-block",
+			"vertical-align":"middle",
+			"min-height":self.options.headerHeight,
+			"white-space":"nowrap",
+			"overflow":"hidden",
+			"text-overflow":"ellipsis",
+		})
+
+		//add textbox if cell is editable
+		if(column.editable){
+			cell.html("<input type='text'/>");
+			$("input", cell).css({
+				"border":"none",
+				"background":"transparent",
+				"padding":"4px",
+				"width":"100%",
+				"box-sizing":"border-box",
+			});
+			$("input", cell).val(value);
+		}else{
+
+			cell.css({padding: "4px"});
+			//format cell contents
+			cell.html(self._formatCell(column.formatter, value, item, cell, row));
+		}
+
+
+
+		//bind cell click function
+		if(typeof(column.onClick) == "function"){
+			cell.on("click", function(e){self._cellClick(e, cell)});
+		}
+
+		row.append(cell);
+	});
+
+return row;
 },
 
 //get number of elements in dataset
