@@ -2,12 +2,13 @@ $.widget("ui.tabulator", {
 
 
 data:[],//array to hold data for table
-sortCurrrent:{col:null,dir:null}, //column name of currently sorted column
 firstRender:true, //layout table widths correctly on first render
 mouseDrag:false, //mouse drag tracker;
 mouseDragWidth:false, //starting width of colum on mouse drag
 mouseDragElement:false, //column being dragged
 mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on sort
+sortCurCol:null,//column name of currently sorted column
+sortCurDir:null,//column name of currently sorted column
 
 //setup options
 options: {
@@ -172,9 +173,17 @@ _create: function() {
 		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
 
+		if(options.sortBy == column.field){
+			var sortdir = " data-sortdir='" + options.sortDir + "' ";
+			self.sortCurCol= column;
+			self.sortCurDir = options.sortDir;
+		}else{
+			var sortdir = "";
+		}
+
 		var title = column.title ? column.title : "&nbsp";
 
-		var col = $("<div class='tabulator-col' style='display:inline-block' data-field='" + column.field + "' data-sortable=" + column.sortable + ">" + title + "</div>");
+		var col = $('<div class="tabulator-col" style="display:inline-block" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
 
 		if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -198,9 +207,9 @@ _create: function() {
 
 	});
 
-	element.append(self.header);
-	self.tableHolder.append(self.table);
-	element.append(self.tableHolder);
+element.append(self.header);
+self.tableHolder.append(self.table);
+element.append(self.tableHolder);
 
 	//layout headers
 	$(".tabulator-col", self.header).css({
@@ -422,9 +431,10 @@ _renderTable:function(){
 	self._styleRows();
 
 	//sort data if already sorted
-	if(self.sortCurrrent.col){
-		self._sorter(self.sortCurrrent.col, self.sortCurrrent.dir);
+	if(self.sortCurCol){
+		self._sorter(self.sortCurCol, self.sortCurDir);
 	}
+
 
 	//show table once loading complete
 	self.table.show();
@@ -480,7 +490,7 @@ _colRender:function(fixedwidth){
 		//free sized table
 		$.each(options.columns, function(i, column) {
 			colWidth = $(".tabulator-col[data-field=" + column.field + "]", element).outerWidth();
-			var col = $(".tabulator-cell[data-field=" + column.field + "]",element);
+			var col = $(".tabulator-cell[data-field=" + column.field + "]", element);
 			col.css({width:colWidth});
 		});
 	}else{
@@ -661,8 +671,8 @@ _sorter: function(column, dir){
 
 	self._trigger("sortStarted");
 
-	self.sortCurrrent.col = column;
-	self.sortCurrrent.dir = dir;
+	self.sortCurCol = column;
+	self.sortCurDir = dir;
 
 	$(".tabulator-row", table).sort(function(a,b) {
 
