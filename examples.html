@@ -39,12 +39,16 @@
 	ul>li{
 		margin-bottom:2px;
 	}
+
+	button{
+		margin-right:20px;
+	}
 	</style>
 	<script type="text/javascript">
 
 	//sample data to be used in all tabulators
 	var tabledata = [
-	{id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+	{id:1, name:"Oli Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
 	{id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
 	{id:3, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true"},
 	{id:4, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980"},
@@ -208,6 +212,45 @@
 	</section>
 
 	<section>
+		<header>Editable Data</header>
+		<p>
+			Using the <strong>editable</strong> setting on each column, you can make a user editable table.
+		</p>
+		<p>
+			Any time a cell is edited it triggers the <strong>rowEdit</strong> callback, to allow you to process any changes.
+		</p>
+		<p>
+			You ccan call the <strong>getData</strong> method to get an array of all of the tables data, including any edits
+		</p>
+		<div id="example-table-editable"></div>
+		<script type="text/javascript">
+
+		$("#example-table-editable").tabulator({
+			height:"320px",
+			columns:[
+			{title:"Name", field:"name", width:200, editable:true},
+			{title:"Age", field:"age", width:90, align:"right", editable:true},
+			{title:"Gender", field:"gender", editable:true},
+			{title:"Height", field:"height", align:"center", width:80, editable:true},
+			{title:"Favourite Color", field:"col", editable:true},
+			{title:"Date Of Birth", field:"dob", align:"center", editable:true},
+			{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
+			],
+			rowEdit:function(id,data,row){
+
+			}
+		});
+
+		$("#example-table-editable").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-editable").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
 		<header>Sorters</header>
 		<p>Sorting is enabled by default, and can be toggled on or off by column using the <span><strong>sortable</strong></span> option.</p>
 
@@ -345,6 +388,65 @@
 
 		</script>
 	</section>
+
+	<section>
+		<header>Add / Delete Rows</header>
+		<p>
+			Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
+		</p>
+		<p>
+			<button id="add-row">Add Blank Row to bottom of table</button>
+			<button id="del-row">Remove "Oli Bob" From the table</button>
+			<button id="clear">Empty the table</button>
+			<button id="reset">Reset the table</button>
+		</p>
+		<div id="example-table-adddel"></div>
+		<script type="text/javascript">
+
+		$("#add-row").click(function(){
+			$("#example-table-adddel").tabulator("addRow");
+		})
+
+		$("#del-row").click(function(){
+			$("#example-table-adddel").tabulator("deleteRow", 1);
+		})
+
+		$("#clear").click(function(){
+			$("#example-table-adddel").tabulator("clear");
+		})
+
+		$("#reset").click(function(){
+			$("#example-table-adddel").tabulator("setData", tabledata);
+		})
+
+
+
+		$("#example-table-adddel").tabulator({
+			height:"320px",
+			addRowPos:"bottom",
+			columns:[
+			{title:"Name", field:"name", width:200, editable:true},
+			{title:"Age", field:"age", width:90, align:"right", editable:true},
+			{title:"Gender", field:"gender", editable:true},
+			{title:"Height", field:"height", align:"center", width:80, editable:true},
+			{title:"Favourite Color", field:"col", editable:true},
+			{title:"Date Of Birth", field:"dob", align:"center", editable:true},
+			{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
+			],
+			rowEdit:function(id,data,row){
+
+			}
+		});
+
+		$("#example-table-adddel").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-adddel").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
 
 	<section>
 		<header>Callbacks</header>
