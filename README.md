@@ -12,8 +12,8 @@ Tabulator is packed with useful  features including:
 
 - JSON, array or AJAX data loading
 - Column sorting
-- Editable data
-- Adding/Deleting Rows
+- Editable cells
+- Adding/Deleting rows
 - Custom data formatting
 - Resizable columns
 - Auto scaling  to fit data/element
