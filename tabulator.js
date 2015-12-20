@@ -1,5 +1,13 @@
-$.widget("ui.tabulator", {
+/*
+ * This file is part of the Tabulator package.
+ *
+ * (c) Oliver Folkerd <oliver.folkerd@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
+$.widget("ui.tabulator", {
 
 data:[],//array to hold data for table
 firstRender:true, //layout table widths correctly on first render
