@@ -145,6 +145,7 @@ By default all data is sorted as a string. if you wish to specify a different so
 Tabulator comes with a number of preconfigured sorters including:
 - **string** - sorts column as strings of characters
 - **number** - sorts column as numbers (integer or float)
+- **alphanum** - sorts column as alpha numeric code
 - **boolean** - sorts column as booleans
 - **date** - sorts column as dates (for this you will need to set the date format using the ***dateFormat*** option when you create your table. default format is "dd/mm/yyyy")
 
