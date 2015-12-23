@@ -338,12 +338,6 @@
 			{title:"Date Of Birth", field:"dob", align:"center"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
-			rowClick:function(e, id, data, row){
-				alert("Row " + data.id + " Clicked!!!!")
-			},
-			rowContext:function(e, id, data, row){
-				alert("Row " + data.id + " Context Clicked!!!!")
-			},
 		});
 
 		$("#example-table-6").tabulator("setData", tabledata);
