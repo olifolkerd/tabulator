@@ -239,7 +239,7 @@ To find out what filter is currently applied to the table you should use the ***
 ```js
 	$("#example-table").tabulator("getFilter");
 ```
-iI there is no filter set, this will return ***false*** otherwise it will return an object with the filter information.
+If there is no filter set, this will return ***false*** otherwise it will return an object with the filter information.
 ```js
 	$("#example-table").tabulator("getFilter");
 ```
