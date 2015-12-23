@@ -15,6 +15,7 @@ Tabulator is packed with useful  features including:
 - Editable cells
 - Adding/Deleting rows
 - Custom data formatting
+- Data filtering
 - Resizable columns
 - Auto scaling  to fit data/element
 - Many theming options
@@ -205,6 +206,44 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
 
 ```
+
+Filtering Data
+================================
+Tabulator allows you to filter the table data by any field in the data set.
+
+To set a filter you need to call the ***setFilter*** method, passing the field you wish to filter, the comparison type and the value to filter for.
+```js
+	$("#example-table").tabulator("setFilter", "age", ">", 10);
+```
+
+Tabulator comes with a number of filter comparison types including:
+- **=** - Displays only rows with data that is the same as the filter
+- **&lt;** - displays rows with a value less than the filter value
+- **&lt;=** - displays rows with a value less than or qual to the filter value
+- **&gt;** - displays rows with a value greater than the filter value
+- **&gt;=** - displays rows with a value greater than or qual to the filter value
+- **!=** - displays rows with a value that is not equal to the filter value
+- **like** - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)
+
+By default tabulator will assume you want to use the "=" comparison unless otherwise stated. This allows for the short hand use of the function:
+```js
+	$("#example-table").tabulator("setFilter", "name", "bob");
+```
+
+You can only have one filter active at a time, calling setFilter a second time will over write the previous filter.
+
+Filters will remain in effect until they are cleared, including during ***setData*** calls.
+
+###Clearing Filters
+To remove filters from the table you should use the ***clearFilter*** method.
+```js
+	$("#example-table").tabulator("clearFilter");
+```
+alternativly you can also call the ***setFilter*** method with no parameters to clear the filter.
+```js
+	$("#example-table").tabulator("setFilter");
+```
+
 
 Manipulating Data
 ================================

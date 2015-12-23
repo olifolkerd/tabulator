@@ -44,6 +44,11 @@
 	button{
 		margin-right:20px;
 	}
+
+	select{
+		margin-right:20px;
+	}
+
 	</style>
 	<script type="text/javascript">
 
@@ -112,223 +117,223 @@
 			},
 		});
 
-		$("#example-table-1").tabulator("setData", tabledata);
+$("#example-table-1").tabulator("setData", tabledata);
 
-		$(window).resize(function(){
-			$("#example-table-1").tabulator("redraw");
-		});
+$(window).resize(function(){
+	$("#example-table-1").tabulator("redraw");
+});
 
-		</script>
-	</section>
+</script>
+</section>
 
-	<section>
-		<header>Simple Table</header>
-		<p>
-			In its simplest form, all you need to set in the options are the column titles and field names.
-		</p>
-		<p>
-			By default columns are resizable (using edge of column header) and sortable (as strings).
-		</P>
-		<div id="example-table-2"></div>
-		<script type="text/javascript">
+<section>
+	<header>Simple Table</header>
+	<p>
+		In its simplest form, all you need to set in the options are the column titles and field names.
+	</p>
+	<p>
+		By default columns are resizable (using edge of column header) and sortable (as strings).
+	</P>
+	<div id="example-table-2"></div>
+	<script type="text/javascript">
 
-		$("#example-table-2").tabulator({
-			height:"320px",
-			columns:[
-			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", width:60},
-			{title:"Gender", field:"gender"},
-			{title:"Height", field:"height", width:80},
-			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob"},
-			{title:"Likes Cheese", field:"cheese"},
-			],
-		});
+	$("#example-table-2").tabulator({
+		height:"320px",
+		columns:[
+		{title:"Name", field:"name", width:200},
+		{title:"Age", field:"age", width:60},
+		{title:"Gender", field:"gender"},
+		{title:"Height", field:"height", width:80},
+		{title:"Favourite Color", field:"col"},
+		{title:"Date Of Birth", field:"dob"},
+		{title:"Likes Cheese", field:"cheese"},
+		],
+	});
 
-		$("#example-table-2").tabulator("setData", tabledata);
+	$("#example-table-2").tabulator("setData", tabledata);
 
-		$(window).resize(function(){
-			$("#example-table-2").tabulator("redraw");
-		});
+	$(window).resize(function(){
+		$("#example-table-2").tabulator("redraw");
+	});
 
-		</script>
-	</section>
+	</script>
+</section>
 
-	<section>
-		<header>Fit To Data</header>
-		<p>
-			Tables will automatically resize to fit the data
-		</p>
-		<div id="example-table-3"></div>
-		<script type="text/javascript">
+<section>
+	<header>Fit To Data</header>
+	<p>
+		Tables will automatically resize to fit the data
+	</p>
+	<div id="example-table-3"></div>
+	<script type="text/javascript">
 
-		$("#example-table-3").tabulator({
-			height:"320px",
-			columns:[
-			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", width:60, align:"right"},
-			{title:"Gender", field:"gender"},
-			{title:"Height", field:"height", align:"center", width:80},
-			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
-			{title:"Likes Cheese", field:"cheese", align:"center"},
-			],
-		});
+	$("#example-table-3").tabulator({
+		height:"320px",
+		columns:[
+		{title:"Name", field:"name", width:200},
+		{title:"Age", field:"age", width:60, align:"right"},
+		{title:"Gender", field:"gender"},
+		{title:"Height", field:"height", align:"center", width:80},
+		{title:"Favourite Color", field:"col"},
+		{title:"Date Of Birth", field:"dob", align:"center"},
+		{title:"Likes Cheese", field:"cheese", align:"center"},
+		],
+	});
 
-		$("#example-table-3").tabulator("setData", tabledata);
+	$("#example-table-3").tabulator("setData", tabledata);
 
-		$(window).resize(function(){
-			$("#example-table-3").tabulator("redraw");
-		});
+	$(window).resize(function(){
+		$("#example-table-3").tabulator("redraw");
+	});
 
-		</script>
-	</section>
-
-
-	<section>
-		<header>Fit To Width</header>
-		<p>
-			By setting the <span><strong>fitColumns</strong></span> to true, the table will resize columns so that they fit perfectly inside the width of the container.
-		</p>
-		<p>
-			If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
-		</p>
-		<div id="example-table-4"></div>
-		<script type="text/javascript">
-		$("#example-table-4").tabulator({
-			height:"320px",
-			fitColumns:true,
-			columns:[
-			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", align:"right"},
-			{title:"Gender", field:"gender"},
-			{title:"Height", field:"height", align:"center", width:60},
-			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
-			{title:"Likes Cheese", field:"cheese", align:"center"},
-			],
-		});
-
-		$("#example-table-4").tabulator("setData", tabledata);
-
-		$(window).resize(function(){
-			$("#example-table-4").tabulator("redraw");
-		});
-
-		</script>
-	</section>
-
-	<section>
-		<header>Editable Data</header>
-		<p>
-			Using the <strong>editable</strong> setting on each column, you can make a user editable table.
-		</p>
-		<p>
-			Any time a cell is edited it triggers the <strong>rowEdit</strong> callback, to allow you to process any changes.
-		</p>
-		<p>
-			You ccan call the <strong>getData</strong> method to get an array of all of the tables data, including any edits
-		</p>
-		<div id="example-table-editable"></div>
-		<script type="text/javascript">
-
-		$("#example-table-editable").tabulator({
-			height:"320px",
-			columns:[
-			{title:"Name", field:"name", width:200, editable:true},
-			{title:"Age", field:"age", width:90, align:"right", editable:true},
-			{title:"Gender", field:"gender", editable:true},
-			{title:"Height", field:"height", align:"center", width:80, editable:true},
-			{title:"Favourite Color", field:"col", editable:true},
-			{title:"Date Of Birth", field:"dob", align:"center", editable:true},
-			{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
-			],
-			rowEdit:function(id,data,row){
-
-			}
-		});
-
-		$("#example-table-editable").tabulator("setData", tabledata);
-
-		$(window).resize(function(){
-			$("#example-table-editable").tabulator("redraw");
-		});
-
-		</script>
-	</section>
-
-	<section>
-		<header>Sorters</header>
-		<p>Sorting is enabled by default, and can be toggled on or off by column using the <span><strong>sortable</strong></span> option.</p>
-
-		<p>By default all columns are sorted as text, different sort functions can be set using the <span><strong>sorter</strong></span> option
-
-			<ul>
-				<li><strong>string</strong> - sorts column as strings of characters</li>
-				<li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
-				<li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
-				<li><strong>boolean</strong> - sorts column as booleans</li>
-				<li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span><strong>dateFormat</strong></span> option when you create your table. default format is "dd/mm/yyyy")</li>
-			</ul>
-
-		</p>
-
-		<p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
-
-		<div id="example-table-5"></div>
-		<script type="text/javascript">
-		$("#example-table-5").tabulator({
-			height:"320px",
-			fitColumns:true,
-			columns:[
-			{title:"Name", field:"name", sorter:"string", width:200},
-			{title:"Age", field:"age", sorter:"number", align:"right"},
-			{title:"Gender", field:"gender", sorter:"string"},
-			{title:"Height", field:"height",  align:"center", width:100},
-			{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
-				return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-			}},
-			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-			{title:"Likes Cheese", field:"cheese", align:"center", sorter:"boolean"},
-			],
-		});
-
-		$("#example-table-5").tabulator("setData", tabledata);
-
-		$(window).resize(function(){
-			$("#example-table-5").tabulator("redraw");
-		});
+	</script>
+</section>
 
 
-		</script>
-	</section>
+<section>
+	<header>Fit To Width</header>
+	<p>
+		By setting the <span><strong>fitColumns</strong></span> to true, the table will resize columns so that they fit perfectly inside the width of the container.
+	</p>
+	<p>
+		If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
+	</p>
+	<div id="example-table-4"></div>
+	<script type="text/javascript">
+	$("#example-table-4").tabulator({
+		height:"320px",
+		fitColumns:true,
+		columns:[
+		{title:"Name", field:"name", width:200},
+		{title:"Age", field:"age", align:"right"},
+		{title:"Gender", field:"gender"},
+		{title:"Height", field:"height", align:"center", width:60},
+		{title:"Favourite Color", field:"col"},
+		{title:"Date Of Birth", field:"dob", align:"center"},
+		{title:"Likes Cheese", field:"cheese", align:"center"},
+		],
+	});
 
-	<section>
-		<header>Formatters</header>
-		<p></p>
-		<p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
+	$("#example-table-4").tabulator("setData", tabledata);
 
-		<p>you can set formatters on a per column basis using the <span><strong>formatter</strong></span> option in the column data.</p>
+	$(window).resize(function(){
+		$("#example-table-4").tabulator("redraw");
+	});
 
-		<p>
-			Tabulator comes with a number of preconfigured formatters including:
-			<ul>
-				<li><strong>money</strong> - formats a number into a currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
-				<li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
-				<li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
-				<li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
-				<li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
-				<li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
-				<li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
-			</ul>
-		</p>
+	</script>
+</section>
 
-		<p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
+<section>
+	<header>Editable Data</header>
+	<p>
+		Using the <strong>editable</strong> setting on each column, you can make a user editable table.
+	</p>
+	<p>
+		Any time a cell is edited it triggers the <strong>rowEdit</strong> callback, to allow you to process any changes.
+	</p>
+	<p>
+		You ccan call the <strong>getData</strong> method to get an array of all of the tables data, including any edits
+	</p>
+	<div id="example-table-editable"></div>
+	<script type="text/javascript">
 
-		<p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+	$("#example-table-editable").tabulator({
+		height:"320px",
+		columns:[
+		{title:"Name", field:"name", width:200, editable:true},
+		{title:"Age", field:"age", width:90, align:"right", editable:true},
+		{title:"Gender", field:"gender", editable:true},
+		{title:"Height", field:"height", align:"center", width:80, editable:true},
+		{title:"Favourite Color", field:"col", editable:true},
+		{title:"Date Of Birth", field:"dob", align:"center", editable:true},
+		{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
+		],
+		rowEdit:function(id,data,row){
 
-		<div id="example-table-6"></div>
-		<script type="text/javascript">
+		}
+	});
+
+	$("#example-table-editable").tabulator("setData", tabledata);
+
+	$(window).resize(function(){
+		$("#example-table-editable").tabulator("redraw");
+	});
+
+	</script>
+</section>
+
+<section>
+	<header>Sorters</header>
+	<p>Sorting is enabled by default, and can be toggled on or off by column using the <span><strong>sortable</strong></span> option.</p>
+
+	<p>By default all columns are sorted as text, different sort functions can be set using the <span><strong>sorter</strong></span> option
+
+		<ul>
+			<li><strong>string</strong> - sorts column as strings of characters</li>
+			<li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
+			<li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
+			<li><strong>boolean</strong> - sorts column as booleans</li>
+			<li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span><strong>dateFormat</strong></span> option when you create your table. default format is "dd/mm/yyyy")</li>
+		</ul>
+
+	</p>
+
+	<p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
+
+	<div id="example-table-5"></div>
+	<script type="text/javascript">
+	$("#example-table-5").tabulator({
+		height:"320px",
+		fitColumns:true,
+		columns:[
+		{title:"Name", field:"name", sorter:"string", width:200},
+		{title:"Age", field:"age", sorter:"number", align:"right"},
+		{title:"Gender", field:"gender", sorter:"string"},
+		{title:"Height", field:"height",  align:"center", width:100},
+		{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
+			return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+		}},
+		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+		{title:"Likes Cheese", field:"cheese", align:"center", sorter:"boolean"},
+		],
+	});
+
+	$("#example-table-5").tabulator("setData", tabledata);
+
+	$(window).resize(function(){
+		$("#example-table-5").tabulator("redraw");
+	});
+
+
+	</script>
+</section>
+
+<section>
+	<header>Formatters</header>
+	<p></p>
+	<p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
+
+	<p>you can set formatters on a per column basis using the <span><strong>formatter</strong></span> option in the column data.</p>
+
+	<p>
+		Tabulator comes with a number of preconfigured formatters including:
+		<ul>
+			<li><strong>money</strong> - formats a number into a currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
+			<li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
+			<li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
+			<li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
+			<li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
+			<li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
+			<li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
+		</ul>
+	</p>
+
+	<p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
+
+	<p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+
+	<div id="example-table-6"></div>
+	<script type="text/javascript">
 
 
 		var printIcon = function(value, data, cell, row, options){ //plain text value
@@ -360,6 +365,107 @@
 
 		$(window).resize(function(){
 			$("#example-table-6").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
+		<header>Filter Data</header>
+		<p></p>
+		<p>Tabulator allows you to filter the table data by any field in the data set.</p>
+
+		<p>To set a filter you need to call the <strong>setFilter</strong> method, passing the field you wish to filter, the comparison type and the value to filter for</p>
+
+		<p>
+			Tabulator comes with a number of filter comparison types including:
+			<ul>
+				<li><strong>=</strong> - Displays only rows with data that is the same as the filter</li>
+				<li><strong>&lt;</strong> - displays rows with a value less than the filter value</li>
+				<li><strong>&lt;=</strong> - displays rows with a value less than or qual to the filter value</li>
+				<li><strong>&gt;</strong> - displays rows with a value greater than the filter value</li>
+				<li><strong>&gt;=</strong> - displays rows with a value greater than or qual to the filter value</li>
+				<li><strong>!=</strong> - displays rows with a value that is not equal to the filter value</li>
+				<li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
+			</ul>
+		</p>
+
+		<p>
+			<fieldset>
+			    <legend>Filter Parameters</legend>
+
+
+			<label>Field: </label>
+			<select id="filter-field">
+				<option></option>
+				<option value="name">Name</option>
+				<option value="age">Age</option>
+				<option value="gender">Gender</option>
+				<option value="height">Height</option>
+				<option value="col">Favourite Colour</option>
+				<option value="dob">Date Of Birth</option>
+				<option value="cheese">Likes Cheese</option>
+			</select>
+
+
+			<label>Type:</label>
+			<select id="filter-type">
+				<option value="=">=</option>
+				<option value="<">&lt;</option>
+				<option value="<=">&lt;=</option>
+				<option value=">">&gt;</option>
+				<option value=">=">&gt;=</option>
+				<option value="!=">!=</option>
+				<option value="like">like</option>
+			</select>
+
+
+			<label>Value: </label><input id="filter-value" type="text" placeholder="value to filter">
+
+			<input id="filter-clear" type="button" value="Clear Filter" style="margin-left:40px;">
+
+			</fieldset>
+
+		</p>
+
+		<div id="example-table-filters"></div>
+		<script type="text/javascript">
+
+		function updateFilter(){
+			$("#example-table-filters").tabulator("setFilter", $("#filter-field").val(), $("#filter-type").val(), $("#filter-value").val());
+		}
+
+		$("#filter-field, #filter-type").change(updateFilter);
+		$("#filter-value").keyup(updateFilter);
+
+		$("#filter-clear").click(function(){
+			$("#filter-field").val("");
+			$("#filter-type").val("=");
+			$("#filter-value").val("");
+
+			$("#example-table-filters").tabulator("clearFilter");
+		});
+
+
+
+		$("#example-table-filters").tabulator({
+			height:"320px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+		});
+
+		$("#example-table-filters").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-filters").tabulator("redraw");
 		});
 
 		</script>

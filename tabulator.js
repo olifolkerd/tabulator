@@ -466,8 +466,8 @@ setFilter:function(field, type, value){
 	if(field){
 		//set filter
 		self.filterField = field;
-		self.filterType = type ? type : "=";
-		self.filterValue = value;
+		self.filterType = typeof(value) == "undefined" ? "=" : type;
+		self.filterValue = typeof(value) == "undefined" ? type : value;
 	}else{
 		//clear filter
 		self.filterField = null;
@@ -598,7 +598,7 @@ _renderTable:function(){
 },
 
 //check if row data matches filter
-_filterRow:function(item){
+_filterRow:function(row){
 	var self = this;
 
 	// if no filter set display row
@@ -611,6 +611,7 @@ _filterRow:function(item){
 
 	switch(self.filterType){
 		case "=": //equal to
+		console.log("result", value + " - " + term)
 		return value == term ? true : false;
 		break;
 		case "<": //less than
@@ -629,7 +630,7 @@ _filterRow:function(item){
 		return value >= term ? true : false;
 		break;
 
-		case "!": //not equal to
+		case "!=": //not equal to
 		return value != term ? true : false;
 		break;
 
