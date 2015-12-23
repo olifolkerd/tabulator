@@ -196,7 +196,7 @@ You can define a custom formatter function in the formatter option:
 You can create icon/button columns, by not specifying a field in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.
 
 ```js
-//custome formatter definition
+//custom formatter definition
 var printIcon = function(value, data, cell, row, options){ //plain text value
 			return "<i class='fa fa-print'></i>"
 };
