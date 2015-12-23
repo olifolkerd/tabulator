@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
 	<script type="text/javascript" src="tabulator.js"></script>
 </head>
@@ -85,10 +86,16 @@
 		</p>
 		<div id="example-table-1"></div>
 		<script type="text/javascript">
+
+		var printIcon = function(value, data, cell, row, options){ //plain text value
+			return "<i class='fa fa-print' style='vertical-align:middle; padding:2px 0;'></i> "
+		};
+
 		$("#example-table-1").tabulator({
 			height:"320px",
 			fitColumns:true,
 			columns:[
+			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
 			{title:"Name", field:"name", sorter:"string", width:150},
 			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
 			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)}},
@@ -318,12 +325,21 @@
 
 		<p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
 
+		<p>You can create icon/button columns, by not specifying a field in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+
 		<div id="example-table-6"></div>
 		<script type="text/javascript">
+
+
+		var printIcon = function(value, data, cell, row, options){ //plain text value
+			return "<i class='fa fa-print'></i> "
+		};
+
 		$("#example-table-6").tabulator({
 			height:"320px",
 			fitColumns:true,
 			columns:[
+			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
 			{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
 				if(value.indexOf("o") > 0){
 					return "<span style='color:red; font-weight:bold;'>" + value + "</span>";

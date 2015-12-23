@@ -187,8 +187,11 @@ _create: function() {
 
 	$.each(options.columns, function(i, column) {
 
+		column.index = i;
+
 		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
+		column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
 
 		if(options.sortBy == column.field){
 			var sortdir = " data-sortdir='" + options.sortDir + "' ";
@@ -200,7 +203,7 @@ _create: function() {
 
 		var title = column.title ? column.title : "&nbsp";
 
-		var col = $('<div class="tabulator-col" style="display:inline-block" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+		var col = $('<div class="tabulator-col" style="display:inline-block" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
 
 		if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -254,7 +257,7 @@ element.append(self.tableHolder);
 		self.element.on("mousemove", function(e){
 			if(self.mouseDrag){
 				self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
-				self._resizeCol(self.mouseDragElement.data("field"), self.mouseDragElement.outerWidth());
+				self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
 			}
 		})
 		self.element.on("mouseup", function(e){
@@ -265,7 +268,7 @@ element.append(self.tableHolder);
 
 				self.mouseDragOut = true;
 
-				self._resizeCol(self.mouseDragElement.data("field"), self.mouseDragElement.outerWidth());
+				self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
 
 				self.mouseDrag = false;
 				self.mouseDragWidth = false;
@@ -559,7 +562,7 @@ _renderRow:function(item){
 		//set column text alignment
 		var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
-		var cell = $("<div class='tabulator-cell' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+		var cell = $("<div class='tabulator-cell' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 		cell.css({
 
@@ -626,8 +629,8 @@ redraw:function(){
 },
 
 //resize a colum to specified width
-_resizeCol:function(field, width){
-	$(".tabulator-cell[data-field=" + field + "], .tabulator-col[data-field=" + field + "]",this.element).css({width:width})
+_resizeCol:function(index, width){
+	$(".tabulator-cell[data-index=" + index + "], .tabulator-col[data-index=" + index + "]",this.element).css({width:width})
 },
 
 //layout coluns on first render
@@ -643,8 +646,8 @@ _colRender:function(fixedwidth){
 	if(fixedwidth && !options.fitColumns){ //it columns have been resized and now data needs to match them
 		//free sized table
 		$.each(options.columns, function(i, column) {
-			colWidth = $(".tabulator-col[data-field=" + column.field + "]", element).outerWidth();
-			var col = $(".tabulator-cell[data-field=" + column.field + "]", element);
+			colWidth = $(".tabulator-col[data-index=" + i + "]", element).outerWidth();
+			var col = $(".tabulator-cell[data-index=" + i + "]", element);
 			col.css({width:colWidth});
 		});
 	}else{
@@ -682,7 +685,7 @@ _colRender:function(fixedwidth){
 				$.each(options.columns, function(i, column) {
 					var newWidth = column.width ? column.width : proposedWidth;
 
-					var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element);
+					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]",element);
 					col.css({width:newWidth});
 				});
 
@@ -696,7 +699,7 @@ _colRender:function(fixedwidth){
 			//free sized table
 			$.each(options.columns, function(i, column) {
 
-				var col = $(".tabulator-cell[data-field=" + column.field + "], .tabulator-col[data-field=" + column.field + "]",element)
+				var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]",element)
 
 				if(column.width){
 					//reseize to match specified column width
@@ -777,7 +780,7 @@ _rowContext: function(e, row, data){
 _cellClick: function(e, cell){
 
 	var column = this.options.columns.filter(function(column) {
-		return column.field == cell.data("field");
+		return column.index == cell.data("index");
 	});
 
 	column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data")  );
