@@ -241,9 +241,12 @@ To find out what filter is currently applied to the table you should use the ***
 ```
 If there is no filter set, this will return ***false*** otherwise it will return an object with the filter information.
 ```js
-	$("#example-table").tabulator("getFilter");
+{
+	"field":"age",
+	"type":">",
+	"value":10,
+}
 ```
-
 
 ###Clearing Filters
 To remove filters from the table you should use the ***clearFilter*** method.
@@ -252,11 +255,7 @@ To remove filters from the table you should use the ***clearFilter*** method.
 ```
 alternatively you can also call the ***setFilter*** method with no parameters to clear the filter.
 ```js
-{
-	"field":"age",
-	"type":">",
-	"value":10,
-}
+	$("#example-table").tabulator("setFilter");
 ```
 
 
