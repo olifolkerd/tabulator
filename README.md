@@ -192,6 +192,7 @@ You can define a custom formatter function in the formatter option:
 }
 ```
 
+###Icon/Button Columns
 You can create icon/button columns, by not specifying a field in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.
 
 ```js
