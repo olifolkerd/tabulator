@@ -239,7 +239,7 @@ To find out what filter is currently applied to the table you should use the ***
 ```js
 	$("#example-table").tabulator("getFilter");
 ```
-If there is no filter set, this will return ***false*** otherwise it will return an object with the filter information.
+If there is no filter set, this will return ***false***, otherwise it will return an object with the filter information.
 ```js
 {
 	"field":"age",
@@ -529,8 +529,12 @@ Coming Soon
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
 - Grouping Data
-- Filtering Data
+- Pagination- Table Footers
+- Custom Cell Editors
 - Movable Rows
+- Movable Columns
+- Column Visibility Toggle
+- Sparkline Formatter
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
