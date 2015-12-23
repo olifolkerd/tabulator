@@ -15,8 +15,13 @@ mouseDrag:false, //mouse drag tracker;
 mouseDragWidth:false, //starting width of colum on mouse drag
 mouseDragElement:false, //column being dragged
 mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on sort
+
 sortCurCol:null,//column name of currently sorted column
 sortCurDir:null,//column name of currently sorted column
+
+filterField:null, //field to be filtered on data render
+filterValue:null, //value to match on filter
+filterType:null, //filter type
 
 //setup options
 options: {
@@ -453,6 +458,60 @@ clear:function(){
 	this._renderTable();
 },
 
+//filter data in table
+setFilter:function(field, type, value){
+	var self = this;
+
+	//set filter
+	if(field){
+		//set filter
+		self.filterField = field;
+		self.filterType = type ? type : "=";
+		self.filterValue = value;
+	}else{
+		//clear filter
+		self.filterField = null;
+		self.filterType = null;
+		self.filterValue = null;
+	}
+
+	//render table
+	this._renderTable();
+},
+
+//clear filter
+clearFilter:function(){
+	var self = this;
+
+	self.filterField = null;
+	self.filterType = null;
+	self.filterValue = null;
+
+	//render table
+	this._renderTable();
+},
+
+//get current filter info
+getFilter:function(){
+
+	var self = this;
+
+	if(self.filterField){
+
+		var filter = {
+			"field":self.filterField,
+			"type":self.filterType,
+			"value":self.filterValue,
+		};
+
+		return filter;
+
+	}else{
+		return false;
+	}
+
+},
+
 //parse and index data
 _parseData:function(data){
 
@@ -505,7 +564,10 @@ _renderTable:function(){
 
 	//build rows of table
 	self.data.forEach( function(item, i) {
-		self.table.append(self._renderRow(item));
+		//check if filter and only build row if if data matches filter
+		if(!self.filterField || (self.filterField && self._filterRow(item))){
+			self.table.append(self._renderRow(item));
+		}
 	});
 
 	self.table.css({//
@@ -532,6 +594,54 @@ _renderTable:function(){
 	self._hideLoader(self);
 
 	self._trigger("renderComplete");
+
+},
+
+//check if row data matches filter
+_filterRow:function(item){
+	var self = this;
+
+	// if no filter set display row
+	if(!self.filterField){
+		return true;
+	}
+
+	var value = row[self.filterField];
+	var term = self.filterValue;
+
+	switch(self.filterType){
+		case "=": //equal to
+		return value == term ? true : false;
+		break;
+		case "<": //less than
+		return value < term ? true : false;
+		break;
+
+		case "<=": //less than or equal too
+		return value <= term ? true : false;
+		break;
+
+		case ">": //greater than
+		return value > term ? true : false;
+		break;
+
+		case ">=": //greater than or equal too
+		return value >= term ? true : false;
+		break;
+
+		case "!": //not equal to
+		return value != term ? true : false;
+		break;
+
+		case "like": //text like
+		return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+		break;
+
+		default:
+		return false;
+	}
+
+	return false;
 
 },
 
@@ -926,20 +1036,20 @@ formatters:{
 	money:function(value, data, cell, row, options){
 		var number =  parseFloat(value).toFixed(2);
 
-    	var number = number.split('.');
+		var number = number.split('.');
 
-   		var integer = number[0];
-    	var decimal = number.length > 1 ? '.' + number[1] : '';
+		var integer = number[0];
+		var decimal = number.length > 1 ? '.' + number[1] : '';
 
-    	var rgx = /(\d+)(\d{3})/;
+		var rgx = /(\d+)(\d{3})/;
 
-    	while (rgx.test(integer)) {
+		while (rgx.test(integer)) {
 
-            integer = integer.replace(rgx, '$1' + ',' + '$2');
+			integer = integer.replace(rgx, '$1' + ',' + '$2');
 
-    	}
+		}
 
-   		return integer + decimal;
+		return integer + decimal;
 	},
 	email:function(value, data, cell, row, options){
 		return "<a href='mailto:" + value + "'>" + value + "</a>";
