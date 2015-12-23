@@ -239,7 +239,7 @@ To remove filters from the table you should use the ***clearFilter*** method.
 ```js
 	$("#example-table").tabulator("clearFilter");
 ```
-alternativly you can also call the ***setFilter*** method with no parameters to clear the filter.
+alternatively you can also call the ***setFilter*** method with no parameters to clear the filter.
 ```js
 	$("#example-table").tabulator("setFilter");
 ```

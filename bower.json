@@ -1,11 +1,11 @@
 {
   "name": "tabulator",
   "main": "tabulator.js",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "An easy to use table generation JQuery UI Plugin",
   "keywords": [
     "table",
-    "grid",
+    "grid"2
     "jquery",
     "jqueryui",
     "widget",
