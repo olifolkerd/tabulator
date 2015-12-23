@@ -64,7 +64,7 @@ $("#example-table").tabulator({
 There are a number of parameters that can be passed in with each column to determine how it is displayed:
 
 - **title** - ***Required*** This is the title that will be displayed in the header for this column
-- **field** - ***Required*** **(not required in icon/button columns)** this is the key for this column in the data array
+- **field** - ***Required*** *(not required in icon/button columns)* this is the key for this column in the data array
 - **align** - sets the text alignment for this column (left|center|right)
 - **width** - sets the width of this column (if not set the system will determine the best)
 - **sortable** - determines if the user can sort data by this column (see [Sorting Data](#sorting-data) for more details)
