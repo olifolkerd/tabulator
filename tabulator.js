@@ -873,7 +873,7 @@ _formatDate:function(dateString){
 //custom data sorters
 sorters:{
 	number:function(a, b){ //sort numbers
-		return parseFloat(a) - parseFloat(b);
+		return parseFloat(a.replace(",","")) - parseFloat(b.replace(",",""));
 	},
 	string:function(a, b){ //sort strings
 		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
@@ -919,6 +919,24 @@ sorters:{
 formatters:{
 	plaintext:function(value, data, cell, row, options){ //plain text value
 		return value;
+	},
+	money:function(value, data, cell, row, options){
+		var number =  parseFloat(value).toFixed(2);
+
+    	var number = number.split('.');
+
+   		var integer = number[0];
+    	var decimal = number.length > 1 ? '.' + number[1] : '';
+
+    	var rgx = /(\d+)(\d{3})/;
+
+    	while (rgx.test(integer)) {
+
+            integer = integer.replace(rgx, '$1' + ',' + '$2');
+
+    	}
+
+   		return integer + decimal;
 	},
 	email:function(value, data, cell, row, options){
 		return "<a href='mailto:" + value + "'>" + value + "</a>";

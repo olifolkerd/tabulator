@@ -144,7 +144,7 @@ By default all data is sorted as a string. if you wish to specify a different so
 
 Tabulator comes with a number of preconfigured sorters including:
 - **string** - sorts column as strings of characters
-- **number** - sorts column as numbers (integer or float)
+- **number** - sorts column as numbers (integer or float, will also handle numbers using "," seperators)
 - **alphanum** - sorts column as alpha numeric code
 - **boolean** - sorts column as booleans
 - **date** - sorts column as dates (for this you will need to set the date format using the ***dateFormat*** option when you create your table. default format is "dd/mm/yyyy")
@@ -171,6 +171,7 @@ you can set formatters on a per column basis using the ***formatter*** option in
 ```
 
 Tabulator comes with a number of preconfigured formatters including:
+- **money** - formats a number into currency notation (eg. 1234567.8901 -> 1,234,567.89)
 - **email** - renders data as an anchor with a mailto: link to the given value
 - **link** - renders data as an anchor with a link to the given value
 - **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
