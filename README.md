@@ -234,6 +234,17 @@ You can only have one filter active at a time, calling setFilter a second time w
 
 Filters will remain in effect until they are cleared, including during ***setData*** calls.
 
+###Get Current Filter
+To find out what filter is currently applied to the table you should use the ***getFilter*** method.
+```js
+	$("#example-table").tabulator("getFilter");
+```
+iI there is no filter set, this will return ***false*** otherwise it will return an object with the filter information.
+```js
+	$("#example-table").tabulator("getFilter");
+```
+
+
 ###Clearing Filters
 To remove filters from the table you should use the ***clearFilter*** method.
 ```js
@@ -241,7 +252,11 @@ To remove filters from the table you should use the ***clearFilter*** method.
 ```
 alternatively you can also call the ***setFilter*** method with no parameters to clear the filter.
 ```js
-	$("#example-table").tabulator("setFilter");
+{
+	"field":"age",
+	"type":">",
+	"value":10,
+}
 ```
 
 
