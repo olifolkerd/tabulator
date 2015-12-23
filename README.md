@@ -64,7 +64,7 @@ $("#example-table").tabulator({
 There are a number of parameters that can be passed in with each column to determine how it is displayed:
 
 - **title** - ***Required*** This is the title that will be displayed in the header for this column
-- **field** - ***Required*** this is the key for this column in the data array
+- **field** - ***Required*** **(not required in icon/button columns)** this is the key for this column in the data array
 - **align** - sets the text alignment for this column (left|center|right)
 - **width** - sets the width of this column (if not set the system will determine the best)
 - **sortable** - determines if the user can sort data by this column (see [Sorting Data](#sorting-data) for more details)
@@ -193,7 +193,7 @@ You can define a custom formatter function in the formatter option:
 ```
 
 ###Icon/Button Columns
-You can create icon/button columns, by not specifying a field in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.
+You can create icon/button columns, by not specifying the ***field*** parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.
 
 ```js
 //custom formatter definition
