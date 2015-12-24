@@ -272,8 +272,6 @@ $("#example-table").tabulator("clear");
 ### Editable Data
 Columns of the table can be set as editable using the ***editable*** parameter in the column definition. (see [Define Column Headers](#define-column-headers) for more details).
 
-**Note** - Only columns without formatters can be set as editable.
-
 When a user clicks on an editable column the will be able to edit the text in that cell. for the moment only plain text can be edited, support for custom editors willl be comming in a future version.
 
 ### Add Row

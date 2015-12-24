@@ -17,7 +17,7 @@
 	<style type="text/css">
 	body{
 		padding:20px 40px;
-		font-family: 'Montserrat', sans-serif;
+		font-family: 'Montserrat', sans-serif !important;
 	}
 
 	.tabulator{
@@ -41,12 +41,13 @@
 		margin-bottom:2px;
 	}
 
-	button{
+	button, select{
 		margin-right:20px;
 	}
 
-	select{
-		margin-right:20px;
+	input{
+		font-family: 'Montserrat', sans-serif !important;
+
 	}
 
 	</style>
@@ -232,7 +233,7 @@ $(window).resize(function(){
 		Any time a cell is edited it triggers the <strong>rowEdit</strong> callback, to allow you to process any changes.
 	</p>
 	<p>
-		You ccan call the <strong>getData</strong> method to get an array of all of the tables data, including any edits
+		You can call the <strong>getData</strong> method to get an array of all of the tables data, including any edits
 	</p>
 	<div id="example-table-editable"></div>
 	<script type="text/javascript">
@@ -241,9 +242,9 @@ $(window).resize(function(){
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200, editable:true},
-		{title:"Age", field:"age", width:90, align:"right", editable:true},
+		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress", width:200,  editable:true},
 		{title:"Gender", field:"gender", editable:true},
-		{title:"Height", field:"height", align:"center", width:80, editable:true},
+		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
 		{title:"Favourite Color", field:"col", editable:true},
 		{title:"Date Of Birth", field:"dob", align:"center", editable:true},
 		{title:"Likes Cheese", field:"cheese", align:"center", editable:true},

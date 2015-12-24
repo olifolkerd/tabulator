@@ -289,7 +289,7 @@ element.append(self.tableHolder);
 
 		});
 
-		element.on("change", ".tabulator-cell input", function(e){
+		element.on("change blur", ".tabulator-cell input", function(e){
 			self._cellDataChange($(this));
 		})
 	}
@@ -331,6 +331,10 @@ _cellDataChange: function(input){
 		//update tabulator data
 		self.data[rowData.id] = rowData;
 	}
+
+	//reformat cell data
+	cell.html(self._formatCell(cell.data("formatter"), input.val(), rowData, cell, row))
+	.css({"padding":"4px"});
 
 
 	//triger event
@@ -611,9 +615,9 @@ _filterRow:function(row){
 
 	switch(self.filterType){
 		case "=": //equal to
-		console.log("result", value + " - " + term)
 		return value == term ? true : false;
 		break;
+
 		case "<": //less than
 		return value < term ? true : false;
 		break;
@@ -673,7 +677,10 @@ _renderRow:function(item){
 		//set column text alignment
 		var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
-		var cell = $("<div class='tabulator-cell' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+		//mark cell as editable
+		var editable = column.editable ? "data-editable=true" : "";
+
+		var cell = $("<div class='tabulator-cell' data-index='" + i + "' " + editable + " data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 		cell.css({
 
@@ -685,31 +692,44 @@ _renderRow:function(item){
 			"white-space":"nowrap",
 			"overflow":"hidden",
 			"text-overflow":"ellipsis",
+			"padding":"4px",
 		})
 
-		//add textbox if cell is editable
-		if(column.editable){
-			cell.html("<input type='text'/>");
-			$("input", cell).css({
-				"border":"none",
-				"background":"transparent",
-				"padding":"4px",
-				"width":"100%",
-				"box-sizing":"border-box",
-			});
-			$("input", cell).val(value);
-		}else{
 
-			cell.css({padding: "4px"});
-			//format cell contents
-			cell.html(self._formatCell(column.formatter, value, item, cell, row));
-		}
-
-
+		//format cell contents
+		cell.data("formatter", column.formatter);
+		cell.html(self._formatCell(column.formatter, value, item, cell, row));
 
 		//bind cell click function
 		if(typeof(column.onClick) == "function"){
 			cell.on("click", function(e){self._cellClick(e, cell)});
+		}else{
+			//handle input replacement on editable cells
+			if(cell.data("editable")){
+				cell.on("click", function(e){
+
+					e.stopPropagation();
+
+					//create and style input
+					cell.html("<input type='text'/>");
+					$("input", cell).css({
+						"border":"none",
+						"background":"transparent",
+						"padding":"4px",
+						"width":"100%",
+						"box-sizing":"border-box",
+					})
+					.click(function(e){
+						e.stopPropagation();
+					})
+
+					$("input", cell).val(cell.data("value"));
+					cell.css({padding: "0"});
+
+					//set focus on input
+					$("input", cell).focus();
+				});
+			}
 		}
 
 		row.append(cell);
