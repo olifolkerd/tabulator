@@ -42,6 +42,10 @@ Turn the element into a tabulator with some simple javascript
 $("#example-table").tabulator();
 ```
 
+###Live Demo
+
+A live demo of tabulator in action can be found [here](http://htmlpreview.github.io/?https://github.com/olifolkerd/tabulator/blob/master/examples.html).
+
 ###Examples
 A selection of demo tables can be found in the ***examples.html*** file.
 
