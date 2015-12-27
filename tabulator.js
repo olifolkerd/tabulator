@@ -59,7 +59,7 @@ options: {
 	sortBy:"id", //defualt column to sort by
 	sortDir:"desc", //default sort direction
 
-	groupBy:"gender", //enable table grouping and set field to group by
+	groupBy:false, //enable table grouping and set field to group by
 	groupHeader:function(value, count, data){ //header layout function
 		return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
 	},
