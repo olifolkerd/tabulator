@@ -579,8 +579,10 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
-- Pagination- Table Footers
+- Pagination
+- Table Footers
 - Custom Cell Editors
+- Custom Filter Functions
 - Movable Rows
 - Movable Columns
 - Column Visibility Toggle
@@ -588,3 +590,5 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
+
+Get in touch if there are any features you feel Tabulator needs.
