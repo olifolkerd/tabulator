@@ -454,6 +454,27 @@ loaderError|string|html (see below)| html for the loader element in the event of
 <div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'>Loading Error</div>
 ```
 
+CSS Clases
+================================
+Tabulator elements are assigned a range of CSS classes to make it easier for you to manipulate the look, feel and function of the table.
+
+Class | Element Description
+---|---
+tabulator | Tabulator container element
+tabulator-header | Column header row
+tabulator-col | Column header (in header row)
+tabulator-handle | Invisible resize handle on the right of each column header
+tabulator-arrow | Sorting arrows
+tabulator-tableHolder | Contain table and scroll bars
+tabulator-table | Contain table rows
+tabulator-row | Row of table
+tabulator-cell | Data cell
+tabulator-group | A group of rows (including group header)
+tabulator-group-header | contains header for a group
+tabulator-group-body | Contains all data rows for a group
+tabulator-loader-msg | Ajax loader message
+
+
 Callbacks
 ================================
 Tabulator features a range of callbacks to allow you to handle user interaction.
