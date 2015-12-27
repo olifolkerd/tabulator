@@ -211,6 +211,31 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
 ```
 
+Grouping Data
+================================
+
+With Tabulator you can group rows together using the ***groupBy*** option.
+
+To group by a field, set this option to the name of the field to be grouped.
+```js
+groupBy:"gender",
+```
+
+To group by more complex operations you should pass a function that returns a string that represents the group.
+```js
+groupBy:function(data){
+   return data.gender + " - " + data.age; //groups by data and age
+}
+```
+
+### Custom Group Headers
+You can set the contents of the group headers with the ***groupHeader*** option. This should return the contents of the group header.
+```js
+groupHeader:function(value, count, data){
+   return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
+},
+```
+
 Filtering Data
 ================================
 Tabulator allows you to filter the table data by any field in the data set.
