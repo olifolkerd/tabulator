@@ -15,6 +15,7 @@ Tabulator is packed with useful  features including:
 - Editable cells
 - Adding/Deleting rows
 - Custom data formatting
+- Grouping Rows
 - Data filtering
 - Resizable columns
 - Auto scaling  to fit data/element
@@ -557,7 +558,6 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
-- Grouping Data
 - Pagination- Table Footers
 - Custom Cell Editors
 - Movable Rows
