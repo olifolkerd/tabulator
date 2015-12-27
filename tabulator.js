@@ -472,6 +472,8 @@ clear:function(){
 setFilter:function(field, type, value){
 	var self = this;
 
+	self._trigger("filterStarted");
+
 	//set filter
 	if(field){
 		//set filter
@@ -643,6 +645,11 @@ _renderTable:function(){
 	self._hideLoader(self);
 
 	self._trigger("renderComplete");
+
+	if(self.filterField){
+		self._trigger("filterComplete");
+	}
+
 
 },
 

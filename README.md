@@ -550,6 +550,8 @@ renderStarted|Table is has started to render
 renderComplete|Table is has finished being rendered
 sortStarted|Table has started sorting
 sortComplete|Table has finished sorting
+filterStarted|Table Filter has started
+filterComplete|Filter has been applied to table
 
 Coming Soon
 ================================
