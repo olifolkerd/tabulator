@@ -372,6 +372,44 @@ $(window).resize(function(){
 	</section>
 
 	<section>
+	<header>Grouping Data</header>
+	<p></p>
+	<p>You can group rows togeather using the <strong>groupBy</strong> option. To group by a field, set this option to the name of the field.</p>
+	<p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+
+	<div id="example-table-grouping"></div>
+	<script type="text/javascript">
+
+
+		var printIcon = function(value, data, cell, row, options){ //plain text value
+			return "<i class='fa fa-print'></i> "
+		};
+
+		$("#example-table-grouping").tabulator({
+			height:"320px",
+			fitColumns:true,
+			groupBy:"gender",
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+		});
+
+		$("#example-table-grouping").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-grouping").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+	<section>
 		<header>Filter Data</header>
 		<p></p>
 		<p>Tabulator allows you to filter the table data by any field in the data set.</p>
