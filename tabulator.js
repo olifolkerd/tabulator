@@ -59,7 +59,11 @@ options: {
 	sortBy:"id", //defualt column to sort by
 	sortDir:"desc", //default sort direction
 
-	groupBy:false, //enable table grouping and set field to group by
+	groupBy:"gender", //enable table grouping and set field to group by
+	groupHeader:function(value, count, data){ //header layout function
+		return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
+	},
+
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
@@ -581,12 +585,14 @@ _renderTable:function(){
 			if(options.groupBy){
 
 				// if groups in use, render column in group
+				var groupVal = typeof(options.groupBy) == "function" ? options.groupBy(item) : item[options.groupBy];
 
-				var group = $(".tabulator-group[data-value='" + item[options.groupBy] + "']", self.table);
+
+				var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
 
 				//if group does not exist, build it
 				if(group.length == 0){
-					group = self._renderGroup(item[options.groupBy]);
+					group = self._renderGroup(groupVal);
 					self.table.append(group);
 				}
 
@@ -607,6 +613,8 @@ _renderTable:function(){
 		$(".tabulator-group", self.table).each(function(){
 			self._renderGroupHeader($(this));
 		});
+
+		self._sortElement(self.table, {}, "asc", true); //sort groups
 
 	}
 
@@ -690,7 +698,13 @@ _renderGroupHeader:function(group){
 				"border-bottom": "0",
 			})
 		}
-	})
+	});
+
+	var data = [];
+
+	$(".tabulator-row", group).each(function(){
+		data.push($(this).data("data"));
+	});
 
 
 	$(".tabulator-group-header", group)
@@ -703,8 +717,7 @@ _renderGroupHeader:function(group){
 		"box-sizing":"border-box",
 	})
 	.html(arrow)
-
-	.append(group.data("value") + "<span style='color:#d00; margin-left:10px;'>(" + $(".tabulator-row", group).length + " item)</span>");
+	.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
 },
 
 //check if row data matches filter
@@ -1118,8 +1131,10 @@ _sortElement:function(element, column, dir, sortGroups){
 		b = column.sorter == "date" ? self._formatDate(el2) : el2;
 
 		//run sorter
-		var sorter = typeof(column.sorter) == "undefined" ? "plaintext" : column.sorter;
+
+		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
+
 		return sorter(a, b);
 
 	}).appendTo(element);
