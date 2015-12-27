@@ -470,7 +470,7 @@ tabulator-table | Contain table rows
 tabulator-row | Row of table
 tabulator-cell | Data cell
 tabulator-group | A group of rows (including group header)
-tabulator-group-header | contains header for a group
+tabulator-group-header | Contains header for a group
 tabulator-group-body | Contains all data rows for a group
 tabulator-loader-msg | Ajax loader message
 
