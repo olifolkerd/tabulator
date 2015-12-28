@@ -579,7 +579,7 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
-- Pagination
+- Pagination (via Ajax or in-table)
 - Table Footers
 - Custom Cell Editors
 - Custom Filter Functions
