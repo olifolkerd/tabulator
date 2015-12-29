@@ -35,7 +35,7 @@ Include the library
 
 Create an element to hold the table
 ```html
-<div id="example-table"><div>
+<div id="example-table"></div>
 ```
 
 Turn the element into a tabulator with some simple javascript
