@@ -238,12 +238,46 @@ $(window).resize(function(){
 	<div id="example-table-editable"></div>
 	<script type="text/javascript">
 
+	//custom editor
+	var genderEditor = function(cell, value){
+
+		//create and style input
+		var input = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
+		input.css({
+			"border":"1px",
+			"background":"transparent",
+			"padding":"4px",
+			"width":"100%",
+			"box-sizing":"border-box",
+		})
+		.click(function(e){ //prevent click triggering issues
+			e.stopPropagation();
+		})
+		.val(value);
+
+		//set focus on the select box when the editor is selected
+		cell.on("focus", function(){
+			setTimeout(function(){
+				input.focus();
+			},100)
+		});
+
+		//when the value has been set, update the table
+		input.on("change blur", function(e){
+			$(this).closest(".tabulator-cell").trigger("editval", input.val());
+		});
+
+		//return the editor element
+		return input;
+
+	}
+
 	$("#example-table-editable").tabulator({
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200, editable:true},
 		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress", width:200,  editable:true},
-		{title:"Gender", field:"gender", editable:true},
+		{title:"Gender", field:"gender", editable:true, editor:genderEditor},
 		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
 		{title:"Favourite Color", field:"col", editable:true},
 		{title:"Date Of Birth", field:"dob", align:"center", editable:true},
