@@ -816,19 +816,11 @@ _renderRow:function(item){
 		//set column text alignment
 		var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
-		//mark cell as editable
-		var editable = "";
 
-		//match to formatter if one exists
-		if (column.editable || column.editor){
-			if(column.editor){
-				editable = self.editors[column.editor] ? "data-editor='" + column.editor + "'" : "data-editor='input'";
-			}else{
-				editable = self.editors[column.formatter] ? "data-editor='" + column.formatter + "'" : "data-editor='input'";
-			}
-		}
 
-		var cell = $("<div class='tabulator-cell' tabindex='0' data-index='" + i + "' " + editable + " data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+
+
+		var cell = $("<div class='tabulator-cell' tabindex='0' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 		cell.css({
 			"text-align": align,
@@ -842,6 +834,19 @@ _renderRow:function(item){
 			"padding":"4px",
 		})
 
+		//mark cell as editable
+		var editor = false;
+
+		//match editor if one exists
+		if (column.editable || column.editor){
+			if(column.editor){
+				editor = column.editor;
+			}else{
+				editor = self.editors[column.formatter] ? column.formatter: "input";
+			}
+		}
+
+		cell.data("editor", editor);
 
 		//format cell contents
 		cell.data("formatter", column.formatter);
@@ -859,7 +864,9 @@ _renderRow:function(item){
 					e.stopPropagation();
 					cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
 
-					var cellEditor = self.editors[cell.data("editor")](cell, cell.data("value"), self.options.editBoxColor);
+					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
+
+					var cellEditor = editorFunc(cell, cell.data("value"));
 					cell.empty();
 					cell.append(cellEditor);
 
@@ -1329,7 +1336,7 @@ formatters:{
 
 //custom data editors
 editors:{
-	input:function(cell, value, editBoxColor){
+	input:function(cell, value){
 
 		//create and style input
 		var input = $("<input type='text'/>");
@@ -1359,7 +1366,7 @@ editors:{
 		return input;
 
 	},
-	star:function(cell, value, editBoxColor){
+	star:function(cell, value){
 		var maxStars = $("svg", cell).length;
 		var size = $("svg:first", cell).attr("width");
 		var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
