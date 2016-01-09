@@ -817,7 +817,7 @@ _renderRow:function(item){
 			"box-sizing":"border-box",
 			"display":"inline-block",
 			"vertical-align":"middle",
-			"min-height":self.options.headerHeight,
+			"min-height":self.options.headerHeight + 2,
 			"white-space":"nowrap",
 			"overflow":"hidden",
 			"text-overflow":"ellipsis",
