@@ -341,7 +341,7 @@ _cellDataChange: function(input){
 	}
 
 	//reformat cell data
-	cell.html(self._formatCell(cell.data("formatter"), input.val(), rowData, cell, row))
+	cell.html(self._formatCell(cell.data("formatter"), input.val(), rowData, cell, row, cell.data("formatterParams")))
 	.css({"padding":"4px"});
 
 
@@ -827,7 +827,8 @@ _renderRow:function(item){
 
 		//format cell contents
 		cell.data("formatter", column.formatter);
-		cell.html(self._formatCell(column.formatter, value, item, cell, row));
+		cell.data("formatterParams", column.formatterParams);
+		cell.html(self._formatCell(column.formatter, value, item, cell, row, column.formatterParams));
 
 		//bind cell click function
 		if(typeof(column.onClick) == "function"){
@@ -1042,11 +1043,11 @@ _styleRows:function(){
 },
 
 //format cell contents
-_formatCell:function(formatter, value, data, cell, row){
+_formatCell:function(formatter, value, data, cell, row, formatterParams){
 	var formatter = typeof(formatter) == "undefined" ? "plaintext" : formatter;
 	formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
 
-	return formatter(value, data, cell, row,  this.options);
+	return formatter(value, data, cell, row, this.options, formatterParams);
 },
 
 //carry out action on row click
@@ -1240,10 +1241,10 @@ sorters:{
 
 //custom data formatters
 formatters:{
-	plaintext:function(value, data, cell, row, options){ //plain text value
+	plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
 		return value;
 	},
-	money:function(value, data, cell, row, options){
+	money:function(value, data, cell, row, options, formatterParams){
 		var number =  parseFloat(value).toFixed(2);
 
 		var number = number.split('.');
@@ -1261,20 +1262,20 @@ formatters:{
 
 		return integer + decimal;
 	},
-	email:function(value, data, cell, row, options){
+	email:function(value, data, cell, row, options, formatterParams){
 		return "<a href='mailto:" + value + "'>" + value + "</a>";
 	},
-	link:function(value, data, cell, row, options){
+	link:function(value, data, cell, row, options, formatterParams){
 		return "<a href='" + value + "'>" + value + "</a>";
 	},
-	tick:function(value, data, cell, row, options){
+	tick:function(value, data, cell, row, options, formatterParams){
 		var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 		if(value === true || value === 'true' || value === 'True' || value === 1){
 			return tick;
 		}
 	},
-	tickCross:function(value, data, cell, row, options){
+	tickCross:function(value, data, cell, row, options, formatterParams){
 		var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 		var cross = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
@@ -1284,9 +1285,9 @@ formatters:{
 			return cross;
 		}
 	},
-	star:function(value, data, cell, row, options){
-		var maxStars = 5;
-		var stars=$("<span></span>");
+	star:function(value, data, cell, row, options, formatterParams){
+		var maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5;
+		var stars=$("<span style='vertical-align:middle;'></span>");
 
 		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
@@ -1308,7 +1309,7 @@ formatters:{
 
 		return stars.html();
 	},
-	progress:function(value, data, cell, row, options){ //progress bar
+	progress:function(value, data, cell, row, options, formatterParams){ //progress bar
 		value = parseFloat(value) <= 100 ? parseFloat(value) : 100;
 
 		cell.css({

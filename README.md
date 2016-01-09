@@ -171,9 +171,11 @@ Formatting Data
 ================================
 Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.
 
-you can set formatters on a per column basis using the ***formatter*** option in the column data.
+You can set formatters on a per column basis using the ***formatter*** option in the column data.
+
+You can pass an optional additional parameter with formatter, ***formatterParams*** that should contain an object with additional information for configuring the formatter.
 ```js
-{title:"Name", field:"name", formatter:"tick"}
+{title:"Name", field:"name", formatter:"star", formatterParams:{stars:6}}
 ```
 
 Tabulator comes with a number of preconfigured formatters including:
@@ -182,17 +184,18 @@ Tabulator comes with a number of preconfigured formatters including:
 - **link** - renders data as an anchor with a link to the given value
 - **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
 - **tickCross** - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not
-- **star** - displays a graphical 0-5 star rating based on integer values from 0-5
+- **star** - displays a graphical star rating based on integer values *(formatterParams has the option of* ***stars*** *which is an interger value representing the maximum number of stars to be displayed, defaults to 5)*
 - **progress** - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width
 
 You can define a custom formatter function in the formatter option:
 ```js
-{title:"Name", field:"name", formatter:function(value, data, cell, row, options){
+{title:"Name", field:"name", formatter:function(value, data, cell, row, options, formatterParams){
 		//value - the value of the cell
 		//data - the data for the row the cell is in
 		//cell - the DOM element of the cell
 		//row - the DOM element of the row
 		//options - the options set for this tabulator
+		//formatterParams - parameters set for the column
 		return "<div></div>"; // must return the html or jquery element of the html for the contents of the cell;
 	},
 }
