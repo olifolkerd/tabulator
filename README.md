@@ -212,6 +212,24 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
 ```
 
+###Row Formatting
+Tabulator also allows you to define a row level formatter using the ***rowFormatter*** option. this lets you alter each row of the table based on the data it contains.
+
+The example below changes the background colour of a cell to blue if the ***col*** value for that row is ***"blue"***.
+
+```js
+$("#example-table-6").tabulator({
+	rowFormatter:function(row, data){
+		//row - JQuery object for row
+		//data - the data for the row
+
+		if(data.col == "blue"){
+			row.css({"background-color":"#A6A6DF"});
+		}
+	},
+});
+
+
 Grouping Data
 ================================
 

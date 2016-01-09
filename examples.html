@@ -333,6 +333,8 @@ $(window).resize(function(){
 
 	<p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
 
+	<p>You can also set a row formatter using the <strong>rowFormatter</strong> option, this allows you to format the styling of the row as a whole</p>
+
 	<div id="example-table-6"></div>
 	<script type="text/javascript">
 
@@ -344,6 +346,12 @@ $(window).resize(function(){
 		$("#example-table-6").tabulator({
 			height:"320px",
 			fitColumns:true,
+			rowFormatter:function(row, data){
+
+				if(data.col == "blue"){
+					row.css({"background-color":"#A6A6DF"});
+				}
+			},
 			columns:[
 			{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
 			{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){

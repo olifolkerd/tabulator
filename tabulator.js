@@ -64,6 +64,8 @@ options: {
 		return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
 	},
 
+	rowFormatter:false, //row formatter
+
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
@@ -584,6 +586,7 @@ _renderTable:function(){
 
 			var row = self._renderRow(item);
 
+
 			if(options.groupBy){
 
 				// if groups in use, render column in group
@@ -995,14 +998,30 @@ _styleRows:function(){
 	if(self.options.selectable){
 		$(".tabulator-row", self.table)
 		.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":self.options.rowHoverBackground})})
-		.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
+		.on("mouseout", function(){
+
+			$(this).css({"background-color":"transparent"});
+
+			if(self.options.rowFormatter){
+				self.options.rowFormatter($(this), $(this).data("data"));
+			}
+
+		})
 	}
 
 	//color odd rows
 	$(".tabulator-row:nth-of-type(even)", self.table).css({
 		"background-color": "rgba(0,0,0,.1);" //shade even numbered rows
 	})
-	.on("mouseout", function(){$(this).css({"background-color": "rgba(0,0,0,.08);"})}); //make sure odd rows revert back to color after hover
+	.on("mouseout", function(){
+
+		$(this).css({"background-color": "rgba(0,0,0,.08);"})
+
+		if(self.options.rowFormatter){
+			self.options.rowFormatter($(this), $(this).data("data"));
+		}
+
+	}); //make sure odd rows revert back to color after hover
 
 	//add column borders to rows
 	$(".tabulator-cell", self.table).css({
@@ -1012,6 +1031,14 @@ _styleRows:function(){
 	if(!self.options.height){
 		self.element.css({height:self.table.outerHeight() + self.options.headerHeight + 3})
 	}
+
+	//apply row formatter
+	if(self.options.rowFormatter){
+		$(".tabulator-row", self.table).each(function(){
+			self.options.rowFormatter($(this), $(this).data("data"));
+		});
+	}
+
 },
 
 //format cell contents
