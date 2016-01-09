@@ -64,6 +64,8 @@ options: {
 		return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
 	},
 
+	editBoxColor:"#1D68CD", //color for edit boxes
+
 	rowFormatter:false, //row formatter
 
 
@@ -297,10 +299,18 @@ element.append(self.tableHolder);
 
 		});
 
-		element.on("change blur", ".tabulator-cell input", function(e){
-			self._cellDataChange($(this));
-		})
 	}
+
+
+	element.on("editval", ".tabulator-cell", function(e, value){
+		console.log("editval", value)
+		if($(this).is(":focus")){$(this).blur()}
+			self._cellDataChange($(this), value);
+	})
+
+	element.on("editcancel", ".tabulator-cell", function(e, value){
+		self._cellDataChange($(this), $(this).data("value"));
+	})
 
 	//append sortable arrows to sortable headers
 	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"25px"})
@@ -320,19 +330,17 @@ _setOption: function(option, value) {
 },
 
 //handle cell data change
-_cellDataChange: function(input){
+_cellDataChange: function(cell, value){
 
 	var self = this;
-
-	var cell = input.closest(".tabulator-cell");
 	var row = cell.closest(".tabulator-row");
 
 	//update cell data value
-	cell.data("value", input.val());
+	cell.data("value", value);
 
 	//update row data
 	var rowData =  row.data("data");
-	rowData[cell.data("field")] = input.val();
+	rowData[cell.data("field")] = value;
 	row.data("data", rowData);
 
 	if(rowData.id){
@@ -341,12 +349,14 @@ _cellDataChange: function(input){
 	}
 
 	//reformat cell data
-	cell.html(self._formatCell(cell.data("formatter"), input.val(), rowData, cell, row, cell.data("formatterParams")))
+	cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")))
 	.css({"padding":"4px"});
 
 
 	//triger event
 	self.options.rowEdit(rowData.id, rowData, row);
+
+	self._styleRows();
 
 },
 
@@ -807,12 +817,20 @@ _renderRow:function(item){
 		var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
 		//mark cell as editable
-		var editable = column.editable ? "data-editable=true" : "";
+		var editable = "";
 
-		var cell = $("<div class='tabulator-cell' data-index='" + i + "' " + editable + " data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+		//match to formatter if one exists
+		if (column.editable || column.editor){
+			if(column.editor){
+				editable = self.editors[column.editor] ? "data-editor='" + column.editor + "'" : "data-editor='input'";
+			}else{
+				editable = self.editors[column.formatter] ? "data-editor='" + column.formatter + "'" : "data-editor='input'";
+			}
+		}
+
+		var cell = $("<div class='tabulator-cell' tabindex='0' data-index='" + i + "' " + editable + " data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 		cell.css({
-
 			"text-align": align,
 			"box-sizing":"border-box",
 			"display":"inline-block",
@@ -835,29 +853,17 @@ _renderRow:function(item){
 			cell.on("click", function(e){self._cellClick(e, cell)});
 		}else{
 			//handle input replacement on editable cells
-			if(cell.data("editable")){
+			if(cell.data("editor")){
 				cell.on("click", function(e){
 
 					e.stopPropagation();
+					cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
 
-					//create and style input
-					cell.html("<input type='text'/>");
-					$("input", cell).css({
-						"border":"none",
-						"background":"transparent",
-						"padding":"4px",
-						"width":"100%",
-						"box-sizing":"border-box",
-					})
-					.click(function(e){
-						e.stopPropagation();
-					})
+					var cellEditor = self.editors[cell.data("editor")](cell, cell.data("value"), self.options.editBoxColor);
+					cell.empty();
+					cell.append(cellEditor);
 
-					$("input", cell).val(cell.data("value"));
-					cell.css({padding: "0"});
-
-					//set focus on input
-					$("input", cell).focus();
+					cell.focus();
 				});
 			}
 		}
@@ -1026,6 +1032,7 @@ _styleRows:function(){
 
 	//add column borders to rows
 	$(".tabulator-cell", self.table).css({
+		"border":"none",
 		"border-right":"1px solid " + self.options.rowBorderColor,
 	});
 
@@ -1317,6 +1324,99 @@ formatters:{
 		});
 
 		return "<div style='margin-top:3px; height:10px; width:" + value + "%; background-color:#2DC214; '></div>"
+	},
+},
+
+//custom data editors
+editors:{
+	input:function(cell, value, editBoxColor){
+
+		//create and style input
+		var input = $("<input type='text'/>");
+		input.css({
+			"border":"1px",
+			"background":"transparent",
+			"padding":"4px",
+			"width":"100%",
+			"box-sizing":"border-box",
+		})
+		.click(function(e){
+			e.stopPropagation();
+		})
+		.val(value);
+
+		cell.on("focus", function(){
+			setTimeout(function(){
+				input.focus();
+			},100)
+		});
+
+
+		input.on("change blur", function(e){
+			$(this).closest(".tabulator-cell").trigger("editval", input.val());
+		});
+
+		return input;
+
+	},
+	star:function(cell, value, editBoxColor){
+		var maxStars = $("svg", cell).length;
+		var size = $("svg:first", cell).attr("width");
+		var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
+
+		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+
+		var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#2AD032" stroke="#04880A" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive"  viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+
+		for(i=1;i<= maxStars;i++){
+
+			var nextStar = starInactive;
+
+			stars.append(nextStar.clone());
+		}
+
+		stars.on("mouseover", "svg", function(e){
+
+			e.stopPropagation();
+
+			if($(".tabulator-star-active", $(this).closest("div")).length != $(this).prevAll("svg").length + 1){
+				console.log("mouseover")
+				$(this).prevAll("svg").replaceWith(starActive.clone());
+				$(this).nextAll("svg").replaceWith(starInactive.clone());
+				$(this).replaceWith(starActive.clone());
+			}
+
+		})
+
+		stars.on("mouseover", function(e){
+			console.log("empty")
+			$("svg", $(this)).replaceWith(starInactive.clone());
+		});
+
+		stars.on("click", function(e){
+			console.log("no stars");
+			$(this).closest(".tabulator-cell").trigger("editval", 0);
+		});
+
+		stars.on("click", "svg", function(e){
+			e.stopPropagation();
+			console.log("clicky")
+			var val = $(this).prevAll("svg").length + 1;
+			$(this).closest(".tabulator-cell").trigger("editval", val);
+		});
+
+		cell.css({
+			"white-space": "nowrap",
+			"overflow": "hidden",
+			"text-overflow": "ellipsis",
+		})
+
+		cell.on("blur", function(){
+			$(this).closest(".tabulator-cell").trigger("editcancel");
+		});
+
+		return stars;
 	},
 },
 
