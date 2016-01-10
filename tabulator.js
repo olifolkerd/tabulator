@@ -1325,13 +1325,26 @@ formatters:{
 		return stars.html();
 	},
 	progress:function(value, data, cell, row, options, formatterParams){ //progress bar
-		value = parseFloat(value) <= 100 ? parseFloat(value) : 100;
+
+		//set default parameters
+		var max = formatterParams && formatterParams.max ? formatterParams.max : 100;
+		var min = formatterParams && formatterParams.min ? formatterParams.min : 0;
+
+		var color = formatterParams && formatterParams.color ? formatterParams.color : "#2DC214";
+
+		//make sure value is in range
+		value = parseFloat(value) <= max ? parseFloat(value) : max;
+		value = parseFloat(value) >= min ? parseFloat(value) : min;
+
+		//workout percentage
+		var percent = (max - min) / 100;
+		value = Math.round((value - min) / percent);
 
 		cell.css({
 			"min-width":"30px",
 		});
 
-		return "<div style='margin-top:3px; height:10px; width:" + value + "%; background-color:#2DC214; '></div>"
+		return "<div style='margin-top:3px; height:10px; width:" + value + "%; background-color:" + color + "; display:inline-block; vertical-align:middle;' data-max='" + max + "' data-min='" + min + "'></div>"
 	},
 },
 
@@ -1356,13 +1369,13 @@ editors:{
 
 		//submit new value on blur
 		input.on("change blur", function(e){
-			$(this).closest(".tabulator-cell").trigger("editval", input.val());
+			cell.trigger("editval", input.val());
 		});
 
 		//submit new value on enter
 		input.on("keydown", function(e){
 			if(e.keyCode == 13){
-				$(this).closest(".tabulator-cell").trigger("editval", input.val());
+				cell.trigger("editval", input.val());
 			}
 		});
 
@@ -1376,8 +1389,8 @@ editors:{
 
 		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
-		var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#2AD032" stroke="#04880A" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-		var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive"  viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#7979FF" stroke="#04880A" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive"  viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 
 		for(i=1;i<= maxStars;i++){
 
@@ -1410,7 +1423,7 @@ editors:{
 
 		stars.on("click", "svg", function(e){
 			var val = $(this).prevAll("svg").length + 1;
-			$(this).closest(".tabulator-cell").trigger("editval", val);
+			cell.trigger("editval", val);
 		});
 
 		cell.css({
@@ -1420,7 +1433,7 @@ editors:{
 		})
 
 		cell.on("blur", function(){
-			$(this).closest(".tabulator-cell").trigger("editcancel");
+			$(this).trigger("editcancel");
 		});
 
 		//allow key based navigation
@@ -1441,7 +1454,7 @@ editors:{
 				break;
 
 				case 13: //enter
-				$(this).closest(".tabulator-cell").trigger("editval", $(".tabulator-star-active", stars).length);
+				cell.trigger("editval", $(".tabulator-star-active", stars).length);
 				break;
 
 			}
@@ -1449,6 +1462,86 @@ editors:{
 
 		return stars;
 	},
+	progress:function(cell, value){
+		//set default parameters
+		var max = $("div", cell).data("max");
+		var min = $("div", cell).data("min");
+
+		//make sure value is in range
+		value = parseFloat(value) <= max ? parseFloat(value) : max;
+		value = parseFloat(value) >= min ? parseFloat(value) : min;
+
+		//workout percentage
+		var percent = (max - min) / 100;
+		value = Math.round((value - min) / percent);
+
+		cell.css({
+			padding:"0 4px",
+		});
+
+		var newVal = function(){
+			var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
+			cell.trigger("editval", newval);
+		}
+
+		var bar = $("<div style='margin-top:7px; height:10px; width:" + value + "%; background-color:#7979FF; display:inline-block; vertical-align:middle; position:relative; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
+
+		var handle = $("<div class='taulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
+
+		bar.append(handle);
+
+		handle.on("mousedown", function(e){
+			bar.data("mouseDrag", e.screenX);
+			bar.data("mouseDragWidth", bar.outerWidth());
+		})
+
+		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
+
+		cell.on("mousemove", function(e){
+			if(bar.data("mouseDrag")){
+				bar.css({width: bar.data("mouseDragWidth") + (e.screenX - bar.data("mouseDrag"))})
+			}
+		})
+
+		cell.on("mouseup", function(e){
+			if(bar.data("mouseDrag")){
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+
+				bar.data("mouseDragOut", true);
+				bar.data("mouseDrag", false);
+				bar.data("mouseDragWidth", false);
+
+				newVal();
+
+			}
+		});
+
+
+		//allow key based navigation
+		cell.on("keydown", function(e){
+			switch(e.keyCode){
+				case 39: //right arrow
+				bar.css({"width" : bar.width() + cell.width()/100});
+				break;
+
+				case 37: //left arrow
+				bar.css({"width" : bar.width() - cell.width()/100});
+				break;
+
+				case 13: //enter
+				newVal();
+				break;
+
+			}
+		});
+
+		cell.on("blur", function(){
+			$(this).trigger("editcancel");
+		});
+
+		return bar;
+	}
 },
 
 //deconstructor
