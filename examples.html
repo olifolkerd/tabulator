@@ -103,7 +103,7 @@
 			columns:[
 			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
 			{title:"Name", field:"name", sorter:"string", width:150},
-			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+			{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
 			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)}},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
