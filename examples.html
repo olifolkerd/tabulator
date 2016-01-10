@@ -240,6 +240,8 @@ $(window).resize(function(){
 
 	//custom editor
 	var genderEditor = function(cell, value){
+		//cell - JQuery object for current cell
+		//value - calue of current cell
 
 		//create and style input
 		var input = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
@@ -250,9 +252,11 @@ $(window).resize(function(){
 			"width":"100%",
 			"box-sizing":"border-box",
 		})
-		.click(function(e){ //prevent click triggering issues
+		//prevent click in editor from triggering cell onClick or rowClick callbacks
+		.click(function(e){
 			e.stopPropagation();
 		})
+		//Set value of editor to the value of the cell
 		.val(value);
 
 		//set focus on the select box when the editor is selected (timout allows for input to be added to DOM)
@@ -260,7 +264,7 @@ $(window).resize(function(){
 			input.focus();
 		},100)
 
-		//when the value has been set, update the table
+		//when the value has been set, update the cell
 		input.on("change blur", function(e){
 			$(this).closest(".tabulator-cell").trigger("editval", input.val());
 		});

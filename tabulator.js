@@ -303,7 +303,6 @@ element.append(self.tableHolder);
 
 
 	element.on("editval", ".tabulator-cell", function(e, value){
-		console.log("editval", value)
 		if($(this).is(":focus")){$(this).blur()}
 			self._cellDataChange($(this), value);
 	})
@@ -1391,7 +1390,6 @@ editors:{
 		//change number of active stars
 		var starChange = function(element){
 			if($(".tabulator-star-active", element.closest("div")).length != element.prevAll("svg").length + 1){
-				console.log("mouseover")
 				element.prevAll("svg").replaceWith(starActive.clone());
 				element.nextAll("svg").replaceWith(starInactive.clone());
 				element.replaceWith(starActive.clone());
