@@ -166,6 +166,11 @@ You can define a custom sorter function in the sorter option:
 ### Sort Data on load
 When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the ***sortBy*** and ***sortDir*** parameters. see [Initial Data Sorting](#initial-data-sorting) for more details)
 
+### Trigger Sorting Programmatically
+You can trigger sorting using the ***sort*** function
+```js
+$("#example-table").tabulator("sort", "age", "asc");
+```
 
 Formatting Data
 ================================
