@@ -263,7 +263,7 @@ $(window).resize(function(){
 
 		//when the value has been set, update the cell
 		editor.on("change blur", function(e){
-			$(this).closest(".tabulator-cell").trigger("editval", editor.val());
+			cell.trigger("editval", editor.val());
 		});
 
 		//return the editor element
