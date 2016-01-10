@@ -234,7 +234,7 @@ Tabulator also allows you to define a row level formatter using the ***rowFormat
 The example below changes the background colour of a cell to blue if the ***col*** value for that row is ***"blue"***.
 
 ```js
-$("#example-table-6").tabulator({
+$("#example-table").tabulator({
 	rowFormatter:function(row, data){
 		//row - JQuery object for row
 		//data - the data for the row
