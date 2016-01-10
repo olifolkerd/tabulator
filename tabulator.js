@@ -816,11 +816,11 @@ _renderRow:function(item){
 		//set column text alignment
 		var align = typeof(column.align) == 'undefined' ? "left" : column.align;
 
+		//allow tabbing on editable cells
+		var tabbable = column.editable || column.editor ? "tabindex='0'" : "";
 
 
-
-
-		var cell = $("<div class='tabulator-cell' tabindex='0' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+		var cell = $("<div class='tabulator-cell' " + tabbable + " data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 		cell.css({
 			"text-align": align,
@@ -859,7 +859,7 @@ _renderRow:function(item){
 		}else{
 			//handle input replacement on editable cells
 			if(cell.data("editor")){
-				cell.on("click", function(e){
+				cell.on("focus", function(e){
 
 					e.stopPropagation();
 					cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
@@ -870,7 +870,7 @@ _renderRow:function(item){
 					cell.empty();
 					cell.append(cellEditor);
 
-					cell.focus();
+					//cell.focus();
 				});
 			}
 		}
@@ -1352,11 +1352,11 @@ editors:{
 		})
 		.val(value);
 
-		cell.on("focus", function(){
+		//cell.on("focus", function(){
 			setTimeout(function(){
 				input.focus();
 			},100)
-		});
+		//});
 
 
 		input.on("change blur", function(e){
