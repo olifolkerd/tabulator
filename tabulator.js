@@ -1091,7 +1091,21 @@ _safeString: function(value){
 	return String(value).replace(/'/g, "&#39;");
 },
 
+
 _sortClick: function(column, element){
+	var self = this;
+
+	if (element.data("sortdir") == "desc"){
+		element.data("sortdir", "asc");
+	}else{
+		element.data("sortdir", "desc");
+	}
+
+	self.sort(column, element.data("sortdir"));
+},
+
+// public sorter
+sort: function(column, dir){
 	var self = this;
 	var header = self.header;
 	var options = this.options;
@@ -1103,21 +1117,32 @@ _sortClick: function(column, element){
 		"border-bottom": "6px solid " + options.sortArrows.inactive,
 	})
 
-	if (element.data("sortdir") == "desc"){
-		element.data("sortdir", "asc");
+	//convert colmun name to column object
+	if(typeof(column) == "string"){
+		$.each(options.columns, function(i, item) {
+			if(column == item.field){
+				column = item;
+				return false;
+			}
+		});
+	}
+
+	var element = $(".tabulator-col[data-field='" + column.field + "']", header);
+
+
+	if (dir == "asc"){
 		$(".tabulator-arrow", element).css({
 			"border-top": "none",
 			"border-bottom": "6px solid " + options.sortArrows.active,
 		});
 	}else{
-		element.data("sortdir", "desc");
 		$(".tabulator-arrow", element).css({
 			"border-top": "6px solid " + options.sortArrows.active,
 			"border-bottom": "none",
 		});
 	}
 
-	self._sorter(column, element.data("sortdir"));
+	self._sorter(column, dir);
 },
 
 

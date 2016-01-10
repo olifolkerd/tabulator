@@ -279,7 +279,7 @@ $(window).resize(function(){
 		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
 		{title:"Favourite Color", field:"col", editable:true},
 		{title:"Date Of Birth", field:"dob", align:"center", editable:true},
-		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tick"},
+		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross"},
 		],
 		rowEdit:function(id,data,row){
 
@@ -313,9 +313,39 @@ $(window).resize(function(){
 
 	<p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
 
-	<div id="example-table-5"></div>
+	<p>You can programmatically trigger a sort using the <strong>sort</strong> function.</p>
+
+	<p>
+		<fieldset>
+			<legend>Programmatic Sort</legend>
+
+			<label>Field: </label>
+			<select id="sort-field">
+				<option value="name" selected>Name</option>
+				<option value="age">Age</option>
+				<option value="gender">Gender</option>
+				<option value="height">Height</option>
+				<option value="col">Favourite Colour</option>
+				<option value="dob">Date Of Birth</option>
+				<option value="cheese">Likes Cheese</option>
+			</select>
+
+
+			<label>Direction:</label>
+			<select id="sort-direction">
+				<option value="asc" selected>asc</option>
+				<option value="desc">desc</option>
+			</select>
+
+			<input id="sort-trigger" type="button" value="Trigger Sort" style="margin-left:40px;">
+
+		</fieldset>
+
+	</p>
+
+	<div id="example-table-sorting"></div>
 	<script type="text/javascript">
-	$("#example-table-5").tabulator({
+	$("#example-table-sorting").tabulator({
 		height:"320px",
 		fitColumns:true,
 		columns:[
@@ -331,11 +361,15 @@ $(window).resize(function(){
 		],
 	});
 
-	$("#example-table-5").tabulator("setData", tabledata);
+	$("#example-table-sorting").tabulator("setData", tabledata);
 
 	$(window).resize(function(){
-		$("#example-table-5").tabulator("redraw");
+		$("#example-table-sorting").tabulator("redraw");
 	});
+
+	$("#sort-trigger").click(function(){
+		$("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+	})
 
 
 	</script>
