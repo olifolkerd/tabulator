@@ -252,10 +252,7 @@ $(window).resize(function(){
 			"width":"100%",
 			"box-sizing":"border-box",
 		})
-		//prevent click in editor from triggering cell onClick or rowClick callbacks
-		.click(function(e){
-			e.stopPropagation();
-		})
+
 		//Set value of editor to the value of the cell
 		.val(value);
 
@@ -287,7 +284,10 @@ $(window).resize(function(){
 		],
 		rowEdit:function(id,data,row){
 
-		}
+		},
+		rowClick:function(e, id, data, row){
+			alert("Row " + data.id + " Clicked!!!!")
+		},
 	});
 
 	$("#example-table-editable").tabulator("setData", tabledata);

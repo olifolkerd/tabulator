@@ -859,7 +859,6 @@ _renderRow:function(item){
 			//handle input replacement on editable cells
 			if(cell.data("editor")){
 				cell.on("focus", function(e){
-
 					e.stopPropagation();
 					cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
 
@@ -869,7 +868,10 @@ _renderRow:function(item){
 					cell.empty();
 					cell.append(cellEditor);
 
-					//cell.focus();
+					//prevent editing from tirggering rowClick event
+					cell.children().click(function(e){
+						e.stopPropagation();
+					})
 				});
 			}
 		}
@@ -1346,9 +1348,6 @@ editors:{
 			"width":"100%",
 			"box-sizing":"border-box",
 		})
-		.click(function(e){
-			e.stopPropagation();
-		})
 		.val(value);
 
 		setTimeout(function(){
@@ -1410,7 +1409,6 @@ editors:{
 		});
 
 		stars.on("click", "svg", function(e){
-			e.stopPropagation();
 			var val = $(this).prevAll("svg").length + 1;
 			$(this).closest(".tabulator-cell").trigger("editval", val);
 		});
