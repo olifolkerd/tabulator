@@ -332,7 +332,7 @@ Columns of the table can be set as editable using the ***editable*** parameter i
 
 When a user clicks on an editable column the will be able to edit the value for that cell.
 
-By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column basis using the ***editor*** option in the column definition.
+By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column using the ***editor*** option in the column definition.
 
 ```js
 {title:"Name", field:"rating", editor:"star"}
