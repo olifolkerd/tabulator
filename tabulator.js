@@ -1288,6 +1288,8 @@ formatters:{
 
 		if(value === true || value === 'true' || value === 'True' || value === 1){
 			return tick;
+		}else{
+			return "";
 		}
 	},
 	tickCross:function(value, data, cell, row, options, formatterParams){
@@ -1541,7 +1543,80 @@ editors:{
 		});
 
 		return bar;
-	}
+	},
+
+
+	tickCross:function(cell, value){
+		//create and style input
+		var input = $("<input type='checkbox'/>");
+		input.css({
+			"border":"1px",
+			"background":"transparent",
+			"margin-top":"5px",
+			"box-sizing":"border-box",
+		})
+		.val(value);
+
+		setTimeout(function(){
+			input.focus();
+		},100)
+
+		if(value === true || value === 'true' || value === 'True' || value === 1){
+			input.prop("checked", true)
+		}else{
+			input.prop("checked", false)
+		}
+
+		//submit new value on blur
+		input.on("change blur", function(e){
+			cell.trigger("editval", input.is(":checked"));
+		});
+
+		//submit new value on enter
+		input.on("keydown", function(e){
+			if(e.keyCode == 13){
+				cell.trigger("editval", input.is(":checked"));
+			}
+		});
+
+		return input;
+	},
+
+	tick:function(cell, value){
+		//create and style input
+		var input = $("<input type='checkbox'/>");
+		input.css({
+			"border":"1px",
+			"background":"transparent",
+			"margin-top":"5px",
+			"box-sizing":"border-box",
+		})
+		.val(value);
+
+		setTimeout(function(){
+			input.focus();
+		},100)
+
+		if(value === true || value === 'true' || value === 'True' || value === 1){
+			input.prop("checked", true)
+		}else{
+			input.prop("checked", false)
+		}
+
+		//submit new value on blur
+		input.on("change blur", function(e){
+			cell.trigger("editval", input.is(":checked"));
+		});
+
+		//submit new value on enter
+		input.on("keydown", function(e){
+			if(e.keyCode == 13){
+				cell.trigger("editval", input.is(":checked"));
+			}
+		});
+
+		return input;
+	},
 },
 
 //deconstructor
