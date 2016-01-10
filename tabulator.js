@@ -66,7 +66,7 @@ options: {
 
 	editBoxColor:"#1D68CD", //color for edit boxes
 
-	rowFormatter:false, //row formatter
+	rowFormatter:false, //row formatter callback
 
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
