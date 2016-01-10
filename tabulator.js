@@ -1352,15 +1352,20 @@ editors:{
 		})
 		.val(value);
 
-		//cell.on("focus", function(){
-			setTimeout(function(){
-				input.focus();
-			},100)
-		//});
+		setTimeout(function(){
+			input.focus();
+		},100)
 
-
+		//submit new value on blur
 		input.on("change blur", function(e){
 			$(this).closest(".tabulator-cell").trigger("editval", input.val());
+		});
+
+		//submit new value on enter
+		input.on("keydown", function(e){
+			if(e.keyCode == 13){
+				$(this).closest(".tabulator-cell").trigger("editval", input.val());
+			}
 		});
 
 		return input;
@@ -1378,37 +1383,36 @@ editors:{
 
 		for(i=1;i<= maxStars;i++){
 
-			var nextStar = starInactive;
+			var nextStar = i <= value ? starActive : starInactive;
 
 			stars.append(nextStar.clone());
 		}
 
-		stars.on("mouseover", "svg", function(e){
-
-			e.stopPropagation();
-
-			if($(".tabulator-star-active", $(this).closest("div")).length != $(this).prevAll("svg").length + 1){
+		//change number of active stars
+		var starChange = function(element){
+			if($(".tabulator-star-active", element.closest("div")).length != element.prevAll("svg").length + 1){
 				console.log("mouseover")
-				$(this).prevAll("svg").replaceWith(starActive.clone());
-				$(this).nextAll("svg").replaceWith(starInactive.clone());
-				$(this).replaceWith(starActive.clone());
+				element.prevAll("svg").replaceWith(starActive.clone());
+				element.nextAll("svg").replaceWith(starInactive.clone());
+				element.replaceWith(starActive.clone());
 			}
+		}
 
+		stars.on("mouseover", "svg", function(e){
+			e.stopPropagation();
+			starChange($(this));
 		})
 
 		stars.on("mouseover", function(e){
-			console.log("empty")
 			$("svg", $(this)).replaceWith(starInactive.clone());
 		});
 
 		stars.on("click", function(e){
-			console.log("no stars");
 			$(this).closest(".tabulator-cell").trigger("editval", 0);
 		});
 
 		stars.on("click", "svg", function(e){
 			e.stopPropagation();
-			console.log("clicky")
 			var val = $(this).prevAll("svg").length + 1;
 			$(this).closest(".tabulator-cell").trigger("editval", val);
 		});
@@ -1421,6 +1425,30 @@ editors:{
 
 		cell.on("blur", function(){
 			$(this).closest(".tabulator-cell").trigger("editcancel");
+		});
+
+		//allow key based navigation
+		cell.on("keydown", function(e){
+			switch(e.keyCode){
+				case 39: //right arrow
+				starChange($(".tabulator-star-inactive:first", stars))
+				break;
+
+				case 37: //left arrow
+				var prevstar = $(".tabulator-star-active:last", stars).prev("svg")
+
+				if(prevstar.length){
+					starChange(prevstar)
+				}else{
+					$("svg", stars).replaceWith(starInactive.clone());
+				}
+				break;
+
+				case 13: //enter
+				$(this).closest(".tabulator-cell").trigger("editval", $(".tabulator-star-active", stars).length);
+				break;
+
+			}
 		});
 
 		return stars;

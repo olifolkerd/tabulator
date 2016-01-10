@@ -255,12 +255,10 @@ $(window).resize(function(){
 		})
 		.val(value);
 
-		//set focus on the select box when the editor is selected
-		cell.on("focus", function(){
-			setTimeout(function(){
-				input.focus();
-			},100)
-		});
+		//set focus on the select box when the editor is selected (timout allows for input to be added to DOM)
+		setTimeout(function(){
+			input.focus();
+		},100)
 
 		//when the value has been set, update the table
 		input.on("change blur", function(e){
@@ -414,13 +412,13 @@ $(window).resize(function(){
 	</section>
 
 	<section>
-	<header>Grouping Data</header>
-	<p></p>
-	<p>You can group rows together using the <strong>groupBy</strong> option. To group by a field, set this option to the name of the field.</p>
-	<p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+		<header>Grouping Data</header>
+		<p></p>
+		<p>You can group rows together using the <strong>groupBy</strong> option. To group by a field, set this option to the name of the field.</p>
+		<p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
 
-	<div id="example-table-grouping"></div>
-	<script type="text/javascript">
+		<div id="example-table-grouping"></div>
+		<script type="text/javascript">
 
 
 		var printIcon = function(value, data, cell, row, options){ //plain text value
@@ -473,37 +471,37 @@ $(window).resize(function(){
 
 		<p>
 			<fieldset>
-			    <legend>Filter Parameters</legend>
+				<legend>Filter Parameters</legend>
 
 
-			<label>Field: </label>
-			<select id="filter-field">
-				<option></option>
-				<option value="name">Name</option>
-				<option value="age">Age</option>
-				<option value="gender">Gender</option>
-				<option value="height">Height</option>
-				<option value="col">Favourite Colour</option>
-				<option value="dob">Date Of Birth</option>
-				<option value="cheese">Likes Cheese</option>
-			</select>
+				<label>Field: </label>
+				<select id="filter-field">
+					<option></option>
+					<option value="name">Name</option>
+					<option value="age">Age</option>
+					<option value="gender">Gender</option>
+					<option value="height">Height</option>
+					<option value="col">Favourite Colour</option>
+					<option value="dob">Date Of Birth</option>
+					<option value="cheese">Likes Cheese</option>
+				</select>
 
 
-			<label>Type:</label>
-			<select id="filter-type">
-				<option value="=">=</option>
-				<option value="<">&lt;</option>
-				<option value="<=">&lt;=</option>
-				<option value=">">&gt;</option>
-				<option value=">=">&gt;=</option>
-				<option value="!=">!=</option>
-				<option value="like">like</option>
-			</select>
+				<label>Type:</label>
+				<select id="filter-type">
+					<option value="=">=</option>
+					<option value="<">&lt;</option>
+					<option value="<=">&lt;=</option>
+					<option value=">">&gt;</option>
+					<option value=">=">&gt;=</option>
+					<option value="!=">!=</option>
+					<option value="like">like</option>
+				</select>
 
 
-			<label>Value: </label><input id="filter-value" type="text" placeholder="value to filter">
+				<label>Value: </label><input id="filter-value" type="text" placeholder="value to filter">
 
-			<input id="filter-clear" type="button" value="Clear Filter" style="margin-left:40px;">
+				<input id="filter-clear" type="button" value="Clear Filter" style="margin-left:40px;">
 
 			</fieldset>
 
