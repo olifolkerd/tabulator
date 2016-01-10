@@ -184,8 +184,15 @@ Tabulator comes with a number of preconfigured formatters including:
 - **link** - renders data as an anchor with a link to the given value
 - **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
 - **tickCross** - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not
-- **star** - displays a graphical star rating based on integer values *(formatterParams has the option of* ***stars*** *which is an interger value representing the maximum number of stars to be displayed, defaults to 5)*
+- **star** - displays a graphical star rating based on integer values
+  - optional  **formatterParams**
+  - **stars** - maximum number of stars to be displayed *(default 5)*
 - **progress** - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width
+  - optional **formatterParams**
+  - **min** - minimum value for progress bar *(default 0)*
+  - **max** - minimum value for progress bar *(default 100)*
+  - **color** - colour of progress bar *(default #2DC214)*
+
 
 You can define a custom formatter function in the formatter option:
 ```js
