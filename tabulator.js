@@ -1416,7 +1416,7 @@ editors:{
 
 		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
-		var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#7979FF" stroke="#04880A" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 		var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive"  viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 
 		for(i=1;i<= maxStars;i++){
@@ -1511,7 +1511,7 @@ editors:{
 			cell.trigger("editval", newval);
 		}
 
-		var bar = $("<div style='margin-top:7px; height:10px; width:" + value + "%; background-color:#7979FF; display:inline-block; vertical-align:middle; position:relative; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
+		var bar = $("<div style='margin-top:7px; height:10px; width:" + value + "%; background-color:#488CE9; display:inline-block; vertical-align:middle; position:relative; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
 
 		var handle = $("<div class='taulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
 
