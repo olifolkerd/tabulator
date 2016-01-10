@@ -77,7 +77,8 @@ There are a number of parameters that can be passed in with each column to deter
 - **sorter** - determines how to sort data in this column (see [Sorting Data](#sorting-data) for more details)
 - **formatter** - set how you would like the data to be formatted (see [Formatting Data](#formatting-data) for more details)
 - **onClick** - callback for when user clicks on a cell in this column (see [Callbacks](#callbacks) for more details)
-- **editable** - (boolean, default - false) determines if this data is editable by the user. (see [Manipulating Data](#manipulating-data) for more details)
+- **editable** - (boolean, default - false) determines if this data is editable by the user. will use the editor that matches the formatter by default. (see [Manipulating Data](#manipulating-data) for more details)
+- **editor** - set the editor to be used when editing the data. (see [Manipulating Data](#manipulating-data) for more details)
 
 Set Table Data
 ================================
@@ -326,23 +327,73 @@ Manipulating Data
 ================================
 Tabulator allows you to manipulate the data in the table in a number of different ways
 
-### Clear Table
-You can clear all data in the table using the ***clear** function:
-```js
-$("#example-table").tabulator("clear");
-```
-
 ### Editable Data
 Columns of the table can be set as editable using the ***editable*** parameter in the column definition. (see [Define Column Headers](#define-column-headers) for more details).
 
-When a user clicks on an editable column the will be able to edit the text in that cell. for the moment only plain text can be edited, support for custom editors willl be comming in a future version.
+When a user clicks on an editable column the will be able to edit the value for that cell.
+
+By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column basis using the ***editor*** option in the column definition.
+
+```js
+{title:"Name", field:"rating", editor:"star"}
+```
+
+ Tabulator comes with a number of preconfigured editors including:
+- **input** - editor for plain text
+- **tick** - editor for tick and tickCross columns.
+- **star** - editor for star columns (can use left/right arrow keys and enter for selection as well as mouse).
+- **progress** -  editor for progress bar columns (can use left/right arrow keys and enter for selection as well as mouse)
+
+You can define a custom editor function in the editor option:
+
+```js
+{title:"Name", field:"rating", editor:function(cell, value){
+		//cell - JQuery object for current cell
+		//value - the current value for current cell
+
+		//create and style editor
+		var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
+		editor.css({
+			"border":"1px",
+			"background":"transparent",
+			"padding":"3px",
+			"width":"100%",
+			"box-sizing":"border-box",
+		})
+
+		//Set value of editor to the current value of the cell
+		editor.val(value);
+
+		//set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+		setTimeout(function(){
+			editor.focus();
+		},100)
+
+		//when the value has been set, trigger the cell to update
+		editor.on("change blur", function(e){
+			cell.trigger("editval", editor.val());
+		});
+
+		//return the editor element
+		return editor;
+	},
+}
+```
+
+### Retreiving Data
+You can retreive the data stored in the table using the ***getData** function.
+```js
+var data = $("#example-table").tabulator("getData");
+```
+This will return an array containing the data objects for each row in the table.
+
 
 ### Add Row
 Additional rows can be added to the table at any point using the ***addRow*** function:
 ```js
 $("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12", gender:"male", height:1});
 ```
-If you do not pass data for a colum, it will be left empty. to create a blank row (ie for a user to fill in), pass an empty object to the function.
+If you do not pass data for a column, it will be left empty. to create a blank row (ie for a user to fill in), pass an empty object to the function.
 
 By default any new rows will be added to the bottom of the table, to change this to the top set the ***addRowPos*** option to "top";
 
@@ -351,14 +402,14 @@ You can delete any row in the table using the ***deleteRow** function;
 ```js
 $("#example-table").tabulator("deleteRow", 15);
 ```
-You can either pass the function the id of the row you wish to delete or the data object that represnts that row.
+You can either pass the function the id of the row you wish to delete or the data object that represents that row.
 
-### Retreiving Data
-You can retreive the data stored in the table using the ***getData** function.
+
+### Clear Table
+You can clear all data in the table using the ***clear** function:
 ```js
-var data = $("#example-table").tabulator("getData");
+$("#example-table").tabulator("clear");
 ```
-This will return an array containing the data objects for each row in the table.
 
 Table Layout
 ================================
@@ -451,6 +502,7 @@ rowBackgroundColor|string|#fff|A valid css color(rgb,hex,etc...) for the backgro
 rowBorderColor|string|#fff|A valid css color(rgb,hex,etc...) for the table row borders
 rowTextColor|string|#333|A valid css color(rgb,hex,etc...) for the table row text
 rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table row background when hovered over.
+editBoxColor|string|#1D68CD|A valid css color(rgb,hex,etc...) for border of a cell being edited.
 
 #####Sort Arrow Theming
 The ***sortArrows*** option contains two options
@@ -614,7 +666,6 @@ Tabulator is actively under development and I plan to have even more useful feat
 
 - Pagination (via Ajax or in-table)
 - Table Footers
-- Custom Cell Editors
 - Custom Filter Functions
 - Movable Rows
 - Movable Columns
