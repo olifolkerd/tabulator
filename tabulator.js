@@ -1105,44 +1105,54 @@ _sortClick: function(column, element){
 },
 
 // public sorter
-sort: function(column, dir){
+sort: function(sortList, dir){
 	var self = this;
 	var header = self.header;
 	var options = this.options;
 
-	//reset all column sorts
-	$(".tabulator-col[data-sortable=true][data-field!=" + column.field + "]", self.header).data("sortdir", "desc");
-	$(".tabulator-col .tabulator-arrow", self.header).css({
-		"border-top": "none",
-		"border-bottom": "6px solid " + options.sortArrows.inactive,
-	})
-
-	//convert colmun name to column object
-	if(typeof(column) == "string"){
-		$.each(options.columns, function(i, item) {
-			if(column == item.field){
-				column = item;
-				return false;
-			}
-		});
+	if(!Array.isArray(sortList)){
+		sortList = [{field: sortList, dir:dir}];
 	}
 
-	var element = $(".tabulator-col[data-field='" + column.field + "']", header);
+	$.each(sortList, function(i, item) {
 
+		//convert colmun name to column object
+		if(typeof(item.field) == "string"){
+			$.each(options.columns, function(i, col) {
+				if(col.field == item.field){
+					item.field = col;
+					return false;
+				}
+			});
+		}
 
-	if (dir == "asc"){
-		$(".tabulator-arrow", element).css({
+		//reset all column sorts
+		$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc");
+		$(".tabulator-col .tabulator-arrow", self.header).css({
 			"border-top": "none",
-			"border-bottom": "6px solid " + options.sortArrows.active,
-		});
-	}else{
-		$(".tabulator-arrow", element).css({
-			"border-top": "6px solid " + options.sortArrows.active,
-			"border-bottom": "none",
-		});
-	}
+			"border-bottom": "6px solid " + options.sortArrows.inactive,
+		})
 
-	self._sorter(column, dir);
+		var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
+
+
+		if (dir == "asc"){
+			$(".tabulator-arrow", element).css({
+				"border-top": "none",
+				"border-bottom": "6px solid " + options.sortArrows.active,
+			});
+		}else{
+			$(".tabulator-arrow", element).css({
+				"border-top": "6px solid " + options.sortArrows.active,
+				"border-bottom": "none",
+			});
+		}
+
+		self._sorter(item.field, item.dir);
+
+
+
+	});
 },
 
 
