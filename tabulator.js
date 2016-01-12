@@ -1148,7 +1148,7 @@ sort: function(sortList, dir){
 			});
 		}
 
-		self._sorter(item.field, item.dir);
+		self._sorter(item.field, item.dir, sortList, i);
 
 
 
@@ -1157,7 +1157,7 @@ sort: function(sortList, dir){
 
 
 //sort table
-_sorter: function(column, dir){
+_sorter: function(column, dir, sortList, i){
 
 	var self = this;
 	var table = self.table;
@@ -1175,12 +1175,12 @@ _sorter: function(column, dir){
 			self._sortElement(table, column, dir, true);
 		}else{
 			$(".tabulator-group", table).each(function(){
-				self._sortElement($(this), column, dir);
+				self._sortElement($(this), column, dir, false, sortList, i);
 			});
 		}
 
 	}else{
-		self._sortElement(table, column, dir);
+		self._sortElement(table, column, dir, false, sortList, i);
 	}
 
 
@@ -1191,25 +1191,45 @@ _sorter: function(column, dir){
 	self._trigger("sortComplete");
 },
 
-//sort element within table
-_sortElement:function(element, column, dir, sortGroups){
+//sort elements within table
+_sortElement:function(element, column, dir, sortGroups, sortList, i){
 	var self = this;
 
 	var row = sortGroups ? ".tabulator-group" : ".tabulator-row";
 
 	$(row, element).sort(function(a,b) {
 
-		//switch elements depending on search direction
-		el1 = dir == "asc" ? $(a) : $(b);
-		el2 = dir == "asc" ? $(b) : $(a);
+		var result = self._processSorter(a, b, column, dir, sortGroups);
 
-		if(sortGroups){
-			el1 = el1.data("value");
-			el2 = el2.data("value");
-		}else{
-			el1 = el1.data("data")[column.field];
-			el2 = el2.data("data")[column.field];
+		//if results match recurse through previous searchs to be sure
+		if(result == 0 && i){
+			for(var j = i-1; j>= 0; j--){
+				result = self._processSorter(a, b, sortList[j].field, sortList[j].dir, sortGroups);
+
+				if(result != 0){
+					break;
+				}
+			}
 		}
+
+		return result;
+
+	}).appendTo(element);
+},
+
+_processSorter:function(a, b, column, dir, sortGroups){
+	var self = this;
+	//switch elements depending on search direction
+	el1 = dir == "asc" ? $(a) : $(b);
+	el2 = dir == "asc" ? $(b) : $(a);
+
+	if(sortGroups){
+		el1 = el1.data("value");
+		el2 = el2.data("value");
+	}else{
+		el1 = el1.data("data")[column.field];
+		el2 = el2.data("data")[column.field];
+	}
 
 		//workaround to format dates correctly
 		a = column.sorter == "date" ? self._formatDate(el1) : el1;
@@ -1221,9 +1241,8 @@ _sortElement:function(element, column, dir, sortGroups){
 		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
 
 		return sorter(a, b);
+	},
 
-	}).appendTo(element);
-},
 
 //format date for date comparison
 _formatDate:function(dateString){
