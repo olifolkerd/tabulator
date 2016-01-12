@@ -173,6 +173,15 @@ You can trigger sorting using the ***sort*** function
 $("#example-table").tabulator("sort", "age", "asc");
 ```
 
+If you wish to sort by multiple columns then you can pass an array of sorting objects to this function, the data will then be sorted in the order of the objects.
+
+```js
+$("#example-table").tabulator("sort", [
+   {field:"age", dir:"asc"}, //sort by this first
+   {field:"height", dir:"desc"}, //then sort by this second
+]);
+```
+
 Formatting Data
 ================================
 Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.
