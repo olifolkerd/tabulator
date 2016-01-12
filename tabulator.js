@@ -339,6 +339,7 @@ _cellDataChange: function(cell, value){
 
 	//update row data
 	var rowData =  row.data("data");
+	var hasChanged = rowData[cell.data("field")] != value;
 	rowData[cell.data("field")] = value;
 	row.data("data", rowData);
 
@@ -351,9 +352,11 @@ _cellDataChange: function(cell, value){
 	cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")))
 	.css({"padding":"4px"});
 
+	if(hasChanged){
+		//triger event
+		self.options.rowEdit(rowData.id, rowData, row);
+	}
 
-	//triger event
-	self.options.rowEdit(rowData.id, rowData, row);
 
 	self._styleRows();
 
