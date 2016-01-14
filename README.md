@@ -688,7 +688,8 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Custom Filter Functions
 - Movable Rows
 - Movable Columns
-- Column Visibility Toggle
+- Column Visibility Toggle Functions
+- Import/Export Column Data (size/position/visibility)
 - Sparkline Formatter
 - Extra Formatters
 - Extra Sorters
