@@ -77,16 +77,15 @@ There are a number of parameters that can be passed in with each column to deter
 - **sorter** - determines how to sort data in this column (see [Sorting Data](#sorting-data) for more details)
 - **formatter** - set how you would like the data to be formatted (see [Formatting Data](#formatting-data) for more details)
 - **onClick** - callback for when user clicks on a cell in this column (see [Callbacks](#callbacks) for more details)
-- **editable** - (boolean, default - false) determines if this data is editable by the user. will use the editor that matches the formatter by default. (see [Manipulating Data](#manipulating-data) for more details)
+- **editable** - *(boolean, default - false)* determines if this data is editable by the user. will use the editor that matches the formatter by default. (see [Manipulating Data](#manipulating-data) for more details)
 - **editor** - set the editor to be used when editing the data. (see [Manipulating Data](#manipulating-data) for more details)
+- **visible** - *(boolean, default - true)* determines if the column is visible
 
 Set Table Data
 ================================
-Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved  as a JSON formatted string via AJAX from a URL.
+Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved as a JSON formatted string via AJAX from a URL.
 
-The data can contain more columns that are defined in the columns options, these will be sorted with the rest of the data, but not rendered to screen.
-
-A unique "id" value must be present for each row of data, if it is missing Tabluator will add one.
+The data can contain more columns that are defined in the columns options, these will be stored with the rest of the data, but not rendered to screen.
 
 an example JSON data set:
 ```js
@@ -103,6 +102,17 @@ an example JSON data set:
 	{id:10, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
 ]
 ```
+
+###Row Index
+A unique numerical index value must be present for each row of data. By default Tabulator will look for this value in the ***id*** field for the data. If you wish to use a different field as the index, set this using the ***index*** option parameter.
+
+```js
+$("#example-table").tabulator({
+	index:"age", //set the index field to the "age" field.
+});
+```
+
+If the index is missing from the provided data, tabulator will generate one from the position of the data in the original array.
 
 ###Set data using array
 You can pass an array directly to the table using the ***setData*** method.
