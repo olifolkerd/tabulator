@@ -49,6 +49,8 @@ options: {
 
 	columns:[],//stor for colum header info
 
+	index:"id",
+
 	sortable:true, //global default for sorting
 	dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 	sortArrows:{ //colors for sorting arrows
@@ -343,9 +345,9 @@ _cellDataChange: function(cell, value){
 	rowData[cell.data("field")] = value;
 	row.data("data", rowData);
 
-	if(rowData.id){
+	if(rowData[self.options.index]){
 		//update tabulator data
-		self.data[rowData.id] = rowData;
+		self.data[rowData[self.options.index]] = rowData;
 	}
 
 	//reformat cell data
@@ -354,7 +356,7 @@ _cellDataChange: function(cell, value){
 
 	if(hasChanged){
 		//triger event
-		self.options.rowEdit(rowData.id, rowData, row);
+		self.options.rowEdit(rowData[self.options.index], rowData, row);
 	}
 
 
@@ -366,7 +368,7 @@ _cellDataChange: function(cell, value){
 deleteRow: function(item){
 	var self = this;
 
-	var id = typeof(item) == "number" ? item : item.data("data").id;
+	var id = typeof(item) == "number" ? item : item.data("data")[self.options.index];
 
 	if(self.data[id]){
 		//remove row from data
@@ -396,7 +398,7 @@ addRow:function(item){
 	var self = this;
 
 	if(item){
-		item.id = item.id ? item.id : 0;
+		item[self.options.index] = item[self.options.index]? item[self.options.index]: 0;
 	}else{
 		item = {id:0}
 	}
@@ -540,17 +542,31 @@ getFilter:function(){
 
 //parse and index data
 _parseData:function(data){
+	var self = this;
 
 	var newData = [];
 
-	$.each(data, function(i, item) {
-		newData[item.id] = item;
-	});
+	if(data){
+		if(typeof(data[0][self.options.index]) == "undefined"){
+			self.options.index = "_index";
+			$.each(data, function(i, item) {
+				newData[i] = item;
+				newData[i]["_index"] = i;
+			});
 
-	this.data = newData;
+		}else{
+			$.each(data, function(i, item) {
+				newData[item[self.options.index]] = item;
+			});
+		}
+	}
 
-	this.options.dataLoaded(data);
-	this._renderTable();
+
+
+	self.data = newData;
+
+	self.options.dataLoaded(data);
+	self._renderTable();
 },
 
 //get json data via ajax
@@ -795,8 +811,7 @@ _filterRow:function(row){
 _renderRow:function(item){
 
 	var self = this;
-
-	var row = $('<div class="tabulator-row" data-id="' + item.id + '"></div>');
+	var row = $('<div class="tabulator-row" data-id="' + item[self.options.index] + '"></div>');
 
 	//bind row data to row
 	row.data("data", item);
