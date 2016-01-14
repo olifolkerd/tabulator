@@ -209,6 +209,7 @@ _create: function() {
 		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
 		column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
+		column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
 
 		if(options.sortBy == column.field){
 			var sortdir = " data-sortdir='" + options.sortDir + "' ";
@@ -220,7 +221,9 @@ _create: function() {
 
 		var title = column.title ? column.title : "&nbsp";
 
-		var col = $('<div class="tabulator-col" style="display:inline-block" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+		var visibility = column.visible ? "inline-block" : "none";
+
+		var col = $('<div class="tabulator-col" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
 
 		if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -839,10 +842,12 @@ _renderRow:function(item){
 
 		var cell = $("<div class='tabulator-cell' " + tabbable + " data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
+		var visibility = column.visible ? "inline-block" : "none";
+
 		cell.css({
 			"text-align": align,
 			"box-sizing":"border-box",
-			"display":"inline-block",
+			"display":visibility,
 			"vertical-align":"middle",
 			"min-height":self.options.headerHeight + 2,
 			"white-space":"nowrap",
@@ -955,19 +960,24 @@ _colRender:function(fixedwidth){
 			}
 
 			var totWidth = self.element.innerWidth();
-			var colCount = options.columns.length;
+			var colCount = 0;
 			var colWidth = totWidth / colCount;
 
 			var widthIdeal = 0;
 			var widthIdealCount = 0;
 
 			$.each(options.columns, function(i, column) {
-				if(column.width){
+				if(column.visible){
 
-					var thisWidth = typeof(column.width) == "string" ? parseInt(column.width) : column.width;
+					colCount++;
 
-					widthIdeal += thisWidth;
-					widthIdealCount++;
+					if(column.width){
+
+						var thisWidth = typeof(column.width) == "string" ? parseInt(column.width) : column.width;
+
+						widthIdeal += thisWidth;
+						widthIdealCount++;
+					}
 				}
 			});
 
@@ -976,10 +986,12 @@ _colRender:function(fixedwidth){
 			if(proposedWidth >= parseInt(options.colMinWidth)){
 
 				$.each(options.columns, function(i, column) {
-					var newWidth = column.width ? column.width : proposedWidth;
+					if(column.visible){
+						var newWidth = column.width ? column.width : proposedWidth;
 
-					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]",element);
-					col.css({width:newWidth});
+						var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]",element);
+						col.css({width:newWidth});
+					}
 				});
 
 			}else{
