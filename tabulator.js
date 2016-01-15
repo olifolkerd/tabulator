@@ -549,7 +549,7 @@ _parseData:function(data){
 
 	var newData = [];
 
-	if(data){
+	if(data.length){
 		if(typeof(data[0][self.options.index]) == "undefined"){
 			self.options.index = "_index";
 			$.each(data, function(i, item) {
