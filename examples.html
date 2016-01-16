@@ -664,7 +664,7 @@ $(window).resize(function(){
 			{title:"Date Of Birth", field:"dob", align:"center", editable:true},
 			{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
 			],
-			rowEdit:function(id,data,row){
+			rowEdit:function(id,data,row,index){
 
 			}
 		});
@@ -677,6 +677,42 @@ $(window).resize(function(){
 
 		</script>
 	</section>
+
+
+	<section>
+		<header>Movable Rows</header>
+		<p>
+			Using the <strong>movableRows</strong> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
+		</p>
+		<div id="example-table-movable-rows"></div>
+		<script type="text/javascript">
+
+		$("#example-table-movable-rows").tabulator({
+			height:"320px",
+			movableRows:true,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+			rowMoved:function(id,data,row,index){
+				alert("Row: " + data.name + " has been moved to position " + index)
+			}
+		});
+
+		$("#example-table-movable-rows").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-movable-rows").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
 
 
 	<section>
