@@ -553,6 +553,19 @@ Option | Data Type | Default Value | Description
 sortBy|string|"id"| the name of the field to be sorted
 sortDir|string|"DESC"| The direction of the sort (ASC or DESC).
 
+###Movable Rows and Columns
+Define if the user can move the order/position of rows and columns.
+
+Option | Data Type | Default Value | Description
+---|---|---|---
+movableCols|boolean|false| Allow users to move and reorder columns
+movableRows|boolean|false| Allow users to move and reorder rows
+movableRowHandle|string|html (see below)| html for the movable row handle
+
+#####Default movable row handle
+```html
+<div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>
+```
 
 ###Added Rows
 Option | Data Type | Default Value | Description
@@ -629,6 +642,7 @@ tabulator-arrow | Sorting arrows
 tabulator-tableHolder | Contain table and scroll bars
 tabulator-table | Contain table rows
 tabulator-row | Row of table
+tabulator-row-handle | Handle for moving the row if ***movableRows*** is enabled
 tabulator-cell | Data cell
 tabulator-group | A group of rows (including group header)
 tabulator-group-header | Contains header for a group
@@ -676,6 +690,19 @@ $("#example-table").tabulator({
 });
 ```
 
+### Row Moved
+when a row has been successfully moved, the ***rowMoved*** callback will be triggered.
+```js
+$("#example-table").tabulator({
+	rowMoved:function(id, data, row, index){
+		//id - the id of the row
+		//data - the data for the row
+		//row - the DOM element of the row
+		//index - new position of row in table
+	}
+});
+```
+
 ###Row Edit
 The row edit callback is triggered when data in an editable row is changed.
 ```js
@@ -708,6 +735,17 @@ $("#example-table").tabulator({
 		//data - the data for the row
 		//row - the DOM element of the row
 	},
+});
+```
+
+###Column Moved
+When a column has been successfully moved, the ***colMoved*** callback will be triggered.
+```js
+$("#example-table").tabulator({
+	colMoved:function(field, columns){
+		//field- the filed name of the moved column
+		//columns- the updated columns config array
+	}
 });
 ```
 
