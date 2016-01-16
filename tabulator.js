@@ -47,7 +47,10 @@ options: {
 	height:false, //height of tabulator
 	fitColumns:false, //fit colums to width of screen;
 
-	columns:[],//stor for colum header info
+	movableRows:false, //enable movable rows
+	movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
+
+	columns:[],//store for colum header info
 
 	index:"id",
 
@@ -202,6 +205,19 @@ _create: function() {
 		"border-bottom": "6px solid " + options.sortArrows.inactive,
 	});
 
+	//add column for row handle if movable rows enabled
+	if(options.movableRows){
+		var handle = $('<div class="tabulator-col-row-handle" style="display:inline-block;">&nbsp</div>');
+
+		handle.css({
+			"width":"30px",
+			"max-width":"30px",
+		})
+
+		self.header.append(handle);
+	}
+
+
 	$.each(options.columns, function(i, column) {
 
 		column.index = i;
@@ -247,12 +263,12 @@ _create: function() {
 
 	});
 
-element.append(self.header);
-self.tableHolder.append(self.table);
-element.append(self.tableHolder);
+	element.append(self.header);//
+	self.tableHolder.append(self.table);
+	element.append(self.tableHolder);
 
 	//layout headers
-	$(".tabulator-col", self.header).css({
+	$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
 		"padding":"4px",
 		"text-align":"left",
 		"position":"relative",
@@ -644,6 +660,48 @@ _renderTable:function(){
 	});
 
 
+
+	//enable movable rows
+	if(options.movableRows){
+
+		var moveBackground ="";
+		var moveBorder ="";
+		//sorter options
+		var config = {
+			handle:".tabulator-row-handle",
+			opacity: 1,
+			axis: "y",
+			start: function(event, ui){
+				moveBorder = ui.item.css("border");
+				moveBackground = ui.item.css("background-color");
+
+				ui.item.css({
+					"border":"1px solid #000",
+					"background":"#fff",
+				});
+
+			},
+			stop: function(event, ui){
+				ui.item.css({
+					"border": moveBorder,
+					"background":moveBackground,
+				});
+			},
+			update: function(event, ui) {
+				self._styleRows();
+			},
+
+		}
+
+		//if groups enabled, set sortable on groups, otherwise set it on main table
+		if(options.groupBy){
+			$(".tabulator-group-body", self.table).sortable(config);
+		}else{
+			self.table.sortable(config);
+		}
+	}
+
+
 	if(options.groupBy){
 
 		$(".tabulator-group", self.table).each(function(){
@@ -823,6 +881,30 @@ _renderRow:function(item){
 	row.on("click", function(e){self._rowClick(e, row, item)});
 	row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
+	//add row handle if movable rows enabled
+	if(self.options.movableRows){
+		var handle = $("<div class='tabulator-row-handle'></div>");
+
+		handle.append(self.options.movableRowHandle);
+
+		handle.css({
+			"text-align": "center",
+			"box-sizing":"border-box",
+			"display":"inline-block",
+			"vertical-align":"middle",
+			"min-height":self.options.headerHeight + 2,
+			"white-space":"nowrap",
+			"overflow":"hidden",
+			"text-overflow":"ellipsis",
+			"padding":"4px",
+			"width":"30px",
+			"max-width":"30px",
+		})
+		.on("mouseover", function(){$(this).css({cursor:"move", "background-color":"rgba(0,0,0,.1)"})})
+
+		row.append(handle);
+	}
+
 	$.each(self.options.columns, function(i, column) {
 		//deal with values that arnt declared
 
@@ -959,7 +1041,7 @@ _colRender:function(fixedwidth){
 				})
 			}
 
-			var totWidth = self.element.innerWidth();
+			var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
 			var colCount = 0;
 			var colWidth = totWidth / colCount;
 
@@ -1069,7 +1151,7 @@ _styleRows:function(){
 	}); //make sure odd rows revert back to color after hover
 
 	//add column borders to rows
-	$(".tabulator-cell", self.table).css({
+	$(".tabulator-cell, .tabulator-row-handle", self.table).css({
 		"border":"none",
 		"border-right":"1px solid " + self.options.rowBorderColor,
 	});
