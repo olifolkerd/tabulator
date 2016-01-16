@@ -363,6 +363,7 @@ _create: function() {
 		//create resize handle
 		var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>")
 		handle.on("mousedown", function(e){
+			e.stopPropagation(); //prevent resize from interfereing with movable columns
 			self.mouseDrag = e.screenX;
 			self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
 			self.mouseDragElement = $(this).closest(".tabulator-col");
