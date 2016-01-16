@@ -15,6 +15,7 @@ Tabulator is packed with useful  features including:
 - Editable cells
 - Adding/Deleting rows
 - Custom data formatting
+- Movable rows and columns
 - Grouping Rows
 - Data filtering
 - Resizable columns
@@ -430,6 +431,62 @@ You can clear all data in the table using the ***clear** function:
 $("#example-table").tabulator("clear");
 ```
 
+Movable Rows and Columns
+================================
+### Movable Rows
+
+To allow the user to move rows up and down the table, set the ***movableRows*** parameter in the options:
+```js
+$('#example-table'),tabulator({
+	movableRows: true, //enable user movable rows, by default this is set to false
+})
+```
+This will allow users to drag rows around using the handle on the left hand side of each row.
+
+if you would like to use a custom handle for a row then set the ***movableRowHandle*** parameter with the HTML for the handle graphic.
+```js
+$('#example-table'),tabulator({
+	movableRows: true, //enable user movable rows, by default this is set to false
+	movableRowHandle: "<div style='height:10px; width:10px; background:#f00;'></div>", //custom handle html
+})
+```
+**NOTE:** When grouping is enabled, rows can only be moved within their own group.
+
+When a row has been successfully moved, the ***rowMoved*** callback will be triggered.
+```js
+$("#example-table").tabulator({
+	rowMoved:function(id, data, row, index){
+		//id - the id of the row
+		//data - the data for the row
+		//row - the DOM element of the row
+		//index - new position of row in table
+	}
+});
+```
+
+
+###Movable Columns
+
+To allow the user to move columns along the table, set the ***movableCols*** parameter in the options:
+```js
+$('#example-table'),tabulator({
+	movableCols: true, //enable user movable rows, by default this is set to false
+})
+```
+This will allow users to drag columns around using the column headers at the top of the table.
+
+**NOTE:** icon/button columns and row handle columns are not movable.
+
+When a column has been successfully moved, the ***colMoved*** callback will be triggered.
+```js
+$("#example-table").tabulator({
+	colMoved:function(field, columns){
+		//field- the filed name of the moved column
+		//columns- the updated columns config array
+	}
+});
+```
+
 Table Layout
 ================================
 Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:
@@ -686,8 +743,6 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Pagination (via Ajax or in-table)
 - Table Footers
 - Custom Filter Functions
-- Movable Rows
-- Movable Columns
 - Column Visibility Toggle Functions
 - Import/Export Column Data (size/position/visibility)
 - Sparkline Formatter
