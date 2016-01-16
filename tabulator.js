@@ -90,6 +90,7 @@ options: {
 	rowDelete:function(){}, //do action on row delete
 	rowContext:function(){}, //context menu action
 	dataLoaded:function(){},  //callback for when data has been Loaded
+	rowMoved:function(){},  //callback for when row has moved
 },
 
 //loader blockout div
@@ -698,6 +699,7 @@ _renderTable:function(){
 			},
 			update: function(event, ui) {
 				self._styleRows();
+				options.rowMoved(ui.item.data("id"), ui.item.data("data"), ui.item,ui.item.prevAll(".tabulator-row").length);
 			},
 
 		}
