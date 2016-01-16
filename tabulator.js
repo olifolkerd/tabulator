@@ -451,13 +451,22 @@ getData:function(){
 	var allData = [];
 
 	//get all data from array
-	self.data.forEach( function(item, i) {
+	/*self.data.forEach( function(item, i) {
 		allData.push(item);
-	});
+	});*/
 
 	//get all new elements from list
-	$("[data-id=0]", self.element).each(function(){
+	/*$("[data-id=0]", self.element).each(function(){
 		allData.push($(this).data("data"));
+	});*/
+
+	$(".tabulator-row", self.element).each(function(){
+		if($(this).data("id")){
+			allData.push(self.data[$(this).data("id")]);
+		}else{
+			allData.push($(this).data("data"));
+		}
+
 	});
 
 	return allData;
