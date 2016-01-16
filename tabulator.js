@@ -47,6 +47,7 @@ options: {
 	height:false, //height of tabulator
 	fitColumns:false, //fit colums to width of screen;
 
+	movableCols:false, //enable movable columns
 	movableRows:false, //enable movable rows
 	movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
 
@@ -91,6 +92,7 @@ options: {
 	rowContext:function(){}, //context menu action
 	dataLoaded:function(){},  //callback for when data has been Loaded
 	rowMoved:function(){},  //callback for when row has moved
+	colMoved:function(){},  //callback for when column has moved
 },
 
 //loader blockout div
@@ -218,6 +220,80 @@ _create: function() {
 		self.header.append(handle);
 	}
 
+	//setup movable columns
+	if(options.movableCols){
+		self.header.sortable({
+			axis: "x",
+			opacity:1,
+			cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''],  .tabulator-col[data-field=undefined]",
+			start: function(event, ui){
+				ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
+			},
+			change: function(event, ui){
+				ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
+
+				var field = ui.item.data("field");
+				var newPos = ui.placeholder.next(".tabulator-col").data("field")
+
+				//cover situation where user moves back to original position
+				if(newPos == field){
+					newPos = ui.placeholder.next(".tabulator-col").next(".tabulator-col").data("field")
+				}
+
+				$(".tabulator-row", self.table).each(function(){
+
+					if(newPos){
+						$(".tabulator-cell[data-field=" + field + "]", $(this)).insertBefore($(".tabulator-cell[data-field=" + newPos + "]", $(this)))
+					}else{
+						$(this).append($(".tabulator-cell[data-field=" + field + "]", $(this)))
+					}
+
+
+				})
+			},
+			update: function(event, ui) {
+
+				//update columns array with new positional data
+				var fromField =  ui.item.data("field")
+				var toField =  ui.item.next(".tabulator-col").data("field")
+
+				console.log("to", toField)
+
+				var from = null;
+				var to = toField ? null : options.columns.length;
+
+				console.log("to", to)
+
+				$.each(options.columns, function(i, column) {
+
+					if(column.field && column.field == fromField){
+						from = i;
+					}
+
+					if(column.field && column.field == toField){
+						to = i;
+					}
+
+
+					if(from !== null && to !== null){
+						return false;
+					}
+
+				});
+
+				console.log("brobbel", from + " - " + to)
+
+				to = to > from ? to + 1 : to;
+
+				options.columns.splice(to , 0, options.columns.splice(from, 1)[0]);
+
+				//trigger callback
+				options.colMoved(ui.item.data("field"), options.columns);
+			},
+		});
+	}
+
+
 
 	$.each(options.columns, function(i, column) {
 
@@ -316,10 +392,6 @@ _create: function() {
 		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
 
 		$(".tabulator-col", self.header).append(handle);
-
-		$(".tabulator-col", self.header).on("mouseup", function(){
-
-		});
 
 	}
 
@@ -461,16 +533,16 @@ getData:function(){
 		allData.push($(this).data("data"));
 	});*/
 
-	$(".tabulator-row", self.element).each(function(){
-		if($(this).data("id")){
-			allData.push(self.data[$(this).data("id")]);
-		}else{
-			allData.push($(this).data("data"));
-		}
+$(".tabulator-row", self.element).each(function(){
+	if($(this).data("id")){
+		allData.push(self.data[$(this).data("id")]);
+	}else{
+		allData.push($(this).data("data"));
+	}
 
-	});
+});
 
-	return allData;
+return allData;
 },
 
 //load data
