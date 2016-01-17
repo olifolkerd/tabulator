@@ -291,34 +291,34 @@ _create: function() {
 				options.colMoved(ui.item.data("field"), options.columns);
 			},
 		});
+}
+
+
+
+$.each(options.columns, function(i, column) {
+
+	column.index = i;
+
+	column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+	column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
+	column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
+	column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
+
+	if(options.sortBy == column.field){
+		var sortdir = " data-sortdir='" + options.sortDir + "' ";
+		self.sortCurCol= column;
+		self.sortCurDir = options.sortDir;
+	}else{
+		var sortdir = "";
 	}
 
+	var title = column.title ? column.title : "&nbsp";
 
+	var visibility = column.visible ? "inline-block" : "none";
 
-	$.each(options.columns, function(i, column) {
+	var col = $('<div class="tabulator-col" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
 
-		column.index = i;
-
-		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
-		column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
-		column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
-
-		if(options.sortBy == column.field){
-			var sortdir = " data-sortdir='" + options.sortDir + "' ";
-			self.sortCurCol= column;
-			self.sortCurDir = options.sortDir;
-		}else{
-			var sortdir = "";
-		}
-
-		var title = column.title ? column.title : "&nbsp";
-
-		var visibility = column.visible ? "inline-block" : "none";
-
-		var col = $('<div class="tabulator-col" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
-
-		if(typeof(column.width) != "undefined"){
+	if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
 
 			col.data("width", column.width);
@@ -771,7 +771,17 @@ _renderTable:function(){
 				});
 			},
 			update: function(event, ui) {
+				//restyle rows
 				self._styleRows();
+
+				//clear sorter arrows
+				$(".tabulator-col[data-sortable=true]", self.header).data("sortdir", "desc");
+				$(".tabulator-col .tabulator-arrow", self.header).css({
+					"border-top": "none",
+					"border-bottom": "6px solid " + options.sortArrows.inactive,
+				})
+
+				//trigger callback
 				options.rowMoved(ui.item.data("id"), ui.item.data("data"), ui.item,ui.item.prevAll(".tabulator-row").length);
 			},
 
