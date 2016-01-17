@@ -264,7 +264,7 @@ $("#example-table").tabulator({
 		}
 	},
 });
-
+```
 
 Grouping Data
 ================================
