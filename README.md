@@ -812,7 +812,6 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Pagination (via Ajax or in-table)
 - Table Footers
 - Custom Filter Functions
-- Column Visibility Toggle Functions
 - Import/Export Column Data (size/position/visibility)
 - Sparkline Formatter
 - Extra Formatters
