@@ -80,7 +80,8 @@ There are a number of parameters that can be passed in with each column to deter
 - **onClick** - callback for when user clicks on a cell in this column (see [Callbacks](#callbacks) for more details)
 - **editable** - *(boolean, default - false)* determines if this data is editable by the user. will use the editor that matches the formatter by default. (see [Manipulating Data](#manipulating-data) for more details)
 - **editor** - set the editor to be used when editing the data. (see [Manipulating Data](#manipulating-data) for more details)
-- **visible** - *(boolean, default - true)* determines if the column is visible
+- **visible** - *(boolean, default - true)* determines if the column is visible. (see [Column Visibility](#column-visibility) for more details)
+
 
 Set Table Data
 ================================
@@ -486,6 +487,35 @@ $("#example-table").tabulator({
 		//columns- the updated columns config array
 	}
 });
+```
+
+Column Visibility
+================================
+Column visibility can be set in a number of different ways.
+
+### Column Definition Visibility
+You can set the column visibility when you create the column definition array:
+```js
+{title:"Name", field:"name", visible:false}, //create hidden column for the field "name"
+```
+By default columns are set with a ***visible*** parameter value of **true**.
+
+### Show Column Function
+You can show a hidden column at any point using the ***showCol*** function. Pass the field name of the column you wish to show as the first parameter of the function.
+```js
+$("#example-table").tabulator("showCol","name") //show the "name" column
+```
+
+### Hide Column Function
+You can hide a visible column at any point using the ***hideCol*** function. Pass the field name of the column you wish to hide as the first parameter of the function.
+```js
+$("#example-table").tabulator("hideCol","name") //hide the "name" column
+```
+
+### Toggle Column Function
+You can toggle the visibility of a column at any point using the ***toggleCol*** function. Pass the field name of the column you wish to toggle as the first parameter of the function.
+```js
+$("#example-table").tabulator("toggleCol","name") ////toggle the visibility of the "name" column
 ```
 
 Table Layout

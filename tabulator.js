@@ -457,6 +457,84 @@ _cellDataChange: function(cell, value){
 
 },
 
+
+//hide column
+hideCol: function(field){
+	var self = this;
+	var column = false;
+
+	$.each(self.options.columns, function(i, item) {
+		console.log("field", item.field)
+		if(item.field == field){
+			column = i;
+			return false;
+		}
+
+	});
+
+	if(column === false){
+		return false;
+	}else{
+		self.options.columns[column].visible = false;
+		$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
+		self._renderTable();
+		return true;
+	}
+},
+
+//show column
+showCol: function(field){
+	var self = this;
+	var column = false;
+
+	$.each(self.options.columns, function(i, item) {
+		console.log("field", item.field)
+		if(item.field == field){
+			column = i;
+			return false;
+		}
+
+	});
+
+	if(column === false){
+		return false;
+	}else{
+		self.options.columns[column].visible = true;
+		$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
+		self._renderTable();
+		return true;
+	}
+},
+
+//toggle column visibility
+toggleCol: function(field){
+	var self = this;
+	var column = false;
+
+	$.each(self.options.columns, function(i, item) {
+		console.log("field", item.field)
+		if(item.field == field){
+			column = i;
+			return false;
+		}
+
+	});
+
+	if(column === false){
+		return false;
+	}else{
+		self.options.columns[column].visible = !self.options.columns[column].visible;
+		if(self.options.columns[column].visible){
+			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
+		}else{
+			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
+		}
+
+		self._renderTable();
+		return true;
+	}
+},
+
 //delete row from table by id
 deleteRow: function(item){
 	var self = this;
