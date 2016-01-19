@@ -1644,6 +1644,38 @@ editors:{
 		return input;
 
 	},
+	number:function(cell, value){
+
+		//create and style input
+		var input = $("<input type='number'/>");
+		input.css({
+			"border":"1px",
+			"background":"transparent",
+			"padding":"4px",
+			"width":"100%",
+			"box-sizing":"border-box",
+		})
+		.val(value);
+
+		setTimeout(function(){
+			input.focus();
+		},100)
+
+		//submit new value on blur
+		input.on("blur", function(e){
+			cell.trigger("editval", input.val());
+		});
+
+		//submit new value on enter
+		input.on("keydown", function(e){
+			if(e.keyCode == 13){
+				cell.trigger("editval", input.val());
+			}
+		});
+
+		return input;
+
+	},
 	star:function(cell, value){
 		var maxStars = $("svg", cell).length;
 		var size = $("svg:first", cell).attr("width");

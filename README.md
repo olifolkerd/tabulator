@@ -359,7 +359,8 @@ By default Tabulator will use an editor that matches the current formatter for t
 ```
 
  Tabulator comes with a number of preconfigured editors including:
-- **input** - editor for plain text
+- **input** - editor for plain text.
+- **number** - editor for numbers with increment and decrement buttons.
 - **tick** - editor for tick and tickCross columns.
 - **star** - editor for star columns (can use left/right arrow keys and enter for selection as well as mouse).
 - **progress** -  editor for progress bar columns (can use left/right arrow keys and enter for selection as well as mouse)
