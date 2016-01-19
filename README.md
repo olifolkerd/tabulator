@@ -24,6 +24,13 @@ Tabulator is packed with useful  features including:
 - Custom click and context Events
 - Callbacks at every stage of data processing and rendering
 
+###Live Demo
+
+A live demo of tabulator in action can be found [here](http://htmlpreview.github.io/?https://github.com/olifolkerd/tabulator/blob/master/examples.html).
+
+###Examples
+A selection of demo tables can be found in the ***examples.html*** file.
+
 
 Setup
 ================================
@@ -43,13 +50,6 @@ Turn the element into a tabulator with some simple javascript
 ```js
 $("#example-table").tabulator();
 ```
-
-###Live Demo
-
-A live demo of tabulator in action can be found [here](http://htmlpreview.github.io/?https://github.com/olifolkerd/tabulator/blob/master/examples.html).
-
-###Examples
-A selection of demo tables can be found in the ***examples.html*** file.
 
 Define Column Headers
 ================================
