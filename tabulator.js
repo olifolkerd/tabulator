@@ -986,6 +986,7 @@ _renderGroupHeader:function(group){
 		"font-weight":"bold",
 		"padding":"5px",
 		"border-bottom":"1px solid #999",
+		"border-right":"1px solid " + self.options.rowBorderColor,
 		"border-top":"1px solid #999",
 		"box-sizing":"border-box",
 	})
