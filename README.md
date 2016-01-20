@@ -81,7 +81,7 @@ There are a number of parameters that can be passed in with each column to deter
 - **editable** - *(boolean, default - false)* determines if this data is editable by the user. will use the editor that matches the formatter by default. (see [Manipulating Data](#manipulating-data) for more details)
 - **editor** - set the editor to be used when editing the data. (see [Manipulating Data](#manipulating-data) for more details)
 - **visible** - *(boolean, default - true)* determines if the column is visible. (see [Column Visibility](#column-visibility) for more details)
-
+- **cssClass** - sets css classes on header and cells in this column.
 
 Set Table Data
 ================================

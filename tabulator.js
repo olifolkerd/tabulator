@@ -303,6 +303,8 @@ $.each(options.columns, function(i, column) {
 	column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
 	column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
 	column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
+	column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
+
 
 	if(options.sortBy == column.field){
 		var sortdir = " data-sortdir='" + options.sortDir + "' ";
@@ -316,7 +318,7 @@ $.each(options.columns, function(i, column) {
 
 	var visibility = column.visible ? "inline-block" : "none";
 
-	var col = $('<div class="tabulator-col" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+	var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
 
 	if(typeof(column.width) != "undefined"){
 			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
@@ -1094,7 +1096,7 @@ _renderRow:function(item){
 		var tabbable = column.editable || column.editor ? "tabindex='0'" : "";
 
 
-		var cell = $("<div class='tabulator-cell' " + tabbable + " data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+		var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
 		var visibility = column.visible ? "inline-block" : "none";
 
