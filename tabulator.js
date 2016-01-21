@@ -161,7 +161,6 @@ _create: function() {
 		"font-size":options.textSize,
 		"font-weight":"bold",
 		"white-space": "nowrap",
-		"z-index":"1",
 		"overflow":"visible",
 	});
 
@@ -169,7 +168,6 @@ _create: function() {
 
 	self.tableHolder.css({
 		"position":"absolute",
-		"z-index":"1",
 		"min-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 		"white-space": "nowrap",
@@ -189,10 +187,13 @@ _create: function() {
 		position:"relative",
 		"font-size":options.textSize,
 		"white-space": "nowrap",
-		"z-index":"1",
 		"display":"inline-block",
 		"overflow":"visible",
+		"background-color":self.options.rowBackgroundColor,
+		"color":self.options.rowTextColor,
 	});
+
+
 
 	//create sortable arrow chevrons
 	var arrow = $("<div class='tabulator-arrow'></div>");
@@ -885,12 +886,6 @@ _renderTable:function(){
 		self._sortElement(self.table, {}, "asc", true); //sort groups
 
 	}
-
-
-	self.table.css({//
-		"background-color":self.options.rowBackgroundColor,
-		"color":self.options.rowTextColor,
-	});
 
 	//style table rows
 	self._styleRows();
