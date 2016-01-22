@@ -352,6 +352,7 @@ $.each(options.columns, function(i, column) {
 		"padding":"4px",
 		"text-align":"left",
 		"position":"relative",
+		"box-sizing":"border-box",
 		"border-right":"1px solid " + options.headerBorderColor,
 		"box-sizing":"border-box",
 		"user-select":"none",
@@ -1211,7 +1212,7 @@ _colRender:function(fixedwidth){
 				})
 			}
 
-			var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
+			var totWidth = Math.floor(options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth());
 			var colCount = 0;
 			var colWidth = totWidth / colCount;
 
