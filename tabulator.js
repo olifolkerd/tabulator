@@ -1166,7 +1166,7 @@ dataCount:function(){
 
 //redraw list without updating data
 redraw:function(){
-	var self = this
+	var self = this;
 
 	//redraw columns
 	if(self.options.fitColumns){
@@ -1181,8 +1181,18 @@ redraw:function(){
 
 //resize a colum to specified width
 _resizeCol:function(index, width){
+	var self = this;
+
 	$(".tabulator-cell[data-index=" + index + "], .tabulator-col[data-index=" + index + "]",this.element).css({width:width})
+
+	//reinstate right edge on table if fitted columns resized
+	if(self.options.fitColumns){
+		$(".tabulator-row .tabulator-cell:last-of-type",self.element).css("border-right","1px solid " + self.options.rowBorderColor);
+		$(".tabulator-col:last",self.element).css("border-right","1px solid " + self.options.headerBorderColor);
+	}
 },
+
+
 
 //layout coluns on first render
 _colRender:function(fixedwidth){
@@ -1206,18 +1216,22 @@ _colRender:function(fixedwidth){
 		if(options.fitColumns){
 			//resize columns to fit in window
 
+			//remove right edge border on table if fitting to width to prevent double border
+			$(".tabulator-row .tabulator-cell:last-of-type, .tabulator-col:last",element).css("border-right","none");
+
 			if(self.options.fitColumns){
 				$(".tabulator-row", self.table).css({
 					"width":"100%",
 				})
 			}
 
-			var totWidth = Math.floor(options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth());
+			var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
 			var colCount = 0;
 			var colWidth = totWidth / colCount;
 
 			var widthIdeal = 0;
 			var widthIdealCount = 0;
+			var lastVariableCol = "";
 
 			$.each(options.columns, function(i, column) {
 				if(column.visible){
@@ -1230,11 +1244,17 @@ _colRender:function(fixedwidth){
 
 						widthIdeal += thisWidth;
 						widthIdealCount++;
+					}else{
+						lastVariableCol = column.field;
 					}
 				}
 			});
 
 			var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
+
+			//prevent underflow on non integer width tables
+			var gapFill = totWidth - widthIdeal - (proposedWidth * (colCount - widthIdealCount));
+			gapFill = gapFill > 0 ? gapFill : 0;
 
 			if(proposedWidth >= parseInt(options.colMinWidth)){
 
@@ -1243,7 +1263,13 @@ _colRender:function(fixedwidth){
 						var newWidth = column.width ? column.width : proposedWidth;
 
 						var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]",element);
-						col.css({width:newWidth});
+
+						if(column.field == lastVariableCol){
+							col.css({width:newWidth + gapFill});
+						}else{
+							col.css({width:newWidth});
+						}
+
 					}
 				});
 
