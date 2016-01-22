@@ -1212,7 +1212,7 @@ _colRender:function(fixedwidth){
 				})
 			}
 
-			var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
+			var totWidth = Math.floor(options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth());
 			var colCount = 0;
 			var colWidth = totWidth / colCount;
 
@@ -1236,9 +1236,6 @@ _colRender:function(fixedwidth){
 
 			var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
 
-			//prevent underflow on non integer width tables
-			var gapFill = totWidth - widthIdeal - (proposedWidth * (colCount - widthIdealCount));
-
 			if(proposedWidth >= parseInt(options.colMinWidth)){
 
 				$.each(options.columns, function(i, column) {
@@ -1246,13 +1243,7 @@ _colRender:function(fixedwidth){
 						var newWidth = column.width ? column.width : proposedWidth;
 
 						var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]",element);
-
-						if(i == options.columns.length - 1){
-							col.css({width:newWidth + gapFill});
-						}else{
-							col.css({width:newWidth});
-						}
-
+						col.css({width:newWidth});
 					}
 				});
 
