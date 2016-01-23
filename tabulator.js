@@ -1146,10 +1146,12 @@ _renderRow:function(item){
 				cell.on("focus", function(e){
 					e.stopPropagation();
 
+					//Load editor
 					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
 
 					var cellEditor = editorFunc(cell, cell.data("value"));
 
+					//if editor returned, add to DOM, if false, abort edit
 					if(cellEditor !== false){
 						cell.addClass("tabulator-editing");
 						cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
@@ -1164,8 +1166,6 @@ _renderRow:function(item){
 					}else{
 						cell.blur();
 					}
-
-
 
 				});
 			}
