@@ -433,6 +433,8 @@ _cellDataChange: function(cell, value){
 	var self = this;
 	var row = cell.closest(".tabulator-row");
 
+	cell.removeClass("tabulator-editing");
+
 	//update cell data value
 	cell.data("value", value);
 
@@ -1134,8 +1136,18 @@ _renderRow:function(item){
 		}else{
 			//handle input replacement on editable cells
 			if(cell.data("editor")){
+
+				cell.on("click", function(e){
+					if(!$(this).hasClass("tabulator-editing")){
+						$(this).focus();
+					}
+				});
+
 				cell.on("focus", function(e){
 					e.stopPropagation();
+
+					cell.addClass("tabulator-editing");
+
 					cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
 
 					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
