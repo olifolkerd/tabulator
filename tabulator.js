@@ -1146,20 +1146,27 @@ _renderRow:function(item){
 				cell.on("focus", function(e){
 					e.stopPropagation();
 
-					cell.addClass("tabulator-editing");
-
-					cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
-
 					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
 
 					var cellEditor = editorFunc(cell, cell.data("value"));
-					cell.empty();
-					cell.append(cellEditor);
 
-					//prevent editing from tirggering rowClick event
-					cell.children().click(function(e){
-						e.stopPropagation();
-					})
+					if(cellEditor !== false){
+						cell.addClass("tabulator-editing");
+						cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
+
+						cell.empty();
+						cell.append(cellEditor);
+
+						//prevent editing from tirggering rowClick event
+						cell.children().click(function(e){
+							e.stopPropagation();
+						})
+					}else{
+						cell.blur();
+					}
+
+
+
 				});
 			}
 		}

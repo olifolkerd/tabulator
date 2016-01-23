@@ -81,7 +81,7 @@ There are a number of parameters that can be passed in with each column to deter
 - **editable** - *(boolean, default - false)* determines if this data is editable by the user. will use the editor that matches the formatter by default. (see [Manipulating Data](#manipulating-data) for more details)
 - **editor** - set the editor to be used when editing the data. (see [Manipulating Data](#manipulating-data) for more details)
 - **visible** - *(boolean, default - true)* determines if the column is visible. (see [Column Visibility](#column-visibility) for more details)
-- **cssClass** - sets css classes on header and cells in this column.
+- **cssClass** - sets css classes on header and cells in this column. *(value should be a string containing space seperated class names)*
 
 Set Table Data
 ================================
@@ -402,6 +402,8 @@ You can define a custom editor function in the editor option:
 }
 ```
 
+Returning a value of ***false*** from this function will abort the edit and prevent the cell from being selected.
+
 ### Retreiving Data
 You can retreive the data stored in the table using the ***getData** function.
 ```js
@@ -675,6 +677,7 @@ tabulator-table | Contain table rows
 tabulator-row | Row of table
 tabulator-row-handle | Handle for moving the row if ***movableRows*** is enabled
 tabulator-cell | Data cell
+tabulator-editing | The cell currently being edited
 tabulator-group | A group of rows (including group header)
 tabulator-group-header | Contains header for a group
 tabulator-group-body | Contains all data rows for a group
