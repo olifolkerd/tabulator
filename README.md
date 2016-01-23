@@ -814,11 +814,14 @@ Tabulator is actively under development and I plan to have even more useful feat
 
 - Pagination (via Ajax or in-table)
 - Table Footers
+- Multi row column headers / column grouping
+- Row Templating
 - Custom Filter Functions
 - Import/Export Column Data (size/position/visibility)
 - Sparkline Formatter
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
+- Usage Case Examples (storing column data in cookies to capture user preferences, creating custom formatters, etc...)
 
 Get in touch if there are any features you feel Tabulator needs.
