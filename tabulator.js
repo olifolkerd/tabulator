@@ -51,8 +51,8 @@ options: {
 	movableRows:false, //enable movable rows
 	movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
 
-	columnStyleCookie:false, //store cookie with column _styles
-	columnStyleCookieID:"", //id for stored cookie
+	columnLayoutCookie:false, //store cookie with column _styles
+	columnLayoutCookieID:"", //id for stored cookie
 
 
 	columns:[],//store for colum header info
@@ -199,7 +199,7 @@ _create: function() {
 
 	//layout columns
 
-	if(options.columnStyleCookie){
+	if(options.columnLayoutCookie){
 		self._getColCookie();
 	}else{
 		self._colLayout();
@@ -254,7 +254,7 @@ _setColCookie:function(){
 	var self = this;
 
 	//set cookie ied
-	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr("id") ? self.element.attr("id") : "";
+	var cookieID = self.options.columnLayoutCookieID ? self.options.columnLayoutCookieID : self.element.attr("id") ? self.element.attr("id") : "";
 	cookieID = "tabulator-" + cookieID;
 
 	//set cookie expiration far in the future
@@ -289,7 +289,7 @@ _getColCookie:function(){
 	var self = this;
 
 	//set cookie ied
-	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr("id") ? self.element.attr("id") : "";
+	var cookieID = self.options.columnLayoutCookieID ? self.options.columnLayoutCookieID : self.element.attr("id") ? self.element.attr("id") : "";
 	cookieID = "tabulator-" + cookieID;
 
 	//find cookie
@@ -428,7 +428,7 @@ hideCol: function(field){
 		$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
 		self._renderTable();
 
-		if(self.options.columnStyleCookie){
+		if(self.options.columnLayoutCookie){
 			self._setColCookie();
 		}
 
@@ -457,7 +457,7 @@ showCol: function(field){
 		$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
 		self._renderTable();
 
-		if(self.options.columnStyleCookie){
+		if(self.options.columnLayoutCookie){
 			self._setColCookie();
 		}
 		return true;
@@ -488,7 +488,7 @@ toggleCol: function(field){
 			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
 		}
 
-		if(self.options.columnStyleCookie){
+		if(self.options.columnLayoutCookie){
 			self._setColCookie();
 		}
 
@@ -1267,7 +1267,7 @@ _colLayout:function(forceRefresh){
 				//trigger callback
 				options.colMoved(ui.item.data("field"), options.columns);
 
-				if(self.options.columnStyleCookie){
+				if(self.options.columnLayoutCookie){
 					self._setColCookie();
 				}
 			},
@@ -1376,7 +1376,7 @@ _colLayout:function(forceRefresh){
 				});
 
 
-				if(self.options.columnStyleCookie){
+				if(self.options.columnLayoutCookie){
 					self._setColCookie();
 				}
 
