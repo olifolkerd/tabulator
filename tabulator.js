@@ -51,6 +51,10 @@ options: {
 	movableRows:false, //enable movable rows
 	movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
 
+	columnStyleCookie:false, //store cookie with column _styles
+	columnStyleCookieID:"", //id for stored cookie
+
+
 	columns:[],//store for colum header info
 
 	index:"id",
@@ -193,232 +197,14 @@ _create: function() {
 		"color":self.options.rowTextColor,
 	});
 
+	//layout columns
 
-
-	//create sortable arrow chevrons
-	var arrow = $("<div class='tabulator-arrow'></div>");
-	arrow.css({
-		display: "inline-block",
-		position: "absolute",
-		top:"9px",
-		right:"8px",
-		width: 0,
-		height: 0,
-		"border-left": "6px solid transparent",
-		"border-right": "6px solid transparent",
-		"border-bottom": "6px solid " + options.sortArrows.inactive,
-	});
-
-	//add column for row handle if movable rows enabled
-	if(options.movableRows){
-		var handle = $('<div class="tabulator-col-row-handle" style="display:inline-block;">&nbsp</div>');
-
-		handle.css({
-			"width":"30px",
-			"max-width":"30px",
-		})
-
-		self.header.append(handle);
-	}
-
-	//setup movable columns
-	if(options.movableCols){
-		self.header.sortable({
-			axis: "x",
-			opacity:1,
-			cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''],  .tabulator-col[data-field=undefined]",
-			start: function(event, ui){
-				ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
-			},
-			change: function(event, ui){
-				ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
-
-				var field = ui.item.data("field");
-				var newPos = ui.placeholder.next(".tabulator-col").data("field")
-
-				//cover situation where user moves back to original position
-				if(newPos == field){
-					newPos = ui.placeholder.next(".tabulator-col").next(".tabulator-col").data("field")
-				}
-
-				$(".tabulator-row", self.table).each(function(){
-
-					if(newPos){
-						$(".tabulator-cell[data-field=" + field + "]", $(this)).insertBefore($(".tabulator-cell[data-field=" + newPos + "]", $(this)))
-					}else{
-						$(this).append($(".tabulator-cell[data-field=" + field + "]", $(this)))
-					}
-
-
-				})
-			},
-			update: function(event, ui) {
-
-				//update columns array with new positional data
-				var fromField =  ui.item.data("field")
-				var toField =  ui.item.next(".tabulator-col").data("field")
-
-				console.log("to", toField)
-
-				var from = null;
-				var to = toField ? null : options.columns.length;
-
-				console.log("to", to)
-
-				$.each(options.columns, function(i, column) {
-
-					if(column.field && column.field == fromField){
-						from = i;
-					}
-
-					if(column.field && column.field == toField){
-						to = i;
-					}
-
-
-					if(from !== null && to !== null){
-						return false;
-					}
-
-				});
-
-				console.log("brobbel", from + " - " + to)
-
-				to = to > from ? to + 1 : to;
-
-				options.columns.splice(to , 0, options.columns.splice(from, 1)[0]);
-
-				//trigger callback
-				options.colMoved(ui.item.data("field"), options.columns);
-			},
-		});
-}
-
-
-
-$.each(options.columns, function(i, column) {
-
-	column.index = i;
-
-	column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-	column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
-	column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
-	column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
-	column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
-
-
-	if(options.sortBy == column.field){
-		var sortdir = " data-sortdir='" + options.sortDir + "' ";
-		self.sortCurCol= column;
-		self.sortCurDir = options.sortDir;
+	if(options.columnStyleCookie){
+		self._getColCookie();
 	}else{
-		var sortdir = "";
+		self._colLayout();
 	}
 
-	var title = column.title ? column.title : "&nbsp";
-
-	var visibility = column.visible ? "inline-block" : "none";
-
-	var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
-
-	if(typeof(column.width) != "undefined"){
-			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
-
-			col.data("width", column.width);
-
-			col.css({width:column.width});
-		}
-
-		//sort tabl click binding
-		if(column.sortable){
-			col.on("click", function(){
-				if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
-					self._sortClick(column, col); //trigger sort
-				}
-				self.mouseDragOut = false;
-			})
-		}
-
-		self.header.append(col);
-
-	});
-
-	element.append(self.header);//
-	self.tableHolder.append(self.table);
-	element.append(self.tableHolder);
-
-	//layout headers
-	$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
-		"padding":"4px",
-		"text-align":"left",
-		"position":"relative",
-		"box-sizing":"border-box",
-		"border-right":"1px solid " + options.headerBorderColor,
-		"box-sizing":"border-box",
-		"user-select":"none",
-		"white-space": "nowrap",
-		"overflow": "hidden",
-		"text-overflow": "ellipsis",
-		"vertical-align": "bottom",
-	});
-
-	//handle resizable columns
-	if(self.options.colResizable){
-		//create resize handle
-		var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>")
-		handle.on("mousedown", function(e){
-			e.stopPropagation(); //prevent resize from interfereing with movable columns
-			self.mouseDrag = e.screenX;
-			self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
-			self.mouseDragElement = $(this).closest(".tabulator-col");
-		})
-		self.element.on("mousemove", function(e){
-			if(self.mouseDrag){
-				self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
-				self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
-			}
-		})
-		self.element.on("mouseup", function(e){
-
-			if(self.mouseDrag){
-				e.stopPropagation();
-				e.stopImmediatePropagation();
-
-				self.mouseDragOut = true;
-
-				self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
-
-				self.mouseDrag = false;
-				self.mouseDragWidth = false;
-				self.mouseDragElement = false;
-			}
-		});
-
-		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
-
-		$(".tabulator-col", self.header).append(handle);
-
-	}
-
-
-	element.on("editval", ".tabulator-cell", function(e, value){
-		if($(this).is(":focus")){$(this).blur()}
-			self._cellDataChange($(this), value);
-	})
-
-	element.on("editcancel", ".tabulator-cell", function(e, value){
-		self._cellDataChange($(this), $(this).data("value"));
-	})
-
-	//append sortable arrows to sortable headers
-	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"25px"})
-	.data("sortdir", "desc")
-	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
-	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
-	.append(arrow.clone());
-
-	//render column headings
-	self._colRender();
 
 },
 
@@ -463,6 +249,163 @@ _cellDataChange: function(cell, value){
 
 },
 
+//set column style cookie
+_setColCookie:function(){
+	var self = this;
+
+	//set cookie ied
+	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr(id) ? self.element.attr(id) : "";
+	cookieID = "tabulator-" + cookieID;
+
+	//set cookie expiration far in the future
+	var expDate = new Date();
+	expDate.setDate(expDate.getDate() + 10000);
+
+
+	//create array of column styles only
+	var columnStyles = [];
+
+	$.each(self.options.columns, function(i, column) {
+
+		var style = {
+			field: column.field,
+			width: column.width,
+			visible:column.visible,
+		};
+
+		columnStyles.push(style);
+	});
+
+
+	//JSON format column data
+	var data = JSON.stringify(columnStyles);
+
+	//save cookie
+	document.cookie = cookieID + "=" + data + "; expires=" + expDate.toUTCString();
+
+	self._getColCookie();
+},
+
+//set Ccolumn style cookie
+_getColCookie:function(){
+	var self = this;
+
+	//set cookie ied
+	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr(id) ? self.element.attr(id) : "";
+	cookieID = "tabulator-" + cookieID;
+
+	//find cookie
+	var cookie = document.cookie;
+	var cookiePos = cookie.indexOf(cookieID+"=");
+
+	//if cookie exists, decode and load column data into tabulator
+	if(cookiePos > -1){
+		cookie = cookie.substr(cookiePos);
+
+		var end = cookie.indexOf(";");
+
+		if(end > -1){
+			cookie = cookie.substr(0, end);
+		}
+
+		cookie = cookie.replace(cookieID+"=", "")
+
+		self.setColumns(JSON.parse(cookie), true);
+	}
+
+
+},
+
+//set tabulator columns
+setColumns: function(columns, update){
+	var self = this;
+	var oldColumns = self.options.columns;
+
+	//if updateing columns work through exisiting column data
+	if(update){
+
+		var newColumns = [];
+
+		//iterate through each of the new columns
+		$.each(columns, function(i, column) {
+
+			//find a match in the original column array
+			var find = column.field;
+			//var find = column.field == "" ? column : column.field;
+
+			$.each(self.options.columns, function(i, origColumn) {
+
+				var match = typeof(find) == "object" ? origColumn == find : origColumn.field == find;
+
+				//if matching, update layout data and add to new column array
+				if(match){
+
+					var result = self.options.columns.splice(i, 1)[0];
+
+					result.width = column.width;
+					result.visible = column.visible;
+
+					newColumns.push(result);
+
+					return false;
+				}
+
+			});
+
+		});
+
+		//if any aditional columns left add them to the end of the table
+		if(self.options.columns.length > 0){
+			newColumns.concat(self.options.columns);
+		}
+
+		//replace old columns with new
+		self.options.columns = newColumns;
+
+		//Trigger Redraw
+		self._colLayout();
+
+	}else{
+
+		// if replaceing columns, replace columns array with new
+		self.options.columns = columns;
+
+		//Trigger Redraw
+		self._colLayout();
+	}
+},
+
+//get tabulator columns
+getColumns: function(){
+	var self = this;
+
+	return self.options.columns;
+},
+
+
+//find column
+_findColumn:function(field){
+	var self = this;
+
+	var result = false
+
+	$.each(self.options.columns, function(i, column) {
+		if(typeof(field) == "object"){
+			if(column == field){
+				result = column;
+				return false;
+			}
+		}else{
+			if(column.field == field){
+				result = column;
+				return false;
+			}
+		}
+	});
+
+	return result;
+},
+
 
 //hide column
 hideCol: function(field){
@@ -470,7 +413,7 @@ hideCol: function(field){
 	var column = false;
 
 	$.each(self.options.columns, function(i, item) {
-		console.log("field", item.field)
+
 		if(item.field == field){
 			column = i;
 			return false;
@@ -484,6 +427,11 @@ hideCol: function(field){
 		self.options.columns[column].visible = false;
 		$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
 		self._renderTable();
+
+		if(self.options.columnStyleCookie){
+			self._setColCookie();
+		}
+
 		return true;
 	}
 },
@@ -494,7 +442,7 @@ showCol: function(field){
 	var column = false;
 
 	$.each(self.options.columns, function(i, item) {
-		console.log("field", item.field)
+
 		if(item.field == field){
 			column = i;
 			return false;
@@ -508,6 +456,10 @@ showCol: function(field){
 		self.options.columns[column].visible = true;
 		$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
 		self._renderTable();
+
+		if(self.options.columnStyleCookie){
+			self._setColCookie();
+		}
 		return true;
 	}
 },
@@ -518,7 +470,7 @@ toggleCol: function(field){
 	var column = false;
 
 	$.each(self.options.columns, function(i, item) {
-		console.log("field", item.field)
+
 		if(item.field == field){
 			column = i;
 			return false;
@@ -534,6 +486,10 @@ toggleCol: function(field){
 			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
 		}else{
 			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
+		}
+
+		if(self.options.columnStyleCookie){
+			self._setColCookie();
 		}
 
 		self._renderTable();
@@ -1212,6 +1168,255 @@ _resizeCol:function(index, width){
 },
 
 
+//layout columns
+_colLayout:function(forceRefresh){
+	var self = this;
+	var options = self.options;
+	var element = self.element;
+
+	self.header.empty();
+
+
+	//create sortable arrow chevrons
+	var arrow = $("<div class='tabulator-arrow'></div>");
+	arrow.css({
+		display: "inline-block",
+		position: "absolute",
+		top:"9px",
+		right:"8px",
+		width: 0,
+		height: 0,
+		"border-left": "6px solid transparent",
+		"border-right": "6px solid transparent",
+		"border-bottom": "6px solid " + options.sortArrows.inactive,
+	});
+
+	//add column for row handle if movable rows enabled
+	if(options.movableRows){
+		var handle = $('<div class="tabulator-col-row-handle" style="display:inline-block;">&nbsp</div>');
+
+		handle.css({
+			"width":"30px",
+			"max-width":"30px",
+		})
+
+		self.header.append(handle);
+	}
+
+	//setup movable columns
+	if(options.movableCols){
+		self.header.sortable({
+			axis: "x",
+			opacity:1,
+			cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''],  .tabulator-col[data-field=undefined]",
+			start: function(event, ui){
+				ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
+			},
+			change: function(event, ui){
+				ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
+
+				var field = ui.item.data("field");
+				var newPos = ui.placeholder.next(".tabulator-col").data("field")
+
+				//cover situation where user moves back to original position
+				if(newPos == field){
+					newPos = ui.placeholder.next(".tabulator-col").next(".tabulator-col").data("field")
+				}
+
+				$(".tabulator-row", self.table).each(function(){
+
+					if(newPos){
+						$(".tabulator-cell[data-field=" + field + "]", $(this)).insertBefore($(".tabulator-cell[data-field=" + newPos + "]", $(this)))
+					}else{
+						$(this).append($(".tabulator-cell[data-field=" + field + "]", $(this)))
+					}
+
+
+				})
+			},
+			update: function(event, ui) {
+
+				//update columns array with new positional data
+				var fromField =  ui.item.data("field")
+				var toField =  ui.item.next(".tabulator-col").data("field")
+
+				var from = null;
+				var to = toField ? null : options.columns.length;
+
+				$.each(options.columns, function(i, column) {
+
+					if(column.field && column.field == fromField){
+						from = i;
+					}
+
+					if(column.field && column.field == toField){
+						to = i;
+					}
+
+
+					if(from !== null && to !== null){
+						return false;
+					}
+
+				});
+
+				to = to > from ? to + 1 : to;
+
+				options.columns.splice(to , 0, options.columns.splice(from, 1)[0]);
+
+				//trigger callback
+				options.colMoved(ui.item.data("field"), options.columns);
+
+				if(self.options.columnStyleCookie){
+					self._setColCookie();
+				}
+			},
+		});
+	}//
+
+
+
+	$.each(options.columns, function(i, column) {
+
+		column.index = i;
+
+		column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+		column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
+		column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
+		column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
+		column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
+
+
+		if(options.sortBy == column.field){
+			var sortdir = " data-sortdir='" + options.sortDir + "' ";
+			self.sortCurCol= column;
+			self.sortCurDir = options.sortDir;
+		}else{
+			var sortdir = "";
+		}
+
+		var title = column.title ? column.title : "&nbsp";
+
+		var visibility = column.visible ? "inline-block" : "none";
+
+		var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+
+		if(typeof(column.width) != "undefined"){
+			column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
+
+			col.data("width", column.width);
+
+			col.css({width:column.width});
+		}
+
+		//sort tabl click binding
+		if(column.sortable){
+			col.on("click", function(){
+				if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
+					self._sortClick(column, col); //trigger sort
+				}
+				self.mouseDragOut = false;
+			})
+		}
+
+		self.header.append(col);
+
+	});
+
+	element.append(self.header);//
+	self.tableHolder.append(self.table);
+	element.append(self.tableHolder);
+
+	//layout headers
+	$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
+		"padding":"4px",
+		"text-align":"left",
+		"position":"relative",
+		"box-sizing":"border-box",
+		"border-right":"1px solid " + options.headerBorderColor,
+		"box-sizing":"border-box",
+		"user-select":"none",
+		"white-space": "nowrap",
+		"overflow": "hidden",
+		"text-overflow": "ellipsis",
+		"vertical-align": "bottom",
+	});
+
+	//handle resizable columns
+	if(self.options.colResizable){
+		//create resize handle
+		var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>")
+		handle.on("mousedown", function(e){
+			e.stopPropagation(); //prevent resize from interfereing with movable columns
+			self.mouseDrag = e.screenX;
+			self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
+			self.mouseDragElement = $(this).closest(".tabulator-col");
+		})
+		self.element.on("mousemove", function(e){
+			if(self.mouseDrag){
+				self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
+				self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
+			}
+		})
+		self.element.on("mouseup", function(e){
+
+			if(self.mouseDrag){
+				e.stopPropagation();
+				e.stopImmediatePropagation();
+
+				self.mouseDragOut = true;
+
+				self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
+
+
+				$.each(self.options.columns, function(i, item) {
+					if(item.field == self.mouseDragElement.data("field")){
+						item.width = self.mouseDragElement.outerWidth();
+					}
+				});
+
+
+				if(self.options.columnStyleCookie){
+					self._setColCookie();
+				}
+
+				self.mouseDrag = false;
+				self.mouseDragWidth = false;
+				self.mouseDragElement = false;
+			}
+		});
+
+		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
+
+		$(".tabulator-col", self.header).append(handle);
+
+	}
+
+
+	element.on("editval", ".tabulator-cell", function(e, value){
+		if($(this).is(":focus")){$(this).blur()}
+			self._cellDataChange($(this), value);
+	})
+
+	element.on("editcancel", ".tabulator-cell", function(e, value){
+		self._cellDataChange($(this), $(this).data("value"));
+	})
+
+	//append sortable arrows to sortable headers
+	$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"25px"})
+	.data("sortdir", "desc")
+	.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
+	.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
+	.append(arrow.clone());
+
+	if(forceRefresh){
+		self._renderTable();
+	}else{
+		//render column headings
+		self._colRender();
+	}
+
+},
 
 //layout coluns on first render
 _colRender:function(fixedwidth){
