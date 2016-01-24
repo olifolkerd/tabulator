@@ -1215,20 +1215,29 @@ _colLayout:function(forceRefresh){
 						from = i;
 					}
 
-					if(column.field && column.field == toField){
-						to = i;
-					}
-
-
-					if(from !== null && to !== null){
+					if(from !== null){
 						return false;
 					}
 
 				});
 
-				to = to > from ? to + 1 : to;
+				//to = to > from ? to + 1 : to;
 
-				options.columns.splice(to , 0, options.columns.splice(from, 1)[0]);
+				columns = options.columns.splice(from, 1)[0]
+
+				$.each(options.columns, function(i, column) {
+
+					if(column.field && column.field == toField){
+						to = i;
+					}
+				});
+
+
+				options.columns.splice(to , 0, columns);
+
+
+
+				console.log("cols", options.columns)
 
 				//trigger callback
 				options.colMoved(ui.item.data("field"), options.columns);
