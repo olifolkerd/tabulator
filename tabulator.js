@@ -1235,8 +1235,6 @@ _colLayout:function(forceRefresh){
 
 				options.columns.splice(to , 0, columns);
 
-
-
 				console.log("cols", options.columns)
 
 				//trigger callback
