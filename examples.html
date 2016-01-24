@@ -586,6 +586,43 @@ $(window).resize(function(){
 		</script>
 	</section>
 
+
+	<section>
+		<header>Persistent Column Layout</header>
+		<p>
+			Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
+		</p>
+		<p>
+			Try resizing (drag the right edge of a column header) or rearanging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
+		</P>
+		<div id="example-table-colum-layout"></div>
+		<script type="text/javascript">
+
+		$("#example-table-colum-layout").tabulator({
+			height:"320px",
+			movableCols:true,
+			columnStyleCookie: true,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", width:60},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", width:80},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+		});
+
+		$("#example-table-colum-layout").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-colum-layout").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+
 	<section>
 		<header>AJAX Data Loading</header>
 		<p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
