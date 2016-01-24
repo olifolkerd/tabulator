@@ -16,6 +16,7 @@ Tabulator is packed with useful  features including:
 - Adding/Deleting rows
 - Custom data formatting
 - Movable rows and columns
+- Persistant Column Layouts (cookie storage of user layout changes)
 - Grouping Rows
 - Data filtering
 - Resizable columns
@@ -491,6 +492,50 @@ $("#example-table").tabulator({
 });
 ```
 
+### Set New Column Definitions
+To update the current column definitions for a table use the ***setColumns*** function. this function takes two parameters. the first should be the new columns definition array. The second is a boolean value that determines the type of column update you wish to use. If you set this to ***false***, the current column definition array will be completely overwritten. Set it to ***true*** and only the column layout information (width, order, visibility) will be overwritten, perfect for loading user layout preferences from an external store.
+
+```js
+	//new column definition array
+	var newColumns = [
+		{title:"Name", field:"name", sortable:true, sorter:"string", width:200, editable:true},
+		{title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
+		{title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
+		{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+		{title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
+	],
+
+	$("#example-table").tabulator("setColumns", newColumns , false) //completely overwrite existing columns with new columns definition array
+```
+
+### Get Column Definitions
+To get the current column definition array (including any changes made through user actions, such as resizing or re-ordering columns), call the ***getColumns*** function. this will return the current columns definition array.
+```js
+	var colDefs = $("#example-table").tabulator("getColumns") //get column definition array
+```
+
+### Persistent Column Layout
+
+Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page, the table is laid out just as they left it. To enable this feature set the ***columnLayoutCookie*** options parameter to ***true***
+
+```js
+$("#example-table").tabulator({
+	columnLayoutCookie:true, //Set column layout persistence cookie
+});
+```
+
+If you are planning on having multiple tables on the same page with ***columnLayoutCookie*** set to ***true*** then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the ***id*** attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the cookie.
+```html
+<div id="example-table"></div>
+```
+Or if you do not want to give an id to the table holding element you can set the tabulator options parameter ***columnLayoutCookieID*** to a unique string value for that table.
+```js
+$("#example-table").tabulator({
+	columnLayoutCookieID:"example1", //cookie id string, can only be numbers, letters, hyphens and underscores.
+	columnLayoutCookie:true, //Set column layout persistence cookie
+});
+```
+
 Column Visibility
 ================================
 Column visibility can be set in a number of different ways.
@@ -817,11 +862,10 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Multi row column headers / column grouping
 - Row Templating
 - Custom Filter Functions
-- Import/Export Column Data (size/position/visibility)
 - Sparkline Formatter
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
-- Usage Case Examples (storing column data in cookies to capture user preferences, creating custom formatters, etc...)
+- Usage Case Examples (creating custom formatters, etc...)
 
 Get in touch if there are any features you feel Tabulator needs.
