@@ -29,6 +29,16 @@
 		font-size: 30px;
 	}
 
+	header span{
+		vertical-align: middle;
+		font-size: .5em;
+		color: #999;
+	}
+
+	header span a{
+	font-size: .9em;
+	}
+
 	section:first-of-type header{
 		font-size: 50px;
 	}
@@ -161,7 +171,7 @@ $(window).resize(function(){
 </section>
 
 <section>
-	<header>Fit To Data</header>
+	<header>Fit To Data <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Table-Layout">https://github.com/olifolkerd/tabulator/wiki/Table-Layout</a></span></header>
 	<p>
 		Tables will automatically resize to fit the data
 	</p>
@@ -192,7 +202,7 @@ $(window).resize(function(){
 
 
 <section>
-	<header>Fit To Width</header>
+	<header>Fit To Width <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Table-Layout">https://github.com/olifolkerd/tabulator/wiki/Table-Layout</a></span></header>
 	<p>
 		By setting the <span><strong>fitColumns</strong></span> to true, the table will resize columns so that they fit perfectly inside the width of the container.
 	</p>
@@ -225,7 +235,7 @@ $(window).resize(function(){
 </section>
 
 <section>
-	<header>Editable Data</header>
+	<header>Editable Data <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Manipulating-Data">https://github.com/olifolkerd/tabulator/wiki/Manipulating-Data</a></span></header>
 	<p>
 		Using the <strong>editable</strong> setting on each column, you can make a user editable table.
 	</p>
@@ -298,7 +308,7 @@ $(window).resize(function(){
 </section>
 
 <section>
-	<header>Sorters</header>
+	<header>Sorters <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Sorting-Data">https://github.com/olifolkerd/tabulator/wiki/Sorting-Data</a></span></header>
 	<p>Sorting is enabled by default, and can be toggled on or off by column using the <span><strong>sortable</strong></span> option.</p>
 
 	<p>By default all columns are sorted as text, different sort functions can be set using the <span><strong>sorter</strong></span> option
@@ -378,7 +388,7 @@ $(window).resize(function(){
 </section>
 
 <section>
-	<header>Formatters</header>
+	<header>Formatters <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Formatting-Data">https://github.com/olifolkerd/tabulator/wiki/Formatting-Data</a></span></header>
 	<p></p>
 	<p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
@@ -448,7 +458,7 @@ $(window).resize(function(){
 	</section>
 
 	<section>
-		<header>Grouping Data</header>
+		<header>Grouping Data <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Grouping-Data">https://github.com/olifolkerd/tabulator/wiki/Grouping-Data</a></span></header>
 		<p></p>
 		<p>You can group rows together using the <strong>groupBy</strong> option. To group by a field, set this option to the name of the field.</p>
 		<p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
@@ -486,7 +496,7 @@ $(window).resize(function(){
 	</section>
 
 	<section>
-		<header>Filter Data</header>
+		<header>Filter Data <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Filtering-Data">https://github.com/olifolkerd/tabulator/wiki/Filtering-Data</a></span></header>
 		<p></p>
 		<p>Tabulator allows you to filter the table data by any field in the data set.</p>
 
@@ -588,7 +598,7 @@ $(window).resize(function(){
 
 
 	<section>
-		<header>Persistent Column Layout</header>
+		<header>Persistent Column Layout <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Column-Layout-Manipulation">https://github.com/olifolkerd/tabulator/wiki/Column-Layout-Manipulation</a></span></header>
 		<p>
 			Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
 		</p>
@@ -601,7 +611,7 @@ $(window).resize(function(){
 		$("#example-table-colum-layout").tabulator({
 			height:"320px",
 			movableCols:true,
-			columnStyleCookie: true,
+			columnLayoutCookie: true,
 			columns:[
 			{title:"Name", field:"name", width:200},
 			{title:"Age", field:"age", width:60},
@@ -624,7 +634,7 @@ $(window).resize(function(){
 
 
 	<section>
-		<header>AJAX Data Loading</header>
+		<header>AJAX Data Loading <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Set-Table-Data">https://github.com/olifolkerd/tabulator/wiki/Set-Table-Data</a></span></header>
 		<p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
 
 		<p>If you always request the same URL for your data then you can set it in the <span><strong>ajaxURL</strong></span> option when you create your Tabulator</p>
@@ -660,7 +670,7 @@ $(window).resize(function(){
 	</section>
 
 	<section>
-		<header>Add / Delete Rows</header>
+		<header>Add / Delete Rows <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Manipulating-Data">https://github.com/olifolkerd/tabulator/wiki/Manipulating-Data</a></span></header>
 		<p>
 			Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
 		</p>
@@ -719,7 +729,7 @@ $(window).resize(function(){
 
 
 	<section>
-		<header>Movable Rows</header>
+		<header>Movable Rows <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Movable-Rows-and-Columns">https://github.com/olifolkerd/tabulator/wiki/Movable-Rows-and-Columns</a></span></header>
 		<p>
 			Using the <strong>movableRows</strong> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
 		</p>
@@ -755,7 +765,7 @@ $(window).resize(function(){
 
 
 	<section>
-		<header>Callbacks</header>
+		<header>Callbacks <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Callbacks">https://github.com/olifolkerd/tabulator/wiki/Callbacks</a></span></header>
 		<p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
 
 		<ul>
@@ -799,7 +809,7 @@ $(window).resize(function(){
 </section>
 
 <section>
-	<header>Theming</header>
+	<header>Theming  <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Table-Options">https://github.com/olifolkerd/tabulator/wiki/Table-Options</a></span></header>
 	<p>Tabulator has a range of additional options to help customise your table. A full list of these can be found in the GitHub readme.md file</p>
 	<div id="example-table-9"></div>
 	<script type="text/javascript">
