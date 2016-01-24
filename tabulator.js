@@ -54,7 +54,6 @@ options: {
 	columnLayoutCookie:false, //store cookie with column _styles
 	columnLayoutCookieID:"", //id for stored cookie
 
-
 	columns:[],//store for colum header info
 
 	index:"id",
@@ -77,7 +76,6 @@ options: {
 	editBoxColor:"#1D68CD", //color for edit boxes
 
 	rowFormatter:false, //row formatter callback
-
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
@@ -111,20 +109,9 @@ _showLoader:function(self, msg){
 	}
 },
 
-
 _hideLoader:function(self){
 	$(".tablulator-loader", self.element).remove();
 },
-
-
-//event triggers
-//dataLoading:-  callback for when data is being loaded
-
-//dataLoadError:-  callback for when there is adata loading error
-//renderStarted:-  callback for when table is starting to render
-//renderComplete:-  callback for when table is rendered
-//sortStarted:-  callback for when sorting has begun
-//sortComplete:-  callback for when sorting is complete
 
 //constructor
 _create: function() {
@@ -198,13 +185,11 @@ _create: function() {
 	});
 
 	//layout columns
-
 	if(options.columnLayoutCookie){
 		self._getColCookie();
 	}else{
 		self._colLayout();
 	}
-
 
 },
 
@@ -243,7 +228,6 @@ _cellDataChange: function(cell, value){
 		//triger event
 		self.options.rowEdit(rowData[self.options.index], rowData, row);
 	}
-
 
 	self._styleRows();
 
@@ -312,7 +296,6 @@ _getColCookie:function(){
 	}else{
 		self._colLayout();
 	}
-
 
 },
 
@@ -413,12 +396,10 @@ hideCol: function(field){
 	var column = false;
 
 	$.each(self.options.columns, function(i, item) {
-
 		if(item.field == field){
 			column = i;
 			return false;
 		}
-
 	});
 
 	if(column === false){
@@ -442,12 +423,10 @@ showCol: function(field){
 	var column = false;
 
 	$.each(self.options.columns, function(i, item) {
-
 		if(item.field == field){
 			column = i;
 			return false;
 		}
-
 	});
 
 	if(column === false){
@@ -470,12 +449,10 @@ toggleCol: function(field){
 	var column = false;
 
 	$.each(self.options.columns, function(i, item) {
-
 		if(item.field == field){
 			column = i;
 			return false;
 		}
-
 	});
 
 	if(column === false){
@@ -561,29 +538,18 @@ addRow:function(item){
 getData:function(){
 	var self = this;
 
-
 	var allData = [];
 
-	//get all data from array
-	/*self.data.forEach( function(item, i) {
-		allData.push(item);
-	});*/
+	$(".tabulator-row", self.element).each(function(){
+		if($(this).data("id")){
+			allData.push(self.data[$(this).data("id")]);
+		}else{
+			allData.push($(this).data("data"));
+		}
 
-	//get all new elements from list
-	/*$("[data-id=0]", self.element).each(function(){
-		allData.push($(this).data("data"));
-	});*/
+	});
 
-$(".tabulator-row", self.element).each(function(){
-	if($(this).data("id")){
-		allData.push(self.data[$(this).data("id")]);
-	}else{
-		allData.push($(this).data("data"));
-	}
-
-});
-
-return allData;
+	return allData;
 },
 
 //load data
