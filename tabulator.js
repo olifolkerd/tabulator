@@ -254,7 +254,7 @@ _setColCookie:function(){
 	var self = this;
 
 	//set cookie ied
-	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr(id) ? self.element.attr(id) : "";
+	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr("id") ? self.element.attr("id") : "";
 	cookieID = "tabulator-" + cookieID;
 
 	//set cookie expiration far in the future
@@ -282,8 +282,6 @@ _setColCookie:function(){
 
 	//save cookie
 	document.cookie = cookieID + "=" + data + "; expires=" + expDate.toUTCString();
-
-	self._getColCookie();
 },
 
 //set Ccolumn style cookie
@@ -291,7 +289,7 @@ _getColCookie:function(){
 	var self = this;
 
 	//set cookie ied
-	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr(id) ? self.element.attr(id) : "";
+	var cookieID = self.options.columnStyleCookieID ? self.options.columnStyleCookieID : self.element.attr("id") ? self.element.attr("id") : "";
 	cookieID = "tabulator-" + cookieID;
 
 	//find cookie
@@ -311,6 +309,8 @@ _getColCookie:function(){
 		cookie = cookie.replace(cookieID+"=", "")
 
 		self.setColumns(JSON.parse(cookie), true);
+	}else{
+		self._colLayout();
 	}
 
 
