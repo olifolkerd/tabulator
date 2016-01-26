@@ -666,6 +666,7 @@ headerSeperatorColor|string|#999|A valid css color(rgb,hex,etc...) for the heade
 headerMargin|int/string|4|The size in pixels for the header cells margin
 sortArrows|object||an object containing two options for theming the sorter arrows in the header *(see next table)*
 rowBackgroundColor|string|#fff|A valid css color(rgb,hex,etc...) for the background colour of the table rows
+rowAltBackgroundColor|string|#e0e0e0|A valid css color(rgb,hex,etc...) for the background colour of the even numbered table rows
 rowBorderColor|string|#fff|A valid css color(rgb,hex,etc...) for the table row borders
 rowTextColor|string|#333|A valid css color(rgb,hex,etc...) for the table row text
 rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table row background when hovered over.

@@ -37,6 +37,7 @@ options: {
 	headerMargin:"4px",
 
 	rowBackgroundColor:"#fff", //table row background color
+	rowAltBackgroundColor:"#e0e0e0", //table row background color
 	rowBorderColor:"#aaa", //table border color
 	rowTextColor:"#333", //table text color
 	rowHoverBackground:"#bbb", //row background color on hover
@@ -1221,14 +1222,16 @@ _colLayout:function(forceRefresh){
 
 				});
 
-				//to = to > from ? to + 1 : to;
-
 				columns = options.columns.splice(from, 1)[0]
 
 				$.each(options.columns, function(i, column) {
 
 					if(column.field && column.field == toField){
 						to = i;
+					}
+
+					if(to !== null){
+						return false;
 					}
 				});
 
@@ -1532,11 +1535,11 @@ _styleRows:function(){
 
 	//color odd rows
 	$(".tabulator-row:nth-of-type(even)", self.table).css({
-		"background-color": "rgba(0,0,0,.1);" //shade even numbered rows
+		"background-color": self.options.rowAltBackgroundColor //shade even numbered rows
 	})
 	.on("mouseout", function(){
 
-		$(this).css({"background-color": "rgba(0,0,0,.08);"})
+		$(this).css({"background-color": self.options.rowAltBackgroundColor})
 
 		if(self.options.rowFormatter){
 			self.options.rowFormatter($(this), $(this).data("data"));
