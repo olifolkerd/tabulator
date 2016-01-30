@@ -709,7 +709,8 @@ _renderTable:function(){
 	this._trigger("renderStarted");
 
 	//hide table while building
-	self.table.hide();
+	self.tableHolder.hide();
+
 	//show loader if needed
 	self._showLoader(self, self.options.loader)
 
@@ -748,8 +749,6 @@ _renderTable:function(){
 
 		}
 	});
-
-
 
 	//enable movable rows
 	if(options.movableRows){
@@ -821,12 +820,11 @@ _renderTable:function(){
 		self._sorter(self.sortCurCol, self.sortCurDir);
 	}
 
-
-	//show table once loading complete
-	self.table.show();
-
 	//align column widths
 	self._colRender(!self.firstRender);
+
+	//show table once loading complete
+	self.tableHolder.show();
 
 	//hide loader div
 	self._hideLoader(self);
@@ -836,7 +834,6 @@ _renderTable:function(){
 	if(self.filterField){
 		self._trigger("filterComplete");
 	}
-
 
 },
 
@@ -979,6 +976,7 @@ _renderRow:function(item){
 
 	//add row handle if movable rows enabled
 	if(self.options.movableRows){
+
 		var handle = $("<div class='tabulator-row-handle'></div>");
 
 		handle.append(self.options.movableRowHandle);
@@ -1016,26 +1014,14 @@ _renderRow:function(item){
 
 		//allow tabbing on editable cells
 		var tabbable = column.editable || column.editor ? "tabindex='0'" : "";
-
-
-		var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
-
 		var visibility = column.visible ? "inline-block" : "none";
 
-		cell.css({
-			"text-align": align,
-			"box-sizing":"border-box",
-			"display":visibility,
-			"vertical-align":"middle",
-			"min-height":self.options.headerHeight + 2,
-			"white-space":"nowrap",
-			"overflow":"hidden",
-			"text-overflow":"ellipsis",
-			"padding":"4px",
-		})
+		//set style as string rather than using .css for massive improvement in rendering time
+		var cellStyle = "text-align: align; box-sizing:border-box; display:" + visibility + "; vertical-align:middle; min-height:" + (self.options.headerHeight + 2) + "; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:4px;";
 
-		//mark cell as editable
-		var editor = false;
+		var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+
+
 
 		//match editor if one exists
 		if (column.editable || column.editor){
@@ -1044,9 +1030,8 @@ _renderRow:function(item){
 			}else{
 				editor = self.editors[column.formatter] ? column.formatter: "input";
 			}
+			cell.data("editor", editor);
 		}
-
-		cell.data("editor", editor);
 
 		//format cell contents
 		cell.data("formatter", column.formatter);
@@ -1235,10 +1220,7 @@ _colLayout:function(forceRefresh){
 					}
 				});
 
-
 				options.columns.splice(to , 0, columns);
-
-				console.log("cols", options.columns)
 
 				//trigger callback
 				options.colMoved(ui.item.data("field"), options.columns);
@@ -1506,6 +1488,7 @@ _colRender:function(fixedwidth){
 			});
 		}//
 	}
+
 },
 
 //style rows of the table
