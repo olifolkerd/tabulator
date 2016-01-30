@@ -1017,7 +1017,7 @@ _renderRow:function(item){
 		var visibility = column.visible ? "inline-block" : "none";
 
 		//set style as string rather than using .css for massive improvement in rendering time
-		var cellStyle = "text-align: align; box-sizing:border-box; display:" + visibility + "; vertical-align:middle; min-height:" + (self.options.headerHeight + 2) + "px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:4px;";
+		var cellStyle = "text-align: " + align + "; box-sizing:border-box; display:" + visibility + "; vertical-align:middle; min-height:" + (self.options.headerHeight + 2) + "px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:4px;";
 
 		var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
