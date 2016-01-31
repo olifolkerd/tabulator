@@ -167,6 +167,7 @@ Sorting of data by column is enabled by default on all columns. It is possible t
 $("#example-table").tabulator({
 	sortable:false, // this option takes a boolean value (default = true)
 });
+```
 
 you can set sorting on a per column basis using the ***sortable*** option in the column data.
 ```js
@@ -226,7 +227,7 @@ Tabulator comes with a number of preconfigured formatters including:
 - **link** - renders data as an anchor with a link to the given value
 - **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
 - **tickCross** - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not
-- **color** - sets the background colour of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
+- **color** - sets the background colour of the cell to the value. Can be any valid CSS color eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
 - **star** - displays a graphical star rating based on integer values
   - optional  **formatterParams**
   - **stars** - maximum number of stars to be displayed *(default 5)*
