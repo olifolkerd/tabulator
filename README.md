@@ -44,6 +44,19 @@ Turn the element into a tabulator with some simple javascript
 $("#example-table").tabulator();
 ```
 
+
+### Bower Installation
+To get Tabulator via the Bower package manager, open a terminal in your project directory and run the following commmand:
+```
+bower install tabulator --save
+```
+
+### NPM Installation
+To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:
+```
+npm install jquery.tabulator --save
+```
+
 ###Live Demo
 
 A live demo of tabulator in action can be found [here](http://htmlpreview.github.io/?https://github.com/olifolkerd/tabulator/blob/master/examples.html).
