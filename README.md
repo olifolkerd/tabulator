@@ -25,6 +25,13 @@ Tabulator is packed with useful  features including:
 - Custom click and context Events
 - Callbacks at every stage of data processing and rendering
 
+#### Live Demo
+
+A live demo of tabulator in action can be found [here](http://htmlpreview.github.io/?https://github.com/olifolkerd/tabulator/blob/master/examples.html).
+
+#### Examples
+A selection of demo tables can be found in the ***examples.html*** file.
+
 Setup
 ================================
 Setting up tabulator could not be simpler.
@@ -57,12 +64,6 @@ To get Tabulator via the NPM package manager, open a terminal in your project di
 npm install jquery.tabulator --save
 ```
 
-###Live Demo
-
-A live demo of tabulator in action can be found [here](http://htmlpreview.github.io/?https://github.com/olifolkerd/tabulator/blob/master/examples.html).
-
-###Examples
-A selection of demo tables can be found in the ***examples.html*** file.
 
 
 Define Column Headers
@@ -225,6 +226,7 @@ Tabulator comes with a number of preconfigured formatters including:
 - **link** - renders data as an anchor with a link to the given value
 - **tick** - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not
 - **tickCross** - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not
+- **color** - sets the background colour of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)
 - **star** - displays a graphical star rating based on integer values
   - optional  **formatterParams**
   - **stars** - maximum number of stars to be displayed *(default 5)*

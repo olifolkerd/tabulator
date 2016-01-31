@@ -71,7 +71,7 @@
 	{id:4, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980", lucky_no:18},
 	{id:5, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999", lucky_no:33},
 	{id:6, name:"Frank Harbours", age:"38", gender:"male", height:4, col:"red", dob:"", cheese:1, lucky_no:2},
-	{id:7, name:"Jamie Newhart", age:"23", gender:"male", height:3, col:"greeb", dob:"14/05/1985", cheese:true, lucky_no:63},
+	{id:7, name:"Jamie Newhart", age:"23", gender:"male", height:3, col:"green", dob:"14/05/1985", cheese:true, lucky_no:63},
 	{id:8, name:"Gemma Jane", age:"60", height:0, col:"red", dob:"22/05/1982", cheese:"true", lucky_no:72},
 	{id:9, name:"Emily Sykes", age:"42", gender:"female", height:1, col:"maroon", dob:"11/11/1970", lucky_no:44},
 	{id:10, name:"James Newman", age:"73", gender:"male", height:5, col:"red", dob:"22/03/1998", lucky_no:9},
@@ -402,6 +402,7 @@ $(window).resize(function(){
 			<li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
 			<li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
 			<li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
+			<li><strong>color</strong> - sets the background color of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
 			<li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
 			<li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
 			<li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
@@ -600,7 +601,7 @@ $(window).resize(function(){
 			{title:"Age", field:"age", formatter:"progress"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
-			{title:"Favourite Color", field:"col"},
+			{title:"Favourite Color", field:"col", formatter:"color", width:160},
 			{title:"Date Of Birth", field:"dob", align:"center"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
