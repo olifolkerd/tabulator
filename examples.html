@@ -404,6 +404,8 @@ $(window).resize(function(){
 			<li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
 			<li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
 			<li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
+			<li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
+			<li><strong>buttonCross</strong> - displays a cross icon on eac row (for use as a button)</li>
 		</ul>
 	</p>
 
@@ -442,9 +444,10 @@ $(window).resize(function(){
 			{title:"Age", field:"age", formatter:"progress"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			{title:"Favourite Color", field:"col"},
 			{title:"Date Of Birth", field:"dob", align:"center"},
-			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			{formatter:"buttonCross", width:30, align:"center"},
 			],
 		});
 

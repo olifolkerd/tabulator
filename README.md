@@ -220,6 +220,8 @@ Tabulator comes with a number of preconfigured formatters including:
   - **min** - minimum value for progress bar *(default 0)*
   - **max** - minimum value for progress bar *(default 100)*
   - **color** - colour of progress bar *(default #2DC214)*
+- **buttonTick** - displays a tick icon on eac row *(for use as a button)*
+- **buttonCross** - displays a cross icon on eac row *(for use as a button)*
 
 
 You can define a custom formatter function in the formatter option:
