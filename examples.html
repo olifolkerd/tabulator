@@ -100,14 +100,14 @@
 				<li>Callbacks at every stage of data processing and rendering</li>
 			</ul>
 		</p>
-		<div id="example-table-1"></div>
+		<div id="example-table-demo"></div>
 		<script type="text/javascript">
 
 		var printIcon = function(value, data, cell, row, options){ //plain text value
 			return "<i class='fa fa-print' style='vertical-align:middle; padding:2px 0;'></i> "
 		};
 
-		$("#example-table-1").tabulator({
+		$("#example-table-demo").tabulator({
 			height:"320px",
 			fitColumns:true,
 			columns:[
@@ -128,10 +128,10 @@
 			},
 		});
 
-$("#example-table-1").tabulator("setData", tabledata);
+$("#example-table-demo").tabulator("setData", tabledata);
 
 $(window).resize(function(){
-	$("#example-table-1").tabulator("redraw");
+	$("#example-table-demo").tabulator("redraw");
 });
 
 </script>
@@ -145,10 +145,10 @@ $(window).resize(function(){
 	<p>
 		By default columns are resizable (using edge of column header) and sortable (as strings).
 	</P>
-	<div id="example-table-2"></div>
+	<div id="example-table-simple"></div>
 	<script type="text/javascript">
 
-	$("#example-table-2").tabulator({
+	$("#example-table-simple").tabulator({
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200},
@@ -161,10 +161,10 @@ $(window).resize(function(){
 		],
 	});
 
-	$("#example-table-2").tabulator("setData", tabledata);
+	$("#example-table-simple").tabulator("setData", tabledata);
 
 	$(window).resize(function(){
-		$("#example-table-2").tabulator("redraw");
+		$("#example-table-simple").tabulator("redraw");
 	});
 
 	</script>
@@ -175,10 +175,10 @@ $(window).resize(function(){
 	<p>
 		Tables will automatically resize to fit the data
 	</p>
-	<div id="example-table-3"></div>
+	<div id="example-table-fittodata"></div>
 	<script type="text/javascript">
 
-	$("#example-table-3").tabulator({
+	$("#example-table-fittodata").tabulator({
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200},
@@ -191,10 +191,10 @@ $(window).resize(function(){
 		],
 	});
 
-	$("#example-table-3").tabulator("setData", tabledata);
+	$("#example-table-fittodata").tabulator("setData", tabledata);
 
 	$(window).resize(function(){
-		$("#example-table-3").tabulator("redraw");
+		$("#example-table-fittodata").tabulator("redraw");
 	});
 
 	</script>
@@ -209,9 +209,9 @@ $(window).resize(function(){
 	<p>
 		If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
 	</p>
-	<div id="example-table-4"></div>
+	<div id="example-table-fittowidth"></div>
 	<script type="text/javascript">
-	$("#example-table-4").tabulator({
+	$("#example-table-fittowidth").tabulator({
 		height:"320px",
 		fitColumns:true,
 		columns:[
@@ -225,10 +225,10 @@ $(window).resize(function(){
 		],
 	});
 
-	$("#example-table-4").tabulator("setData", tabledata);
+	$("#example-table-fittowidth").tabulator("setData", tabledata);
 
 	$(window).resize(function(){
-		$("#example-table-4").tabulator("redraw");
+		$("#example-table-fittowidth").tabulator("redraw");
 	});
 
 	</script>
@@ -413,7 +413,7 @@ $(window).resize(function(){
 
 	<p>You can also set a row formatter using the <strong>rowFormatter</strong> option, this allows you to format the styling of the row as a whole</p>
 
-	<div id="example-table-6"></div>
+	<div id="example-table-formatter"></div>
 	<script type="text/javascript">
 
 
@@ -421,7 +421,7 @@ $(window).resize(function(){
 			return "<i class='fa fa-print'></i> "
 		};
 
-		$("#example-table-6").tabulator({
+		$("#example-table-formatter").tabulator({
 			height:"320px",
 			fitColumns:true,
 			rowFormatter:function(row, data){
@@ -448,10 +448,10 @@ $(window).resize(function(){
 			],
 		});
 
-		$("#example-table-6").tabulator("setData", tabledata);
+		$("#example-table-formatter").tabulator("setData", tabledata);
 
 		$(window).resize(function(){
-			$("#example-table-6").tabulator("redraw");
+			$("#example-table-formatter").tabulator("redraw");
 		});
 
 		</script>
@@ -641,9 +641,9 @@ $(window).resize(function(){
 
 		<p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
 		<p><input id="ajax-trigger" type="button" value="Load Data via AJAX"></p>
-		<div id="example-table-7"></div>
+		<div id="example-table-ajax"></div>
 		<script type="text/javascript">
-		$("#example-table-7").tabulator({
+		$("#example-table-ajax").tabulator({
 			height:"320px",
 			fitColumns:true,
 			ajaxURL:"/ajax_sim.php",
@@ -659,11 +659,11 @@ $(window).resize(function(){
 		});
 
 		$("#ajax-trigger").click(function(){
-			$("#example-table-7").tabulator("setData");
+			$("#example-table-ajax").tabulator("setData");
 		})
 
 		$(window).resize(function(){
-			$("#example-table-7").tabulator("redraw");
+			$("#example-table-ajax").tabulator("redraw");
 		});
 
 		</script>
@@ -775,9 +775,9 @@ $(window).resize(function(){
 			<li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span><strong>dataLoaded</strong></span> option when you create your</li>
 		</ul>
 
-		<div id="example-table-8"></div>
+		<div id="example-table-callbacks"></div>
 		<script type="text/javascript">
-		$("#example-table-8").tabulator({
+		$("#example-table-callbacks").tabulator({
 			height:"320px",
 			fitColumns:true,
 			columns:[
@@ -797,10 +797,10 @@ $(window).resize(function(){
 			},
 		});
 
-		$("#example-table-8").tabulator("setData", tabledata);
+		$("#example-table-callbacks").tabulator("setData", tabledata);
 
 		$(window).resize(function(){
-			$("#example-table-8").tabulator("redraw");
+			$("#example-table-callbacks").tabulator("redraw");
 		});
 
 		</script>
@@ -811,9 +811,9 @@ $(window).resize(function(){
 <section>
 	<header>Theming  <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Table-Options">https://github.com/olifolkerd/tabulator/wiki/Table-Options</a></span></header>
 	<p>Tabulator has a range of additional options to help customise your table. A full list of these can be found in the GitHub readme.md file</p>
-	<div id="example-table-9"></div>
+	<div id="example-table-theme"></div>
 	<script type="text/javascript">
-	$("#example-table-9").tabulator({
+	$("#example-table-theme").tabulator({
 		backgroundColor:"#ccc",
 		borderColor:"#333",
 
@@ -843,10 +843,10 @@ $(window).resize(function(){
 		},
 	});
 
-$("#example-table-9").tabulator("setData", tabledata);
+$("#example-table-theme").tabulator("setData", tabledata);
 
 $(window).resize(function(){
-	$("#example-table-9").tabulator("redraw");
+	$("#example-table-theme").tabulator("redraw");
 });
 
 </script>
