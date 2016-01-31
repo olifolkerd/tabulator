@@ -451,23 +451,23 @@ $(window).resize(function(){
 			],
 		});
 
-		$("#example-table-formatter").tabulator("setData", tabledata);
+$("#example-table-formatter").tabulator("setData", tabledata);
 
-		$(window).resize(function(){
-			$("#example-table-formatter").tabulator("redraw");
-		});
+$(window).resize(function(){
+	$("#example-table-formatter").tabulator("redraw");
+});
 
-		</script>
-	</section>
+</script>
+</section>
 
-	<section>
-		<header>Grouping Data <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Grouping-Data">https://github.com/olifolkerd/tabulator/wiki/Grouping-Data</a></span></header>
-		<p></p>
-		<p>You can group rows together using the <strong>groupBy</strong> option. To group by a field, set this option to the name of the field.</p>
-		<p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+<section>
+	<header>Grouping Data <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Grouping-Data">https://github.com/olifolkerd/tabulator/wiki/Grouping-Data</a></span></header>
+	<p></p>
+	<p>You can group rows together using the <strong>groupBy</strong> option. To group by a field, set this option to the name of the field.</p>
+	<p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
 
-		<div id="example-table-grouping"></div>
-		<script type="text/javascript">
+	<div id="example-table-grouping"></div>
+	<script type="text/javascript">
 
 
 		var printIcon = function(value, data, cell, row, options){ //plain text value
@@ -533,6 +533,7 @@ $(window).resize(function(){
 					<option value="col">Favourite Colour</option>
 					<option value="dob">Date Of Birth</option>
 					<option value="cheese">Likes Cheese</option>
+					<option value="function">Likes Cheese &amp; height &lt; 3</option>
 				</select>
 
 
@@ -559,8 +560,23 @@ $(window).resize(function(){
 		<div id="example-table-filters"></div>
 		<script type="text/javascript">
 
+		function customFilter(data){
+			return data.cheese && data.height < 3;
+		}
+
 		function updateFilter(){
-			$("#example-table-filters").tabulator("setFilter", $("#filter-field").val(), $("#filter-type").val(), $("#filter-value").val());
+
+			var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
+
+			if($("#filter-field").val() == "function" ){
+				$("#filter-type").prop("disabled", true);
+				$("#filter-value").prop("disabled", true);
+			}else{
+				$("#filter-type").prop("disabled", false);
+				$("#filter-value").prop("disabled", false);
+			}
+
+			$("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
 		}
 
 		$("#filter-field, #filter-type").change(updateFilter);

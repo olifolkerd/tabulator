@@ -322,6 +322,18 @@ You can only have one filter active at a time, calling setFilter a second time w
 
 Filters will remain in effect until they are cleared, including during ***setData*** calls.
 
+### Custom Filter Functions
+If you want to perform a more complicated filter then you can pass a callback function to the setFilter Method
+```js
+
+	function customFilter(data){
+		//data - the data for the row being filtered
+		return data.name == "bob" && data.height < 3; //must return a boolean, true if it passes the filter.
+	}
+
+	$("#example-table").tabulator("setFilter", customFilter);
+```
+
 ###Get Current Filter
 To find out what filter is currently applied to the table you should use the ***getFilter*** method.
 ```js

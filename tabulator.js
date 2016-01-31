@@ -924,43 +924,53 @@ _filterRow:function(row){
 	// if no filter set display row
 	if(!self.filterField){
 		return true;
+	}else{
+
+		if(typeof(self.filterField) == "function"){
+
+			return self.filterField(row);
+
+		}else{
+			var value = row[self.filterField];
+			var term = self.filterValue;
+
+			switch(self.filterType){
+				case "=": //equal to
+				return value == term ? true : false;
+				break;
+
+				case "<": //less than
+				return value < term ? true : false;
+				break;
+
+				case "<=": //less than or equal too
+				return value <= term ? true : false;
+				break;
+
+				case ">": //greater than
+				return value > term ? true : false;
+				break;
+
+				case ">=": //greater than or equal too
+				return value >= term ? true : false;
+				break;
+
+				case "!=": //not equal to
+				return value != term ? true : false;
+				break;
+
+				case "like": //text like
+				return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+				break;
+
+				default:
+				return false;
+			}
+		}
+
 	}
 
-	var value = row[self.filterField];
-	var term = self.filterValue;
 
-	switch(self.filterType){
-		case "=": //equal to
-		return value == term ? true : false;
-		break;
-
-		case "<": //less than
-		return value < term ? true : false;
-		break;
-
-		case "<=": //less than or equal too
-		return value <= term ? true : false;
-		break;
-
-		case ">": //greater than
-		return value > term ? true : false;
-		break;
-
-		case ">=": //greater than or equal too
-		return value >= term ? true : false;
-		break;
-
-		case "!=": //not equal to
-		return value != term ? true : false;
-		break;
-
-		case "like": //text like
-		return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
-		break;
-
-		default:
-		return false;
-	}
 
 	return false;
 
