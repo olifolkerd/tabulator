@@ -22,6 +22,7 @@ sortCurDir:null,//column name of currently sorted column
 filterField:null, //field to be filtered on data render
 filterValue:null, //value to match on filter
 filterType:null, //filter type
+currentPage:1, // pagination page
 
 //setup options
 options: {
@@ -54,6 +55,10 @@ options: {
 
 	columnLayoutCookie:false, //store cookie with column _styles
 	columnLayoutCookieID:"", //id for stored cookie
+
+	paginateionSize:8, //size of pages
+	paginateionAjax:false, //paginate internal or via ajax
+	paginationElement:"",
 
 	columns:[],//store for colum header info
 
