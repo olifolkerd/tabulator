@@ -547,11 +547,13 @@ getData:function(){
 	var allData = [];
 
 	$(".tabulator-row", self.element).each(function(){
-		if($(this).data("id")){
-			allData.push(self.data[$(this).data("id")]);
-		}else{
-			allData.push($(this).data("data"));
-		}
+		// if($(this).data("id")){
+		// 	allData.push(self.data[$(this).data("id")]);
+		// }else{
+		// 	allData.push($(this).data("data"));
+		// }
+
+		allData.push($(this).data("data"));
 
 	});
 
