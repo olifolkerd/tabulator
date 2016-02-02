@@ -819,9 +819,6 @@ _renderTable:function(){
 
 	}
 
-	//style table rows
-	self._styleRows();
-
 	//sort data if already sorted
 	if(self.sortCurCol){
 		self._sorter(self.sortCurCol, self.sortCurDir);
@@ -829,6 +826,10 @@ _renderTable:function(){
 
 	//align column widths
 	self._colRender(!self.firstRender);
+
+
+	//style table rows
+	self._styleRows();
 
 	//show table once loading complete
 	self.table.show();
@@ -1560,7 +1561,12 @@ _styleRows:function(){
 	//apply row formatter
 	if(self.options.rowFormatter){
 		$(".tabulator-row", self.table).each(function(){
-			self.options.rowFormatter($(this), $(this).data("data"));
+			//allow row contents to be replaced with custom DOM elements
+			var newRow = self.options.rowFormatter($(this), $(this).data("data"));
+
+			if(newRow){
+				$(this).html(newRow)
+			}
 		});
 	}
 
