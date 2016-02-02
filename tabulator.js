@@ -714,7 +714,7 @@ _renderTable:function(){
 	this._trigger("renderStarted");
 
 	//hide table while building
-	self.tableHolder.hide();
+	self.table.hide();
 
 	//show loader if needed
 	self._showLoader(self, self.options.loader)
@@ -829,7 +829,7 @@ _renderTable:function(){
 	self._colRender(!self.firstRender);
 
 	//show table once loading complete
-	self.tableHolder.show();
+	self.table.show();
 
 	//hide loader div
 	self._hideLoader(self);
