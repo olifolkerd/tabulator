@@ -111,10 +111,10 @@
 			height:"320px",
 			fitColumns:true,
 			columns:[
-			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
+			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
 			{title:"Name", field:"name", sorter:"string", width:150},
 			{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
-			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click - " + val, cell)}},
+			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, data){console.log("cell click - " + val, cell)}},
 			{title:"Height", field:"height", formatter:"star", align:"center", sorter:"number", width:100},
 			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
 			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -434,7 +434,7 @@ $(window).resize(function(){
 				}
 			},
 			columns:[
-			{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},
+			{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
 			{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
 				if(value.indexOf("o") > 0){
 					return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
@@ -803,7 +803,7 @@ $(window).resize(function(){
 			columns:[
 			{title:"Name", field:"name", sorter:"string", width:150},
 			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
-			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, row){alert("cell clicked - " + val)}},
+			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
 			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -849,7 +849,7 @@ $(window).resize(function(){
 		columns:[
 		{title:"Name", field:"name", sorter:"string", width:150},
 		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
-		{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, row){alert("cell clicked - " + val)}},
+		{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
 		{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 		{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
 		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
