@@ -237,6 +237,8 @@ _cellDataChange: function(cell, value){
 
 	self._styleRows();
 
+	self._trigger("dataEdited");
+
 },
 
 //set column style cookie
@@ -507,6 +509,8 @@ deleteRow: function(item){
 	self._trigger("renderComplete");
 
 	self.options.rowDelete(id);
+
+	self._trigger("dataEdited");
 },
 
 //add blank row to table
@@ -528,15 +532,19 @@ addRow:function(item){
 	}else{
 		self.table.append(row);
 	}
-	//style table rows
-	self._styleRows();
+
 
 	//align column widths
 	self._colRender(!self.firstRender);
 	self._trigger("renderComplete");
 
+	//style table rows
+	self._styleRows();
+
 	//triger event
 	self.options.rowAdded(item);
+
+	self._trigger("dataEdited");
 
 },
 
