@@ -58,7 +58,9 @@ options: {
 
 	paginateionSize:8, //size of pages
 	paginateionAjax:false, //paginate internal or via ajax
-	paginationElement:"",
+	paginationElement:"", //element to hold pagination numbers
+
+	tooltips: false, //Tool tip value
 
 	columns:[],//store for colum header info
 
@@ -233,6 +235,7 @@ _cellDataChange: function(cell, value){
 	if(hasChanged){
 		//triger event
 		self.options.rowEdit(rowData[self.options.index], rowData, row);
+		self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
 	}
 
 	self._styleRows();
@@ -987,6 +990,25 @@ _filterRow:function(row){
 
 },
 
+//generate tooltip text
+_generateTooltip(cell, data, tooltip){
+	var self = this;
+
+	var tooltip = tooltip ? tooltip : self.options.tooltips;
+
+	if(tooltip == true){
+		tooltip = cell.data("value");
+	}else if(typeof(tooltip) == "function"){
+		tooltip = tooltip(cell.data("value"), data);
+	}
+
+	if(tooltip){
+		cell.attr("title", tooltip);
+	}else{
+		cell.attr("title", "");
+	}
+},
+
 //render individual rows
 _renderRow:function(item){
 
@@ -1047,7 +1069,8 @@ _renderRow:function(item){
 
 		var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
-
+		//add tooltip to cell
+		self._generateTooltip(cell, item, column.tooltip);
 
 		//match editor if one exists
 		if (column.editable || column.editor){
@@ -1606,7 +1629,7 @@ _cellClick: function(e, cell){
 		return column.index == cell.data("index");
 	});
 
-	column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data")  );
+	column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data") );
 },
 
 //return escaped string for attribute
