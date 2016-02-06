@@ -929,7 +929,6 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Table Footers
 - Multi row column headers / column grouping
 - Row Templating
-- Custom Filter Functions
 - Sparkline Formatter
 - Extra Formatters
 - Extra Sorters
