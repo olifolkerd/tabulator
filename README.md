@@ -97,6 +97,7 @@ There are a number of parameters that can be passed in with each column to deter
 - **editor** - set the editor to be used when editing the data. (see [Manipulating Data](#manipulating-data) for more details)
 - **visible** - *(boolean, default - true)* determines if the column is visible. (see [Column Visibility](#column-visibility) for more details)
 - **cssClass** - sets css classes on header and cells in this column. *(value should be a string containing space seperated class names)*
+- **tooltip** - sets the on hover tooltip for each cell in this column (see [Formatting Data](https://github.com/olifolkerd/tabulator/wiki/Formatting-Data#tooltips) for more details)
 
 Set Table Data
 ================================
@@ -285,6 +286,41 @@ $("#example-table").tabulator({
 	},
 });
 ```
+
+### ToolTips
+You can set tooltips to be displayed when the cursor hovers over cells. By default, tooltips are not displayed.
+
+Tooltips can either be set globally using the ***tooltips*** options parameter:
+```js
+$("#example-table").tabulator({
+	tooltips:true,
+});
+```
+Or on a per column basis in the column definition array:
+```js
+//column definition in the columns array
+{formatter:printIcon, width:40, align:"center", tooltip:true},
+
+```
+
+The tooltip parameter can take three different types of value
+- **boolean** - a value of ***false*** disables the tooltip, a value of ***true*** sets the tooltip of the cell to its value
+- **string** - a string that will be displayed for all cells in the matching column/table.
+- **function** - a callback function that returns the string for the cell. see below:
+```js
+$("#example-table").tabulator({
+	tooltips:function(field, value, data){
+		//field - field name of the cell's column
+		//value - value of the cell
+		//data - data for the cell's row
+
+		//function should return a string for the tooltip of false to hide the tooltip
+		return  field + " - " + value; //return cells "field - value";
+	},
+});
+```
+
+**NOTE** setting a tooltip value on a column will override the global setting.
 
 Grouping Data
 ================================
@@ -877,6 +913,7 @@ Event | Description
 ---|---
 dataLoading|Data is being loaded (from string, array or AJAX source)
 dataLoadError|There is has been an error loading data from an AJAX source
+dataEdited|A function that edits data has completed (cell edit, add row, delete row)
 renderStarted|Table is has started to render
 renderComplete|Table is has finished being rendered
 sortStarted|Table has started sorting
