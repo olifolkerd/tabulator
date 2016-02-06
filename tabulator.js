@@ -994,12 +994,12 @@ _filterRow:function(row){
 _generateTooltip(cell, data, tooltip){
 	var self = this;
 
-	var tooltip = tooltip ? tooltip : self.options.tooltips;
+	var tooltip = tooltip || tooltip === false ? tooltip : self.options.tooltips;
 
-	if(tooltip == true){
+	if(tooltip === true){
 		tooltip = cell.data("value");
 	}else if(typeof(tooltip) == "function"){
-		tooltip = tooltip(cell.data("value"), data);
+		tooltip = tooltip(cell.data("field"), cell.data("value"), data);
 	}
 
 	if(tooltip){
