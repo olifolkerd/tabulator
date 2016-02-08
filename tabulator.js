@@ -2263,7 +2263,19 @@ editors:{
 
 //deconstructor
 destroy: function() {
+	var self = this;
+	var element = self.element;
 
+	element.empty();
+	element.css({
+		position:"initial",
+		"box-sizing" : "initial",
+		"background-color": "initial",
+		"border": "initial",
+		"overflow":"initial",
+		"height":"initial",
+	})
+	element.removeClass("tabulator");
 },
 
 });
