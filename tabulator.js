@@ -2262,7 +2262,7 @@ editors:{
 },
 
 //deconstructor
-destroy: function() {
+_destroy: function() {
 	var self = this;
 	var element = self.element;
 
