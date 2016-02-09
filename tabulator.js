@@ -496,13 +496,36 @@ deleteRow: function(item){
 		self.data.splice(id, 1);
 	}
 
-	if(id){
-		//remove row from table
-		$("[data-id=" + id + "]", self.element).remove();
-	}else{
-		//remove row from table
-		item.remove();
+
+	var row = id ? $("[data-id=" + id + "]", self.element) : item;
+	var group = row.closest(".tabulator-group")
+
+	row.remove();
+
+	if(self.options.groupBy){
+
+		var length = $(".tabulator-row", group).length;
+
+		if(length){
+
+			var data = [];
+
+			$(".tabulator-row", group).each(function(){
+				data.push($(this).data("data"));
+			});
+
+			var header = $(".tabulator-group-header", group)
+			var arrow = $(".tabulator-arrow", header).clone(true,true);
+
+			header.empty()
+
+			header.append(arrow).append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+		}else{
+			group.remove();
+		}
+
 	}
+
 
 	//style table rows
 	self._styleRows();
