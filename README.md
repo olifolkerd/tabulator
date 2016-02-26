@@ -148,7 +148,14 @@ If you wish to retrieve your data from a remote source, pass the URL to the ***s
 ```js
 $("#example-table").tabulator("setData","http://www.getmydata.com/now");
 ```
-Data must be provided in the form of a JSON formatted array of objects.
+
+If you wish to pass parameters with your request you can either include them in-line with the url string, or as a second parameter to the ***setData*** function. In the latter case they should be provided in the form of an object with key/value pairs.
+
+```js
+$("#example-table").tabulator("setData","http://www.getmydata.com/now", {key1:"value1", key2:"value2"});
+```
+
+The server will need to return a JSON formatted array of objects.
 
 If you always request the same url for your data then you can set it in the ***ajaxURL*** option when you create your Tabulator
 ```js

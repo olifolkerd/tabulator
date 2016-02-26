@@ -90,6 +90,7 @@ options: {
 	selectable:true, //highlight rows on hover
 
 	ajaxURL:false, //url for ajax loading
+	ajaxParams:{}, //url for ajax loading
 
 	showLoader:true, //show loader while data loading
 	loader:"<div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'>Loading Data</div>", //loader element
@@ -595,9 +596,11 @@ getData:function(){
 },
 
 //load data
-setData:function(data){
+setData:function(data, params){
 
 	this._trigger("dataLoading");
+
+	params = params ? params : {};
 
 	//show loader if needed
 	this._showLoader(this, this.options.loader)
@@ -608,7 +611,7 @@ setData:function(data){
 			this._parseData(jQuery.parseJSON(data));
 		}else{
 			//assume data is url, make ajax call to url to get data
-			this._getAjaxData(data);
+			this._getAjaxData(data, params);
 		}
 	}else{
 		if(data){
@@ -618,7 +621,7 @@ setData:function(data){
 		}else{
 			//no data provided, check if ajaxURL is present;
 			if(this.options.ajaxURL){
-				this._getAjaxData(this.options.ajaxURL);
+				this._getAjaxData(this.options.ajaxURL, params);
 			}else{
 				//empty data
 				this._parseData([]);
@@ -720,7 +723,7 @@ _parseData:function(data){
 },
 
 //get json data via ajax
-_getAjaxData:function(url){
+_getAjaxData:function(url, params){
 
 	var self = this;
 	var options = self.options;
@@ -728,6 +731,7 @@ _getAjaxData:function(url){
 	$.ajax({
 		url: url,
 		type: "GET",
+		data:params,
 		async: true,
 		dataType:'json',
 		success: function (data) {
