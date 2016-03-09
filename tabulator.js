@@ -1018,7 +1018,7 @@ _filterRow:function(row){
 },
 
 //generate tooltip text
-_generateTooltip(cell, data, tooltip){
+_generateTooltip:function(cell, data, tooltip){
 	var self = this;
 
 	var tooltip = tooltip || tooltip === false ? tooltip : self.options.tooltips;
