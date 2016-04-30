@@ -1071,6 +1071,14 @@
 		self._renderTable();
 	},
 
+	//set page size for the table
+	setPageSize:function(size){
+		var self = this;
+
+		self.options.paginationSize = size;
+		self._filterData();
+	},
+
 
 	//create page selector layout for current page
 	_layoutPageSelector:function(){
