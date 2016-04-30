@@ -11,7 +11,7 @@
 
 	'use strict';
 
-	 $.widget("ui.tabulator", {
+	$.widget("ui.tabulator", {
 
 	data:[],//array to hold data for table
 	firstRender:true, //layout table widths correctly on first render
@@ -766,36 +766,33 @@
 		//clear data from table before loading new
 		self.table.empty();
 
+		//filter data if nessisary
+		var data = self.filterField ? self.data.filter(function(row){return self._filterRow(row);}) : self.data;
+
 		//build rows of table
-		self.data.forEach( function(item, i) {
-			//check if filter and only build row if if data matches filter
-			if(!self.filterField || (self.filterField && self._filterRow(item))){
+		data.forEach( function(item, i) {
 
-				var row = self._renderRow(item);
+			var row = self._renderRow(item);
 
+			if(options.groupBy){
 
-				if(options.groupBy){
-
-					// if groups in use, render column in group
-					var groupVal = typeof(options.groupBy) == "function" ? options.groupBy(item) : item[options.groupBy];
+				// if groups in use, render column in group
+				var groupVal = typeof(options.groupBy) == "function" ? options.groupBy(item) : item[options.groupBy];
 
 
-					var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
+				var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
 
-					//if group does not exist, build it
-					if(group.length == 0){
-						group = self._renderGroup(groupVal);
-						self.table.append(group);
-					}
-
-
-					$(".tabulator-group-body", group).append(row);
-
-				}else{
-					//if not grouping output row to table
-					self.table.append(row);
+				//if group does not exist, build it
+				if(group.length == 0){
+					group = self._renderGroup(groupVal);
+					self.table.append(group);
 				}
 
+				$(".tabulator-group-body", group).append(row);
+
+			}else{
+				//if not grouping output row to table
+				self.table.append(row);
 			}
 		});
 
@@ -1727,8 +1724,6 @@
 
 			self._sorter(item.field, item.dir, sortList, i);
 
-
-
 		});
 	},
 
@@ -1759,8 +1754,6 @@
 		}else{
 			self._sortElement(table, column, dir, false, sortList, i);
 		}
-
-
 
 		//style table rows
 		self._styleRows();
