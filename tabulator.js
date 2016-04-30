@@ -628,7 +628,6 @@
 			}else{
 				group.remove();
 			}
-
 		}
 
 
@@ -682,7 +681,6 @@
 	//get array of data from the table
 	getData:function(){
 		var self = this;
-
 		return self.activeData;
 	},
 
@@ -765,7 +763,6 @@
 
 	//get current filter info
 	getFilter:function(){
-
 		var self = this;
 
 		if(self.filterField){
@@ -781,7 +778,6 @@
 		}else{
 			return false;
 		}
-
 	},
 
 	//parse and index data
@@ -804,7 +800,6 @@
 				});
 			}
 		}
-
 
 		self.data = newData;
 
@@ -853,10 +848,6 @@
 
 		//clear data from table before loading new
 		self.table.empty();
-
-
-
-		console.log("page", self.paginationCurrentPage, (self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize)
 
 		var renderData = options.pagination ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData
 
@@ -938,7 +929,6 @@
 			}
 		}
 
-
 		if(options.groupBy){
 
 			$(".tabulator-group", self.table).each(function(){
@@ -951,7 +941,6 @@
 
 		//align column widths
 		self._colRender(!self.firstRender);
-
 
 		//style table rows
 		self._styleRows();
@@ -1077,9 +1066,6 @@
 			}
 		}
 
-
-		console.log("data", self.activeData);
-
 		self._layoutPageSelector();
 
 		self._renderTable();
@@ -1157,7 +1143,6 @@
 				"opacity":".5"
 			})
 		}
-
 		
 	},
 
@@ -1244,13 +1229,9 @@
 					return false;
 				}
 			}
-
 		}
 
-
-
 		return false;
-
 	},
 
 	//generate tooltip text
@@ -1593,9 +1574,7 @@
 
 		});
 
-		
-
-		element.append(self.header);//
+		element.append(self.header);
 		self.tableHolder.append(self.table);
 		element.append(self.tableHolder);
 
@@ -1990,6 +1969,8 @@
 
 		});
 
+		self._trigger("sortComplete");
+
 		//determine pagination information / render table
 		if(self.options.pagination){
 			self.setPage(1);
@@ -2013,31 +1994,12 @@
 		self.sortCurCol = column;
 		self.sortCurDir = dir;
 
-		// if(options.groupBy){
-
-		// 	if(options.groupBy == column.field){
-		// 		self._sortElement(table, column, dir, true);
-		// 	}else{
-		// 		$(".tabulator-group", table).each(function(){
-		// 			self._sortElement($(this), column, dir, false, sortList, i);
-		// 		});
-		// 	}
-
-		// }else{
-			self._sortElement(table, column, dir, sortList, i);
-		// }
-
-		//style table rows
-		// self._styleRows();
-
-		// self._trigger("sortComplete");
+		self._sortElement(table, column, dir, sortList, i);
 	},
 
 	//sort elements within table
 	_sortElement:function(element, column, dir, sortList, i){
 		var self = this;
-
-		console.log("sort")
 
 		self.activeData = self.activeData.sort(function(a,b){
 
@@ -2057,24 +2019,6 @@
 			return result;
 		})
 
-		// $(row, element).sort(function(a,b) {
-
-		// 	var result = self._processSorter(a, b, column, dir, sortGroups);
-
-		// 	//if results match recurse through previous searchs to be sure
-		// 	if(result == 0 && i){
-		// 		for(var j = i-1; j>= 0; j--){
-		// 			result = self._processSorter(a, b, sortList[j].field, sortList[j].dir, sortGroups);
-
-		// 			if(result != 0){
-		// 				break;
-		// 			}
-		// 		}
-		// 	}
-
-		// 	return result;
-
-		// }).appendTo(element);
 	},
 
 	_processSorter:function(a, b, column, dir){
@@ -2086,27 +2030,16 @@
 		el1 = el1[column.field];
 		el2 = el2[column.field];
 
-		console.log("sorting", el1, el2)
+		//workaround to format dates correctly
+		a = column.sorter == "date" ? self._formatDate(el1) : el1;
+		b = column.sorter == "date" ? self._formatDate(el2) : el2;
 
-		// if(sortGroups){
-		// 	el1 = el1.data("value");
-		// 	el2 = el2.data("value");
-		// }else{
-		// 	el1 = el1.data("data")[column.field];
-		// 	el2 = el2.data("data")[column.field];
-		// }
+		//run sorter
+		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
 
-			//workaround to format dates correctly
-			a = column.sorter == "date" ? self._formatDate(el1) : el1;
-			b = column.sorter == "date" ? self._formatDate(el2) : el2;
-
-			//run sorter
-
-			var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-			sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
-
-			return sorter(a, b);
-		},
+		return sorter(a, b);
+	},
 
 
 	//format date for date comparison
