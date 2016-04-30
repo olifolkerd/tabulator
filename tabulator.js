@@ -78,7 +78,7 @@
 
 		progressiveRender:true, //enable progressive rendering
 		progressiveRenderSize:200, //block size for progressive rendering
-		progressiveRenderPeriod:200, //time between renders
+		progressiveRenderPeriod:100, //time between renders
 
 		tooltips: false, //Tool tip value
 
