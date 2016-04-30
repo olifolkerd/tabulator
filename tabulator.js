@@ -969,8 +969,9 @@
 
 		//sort data if already sorted
 		if(self.sortCurCol){
-			self._sorter(self.sortCurCol, self.sortCurDir);
+			self.sort(self.sortCurCol, self.sortCurDir);
 		}else{
+			self.currentPage = 1;
 			self._renderTable();
 		}	
 	},
