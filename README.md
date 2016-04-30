@@ -932,11 +932,9 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
-- Pagination (via Ajax or in-table)
-- Table Footers
+- Pagination via AJAX request
 - Multi row column headers / column grouping
 - Row Templating
-- Sparkline Formatter
 - Extra Formatters
 - Extra Sorters
 - More Theming Options
