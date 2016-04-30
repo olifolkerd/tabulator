@@ -28,7 +28,9 @@
 	filterField:null, //field to be filtered on data render
 	filterValue:null, //value to match on filter
 	filterType:null, //filter type
-	currentPage:1, // pagination page
+
+	paginationCurrentPage:1, // pagination page
+	paginationMaxPage:1, // pagination maxpage
 
 	//setup options
 	options: {
@@ -42,6 +44,11 @@
 		headerBorderColor:"#aaa", //header border color
 		headerSeperatorColor:"#999", //header bottom seperator color
 		headerMargin:"4px",
+
+		footerBackgroundColor:"#e6e6e6", //border to tablulator
+		footerTextColor:"#555", //footer text colour
+		footerBorderColor:"#aaa", //footer border color
+		footerSeperatorColor:"#999", //footer bottom seperator color
 
 		rowBackgroundColor:"#fff", //table row background color
 		rowAltBackgroundColor:"#e0e0e0", //table row background color
@@ -63,7 +70,7 @@
 		columnLayoutCookieID:"", //id for stored cookie
 
 		pagination:false, //enable pagination
-		paginationSize:8, //size of pages
+		paginationSize:false, //size of pages
 		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
 
@@ -199,6 +206,73 @@
 			"background-color":self.options.rowBackgroundColor,
 			"color":self.options.rowTextColor,
 		});
+
+
+		//build pagination footer if needed
+		if(options.pagination){
+			
+			if(!options.paginationElement){
+				options.paginationElement = $("<div class='tabulator-footer'></div>");
+
+				options.paginationElement.css({
+					"padding":"5px 10px",
+					"text-align":"right",
+					"background-color": options.footerBackgroundColor,
+					"border-top":"1px solid " + options.footerSeperatorColor,
+					"color": options.footerTextColor,
+					"font-size":options.textSize,
+					"font-weight":"bold",
+					"white-space":"nowrap",
+					"user-select":"none",
+				});
+
+				self.footer = options.paginationElement;
+			}
+
+			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first'>First</span><span class='tabulator-page' data-page='prev'>Prev</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next'>Next</span><span class='tabulator-page' data-page='last'>Last</span></span>");
+
+			self.paginator.on("click", ".tabulator-page", function(){
+				if(!$(this).hasClass("disabled")){
+					self.setPage($(this).data("page"));
+				}
+			});
+
+			$(".tabulator-pages", self.paginator).css({
+				"margin":"0 7px",
+			});
+
+			self.paginator.on("mouseover", ".tabulator-page", function(){
+				if(!$(this).hasClass("disabled")){
+					$(this).css({
+						"cursor":"pointer",
+						"background":"rgba(0,0,0,.2)",
+						"color":"#fff",
+					});
+				}
+			});
+
+			self.paginator.on("mouseout", ".tabulator-page", function(){
+				if(!$(this).hasClass("disabled")){
+					$(this).css({
+						"cursor":"pointer",
+						"background":"rgba(255,255,255,.2)",
+						"color": options.footerTextColor,
+					});
+				}
+			});
+
+			$(".tabulator-page", self.paginator).css({
+				"display":"inline-block",
+				"border":"1px solid " + options.footerBorderColor,
+				"border-radius":"3px",
+				"padding":"2px 5px",
+				"margin":"0 2px",
+				"background":"rgba(255,255,255,.2)",
+				"color": options.footerTextColor,
+			});
+
+			options.paginationElement.append(self.paginator);
+		}
 
 		//layout columns
 		if(options.columnLayoutCookie){
@@ -716,7 +790,7 @@
 
 			}else{
 				$.each(data, function(i, item) {
-					newData[item[self.options.index]] = item;
+					newData.push(item);
 				});
 			}
 		}
@@ -770,8 +844,14 @@
 		//clear data from table before loading new
 		self.table.empty();
 
+
+
+		console.log("page", self.paginationCurrentPage, (self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize)
+
+		var renderData = options.pagination ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData
+
 		//build rows of table
-		self.activeData.forEach( function(item, i) {
+		renderData.forEach( function(item, i) {
 
 			var row = self._renderRow(item);
 
@@ -955,24 +1035,152 @@
 		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
 	},
 
+
+	//set current paginated page
+	setPage:function(page){
+
+		var self = this;
+
+		if(Number.isInteger(page) && page > 0 && page <= self.paginationMaxPage){
+			self.paginationCurrentPage = page;
+		}else{
+			switch(page){
+				case "first":
+					self.paginationCurrentPage = 1;
+				break;
+
+				case "prev":
+					if(self.paginationCurrentPage > 1){
+						self.paginationCurrentPage--;
+					}
+				break;
+
+				case "next":
+					if(self.paginationCurrentPage < self.paginationMaxPage){
+						self.paginationCurrentPage++;
+					}
+				break;
+
+				case "last":
+					self.paginationCurrentPage = self.paginationMaxPage;
+				break;
+			}
+		}
+
+
+		console.log("data", self.activeData);
+
+		self._layoutPageSelector();
+
+		self._renderTable();
+	},
+
+
+	//create page selector layout for current page
+	_layoutPageSelector:function(){
+		var self = this;
+
+		var min = 1, max = self.paginationMaxPage;
+
+		var pages = $(".tabulator-pages", self.paginator);
+
+		pages.empty();
+
+		var spacer = $("<span> ... </span>");
+
+		if(self.paginationMaxPage > 10){
+			
+			if(self.paginationCurrentPage <= 4){
+				max = 5;
+			}else if(self.paginationCurrentPage > self.paginationMaxPage - 4){
+				min = self.paginationMaxPage - 4;
+
+				pages.append(spacer.clone());
+			}else{
+				min = self.paginationCurrentPage - 2;
+				max = self.paginationCurrentPage + 2;
+
+				pages.append(spacer.clone());
+			}
+		}
+
+		for(var i = min; i <= max; ++i){
+
+			var active = i == self.paginationCurrentPage ? "active" : "";
+
+			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "'>" + i + "</span>");
+		}
+
+		if(self.paginationMaxPage > 10){
+			if(self.paginationCurrentPage <= 4 || self.paginationCurrentPage <= self.paginationMaxPage - 4){
+				pages.append(spacer.clone());
+			}
+		}
+
+		$(".tabulator-page", self.paginator).css({
+			"opacity":"1",
+			"display":"inline-block",
+			"border":"1px solid " + self.options.footerBorderColor,
+			"border-radius":"3px",
+			"padding":"2px 5px",
+			"margin":"0 2px",
+			"background":"rgba(255,255,255,.2)",
+			"color": self.options.footerTextColor,
+		}).removeClass("disabled");
+
+		$(".active", pages).css({
+			"color":"#d00",
+		})
+
+		if(self.paginationCurrentPage == 1){
+			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator)
+			.addClass("disabled")
+			.css({
+				"opacity":".5"
+			})
+		}
+
+		if(self.paginationCurrentPage == self.paginationMaxPage){
+			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator)
+			.addClass("disabled")
+			.css({
+				"opacity":".5"
+			})
+		}
+
+		
+	},
+
+
 	//filter data set
 	_filterData:function(){
 		var self = this;
 
+		//filter data set
 		if(self.filterField ){
 			self.activeData = self.data.filter(function(row){
 				return self._filterRow(row);
 			});
 		}else{
-			self.activeData= self.data;
+			self.activeData = self.data;
 		}
 
-		//sort data if already sorted
+		//set the max pages available given the filter results
+		if(self.options.pagination){
+			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
+		}
+
+		//sort or render data
 		if(self.sortCurCol){
 			self.sort(self.sortCurCol, self.sortCurDir);
 		}else{
-			self.currentPage = 1;
-			self._renderTable();
+
+			//determine pagination information / render table
+			if(self.options.pagination){
+				self.setPage(1);
+			}else{
+				self._renderTable();
+			}
 		}	
 	},
 
@@ -1381,23 +1589,28 @@
 		self.tableHolder.append(self.table);
 		element.append(self.tableHolder);
 
-		//build pagination footer if needed
-		if(options.pagination && !options.paginationElement){
-			console.log("")
-			options.paginationElement = $("<div class='tabulator-footer'>Booya</div>");
+		//add pagination footer if needed
+		if(self.footer){
 
-			options.paginationElement.css({
-				padding:"5px 10px",
-				"text-align":"right",
-			});
+			element.append(self.footer);
 
-			element.append(options.paginationElement);
+			var footerHeight = options.headerHeight + 2 + self.footer.outerHeight();
 
 			self.tableHolder.css({
-				"min-height":"calc(100% - " + (options.headerHeight + 1 + options.paginationElement.outerHeight()) + "px)",
-				"max-height":"calc(100% - " + (options.headerHeight + 1 + options.paginationElement.outerHeight()) + "px)",
+				"min-height":"calc(100% - " + footerHeight + "px)",
+				"max-height":"calc(100% - " + footerHeight + "px)",
 			});
 		}
+
+		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
+		if(self.options.pagination && !self.options.paginationSize){
+			if(self.options.height){
+				self.options.paginationSize = Math.floor(self.tableHolder.innerHeight() / (self.options.headerHeight + 2))
+			}else{
+				self.options.paginationSize = 10;
+			}
+		}
+		
 
 		//layout headers
 		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
@@ -1651,8 +1864,8 @@
 
 			var height  = self.table.outerHeight() + self.options.headerHeight + 3;
 
-			if(self.options.pagination && self.options.paginationElement.hasClass("tabulator-footer")){
-				height += self.options.paginationElement.outerHeight();
+			if(self.footer){
+				height += self.footer.outerHeight() + 1;
 			}
 
 			self.element.css({height:height})
@@ -1767,7 +1980,12 @@
 
 		});
 
-		self._renderTable();
+		//determine pagination information / render table
+		if(self.options.pagination){
+			self.setPage(1);
+		}else{
+			self._renderTable();
+		}
 
 	},
 
