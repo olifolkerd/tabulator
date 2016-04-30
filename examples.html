@@ -153,7 +153,7 @@ $(window).resize(function(){
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", width:60},
+		{title:"Age", field:"age", width:60, sorter:"number"},
 		{title:"Gender", field:"gender"},
 		{title:"Height", field:"height", width:80},
 		{title:"Favourite Color", field:"col"},
@@ -183,7 +183,7 @@ $(window).resize(function(){
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", width:60, align:"right"},
+		{title:"Age", field:"age", width:60, align:"right", sorter:"number"},
 		{title:"Gender", field:"gender"},
 		{title:"Height", field:"height", align:"center", width:80},
 		{title:"Favourite Color", field:"col"},
@@ -217,7 +217,7 @@ $(window).resize(function(){
 		fitColumns:true,
 		columns:[
 		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", align:"right"},
+		{title:"Age", field:"age", align:"right", sorter:"number"},
 		{title:"Gender", field:"gender"},
 		{title:"Height", field:"height", align:"center", width:60},
 		{title:"Favourite Color", field:"col"},
@@ -363,7 +363,7 @@ $(window).resize(function(){
 		fitColumns:true,
 		columns:[
 		{title:"Name", field:"name", sorter:"string", width:200},
-		{title:"Age", field:"age", sorter:"number", align:"right"},
+		{title:"Age", field:"age", sorter:"number", align:"right", sorter:"number"},
 		{title:"Gender", field:"gender", sorter:"string"},
 		{title:"Height", field:"height",  align:"center", width:100},
 		{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
@@ -443,7 +443,7 @@ $(window).resize(function(){
 					return value;
 				}
 			}},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
@@ -482,7 +482,7 @@ $(window).resize(function(){
 			groupBy:"gender",
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
@@ -599,7 +599,7 @@ $(window).resize(function(){
 			fitColumns:true,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
@@ -636,7 +636,7 @@ $(window).resize(function(){
 			paginationSize:3,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
