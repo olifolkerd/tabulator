@@ -78,7 +78,6 @@
 	];
 
 	</script>
-
 	<section>
 		<header>Tabulator</header>
 
@@ -153,7 +152,7 @@ $(window).resize(function(){
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", width:60},
+		{title:"Age", field:"age", width:60, sorter:"number"},
 		{title:"Gender", field:"gender"},
 		{title:"Height", field:"height", width:80},
 		{title:"Favourite Color", field:"col"},
@@ -183,7 +182,7 @@ $(window).resize(function(){
 		height:"320px",
 		columns:[
 		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", width:60, align:"right"},
+		{title:"Age", field:"age", width:60, align:"right", sorter:"number"},
 		{title:"Gender", field:"gender"},
 		{title:"Height", field:"height", align:"center", width:80},
 		{title:"Favourite Color", field:"col"},
@@ -217,7 +216,7 @@ $(window).resize(function(){
 		fitColumns:true,
 		columns:[
 		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", align:"right"},
+		{title:"Age", field:"age", align:"right", sorter:"number"},
 		{title:"Gender", field:"gender"},
 		{title:"Height", field:"height", align:"center", width:60},
 		{title:"Favourite Color", field:"col"},
@@ -363,7 +362,7 @@ $(window).resize(function(){
 		fitColumns:true,
 		columns:[
 		{title:"Name", field:"name", sorter:"string", width:200},
-		{title:"Age", field:"age", sorter:"number", align:"right"},
+		{title:"Age", field:"age", sorter:"number", align:"right", sorter:"number"},
 		{title:"Gender", field:"gender", sorter:"string"},
 		{title:"Height", field:"height",  align:"center", width:100},
 		{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
@@ -443,7 +442,7 @@ $(window).resize(function(){
 					return value;
 				}
 			}},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
@@ -482,7 +481,7 @@ $(window).resize(function(){
 			groupBy:"gender",
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
@@ -599,7 +598,7 @@ $(window).resize(function(){
 			fitColumns:true,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
@@ -612,6 +611,51 @@ $(window).resize(function(){
 
 		$(window).resize(function(){
 			$("#example-table-filters").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+
+	<section>
+	<header>Pagination<span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Tabulator">https://github.com/olifolkerd/tabulator/wiki/Tabulator</a></span></header>
+
+	<p>Tabulator allows you to paginate your data. simply set the <strong>pagination</strong> property to true.</p>
+
+	<p>If you have set the height of the table then the data will be automatically paginated to fit within the table.</p>
+
+	<p>If you wish to define how many rows should be shown on a page, set this in the <strong>paginationSize</strong> property. If you set the paginationSize without setting the height, the Tabulator will automatically resize to fit the data</p>
+
+	<div id="example-table-pagination"></div>
+	<script type="text/javascript">
+
+
+		var printIcon = function(value, data, cell, row, options){ //plain text value
+			return "<i class='fa fa-print'></i> "
+		};
+
+		$("#example-table-pagination").tabulator({
+			height:"167px",
+			fitColumns:true,
+			pagination:true,
+			// paginationSize:4,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+		});
+
+		$("#example-table-pagination").tabulator("setData", tabledata);
+
+		$("#example-table-pagination").tabulator("setPage", 1);
+
+		$(window).resize(function(){
+			$("#example-table-pagination").tabulator("redraw");
 		});
 
 		</script>
@@ -635,7 +679,7 @@ $(window).resize(function(){
 			columnLayoutCookie: true,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", width:60},
+			{title:"Age", field:"age", width:60, sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", width:80},
 			{title:"Favourite Color", field:"col"},
@@ -727,7 +771,7 @@ $(window).resize(function(){
 			addRowPos:"bottom",
 			columns:[
 			{title:"Name", field:"name", width:200, editable:true},
-			{title:"Age", field:"age", width:90, align:"right", editable:true},
+			{title:"Age", field:"age", width:90, align:"right", sorter:"number", editable:true},
 			{title:"Gender", field:"gender", editable:true},
 			{title:"Height", field:"height", align:"center", width:80, editable:true},
 			{title:"Favourite Color", field:"col", editable:true},
@@ -762,7 +806,7 @@ $(window).resize(function(){
 			movableRows:true,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
 			{title:"Favourite Color", field:"col"},
