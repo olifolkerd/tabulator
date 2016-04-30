@@ -1545,7 +1545,7 @@
 
 					});
 
-					columns = options.columns.splice(from, 1)[0]
+					var columns = options.columns.splice(from, 1)[0]
 
 					$.each(options.columns, function(i, column) {
 
