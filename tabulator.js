@@ -60,9 +60,10 @@
 		columnLayoutCookie:false, //store cookie with column _styles
 		columnLayoutCookieID:"", //id for stored cookie
 
-		paginateionSize:8, //size of pages
-		paginateionAjax:false, //paginate internal or via ajax
-		paginationElement:"", //element to hold pagination numbers
+		pagination:false, //enable pagination
+		paginationSize:8, //size of pages
+		paginationAjax:false, //paginate internal or via ajax
+		paginationElement:false, //element to hold pagination numbers
 
 		tooltips: false, //Tool tip value
 
@@ -171,7 +172,7 @@
 		self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
 		self.tableHolder.css({
-			"position":"absolute",
+			"position":"relative",
 			"min-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 			"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
 			"white-space": "nowrap",
@@ -1358,9 +1359,29 @@
 
 		});
 
+		
+
 		element.append(self.header);//
 		self.tableHolder.append(self.table);
 		element.append(self.tableHolder);
+
+		//build pagination footer if needed
+		if(options.pagination && !options.paginationElement){
+			console.log("")
+			options.paginationElement = $("<div class='tabulator-footer'>Booya</div>");
+
+			options.paginationElement.css({
+				padding:"5px 10px",
+				"text-align":"right",
+			});
+
+			element.append(options.paginationElement);
+
+			self.tableHolder.css({
+				"min-height":"calc(100% - " + (options.headerHeight + 1 + options.paginationElement.outerHeight()) + "px)",
+				"max-height":"calc(100% - " + (options.headerHeight + 1 + options.paginationElement.outerHeight()) + "px)",
+			});
+		}
 
 		//layout headers
 		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
@@ -1614,7 +1635,14 @@
 		});
 
 		if(!self.options.height){
-			self.element.css({height:self.table.outerHeight() + self.options.headerHeight + 3})
+
+			var height  = self.table.outerHeight() + self.options.headerHeight + 3;
+
+			if(self.options.pagination && self.options.paginationElement.hasClass("tabulator-footer")){
+				height += self.options.paginationElement.outerHeight();
+			}
+
+			self.element.css({height:height})
 		}
 
 		//apply row formatter

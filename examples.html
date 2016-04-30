@@ -619,6 +619,43 @@ $(window).resize(function(){
 
 
 	<section>
+	<header>Pagination<span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator">https://github.com/olifolkerd/tabulator/</a></span></header>
+	<p>SOME PAGINATION BLAH WILL GO HERE</p>
+
+	<div id="example-table-pagination"></div>
+	<script type="text/javascript">
+
+
+		var printIcon = function(value, data, cell, row, options){ //plain text value
+			return "<i class='fa fa-print'></i> "
+		};
+
+		$("#example-table-pagination").tabulator({
+			fitColumns:true,
+			pagination:true,
+			paginationSize:3,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+			],
+		});
+
+		$("#example-table-pagination").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#example-table-pagination").tabulator("redraw");
+		});
+
+		</script>
+	</section>
+
+
+	<section>
 		<header>Persistent Column Layout <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Column-Layout-Manipulation">https://github.com/olifolkerd/tabulator/wiki/Column-Layout-Manipulation</a></span></header>
 		<p>
 			Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
