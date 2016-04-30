@@ -14,6 +14,8 @@
 	$.widget("ui.tabulator", {
 
 	data:[],//array to hold data for table
+	activeData:[],//array to hold data that is active in the DOM
+
 	firstRender:true, //layout table widths correctly on first render
 	mouseDrag:false, //mouse drag tracker;
 	mouseDragWidth:false, //starting width of colum on mouse drag
@@ -639,7 +641,7 @@
 	clear:function(){
 		this.table.empty();
 		this.data = [];
-		this._renderTable();
+		this._filterData();
 	},
 
 	//filter data in table
@@ -662,7 +664,7 @@
 		}
 
 		//render table
-		this._renderTable();
+		this._filterData();
 	},
 
 	//clear filter
@@ -674,7 +676,7 @@
 		self.filterValue = null;
 
 		//render table
-		this._renderTable();
+		this._filterData();
 	},
 
 	//get current filter info
@@ -720,11 +722,12 @@
 		}
 
 
-
 		self.data = newData;
 
 		self.options.dataLoaded(data);
-		self._renderTable();
+
+		//filter incomming data
+		self._filterData();
 	},
 
 	//get json data via ajax
@@ -767,11 +770,8 @@
 		//clear data from table before loading new
 		self.table.empty();
 
-		//filter data if nessisary
-		var data = self.filterField ? self.data.filter(function(row){return self._filterRow(row);}) : self.data;
-
 		//build rows of table
-		data.forEach( function(item, i) {
+		self.activeData.forEach( function(item, i) {
 
 			var row = self._renderRow(item);
 
@@ -857,11 +857,6 @@
 
 			self._sortElement(self.table, {}, "asc", true); //sort groups
 
-		}
-
-		//sort data if already sorted
-		if(self.sortCurCol){
-			self._sorter(self.sortCurCol, self.sortCurDir);
 		}
 
 		//align column widths
@@ -958,6 +953,26 @@
 		})
 		.html(arrow)
 		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+	},
+
+	//filter data set
+	_filterData:function(){
+		var self = this;
+
+		if(self.filterField ){
+			self.activeData = self.data.filter(function(row){
+				return self._filterRow(row);
+			});
+		}else{
+			self.activeData= self.data;
+		}
+
+		//sort data if already sorted
+		if(self.sortCurCol){
+			self._sorter(self.sortCurCol, self.sortCurDir);
+		}else{
+			self._renderTable();
+		}	
 	},
 
 	//check if row data matches filter
@@ -1199,7 +1214,7 @@
 
 
 	//layout columns
-	_colLayout:function(forceRefresh){
+	_colLayout:function(){
 		var self = this;
 		var options = self.options;
 		var element = self.element;
@@ -1465,13 +1480,10 @@
 		.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 		.append(arrow.clone());
 
-		if(forceRefresh){
-			self._renderTable();
-		}else{
-			//render column headings
-			self._colRender();
-		}
 
+		//render column headings
+		self._colRender();
+		
 	},
 
 	//layout coluns on first render
@@ -1753,6 +1765,9 @@
 			self._sorter(item.field, item.dir, sortList, i);
 
 		});
+
+		self._renderTable();
+
 	},
 
 
@@ -1769,40 +1784,40 @@
 		self.sortCurCol = column;
 		self.sortCurDir = dir;
 
-		if(options.groupBy){
+		// if(options.groupBy){
 
-			if(options.groupBy == column.field){
-				self._sortElement(table, column, dir, true);
-			}else{
-				$(".tabulator-group", table).each(function(){
-					self._sortElement($(this), column, dir, false, sortList, i);
-				});
-			}
+		// 	if(options.groupBy == column.field){
+		// 		self._sortElement(table, column, dir, true);
+		// 	}else{
+		// 		$(".tabulator-group", table).each(function(){
+		// 			self._sortElement($(this), column, dir, false, sortList, i);
+		// 		});
+		// 	}
 
-		}else{
-			self._sortElement(table, column, dir, false, sortList, i);
-		}
+		// }else{
+			self._sortElement(table, column, dir, sortList, i);
+		// }
 
 		//style table rows
-		self._styleRows();
+		// self._styleRows();
 
-		self._trigger("sortComplete");
+		// self._trigger("sortComplete");
 	},
 
 	//sort elements within table
-	_sortElement:function(element, column, dir, sortGroups, sortList, i){
+	_sortElement:function(element, column, dir, sortList, i){
 		var self = this;
 
-		var row = sortGroups ? ".tabulator-group" : ".tabulator-row";
+		console.log("sort")
 
-		$(row, element).sort(function(a,b) {
+		self.activeData = self.activeData.sort(function(a,b){
 
-			var result = self._processSorter(a, b, column, dir, sortGroups);
+			var result = self._processSorter(a, b, column, dir);
 
 			//if results match recurse through previous searchs to be sure
 			if(result == 0 && i){
 				for(var j = i-1; j>= 0; j--){
-					result = self._processSorter(a, b, sortList[j].field, sortList[j].dir, sortGroups);
+					result = self._processSorter(a, b, sortList[j].field, sortList[j].dir);
 
 					if(result != 0){
 						break;
@@ -1811,23 +1826,46 @@
 			}
 
 			return result;
+		})
 
-		}).appendTo(element);
+		// $(row, element).sort(function(a,b) {
+
+		// 	var result = self._processSorter(a, b, column, dir, sortGroups);
+
+		// 	//if results match recurse through previous searchs to be sure
+		// 	if(result == 0 && i){
+		// 		for(var j = i-1; j>= 0; j--){
+		// 			result = self._processSorter(a, b, sortList[j].field, sortList[j].dir, sortGroups);
+
+		// 			if(result != 0){
+		// 				break;
+		// 			}
+		// 		}
+		// 	}
+
+		// 	return result;
+
+		// }).appendTo(element);
 	},
 
-	_processSorter:function(a, b, column, dir, sortGroups){
+	_processSorter:function(a, b, column, dir){
 		var self = this;
 		//switch elements depending on search direction
-		var el1 = dir == "asc" ? $(a) : $(b);
-		var el2 = dir == "asc" ? $(b) : $(a);
+		var el1 = dir == "asc" ? a : b;
+		var el2 = dir == "asc" ? b : a;
 
-		if(sortGroups){
-			el1 = el1.data("value");
-			el2 = el2.data("value");
-		}else{
-			el1 = el1.data("data")[column.field];
-			el2 = el2.data("data")[column.field];
-		}
+		el1 = el1[column.field];
+		el2 = el2[column.field];
+
+		console.log("sorting", el1, el2)
+
+		// if(sortGroups){
+		// 	el1 = el1.data("value");
+		// 	el2 = el2.data("value");
+		// }else{
+		// 	el1 = el1.data("data")[column.field];
+		// 	el2 = el2.data("data")[column.field];
+		// }
 
 			//workaround to format dates correctly
 			a = column.sorter == "date" ? self._formatDate(el1) : el1;
