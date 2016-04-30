@@ -32,6 +32,8 @@
 	paginationCurrentPage:1, // pagination page
 	paginationMaxPage:1, // pagination maxpage
 
+	progressiveRenderTimer:null, //timer for progressiver rendering
+
 	//setup options
 	options: {
 		backgroundColor: "#888", //background color of tabulator
@@ -73,6 +75,10 @@
 		paginationSize:false, //size of pages
 		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
+
+		progressiveRender:true, //enable progressive rendering
+		progressiveRenderSize:200, //block size for progressive rendering
+		progressiveRenderPeriod:200, //time between renders
 
 		tooltips: false, //Tool tip value
 
@@ -834,22 +840,34 @@
 	},
 
 	//build table DOM
-	_renderTable:function(){
+	_renderTable:function(progressiveRender){
 		var self = this;
 		var options = self.options
 
 		this._trigger("renderStarted");
 
-		//hide table while building
-		self.table.hide();
-
 		//show loader if needed
 		self._showLoader(self, self.options.loader)
 
-		//clear data from table before loading new
-		self.table.empty();
+		if(!progressiveRender){
 
-		var renderData = options.pagination ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData
+			clearTimeout(self.progressiveRenderTimer);
+
+			//hide table while building
+			self.table.hide();
+
+			//clear data from table before loading new
+			self.table.empty();	
+		}
+
+
+		if(!options.pagination && options.progressiveRender && !progressiveRender){
+			self.paginationCurrentPage = 1;
+			options.paginationSize = options.progressiveRenderSize;
+			progressiveRender = true;
+		}		
+
+		var renderData = options.pagination || options.progressiveRender ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData;
 
 		//build rows of table
 		renderData.forEach( function(item, i) {
@@ -955,6 +973,14 @@
 
 		if(self.filterField){
 			self._trigger("filterComplete");
+		}
+
+		//trigger progressive render
+		if(progressiveRender && renderData.length){
+			self.progressiveRenderTimer = setTimeout(function(){
+				self.paginationCurrentPage++;
+				self._renderTable(true);
+			}, options.progressiveRenderPeriod)
 		}
 
 	},
