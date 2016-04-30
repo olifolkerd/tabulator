@@ -78,7 +78,6 @@
 	];
 
 	</script>
-
 	<section>
 		<header>Tabulator</header>
 
@@ -680,7 +679,7 @@ $(window).resize(function(){
 			columnLayoutCookie: true,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", width:60},
+			{title:"Age", field:"age", width:60, sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", width:80},
 			{title:"Favourite Color", field:"col"},
@@ -772,7 +771,7 @@ $(window).resize(function(){
 			addRowPos:"bottom",
 			columns:[
 			{title:"Name", field:"name", width:200, editable:true},
-			{title:"Age", field:"age", width:90, align:"right", editable:true},
+			{title:"Age", field:"age", width:90, align:"right", sorter:"number", editable:true},
 			{title:"Gender", field:"gender", editable:true},
 			{title:"Height", field:"height", align:"center", width:80, editable:true},
 			{title:"Favourite Color", field:"col", editable:true},
@@ -807,7 +806,7 @@ $(window).resize(function(){
 			movableRows:true,
 			columns:[
 			{title:"Name", field:"name", width:200},
-			{title:"Age", field:"age", formatter:"progress"},
+			{title:"Age", field:"age", formatter:"progress", sorter:"number"},
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
 			{title:"Favourite Color", field:"col"},

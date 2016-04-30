@@ -572,44 +572,42 @@
 	deleteRow: function(item){
 		var self = this;
 
-		var id = typeof(item) == "number" ? item : item.data("data")[self.options.index];
+		var id = typeof(item) == "number" ? item : item.data("data")[self.options.index]
 
-		var line;
+		var row = typeof(item) == "number" ? $("[data-id=" + item + "]", self.element) :  item;
 
-		if(self.data[id]){
+		var rowData = row.data("data");
+		rowData.tabulator_delete_row = true;
 
-			//remove from data
-			line = self.data.find(function(item){
-				return item[self.options.index] == id;
-			});
+		//remove from data
+		var line = self.data.find(function(rowData){
+			return item.tabulator_delete_row;
+		});
 
-			if(line){
-				line = self.data.indexOf(line);
+		if(line){
+			line = self.data.indexOf(line);
 
-				if(line > -1){
-					//remove row from data
-					self.data.splice(line, 1);
-				}
-			}
-
-			//remove from active data
-			line = self.activeData.find(function(item){
-				return item[self.options.index] == id;
-			});
-
-			if(line){
-				line = self.activeData.indexOf(line);
-
-				if(line > -1){
-					//remove row from data
-					self.activeData.splice(line, 1);
-				}
+			if(line > -1){
+				//remove row from data
+				self.data.splice(line, 1);
 			}
 		}
 
+		//remove from active data
+		line = self.activeData.find(function(item){
+			return item.tabulator_delete_row;
+		});
 
-		var row = id ? $("[data-id=" + id + "]", self.element) : item;
-		var group = row.closest(".tabulator-group")
+		if(line){
+			line = self.activeData.indexOf(line);
+
+			if(line > -1){
+				//remove row from data
+				self.activeData.splice(line, 1);
+			}
+		}
+
+		var group = row.closest(".tabulator-group");
 
 		row.remove();
 
@@ -659,13 +657,18 @@
 			item = {id:0}
 		}
 
+		//add item to
+		//self.data.push(item);		
+
 		//create blank row
 		var row = self._renderRow(item);
 
 		//append to top or bottom of table based on preference
 		if(self.options.addRowPos == "top"){
+			self.activeData.push(item);
 			self.table.prepend(row);
 		}else{
+			self.activeData.unshift(item);
 			self.table.append(row);
 		}
 
@@ -931,7 +934,15 @@
 					$(".tabulator-col .tabulator-arrow", self.header).css({
 						"border-top": "none",
 						"border-bottom": "6px solid " + options.sortArrows.inactive,
-					})
+					});
+
+					self.activeData = [];
+
+					//update active data to mach rows
+					$(".tabulator-row", self.table).each(function(){
+						self.activeData.push($(this).data("data"));
+					});
+
 
 					//trigger callback
 					options.rowMoved(ui.item.data("id"), ui.item.data("data"), ui.item,ui.item.prevAll(".tabulator-row").length);
