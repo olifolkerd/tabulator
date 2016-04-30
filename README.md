@@ -12,6 +12,7 @@ Tabulator is packed with useful  features including:
 
 - JSON, array or AJAX data loading
 - Column sorting
+- Pagination
 - Editable cells
 - Adding/Deleting rows
 - Custom data formatting
@@ -166,6 +167,72 @@ $("#example-table").tabulator({
 and call ***setData*** to refresh the data at any point
 ```js
 $("#example-table").tabulator("setData");
+```
+
+Tabulator allows for pagination of table data, displaying only a section of data at a time, allowing for smaller tables without scroll bars.
+
+**NOTE:** Changing the filter or sorting while pagination is enabled will revert the table back to the first page.
+
+### Enabling Pagination
+
+To enable pagination, set the ***pagination*** option to true when you create your Tabulator
+
+```js
+$("#example-table").tabulator({
+	pagination:true, // this option takes a boolean value (default = false)
+});
+```
+
+### Set Page size
+
+There are three ways to set the number of rows in each page.
+
+##### Set During Table Creation
+You can specify the page size during table creation by setting the ***paginationSize*** option.
+```js
+$("#example-table").tabulator({
+	pagination:true, // this option takes a boolean value (default = false)
+	paginationSize:5, // this option can take any positive integer value (default = 10)
+});
+```
+If no height option is specified the table will resize to fit the number of rows on the page.
+
+##### Auto-fit to Tabulator Height
+If you specify the ***height*** option, and don't define the ***paginationSize*** option the page size will be automatically set to fill the height of the table.
+```js
+$("#example-table").tabulator({
+	height:"300px",
+	pagination:true, // this option takes a boolean value (default = false)
+});
+```
+
+##### Change Page Size
+You can change the page size at any point by using the ***setPageSize*** function.
+```js
+$("#example-table").tabulator("setPageSize", 50); // show 50 rows per page
+```
+
+### Changing Page
+When pagination is enabled the table footer will contain a number of pagination controls for navigating through the data.
+
+In addition to these controls it is possible to change page using the ***setPage*** function
+```js
+$("#example-table").tabulator("setPage", 5); // show page 5
+```
+
+The ***setPage*** function takes one parameter, which should be an integer representing the page you wish to see. There are also four strings that you can pass into the parameter for special functions.
+* "first" - show the first page
+* "prev" - show the previous page
+* "next" - show the next page
+* "last" - show the last page
+
+### Custom Pagination Control Element
+By default the pagination controls are added to the footer of the table. If you wish the controls to be created in another element pass a JQuery object for that element to the ***paginationElement*** option.
+```js
+$("#example-table").tabulator({
+	pagination:true, // this option takes a boolean value (default = false)
+	paginationElement:$("#pagination-element"), //build pagination controls in this element
+});
 ```
 
 Sorting Data
@@ -723,6 +790,12 @@ Option | Data Type | Default Value | Description
 ---|---|---|---
 addRowPos|string|"bottom"| The position in the table for new rows to be added, "bottom" or "top"
 
+###Pagination
+Option | Data Type | Default Value | Description
+---|---|---|---
+pagination|boolean|false|Enable Pagination
+paginationSize|integer|10|Set number of rows in each page
+paginationElement|JQuery Element|(generated tabulator footer)|The element to contain the pagination selectors
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
@@ -744,6 +817,10 @@ rowBorderColor|string|#fff|A valid css color(rgb,hex,etc...) for the table row b
 rowTextColor|string|#333|A valid css color(rgb,hex,etc...) for the table row text
 rowHoverBackground|string|#bbb|A valid css color(rgb,hex,etc...) for the table row background when hovered over.
 editBoxColor|string|#1D68CD|A valid css color(rgb,hex,etc...) for border of a cell being edited.
+footerBackgroundColor|string|#e6e6e6|A valid css color(rgb,hex,etc...) for the footer cells
+footerTextColor|string|#555|A valid css color(rgb,hex,etc...) for the footer text
+footerBorderColor|string|#aaa|A valid css color(rgb,hex,etc...) for the footer buttons border
+footerSeperatorColor|string|#999|A valid css color(rgb,hex,etc...) for the footer row top border
 
 #####Sort Arrow Theming
 The ***sortArrows*** option contains two options
