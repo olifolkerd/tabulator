@@ -305,11 +305,6 @@
 		rowData[cell.data("field")] = value;
 		row.data("data", rowData);
 
-		if(rowData[self.options.index]){
-			//update tabulator data
-			self.data[rowData[self.options.index]] = rowData;
-		}
-
 		//reformat cell data
 		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")))
 		.css({"padding":"4px"});
@@ -573,9 +568,37 @@
 
 		var id = typeof(item) == "number" ? item : item.data("data")[self.options.index];
 
+		var line;
+
 		if(self.data[id]){
-			//remove row from data
-			self.data.splice(id, 1);
+
+			//remove from data
+			line = self.data.find(function(item){
+				return item[self.options.index] == id;
+			});
+
+			if(line){
+				line = self.data.indexOf(line);
+
+				if(line > -1){
+					//remove row from data
+					self.data.splice(line, 1);
+				}
+			}
+
+			//remove from active data
+			line = self.activeData.find(function(item){
+				return item[self.options.index] == id;
+			});
+
+			if(line){
+				line = self.activeData.indexOf(line);
+
+				if(line > -1){
+					//remove row from data
+					self.activeData.splice(line, 1);
+				}
+			}
 		}
 
 
@@ -660,20 +683,7 @@
 	getData:function(){
 		var self = this;
 
-		var allData = [];
-
-		$(".tabulator-row", self.element).each(function(){
-			// if($(this).data("id")){
-			// 	allData.push(self.data[$(this).data("id")]);
-			// }else{
-			// 	allData.push($(this).data("data"));
-			// }
-
-			allData.push($(this).data("data"));
-
-		});
-
-		return allData;
+		return self.activeData;
 	},
 
 	//load data
