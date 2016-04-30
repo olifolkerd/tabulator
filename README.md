@@ -759,6 +759,30 @@ $(window).resize(function(){
 });
 ```
 
+###Progressive Rendering
+Progressive rendering allow large data sets to be loaded into Tabulator without blocking the UI. 
+
+Progressive rendering is enabled by default on Tabulator.
+
+It works by rendering blocks of rows progressively over time rather than all at once. On smaller tables this wont be noticeable at all but on tables with more than 200 rows it should significantly improve loading times.
+
+By default data is progressively rendered to the table 200 rows at a time with a 100ms pause between rendering each block.
+
+It is possible to configure the progressive rendering system using the ***progressiveRenderSize*** and ***progressiveRenderPeriod*** options.
+```js
+$("#example-table").tabulator({
+	progressiveRenderSize:500, //sets the number of rows to render per block (default = 200)
+	progressiveRenderPeriod:350, //sets the delay in milliseconds between rendering each block (default = 100)
+});
+```
+
+If you wish to disable progressive rendering on your table, set the ***progressiveRender*** option to ***false***.
+```js
+$("#example-table").tabulator({
+	progressiveRender:false, //disable progressive rendering
+});
+```
+
 Table Options
 ================================
 In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.
@@ -794,8 +818,15 @@ addRowPos|string|"bottom"| The position in the table for new rows to be added, "
 Option | Data Type | Default Value | Description
 ---|---|---|---
 pagination|boolean|false|Enable Pagination
-paginationSize|integer|10|Set number of rows in each page
+paginationSize|integer|10|Set the number of rows in each page
 paginationElement|JQuery Element|(generated tabulator footer)|The element to contain the pagination selectors
+
+###Progressive Rendering
+Option | Data Type | Default Value | Description
+---|---|---|---
+progressiveRender|boolean|true|Enable progressive rendering
+progressiveRenderSize|integer|200|Set the number of rows to be rendered in each block
+progressiveRenderPeriod|integer|100|Set the time delay between reach block rendering
 
 ###Table Theming
 Tabulator allows you to set a number of global options that can help theme your table.
