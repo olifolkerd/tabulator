@@ -1622,16 +1622,6 @@
 
 		});
 
-		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
-		if(self.options.pagination && !self.options.paginationSize){
-			if(self.options.height){
-				self.options.paginationSize = Math.floor(self.tableHolder.innerHeight() / (self.options.headerHeight + 2))
-			}else{
-				self.options.paginationSize = 10;
-			}
-		}
-
-
 		//layout headers
 		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
 			"padding":"4px",
@@ -1718,6 +1708,16 @@
 				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
 			});
 		}
+
+		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
+		if(self.options.pagination && !self.options.paginationSize){
+			if(self.options.height){
+				self.options.paginationSize = Math.floor(self.tableHolder.outerHeight() / (self.header.outerHeight() - 1))
+			}else{
+				self.options.paginationSize = 10;
+			}
+		}
+
 
 
 		element.on("editval", ".tabulator-cell", function(e, value){
