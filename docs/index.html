@@ -112,7 +112,7 @@
                     <p>To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:</p>
                     <pre class="prettyprint lang-bsh">npm install jquery.tabulator --save</pre>
                 </article>
-                <a class="anchor" id="define-column-header"></a>
+                <a class="anchor" id="define-column-headers"></a>
                 <article>
                     <h1>Define Column Headers</h1>
 
@@ -1235,10 +1235,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#manipulating-data">Manipulating Data</a></li>
                         <li><a href="#movable">Movable Rows and Columns</a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
-                        <li><a href="#option">Table Options</a></li>
+                        <li><a href="#options">Table Options</a></li>
                         <li><a href="#css">CSS Classes</a></li>
                         <li><a href="#callbacks">Callback</a></li>
-                        <li><a href="#events"></a></li>
+                        <li><a href="#events">Events</a></li>
 
                     </ul>
                 </nav>
@@ -1274,6 +1274,13 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     <script src="../js/tabulator.js"></script>
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
+
+    <script type="text/javascript">
+        $('body').scrollspy({
+            target: '.docs-sidebar',
+            offset: 40
+        });
+    </script>
 
 </body>
 
