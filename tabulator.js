@@ -1631,11 +1631,16 @@
 
 			element.append(self.footer);
 
-			var footerHeight = options.headerHeight + 2 + self.footer.outerHeight();
+			var footerHeight = self.header.outerHeight() + 2 + self.footer.outerHeight();
 
 			self.tableHolder.css({
 				"min-height":"calc(100% - " + footerHeight + "px)",
 				"max-height":"calc(100% - " + footerHeight + "px)",
+			});
+		}else{
+			self.tableHolder.css({
+				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
 			});
 		}
 
