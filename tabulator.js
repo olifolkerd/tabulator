@@ -1706,7 +1706,7 @@
 
 			element.append(self.footer);
 
-			var footerHeight = self.header.outerHeight() + 2 + self.footer.outerHeight();
+			var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
 
 			self.tableHolder.css({
 				"min-height":"calc(100% - " + footerHeight + "px)",
