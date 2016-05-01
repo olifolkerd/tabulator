@@ -4,6 +4,8 @@ An easy to use table generation JQuery UI Plugin
 
 Full documentation & demos can be found at: [http://olifolkerd.github.io/tabulator](http://olifolkerd.github.io/tabulator)
 ***
+![Tabluator Table](http://olifolkerd.github.io/tabulator/images/tabulator_table.jpg)
+***
 ###Features
 
 Tabulator allows you to create  a table with in seconds from any JSON formatted data.
