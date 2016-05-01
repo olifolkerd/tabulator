@@ -1622,28 +1622,6 @@
 
 		});
 
-		element.append(self.header);
-		self.tableHolder.append(self.table);
-		element.append(self.tableHolder);
-
-		//add pagination footer if needed
-		if(self.footer){
-
-			element.append(self.footer);
-
-			var footerHeight = self.header.outerHeight() + 2 + self.footer.outerHeight();
-
-			self.tableHolder.css({
-				"min-height":"calc(100% - " + footerHeight + "px)",
-				"max-height":"calc(100% - " + footerHeight + "px)",
-			});
-		}else{
-			self.tableHolder.css({
-				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-			});
-		}
-
 		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
 		if(self.options.pagination && !self.options.paginationSize){
 			if(self.options.height){
@@ -1717,6 +1695,28 @@
 
 			$(".tabulator-col", self.header).append(handle);
 
+		}
+
+		element.append(self.header);
+		self.tableHolder.append(self.table);
+		element.append(self.tableHolder);
+
+		//add pagination footer if needed
+		if(self.footer){
+
+			element.append(self.footer);
+
+			var footerHeight = self.header.outerHeight() + 2 + self.footer.outerHeight();
+
+			self.tableHolder.css({
+				"min-height":"calc(100% - " + footerHeight + "px)",
+				"max-height":"calc(100% - " + footerHeight + "px)",
+			});
+		}else{
+			self.tableHolder.css({
+				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+			});
 		}
 
 
