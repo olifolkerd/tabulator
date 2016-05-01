@@ -93,12 +93,27 @@ ul.docs-sidenav li a:hover {
   color: #59B038;
 }
 .docs article {
+  position: relative;
   margin-top: 50px;
+}
+.docs article a.anchor {
+  display: block;
+  position: absolute;
+  top: -60px;
+  visibility: hidden;
 }
 .docs article h1 {
   border-bottom: 1px solid #59B038;
   padding-bottom: 10px;
   font-weight: bold;
+}
+.docs article h1 .doc-link {
+  margin-left: 20px;
+  font-size: 20px;
+  vertical-align: middle;
+}
+.docs article h1 .doc-link i {
+  font-size: .9em;
 }
 .docs article h2 {
   font-size: 25px;

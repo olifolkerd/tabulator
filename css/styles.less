@@ -149,6 +149,15 @@ ul.docs-sidenav{
 .docs{
 	article{
 
+		position: relative;
+
+		a.anchor {
+		    display: block;
+		    position: absolute;
+		    top: -60px;
+		    visibility: hidden;
+		}
+
 		margin-top: 50px;
 
 		h1{
@@ -158,6 +167,17 @@ ul.docs-sidenav{
 			padding-bottom:10px;
 
 			font-weight: bold;
+
+			.doc-link{
+				margin-left:20px;
+
+				font-size: 20px;
+				vertical-align: middle;
+
+				i{
+					font-size: .9em;
+				}
+			}
 		}
 
 		h2{
