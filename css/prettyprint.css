@@ -2,12 +2,12 @@
 pre.prettyprint { display: block; box-sizing: border-box; padding:10px!important; background-color: #333;}
 pre .nocode { background-color: none; color: #000 }
 pre .str { color: #B8D280 } /* string  - pink */
-pre .kwd { color: #bdb76b; font-weight: bold }
-pre .com { color: #ffa0a0 } /* comment - skyblue */
+pre .kwd { color: #E9934D; font-weight: bold }
+pre .com { color: #A5A5A5 } /* comment - skyblue */
 pre .typ { color: #98fb98 } /* type    - lightgreen */
 pre .lit { color: #cd5c5c } /* literal - darkred */
 pre .pun { color: #fff }    /* punctuation */
-pre .pln { color: #DE7778 }    /* plaintext */
+pre .pln { color: #fff }    /* plaintext */
 pre .tag { color: #DE7778; font-weight: bold } /* html/xml tag    - lightyellow */
 pre .atn { color: #D28445; font-weight: bold } /* attribute name  - khaki */
 pre .atv { color: #B8D280 } /* attribute value - pink */

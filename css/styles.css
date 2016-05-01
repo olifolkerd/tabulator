@@ -74,15 +74,66 @@ body {
 .features .feature .frame .fa {
   font-size: 5em;
 }
+ul.docs-sidenav {
+  margin-top: 20px;
+}
+ul.docs-sidenav li.active {
+  border-left: 3px solid #59B038;
+}
+ul.docs-sidenav li.active a {
+  padding-left: 12px;
+  color: #59B038;
+}
+ul.docs-sidenav li a {
+  padding: 5px 15px;
+  font-weight: bold;
+  color: #999;
+}
+ul.docs-sidenav li a:hover {
+  color: #59B038;
+}
+.docs article {
+  margin-top: 50px;
+}
 .docs article h1 {
   border-bottom: 1px solid #59B038;
   padding-bottom: 10px;
   font-weight: bold;
 }
 .docs article h2 {
+  font-size: 25px;
   margin-top: 30px;
-  font-size: 1.5em;
   font-weight: bold;
+}
+.docs article h3 {
+  margin-top: 18px;
+  font-size: 17px;
+  font-weight: bold;
+}
+.docs article a {
+  color: #59B038;
+  font-weight: bold;
+}
+.docs article .param {
+  font-weight: bold;
+  font-style: italic;
+}
+.docs article table {
+  width: 100%;
+}
+.docs article table thead {
+  font-weight: bold;
+}
+.docs article table thead th {
+  border-bottom: 1px solid #999;
+}
+.docs article table th,
+.docs article table td {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+.docs article table tbody tr:nth-of-type(even) td {
+  background: #f9f9f9;
 }
 footer {
   margin: 50px 0;

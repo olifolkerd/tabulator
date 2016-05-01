@@ -66,6 +66,9 @@
                         <a href="/start/">Quick Start</a>
                     </li>
                     <li>
+                        <a href="/examples/">Examples</a>
+                    </li>
+                    <li>
                         <a href="https://github.com/olifolkerd/tabulator">Github</a>
                     </li>
                 </ul>
@@ -83,8 +86,8 @@
         <div class="row">
 
             <div class="col-md-9 content" role="main">
-                <article>
-                    <h1 id="setup">Setup</h1>
+                <article id="setup">
+                    <h1>Setup</h1>
 
                     <p>Setting up tabulator could not be simpler.</p>
 
@@ -103,25 +106,1123 @@
 
                     <h2>Bower Installation</h2>
                     <p>To get Tabulator via the Bower package manager, open a terminal in your project directory and run the following commmand:</p>
-                    ```
-                    bower install tabulator --save
-                    ```
+                    <pre class="prettyprint lang-bsh">bower install tabulator --save</pre>
 
                     <h2>NPM Installation</h2>
                     <p>To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:</p>
-                    ```
-                    npm install jquery.tabulator --save
-                    ```
+                    <pre class="prettyprint lang-bsh">npm install jquery.tabulator --save</pre>
                 </article>
+
+                <article id="define-column-headers">
+                    <h1>Define Column Headers</h1>
+
+                    <p>Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {title:"Name", field:"name", sortable:true, sorter:"string", width:200, editable:true},
+        {title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
+        {title:"Gender", field:"gender", sortable:true, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click")},},
+        {title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
+        {title:"Cheese Preference", field:"cheese", sortable:true, sorter:"boolean", align:"center", formatter:"tickCross"},
+    ],
+});</pre>
+
+                    <p>There are a number of parameters that can be passed in with each column to determine how it is displayed:</p>
+
+                    <ul>
+                        <li><strong>title</strong> - <strong><i>Required</i></strong> This is the title that will be displayed in the header for this column</li>
+                        <li><strong>field</strong> - <strong><i>Required</i></strong> <i>(not required in icon/button columns)</i> this is the key for this column in the data array</li>
+                        <li><strong>align</strong> - sets the text alignment for this column (left|center|right)</li>
+                        <li><strong>width</strong> - sets the width of this column (if not set the system will determine the best)</li>
+                        <li><strong>sortable</strong> - determines if the user can sort data by this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
+                        <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
+                        <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
+                        <li><strong>onClick</strong> - callback for when user clicks on a cell in this column (see <a href="callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>editable</strong> - <i>(boolean, default - false)</i> determines if this data is editable by the user. will use the editor that matches the formatter by default. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
+                        <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
+                        <li><strong>visible</strong> - <i>(boolean, default - true)</i> determines if the column is visible. (see <a href="#column-visibility">Column Visibility</a> for more details)</li>
+                        <li><strong>cssClass</strong> - sets css classes on header and cells in this column. <i>(value should be a string containing space seperated class names)</i></li>
+                        <li><strong>tooltip</strong> - sets the on hover tooltip for each cell in this column (see <a href="#formatting">Formatting Data</a> for more details)</li>
+                    </ul>
+                </article>
+
+                <article id="set-data">
+                    <h1>Set Table Data</h1>
+
+                    <p>Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved as a JSON formatted string via AJAX from a URL.</p>
+
+                    <p>The data can contain more columns that are defined in the columns options, these will be stored with the rest of the data, but not rendered to screen.</p>
+
+                    <p>An example JSON data set:</p>
+                    <pre class="prettyprint lang-js">[
+    {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+    {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+    {id:3, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true"},
+    {id:4, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980"},
+    {id:5, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
+    {id:6, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+    {id:7, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+    {id:8, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true"},
+    {id:9, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980"},
+    {id:10, name:"Margret Marmajuke", age:"16", gender:"female", height:5, col:"yellow", dob:"31/01/1999"},
+]</pre>
+
+                    <h2>Row Index</h2>
+                    <p> A unique numerical index value must be present for each row of data. By default Tabulator will look for this value in the <span class='param'>id</span> field for the data. If you wish to use a different field as the index, set this using the <span class='param'>index</span> option parameter.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+index:"age", //set the index field to the "age" field.
+});</pre>
+
+                    <p>If the index is missing from the provided data, tabulator will generate one from the position of the data in the original array.</p>
+
+                    <h2>Set data using array</h2>
+                    <p>You can pass an array directly to the table using the <span class='param'>setData</span> method.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setData",[
+    {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+    {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+]);</pre>
+
+                    <h2>Set data using AJAX</h2>
+                    <p>  If you wish to retrieve your data from a remote source, pass the URL to the <span class='param'>setData</span> method and it will perform the AJAX request for you. The URL can be absolute or relative.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now");</pre>
+
+                    <p>If you wish to pass parameters with your request you can either include them in-line with the url string, or as a second parameter to the <span class='param'>setData</span> function. In the latter case they should be provided in the form of an object with key/value pairs.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now", {key1:"value1", key2:"value2"});</pre>
+
+                    <p>The server will need to return a JSON formatted array of objects.</p>
+
+                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
+                   <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxURL:"http://www.getmydata.com/now",
+});</pre>
+                    <p>and call <span class='param'>setData</span> to refresh the data at any point</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
+
+                </article>
+
+                <article id="pagination">
+                    <h1>Pagination</h1>
+
+                    <p>Tabulator allows for pagination of table data, displaying only a section of data at a time, allowing for smaller tables without scroll bars.</p>
+
+                    <strong>NOTE:</strong> Changing the filter or sorting while pagination is enabled will revert the table back to the first page.
+
+                    <h2>Enabling Pagination</h2>
+
+                    <p>To enable pagination, set the <span class='param'>pagination</span> option to true when you create your Tabulator</p>
+
+                   <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:true, // this option takes a boolean value (default = false)
+});</pre>
+
+                    <h2>Set Page size</h2>
+
+                    <p>There are three ways to set the number of rows in each page.</p>
+
+                    <h3>Set During Table Creation</h3>
+                    <p>You can specify the page size during table creation by setting the <span class='param'>paginationSize</span> option.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:true, // this option takes a boolean value (default = false)
+    paginationSize:5, // this option can take any positive integer value (default = 10)
+});</pre>
+                    <p>If no height option is specified the table will resize to fit the number of rows on the page.</p>
+
+                    <h3>Auto-fit to Tabulator Height</h3>
+                    <p>If you specify the <span class='param'>height</span> option, and don't define the <span class='param'>paginationSize</span> option the page size will be automatically set to fill the height of the table.</p>
+                   <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    height:"300px",
+    pagination:true, // this option takes a boolean value (default = false)
+});</pre>
+
+                    <h3>Change Page Size</h3>
+                    <p>You can change the page size at any point by using the <span class='param'>setPageSize</span> function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setPageSize", 50); // show 50 rows per page</pre>
+
+                    <h2>Changing Page</h2>
+                    <p>When pagination is enabled the table footer will contain a number of pagination controls for navigating through the data.</p>
+
+                    <p>In addition to these controls it is possible to change page using the <span class='param'>setPage</span> function</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setPage", 5); // show page 5</pre>
+
+                    <p>The <span class='param'>setPage</span> function takes one parameter, which should be an integer representing the page you wish to see. There are also four strings that you can pass into the parameter for special functions.</p>
+                    <ul>
+                        <li>"first" - show the first page</li>
+                        <li>"prev" - show the previous page</li>
+                        <li>"next" - show the next page</li>
+                        <li>"last" - show the last page</li>
+                    </ul>
+
+                    <h2>Custom Pagination Control Element</h2>
+                    <p>By default the pagination controls are added to the footer of the table. If you wish the controls to be created in another element pass a JQuery object for that element to the <span class='param'>paginationElement</span> option.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:true, // this option takes a boolean value (default = false)
+    paginationElement:$("#pagination-element"), //build pagination controls in this element
+});</pre>
+                </article>
+
+                <article id='sorting'>
+                    <h1>Sorting Data</h1>
+
+                    <p>Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the <span class='param'>sortable</span> option when you create your Tabulator.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    sortable:false, // this option takes a boolean value (default = true)
+});</pre>
+
+                    <p>you can set sorting on a per column basis using the <span class='param'>sortable</span> option in the column data.</p>
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string"}</pre>
+
+                    <h2>Sorter type</h2>
+                    <p>By default all data is sorted as a string. if you wish to specify a different sorting method then you should include the <span class='param'>sorter</span> option in the column data.</p>
+
+                    <p>Tabulator comes with a number of preconfigured sorters including:</p>
+                    <ul>
+                        <li><strong>string</strong> - sorts column as strings of characters</li>
+                        <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
+                        <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
+                        <li><strong>boolean</strong> - sorts column as booleans</li>
+                        <li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span class='param'>dateFormat</span> option when you create your table. default format is "dd/mm/yyyy")</li>
+                    </ul>
+
+                    <p>You can define a custom sorter function in the sorter option:</p>
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b){
+        //a and b are the two values being compared
+        return a - b; //you must return the difference between the two values
+    },
+}</pre>
+
+                    <h2>Sort Data on load</h2>
+                    <p>When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the <span class='param'>sortBy</span> and <span class='param'>sortDir</span> parameters. (see <a href="#initial-data-sorting">Initial Data Sorting</a> for more details)</p>
+
+                    <h2>Trigger Sorting Programmatically</h2>
+                    <p>You can trigger sorting using the <span class='param'>sort</span> function</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("sort", "age", "asc");</pre>
+
+                    <p>If you wish to sort by multiple columns then you can pass an array of sorting objects to this function, the data will then be sorted in the order of the objects.</p>
+
+                   <pre class="prettyprint lang-js">$("#example-table").tabulator("sort", [
+    {field:"age", dir:"asc"}, //sort by this first
+    {field:"height", dir:"desc"}, //then sort by this second
+]);</pre>
+
+                </article>
+
+                <article id="formatting">
+
+                    <h1>Formatting Data</h1>
+                    <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
+
+                    <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
+
+                    <p>You can pass an optional additional parameter with formatter, <span class='param'>formatterParams</span> that should contain an object with additional information for configuring the formatter.</p>
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:"star", formatterParams:{stars:6}}</pre>
+
+                    <p>Tabulator comes with a number of preconfigured formatters including:</p>
+
+                    <ul>
+                        <li><strong>money</strong> - formats a number into currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
+                        <li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
+                        <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
+                        <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
+                        <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
+                        <li><strong>color</strong> - sets the background colour of the cell to the value. Can be any valid CSS color eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
+                        <li><strong>star</strong> - displays a graphical star rating based on integer values
+                        <ul>
+                            <li>optional <strong>formatterParams</strong></li>
+                            <li><strong>stars</strong> - maximum number of stars to be displayed <i>(default 5)</i></li>
+                        </ul></li>
+                        <li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width#
+                        <ul>
+                            <li>optional <strong>formatterParams</strong></li>
+                            <li><strong>min</strong> - minimum value for progress bar <i>(default 0)</i></li>
+                            <li><strong>max</strong> - minimum value for progress bar <i>(default 100)</i></li>
+                            <li><strong>color</strong> - colour of progress bar *(default #2DC214)*</li>
+                        </ul>
+                        </li>
+                        <li><strong>buttonTick</strong> - displays a tick icon on eac row <i>(for use as a button)</i></li>
+                        <li><strong>buttonCross</strong> - displays a cross icon on eac row <i>(for use as a button)</i></li>
+                    </ul>
+
+                    <p>You can define a custom formatter function in the formatter option:</p>
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:function(value, data, cell, row, options, formatterParams){
+        //value - the value of the cell
+        //data - the data for the row the cell is in
+        //cell - the DOM element of the cell
+        //row - the DOM element of the row
+        //options - the options set for this tabulator
+        //formatterParams - parameters set for the column
+        return "&lt;div&gt;&lt;/div&gt;"; // must return the html or jquery element of the html for the contents of the cell;
+    },
+}</pre>
+
+                    <h2>Icon/Button Columns</h2>
+                    <p>You can create icon/button columns, by not specifying the <span class='param'>field</span> parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+
+                   <pre class="prettyprint lang-js">//custom formatter definition
+var printIcon = function(value, data, cell, row, options){ //plain text value
+    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;"
+};
+
+//column definition in the columns array
+{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},</pre>
+
+                    <h2>Row Formatting</h2>
+                    <p>Tabulator also allows you to define a row level formatter using the <span class='param'>rowFormatter</span> option. this lets you alter each row of the table based on the data it contains.</p>
+
+                    <p>The example below changes the background colour of a cell to blue if the <span class='param'>col</span> value for that row is <span class='param'>"blue"</span>.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowFormatter:function(row, data){
+        //row - JQuery object for row
+        //data - the data for the row
+
+        if(data.col == "blue"){
+            row.css({"background-color":"#A6A6DF"});
+        }
+    },
+});</pre>
+
+                    <h2>ToolTips</h2>
+                    <p>You can set tooltips to be displayed when the cursor hovers over cells. By default, tooltips are not displayed.</p>
+
+                    <p>Tooltips can either be set globally using the <span class='param'>tooltips</span> options parameter:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    tooltips:true,
+});</pre>
+                    <p>Or on a per column basis in the column definition array:</p>
+                    <pre class="prettyprint lang-js">//column definition in the columns array
+{formatter:printIcon, width:40, align:"center", tooltip:true},</pre>
+
+                    <p>The tooltip parameter can take three different types of value</p>
+                    <ul>
+                        <li><strong>boolean</strong> - a value of <span class='param'>false</span> disables the tooltip, a value of <span class='param'>true</span> sets the tooltip of the cell to its value</li>
+                        <li><strong>string</strong> - a string that will be displayed for all cells in the matching column/table.</li>
+                        <li><strong>function</strong> - a callback function that returns the string for the cell. see below:</li>
+                    </ul>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    tooltips:function(field, value, data){
+        //field - field name of the cell's column
+        //value - value of the cell
+        //data - data for the cell's row
+
+        //function should return a string for the tooltip of false to hide the tooltip
+        return  field + " - " + value; //return cells "field - value";
+    },
+});</pre>
+
+                    <p><strong>NOTE</strong> setting a tooltip value on a column will override the global setting.</p>
+                </article>
+
+                <article id="grouping">
+                    <h1>Grouping Data</h1>
+
+                    <p> With Tabulator you can group rows together using the <span class='param'>groupBy</span> option.</p>
+                    <p>To group by a field, set this option to the name of the field to be grouped.</p>
+                    <pre class="prettyprint lang-js">groupBy:"gender",</pre>
+
+                    <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+                    <pre class="prettyprint lang-js">groupBy:function(data){
+    return data.gender + " - " + data.age; //groups by data and age
+}</pre>
+
+                    <h2>Custom Group Headers</h2>
+                    <p>You can set the contents of the group headers with the <span class='param'>groupHeader</span> option. This should return the contents of the group header.</p>
+                    <pre class="prettyprint lang-js">groupHeader:function(value, count, data){
+    return value + "&lt;span style='color:#d00; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
+},</pre>
+                </article>
+
+                <article id="filtering">
+                    <h1>Filtering Data</h1>
+
+                    <p>Tabulator allows you to filter the table data by any field in the data set.</p>
+
+                    <p>To set a filter you need to call the <span class='param'>setFilter</span> method, passing the field you wish to filter, the comparison type and the value to filter for.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", "age", ">", 10);</pre>
+
+                    <p>Tabulator comes with a number of filter comparison types including:</p>
+                    <ul>
+                        <li><strong>=</strong> - Displays only rows with data that is the same as the filter</li>
+                        <li><strong>&lt;</strong> - displays rows with a value less than the filter value</li>
+                        <li><strong>&lt;=</strong> - displays rows with a value less than or qual to the filter value</li>
+                        <li><strong>&gt;</strong> - displays rows with a value greater than the filter value</li>
+                        <li><strong>&gt;=</strong> - displays rows with a value greater than or qual to the filter value</li>
+                        <li><strong>!=</strong> - displays rows with a value that is not equal to the filter value</li>
+                        <li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
+                    </ul>
+
+                    <p>By default tabulator will assume you want to use the "=" comparison unless otherwise stated. This allows for the short hand use of the function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", "name", "bob");</pre>
+
+                    <p>You can only have one filter active at a time, calling setFilter a second time will over write the previous filter.</p>
+
+                    <p>Filters will remain in effect until they are cleared, including during <span class='param'>setData</span> calls.</p>
+
+                    <h2>Custom Filter Functions</h2>
+                    <p>If you want to perform a more complicated filter then you can pass a callback function to the setFilter Method</p>
+                    <pre class="prettyprint lang-js">function customFilter(data){
+    //data - the data for the row being filtered
+    return data.name == "bob" && data.height < 3; //must return a boolean, true if it passes the filter.
+}
+
+$("#example-table").tabulator("setFilter", customFilter);</pre>
+
+                    <h2>Get Current Filter</h2>
+                    <p>To find out what filter is currently applied to the table you should use the <span class='param'>getFilter</span> method.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getFilter");</pre>
+                    <p>If there is no filter set, this will return <span class='param'>false</span>, otherwise it will return an object with the filter information.</p>
+                    <pre class="prettyprint lang-js">{
+    "field":"age",
+    "type":">",
+    "value":10,
+}</pre>
+
+                    <h2>Clearing Filters</h2>
+                    <p>To remove filters from the table you should use the <span class='param'>clearFilter</span> method.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clearFilter");</pre>
+                    <p>alternatively you can also call the <span class='param'>setFilter</span> method with no parameters to clear the filter.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter");</pre>
+                </article>
+
+                <article id="manipulating-data">
+                    <h1>Manipulating Data</h1>
+
+                    <p>Tabulator allows you to manipulate the data in the table in a number of different ways</p>
+
+                    <h2>Editable Data</h2>
+                    <p>Columns of the table can be set as editable using the <span class='param'>editable</span> parameter in the column definition. (see <a href="#define-column-headers">Define Column Headers</a> for more details).</p>
+
+                    <p>When a user clicks on an editable column the will be able to edit the value for that cell.</p>
+
+                    <p>By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column using the <span class='param'>editor</span> option in the column definition.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"rating", editor:"star"}</pre>
+
+                    <p>Tabulator comes with a number of preconfigured editors including:</p>
+                    <ul>
+                        <li><strong>input</strong> - editor for plain text.</li>
+                        <li><strong>number</strong> - editor for numbers with increment and decrement buttons.</li>
+                        <li><strong>tick</strong> - editor for tick and tickCross columns.</li>
+                        <li><strong>star</strong> - editor for star columns (can use left/right arrow keys and enter for selection as well as mouse).</li>
+                        <li><strong>progress</strong> -  editor for progress bar columns (can use left/right arrow keys and enter for selection as well as mouse)</li>
+                    </ul>
+
+                    <p>You can define a custom editor function in the editor option:</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"rating", editor:function(cell, value){
+        //cell - JQuery object for current cell
+        //value - the current value for current cell
+
+        //create and style editor
+        var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+        editor.css({
+            "border":"1px",
+            "background":"transparent",
+            "padding":"3px",
+            "width":"100%",
+            "box-sizing":"border-box",
+        })
+
+        //Set value of editor to the current value of the cell
+        editor.val(value);
+
+        //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+        setTimeout(function(){
+            editor.focus();
+        },100)
+
+        //when the value has been set, trigger the cell to update
+        editor.on("change blur", function(e){
+            cell.trigger("editval", editor.val());
+        });
+
+        //return the editor element
+        return editor;
+    },
+}</pre>
+
+                    <p>Returning a value of <span class='param'>false</span> from this function will abort the edit and prevent the cell from being selected.</p>
+
+                    <h2>Retreiving Data</h2>
+                    <p>You can retreive the data stored in the table using the <span class='param'>getData</span> function.</p>
+                    <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData");</pre>
+                    <p>This will return an array containing the data objects for each row in the table.</p>
+
+                    <h2>Add Row</h2>
+                    <p>Additional rows can be added to the table at any point using the <span class='param'>addRow</span> function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12", gender:"male", height:1});</pre>
+                    <p>If you do not pass data for a column, it will be left empty. to create a blank row (ie for a user to fill in), pass an empty object to the function.</p>
+
+                    <p>By default any new rows will be added to the bottom of the table, to change this to the top set the <span class='param'>addRowPos</span> option to "top";</p>
+
+                    <h2>Delete Row</h2>
+                    <p>You can delete any row in the table using the <span class='param'>deleteRow</span> function;</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("deleteRow", 15);</pre>
+                    <p>You can either pass the function the id of the row you wish to delete or the data object that represents that row.</p>
+
+
+                    <h2>Clear Table</h2>
+                    <p>You can clear all data in the table using the <span class='param'>clear</span> function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clear");</pre>
+                </article>
+
+                <article id="movable">
+                    <h1>Movable Rows and Columns</h1>
+
+                    <h2>Movable Rows</h2>
+
+                    <p>To allow the user to move rows up and down the table, set the <span class='param'>movableRows</span> parameter in the options:</p>
+                    <pre class="prettyprint lang-js">$('#example-table'),tabulator({
+    movableRows: true, //enable user movable rows, by default this is set to false
+})</pre>
+                    <p>This will allow users to drag rows around using the handle on the left hand side of each row.</p>
+
+                    <p>If you would like to use a custom handle for a row then set the <span class='param'>movableRowHandle</span> parameter with the HTML for the handle graphic.</p>
+                    <pre class="prettyprint lang-js">$('#example-table'),tabulator({
+    movableRows: true, //enable user movable rows, by default this is set to false
+    movableRowHandle: "&lt;div style='height:10px; width:10px; background:#f00;'&gt;&lt;/div&gt;", //custom handle html
+})</pre>
+                    <p><strong>NOTE:</strong> When grouping is enabled, rows can only be moved within their own group.</p>
+
+                    <p>When a row has been successfully moved, the <span class='param'>rowMoved</span> callback will be triggered.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowMoved:function(id, data, row, index){
+        //id - the id of the row
+        //data - the data for the row
+        //row - the DOM element of the row
+        //index - new position of row in table
+    }
+});</pre>
+
+                    <h2>Movable Columns</h2>
+
+                    <p>To allow the user to move columns along the table, set the <span class='param'>movableCols</span> parameter in the options:</p>
+                    <pre class="prettyprint lang-js">$('#example-table'),tabulator({
+    movableCols: true, //enable user movable rows, by default this is set to false
+})</pre>
+
+                    <p>This will allow users to drag columns around using the column headers at the top of the table.</p>
+
+                    <p><strong>NOTE:</strong> icon/button columns and row handle columns are not movable.</p>
+
+                    <p>When a column has been successfully moved, the <span class='param'>colMoved</span> callback will be triggered.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    colMoved:function(field, columns){
+        //field- the filed name of the moved column
+        //columns- the updated columns config array
+    }
+});</pre>
+
+                    <h2>Set New Column Definitions</h2>
+                    <p>To update the current column definitions for a table use the <span class='param'>setColumns</span> function. this function takes two parameters. the first should be the new columns definition array. The second is a boolean value that determines the type of column update you wish to use. If you set this to <span class='param'>false</span>, the current column definition array will be completely overwritten. Set it to <span class='param'>true</span> and only the column layout information (width, order, visibility) will be overwritten, perfect for loading user layout preferences from an external store.</p>
+
+                    <pre class="prettyprint lang-js">//new column definition array
+var newColumns = [
+    {title:"Name", field:"name", sortable:true, sorter:"string", width:200, editable:true},
+    {title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
+    {title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
+    {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+    {title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
+],
+
+$("#example-table").tabulator("setColumns", newColumns , false) //completely overwrite existing columns with new columns definition array</pre>
+
+                    <h2>Get Column Definitions</h2>
+                    <p>To get the current column definition array (including any changes made through user actions, such as resizing or re-ordering columns), call the <span class='param'>getColumns</span> function. this will return the current columns definition array.</p>
+                    <pre class="prettyprint lang-js">var colDefs = $("#example-table").tabulator("getColumns") //get column definition array</pre>
+
+                    <h2 id="persistant-columns">Persistent Column Layout</h2>
+                    <p>Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page, the table is laid out just as they left it. To enable this feature set the <span class='param'>columnLayoutCookie</span> options parameter to <span class='param'>true</span></p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columnLayoutCookie:true, //Set column layout persistence cookie
+});</pre>
+
+                    <p>If you are planning on having multiple tables on the same page with <span class='param'>columnLayoutCookie</span> set to <span class='param'>true</span> then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the cookie.</p>
+
+                    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                    <p>Or if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>columnLayoutCookieID</span> to a unique string value for that table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columnLayoutCookieID:"example1", //cookie id string, can only be numbers, letters, hyphens and underscores.
+    columnLayoutCookie:true, //Set column layout persistence cookie
+});</pre>
+                </article>
+
+                <article id="column-visibility">
+                    <h1>Column Visibility</h1>
+
+                    <p>Column visibility can be set in a number of different ways.</p>
+
+                    <h2>Column Definition Visibility</h2>
+                    <p>You can set the column visibility when you create the column definition array:</p>
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", visible:false}, //create hidden column for the field "name"</pre>
+                    <p>By default columns are set with a <span class='param'>visible</span> parameter value of <span class='param'>true</span>.</p>
+
+                    <h2>Show Column Function</h2>
+                    <p>You can show a hidden column at any point using the <span class='param'>showCol</span> function. Pass the field name of the column you wish to show as the first parameter of the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("showCol","name") //show the "name" column</pre>
+
+                    <h2>Hide Column Function</h2>
+                    <p>You can hide a visible column at any point using the <span class='param'>hideCol</span> function. Pass the field name of the column you wish to hide as the first parameter of the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("hideCol","name") //hide the "name" column</pre>
+
+                    <h2>Toggle Column Function</h2>
+                    <p>You can toggle the visibility of a column at any point using the <span class='param'>toggleCol</span> function. Pass the field name of the column you wish to toggle as the first parameter of the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("toggleCol","name") ////toggle the visibility of the "name" column</pre>
+                </article>
+
+                <article id="layout">
+                    <h1>Table Layout</h1>
+
+                    <p>Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:</p>
+
+                    <ul>
+                        <li>Fit columns to data (default)</li>
+                        <li>Fit columns to container</li>
+                    </ul>
+
+                    <h2>Fit Columns to data</h2>
+                    <p>This is the default table layout style and will cause columns to resize to fit the widest element they contain (unless a column width was set in the column options). This can cause the table to be wider than its containing element, in this case a scroll bar will appear;</p>
+
+                    <h2>Fit Columns to container</h2>
+                    <p>This option will resize columns so that they fit perfectly inside the width of the container.</p>
+
+                    <p>If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.</p>
+
+                    <p>In this layout style at least one column must <span class='param'>not</span> have a width specified so it can be resized to fill any spare space.</p>
+
+                    <p>to enable this layout mode set the <span class='param'>fitColumns</span> option to true when you create your Tabulator.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    fitColumns:true, // this option takes a boolean value (default = false)
+});</pre>
+
+                    <h2>Resizable columns</h2>
+                    <p>By default it is possible to manually resize columns by dragging the borders of the column headers.</p>
+
+                    <p>To disable this option globally set the <span class='param'>colResizable</span> option to false when you create your Tabulator.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    colResizable:false, // this option takes a boolean value (default = true)
+});</pre>
+
+                    <h2>Minimum Column Width</h2>
+                    <p>It is possible to set a minimum column width to prevent resizing columns from becoming too small.</p>
+
+                    <p>This can be set globally, by setting the <span class='param'>colMinWidth</span> option to the column width when you create your Tabulator.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    colMinWidth:80, //Minimum column width in px (default = 40)
+});</pre>
+
+                    <h2>Redrawing the table</h2>
+                    <p>If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit the new dimensions.</p>
+
+                    <p>This can be done by calling the <span class='param'>redraw</span> method. For example, to trigger a redraw whenever the viewport width is changed:</p>
+                    <pre class="prettyprint lang-js">$(window).resize(function(){
+    $("#example-table").tabulator("redraw");
+});</pre>
+
+                    <h2 id="progressive-render">Progressive Rendering</h2>
+                    <p>Progressive rendering allow large data sets to be loaded into Tabulator without blocking the UI.</p>
+
+                    <p>Progressive rendering is enabled by default on Tabulator.</p>
+
+                    <p>It works by rendering blocks of rows progressively over time rather than all at once. On smaller tables this wont be noticeable at all but on tables with more than 200 rows it should significantly improve loading times.</p>
+
+                    <p>By default data is progressively rendered to the table 200 rows at a time with a 100ms pause between rendering each block.</p>
+
+                    <p>It is possible to configure the progressive rendering system using the <span class='param'>progressiveRenderSize</span> and <span class='param'>progressiveRenderPeriod</span> options.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    progressiveRenderSize:500, //sets the number of rows to render per block (default = 200)
+    progressiveRenderPeriod:350, //sets the delay in milliseconds between rendering each block (default = 100)
+});</pre>
+                    <p>If you wish to disable progressive rendering on your table, set the <span class='param'>progressiveRender</span> option to <span class='param'>param</span>.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    progressiveRender:false, //disable progressive rendering
+});</pre>
+                </article>
+
+                <article id="options">
+                    <h1>Table Options</h1>
+
+                    <p>In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.</p>
+
+                    <h2>Initial Data Sorting</h2>
+                    <p>When data is loaded into the table it can be automatically sorted by a specified field</p>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>sortBy</td><td>string</td><td>"id"</td><td>The name of the field to be sorted.</td>
+                            </tr>
+                            <tr>
+                                <td>sortDir</td><td>string</td><td>"DESC"</td><td>The direction of the sort (ASC or DESC).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Movable Rows and Columns</h2>
+                    <p>Define if the user can move the order/position of rows and columns.</p>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>movableCols</td><td>boolean</td><td>false</td><td>Allow users to move and reorder columns</td>
+                            </tr>
+                            <tr>
+                                <td>movableRows</td><td>boolean</td><td>false</td><td>Allow users to move and reorder rows</td>
+                            </tr>
+                            <tr>
+                                <td>movableRowHandle</td><td>string</td><td>html (see below)</td><td>html for the movable row handle</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Default movable row handle</h3>
+                    <pre class="prettyprint lang-html">&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'&gt;&lt;/div&gt;&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'&gt;&lt;/div&gt;&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'&gt;&lt;/div&gt;</pre>
+
+                    <h2>Added Rows</h2>
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>addRowPos</td><td>string</td><td>"bottom"</td><td>The position in the table for new rows to be added, "bottom" or "top"</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Pagination</h2>
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>pagination</td><td>boolean</td><td>false</td><td>Enable Pagination</td>
+                            </tr>
+                            <tr>
+                                <td>paginationSize</td><td>integer</td><td>10</td><td>Set the number of rows in each page</td>
+                            </tr>
+                            <tr>
+                                <td>paginationElement</td><td>JQuery Element</td><td>(generated tabulator footer)</td><td>The element to contain the pagination selectors</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Progressive Rendering</h2>
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>progressiveRender</td><td>boolean</td><td>true</td><td>Enable progressive rendering</td>
+                            </tr>
+                            <tr>
+                                <td>progressiveRenderSize</td><td>integer</td><td>200</td><td>Set the number of rows to be rendered in each block</td>
+                            </tr>
+                            <tr>
+                                <td>progressiveRenderPeriod</td><td>integer</td><td>100</td><td>Set the time delay between reach block rendering</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Table Theming</h2>
+                    <p>Tabulator allows you to set a number of global options that can help theme your table.</p>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>backgroundColor</td><td>string</td><td>#888</td><td>A valid css color(rgb,hex,etc...) for the background of the tabulator element</td>
+                            </tr>
+                            <tr>
+                                <td>borderColor</td><td>string</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the border of the tabulator element</td>
+                            </tr>
+                            <tr>
+                                <td>textSize</td><td>int/string</td><td>14</td><td>The text size for all text in the tabulator</td>
+                            </tr>
+                            <tr>
+                                <td>headerBackgroundColor</td><td>string</td><td>#e6e6e6</td><td>A valid css color(rgb,hex,etc...) for the header cells</td>
+                            </tr>
+                            <tr>
+                                <td>headerTextColor</td><td>string</td><td>#555</td><td>A valid css color(rgb,hex,etc...) for the header cells text</td>
+                            </tr>
+                            <tr>
+                                <td>headerBorderColor</td><td>string</td><td>#aaa</td><td>A valid css color(rgb,hex,etc...) for the header cells border</td>
+                            </tr>
+                            <tr>
+                                <td>headerSeperatorColor</td><td>string</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the header row bottom border</td>
+                            </tr>
+                            <tr>
+                                <td>headerMargin</td><td>int/string</td><td>4</td><td>The size in pixels for the header cells margin</td>
+                            </tr>
+                            <tr>
+                                <td>sortArrows</td><td>object</td><td></td><td>an object containing two options for theming the sorter arrows in the header <i>(see next table)</i></td>
+                            </tr>
+                            <tr>
+                                <td>rowBackgroundColor</td><td>string</td><td>#fff</td><td>A valid css color(rgb,hex,etc...) for the background colour of the table rows</td>
+                            </tr>
+                            <tr>
+                                <td>rowAltBackgroundColor</td><td>string</td><td>#e0e0e0</td><td>A valid css color(rgb,hex,etc...) for the background colour of the even numbered table rows</td>
+                            </tr>
+                            <tr>
+                                <td>rowBorderColor</td><td>string</td><td>#fff</td><td>A valid css color(rgb,hex,etc...) for the table row borders</td>
+                            </tr>
+                            <tr>
+                                <td>rowTextColor</td><td>string</td><td>#333</td><td>A valid css color(rgb,hex,etc...) for the table row text</td>
+                            </tr>
+                            <tr>
+                                <td>rowHoverBackground</td><td>string</td><td>#bbb</td><td>A valid css color(rgb,hex,etc...) for the table row background when hovered over.</td>
+                            </tr>
+                            <tr>
+                                <td>editBoxColor</td><td>string</td><td>#1D68CD</td><td>A valid css color(rgb,hex,etc...) for border of a cell being edited.</td>
+                            </tr>
+                            <tr>
+                                <td>footerBackgroundColor</td><td>string</td><td>#e6e6e6</td><td>A valid css color(rgb,hex,etc...) for the footer cells</td>
+                            </tr>
+                            <tr>
+                                <td>footerTextColor</td><td>string</td><td>#555</td><td>A valid css color(rgb,hex,etc...) for the footer text</td>
+                            </tr>
+                            <tr>
+                                <td>footerBorderColor</td><td>string</td><td>#aaa</td><td>A valid css color(rgb,hex,etc...) for the footer buttons border</td>
+                            </tr>
+                            <tr>
+                                <td>footerSeperatorColor</td><td>string</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the footer row top border</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Sort Arrow Theming</h3>
+                    <p>The <span class='param'>sortArrows</span> option contains two options</p>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>active</td><td>string</td><td>#666</td><td>A valid css color(rgb,hex,etc...) for the sorter arrow on currently sorted column</td>
+                            </tr>
+                            <tr>
+                                <td>inactive</td><td>string</td><td>#bbb</td><td>A valid css color(rgb,hex,etc...) for the sorter arrow on unsorted column</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Table Size</h2>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>height</td><td>string/int</td><td>false</td><td>Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Data Loaders</h2>
+                    <p>When loading data, Tabulator can display a loading overlay over the table. This consists of a modal background and a loader element. The loader element can be set globally in the options and should be specified as a div with a <span class='param'>display</span> style of <span class='param'>inline-block</span>.</p>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>showLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td>
+                            </tr>
+                            <tr>
+                                <td>loader</td><td>string</td><td>html (see below)</td><td>html for loader element</td>
+                            </tr>
+                            <tr>
+                                <td>loaderError</td><td>string</td><td>html (see below)</td><td>html for the loader element in the event of an error</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Default loader element</h3>
+                    <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'&gt;Loading Data&lt;/div&gt;</pre>
+
+                    <h3>Default loader error element</h3>
+                    <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'&gt;Loading Error&lt;/div&gt;</pre>
+                </article>
+
+                <article id="css">
+                    <h1>CSS Clases</h1>
+
+                    <p>Tabulator elements are assigned a range of CSS classes to make it easier for you to manipulate the look, feel and function of the table.</p>
+
+                    <table>
+                        <thead>
+                            <th>Class</th>
+                            <th>Element Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>tabulator</td><td>Tabulator container element</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-head</td><td>Column header row</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-col</td><td>Column header (in header row)</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-hand</td><td>Invisible resize handle on the right of each column header</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-arr</td><td>Sorting arrows</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-tableHold</td><td>Contain table and scroll bars</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-table</td><td>Contain table rows</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-row</td><td>Row of table</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-row-handle</td><td>Handle for moving the row if <span class='param'>movableRows</span> is enabled</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-cell</td><td>Data cell</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-editing</td><td>The cell currently being edited</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-group</td><td>A group of rows (including group header)</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-group-header</td><td>Contains header for a group</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-group-body</td><td>Contains all data rows for a group</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-footer</td><td>Tabulator footer element</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-paginator</td><td>Contains the pagination controls</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-pages</td><td>Contains individual page buttons</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-page</td><td>Page selection button</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-loader-msg</td><td>Ajax loader message</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </article>
+
+                <article id="callbacks">
+                    <h1>Callbacks</h1>
+
+                    <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
+
+                    <h2>Cell Click</h2>
+                    <p>The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span class='param'>onClick</span> option in the columns data.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", onClick:function(e, cell, value, data){
+        //e - the click event object
+        //cell - the DOM element of the cell
+        //value - the value of the cell
+        //data - the data for the row the cell is in
+    },
+}</pre>
+
+                    <h2>Row Click</h2>
+                    <p>The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the <span class='param'>rowClick</span> option when you create your Tabulator.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+        rowClick:function(e, id, data, row){
+        //e - the click event object
+        //id - the id of the row
+        //data - the data for the row
+        //row - the DOM element of the row
+    },
+});</pre>
+
+                    <h2>Row Added</h2>
+                    <p>The row added callback is triggered when a row is added to the table by the <span class='param'>addRow</span> function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowAdded:function(data){
+        //data - the data for the row
+    },
+});</pre>
+
+                    <h2>Row Moved</h2>
+                    <p>When a row has been successfully moved, the <span class='param'>rowMoved</span> callback will be triggered.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowMoved:function(id, data, row, index){
+        //id - the id of the row
+        //data - the data for the row
+        //row - the DOM element of the row
+        //index - new position of row in table
+    }
+});</pre>
+
+                    <h2>Row Edit</h2>
+                    <p>The row edit callback is triggered when data in an editable row is changed.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowEdit:function(id, data, row){
+        //id - the id of the row
+        //data - the data for the row
+        //row - the DOM element of the row
+    },
+});</pre>
+
+                    <h2>Row Deleted</h2>
+                    <p>The row deleted callback is triggered when a row is deleted from the table by the <span class='param'>deleteRow</span> function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowDelete:function(id){
+        //id - the id of the row
+    },
+});</pre>
+
+                    <h2>Row Context Menu</h2>
+                    <p>The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span class='param'>rowContext</span> option when you create your Tabulator.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowContext:function(e, id, data, row){
+        //e - the click event object
+        //id - the id of the row
+        //data - the data for the row
+        //row - the DOM element of the row
+    },
+});</pre>
+
+                    <h2>Column Moved</h2>
+                    <p>When a column has been successfully moved, the <span class='param'>colMoved</span> callback will be triggered.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    colMoved:function(field, columns){
+        //field- the filed name of the moved column
+        //columns- the updated columns config array
+    }
+});</pre>
+
+                    <h2>Data Loaded</h2>
+                    <p>The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span class='param'>dataLoaded</span> option when you create your</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataLoaded:function(data){
+        //data - the data for the row
+    },
+});</pre>
+                </article>
+
+                <article id="events">
+                    <h1>Events</h1>
+
+                    <p>A number of events are fired as the Tabulator is loaded and rendered:</p>
+
+                    <table>
+                        <thead>
+                            <th>Event</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>dataLoading</td><td>Data is being loaded (from string, array or AJAX source)</td>
+                            </tr>
+                            <tr>
+                                <td>dataLoadError</td><td>There is has been an error loading data from an AJAX source</td>
+                            </tr>
+                            <tr>
+                                <td>dataEdited</td><td>A function that edits data has completed (cell edit, add row, delete row)</td>
+                            </tr>
+                            <tr>
+                                <td>renderStarted</td><td>Table is has started to render</td>
+                            </tr>
+                            <tr>
+                                <td>renderComplete</td><td>Table is has finished being rendered</td>
+                            </tr>
+                            <tr>
+                                <td>sortStarted</td><td>Table has started sorting</td>
+                            </tr>
+                            <tr>
+                                <td>sortComplete</td><td>Table has finished sorting</td>
+                            </tr>
+                            <tr>
+                                <td>filterStarted</td><td>Table Filter has started</td>
+                            </tr>
+                            <tr>
+                                <td>filterComplete</td><td>Filter has been applied to table</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </article>
+
             </div>
 
             <div class="col-md-3" role="complementary">
-                <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix">
-                    <ul class="nav bs-docs-sidenav">
+                <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
+                    <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
-                        <li>Item 2</li>
-                        <li>Item 3</li>
-                        <li>Item 4</li>
+                        <li><a href="#define-column-headers">Define Column Headers</a></li>
+                        <li><a href="#set-data">Set Table Data</a></li>
+                        <li><a href="#pagination">Pagination</a></li>
+                        <li><a href="#sorting">Sorting Data</a></li>
+                        <li><a href="#formatting">Formatting Data</a></li>
+                        <li><a href="#grouping">Grouping Data</a></li>
+                        <li><a href="#filtering">Filtering Data</a></li>
+                        <li><a href="#manipulating-data">Manipulating Data</a></li>
+                        <li><a href="#movable">Movable Rows and Columns</a></li>
+                        <li><a href="#column-visibility">Column Visibility</a></li>
+                        <li><a href="#layout">Table Layout</a></li>
+                        <li><a href="#option">Table Options</a></li>
+                        <li><a href="#css">CSS Classes</a></li>
+                        <li><a href="#callbacks">Callback</a></li>
+                        <li><a href="#events"></a></li>
+
                     </ul>
                 </nav>
             </div>

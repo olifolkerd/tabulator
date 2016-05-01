@@ -2,12 +2,12 @@
 
 body {
 	font-family: 'Open Sans', sans-serif;
-    padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+	padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
 
 .navbar {
-  margin-bottom: 0px !important;
-	
+	margin-bottom: 0px !important;
+
 	li{
 		a.active{
 			color: @green !important;
@@ -35,7 +35,7 @@ body {
 	}
 
 	.btn{
-		
+
 		background-color: #2C801E;
 		border-color: #1E5715;
 
@@ -69,7 +69,7 @@ body {
 
 	h2{
 		color:@green;
-		font-weight: bold;	
+		font-weight: bold;
 		font-size: 2.5em;
 
 		margin-bottom: 40px;
@@ -115,13 +115,44 @@ body {
 			}
 		}
 	}
-	
+
 }
+
+ul.docs-sidenav{
+	margin-top:20px;
+
+	li{
+
+		&.active{
+			border-left:3px solid @green;
+
+			a{
+				padding-left:12px;
+				color: @green;
+			}
+		}
+
+		a{
+			padding:5px 15px;
+
+			font-weight: bold;
+			color:#999;
+
+			&:hover{
+				color:@green;
+			}
+		}
+	}
+}
+
 
 .docs{
 	article{
+
+		margin-top: 50px;
+
 		h1{
-			
+
 			border-bottom:1px solid @green;
 
 			padding-bottom:10px;
@@ -130,14 +161,60 @@ body {
 		}
 
 		h2{
-
+			font-size: 25px;
 			margin-top:30px;
-			font-size: 1.5em;
+			// font-size: 1.5em;
 			font-weight: bold;
+		}
+
+		h3{
+
+			margin-top:18px;
+			font-size: 17px;
+			font-weight: bold;
+			// color: #666;
+		}
+
+		a{
+			color: @green;
+			font-weight: bold;
+		}
+
+		.param{
+			font-weight: bold;
+			font-style: italic;
+		}
+
+		table{
+
+			width:100%;
+
+			thead{
+				font-weight: bold;
+
+				th{
+					border-bottom: 1px solid #999;
+				}
+			}
+
+			th,td{
+				border:1px solid #ccc;
+				padding:5px;
+			}
+
+			tbody{
+				tr{
+					&:nth-of-type(even){
+						td{
+							background: #f9f9f9;
+						}
+					}
+				}
+			}
 		}
 	}
 }
 
 footer {
-    margin: 50px 0;
+	margin: 50px 0;
 }
