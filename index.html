@@ -1,1 +1,336 @@
-hey
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Tabulator</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:800,400,700,400italic,700italic|Bevan' rel='stylesheet' type='text/css'>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+
+    <!-- Bootstrap Core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="/css/styles.css" rel="stylesheet">
+
+    <link rel="icon" 
+      type="image/png" 
+      href="/images/tabulator_favicon_simple.png">
+
+    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <span class="navbar-brand" href="/"><img src="/images/tabulator_small.png" alt="Tabulator"></a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/docs/">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="/start/">Quick Start</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/olifolkerd/tabulator">Github</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+     <!-- Jumbotron Header -->
+        <header class="jumbotron">
+        	<div class="container">
+	            <h1><img src="/images/tabulator_white.png" alt="Tabulator"></h1>
+	            <p>The easy to use, fully featured JQuery table plugin</p>
+	            <p><a class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download</a>
+	            </p>
+        	</div>
+        </header>
+
+    <!-- Page Content -->
+    <div class="container features">
+	
+		<div class="row main-title">
+			<div class="col-lg-12">
+                <h2>The Table You Can Trust</h2>
+            </div>
+		</div>
+        <div class="row">
+            <div class="col-lg-12">
+			    <p>Tabulator is a lightweight, fully featured JQuery table generation plugin.</p>
+	
+				<p>Tabulator allows you to create a table with in seconds from any JSON formatted data.</p>
+
+				<p>It is not dependant on any external css or images, simply include the library in your JQuery UI project and you're away!</p>
+			</div>
+		</div>
+		
+		<div class="row">
+            <div class="col-lg-12 hidden-xs">
+				<div id="tabulator-example"></div>
+			</div>
+		</div>
+
+        <hr>
+
+        <!-- Title -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Latest Features</h2>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Page Features -->
+        <div class="row text-center">
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#filters">
+	                <div class="frame">
+	                    <i class="fa fa-filter"></i>
+	                    <div class="caption">
+	                        <h3>Filters</h3>
+	                        <p>Filter data to display only what you need to.</p>
+	                    </div>
+	                </div>
+                </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#sorting">
+	                <div class="frame">
+	                    <i class="fa fa-sort-amount-asc"></i>
+	                    <div class="caption">
+	                        <h3>Sorting</h3>
+	                        <p>Sort data however you like, by any value or data type.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#formatting">
+	                <div class="frame">
+	                    <i class="fa fa-tasks"></i>
+	                    <div class="caption">
+	                        <h3>Formatting</h3>
+	                        <p>Create custom formatters to graphically display data.</p>
+	                    </div>
+	                </div>
+	            </a>		
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#grouping">
+	                <div class="frame">
+	                    <i class="fa fa-object-group"></i>
+	                    <div class="caption">
+	                        <h3>Grouping</h3>
+	                        <p>Graphically group rows be any specified data.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+        </div>
+
+        <div class="row text-center">
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#loading">
+	                <div class="frame">
+	                    <i class="fa fa-retweet"></i>
+	                    <div class="caption">
+	                        <h3>Ajax</h3>
+	                        <p>Asyncronously load data to your table via Ajax requests.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#editing">
+	                <div class="frame">
+	                    <i class="fa fa-edit"></i>
+	                    <div class="caption">
+	                        <h3>Editing</h3>
+	                        <p>Edit table data directly in the table. Then return the result</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#callbacks">
+	                <div class="frame">
+	                    <i class="fa fa-random"></i>
+	                    <div class="caption">
+	                        <h3>Callbacks</h3>
+	                        <p>Interact with Tabulator through a selection of callbacks.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#layout">
+	                <div class="frame">
+	                    <i class="fa fa-list-alt"></i>
+	                    <div class="caption">
+	                        <h3>Layout</h3>
+	                        <p>Customise the layout of Tabulator to meet you needs.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+        </div>
+
+         <div class="row text-center">
+			<div class="col-md-3 col-sm-6 feature">
+			</div>
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#loading">
+	                <div class="frame">
+	                    <i class="fa fa-cubes"></i>
+	                    <div class="caption">
+	                        <h3>Progressive Rendeingr</h3>
+	                        <p>Progressivly render large datasets to prevent UI blocking.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+
+            <div class="col-md-3 col-sm-6 feature">
+            	<a href="/docs#editing">
+	                <div class="frame">
+	                    <i class="fa fa-floppy-o"></i>
+	                    <div class="caption">
+	                        <h3>Persistant Formatting</h3>
+	                        <p>Rember user layout preferences between visits.</p>
+	                    </div>
+	                </div>
+	            </a>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Oli Folkerd 2016</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+
+
+    <!-- jQuery -->
+    <script src="/js/jquery.js"></script>
+    <script src="/js/jqueryui.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/js/bootstrap.min.js"></script>
+	
+	<!-- Tabulator -->
+	<script src="/js/tabulator.js"></script>
+
+	<script type="text/javascript">
+
+		//sample data to be used in all tabulators
+		var tabledata = [
+		{id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
+		{id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
+		{id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
+		{id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
+		{id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999", lucky_no:33},
+		{id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1, lucky_no:2},
+		{id:7, name:"Jamie Newhart", progress:23, gender:"male", rating:3, col:"green", dob:"14/05/1985", car:true, lucky_no:63},
+		{id:8, name:"Gemma Jane", progress:60, gender:"female", rating:0, col:"red", dob:"22/05/1982", car:"true", lucky_no:72},
+		{id:9, name:"Emily Sykes", progress:42, gender:"female", rating:1, col:"maroon", dob:"11/11/1970", lucky_no:44},
+		{id:10, name:"James Newman", progress:73, gender:"male", rating:5, col:"red", dob:"22/03/1998", lucky_no:9},
+		{id:11, name:"Martin Barryman", progress:20, gender:"male", rating:5, col:"violet", dob:"04/04/2001"},
+		{id:12, name:"Jenny Green", progress:56, gender:"female", rating:4, col:"indigo", dob:"12/11/1998", car:true},
+		{id:13, name:"Alan Francis", progress:90, gender:"male", rating:3, col:"blue", dob:"07/08/1972", car:true},
+		{id:14, name:"John Phillips", progress:80, gender:"male", rating:1, col:"green", dob:"24/09/1950", car:true},
+		{id:15, name:"Ed White", progress:70, gender:"male", rating:0, col:"yellow", dob:"19/06/1976"},
+		{id:16, name:"Paul Branderson", progress:60, gender:"male", rating:5, col:"orange", dob:"01/01/1982"},
+		{id:17, name:"Gemma Jane", progress:50, gender:"female", rating:2, col:"red", dob:"14/04/1983", car:true},
+		{id:18, name:"Emma Netwon", progress:40, gender:"female", rating:4, col:"brown", dob:"07/10/1963", car:true},
+		{id:19, name:"Hannah Farnsworth", progress:30, gender:"female", rating:1, col:"pink", dob:"11/02/1991"},
+		{id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986"},
+		];
+
+		$("#tabulator-example").tabulator({
+			height:"317px",
+			fitColumns:true,
+			tooltips:true,
+			pagination:true,
+			sortBy:"name",
+			sortDir:"asc",
+			columns:[
+			{title:"Name", field:"name", sorter:"string"},
+			{title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress"},
+			{title:"Gender", field:"gender", width:100, sorter:"string"},
+			{title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100},
+			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+			{title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
+			{title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean"},
+			],
+		});
+
+		$("#tabulator-example").tabulator("setData", tabledata);
+
+		$(window).resize(function(){
+			$("#tabulator-example").tabulator("redraw");
+		});
+
+	</script>
+    
+
+</body>
+
+</html>
+

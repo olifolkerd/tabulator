@@ -1,0 +1,89 @@
+body {
+  font-family: 'Open Sans', sans-serif;
+  padding-top: 50px;
+  /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+.navbar {
+  margin-bottom: 0px !important;
+  border-bottom: 2px solid #59B038;
+}
+.navbar li a.active {
+  color: #59B038 !important;
+}
+.navbar .navbar-brand img {
+  height: 30px;
+  margin-top: -7px;
+}
+.jumbotron {
+  background-color: #59B038;
+  color: #fff;
+}
+.jumbotron h1 {
+  font-family: 'Bevan', 'Open Sans', sans-serif;
+}
+.jumbotron .btn {
+  background-color: #2C801E;
+  border-color: #1E5715;
+}
+.jumbotron .btn:hover {
+  background-color: #59DA43;
+  border-color: #368D27;
+}
+.jumbotron .btn .glyphicon {
+  margin-right: 10px;
+}
+.tabulator {
+  font-family: sans-serif;
+}
+.features #tabulator-example {
+  border-radius: 5px;
+}
+.features .main-title h2 {
+  margin-top: 00px;
+  margin-bottom: 10px;
+}
+.features h2 {
+  color: #59B038;
+  font-weight: bold;
+  font-size: 2.5em;
+  margin-bottom: 40px;
+}
+.features .tabulator {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+.features .feature a {
+  text-decoration: none;
+  color: inherit;
+}
+.features .feature .frame {
+  padding: 20px 10px 10px 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin: 1px 1px 20px 1px;
+}
+.features .feature .frame:hover {
+  margin: 0 0 19px 0;
+  border: 2px solid #59B038;
+  cursor: pointer;
+}
+.features .feature .frame:hover .fa {
+  color: #59B038;
+}
+.features .feature .frame .fa {
+  font-size: 5em;
+}
+.docs article h1 {
+  border-bottom: 1px solid #59B038;
+  padding-bottom: 10px;
+  font-weight: bold;
+}
+.docs article h2 {
+  margin-top: 30px;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+footer {
+  margin: 50px 0;
+}

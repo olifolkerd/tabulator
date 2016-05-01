@@ -1,0 +1,143 @@
+@green:#59B038;
+
+body {
+	font-family: 'Open Sans', sans-serif;
+    padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+
+.navbar {
+  margin-bottom: 0px !important;
+	
+	li{
+		a.active{
+			color: @green !important;
+		}
+	}
+
+	.navbar-brand{
+		img{
+			height:30px;
+			margin-top:-7px;
+		}
+	}
+	border-bottom:2px solid @green;
+
+}
+
+.jumbotron{
+
+	background-color: @green;
+
+	color: #fff;
+
+	h1{
+		font-family: 'Bevan', 'Open Sans', sans-serif;
+	}
+
+	.btn{
+		
+		background-color: #2C801E;
+		border-color: #1E5715;
+
+		&:hover{
+			background-color: #59DA43;
+			border-color: #368D27;
+		}
+
+		.glyphicon{
+			margin-right: 10px;
+		}
+	}
+}
+
+.tabulator{
+	font-family: sans-serif;
+}
+
+.features{
+
+	#tabulator-example{
+		border-radius: 5px;
+	}
+
+	.main-title{
+		h2{
+			margin-top:00px;
+			margin-bottom:10px;
+		}
+	}
+
+	h2{
+		color:@green;
+		font-weight: bold;	
+		font-size: 2.5em;
+
+		margin-bottom: 40px;
+	}
+
+
+	.tabulator{
+		margin-top:20px;
+		margin-bottom:30px;
+	}
+
+	.feature{
+
+		a{
+			text-decoration: none;
+			color:inherit;
+		}
+
+		.frame{
+
+			padding:20px 10px 10px 10px;
+			border-radius: 10px;
+			border:1px solid #ccc;
+			box-sizing: border-box;
+
+			margin:1px 1px 20px 1px;
+
+			&:hover{
+
+				margin:0 0 19px 0;
+
+				border:2px solid @green;
+
+				cursor: pointer;
+
+				.fa{
+					color:@green;
+				}
+			}
+
+			.fa{
+				font-size: 5em;
+			}
+		}
+	}
+	
+}
+
+.docs{
+	article{
+		h1{
+			
+			border-bottom:1px solid @green;
+
+			padding-bottom:10px;
+
+			font-weight: bold;
+		}
+
+		h2{
+
+			margin-top:30px;
+			font-size: 1.5em;
+			font-weight: bold;
+		}
+	}
+}
+
+footer {
+    margin: 50px 0;
+}
