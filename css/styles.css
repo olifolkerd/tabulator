@@ -118,6 +118,10 @@ ul.docs-sidenav li a:hover {
   font-weight: bold;
   font-style: italic;
 }
+.docs article button,
+.docs article select {
+  margin-right: 20px;
+}
 .docs article table {
   width: 100%;
 }
