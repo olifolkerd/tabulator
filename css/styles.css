@@ -16,6 +16,9 @@ body {
 }
 .jumbotron {
   background-color: #59B038;
+  background-image: url(../images/jumbotron_background.png);
+  background-repeat: no-repeat;
+  background-position: center;
   color: #fff;
 }
 .jumbotron h1 {
