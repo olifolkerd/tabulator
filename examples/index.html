@@ -460,12 +460,12 @@
             height:"320px",
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", width:60, sorter:"number"},
+            {title:"Progress", field:"progress", width:60, sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", width:80},
+            {title:"Rating", field:"rating", width:80},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob"},
-            {title:"Likes Cheese", field:"cheese"},
+            {title:"Driver", field:"car"},
             ],
         });
 
@@ -477,12 +477,12 @@
             height:"320px",
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", width:60, align:"right", sorter:"number"},
+            {title:"Progress", field:"progress", width:60, align:"right", sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", align:"center", width:80},
+            {title:"Rating", field:"rating", align:"center", width:80},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center"},
+            {title:"Driver", field:"car", align:"center"},
             ],
         });
 
@@ -495,12 +495,12 @@
             fitColumns:true,
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", align:"right", sorter:"number"},
+            {title:"Progress", field:"progress", align:"right", sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", align:"center", width:60},
+            {title:"Rating", field:"rating", align:"center", width:60},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center"},
+            {title:"Driver", field:"car", align:"center"},
             ],
         });
 
@@ -545,11 +545,11 @@
             height:"320px",
             columns:[
             {title:"Name", field:"name", width:150, editable:true},
-            {title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
+            {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
             {title:"Gender", field:"gender", editable:true, editor:genderEditor},
-            {title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
+            {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
             {title:"Date Of Birth", field:"dob", align:"center", editable:true},
-            {title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross"},
+            {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
             ],
             rowEdit:function(id,data,row){
 
@@ -566,14 +566,14 @@
             fitColumns:true,
             columns:[
             {title:"Name", field:"name", sorter:"string", width:200},
-            {title:"Age", field:"age", sorter:"number", align:"right", sorter:"number"},
+            {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
             {title:"Gender", field:"gender", sorter:"string"},
-            {title:"Height", field:"height",  align:"center", width:100},
+            {title:"Rating", field:"rating",  align:"center", width:100},
             {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
                 return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
             }},
             {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", sorter:"boolean"},
+            {title:"Driver", field:"car", align:"center", sorter:"boolean"},
             ],
         });
 
@@ -609,10 +609,10 @@
                             return value;
                         }
                     }},
-                    {title:"Age", field:"age", formatter:"progress", sorter:"number"},
+                    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
                     {title:"Gender", field:"gender"},
-                    {title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-                    {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+                    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+                    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
                     {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
                     {title:"Date Of Birth", field:"dob", align:"center"},
                     {formatter:"buttonCross", width:30, align:"center"},
@@ -634,12 +634,12 @@
             groupBy:"gender",
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", formatter:"progress", sorter:"number"},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
 
@@ -685,12 +685,12 @@
             fitColumns:true,
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", formatter:"progress", sorter:"number"},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
 
@@ -707,12 +707,12 @@
             paginationSize:8,
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", formatter:"progress", sorter:"number"},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
 
@@ -729,12 +729,12 @@
             columnLayoutCookie: true,
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", width:60, sorter:"number"},
+            {title:"Progress", field:"progress", width:60, sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", width:80},
+            {title:"Rating", field:"rating", width:80},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
 
@@ -748,12 +748,12 @@
             ajaxURL:"/ajax_sim.php",
             columns:[
             {title:"Name", field:"name", sorter:"string", width:200},
-            {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
             {title:"Gender", field:"gender", sorter:"string"},
-            {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
             {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
             ],
         });
 
@@ -786,12 +786,12 @@
             addRowPos:"bottom",
             columns:[
             {title:"Name", field:"name", width:200, editable:true},
-            {title:"Age", field:"age", width:90, align:"right", sorter:"number", editable:true},
+            {title:"Progress", field:"progress", width:90, align:"right", sorter:"number", editable:true},
             {title:"Gender", field:"gender", editable:true},
-            {title:"Height", field:"height", align:"center", width:80, editable:true},
+            {title:"Rating", field:"rating", align:"center", width:80, editable:true},
             {title:"Favourite Color", field:"col", editable:true},
             {title:"Date Of Birth", field:"dob", align:"center", editable:true},
-            {title:"Likes Cheese", field:"cheese", align:"center", editable:true},
+            {title:"Driver", field:"car", align:"center", editable:true},
             ],
             rowEdit:function(id,data,row,index){
 
@@ -808,12 +808,12 @@
             movableRows:true,
             columns:[
             {title:"Name", field:"name", width:200},
-            {title:"Age", field:"age", formatter:"progress", sorter:"number"},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
             {title:"Gender", field:"gender"},
-            {title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+            {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
             {title:"Favourite Color", field:"col"},
             {title:"Date Of Birth", field:"dob", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
             rowMoved:function(id,data,row,index){
                 alert("Row: " + data.name + " has been moved to position " + index)
@@ -831,12 +831,12 @@
             fitColumns:true,
             columns:[
             {title:"Name", field:"name", sorter:"string", width:150},
-            {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
             {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-            {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
             {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
             ],
             rowClick:function(e, id, data, row){
                 alert("Row " + id + " Clicked!!!!")
@@ -867,12 +867,12 @@
             fitColumns:true,
             columns:[
             {title:"Name", field:"name", sorter:"string", width:150},
-            {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
             {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-            {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
             {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
             ],
             rowClick:function(e, id, data, row){
                 alert("Row " + id + " Clicked!!!!")
