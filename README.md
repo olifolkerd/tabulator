@@ -908,6 +908,10 @@ tabulator-editing | The cell currently being edited
 tabulator-group | A group of rows (including group header)
 tabulator-group-header | Contains header for a group
 tabulator-group-body | Contains all data rows for a group
+tabulator-footer | Tabulator footer element
+tabulator-paginator | Contains the pagination controls
+tabulator-pages | Contains individual page buttons
+tabulator-page | Page selection button
 tabulator-loader-msg | Ajax loader message
 
 
