@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-(function(){ 
+(function(){
 
 	'use strict';
 
@@ -216,7 +216,7 @@
 
 		//build pagination footer if needed
 		if(options.pagination){
-			
+
 			if(!options.paginationElement){
 				options.paginationElement = $("<div class='tabulator-footer'></div>");
 
@@ -259,10 +259,13 @@
 
 			self.paginator.on("mouseout", ".tabulator-page", function(){
 				if(!$(this).hasClass("disabled")){
+
+					var color = $(this).hasClass("active") ? "#d00" : options.footerTextColor;
+
 					$(this).css({
 						"cursor":"pointer",
 						"background":"rgba(255,255,255,.2)",
-						"color": options.footerTextColor,
+						"color": color,
 					});
 				}
 			});
@@ -658,7 +661,7 @@
 		}
 
 		//add item to
-		//self.data.push(item);		
+		//self.data.push(item);
 
 		//create blank row
 		var row = self._renderRow(item);
@@ -860,7 +863,7 @@
 			self.table.hide();
 
 			//clear data from table before loading new
-			self.table.empty();	
+			self.table.empty();
 		}
 
 
@@ -868,7 +871,7 @@
 			self.paginationCurrentPage = 1;
 			options.paginationSize = options.progressiveRenderSize;
 			progressiveRender = true;
-		}		
+		}
 
 		var renderData = options.pagination || options.progressiveRender ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData;
 
@@ -1130,7 +1133,7 @@
 		var spacer = $("<span> ... </span>");
 
 		if(self.paginationMaxPage > 10){
-			
+
 			if(self.paginationCurrentPage <= 4){
 				max = 5;
 			}else if(self.paginationCurrentPage > self.paginationMaxPage - 4){
@@ -1188,7 +1191,7 @@
 				"opacity":".5"
 			})
 		}
-		
+
 	},
 
 
@@ -1221,7 +1224,7 @@
 			}else{
 				self._renderTable();
 			}
-		}	
+		}
 	},
 
 	//check if row data matches filter
@@ -1644,7 +1647,7 @@
 				self.options.paginationSize = 10;
 			}
 		}
-		
+
 
 		//layout headers
 		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
@@ -1731,7 +1734,7 @@
 
 		//render column headings
 		self._colRender();
-		
+
 	},
 
 	//layout coluns on first render
