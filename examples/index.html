@@ -16,17 +16,17 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
     <!-- Bootstrap Core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="/css/styles.css" rel="stylesheet">
+    <link href="./css/styles.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="/css/prettyprint.css" rel="stylesheet">
+    <link href="./css/prettyprint.css" rel="stylesheet">
 
     <link rel="icon"
     type="image/png"
-    href="/images/tabulator_favicon_simple.png">
+    href="./images/tabulator_favicon_simple.png">
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -51,22 +51,22 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <span class="navbar-brand" href="/"><img src="/images/tabulator_small.png" alt="Tabulator"></a>
+                    <span class="navbar-brand" href="./"><img src="/images/tabulator_small.png" alt="Tabulator"></a>
                     </div>
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li>
-                                <a href="/">Home</a>
+                                <a href="./">Home</a>
                             </li>
                             <li>
-                                <a href="/docs/">Documentation</a>
+                                <a href="./docs/">Documentation</a>
                             </li>
                             <li>
-                                <a href="/quickstart/">Quick Start</a>
+                                <a href="./quickstart/">Quick Start</a>
                             </li>
                             <li>
-                                <a href="/examples/" class="active">Examples</a>
+                                <a href="./examples/" class="active">Examples</a>
                             </li>
                             <li>
                                 <a href="https://github.com/olifolkerd/tabulator">Github</a>
@@ -86,7 +86,8 @@
                 <div class="row">
 
                     <div class="col-md-9 content" role="main">
-                        <article id="simple">
+                        <a class="anchor" id="simple"></a>
+                        <article>
                             <h1>Simple Table</h1>
 
                             <p>In its simplest form, all you need to set in the options are the column titles and field names.</p>
@@ -94,16 +95,16 @@
 
                             <div id="example-table-simple"></div>
                         </article>
-
-                        <article id="fittodata">
+                        <a class="anchor" id="fittodata"></a>
+                        <article>
                             <h1>Fit To Data <a class="doc-link" href="/docs?#fittodata"><i class="fa fa-external-link"></i> Documentation</a></h1>
                             <p>
                                 Tables will automatically resize to fit the data
                             </p>
                             <div id="example-table-fittodata"></div>
                         </article>
-
-                        <article id="fittowidth">
+                        <a class="anchor" id="fittowidth"></a>
+                        <article>
                             <h1>Fit To Width <a class="doc-link" href="/docs?#fittowidth"><i class="fa fa-external-link"></i> Documentation</a></h1>
                             <p>
                                 By setting the <span class='param'>fitColumns</span> to true, the table will resize columns so that they fit perfectly inside the width of the container.
@@ -113,8 +114,8 @@
                             </p>
                             <div id="example-table-fittowidth"></div>
                         </article>
-
-                        <article id="editable">
+                        <a class="anchor" id="editable"></a>
+                        <article>
                             <h1>Editable Data <a class="doc-link" href="/docs?#manipulating-data"><i class="fa fa-external-link"></i> Documentation</a></h1>
                             <p>
                                 Using the <span class='param'>editable</span> setting on each column, you can make a user editable table.
@@ -127,8 +128,8 @@
                             </p>
                             <div id="example-table-editable"></div>
                         </article>
-
-                        <article id="sorters">
+                        <a class="anchor" id="sorters"></a>
+                        <article>
                             <h1>Sorters <a class="doc-link" href="/docs?#sorting"><i class="fa fa-external-link"></i> Documentation</a></h1>
                             <p>Sorting is enabled by default, and can be toggled on or off by column using the <span class='param'>sortable</span> option.</p>
 
@@ -178,8 +179,8 @@
 
                         <div id="example-table-sorting"></div>
                     </article>
-
-                    <article id="formatters">
+                    <a class="anchor" id="formatters"></a>
+                    <article>
                         <h1>Formatters <a class="doc-link" href="/docs?#formatting"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
@@ -209,16 +210,16 @@
 
                         <div id="example-table-formatter"></div>
                     </article>
-
-                    <article id="grouping">
+                    <a class="anchor" id="grouping"></a>
+                    <article>
                         <h1>Grouping Data <a class="doc-link" href="/docs?#grouping"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>You can group rows together using the <span class='param'>groupBy</span> option. To group by a field, set this option to the name of the field.</p>
                         <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
 
                         <div id="example-table-grouping"></div>
                     </article>
-
-                    <article id="filter">
+                    <a class="anchor" id="filter"></a>
+                    <article>
                         <h1>Filter Data <a class="doc-link" href="/docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>Tabulator allows you to filter the table data by any field in the data set.</p>
 
@@ -278,8 +279,8 @@
 
                         <div id="example-table-filters"></div>
                     </article>
-
-                    <article id="pagination">
+                    <a class="anchor" id="pagination"></a>
+                    <article>
                         <h1>Pagination <a class="doc-link" href="/docs?#pagination"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
                         <p>Tabulator allows you to paginate your data. simply set the <span class='param'>pagination</span> property to true.</p>
@@ -290,8 +291,8 @@
 
                         <div id="example-table-pagination"></div>
                     </article>
-
-                    <article id="persistance">
+                    <a class="anchor" id="persistance"></a>
+                    <article>
                         <h1>Persistent Column Layout <a class="doc-link" href="/docs?#persistant-columns"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>
                             Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
@@ -301,8 +302,8 @@
                         </P>
                         <div id="example-table-colum-layout"></div>
                     </article>
-
-                    <article id="ajax">
+                    <a class="anchor" id="ajax"></a>
+                    <article>
                         <h1>AJAX Data Loading <a class="doc-link" href="/docs?#ajax"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
 
@@ -312,8 +313,8 @@
                         <p><input id="ajax-trigger" type="button" value="Load Data via AJAX"></p>
                         <div id="example-table-ajax"></div>
                     </article>
-
-                    <article id="adddel">
+                    <a class="anchor" id="adddel"></a>
+                    <article>
                         <h1>Add / Delete Rows <a class="doc-link" href="/docs?#addrow"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>
                             Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
@@ -326,8 +327,8 @@
                         </p>
                         <div id="example-table-adddel"></div>
                     </article>
-
-                    <article id="movable">
+                    <a class="anchor" id="movable"></a>
+                    <article>
                         <h1>Movable Rows <a class="doc-link" href="/docs?#movable"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
                         <p>
@@ -335,8 +336,8 @@
                         </p>
                         <div id="example-table-movable-rows"></div>
                     </article>
-
-                    <article id="callbacks">
+                    <a class="anchor" id="callbacks"></a>
+                    <article>
                         <h1>Callbacks <a class="doc-link" href="/docs?#callbacks"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
 
@@ -349,8 +350,8 @@
 
                         <div id="example-table-callbacks"></div>
                     </article>
-
-                    <article id="theming">
+                    <a class="anchor" id="theming"></a>
+                    <article>
                         <h1>Theming <a class="doc-link" href="/docs?#theming"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>Tabulator has a range of additional options to help customise your table. A full list of these can be found <a href="/docs?#theming">here.</a></p>
                         <div id="example-table-theme"></div>
@@ -400,14 +401,14 @@
         <!-- /.container -->
 
         <!-- jQuery -->
-        <script src="/js/jquery.js"></script>
-        <script src="/js/jqueryui.js"></script>
+        <script src="./js/jquery.js"></script>
+        <script src="./js/jqueryui.js"></script>
 
         <!-- Bootstrap Core JavaScript -->
-        <script src="/js/bootstrap.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>
 
         <!-- Tabulator -->
-        <script src="/js/tabulator.js"></script>
+        <script src="./js/tabulator.js"></script>
 
         <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 

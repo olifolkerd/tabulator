@@ -92,15 +92,16 @@ ul.docs-sidenav li a {
 ul.docs-sidenav li a:hover {
   color: #59B038;
 }
+.docs a.anchor {
+  display: block;
+  position: relative;
+  margin-top: -20px;
+  padding-top: 20px;
+  visibility: hidden;
+}
 .docs article {
   position: relative;
   margin-top: 50px;
-}
-.docs article a.anchor {
-  display: block;
-  position: absolute;
-  top: -60px;
-  visibility: hidden;
 }
 .docs article h1 {
   border-bottom: 1px solid #59B038;

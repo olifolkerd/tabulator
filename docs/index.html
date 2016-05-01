@@ -16,17 +16,17 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 
     <!-- Bootstrap Core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
 
      <!-- Custom CSS -->
-    <link href="/css/styles.css" rel="stylesheet">
+    <link href="./css/styles.css" rel="stylesheet">
 
      <!-- Custom CSS -->
-    <link href="/css/prettyprint.css" rel="stylesheet">
+    <link href="./css/prettyprint.css" rel="stylesheet">
 
     <link rel="icon"
       type="image/png"
-      href="/images/tabulator_favicon_simple.png">
+      href="./images/tabulator_favicon_simple.png">
 
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -51,22 +51,22 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <span class="navbar-brand" href="/"><img src="/images/tabulator_small.png" alt="Tabulator"></a>
+                <span class="navbar-brand" href="./"><img src="/images/tabulator_small.png" alt="Tabulator"></a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="/">Home</a>
+                        <a href="./">Home</a>
                     </li>
                     <li>
-                        <a href="/docs/" class="active">Documentation</a>
+                        <a href="./docs/" class="active">Documentation</a>
                     </li>
                     <li>
-                        <a href="/quickstart/">Quick Start</a>
+                        <a href="./quickstart/">Quick Start</a>
                     </li>
                     <li>
-                        <a href="/examples/">Examples</a>
+                        <a href="./examples/">Examples</a>
                     </li>
                     <li>
                         <a href="https://github.com/olifolkerd/tabulator">Github</a>
@@ -86,9 +86,8 @@
         <div class="row">
 
             <div class="col-md-9 content" role="main">
+                <a class="anchor" id="setup"></a>
                 <article>
-                    <a class="anchor" id="setup"></a>
-
                     <h1>Setup</h1>
 
                     <p>Setting up tabulator could not be simpler.</p>
@@ -113,9 +112,8 @@
                     <p>To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:</p>
                     <pre class="prettyprint lang-bsh">npm install jquery.tabulator --save</pre>
                 </article>
-
+                <a class="anchor" id="define-column-header"></a>
                 <article>
-                    <a class="anchor" id="define-column-header"></a>
                     <h1>Define Column Headers</h1>
 
                     <p>Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator</p>
@@ -150,9 +148,8 @@
                         <li><strong>tooltip</strong> - sets the on hover tooltip for each cell in this column (see <a href="#formatting">Formatting Data</a> for more details)</li>
                     </ul>
                 </article>
-
+                <a class="anchor" id="set-data"></a>
                 <article>
-                    <a class="anchor" id="set-data"></a>
                     <h1>Set Table Data</h1>
 
                     <p>Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved as a JSON formatted string via AJAX from a URL.</p>
@@ -209,9 +206,8 @@ index:"age", //set the index field to the "age" field.
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
 
                 </article>
-
+                <a class="anchor" id="pagination"></a>
                 <article>
-                    <a class="anchor" id="pagination"></a>
                     <h1>Pagination</h1>
 
                     <p>Tabulator allows for pagination of table data, displaying only a section of data at a time, allowing for smaller tables without scroll bars.</p>
@@ -271,8 +267,8 @@ index:"age", //set the index field to the "age" field.
 });</pre>
                 </article>
 
+                <a class="anchor" id="layout"></a>
                 <article>
-                    <a class="anchor" id="layout"></a>
                     <h1>Table Layout</h1>
 
                     <p>Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:</p>
@@ -343,9 +339,9 @@ index:"age", //set the index field to the "age" field.
 });</pre>
                 </article>
 
-
+                <a class="anchor" id="sorting"></a>
                 <article>
-                    <a class="anchor" id="sorting"></a>
+
                     <h1>Sorting Data</h1>
 
                     <p>Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the <span class='param'>sortable</span> option when you create your Tabulator.</p>
@@ -391,8 +387,8 @@ index:"age", //set the index field to the "age" field.
 
                 </article>
 
+                <a class="anchor" id="formatting"></a>
                 <article>
-                    <a class="anchor" id="formatting"></a>
                     <h1>Formatting Data</h1>
                     <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
@@ -497,8 +493,8 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
                     <p><strong>NOTE</strong> setting a tooltip value on a column will override the global setting.</p>
                 </article>
 
+                <a class="anchor" id="grouping"></a>
                 <article>
-                    <a class="anchor" id="grouping"></a>
                     <h1>Grouping Data</h1>
 
                     <p> With Tabulator you can group rows together using the <span class='param'>groupBy</span> option.</p>
@@ -517,8 +513,8 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 },</pre>
                 </article>
 
+                <a class="anchor" id="filtering"></a>
                 <article>
-                    <a class="anchor" id="filtering"></a>
                     <h1>Filtering Data</h1>
 
                     <p>Tabulator allows you to filter the table data by any field in the data set.</p>
@@ -570,8 +566,8 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter");</pre>
                 </article>
 
+                <a class="anchor" id="manipulating-data"></a>
                 <article>
-                    <a class="anchor" id="manipulating-data"></a>
                     <h1>Manipulating Data</h1>
 
                     <p>Tabulator allows you to manipulate the data in the table in a number of different ways</p>
@@ -654,8 +650,8 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("clear");</pre>
                 </article>
 
+                <a class="anchor" id="movable"></a>
                 <article>
-                    <a class="anchor" id="movable"></a>
                     <h1>Movable Rows and Columns</h1>
 
                     <h2>Movable Rows</h2>
@@ -739,8 +735,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
                 </article>
 
+                <a class="anchor" id="column-visibility"></a>
                 <article>
-                    <a class="anchor" id="column-visibility"></a>
                     <h1>Column Visibility</h1>
 
                     <p>Column visibility can be set in a number of different ways.</p>
@@ -763,8 +759,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("toggleCol","name") ////toggle the visibility of the "name" column</pre>
                 </article>
 
+                <a class="anchor" id="options"></a>
                 <article>
-                    <a class="anchor" id="options"></a>
                     <h1>Table Options</h1>
 
                     <p>In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.</p>
@@ -1010,8 +1006,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'&gt;Loading Error&lt;/div&gt;</pre>
                 </article>
 
+                <a class="anchor" id="css"></a>
                 <article>
-                    <a class="anchor" id="css"></a>
                     <h1>CSS Clases</h1>
 
                     <p>Tabulator elements are assigned a range of CSS classes to make it easier for you to manipulate the look, feel and function of the table.</p>
@@ -1084,8 +1080,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 </article>
 
+                <a class="anchor" id="callbacks"></a>
                 <article>
-                    <a class="anchor" id="callbacks"></a>
                     <h1>Callbacks</h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
@@ -1178,8 +1174,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
                 </article>
 
+                <a class="anchor" id="events"></a>
                 <article>
-                    <a class="anchor" id="events"></a>
                     <h1>Events</h1>
 
                     <p>A number of events are fired as the Tabulator is loaded and rendered:</p>
@@ -1268,14 +1264,14 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     <!-- /.container -->
 
      <!-- jQuery -->
-    <script src="/js/jquery.js"></script>
-    <script src="/js/jqueryui.js"></script>
+    <script src="./js/jquery.js"></script>
+    <script src="./js/jqueryui.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="/js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
 
     <!-- Tabulator -->
-    <script src="/js/tabulator.js"></script>
+    <script src="./js/tabulator.js"></script>
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 
