@@ -1828,7 +1828,7 @@
 				gapFill = gapFill > 0 ? gapFill : 0;
 
 				if(proposedWidth >= parseInt(options.colMinWidth)){
-					console.log("woop");
+
 					$.each(options.columns, function(i, column) {
 						if(column.visible){
 							var newWidth = column.width ? column.width : proposedWidth;
