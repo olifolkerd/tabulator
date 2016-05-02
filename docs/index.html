@@ -294,7 +294,7 @@ index:"age", //set the index field to the "age" field.
 
                     <p>If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.</p>
 
-                    <p>In this layout style at least one column must <span class='param'>not</span> have a width specified so it can be resized to fill any spare space.</p>
+                    <p>In this layout style at least one column must not have a width specified so it can be resized to fill any spare space.</p>
 
                     <p>to enable this layout mode set the <span class='param'>fitColumns</span> option to true when you create your Tabulator.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -339,7 +339,7 @@ index:"age", //set the index field to the "age" field.
     progressiveRenderSize:500, //sets the number of rows to render per block (default = 200)
     progressiveRenderPeriod:350, //sets the delay in milliseconds between rendering each block (default = 100)
 });</pre>
-                    <p>If you wish to disable progressive rendering on your table, set the <span class='param'>progressiveRender</span> option to <span class='param'>param</span>.</p>
+                    <p>If you wish to disable progressive rendering on your table, set the <span class='param'>false</span> option to <span class='param'>param</span>.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     progressiveRender:false, //disable progressive rendering
 });</pre>
@@ -771,6 +771,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <p>In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.</p>
 
+                    <a class="anchor" id="initial-data-sorting"></a>
                     <h2>Initial Data Sorting</h2>
                     <p>When data is loaded into the table it can be automatically sorted by a specified field</p>
 

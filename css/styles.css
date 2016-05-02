@@ -146,9 +146,10 @@ ul.docs-sidenav li a:hover {
 }
 .docs article table thead {
   font-weight: bold;
+  background: #ddd;
 }
 .docs article table thead th {
-  border-bottom: 1px solid #999;
+  border: 1px solid #999;
 }
 .docs article table th,
 .docs article table td {
