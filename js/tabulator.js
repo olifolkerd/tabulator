@@ -1774,7 +1774,7 @@
 
 		self.firstRender = false;
 
-		if(fixedwidth && !options.fitColumns){ //it columns have been resized and now data needs to match them
+		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
 			//free sized table
 			$.each(options.columns, function(i, column) {
 				colWidth = $(".tabulator-col[data-index=" + i + "]", element).outerWidth();
