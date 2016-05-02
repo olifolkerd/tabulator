@@ -1640,12 +1640,23 @@
 		//handle resizable columns
 		if(self.options.colResizable){
 			//create resize handle
-			var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>")
-			handle.on("mousedown", function(e){
+			var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
+			var prevHandle = $("<div class='tabulator-handle prev' style='position:absolute; left:0; top:0; bottom:0; width:5px;''></div>")
+
+			$(".tabulator-col", self.header).append(handle);
+			$(".tabulator-col", self.header).append(prevHandle);
+
+			$(".tabulator-col .tabulator-handle", self.header).on("mousedown", function(e){
+
 				e.stopPropagation(); //prevent resize from interfereing with movable columns
-				self.mouseDrag = e.screenX;
-				self.mouseDragWidth = $(this).closest(".tabulator-col").outerWidth();
-				self.mouseDragElement = $(this).closest(".tabulator-col");
+
+				var colElement = !$(this).hasClass("prev") ? $(this).closest(".tabulator-col") : $(this).closest(".tabulator-col").prev(".tabulator-col");
+
+				if(colElement){
+					self.mouseDrag = e.screenX;
+					self.mouseDragWidth = colElement.outerWidth();
+					self.mouseDragElement = colElement;
+				}
 			})
 			self.element.on("mousemove", function(e){
 				if(self.mouseDrag){
@@ -1681,9 +1692,9 @@
 				}
 			});
 
-			handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
+			$(".tabulator-col .tabulator-handle", self.header).on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
 
-			$(".tabulator-col", self.header).append(handle);
+
 
 		}
 
