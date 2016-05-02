@@ -159,6 +159,15 @@ ul.docs-sidenav li a:hover {
 .docs article table tbody tr:nth-of-type(even) td {
   background: #f9f9f9;
 }
+.docs article table tbody tr:last-of-type td {
+  border-bottom: 1px solid #999;
+}
+.docs article table tbody tr td:first-of-type {
+  border-left: 1px solid #999;
+}
+.docs article table tbody tr td:last-of-type {
+  border-right: 1px solid #999;
+}
 footer {
   margin: 50px 0;
 }
