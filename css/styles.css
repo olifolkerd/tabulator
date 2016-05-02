@@ -115,6 +115,7 @@ ul.docs-sidenav li a:hover {
   margin-left: 20px;
   font-size: 20px;
   vertical-align: middle;
+  white-space: nowrap;
 }
 .docs article h1 .doc-link i {
   font-size: .9em;
