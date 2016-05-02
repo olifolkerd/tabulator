@@ -1797,7 +1797,6 @@
 
 				var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
 				var colCount = 0;
-				var colWidth = totWidth / colCount;
 
 				var widthIdeal = 0;
 				var widthIdealCount = 0;
@@ -1820,6 +1819,8 @@
 					}
 				});
 
+				var colWidth = totWidth / colCount;
+
 				var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount))
 
 				//prevent underflow on non integer width tables
@@ -1827,7 +1828,7 @@
 				gapFill = gapFill > 0 ? gapFill : 0;
 
 				if(proposedWidth >= parseInt(options.colMinWidth)){
-
+					console.log("woop");
 					$.each(options.columns, function(i, column) {
 						if(column.visible){
 							var newWidth = column.width ? column.width : proposedWidth;
