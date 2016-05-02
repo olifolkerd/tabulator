@@ -162,12 +162,12 @@
                                  <label>Field: </label>
                                  <select id="sort-field">
                                     <option value="name" selected>Name</option>
-                                    <option value="age">Age</option>
+                                    <option value="progress">Progress</option>
                                     <option value="gender">Gender</option>
-                                    <option value="height">Height</option>
+                                    <option value="rating">Rating</option>
                                     <option value="col">Favourite Colour</option>
                                     <option value="dob">Date Of Birth</option>
-                                    <option value="cheese">Likes Cheese</option>
+                                    <option value="car">Driver</option>
                                 </select>
 
 
@@ -253,13 +253,13 @@
                                 <select id="filter-field">
                                     <option></option>
                                     <option value="name">Name</option>
-                                    <option value="age">Age</option>
+                                    <option value="progress">Progress</option>
                                     <option value="gender">Gender</option>
-                                    <option value="height">Height</option>
+                                    <option value="rating">Rating</option>
                                     <option value="col">Favourite Colour</option>
                                     <option value="dob">Date Of Birth</option>
-                                    <option value="cheese">Likes Cheese</option>
-                                    <option value="function">Likes Cheese &amp; height &lt; 3</option>
+                                    <option value="car">Drives</option>
+                                    <option value="function">Drives &amp;Rating &lt; 3</option>
                                 </select>
 
 
@@ -659,7 +659,7 @@
 
         //Filtering Example
         function customFilter(data){
-            return data.cheese && data.height < 3;
+            return data.car && data.rating < 3;
         }
 
         function updateFilter(){
