@@ -80,7 +80,7 @@
                         <a href="examples/">Examples</a>
                     </li>
                     <li>
-                        <a href="https://github.com/olifolkerd/tabulator">Github</a>
+                        <a id="github-link" href="https://github.com/olifolkerd/tabulator">Github</a>
                     </li>
                 </ul>
             </div>
@@ -355,6 +355,15 @@
 
 		$("#download").click(function(){
 			ga('send', 'event', 'Download', 'click', 'Homescreen Download');
+		});
+
+		$("#github-link").click(function(){
+			ga('send', 'event', {
+			    eventCategory: 'Github Link',
+			    eventAction: 'click',
+			    eventLabel: 'Github Link',
+			    transport: 'beacon'
+			  })
 		});
 
 	</script>

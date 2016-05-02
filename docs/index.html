@@ -75,7 +75,7 @@
                         <a href="../examples/">Examples</a>
                     </li>
                     <li>
-                        <a href="https://github.com/olifolkerd/tabulator">Github</a>
+                        <a id="github-link" href="https://github.com/olifolkerd/tabulator">Github</a>
                     </li>
                 </ul>
             </div>
@@ -1296,6 +1296,16 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
         ga('create', 'UA-77206751-1', 'auto');
         ga('send', 'pageview');
+
+
+        $("#github-link").click(function(){
+            ga('send', 'event', {
+                eventCategory: 'Github Link',
+                eventAction: 'click',
+                eventLabel: 'Github Link',
+                transport: 'beacon'
+              })
+        });
     </script>
 
 </body>
