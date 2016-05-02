@@ -1030,7 +1030,7 @@
 		.on("click", function(){
 			if($(this).data("show")){
 				$(this).data("show", false);
-				$(this).closest(".tabulator-group").find(".tabulator-group-body").slideUp();
+				// $(this).closest(".tabulator-group").find(".tabulator-group-body").slideUp();
 				$(this).css({
 					"margin-left":"8px",
 					"margin-right":"13px",
@@ -1038,10 +1038,15 @@
 					"border-bottom": "6px solid transparent",
 					"border-right": "0",
 					"border-left": "6px solid " + self.options.sortArrows.active,
-				})
+
+				});
+				$(this).closest(".tabulator-group").find(".tabulator-group-body").css({
+					"height":0,
+					"visibility":"hidden",
+				});
 			}else{
 				$(this).data("show", true);
-				$(this).closest(".tabulator-group").find(".tabulator-group-body").slideDown();
+				// $(this).closest(".tabulator-group").find(".tabulator-group-body").slideDown();
 				$(this).css({
 					"margin-left":"5px",
 					"margin-right":"10px",
@@ -1049,7 +1054,13 @@
 					"border-right": "6px solid transparent",
 					"border-top": "6px solid " + self.options.sortArrows.active,
 					"border-bottom": "0",
-				})
+					"height":"",
+					"visibility":"",
+				});
+				$(this).closest(".tabulator-group").find(".tabulator-group-body").css({
+					"height":"",
+					"visibility":"",
+				});
 			}
 		});
 
