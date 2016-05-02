@@ -94,7 +94,7 @@
         	<div class="container">
 	            <h1><img src="images/tabulator_white.png" alt="Tabulator"></h1>
 	            <p>The easy to use, fully featured JQuery table plugin</p>
-	            <p><a class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download</a>
+	            <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download</a>
 	            </p>
         	</div>
         </header>
@@ -352,6 +352,10 @@
 
 		ga('create', 'UA-77206751-1', 'auto');
 		ga('send', 'pageview');
+
+		$("#download").click(function(){
+			ga('send', 'event', 'Download', 'click', 'Homescreen Download');
+		});
 
 	</script>
 
