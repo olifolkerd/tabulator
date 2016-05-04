@@ -68,6 +68,8 @@ Tabulator is actively under development and I plan to have even more useful feat
 
 - Pagination via AJAX request
 - Multi row column headers / column grouping
+- CSS Theme file
+- Minified source files
 - Row Templating
 - Extra Formatters
 - Extra Sorters
