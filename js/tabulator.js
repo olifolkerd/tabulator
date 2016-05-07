@@ -1512,7 +1512,9 @@
 		.append(arrow.clone());
 
 		//render column headings
-		self._colRender();
+		if(!self.firstRender){
+			self._colRender();
+		}
 	},
 
 	//layout coluns on first render
