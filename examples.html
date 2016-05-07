@@ -359,6 +359,8 @@ $(window).resize(function(){
 	$("#example-table-sorting").tabulator({
 		height:"320px",
 		fitColumns:true,
+		sortBy:"name",
+		sortDir:"asc",
 		columns:[
 		{title:"Name", field:"name", sorter:"string", width:200},
 		{title:"Age", field:"age", sorter:"number", align:"right", sorter:"number"},
@@ -874,20 +876,37 @@ $(window).resize(function(){
 
 <section>
 	<header>Theming  <span> - for full documentation visit <a href="https://github.com/olifolkerd/tabulator/wiki/Table-Options">https://github.com/olifolkerd/tabulator/wiki/Table-Options</a></span></header>
-	<p>Tabulator has a range of additional options to help customise your table. A full list of these can be found in the GitHub readme.md file</p>
+	<p>Tabulator is styled using a full set of CSS classes, making theming of the table very simple, A full list of these can be found in the GitHub readme.md file</p>
 	<div id="example-table-theme"></div>
+
+	<style>
+			/*Theme the table*/
+			#example-table-theme{
+				background-color:#ccc;
+				border: 1px solid #333;
+			}
+
+			/*Theme the header*/
+			#example-table-theme .tabulator-header {
+				background-color:#333;
+				color:#fff;
+			}
+
+			/*Theme the rows*/
+			#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
+				color:#fff;
+				background-color: #666;
+			}
+
+			#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+			  background-color: #444;
+			}
+
+	</style>
+
+
 	<script type="text/javascript">
 	$("#example-table-theme").tabulator({
-		backgroundColor:"#ccc",
-		borderColor:"#333",
-
-		headerBackgroundColor: "#333",
-		headerTextColor: "#fff",
-
-		rowBackgroundColor:"#666",
-		rowAltBackgroundColor:"#444",
-		rowTextColor:"#fff",
-
 		height:"320px",
 		fitColumns:true,
 		columns:[
