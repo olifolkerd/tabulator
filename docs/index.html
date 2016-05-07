@@ -381,8 +381,13 @@ index:"age", //set the index field to the "age" field.
     },
 }</pre>
 
-                    <h2>Sort Data on load</h2>
+                    <h2>Sort Data on Load</h2>
                     <p>When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the <span class='param'>sortBy</span> and <span class='param'>sortDir</span> parameters. (see <a href="#initial-data-sorting">Initial Data Sorting</a> for more details)</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    sortBy:'name', // when data is loaded into the table, sort it by name
+    sorDir:'asc', //when data is loaded into the table, sort it in ascending order.
+});</pre>
 
                     <h2>Trigger Sorting Programmatically</h2>
                     <p>You can trigger sorting using the <span class='param'>sort</span> function</p>
@@ -775,6 +780,22 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <p>In addition to the features mentioned above Tabulator has a range of aditional options to help customise your table.</p>
 
+                    <h2>Table Size</h2>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>height</td><td>string/int</td><td>false</td><td>Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <a class="anchor" id="initial-data-sorting"></a>
                     <h2>Initial Data Sorting</h2>
                     <p>When data is loaded into the table it can be automatically sorted by a specified field</p>
@@ -875,22 +896,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             </tr>
                             <tr>
                                 <td>progressiveRenderPeriod</td><td>integer</td><td>100</td><td>Set the time delay between reach block rendering</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h2>Table Size</h2>
-
-                    <table>
-                        <thead>
-                            <th>Option</th>
-                            <th>Data Type</th>
-                            <th>Default Value</th>
-                            <th>Description</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>height</td><td>string/int</td><td>false</td><td>Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.</td>
                             </tr>
                         </tbody>
                     </table>
