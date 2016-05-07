@@ -35,17 +35,16 @@
 //Tabulator Containing Element
 .tabulator{
 	box-sizing: border-box;
-	background-color: @backgroundColor;
 	border: 1px solid @borderColor;
+	background-color: @backgroundColor;
 	overflow:hidden;
 	font-size:@textSize;
 
 	//column header containing element
 	.tabulator-header{
 		position:relative;
-
-		background-color: @headerBackgroundColor;
 		border-bottom:1px solid @headerSeperatorColor;
+		background-color: @headerBackgroundColor;
 		color: @headerTextColor;
 		font-weight:bold;
 		white-space: nowrap;
@@ -114,42 +113,39 @@
 		}
 
 		.tabulator-col, .tabulator-col-row-handle{
-			padding:4px;
-			text-align:left;
 			position:relative;
 			box-sizing:border-box;
 			border-right:1px solid @headerBorderColor;
-			box-sizing:border-box;
+			padding:4px;
+			text-align:left;
+			vertical-align: bottom;
 			user-select:none;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			vertical-align: bottom;
 		}
 	}
 
 	//scrolling element to hold table
 	.tabulator-tableHolder{
 		position:relative;
+		width:100%;
 		white-space: nowrap;
 		overflow:auto;
-		width:100%;
 
 		//element to hold table rows
 		.tabulator-table{
 			position:relative;
-			white-space: nowrap;
 			display:inline-block;
-			overflow:visible;
 			background-color:@rowBackgroundColor;
+			white-space: nowrap;
+			overflow:visible;
 			color:@rowTextColor;
-
-
 
 			//row element
 			.tabulator-row{
+				min-height:@textSize + (@headerMargin * 2);
 				background-color: @rowBackgroundColor;
-				min-height:@textSize + @headerMargin + @headerMargin;
 
 				&:nth-child(even){
 					background-color: @rowAltBackgroundColor;
@@ -161,19 +157,17 @@
 
 				//movable row handle
 				.tabulator-row-handle{
-					text-align: center;
-					box-sizing:border-box;
+
 					display:inline-block;
+					box-sizing:border-box;
+					width:30px;
+					max-width:30px;
+					padding:4px;
+					text-align: center;
 					vertical-align:middle;
-					// min-height:self.options.headerHeight + 2;
 					white-space:nowrap;
 					overflow:hidden;
 					text-overflow:ellipsis;
-					padding:4px;
-					width:30px;
-					max-width:30px;
-
-					// line-height: 40px;
 
 					&:hover{
 						cursor:move;
@@ -184,19 +178,16 @@
 				//cell element
 				.tabulator-cell{
 					box-sizing:border-box;
+					padding:4px;
+					border-right:1px solid @rowBorderColor;
 					vertical-align:middle;
 					white-space:nowrap;
 					overflow:hidden;
 					text-overflow:ellipsis;
-					padding:4px;
-					border-right:1px solid @rowBorderColor;
-
-					// height:100%;
-					// line-height: 40px;
 
 					&.tabulator-editing{
-						padding: 0;
 						border:1px solid  @editBoxColor;
+						padding: 0;
 					}
 				}
 
@@ -218,25 +209,24 @@
 					}
 
 					.tabulator-group-body{
-						height:auto;
 						visibility: visible;
+						height:auto;
 					}
 				}
 
 				//row grouping header
 				.tabulator-group-header{
-					background:#ccc;
-					font-weight:bold;
-					padding:5px;
+					box-sizing:border-box;
 					border-bottom:1px solid #999;
 					border-right:1px solid @rowBorderColor;
 					border-top:1px solid #999;
-					box-sizing:border-box;
+					padding:5px;
+					background:#ccc;
+					font-weight:bold;
 
 					//sorting arrow
 					.tabulator-arrow{
 						display: inline-block;
-						vertical-align:middle;
 						width: 0;
 						height: 0;
 						margin-left:8px;
@@ -245,6 +235,7 @@
 						border-bottom: 6px solid transparent;
 						border-right: 0;
 						border-left: 6px solid @sortArrowActive;
+						vertical-align:middle;
 
 						&:hover{
 							cursor:pointer;
@@ -255,8 +246,8 @@
 
 				//row grouping footer
 				.tabulator-group-body{
-					height:0;
 					visibility:hidden;
+					height:0;
 				}
 			}
 		}
@@ -265,9 +256,9 @@
 	//footer element
 	.tabulator-footer{
 		padding:5px 10px;
-		text-align:right;
-		background-color: @footerBackgroundColor;
 		border-top:1px solid @footerSeperatorColor;
+		background-color: @footerBackgroundColor;
+		text-align:right;
 		color: @footerTextColor;
 		font-weight:bold;
 		white-space:nowrap;
@@ -281,10 +272,10 @@
 		//pagination button
 		.tabulator-page{
 			display:inline-block;
+			margin:0 2px;
 			border:1px solid @footerBorderColor;
 			border-radius:3px;
 			padding:2px 5px;
-			margin:0 2px;
 			background:rgba(255,255,255,.2);
 			color: @footerTextColor;
 
