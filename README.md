@@ -10,7 +10,7 @@ Features
 ================================
 Tabulator allows you to create  a table with in seconds from any JSON formatted data.
 
-Simply include the library in your JQuery UI project and you're away!
+Simply include the library and the css in your JQuery UI project and you're away!
 
 Tabulator is packed with useful  features including:
 
@@ -34,8 +34,9 @@ Setup
 ================================
 Setting up tabulator could not be simpler.
 
-Include the library
+Include the library and the css
 ```html
+<link href="tabulator.css" rel="stylesheet">
 <script type="text/javascript" src="tabulator.js"></script>
 ```
 
@@ -68,12 +69,10 @@ Tabulator is actively under development and I plan to have even more useful feat
 
 - Pagination via AJAX request
 - Multi row column headers / column grouping
-- CSS Theme file
 - Minified source files
 - Row Templating
 - Extra Formatters
 - Extra Sorters
-- More Theming Options
 - Usage Case Examples (creating custom formatters, etc...)
 
 Get in touch if there are any features you feel Tabulator needs.
