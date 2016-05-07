@@ -13,6 +13,10 @@
   font-weight: bold;
   white-space: nowrap;
   overflow: visible;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
@@ -177,6 +181,10 @@
   font-weight: bold;
   white-space: nowrap;
   user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 .tabulator .tabulator-footer .tabulator-pages {
   margin: 0 7px;
