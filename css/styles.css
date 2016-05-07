@@ -1,196 +1,211 @@
-body {
-  font-family: 'Open Sans', sans-serif;
-  padding-top: 50px;
-  /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
-}
-.navbar {
-  margin-bottom: 0px !important;
-  border-bottom: 2px solid #59B038;
-}
-.navbar li a.active {
-  color: #59B038 !important;
-}
-.navbar .navbar-brand img {
-  height: 30px;
-  margin-top: -7px;
-}
-.jumbotron {
-  background-color: #59B038;
-  background-image: url(../images/jumbotron_background.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  margin-bottom: 0;
-  color: #fff;
-}
-.jumbotron h1 {
-  font-family: 'Bevan', 'Open Sans', sans-serif;
-}
-.jumbotron .btn {
-  background-color: #2C801E;
-  border-color: #1E5715;
-}
-.jumbotron .btn:hover {
-  background-color: #59DA43;
-  border-color: #368D27;
-}
-.jumbotron .btn .glyphicon {
-  margin-right: 10px;
-}
 .tabulator {
-  font-family: sans-serif;
-}
-.news {
-  border-top: 2px solid #59B038;
-  border-bottom: 2px solid #59B038;
-  background: #ddd;
-}
-.news h1 {
-  margin-top: 10px;
-  color: #59B038;
-  font-weight: bold;
-  font-size: 2em;
-}
-.news p {
-  font-weight: bold;
-}
-.news a {
-  color: #59B038;
-  font-weight: bold;
-}
-.features {
-  margin-top: 30px;
-}
-.features #tabulator-example {
-  border-radius: 5px;
-}
-.features .main-title h2 {
-  margin-top: 00px;
-  margin-bottom: 10px;
-}
-.features h2 {
-  color: #59B038;
-  font-weight: bold;
-  font-size: 2.5em;
-  margin-bottom: 40px;
-}
-.features .tabulator {
-  margin-top: 20px;
-  margin-bottom: 30px;
-}
-.features .feature a {
-  text-decoration: none;
-  color: inherit;
-}
-.features .feature .frame {
-  padding: 20px 10px 10px 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
   box-sizing: border-box;
-  margin: 1px 1px 20px 1px;
+  border: 1px solid #999;
+  background-color: #888;
+  overflow: hidden;
+  font-size: 14px;
 }
-.features .feature .frame:hover {
-  margin: 0 0 19px 0;
-  border: 2px solid #59B038;
+.tabulator .tabulator-header {
+  position: relative;
+  border-bottom: 1px solid #999;
+  background-color: #e6e6e6;
+  color: #555;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: visible;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+.tabulator .tabulator-header .tabulator-col {
+  display: inline-block;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-arrow {
+  display: inline-block;
+  position: absolute;
+  top: 9px;
+  right: 8px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #bbb;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-arrow.asc {
+  border-top: none;
+  border-bottom: 6px solid #666;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-arrow.desc {
+  border-top: 6px solid #666;
+  border-bottom: none;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-handle.prev {
+  left: 0;
+  right: auto;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-handle:hover {
+  cursor: ew-resize;
+}
+.tabulator .tabulator-header .tabulator-col[data-sortable=true] {
+  padding-right: 25px;
+}
+.tabulator .tabulator-header .tabulator-col[data-sortable=true]:hover {
   cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
 }
-.features .feature .frame:hover .fa {
-  color: #59B038;
+.tabulator .tabulator-header .tabulator-col-row-handle {
+  width: 30px;
+  max-width: 30px;
 }
-.features .feature .frame .fa {
-  font-size: 5em;
-}
-ul.docs-sidenav {
-  margin-top: 20px;
-}
-ul.docs-sidenav li.active {
-  border-left: 3px solid #59B038;
-}
-ul.docs-sidenav li.active a {
-  padding-left: 12px;
-  color: #59B038;
-}
-ul.docs-sidenav li a {
-  padding: 5px 15px;
-  font-weight: bold;
-  color: #999;
-}
-ul.docs-sidenav li a:hover {
-  color: #59B038;
-}
-.docs a.anchor {
-  display: block;
+.tabulator .tabulator-header .tabulator-col,
+.tabulator .tabulator-header .tabulator-col-row-handle {
   position: relative;
-  margin-top: -20px;
-  padding-top: 20px;
-  visibility: hidden;
+  box-sizing: border-box;
+  border-right: 1px solid #aaa;
+  padding: 4px;
+  text-align: left;
+  vertical-align: bottom;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.docs article {
+.tabulator .tabulator-tableHolder {
   position: relative;
-  margin-top: 50px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: auto;
 }
-.docs article h1 {
-  border-bottom: 1px solid #59B038;
-  padding-bottom: 10px;
-  font-weight: bold;
+.tabulator .tabulator-tableHolder .tabulator-table {
+  position: relative;
+  display: inline-block;
+  background-color: #fff;
+  white-space: nowrap;
+  overflow: visible;
+  color: #333;
 }
-.docs article h1 .doc-link {
-  margin-left: 20px;
-  font-size: 20px;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row {
+  min-height: 22px;
+  background-color: #fff;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+  background-color: #EFEFEF;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover {
+  background-color: #bbb;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
+  display: inline-block;
+  box-sizing: border-box;
+  width: 30px;
+  max-width: 30px;
+  padding: 4px;
+  text-align: center;
   vertical-align: middle;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.docs article h1 .doc-link i {
-  font-size: .9em;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle:hover {
+  cursor: move;
+  background-color: rgba(0, 0, 0, 0.1);
 }
-.docs article h2 {
-  font-size: 25px;
-  margin-top: 30px;
-  font-weight: bold;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  box-sizing: border-box;
+  padding: 4px;
+  border-right: 1px solid #aaa;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.docs article h3 {
-  margin-top: 18px;
-  font-size: 17px;
-  font-weight: bold;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
+  border: 1px solid #1D68CD;
+  padding: 0;
 }
-.docs article a {
-  color: #59B038;
-  font-weight: bold;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group.show .tabulator-group-header .tabulator-arrow {
+  margin-left: 5px;
+  margin-right: 10px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #666;
+  border-bottom: 0;
 }
-.docs article .param {
-  font-weight: bold;
-  font-style: italic;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group.show .tabulator-group-body {
+  visibility: visible;
+  height: auto;
 }
-.docs article button,
-.docs article select {
-  margin-right: 20px;
-}
-.docs article table {
-  width: 100%;
-}
-.docs article table thead {
-  font-weight: bold;
-  background: #ddd;
-}
-.docs article table thead th {
-  border: 1px solid #999;
-}
-.docs article table th,
-.docs article table td {
-  border: 1px solid #ccc;
-  padding: 5px;
-}
-.docs article table tbody tr:nth-of-type(even) td {
-  background: #f9f9f9;
-}
-.docs article table tbody tr:last-of-type td {
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header {
+  box-sizing: border-box;
   border-bottom: 1px solid #999;
+  border-right: 1px solid #aaa;
+  border-top: 1px solid #999;
+  padding: 5px;
+  background: #ccc;
+  font-weight: bold;
 }
-.docs article table tbody tr td:first-of-type {
-  border-left: 1px solid #999;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header .tabulator-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  margin-right: 13px;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 0;
+  border-left: 6px solid #666;
+  vertical-align: middle;
 }
-.docs article table tbody tr td:last-of-type {
-  border-right: 1px solid #999;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header .tabulator-arrow:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
 }
-footer {
-  margin: 50px 0;
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-body {
+  visibility: hidden;
+  height: 0;
+}
+.tabulator .tabulator-footer {
+  padding: 5px 10px;
+  border-top: 1px solid #999;
+  background-color: #e6e6e6;
+  text-align: right;
+  color: #555;
+  font-weight: bold;
+  white-space: nowrap;
+  user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
+}
+.tabulator .tabulator-footer .tabulator-pages {
+  margin: 0 7px;
+}
+.tabulator .tabulator-footer .tabulator-page {
+  display: inline-block;
+  margin: 0 2px;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  padding: 2px 5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #555;
+}
+.tabulator .tabulator-footer .tabulator-page.active {
+  color: #d00;
+}
+.tabulator .tabulator-footer .tabulator-page.disabled {
+  opacity: .5;
+}
+.tabulator .tabulator-footer .tabulator-page:not(.disabled):hover {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
 }
