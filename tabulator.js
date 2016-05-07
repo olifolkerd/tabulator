@@ -45,7 +45,7 @@
 
 		movableCols:false, //enable movable columns
 		movableRows:false, //enable movable rows
-		movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
+		movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
 
 		columnLayoutCookie:false, //store cookie with column _styles
 		columnLayoutCookieID:"", //id for stored cookie
