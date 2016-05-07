@@ -31,7 +31,7 @@
     <link href="../css/prettyprint.css" rel="stylesheet">
 
     <!-- Tabulator CSS -->
-    <link href="css/tabulator.css" rel="stylesheet">
+    <link href="../css/tabulator.css" rel="stylesheet">
 
     <link rel="icon"
     type="image/png"
@@ -361,8 +361,35 @@
                     </article>
                     <a class="anchor" id="theming"></a>
                     <article>
-                        <h1>Theming <a class="doc-link" href="../docs?#theming"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                        <p>Tabulator has a range of additional options to help customise your table. A full list of these can be found <a href="../docs?#theming">here.</a></p>
+                        <h1>Theming <a class="doc-link" href="../docs?#css"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                        <p>Tabulator is styled using a full set of CSS classes, making theming of the table very simple. A full list of these can be found <a href="../docs?#css">here.</a></p>
+
+                        <style>
+                                /*Theme the table*/
+                                #example-table-theme{
+                                    background-color:#ccc;
+                                    border: 1px solid #333;
+                                }
+
+                                /*Theme the header*/
+                                #example-table-theme .tabulator-header {
+                                    background-color:#333;
+                                    color:#fff;
+                                }
+
+                                /*Theme the rows*/
+                                #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
+                                    color:#fff;
+                                    background-color: #666;
+                                }
+
+                                #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+                                  background-color: #444;
+                                }
+
+                        </style>
+
+
                         <div id="example-table-theme"></div>
                     </article>
 
@@ -866,16 +893,6 @@
         //Theming Example
 
         $("#example-table-theme").tabulator({
-            backgroundColor:"#ccc",
-            borderColor:"#333",
-
-            headerBackgroundColor: "#333",
-            headerTextColor: "#fff",
-
-            rowBackgroundColor:"#666",
-            rowAltBackgroundColor:"#444",
-            rowTextColor:"#fff",
-
             height:"311px",
             fitColumns:true,
             columns:[

@@ -30,6 +30,7 @@ body {
 	background-image: url(../images/jumbotron_background.png);
 	background-repeat: no-repeat;
 	background-position: center;
+	margin-bottom:0;
 
 	color: #fff;
 
@@ -57,7 +58,33 @@ body {
 	font-family: sans-serif;
 }
 
+.news{
+
+	border-top:2px solid @green;
+	border-bottom:2px solid @green;
+	background: #ddd;
+
+	h1{
+		margin-top: 10px;
+
+		color:@green;
+		font-weight: bold;
+		font-size: 2em;
+	}
+
+	p{
+		font-weight: bold;
+	}
+
+	a{
+		color: @green;
+		font-weight: bold;
+	}
+}
+
 .features{
+
+	margin-top:30px;
 
 	#tabulator-example{
 		border-radius: 5px;

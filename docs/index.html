@@ -31,7 +31,7 @@
     <link href="../css/prettyprint.css" rel="stylesheet">
 
     <!-- Tabulator CSS -->
-    <link href="css/tabulator.css" rel="stylesheet">
+    <link href="../css/tabulator.css" rel="stylesheet">
 
     <link rel="icon"
       type="image/png"
@@ -101,9 +101,10 @@
 
                     <p>Setting up tabulator could not be simpler.</p>
 
-                    <p>Include the library</p>
+                    <p>Include the library and the css</p>
 
-                    <pre class="prettyprint lang-html">&lt;script type="text/javascript" src="tabulator.js"&gt;&lt;/script&gt;</pre>
+                    <pre class="prettyprint lang-html">&lt;link href="tabulator.css" rel="stylesheet"&gt;
+&lt;script type="text/javascript" src="tabulator.js"&gt;&lt;/script&gt;</pre>
 
                     <p>Create an element to hold the table</p>
                     <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
@@ -878,98 +879,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         </tbody>
                     </table>
 
-                    <h2>Table Theming</h2>
-                    <a class="anchor" id="theming"></a>
-                    <p>Tabulator allows you to set a number of global options that can help theme your table.</p>
-
-                    <table>
-                        <thead>
-                            <th>Option</th>
-                            <th>Data Type</th>
-                            <th>Default Value</th>
-                            <th>Description</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>backgroundColor</td><td>string</td><td>#888</td><td>A valid css color(rgb,hex,etc...) for the background of the tabulator element</td>
-                            </tr>
-                            <tr>
-                                <td>borderColor</td><td>string</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the border of the tabulator element</td>
-                            </tr>
-                            <tr>
-                                <td>textSize</td><td>int/string</td><td>14</td><td>The text size for all text in the tabulator</td>
-                            </tr>
-                            <tr>
-                                <td>headerBackgroundColor</td><td>string</td><td>#e6e6e6</td><td>A valid css color(rgb,hex,etc...) for the header cells</td>
-                            </tr>
-                            <tr>
-                                <td>headerTextColor</td><td>string</td><td>#555</td><td>A valid css color(rgb,hex,etc...) for the header cells text</td>
-                            </tr>
-                            <tr>
-                                <td>headerBorderColor</td><td>string</td><td>#aaa</td><td>A valid css color(rgb,hex,etc...) for the header cells border</td>
-                            </tr>
-                            <tr>
-                                <td>headerSeperatorColor</td><td>string</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the header row bottom border</td>
-                            </tr>
-                            <tr>
-                                <td>headerMargin</td><td>int/string</td><td>4</td><td>The size in pixels for the header cells margin</td>
-                            </tr>
-                            <tr>
-                                <td>sortArrows</td><td>object</td><td></td><td>an object containing two options for theming the sorter arrows in the header <i>(see next table)</i></td>
-                            </tr>
-                            <tr>
-                                <td>rowBackgroundColor</td><td>string</td><td>#fff</td><td>A valid css color(rgb,hex,etc...) for the background colour of the table rows</td>
-                            </tr>
-                            <tr>
-                                <td>rowAltBackgroundColor</td><td>string</td><td>#e0e0e0</td><td>A valid css color(rgb,hex,etc...) for the background colour of the even numbered table rows</td>
-                            </tr>
-                            <tr>
-                                <td>rowBorderColor</td><td>string</td><td>#fff</td><td>A valid css color(rgb,hex,etc...) for the table row borders</td>
-                            </tr>
-                            <tr>
-                                <td>rowTextColor</td><td>string</td><td>#333</td><td>A valid css color(rgb,hex,etc...) for the table row text</td>
-                            </tr>
-                            <tr>
-                                <td>rowHoverBackground</td><td>string</td><td>#bbb</td><td>A valid css color(rgb,hex,etc...) for the table row background when hovered over.</td>
-                            </tr>
-                            <tr>
-                                <td>editBoxColor</td><td>string</td><td>#1D68CD</td><td>A valid css color(rgb,hex,etc...) for border of a cell being edited.</td>
-                            </tr>
-                            <tr>
-                                <td>footerBackgroundColor</td><td>string</td><td>#e6e6e6</td><td>A valid css color(rgb,hex,etc...) for the footer cells</td>
-                            </tr>
-                            <tr>
-                                <td>footerTextColor</td><td>string</td><td>#555</td><td>A valid css color(rgb,hex,etc...) for the footer text</td>
-                            </tr>
-                            <tr>
-                                <td>footerBorderColor</td><td>string</td><td>#aaa</td><td>A valid css color(rgb,hex,etc...) for the footer buttons border</td>
-                            </tr>
-                            <tr>
-                                <td>footerSeperatorColor</td><td>string</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the footer row top border</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Sort Arrow Theming</h3>
-                    <p>The <span class='param'>sortArrows</span> option contains two options</p>
-
-                    <table>
-                        <thead>
-                            <th>Option</th>
-                            <th>Data Type</th>
-                            <th>Default Value</th>
-                            <th>Description</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>active</td><td>string</td><td>#666</td><td>A valid css color(rgb,hex,etc...) for the sorter arrow on currently sorted column</td>
-                            </tr>
-                            <tr>
-                                <td>inactive</td><td>string</td><td>#bbb</td><td>A valid css color(rgb,hex,etc...) for the sorter arrow on unsorted column</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
                     <h2>Table Size</h2>
 
                     <table>
@@ -1018,9 +927,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="css"></a>
                 <article>
-                    <h1>CSS Clases</h1>
+                    <h1>CSS Classes &amp; Theming</h1>
 
-                    <p>Tabulator elements are assigned a range of CSS classes to make it easier for you to manipulate the look, feel and function of the table.</p>
+                    <p>As of version 2.1 all Tabulator elements are styled using a range CSS classes to make it easier for you to manipulate the look, feel and function of the table.</p>
 
                     <table>
                         <thead>
@@ -1084,6 +993,80 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             </tr>
                             <tr>
                                 <td>tabulator-loader-msg</td><td>Ajax loader message</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>tabulator.less</h2>
+                    <a class="anchor" id="theming"></a>
+                    <p>A LESS file is included in the project with a number of variables setup to make theming a table even easier.</p>
+
+                    <table>
+                        <thead>
+                            <th>Variable</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>backgroundColor</td><td>#888</td><td>A valid css color(rgb,hex,etc...) for the background of the tabulator element</td>
+                            </tr>
+                            <tr>
+                                <td>borderColor</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the border of the tabulator element</td>
+                            </tr>
+                            <tr>
+                                <td>textSize</td><td>14</td><td>The text size for all text in the tabulator</td>
+                            </tr>
+                            <tr>
+                                <td>headerBackgroundColor</td><td>#e6e6e6</td><td>A valid css color(rgb,hex,etc...) for the header cells</td>
+                            </tr>
+                            <tr>
+                                <td>headerTextColor</td><td>#555</td><td>A valid css color(rgb,hex,etc...) for the header cells text</td>
+                            </tr>
+                            <tr>
+                                <td>headerBorderColor</td><td>#aaa</td><td>A valid css color(rgb,hex,etc...) for the header cells border</td>
+                            </tr>
+                            <tr>
+                                <td>headerSeperatorColor</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the header row bottom border</td>
+                            </tr>
+                            <tr>
+                                <td>headerMargin</td><td>4</td><td>The size in pixels for the header cells margin</td>
+                            </tr>
+                            <tr>
+                                <td>sortArrowActive</td><td>#666</td><td>The colour of the column sorter arrow when sorting is active on a column</td>
+                            </tr>
+                            <tr>
+                                <td>sortArrowInactive</td><td>#bbb</td><td>The colour of the column sorter arrow when sorting is not active on a column</td>
+                            </tr>
+                            <tr>
+                                <td>rowBackgroundColor</td><td>#fff</td><td>A valid css color(rgb,hex,etc...) for the background colour of the table rows</td>
+                            </tr>
+                            <tr>
+                                <td>rowAltBackgroundColor</td><td>#e0e0e0</td><td>A valid css color(rgb,hex,etc...) for the background colour of the even numbered table rows</td>
+                            </tr>
+                            <tr>
+                                <td>rowBorderColor</td><td>#fff</td><td>A valid css color(rgb,hex,etc...) for the table row borders</td>
+                            </tr>
+                            <tr>
+                                <td>rowTextColor</td><td>#333</td><td>A valid css color(rgb,hex,etc...) for the table row text</td>
+                            </tr>
+                            <tr>
+                                <td>rowHoverBackground</td><td>#bbb</td><td>A valid css color(rgb,hex,etc...) for the table row background when hovered over.</td>
+                            </tr>
+                            <tr>
+                                <td>editBoxColor</td><td>#1D68CD</td><td>A valid css color(rgb,hex,etc...) for border of a cell being edited.</td>
+                            </tr>
+                            <tr>
+                                <td>footerBackgroundColor</td><td>#e6e6e6</td><td>A valid css color(rgb,hex,etc...) for the footer cells</td>
+                            </tr>
+                            <tr>
+                                <td>footerTextColor</td><td>#555</td><td>A valid css color(rgb,hex,etc...) for the footer text</td>
+                            </tr>
+                            <tr>
+                                <td>footerBorderColor</td><td>#aaa</td><td>A valid css color(rgb,hex,etc...) for the footer buttons border</td>
+                            </tr>
+                            <tr>
+                                <td>footerSeperatorColor</td><td>#999</td><td>A valid css color(rgb,hex,etc...) for the footer row top border</td>
                             </tr>
                         </tbody>
                     </table>
@@ -1246,7 +1229,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#movable">Movable Rows and Columns</a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
                         <li><a href="#options">Table Options</a></li>
-                        <li><a href="#css">CSS Classes</a></li>
+                        <li><a href="#css">CSS Classes &amp; Theming</a></li>
                         <li><a href="#callbacks">Callback</a></li>
                         <li><a href="#events">Events</a></li>
 
