@@ -36,27 +36,6 @@
 
 	//setup options
 	options: {
-		backgroundColor: "#888", //background color of tabulator
-		borderColor:"#999", //border to tablulator
-
-		textSize: "14px", //table text size
-
-		headerBackgroundColor:"#e6e6e6", //border to tablulator
-		headerTextColor:"#555", //header text colour
-		headerBorderColor:"#aaa", //header border color
-		headerSeperatorColor:"#999", //header bottom seperator color
-		headerMargin:"4px",
-
-		footerBackgroundColor:"#e6e6e6", //border to tablulator
-		footerTextColor:"#555", //footer text colour
-		footerBorderColor:"#aaa", //footer border color
-		footerSeperatorColor:"#999", //footer bottom seperator color
-
-		rowBackgroundColor:"#fff", //table row background color
-		rowAltBackgroundColor:"#e0e0e0", //table row background color
-		rowBorderColor:"#aaa", //table border color
-		rowTextColor:"#333", //table text color
-		rowHoverBackground:"#bbb", //row background color on hover
 
 		colMinWidth:"40px", //minimum global width for a column
 		colResizable:true, //resizable columns
@@ -88,10 +67,6 @@
 
 		sortable:true, //global default for sorting
 		dateFormat: "dd/mm/yyyy", //date format to be used for sorting
-		sortArrows:{ //colors for sorting arrows
-			active: "#666",
-			inactive: "#bbb",
-		},
 
 		sortBy:"id", //defualt column to sort by
 		sortDir:"desc", //default sort direction
@@ -148,12 +123,7 @@
 		var options = self.options;
 		var element = self.element;
 
-		options.textSize = isNaN(options.textSize) ? options.textSize : options.textSize + "px";
 		options.colMinWidth = isNaN(options.colMinWidth) ? options.colMinWidth : options.colMinWidth + "px";
-
-		options.textSizeNum = parseInt(options.textSize.replace("px",""));
-		var headerMargin = parseInt(options.headerMargin.replace("px",""));
-		options.headerHeight =  options.textSizeNum + (headerMargin*2) + 2;
 
 		if(options.height){
 			options.height = isNaN(options.height) ? options.height : options.height + "px";
@@ -161,39 +131,10 @@
 		}
 
 		element.addClass("tabulator");
-		element.css({
-			position:"relative",
-			"box-sizing" : "border-box",
-			"background-color": options.backgroundColor,
-			"border": "1px solid " + options.borderColor,
-			//"overflow-x":"auto",
-			"overflow":"hidden",
-		})
 
 		self.header = $("<div class='tabulator-header'></div>")
 
-		self.header.css({
-			position:"relative",
-
-			"background-color": options.headerBackgroundColor,
-			"border-bottom":"1px solid " + options.headerSeperatorColor,
-			"color": options.headerTextColor,
-			"font-size":options.textSize,
-			"font-weight":"bold",
-			"white-space": "nowrap",
-			"overflow":"visible",
-		});
-
 		self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
-
-		self.tableHolder.css({
-			"position":"relative",
-			"min-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
-			"max-height":"calc(100% - " + (options.headerHeight + 1) + "px)",
-			"white-space": "nowrap",
-			"overflow":"auto",
-			"width":"100%",
-		});
 
 		self.tableHolder.scroll(function(){
 			self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
@@ -203,35 +144,11 @@
 		self.table = $("<div class='tabulator-table'></div>");
 
 
-		self.table.css({
-			position:"relative",
-			"font-size":options.textSize,
-			"white-space": "nowrap",
-			"display":"inline-block",
-			"overflow":"visible",
-			"background-color":self.options.rowBackgroundColor,
-			"color":self.options.rowTextColor,
-		});
-
-
 		//build pagination footer if needed
 		if(options.pagination){
 
 			if(!options.paginationElement){
 				options.paginationElement = $("<div class='tabulator-footer'></div>");
-
-				options.paginationElement.css({
-					"padding":"5px 10px",
-					"text-align":"right",
-					"background-color": options.footerBackgroundColor,
-					"border-top":"1px solid " + options.footerSeperatorColor,
-					"color": options.footerTextColor,
-					"font-size":options.textSize,
-					"font-weight":"bold",
-					"white-space":"nowrap",
-					"user-select":"none",
-				});
-
 				self.footer = options.paginationElement;
 			}
 
@@ -241,43 +158,6 @@
 				if(!$(this).hasClass("disabled")){
 					self.setPage($(this).data("page"));
 				}
-			});
-
-			$(".tabulator-pages", self.paginator).css({
-				"margin":"0 7px",
-			});
-
-			self.paginator.on("mouseover", ".tabulator-page", function(){
-				if(!$(this).hasClass("disabled")){
-					$(this).css({
-						"cursor":"pointer",
-						"background":"rgba(0,0,0,.2)",
-						"color":"#fff",
-					});
-				}
-			});
-
-			self.paginator.on("mouseout", ".tabulator-page", function(){
-				if(!$(this).hasClass("disabled")){
-
-					var color = $(this).hasClass("active") ? "#d00" : options.footerTextColor;
-
-					$(this).css({
-						"cursor":"pointer",
-						"background":"rgba(255,255,255,.2)",
-						"color": color,
-					});
-				}
-			});
-
-			$(".tabulator-page", self.paginator).css({
-				"display":"inline-block",
-				"border":"1px solid " + options.footerBorderColor,
-				"border-radius":"3px",
-				"padding":"2px 5px",
-				"margin":"0 2px",
-				"background":"rgba(255,255,255,.2)",
-				"color": options.footerTextColor,
 			});
 
 			options.paginationElement.append(self.paginator);
@@ -315,8 +195,7 @@
 		row.data("data", rowData);
 
 		//reformat cell data
-		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")))
-		.css({"padding":"4px"});
+		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
 
 		if(hasChanged){
 			//triger event
@@ -530,7 +409,7 @@
 			return false;
 		}else{
 			self.options.columns[column].visible = true;
-			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
+			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show();
 			self._renderTable();
 
 			if(self.options.columnLayoutCookie){
@@ -557,7 +436,7 @@
 		}else{
 			self.options.columns[column].visible = !self.options.columns[column].visible;
 			if(self.options.columns[column].visible){
-				$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show().css({"display":"inline-block"});
+				$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show();
 			}else{
 				$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
 			}
@@ -674,6 +553,9 @@
 			self.activeData.unshift(item);
 			self.table.append(row);
 		}
+
+		//resize cells to the same height
+		$(".tabulator-cell", row).css({"height":row.outerHeight() + "px"});
 
 
 		//align column widths
@@ -860,7 +742,7 @@
 			clearTimeout(self.progressiveRenderTimer);
 
 			//hide table while building
-			self.table.hide();
+			// self.table.hide();
 
 			//clear data from table before loading new
 			self.table.empty();
@@ -900,7 +782,12 @@
 				//if not grouping output row to table
 				self.table.append(row);
 			}
+
+			//resize cells to the same height
+			$(".tabulator-cell", row).css({"height":row.outerHeight() + "px"});
 		});
+
+
 
 		//enable movable rows
 		if(options.movableRows){
@@ -934,11 +821,7 @@
 
 					//clear sorter arrows
 					$(".tabulator-col[data-sortable=true]", self.header).data("sortdir", "desc");
-					$(".tabulator-col .tabulator-arrow", self.header).css({
-						"border-top": "none",
-						"border-bottom": "6px solid " + options.sortArrows.inactive,
-					});
-
+					$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc")
 					self.activeData = [];
 
 					//update active data to mach rows
@@ -978,7 +861,7 @@
 		self._styleRows();
 
 		//show table once loading complete
-		self.table.show();
+		// self.table.show();
 
 		//hide loader div
 		self._hideLoader(self);
@@ -1001,7 +884,7 @@
 
 	//build group DOM
 	_renderGroup:function(value){
-		var group =  $("<div class='tabulator-group' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
+		var group =  $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
 
 		return group;
 	},
@@ -1012,56 +895,9 @@
 		var self = this;
 
 		//create sortable arrow chevrons
-		var arrow = $("<div class='tabulator-arrow'></div>");
-		arrow.css({
-			display: "inline-block",
-			"vertical-align":"middle",
-			width: 0,
-			height: 0,
-			"margin-right":"10px",
-			"margin-left":"5px",
-			"border-left": "6px solid transparent",
-			"border-right": "6px solid transparent",
-			"border-top": "6px solid " + self.options.sortArrows.active,
-		})
-		.data("show", true)
-		.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
-		.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
+		var arrow = $("<div class='tabulator-arrow'></div>")
 		.on("click", function(){
-			if($(this).data("show")){
-				$(this).data("show", false);
-				// $(this).closest(".tabulator-group").find(".tabulator-group-body").slideUp();
-				$(this).css({
-					"margin-left":"8px",
-					"margin-right":"13px",
-					"border-top": "6px solid transparent",
-					"border-bottom": "6px solid transparent",
-					"border-right": "0",
-					"border-left": "6px solid " + self.options.sortArrows.active,
-
-				});
-				$(this).closest(".tabulator-group").find(".tabulator-group-body").css({
-					"height":0,
-					"visibility":"hidden",
-				});
-			}else{
-				$(this).data("show", true);
-				// $(this).closest(".tabulator-group").find(".tabulator-group-body").slideDown();
-				$(this).css({
-					"margin-left":"5px",
-					"margin-right":"10px",
-					"border-left": "6px solid transparent",
-					"border-right": "6px solid transparent",
-					"border-top": "6px solid " + self.options.sortArrows.active,
-					"border-bottom": "0",
-					"height":"",
-					"visibility":"",
-				});
-				$(this).closest(".tabulator-group").find(".tabulator-group-body").css({
-					"height":"",
-					"visibility":"",
-				});
-			}
+			$(this).closest(".tabulator-group").toggleClass("show");
 		});
 
 		var data = [];
@@ -1072,15 +908,6 @@
 
 
 		$(".tabulator-group-header", group)
-		.css({
-			"background":"#ccc",
-			"font-weight":"bold",
-			"padding":"5px",
-			"border-bottom":"1px solid #999",
-			"border-right":"1px solid " + self.options.rowBorderColor,
-			"border-top":"1px solid #999",
-			"box-sizing":"border-box",
-		})
 		.html(arrow)
 		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
 	},
@@ -1172,35 +999,15 @@
 			}
 		}
 
-		$(".tabulator-page", self.paginator).css({
-			"opacity":"1",
-			"display":"inline-block",
-			"border":"1px solid " + self.options.footerBorderColor,
-			"border-radius":"3px",
-			"padding":"2px 5px",
-			"margin":"0 2px",
-			"background":"rgba(255,255,255,.2)",
-			"color": self.options.footerTextColor,
-		}).removeClass("disabled");
+		$(".tabulator-page", self.paginator).removeClass("disabled");
 
-		$(".active", pages).css({
-			"color":"#d00",
-		})
 
 		if(self.paginationCurrentPage == 1){
-			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator)
-			.addClass("disabled")
-			.css({
-				"opacity":".5"
-			})
+			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled");
 		}
 
 		if(self.paginationCurrentPage == self.paginationMaxPage){
-			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator)
-			.addClass("disabled")
-			.css({
-				"opacity":".5"
-			})
+			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled");
 		}
 
 	},
@@ -1329,24 +1136,7 @@
 		if(self.options.movableRows){
 
 			var handle = $("<div class='tabulator-row-handle'></div>");
-
 			handle.append(self.options.movableRowHandle);
-
-			handle.css({
-				"text-align": "center",
-				"box-sizing":"border-box",
-				"display":"inline-block",
-				"vertical-align":"middle",
-				"min-height":self.options.headerHeight + 2,
-				"white-space":"nowrap",
-				"overflow":"hidden",
-				"text-overflow":"ellipsis",
-				"padding":"4px",
-				"width":"30px",
-				"max-width":"30px",
-			})
-			.on("mouseover", function(){$(this).css({cursor:"move", "background-color":"rgba(0,0,0,.1)"})})
-
 			row.append(handle);
 		}
 
@@ -1368,7 +1158,7 @@
 			var visibility = column.visible ? "inline-block" : "none";
 
 			//set style as string rather than using .css for massive improvement in rendering time
-			var cellStyle = "text-align: " + align + "; box-sizing:border-box; display:" + visibility + "; vertical-align:middle; min-height:" + (self.options.headerHeight + 2) + "px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:4px;";
+			var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
 
 			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
 
@@ -1414,8 +1204,6 @@
 						//if editor returned, add to DOM, if false, abort edit
 						if(cellEditor !== false){
 							cell.addClass("tabulator-editing");
-							cell.css({padding: "0", border:"1px solid " + self.options.editBoxColor})
-
 							cell.empty();
 							cell.append(cellEditor);
 
@@ -1466,8 +1254,8 @@
 
 		//reinstate right edge on table if fitted columns resized
 		if(self.options.fitColumns){
-			$(".tabulator-row .tabulator-cell:last-of-type",self.element).css("border-right","1px solid " + self.options.rowBorderColor);
-			$(".tabulator-col:last",self.element).css("border-right","1px solid " + self.options.headerBorderColor);
+			$(".tabulator-row .tabulator-cell:last-of-type",self.element).css("border-right","");
+			$(".tabulator-col:last",self.element).css("border-right","");
 		}
 	},
 
@@ -1480,30 +1268,12 @@
 
 		self.header.empty();
 
-
 		//create sortable arrow chevrons
 		var arrow = $("<div class='tabulator-arrow'></div>");
-		arrow.css({
-			display: "inline-block",
-			position: "absolute",
-			top:"9px",
-			right:"8px",
-			width: 0,
-			height: 0,
-			"border-left": "6px solid transparent",
-			"border-right": "6px solid transparent",
-			"border-bottom": "6px solid " + options.sortArrows.inactive,
-		});
 
 		//add column for row handle if movable rows enabled
 		if(options.movableRows){
 			var handle = $('<div class="tabulator-col-row-handle" style="display:inline-block;">&nbsp</div>');
-
-			handle.css({
-				"width":"30px",
-				"max-width":"30px",
-			})
-
 			self.header.append(handle);
 		}
 
@@ -1633,26 +1403,11 @@
 
 		});
 
-		//layout headers
-		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({
-			"padding":"4px",
-			"text-align":"left",
-			"position":"relative",
-			"box-sizing":"border-box",
-			"border-right":"1px solid " + options.headerBorderColor,
-			"box-sizing":"border-box",
-			"user-select":"none",
-			"white-space": "nowrap",
-			"overflow": "hidden",
-			"text-overflow": "ellipsis",
-			"vertical-align": "bottom",
-		});
-
 		//handle resizable columns
 		if(self.options.colResizable){
 			//create resize handle
-			var handle = $("<div class='tabulator-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
-			var prevHandle = $("<div class='tabulator-handle prev' style='position:absolute; left:0; top:0; bottom:0; width:5px;''></div>")
+			var handle = $("<div class='tabulator-handle'></div>");
+			var prevHandle = $("<div class='tabulator-handle prev'></div>")
 
 			$(".tabulator-col", self.header).append(handle);
 			$(".tabulator-col", self.header).append(prevHandle);
@@ -1703,10 +1458,6 @@
 				}
 			});
 
-			$(".tabulator-col .tabulator-handle", self.header).on("mouseover", function(){$(this).css({cursor:"ew-resize"})})
-
-
-
 		}
 
 		element.append(self.header);
@@ -1740,8 +1491,6 @@
 			}
 		}
 
-
-
 		element.on("editval", ".tabulator-cell", function(e, value){
 			if($(this).is(":focus")){$(this).blur()}
 				self._cellDataChange($(this), value);
@@ -1752,16 +1501,12 @@
 		})
 
 		//append sortable arrows to sortable headers
-		$(".tabulator-col[data-sortable=true]", self.header).css({"padding-right":"25px"})
+		$(".tabulator-col[data-sortable=true]", self.header)
 		.data("sortdir", "desc")
-		.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":"rgba(0,0,0,.1)"})})
-		.on("mouseout", function(){$(this).css({"background-color":"transparent"})})
 		.append(arrow.clone());
-
 
 		//render column headings
 		self._colRender();
-
 	},
 
 	//layout coluns on first render
@@ -1787,7 +1532,7 @@
 				//resize columns to fit in window
 
 				//remove right edge border on table if fitting to width to prevent double border
-				$(".tabulator-row .tabulator-cell:last-of-type, .tabulator-col:last",element).css("border-right","none");
+				$(".tabulator-row .tabulator-cell:last-child, .tabulator-col:last",element).css("border-right","none");
 
 				if(self.options.fitColumns){
 					$(".tabulator-row", self.table).css({
@@ -1888,46 +1633,17 @@
 		//fixes IE rendering bug on table redraw
 		$(".tabulator-tableHolder", self.element).css({height:$(".tabulator-table", self.element).height()});
 
-		$(".tabulator-row", self.table).css({"background-color":"transparent"})
 
 		//hover over rows
 		if(self.options.selectable){
-			$(".tabulator-row", self.table)
-			.on("mouseover", function(){$(this).css({cursor:"pointer", "background-color":self.options.rowHoverBackground})})
-			.on("mouseout", function(){
-
-				$(this).css({"background-color":"transparent"});
-
-				if(self.options.rowFormatter){
-					self.options.rowFormatter($(this), $(this).data("data"));
-				}
-
-			})
+			$(".tabulator-row").addClass("selectable");
+		}else{
+			$(".tabulator-row").removeClass("selectable");
 		}
-
-		//color odd rows
-		$(".tabulator-row:nth-of-type(even)", self.table).css({
-			"background-color": self.options.rowAltBackgroundColor //shade even numbered rows
-		})
-		.on("mouseout", function(){
-
-			$(this).css({"background-color": self.options.rowAltBackgroundColor})
-
-			if(self.options.rowFormatter){
-				self.options.rowFormatter($(this), $(this).data("data"));
-			}
-
-		}); //make sure odd rows revert back to color after hover
-
-		//add column borders to rows
-		$(".tabulator-cell, .tabulator-row-handle", self.table).css({
-			"border":"none",
-			"border-right":"1px solid " + self.options.rowBorderColor,
-		});
 
 		if(!self.options.height){
 
-			var height  = self.table.outerHeight() + self.options.headerHeight + 3;
+			var height  = self.table.outerHeight() + self.header.innerHeight();
 
 			if(self.footer){
 				height += self.footer.outerHeight() + 1;
@@ -2021,24 +1737,14 @@
 
 			//reset all column sorts
 			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc");
-			$(".tabulator-col .tabulator-arrow", self.header).css({
-				"border-top": "none",
-				"border-bottom": "6px solid " + options.sortArrows.inactive,
-			})
+			$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc")
 
 			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
 
-
 			if (dir == "asc"){
-				$(".tabulator-arrow", element).css({
-					"border-top": "none",
-					"border-bottom": "6px solid " + options.sortArrows.active,
-				});
+				$(".tabulator-arrow", element).removeClass("desc").addClass("asc");
 			}else{
-				$(".tabulator-arrow", element).css({
-					"border-top": "6px solid " + options.sortArrows.active,
-					"border-bottom": "none",
-				});
+				$(".tabulator-arrow", element).removeClass("asc").addClass("desc");
 			}
 
 			self._sorter(item.field, item.dir, sortList, i);
@@ -2185,7 +1891,7 @@
 	//custom data formatters
 	formatters:{
 		plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
-			return value;
+			return  value;
 		},
 		money:function(value, data, cell, row, options, formatterParams){
 			var number =  parseFloat(value).toFixed(2);
@@ -2212,7 +1918,8 @@
 			return "<a href='" + value + "'>" + value + "</a>";
 		},
 		tick:function(value, data, cell, row, options, formatterParams){
-			var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+			console.log("font", cell.closest(".tabulator").css("font-size"))
+			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 			if(value === true || value === 'true' || value === 'True' || value === 1){
 				return tick;
@@ -2221,8 +1928,8 @@
 			}
 		},
 		tickCross:function(value, data, cell, row, options, formatterParams){
-			var tick = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
-			var cross = '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+			var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
 			if(value === true || value === 'true' || value === 'True' || value === 1){
 				return tick;
@@ -2236,8 +1943,8 @@
 
 			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
-			var starActive = $('<svg width="' + options.textSize + '" height="' + options.textSize + '" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-			var starInactive = $('<svg width="' + options.textSize + '" height="' + options.textSize + '" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+			var starActive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+			var starInactive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 
 			for(var i=1;i<= maxStars;i++){
 
@@ -2281,10 +1988,10 @@
 			return "";
 		},
 		buttonTick:function(value, data, cell, row, options, formatterParams){
-			return '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+			return '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 		},
 		buttonCross:function(value, data, cell, row, options, formatterParams){
-			return '<svg enable-background="new 0 0 24 24" height="' + options.textSize + '" width="' + options.textSize + '"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+			return '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 		},
 
 	},
