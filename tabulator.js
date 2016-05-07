@@ -880,6 +880,8 @@
 			}, options.progressiveRenderPeriod)
 		}
 
+		self.firstRender = false;
+
 	},
 
 	//build group DOM
@@ -1512,9 +1514,8 @@
 		.append(arrow.clone());
 
 		//render column headings
-		if(!self.firstRender){
-			self._colRender();
-		}
+		self._colRender();
+
 	},
 
 	//layout coluns on first render
@@ -1524,8 +1525,6 @@
 		var table = self.table;
 		var header = self.header;
 		var element = self.element;
-
-		self.firstRender = false;
 
 		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
 			//free sized table
