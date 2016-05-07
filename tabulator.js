@@ -1423,6 +1423,8 @@
 					self.mouseDragWidth = colElement.outerWidth();
 					self.mouseDragElement = colElement;
 				}
+
+				$("body").on("mouseup", endColMove);
 			})
 			self.element.on("mousemove", function(e){
 				if(self.mouseDrag){
@@ -1430,11 +1432,15 @@
 					self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
 				}
 			})
-			self.element.on("mouseup", function(e){
+
+
+			var endColMove = function(e){
 
 				if(self.mouseDrag){
 					e.stopPropagation();
 					e.stopImmediatePropagation();
+
+					$("body").off("mouseup", endColMove);
 
 					self.mouseDragOut = true;
 
@@ -1456,7 +1462,7 @@
 					self.mouseDragWidth = false;
 					self.mouseDragElement = false;
 				}
-			});
+			}
 
 		}
 
