@@ -59,6 +59,12 @@
 		.tabulator-col{
 			display:inline-block;
 
+			&:first-child{
+				.tabulator-handle.prev{
+					display: none;
+				}
+			}
+
 			//column sorter arrow
 			.tabulator-arrow{
 				display: inline-block;

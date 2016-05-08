@@ -21,6 +21,9 @@
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
 }
+.tabulator .tabulator-header .tabulator-col:first-child .tabulator-handle.prev {
+  display: none;
+}
 .tabulator .tabulator-header .tabulator-col .tabulator-arrow {
   display: inline-block;
   position: absolute;
