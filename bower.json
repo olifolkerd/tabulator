@@ -18,8 +18,8 @@
     "list",
     "scrollable",
     "ajax",
-    "json"
-    "widget",
+    "json",
+    "widget"
   ],
   "authors": [
     "Oli Folkerd"
