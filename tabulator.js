@@ -88,8 +88,8 @@
 		ajaxParams:{}, //url for ajax loading
 
 		showLoader:true, //show loader while data loading
-		loader:"<div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'>Loading Data</div>", //loader element
-		loaderError:"<div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'>Loading Error</div>", //loader element
+		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
+		loaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
 
 		rowClick:function(){}, //do action on row click
 		rowAdded:function(){}, //do action on row add
@@ -102,7 +102,7 @@
 	},
 
 	//loader blockout div
-	loaderDiv: $("<div class='tablulator-loader' style='position:absolute; top:0; left:0; z-index:100; height:100%; width:100%; background:rgba(0,0,0,.4); text-align:center;'><div class='tabulator-loader-msg'></div></div>"),
+	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"),
 
 	//show loader blockout div
 	_showLoader:function(self, msg){
