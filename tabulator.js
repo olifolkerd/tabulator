@@ -34,6 +34,8 @@
 
 	progressiveRenderTimer:null, //timer for progressiver rendering
 
+	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"), //loader blockout div
+
 	//setup options
 	options: {
 
@@ -101,22 +103,6 @@
 		colMoved:function(){},  //callback for when column has moved
 	},
 
-	//loader blockout div
-	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"),
-
-	//show loader blockout div
-	_showLoader:function(self, msg){
-		if(self.options.showLoader){
-			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
-			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
-			self.element.append(self.loaderDiv);
-		}
-	},
-
-	_hideLoader:function(self){
-		$(".tablulator-loader", self.element).remove();
-	},
-
 	//constructor
 	_create: function() {
 		var self = this;
@@ -175,6 +161,19 @@
 	//set options
 	_setOption: function(option, value) {
 		$.Widget.prototype._setOption.apply( this, arguments );
+	},
+
+	//show loader blockout div
+	_showLoader:function(self, msg){
+		if(self.options.showLoader){
+			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
+			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
+			self.element.append(self.loaderDiv);
+		}
+	},
+
+	_hideLoader:function(self){
+		$(".tablulator-loader", self.element).remove();
 	},
 
 	//handle cell data change
