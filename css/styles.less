@@ -185,6 +185,31 @@ ul.docs-sidenav{
 	    visibility: hidden;
 	}
 
+	.intro{
+		box-sizing: border-box;
+		margin-top: 40px;
+
+		border-top:2px solid @green;
+		border-bottom:2px solid @green;
+		// border-radius: 5px;
+
+		padding:10px;
+
+		background-color: #E9FBE3;
+
+		font-size: 18px;
+		color: #000;
+
+		i{
+			font-size: 65px;
+			color: @green;
+		}
+
+		p:last-child{
+			margin-bottom:0;
+		}
+	}
+
 	article{
 
 		position: relative;
@@ -199,7 +224,11 @@ ul.docs-sidenav{
 
 			font-weight: bold;
 
-			.doc-link{
+			.datestamp{
+				color: @green;
+			}
+
+			.doc-link, .datestamp{
 				margin-left:20px;
 
 				font-size: 20px;

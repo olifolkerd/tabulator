@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create data tables in seconds with Tabulator. A lightweight, fully featured JQuery table generation plugin.">
+    <meta name="author" content="Oli Folkerd">
+
+    <meta property="og:url" content="http://olifolkerd.github.io/tabulator" />
+    <meta property="og:title" content="Tabulator" />
+    <meta property="og:description" content="Create data tables in seconds with Tabulator. A lightweight, fully featured JQuery table generation plugin." />
+    <meta property="og:image" content="http://olifolkerd.github.io/tabulator/images/tabulator_icon.jpg"/>
+    <meta property="og:image:secure_url" content="https://olifolkerd.github.io/tabulator/images/tabulator_icon.jpg" />
+
+    <title>Tabulator</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:800,400,700,400italic,700italic|Bevan' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../css/styles.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="../css/prettyprint.css" rel="stylesheet">
+
+    <!-- Tabulator CSS -->
+    <link href="../css/tabulator.css" rel="stylesheet">
+
+    <link rel="icon"
+    type="image/png"
+    href="../images/tabulator_favicon_simple.png">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+    </head>
+
+    <body>
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="../"><img src="../images/tabulator_small.png" alt="Tabulator"></a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="../">Home</a>
+                        </li>
+                        <li>
+                            <a href="../docs/">Documentation</a>
+                        </li>
+                        <li>
+                            <a href="../quickstart/">Quick Start</a>
+                        </li>
+                        <li>
+                            <a href="../examples/">Examples</a>
+                        </li>
+                        <li>
+                            <a href="../news/" class="active">News</a>
+                        </li>
+                        <li>
+                            <a id="github-link" href="https://github.com/olifolkerd/tabulator">Github</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container -->
+        </nav>
+
+
+        <!-- Page Content -->
+
+        <div class="container docs">
+
+            <div class="row intro">
+
+                <div class="col-md-1 hidden-xs hidden-sm" role="main">
+                    <i class="fa fa-newspaper-o"></i>
+                </div>
+
+                <div class="col-md-11 col-xs-12 " role="main">
+
+                    <p>Tabulator is getting a little better every day. So what’s new in the latest version you ask?</p>
+                    <p>Have a look below to check out the latest features that Tabulator has to offer!</p>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-lg-12" role="main">
+
+                    <article>
+                        <h1>Version 2.1 Released <span class="datestamp">05/05/2016</span></h1>
+
+                        <h2>Styling Moved to tabulator.css</h2>
+
+                        <p>All styling options have been moved from the tabulator constructor to tabulator.css to allow greater flexibility in styling the table.</p>
+
+                        <p><strong>NOTE</strong> tabulator.css must now be loaded before tabulator.js when setting up Tabulator in a file.</p>
+
+                        <p>More information can be found in the <a href="../docs#css">CSS documentation</a></p>
+
+                        <h2>Column Resize Bug Fixed</h2>
+
+                        <p>Columns will now resize smoothly even when the cursor leaves the tabulator element.</p>
+                    </article>
+
+                    <article>
+                        <h1>Version 2.0 Released<span class="datestamp">31/04/2016</span></h1>
+
+                        <h2>Progressive Rendering</h2>
+                        <p>Progressive rendering has been added to improve the rendering of large data sets without blocking the UI.</p>
+                        <p>More information can be found in the <a href="../docs#progressive-render">Progressive Rendering Documentation</a></p>
+
+                        <h2>Pagination</h2>
+                        <p>Pagination has been added to display only a section of data at a time, allowing for smaller tables without scroll bars</p>
+                        <p>More Information can be found in the <a href="../docs#pagination">Pagination Documentation</a></p>
+
+                        <h2>Optimized Filtering, Sorting &amp; Rendering</h2>
+                        <p>The Filtering, Sorting &amp; Rendering systems have been significantly upgraded to offer improved performance when loading and rendering data.</p>
+                    </article>
+
+                    <article>
+                        <h1>Website Launched<span class="datestamp">31/04/2016</span></h1>
+                        <p>We have launched our new look website to help the Tabulator community find the resources  it needs to keep on building those tables.</p>
+
+                        <h2>Documentation</h2>
+                        <p>The Documentation section contains all the information on the latest version of tabulator.</p>
+                        <p><a href="../docs/">Check out the documentation section</a></p>
+
+                        <h2>Quick Start</h2>
+                        <p>The Quick Start guide provides a simple how-to guide for getting yourself  setup with Tabulator in a matter of minutes.</p>
+                        <p><a href="../quickstart/">Check out the quick start guide</a></p>
+
+                        <h2>Examples</h2>
+                        <p>The Examples section demonstrates a wide range of different functions and uses for the Tabulator library.</p>
+                        <p><a href="../examples/">Check out the documentation section</a></p>
+
+                        <h2>Github</h2>
+                        <p>A link back to the GitHub repository where the source code for this project is managed.</p>
+                        <p><a href="https://github.com/olifolkerd/tabulator">Check out the GitHub repository</a></p>
+                    </article>
+
+                    <article>
+                        <h1>Version 1.9 Released<span class="datestamp">06/02/2016</span></h1>
+
+                        <h2>Tooltips</h2>
+                        <p>On hover tooltips can now be set on a global or per column basis using the <span class='param'>tooltip</span> parameter.</p>
+                        <p>More information can be found in the <a href="../docs#tooltips">Tooltips Documentation</a></p>
+
+                        <h2>New Formatters</h2>
+                        <p>A couple of new formatters have been added for creating button columns:</p>
+                        <ul>
+                            <li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
+                            <li><strong>buttonCross</strong> - displays a cross icon on eac row (for use as a button)</li>
+                        </ul>
+                        <p>An additional formatter has been added for colored cells:</p>
+                        <ul>
+                            <li><strong>color</strong> -  sets the background colour of the cell to the value. Can be any valid CSS color eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
+                        </ul>
+                        <p>More Information can be found in the <a href="../docs#formating">Formatting Documentation</a></p>
+
+                        <h2>Custom Filter Functions</h2>
+                        <p>If you want to perform more complicated filter operations you can now pass a callback function to the <span class='param'>setFilter</span> method.</p>
+                        <p>More information can be found in the <a href="../docs#filtering">Filtering Documentation</a></p>
+
+                        <h2>Added dataEdited Event</h2>
+                        <p>The <span class='param'>dataEdited</span> event is now triggered when an action edits data in the table, (ed. editing a cell, adding/deleting a row)</p>
+
+                        <h2>Additional improvements</h2>
+                        <ul>
+                            <li>rendering speeds have been improved for large data sets (> 1000 rows)</li>
+                            <li>row deletion bug fixed</li>
+                            <li>examples.html has been improved</li>
+                        </ul>
+                    </article>
+
+                    <article>
+                        <h1>Version 1.8 Released<span class="datestamp">24/01/2016</span></h1>
+
+                        <h2>Column Layout Updates</h2>
+                        <p>A number of column manipulation functions have been added in this release</p>
+                        <p>More information can be found in the <a href="../docs#movable">Columns Documentation</a></p>
+
+                        <h3>Persistent Column Layout</h3>
+                        <p>Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page, the table is laid out just as they left it. To enable this feature set the <span class='param'>columnLayoutCookie</span> options parameter to <span class='param'>true</span>.</p>
+
+                        <h3>Set New Column Definitions</h3>
+                        <p>Column definitions can be changed after Tabulator creation using the <span class='param'>setColumns</span> function.</p>
+
+                        <h3>Get Column Definitions</h3>
+                        <p>To get the current column definition array (including any changes made through user actions, such as resizing or re-ordering columns), call the <span class='param'>getColumns</span> function.</p>
+
+                        <h2>Cell Editor Updates</h2>
+                        <p>A number of updates have been made to the cell editing system.</p>
+                        <p>More information can be found in the <a href="../docs#manipulating-data">Manipulating Data Documentation</a></p>
+
+                        <h3>New Editing Class</h3>
+                        <p>When cells are being edited, they now gain the <span class='param'>tabulator-editing</span> class.</p>
+
+                        <h3>Abort Edit</h3>
+                        <p>It is now possible to abort the creation of an editor by returning <span class='param'>false</span> from the editor function instead of the editor DOM element.</p>
+
+                    </article>
+
+                    <article>
+                        <h1>Version 1.7 Released<span class="datestamp">19/01/2016</span></h1>
+                        <h2>Column Visibility Toggle Functions</h2>
+                        <p>Several new functions have been added to programatically change column visibility.</p>
+                        <ul>
+                            <li><span class='param'>showCol</span> - function to show hidden columns.</li>
+                            <li><span class='param'>hideCol</span> - to hide visible columns.</li>
+                            <li><span class='param'>toggleCol</span> - to toggle the visibility of columns.</li>
+                        </ul>
+                        <p>More information can be found in the <a href="../docs#column-visibility">Column Visibility Documentation</a></p>
+
+                        <h2>Number Editor</h2>
+                        <p>A new editor has been added, <span class='param'>number</span> uses a number formatted input element for editing numbers, Has increment and decrement buttons.</p>
+
+                    </article>
+
+                    <article>
+                        <h1>Version 1.6 Released<span class="datestamp">16/01/2016</span></h1>
+
+                        <h2>Movable Rows</h2>
+                        <p>Using the <span class='param'>movableRows</span> parameter you can now allow users to reorder the rows of the table.</p>
+
+                        <h2>Movable Columns</h2>
+                        <p>Using the <span class='param'>movableCols</span> parameter you can now allow users to reorder the columns of the table.</p>
+
+                        <p>More information can be found in the <a href="../docs#movable">Movable Rows &amp; Columns Documentation</a></p>
+
+                    </article>
+
+                    <!-- <article>
+                        <h1><span class="datestamp"></span></h1>
+                        <h2></h2>
+                        <p></p>
+                    </article> -->
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Footer -->
+        <div class="container">
+
+            <footer>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <p>Copyright &copy; Oli Folkerd 2016</p>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+        <!-- /.container -->
+
+        <!-- jQuery -->
+        <script src="../js/jquery.js"></script>
+        <script src="../js/jqueryui.js"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="../js/bootstrap.min.js"></script>
+
+        <!-- Tabulator -->
+        <script src="../js/tabulator.js"></script>
+
+        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
+
+        <script type="text/javascript">
+        //google analytics tracking code
+        // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        // })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        // ga('create', 'UA-77206751-1', 'auto');
+        // ga('send', 'pageview');
+
+    </script>
+
+</body>
+
+</html>

@@ -124,6 +124,23 @@ ul.docs-sidenav li a:hover {
   padding-top: 20px;
   visibility: hidden;
 }
+.docs .intro {
+  box-sizing: border-box;
+  margin-top: 40px;
+  border-top: 2px solid #59B038;
+  border-bottom: 2px solid #59B038;
+  padding: 10px;
+  background-color: #E9FBE3;
+  font-size: 18px;
+  color: #000;
+}
+.docs .intro i {
+  font-size: 65px;
+  color: #59B038;
+}
+.docs .intro p:last-child {
+  margin-bottom: 0;
+}
 .docs article {
   position: relative;
   margin-top: 50px;
@@ -133,13 +150,18 @@ ul.docs-sidenav li a:hover {
   padding-bottom: 10px;
   font-weight: bold;
 }
-.docs article h1 .doc-link {
+.docs article h1 .datestamp {
+  color: #59B038;
+}
+.docs article h1 .doc-link,
+.docs article h1 .datestamp {
   margin-left: 20px;
   font-size: 20px;
   vertical-align: middle;
   white-space: nowrap;
 }
-.docs article h1 .doc-link i {
+.docs article h1 .doc-link i,
+.docs article h1 .datestamp i {
   font-size: .9em;
 }
 .docs article h2 {
