@@ -78,8 +78,6 @@
 			return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
 		},
 
-		editBoxColor:"#1D68CD", //color for edit boxes
-
 		rowFormatter:false, //row formatter callback
 
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
@@ -161,6 +159,8 @@
 	//set options
 	_setOption: function(option, value) {
 		$.Widget.prototype._setOption.apply( this, arguments );
+
+
 	},
 
 	//show loader blockout div
