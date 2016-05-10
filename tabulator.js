@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
-(function(){
+ (function(){
 
-	'use strict';
+ 	'use strict';
 
-	$.widget("ui.tabulator", {
+ 	$.widget("ui.tabulator", {
 
 	data:[],//array to hold data for table
 	activeData:[],//array to hold data that is active in the DOM
@@ -74,6 +74,7 @@
 		sortDir:"desc", //default sort direction
 
 		groupBy:false, //enable table grouping and set field to group by
+
 		groupHeader:function(value, count, data){ //header layout function
 			return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
 		},
@@ -158,9 +159,47 @@
 
 	//set options
 	_setOption: function(option, value) {
+		var self = this;
+
+		//block update if option cannot be updated this way
+		if(["columns"].indexOf(option) > -1){
+			return false
+		}
+
+		//set option to value
 		$.Widget.prototype._setOption.apply( this, arguments );
 
+		//trigger appropriate table response
 
+		if(["colMinWidth", "colResizable", "fitColumns", "movableCols", "movableRows", "movableRowHandle", "sortable", "groupBy", "groupHeader", "rowFormatter", "selectable"].indexOf(option) > -1){
+
+			//triger rerender
+			self._renderTable();
+
+		}else if(["height", "pagination", "paginationSize", "tooltips"].indexOf(option) > -1){
+
+			//triger render/reset page
+			if(self.options.pagination){
+				self.setPage(1);
+			}else{
+				self._renderTable();
+			}
+
+		}else if(["dateFormat", "sortBy", "sortDir"].indexOf(option) > -1){
+
+			//trigger sort
+			if(self.sortCurCol){
+				self.sort(self.sortCurCol, self.sortCurDir);
+			}
+
+		}else if(["index"].indexOf(option) > -1){
+
+			//trigger reparse data
+			self._parseData(self.data);
+
+		}else if(["paginationElement"].indexOf(option) > -1){
+			//trigger complete redraw
+		}
 	},
 
 	//show loader blockout div
@@ -924,23 +963,23 @@
 		}else{
 			switch(page){
 				case "first":
-					self.paginationCurrentPage = 1;
+				self.paginationCurrentPage = 1;
 				break;
 
 				case "prev":
-					if(self.paginationCurrentPage > 1){
-						self.paginationCurrentPage--;
-					}
+				if(self.paginationCurrentPage > 1){
+					self.paginationCurrentPage--;
+				}
 				break;
 
 				case "next":
-					if(self.paginationCurrentPage < self.paginationMaxPage){
-						self.paginationCurrentPage++;
-					}
+				if(self.paginationCurrentPage < self.paginationMaxPage){
+					self.paginationCurrentPage++;
+				}
 				break;
 
 				case "last":
-					self.paginationCurrentPage = self.paginationMaxPage;
+				self.paginationCurrentPage = self.paginationMaxPage;
 				break;
 			}
 		}
@@ -1223,7 +1262,7 @@
 			row.append(cell);
 		});
 
-	return row;
+		return row;
 	},
 
 	//get number of elements in dataset
@@ -2312,6 +2351,6 @@
 		element.removeClass("tabulator");
 	},
 
-	});
+});
 
 })();
