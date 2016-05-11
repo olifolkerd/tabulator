@@ -141,9 +141,17 @@ ul.docs-sidenav li a:hover {
 .docs .intro p:last-child {
   margin-bottom: 0;
 }
+.docs .intro a {
+  color: #59B038;
+  font-weight: bold;
+}
 .docs article {
   position: relative;
   margin-top: 50px;
+}
+.docs article .green {
+  color: green;
+  font-weight: bold;
 }
 .docs article h1 {
   border-bottom: 1px solid #59B038;
