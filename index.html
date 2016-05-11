@@ -348,6 +348,37 @@
 		{id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986"},
 		];
 
+		var genderEditor = function(cell, value){
+		    //cell - JQuery object for current cell
+		    //value - the current value for current cell
+
+		    //create and style editor
+		    var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
+		    editor.css({
+		        "border":"1px",
+		        "background":"transparent",
+		        "padding":"3px",
+		        "width":"100%",
+		        "box-sizing":"border-box",
+		    })
+
+		    //Set value of editor to the value of the cell
+		    .val(value);
+
+		    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+		    setTimeout(function(){
+		        editor.focus();
+		    },100)
+
+		    //when the value has been set, update the cell
+		    editor.on("change blur", function(e){
+		        cell.trigger("editval", editor.val());
+		    });
+
+		    //return the editor element
+		    return editor;
+		}
+
 		$("#tabulator-example").tabulator({
 			height:"320px",
 			fitColumns:true,
@@ -356,13 +387,13 @@
 			sortBy:"name",
 			sortDir:"asc",
 			columns:[
-			{title:"Name", field:"name", width:200, sorter:"string"},
-			{title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress"},
-			{title:"Gender", field:"gender", width:100, sorter:"string"},
-			{title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100},
-			{title:"Favourite Color", field:"col", width:160, sorter:"string", sortable:false},
+			{title:"Name", field:"name", width:200, sorter:"string", editable:true},
+			{title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
+			{title:"Gender", field:"gender", width:100, sorter:"string", editable:true, editor:genderEditor},
+			{title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
+			{title:"Favourite Color", field:"col", width:160, sorter:"string", sortable:false, editable:true},
 			{title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-			{title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean"},
+			{title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true},
 			],
 		});
 
