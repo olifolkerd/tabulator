@@ -169,12 +169,12 @@
 
 				//movable row handle
 				.tabulator-row-handle{
-
 					display:inline-block;
 					box-sizing:border-box;
 					width:30px;
 					max-width:30px;
 					padding:4px;
+					border-right:1px solid @rowBorderColor;
 					text-align: center;
 					vertical-align:middle;
 					white-space:nowrap;
@@ -184,6 +184,14 @@
 					&:hover{
 						cursor:move;
 						background-color:rgba(0,0,0,.1);
+					}
+
+					//Hamburger element
+					div{
+						width:80%;
+						height:3px;
+						margin:2px 10% 0 10%;
+						background:#666;
 					}
 				}
 
