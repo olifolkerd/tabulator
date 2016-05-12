@@ -1317,7 +1317,7 @@
 
 		//add column for row handle if movable rows enabled
 		if(options.movableRows){
-			var handle = $('<div class="tabulator-col-row-handle" style="display:inline-block;">&nbsp</div>');
+			var handle = $('<div class="tabulator-col-row-handle">&nbsp</div>');
 			self.header.append(handle);
 		}
 

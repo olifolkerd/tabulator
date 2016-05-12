@@ -68,6 +68,7 @@
 .tabulator .tabulator-header .tabulator-col-row-handle {
   width: 30px;
   max-width: 30px;
+  display: inline-block;
 }
 .tabulator .tabulator-header .tabulator-col,
 .tabulator .tabulator-header .tabulator-col-row-handle {
