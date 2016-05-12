@@ -179,6 +179,10 @@
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.1);
 }
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header span {
+  margin-left: 10px;
+  color: #d00;
+}
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-body {
   visibility: hidden;
   height: 0;

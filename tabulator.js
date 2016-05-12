@@ -76,7 +76,7 @@
 		groupBy:false, //enable table grouping and set field to group by
 
 		groupHeader:function(value, count, data){ //header layout function
-			return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
+			return value + "<span>(" + count + " item)</span>";
 		},
 
 		rowFormatter:false, //row formatter callback
