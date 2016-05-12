@@ -1272,7 +1272,7 @@
 
 
 	//redraw list without updating data
-	redraw:function(){
+	redraw:function(fullRedraw){
 		var self = this;
 
 		//redraw columns
@@ -1283,6 +1283,10 @@
 		//reposition loader if present
 		if(self.element.innerHeight() > 0){
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
+		}
+
+		if(fullRedraw){
+			self._renderTable();
 		}
 	},
 
