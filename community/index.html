@@ -123,7 +123,7 @@
                             <li>Checkout the <a href="../docs/">Quick Start Guide</a> for a demo on getting up and running quickly.</li>
                             <li>Have a look at the working <a href="../quickstart/">Examples</a> to see if one of those fits the bill.</li>
                             <li>Search the <a href="../examples/">Documentation</a> for a guide to the section that is giving you trouble.</li>
-                            <li>If you are still out of luck, head over to our <a href="https://github.com/olifolkerd/tabulator/issues">Issues Page on GitHub</a> and have a search, see if someone else has alreadty solved your problem. If not, ask your own question, one of the community will get back to you within hours with a helpful response.</li>
+                            <li>If you are still out of luck, head over to our <a id="github-help" href="https://github.com/olifolkerd/tabulator/issues">Issues Page on GitHub</a> and have a search, see if someone else has alreadty solved your problem. If not, ask your own question, one of the community will get back to you within hours with a helpful response.</li>
                         </ul>
                     </article>
 
@@ -132,7 +132,7 @@
                         <h1>Found A Bug?</h1>
                         <p>Is Tabulator behaving strangely, have you found a bug? Don't panic, we can fix that in a jiffy!</p>
                         <ul>
-                            <li>Head over to our <a href="https://github.com/olifolkerd/tabulator/issues">Issues Page on GitHub</a> and have a search to see if anyone else has had the same issue. If so include any info you have from your bug to help us solve the problem faster.</li>
+                            <li>Head over to our <a id="github-bug" href="https://github.com/olifolkerd/tabulator/issues">Issues Page on GitHub</a> and have a search to see if anyone else has had the same issue. If so include any info you have from your bug to help us solve the problem faster.</li>
                             <li>If you can't find the issue already? Create your own. Include as much detail as possible to help us find that pesky bug. A copy of the section of offending code would be great, info on what you are trying to achieve, what browser you are using, all that good stuff.</li>
                         </ul>
                     </article>
@@ -142,7 +142,7 @@
                         <h1>Request a New Feature</h1>
                         <p>Have you just had a spark of inspiration? or found that tabulator is missing that critical feature that would make your life much easier? why not let us know and we will see what we can do to help out.</p>
                         <ul>
-                            <li>Head over to our <a href="https://github.com/olifolkerd/tabulator/issues">Issues Page on GitHub</a> and have a search, see if someone has already requested the same feature, if so, add your thoughts to the conversation, help guide how Tabulator develops.</li>
+                            <li>Head over to our <a id="github-feature" href="https://github.com/olifolkerd/tabulator/issues">Issues Page on GitHub</a> and have a search, see if someone has already requested the same feature, if so, add your thoughts to the conversation, help guide how Tabulator develops.</li>
                             <li>If you can't find the feature already create a new issue and let us know what features we can add to Tabulator to bring a touch of sunshine to your day.</li>
                         </ul>
                     </article>
@@ -151,7 +151,7 @@
                     <article>
                         <h1>Want to Say Thanks</h1>
                         <p>Enjoying Tabulator? Wanna say thanks to the chap who built it? Aren’t you a lovely person <i class="fa fa-smile-o green"></i></p>
-                        <p>If you want to show your support for Tabulator, please head over to our <a href="https://github.com/olifolkerd/tabulator">GitHub Page</a> and click that <i class="fa fa-star"></i> <strong>Star</strong> button in top right hand corner to show other users what you think. Better yet, why not introduce your developer friends to Tabulator, see if you can make their table building tasks that little bit easier too!</p>
+                        <p>If you want to show your support for Tabulator, please head over to our <a id="github-thanks" href="https://github.com/olifolkerd/tabulator">GitHub Page</a> and click that <i class="fa fa-star"></i> <strong>Star</strong> button in top right hand corner to show other users what you think. Better yet, why not introduce your developer friends to Tabulator, see if you can make their table building tasks that little bit easier too!</p>
                     </article>
                 </div>
             </div>
@@ -194,6 +194,52 @@
 
             ga('create', 'UA-77206751-1', 'auto');
             ga('send', 'pageview');
+
+            $("#github-link").click(function(){
+                ga('send', 'event', {
+                    eventCategory: 'Github Link',
+                    eventAction: 'click',
+                    eventLabel: 'Github Link',
+                    transport: 'beacon'
+                })
+            });
+
+            $("#github-help").click(function(){
+                ga('send', 'event', {
+                    eventCategory: 'Github Link',
+                    eventAction: 'click',
+                    eventLabel: 'Github Help',
+                    transport: 'beacon'
+                })
+            });
+
+            $("#github-bug").click(function(){
+                ga('send', 'event', {
+                    eventCategory: 'Github Link',
+                    eventAction: 'click',
+                    eventLabel: 'Github Bug',
+                    transport: 'beacon'
+                })
+            });
+
+            $("#github-feature").click(function(){
+                ga('send', 'event', {
+                    eventCategory: 'Github Link',
+                    eventAction: 'click',
+                    eventLabel: 'Github Feature',
+                    transport: 'beacon'
+                })
+            });
+
+            $("#github-thanks").click(function(){
+                ga('send', 'event', {
+                    eventCategory: 'Github Link',
+                    eventAction: 'click',
+                    eventLabel: 'Github Thanks',
+                    transport: 'beacon'
+                })
+            });
+
         </script>
 
     </body>

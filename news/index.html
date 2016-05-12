@@ -306,6 +306,15 @@
 
         ga('create', 'UA-77206751-1', 'auto');
         ga('send', 'pageview');
+
+        $("#github-link").click(function(){
+            ga('send', 'event', {
+                eventCategory: 'Github Link',
+                eventAction: 'click',
+                eventLabel: 'Github Link',
+                transport: 'beacon'
+            })
+        });
     </script>
 
 </body>
