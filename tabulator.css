@@ -106,6 +106,7 @@
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover {
   background-color: #bbb;
+  cursor: pointer;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
   display: inline-block;
