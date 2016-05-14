@@ -100,6 +100,7 @@
 		dataLoaded:function(){},  //callback for when data has been Loaded
 		rowMoved:function(){},  //callback for when row has moved
 		colMoved:function(){},  //callback for when column has moved
+		pageLoaded:function(){}, //calback for when a page is loaded
 	},
 
 	//constructor
@@ -910,6 +911,10 @@
 			self._trigger("filterComplete");
 		}
 
+		if(self.options.pagination){
+			self.options.pageLoaded(self.paginationCurrentPage);
+		}
+
 		//trigger progressive render
 		if(progressiveRender && renderData.length){
 			self.progressiveRenderTimer = setTimeout(function(){
@@ -950,6 +955,13 @@
 		$(".tabulator-group-header", group)
 		.html(arrow)
 		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+	},
+
+	//get current page number
+	getPage:function(){
+		var self = this;
+
+		return self.options.pagination ? self.paginationCurrentPage : false;
 	},
 
 
