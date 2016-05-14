@@ -14,46 +14,46 @@
 <body>
 
 	<style type="text/css">
-	body{
-		padding:20px 40px;
-		font-family: 'Montserrat', sans-serif !important;
-	}
+		body{
+			padding:20px 40px;
+			font-family: 'Montserrat', sans-serif !important;
+		}
 
-	header{
-		font-weight: bold;
-		font-size: 30px;
-	}
+		header{
+			font-weight: bold;
+			font-size: 30px;
+		}
 
-	header span{
-		vertical-align: middle;
-		font-size: .5em;
-		color: #999;
-	}
+		header span{
+			vertical-align: middle;
+			font-size: .5em;
+			color: #999;
+		}
 
-	header span a{
-		font-size: .9em;
-	}
+		header span a{
+			font-size: .9em;
+		}
 
-	section:first-of-type header{
-		font-size: 50px;
-	}
+		section:first-of-type header{
+			font-size: 50px;
+		}
 
-	section{
-		margin-bottom:30px;
-	}
+		section{
+			margin-bottom:30px;
+		}
 
-	ul>li{
-		margin-bottom:2px;
-	}
+		ul>li{
+			margin-bottom:2px;
+		}
 
-	button, select{
-		margin-right:20px;
-	}
+		button, select{
+			margin-right:20px;
+		}
 
-	input{
-		font-family: 'Montserrat', sans-serif !important;
+		input{
+			font-family: 'Montserrat', sans-serif !important;
 
-	}
+		}
 	</style>
 
 	<script type="text/javascript">
@@ -72,30 +72,30 @@
 	{id:10, name:"James Newman", age:"73", gender:"male", height:5, col:"red", dob:"22/03/1998", lucky_no:9},
 	];
 
-	</script>
-	<section>
-		<header>Tabulator</header>
+</script>
+<section>
+	<header>Tabulator</header>
 
-		<p>An easy to use table generation JQuery UI Plugin</p>
+	<p>An easy to use table generation JQuery UI Plugin</p>
 
-		<p>Tabulator allows you to create  a table with in seconds from any JSON formatted data.</p>
+	<p>Tabulator allows you to create  a table with in seconds from any JSON formatted data.</p>
 
-		<p>It relies on no external css or images, simply include the library in your JQuery UI project and you're away!</p>
+	<p>It relies on no external css or images, simply include the library in your JQuery UI project and you're away!</p>
 
-		<p>Tabulator is packed with useful features including:
-			<ul>
-				<li>JSON, array or AJAX data loading</li>
-				<li>Column sorting</li>
-				<li>Custom data formatting</li>
-				<li>Resizable columns</li>
-				<li>Auto scaling  to fit data/element</li>
-				<li>Many theming options</li>
-				<li>Custom click and context Events</li>
-				<li>Callbacks at every stage of data processing and rendering</li>
-			</ul>
-		</p>
-		<div id="example-table-demo"></div>
-		<script type="text/javascript">
+	<p>Tabulator is packed with useful features including:
+		<ul>
+			<li>JSON, array or AJAX data loading</li>
+			<li>Column sorting</li>
+			<li>Custom data formatting</li>
+			<li>Resizable columns</li>
+			<li>Auto scaling  to fit data/element</li>
+			<li>Many theming options</li>
+			<li>Custom click and context Events</li>
+			<li>Callbacks at every stage of data processing and rendering</li>
+		</ul>
+	</p>
+	<div id="example-table-demo"></div>
+	<script type="text/javascript">
 
 		var printIcon = function(value, data, cell, row, options){ //plain text value
 			return "<i class='fa fa-print' style='vertical-align:middle; padding:2px 0;'></i> "
@@ -123,13 +123,13 @@
 			},
 		});
 
-$("#example-table-demo").tabulator("setData", tabledata);
+		$("#example-table-demo").tabulator("setData", tabledata);
 
-$(window).resize(function(){
-	$("#example-table-demo").tabulator("redraw");
-});
+		$(window).resize(function(){
+			$("#example-table-demo").tabulator("redraw");
+		});
 
-</script>
+	</script>
 </section>
 
 <section>
@@ -143,24 +143,24 @@ $(window).resize(function(){
 	<div id="example-table-simple"></div>
 	<script type="text/javascript">
 
-	$("#example-table-simple").tabulator({
-		height:"320px",
-		columns:[
-		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", width:60, sorter:"number"},
-		{title:"Gender", field:"gender"},
-		{title:"Height", field:"height", width:80},
-		{title:"Favourite Color", field:"col"},
-		{title:"Date Of Birth", field:"dob"},
-		{title:"Likes Cheese", field:"cheese"},
-		],
-	});
+		$("#example-table-simple").tabulator({
+			height:"320px",
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", width:60, sorter:"number"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", width:80},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob"},
+			{title:"Likes Cheese", field:"cheese"},
+			],
+		});
 
-	$("#example-table-simple").tabulator("setData", tabledata);
+		$("#example-table-simple").tabulator("setData", tabledata);
 
-	$(window).resize(function(){
-		$("#example-table-simple").tabulator("redraw");
-	});
+		$(window).resize(function(){
+			$("#example-table-simple").tabulator("redraw");
+		});
 
 	</script>
 </section>
@@ -173,24 +173,24 @@ $(window).resize(function(){
 	<div id="example-table-fittodata"></div>
 	<script type="text/javascript">
 
-	$("#example-table-fittodata").tabulator({
-		height:"320px",
-		columns:[
-		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", width:60, align:"right", sorter:"number"},
-		{title:"Gender", field:"gender"},
-		{title:"Height", field:"height", align:"center", width:80},
-		{title:"Favourite Color", field:"col"},
-		{title:"Date Of Birth", field:"dob", align:"center"},
-		{title:"Likes Cheese", field:"cheese", align:"center"},
-		],
-	});
+		$("#example-table-fittodata").tabulator({
+			height:"320px",
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", width:60, align:"right", sorter:"number"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", align:"center", width:80},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center"},
+			],
+		});
 
-	$("#example-table-fittodata").tabulator("setData", tabledata);
+		$("#example-table-fittodata").tabulator("setData", tabledata);
 
-	$(window).resize(function(){
-		$("#example-table-fittodata").tabulator("redraw");
-	});
+		$(window).resize(function(){
+			$("#example-table-fittodata").tabulator("redraw");
+		});
 
 	</script>
 </section>
@@ -206,26 +206,73 @@ $(window).resize(function(){
 	</p>
 	<div id="example-table-fittowidth"></div>
 	<script type="text/javascript">
-	$("#example-table-fittowidth").tabulator({
-		height:"320px",
-		fitColumns:true,
-		columns:[
-		{title:"Name", field:"name", width:200},
-		{title:"Age", field:"age", align:"right", sorter:"number"},
-		{title:"Gender", field:"gender"},
-		{title:"Height", field:"height", align:"center", width:60},
-		{title:"Favourite Color", field:"col"},
-		{title:"Date Of Birth", field:"dob", align:"center"},
-		{title:"Likes Cheese", field:"cheese", align:"center"},
-		],
-	});
+		$("#example-table-fittowidth").tabulator({
+			height:"320px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", width:200},
+			{title:"Age", field:"age", align:"right", sorter:"number"},
+			{title:"Gender", field:"gender"},
+			{title:"Height", field:"height", align:"center", width:60},
+			{title:"Favourite Color", field:"col"},
+			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center"},
+			],
+		});
 
-	$("#example-table-fittowidth").tabulator("setData", tabledata);
+		$("#example-table-fittowidth").tabulator("setData", tabledata);
 
-	$(window).resize(function(){
-		$("#example-table-fittowidth").tabulator("redraw");
-	});
+		$(window).resize(function(){
+			$("#example-table-fittowidth").tabulator("redraw");
+		});
 
+	</script>
+</section>
+
+<section>
+	<header>Parse Data from Table Element</header>
+
+	<p>It is possible to turn a standard HTML Table element into a tabulator, pulling all the data directly from the table into the tabulator when it is created.</p>
+
+	<table id="example-table-table">
+		<thead>
+			<tr>
+				<th width="200">Name</th>
+				<th>Age</th>
+				<th>Gender</th>
+				<th>Height</th>
+				<th>Favourite Color</th>
+				<th>Date of Birth</th>
+				<th>Likes Cheese</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>Oli Bob</td>
+				<td>12</td>
+				<td>male</td>
+				<td>1</td>
+				<td>red</td>
+				<td></td>
+				<td>1</td>
+			</tr>
+			<tr>
+				<td>Mary May</td>
+				<td>1</td>
+				<td>female</td>
+				<td>2</td>
+				<td>blue</td>
+				<td>14/05/1982</td>
+				<td>true</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<script type="text/javascript">
+
+		$("#example-table-table").tabulator({});
+
+		// $("#example-table-table").tabulator("setData", tabledata);
 	</script>
 </section>
 
@@ -299,7 +346,7 @@ $(window).resize(function(){
 		$("#example-table-editable").tabulator("redraw");
 	});
 
-	</script>
+</script>
 </section>
 
 <section>
@@ -352,33 +399,33 @@ $(window).resize(function(){
 
 	<div id="example-table-sorting"></div>
 	<script type="text/javascript">
-	$("#example-table-sorting").tabulator({
-		height:"320px",
-		fitColumns:true,
-		sortBy:"name",
-		sortDir:"asc",
-		columns:[
-		{title:"Name", field:"name", sorter:"string", width:200},
-		{title:"Age", field:"age", sorter:"number", align:"right", sorter:"number"},
-		{title:"Gender", field:"gender", sorter:"string"},
-		{title:"Height", field:"height",  align:"center", width:100},
-		{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
-			return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-		}},
-		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-		{title:"Likes Cheese", field:"cheese", align:"center", sorter:"boolean"},
-		],
-	});
+		$("#example-table-sorting").tabulator({
+			height:"320px",
+			fitColumns:true,
+			sortBy:"name",
+			sortDir:"asc",
+			columns:[
+			{title:"Name", field:"name", sorter:"string", width:200},
+			{title:"Age", field:"age", sorter:"number", align:"right", sorter:"number"},
+			{title:"Gender", field:"gender", sorter:"string"},
+			{title:"Height", field:"height",  align:"center", width:100},
+			{title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
+				return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+			}},
+			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", sorter:"boolean"},
+			],
+		});
 
-	$("#example-table-sorting").tabulator("setData", tabledata);
+		$("#example-table-sorting").tabulator("setData", tabledata);
 
-	$(window).resize(function(){
-		$("#example-table-sorting").tabulator("redraw");
-	});
+		$(window).resize(function(){
+			$("#example-table-sorting").tabulator("redraw");
+		});
 
-	$("#sort-trigger").click(function(){
-		$("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
-	})
+		$("#sort-trigger").click(function(){
+			$("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+		})
 
 
 	</script>
@@ -449,13 +496,13 @@ $(window).resize(function(){
 			],
 		});
 
-$("#example-table-formatter").tabulator("setData", tabledata);
+		$("#example-table-formatter").tabulator("setData", tabledata);
 
-$(window).resize(function(){
-	$("#example-table-formatter").tabulator("redraw");
-});
+		$(window).resize(function(){
+			$("#example-table-formatter").tabulator("redraw");
+		});
 
-</script>
+	</script>
 </section>
 
 <section>
@@ -493,70 +540,70 @@ $(window).resize(function(){
 			$("#example-table-grouping").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
-	<section>
-		<header>Filter Data <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#filtering">http://olifolkerd.github.io/tabulator/docs/#filtering</a></span></header>
-		<p></p>
-		<p>Tabulator allows you to filter the table data by any field in the data set.</p>
+<section>
+	<header>Filter Data <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#filtering">http://olifolkerd.github.io/tabulator/docs/#filtering</a></span></header>
+	<p></p>
+	<p>Tabulator allows you to filter the table data by any field in the data set.</p>
 
-		<p>To set a filter you need to call the <strong>setFilter</strong> method, passing the field you wish to filter, the comparison type and the value to filter for</p>
+	<p>To set a filter you need to call the <strong>setFilter</strong> method, passing the field you wish to filter, the comparison type and the value to filter for</p>
 
-		<p>
-			Tabulator comes with a number of filter comparison types including:
-			<ul>
-				<li><strong>=</strong> - Displays only rows with data that is the same as the filter</li>
-				<li><strong>&lt;</strong> - displays rows with a value less than the filter value</li>
-				<li><strong>&lt;=</strong> - displays rows with a value less than or qual to the filter value</li>
-				<li><strong>&gt;</strong> - displays rows with a value greater than the filter value</li>
-				<li><strong>&gt;=</strong> - displays rows with a value greater than or qual to the filter value</li>
-				<li><strong>!=</strong> - displays rows with a value that is not equal to the filter value</li>
-				<li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
-			</ul>
-		</p>
+	<p>
+		Tabulator comes with a number of filter comparison types including:
+		<ul>
+			<li><strong>=</strong> - Displays only rows with data that is the same as the filter</li>
+			<li><strong>&lt;</strong> - displays rows with a value less than the filter value</li>
+			<li><strong>&lt;=</strong> - displays rows with a value less than or qual to the filter value</li>
+			<li><strong>&gt;</strong> - displays rows with a value greater than the filter value</li>
+			<li><strong>&gt;=</strong> - displays rows with a value greater than or qual to the filter value</li>
+			<li><strong>!=</strong> - displays rows with a value that is not equal to the filter value</li>
+			<li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
+		</ul>
+	</p>
 
-		<p>
-			<fieldset>
-				<legend>Filter Parameters</legend>
-
-
-				<label>Field: </label>
-				<select id="filter-field">
-					<option></option>
-					<option value="name">Name</option>
-					<option value="age">Age</option>
-					<option value="gender">Gender</option>
-					<option value="height">Height</option>
-					<option value="col">Favourite Colour</option>
-					<option value="dob">Date Of Birth</option>
-					<option value="cheese">Likes Cheese</option>
-					<option value="function">Likes Cheese &amp; height &lt; 3</option>
-				</select>
+	<p>
+		<fieldset>
+			<legend>Filter Parameters</legend>
 
 
-				<label>Type:</label>
-				<select id="filter-type">
-					<option value="=">=</option>
-					<option value="<">&lt;</option>
-					<option value="<=">&lt;=</option>
-					<option value=">">&gt;</option>
-					<option value=">=">&gt;=</option>
-					<option value="!=">!=</option>
-					<option value="like">like</option>
-				</select>
+			<label>Field: </label>
+			<select id="filter-field">
+				<option></option>
+				<option value="name">Name</option>
+				<option value="age">Age</option>
+				<option value="gender">Gender</option>
+				<option value="height">Height</option>
+				<option value="col">Favourite Colour</option>
+				<option value="dob">Date Of Birth</option>
+				<option value="cheese">Likes Cheese</option>
+				<option value="function">Likes Cheese &amp; height &lt; 3</option>
+			</select>
 
 
-				<label>Value: </label><input id="filter-value" type="text" placeholder="value to filter">
+			<label>Type:</label>
+			<select id="filter-type">
+				<option value="=">=</option>
+				<option value="<">&lt;</option>
+				<option value="<=">&lt;=</option>
+				<option value=">">&gt;</option>
+				<option value=">=">&gt;=</option>
+				<option value="!=">!=</option>
+				<option value="like">like</option>
+			</select>
 
-				<input id="filter-clear" type="button" value="Clear Filter" style="margin-left:40px;">
 
-			</fieldset>
+			<label>Value: </label><input id="filter-value" type="text" placeholder="value to filter">
 
-		</p>
+			<input id="filter-clear" type="button" value="Clear Filter" style="margin-left:40px;">
 
-		<div id="example-table-filters"></div>
-		<script type="text/javascript">
+		</fieldset>
+
+	</p>
+
+	<div id="example-table-filters"></div>
+	<script type="text/javascript">
 
 		function customFilter(data){
 			return data.cheese && data.height < 3;
@@ -610,11 +657,11 @@ $(window).resize(function(){
 			$("#example-table-filters").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
 
-	<section>
+<section>
 	<header>Pagination<span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#pagination">http://olifolkerd.github.io/tabulator/docs/#pagination</a></span></header>
 
 	<p>Tabulator allows you to paginate your data. simply set the <strong>pagination</strong> property to true.</p>
@@ -655,20 +702,20 @@ $(window).resize(function(){
 			$("#example-table-pagination").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
 
-	<section>
-		<header>Persistent Column Layout <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#persistant-columns">http://olifolkerd.github.io/tabulator/docs/#persistant-columns</a></span></header>
-		<p>
-			Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
-		</p>
-		<p>
-			Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
-		</P>
-		<div id="example-table-colum-layout"></div>
-		<script type="text/javascript">
+<section>
+	<header>Persistent Column Layout <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#persistant-columns">http://olifolkerd.github.io/tabulator/docs/#persistant-columns</a></span></header>
+	<p>
+		Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
+	</p>
+	<p>
+		Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
+	</P>
+	<div id="example-table-colum-layout"></div>
+	<script type="text/javascript">
 
 		$("#example-table-colum-layout").tabulator({
 			height:"320px",
@@ -691,20 +738,20 @@ $(window).resize(function(){
 			$("#example-table-colum-layout").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
 
-	<section>
-		<header>AJAX Data Loading <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#ajax">http://olifolkerd.github.io/tabulator/docs/#ajax</a></span></header>
-		<p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
+<section>
+	<header>AJAX Data Loading <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#ajax">http://olifolkerd.github.io/tabulator/docs/#ajax</a></span></header>
+	<p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
 
-		<p>If you always request the same URL for your data then you can set it in the <span><strong>ajaxURL</strong></span> option when you create your Tabulator</p>
+	<p>If you always request the same URL for your data then you can set it in the <span><strong>ajaxURL</strong></span> option when you create your Tabulator</p>
 
-		<p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
-		<p><input id="ajax-trigger" type="button" value="Load Data via AJAX"></p>
-		<div id="example-table-ajax"></div>
-		<script type="text/javascript">
+	<p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
+	<p><input id="ajax-trigger" type="button" value="Load Data via AJAX"></p>
+	<div id="example-table-ajax"></div>
+	<script type="text/javascript">
 		$("#example-table-ajax").tabulator({
 			height:"320px",
 			fitColumns:true,
@@ -728,22 +775,22 @@ $(window).resize(function(){
 			$("#example-table-ajax").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
-	<section>
-		<header>Add / Delete Rows <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#addrow">http://olifolkerd.github.io/tabulator/docs/#addrow</a></span></header>
-		<p>
-			Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
-		</p>
-		<p>
-			<button id="add-row">Add Blank Row to bottom of table</button>
-			<button id="del-row">Remove "Oli Bob" From the table</button>
-			<button id="clear">Empty the table</button>
-			<button id="reset">Reset the table</button>
-		</p>
-		<div id="example-table-adddel"></div>
-		<script type="text/javascript">
+<section>
+	<header>Add / Delete Rows <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#addrow">http://olifolkerd.github.io/tabulator/docs/#addrow</a></span></header>
+	<p>
+		Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
+	</p>
+	<p>
+		<button id="add-row">Add Blank Row to bottom of table</button>
+		<button id="del-row">Remove "Oli Bob" From the table</button>
+		<button id="clear">Empty the table</button>
+		<button id="reset">Reset the table</button>
+	</p>
+	<div id="example-table-adddel"></div>
+	<script type="text/javascript">
 
 		$("#add-row").click(function(){
 			$("#example-table-adddel").tabulator("addRow");
@@ -786,17 +833,17 @@ $(window).resize(function(){
 			$("#example-table-adddel").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
 
-	<section>
-		<header>Movable Rows <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#movable">http://olifolkerd.github.io/tabulator/docs/#movable</a></span></header>
-		<p>
-			Using the <strong>movableRows</strong> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
-		</p>
-		<div id="example-table-movable-rows"></div>
-		<script type="text/javascript">
+<section>
+	<header>Movable Rows <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#movable">http://olifolkerd.github.io/tabulator/docs/#movable</a></span></header>
+	<p>
+		Using the <strong>movableRows</strong> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
+	</p>
+	<div id="example-table-movable-rows"></div>
+	<script type="text/javascript">
 
 		$("#example-table-movable-rows").tabulator({
 			height:"320px",
@@ -821,24 +868,24 @@ $(window).resize(function(){
 			$("#example-table-movable-rows").tabulator("redraw");
 		});
 
-		</script>
-	</section>
+	</script>
+</section>
 
 
 
-	<section>
-		<header>Callbacks <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#callbacks">http://olifolkerd.github.io/tabulator/docs/#callbacks</a></span></header>
-		<p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
+<section>
+	<header>Callbacks <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#callbacks">http://olifolkerd.github.io/tabulator/docs/#callbacks</a></span></header>
+	<p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
 
-		<ul>
-			<li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>onClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
-			<li><strong>Row Click</strong> - The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the<span><strong>rowClick</strong></span>option when you create your Tabulator. (left click any row in this example)</li>
-			<li><strong>Row Context Menu</strong> - The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span><strong>rowContext</strong></span> option when you create your Tabulator. (right click any row in this example)</li>
-			<li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span><strong>dataLoaded</strong></span> option when you create your</li>
-		</ul>
+	<ul>
+		<li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>onClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
+		<li><strong>Row Click</strong> - The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the<span><strong>rowClick</strong></span>option when you create your Tabulator. (left click any row in this example)</li>
+		<li><strong>Row Context Menu</strong> - The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span><strong>rowContext</strong></span> option when you create your Tabulator. (right click any row in this example)</li>
+		<li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span><strong>dataLoaded</strong></span> option when you create your</li>
+	</ul>
 
-		<div id="example-table-callbacks"></div>
-		<script type="text/javascript">
+	<div id="example-table-callbacks"></div>
+	<script type="text/javascript">
 		$("#example-table-callbacks").tabulator({
 			height:"320px",
 			fitColumns:true,
@@ -865,9 +912,9 @@ $(window).resize(function(){
 			$("#example-table-callbacks").tabulator("redraw");
 		});
 
-		</script>
-
 	</script>
+
+</script>
 </section>
 
 <section>
@@ -876,59 +923,59 @@ $(window).resize(function(){
 	<div id="example-table-theme"></div>
 
 	<style>
-			/*Theme the table*/
-			#example-table-theme{
-				background-color:#ccc;
-				border: 1px solid #333;
-			}
+		/*Theme the table*/
+		#example-table-theme{
+			background-color:#ccc;
+			border: 1px solid #333;
+		}
 
-			/*Theme the header*/
-			#example-table-theme .tabulator-header {
-				background-color:#333;
-				color:#fff;
-			}
+		/*Theme the header*/
+		#example-table-theme .tabulator-header {
+			background-color:#333;
+			color:#fff;
+		}
 
-			/*Theme the rows*/
-			#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
-				color:#fff;
-				background-color: #666;
-			}
+		/*Theme the rows*/
+		#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
+			color:#fff;
+			background-color: #666;
+		}
 
-			#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
-			  background-color: #444;
-			}
+		#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+			background-color: #444;
+		}
 
 	</style>
 
 
 	<script type="text/javascript">
-	$("#example-table-theme").tabulator({
-		height:"320px",
-		fitColumns:true,
-		columns:[
-		{title:"Name", field:"name", sorter:"string", width:150},
-		{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
-		{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-		{title:"Height", field:"height", formatter:"star", align:"center", width:100},
-		{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-		{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-		{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
-		],
-		rowClick:function(e, id, data, row){
-			alert("Row " + id + " Clicked!!!!")
-		},
-		rowContext:function(e, id, data, row){
-			alert("Row " + id + " Context Clicked!!!!")
-		},
-	});
+		$("#example-table-theme").tabulator({
+			height:"320px",
+			fitColumns:true,
+			columns:[
+			{title:"Name", field:"name", sorter:"string", width:150},
+			{title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
+			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
+			],
+			rowClick:function(e, id, data, row){
+				alert("Row " + id + " Clicked!!!!")
+			},
+			rowContext:function(e, id, data, row){
+				alert("Row " + id + " Context Clicked!!!!")
+			},
+		});
 
-$("#example-table-theme").tabulator("setData", tabledata);
+		$("#example-table-theme").tabulator("setData", tabledata);
 
-$(window).resize(function(){
-	$("#example-table-theme").tabulator("redraw");
-});
+		$(window).resize(function(){
+			$("#example-table-theme").tabulator("redraw");
+		});
 
-</script>
+	</script>
 </section>
 
 </body>

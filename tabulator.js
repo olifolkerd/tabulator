@@ -64,6 +64,7 @@
 		tooltips: false, //Tool tip value
 
 		columns:[],//store for colum header info
+		data:false, //store for initial table data if set at construction
 
 		index:"id",
 
@@ -106,6 +107,103 @@
 	//constructor
 	_create: function() {
 		var self = this;
+		var element = self.element;
+
+		if(element.is("table")){
+			self._parseTable();
+		}else{
+			self._buildElement();
+		}
+	},
+
+	//parse table element to create data set
+	_parseTable:function(){
+		var self = this;
+		var element = self.element;
+		var options = self.options;
+
+		var hasIndex = false;
+
+		//build columns from table header if they havnt been set;
+		if(!options.columns.length){
+			var headers = $("th", element);
+
+			if(headers.length){
+				//create column array from headers
+				headers.each(function(index){
+
+					var col = {title:$(this).text(), field:$(this).text().toLowerCase().replace(" ", "_")};
+
+					var width = $(this).attr("width");
+
+					if(width){
+						col.width = width;
+					}
+
+					if(col.field == options.index){
+						hasIndex = true;
+					}
+
+					options.columns.push(col);
+				});
+			}else{
+				//create blank table headers
+				headers = $("tr:first td", element);
+
+				headers.each(function(index){
+					var col = {title:"", field:"col" + index};
+
+					var width = $(this).attr("width");
+
+					if(width){
+						col.width = width;
+					}
+
+					options.columns.push(col);
+				});
+			}
+		}
+
+
+		//iterate through table rows and build data set
+		$("tbody tr", element).each(function(rowIndex){
+			var item = {};
+
+			//create index if the dont exist in table
+			if(!hasIndex){
+				item[options.index] = rowIndex;
+			}
+
+			//add row data to item
+			$("td", $(this)).each(function(colIndex){
+				item[options.columns[colIndex].field] = $(this).text();
+			});
+
+			self.data.push(item);
+		});
+
+		//create new element
+		var newElement = $("<div></div>");
+
+		//transfer attributes to new element
+		var attributes = element.prop("attributes");
+
+		// loop through attributes and apply them on div
+		$.each(attributes, function() {
+		    newElement.attr(this.name, this.value);
+		});
+
+		// replace table with div element
+		element.replaceWith(newElement);
+
+		options.data = self.data;
+
+		newElement.tabulator(options);
+	},
+
+	//build tabulator element
+	_buildElement: function() {
+		var self = this;
 		var options = self.options;
 		var element = self.element;
 
@@ -114,6 +212,10 @@
 		if(options.height){
 			options.height = isNaN(options.height) ? options.height : options.height + "px";
 			element.css({"height": options.height});
+		}
+
+		if(options.data){
+			self.data = options.data;
 		}
 
 		element.addClass("tabulator");
@@ -1538,10 +1640,14 @@
 				"max-height":"calc(100% - " + footerHeight + "px)",
 			});
 		}else{
-			self.tableHolder.css({
-				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-			});
+
+			if(self.options.height){
+				self.tableHolder.css({
+					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				});
+			}
+
 		}
 
 		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
@@ -1569,6 +1675,11 @@
 
 		//render column headings
 		self._colRender();
+
+		if(self.firstRender && self.options.data){
+			// self.firstRender = false;
+			self._parseData(self.options.data);
+		}
 
 	},
 
