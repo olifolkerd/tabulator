@@ -275,6 +275,23 @@ index:"age", //set the index field to the "age" field.
                         <li>"last" - show the last page</li>
                     </ul>
 
+                    <h2>pageLoaded Callback</h2>
+
+                    <p>Whenever a page has been loaded, the <span class='param'>pageLoaded</span> callback is called, passing the current page number as an argument.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:true,
+    pageLoaded:function(pageno){
+        alert("Number of loaded page:" + pageno);
+    }
+});</pre>
+
+                    <h2>Getting Current Page Number</h2>
+
+                    <p>To retrieve the curren page use the <span class='param'>getPage</span> function. this will return the number of the current page. If pagination is disabled this will return <span class='param'>false</span>.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getPage"); // returns furrent page</pre>
+
                     <h2>Custom Pagination Control Element</h2>
                     <p>By default the pagination controls are added to the footer of the table. If you wish the controls to be created in another element pass a JQuery object for that element to the <span class='param'>paginationElement</span> option.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
