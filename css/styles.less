@@ -281,7 +281,22 @@ ul.docs-sidenav{
 			margin-right:20px;
 		}
 
-		table{
+		table.plain{
+
+			width:100%;
+
+			td, th{
+				border:1px solid #999;
+				padding:3px;
+			}
+
+			th{
+				background: #eee;
+			}
+
+		}
+
+		table:not(.plain){
 
 			width:100%;
 

@@ -194,31 +194,42 @@ ul.docs-sidenav li a:hover {
 .docs article select {
   margin-right: 20px;
 }
-.docs article table {
+.docs article table.plain {
   width: 100%;
 }
-.docs article table thead {
+.docs article table.plain td,
+.docs article table.plain th {
+  border: 1px solid #999;
+  padding: 3px;
+}
+.docs article table.plain th {
+  background: #eee;
+}
+.docs article table:not(.plain) {
+  width: 100%;
+}
+.docs article table:not(.plain) thead {
   font-weight: bold;
   background: #ddd;
 }
-.docs article table thead th {
+.docs article table:not(.plain) thead th {
   border: 1px solid #999;
 }
-.docs article table th,
-.docs article table td {
+.docs article table:not(.plain) th,
+.docs article table:not(.plain) td {
   border: 1px solid #ccc;
   padding: 5px;
 }
-.docs article table tbody tr:nth-of-type(even) td {
+.docs article table:not(.plain) tbody tr:nth-of-type(even) td {
   background: #f9f9f9;
 }
-.docs article table tbody tr:last-of-type td {
+.docs article table:not(.plain) tbody tr:last-of-type td {
   border-bottom: 1px solid #999;
 }
-.docs article table tbody tr td:first-of-type {
+.docs article table:not(.plain) tbody tr td:first-of-type {
   border-left: 1px solid #999;
 }
-.docs article table tbody tr td:last-of-type {
+.docs article table:not(.plain) tbody tr td:last-of-type {
   border-right: 1px solid #999;
 }
 footer {
