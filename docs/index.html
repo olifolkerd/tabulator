@@ -394,6 +394,14 @@ $("#example-table").tabulator({
     colMinWidth:80, //Minimum column width in px (default = 40)
 });</pre>
 
+                    <h2>Wrap Column Header Title Text</h2>
+                    <p>By default Tabulator will try and keep column header titles on one line, truncating the text with ellipsis  if it gets wider that the column.</p>
+                    <p>If you would like to wrap the text instead then you will need to edit the CSS <span class='param'>white-space</span> value for the column headers and set it to <span class='param'>normal</span>.</p>
+                    <pre class="prettyprint lang-css">.tabulator .tabulator-header .tabulator-col,
+.tabulator .tabulator-header .tabulator-col-row-handle {
+    white-space: normal;
+}</pre>
+
                     <h2>Redrawing the table</h2>
                     <p>If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit the new dimensions.</p>
 
