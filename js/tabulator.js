@@ -345,7 +345,7 @@
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 		}
 
-		//trigger ro restyle
+		//trigger row restyle
 		self._styleRows(true);
 
 		if(fullRedraw){
@@ -1543,17 +1543,18 @@
 
 	//set all headers to the same height
 	_vertAlignColHeaders:function(){
-		var self = this;
 
-		var headerHeight = self.header.outerHeight()
+		if(self.header){
+			var headerHeight = self.header.outerHeight()
 
-		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
 
-		if(self.options.height && headerHeight != self.header.outerHeight()){
-			self.tableHolder.css({
-				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-			});
+			if(self.options.height && headerHeight != self.header.outerHeight()){
+				self.tableHolder.css({
+					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				});
+			}
 		}
 	},
 
@@ -1967,20 +1968,22 @@
 			}
 		}
 
-		if(!self.options.height){
-			var height = self.tableHolder.outerHeight() + self.header.outerHeight();
+		// if(!self.options.height){
+		// 	var height = self.tableHolder.outerHeight() + self.header.outerHeight();
 
-			if(self.footer){
-				height += self.footer.outerHeight() + 1;
-			}
+		// 	if(self.footer){
+		// 		height += self.footer.outerHeight() + 1;
+		// 	}
 
-			self.element.css({height:height})
-		}
+		// 	// self.element.css({height:height})
+		// }
 
 		//resize cells vertically to fit row contents
-		$(".tabulator-row", self.table).each(function(){
-			$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
-		})
+		if(self.element.is(":visible")){
+			$(".tabulator-row", self.table).each(function(){
+				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
+			})
+		}
 
 	},
 
