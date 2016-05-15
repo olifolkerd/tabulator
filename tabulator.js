@@ -104,6 +104,8 @@
 		pageLoaded:function(){}, //calback for when a page is loaded
 	},
 
+	////////////////// Element Construction //////////////////
+
 	//constructor
 	_create: function() {
 		var self = this;
@@ -321,50 +323,37 @@
 		}
 	},
 
-	//show loader blockout div
-	_showLoader:function(self, msg){
-		if(self.options.showLoader){
-			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
-			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
-			self.element.append(self.loaderDiv);
-		}
+	////////////////// General Public Functions //////////////////
+
+	//get number of elements in dataset
+	dataCount:function(){
+		return this.data.length;
 	},
 
-	_hideLoader:function(self){
-		$(".tablulator-loader", self.element).remove();
-	},
 
-	//handle cell data change
-	_cellDataChange: function(cell, value){
-
+	//redraw list without updating data
+	redraw:function(fullRedraw){
 		var self = this;
-		var row = cell.closest(".tabulator-row");
 
-		cell.removeClass("tabulator-editing");
-
-		//update cell data value
-		cell.data("value", value);
-
-		//update row data
-		var rowData =  row.data("data");
-		var hasChanged = rowData[cell.data("field")] != value;
-		rowData[cell.data("field")] = value;
-		row.data("data", rowData);
-
-		//reformat cell data
-		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
-
-		if(hasChanged){
-			//triger event
-			self.options.rowEdit(rowData[self.options.index], rowData, row);
-			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
+		//redraw columns
+		if(self.options.fitColumns){
+			self._colRender();
 		}
 
-		self._styleRows();
+		//reposition loader if present
+		if(self.element.innerHeight() > 0){
+			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
+		}
 
-		self._trigger("dataEdited");
+		//trigger ro restyle
+		self._styleRows(true);
 
+		if(fullRedraw){
+			self._renderTable();
+		}
 	},
+
+	////////////////// Column Manipulation //////////////////
 
 	//set column style cookie
 	_setColCookie:function(){
@@ -401,7 +390,7 @@
 		document.cookie = cookieID + "=" + data + "; expires=" + expDate.toUTCString();
 	},
 
-	//set Ccolumn style cookie
+	//set Column style cookie
 	_getColCookie:function(){
 		var self = this;
 
@@ -497,7 +486,6 @@
 
 		return self.options.columns;
 	},
-
 
 	//find column
 	_findColumn:function(field){
@@ -606,6 +594,8 @@
 			return true;
 		}
 	},
+
+	////////////////// Row Manipulation //////////////////
 
 	//delete row from table by id
 	deleteRow: function(item){
@@ -725,6 +715,8 @@
 
 	},
 
+	////////////////// Data Manipulation //////////////////
+
 	//get array of data from the table
 	getData:function(){
 		var self = this;
@@ -772,6 +764,61 @@
 		this.data = [];
 		this._filterData();
 	},
+
+	//get json data via ajax
+	_getAjaxData:function(url, params){
+
+		var self = this;
+		var options = self.options;
+
+		$.ajax({
+			url: url,
+			type: "GET",
+			data:params,
+			async: true,
+			dataType:'json',
+			success: function (data) {
+				self._parseData(data);
+			},
+			error: function (xhr, ajaxOptions, thrownError) {
+				console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
+				self._trigger("dataLoadError", xhr, thrownError);
+
+				self._showLoader(self, self.options.loaderError);
+			},
+		});
+	},
+
+	//parse and index data
+	_parseData:function(data){
+		var self = this;
+
+		var newData = [];
+
+		if(data.length){
+			if(typeof(data[0][self.options.index]) == "undefined"){
+				self.options.index = "_index";
+				$.each(data, function(i, item) {
+					newData[i] = item;
+					newData[i]["_index"] = i;
+				});
+
+			}else{
+				$.each(data, function(i, item) {
+					newData.push(item);
+				});
+			}
+		}
+
+		self.data = newData;
+
+		self.options.dataLoaded(data);
+
+		//filter incomming data
+		self._filterData();
+	},
+
+	////////////////// Data Filtering //////////////////
 
 	//filter data in table
 	setFilter:function(field, type, value){
@@ -827,60 +874,329 @@
 		}
 	},
 
-	//parse and index data
-	_parseData:function(data){
+	//filter data set
+	_filterData:function(){
 		var self = this;
 
-		var newData = [];
+		//filter data set
+		if(self.filterField ){
+			self.activeData = self.data.filter(function(row){
+				return self._filterRow(row);
+			});
+		}else{
+			self.activeData = self.data;
+		}
 
-		if(data.length){
-			if(typeof(data[0][self.options.index]) == "undefined"){
-				self.options.index = "_index";
-				$.each(data, function(i, item) {
-					newData[i] = item;
-					newData[i]["_index"] = i;
-				});
+		//set the max pages available given the filter results
+		if(self.options.pagination){
+			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
+		}
+
+		//sort or render data
+		if(self.sortCurCol){
+			self.sort(self.sortCurCol, self.sortCurDir);
+		}else{
+
+			//determine pagination information / render table
+			if(self.options.pagination){
+				self.setPage(1);
+			}else{
+				self._renderTable();
+			}
+		}
+	},
+
+	//check if row data matches filter
+	_filterRow:function(row){
+		var self = this;
+
+		// if no filter set display row
+		if(!self.filterField){
+			return true;
+		}else{
+
+			if(typeof(self.filterField) == "function"){
+
+				return self.filterField(row);
 
 			}else{
-				$.each(data, function(i, item) {
-					newData.push(item);
-				});
+				var value = row[self.filterField];
+				var term = self.filterValue;
+
+				switch(self.filterType){
+					case "=": //equal to
+					return value == term ? true : false;
+					break;
+
+					case "<": //less than
+					return value < term ? true : false;
+					break;
+
+					case "<=": //less than or equal too
+					return value <= term ? true : false;
+					break;
+
+					case ">": //greater than
+					return value > term ? true : false;
+					break;
+
+					case ">=": //greater than or equal too
+					return value >= term ? true : false;
+					break;
+
+					case "!=": //not equal to
+					return value != term ? true : false;
+					break;
+
+					case "like": //text like
+					return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+					break;
+
+					default:
+					return false;
+				}
 			}
 		}
 
-		self.data = newData;
+		return false;
+	},
 
-		self.options.dataLoaded(data);
+	////////////////// Data Sorting //////////////////
 
-		//filter incomming data
+	//handle user clicking on column header sort
+	_sortClick: function(column, element){
+		var self = this;
+
+		if (element.data("sortdir") == "desc"){
+			element.data("sortdir", "asc");
+		}else{
+			element.data("sortdir", "desc");
+		}
+
+		self.sort(column, element.data("sortdir"));
+	},
+
+	// public sorter function
+	sort: function(sortList, dir){
+		var self = this;
+		var header = self.header;
+		var options = this.options;
+
+		if(!Array.isArray(sortList)){
+			sortList = [{field: sortList, dir:dir}];
+		}
+
+		$.each(sortList, function(i, item) {
+
+			//convert colmun name to column object
+			if(typeof(item.field) == "string"){
+				$.each(options.columns, function(i, col) {
+					if(col.field == item.field){
+						item.field = col;
+						return false;
+					}
+				});
+			}
+
+			//reset all column sorts
+			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc");
+			$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc")
+
+			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
+
+			if (dir == "asc"){
+				$(".tabulator-arrow", element).removeClass("desc").addClass("asc");
+			}else{
+				$(".tabulator-arrow", element).removeClass("asc").addClass("desc");
+			}
+
+			self._sorter(item.field, item.dir, sortList, i);
+
+		});
+
+		self._trigger("sortComplete");
+
+		//determine pagination information / render table
+		if(self.options.pagination){
+			self.setPage(1);
+		}else{
+			self._renderTable();
+		}
+
+	},
+
+	//sort table
+	_sorter: function(column, dir, sortList, i){
+
+		var self = this;
+		var table = self.table;
+		var options = self.options;
+		var data = self.data;
+
+		self._trigger("sortStarted");
+
+		self.sortCurCol = column;
+		self.sortCurDir = dir;
+
+		self._sortElement(table, column, dir, sortList, i);
+	},
+
+	//itterate through nested sorters
+	_sortElement:function(element, column, dir, sortList, i){
+		var self = this;
+
+		self.activeData = self.activeData.sort(function(a,b){
+
+			var result = self._processSorter(a, b, column, dir);
+
+			//if results match recurse through previous searchs to be sure
+			if(result == 0 && i){
+				for(var j = i-1; j>= 0; j--){
+					result = self._processSorter(a, b, sortList[j].field, sortList[j].dir);
+
+					if(result != 0){
+						break;
+					}
+				}
+			}
+
+			return result;
+		})
+
+	},
+
+	//process individual sort functions on active data
+	_processSorter:function(a, b, column, dir){
+		var self = this;
+		//switch elements depending on search direction
+		var el1 = dir == "asc" ? a : b;
+		var el2 = dir == "asc" ? b : a;
+
+		el1 = el1[column.field];
+		el2 = el2[column.field];
+
+		//workaround to format dates correctly
+		a = column.sorter == "date" ? self._formatDate(el1) : el1;
+		b = column.sorter == "date" ? self._formatDate(el2) : el2;
+
+		//run sorter
+		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
+
+		return sorter(a, b);
+	},
+
+	////////////////// Data Pagination //////////////////
+
+	//get current page number
+	getPage:function(){
+		var self = this;
+
+		return self.options.pagination ? self.paginationCurrentPage : false;
+	},
+
+	//set current paginated page
+	setPage:function(page){
+
+		var self = this;
+
+		if(Number.isInteger(page) && page > 0 && page <= self.paginationMaxPage){
+			self.paginationCurrentPage = page;
+		}else{
+			switch(page){
+				case "first":
+				self.paginationCurrentPage = 1;
+				break;
+
+				case "prev":
+				if(self.paginationCurrentPage > 1){
+					self.paginationCurrentPage--;
+				}
+				break;
+
+				case "next":
+				if(self.paginationCurrentPage < self.paginationMaxPage){
+					self.paginationCurrentPage++;
+				}
+				break;
+
+				case "last":
+				self.paginationCurrentPage = self.paginationMaxPage;
+				break;
+			}
+		}
+
+		self._layoutPageSelector();
+
+		self._renderTable();
+	},
+
+	//set page size for the table
+	setPageSize:function(size){
+		var self = this;
+
+		self.options.paginationSize = size;
 		self._filterData();
 	},
 
-	//get json data via ajax
-	_getAjaxData:function(url, params){
 
+	//create page selector layout for current page
+	_layoutPageSelector:function(){
 		var self = this;
-		var options = self.options;
 
-		$.ajax({
-			url: url,
-			type: "GET",
-			data:params,
-			async: true,
-			dataType:'json',
-			success: function (data) {
-				self._parseData(data);
-			},
-			error: function (xhr, ajaxOptions, thrownError) {
-				console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
-				self._trigger("dataLoadError", xhr, thrownError);
+		var min = 1, max = self.paginationMaxPage;
 
-				self._showLoader(self, self.options.loaderError);
-			},
-		});
+		var pages = $(".tabulator-pages", self.paginator);
+
+		pages.empty();
+
+		var spacer = $("<span> ... </span>");
+
+		if(self.paginationMaxPage > 10){
+
+			if(self.paginationCurrentPage <= 4){
+				max = 5;
+			}else if(self.paginationCurrentPage > self.paginationMaxPage - 4){
+				min = self.paginationMaxPage - 4;
+
+				pages.append(spacer.clone());
+			}else{
+				min = self.paginationCurrentPage - 2;
+				max = self.paginationCurrentPage + 2;
+
+				pages.append(spacer.clone());
+			}
+		}
+
+		for(var i = min; i <= max; ++i){
+
+			var active = i == self.paginationCurrentPage ? "active" : "";
+
+			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "'>" + i + "</span>");
+		}
+
+		if(self.paginationMaxPage > 10){
+			if(self.paginationCurrentPage <= 4 || self.paginationCurrentPage <= self.paginationMaxPage - 4){
+				pages.append(spacer.clone());
+			}
+		}
+
+		$(".tabulator-page", self.paginator).removeClass("disabled");
+
+
+		if(self.paginationCurrentPage == 1){
+			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled");
+		}
+
+		if(self.paginationCurrentPage == self.paginationMaxPage){
+			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled");
+		}
+
 	},
 
-	//build table DOM
+	////////////////// Render Data to Table //////////////////
+
+	//render active data to table rows
 	_renderTable:function(progressiveRender){
 		var self = this;
 		var options = self.options
@@ -1039,250 +1355,6 @@
 
 	},
 
-	//build group DOM
-	_renderGroup:function(value){
-		var group =  $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
-
-		return group;
-	},
-
-
-	//render group header
-	_renderGroupHeader:function(group){
-		var self = this;
-
-		//create sortable arrow chevrons
-		var arrow = $("<div class='tabulator-arrow'></div>")
-		.on("click", function(){
-			$(this).closest(".tabulator-group").toggleClass("show");
-		});
-
-		var data = [];
-
-		$(".tabulator-row", group).each(function(){
-			data.push($(this).data("data"));
-		});
-
-
-		$(".tabulator-group-header", group)
-		.html(arrow)
-		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
-	},
-
-	//get current page number
-	getPage:function(){
-		var self = this;
-
-		return self.options.pagination ? self.paginationCurrentPage : false;
-	},
-
-
-	//set current paginated page
-	setPage:function(page){
-
-		var self = this;
-
-		if(Number.isInteger(page) && page > 0 && page <= self.paginationMaxPage){
-			self.paginationCurrentPage = page;
-		}else{
-			switch(page){
-				case "first":
-				self.paginationCurrentPage = 1;
-				break;
-
-				case "prev":
-				if(self.paginationCurrentPage > 1){
-					self.paginationCurrentPage--;
-				}
-				break;
-
-				case "next":
-				if(self.paginationCurrentPage < self.paginationMaxPage){
-					self.paginationCurrentPage++;
-				}
-				break;
-
-				case "last":
-				self.paginationCurrentPage = self.paginationMaxPage;
-				break;
-			}
-		}
-
-		self._layoutPageSelector();
-
-		self._renderTable();
-	},
-
-	//set page size for the table
-	setPageSize:function(size){
-		var self = this;
-
-		self.options.paginationSize = size;
-		self._filterData();
-	},
-
-
-	//create page selector layout for current page
-	_layoutPageSelector:function(){
-		var self = this;
-
-		var min = 1, max = self.paginationMaxPage;
-
-		var pages = $(".tabulator-pages", self.paginator);
-
-		pages.empty();
-
-		var spacer = $("<span> ... </span>");
-
-		if(self.paginationMaxPage > 10){
-
-			if(self.paginationCurrentPage <= 4){
-				max = 5;
-			}else if(self.paginationCurrentPage > self.paginationMaxPage - 4){
-				min = self.paginationMaxPage - 4;
-
-				pages.append(spacer.clone());
-			}else{
-				min = self.paginationCurrentPage - 2;
-				max = self.paginationCurrentPage + 2;
-
-				pages.append(spacer.clone());
-			}
-		}
-
-		for(var i = min; i <= max; ++i){
-
-			var active = i == self.paginationCurrentPage ? "active" : "";
-
-			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "'>" + i + "</span>");
-		}
-
-		if(self.paginationMaxPage > 10){
-			if(self.paginationCurrentPage <= 4 || self.paginationCurrentPage <= self.paginationMaxPage - 4){
-				pages.append(spacer.clone());
-			}
-		}
-
-		$(".tabulator-page", self.paginator).removeClass("disabled");
-
-
-		if(self.paginationCurrentPage == 1){
-			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled");
-		}
-
-		if(self.paginationCurrentPage == self.paginationMaxPage){
-			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled");
-		}
-
-	},
-
-
-	//filter data set
-	_filterData:function(){
-		var self = this;
-
-		//filter data set
-		if(self.filterField ){
-			self.activeData = self.data.filter(function(row){
-				return self._filterRow(row);
-			});
-		}else{
-			self.activeData = self.data;
-		}
-
-		//set the max pages available given the filter results
-		if(self.options.pagination){
-			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
-		}
-
-		//sort or render data
-		if(self.sortCurCol){
-			self.sort(self.sortCurCol, self.sortCurDir);
-		}else{
-
-			//determine pagination information / render table
-			if(self.options.pagination){
-				self.setPage(1);
-			}else{
-				self._renderTable();
-			}
-		}
-	},
-
-	//check if row data matches filter
-	_filterRow:function(row){
-		var self = this;
-
-		// if no filter set display row
-		if(!self.filterField){
-			return true;
-		}else{
-
-			if(typeof(self.filterField) == "function"){
-
-				return self.filterField(row);
-
-			}else{
-				var value = row[self.filterField];
-				var term = self.filterValue;
-
-				switch(self.filterType){
-					case "=": //equal to
-					return value == term ? true : false;
-					break;
-
-					case "<": //less than
-					return value < term ? true : false;
-					break;
-
-					case "<=": //less than or equal too
-					return value <= term ? true : false;
-					break;
-
-					case ">": //greater than
-					return value > term ? true : false;
-					break;
-
-					case ">=": //greater than or equal too
-					return value >= term ? true : false;
-					break;
-
-					case "!=": //not equal to
-					return value != term ? true : false;
-					break;
-
-					case "like": //text like
-					return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
-					break;
-
-					default:
-					return false;
-				}
-			}
-		}
-
-		return false;
-	},
-
-	//generate tooltip text
-	_generateTooltip:function(cell, data, tooltip){
-		var self = this;
-
-		var tooltip = tooltip || tooltip === false ? tooltip : self.options.tooltips;
-
-		if(tooltip === true){
-			tooltip = cell.data("value");
-		}else if(typeof(tooltip) == "function"){
-			tooltip = tooltip(cell.data("field"), cell.data("value"), data);
-		}
-
-		if(tooltip){
-			cell.attr("title", tooltip);
-		}else{
-			cell.attr("title", "");
-		}
-	},
-
 	//render individual rows
 	_renderRow:function(item){
 
@@ -1389,33 +1461,70 @@
 		return row;
 	},
 
-	//get number of elements in dataset
-	dataCount:function(){
-		return this.data.length;
+	//render group element
+	_renderGroup:function(value){
+		var group =  $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
+
+		return group;
 	},
 
-
-	//redraw list without updating data
-	redraw:function(fullRedraw){
+	//render group header
+	_renderGroupHeader:function(group){
 		var self = this;
 
-		//redraw columns
-		if(self.options.fitColumns){
-			self._colRender();
-		}
+		//create sortable arrow chevrons
+		var arrow = $("<div class='tabulator-arrow'></div>")
+		.on("click", function(){
+			$(this).closest(".tabulator-group").toggleClass("show");
+		});
 
-		//reposition loader if present
-		if(self.element.innerHeight() > 0){
+		var data = [];
+
+		$(".tabulator-row", group).each(function(){
+			data.push($(this).data("data"));
+		});
+
+
+		$(".tabulator-group-header", group)
+		.html(arrow)
+		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+	},
+
+	//show loader blockout div
+	_showLoader:function(self, msg){
+		if(self.options.showLoader){
+			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
-		}
-
-		//trigger ro restyle
-		self._styleRows(true);
-
-		if(fullRedraw){
-			self._renderTable();
+			self.element.append(self.loaderDiv);
 		}
 	},
+
+	//hide loader
+	_hideLoader:function(self){
+		$(".tablulator-loader", self.element).remove();
+	},
+
+	//generate tooltip text
+	_generateTooltip:function(cell, data, tooltip){
+		var self = this;
+
+		var tooltip = tooltip || tooltip === false ? tooltip : self.options.tooltips;
+
+		if(tooltip === true){
+			tooltip = cell.data("value");
+		}else if(typeof(tooltip) == "function"){
+			tooltip = tooltip(cell.data("field"), cell.data("value"), data);
+		}
+
+		if(tooltip){
+			cell.attr("title", tooltip);
+		}else{
+			cell.attr("title", "");
+		}
+	},
+
+
+	////////////////// Column Styling //////////////////
 
 	//resize a colum to specified width
 	_resizeCol:function(index, width){
@@ -1429,7 +1538,6 @@
 			$(".tabulator-col:last",self.element).css("border-right","");
 		}
 	},
-
 
 	//layout columns
 	_colLayout:function(){
@@ -1810,6 +1918,8 @@
 
 	},
 
+	////////////////// Row Styling //////////////////
+
 	//style rows of the table
 	_styleRows:function(minimal){
 
@@ -1861,6 +1971,8 @@
 		return formatter(value, data, cell, row, this.options, formatterParams);
 	},
 
+	////////////////// Table Interaction Handlers //////////////////
+
 	//carry out action on row click
 	_rowClick: function(e, row, data){
 		this.options.rowClick(e, row.data("id"), data, row);
@@ -1882,134 +1994,44 @@
 		column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data") );
 	},
 
+	//handle cell data change
+	_cellDataChange: function(cell, value){
+
+		var self = this;
+		var row = cell.closest(".tabulator-row");
+
+		cell.removeClass("tabulator-editing");
+
+		//update cell data value
+		cell.data("value", value);
+
+		//update row data
+		var rowData =  row.data("data");
+		var hasChanged = rowData[cell.data("field")] != value;
+		rowData[cell.data("field")] = value;
+		row.data("data", rowData);
+
+		//reformat cell data
+		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
+
+		if(hasChanged){
+			//triger event
+			self.options.rowEdit(rowData[self.options.index], rowData, row);
+			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
+		}
+
+		self._styleRows();
+
+		self._trigger("dataEdited");
+
+	},
+
+	////////////////// Formatter/Sorter Helpers //////////////////
+
 	//return escaped string for attribute
 	_safeString: function(value){
 		return String(value).replace(/'/g, "&#39;");
 	},
-
-
-	_sortClick: function(column, element){
-		var self = this;
-
-		if (element.data("sortdir") == "desc"){
-			element.data("sortdir", "asc");
-		}else{
-			element.data("sortdir", "desc");
-		}
-
-		self.sort(column, element.data("sortdir"));
-	},
-
-	// public sorter
-	sort: function(sortList, dir){
-		var self = this;
-		var header = self.header;
-		var options = this.options;
-
-		if(!Array.isArray(sortList)){
-			sortList = [{field: sortList, dir:dir}];
-		}
-
-		$.each(sortList, function(i, item) {
-
-			//convert colmun name to column object
-			if(typeof(item.field) == "string"){
-				$.each(options.columns, function(i, col) {
-					if(col.field == item.field){
-						item.field = col;
-						return false;
-					}
-				});
-			}
-
-			//reset all column sorts
-			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc");
-			$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc")
-
-			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
-
-			if (dir == "asc"){
-				$(".tabulator-arrow", element).removeClass("desc").addClass("asc");
-			}else{
-				$(".tabulator-arrow", element).removeClass("asc").addClass("desc");
-			}
-
-			self._sorter(item.field, item.dir, sortList, i);
-
-		});
-
-		self._trigger("sortComplete");
-
-		//determine pagination information / render table
-		if(self.options.pagination){
-			self.setPage(1);
-		}else{
-			self._renderTable();
-		}
-
-	},
-
-
-	//sort table
-	_sorter: function(column, dir, sortList, i){
-
-		var self = this;
-		var table = self.table;
-		var options = self.options;
-		var data = self.data;
-
-		self._trigger("sortStarted");
-
-		self.sortCurCol = column;
-		self.sortCurDir = dir;
-
-		self._sortElement(table, column, dir, sortList, i);
-	},
-
-	//sort elements within table
-	_sortElement:function(element, column, dir, sortList, i){
-		var self = this;
-
-		self.activeData = self.activeData.sort(function(a,b){
-
-			var result = self._processSorter(a, b, column, dir);
-
-			//if results match recurse through previous searchs to be sure
-			if(result == 0 && i){
-				for(var j = i-1; j>= 0; j--){
-					result = self._processSorter(a, b, sortList[j].field, sortList[j].dir);
-
-					if(result != 0){
-						break;
-					}
-				}
-			}
-
-			return result;
-		})
-
-	},
-
-	_processSorter:function(a, b, column, dir){
-		var self = this;
-		//switch elements depending on search direction
-		var el1 = dir == "asc" ? a : b;
-		var el2 = dir == "asc" ? b : a;
-
-		el1 = el1[column.field];
-		el2 = el2[column.field];
-
-		//workaround to format dates correctly
-		a = column.sorter == "date" ? self._formatDate(el1) : el1;
-		b = column.sorter == "date" ? self._formatDate(el2) : el2;
-
-		//run sorter
-		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
-
-		return sorter(a, b);
-	},
-
 
 	//format date for date comparison
 	_formatDate:function(dateString){
@@ -2030,6 +2052,8 @@
 		return isNaN(newDate) ? 0 : newDate;
 	},
 
+	////////////////// Default Sorter/Formatter/Editor Elements //////////////////
+
 	//custom data sorters
 	sorters:{
 		number:function(a, b){ //sort numbers
@@ -2042,8 +2066,8 @@
 			return a - b;
 		},
 		boolean:function(a, b){ //sort booleans
-			el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
-			el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
+			var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
+			var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
 
 			return el1 - el2
 		},
@@ -2073,7 +2097,6 @@
 			return a.length > b.length;
 		},
 	},
-
 
 	//custom data formatters
 	formatters:{
@@ -2482,6 +2505,8 @@
 			return input;
 		},
 	},
+
+	////////////////// Tabulator Desconstructor //////////////////
 
 	//deconstructor
 	_destroy: function() {
