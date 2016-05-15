@@ -57,9 +57,9 @@
 		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
 
-		progressiveRender:true, //enable progressive rendering
-		progressiveRenderSize:200, //block size for progressive rendering
-		progressiveRenderPeriod:100, //time between renders
+		progressiveRender:false, //enable progressive rendering
+		progressiveRenderSize:20, //block size for progressive rendering
+		progressiveRenderMargin:200, //disance in px before end of scroll before progressive render is triggered
 
 		tooltips: false, //Tool tip value
 
@@ -224,8 +224,24 @@
 
 		self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
+		var scrollTop = 0;
+		var scrollLeft = 0;
 		self.tableHolder.scroll(function(){
-			self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
+			// if(scrollLeft != $(this).scrollLeft()){
+				self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
+			// }
+
+			//trigger progressive rendering on scroll
+			if(self.options.progressiveRender && scrollTop != $(this).scrollTop() && scrollTop < $(this).scrollTop()){
+				if($(this)[0].scrollHeight - $(this).innerHeight() - $(this).scrollTop() < self.options.progressiveRenderMargin){
+					if(self.paginationCurrentPage < self.paginationMaxPage){
+						self.paginationCurrentPage++;
+						self._renderTable(true);
+					}
+				}
+			}
+
+			scrollTop = $(this).scrollTop();
 		});
 
 		//create scrollable table holder
@@ -888,6 +904,8 @@
 
 		if(!options.pagination && options.progressiveRender && !progressiveRender){
 			self.paginationCurrentPage = 1;
+			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.progressiveRenderSize);
+
 			options.paginationSize = options.progressiveRenderSize;
 			progressiveRender = true;
 		}
@@ -1012,11 +1030,9 @@
 		}
 
 		//trigger progressive render
-		if(progressiveRender && renderData.length){
-			self.progressiveRenderTimer = setTimeout(function(){
+		if(progressiveRender && self.paginationCurrentPage < self.paginationMaxPage && self.tableHolder[0].scrollHeight <= self.tableHolder.innerHeight()){
 				self.paginationCurrentPage++;
 				self._renderTable(true);
-			}, options.progressiveRenderPeriod)
 		}
 
 		self.firstRender = false;
