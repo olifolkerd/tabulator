@@ -1543,6 +1543,7 @@
 
 	//set all headers to the same height
 	_vertAlignColHeaders:function(){
+		var self = this;
 
 		if(self.header){
 			var headerHeight = self.header.outerHeight()
