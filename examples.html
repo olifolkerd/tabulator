@@ -146,6 +146,7 @@
 
 		$("#example-table-simple").tabulator({
 			height:"320px",
+			data:tabledata,
 			columns:[
 			{title:"Name", field:"name", width:200},
 			{title:"Age", field:"age", width:60, sorter:"number"},
@@ -156,8 +157,6 @@
 			{title:"Likes Cheese", field:"cheese"},
 			],
 		});
-
-		$("#example-table-simple").tabulator("setData", tabledata);
 
 		$(window).resize(function(){
 			$("#example-table-simple").tabulator("redraw");
