@@ -345,7 +345,7 @@
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 		}
 
-		//trigger ro restyle
+		//trigger row restyle
 		self._styleRows(true);
 
 		if(fullRedraw){
