@@ -1543,8 +1543,16 @@
 
 	//set all headers to the same height
 	_vertAlignColHeaders:function(){
-		var self = this;
+		var headerHeight = self.header.outerHeight()
+
 		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+
+		if(self.options.height && headerHeight != self.header.outerHeight()){
+			self.tableHolder.css({
+				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+			});
+		}
 	},
 
 	//layout columns
