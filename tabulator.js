@@ -695,10 +695,6 @@
 			self.table.append(row);
 		}
 
-		//resize cells to the same height
-		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
-
-
 		//align column widths
 		self._colRender(!self.firstRender);
 		self._trigger("renderComplete");
@@ -922,11 +918,6 @@
 			}else{
 				//if not grouping output row to table
 				self.table.append(row);
-			}
-
-			if(row.is(":visible")){
-				//resize cells to the same height
-				$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
 			}
 
 		});
@@ -1402,10 +1393,8 @@
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 		}
 
-		//resize rows to fit data vertically
-		$(".tabulator-row", self.element).each(function(){
-			$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
-		})
+		//trigger ro restyle
+		self._styleRows(true);
 
 		if(fullRedraw){
 			self._renderTable();
@@ -1806,24 +1795,33 @@
 	},
 
 	//style rows of the table
-	_styleRows:function(){
+	_styleRows:function(minimal){
 
 		var self = this;
 
-		//fixes IE rendering bug on table redraw
-		$(".tabulator-tableHolder", self.element).css({height:$(".tabulator-table", self.element).height()});
+		if(!minimal){
+			//hover over rows
+			if(self.options.selectable){
+				$(".tabulator-row").addClass("selectable");
+			}else{
+				$(".tabulator-row").removeClass("selectable");
+			}
 
+			//apply row formatter
+			if(self.options.rowFormatter){
+				$(".tabulator-row", self.table).each(function(){
+					//allow row contents to be replaced with custom DOM elements
+					var newRow = self.options.rowFormatter($(this), $(this).data("data"));
 
-		//hover over rows
-		if(self.options.selectable){
-			$(".tabulator-row").addClass("selectable");
-		}else{
-			$(".tabulator-row").removeClass("selectable");
+					if(newRow){
+						$(this).html(newRow)
+					}
+				});
+			}
 		}
 
 		if(!self.options.height){
-
-			var height  = self.table.outerHeight() + self.header.innerHeight();
+			var height = self.tableHolder.outerHeight() + self.header.outerHeight();
 
 			if(self.footer){
 				height += self.footer.outerHeight() + 1;
@@ -1832,17 +1830,10 @@
 			self.element.css({height:height})
 		}
 
-		//apply row formatter
-		if(self.options.rowFormatter){
-			$(".tabulator-row", self.table).each(function(){
-				//allow row contents to be replaced with custom DOM elements
-				var newRow = self.options.rowFormatter($(this), $(this).data("data"));
-
-				if(newRow){
-					$(this).html(newRow)
-				}
-			});
-		}
+		//resize cells vertically to fit row contents
+		$(".tabulator-row", self.table).each(function(){
+			$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
+		})
 
 	},
 

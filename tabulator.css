@@ -1,6 +1,5 @@
 .tabulator {
   position: relative;
-  box-sizing: border-box;
   border: 1px solid #999;
   background-color: #888;
   overflow: hidden;
