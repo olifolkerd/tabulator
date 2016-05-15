@@ -924,8 +924,11 @@
 				self.table.append(row);
 			}
 
-			//resize cells to the same height
-			$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
+			if(row.is(":visible")){
+				//resize cells to the same height
+				$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
+			}
+
 		});
 
 
@@ -1398,6 +1401,11 @@
 		if(self.element.innerHeight() > 0){
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 		}
+
+		//resize rows to fit data vertically
+		$(".tabulator-row", self.element).each(function(){
+			$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
+		})
 
 		if(fullRedraw){
 			self._renderTable();
