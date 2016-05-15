@@ -1537,6 +1537,15 @@
 			$(".tabulator-row .tabulator-cell:last-of-type",self.element).css("border-right","");
 			$(".tabulator-col:last",self.element).css("border-right","");
 		}
+
+		self._vertAlignColHeaders();
+	},
+
+	//set all headers to the same height
+	_vertAlignColHeaders:function(){
+		var self = this;
+		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""})
+		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":self.header.innerHeight() + "px"});
 	},
 
 	//layout columns
@@ -1915,6 +1924,9 @@
 				});
 			}//
 		}
+
+		//vertically align headers
+		self._vertAlignColHeaders();
 
 	},
 
