@@ -1544,8 +1544,7 @@
 	//set all headers to the same height
 	_vertAlignColHeaders:function(){
 		var self = this;
-		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""})
-		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":self.header.innerHeight() + "px"});
+		$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
 	},
 
 	//layout columns
