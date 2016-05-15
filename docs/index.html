@@ -221,6 +221,26 @@ index:"age", //set the index field to the "age" field.
                     <p>and call <span class='param'>setData</span> to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
 
+
+                    <h2>Set Data at Table Creation</h2>
+                    <p>You can set the data at the same time as the table creation by passing the data array to the data option.</p>
+                    <pre class="prettyprint lang-js">var dataArray = [
+    {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+    {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+]
+
+$("#example-table").tabulator({
+    data:arrayData,
+});</pre>
+
+
+                    <h2>Extract Data from HTML Table Element</h2>
+                    <p>You can create a Tabulator table directly from an HTML table element. You can define the columns in the usual way with the columns option, or you can set them as <span class='param'>th</span> elements in the  <span class='param'>thead</span> of a table.</p>
+
+                    <pre class="prettyprint lang-html">code</pre>
+
+                    <pre class="prettyprint lang-js">code</pre>
+
                 </article>
                 <a class="anchor" id="pagination"></a>
                 <article>
