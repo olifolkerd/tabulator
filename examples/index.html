@@ -463,6 +463,12 @@
                                     color:#fff;
                                 }
 
+                                /*Allow column header names to wrap lines*/
+                                #example-table-theme .tabulator-header .tabulator-col,
+                                #example-table-theme .tabulator-header .tabulator-col-row-handle {
+                                    white-space: normal;
+                                }
+
                                 /*Theme the rows*/
                                 #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
                                     color:#fff;
@@ -981,15 +987,15 @@
         //Theming Example
 
         $("#example-table-theme").tabulator({
-            height:"311px",
+            height:"331px",
             fitColumns:true,
             columns:[
             {title:"Name", field:"name", sorter:"string", width:150},
             {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
             {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
             {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+            {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
+            {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},
             {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
             ],
             rowClick:function(e, id, data, row){
