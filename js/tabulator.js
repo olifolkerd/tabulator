@@ -57,9 +57,9 @@
 		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
 
-		progressiveRender:true, //enable progressive rendering
-		progressiveRenderSize:200, //block size for progressive rendering
-		progressiveRenderPeriod:100, //time between renders
+		progressiveRender:false, //enable progressive rendering
+		progressiveRenderSize:20, //block size for progressive rendering
+		progressiveRenderMargin:200, //disance in px before end of scroll before progressive render is triggered
 
 		tooltips: false, //Tool tip value
 
@@ -224,8 +224,24 @@
 
 		self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
+		var scrollTop = 0;
+		var scrollLeft = 0;
 		self.tableHolder.scroll(function(){
-			self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
+			// if(scrollLeft != $(this).scrollLeft()){
+				self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
+			// }
+
+			//trigger progressive rendering on scroll
+			if(self.options.progressiveRender && scrollTop != $(this).scrollTop() && scrollTop < $(this).scrollTop()){
+				if($(this)[0].scrollHeight - $(this).innerHeight() - $(this).scrollTop() < self.options.progressiveRenderMargin){
+					if(self.paginationCurrentPage < self.paginationMaxPage){
+						self.paginationCurrentPage++;
+						self._renderTable(true);
+					}
+				}
+			}
+
+			scrollTop = $(this).scrollTop();
 		});
 
 		//create scrollable table holder
@@ -695,10 +711,6 @@
 			self.table.append(row);
 		}
 
-		//resize cells to the same height
-		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
-
-
 		//align column widths
 		self._colRender(!self.firstRender);
 		self._trigger("renderComplete");
@@ -892,6 +904,8 @@
 
 		if(!options.pagination && options.progressiveRender && !progressiveRender){
 			self.paginationCurrentPage = 1;
+			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.progressiveRenderSize);
+
 			options.paginationSize = options.progressiveRenderSize;
 			progressiveRender = true;
 		}
@@ -924,8 +938,6 @@
 				self.table.append(row);
 			}
 
-			//resize cells to the same height
-			$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
 		});
 
 
@@ -1018,11 +1030,9 @@
 		}
 
 		//trigger progressive render
-		if(progressiveRender && renderData.length){
-			self.progressiveRenderTimer = setTimeout(function(){
+		if(progressiveRender && self.paginationCurrentPage < self.paginationMaxPage && self.tableHolder[0].scrollHeight <= self.tableHolder.innerHeight()){
 				self.paginationCurrentPage++;
 				self._renderTable(true);
-			}, options.progressiveRenderPeriod)
 		}
 
 		self.firstRender = false;
@@ -1398,6 +1408,9 @@
 		if(self.element.innerHeight() > 0){
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
 		}
+
+		//trigger ro restyle
+		self._styleRows(true);
 
 		if(fullRedraw){
 			self._renderTable();
@@ -1798,24 +1811,33 @@
 	},
 
 	//style rows of the table
-	_styleRows:function(){
+	_styleRows:function(minimal){
 
 		var self = this;
 
-		//fixes IE rendering bug on table redraw
-		$(".tabulator-tableHolder", self.element).css({height:$(".tabulator-table", self.element).height()});
+		if(!minimal){
+			//hover over rows
+			if(self.options.selectable){
+				$(".tabulator-row").addClass("selectable");
+			}else{
+				$(".tabulator-row").removeClass("selectable");
+			}
 
+			//apply row formatter
+			if(self.options.rowFormatter){
+				$(".tabulator-row", self.table).each(function(){
+					//allow row contents to be replaced with custom DOM elements
+					var newRow = self.options.rowFormatter($(this), $(this).data("data"));
 
-		//hover over rows
-		if(self.options.selectable){
-			$(".tabulator-row").addClass("selectable");
-		}else{
-			$(".tabulator-row").removeClass("selectable");
+					if(newRow){
+						$(this).html(newRow)
+					}
+				});
+			}
 		}
 
 		if(!self.options.height){
-
-			var height  = self.table.outerHeight() + self.header.innerHeight();
+			var height = self.tableHolder.outerHeight() + self.header.outerHeight();
 
 			if(self.footer){
 				height += self.footer.outerHeight() + 1;
@@ -1824,17 +1846,10 @@
 			self.element.css({height:height})
 		}
 
-		//apply row formatter
-		if(self.options.rowFormatter){
-			$(".tabulator-row", self.table).each(function(){
-				//allow row contents to be replaced with custom DOM elements
-				var newRow = self.options.rowFormatter($(this), $(this).data("data"));
-
-				if(newRow){
-					$(this).html(newRow)
-				}
-			});
-		}
+		//resize cells vertically to fit row contents
+		$(".tabulator-row", self.table).each(function(){
+			$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
+		})
 
 	},
 
