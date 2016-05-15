@@ -7,11 +7,11 @@
  * file that was distributed with this source code.
  */
 
-(function(){
+ (function(){
 
-	'use strict';
+ 	'use strict';
 
-	$.widget("ui.tabulator", {
+ 	$.widget("ui.tabulator", {
 
 	data:[],//array to hold data for table
 	activeData:[],//array to hold data that is active in the DOM
@@ -34,6 +34,8 @@
 
 	progressiveRenderTimer:null, //timer for progressiver rendering
 
+	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"), //loader blockout div
+
 	//setup options
 	options: {
 
@@ -45,7 +47,7 @@
 
 		movableCols:false, //enable movable columns
 		movableRows:false, //enable movable rows
-		movableRowHandle:"<div style='margin:0 10%; width:80%; height:3px; background:#666;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div><div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'></div>", //handle for movable rows
+		movableRowHandle:"<div></div><div></div><div></div>", //handle for movable rows
 
 		columnLayoutCookie:false, //store cookie with column _styles
 		columnLayoutCookieID:"", //id for stored cookie
@@ -62,6 +64,7 @@
 		tooltips: false, //Tool tip value
 
 		columns:[],//store for colum header info
+		data:false, //store for initial table data if set at construction
 
 		index:"id",
 
@@ -72,11 +75,10 @@
 		sortDir:"desc", //default sort direction
 
 		groupBy:false, //enable table grouping and set field to group by
-		groupHeader:function(value, count, data){ //header layout function
-			return value + "<span style='color:#d00; margin-left:10px;'>(" + count + " item)</span>";
-		},
 
-		editBoxColor:"#1D68CD", //color for edit boxes
+		groupHeader:function(value, count, data){ //header layout function
+			return value + "<span>(" + count + " item)</span>";
+		},
 
 		rowFormatter:false, //row formatter callback
 
@@ -88,8 +90,8 @@
 		ajaxParams:{}, //url for ajax loading
 
 		showLoader:true, //show loader while data loading
-		loader:"<div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'>Loading Data</div>", //loader element
-		loaderError:"<div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'>Loading Error</div>", //loader element
+		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
+		loaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
 
 		rowClick:function(){}, //do action on row click
 		rowAdded:function(){}, //do action on row add
@@ -99,26 +101,108 @@
 		dataLoaded:function(){},  //callback for when data has been Loaded
 		rowMoved:function(){},  //callback for when row has moved
 		colMoved:function(){},  //callback for when column has moved
-	},
-
-	//loader blockout div
-	loaderDiv: $("<div class='tablulator-loader' style='position:absolute; top:0; left:0; z-index:100; height:100%; width:100%; background:rgba(0,0,0,.4); text-align:center;'><div class='tabulator-loader-msg'></div></div>"),
-
-	//show loader blockout div
-	_showLoader:function(self, msg){
-		if(self.options.showLoader){
-			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
-			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
-			self.element.append(self.loaderDiv);
-		}
-	},
-
-	_hideLoader:function(self){
-		$(".tablulator-loader", self.element).remove();
+		pageLoaded:function(){}, //calback for when a page is loaded
 	},
 
 	//constructor
 	_create: function() {
+		var self = this;
+		var element = self.element;
+
+		if(element.is("table")){
+			self._parseTable();
+		}else{
+			self._buildElement();
+		}
+	},
+
+	//parse table element to create data set
+	_parseTable:function(){
+		var self = this;
+		var element = self.element;
+		var options = self.options;
+
+		var hasIndex = false;
+
+		//build columns from table header if they havnt been set;
+		if(!options.columns.length){
+			var headers = $("th", element);
+
+			if(headers.length){
+				//create column array from headers
+				headers.each(function(index){
+
+					var col = {title:$(this).text(), field:$(this).text().toLowerCase().replace(" ", "_")};
+
+					var width = $(this).attr("width");
+
+					if(width){
+						col.width = width;
+					}
+
+					if(col.field == options.index){
+						hasIndex = true;
+					}
+
+					options.columns.push(col);
+				});
+			}else{
+				//create blank table headers
+				headers = $("tr:first td", element);
+
+				headers.each(function(index){
+					var col = {title:"", field:"col" + index};
+
+					var width = $(this).attr("width");
+
+					if(width){
+						col.width = width;
+					}
+
+					options.columns.push(col);
+				});
+			}
+		}
+
+
+		//iterate through table rows and build data set
+		$("tbody tr", element).each(function(rowIndex){
+			var item = {};
+
+			//create index if the dont exist in table
+			if(!hasIndex){
+				item[options.index] = rowIndex;
+			}
+
+			//add row data to item
+			$("td", $(this)).each(function(colIndex){
+				item[options.columns[colIndex].field] = $(this).text();
+			});
+
+			self.data.push(item);
+		});
+
+		//create new element
+		var newElement = $("<div></div>");
+
+		//transfer attributes to new element
+		var attributes = element.prop("attributes");
+
+		// loop through attributes and apply them on div
+		$.each(attributes, function() {
+		    newElement.attr(this.name, this.value);
+		});
+
+		// replace table with div element
+		element.replaceWith(newElement);
+
+		options.data = self.data;
+
+		newElement.tabulator(options);
+	},
+
+	//build tabulator element
+	_buildElement: function() {
 		var self = this;
 		var options = self.options;
 		var element = self.element;
@@ -128,6 +212,10 @@
 		if(options.height){
 			options.height = isNaN(options.height) ? options.height : options.height + "px";
 			element.css({"height": options.height});
+		}
+
+		if(options.data){
+			self.data = options.data;
 		}
 
 		element.addClass("tabulator");
@@ -174,7 +262,60 @@
 
 	//set options
 	_setOption: function(option, value) {
+		var self = this;
+
+		//block update if option cannot be updated this way
+		if(["columns"].indexOf(option) > -1){
+			return false
+		}
+
+		//set option to value
 		$.Widget.prototype._setOption.apply( this, arguments );
+
+		//trigger appropriate table response
+
+		if(["colMinWidth", "colResizable", "fitColumns", "movableCols", "movableRows", "movableRowHandle", "sortable", "groupBy", "groupHeader", "rowFormatter", "selectable"].indexOf(option) > -1){
+
+			//triger rerender
+			self._renderTable();
+
+		}else if(["height", "pagination", "paginationSize", "tooltips"].indexOf(option) > -1){
+
+			//triger render/reset page
+			if(self.options.pagination){
+				self.setPage(1);
+			}else{
+				self._renderTable();
+			}
+
+		}else if(["dateFormat", "sortBy", "sortDir"].indexOf(option) > -1){
+
+			//trigger sort
+			if(self.sortCurCol){
+				self.sort(self.sortCurCol, self.sortCurDir);
+			}
+
+		}else if(["index"].indexOf(option) > -1){
+
+			//trigger reparse data
+			self._parseData(self.data);
+
+		}else if(["paginationElement"].indexOf(option) > -1){
+			//trigger complete redraw
+		}
+	},
+
+	//show loader blockout div
+	_showLoader:function(self, msg){
+		if(self.options.showLoader){
+			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
+			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
+			self.element.append(self.loaderDiv);
+		}
+	},
+
+	_hideLoader:function(self){
+		$(".tablulator-loader", self.element).remove();
 	},
 
 	//handle cell data change
@@ -555,7 +696,7 @@
 		}
 
 		//resize cells to the same height
-		$(".tabulator-cell", row).css({"height":row.outerHeight() + "px"});
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
 
 
 		//align column widths
@@ -784,7 +925,7 @@
 			}
 
 			//resize cells to the same height
-			$(".tabulator-cell", row).css({"height":row.outerHeight() + "px"});
+			$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
 		});
 
 
@@ -872,6 +1013,10 @@
 			self._trigger("filterComplete");
 		}
 
+		if(self.options.pagination){
+			self.options.pageLoaded(self.paginationCurrentPage);
+		}
+
 		//trigger progressive render
 		if(progressiveRender && renderData.length){
 			self.progressiveRenderTimer = setTimeout(function(){
@@ -914,6 +1059,13 @@
 		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
 	},
 
+	//get current page number
+	getPage:function(){
+		var self = this;
+
+		return self.options.pagination ? self.paginationCurrentPage : false;
+	},
+
 
 	//set current paginated page
 	setPage:function(page){
@@ -925,23 +1077,23 @@
 		}else{
 			switch(page){
 				case "first":
-					self.paginationCurrentPage = 1;
+				self.paginationCurrentPage = 1;
 				break;
 
 				case "prev":
-					if(self.paginationCurrentPage > 1){
-						self.paginationCurrentPage--;
-					}
+				if(self.paginationCurrentPage > 1){
+					self.paginationCurrentPage--;
+				}
 				break;
 
 				case "next":
-					if(self.paginationCurrentPage < self.paginationMaxPage){
-						self.paginationCurrentPage++;
-					}
+				if(self.paginationCurrentPage < self.paginationMaxPage){
+					self.paginationCurrentPage++;
+				}
 				break;
 
 				case "last":
-					self.paginationCurrentPage = self.paginationMaxPage;
+				self.paginationCurrentPage = self.paginationMaxPage;
 				break;
 			}
 		}
@@ -1224,7 +1376,7 @@
 			row.append(cell);
 		});
 
-	return row;
+		return row;
 	},
 
 	//get number of elements in dataset
@@ -1234,7 +1386,7 @@
 
 
 	//redraw list without updating data
-	redraw:function(){
+	redraw:function(fullRedraw){
 		var self = this;
 
 		//redraw columns
@@ -1245,6 +1397,10 @@
 		//reposition loader if present
 		if(self.element.innerHeight() > 0){
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
+		}
+
+		if(fullRedraw){
+			self._renderTable();
 		}
 	},
 
@@ -1275,7 +1431,7 @@
 
 		//add column for row handle if movable rows enabled
 		if(options.movableRows){
-			var handle = $('<div class="tabulator-col-row-handle" style="display:inline-block;">&nbsp</div>');
+			var handle = $('<div class="tabulator-col-row-handle">&nbsp</div>');
 			self.header.append(handle);
 		}
 
@@ -1484,10 +1640,14 @@
 				"max-height":"calc(100% - " + footerHeight + "px)",
 			});
 		}else{
-			self.tableHolder.css({
-				"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-			});
+
+			if(self.options.height){
+				self.tableHolder.css({
+					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				});
+			}
+
 		}
 
 		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
@@ -1515,6 +1675,11 @@
 
 		//render column headings
 		self._colRender();
+
+		if(self.firstRender && self.options.data){
+			// self.firstRender = false;
+			self._parseData(self.options.data);
+		}
 
 	},
 
@@ -2309,17 +2474,10 @@
 		var element = self.element;
 
 		element.empty();
-		element.css({
-			position:"initial",
-			"box-sizing" : "initial",
-			"background-color": "initial",
-			"border": "initial",
-			"overflow":"initial",
-			"height":"initial",
-		})
+
 		element.removeClass("tabulator");
 	},
 
-	});
+});
 
 })();
