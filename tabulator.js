@@ -1210,9 +1210,6 @@
 
 			clearTimeout(self.progressiveRenderTimer);
 
-			//hide table while building
-			// self.table.hide();
-
 			//clear data from table before loading new
 			self.table.empty();
 		}
@@ -1255,7 +1252,6 @@
 			}
 
 		});
-
 
 
 		//enable movable rows
@@ -1329,26 +1325,25 @@
 		//style table rows
 		self._styleRows();
 
-		//show table once loading complete
-		// self.table.show();
-
-		//hide loader div
-		self._hideLoader(self);
-
-		self._trigger("renderComplete");
-
-		if(self.filterField){
-			self._trigger("filterComplete");
-		}
-
-		if(self.options.pagination){
-			self.options.pageLoaded(self.paginationCurrentPage);
-		}
-
-		//trigger progressive render
 		if(progressiveRender && self.paginationCurrentPage < self.paginationMaxPage && self.tableHolder[0].scrollHeight <= self.tableHolder.innerHeight()){
+				//trigger progressive render to fill element
 				self.paginationCurrentPage++;
 				self._renderTable(true);
+		}else{
+
+			//hide loader div
+			self._hideLoader(self);
+
+			//trigger callbacks
+			self._trigger("renderComplete");
+
+			if(self.filterField){
+				self._trigger("filterComplete");
+			}
+
+			if(self.options.pagination){
+				self.options.pageLoaded(self.paginationCurrentPage);
+			}
 		}
 
 		self.firstRender = false;
