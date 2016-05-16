@@ -61,6 +61,7 @@
 		progressiveRenderMargin:200, //disance in px before end of scroll before progressive render is triggered
 
 		tooltips: false, //Tool tip value
+		tooltipsHeader: false, //Tool tip for headers
 
 		columns:[],//store for colum header info
 		data:false, //store for initial table data if set at construction
@@ -1661,6 +1662,10 @@
 			var visibility = column.visible ? "inline-block" : "none";
 
 			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+
+			if(options.tooltipsHeader){
+				col.attr("title", title);
+			}
 
 			if(typeof(column.width) != "undefined"){
 				column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
