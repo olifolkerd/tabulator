@@ -593,6 +593,13 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 });</pre>
 
                     <p><strong>NOTE</strong> setting a tooltip value on a column will override the global setting.</p>
+
+                    <h2>Header ToolTips</h2>
+                    <p>It is also possible to set tooltips to display on the column headers. This is particularly useful when your columns are too narrow to display full header names. To enable this set the <span class='param'>tooltipsHeader</span> option to <span class='param'>true</span>.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    tooltipsHeader:true, //enable header tooltips
+});</pre>
                 </article>
 
                 <a class="anchor" id="grouping"></a>
