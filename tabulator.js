@@ -38,7 +38,6 @@
 
 	//setup options
 	options: {
-
 		colMinWidth:"40px", //minimum global width for a column
 		colResizable:true, //resizable columns
 
@@ -275,7 +274,6 @@
 		}else{
 			self._colLayout();
 		}
-
 	},
 
 	//set options
@@ -418,7 +416,6 @@
 		}else{
 			self._colLayout();
 		}
-
 	},
 
 	//set tabulator columns
@@ -712,7 +709,6 @@
 		self.options.rowAdded(item);
 
 		self._trigger("dataEdited");
-
 	},
 
 	////////////////// Data Manipulation //////////////////
@@ -725,7 +721,6 @@
 
 	//load data
 	setData:function(data, params){
-
 		this._trigger("dataLoading");
 
 		params = params ? params : {};
@@ -767,7 +762,6 @@
 
 	//get json data via ajax
 	_getAjaxData:function(url, params){
-
 		var self = this;
 		var options = self.options;
 
@@ -1022,12 +1016,10 @@
 		}else{
 			self._renderTable();
 		}
-
 	},
 
 	//sort table
 	_sorter: function(column, dir, sortList, i){
-
 		var self = this;
 		var table = self.table;
 		var options = self.options;
@@ -1062,7 +1054,6 @@
 
 			return result;
 		})
-
 	},
 
 	//process individual sort functions on active data
@@ -1097,7 +1088,6 @@
 
 	//set current paginated page
 	setPage:function(page){
-
 		var self = this;
 
 		if(Number.isInteger(page) && page > 0 && page <= self.paginationMaxPage){
@@ -1191,7 +1181,6 @@
 		if(self.paginationCurrentPage == self.paginationMaxPage){
 			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled");
 		}
-
 	},
 
 	////////////////// Render Data to Table //////////////////
@@ -1347,12 +1336,10 @@
 		}
 
 		self.firstRender = false;
-
 	},
 
 	//render individual rows
 	_renderRow:function(item){
-
 		var self = this;
 		var row = $('<div class="tabulator-row" data-id="' + item[self.options.index] + '"></div>');
 
@@ -1816,7 +1803,6 @@
 			// self.firstRender = false;
 			self._parseData(self.options.data);
 		}
-
 	},
 
 	//layout coluns on first render
@@ -1933,14 +1919,12 @@
 
 		//vertically align headers
 		self._vertAlignColHeaders();
-
 	},
 
 	////////////////// Row Styling //////////////////
 
 	//style rows of the table
 	_styleRows:function(minimal){
-
 		var self = this;
 
 		if(!minimal){
@@ -1964,23 +1948,12 @@
 			}
 		}
 
-		// if(!self.options.height){
-		// 	var height = self.tableHolder.outerHeight() + self.header.outerHeight();
-
-		// 	if(self.footer){
-		// 		height += self.footer.outerHeight() + 1;
-		// 	}
-
-		// 	// self.element.css({height:height})
-		// }
-
 		//resize cells vertically to fit row contents
 		if(self.element.is(":visible")){
 			$(".tabulator-row", self.table).each(function(){
 				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
 			})
 		}
-
 	},
 
 	//format cell contents
@@ -2006,7 +1979,6 @@
 
 	//carry out action on cell click
 	_cellClick: function(e, cell){
-
 		var column = this.options.columns.filter(function(column) {
 			return column.index == cell.data("index");
 		});
@@ -2016,7 +1988,6 @@
 
 	//handle cell data change
 	_cellDataChange: function(cell, value){
-
 		var self = this;
 		var row = cell.closest(".tabulator-row");
 
@@ -2043,7 +2014,6 @@
 		self._styleRows();
 
 		self._trigger("dataEdited");
-
 	},
 
 	////////////////// Formatter/Sorter Helpers //////////////////
@@ -2191,7 +2161,6 @@
 			return stars.html();
 		},
 		progress:function(value, data, cell, row, options, formatterParams){ //progress bar
-
 			//set default parameters
 			var max = formatterParams && formatterParams.max ? formatterParams.max : 100;
 			var min = formatterParams && formatterParams.min ? formatterParams.min : 0;
@@ -2223,13 +2192,11 @@
 		buttonCross:function(value, data, cell, row, options, formatterParams){
 			return '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 		},
-
 	},
 
 	//custom data editors
 	editors:{
 		input:function(cell, value){
-
 			//create and style input
 			var input = $("<input type='text'/>");
 			input.css({
@@ -2258,10 +2225,8 @@
 			});
 
 			return input;
-
 		},
 		number:function(cell, value){
-
 			//create and style input
 			var input = $("<input type='number'/>");
 			input.css({
@@ -2290,7 +2255,6 @@
 			});
 
 			return input;
-
 		},
 		star:function(cell, value){
 			var maxStars = $("svg", cell).length;
@@ -2425,7 +2389,6 @@
 
 				}
 			});
-
 
 			//allow key based navigation
 			cell.on("keydown", function(e){
