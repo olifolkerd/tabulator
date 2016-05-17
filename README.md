@@ -70,10 +70,10 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Pagination via AJAX request
 - Multi row column headers / column grouping
 - Selectable Rows
+- Custom Row Templates
 - Minified source files
 - Loading data from HTML Table elements
 - Minified CSS and JS
-- Row Templating
 - Extra Formatters
 - Extra Sorters
 - Usage Case Examples (creating custom formatters, etc...)
