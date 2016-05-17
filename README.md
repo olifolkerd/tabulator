@@ -69,6 +69,7 @@ Tabulator is actively under development and I plan to have even more useful feat
 
 - Pagination via AJAX request
 - Multi row column headers / column grouping
+- Selectable Rows
 - Minified source files
 - Loading data from HTML Table elements
 - Minified CSS and JS
