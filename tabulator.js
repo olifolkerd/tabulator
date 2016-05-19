@@ -110,7 +110,7 @@
 	////////////////// Element Construction //////////////////
 
 	//constructor
-	_create: function() {
+	_create: function(){
 		var self = this;
 		var element = self.element;
 
@@ -193,7 +193,7 @@
 		var attributes = element.prop("attributes");
 
 		// loop through attributes and apply them on div
-		$.each(attributes, function() {
+		$.each(attributes, function(){
 		    newElement.attr(this.name, this.value);
 		});
 
@@ -206,7 +206,7 @@
 	},
 
 	//build tabulator element
-	_buildElement: function() {
+	_buildElement: function(){
 		var self = this;
 		var options = self.options;
 		var element = self.element;
@@ -280,7 +280,7 @@
 	},
 
 	//set options
-	_setOption: function(option, value) {
+	_setOption: function(option, value){
 		var self = this;
 
 		//block update if option cannot be updated this way
@@ -372,7 +372,7 @@
 		//create array of column styles only
 		var columnStyles = [];
 
-		$.each(self.options.columns, function(i, column) {
+		$.each(self.options.columns, function(i, column){
 
 			var style = {
 				field: column.field,
@@ -432,13 +432,13 @@
 			var newColumns = [];
 
 			//iterate through each of the new columns
-			$.each(columns, function(i, column) {
+			$.each(columns, function(i, column){
 
 				//find a match in the original column array
 				var find = column.field;
 				//var find = column.field == "" ? column : column.field;
 
-				$.each(self.options.columns, function(i, origColumn) {
+				$.each(self.options.columns, function(i, origColumn){
 
 					var match = typeof(find) == "object" ? origColumn == find : origColumn.field == find;
 
@@ -493,7 +493,7 @@
 
 		var result = false;
 
-		$.each(self.options.columns, function(i, column) {
+		$.each(self.options.columns, function(i, column){
 			if(typeof(field) == "object"){
 				if(column == field){
 					result = column;
@@ -516,7 +516,7 @@
 		var self = this;
 		var column = false;
 
-		$.each(self.options.columns, function(i, item) {
+		$.each(self.options.columns, function(i, item){
 			if(item.field == field){
 				column = i;
 				return false;
@@ -543,7 +543,7 @@
 		var self = this;
 		var column = false;
 
-		$.each(self.options.columns, function(i, item) {
+		$.each(self.options.columns, function(i, item){
 			if(item.field == field){
 				column = i;
 				return false;
@@ -569,7 +569,7 @@
 		var self = this;
 		var column = false;
 
-		$.each(self.options.columns, function(i, item) {
+		$.each(self.options.columns, function(i, item){
 			if(item.field == field){
 				column = i;
 				return false;
@@ -773,11 +773,11 @@
 			type: "GET",
 			data:params,
 			async: true,
-			dataType:'json',
-			success: function (data) {
+			dataType:"json",
+			success: function (data){
 				self._parseData(data);
 			},
-			error: function (xhr, ajaxOptions, thrownError) {
+			error: function (xhr, ajaxOptions, thrownError){
 				console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
 				self._trigger("dataLoadError", xhr, thrownError);
 
@@ -795,13 +795,13 @@
 		if(data.length){
 			if(typeof(data[0][self.options.index]) == "undefined"){
 				self.options.index = "_index";
-				$.each(data, function(i, item) {
+				$.each(data, function(i, item){
 					newData[i] = item;
 					newData[i]["_index"] = i;
 				});
 
 			}else{
-				$.each(data, function(i, item) {
+				$.each(data, function(i, item){
 					newData.push(item);
 				});
 			}
@@ -983,11 +983,11 @@
 			sortList = [{field: sortList, dir:dir}];
 		}
 
-		$.each(sortList, function(i, item) {
+		$.each(sortList, function(i, item){
 
 			//convert colmun name to column object
 			if(typeof(item.field) == "string"){
-				$.each(options.columns, function(i, col) {
+				$.each(options.columns, function(i, col){
 					if(col.field == item.field){
 						item.field = col;
 						return false;
@@ -1218,7 +1218,7 @@
 		var renderData = options.pagination || options.progressiveRender ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData;
 
 		//build rows of table
-		renderData.forEach( function(item, i) {
+		renderData.forEach(function(item, i){
 
 			var row = self._renderRow(item);
 
@@ -1273,7 +1273,7 @@
 						"background":moveBackground,
 					});
 				},
-				update: function(event, ui) {
+				update: function(event, ui){
 					//restyle rows
 					self._styleRows();
 
@@ -1345,7 +1345,7 @@
 	//render individual rows
 	_renderRow:function(item){
 		var self = this;
-		var row = $('<div class="tabulator-row" data-id="' + item[self.options.index] + '"></div>');
+		var row = $("<div class='tabulator-row' data-id='" + item[self.options.index] + "'></div>");
 
 		//bind row data to row
 		row.data("data", item);
@@ -1362,18 +1362,18 @@
 			row.append(handle);
 		}
 
-		$.each(self.options.columns, function(i, column) {
+		$.each(self.options.columns, function(i, column){
 			//deal with values that arnt declared
 
-			var value = typeof(item[column.field]) == 'undefined' ? "" : item[column.field];
+			var value = typeof(item[column.field]) == "undefined" ? "" : item[column.field];
 
 			// set empty values to not break search
-			if(typeof(item[column.field]) == 'undefined'){
+			if(typeof(item[column.field]) == "undefined"){
 				item[column.field] = "";
 			}
 
 			//set column text alignment
-			var align = typeof(column.align) == 'undefined' ? "left" : column.align;
+			var align = typeof(column.align) == "undefined" ? "left" : column.align;
 
 			//allow tabbing on editable cells
 			var tabbable = column.editable || column.editor ? "tabindex='0'" : "";
@@ -1558,7 +1558,7 @@
 
 		//add column for row handle if movable rows enabled
 		if(options.movableRows){
-			var handle = $('<div class="tabulator-col-row-handle">&nbsp</div>');
+			var handle = $("<div class='tabulator-col-row-handle'>&nbsp</div>");
 			self.header.append(handle);
 		}
 
@@ -1593,7 +1593,7 @@
 
 					})
 				},
-				update: function(event, ui) {
+				update: function(event, ui){
 
 					//update columns array with new positional data
 					var fromField =  ui.item.data("field");
@@ -1602,7 +1602,7 @@
 					var from = null;
 					var to = toField ? null : options.columns.length;
 
-					$.each(options.columns, function(i, column) {
+					$.each(options.columns, function(i, column){
 
 						if(column.field && column.field == fromField){
 							from = i;
@@ -1616,7 +1616,7 @@
 
 					var columns = options.columns.splice(from, 1)[0]
 
-					$.each(options.columns, function(i, column) {
+					$.each(options.columns, function(i, column){
 
 						if(column.field && column.field == toField){
 							to = i;
@@ -1641,7 +1641,7 @@
 
 
 
-		$.each(options.columns, function(i, column) {
+		$.each(options.columns, function(i, column){
 
 			column.index = i;
 
@@ -1736,7 +1736,7 @@
 					self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
 
 
-					$.each(self.options.columns, function(i, item) {
+					$.each(self.options.columns, function(i, item){
 						if(item.field == self.mouseDragElement.data("field")){
 							item.width = self.mouseDragElement.outerWidth();
 						}
@@ -1823,7 +1823,7 @@
 
 		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
 			//free sized table
-			$.each(options.columns, function(i, column) {
+			$.each(options.columns, function(i, column){
 				colWidth = $(".tabulator-col[data-index=" + i + "]", element).outerWidth();
 				var col = $(".tabulator-cell[data-index=" + i + "]", element);
 				col.css({width:colWidth});
@@ -1849,7 +1849,7 @@
 				var widthIdealCount = 0;
 				var lastVariableCol = "";
 
-				$.each(options.columns, function(i, column) {
+				$.each(options.columns, function(i, column){
 					if(column.visible){
 
 						colCount++;
@@ -1876,7 +1876,7 @@
 
 				if(proposedWidth >= parseInt(options.colMinWidth)){
 
-					$.each(options.columns, function(i, column) {
+					$.each(options.columns, function(i, column){
 						if(column.visible){
 							var newWidth = column.width ? column.width : proposedWidth;
 
@@ -1899,7 +1899,7 @@
 			}else{
 
 				//free sized table
-				$.each(options.columns, function(i, column) {
+				$.each(options.columns, function(i, column){
 
 					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]",element);
 
@@ -1987,11 +1987,11 @@
 
 	//carry out action on cell click
 	_cellClick: function(e, cell){
-		var column = this.options.columns.filter(function(column) {
+		var column = this.options.columns.filter(function(column){
 			return column.index == cell.data("index");
 		});
 
-		column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data") );
+		column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 	},
 
 	//handle cell data change
@@ -2069,17 +2069,17 @@
 
 			return el1 - el2;
 		},
-		alphanum:function(as, bs) {
-			var a, b, a1, b1, i= 0, L, rx=  /(\d+)|(\D+)/g, rd=  /\d/;
+		alphanum:function(as, bs){
+			var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
 
 			if(isFinite(as) && isFinite(bs)) return as - bs;
-			a= String(as).toLowerCase();
-			b= String(bs).toLowerCase();
+			a = String(as).toLowerCase();
+			b = String(bs).toLowerCase();
 			if(a === b) return 0;
 			if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
-			a= a.match(rx);
-			b= b.match(rx);
-			L= a.length > b.length ? b.length: a.length;
+			a = a.match(rx);
+			b = b.match(rx);
+			L = a.length > b.length ? b.length : a.length;
 			while(i < L){
 				a1= a[i];
 				b1= b[i++];
@@ -2104,15 +2104,15 @@
 		money:function(value, data, cell, row, options, formatterParams){
 			var number =  parseFloat(value).toFixed(2);
 
-			var number = number.split('.');
+			var number = number.split(".");
 
 			var integer = number[0];
-			var decimal = number.length > 1 ? '.' + number[1] : '';
+			var decimal = number.length > 1 ? "." + number[1] : "";
 
 			var rgx = /(\d+)(\d{3})/;
 
-			while (rgx.test(integer)) {
-				integer = integer.replace(rgx, '$1' + ',' + '$2');
+			while (rgx.test(integer)){
+				integer = integer.replace(rgx, "$1" + "," + "$2");
 			}
 
 			return integer + decimal;
@@ -2126,7 +2126,7 @@
 		tick:function(value, data, cell, row, options, formatterParams){
 			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
-			if(value === true || value === 'true' || value === 'True' || value === 1){
+			if(value === true || value === "true" || value === "True" || value === 1){
 				return tick;
 			}else{
 				return "";
@@ -2136,7 +2136,7 @@
 			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 			var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
-			if(value === true || value === 'true' || value === 'True' || value === 1){
+			if(value === true || value === "true" || value === "True" || value === 1){
 				return tick;
 			}else{
 				return cross;
@@ -2437,7 +2437,7 @@
 				input.focus();
 			},100);
 
-			if(value === true || value === 'true' || value === 'True' || value === 1){
+			if(value === true || value === "true" || value === "True" || value === 1){
 				input.prop("checked", true);
 			}else{
 				input.prop("checked", false);
@@ -2473,7 +2473,7 @@
 				input.focus();
 			},100);
 
-			if(value === true || value === 'true' || value === 'True' || value === 1){
+			if(value === true || value === "true" || value === "True" || value === 1){
 				input.prop("checked", true);
 			}else{
 				input.prop("checked", false);
@@ -2498,7 +2498,7 @@
 	////////////////// Tabulator Desconstructor //////////////////
 
 	//deconstructor
-	_destroy: function() {
+	_destroy: function(){
 		var self = this;
 		var element = self.element;
 
