@@ -101,9 +101,9 @@
 		rowEdit:function(){}, //do action on row edit
 		rowDelete:function(){}, //do action on row delete
 		rowContext:function(){}, //context menu action
-		dataLoaded:function(){},  //callback for when data has been Loaded
-		rowMoved:function(){},  //callback for when row has moved
-		colMoved:function(){},  //callback for when column has moved
+		dataLoaded:function(){}, //callback for when data has been Loaded
+		rowMoved:function(){}, //callback for when row has moved
+		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
 	},
 
@@ -194,7 +194,7 @@
 
 		// loop through attributes and apply them on div
 		$.each(attributes, function(){
-		    newElement.attr(this.name, this.value);
+			newElement.attr(this.name, this.value);
 		});
 
 		// replace table with div element
@@ -289,7 +289,7 @@
 		}
 
 		//set option to value
-		$.Widget.prototype._setOption.apply( this, arguments );
+		$.Widget.prototype._setOption.apply(this, arguments);
 
 		//trigger appropriate table response
 
@@ -603,7 +603,7 @@
 
 		var id = typeof(item) == "number" ? item : item.data("data")[self.options.index];
 
-		var row = typeof(item) == "number" ? $("[data-id=" + item + "]", self.element) :  item;
+		var row = typeof(item) == "number" ? $("[data-id=" + item + "]", self.element) : item;
 
 		var rowData = row.data("data");
 		rowData.tabulator_delete_row = true;
@@ -876,7 +876,7 @@
 		var self = this;
 
 		//filter data set
-		if(self.filterField ){
+		if(self.filterField){
 			self.activeData = self.data.filter(function(row){
 				return self._filterRow(row);
 			});
@@ -893,7 +893,6 @@
 		if(self.sortCurCol){
 			self.sort(self.sortCurCol, self.sortCurDir);
 		}else{
-
 			//determine pagination information / render table
 			if(self.options.pagination){
 				self.setPage(1);
@@ -1449,7 +1448,7 @@
 
 	//render group element
 	_renderGroup:function(value){
-		var group =  $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
+		var group = $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
 
 		return group;
 	},
@@ -1567,7 +1566,7 @@
 			self.header.sortable({
 				axis: "x",
 				opacity:1,
-				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''],  .tabulator-col[data-field=undefined]",
+				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
 				start: function(event, ui){
 					ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
 				},
@@ -1596,8 +1595,8 @@
 				update: function(event, ui){
 
 					//update columns array with new positional data
-					var fromField =  ui.item.data("field");
-					var toField =  ui.item.next(".tabulator-col").data("field");
+					var fromField = ui.item.data("field");
+					var toField = ui.item.next(".tabulator-col").data("field");
 
 					var from = null;
 					var to = toField ? null : options.columns.length;
@@ -1722,9 +1721,7 @@
 				}
 			})
 
-
 			var endColMove = function(e){
-
 				if(self.mouseDrag){
 					e.stopPropagation();
 					e.stopImmediatePropagation();
@@ -1761,7 +1758,6 @@
 
 		//add pagination footer if needed
 		if(self.footer){
-
 			element.append(self.footer);
 
 			var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
@@ -1771,14 +1767,12 @@
 				"max-height":"calc(100% - " + footerHeight + "px)",
 			});
 		}else{
-
 			if(self.options.height){
 				self.tableHolder.css({
 					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
 					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
 				});
 			}
-
 		}
 
 		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
@@ -2005,7 +1999,7 @@
 		cell.data("value", value);
 
 		//update row data
-		var rowData =  row.data("data");
+		var rowData = row.data("data");
 		var hasChanged = rowData[cell.data("field")] != value;
 		rowData[cell.data("field")] = value;
 		row.data("data", rowData);
@@ -2099,10 +2093,10 @@
 	//custom data formatters
 	formatters:{
 		plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
-			return  value;
+			return value;
 		},
 		money:function(value, data, cell, row, options, formatterParams){
-			var number =  parseFloat(value).toFixed(2);
+			var number = parseFloat(value).toFixed(2);
 
 			var number = number.split(".");
 
@@ -2124,7 +2118,7 @@
 			return "<a href='" + value + "'>" + value + "</a>";
 		},
 		tick:function(value, data, cell, row, options, formatterParams){
-			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 			if(value === true || value === "true" || value === "True" || value === 1){
 				return tick;
@@ -2133,7 +2127,7 @@
 			}
 		},
 		tickCross:function(value, data, cell, row, options, formatterParams){
-			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 			var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
 			if(value === true || value === "true" || value === "True" || value === 1){
@@ -2193,10 +2187,10 @@
 			return "";
 		},
 		buttonTick:function(value, data, cell, row, options, formatterParams){
-			return '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+			return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 		},
 		buttonCross:function(value, data, cell, row, options, formatterParams){
-			return '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+			return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 		},
 	},
 
@@ -2270,7 +2264,7 @@
 			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
 			var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-			var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive"  viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+			var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 
 			for(var i=1;i<= maxStars;i++){
 
