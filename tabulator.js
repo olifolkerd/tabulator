@@ -686,9 +686,6 @@
 			item = {id:0};
 		}
 
-		//add item to
-		//self.data.push(item);
-
 		//create blank row
 		var row = self._renderRow(item);
 
@@ -1084,7 +1081,6 @@
 	//get current page number
 	getPage:function(){
 		var self = this;
-
 		return self.options.pagination ? self.paginationCurrentPage : false;
 	},
 
@@ -1174,7 +1170,6 @@
 		}
 
 		$(".tabulator-page", self.paginator).removeClass("disabled");
-
 
 		if(self.paginationCurrentPage == 1){
 			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled");
