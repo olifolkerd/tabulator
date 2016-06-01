@@ -469,6 +469,10 @@
 
 			//Trigger Redraw
 			self._colLayout();
+			
+			if(self.options.columnLayoutCookie){
+				self._setColCookie();
+			}
 
 		}else{
 
@@ -477,6 +481,10 @@
 
 			//Trigger Redraw
 			self._colLayout();
+			
+			if(self.options.columnLayoutCookie){
+				self._setColCookie();
+			}
 		}
 	},
 
