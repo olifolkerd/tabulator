@@ -467,24 +467,16 @@
 			//replace old columns with new
 			self.options.columns = newColumns;
 
-			//Trigger Redraw
-			self._colLayout();
-			
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
-			}
-
 		}else{
-
 			// if replaceing columns, replace columns array with new
 			self.options.columns = columns;
+		}
 
-			//Trigger Redraw
-			self._colLayout();
-			
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
-			}
+		//Trigger Redraw
+		self._colLayout();
+
+		if(self.options.columnLayoutCookie){
+			self._setColCookie();
 		}
 	},
 
