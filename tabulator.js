@@ -426,57 +426,60 @@
 		var self = this;
 		var oldColumns = self.options.columns;
 
-		//if updateing columns work through exisiting column data
-		if(update){
+		if(Array.isArray(columns)){
 
-			var newColumns = [];
+			//if updateing columns work through exisiting column data
+			if(update){
 
-			//iterate through each of the new columns
-			$.each(columns, function(i, column){
+				var newColumns = [];
 
-				//find a match in the original column array
-				//var find = column.field;
-				var find = column.field == "" ? column : column.field;
+				//iterate through each of the new columns
+				$.each(columns, function(i, column){
 
-				$.each(self.options.columns, function(i, origColumn){
+					//find a match in the original column array
+					//var find = column.field;
+					var find = column.field == "" ? column : column.field;
 
-					var match = typeof(find) == "object" ? origColumn == find : origColumn.field == find;
+					$.each(self.options.columns, function(i, origColumn){
 
-					//if matching, update layout data and add to new column array
-					if(match){
+						var match = typeof(find) == "object" ? origColumn == find : origColumn.field == find;
 
-						var result = self.options.columns.splice(i, 1)[0];
+						//if matching, update layout data and add to new column array
+						if(match){
 
-						result.width = column.width;
-						result.visible = column.visible;
+							var result = self.options.columns.splice(i, 1)[0];
 
-						newColumns.push(result);
+							result.width = column.width;
+							result.visible = column.visible;
 
-						return false;
-					}
+							newColumns.push(result);
+
+							return false;
+						}
+
+					});
 
 				});
 
-			});
+				//if any aditional columns left add them to the end of the table
+				if(self.options.columns.length > 0){
+					newColumns.concat(self.options.columns);
+				}
 
-			//if any aditional columns left add them to the end of the table
-			if(self.options.columns.length > 0){
-				newColumns.concat(self.options.columns);
+				//replace old columns with new
+				self.options.columns = newColumns;
+
+			}else{
+				// if replaceing columns, replace columns array with new
+				self.options.columns = columns;
 			}
 
-			//replace old columns with new
-			self.options.columns = newColumns;
+			//Trigger Redraw
+			self._colLayout();
 
-		}else{
-			// if replaceing columns, replace columns array with new
-			self.options.columns = columns;
-		}
-
-		//Trigger Redraw
-		self._colLayout();
-
-		if(self.options.columnLayoutCookie){
-			self._setColCookie();
+			if(self.options.columnLayoutCookie){
+				self._setColCookie();
+			}
 		}
 	},
 
