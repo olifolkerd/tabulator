@@ -601,79 +601,81 @@
 	deleteRow: function(item){
 		var self = this;
 
-		var id = typeof(item) == "number" ? item : item.data("data")[self.options.index];
+		var id = !isNaN(item) ? item : item.data("data")[self.options.index];
 
-		var row = typeof(item) == "number" ? $("[data-id=" + item + "]", self.element) : item;
+		var row = !isNaN(item) ? $("[data-id=" + item + "]", self.element) : item;
 
-		var rowData = row.data("data");
-		rowData.tabulator_delete_row = true;
+		if(row.length){
+			var rowData = row.data("data");
+			rowData.tabulator_delete_row = true;
 
-		//remove from data
-		var line = self.data.find(function(rowData){
-			return item.tabulator_delete_row;
-		});
+			//remove from data
+			var line = self.data.find(function(rowData){
+				return item.tabulator_delete_row;
+			});
 
-		if(line){
-			line = self.data.indexOf(line);
+			if(line){
+				line = self.data.indexOf(line);
 
-			if(line > -1){
-				//remove row from data
-				self.data.splice(line, 1);
+				if(line > -1){
+					//remove row from data
+					self.data.splice(line, 1);
+				}
 			}
-		}
 
-		//remove from active data
-		line = self.activeData.find(function(item){
-			return item.tabulator_delete_row;
-		});
+			//remove from active data
+			line = self.activeData.find(function(item){
+				return item.tabulator_delete_row;
+			});
 
-		if(line){
-			line = self.activeData.indexOf(line);
+			if(line){
+				line = self.activeData.indexOf(line);
 
-			if(line > -1){
-				//remove row from data
-				self.activeData.splice(line, 1);
+				if(line > -1){
+					//remove row from data
+					self.activeData.splice(line, 1);
+				}
 			}
-		}
 
-		var group = row.closest(".tabulator-group");
+			var group = row.closest(".tabulator-group");
 
-		row.remove();
+			row.remove();
 
-		if(self.options.groupBy){
+			if(self.options.groupBy){
 
-			var length = $(".tabulator-row", group).length;
+				var length = $(".tabulator-row", group).length;
 
-			if(length){
+				if(length){
 
-				var data = [];
+					var data = [];
 
-				$(".tabulator-row", group).each(function(){
-					data.push($(this).data("data"));
-				});
+					$(".tabulator-row", group).each(function(){
+						data.push($(this).data("data"));
+					});
 
-				var header = $(".tabulator-group-header", group);
-				var arrow = $(".tabulator-arrow", header).clone(true,true);
+					var header = $(".tabulator-group-header", group);
+					var arrow = $(".tabulator-arrow", header).clone(true,true);
 
-				header.empty();
+					header.empty();
 
-				header.append(arrow).append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
-			}else{
-				group.remove();
+					header.append(arrow).append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+				}else{
+					group.remove();
+				}
 			}
+
+
+			//style table rows
+			self._styleRows();
+
+			//align column widths
+			self._colRender(!self.firstRender);
+			self._trigger("renderComplete");
+
+			self.options.rowDelete(id);
+
+			self._trigger("dataEdited");
 		}
-
-
-		//style table rows
-		self._styleRows();
-
-		//align column widths
-		self._colRender(!self.firstRender);
-		self._trigger("renderComplete");
-
-		self.options.rowDelete(id);
-
-		self._trigger("dataEdited");
 	},
 
 	//add blank row to table
@@ -1316,7 +1318,7 @@
 				//trigger progressive render to fill element
 				self.paginationCurrentPage++;
 				self._renderTable(true);
-		}else{
+			}else{
 
 			//hide loader div
 			self._hideLoader(self);
