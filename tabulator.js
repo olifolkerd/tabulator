@@ -435,8 +435,8 @@
 			$.each(columns, function(i, column){
 
 				//find a match in the original column array
-				var find = column.field;
-				//var find = column.field == "" ? column : column.field;
+				//var find = column.field;
+				var find = column.field == "" ? column : column.field;
 
 				$.each(self.options.columns, function(i, origColumn){
 
