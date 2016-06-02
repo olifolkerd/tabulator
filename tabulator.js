@@ -915,7 +915,7 @@
 				return self.filterField(row);
 
 			}else{
-				var value = (row[self.filterField] !== null) ? row[self.filterField] : '';
+				var value = row[self.filterField];
 				var term = self.filterValue;
 
 				switch(self.filterType){
@@ -944,7 +944,11 @@
 					break;
 
 					case "like": //text like
-					return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+						if(value === null){
+							return term === value ? true : false;
+						}else{
+							return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+						}
 					break;
 
 					default:
