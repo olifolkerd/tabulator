@@ -1129,8 +1129,10 @@
 	setPageSize:function(size){
 		var self = this;
 
-		self.options.paginationSize = size;
-		self._filterData();
+		if(!isNaN(size)){
+			self.options.paginationSize = parseInt(size);
+			self._filterData();
+		}
 	},
 
 
