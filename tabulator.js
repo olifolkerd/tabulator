@@ -789,29 +789,32 @@
 	_parseData:function(data){
 		var self = this;
 
-		var newData = [];
+		if(Array.isArray(data)){
+			var newData = [];
 
-		if(data.length){
-			if(typeof(data[0][self.options.index]) == "undefined"){
-				self.options.index = "_index";
-				$.each(data, function(i, item){
-					newData[i] = item;
-					newData[i]["_index"] = i;
-				});
+			if(data.length){
+				if(typeof(data[0][self.options.index]) == "undefined"){
+					self.options.index = "_index";
+					$.each(data, function(i, item){
+						newData[i] = item;
+						newData[i]["_index"] = i;
+					});
 
-			}else{
-				$.each(data, function(i, item){
-					newData.push(item);
-				});
+				}else{
+					$.each(data, function(i, item){
+						newData.push(item);
+					});
+				}
 			}
+
+			self.data = newData;
+
+			self.options.dataLoaded(data);
+
+			//filter incomming data
+			self._filterData();
 		}
 
-		self.data = newData;
-
-		self.options.dataLoaded(data);
-
-		//filter incomming data
-		self._filterData();
 	},
 
 	////////////////// Data Filtering //////////////////
