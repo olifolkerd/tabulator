@@ -915,7 +915,7 @@
 				return self.filterField(row);
 
 			}else{
-				var value = row[self.filterField];
+				var value = (row[self.filterField] !== null) ? row[self.filterField] : '';
 				var term = self.filterValue;
 
 				switch(self.filterType){
