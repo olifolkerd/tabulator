@@ -115,6 +115,30 @@
             <div class="row">
 
                 <div class="col-lg-12" role="main">
+                    <article>
+                        <h1>Version 2.3 Released <span class="datestamp">04/07/2016</span></h1>
+
+                        <h2>Column Header Tooltips</h2>
+                        <p>It is now possible to set tooltips to display on column headers. This is particularly useful when your columns are too narrow to display full header names.</p>
+
+                        <p>More information can be found in the <a href="../docs#formatting">Formatting Data documentation</a></p>
+
+                        <h2>Add and Remove Columns</h2>
+                        <p>You can now add and remove columns from a table using the <span class='param'>addColumn</span> and <span class='param'>deleteColumn</span> functions.</p>
+
+                        <p>More information can be found in the <a href="../docs#movable">Movable Rows and Columns documentation</a></p>
+
+                        <h2>setColumns Rendering Fix</h2>
+                        <p>Set columns has been updated to fix a rendering glitch when changing the number of columns.</p>
+
+                        <h2>New dataFiltered Callback</h2>
+                        <p>The <span class='param'>dataFiltered</span> callback is now available offering access to the filtered subset of the table data after new data is loaded into a table or a filter operation is performed.</p>
+
+                        <p>More information can be found in the <a href="../docs#callbacks">Callbacks documentation</a></p>
+
+                        <h2>Input Validation</h2>
+                        <p>All functions now validate argument data before updating the table.</p>
+                    </article>
 
                     <article>
                         <h1>Version 2.2 Released <span class="datestamp">15/05/2016</span></h1>
@@ -329,8 +353,8 @@
         <script type="text/javascript">
         //google analytics tracking code
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
         ga('create', 'UA-77206751-1', 'auto');
