@@ -8,7 +8,7 @@ Full documentation & demos can be found at: [http://olifolkerd.github.io/tabulat
 ***
 Features
 ================================
-Tabulator allows you to create  a table with in seconds from any JSON formatted data.
+Tabulator allows you to create a table with in seconds from any HTML Table, Javascript Array or JSON formatted data.
 
 Simply include the library and the css in your JQuery UI project and you're away!
 
