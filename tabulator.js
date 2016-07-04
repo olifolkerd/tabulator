@@ -1690,7 +1690,6 @@
 			}
 
 
-
 			if(typeof(column.width) != "undefined"){
 				column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
 
