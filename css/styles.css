@@ -43,6 +43,10 @@ body {
   border-top: 2px solid #59B038;
   border-bottom: 2px solid #59B038;
   background: #ddd;
+  background: -moz-linear-gradient(top, #f4f4f4 1%, #cccccc 100%);
+  background: -webkit-linear-gradient(top, #f4f4f4 1%, #cccccc 100%);
+  background: linear-gradient(to bottom, #f4f4f4 1%, #cccccc 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccccc', GradientType=0);
 }
 .news h1 {
   margin-top: 10px;
