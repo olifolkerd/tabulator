@@ -1674,9 +1674,22 @@
 
 			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
 
-			if(options.tooltipsHeader){
-				col.attr("title", title);
+			//added callback for custom header tooltips
+			var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
+
+			if(tooltip === true){
+				tooltip = title;
+			}else if(typeof(tooltip) == "function"){
+				tooltip = tooltip(column);
 			}
+
+			if(tooltip){
+				col.attr("title", tooltip);
+			}else{
+				col.attr("title", "");
+			}
+
+
 
 			if(typeof(column.width) != "undefined"){
 				column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number

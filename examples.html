@@ -109,7 +109,7 @@
 			tooltipsHeader:true,
 			columns:[
 			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-			{title:"Name", field:"name", sorter:"string", width:150},
+			{title:"Name", field:"name", sorter:"string", width:150, tooltipHeader:"Custom Header Tooltip"},
 			{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
 			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, data){console.log("cell click - " + val, cell)}},
 			{title:"Height", field:"height", formatter:"star", align:"center", sorter:"number", width:100},
