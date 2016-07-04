@@ -72,7 +72,6 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Selectable Rows
 - Custom Row Templates
 - Minified source files
-- Loading data from HTML Table elements
 - Minified CSS and JS
 - Extra Formatters
 - Extra Sorters
