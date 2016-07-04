@@ -475,7 +475,7 @@
 			}
 
 			//Trigger Redraw
-			self._colLayout();
+			self._colLayout(true);
 
 			if(self.options.columnLayoutCookie){
 				self._setColCookie();
@@ -526,7 +526,6 @@
 			columns.splice(index, 0, newCol);
 
 			self.setColumns(columns);
-			self.redraw(true);
 		}
 	},
 
@@ -553,7 +552,6 @@
 			}
 
 			self.setColumns(columns);
-			self.redraw(true);
 		}
 	},
 
@@ -1623,7 +1621,7 @@
 	},
 
 	//layout columns
-	_colLayout:function(){
+	_colLayout:function(forceRedraw){
 		var self = this;
 		var options = self.options;
 		var element = self.element;
@@ -1889,7 +1887,7 @@
 		.append(arrow.clone());
 
 		//render column headings
-		self._colRender();
+		self._colRender(false, forceRedraw);
 
 		if(self.firstRender && self.options.data){
 			// self.firstRender = false;
@@ -1898,7 +1896,7 @@
 	},
 
 	//layout coluns on first render
-	_colRender:function(fixedwidth){
+	_colRender:function(fixedwidth, forceRedraw){
 		var self = this;
 		var options = self.options;
 		var table = self.table;
@@ -2011,6 +2009,10 @@
 
 		//vertically align headers
 		self._vertAlignColHeaders();
+
+		if(forceRedraw){
+			self._renderTable();
+		}
 	},
 
 	////////////////// Row Styling //////////////////
