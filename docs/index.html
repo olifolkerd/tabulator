@@ -162,6 +162,7 @@
                         <li><strong>visible</strong> - <i>(boolean, default - true)</i> determines if the column is visible. (see <a href="#column-visibility">Column Visibility</a> for more details)</li>
                         <li><strong>cssClass</strong> - sets css classes on header and cells in this column. <i>(value should be a string containing space seperated class names)</i></li>
                         <li><strong>tooltip</strong> - sets the on hover tooltip for each cell in this column (see <a href="#formatting">Formatting Data</a> for more details)</li>
+                        <li><strong>tooltipHeader</strong> - sets the on hover tooltip for the column header (see <a href="#formatting">Formatting Data</a> for more details)</li>
                     </ul>
                 </article>
                 <a class="anchor" id="set-data"></a>
@@ -575,7 +576,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
                     <pre class="prettyprint lang-js">//column definition in the columns array
 {formatter:printIcon, width:40, align:"center", tooltip:true},</pre>
 
-                    <p>The tooltip parameter can take three different types of value</p>
+                    <p>The <span class='param'>tooltip</span> parameter can take three different types of value</p>
                     <ul>
                         <li><strong>boolean</strong> - a value of <span class='param'>false</span> disables the tooltip, a value of <span class='param'>true</span> sets the tooltip of the cell to its value</li>
                         <li><strong>string</strong> - a string that will be displayed for all cells in the matching column/table.</li>
@@ -592,14 +593,34 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
     },
 });</pre>
 
-                    <p><strong>NOTE</strong> setting a tooltip value on a column will override the global setting.</p>
+                    <p><strong>NOTE</strong> setting a <span class='param'>tooltip</span> value on a column will override the global setting.</p>
 
                     <h2>Header ToolTips</h2>
-                    <p>It is also possible to set tooltips to display on the column headers. This is particularly useful when your columns are too narrow to display full header names. To enable this set the <span class='param'>tooltipsHeader</span> option to <span class='param'>true</span>.</p>
+                    <p>It is also possible to set tooltips to display on the column headers. This is particularly useful when your columns are too narrow to display full header names.</p>
 
+                    <p>Header tooltips can either be set globally using the <span class='param'>tooltipsHeader</span> options parameter:</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     tooltipsHeader:true, //enable header tooltips
 });</pre>
+                    <p>Or on a per column basis in the column definition array:</p>
+                    <pre class="prettyprint lang-js">//column definition in the columns array
+{title:"name", field:"name", width:40, align:"center", tooltipHeader:true},</pre>
+
+                    <p>The tooltip <span class='param'>tooltipHeader</span> can take three different types of value</p>
+                    <ul>
+                        <li><strong>boolean</strong> - a value of <span class='param'>false</span> disables the tooltip, a value of <span class='param'>true</span> sets the tooltip of the column header to its <span class='param'>title</span> value.</li>
+                        <li><strong>string</strong> - a string that will be displayed for the tooltip.</li>
+                        <li><strong>function</strong> - a callback function that returns the string for the column header. see below:</li>
+                    </ul>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    tooltips:function(col){
+        //col - column definition object
+
+        //function should return a string for the header tooltip of false to hide the tooltip
+        return  col.title;
+    },
+});</pre>
+                    <p><strong>NOTE</strong> setting a <span class='param'>tooltipHeader</span> value on a column will override the global setting.</p>
                 </article>
 
                 <a class="anchor" id="grouping"></a>
