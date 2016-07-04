@@ -105,6 +105,7 @@
 		rowMoved:function(){}, //callback for when row has moved
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
+		dataFiltered:function(){}, //callback for when data is filtered
 	},
 
 	////////////////// Element Construction //////////////////
@@ -960,6 +961,8 @@
 		if(self.options.pagination){
 			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
 		}
+
+		self.options.dataFiltered(self.activeData);
 
 		//sort or render data
 		if(self.sortCurCol){
