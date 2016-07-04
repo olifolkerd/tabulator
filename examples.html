@@ -780,11 +780,13 @@
 </section>
 
 <section>
-	<header>Add / Delete Rows <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#addrow">http://olifolkerd.github.io/tabulator/docs/#addrow</a></span></header>
+	<header>Add / Delete Rows & Columns <span> - for full documentation visit <a href="http://olifolkerd.github.io/tabulator/docs/#addrow">http://olifolkerd.github.io/tabulator/docs/#addrow</a></span></header>
 	<p>
-		Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
+		Tablulator allows you to add new rows and columns, delete existing rows and columns, and clear all table data with ease.
 	</p>
 	<p>
+		<button id="add-col">Add "Favourite Color" Column</button>
+		<button id="del-col">Remove "Date Of Birth" Column</button>
 		<button id="add-row">Add Blank Row to bottom of table</button>
 		<button id="del-row">Remove "Oli Bob" From the table</button>
 		<button id="clear">Empty the table</button>
@@ -792,6 +794,14 @@
 	</p>
 	<div id="example-table-adddel"></div>
 	<script type="text/javascript">
+
+		$("#add-col").click(function(){
+			$("#example-table-adddel").tabulator("addColumn",  {title:"Favourite Color", field:"col", editable:true}, true, "height");
+		})
+
+		$("#del-col").click(function(){
+			$("#example-table-adddel").tabulator("deleteColumn", "dob");
+		})
 
 		$("#add-row").click(function(){
 			$("#example-table-adddel").tabulator("addRow");
@@ -819,7 +829,6 @@
 			{title:"Age", field:"age", width:90, align:"right", sorter:"number", editable:true},
 			{title:"Gender", field:"gender", editable:true},
 			{title:"Height", field:"height", align:"center", width:80, editable:true},
-			{title:"Favourite Color", field:"col", editable:true},
 			{title:"Date Of Birth", field:"dob", align:"center", editable:true},
 			{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
 			],

@@ -490,6 +490,73 @@
 		return self.options.columns;
 	},
 
+	//add column
+	addColumn:function(newCol, before, field){
+		var self = this;
+
+		if(newCol){
+			var columns = self.options.columns;
+
+			var index = false;
+
+			if(field){
+
+				index = isNaN(field) ? false : field;
+
+				if(index === false){
+
+					$.each(self.options.columns, function(i, item){
+						if(item.field == field){
+							index = i;
+							return false;
+						}
+					});
+				}
+
+				if(!before){
+					++index;
+				}
+
+			}
+
+			if(index === false){
+				index = before ? 0 : columns.length + 1;
+			}
+
+			columns.splice(index, 0, newCol);
+
+			self.setColumns(columns);
+			self.redraw(true);
+		}
+	},
+
+	//delete column
+	deleteColumn:function(field){
+		var self = this;
+
+		if(field){
+			var columns = self.options.columns;
+
+			var index = isNaN(field) ? false : field;
+
+			if(index === false){
+				$.each(self.options.columns, function(i, item){
+					if(item.field == field){
+						index = i;
+						return false;
+					}
+				});
+			}
+
+			if(index !== false){
+				columns.splice(index, 1);
+			}
+
+			self.setColumns(columns);
+			self.redraw(true);
+		}
+	},
+
 	//find column
 	_findColumn:function(field){
 		var self = this;
@@ -952,11 +1019,11 @@
 					break;
 
 					case "like": //text like
-						if(value === null){
-							return term === value ? true : false;
-						}else{
-							return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
-						}
+					if(value === null){
+						return term === value ? true : false;
+					}else{
+						return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+					}
 					break;
 
 					default:
