@@ -764,8 +764,11 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <a class="anchor" id="addrow"></a>
                     <h2>Add Row</h2>
                     <p>Additional rows can be added to the table at any point using the <span class='param'>addRow</span> function:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12", gender:"male", height:1});</pre>
-                    <p>If you do not pass data for a column, it will be left empty. to create a blank row (ie for a user to fill in), pass an empty object to the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12", gender:"male", height:1}, true);</pre>
+
+                    <p>If you do not pass data for a column, it will be left empty. To create a blank row (ie for a user to fill in), pass an empty object to the function.</p>
+
+                    <p>The second argument is optional and determines wheather the row is added to the top or bottom of the table. A value of <span class='param'>true</span> will add the row to the top of the table, a value of <span class='param'>false</span> will add the row to the bottom of the table. If the parameter is not set the row will be placed according to the <span class='param'>addRowPos</span> global option.</p>
 
                     <p>By default any new rows will be added to the bottom of the table, to change this to the top set the <span class='param'>addRowPos</span> option to "top";</p>
 
