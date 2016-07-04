@@ -682,7 +682,7 @@
 	},
 
 	//add blank row to table
-	addRow:function(item){
+	addRow:function(item, top){
 		var self = this;
 
 		if(item){
@@ -694,8 +694,10 @@
 		//create blank row
 		var row = self._renderRow(item);
 
+		var top = typeof top == "undefined" ? self.options.addRowPos : (top === true || top === "top" ? "top" : "bottom");
+
 		//append to top or bottom of table based on preference
-		if(self.options.addRowPos == "top"){
+		if(top == "top"){
 			self.activeData.push(item);
 			self.table.prepend(row);
 		}else{
