@@ -768,7 +768,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>If you do not pass data for a column, it will be left empty. To create a blank row (ie for a user to fill in), pass an empty object to the function.</p>
 
-                    <p>The second argument is optional and determines wheather the row is added to the top or bottom of the table. A value of <span class='param'>true</span> will add the row to the top of the table, a value of <span class='param'>false</span> will add the row to the bottom of the table. If the parameter is not set the row will be placed according to the <span class='param'>addRowPos</span> global option.</p>
+                    <p>The second argument is optional and determines whether the row is added to the top or bottom of the table. A value of <span class='param'>true</span> will add the row to the top of the table, a value of <span class='param'>false</span> will add the row to the bottom of the table. If the parameter is not set the row will be placed according to the <span class='param'>addRowPos</span> global option.</p>
 
                     <p>By default any new rows will be added to the bottom of the table, to change this to the top set the <span class='param'>addRowPos</span> option to "top";</p>
 
@@ -844,6 +844,28 @@ var newColumns = [
 ],
 
 $("#example-table").tabulator("setColumns", newColumns , false) //completely overwrite existing columns with new columns definition array</pre>
+
+                    <h2>Add Column</h2>
+                    <p>If you wish to add a single column to the table, you can do this using the <span class='param'>addColumn</span> function.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("addColumn", {title:"Age", field:"age"}, true, "name");</pre>
+
+                    <p>This function takes three arguments:</p>
+                    <ul>
+                        <li><strong>Columns Definition</strong> - The column definition object for the column you want to add.</li>
+                        <li><strong>Before</strong> (optional) - Determines how to position the new column. A value of <span class='param'>true</span> will insert the column to the left of exisiting columns, a value of <span class='param'>false</span> will insert it to the right. If a <span class='param'>Position</span> argument is supplied then this will determine whether the new colum is inserted before or after this column.</li>
+                        <li><strong>Position</strong> (optional) - The field to insert the new column next to, this can be either the <span class='param'>field</span> value of the column you wish to insert next to, or its index in the column definition array (starting from zero).</li>
+                    </ul>
+
+
+
+
+                    <h2>Delete Column</h2>
+                    <p>If you wish to remove a single column to the table, you can do this using the <span class='param'>deleteColumn</span> function.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("deleteColumn", "name");</pre>
+
+                    <p>You can pass either the <span class='param'>field</span> value of the column you wish to delete, or its index in the column definition array (starting from zero).</p>
 
                     <h2>Get Column Definitions</h2>
                     <p>To get the current column definition array (including any changes made through user actions, such as resizing or re-ordering columns), call the <span class='param'>getColumns</span> function. this will return the current columns definition array.</p>
