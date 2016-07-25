@@ -614,7 +614,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", align:"center", width:80},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center"},
             ],
         });
@@ -632,7 +632,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", align:"center", width:60},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center"},
             ],
         });
@@ -682,7 +682,7 @@
             {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
             {title:"Gender", field:"gender", editable:true, editor:genderEditor},
             {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
-            {title:"Date Of Birth", field:"dob", align:"center", editable:true},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
             {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
             ],
             rowEdit:function(id,data,row){
@@ -748,7 +748,7 @@
                     {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
                     {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
                     {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
-                    {title:"Date Of Birth", field:"dob", align:"center"},
+                    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
                     {formatter:"buttonCross", width:30, align:"center"},
                     ],
                 });
@@ -772,7 +772,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
@@ -823,7 +823,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
@@ -845,7 +845,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
@@ -867,7 +867,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", width:80},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
         });
@@ -924,7 +924,7 @@
             {title:"Gender", field:"gender", editable:true},
             {title:"Rating", field:"rating", align:"center", width:80, editable:true},
             {title:"Favourite Color", field:"col", editable:true},
-            {title:"Date Of Birth", field:"dob", align:"center", editable:true},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
             {title:"Driver", field:"car", align:"center", editable:true},
             ],
             rowEdit:function(id,data,row,index){
@@ -946,7 +946,7 @@
             {title:"Gender", field:"gender"},
             {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
             {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
             {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
             ],
             rowMoved:function(id,data,row,index){
