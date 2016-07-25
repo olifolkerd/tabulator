@@ -182,7 +182,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", align:"center", width:80},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center"},
 			],
 		});
@@ -216,7 +216,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", align:"center", width:60},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center"},
 			],
 		});
@@ -331,7 +331,7 @@
 		{title:"Gender", field:"gender", editable:true, editor:genderEditor},
 		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
 		{title:"Favourite Color", field:"col", editable:true},
-		{title:"Date Of Birth", field:"dob", align:"center", editable:true},
+		{title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
 		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross"},
 		{title:"Luck No", field:"lucky_no", align:"right", width:100, sorter:"number", editor:"number"},
 
@@ -492,7 +492,7 @@
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			{title:"Favourite Color", field:"col" ,formatter:"color", width:160},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{formatter:"buttonCross", width:30, align:"center"},
 			],
 		});
@@ -530,7 +530,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
 		});
@@ -647,7 +647,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
 		});
@@ -690,7 +690,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", align:"center", width:100},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
 		});
@@ -728,7 +728,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", width:80},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
 		});
@@ -829,7 +829,7 @@
 			{title:"Age", field:"age", width:90, align:"right", sorter:"number", editable:true},
 			{title:"Gender", field:"gender", editable:true},
 			{title:"Height", field:"height", align:"center", width:80, editable:true},
-			{title:"Date Of Birth", field:"dob", align:"center", editable:true},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
 			{title:"Likes Cheese", field:"cheese", align:"center", editable:true},
 			],
 			rowEdit:function(id,data,row,index){
@@ -864,7 +864,7 @@
 			{title:"Gender", field:"gender"},
 			{title:"Height", field:"height", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
 			{title:"Favourite Color", field:"col"},
-			{title:"Date Of Birth", field:"dob", align:"center"},
+			{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross"},
 			],
 			rowMoved:function(id,data,row,index){
