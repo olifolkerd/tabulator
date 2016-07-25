@@ -219,10 +219,6 @@
 			element.css({"height": options.height});
 		}
 
-		if(options.data){
-			self.data = options.data;
-		}
-
 		element.addClass("tabulator");
 
 		self.header = $("<div class='tabulator-header'></div>")
@@ -251,7 +247,6 @@
 
 		//create scrollable table holder
 		self.table = $("<div class='tabulator-table'></div>");
-
 
 		//build pagination footer if needed
 		if(options.pagination){
@@ -1144,18 +1139,14 @@
 		var el1 = dir == "asc" ? a : b;
 		var el2 = dir == "asc" ? b : a;
 
-		el1 = el1[column.field];
-		el2 = el2[column.field];
-
-		//workaround to format dates correctly
-		a = column.sorter == "date" ? self._formatDate(el1) : el1;
-		b = column.sorter == "date" ? self._formatDate(el2) : el2;
+		a = el1[column.field];
+		b = el2[column.field];
 
 		//run sorter
 		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
 
-		return sorter(a, b);
+		return sorter.call(self, a, b);
 	},
 
 	////////////////// Data Pagination //////////////////
@@ -1442,7 +1433,6 @@
 
 		$.each(self.options.columns, function(i, column){
 			//deal with values that arnt declared
-
 			var value = typeof(item[column.field]) == "undefined" ? "" : item[column.field];
 
 			// set empty values to not break search
@@ -1499,7 +1489,7 @@
 						//Load editor
 						var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
 
-						var cellEditor = editorFunc(cell, cell.data("value"));
+						var cellEditor = editorFunc.call(self, cell, cell.data("value"));
 
 						//if editor returned, add to DOM, if false, abort edit
 						if(cellEditor !== false){
@@ -1893,9 +1883,11 @@
 		self._colRender(false, forceRedraw);
 
 		if(self.firstRender && self.options.data){
-			// self.firstRender = false;
-			self._parseData(self.options.data);
+			setTimeout(function(){ //give columns time to render before aloding data set
+				self._parseData(self.options.data);
+			}, 100);
 		}
+
 	},
 
 	//layout coluns on first render
@@ -2055,10 +2047,12 @@
 
 	//format cell contents
 	_formatCell:function(formatter, value, data, cell, row, formatterParams){
+		var self = this;
+
 		var formatter = typeof(formatter) == "undefined" ? "plaintext" : formatter;
 		formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
 
-		return formatter(value, data, cell, row, this.options, formatterParams);
+		return formatter.call(self, value, data, cell, row, this.options, formatterParams);
 	},
 
 	////////////////// Table Interaction Handlers //////////////////
@@ -2150,7 +2144,9 @@
 			return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
 		},
 		date:function(a, b){ //sort dates
-			return a - b;
+			var self = this;
+
+			return self._formatDate(a) - self._formatDate(b);
 		},
 		boolean:function(a, b){ //sort booleans
 			var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
