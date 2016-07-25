@@ -219,10 +219,6 @@
 			element.css({"height": options.height});
 		}
 
-		if(options.data){
-			self.data = options.data;
-		}
-
 		element.addClass("tabulator");
 
 		self.header = $("<div class='tabulator-header'></div>")
@@ -251,7 +247,6 @@
 
 		//create scrollable table holder
 		self.table = $("<div class='tabulator-table'></div>");
-
 
 		//build pagination footer if needed
 		if(options.pagination){
@@ -1893,9 +1888,11 @@
 		self._colRender(false, forceRedraw);
 
 		if(self.firstRender && self.options.data){
-			// self.firstRender = false;
-			self._parseData(self.options.data);
+			setTimeout(function(){ //give columns time to render before aloding data set
+				self._parseData(self.options.data);
+			}, 100);
 		}
+
 	},
 
 	//layout coluns on first render
