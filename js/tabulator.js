@@ -1901,8 +1901,8 @@
 		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
 			//free sized table
 			$.each(options.columns, function(i, column){
-				colWidth = $(".tabulator-col[data-index=" + i + "]", element).outerWidth();
-				var col = $(".tabulator-cell[data-index=" + i + "]", element);
+				colWidth = $(".tabulator-col[data-field='" + column.field + "']", element).outerWidth();
+				var col = $(".tabulator-cell[data-field='" + column.field + "']", element);
 				col.css({width:colWidth});
 			});
 		}else{
