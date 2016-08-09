@@ -373,6 +373,32 @@
 
                         <div id="example-table-filters"></div>
                     </article>
+                    <a class="anchor" id="filter-header"></a>
+                    <article>
+                    <h1>Filter Data In Header<a class="doc-link" href="../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                    <p>You can also use some of the aditional features in Tabulator to add the filters into the column headers.</p>
+
+                    <style>
+
+                    #example-table-filters-header .tabulator-header .tabulator-col .input-holder{
+                        margin-top:2px;
+                        width:calc(100% + 20px);
+                    }
+
+                    #example-table-filters-header .tabulator-header .tabulator-col .input-holder input{
+                        box-sizing: border-box;
+                        width:100%;
+
+                        padding:1px 3px;
+                        font-weight: normal;
+
+                    }
+                    </style>
+
+                    <div id="example-table-filters-header"></div>
+
+
+                    </article>
                     <a class="anchor" id="pagination"></a>
                     <article>
                         <h1>Pagination <a class="doc-link" href="../docs?#pagination"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -499,6 +525,7 @@
                             <li><a href="#formatters">Formatters</a></li>
                             <li><a href="#grouping">Grouping Data</a></li>
                             <li><a href="#filter">Filter Data</a></li>
+                            <li><a href="#filter-header">Filter Data In Column Header</a></li>
                             <li><a href="#pagination">Pagination</a></li>
                             <li><a href="#persistance">Persistent Column Layout</a></li>
                             <li><a href="#ajax">AJAX Data Loading</a></li>
@@ -831,9 +858,64 @@
         $("#example-table-filters").tabulator("setData", tabledata);
 
 
+        /////// filter data in column headers ///////
+
+        //create header filter element
+        var headerInput = "<div class='input-holder'><input type='text' placeholder='filter column...'></div>";
+
+        $("#example-table-filters-header").tabulator({
+            height:"311px",
+            fitColumns:true,
+            columns:[
+            {title:"Name" + headerInput, field:"name", width:150},
+            {title:"Progress" + headerInput, field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Gender" + headerInput, field:"gender"},
+            {title:"Rating" + headerInput, field:"rating", formatter:"star", align:"center", width:100},
+            {title:"Favourite Color" + headerInput, field:"col"},
+            {title:"Date Of Birth" + headerInput, field:"dob", align:"center", sorter:"date"},
+            {title:"Driver" + headerInput, field:"car", align:"center", formatter:"tickCross"},
+            ],
+        });
+
+        $("#example-table-filters-header").tabulator("setData", tabledata);
+
+        //prevent click in filter from triggering sort
+        $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").on("click", function(e){
+            e.stopPropagation();
+        });
+
+        //create filter function
+        var colFilter = function(data){
+
+            var match = true;
+
+            $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").each(function(){
+                var value = $(this).val().toLowerCase();
+                var field = $(this).closest(".tabulator-col").data("field");
+
+                if(value){
+                    if(typeof data[field] == "string"){
+                        if(data[field].toLowerCase().indexOf(value) == -1){
+                            match = false;
+                        }
+                    }else{
+                        if(data[field] != value){
+                            match = false;
+                        }
+                    }
+                }
+            });
+
+            return match;
+        }
+
+        //trigger filter on keyup
+        $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").on("keyup", function(e){
+            $("#example-table-filters-header").tabulator("setFilter", colFilter);
+        });
 
 
-        //Pagination Example
+        /////// Pagination Example ///////
         $("#example-table-pagination").tabulator({
             height:"292px",
             fitColumns:true,
