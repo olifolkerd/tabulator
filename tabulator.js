@@ -1161,7 +1161,7 @@
 	setPage:function(page){
 		var self = this;
 
-		if(Number.isInteger(page) && page > 0 && page <= self.paginationMaxPage){
+		if(page > 0 && page <= self.paginationMaxPage){
 			self.paginationCurrentPage = page;
 		}else{
 			switch(page){
