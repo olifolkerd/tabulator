@@ -198,6 +198,40 @@ ul.docs-sidenav li a:hover {
 .docs article select {
   margin-right: 20px;
 }
+.docs article button.view-source {
+  margin-top: 20px;
+  border: 2px solid #32631f;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background: #59B038;
+  color: #fff;
+  font-weight: bold;
+}
+.docs article button.view-source:hover {
+  background: #32631f;
+  border: 2px solid #59B038;
+}
+.docs article fieldset {
+  display: none;
+  margin-top: 20px;
+  border: 2px solid #59B038;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+.docs article fieldset legend {
+  width: inherit;
+  border: none;
+  color: #59B038;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: bold;
+  background: #fff;
+  padding: 0 10px;
+  margin-bottom: 10px;
+}
+.docs article fieldset h3:first-of-type {
+  margin-top: 0;
+}
 .docs article table.plain {
   width: 100%;
 }

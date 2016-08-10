@@ -285,6 +285,59 @@ ul.docs-sidenav{
 			margin-right:20px;
 		}
 
+		button.view-source,{
+
+			margin-top: 20px;
+
+			border:2px solid darken(@green, 20%);
+			border-radius: 5px;
+
+			padding: 5px 10px;
+
+			background: @green;
+
+			color: #fff;
+			font-weight: bold;
+
+			&:hover{
+				background:darken(@green, 20%);
+				border:2px solid  @green;
+			}
+
+		}
+
+
+
+		fieldset{
+			display: none;
+			margin-top:20px;
+
+			border: 2px solid @green;
+			border-radius: 5px;
+
+			padding:10px 20px;
+
+			legend{
+				width: inherit;
+				border:none;
+
+				color: @green;
+				font-size: 16px;
+				line-height: 16px;
+				font-weight: bold;
+
+				background: #fff;
+				padding:0 10px;
+
+				margin-bottom: 10px;
+
+			}
+
+			h3:first-of-type{
+				margin-top: 0;
+			}
+		}
+
 		table.plain{
 
 			width:100%;
