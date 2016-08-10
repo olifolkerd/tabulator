@@ -14,6 +14,25 @@
 
  	'use strict';
 
+ 	//polyfill for Array.find method
+ 	if (!Array.prototype.find) {
+ 	Array.prototype.find = function (predicate, thisValue) {
+ 	        var arr = Object(this);
+ 	        if (typeof predicate !== 'function') {
+ 	            throw new TypeError();
+ 	        }
+ 	        for(var i=0; i < arr.length; i++) {
+ 	            if (i in arr) {
+ 	                var elem = arr[i];
+ 	                if (predicate.call(thisValue, elem, i, arr)) {
+ 	                    return elem;
+ 	                }
+ 	            }
+ 	        }
+ 	        return undefined;
+ 	    }
+ 	}
+
  	$.widget("ui.tabulator", {
 
 	data:[],//array to hold data for table
@@ -1161,7 +1180,7 @@
 	setPage:function(page){
 		var self = this;
 
-		if(Number.isInteger(page) && page > 0 && page <= self.paginationMaxPage){
+		if(page > 0 && page <= self.paginationMaxPage){
 			self.paginationCurrentPage = page;
 		}else{
 			switch(page){
