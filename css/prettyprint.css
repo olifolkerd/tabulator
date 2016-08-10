@@ -14,10 +14,10 @@ pre .atv { color: #B8D280 } /* attribute value - pink */
 pre .dec { color: #98fb98 } /* decimal         - lightgreen */
 
 /* Specify class=linenums on a pre to get line numbering */
-ol.linenums { margin-top: 0; margin-bottom: 0; color: #AEAEAE } /* IE indents via margin-left */
+ol.linenums { margin-top: 0; margin-bottom: 0; color: #ddd } /* IE indents via margin-left */
 li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 { list-style-type: none }
 /* Alternate shading for lines */
-li.L1,li.L3,li.L5,li.L7,li.L9 { }
+li.L1,li.L3,li.L5,li.L7,li.L9 { background: #363636 !important;}
 
 @media print {
   pre.prettyprint { background-color: none }
@@ -32,3 +32,7 @@ li.L1,li.L3,li.L5,li.L7,li.L9 { }
   pre .atn, code .atn { color: #404 }
   pre .atv, code .atv { color: #060 }
 }
+
+li.L0, li.L1, li.L2, li.L3,
+li.L5, li.L6, li.L7, li.L8
+{ list-style-type: decimal !important }
