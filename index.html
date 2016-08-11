@@ -41,6 +41,7 @@
 
 	<!-- Custom CSS -->
 	<link href="css/styles.css" rel="stylesheet">
+    <link href="css/prettyprint.css" rel="stylesheet">
 
 	<!-- Tabulator CSS -->
 	<link href="css/tabulator.css" rel="stylesheet">
@@ -90,242 +91,267 @@
     						<a href="examples/">Examples</a>
     					</li>
     					<li>
-	                        <a class="hidden-sm" href="news/">News</a>
-	                    </li>
-	                    <li>
-	                        <a class="hidden-sm" href="community/">Community</a>
-	                    </li>
-    					<li>
-    						<a id="github-link" href="https://github.com/olifolkerd/tabulator">Github</a>
-    					</li>
-    				</ul>
-    			</div>
-    			<!-- /.navbar-collapse -->
-    		</div>
-    		<!-- /.container -->
-    	</nav>
+                           <a class="hidden-sm" href="news/">News</a>
+                       </li>
+                       <li>
+                           <a class="hidden-sm" href="community/">Community</a>
+                       </li>
+                       <li>
+                          <a id="github-link" href="https://github.com/olifolkerd/tabulator">Github</a>
+                      </li>
+                  </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+          </div>
+          <!-- /.container -->
+      </nav>
 
-    	<!-- Jumbotron Header -->
-    	<header class="jumbotron">
-    		<div class="container">
-    			<h1><img src="images/tabulator_white.png" alt="Tabulator"></h1>
-    			<p>The easy to use, fully featured JQuery table plugin</p>
-    			<p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download</a>
-    			</p>
-    		</div>
-
-
-    	</header>
-
-    	<div class="news">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-12 content" role="main">
-						<h1>Version 2.3 Released!</h1>
-						<p>Add and remove columns on the go! New functions allow you to add and remove columns from your table at any point.</p>
-                        <p>Column Headers can now have custom tooltips set to aid with user navigation.</p>
-                        <p>The new dataFiltered callback lets you see the results of data filtering as it happens.</p>
-                        <p>For full details of this update <a href="news/">checkout the news section</a>.</p>
-					</div>
-				</div>
-			</div>
-    	</div>
-
-    	<!-- Page Content -->
-    	<div class="container features">
-
-    		<div class="row main-title">
-    			<div class="col-lg-12">
-    				<h2>The Table You Can Trust</h2>
-    			</div>
-    		</div>
-    		<div class="row">
-    			<div class="col-lg-12">
-    				<p>Tabulator is a lightweight, fully featured JQuery table generation plugin.</p>
-
-    				<p>Tabulator allows you to create a table with in seconds from any HTML Table, Javascript Array or JSON formatted data.</p>
-
-    				<p>Simply include the library in your JQuery UI project and you're away!</p>
-    			</div>
-    		</div>
-
-    		<div class="row">
-    			<div class="col-lg-12 hidden-xs">
-    				<div id="tabulator-example"></div>
-    			</div>
-    		</div>
-
-    		<hr>
-
-    		<!-- Title -->
-    		<div class="row">
-    			<div class="col-lg-12">
-    				<h2>Latest Features</h2>
-    			</div>
-    		</div>
-    		<!-- /.row -->
-
-    		<!-- Page Features -->
-    		<div class="row text-center">
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#filtering">
-    					<div class="frame">
-    						<i class="fa fa-filter"></i>
-    						<div class="caption">
-    							<h3>Filters</h3>
-    							<p>Filter data to display only what you need to</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#sorting">
-    					<div class="frame">
-    						<i class="fa fa-sort-amount-asc"></i>
-    						<div class="caption">
-    							<h3>Sorting</h3>
-    							<p>Sort data however you like, by any value or data type</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#formatting">
-    					<div class="frame">
-    						<i class="fa fa-tasks"></i>
-    						<div class="caption">
-    							<h3>Formatting</h3>
-    							<p>Create custom formatters to graphically display data</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#grouping">
-    					<div class="frame">
-    						<i class="fa fa-object-group"></i>
-    						<div class="caption">
-    							<h3>Grouping</h3>
-    							<p>Graphically group rows be any specified data</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    		</div>
-
-    		<div class="row text-center">
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#set-data">
-    					<div class="frame">
-    						<i class="fa fa-retweet"></i>
-    						<div class="caption">
-    							<h3>Ajax</h3>
-    							<p>Asynchronously  load data to your table via Ajax requests</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#manipulating-data">
-    					<div class="frame">
-    						<i class="fa fa-edit"></i>
-    						<div class="caption">
-    							<h3>Editing</h3>
-    							<p>Edit table data directly in the table. Then return the result</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#callbacks">
-    					<div class="frame">
-    						<i class="fa fa-random"></i>
-    						<div class="caption">
-    							<h3>Callbacks</h3>
-    							<p>Interact with Tabulator through a selection of callbacks</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#layout">
-    					<div class="frame">
-    						<i class="fa fa-list-alt"></i>
-    						<div class="caption">
-    							<h3>Layout</h3>
-    							<p>Customise the layout of Tabulator to meet your needs</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    		</div>
-
-    		<div class="row text-center">
-    			<div class="col-md-3 col-sm-6 feature">
-    			</div>
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#progressive-render">
-    					<div class="frame">
-    						<i class="fa fa-cubes"></i>
-    						<div class="caption">
-    							<h3>Progressive Rendering</h3>
-    							<p>Progressively render large datasets to prevent UI blocking</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-
-    			<div class="col-md-3 col-sm-6 feature">
-    				<a href="docs#persistant-columns">
-    					<div class="frame">
-    						<i class="fa fa-floppy-o"></i>
-    						<div class="caption">
-    							<h3>Persistent Formatting</h3>
-    							<p>Remember user layout preferences between visits</p>
-    						</div>
-    					</div>
-    				</a>
-    			</div>
-    		</div>
-    		<!-- /.row -->
-
-    		<hr>
-
-    		<!-- Footer -->
-    		<footer>
-    			<div class="row">
-    				<div class="col-lg-12">
-    					<p>Copyright &copy; Oli Folkerd 2016</p>
-    				</div>
-    			</div>
-    		</footer>
-
-    	</div>
-    	<!-- /.container -->
+      <!-- Jumbotron Header -->
+      <header class="jumbotron">
+          <div class="container">
+             <h1><img src="images/tabulator_white.png" alt="Tabulator"></h1>
+             <p>The easy to use, fully featured JQuery table plugin</p>
+             <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download</a>
+             </p>
+         </div>
 
 
+     </header>
 
-    	<!-- jQuery -->
-    	<script src="js/jquery.js"></script>
-    	<script src="js/jqueryui.js"></script>
+     <div class="news">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-12 content" role="main">
+                  <h1>Version 2.3 Released!</h1>
+                  <p>Add and remove columns on the go! New functions allow you to add and remove columns from your table at any point.</p>
+                  <p>Column Headers can now have custom tooltips set to aid with user navigation.</p>
+                  <p>The new dataFiltered callback lets you see the results of data filtering as it happens.</p>
+                  <p>For full details of this update <a href="news/">checkout the news section</a>.</p>
+              </div>
+          </div>
+      </div>
+  </div>
 
-    	<!-- Bootstrap Core JavaScript -->
-    	<script src="js/bootstrap.min.js"></script>
+  <!-- Page Content -->
+  <div class="container features">
 
-    	<!-- Tabulator -->
-    	<script src="js/tabulator.js"></script>
+      <div class="row main-title">
+         <div class="col-lg-12">
+            <h2>The Table You Can Trust</h2>
+        </div>
+    </div>
+    <div class="row">
+     <div class="col-lg-12">
+        <p>Tabulator is a lightweight, fully featured JQuery table generation plugin.</p>
 
-    	<script type="text/javascript">
+        <p>Tabulator allows you to create a table with in seconds from any HTML Table, Javascript Array or JSON formatted data.</p>
+
+        <p>Simply include the library in your JQuery UI project and you're away!</p>
+    </div>
+</div>
+
+<div class="row">
+ <div class="col-lg-12 hidden-xs">
+    <div id="tabulator-example"></div>
+
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#tabulator-example").tabulator({
+    height:"320px",
+    fitColumns:true,
+    tooltips:true,
+    pagination:true,
+    movableCols:true,
+    sortBy:"name",
+    sortDir:"asc",
+    columns:[
+        {title:"Name", field:"name", width:200, sorter:"string", editable:true},
+        {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
+        {title:"Gender", field:"gender", width:100, sorter:"string", editable:true},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
+        {title:"Favourite Color", field:"col", width:160, sorter:"string", sortable:false, editable:true},
+        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
+        {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true},
+    ],
+});</pre>
+</div>
+</div>
+
+<hr>
+
+<!-- Title -->
+<div class="row">
+ <div class="col-lg-12">
+    <h2>Latest Features</h2>
+</div>
+</div>
+<!-- /.row -->
+
+<!-- Page Features -->
+<div class="row text-center">
+
+ <div class="col-md-3 col-sm-6 feature">
+    <a href="docs#filtering">
+       <div class="frame">
+          <i class="fa fa-filter"></i>
+          <div class="caption">
+             <h3>Filters</h3>
+             <p>Filter data to display only what you need to</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#sorting">
+       <div class="frame">
+          <i class="fa fa-sort-amount-asc"></i>
+          <div class="caption">
+             <h3>Sorting</h3>
+             <p>Sort data however you like, by any value or data type</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#formatting">
+       <div class="frame">
+          <i class="fa fa-tasks"></i>
+          <div class="caption">
+             <h3>Formatting</h3>
+             <p>Create custom formatters to graphically display data</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#grouping">
+       <div class="frame">
+          <i class="fa fa-object-group"></i>
+          <div class="caption">
+             <h3>Grouping</h3>
+             <p>Graphically group rows be any specified data</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+</div>
+
+<div class="row text-center">
+
+ <div class="col-md-3 col-sm-6 feature">
+    <a href="docs#set-data">
+       <div class="frame">
+          <i class="fa fa-retweet"></i>
+          <div class="caption">
+             <h3>Ajax</h3>
+             <p>Asynchronously  load data to your table via Ajax requests</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#manipulating-data">
+       <div class="frame">
+          <i class="fa fa-edit"></i>
+          <div class="caption">
+             <h3>Editing</h3>
+             <p>Edit table data directly in the table. Then return the result</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#callbacks">
+       <div class="frame">
+          <i class="fa fa-random"></i>
+          <div class="caption">
+             <h3>Callbacks</h3>
+             <p>Interact with Tabulator through a selection of callbacks</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#layout">
+       <div class="frame">
+          <i class="fa fa-list-alt"></i>
+          <div class="caption">
+             <h3>Layout</h3>
+             <p>Customise the layout of Tabulator to meet your needs</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+</div>
+
+<div class="row text-center">
+ <div class="col-md-3 col-sm-6 feature">
+ </div>
+ <div class="col-md-3 col-sm-6 feature">
+    <a href="docs#progressive-render">
+       <div class="frame">
+          <i class="fa fa-cubes"></i>
+          <div class="caption">
+             <h3>Progressive Rendering</h3>
+             <p>Progressively render large datasets to prevent UI blocking</p>
+         </div>
+     </div>
+ </a>
+</div>
+
+<div class="col-md-3 col-sm-6 feature">
+    <a href="docs#persistant-columns">
+       <div class="frame">
+          <i class="fa fa-floppy-o"></i>
+          <div class="caption">
+             <h3>Persistent Formatting</h3>
+             <p>Remember user layout preferences between visits</p>
+         </div>
+     </div>
+ </a>
+</div>
+</div>
+<!-- /.row -->
+
+<hr>
+
+<!-- Footer -->
+<footer>
+ <div class="row">
+    <div class="col-lg-12">
+       <p>Copyright &copy; Oli Folkerd 2016</p>
+   </div>
+</div>
+</footer>
+
+</div>
+<!-- /.container -->
+
+
+
+<!-- jQuery -->
+<script src="js/jquery.js"></script>
+<script src="js/jqueryui.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
+
+<!-- Tabulator -->
+<script src="js/tabulator.js"></script>
+
+<script type="text/javascript">
 
 		//sample data to be used in all tabulators
 		var tabledata = [
@@ -358,25 +384,25 @@
 		    //create and style editor
 		    var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
 		    editor.css({
-		        "border":"1px",
-		        "background":"transparent",
-		        "padding":"3px",
-		        "width":"100%",
-		        "box-sizing":"border-box",
-		    })
+              "border":"1px",
+              "background":"transparent",
+              "padding":"3px",
+              "width":"100%",
+              "box-sizing":"border-box",
+          })
 
 		    //Set value of editor to the value of the cell
 		    .val(value);
 
 		    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
 		    setTimeout(function(){
-		        editor.focus();
-		    },100)
+              editor.focus();
+          },100)
 
 		    //when the value has been set, update the cell
 		    editor.on("change blur", function(e){
-		        cell.trigger("editval", editor.val());
-		    });
+              cell.trigger("editval", editor.val());
+          });
 
 		    //return the editor element
 		    return editor;
@@ -388,18 +414,18 @@
 			tooltips:true,
 			pagination:true,
             movableCols:true,
-			sortBy:"name",
-			sortDir:"asc",
-			columns:[
-			{title:"Name", field:"name", width:200, sorter:"string", editable:true},
-			{title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
-			{title:"Gender", field:"gender", width:100, sorter:"string", editable:true, editor:genderEditor},
-			{title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
-			{title:"Favourite Color", field:"col", width:160, sorter:"string", sortable:false, editable:true},
-			{title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-			{title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true},
-			],
-		});
+            sortBy:"name",
+            sortDir:"asc",
+            columns:[
+            {title:"Name", field:"name", width:200, sorter:"string", editable:true},
+            {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
+            {title:"Gender", field:"gender", width:100, sorter:"string", editable:true, editor:genderEditor},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
+            {title:"Favourite Color", field:"col", width:160, sorter:"string", sortable:false, editable:true},
+            {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
+            {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true},
+            ],
+        });
 
 		$("#tabulator-example").tabulator("setData", tabledata);
 
