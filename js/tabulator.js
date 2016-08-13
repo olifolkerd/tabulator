@@ -16,21 +16,21 @@
 
  	//polyfill for Array.find method
  	if (!Array.prototype.find) {
- 	Array.prototype.find = function (predicate, thisValue) {
- 	        var arr = Object(this);
- 	        if (typeof predicate !== 'function') {
- 	            throw new TypeError();
- 	        }
- 	        for(var i=0; i < arr.length; i++) {
- 	            if (i in arr) {
- 	                var elem = arr[i];
- 	                if (predicate.call(thisValue, elem, i, arr)) {
- 	                    return elem;
- 	                }
- 	            }
- 	        }
- 	        return undefined;
- 	    }
+ 		Array.prototype.find = function (predicate, thisValue) {
+ 			var arr = Object(this);
+ 			if (typeof predicate !== 'function') {
+ 				throw new TypeError();
+ 			}
+ 			for(var i=0; i < arr.length; i++) {
+ 				if (i in arr) {
+ 					var elem = arr[i];
+ 					if (predicate.call(thisValue, elem, i, arr)) {
+ 						return elem;
+ 					}
+ 				}
+ 			}
+ 			return undefined;
+ 		}
  	}
 
  	$.widget("ui.tabulator", {
@@ -82,6 +82,8 @@
 		progressiveRenderSize:20, //block size for progressive rendering
 		progressiveRenderMargin:200, //disance in px before end of scroll before progressive render is triggered
 
+		headerFilterPlaceholder: "filter column...", //placeholder text to display in header filters
+
 		tooltips: false, //Tool tip value
 		tooltipsHeader: false, //Tool tip for headers
 
@@ -125,6 +127,7 @@
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
 		dataFiltered:function(){}, //callback for when data is filtered
+		colTitleChanged:function(){}, //do action whel column title changed
 	},
 
 	////////////////// Element Construction //////////////////
@@ -1727,6 +1730,44 @@
 		}//
 
 
+		//handle filter update
+		function updateFilter(){
+
+			var filters = {};
+
+			$(".tabulator-header-filter", self.header).each(function(){
+				var element = $(this);
+				var filterVal = element.data("filter-val");
+
+				if(filterVal){
+					filters[element.closest(".tabulator-col").data("field")] = filterVal;
+				}
+			});
+
+
+			function colFilter(data){
+				var match = true;
+
+				for(var field in filters){
+					if(typeof data[field] == "string"){
+						if(data[field].toLowerCase().indexOf(filters[field]) == -1){
+							match = false;
+						}
+					}else{
+					    //match everything else explicitly
+					    if(data[field] != filters[field]){
+					    	match = false;
+					    }
+					}
+				}
+
+				return match;
+			}
+
+			self.setFilter(colFilter);
+		}
+
+
 
 		$.each(options.columns, function(i, column){
 
@@ -1747,11 +1788,84 @@
 				var sortdir = "";
 			}
 
-			var title = column.title ? column.title : "&nbsp";
-
 			var visibility = column.visible ? "inline-block" : "none";
 
-			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' ></div>');
+
+
+			var title = column.title ? column.title : "&nbsp";
+
+
+			if(column.editableTitle){
+				var titleElement = $("<input class='tabulator-title-editor'>");
+				titleElement.val(title);
+
+				titleElement.on("click", function(e){
+					e.stopPropagation();
+					$(this).focus();
+				});
+
+				titleElement.on("change", function(){
+					var newTitle = $(this).val();
+					column.title = newTitle;
+					options.colTitleChanged(newTitle, column, options.columns);
+				});
+
+				title = titleElement;
+			}
+
+			//Manage Header Column Filters
+			if(column.headerFilter){
+
+				//select appropriate filter
+				if(column.headerFilter === true){
+					if(column.editor){
+						var editor = column.editor;
+					}else{
+						var editor = self.editors[column.formatter] ? column.formatter: "input";
+					}
+				}else{
+					var editor = column.headerFilter;
+				}
+
+
+				//build filter element from editor
+				var editorFunc = typeof(editor) == "string" ? self.editors[editor] : editor;
+
+				var filter = $("<div class='tabulator-header-filter'></div>");
+
+				var cellEditor = editorFunc.call(self, filter, "");
+
+				filter.append(cellEditor);
+				filter.children().attr("placeholder", self.options.headerFilterPlaceholder);
+
+				//handle events
+				cellEditor.on("click", function(e){
+					e.stopPropagation();
+					$(this).focus();
+				});
+
+				cellEditor.on("keyup change", function(e){
+					$(this).closest(".tabulator-header-filter").data("filter-val", $(this).val());
+					updateFilter()
+				});
+
+				filter.on("editval editcancel", function(e, value){
+					$(this).data("filter-val", value);
+					updateFilter()
+				});
+
+				//add filter to column header
+				col.append(title);
+
+				col.append(filter);
+
+			}else{
+
+
+				col.html(title);
+			}
+
 
 			//added callback for custom header tooltips
 			var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
@@ -2064,6 +2178,12 @@
 		}
 	},
 
+	//resize row to match contents
+	_resizeRow(row){
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":""});
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
+	},
+
 	//format cell contents
 	_formatCell:function(formatter, value, data, cell, row, formatterParams){
 		var self = this;
@@ -2205,6 +2325,10 @@
 		plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
 			return value;
 		},
+		textarea:function(value, data, cell, row, options, formatterParams){ //multiline text area
+			cell.css({"white-space":"pre-wrap"});
+			return value;
+		},
 		money:function(value, data, cell, row, options, formatterParams){
 			var number = parseFloat(value).toFixed(2);
 
@@ -2310,17 +2434,17 @@
 			//create and style input
 			var input = $("<input type='text'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"padding":"4px",
 				"width":"100%",
 				"box-sizing":"border-box",
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			//submit new value on blur
 			input.on("change blur", function(e){
@@ -2336,21 +2460,76 @@
 
 			return input;
 		},
-		number:function(cell, value){
+		textarea:function(cell, value){
+			var self = this;
+
+			var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+			var row = cell.closest(".tabulator-row")
+
+            //create and style input
+            var input = $("<textarea></textarea>");
+            input.css({
+            	"display":"block",
+            	"height":"100%",
+            	"width":"100%",
+            	"padding":"2px",
+            	"box-sizing":"border-box",
+            	"white-space":"pre-wrap",
+            	"resize": "none",
+            })
+            .val(value);
+
+            if(cell.hasClass("tabulator-cell")){
+            	setTimeout(function(){
+            		input.focus();
+            	},100);
+            }
+
+            //submit new value on blur
+            input.on("change blur", function(e){
+            	cell.trigger("editval", input.val());
+            	setTimeout(function(){
+            		self._resizeRow(row);
+            	},300)
+            });
+
+            input.on("keyup", function(){
+            	var value = $(this).val();
+            	var newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+
+            	if(newCount != count){
+            		var line = input.innerHeight() / count;
+
+            		console.log("lines", line);
+
+            		input.css({"height": (line * newCount) + "px"});
+
+            		self._resizeRow(row);
+
+            		count = newCount;
+            	}
+
+
+
+            });
+
+            return input;
+        },
+        number:function(cell, value){
 			//create and style input
 			var input = $("<input type='number'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"padding":"4px",
 				"width":"100%",
 				"box-sizing":"border-box",
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			//submit new value on blur
 			input.on("blur", function(e){
@@ -2367,8 +2546,13 @@
 			return input;
 		},
 		star:function(cell, value){
+
 			var maxStars = $("svg", cell).length;
-			var size = $("svg:first", cell).attr("width");
+			maxStars = maxStars ?maxStars : 5;
+
+			var size = $("svg:first", cell).attr("width")
+			size = size ? size : 14;
+
 			var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
 
 			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
@@ -2530,16 +2714,16 @@
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"margin-top":"5px",
 				"box-sizing":"border-box",
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			if(value === true || value === "true" || value === "True" || value === 1){
 				input.prop("checked", true);
@@ -2566,16 +2750,16 @@
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"margin-top":"5px",
 				"box-sizing":"border-box",
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			if(value === true || value === "true" || value === "True" || value === 1){
 				input.prop("checked", true);

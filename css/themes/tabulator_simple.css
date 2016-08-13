@@ -1,14 +1,13 @@
 .tabulator {
   position: relative;
-  border: 1px solid #999;
-  background-color: #888;
+  background-color: #fff;
   overflow: hidden;
   font-size: 14px;
 }
 .tabulator .tabulator-header {
   position: relative;
   border-bottom: 1px solid #999;
-  background-color: #e6e6e6;
+  background-color: #fff;
   color: #555;
   font-weight: bold;
   white-space: nowrap;
@@ -96,13 +95,17 @@
 .tabulator .tabulator-header .tabulator-col-row-handle {
   position: relative;
   box-sizing: border-box;
-  border-right: 1px solid #aaa;
+  border-right: 1px solid #ddd;
   padding: 4px;
   text-align: left;
   vertical-align: bottom;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.tabulator .tabulator-header .tabulator-col:last-of-type,
+.tabulator .tabulator-header .tabulator-col-row-handle:last-of-type {
+  border-right: none;
 }
 .tabulator .tabulator-tableHolder {
   position: relative;
@@ -121,9 +124,10 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row {
   min-height: 22px;
   background-color: #fff;
+  border-bottom: 1px solid #ddd;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
-  background-color: #EFEFEF;
+  background-color: #fff;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover {
   background-color: #bbb;
@@ -135,7 +139,7 @@
   width: 30px;
   max-width: 30px;
   padding: 4px;
-  border-right: 1px solid #aaa;
+  border-right: 1px solid #ddd;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
@@ -156,11 +160,14 @@
   position: relative;
   box-sizing: border-box;
   padding: 4px;
-  border-right: 1px solid #aaa;
+  border-right: 1px solid #ddd;
   vertical-align: middle;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:last-of-type {
+  border-right: none;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
   border: 1px solid #1D68CD;
@@ -186,10 +193,10 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header {
   box-sizing: border-box;
   border-bottom: 1px solid #999;
-  border-right: 1px solid #aaa;
+  border-right: 1px solid #ddd;
   border-top: 1px solid #999;
   padding: 5px;
-  background: #ccc;
+  background: #fafafa;
   font-weight: bold;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header .tabulator-arrow {
@@ -210,7 +217,7 @@
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header span {
   margin-left: 10px;
-  color: #d00;
+  color: #666;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-body {
   visibility: hidden;
@@ -219,7 +226,7 @@
 .tabulator .tabulator-footer {
   padding: 5px 10px;
   border-top: 1px solid #999;
-  background-color: #e6e6e6;
+  background-color: #fff;
   text-align: right;
   color: #555;
   font-weight: bold;
