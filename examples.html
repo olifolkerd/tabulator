@@ -325,14 +325,14 @@
 	$("#example-table-editable").tabulator({
 		height:"320px",
 		columns:[
-		{title:"Name", field:"name", width:200, editable:true, formatter:"textarea", editable:true},
-		{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true, headerFilter:true},
-		{title:"Gender", field:"gender", editable:true, editor:genderEditor, headerFilter:true},
-		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true, headerFilter:true},
-		{title:"Favourite Color", field:"col", editable:true, headerFilter:true},
-		{title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true, headerFilter:true},
-		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross", headerFilter:true},
-		{title:"Luck No", field:"lucky_no", align:"right", width:100, sorter:"number", editor:"number", headerFilter:true},
+		{title:"Name", field:"name", width:200, editable:true, editable:true},
+		{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
+		{title:"Gender", field:"gender", editable:true, editor:genderEditor},
+		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
+		{title:"Favourite Color", field:"col", editable:true},
+		{title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
+		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross"},
+		{title:"Luck No", field:"lucky_no", align:"right", width:100, sorter:"number", editor:"number"},
 
 		],
 		rowEdit:function(id,data,row){
