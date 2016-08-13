@@ -14,6 +14,7 @@ Simply include the library and the css in your JQuery UI project and you're away
 
 Tabulator is packed with useful  features including:
 
+- Fully CSS stylable
 - JSON, array or AJAX data loading
 - Column sorting
 - Pagination
