@@ -107,12 +107,24 @@
 				}
 			}
 
+			.tabulator-header-filter{
+				margin-top:2px;
+				width:100%;
+				text-align: center;
+			}
+
+
 			&[data-sortable=true]{
 				padding-right:25px;
 
 				&:hover{
 					cursor:pointer;
 					background-color:rgba(0,0,0,.1);
+				}
+
+				.tabulator-header-filter{
+					margin-top:2px;
+					width:calc(~"100% + 20px");
 				}
 			}
 
@@ -209,6 +221,11 @@
 					&.tabulator-editing{
 						border:1px solid  @editBoxColor;
 						padding: 0;
+
+						input, select{
+							border:1px;
+							background:transparent;
+						}
 					}
 				}
 

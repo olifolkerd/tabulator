@@ -57,12 +57,21 @@
 .tabulator .tabulator-header .tabulator-col .tabulator-handle:hover {
   cursor: ew-resize;
 }
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
+  margin-top: 2px;
+  width: 100%;
+  text-align: center;
+}
 .tabulator .tabulator-header .tabulator-col[data-sortable=true] {
   padding-right: 25px;
 }
 .tabulator .tabulator-header .tabulator-col[data-sortable=true]:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.1);
+}
+.tabulator .tabulator-header .tabulator-col[data-sortable=true] .tabulator-header-filter {
+  margin-top: 2px;
+  width: calc(100% + 20px);
 }
 .tabulator .tabulator-header .tabulator-col-row-handle {
   width: 30px;
@@ -141,6 +150,11 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
   border: 1px solid #1D68CD;
   padding: 0;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing input,
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing select {
+  border: 1px;
+  background: transparent;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group.show .tabulator-group-header .tabulator-arrow {
   margin-left: 5px;

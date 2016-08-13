@@ -16,21 +16,21 @@
 
  	//polyfill for Array.find method
  	if (!Array.prototype.find) {
- 	Array.prototype.find = function (predicate, thisValue) {
- 	        var arr = Object(this);
- 	        if (typeof predicate !== 'function') {
- 	            throw new TypeError();
- 	        }
- 	        for(var i=0; i < arr.length; i++) {
- 	            if (i in arr) {
- 	                var elem = arr[i];
- 	                if (predicate.call(thisValue, elem, i, arr)) {
- 	                    return elem;
- 	                }
- 	            }
- 	        }
- 	        return undefined;
- 	    }
+ 		Array.prototype.find = function (predicate, thisValue) {
+ 			var arr = Object(this);
+ 			if (typeof predicate !== 'function') {
+ 				throw new TypeError();
+ 			}
+ 			for(var i=0; i < arr.length; i++) {
+ 				if (i in arr) {
+ 					var elem = arr[i];
+ 					if (predicate.call(thisValue, elem, i, arr)) {
+ 						return elem;
+ 					}
+ 				}
+ 			}
+ 			return undefined;
+ 		}
  	}
 
  	$.widget("ui.tabulator", {
@@ -81,6 +81,8 @@
 		progressiveRender:false, //enable progressive rendering
 		progressiveRenderSize:20, //block size for progressive rendering
 		progressiveRenderMargin:200, //disance in px before end of scroll before progressive render is triggered
+
+		headerFilterPlaceholder: "filter column...", //placeholder text to display in header filters
 
 		tooltips: false, //Tool tip value
 		tooltipsHeader: false, //Tool tip for headers
@@ -1727,6 +1729,44 @@
 		}//
 
 
+		//handle filter update
+		function updateFilter(){
+
+			var filters = {};
+
+			$(".tabulator-header-filter", self.header).each(function(){
+				var element = $(this);
+				var filterVal = element.data("filter-val");
+
+				if(filterVal){
+					filters[element.closest(".tabulator-col").data("field")] = filterVal;
+				}
+			});
+
+
+			function colFilter(data){
+				var match = true;
+
+				for(var field in filters){
+					if(typeof data[field] == "string"){
+						if(data[field].toLowerCase().indexOf(filters[field]) == -1){
+							match = false;
+						}
+					}else{
+					    //match everything else explicitly
+					    if(data[field] != filters[field]){
+					    	match = false;
+					    }
+					}
+				}
+
+				return match;
+			}
+
+			self.setFilter(colFilter);
+		}
+
+
 
 		$.each(options.columns, function(i, column){
 
@@ -1747,11 +1787,64 @@
 				var sortdir = "";
 			}
 
-			var title = column.title ? column.title : "&nbsp";
-
 			var visibility = column.visible ? "inline-block" : "none";
 
-			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' >' + title + '</div>');
+			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' ></div>');
+
+
+
+			//Manage Header Column Filters
+			if(column.headerFilter){
+
+				//select appropriate filter
+				if(column.headerFilter === true){
+					if(column.editor){
+						var editor = column.editor;
+					}else{
+						var editor = self.editors[column.formatter] ? column.formatter: "input";
+					}
+				}else{
+					var editor = column.headerFilter;
+				}
+
+
+				//build filter element from editor
+				var editorFunc = typeof(editor) == "string" ? self.editors[editor] : editor;
+
+				var filter = $("<div class='tabulator-header-filter'></div>");
+
+				var cellEditor = editorFunc.call(self, filter, "");
+
+				filter.append(cellEditor);
+				filter.children().attr("placeholder", self.options.headerFilterPlaceholder);
+
+				//handle events
+				cellEditor.on("click", function(e){
+					e.stopPropagation();
+					$(this).focus();
+				});
+
+				cellEditor.on("keyup change", function(e){
+					$(this).closest(".tabulator-header-filter").data("filter-val", $(this).val());
+					updateFilter()
+				});
+
+				filter.on("editval editcancel", function(e, value){
+					$(this).data("filter-val", value);
+					updateFilter()
+				});
+
+				//add filter to column header
+				col.text(column.title ? column.title : "&nbsp");
+
+				col.append(filter);
+
+			}else{
+				var title = column.title ? column.title : "&nbsp";
+
+				col.html(title);
+			}
+
 
 			//added callback for custom header tooltips
 			var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
@@ -2310,8 +2403,6 @@
 			//create and style input
 			var input = $("<input type='text'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"padding":"4px",
 				"width":"100%",
 				"box-sizing":"border-box",
@@ -2340,8 +2431,6 @@
 			//create and style input
 			var input = $("<input type='number'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"padding":"4px",
 				"width":"100%",
 				"box-sizing":"border-box",
@@ -2367,8 +2456,13 @@
 			return input;
 		},
 		star:function(cell, value){
+
 			var maxStars = $("svg", cell).length;
-			var size = $("svg:first", cell).attr("width");
+			maxStars = maxStars ?maxStars : 5;
+
+			var size = $("svg:first", cell).attr("width")
+			size = size ? size : 14;
+
 			var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
 
 			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
@@ -2530,8 +2624,6 @@
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"margin-top":"5px",
 				"box-sizing":"border-box",
 			})
@@ -2566,8 +2658,6 @@
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
-				"border":"1px",
-				"background":"transparent",
 				"margin-top":"5px",
 				"box-sizing":"border-box",
 			})
