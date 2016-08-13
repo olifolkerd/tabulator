@@ -24,6 +24,13 @@
 .tabulator .tabulator-header .tabulator-col:first-child .tabulator-handle.prev {
   display: none;
 }
+.tabulator .tabulator-header .tabulator-col .tabulator-title-editor {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid #999;
+  padding: 1px;
+  background: #fff;
+}
 .tabulator .tabulator-header .tabulator-col .tabulator-arrow {
   display: inline-block;
   position: absolute;

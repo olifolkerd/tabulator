@@ -127,6 +127,7 @@
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
 		dataFiltered:function(){}, //callback for when data is filtered
+		colTitleChanged:function(){}, //do action whel column title changed
 	},
 
 	////////////////// Element Construction //////////////////
@@ -1794,6 +1795,24 @@
 
 			var title = column.title ? column.title : "&nbsp";
 
+
+			if(column.editableTitle){
+				var titleElement = $("<input class='tabulator-title-editor'>");
+				titleElement.val(title);
+
+				titleElement.on("click", function(e){
+					e.stopPropagation();
+					$(this).focus();
+				});
+
+				titleElement.on("change", function(){
+					var newTitle = $(this).val();
+					column.title = newTitle;
+					options.colTitleChanged(newTitle, column, options.columns);
+				});
+
+				title = titleElement;
+			}
 
 			//Manage Header Column Filters
 			if(column.headerFilter){
