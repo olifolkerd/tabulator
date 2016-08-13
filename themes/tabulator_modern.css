@@ -7,7 +7,8 @@
 }
 .tabulator .tabulator-header {
   position: relative;
-  border-bottom: 1px solid #999;
+  border-bottom: 3px solid #3759D7;
+  margin-bottom: 4px;
   background-color: #fff;
   color: #3759D7;
   font-weight: bold;
@@ -102,7 +103,7 @@
   position: relative;
   box-sizing: border-box;
   border-right: 2px solid #fff;
-  padding: 6px 4px;
+  padding: 6px 4px 4px 4px;
   text-align: left;
   vertical-align: bottom;
   white-space: nowrap;

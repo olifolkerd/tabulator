@@ -10,7 +10,7 @@
 @headerBackgroundColor:#fff; //border to tablulator
 @headerTextColor:@primary; //header text colour
 @headerBorderColor:#fff;  //header border color
-@headerSeperatorColor:#999; //header bottom seperator color
+@headerSeperatorColor:@primary; //header bottom seperator color
 @headerMargin:4px; //padding round header
 
 //column header arrows
@@ -48,7 +48,8 @@
 	//column header containing element
 	.tabulator-header{
 		position:relative;
-		border-bottom:1px solid @headerSeperatorColor;
+		border-bottom:3px solid @headerSeperatorColor;
+		margin-bottom:4px;
 		background-color: @headerBackgroundColor;
 		color: @headerTextColor;
 		font-weight:bold;
@@ -177,7 +178,7 @@
 			position:relative;
 			box-sizing:border-box;
 			border-right:2px solid @headerBorderColor;
-			padding:6px 4px;
+			padding:6px 4px 4px 4px;
 			text-align:left;
 			vertical-align: bottom;
 			white-space: nowrap;
