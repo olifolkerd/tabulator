@@ -715,6 +715,8 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>You can also pass a custom editor function to this parameter in the same way as you would for column editor. for more information see the <a href="#manipulating-data">Manipulating Data</a> section.</p>
 
+                    <p>Filtering on string data types is done using a case insesitive comparison where even a partial match counts as successful. For all other data types it is a direct like for like comparison.</p>
+
                     <p>The placeholder text used for input elements can be set using the <span class='param'>headerFilterPlaceholder</span> option in the table definition</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
