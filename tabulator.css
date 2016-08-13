@@ -58,9 +58,16 @@
   cursor: ew-resize;
 }
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
+  position: relative;
   margin-top: 2px;
   width: 100%;
   text-align: center;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter textarea {
+  height: auto !important;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter svg {
+  margin-top: 3px;
 }
 .tabulator .tabulator-header .tabulator-col[data-sortable=true] {
   padding-right: 25px;

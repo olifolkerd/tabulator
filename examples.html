@@ -60,7 +60,7 @@
 
 	//sample data to be used in all tabulators
 	var tabledata = [
-	{id:1, name:"Oli Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1, lucky_no:5},
+	{id:1, name:"Oli Bob \n steve", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1, lucky_no:5},
 	{id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true, lucky_no:10},
 	{id:3, name:"Christine Lobowski", age:"42", height:0, col:"green", dob:"22/05/1982", cheese:"true", lucky_no:12},
 	{id:4, name:"Brendon Philips", age:"125", gender:"male", height:1, col:"orange", dob:"01/08/1980", lucky_no:18},
@@ -109,7 +109,7 @@
 			tooltipsHeader:true,
 			movableCols:true,
 			columns:[
-			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
+			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)} },
 			{title:"Name", field:"name", sorter:"string", width:150, tooltipHeader:"Custom Header Tooltip"},
 			{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
 			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, data){console.log("cell click - " + val, cell)}},
@@ -300,9 +300,7 @@
 		//create and style editor
 		var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
 		editor.css({
-			"border":"1px",
-			"background":"transparent",
-			"padding":"3px",
+			"padding":"4px",
 			"width":"100%",
 			"box-sizing":"border-box",
 		})
@@ -327,14 +325,14 @@
 	$("#example-table-editable").tabulator({
 		height:"320px",
 		columns:[
-		{title:"Name", field:"name", width:200, editable:true},
-		{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
-		{title:"Gender", field:"gender", editable:true, editor:genderEditor},
-		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true},
-		{title:"Favourite Color", field:"col", editable:true},
-		{title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross"},
-		{title:"Luck No", field:"lucky_no", align:"right", width:100, sorter:"number", editor:"number"},
+		{title:"Name", field:"name", width:200, editable:true, formatter:"textarea", editable:true},
+		{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true, headerFilter:true},
+		{title:"Gender", field:"gender", editable:true, editor:genderEditor, headerFilter:true},
+		{title:"Height", field:"height",  formatter:"star", align:"center", width:100, editable:true, headerFilter:true},
+		{title:"Favourite Color", field:"col", editable:true, headerFilter:true},
+		{title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true, headerFilter:true},
+		{title:"Likes Cheese", field:"cheese", align:"center", editable:true, formatter:"tickCross", headerFilter:true},
+		{title:"Luck No", field:"lucky_no", align:"right", width:100, sorter:"number", editor:"number", headerFilter:true},
 
 		],
 		rowEdit:function(id,data,row){
