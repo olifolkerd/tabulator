@@ -139,6 +139,7 @@
   background: #666;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+  position: relative;
   box-sizing: border-box;
   padding: 4px;
   border-right: 1px solid #aaa;

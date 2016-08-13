@@ -2157,6 +2157,12 @@
 		}
 	},
 
+	//resize row to match contents
+	_resizeRow(row){
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":""});
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
+	},
+
 	//format cell contents
 	_formatCell:function(formatter, value, data, cell, row, formatterParams){
 		var self = this;
@@ -2298,6 +2304,10 @@
 		plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
 			return value;
 		},
+		textarea:function(value, data, cell, row, options, formatterParams){ //multiline text area
+			cell.css({"white-space":"pre-wrap"});
+			return value;
+		},
 		money:function(value, data, cell, row, options, formatterParams){
 			var number = parseFloat(value).toFixed(2);
 
@@ -2427,6 +2437,59 @@
 
 			return input;
 		},
+		textarea:function(cell, value){
+			var self = this;
+
+			var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+			var row = cell.closest(".tabulator-row")
+
+            //create and style input
+            var input = $("<textarea></textarea>");
+            input.css({
+                "display":"block",
+                "height":"100%",
+                "width":"100%",
+                "padding":"2px",
+                "box-sizing":"border-box",
+                "white-space":"pre-wrap",
+                "resize": "none",
+            })
+            .val(value);
+
+            setTimeout(function(){
+                input.focus();
+            },100);
+
+            //submit new value on blur
+            input.on("change blur", function(e){
+                cell.trigger("editval", input.val());
+                setTimeout(function(){
+                	self._resizeRow(row);
+                },300)
+            });
+
+            input.on("keyup", function(){
+            	var value = $(this).val();
+            	var newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+
+            	if(newCount != count){
+            		var line = input.innerHeight() / count;
+
+            		console.log("lines", line);
+
+            		input.css({"height": (line * newCount) + "px"});
+
+            		self._resizeRow(row);
+
+            		count = newCount;
+            	}
+
+
+
+            });
+
+            return input;
+        },
 		number:function(cell, value){
 			//create and style input
 			var input = $("<input type='number'/>");
