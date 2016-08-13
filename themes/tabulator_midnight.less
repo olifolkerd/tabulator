@@ -1,0 +1,418 @@
+
+//Main Theme Variables
+@backgroundColor: #222; //background color of tabulator
+@borderColor:#333; //border to tablulator
+@textSize:14px; //table text size
+
+//header themeing
+@headerBackgroundColor:#333; //border to tablulator
+@headerTextColor:#fff; //header text colour
+@headerBorderColor:#aaa;  //header border color
+@headerSeperatorColor:#999; //header bottom seperator color
+@headerMargin:4px; //padding round header
+
+//column header arrows
+@sortArrowActive: #666;
+@sortArrowInactive: #bbb;
+
+//row themeing
+@rowBackgroundColor:#666; //table row background color
+@rowAltBackgroundColor:#444; //table row background color
+@rowBorderColor:#888; //table border color
+@rowTextColor:#fff; //table text color
+@rowHoverBackground:#999; //row background color on hover
+
+@editBoxColor:#999; //border color for edit boxes
+
+//footer themeing
+@footerBackgroundColor:#333; //border to tablulator
+@footerTextColor:#333; //footer text colour
+@footerBorderColor:#aaa; //footer border color
+@footerSeperatorColor:#999; //footer bottom seperator color
+
+
+
+//Tabulator Containing Element
+.tabulator{
+	position: relative;
+	border: 1px solid @borderColor;
+	background-color: @backgroundColor;
+	overflow:hidden;
+	font-size:@textSize;
+
+	//column header containing element
+	.tabulator-header{
+		position:relative;
+		border-bottom:1px solid @headerSeperatorColor;
+		background-color: @headerBackgroundColor;
+		color: @headerTextColor;
+		font-weight:bold;
+
+		white-space: nowrap;
+		overflow:visible;
+
+		-moz-user-select: none;
+		-khtml-user-select: none;
+		-webkit-user-select: none;
+		-o-user-select: none;
+
+		//individual column header element
+		.tabulator-col{
+			display:inline-block;
+
+			&:first-child{
+				.tabulator-handle.prev{
+					display: none;
+				}
+			}
+
+			.tabulator-title-editor{
+				box-sizing: border-box;
+				width: 100%;
+
+				border:1px solid #999;
+
+				padding:1px;
+
+				background: #444;
+				color: #fff;
+			}
+
+			//column sorter arrow
+			.tabulator-arrow{
+				display: inline-block;
+				position: absolute;
+				top:9px;
+				right:8px;
+				width: 0;
+				height: 0;
+				border-left: 6px solid transparent;
+				border-right: 6px solid transparent;
+				border-bottom: 6px solid @sortArrowInactive;
+
+				&.asc{
+					border-top: none;
+					border-bottom: 6px solid @sortArrowActive;
+				}
+
+				&.desc{
+					border-top: 6px solid @sortArrowActive;
+					border-bottom: none;
+				}
+			}
+
+			//column resize handles
+			.tabulator-handle{
+				position:absolute;
+				right:0;
+				top:0;
+				bottom:0;
+				width:5px;
+
+				&.prev{
+					left:0;
+					right:auto;
+				}
+
+				&:hover{
+					cursor:ew-resize;
+				}
+			}
+
+			.tabulator-header-filter{
+				position: relative;
+				margin-top:2px;
+				width:100%;
+				text-align: center;
+
+				//styling adjustment for inbuilt editors
+				textarea{
+					height:auto !important;
+				}
+
+				svg{
+					margin-top: 3px;
+				}
+
+				input, select{
+					border:1px solid #999;
+					background: #444;
+					color: #fff;
+				}
+			}
+
+
+			&[data-sortable=true]{
+				padding-right:25px;
+
+				&:hover{
+					cursor:pointer;
+					background-color:rgba(0,0,0,.1);
+				}
+
+				.tabulator-header-filter{
+					margin-top:2px;
+					width:calc(~"100% + 20px");
+				}
+			}
+
+		}
+
+		//empty column for spacing row handlers on tables with movable rows enabled
+		.tabulator-col-row-handle{
+			width:30px;
+			max-width:30px;
+			display:inline-block;
+		}
+
+		.tabulator-col, .tabulator-col-row-handle{
+			position:relative;
+			box-sizing:border-box;
+			border-right:1px solid @headerBorderColor;
+			padding:4px;
+			text-align:left;
+			vertical-align: bottom;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	//scrolling element to hold table
+	.tabulator-tableHolder{
+		position:relative;
+		width:100%;
+		white-space: nowrap;
+		overflow:auto;
+
+		//element to hold table rows
+		.tabulator-table{
+			position:relative;
+			display:inline-block;
+			background-color:@rowBackgroundColor;
+			white-space: nowrap;
+			overflow:visible;
+			color:@rowTextColor;
+
+			//row element
+			.tabulator-row{
+				min-height:@textSize + (@headerMargin * 2);
+				background-color: @rowBackgroundColor;
+
+				&:nth-child(even){
+					background-color: @rowAltBackgroundColor;
+				}
+
+				&.selectable:hover{
+					background-color:@rowHoverBackground;
+					cursor: pointer;
+				}
+
+				//movable row handle
+				.tabulator-row-handle{
+					display:inline-block;
+					box-sizing:border-box;
+					width:30px;
+					max-width:30px;
+					padding:4px;
+					border-right:1px solid @rowBorderColor;
+					text-align: center;
+					vertical-align:middle;
+					white-space:nowrap;
+					overflow:hidden;
+					text-overflow:ellipsis;
+
+					&:hover{
+						cursor:move;
+						background-color:rgba(0,0,0,.1);
+					}
+
+					//Hamburger element
+					div{
+						width:80%;
+						height:3px;
+						margin:2px 10% 0 10%;
+						background:#666;
+					}
+				}
+
+				//cell element
+				.tabulator-cell{
+					position: relative;
+					box-sizing:border-box;
+					padding:4px;
+					border-right:1px solid @rowBorderColor;
+					vertical-align:middle;
+					white-space:nowrap;
+					overflow:hidden;
+					text-overflow:ellipsis;
+
+
+					&.tabulator-editing{
+						border:1px solid  @editBoxColor;
+						padding: 0;
+
+						input, select{
+							border:1px;
+							background:transparent;
+						}
+					}
+				}
+
+			}
+
+			//row grouping element
+			.tabulator-group{
+
+				&.show{
+					.tabulator-group-header{
+						.tabulator-arrow{
+							margin-left:5px;
+							margin-right:10px;
+							border-left: 6px solid transparent;
+							border-right: 6px solid transparent;
+							border-top: 6px solid @sortArrowActive;
+							border-bottom: 0;
+						}
+					}
+
+					.tabulator-group-body{
+						visibility: visible;
+						height:auto;
+					}
+				}
+
+				//row grouping header
+				.tabulator-group-header{
+					box-sizing:border-box;
+					border-bottom:1px solid #999;
+					border-right:1px solid @rowBorderColor;
+					border-top:1px solid #999;
+					padding:5px;
+					background:#ccc;
+					font-weight:bold;
+					color:#333;
+
+					//sorting arrow
+					.tabulator-arrow{
+						display: inline-block;
+						width: 0;
+						height: 0;
+						margin-left:8px;
+						margin-right:13px;
+						border-top: 6px solid transparent;
+						border-bottom: 6px solid transparent;
+						border-right: 0;
+						border-left: 6px solid @sortArrowActive;
+						vertical-align:middle;
+
+						&:hover{
+							cursor:pointer;
+							background-color:rgba(0,0,0,.1);
+						}
+					}
+
+					span{
+						margin-left:10px;
+						color:#666;
+					}
+				}
+
+				//row grouping footer
+				.tabulator-group-body{
+					visibility:hidden;
+					height:0;
+				}
+			}
+		}
+	}
+
+	//footer element
+	.tabulator-footer{
+		padding:5px 10px;
+		border-top:1px solid @footerSeperatorColor;
+		background-color: @footerBackgroundColor;
+		text-align:right;
+		color: @footerTextColor;
+		font-weight:bold;
+		white-space:nowrap;
+		user-select:none;
+
+		-moz-user-select: none;
+		-khtml-user-select: none;
+		-webkit-user-select: none;
+		-o-user-select: none;
+
+		//pagination container element
+		.tabulator-pages{
+			margin:0 7px;
+		}
+
+		//pagination button
+		.tabulator-page{
+			display:inline-block;
+			margin:0 2px;
+			border:1px solid @footerBorderColor;
+			border-radius:3px;
+			padding:2px 5px;
+			background:rgba(255,255,255,.2);
+			color: @footerTextColor;
+
+			&.active{
+				color:#fff;
+			}
+
+			&.disabled{
+				opacity:.5;
+			}
+
+			&:not(.disabled){
+				&:hover{
+					cursor:pointer;
+					background:rgba(0,0,0,.2);
+					color:#fff;
+				}
+			}
+		}
+	}
+
+	//holding div that contains loader and covers tabulator element to prevent interaction
+	.tablulator-loader{
+		position:absolute;
+		top:0;
+		left:0;
+		z-index:100;
+		height:100%;
+		width:100%;
+		background:rgba(0,0,0,.4);
+		text-align:center;
+
+		//loading message element
+		.tabulator-loader-msg{
+
+			//loading message
+			.tabulator-loading{
+				display:inline-block;
+				border:4px solid #333;
+				border-radius:10px;
+				padding:10px 20px;
+				background:#fff;
+				font-weight:bold;
+				font-size:16px;
+				color:#000;
+			}
+
+			//error message
+			.tabulator-error{
+				display:inline-block;
+				border:4px solid #D00;
+				border-radius:10px;
+				padding:10px 20px;
+				background:#fff;
+				font-weight:bold;
+				font-size:16px;
+				color:#590000;
+			}
+		}
+	}
+}
