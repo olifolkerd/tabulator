@@ -1792,6 +1792,8 @@
 			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' ></div>');
 
 
+			var title = column.title ? column.title : "&nbsp";
+
 
 			//Manage Header Column Filters
 			if(column.headerFilter){
@@ -1835,12 +1837,12 @@
 				});
 
 				//add filter to column header
-				col.text(column.title ? column.title : "&nbsp");
+				col.append(title);
 
 				col.append(filter);
 
 			}else{
-				var title = column.title ? column.title : "&nbsp";
+
 
 				col.html(title);
 			}
@@ -2419,9 +2421,11 @@
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			//submit new value on blur
 			input.on("change blur", function(e){
@@ -2446,26 +2450,28 @@
             //create and style input
             var input = $("<textarea></textarea>");
             input.css({
-                "display":"block",
-                "height":"100%",
-                "width":"100%",
-                "padding":"2px",
-                "box-sizing":"border-box",
-                "white-space":"pre-wrap",
-                "resize": "none",
+            	"display":"block",
+            	"height":"100%",
+            	"width":"100%",
+            	"padding":"2px",
+            	"box-sizing":"border-box",
+            	"white-space":"pre-wrap",
+            	"resize": "none",
             })
             .val(value);
 
-            setTimeout(function(){
-                input.focus();
-            },100);
+            if(cell.hasClass("tabulator-cell")){
+            	setTimeout(function(){
+            		input.focus();
+            	},100);
+            }
 
             //submit new value on blur
             input.on("change blur", function(e){
-                cell.trigger("editval", input.val());
-                setTimeout(function(){
-                	self._resizeRow(row);
-                },300)
+            	cell.trigger("editval", input.val());
+            	setTimeout(function(){
+            		self._resizeRow(row);
+            	},300)
             });
 
             input.on("keyup", function(){
@@ -2490,7 +2496,7 @@
 
             return input;
         },
-		number:function(cell, value){
+        number:function(cell, value){
 			//create and style input
 			var input = $("<input type='number'/>");
 			input.css({
@@ -2500,9 +2506,11 @@
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			//submit new value on blur
 			input.on("blur", function(e){
@@ -2692,9 +2700,11 @@
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			if(value === true || value === "true" || value === "True" || value === 1){
 				input.prop("checked", true);
@@ -2726,9 +2736,11 @@
 			})
 			.val(value);
 
-			setTimeout(function(){
-				input.focus();
-			},100);
+			if(cell.hasClass("tabulator-cell")){
+				setTimeout(function(){
+					input.focus();
+				},100);
+			}
 
 			if(value === true || value === "true" || value === "True" || value === 1){
 				input.prop("checked", true);
