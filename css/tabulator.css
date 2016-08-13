@@ -76,6 +76,9 @@
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter svg {
   margin-top: 3px;
 }
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input {
+  padding: 1px 3px !important;
+}
 .tabulator .tabulator-header .tabulator-col[data-sortable=true] {
   padding-right: 25px;
 }

@@ -32,6 +32,10 @@
 
     <!-- Tabulator CSS -->
     <link href="../css/tabulator.css" rel="stylesheet">
+    <link href="../css/themes/tabulator_autumn.css" rel="stylesheet">
+    <link href="../css/themes/tabulator_midnight.css" rel="stylesheet">
+    <link href="../css/themes/tabulator_modern.css" rel="stylesheet">
+    <link href="../css/themes/tabulator_simple.css" rel="stylesheet">
 
     <link rel="icon"
     type="image/png"
@@ -339,8 +343,6 @@ var genderEditor = function(cell, value){
     //create and style editor
     var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
     editor.css({
-        "border":"1px",
-        "background":"transparent",
         "padding":"3px",
         "width":"100%",
         "box-sizing":"border-box",
@@ -350,9 +352,11 @@ var genderEditor = function(cell, value){
     .val(value);
 
     //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-    setTimeout(function(){
-        editor.focus();
-    },100)
+    if(cell.hasClass("tabulator-cell")){
+        setTimeout(function(){
+            editor.focus();
+        },100);
+    }
 
     //when the value has been set, update the cell
     editor.on("change blur", function(e){
@@ -686,23 +690,9 @@ $("#example-table-filters").tabulator({
                 <a class="anchor" id="filter-header"></a>
                 <article>
                     <h1>Filter Data In Header<a class="doc-link" href="../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>You can also use some of the aditional features in Tabulator to add the filters into the column headers.</p>
+                    <p>By settting the <span class='param'>headerFilter</span> parameter for a column you can add column based filtering directly into your table.</p>
 
-                    <style>
-                        /*Style input element holder*/
-                        #example-table-filters-header .tabulator-header .tabulator-col .input-holder{
-                            margin-top:2px;
-                            width:calc(100% + 20px);
-                        }
-
-                        /*Style input element*/
-                        #example-table-filters-header .tabulator-header .tabulator-col .input-holder input{
-                            box-sizing: border-box;
-                            width:100%;
-                            padding:1px 3px;
-                            font-weight: normal;
-                        }
-                    </style>
+                    <p>See the documentation for <a href="../docs#header-filters">Header Filtering</a> for more information.</p>
 
                     <div id="example-table-filters-header"></div>
 
@@ -712,75 +702,19 @@ $("#example-table-filters").tabulator({
                         <h3>HTML</h3>
                         <pre class="prettyprint lang-html">&lt;div id="example-table-filters-header"&gt;&lt;/div&gt;</pre>
 
-                        <h3>CSS</h3>
-                        <pre class="prettyprint lang-css">/*Style input element holder*/
-#example-table-filters-header .tabulator-header .tabulator-col .input-holder{
-    margin-top:2px;
-    width:calc(100% + 20px);
-}
-
-/*Style input element*/
-#example-table-filters-header .tabulator-header .tabulator-col .input-holder input{
-    box-sizing: border-box;
-    width:100%;
-    padding:1px 3px;
-    font-weight: normal;
-}</pre>
-
                         <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Create header filter element
-var headerInput = "&lt;div class='input-holder'&gt;&lt;input type='text' placeholder='filter column...'&gt;&lt;/div&gt;";
-
-//Build Tabulator
-$("#example-table-filters-header").tabulator({
+                        <pre class="prettyprint lang-js">$("#example-table-filters-header").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
-    {title:"Name" + headerInput, field:"name", width:150},
-    {title:"Progress" + headerInput, field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender" + headerInput, field:"gender"},
-    {title:"Rating" + headerInput, field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color" + headerInput, field:"col"},
-    {title:"Date Of Birth" + headerInput, field:"dob", align:"center", sorter:"date"},
-    {title:"Driver" + headerInput, field:"car", align:"center", formatter:"tickCross"},
+    {title:"Name", field:"name", width:150, headerFilter:true},
+    {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
+    {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
+    {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+    {title:"Favourite Color", field:"col", headerFilter:true},
+    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
+    {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
     ],
-});
-
-//Prevent click in filter from triggering sort
-$("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").on("click", function(e){
-    e.stopPropagation();
-});
-
-//Create filter function
-var colFilter = function(data){
-
-    var match = true;
-
-    $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").each(function(){
-        var value = $(this).val().toLowerCase();
-        var field = $(this).closest(".tabulator-col").data("field");
-
-        if(value){
-            //Compare strings in a case insensitive manner, accept partial matches
-            if(typeof data[field] == "string"){
-                if(data[field].toLowerCase().indexOf(value) == -1){
-                    match = false;
-                }
-            }else{
-                //match everything else explicitly
-                if(data[field] != value){
-                    match = false;
-                }
-            }
-        }
-    });
-
-    return match;
-}
-
-//Trigger filter on keyup in filter input element
-$("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").on("keyup", function(e){
-    $("#example-table-filters-header").tabulator("setFilter", colFilter);
 });</pre>
                     </fieldset>
                 </article>
@@ -1039,6 +973,52 @@ $("#reset").click(function(){
                     <h1>Theming <a class="doc-link" href="../docs?#css"><i class="fa fa-external-link"></i> Documentation</a></h1>
                     <p>Tabulator is styled using a full set of CSS classes, making theming of the table very simple. A full list of these can be found <a href="../docs?#css">here.</a></p>
 
+                    <p>A <span class='param'>LESS</span> file is also provided, containing a set of variables to make generating your own theme even easier. This can be found in <span class='param'>tabulator.less</span></p>
+
+                    <p>Tabulator comes with a number of packaged themes in the <span class='param'>/themes</span> directory of the package. To use one of these simply include the matching css file instead of the default <span class='param'>tabulator.css</span></p>
+
+                    <h2>Simple Theme</h2>
+                    <p>A plain, simplistic layout showing only basic grid lines. This can be found in <span class='param'>/themes/tabulator_simple.css</span></p>
+                    <div id="example-table-theme-simple" class="example-themes"></div>
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_simple.css" rel="stylesheet"&gt;</pre>
+                    </fieldset>
+
+                    <h2>Midnight Theme</h2>
+                    <p>A dark, stylish layout using simple shades of grey. This can be found in <span class='param'>/themes/tabulator_midnight.css</span></p>
+                    <div id="example-table-theme-midnight" class="example-themes"></div>
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_midnight.css" rel="stylesheet"&gt;</pre>
+                    </fieldset>
+
+                    <h2>Modern Theme</h2>
+                    <p>A neat, stylish layout using one primary color. This color can be set in the <span class='param'>@primary</span> variable in the <span class='param'>/themes/tabulator_modern.less</span> file to alter the style to match your colour scheme. This can be found in <span class='param'>/themes/tabulator_modern.css</span></p>
+                    <div id="example-table-theme-modern" class="example-themes"></div>
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_modern.css" rel="stylesheet"&gt;</pre>
+                    </fieldset>
+
+                    <h2>Autumn Theme</h2>
+                    <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
+                    <div id="example-table-theme-autumn" class="example-themes"></div>
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_autumn.css" rel="stylesheet"&gt;</pre>
+                    </fieldset>
+
+                    <h2>Manually Adjusted Theme</h2>
+                    <p>You can override the defualt tabulator styling in document, or simply edit the provided <span class='param'>tabulator.css</span> file to make your own custom theme.</p>
                     <style>
                         /*Theme the Tabulator element*/
                         #example-table-theme{
@@ -1306,8 +1286,6 @@ $("#reset").click(function(){
             //create and style editor
             var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
             editor.css({
-                "border":"1px",
-                "background":"transparent",
                 "padding":"3px",
                 "width":"100%",
                 "box-sizing":"border-box",
@@ -1317,9 +1295,12 @@ $("#reset").click(function(){
             .val(value);
 
             //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-            setTimeout(function(){
-                editor.focus();
-            },100)
+            if(cell.hasClass("tabulator-cell")){
+                setTimeout(function(){
+                    editor.focus();
+                },100);
+            }
+
 
             //when the value has been set, update the cell
             editor.on("change blur", function(e){
@@ -1376,40 +1357,40 @@ $("#reset").click(function(){
 
 
         //Formatter Example
-                //generate print icon
-                var printIcon = function(value, data, cell, row, options){ //plain text value
-                    return "<i class='fa fa-print'></i> "
-                };
+        //generate print icon
+        var printIcon = function(value, data, cell, row, options){ //plain text value
+            return "<i class='fa fa-print'></i> "
+        };
 
-                $("#example-table-formatter").tabulator({
-                    height:"311px",
-                    fitColumns:true,
-                    rowFormatter:function(row, data){
+        $("#example-table-formatter").tabulator({
+            height:"311px",
+            fitColumns:true,
+            rowFormatter:function(row, data){
 
-                        if(data.col == "blue"){
-                            row.css({"background-color":"#A6A6DF"});
-                        }
-                    },
-                    columns:[
-                    {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-                    {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
-                        if(value.indexOf("o") > 0){
-                            return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
-                        }else{
-                            return value;
-                        }
-                    }},
-                    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-                    {title:"Gender", field:"gender"},
-                    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-                    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-                    {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
-                    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-                    {formatter:"buttonCross", width:30, align:"center"},
-                    ],
-                });
+                if(data.col == "blue"){
+                    row.css({"background-color":"#A6A6DF"});
+                }
+            },
+            columns:[
+            {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
+            {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
+                if(value.indexOf("o") > 0){
+                    return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
+                }else{
+                    return value;
+                }
+            }},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Gender", field:"gender"},
+            {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+            {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+            {formatter:"buttonCross", width:30, align:"center"},
+            ],
+        });
 
-                $("#example-table-formatter").tabulator("setData", tabledata);
+        $("#example-table-formatter").tabulator("setData", tabledata);
 
 
 
@@ -1485,60 +1466,21 @@ $("#reset").click(function(){
 
         /////// filter data in column headers ///////
 
-        //create header filter element
-        var headerInput = "<div class='input-holder'><input type='text' placeholder='filter column...'></div>";
-
         $("#example-table-filters-header").tabulator({
             height:"311px",
             fitColumns:true,
             columns:[
-            {title:"Name" + headerInput, field:"name", width:150},
-            {title:"Progress" + headerInput, field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender" + headerInput, field:"gender"},
-            {title:"Rating" + headerInput, field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color" + headerInput, field:"col"},
-            {title:"Date Of Birth" + headerInput, field:"dob", align:"center", sorter:"date"},
-            {title:"Driver" + headerInput, field:"car", align:"center", formatter:"tickCross"},
+            {title:"Name", field:"name", width:150, headerFilter:true},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
+            {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
+            {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+            {title:"Favourite Color", field:"col", headerFilter:true},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
             ],
         });
 
         $("#example-table-filters-header").tabulator("setData", tabledata);
-
-        //prevent click in filter from triggering sort
-        $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").on("click", function(e){
-            e.stopPropagation();
-        });
-
-        //create filter function
-        var colFilter = function(data){
-
-            var match = true;
-
-            $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").each(function(){
-                var value = $(this).val().toLowerCase();
-                var field = $(this).closest(".tabulator-col").data("field");
-
-                if(value){
-                    if(typeof data[field] == "string"){
-                        if(data[field].toLowerCase().indexOf(value) == -1){
-                            match = false;
-                        }
-                    }else{
-                        if(data[field] != value){
-                            match = false;
-                        }
-                    }
-                }
-            });
-
-            return match;
-        }
-
-        //trigger filter on keyup
-        $("#example-table-filters-header .tabulator-header .tabulator-col .input-holder input").on("keyup", function(e){
-            $("#example-table-filters-header").tabulator("setFilter", colFilter);
-        });
-
 
         /////// Pagination Example ///////
         $("#example-table-pagination").tabulator({
@@ -1692,6 +1634,27 @@ $("#reset").click(function(){
 
 
         //Theming Example
+
+        $(".example-themes").tabulator({
+            tooltipsHeader: false,
+            columns:[
+            {title:"Name", field:"name", sorter:"string", width:226},
+            {title:"Progress", field:"progress", width:120, sorter:"number"},
+            {title:"Gender", field:"gender", width:100, sorter:"string"},
+            {title:"Rating", field:"rating", align:"center", width:100},
+            {title:"Favourite Color", field:"col", width:150, sorter:"string", sortable:false},
+            {title:"Date Of Birth", field:"dob", width:150, sorter:"date", align:"center"},
+            ],
+            rowClick:function(e, id, data, row){
+                alert("Row " + id + " Clicked!!!!")
+            },
+            rowContext:function(e, id, data, row){
+                alert("Row " + id + " Context Clicked!!!!")
+            },
+        });
+
+        $(".example-themes").tabulator("setData", tabledata);
+
 
         $("#example-table-theme").tabulator({
             height:"331px",
