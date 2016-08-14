@@ -2179,7 +2179,7 @@
 	},
 
 	//resize row to match contents
-	_resizeRow(row){
+	_resizeRow:function(row){
 		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":""});
 		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
 	},
