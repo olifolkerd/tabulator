@@ -160,9 +160,11 @@
 				//create column array from headers
 				headers.each(function(index){
 
-					var col = {title:$(this).text(), field:$(this).text().toLowerCase().replace(" ", "_")};
+					var header = $(this);
 
-					var width = $(this).attr("width");
+					var col = {title:header.text(), field:header.text().toLowerCase().replace(" ", "_")};
+
+					var width = header.attr("width");
 
 					if(width){
 						col.width = width;
@@ -250,13 +252,16 @@
 		var scrollTop = 0;
 		var scrollLeft = 0;
 		self.tableHolder.scroll(function(){
+
+			var holder = $(this);
+
 			// if(scrollLeft != $(this).scrollLeft()){
-				self.header.css({"margin-left": "-1" * $(this).scrollLeft()});
+				self.header.css({"margin-left": "-1" * holder.scrollLeft()});
 			// }
 
 			//trigger progressive rendering on scroll
-			if(self.options.progressiveRender && scrollTop != $(this).scrollTop() && scrollTop < $(this).scrollTop()){
-				if($(this)[0].scrollHeight - $(this).innerHeight() - $(this).scrollTop() < self.options.progressiveRenderMargin){
+			if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
+				if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
 					if(self.paginationCurrentPage < self.paginationMaxPage){
 						self.paginationCurrentPage++;
 						self._renderTable(true);
@@ -264,7 +269,7 @@
 				}
 			}
 
-			scrollTop = $(this).scrollTop();
+			scrollTop = holder.scrollTop();
 		});
 
 		//create scrollable table holder
@@ -361,7 +366,8 @@
 
 		//reposition loader if present
 		if(self.element.innerHeight() > 0){
-			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)})
+			var msg = $(".tabulator-loader-msg", self.loaderDiv);
+			msg.css({"margin-top":(self.element.innerHeight() / 2) - (msg.outerHeight()/2)})
 		}
 
 		//trigger row restyle
@@ -666,10 +672,13 @@
 			return false;
 		}else{
 			self.options.columns[column].visible = !self.options.columns[column].visible;
+
+			var cell = $(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element);
+
 			if(self.options.columns[column].visible){
-				$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show();
+				cell.show();
 			}else{
-				$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
+				cell.hide();
 			}
 
 			if(self.options.columnLayoutCookie){
@@ -729,13 +738,14 @@
 
 			if(self.options.groupBy){
 
-				var length = $(".tabulator-row", group).length;
+				var rows = $(".tabulator-row", group);
+				var length = rows.length;
 
 				if(length){
 
 					var data = [];
 
-					$(".tabulator-row", group).each(function(){
+					rows.each(function(){
 						data.push($(this).data("data"));
 					});
 
@@ -744,7 +754,7 @@
 
 					header.empty();
 
-					header.append(arrow).append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+					header.append(arrow).append(self.options.groupHeader(group.data("value"), length, data));
 				}else{
 					group.remove();
 				}
@@ -1096,10 +1106,12 @@
 
 			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
 
+			var arrow = $(".tabulator-arrow", element);
+
 			if (dir == "asc"){
-				$(".tabulator-arrow", element).removeClass("desc").addClass("asc");
+				arrow.removeClass("desc").addClass("asc");
 			}else{
-				$(".tabulator-arrow", element).removeClass("asc").addClass("desc");
+				arrow.removeClass("asc").addClass("desc");
 			}
 
 			self._sorter(item.field, item.dir, sortList, i);
@@ -1911,14 +1923,16 @@
 			var handle = $("<div class='tabulator-handle'></div>");
 			var prevHandle = $("<div class='tabulator-handle prev'></div>");
 
-			$(".tabulator-col", self.header).append(handle);
-			$(".tabulator-col", self.header).append(prevHandle);
+			$(".tabulator-col", self.header).append(handle)
+			.append(prevHandle);
 
 			$(".tabulator-col .tabulator-handle", self.header).on("mousedown", function(e){
 
 				e.stopPropagation(); //prevent resize from interfereing with movable columns
 
-				var colElement = !$(this).hasClass("prev") ? $(this).closest(".tabulator-col") : $(this).closest(".tabulator-col").prev(".tabulator-col");
+				var colHandle = $(this);
+
+				var colElement = !colHandle.hasClass("prev") ? colHandle.closest(".tabulator-col") : colHandle.closest(".tabulator-col").prev(".tabulator-col");
 
 				if(colElement){
 					self.mouseDrag = e.screenX;
@@ -1999,8 +2013,9 @@
 		}
 
 		element.on("editval", ".tabulator-cell", function(e, value){
-			if($(this).is(":focus")){$(this).blur()}
-				self._cellDataChange($(this), value);
+			var element = $(this);
+			if(element.is(":focus")){element.blur()}
+				self._cellDataChange(element, value);
 		});
 
 		element.on("editcancel", ".tabulator-cell", function(e, value){
@@ -2044,7 +2059,7 @@
 				//resize columns to fit in window
 
 				//remove right edge border on table if fitting to width to prevent double border
-				$(".tabulator-row .tabulator-cell:last-child, .tabulator-col:last",element).css("border-right","none");
+				$(".tabulator-row .tabulator-cell:last-child, .tabulator-col:last", element).css("border-right","none");
 
 				if(self.options.fitColumns){
 					$(".tabulator-row", self.table).css({
@@ -2090,7 +2105,7 @@
 						if(column.visible){
 							var newWidth = column.width ? column.width : proposedWidth;
 
-							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]",element);
+							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]", element);
 
 							if(column.field == lastVariableCol){
 								col.css({width:newWidth + gapFill});
@@ -2111,7 +2126,7 @@
 				//free sized table
 				$.each(options.columns, function(i, column){
 
-					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]",element);
+					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]", element);
 
 					if(column.width){
 						//reseize to match specified column width
@@ -2508,9 +2523,6 @@
 
             		count = newCount;
             	}
-
-
-
             });
 
             return input;
