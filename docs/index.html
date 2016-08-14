@@ -217,6 +217,7 @@ index:"age", //set the index field to the "age" field.
 
                     <p>The server will need to return a JSON formatted array of objects.</p>
 
+                    <h3>Repeated Requests</h3>
                     <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
     ajaxURL:"http://www.getmydata.com/now",
@@ -224,6 +225,19 @@ index:"age", //set the index field to the "age" field.
                     <p>and call <span class='param'>setData</span> to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
 
+                    <h3>Server Side Code (PHP)</h3>
+                    <p>When using ajax loading, the server should respond with a JSON encoded string representing an array of row objects. An example in PHP can be seen below:</p>
+                    <pre class="prettyprint lang-php">//build data array
+$data = array(
+    array(id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1),
+    array(id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true),
+    array(id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"),
+    array(id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"),
+    array(id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"),
+);
+
+//return JSON formatted data
+echo(json_encode($data));</pre>
 
                     <h2>Set Data at Table Creation</h2>
                     <p>You can set the data at the same time as the table creation by passing the data array to the data option.</p>
