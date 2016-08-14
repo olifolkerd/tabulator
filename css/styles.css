@@ -61,6 +61,11 @@ body {
   color: #59B038;
   font-weight: bold;
 }
+.news i {
+  color: #59B038;
+  font-size: 3em;
+  margin-right: 10px;
+}
 .features {
   margin-top: 30px;
 }
