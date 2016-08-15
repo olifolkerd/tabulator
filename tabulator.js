@@ -705,7 +705,7 @@
 			rowData.tabulator_delete_row = true;
 
 			//remove from data
-			var line = self.data.find(function(rowData){
+			var line = self.data.find(function(item){
 				return item.tabulator_delete_row;
 			});
 
