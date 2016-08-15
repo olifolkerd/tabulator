@@ -217,11 +217,13 @@ ul.docs-sidenav li a:hover {
   border: 2px solid #59B038;
 }
 .docs article fieldset {
-  display: none;
   margin-top: 20px;
   border: 2px solid #59B038;
   border-radius: 5px;
   padding: 10px 20px;
+}
+.docs article fieldset.source {
+  display: none;
 }
 .docs article fieldset legend {
   width: inherit;
