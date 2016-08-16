@@ -1180,7 +1180,7 @@
 		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
 		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
 
-		return sorter.call(self, a, b);
+		return sorter.call(self, a, b, el1, el2);
 	},
 
 	////////////////// Data Pagination //////////////////
