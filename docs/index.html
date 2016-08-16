@@ -479,8 +479,9 @@ $("#example-table").tabulator({
                     </ul>
 
                     <p>You can define a custom sorter function in the sorter option:</p>
-                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b){
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b, aData, bData){
         //a and b are the two values being compared
+        //aData and bData are the row objects for the values being compared (useful if you need to access additional fields in the row data for the sort)
         return a - b; //you must return the difference between the two values
     },
 }</pre>
