@@ -1295,6 +1295,7 @@
 	_renderTable:function(progressiveRender){
 		var self = this;
 		var options = self.options;
+		var hozScrollPos = 0;
 
 		this._trigger("renderStarted");
 
@@ -1304,6 +1305,11 @@
 		if(!progressiveRender){
 
 			clearTimeout(self.progressiveRenderTimer);
+
+			//get current left scroll position
+
+			hozScrollPos = self.tableHolder.scrollLeft();
+			console.log("hozScrollPos", hozScrollPos);
 
 			//clear data from table before loading new
 			self.table.empty();
@@ -1440,6 +1446,11 @@
 			if(self.options.pagination){
 				self.options.pageLoaded(self.paginationCurrentPage);
 			}
+		}
+
+		if(!progressiveRender){
+			//get current left scroll position
+			self.tableHolder.scrollLeft(hozScrollPos);
 		}
 
 		self.firstRender = false;
