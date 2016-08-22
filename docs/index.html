@@ -1427,7 +1427,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <h2>Data Filtered</h2>
                     <p>The <span class='param'>dataFiltered</span> callback is triggered whenever the table dataset is filtered. It can be set globally by setting the <span class='param'>dataFiltered</span> option when you create your Tabulator.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataLoaded:function(data){
+    dataFiltered:function(data){
         //data - the subset of the total table data that has passed the filter and is now visible
     },
 });</pre>
