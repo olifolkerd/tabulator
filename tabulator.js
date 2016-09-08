@@ -101,7 +101,7 @@
 		groupBy:false, //enable table grouping and set field to group by
 
 		groupHeader:function(value, count, data){ //header layout function
-			return value + "<span>(" + count + " item)</span>";
+			return value + "<span>(" + count + " " + ((count === 1) ? "item" : "items") + ")</span>";
 		},
 
 		rowFormatter:false, //row formatter callback
