@@ -2185,7 +2185,7 @@
 		//resize cells vertically to fit row contents
 		if(self.element.is(":visible")){
 			$(".tabulator-row", self.table).each(function(){
-				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
+				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).innerHeight() + "px"});
 			});
 		}
 	},
@@ -2193,7 +2193,7 @@
 	//resize row to match contents
 	_resizeRow:function(row){
 		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":""});
-		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.innerHeight() + "px"});
 	},
 
 	//format cell contents
