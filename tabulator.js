@@ -127,6 +127,8 @@
 		dataLoadError:function(){}, //callback for when data load has failed
 		renderStarted:function(){}, //callback for when render has started
 		renderComplete:function(){}, //callback for when render has compleated
+		dataSorting:function(){}, //callback for when sort has started
+		dataSorted:function(){}, //callback for when sort is complete
 		rowMoved:function(){}, //callback for when row has moved
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
@@ -1124,7 +1126,7 @@
 
 		});
 
-		self._trigger("sortComplete");
+		self.options.dataSorted(self.data, sortList, dir);
 
 		//determine pagination information / render table
 		if(self.options.pagination){
@@ -1141,7 +1143,7 @@
 		var options = self.options;
 		var data = self.data;
 
-		self._trigger("sortStarted");
+		self.options.dataSorting(sortList, dir);
 
 		self.sortCurCol = column;
 		self.sortCurDir = dir;
