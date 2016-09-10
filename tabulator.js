@@ -117,25 +117,31 @@
 		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
 		loaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
 
-		rowClick:function(){}, //do action on row click
-		rowAdded:function(){}, //do action on row add
-		rowEdit:function(){}, //do action on row edit
-		rowDelete:function(){}, //do action on row delete
-		rowContext:function(){}, //context menu action
-		dataLoading:function(){}, //callback for when data is being loaded
-		dataLoaded:function(){}, //callback for when data has been Loaded
-		dataLoadError:function(){}, //callback for when data load has failed
-		renderStarted:function(){}, //callback for when render has started
-		renderComplete:function(){}, //callback for when render has compleated
-		dataFiltering:function(){} //callback for when filterin is started
-		dataFiltered:function(){}, //callback for when data is filtered
-		dataSorting:function(){}, //callback for when sort has started
-		dataSorted:function(){}, //callback for when sort is complete
-		rowMoved:function(){}, //callback for when row has moved
-		colMoved:function(){}, //callback for when column has moved
-		pageLoaded:function(){}, //calback for when a page is loaded
+		//Callbacks from events
+		rowClick:function(){},
+		rowAdded:function(){},
+		rowEdit:function(){},
+		rowDelete:function(){},
+		rowContext:function(){},
+		rowMoved:function(){},
 
-		colTitleChanged:function(){}, //do action whel column title changed
+		colMoved:function(){},
+		colTitleChanged:function(){},
+
+		dataLoading:function(){},
+		dataLoaded:function(){},
+		dataLoadError:function(){},
+
+		dataFiltering:function(){},
+		dataFiltered:function(){},
+
+		dataSorting:function(){},
+		dataSorted:function(){},
+
+		renderStarted:function(){},
+		renderComplete:function(){},
+
+		pageLoaded:function(){},
 	},
 
 	////////////////// Element Construction //////////////////
