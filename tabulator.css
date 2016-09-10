@@ -129,6 +129,10 @@
   background-color: #bbb;
   cursor: pointer;
 }
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-moving {
+  border: 1px solid #000;
+  background: #fff;
+}
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
   display: inline-block;
   box-sizing: border-box;

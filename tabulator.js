@@ -1358,29 +1358,16 @@
 		//enable movable rows
 		if(options.movableRows){
 
-			var moveBackground ="";
-			var moveBorder ="";
-
 			//sorter options
 			var config = {
 				handle:".tabulator-row-handle",
 				opacity: 1,
 				axis: "y",
 				start: function(event, ui){
-					moveBorder = ui.item.css("border");
-					moveBackground = ui.item.css("background-color");
-
-					ui.item.css({
-						"border":"1px solid #000",
-						"background":"#fff",
-					});
-
+					ui.item.addClass("tabulator-row-moving");
 				},
 				stop: function(event, ui){
-					ui.item.css({
-						"border": moveBorder,
-						"background":moveBackground,
-					});
+					ui.item.removeClass("tabulator-row-moving");
 				},
 				update: function(event, ui){
 					//restyle rows
@@ -1395,7 +1382,6 @@
 					$(".tabulator-row", self.table).each(function(){
 						self.activeData.push($(this).data("data"));
 					});
-
 
 					//trigger callback
 					options.rowMoved(ui.item.data("id"), ui.item.data("data"), ui.item,ui.item.prevAll(".tabulator-row").length);
