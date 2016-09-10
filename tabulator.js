@@ -125,6 +125,8 @@
 		dataLoading:function(){}, //callback for when data is being loaded
 		dataLoaded:function(){}, //callback for when data has been Loaded
 		dataLoadError:function(){}, //callback for when data load has failed
+		renderStarted:function(){}, //callback for when render has started
+		renderComplete:function(){}, //callback for when render has compleated
 		rowMoved:function(){}, //callback for when row has moved
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
@@ -1301,7 +1303,7 @@
 		var options = self.options;
 		var hozScrollPos = 0;
 
-		this._trigger("renderStarted");
+		self.options.renderStarted();
 
 		//show loader if needed
 		self._showLoader(self, self.options.loader);
@@ -1427,7 +1429,7 @@
 			self._hideLoader(self);
 
 			//trigger callbacks
-			self._trigger("renderComplete");
+			self.options.renderComplete();
 
 			if(self.filterField){
 				self._trigger("filterComplete");
