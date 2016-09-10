@@ -115,6 +115,48 @@
             <div class="row">
 
                 <div class="col-lg-12" role="main">
+
+                    <article>
+                        <h1>Version 2.5 Released<span class="datestamp">10/09/2016</span></h1>
+                        <h2>Callbacks and Events Overhaul</h2>
+                        <p>This release has seen a complete overhaul of the callbacks and events system to make interacting with Tabulator programatically even easier.</p>
+                        <p>Full documentation of all the new callbacks can be found in the <a href="http://olifolkerd.github.io/tabulator/docs/#callbacks">Calbacks Documentation</a>.</p>
+                        <h3>New Data Flow Callbacks Added</h3>
+                        <p>
+                            New callbacks to monitor all stages of data flow in the system have been added.
+                            <ul>
+                                <li>dataLoading</li>
+                                <li>dataLoaded</li>
+                                <li>dataLoadError</li>
+                                <li>dataEdited</li>
+                                <li>dataFiltering</li>
+                                <li>dataFiltered</li>
+                                <li>dataSorting</li>
+                                <li>dataSorted</li>
+                            </ul>
+                        </p>
+
+                        <h3>rowEdit Callback Replaced With cellEdited</h3>
+                        <p>The <span class='param'>rowEdit</span> callback has been replaced with the <span class='param'>cellEdited</span> callback. Not only is this more descriptive of the event, it also contains new arguments, passing the old value of the cell, the new value, the DOM objects for the cell and the row and the name of the field being edited.</p>
+
+                        <h3>rowContext Callback No Longer Prevents Default Browser Context Menu</h3>
+                        <p>The <span class='param'>rowContext</span> callback no longer prevents the default browser context menu from opening.</p>
+
+                        <h3>Callbacks Renamed</h3>
+                        <p>Several callbacks have been renamed to make sure they all follow the same naming conventions.</p>
+                        <p>Callbacks ending in <span class='param'>Load</span> now end in <span class='param'>Loaded</span>.</p>
+                        <p>Callbacks ending with <span class='param'>Edit</span> now end with <span class='param'>Edited</span>.</p>
+
+                        <h2>Movable Row Placeholder Style Added</h2>
+                        <p>The <span class='param'>tabulator-row-moving</span> class has been added to allow styling of the movable row placeholder.</p>
+
+                        <h2>Scrollable Empty Tables</h2>
+                        <p>Empty tables can now be scrolled horizontally if the combined width of the column headers exceeds the width of the tabulator elemen.</p>
+
+                        <h2>Improved Custom Sorters and Editors</h2>
+                        <p>Sorter and editor functions are now passed an additional <span class='param'>data</span> argument so they can see all the data for the current row rather than just the cell being processed.</p>
+
+                    </article>
                     <article>
                     <h1>Version 2.4 Released<span class="datestamp">13/08/2016</span></h1>
 
