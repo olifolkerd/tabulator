@@ -806,7 +806,7 @@
 		self._styleRows();
 
 		//triger event
-		self.options.rowAdded(item);
+		self.options.rowAdded(item, row);
 
 		self._trigger("dataEdited");
 	},
