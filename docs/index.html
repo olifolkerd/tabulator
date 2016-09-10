@@ -1337,8 +1337,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
+                    <p>These callbacks can all be set in the options object when you create your Tabulator.</p>
+
                     <h2>Cell Click</h2>
-                    <p>The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span class='param'>onClick</span> option in the columns data.</p>
+                    <p>The <span class='param'>onClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the  option in the columns data.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", onClick:function(e, cell, value, data){
         //e - the click event object
@@ -1349,7 +1351,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 }</pre>
 
                     <h2>Row Click</h2>
-                    <p>The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the <span class='param'>rowClick</span> option when you create your Tabulator.</p>
+                    <p>The <span class='param'>rowClick</span> callback is triggered when a user clicks on a row.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
         rowClick:function(e, id, data, row){
         //e - the click event object
@@ -1358,17 +1360,39 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //row - the DOM element of the row
     },
 });</pre>
+                    <h2>Row Context Menu</h2>
+                    <p>The <span class='param'>rowContext</span> callback is triggered when a user right clicks on a row.</p>
+                    <p>If you want to prevent the browsers context menu being triggered in this event you will need to include the <span class='param'>preventDefault()</span> function in your callback.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowContext:function(e, id, data, row){
+        //e - the click event object
+        //id - the id of the row
+        //data - the data for the row
+        //row - the DOM element of the row
+
+        e.preventDefault(); // prevent the browsers default context menu form appearing.
+    },
+});</pre>
 
                     <h2>Row Added</h2>
-                    <p>The row added callback is triggered when a row is added to the table by the <span class='param'>addRow</span> function.</p>
+                    <p>The <span class='param'>rowAdded</span> callback is triggered when a row is added to the table by the <span class='param'>addRow</span> function.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowAdded:function(data){
+    rowAdded:function(data, row){
         //data - the data for the row
+        //row - DOM element for the row
+    },
+});</pre>
+
+                    <h2>Row Deleted</h2>
+                    <p>The <span class='param'>rowDeleted</span> callback is triggered when a row is deleted from the table by the <span class='param'>deleteRow</span> function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowDeleted:function(id){
+        //id - the id of the row
     },
 });</pre>
 
                     <h2>Row Moved</h2>
-                    <p>When a row has been successfully moved, the <span class='param'>rowMoved</span> callback will be triggered.</p>
+                    <p>The <span class='param'>rowMoved</span> callback will be triggered when a row has been successfully moved.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     rowMoved:function(id, data, row, index){
         //id - the id of the row
@@ -1378,37 +1402,23 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     }
 });</pre>
 
-                    <h2>Row Edit</h2>
-                    <p>The row edit callback is triggered when data in an editable row is changed.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowEdit:function(id, data, row){
-        //id - the id of the row
-        //data - the data for the row
-        //row - the DOM element of the row
-    },
-});</pre>
 
-                    <h2>Row Deleted</h2>
-                    <p>The row deleted callback is triggered when a row is deleted from the table by the <span class='param'>deleteRow</span> function.</p>
+                    <h2>Cell Edit</h2>
+                    <p>The <span class='param'>cellEdited</span> callback is triggered when data in an editable cell is changed.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowDelete:function(id){
+    cellEdited:function(id, field, value, oldValue, data, cell, row){
         //id - the id of the row
-    },
-});</pre>
-
-                    <h2>Row Context Menu</h2>
-                    <p>The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span class='param'>rowContext</span> option when you create your Tabulator.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowContext:function(e, id, data, row){
-        //e - the click event object
-        //id - the id of the row
+        //field - field of the cell
+        //value - the new value for the cell
+        //oldValue - the old value for the cell
         //data - the data for the row
+        //cell - the DOM element of the cell
         //row - the DOM element of the row
     },
 });</pre>
 
                     <h2>Column Moved</h2>
-                    <p>When a column has been successfully moved, the <span class='param'>colMoved</span> callback will be triggered.</p>
+                    <p>The <span class='param'>colMoved</span> callback will be triggeredw hen a column has been successfully moved, .</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     colMoved:function(field, columns){
         //field- the filed name of the moved column
@@ -1416,24 +1426,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     }
 });</pre>
 
-                    <h2>Data Loaded</h2>
-                    <p>The <span class='param'>dataLoaded</span> callback is triggered when a new set of data is loaded into the table, it can be set globally by setting the <span class='param'>dataLoaded</span> option when you create your Tabulator.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataLoaded:function(data){
-        //data - all data loaded into the table
-    },
-});</pre>
-
-                    <h2>Data Filtered</h2>
-                    <p>The <span class='param'>dataFiltered</span> callback is triggered whenever the table dataset is filtered. It can be set globally by setting the <span class='param'>dataFiltered</span> option when you create your Tabulator.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataFiltered:function(data){
-        //data - the subset of the total table data that has passed the filter and is now visible
-    },
-});</pre>
-
                     <h2>Column Title Changed</h2>
-                    <p>The <span class='param'>colTitleChanged</span> callback is triggered whenever a user edits a column title when the <span class='param'>editableTitle</span> parameter has been enabled in the column definition array. It can be set globally by setting the <span class='param'>colTitleChanged</span> option when you create your Tabulator.</p>
+                    <p>The <span class='param'>colTitleChanged</span> callback is triggered whenever a user edits a column title when the <span class='param'>editableTitle</span> parameter has been enabled in the column definition array.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     colTitleChanged:function(value, col, cols){
         //value - the new column value
@@ -1441,50 +1435,102 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //cols - the updated column definition array for all columns in the table
     },
 });</pre>
-                </article>
+                    <h2>Data Loading</h2>
+                    <p>The <span class='param'>dataLoading</span> callback is triggered when the <span class='param'>setData</span> function is called.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataLoaded:function(data, params){
+        //data - the data or url passed to the setData function
+        //params - the params object passed to the setData function
+    },
+});</pre>
 
-                <a class="anchor" id="events"></a>
-                <article>
-                    <h1>Events</h1>
+                    <h2>Data Loaded</h2>
+                    <p>The <span class='param'>dataLoaded</span> callback is triggered when a new set of data is loaded into the table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataLoaded:function(data){
+        //data - all data loaded into the table
+    },
+});</pre>
 
-                    <p>A number of events are fired as the Tabulator is loaded and rendered:</p>
+                    <h2>Data Loading Error</h2>
+                    <p>The <span class='param'>dataLoadError</span> callback is triggered when a there is an error AJAX loading data. The arguments are passed straight from the AJAX error function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataLoadError:function(xhr, textStatus, errorThrown){
+        //xhr - the XHR object
+        //textStatus - error type
+        //errorThrown - text portion of the HTTP status
+    },
+});</pre>
 
-                    <table>
-                        <thead>
-                            <th>Event</th>
-                            <th>Description</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>dataLoading</td><td>Data is being loaded (from string, array or AJAX source)</td>
-                            </tr>
-                            <tr>
-                                <td>dataLoadError</td><td>There is has been an error loading data from an AJAX source</td>
-                            </tr>
-                            <tr>
-                                <td>dataEdited</td><td>A function that edits data has completed (cell edit, add row, delete row)</td>
-                            </tr>
-                            <tr>
-                                <td>renderStarted</td><td>Table is has started to render</td>
-                            </tr>
-                            <tr>
-                                <td>renderComplete</td><td>Table is has finished being rendered</td>
-                            </tr>
-                            <tr>
-                                <td>sortStarted</td><td>Table has started sorting</td>
-                            </tr>
-                            <tr>
-                                <td>sortComplete</td><td>Table has finished sorting</td>
-                            </tr>
-                            <tr>
-                                <td>filterStarted</td><td>Table Filter has started</td>
-                            </tr>
-                            <tr>
-                                <td>filterComplete</td><td>Filter has been applied to table</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <h2>Data Edited</h2>
+                    <p>The <span class='param'>dataEdited</span> callback is triggered whenever the table data is changed by the user. Triggers for this include editing any cell in the table, adding a row and deleting a row.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataEdited:function(data){
+        //data - the updated table data
+    },
+});</pre>
 
+
+                    <h2>Data Filtering</h2>
+                    <p>The <span class='param'>dataFiltering</span> callback is triggered whenever a filter event occurs, before the filter happens.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataFiltering:function(field, type, value){
+        //field - the field being filtered
+        //type - the type of filter being used
+        //value - the value of the filter
+    },
+});</pre>
+
+                    <h2>Data Filtered</h2>
+                    <p>The <span class='param'>dataFiltered</span> callback is triggered after the table dataset is filtered.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataFiltered:function(data, field, type, value){
+        //data - the subset of the total table data that has passed the filter and is now visible
+        //field - the field being filtered
+        //type - the type of filter being used
+        //value - the value of the filter
+    },
+});</pre>
+
+                    <h2>Data Sorting</h2>
+                    <p>The <span class='param'>dataSorting</span> callback is triggered whenever a sort event occurs, before sort happens.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataSorting:function(sortList, dir){
+        //sortList - the field name or array of fields being sorted
+        //dir - the direction of the sort
+    },
+});</pre>
+
+                    <h2>Data Sorted</h2>
+                    <p>The <span class='param'>dataSorted</span> callback is triggered after the table dataset is sorted.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataSorted:function(sortList, dir){
+        //sortList - the field name or array of fields being sorted
+        //dir - the direction of the sort
+    },
+});</pre>
+
+                    <h2>Render Started</h2>
+                    <p>The <span class='param'>renderStarted</span> callback is triggered whenever the table is about to be rendered. this can be when the table is first created, when data is loaded, when pages are changed or when a <span class='param'>redraw</span> is called.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    renderStarted:function(){
+    },
+});</pre>
+
+                    <h2>Render Complete</h2>
+                    <p>The <span class='param'>renderComplete</span> callback is triggered after the table has been rendered</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    renderComplete:function(sortList, dir){
+    },
+});</pre>
+
+                    <h2>Page Loaded</h2>
+                    <p>Whenever a page has been loaded, the <span class='param'>pageLoaded</span> callback is called, passing the current page number as an argument.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pageLoaded:function(pageno){
+        //pageno - the number of the loaded page
+    }
+});</pre>
                 </article>
 
             </div>
