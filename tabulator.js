@@ -1324,9 +1324,7 @@
 			clearTimeout(self.progressiveRenderTimer);
 
 			//get current left scroll position
-
 			hozScrollPos = self.tableHolder.scrollLeft();
-			console.log("hozScrollPos", hozScrollPos);
 
 			//clear data from table before loading new
 			self.table.empty();
@@ -2525,8 +2523,6 @@
 
             	if(newCount != count){
             		var line = input.innerHeight() / count;
-
-            		console.log("lines", line);
 
             		input.css({"height": (line * newCount) + "px"});
 
