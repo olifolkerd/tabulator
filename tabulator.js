@@ -780,7 +780,6 @@
 
 			//align column widths
 			self._colRender(!self.firstRender);
-			self._trigger("renderComplete");
 
 			self.options.rowDelete(id);
 
@@ -814,7 +813,6 @@
 
 		//align column widths
 		self._colRender(!self.firstRender);
-		self._trigger("renderComplete");
 
 		//style table rows
 		self._styleRows();
@@ -837,7 +835,7 @@
 	setData:function(data, params){
 		var self = this;
 
-		self.options.dataLoaded(data);
+		self.options.dataLoading(data, params);
 
 		params = params ? params : {};
 
@@ -1438,8 +1436,6 @@
 			//hide loader div
 			self._hideLoader(self);
 
-			//trigger callbacks
-			self.options.renderComplete();
 
 			if(self.options.pagination){
 				self.options.pageLoaded(self.paginationCurrentPage);
@@ -2200,6 +2196,9 @@
 				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).innerHeight() + "px"});
 			});
 		}
+
+		//trigger callbacks
+		self.options.renderComplete();
 	},
 
 	//resize row to match contents
