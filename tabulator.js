@@ -120,7 +120,6 @@
 		//Callbacks from events
 		rowClick:function(){},
 		rowAdded:function(){},
-
 		rowDelete:function(){},
 		rowContext:function(){},
 		rowMoved:function(){},
