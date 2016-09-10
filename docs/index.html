@@ -772,6 +772,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <pre class="prettyprint lang-js">{title:"Name", field:"rating", editor:function(cell, value, data){
         //cell - JQuery object for current cell
         //value - the current value for current cell
+        //data - the data for the current row
 
         //create and style editor
         var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
