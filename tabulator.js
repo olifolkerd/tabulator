@@ -120,10 +120,12 @@
 		//Callbacks from events
 		rowClick:function(){},
 		rowAdded:function(){},
-		rowEdit:function(){},
+
 		rowDelete:function(){},
 		rowContext:function(){},
 		rowMoved:function(){},
+
+		cellEdit:function(){},
 
 		colMoved:function(){},
 		colTitleChanged:function(){},
@@ -131,6 +133,7 @@
 		dataLoading:function(){},
 		dataLoaded:function(){},
 		dataLoadError:function(){},
+		dataEdited:function(){},
 
 		dataFiltering:function(){},
 		dataFiltered:function(){},
@@ -783,7 +786,7 @@
 
 			self.options.rowDelete(id);
 
-			self._trigger("dataEdited");
+			self.options.dataEdited(self.data);
 		}
 	},
 
@@ -820,7 +823,7 @@
 		//triger event
 		self.options.rowAdded(item, row);
 
-		self._trigger("dataEdited");
+		self.options.dataEdited(self.data);
 	},
 
 	////////////////// Data Manipulation //////////////////
@@ -2251,6 +2254,7 @@
 		//update row data
 		var rowData = row.data("data");
 		var hasChanged = rowData[cell.data("field")] != value;
+		var oldVal = rowData[cell.data("field")];
 		rowData[cell.data("field")] = value;
 		row.data("data", rowData);
 
@@ -2259,13 +2263,13 @@
 
 		if(hasChanged){
 			//triger event
-			self.options.rowEdit(rowData[self.options.index], rowData, row);
+			self.options.cellEdit(rowData[self.options.index], value, oldVal, rowData, cell, row);
 			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
 		}
 
 		self._styleRows();
 
-		self._trigger("dataEdited");
+		self.options.dataEdited(self.data);
 	},
 
 	////////////////// Formatter/Sorter Helpers //////////////////
