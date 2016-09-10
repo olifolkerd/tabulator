@@ -127,12 +127,14 @@
 		dataLoadError:function(){}, //callback for when data load has failed
 		renderStarted:function(){}, //callback for when render has started
 		renderComplete:function(){}, //callback for when render has compleated
+		dataFiltering:function(){} //callback for when filterin is started
+		dataFiltered:function(){}, //callback for when data is filtered
 		dataSorting:function(){}, //callback for when sort has started
 		dataSorted:function(){}, //callback for when sort is complete
 		rowMoved:function(){}, //callback for when row has moved
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
-		dataFiltered:function(){}, //callback for when data is filtered
+
 		colTitleChanged:function(){}, //do action whel column title changed
 	},
 
@@ -929,7 +931,7 @@
 	setFilter:function(field, type, value){
 		var self = this;
 
-		self._trigger("filterStarted");
+		self.options.dataFiltering(field, type, value);
 
 		//set filter
 		if(field){
@@ -997,7 +999,7 @@
 			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
 		}
 
-		self.options.dataFiltered(self.activeData);
+		self.options.dataFiltered(self.activeData, self.filterField, self.filterType, self.filterValue);
 
 		//sort or render data
 		if(self.sortCurCol){
@@ -1432,10 +1434,6 @@
 
 			//trigger callbacks
 			self.options.renderComplete();
-
-			if(self.filterField){
-				self._trigger("filterComplete");
-			}
 
 			if(self.options.pagination){
 				self.options.pageLoaded(self.paginationCurrentPage);
