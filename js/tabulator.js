@@ -101,7 +101,7 @@
 		groupBy:false, //enable table grouping and set field to group by
 
 		groupHeader:function(value, count, data){ //header layout function
-			return value + "<span>(" + count + " item)</span>";
+			return value + "<span>(" + count + " " + ((count === 1) ? "item" : "items") + ")</span>";
 		},
 
 		rowFormatter:false, //row formatter callback
@@ -117,17 +117,34 @@
 		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
 		loaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
 
-		rowClick:function(){}, //do action on row click
-		rowAdded:function(){}, //do action on row add
-		rowEdit:function(){}, //do action on row edit
-		rowDelete:function(){}, //do action on row delete
-		rowContext:function(){}, //context menu action
-		dataLoaded:function(){}, //callback for when data has been Loaded
-		rowMoved:function(){}, //callback for when row has moved
-		colMoved:function(){}, //callback for when column has moved
-		pageLoaded:function(){}, //calback for when a page is loaded
-		dataFiltered:function(){}, //callback for when data is filtered
-		colTitleChanged:function(){}, //do action whel column title changed
+		//Callbacks from events
+		rowClick:function(){},
+		rowAdded:function(){},
+
+		rowDelete:function(){},
+		rowContext:function(){},
+		rowMoved:function(){},
+
+		cellEdit:function(){},
+
+		colMoved:function(){},
+		colTitleChanged:function(){},
+
+		dataLoading:function(){},
+		dataLoaded:function(){},
+		dataLoadError:function(){},
+		dataEdited:function(){},
+
+		dataFiltering:function(){},
+		dataFiltered:function(){},
+
+		dataSorting:function(){},
+		dataSorted:function(){},
+
+		renderStarted:function(){},
+		renderComplete:function(){},
+
+		pageLoaded:function(){},
 	},
 
 	////////////////// Element Construction //////////////////
@@ -766,11 +783,10 @@
 
 			//align column widths
 			self._colRender(!self.firstRender);
-			self._trigger("renderComplete");
 
 			self.options.rowDelete(id);
 
-			self._trigger("dataEdited");
+			self.options.dataEdited(self.data);
 		}
 	},
 
@@ -800,15 +816,14 @@
 
 		//align column widths
 		self._colRender(!self.firstRender);
-		self._trigger("renderComplete");
 
 		//style table rows
 		self._styleRows();
 
 		//triger event
-		self.options.rowAdded(item);
+		self.options.rowAdded(item, row);
 
-		self._trigger("dataEdited");
+		self.options.dataEdited(self.data);
 	},
 
 	////////////////// Data Manipulation //////////////////
@@ -821,7 +836,9 @@
 
 	//load data
 	setData:function(data, params){
-		this._trigger("dataLoading");
+		var self = this;
+
+		self.options.dataLoading(data, params);
 
 		params = params ? params : {};
 
@@ -874,10 +891,10 @@
 			success: function (data){
 				self._parseData(data);
 			},
-			error: function (xhr, ajaxOptions, thrownError){
-				console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
-				self._trigger("dataLoadError", xhr, thrownError);
+			error: function (xhr, textStatus, errorThrown){
+				console.error("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
 
+				self.options.dataLoadError(xhr, textStatus, errorThrown);
 				self._showLoader(self, self.options.loaderError);
 			},
 		});
@@ -921,7 +938,7 @@
 	setFilter:function(field, type, value){
 		var self = this;
 
-		self._trigger("filterStarted");
+		self.options.dataFiltering(field, type, value);
 
 		//set filter
 		if(field){
@@ -989,7 +1006,7 @@
 			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
 		}
 
-		self.options.dataFiltered(self.activeData);
+		self.options.dataFiltered(self.activeData, self.filterField, self.filterType, self.filterValue);
 
 		//sort or render data
 		if(self.sortCurCol){
@@ -1118,7 +1135,7 @@
 
 		});
 
-		self._trigger("sortComplete");
+		self.options.dataSorted(self.data, sortList, dir);
 
 		//determine pagination information / render table
 		if(self.options.pagination){
@@ -1135,7 +1152,7 @@
 		var options = self.options;
 		var data = self.data;
 
-		self._trigger("sortStarted");
+		self.options.dataSorting(sortList, dir);
 
 		self.sortCurCol = column;
 		self.sortCurDir = dir;
@@ -1297,7 +1314,7 @@
 		var options = self.options;
 		var hozScrollPos = 0;
 
-		this._trigger("renderStarted");
+		self.options.renderStarted();
 
 		//show loader if needed
 		self._showLoader(self, self.options.loader);
@@ -1307,9 +1324,7 @@
 			clearTimeout(self.progressiveRenderTimer);
 
 			//get current left scroll position
-
 			hozScrollPos = self.tableHolder.scrollLeft();
-			console.log("hozScrollPos", hozScrollPos);
 
 			//clear data from table before loading new
 			self.table.empty();
@@ -1358,29 +1373,16 @@
 		//enable movable rows
 		if(options.movableRows){
 
-			var moveBackground ="";
-			var moveBorder ="";
-
 			//sorter options
 			var config = {
 				handle:".tabulator-row-handle",
 				opacity: 1,
 				axis: "y",
 				start: function(event, ui){
-					moveBorder = ui.item.css("border");
-					moveBackground = ui.item.css("background-color");
-
-					ui.item.css({
-						"border":"1px solid #000",
-						"background":"#fff",
-					});
-
+					ui.item.addClass("tabulator-row-moving");
 				},
 				stop: function(event, ui){
-					ui.item.css({
-						"border": moveBorder,
-						"background":moveBackground,
-					});
+					ui.item.removeClass("tabulator-row-moving");
 				},
 				update: function(event, ui){
 					//restyle rows
@@ -1395,7 +1397,6 @@
 					$(".tabulator-row", self.table).each(function(){
 						self.activeData.push($(this).data("data"));
 					});
-
 
 					//trigger callback
 					options.rowMoved(ui.item.data("id"), ui.item.data("data"), ui.item,ui.item.prevAll(".tabulator-row").length);
@@ -1436,12 +1437,6 @@
 			//hide loader div
 			self._hideLoader(self);
 
-			//trigger callbacks
-			self._trigger("renderComplete");
-
-			if(self.filterField){
-				self._trigger("filterComplete");
-			}
 
 			if(self.options.pagination){
 				self.options.pageLoaded(self.paginationCurrentPage);
@@ -1534,7 +1529,7 @@
 						//Load editor
 						var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
 
-						var cellEditor = editorFunc.call(self, cell, cell.data("value"));
+						var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 
 						//if editor returned, add to DOM, if false, abort edit
 						if(cellEditor !== false){
@@ -1656,6 +1651,22 @@
 				});
 			}
 		}
+
+		//allow for scrolling of headers if table is empty
+		if(self.table.is(":empty") && self.header[0].scrollWidth > self.header.outerHeight()){
+			self.table.css({
+				"min-width":self.header[0].scrollWidth + "px",
+				"min-height":"1px",
+				"visibility":"hidden",
+			});
+		}else{
+			self.table.css({
+				"min-width":"",
+				"min-height":"",
+				"visibility":"",
+			});
+		}
+
 	},
 
 	//layout columns
@@ -2199,15 +2210,18 @@
 		//resize cells vertically to fit row contents
 		if(self.element.is(":visible")){
 			$(".tabulator-row", self.table).each(function(){
-				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).outerHeight() + "px"});
+				$(".tabulator-cell, .tabulator-row-handle", $(this)).css({"height":$(this).innerHeight() + "px"});
 			});
 		}
+
+		//trigger callbacks
+		self.options.renderComplete();
 	},
 
 	//resize row to match contents
 	_resizeRow:function(row){
 		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":""});
-		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.outerHeight() + "px"});
+		$(".tabulator-cell, .tabulator-row-handle", row).css({"height":row.innerHeight() + "px"});
 	},
 
 	//format cell contents
@@ -2229,7 +2243,6 @@
 
 	//carry out action on row context
 	_rowContext: function(e, row, data){
-		e.preventDefault();
 		this.options.rowContext(e, row.data("id"), data, row);
 	},
 
@@ -2255,6 +2268,7 @@
 		//update row data
 		var rowData = row.data("data");
 		var hasChanged = rowData[cell.data("field")] != value;
+		var oldVal = rowData[cell.data("field")];
 		rowData[cell.data("field")] = value;
 		row.data("data", rowData);
 
@@ -2263,13 +2277,13 @@
 
 		if(hasChanged){
 			//triger event
-			self.options.rowEdit(rowData[self.options.index], rowData, row);
+			self.options.cellEdit(rowData[self.options.index], value, oldVal, rowData, cell, row);
 			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
 		}
 
 		self._styleRows();
 
-		self._trigger("dataEdited");
+		self.options.dataEdited(self.data);
 	},
 
 	////////////////// Formatter/Sorter Helpers //////////////////
@@ -2456,7 +2470,7 @@
 
 	//custom data editors
 	editors:{
-		input:function(cell, value){
+		input:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='text'/>");
 			input.css({
@@ -2486,7 +2500,7 @@
 
 			return input;
 		},
-		textarea:function(cell, value){
+		textarea:function(cell, value, data){
 			var self = this;
 
 			var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
@@ -2526,8 +2540,6 @@
             	if(newCount != count){
             		var line = input.innerHeight() / count;
 
-            		console.log("lines", line);
-
             		input.css({"height": (line * newCount) + "px"});
 
             		self._resizeRow(row);
@@ -2538,7 +2550,7 @@
 
             return input;
         },
-        number:function(cell, value){
+        number:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='number'/>");
 			input.css({
@@ -2568,7 +2580,7 @@
 
 			return input;
 		},
-		star:function(cell, value){
+		star:function(cell, value, data){
 
 			var maxStars = $("svg", cell).length;
 			maxStars = maxStars ?maxStars : 5;
@@ -2652,7 +2664,7 @@
 
 			return stars;
 		},
-		progress:function(cell, value){
+		progress:function(cell, value, data){
 			//set default parameters
 			var max = $("div", cell).data("max");
 			var min = $("div", cell).data("min");
@@ -2732,8 +2744,7 @@
 			return bar;
 		},
 
-
-		tickCross:function(cell, value){
+		tickCross:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
@@ -2769,7 +2780,7 @@
 			return input;
 		},
 
-		tick:function(cell, value){
+		tick:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
