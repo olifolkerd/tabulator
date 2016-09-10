@@ -120,7 +120,7 @@
 		//Callbacks from events
 		rowClick:function(){},
 		rowAdded:function(){},
-		rowDelete:function(){},
+		rowDeleted:function(){},
 		rowContext:function(){},
 		rowMoved:function(){},
 
@@ -783,7 +783,7 @@
 			//align column widths
 			self._colRender(!self.firstRender);
 
-			self.options.rowDelete(id);
+			self.options.rowDeleted(id);
 
 			self.options.dataEdited(self.data);
 		}
