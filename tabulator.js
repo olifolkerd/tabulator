@@ -122,7 +122,9 @@
 		rowEdit:function(){}, //do action on row edit
 		rowDelete:function(){}, //do action on row delete
 		rowContext:function(){}, //context menu action
+		dataLoading:function(){}, //callback for when data is being loaded
 		dataLoaded:function(){}, //callback for when data has been Loaded
+		dataLoadError:function(){}, //callback for when data load has failed
 		rowMoved:function(){}, //callback for when row has moved
 		colMoved:function(){}, //callback for when column has moved
 		pageLoaded:function(){}, //calback for when a page is loaded
@@ -821,7 +823,9 @@
 
 	//load data
 	setData:function(data, params){
-		this._trigger("dataLoading");
+		var self = this;
+
+		self.options.dataLoaded(data);
 
 		params = params ? params : {};
 
@@ -874,10 +878,10 @@
 			success: function (data){
 				self._parseData(data);
 			},
-			error: function (xhr, ajaxOptions, thrownError){
+			error: function (xhr, textStatus, errorThrown){
 				console.log("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
-				self._trigger("dataLoadError", xhr, thrownError);
 
+				self.options.dataLoadError(xhr, textStatus, errorThrown);
 				self._showLoader(self, self.options.loaderError);
 			},
 		});
