@@ -769,7 +769,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>You can define a custom editor function in the editor option:</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"rating", editor:function(cell, value){
+                    <pre class="prettyprint lang-js">{title:"Name", field:"rating", editor:function(cell, value, data){
         //cell - JQuery object for current cell
         //value - the current value for current cell
 
@@ -1333,9 +1333,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks</h1>
+                    <h1>Callbacks &amp; Events</h1>
 
-                    <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
+                    <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
                     <h2>Cell Click</h2>
                     <p>The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span class='param'>onClick</span> option in the columns data.</p>
@@ -1506,9 +1506,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#column-visibility">Column Visibility</a></li>
                         <li><a href="#options">Table Options</a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
-                        <li><a href="#callbacks">Callback</a></li>
-                        <li><a href="#events">Events</a></li>
-
+                        <li><a href="#callbacks">Callbacks &amp; Events</a></li>
                     </ul>
                 </nav>
             </div>
