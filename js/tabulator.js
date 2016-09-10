@@ -124,7 +124,7 @@
 		rowContext:function(){},
 		rowMoved:function(){},
 
-		cellEdit:function(){},
+		cellEdited:function(){},
 
 		colMoved:function(){},
 		colTitleChanged:function(){},
