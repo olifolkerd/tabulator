@@ -1531,7 +1531,7 @@
 						//Load editor
 						var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
 
-						var cellEditor = editorFunc.call(self, cell, cell.data("value"));
+						var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 
 						//if editor returned, add to DOM, if false, abort edit
 						if(cellEditor !== false){
@@ -2456,7 +2456,7 @@
 
 	//custom data editors
 	editors:{
-		input:function(cell, value){
+		input:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='text'/>");
 			input.css({
@@ -2486,7 +2486,7 @@
 
 			return input;
 		},
-		textarea:function(cell, value){
+		textarea:function(cell, value, data){
 			var self = this;
 
 			var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
@@ -2538,7 +2538,7 @@
 
             return input;
         },
-        number:function(cell, value){
+        number:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='number'/>");
 			input.css({
@@ -2568,7 +2568,7 @@
 
 			return input;
 		},
-		star:function(cell, value){
+		star:function(cell, value, data){
 
 			var maxStars = $("svg", cell).length;
 			maxStars = maxStars ?maxStars : 5;
@@ -2652,7 +2652,7 @@
 
 			return stars;
 		},
-		progress:function(cell, value){
+		progress:function(cell, value, data){
 			//set default parameters
 			var max = $("div", cell).data("max");
 			var min = $("div", cell).data("min");
@@ -2732,8 +2732,7 @@
 			return bar;
 		},
 
-
-		tickCross:function(cell, value){
+		tickCross:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
@@ -2769,7 +2768,7 @@
 			return input;
 		},
 
-		tick:function(cell, value){
+		tick:function(cell, value, data){
 			//create and style input
 			var input = $("<input type='checkbox'/>");
 			input.css({
