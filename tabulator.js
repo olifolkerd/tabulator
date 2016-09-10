@@ -1651,6 +1651,22 @@
 				});
 			}
 		}
+
+		//allow for scrolling of headers if table is empty
+		if(self.table.is(":empty") && self.header[0].scrollWidth > self.header.outerHeight()){
+			self.table.css({
+				"min-width":self.header[0].scrollWidth + "px",
+				"min-height":"1px",
+				"visibility":"hidden",
+			});
+		}else{
+			self.table.css({
+				"min-width":"",
+				"min-height":"",
+				"visibility":"",
+			});
+		}
+
 	},
 
 	//layout columns
