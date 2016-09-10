@@ -2277,7 +2277,7 @@
 
 		if(hasChanged){
 			//triger event
-			self.options.cellEdit(rowData[self.options.index], value, oldVal, rowData, cell, row);
+			self.options.cellEdit(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
 			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
 		}
 
