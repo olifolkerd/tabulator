@@ -1783,7 +1783,7 @@
 
 				for(var field in filters){
 					if(typeof data[field] == "string"){
-						if(data[field].toLowerCase().indexOf(filters[field]) == -1){
+						if(data[field].toLowerCase().indexOf(filters[field].toLowerCase()) == -1){
 							match = false;
 						}
 					}else{
