@@ -2369,7 +2369,14 @@
 			return value;
 		},
 		money:function(value, data, cell, row, options, formatterParams){
-			var number = parseFloat(value).toFixed(2);
+
+			var floatVal = parseFloat(value);
+
+			if(isNaN(floatVal)){
+				return value;
+			}
+
+			var number = floatVal.toFixed(2);
 
 			var number = number.split(".");
 
