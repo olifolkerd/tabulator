@@ -1783,7 +1783,7 @@
 
 				for(var field in filters){
 					if(typeof data[field] == "string"){
-						if(data[field].toLowerCase().indexOf(filters[field]) == -1){
+						if(data[field].toLowerCase().indexOf(filters[field].toLowerCase()) == -1){
 							match = false;
 						}
 					}else{
@@ -2276,7 +2276,7 @@
 
 		if(hasChanged){
 			//triger event
-			self.options.cellEdit(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
+			self.options.cellEdited(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
 			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
 		}
 
@@ -2369,7 +2369,14 @@
 			return value;
 		},
 		money:function(value, data, cell, row, options, formatterParams){
-			var number = parseFloat(value).toFixed(2);
+
+			var floatVal = parseFloat(value);
+
+			if(isNaN(floatVal)){
+				return value;
+			}
+
+			var number = floatVal.toFixed(2);
 
 			var number = number.split(".");
 
