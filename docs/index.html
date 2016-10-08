@@ -380,7 +380,7 @@ $("#example-table").tabulator({
 
                     <a class="anchor" id="fittodata"></a>
                     <h2>Fit Columns to data</h2>
-                    <p>This is the default table layout style and will cause columns to resize to fit the widest element they contain (unless a column width was set in the column options). This can cause the table to be wider than its containing element, in this case a scroll bar will appear;</p>
+                    <p>This is the default table layout style and will cause columns to resize to fit the widest element they contain (unless a column width was set in the column options). If the width of all columns exceeds the width of the containing element, a scroll bar will appear.</p>
 
                     <a class="anchor" id="fittowidth"></a>
                     <h2>Fit Columns to container</h2>
@@ -1536,6 +1536,138 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     }
 });</pre>
                 </article>
+                <a class="anchor" id="extending"></a>
+                <article>
+                    <h1>Extending Tabulator</h1>
+                    <p>If you are using multiple Tabulators across your site, you can often end up declaring the same options or custom formatters, sorter and editors multiple times. To make your code more manageable you can extend Tabulator with your custom options using jQuery's widget extension options.</p>
+
+                    <p>This allows you to define your standard config once in one file and then have it automatically apply to any Tabulators that you create.</p>
+
+                    <p>The below code outlines the basic template for the extension and should be included in your project after the tabulator.js file has been loaded but before any Tabulators are created.</p>
+
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    options: {
+        //default options are set here
+    },
+    sorters:{
+        //additional sorters can be added here
+    }
+    formatters:{
+        //additional formatters can be added here
+    }
+    editors:{
+        //additional editors can be added here
+    }
+});</pre>
+
+                    <h2>Default Options</h2>
+                    <p>Any options that you would usually set when you create your Tabulator can be set in the extension options object, these will automatically apply to any new Tabulator's unless the value is overwritten  when you create a specific Tabulator.</p>
+
+                    <p>For example the below code will cause all Tabulators to have non-resizable columns.</p>
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    options: {
+        colResizable:false,
+    },
+});</pre>
+
+                    <h2>Additional Sorters</h2>
+                    <p>If you use any custom sorters regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    sorters: {
+        //datetime sort using moment.js
+        datetime:function(a, b){
+            a = moment(a, "DD/MM/YYYY hh:mm");
+            b = moment(b, "DD/MM/YYYY hh:mm");
+            return a - b;
+        },
+    },
+});</pre>
+
+                    <p>Using a sorter defined in the extension is as simple as passing the name to the <span class='param'>sorter</span> parameter in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"name", title:"Name"},
+        {field:"start", title:"Start Time", sorter:"datetime"},
+    ],
+});</pre>
+
+                    <h2>Additional Formatters</h2>
+                    <p>If you use any custom formatters regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    formatters: {
+        //show file icon based on extension type
+        file:function(value, data, cell, row, options){ //plain text value
+            return "&lt;img class='fileicon' src='/images/fileicons/" + value + ".png'&gt;&lt;/img&gt;";
+        },
+    },
+});</pre>
+
+                    <p>Using a formatter defined in the extension is as simple as passing the name to the <span class='param'>formatter</span> parameter in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"ext", title:"Icon", formatter:"file"},
+        {field:"name", title:"File Name"},
+    ],
+});</pre>
+
+
+                    <h2>Additional Editors</h2>
+                    <p>If you use any custom editors regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    editors: {
+        //variant of input editor for handling currency
+        money:function(cell, value){
+            //create and style input
+            var input = $("&lt;input type='text'/&gt;");
+            input.css({
+                "padding":"4px",
+                "width":"100%",
+                "box-sizing":"border-box",
+                "text-align":"right",
+            })
+            .val(value);
+
+            if(cell.hasClass("tabulator-cell")){
+                setTimeout(function(){
+                    input.focus();
+                },100);
+            }
+
+            input.inputmask("currency");
+
+            //submit new value on blur
+            input.on("blur", function(e){
+                cell.trigger("editval", input.val());
+            });
+
+            //submit new value on enter
+            input.on("keydown", function(e){
+                if(e.keyCode == 13){
+                    cell.trigger("editval", input.val());
+                }
+            });
+
+            return input;
+        },
+    },
+});</pre>
+
+                    <p>Using a sorter defined in the extension is as simple as passing the name to the <span class='param'>editor</span> parameter in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"item", title:"item"},
+        {field:"cost", title:"Cost", editor:"moeny"},
+    ],
+});</pre>
+
+
+                </article>
 
             </div>
 
@@ -1557,6 +1689,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#options">Table Options</a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events</a></li>
+                        <li><a href="#extending">Extending Tabulator</a></li>
                     </ul>
                 </nav>
             </div>
