@@ -76,8 +76,5 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Custom Row Templates
 - Minified source files
 - Minified CSS and JS
-- Extra Formatters
-- Extra Sorters
-- Usage Case Examples (creating custom formatters, etc...)
 
 Get in touch if there are any features you feel Tabulator needs.
