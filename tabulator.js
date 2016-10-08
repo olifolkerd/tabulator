@@ -2332,7 +2332,7 @@
 
 			return el1 - el2;
 		},
-		alphanum:function(as, bs){
+		alphanum:function(as, bs){//sort alpha numeric strings
 			var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
 
 			if(isFinite(as) && isFinite(bs)) return as - bs;
@@ -2356,6 +2356,14 @@
 				}
 			}
 			return a.length > b.length;
+		},
+		time:function(a, b){ //sort hh:mm formatted times
+			a = a.split(":");
+			b = b.split(":");
+
+			a = (a[0]*60) + a[1];
+			b = (b[0]*60) + b[1];
+			return a > b;
 		},
 	},
 
