@@ -2303,22 +2303,25 @@
 
 		cell.removeClass("tabulator-editing");
 
-		//handle cell mutation if needed
-		var mutator = cell.data("mutator");
-
-		if(mutator){
-			value = mutator(value);
-		}
-
-		//update cell data value
-		cell.data("value", value);
-
 		//update row data
 		var rowData = row.data("data");
 		var hasChanged = rowData[cell.data("field")] != value;
 		var oldVal = rowData[cell.data("field")];
-		rowData[cell.data("field")] = value;
-		row.data("data", rowData);
+
+		if(hasChanged){
+			//handle cell mutation if needed
+			var mutator = cell.data("mutator");
+
+			if(mutator){
+				value = mutator(value);
+			}
+
+			//update cell data value
+			cell.data("value", value);
+
+			rowData[cell.data("field")] = value;
+			row.data("data", rowData);
+		}
 
 		//reformat cell data
 		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
