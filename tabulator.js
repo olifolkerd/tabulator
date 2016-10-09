@@ -830,7 +830,27 @@
 	//get array of data from the table
 	getData:function(allData){
 		var self = this;
-		return allData === true ? self.data : self.activeData;
+
+		//clone data array with deep copy to isolate internal data from returend result
+		var outputData = $.extend(true, [], allData === true ? self.data : self.activeData);
+
+		//check for accessors and return the processed data
+		return self._applyAccessors(outputData);
+	},
+
+	//apply any column accessors to the data before returing the result
+	_applyAccessors:function(data){
+		var self = this;
+
+		self.options.columns.forEach(function(col, i){
+			if(typeof col.accessor === "function"){
+				data.forEach(function(item, j){
+					item[col.field] = col.accessor(item[col.field]);
+				});
+			}
+		});
+
+		return data;
 	},
 
 	//load data
