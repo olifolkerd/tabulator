@@ -828,9 +828,9 @@
 	////////////////// Data Manipulation //////////////////
 
 	//get array of data from the table
-	getData:function(){
+	getData:function(allData){
 		var self = this;
-		return self.activeData;
+		return allData === true ? self.data : self.activeData;
 	},
 
 	//load data
