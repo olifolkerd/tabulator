@@ -820,12 +820,12 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <h2>Retreiving Data</h2>
                     <p>You can retreive the data stored in the table using the <span class='param'>getData</span> function.</p>
-                    <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData"); //return currently filtered data</pre>
+                    <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData");</pre>
                     <p>This will return an array containing the data objects for each row in the table.</p>
 
-                    <p>By default <span class='param'>getData</span> will return an array containing only the currently filtered elements. To access all data contained in tabulator you will need to pass a value of <span class='param'>true</span> to the first argument of the function.</p>
+                    <p>By default <span class='param'>getData</span> will return an array containing all the data held in the Tabulator. If you only want to access the currently filtered/sorted elements, you can pass a value of <span class='param'>true</span> to the first argument of the function.</p>
 
-                    <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData", true); //return all data</pre>
+                    <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData", true); //return currently filtered data</pre>
 
                     If you have defined any accessors on your columns, then these will be applied to the data before the data is returned. (see <a href="#accessors">Accessors</a> for more details)</li>
 
