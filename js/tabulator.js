@@ -828,11 +828,11 @@
 	////////////////// Data Manipulation //////////////////
 
 	//get array of data from the table
-	getData:function(allData){
+	getData:function(filteredData){
 		var self = this;
 
 		//clone data array with deep copy to isolate internal data from returend result
-		var outputData = $.extend(true, [], allData === true ? self.data : self.activeData);
+		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data );
 
 		//check for accessors and return the processed data
 		return self._applyAccessors(outputData);
