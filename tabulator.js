@@ -828,11 +828,11 @@
 	////////////////// Data Manipulation //////////////////
 
 	//get array of data from the table
-	getData:function(allData){
+	getData:function(filteredData){
 		var self = this;
 
 		//clone data array with deep copy to isolate internal data from returend result
-		var outputData = $.extend(true, [], allData === true ? self.data : self.activeData);
+		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data );
 
 		//check for accessors and return the processed data
 		return self._applyAccessors(outputData);
@@ -2303,22 +2303,25 @@
 
 		cell.removeClass("tabulator-editing");
 
-		//handle cell mutation if needed
-		var mutator = cell.data("mutator");
-
-		if(mutator){
-			value = mutator(value);
-		}
-
-		//update cell data value
-		cell.data("value", value);
-
 		//update row data
 		var rowData = row.data("data");
 		var hasChanged = rowData[cell.data("field")] != value;
 		var oldVal = rowData[cell.data("field")];
-		rowData[cell.data("field")] = value;
-		row.data("data", rowData);
+
+		if(hasChanged){
+			//handle cell mutation if needed
+			var mutator = cell.data("mutator");
+
+			if(mutator){
+				value = mutator(value);
+			}
+
+			//update cell data value
+			cell.data("value", value);
+
+			rowData[cell.data("field")] = value;
+			row.data("data", rowData);
+		}
 
 		//reformat cell data
 		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
