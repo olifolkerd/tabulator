@@ -923,12 +923,27 @@
 
 			self.data = newData;
 
-			self.options.dataLoaded(data);
+			self.options.dataLoaded(self.data);
 
-			//filter incomming data
-			self._filterData();
+			self._mutateData();
 		}
 
+	},
+
+	//applu mutators if present
+	_mutateData:function(){
+		var self = this;
+
+		self.options.columns.forEach(function(col, i){
+			if(typeof col.mutator === "function" && col.mutateType !== "edit"){
+				self.data.forEach(function(item, j){
+					item[col.field] = col.mutator(item[col.field]);
+				});
+			}
+		});
+
+		//filter incomming data
+		self._filterData();
 	},
 
 	////////////////// Data Filtering //////////////////
@@ -1509,6 +1524,8 @@
 			cell.data("formatterParams", column.formatterParams);
 			cell.html(self._formatCell(column.formatter, value, item, cell, row, column.formatterParams));
 
+
+
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
 				cell.on("click", function(e){self._cellClick(e, cell)});
@@ -1545,6 +1562,11 @@
 						}
 
 					});
+
+					//assign cell mutator function if needed
+					if(typeof column.mutator === "function" && column.mutateType !== "data"){
+						cell.data("mutator", column.mutator);
+					}
 				}
 			}
 
@@ -2260,6 +2282,13 @@
 		var row = cell.closest(".tabulator-row");
 
 		cell.removeClass("tabulator-editing");
+
+		//handle cell mutation if needed
+		var mutator = cell.data("mutator");
+
+		if(mutator){
+			value = mutator(value);
+		}
 
 		//update cell data value
 		cell.data("value", value);
