@@ -39,6 +39,15 @@ body {
 .tabulator {
   font-family: sans-serif;
 }
+.docs-sidenav .label {
+  margin-left: 3px;
+}
+h1 .label,
+h2 .label {
+  margin-left: 5px;
+  font-size: 11px;
+  vertical-align: middle;
+}
 .news {
   border-top: 2px solid #59B038;
   border-bottom: 2px solid #59B038;
