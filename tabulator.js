@@ -75,7 +75,6 @@
 
 		pagination:false, //enable pagination
 		paginationSize:false, //size of pages
-		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
 		paginationDataReceived:{ //pagination data received from the server
 			"current_page":"current_page",
