@@ -299,44 +299,126 @@ $("#example-table").tabulator({
                 </article>
                 <a class="anchor" id="pagination"></a>
                 <article>
-                    <h1>Pagination</h1>
+                    <h1>Pagination <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator allows for pagination of table data, displaying only a section of data at a time, allowing for smaller tables without scroll bars.</p>
 
+                    <p>There are two forms of pagination available. <span class='param'>local</span> pagination, where Tabulator will parse in all available data and then paginate this data set. Or <span class='param'>remote</span> pagination, where Tabulator will load indiviudal pages of data via Ajax from a remote server.</p>
+
+                    <p>When pagination is enabled, a footer element will be added to the bottom of the table, with a range of navigation controls to allow your users to easily switch between pages.</p>
+
+                    <p>The first page of a table will automatically be loaded when the table is created if pagination is enabled.</p>
+
+                    <p>If you are a Laravel user then you should find that the auto generated URL's and data processing work straight out the box with no aditional configuration needed.</p>
+
+                    <p>An example of pagination in action can be found on the <a href="../examples?#pagination">Examples page.</a></p>
+
                     <strong>NOTE:</strong> Changing the filter or sorting while pagination is enabled will revert the table back to the first page.
 
-                    <h2>Enabling Pagination</h2>
 
-                    <p>To enable pagination, set the <span class='param'>pagination</span> option to true when you create your Tabulator</p>
 
-                   <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:true, // this option takes a boolean value (default = false)
+                    <h2>Remote Pagination <span class="label label-danger">New</span></h2>
+
+                    <p>To enable remote pagination, set the <span class='param'>pagination</span> option to <span class='param'>remote</span>, and set the url for the Ajax request using the <span class='param'>ajaxURL</span> paramter. You can also pass an optional object ro <span class='param'>ajaxParams</span> for any paramters you want to pass with the url (these should be static parameters, the page number etc, will be added later on).</p>
+
+                    <p>By default the page size will be set by the amount of data returned by the remote server, if you need to tell the remote server how many rows to send you can set the <span class='param'>paginationSize</span> paramter.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:"remote", //enable remote pagination
+    ajaxURL:"http://testdata.com/data", //set url for ajax request
+    ajaxParams:{token:"ABC123"}, //set any standard paramters to pass with the request
+    paginationSize:5, //optional paramter to request a certain number of rows per page
 });</pre>
 
-                    <h2>Set Page size</h2>
 
-                    <p>There are three ways to set the number of rows in each page.</p>
+                    <h3>Request URL</h3>
+                    <p>Tabulator will automaticly create a page request URL when a user selects a page.</p>
+                    <p>By default a url will be generated using the provided <span class='param'>ajaxURL</span> and a number of system generated parameters:</p>
 
-                    <h3>Set During Table Creation</h3>
-                    <p>You can specify the page size during table creation by setting the <span class='param'>paginationSize</span> option.</p>
+                    <ul>
+                        <li><strong>page</strong> - the page number being requested</li>
+                        <li><strong>size</strong> - the number of rows to a page <i>(if <span class='param'>paginationSize</span> is set)</i></li>
+                        <li><strong>sort</strong> - the currently sorted field <i>(if data is sorted by user)</i></li>
+                        <li><strong>sort_dir</strong> - the current sort direction <i>(if data is sorted by user)</i></li>
+                        <li><strong>filter</strong> - the currently filtered field <i>(if data is filtered by user)</i></li>
+                        <li><strong>filter_value</strong> - the current filter value <i>(if data is filtered by user)</i></li>
+                        <li><strong>filter_type</strong> - the current filter type <i>(if data is filtered by user)</i></li>
+                    </ul>
+
+                    <p>If you need to change the names of any of these paramters to fit your existing system, you can use the <span class='param'>paginationDataSent</span> option to set alternative parameter names.</p>
+
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:true, // this option takes a boolean value (default = false)
+    pagination:"remote", //enable remote pagination
+    ajaxURL:"http://testdata.com/data", //set url for ajax request
+    paginationDataSent:{
+        "page":"pageNo", //change page request parameter to "pageNo"
+    } ,
+});</pre>
+
+                    <p>If you need to have more complex control over the request URL, you can pass a callback to the <span class='param'>paginator</span> paramter to return the URL you wish to use for each page.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:"remote", //enable remote pagination
+    ajaxURL:"http://testdata.com/data", //set url for ajax request
+    paginator: function(url, pageNo, pageSize, ajaxParams ){
+        //url - the url from the ajaxURL paramter
+        //pageNo - the requested page number
+        //pageSize - the value of the paginationSize paramter
+        //ajaxParams - the value of the ajaxParams parameter
+
+        return "";// must return the string of the page request URL.
+    },
+});</pre>
+
+                    <h3>Returned Data</h3>
+
+                    <p>The remote server should return a JSON formatted object with the following structure:</p>
+
+                    <pre class="prettyprint lang-js">{
+    "last_page":15, //the total number of available pages
+    "data":[ // an array of row data objects
+        {id:1, name:"bob", age:"23"}, //example row data object
+    ]
+}</pre>
+
+                    <p>If you need to change the names of any of these paramters to fit your existing system, you can use the <span class='param'>paginationDataReceived</span> option to set alternative parameter names.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:"remote", //enable remote pagination
+    ajaxURL:"http://testdata.com/data", //set url for ajax request
+    paginationDataReceived:{
+        "last_page":"max_pages", //change last_page parameter name to "max_pages"
+    } ,
+});</pre>
+
+                    <h2>Local Pagination <span class="label label-primary">Updated</span></h2>
+                    <p>Local pagination works by loading the entier data set into the table then generating paged views of that data.</p>
+                    <p>To enable local pagination set the <span class='param'>pagination</span> option to <span class='param'>local</span>.</p>
+
+                   <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:"local", //enable local pagination.
+});</pre>
+
+                    <h3>Setting Page size</h3>
+
+                    <p>With local pagination there are a couple ways to set the number of rows in each page.</p>
+
+                    <p>You can specify the page size during table creation by setting the <span class='param'>paginationSize</span> option. If no height option is specified the table will resize to fit the number of rows on the page.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:"local", //enable local pagination.
     paginationSize:5, // this option can take any positive integer value (default = 10)
 });</pre>
-                    <p>If no height option is specified the table will resize to fit the number of rows on the page.</p>
 
-                    <h3>Auto-fit to Tabulator Height</h3>
-                    <p>If you specify the <span class='param'>height</span> option, and don't define the <span class='param'>paginationSize</span> option the page size will be automatically set to fill the height of the table.</p>
+                    <p>Alternatively, if you specify the <span class='param'>height</span> option, and don't define the <span class='param'>paginationSize</span> option the page size will be automatically set to fill the height of the table.</p>
                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"300px",
-    pagination:true, // this option takes a boolean value (default = false)
+    pagination:"local", //enable local pagination.
 });</pre>
 
-                    <h3>Change Page Size</h3>
-                    <p>You can change the page size at any point by using the <span class='param'>setPageSize</span> function.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setPageSize", 50); // show 50 rows per page</pre>
 
-                    <h2>Changing Page</h2>
+                    <h2>Additional Features</h2>
+                    <p>A number of aditional features are available to help customize the pagination experience.</p>
+
+                    <h3>Set Current Page</h3>
                     <p>When pagination is enabled the table footer will contain a number of pagination controls for navigating through the data.</p>
 
                     <p>In addition to these controls it is possible to change page using the <span class='param'>setPage</span> function</p>
@@ -350,29 +432,34 @@ $("#example-table").tabulator({
                         <li>"last" - show the last page</li>
                     </ul>
 
-                    <h2>pageLoaded Callback</h2>
+                    <h3>Change Page Size</h3>
+                    <p>You can change the page size at any point by using the <span class='param'>setPageSize</span> function. <i>(this setting will be ignored if using remote pagination with the page size set by the server)</i></p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setPageSize", 50); // show 50 rows per page</pre>
+
+                    <h3>pageLoaded Callback</h3>
 
                     <p>Whenever a page has been loaded, the <span class='param'>pageLoaded</span> callback is called, passing the current page number as an argument.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:true,
+    pagination:"local",
     pageLoaded:function(pageno){
         alert("Number of loaded page:" + pageno);
     }
 });</pre>
 
-                    <h2>Getting Current Page Number</h2>
+                    <h3>Get Current Page Number</h3>
 
                     <p>To retrieve the curren page use the <span class='param'>getPage</span> function. this will return the number of the current page. If pagination is disabled this will return <span class='param'>false</span>.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("getPage"); // returns furrent page</pre>
 
-                    <h2>Custom Pagination Control Element</h2>
+                    <h3>Custom Pagination Control Element</h3>
                     <p>By default the pagination controls are added to the footer of the table. If you wish the controls to be created in another element pass a JQuery object for that element to the <span class='param'>paginationElement</span> option.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:true, // this option takes a boolean value (default = false)
+    pagination:"local",
     paginationElement:$("#pagination-element"), //build pagination controls in this element
 });</pre>
+
                 </article>
 
                 <a class="anchor" id="layout"></a>
@@ -735,7 +822,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>Setting this parameter to <span class='param'>true</span> will cause an editor element matching the columns <span class='param'>editor</span> type to be displayed in the header below the column title, and will allow the user to filter data in the table by values in that column. The editor will be chosen using the same rules as the <span class='param'>editor</span> parameter, for more information on this see the <a href="#manipulating-data">Manipulating Data</a> section.</p>
 
-                    <p>Alternativly you can pass a string to this parameter containing any of the standard editors listed in the <a href="#manipulating-data">Manipulating Data</a> section</p>
+                    <p>Alternatively you can pass a string to this parameter containing any of the standard editors listed in the <a href="#manipulating-data">Manipulating Data</a> section</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerFilter:"input"} //show headerFilter using "input" editor</pre>
 
@@ -1792,7 +1879,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#setup">Setup</a></li>
                         <li><a href="#define-column-headers">Define Column Headers</a></li>
                         <li><a href="#set-data">Set Table Data</a></li>
-                        <li><a href="#pagination">Pagination</a></li>
+                        <li><a href="#pagination">Pagination <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#layout">Table Layout</a></li>
                         <li><a href="#sorting">Sorting Data</a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
