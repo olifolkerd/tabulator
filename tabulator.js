@@ -957,7 +957,7 @@
 		self.options.columns.forEach(function(col, i){
 			if(typeof col.mutator === "function" && col.mutateType !== "edit"){
 				self.data.forEach(function(item, j){
-					item[col.field] = col.mutator(item[col.field], "data ", item);
+					item[col.field] = col.mutator(item[col.field], "data", item);
 				});
 			}
 		});
