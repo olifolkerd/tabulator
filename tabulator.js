@@ -294,6 +294,10 @@
 		//build pagination footer if needed
 		if(options.pagination){
 
+			if(options.pagination === true){
+				options.pagination = "local"; //convert old pagination style to new
+			}
+
 			if(!options.paginationElement){
 				options.paginationElement = $("<div class='tabulator-footer'></div>");
 				self.footer = options.paginationElement;
@@ -1041,7 +1045,7 @@
 		}
 
 		//set the max pages available given the filter results
-		if(self.options.pagination){
+		if(self.options.pagination == "local"){
 			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
 		}
 
@@ -1378,7 +1382,7 @@
 			progressiveRender = true;
 		}
 
-		var renderData = options.pagination || options.progressiveRender ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData;
+		var renderData = options.pagination == "local" || options.progressiveRender ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData;
 
 		//build rows of table
 		renderData.forEach(function(item, i){
@@ -2074,7 +2078,7 @@
 		}
 
 		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
-		if(self.options.pagination && !self.options.paginationSize){
+		if(self.options.pagination == "local" && !self.options.paginationSize){
 			if(self.options.height){
 				self.options.paginationSize = Math.floor(self.tableHolder.outerHeight() / (self.header.outerHeight() - 1));
 			}else{
