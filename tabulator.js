@@ -2203,10 +2203,20 @@
 		//render column headings
 		self._colRender(false, forceRedraw);
 
-		if(self.firstRender && self.options.data){
-			setTimeout(function(){ //give columns time to render before aloding data set
-				self._parseData(self.options.data);
-			}, 100);
+		if(self.firstRender){
+			if(self.options.data){
+				setTimeout(function(){ //give columns time to render before aloding data set
+					self._parseData(self.options.data);
+				}, 100);
+			}else{
+				if(self.options.ajaxURL){
+					if(self.options.pagination === "remote"){
+						self.setPage(1);
+					}else{
+						self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
+					}
+				}
+			}
 		}
 
 	},
