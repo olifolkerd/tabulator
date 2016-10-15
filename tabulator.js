@@ -843,9 +843,11 @@
 		var self = this;
 
 		self.options.columns.forEach(function(col, i){
-			if(typeof col.accessor === "function"){
+			if(col.accessor){
+				var accessor = typeof col.accessor === "function" ? col.accessor : self.accessors[col.accessor];
+
 				data.forEach(function(item, j){
-					item[col.field] = col.accessor(item[col.field], item);
+					item[col.field] = accessor(item[col.field], item);
 				});
 			}
 		});
