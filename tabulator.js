@@ -879,6 +879,8 @@
 
 		params = params ? params : {};
 
+		self.options.ajaxParams = params;
+
 		//show loader if needed
 		this._showLoader(this, this.options.loader);
 
@@ -887,6 +889,9 @@
 				//data is a json encoded string
 				this._parseData(jQuery.parseJSON(data));
 			}else{
+
+				this.options.ajaxURL = data;
+
 				//assume data is url, make ajax call to url to get data
 				this._getAjaxData(data, params);
 			}
@@ -922,7 +927,7 @@
 		$.ajax({
 			url: url,
 			type: "GET",
-			data:options.ajaxParams,
+			data:params ? params : self.options.ajaxParams,
 			async: true,
 			dataType:"json",
 			success: function (data){
