@@ -922,7 +922,7 @@
 		$.ajax({
 			url: url,
 			type: "GET",
-			data:params,
+			data:options.ajaxParams,
 			async: true,
 			dataType:"json",
 			success: function (data){
