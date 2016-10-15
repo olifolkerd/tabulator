@@ -1871,6 +1871,26 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
                 </article>
 
+                <a class="anchor" id="depricated"></a>
+                <article>
+                    <h1>Depricated Functionality</h1>
+                    <p>The following sections have been updated and now have elements of obsolete functionality that have been depricated and will be removed in version 3.0.</p>
+
+                    <h2>Pagination</h2>
+
+                    <h3>Depricated Function</h3>
+                    <p>The use of a boolean value to enable local pagination through the <span class='param'>pagination</span> option:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:true, //enable local pagination
+});</pre>
+                    <h3>Replacement Function</h3>
+                    <p>This has been replaced with using a string to choose between <span class='param'>local</span> and <span class='param'>remote</span> pagination options.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    pagination:"local", //enable local pagination
+});</pre>
+
+                </article>
+
             </div>
 
             <div class="col-md-3" role="complementary">
@@ -1893,6 +1913,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events</a></li>
                         <li><a href="#extending">Extending Tabulator <span class="label label-danger">New</span></a></li>
+                        <li><a href="#depricated">Depricated Functionality <span class="label label-danger">New</span></a></li>
                     </ul>
                 </nav>
             </div>
