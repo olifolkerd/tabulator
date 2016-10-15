@@ -78,7 +78,7 @@
 		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
 		paginationDataReceived:{ //pagination data received from the server
-			"cuurrent_page":"cuurrent_page",
+			"current_page":"current_page",
 			"last_page":"last_page",
 			"data":"data",
 		},
@@ -87,6 +87,9 @@
 			"size":"size",
 			"sort":"sort",
 			"sort_dir":"sort_dir",
+			"filter":"filter",
+			"filter_value":"filter_value",
+			"filter_type":"fitler_type",
 		},
 		paginator:false, //pagination url string builder
 
@@ -871,6 +874,64 @@
 		return data;
 	},
 
+
+	///////////////// Pagination Data Loading //////////////////
+
+	//parse paginated data
+	_parsePageData:function(data){
+		var self = this;
+		var options = self.options;
+
+		self.paginationMaxPage = parseInt(data[options.paginationDataReceived.last_page]);
+
+		self._layoutPageSelector();
+
+		self._parseData(data[options.paginationDataReceived.data]);
+	},
+
+
+	_getRemotePageData:function(){
+		var self = this;
+		var options = self.options;
+
+		if(typeof options.paginator == "function"){
+			var url = options.paginator(options.ajaxURL, self.paginationCurrentPage, options.paginationSize, options.ajaxParams);
+			self._getAjaxData(url, {});
+		}else{
+			var pageParams = {};
+
+			//clone ajax params into page request params
+			for (var attrname in options.ajaxParams) { pageParams[attrname] = options.ajaxParams[attrname]; }
+
+			//set page number
+			pageParams[options.paginationDataSent.page] = self.paginationCurrentPage;
+
+			//set page size if defined
+			if(options.paginationSize){
+				pageParams[options.paginationDataSent.size] = options.paginationSize;
+			}
+
+			//set sort data if defined
+			if(self.sortCurCol && typeof self.sortCurCol.field === "string"){
+				pageParams[options.paginationDataSent.sort] = self.sortCurCol.field;
+				pageParams[options.paginationDataSent.sort_dir] = self.sortCurDir;
+			}
+
+			//set filter data if defined
+			if(self.filterField && typeof self.filterField === "string"){
+				pageParams[options.paginationDataSent.filter] = self.filterField;
+				pageParams[options.paginationDataSent.filter_value] = self.filterValue;
+				pageParams[options.paginationDataSent.filter_type] = self.filterType;
+			}
+
+			self._getAjaxData(options.ajaxURL, pageParams);
+		}
+
+	},
+
+	////////////////// Data Loading //////////////////
+
+
 	//load data
 	setData:function(data, params){
 		var self = this;
@@ -882,31 +943,42 @@
 		self.options.ajaxParams = params;
 
 		//show loader if needed
-		this._showLoader(this, this.options.loader);
+		self._showLoader(this, this.options.loader);
 
 		if(typeof(data) === "string"){
 			if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
 				//data is a json encoded string
-				this._parseData(jQuery.parseJSON(data));
+				self._parseData(jQuery.parseJSON(data));
 			}else{
 
-				this.options.ajaxURL = data;
+				self.options.ajaxURL = data;
 
-				//assume data is url, make ajax call to url to get data
-				this._getAjaxData(data, params);
+				if(self.options.pagination == "remote"){
+					self.setPage(1);
+				}else{
+					//assume data is url, make ajax call to url to get data
+					self._getAjaxData(data, params);
+				}
+
 			}
 		}else{
 			if(data){
 				//asume data is already an object
-				this._parseData(data);
+				self._parseData(data);
 
 			}else{
 				//no data provided, check if ajaxURL is present;
 				if(this.options.ajaxURL){
-					this._getAjaxData(this.options.ajaxURL, params);
+
+					if(self.options.pagination == "remote"){
+						self.setPage(1);
+					}else{
+						self._getAjaxData(this.options.ajaxURL, params);
+					}
+
 				}else{
 					//empty data
-					this._parseData([]);
+					self._parseData([]);
 				}
 			}
 		}
@@ -931,7 +1003,13 @@
 			async: true,
 			dataType:"json",
 			success: function (data){
-				self._parseData(data);
+
+				if(self.options.pagination == "remote"){
+					self._parsePageData(data);
+				}else{
+					self._parseData(data);
+				}
+
 			},
 			error: function (xhr, textStatus, errorThrown){
 				console.error("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
@@ -1069,11 +1147,11 @@
 		self.options.dataFiltered(self.activeData, self.filterField, self.filterType, self.filterValue);
 
 		//sort or render data
-		if(self.sortCurCol){
+		if(self.sortCurCol && self.options.pagination != "remote"){
 			self.sort(self.sortCurCol, self.sortCurDir);
 		}else{
 			//determine pagination information / render table
-			if(self.options.pagination){
+			if(self.options.pagination == "local"){
 				self.setPage(1);
 			}else{
 				self._renderTable();
@@ -1298,9 +1376,13 @@
 			}
 		}
 
-		self._layoutPageSelector();
+		if(self.options.pagination == "local"){
+			self._layoutPageSelector();
+			self._renderTable();
+		}else{
+			self._getRemotePageData();
+		}
 
-		self._renderTable();
 	},
 
 	//set page size for the table
