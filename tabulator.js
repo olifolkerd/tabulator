@@ -955,9 +955,12 @@
 		var self = this;
 
 		self.options.columns.forEach(function(col, i){
-			if(typeof col.mutator === "function" && col.mutateType !== "edit"){
+			if(col.mutator && col.mutateType !== "edit"){
+
+				var mutator = typeof col.mutator === "function" ? col.mutator : self.mutators[col.mutator];
+
 				self.data.forEach(function(item, j){
-					item[col.field] = col.mutator(item[col.field], "data", item);
+					item[col.field] = mutator(item[col.field], "data", item);
 				});
 			}
 		});
@@ -1584,8 +1587,10 @@
 					});
 
 					//assign cell mutator function if needed
-					if(typeof column.mutator === "function" && column.mutateType !== "data"){
-						cell.data("mutator", column.mutator);
+					if(column.mutator && column.mutateType !== "data"){
+						var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
+
+						cell.data("mutator", mutator);
 					}
 				}
 			}
@@ -2882,6 +2887,12 @@
 			return input;
 		},
 	},
+
+	//custom mutators
+	mutators:{},
+
+	//custom accessors
+	accessors:{},
 
 	////////////////// Tabulator Desconstructor //////////////////
 
