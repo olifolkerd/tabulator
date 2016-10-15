@@ -1012,7 +1012,7 @@
 
 			},
 			error: function (xhr, textStatus, errorThrown){
-				console.error("Tablulator ERROR (ajax get): " + xhr.status + " - " + thrownError);
+				console.error("Tablulator ERROR (ajax get): " + xhr.status + " - " + errorThrown);
 
 				self.options.dataLoadError(xhr, textStatus, errorThrown);
 				self._showLoader(self, self.options.loaderError);
