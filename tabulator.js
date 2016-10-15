@@ -957,7 +957,7 @@
 		self.options.columns.forEach(function(col, i){
 			if(typeof col.mutator === "function" && col.mutateType !== "edit"){
 				self.data.forEach(function(item, j){
-					item[col.field] = col.mutator(item[col.field]);
+					item[col.field] = col.mutator(item[col.field], "data ", item);
 				});
 			}
 		});
@@ -2313,7 +2313,7 @@
 			var mutator = cell.data("mutator");
 
 			if(mutator){
-				value = mutator(value);
+				value = mutator(value, "edit", rowData);
 			}
 
 			//update cell data value
