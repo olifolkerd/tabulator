@@ -1624,12 +1624,18 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
     sorters:{
         //additional sorters can be added here
-    }
+    },
     formatters:{
         //additional formatters can be added here
-    }
+    },
     editors:{
         //additional editors can be added here
+    },
+    mutators:{
+        //additional mutators can be added here
+    },
+    accessors:{
+        //additional accessors can be added here
     }
 });</pre>
 
@@ -1739,7 +1745,43 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     ],
 });</pre>
 
+<h2>Additional Mutators</h2>
+                    <p>If you use any mutators regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
 
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    mutators: {
+        tooManyCars:function(value, type, data){
+            return value > 5; //return the new value for the cell data.
+        },
+    },
+});</pre>
+
+                    <p>Using a mutator defined in the extension is as simple as passing the name to the <span class='param'>mutator</span> parameter in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"cars", title:"Cars", mutator:"tooManyCars"},
+    ],
+});</pre>
+
+<h2>Additional Accessors</h2>
+                    <p>If you use any accessors regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
+    accessors: {
+        roundDown:function(value, data){
+            return Math.floor(value); //return the new value for the cell data.
+        },
+    },
+});</pre>
+
+                    <p>Using a accessor defined in the extension is as simple as passing the name to the <span class='param'>accessor</span> parameter in the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"tax", title:"Tax (£)", accessor:"roundDown"},
+    ],
+});</pre>
                 </article>
 
             </div>
