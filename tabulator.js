@@ -845,7 +845,7 @@
 		self.options.columns.forEach(function(col, i){
 			if(typeof col.accessor === "function"){
 				data.forEach(function(item, j){
-					item[col.field] = col.accessor(item[col.field]);
+					item[col.field] = col.accessor(item[col.field], item);
 				});
 			}
 		});
