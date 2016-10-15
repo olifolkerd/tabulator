@@ -77,6 +77,18 @@
 		paginationSize:false, //size of pages
 		paginationAjax:false, //paginate internal or via ajax
 		paginationElement:false, //element to hold pagination numbers
+		paginationDataReceived:{ //pagination data received from the server
+			"cuurrent_page":"cuurrent_page",
+			"last_page":"last_page",
+			"data":"data",
+		},
+		paginationDataSent:{ //pagination data sent to the server
+			"page":"page",
+			"size":"size",
+			"sort":"sort",
+			"sort_dir":"sort_dir",
+		},
+		paginator:false, //pagination url string builder
 
 		progressiveRender:false, //enable progressive rendering
 		progressiveRenderSize:20, //block size for progressive rendering
