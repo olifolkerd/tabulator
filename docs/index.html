@@ -862,8 +862,10 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>You can set mutators on a per column basis using the <span class='param'>mutator</span> option in the column data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutator:function(value){
+                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutator:function(value, type, data){
         //value - original value of the cell
+        //type - the type of mutation occuring (data|edit)
+        //data - the data for the row
 
         return value > 5; //return the new value for the cell data.
     },
@@ -891,8 +893,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <h2>Accessors</h2>
                     <p>Accessors are used to alter data as it leaves the table through the <span class='param'>getData</span> function. For example if you wanted to make sure that any float values in a column were rounded down to integers before you retrieved the data, you could use an accessor.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Tax Owed (£)", field:"tax", accessor:function(value){
+                    <pre class="prettyprint lang-js">{title:"Tax Owed (£)", field:"tax", accessor:function(value, data){
         //value - original value of the cell
+        //data - the data for the row
 
         return Math.floor(value); //return the new value for the cell data.
     },
