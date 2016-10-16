@@ -71,7 +71,6 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
-- Pagination via AJAX request
 - Multi row column headers / column grouping
 - Selectable Rows
 - Custom Row Templates
