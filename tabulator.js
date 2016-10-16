@@ -845,7 +845,7 @@
 	},
 
 	//update row data
-	updateRow:function(index, item){
+	updateRow:function(index, item, bulk){
 		var self = this;
 
 		var id = !isNaN(index) ? index : index.data("data")[self.options.index];
@@ -859,21 +859,27 @@
 			for (var attrname in item) { rowData[attrname] = item[attrname]; }
 
 			//render new row
-			var newRow = self._renderRow(rowData);
+		var newRow = self._renderRow(rowData);
 
 			//replace old row with new row
 			row.replaceWith(newRow);
 
-			//align column widths
-			self._colRender(!self.firstRender);
 
-			//style table rows
-			self._styleRows();
+			if(!bulk){
+				//align column widths
+				self._colRender(!self.firstRender);
+
+				//style table rows
+				self._styleRows();
+			}
+
 
 			//triger event
 			self.options.rowUpdated(item, newRow);
 
-			self.options.dataEdited(self.data);
+			if(!bulk){
+				self.options.dataEdited(self.data);
+			}
 
 			return true;
 		}
@@ -888,10 +894,29 @@
 		var self = this;
 
 		//clone data array with deep copy to isolate internal data from returend result
-		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data );
+		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data);
 
 		//check for accessors and return the processed data
 		return self._applyAccessors(outputData);
+	},
+
+	//update existing data
+	updateData:function(data){
+		var self = this;
+
+		if(data){
+			data.forEach(function(item){
+				//update each row in turn
+				self.updateRow(item[self.options.index], item, true);
+			});
+
+			//align column widths
+			self._colRender(!self.firstRender);
+
+			//style table rows
+			self._styleRows();
+			self.options.dataEdited(self.data);
+		}
 	},
 
 	//apply any column accessors to the data before returing the result
