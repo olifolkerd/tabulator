@@ -858,6 +858,9 @@
 		if(row.length){
 			var rowData = row.data("data");
 
+			//Apply mutators if present
+			item = self._mutateData(item);
+
 			//makesure there are differences between the new and old data before updating
 			if(JSON.stringify(rowData) !== JSON.stringify(item)){
 
