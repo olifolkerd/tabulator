@@ -919,6 +919,9 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
 //data after update  = {id:1, name:"bob", gender:"male", age:20}</pre>
 
+                    <h3>Data Mutation</h3>
+                    <p>It is worth noting that if you have defined any mutator functions in your column definition array, these will be applied to the new data before the table is updated. (see <a href="#mutators">Mutators</a> for more details)</p>
+
 
 
                     <h2>Retreiving Data <span class="label label-primary">Updated</span></h2>
@@ -952,6 +955,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p>By default any new rows will be added to the bottom of the table, to change this to the top set the <span class='param'>addRowPos</span> option to "top";</p>
 
+                    <p>It is worth noting that if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is added. (see <a href="#mutators">Mutators</a> for more details)</p>
+
                     <h3>Update Row <span class="label label-danger">New</span></h3>
                     <p>You can update any row in the table using the <span class='param'>updateRow</span> function. The first argument of this function should be the index of the row you want to update (the index field being defined by the <span class='param'>index</span> option in the tabulator constructor, which defaults to "id"), alternativly you could pass a jQuery object of the row itself. </p>
 
@@ -962,6 +967,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <p>Once complete, this function will trigger the <span class='param'>rowUpdated</span> and <span class='param'>dataEdited</span> events.</p>
 
                     <p>This function will return <span class='param'>true</span> if the update was successfull or <span class='param'>false</span> if the requested row could not be found. If the new data matches the existing row data, no update will be performed.</p>
+
+                    <p>It is worth noting that if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is updated. (see <a href="#mutators">Mutators</a> for more details)</p>
 
                     <h3>Delete Row</h3>
                     <p>You can delete any row in the table using the <span class='param'>deleteRow</span> function;</p>
