@@ -1579,6 +1579,16 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
+                    <h2>Row Updated <span class="label label-danger">New</span></h2>
+                    <p>The <span class='param'>rowUpdated</span> callback is triggered when a row is updated by the <span class='param'>updateRow</span> or <span class='param'>updateData</span> functions.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowUpdated:function(index, data, row){
+        //index - the index for the updated row
+        //data - the updated data for the row
+        //row - DOM element for the updated row
+    },
+});</pre>
+
                     <h2>Row Deleted</h2>
                     <p>The <span class='param'>rowDeleted</span> callback is triggered when a row is deleted from the table by the <span class='param'>deleteRow</span> function.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -1943,7 +1953,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#column-visibility">Column Visibility</a></li>
                         <li><a href="#options">Table Options</a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
-                        <li><a href="#callbacks">Callbacks &amp; Events</a></li>
+                        <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#extending">Extending Tabulator <span class="label label-danger">New</span></a></li>
                         <li><a href="#depricated">Depricated Functionality <span class="label label-danger">New</span></a></li>
                     </ul>
