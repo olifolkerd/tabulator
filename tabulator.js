@@ -855,30 +855,34 @@
 		if(row.length){
 			var rowData = row.data("data");
 
-			//update row data
-			for (var attrname in item) { rowData[attrname] = item[attrname]; }
+			//makesure there are differences between the new and old data before updating
+			if(JSON.stringify(rowData) !== JSON.stringify(item)){
 
-			//render new row
-		var newRow = self._renderRow(rowData);
+				//update row data
+				for (var attrname in item) { rowData[attrname] = item[attrname]; }
 
-			//replace old row with new row
-			row.replaceWith(newRow);
+				//render new row
+				var newRow = self._renderRow(rowData);
 
-
-			if(!bulk){
-				//align column widths
-				self._colRender(!self.firstRender);
-
-				//style table rows
-				self._styleRows();
-			}
+				//replace old row with new row
+				row.replaceWith(newRow);
 
 
-			//triger event
-			self.options.rowUpdated(item, newRow);
+				if(!bulk){
+					//align column widths
+					self._colRender(!self.firstRender);
 
-			if(!bulk){
-				self.options.dataEdited(self.data);
+					//style table rows
+					self._styleRows();
+				}
+
+
+				//triger event
+				self.options.rowUpdated(item, newRow);
+
+				if(!bulk){
+					self.options.dataEdited(self.data);
+				}
 			}
 
 			return true;
