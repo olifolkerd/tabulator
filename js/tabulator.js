@@ -137,6 +137,7 @@
 		rowDeleted:function(){},
 		rowContext:function(){},
 		rowMoved:function(){},
+		rowUpdated:function(){},
 
 		cellEdited:function(){},
 
@@ -843,6 +844,53 @@
 		self.options.dataEdited(self.data);
 	},
 
+	//update row data
+	updateRow:function(index, item, bulk){
+		var self = this;
+
+		var id = !isNaN(index) ? index : index.data("data")[self.options.index];
+
+		var row = !isNaN(index) ? $("[data-id=" + index + "]", self.element) : index;
+
+		if(row.length){
+			var rowData = row.data("data");
+
+			//makesure there are differences between the new and old data before updating
+			if(JSON.stringify(rowData) !== JSON.stringify(item)){
+
+				//update row data
+				for (var attrname in item) { rowData[attrname] = item[attrname]; }
+
+				//render new row
+				var newRow = self._renderRow(rowData);
+
+				//replace old row with new row
+				row.replaceWith(newRow);
+
+
+				if(!bulk){
+					//align column widths
+					self._colRender(!self.firstRender);
+
+					//style table rows
+					self._styleRows();
+				}
+
+
+				//triger event
+				self.options.rowUpdated(item, newRow);
+
+				if(!bulk){
+					self.options.dataEdited(self.data);
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	},
+
 	////////////////// Data Manipulation //////////////////
 
 	//get array of data from the table
@@ -850,10 +898,29 @@
 		var self = this;
 
 		//clone data array with deep copy to isolate internal data from returend result
-		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data );
+		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data);
 
 		//check for accessors and return the processed data
 		return self._applyAccessors(outputData);
+	},
+
+	//update existing data
+	updateData:function(data){
+		var self = this;
+
+		if(data){
+			data.forEach(function(item){
+				//update each row in turn
+				self.updateRow(item[self.options.index], item, true);
+			});
+
+			//align column widths
+			self._colRender(!self.firstRender);
+
+			//style table rows
+			self._styleRows();
+			self.options.dataEdited(self.data);
+		}
 	},
 
 	//apply any column accessors to the data before returing the result
@@ -903,7 +970,7 @@
 			for (var attrname in options.ajaxParams) { pageParams[attrname] = options.ajaxParams[attrname]; }
 
 			//set page number
-			pageParams[options.paginationDataSent.page] = self.paginationCurrentPage;
+		pageParams[options.paginationDataSent.page] = self.paginationCurrentPage;
 
 			//set page size if defined
 			if(options.paginationSize){
