@@ -43,7 +43,8 @@ body {
   margin-left: 3px;
 }
 h1 .label,
-h2 .label {
+h2 .label,
+h3 .label {
   margin-left: 5px;
   font-size: 11px;
   vertical-align: middle;
