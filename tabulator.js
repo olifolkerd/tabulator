@@ -137,6 +137,7 @@
 		rowDeleted:function(){},
 		rowContext:function(){},
 		rowMoved:function(){},
+		rowUpdated:function(){},
 
 		cellEdited:function(){},
 
@@ -843,6 +844,43 @@
 		self.options.dataEdited(self.data);
 	},
 
+	//update row data
+	updateRow:function(index, item){
+		var self = this;
+
+		var id = !isNaN(index) ? index : index.data("data")[self.options.index];
+
+		var row = !isNaN(index) ? $("[data-id=" + index + "]", self.element) : index;
+
+		if(row.length){
+			var rowData = row.data("data");
+
+			//update row data
+			for (var attrname in item) { rowData[attrname] = item[attrname]; }
+
+			//render new row
+			var newRow = self._renderRow(rowData);
+
+			//replace old row with new row
+			row.replaceWith(newRow);
+
+			//align column widths
+			self._colRender(!self.firstRender);
+
+			//style table rows
+			self._styleRows();
+
+			//triger event
+			self.options.rowUpdated(item, newRow);
+
+			self.options.dataEdited(self.data);
+
+			return true;
+		}
+
+		return false;
+	},
+
 	////////////////// Data Manipulation //////////////////
 
 	//get array of data from the table
@@ -903,7 +941,7 @@
 			for (var attrname in options.ajaxParams) { pageParams[attrname] = options.ajaxParams[attrname]; }
 
 			//set page number
-			pageParams[options.paginationDataSent.page] = self.paginationCurrentPage;
+		pageParams[options.paginationDataSent.page] = self.paginationCurrentPage;
 
 			//set page size if defined
 			if(options.paginationSize){
