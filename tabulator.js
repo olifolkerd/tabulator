@@ -818,6 +818,9 @@
 			item = {id:0};
 		}
 
+		//Apply mutators if present
+		item = self._mutateData(item);
+
 		//create blank row
 		var row = self._renderRow(item);
 
