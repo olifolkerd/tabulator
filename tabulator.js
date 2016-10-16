@@ -862,7 +862,7 @@
 				for (var attrname in item) { rowData[attrname] = item[attrname]; }
 
 				//render new row
-				var newRow = self._renderRow(rowData);
+			var newRow = self._renderRow(rowData);
 
 				//replace old row with new row
 				row.replaceWith(newRow);
@@ -1108,17 +1108,18 @@
 				}
 			}
 
-			self.data = newData;
+			self.options.dataLoaded(newData);
 
-			self.options.dataLoaded(self.data);
+			self.data = self._mutateData(newData);
 
-			self._mutateData();
+			//filter incomming data
+			self._filterData();
 		}
 
 	},
 
 	//applu mutators if present
-	_mutateData:function(){
+	_mutateData:function(data){
 		var self = this;
 
 		self.options.columns.forEach(function(col, i){
@@ -1126,15 +1127,20 @@
 
 				var mutator = typeof col.mutator === "function" ? col.mutator : self.mutators[col.mutator];
 
-				self.data.forEach(function(item, j){
-					item[col.field] = mutator(item[col.field], "data", item);
-				});
+				if(Array.isArray(data)){
+					data.forEach(function(item, j){
+						item[col.field] = mutator(item[col.field], "data", item);
+					});
+				}else{
+					data[col.field] = mutator(data[col.field], "data", data);
+				}
 			}
 		});
 
-		//filter incomming data
-		self._filterData();
+		return data;
 	},
+
+
 
 	////////////////// Data Filtering //////////////////
 
