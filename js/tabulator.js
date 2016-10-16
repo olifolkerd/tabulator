@@ -878,7 +878,7 @@
 
 
 				//triger event
-				self.options.rowUpdated(item, newRow);
+				self.options.rowUpdated(id, item, newRow);
 
 				if(!bulk){
 					self.options.dataEdited(self.data);
