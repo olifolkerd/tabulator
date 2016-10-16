@@ -226,11 +226,11 @@ index:"age", //set the index field to the "age" field.
                     <p>The server will need to return a JSON formatted array of objects.</p>
 
                     <h3>Repeated Requests</h3>
-                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
+                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator. This will cause the table to immediately load the data from the remote resource as soon as the table is created.</p>
                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
     ajaxURL:"http://www.getmydata.com/now",
 });</pre>
-                    <p>and call <span class='param'>setData</span> to refresh the data at any point</p>
+                    <p>You can call the <span class='param'>setData</span> function to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
 
                     <h3>Server Side Code (PHP)</h3>
