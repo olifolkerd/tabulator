@@ -1901,7 +1901,6 @@
 
 		if(self.header){
 			var headerHeight = self.header.outerHeight();
-			console.log("header-height", self.header.innerHeight(), self.header.outerHeight())
 			$(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
 
 			if(self.options.height && headerHeight != self.header.outerHeight()){
@@ -2094,70 +2093,105 @@
 
 		//setup movable columns
 		if(options.movableCols){
+
 			container.sortable({
 				axis: "x",
 				opacity:1,
+				// containment: container,
 				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
 				start: function(event, ui){
-					ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
+					ui.placeholder.css({"display":"inline-block", visibility:"visible", "width":ui.item.outerWidth()});
 				},
 				change: function(event, ui){
-					ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
+					var item = ui.item;
+					var placeholder = ui.placeholder;
 
-					var field = ui.item.data("field");
-					var newPos = ui.placeholder.next(".tabulator-col").data("field");
+					placeholder.css({"display":"inline-block", visibility:"visible", "width":ui.item.outerWidth()});
 
-					//cover situation where user moves back to original position
-					if(newPos == field){
-						newPos = ui.placeholder.next(".tabulator-col").next(".tabulator-col").data("field");
-					}
+					//find next column
+					function nextColumn(element){
 
-					$(".tabulator-row", self.table).each(function(){
+						var nextCol = element.next(".tabulator-col");
 
-						if(newPos){
-							$(".tabulator-cell[data-field=" + field + "]", $(this)).insertBefore($(".tabulator-cell[data-field=" + newPos + "]", $(this)));
-						}else{
-							$(this).append($(".tabulator-cell[data-field=" + field + "]", $(this)));
+						//handle cells at end of group
+						if(!nextCol.length){
+							var group = element.parent().closest(".tabulator-col.tabulator-col-group");
+							if(group.length){
+								var nextCol = nextColumn(group);
+							}
 						}
 
+						//handle next column being a column group
+						if(nextCol.hasClass("tabulator-col-group")){
+							return $(".tabulator-col[data-index]", nextCol).first();
+						}
 
-					})
+						return nextCol;
+					}
+
+					//move cells in column
+					function moveColumn(from, to){
+						$(".tabulator-row", self.table).each(function(){
+							if(to.length){
+								$(".tabulator-cell[data-index=" + from.data("index") + "]", $(this)).insertBefore($(".tabulator-cell[data-index=" + to.data("index") + "]", $(this)));
+							}else{
+								$(this).append($(".tabulator-cell[data-index=" + from.data("index") + "]", $(this)));
+							}
+						})
+					}
+
+					var next = nextColumn(ui.placeholder);
+
+					if(item.index != next.data("index")){
+						//move whole column groups or individual columns
+						if(item.hasClass("tabulator-col-group")){
+							var to = next
+							$($(".tabulator-col[data-index]", item).get().reverse()).each(function(){
+								moveColumn($(this), to);
+								to = $(this);
+							});
+						}else{
+							moveColumn(item, next);
+						}
+					}
+
 				},
 				update: function(event, ui){
 
-					//update columns array with new positional data
-					var fromField = ui.item.data("field");
-					var toField = ui.item.next(".tabulator-col").data("field");
+					//find column layout structure
+					var neighbour = ui.item.next(".tabulator-col");
+					var group = ui.item.parent().closest(".tabulator-col-group");
 
-					var from = null;
-					var to = toField ? null : options.columns.length;
 
-					$.each(options.columns, function(i, column){
+					var from = ui.item.data("column");
+					var container = group.length ? group.data("column").columns : options.columns;
+					var to = neighbour.length ? neighbour.data("column") : null;
 
-						if(column.field && column.field == fromField){
-							from = i;
-						}
+					//find index for column
+					function search(columns, col){
 
-						if(from !== null){
-							return false;
-						}
+						var match = false;
 
-					});
+						$.each(columns, function(i, column){;
+							if(col === column){
+								match = i;
+							}
+							if(match !== false){
+								return false;
+							}
+						});
 
-					var columns = options.columns.splice(from, 1)[0]
+						return match;
+					}
 
-					$.each(options.columns, function(i, column){
+					//splice column into new position
+					var column = container.splice(search(container, from), 1)[0];
 
-						if(column.field && column.field == toField){
-							to = i;
-						}
+					to = search(container, to);
 
-						if(to !== null){
-							return false;
-						}
-					});
+					container.splice(to !== false ? to : container.length , 0, column);
 
-					options.columns.splice(to , 0, columns);
+					console.log("updated", options.columns);
 
 					//trigger callback
 					options.colMoved(ui.item.data("field"), options.columns);
@@ -2165,6 +2199,7 @@
 					if(self.options.persistentLayout){
 						self._setPersistentCol();
 					}
+
 				},
 			});
 		}
@@ -2346,7 +2381,7 @@
 			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-title">' + column.title + '</div><div class="tabulator-col-group-cols"></div></div>');
 			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
 		}
-
+		col.data("column", column);
 		container.append(col);
 	});
 
