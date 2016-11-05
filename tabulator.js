@@ -274,7 +274,7 @@
 			element.css({"height": options.height});
 		}
 
-		element.addClass("tabulator");
+		element.addClass("tabulator").attr("role", "grid");
 
 		self.header = $("<div class='tabulator-header'></div>")
 
@@ -1303,9 +1303,9 @@
 		var self = this;
 
 		if (element.data("sortdir") == "desc"){
-			element.data("sortdir", "asc");
+			element.data("sortdir", "asc").attr("aria-sort", "ascending");
 		}else{
-			element.data("sortdir", "desc");
+			element.data("sortdir", "desc").attr("aria-sort", "descending");
 		}
 
 		self.sort(column, element.data("sortdir"));
@@ -1334,7 +1334,7 @@
 			}
 
 			//reset all column sorts
-			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc");
+			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc").attr("aria-sort", "none");
 			$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc");
 
 			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
@@ -1674,7 +1674,7 @@
 	//render individual rows
 	_renderRow:function(item){
 		var self = this;
-		var row = $("<div class='tabulator-row' data-id='" + item[self.options.index] + "'></div>");
+		var row = $("<div class='tabulator-row' data-id='" + item[self.options.index] + "' role='row'></div>");
 
 		//bind row data to row
 		row.data("data", item);
@@ -1710,7 +1710,7 @@
 			//set style as string rather than using .css for massive improvement in rendering time
 			var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
 
-			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
 
 			//add tooltip to cell
 			self._generateTooltip(cell, item, column.tooltip);
@@ -1786,7 +1786,7 @@
 
 	//render group element
 	_renderGroup:function(value){
-		var group = $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
+		var group = $("<div class='tabulator-group show' data-value='" + value + "' role='rowgroup'><div class='tabulator-group-header' role='rowheader'></div><div class='tabulator-group-body'></div></div>");
 
 		return group;
 	},
@@ -1816,6 +1816,7 @@
 	//show loader blockout div
 	_showLoader:function(self, msg){
 		if(self.options.showLoader){
+			$(".tabulator-loader-msg", self.loaderDiv).attr("role","alert")
 			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)});
 			self.element.append(self.loaderDiv);
@@ -1911,7 +1912,7 @@
 
 		//add column for row handle if movable rows enabled
 		if(options.movableRows){
-			var handle = $("<div class='tabulator-col-row-handle'>&nbsp</div>");
+			var handle = $("<div class='tabulator-col-row-handle' role='gridcell'>&nbsp</div>");
 			self.header.append(handle);
 		}
 
@@ -2053,7 +2054,7 @@
 
 			var visibility = column.visible ? "inline-block" : "none";
 
-			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' ></div>');
+			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"></div>');
 
 
 			var title = column.title ? column.title : "&nbsp";
@@ -2659,8 +2660,10 @@
 			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 			if(value === true || value === "true" || value === "True" || value === 1){
+				cell.attr("aria-checked", true);
 				return tick;
 			}else{
+				cell.attr("aria-checked", false);
 				return "";
 			}
 		},
@@ -2669,8 +2672,10 @@
 			var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
 			if(value === true || value === "true" || value === "True" || value === 1){
+				cell.attr("aria-checked", true);
 				return tick;
 			}else{
+				cell.attr("aria-checked", false);
 				return cross;
 			}
 		},
@@ -2696,6 +2701,8 @@
 				"text-overflow": "ellipsis",
 			});
 
+			cell.attr("aria-label", value);
+
 			return stars.html();
 		},
 		progress:function(value, data, cell, row, options, formatterParams){ //progress bar
@@ -2717,6 +2724,8 @@
 				"min-width":"30px",
 				"position":"relative",
 			});
+
+			cell.attr("aria-label", value);
 
 			return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
 		},
@@ -2945,9 +2954,13 @@
 				padding:"0 4px",
 			});
 
+			cell.attr("aria-valuemin", min).attr("aria-valuemax", max)
+
+
 			var newVal = function(){
 				var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
 				cell.trigger("editval", newval);
+				cell.attr("aria-valuenow", newval).attr("aria-label", value);
 			}
 
 			var bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
