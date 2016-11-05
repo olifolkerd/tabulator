@@ -39,6 +39,10 @@
 .tabulator .tabulator-header .tabulator-col:first-child .tabulator-handle.prev {
   display: none;
 }
+.tabulator .tabulator-header .tabulator-col.ui-sortable-helper {
+  background-color: #e6e6e6;
+  border: 1px solid #aaa;
+}
 .tabulator .tabulator-header .tabulator-col .tabulator-title-editor {
   box-sizing: border-box;
   width: 100%;
