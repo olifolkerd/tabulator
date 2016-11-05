@@ -59,6 +59,7 @@
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;
+			vertical-align:bottom;
 
 			.tabulator-col-title{
 				padding:4px;
@@ -66,13 +67,16 @@
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+				vertical-align:bottom;
 			}
 
 			&.tabulator-col-group{
 
 				.tabulator-col-group-cols{
+					position:relative;
 
 					border-top:1px solid @headerBorderColor;
+					overflow: hidden;
 
 					.tabulator-col:last-child{
 						margin-right:-1px;
@@ -87,7 +91,8 @@
 			}
 
 			&.ui-sortable-helper{
-				background-color: @headerBackgroundColor;
+				position: absolute;
+				background-color: @headerBackgroundColor !important;
 				border:1px solid @headerBorderColor;
 			}
 

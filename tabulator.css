@@ -20,15 +20,19 @@
 }
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
+  vertical-align: bottom;
 }
 .tabulator .tabulator-header .tabulator-col .tabulator-col-title {
   padding: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: bottom;
 }
 .tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
+  position: relative;
   border-top: 1px solid #aaa;
+  overflow: hidden;
 }
 .tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols .tabulator-col:last-child {
   margin-right: -1px;
@@ -37,7 +41,8 @@
   display: none;
 }
 .tabulator .tabulator-header .tabulator-col.ui-sortable-helper {
-  background-color: #e6e6e6;
+  position: absolute;
+  background-color: #e6e6e6 !important;
   border: 1px solid #aaa;
 }
 .tabulator .tabulator-header .tabulator-col .tabulator-title-editor {
