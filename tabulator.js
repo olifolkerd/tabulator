@@ -2343,13 +2343,11 @@
 			}
 
 		}else{
-			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-title">' + column.title + '</div></div>');
-			self._colLayoutGroup(column.columns, col);
+			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-title">' + column.title + '</div><div class="tabulator-col-group-cols"></div></div>');
+			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
 		}
 
 		container.append(col);
-
-
 	});
 
 },

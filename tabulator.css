@@ -27,14 +27,11 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-title + .tabulator-col {
-  margin-left: 0;
-}
-.tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col {
-  margin-left: 1px;
-  margin-right: -1px;
+.tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
   border-top: 1px solid #aaa;
-  border-right: 1px solid #aaa;
+}
+.tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols .tabulator-col:last-child {
+  margin-right: -1px;
 }
 .tabulator .tabulator-header .tabulator-col:first-child .tabulator-handle.prev {
   display: none;
