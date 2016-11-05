@@ -70,8 +70,8 @@
 		movableRows:false, //enable movable rows
 		movableRowHandle:"<div></div><div></div><div></div>", //handle for movable rows
 
-		columnLayoutCookie:false, //store cookie with column _styles
-		columnLayoutCookieID:"", //id for stored cookie
+		persistentLayout:false, //store cookie with column _styles
+		persistentLayoutID:"", //id for stored cookie
 
 		pagination:false, //enable pagination
 		paginationSize:false, //size of pages
@@ -267,6 +267,26 @@
 		var options = self.options;
 		var element = self.element;
 
+
+		//// backwards compatability options adjustments ////
+
+		//old persistan column layout adjustment
+		if( typeof options.columnLayoutCookie != 'undefined'){
+			options.persistentLayout = options.columnLayoutCookie;
+			options.persistentLayoutID = options.columnLayoutCookieID;
+		}
+		/////////////////////////////////////////////////////
+
+
+		//setup persistent layout storage if needed
+		if(self.options.persistentLayout){
+			//determine persistant layout storage type
+			self.options.persistentLayout = self.options.persistentLayout !== true ?  self.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
+
+			//set storage tag
+			self.options.persistentLayoutID = "tabulator-" + (self.options.persistentLayoutID ? self.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
+		}
+
 		options.colMinWidth = isNaN(options.colMinWidth) ? options.colMinWidth : options.colMinWidth + "px";
 
 		if(options.height){
@@ -330,8 +350,8 @@
 		}
 
 		//layout columns
-		if(options.columnLayoutCookie){
-			self._getColCookie();
+		if(options.persistentLayout){
+			self._getPersistentCol();
 		}else{
 			self._colLayout();
 		}
@@ -416,17 +436,8 @@
 	////////////////// Column Manipulation //////////////////
 
 	//set column style cookie
-	_setColCookie:function(){
+	_setPersistentCol:function(){
 		var self = this;
-
-		//set cookie ied
-		var cookieID = self.options.columnLayoutCookieID ? self.options.columnLayoutCookieID : self.element.attr("id") ? self.element.attr("id") : "";
-		cookieID = "tabulator-" + cookieID;
-
-		//set cookie expiration far in the future
-		var expDate = new Date();
-		expDate.setDate(expDate.getDate() + 10000);
-
 
 		//create array of column styles only
 		var columnStyles = [];
@@ -446,35 +457,52 @@
 		//JSON format column data
 		var data = JSON.stringify(columnStyles);
 
-		//save cookie
-		document.cookie = cookieID + "=" + data + "; expires=" + expDate.toUTCString();
+
+
+		if(self.options.persistentLayout == "cookie"){
+			//set cookie expiration far in the future
+			var expDate = new Date();
+			expDate.setDate(expDate.getDate() + 10000);
+
+			//save cookie
+			document.cookie = self.options.persistentLayoutID + "=" + data + "; expires=" + expDate.toUTCString();
+		}else{
+			//save data to local storage
+			localStorage.setItem(self.options.persistentLayoutID, data);
+		}
 	},
 
 	//set Column style cookie
-	_getColCookie:function(){
+	_getPersistentCol:function(){
 		var self = this;
 
-		//set cookie ied
-		var cookieID = self.options.columnLayoutCookieID ? self.options.columnLayoutCookieID : self.element.attr("id") ? self.element.attr("id") : "";
-		cookieID = "tabulator-" + cookieID;
+		var colString = "";
 
-		//find cookie
-		var cookie = document.cookie;
-		var cookiePos = cookie.indexOf(cookieID+"=");
+		if(self.options.persistentLayout == "cookie"){
+			//find cookie
+			var cookie = document.cookie;
+			var cookiePos = cookie.indexOf(self.options.persistentLayoutID + "=");
 
-		//if cookie exists, decode and load column data into tabulator
-		if(cookiePos > -1){
-			cookie = cookie.substr(cookiePos);
+			//if cookie exists, decode and load column data into tabulator
+			if(cookiePos > -1){
+				cookie = cookie.substr(cookiePos);
 
-			var end = cookie.indexOf(";");
+				var end = cookie.indexOf(";");
 
-			if(end > -1){
-				cookie = cookie.substr(0, end);
+				if(end > -1){
+					cookie = cookie.substr(0, end);
+				}
+
+				colString = cookie.replace(self.options.persistentLayoutID + "=", "");
 			}
 
-			cookie = cookie.replace(cookieID+"=", "");
+		}else{
+			//find loocal storage value
+			var colString = localStorage.getItem(self.options.persistentLayoutID);
+		}
 
-			self.setColumns(JSON.parse(cookie), true);
+		if(colString){
+			self.setColumns(JSON.parse(colString), true);
 		}else{
 			self._colLayout();
 		}
@@ -536,8 +564,8 @@
 			//Trigger Redraw
 			self._colLayout(true);
 
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
+			if(self.options.persistentLayout){
+				self._setPersistentCol();
 			}
 		}
 	},
@@ -657,8 +685,8 @@
 			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
 			self._renderTable();
 
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
+			if(self.options.persistentLayout){
+				self._setPersistentCol();
 			}
 
 			return true;
@@ -684,8 +712,8 @@
 			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show();
 			self._renderTable();
 
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
+			if(self.options.persistentLayout){
+				self._setPersistentCol();
 			}
 			return true;
 		}
@@ -716,8 +744,8 @@
 				cell.hide();
 			}
 
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
+			if(self.options.persistentLayout){
+				self._setPersistentCol();
 			}
 
 			self._renderTable();
@@ -1986,8 +2014,8 @@
 					//trigger callback
 					options.colMoved(ui.item.data("field"), options.columns);
 
-					if(self.options.columnLayoutCookie){
-						self._setColCookie();
+					if(self.options.persistentLayout){
+						self._setPersistentCol();
 					}
 				},
 			});
@@ -2220,8 +2248,8 @@
 					});
 
 
-					if(self.options.columnLayoutCookie){
-						self._setColCookie();
+					if(self.options.persistentLayout){
+						self._setPersistentCol();
 					}
 
 					self.mouseDrag = false;
