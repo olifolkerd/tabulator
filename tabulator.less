@@ -60,6 +60,28 @@
 		.tabulator-col{
 			display:inline-block;
 
+			.tabulator-col-title{
+				padding:4px;
+
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			&.tabulator-col-group{
+				.tabulator-col-title+.tabulator-col{
+					margin-left:0;
+				}
+
+				.tabulator-col{
+					margin-left:1px;
+					margin-right:-1px;
+
+					border-top:1px solid @headerBorderColor;
+					border-right:1px solid @headerBorderColor;
+				}
+			}
+
 			&:first-child{
 				.tabulator-handle.prev{
 					display: none;
@@ -162,12 +184,8 @@
 			position:relative;
 			box-sizing:border-box;
 			border-right:1px solid @headerBorderColor;
-			padding:4px;
 			text-align:left;
 			vertical-align: bottom;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
 		}
 	}
 

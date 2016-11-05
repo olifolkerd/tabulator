@@ -56,6 +56,8 @@
 
 	progressiveRenderTimer:null, //timer for progressiver rendering
 
+	columnList:[], //an array of all acutal columns ignoring column groupings
+
 	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"), //loader blockout div
 
 	//setup options
@@ -1719,7 +1721,7 @@
 			row.append(handle);
 		}
 
-		$.each(self.options.columns, function(i, column){
+		$.each(self.columnList, function(i, column){
 			//deal with values that arnt declared
 			var value = typeof(item[column.field]) == "undefined" ? "" : item[column.field];
 
@@ -1899,8 +1901,8 @@
 
 		if(self.header){
 			var headerHeight = self.header.outerHeight();
-
-			$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			console.log("header-height", self.header.innerHeight(), self.header.outerHeight())
+			$(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
 
 			if(self.options.height && headerHeight != self.header.outerHeight()){
 				self.tableHolder.css({
@@ -1934,9 +1936,155 @@
 		var element = self.element;
 
 		self.header.empty();
+		self.columnList = [];
+
+		self._colLayoutGroup(self.options.columns, self.header);
+
 
 		//create sortable arrow chevrons
 		var arrow = $("<div class='tabulator-arrow'></div>");
+
+
+		//handle resizable columns
+		if(self.options.colResizable){
+			//create resize handle
+			var handle = $("<div class='tabulator-handle'></div>");
+			var prevHandle = $("<div class='tabulator-handle prev'></div>");
+
+			$(".tabulator-col", self.header).append(handle)
+			.append(prevHandle);
+
+			$(".tabulator-col .tabulator-handle", self.header).on("mousedown", function(e){
+
+				e.stopPropagation(); //prevent resize from interfereing with movable columns
+
+				var colHandle = $(this);
+
+				var colElement = !colHandle.hasClass("prev") ? colHandle.closest(".tabulator-col") : colHandle.closest(".tabulator-col").prev(".tabulator-col");
+
+				if(typeof colElement.attr("data-index") === "undefined"){
+					colElement = $(".tabulator-col", colElement).last();
+				}
+
+				if(colElement){
+					self.mouseDrag = e.screenX;
+					self.mouseDragWidth = colElement.outerWidth();
+					self.mouseDragElement = colElement;
+				}
+
+				$("body").on("mouseup", endColMove);
+			})
+			self.element.on("mousemove", function(e){
+				if(self.mouseDrag){
+					self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
+					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
+				}
+			})
+
+			var endColMove = function(e){
+				if(self.mouseDrag){
+					e.stopPropagation();
+					e.stopImmediatePropagation();
+
+					$("body").off("mouseup", endColMove);
+
+					self.mouseDragOut = true;
+
+					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
+
+
+					$.each(self.options.columns, function(i, item){
+						if(item.field == self.mouseDragElement.data("field")){
+							item.width = self.mouseDragElement.outerWidth();
+						}
+					});
+
+
+					if(self.options.persistentLayout){
+						self._setPersistentCol();
+					}
+
+					self.mouseDrag = false;
+					self.mouseDragWidth = false;
+					self.mouseDragElement = false;
+				}
+			}
+
+		}
+
+		element.append(self.header);
+		self.tableHolder.append(self.table);
+		element.append(self.tableHolder);
+
+		//add pagination footer if needed
+		if(self.footer){
+			element.append(self.footer);
+
+			var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
+
+			self.tableHolder.css({
+				"min-height":"calc(100% - " + footerHeight + "px)",
+				"max-height":"calc(100% - " + footerHeight + "px)",
+			});
+		}else{
+			if(self.options.height){
+				self.tableHolder.css({
+					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+				});
+			}
+		}
+
+		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
+		if(self.options.pagination == "local" && !self.options.paginationSize){
+			if(self.options.height){
+				self.options.paginationSize = Math.floor(self.tableHolder.outerHeight() / (self.header.outerHeight() - 1));
+			}else{
+				self.options.paginationSize = 10;
+			}
+		}
+
+		element.on("editval", ".tabulator-cell", function(e, value){
+			var element = $(this);
+			if(element.is(":focus")){element.blur()}
+				self._cellDataChange(element, value);
+		});
+
+		element.on("editcancel", ".tabulator-cell", function(e, value){
+			self._cellDataChange($(this), $(this).data("value"));
+		});
+
+		//append sortable arrows to sortable headers
+		$(".tabulator-col[data-sortable=true]", self.header)
+		.data("sortdir", "desc")
+		.append(arrow.clone());
+
+		setTimeout(function(){//give columns time to be built before rendering
+			//render column headings
+			self._colRender(false, forceRedraw);
+
+			if(self.firstRender){
+				if(self.options.data){
+					setTimeout(function(){ //give columns time to render before looding data set
+						self._parseData(self.options.data);
+					}, 100);
+				}else{
+					if(self.options.ajaxURL){
+						if(self.options.pagination === "remote"){
+							self.setPage(1);
+						}else{
+							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
+						}
+					}
+				}
+			}
+		}, 100);
+	},
+
+	_colLayoutGroup:function(columns, container){
+		var self = this;
+		var options = self.options;
+		var element = self.element;
 
 		//add column for row handle if movable rows enabled
 		if(options.movableRows){
@@ -1946,7 +2094,7 @@
 
 		//setup movable columns
 		if(options.movableCols){
-			self.header.sortable({
+			container.sortable({
 				axis: "x",
 				opacity:1,
 				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
@@ -2019,8 +2167,7 @@
 					}
 				},
 			});
-		}//
-
+		}
 
 		//handle filter update
 		function updateFilter(){
@@ -2059,52 +2206,55 @@
 			self.setFilter(colFilter);
 		}
 
+		//iterate through columns
+		columns.forEach(function(column, i){
+
+			if(!column.columns){
+				self.columnList.push(column);
+				column.index = self.columnList.length -1;
+
+				column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+				column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
+				column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
+				column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
+				column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
 
 
-		$.each(options.columns, function(i, column){
+				if(options.sortBy == column.field){
+					var sortdir = " data-sortdir='" + options.sortDir + "' ";
+					self.sortCurCol= column;
+					self.sortCurDir = options.sortDir;
+				}else{
+					var sortdir = "";
+				}
 
-			column.index = i;
+				var visibility = column.visible ? "inline-block" : "none";
 
-			column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-			column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
-			column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
-			column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
-			column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"></div>');
+				var colTitle = $("<div class='tabulator-col-title'></div>")
 
+				col.append(colTitle);
 
-			if(options.sortBy == column.field){
-				var sortdir = " data-sortdir='" + options.sortDir + "' ";
-				self.sortCurCol= column;
-				self.sortCurDir = options.sortDir;
-			}else{
-				var sortdir = "";
-			}
-
-			var visibility = column.visible ? "inline-block" : "none";
-
-			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"></div>');
+				var title = column.title ? column.title : "&nbsp";
 
 
-			var title = column.title ? column.title : "&nbsp";
+				if(column.editableTitle){
+					var titleElement = $("<input class='tabulator-title-editor'>");
+					titleElement.val(title);
 
+					titleElement.on("click", function(e){
+						e.stopPropagation();
+						$(this).focus();
+					});
 
-			if(column.editableTitle){
-				var titleElement = $("<input class='tabulator-title-editor'>");
-				titleElement.val(title);
+					titleElement.on("change", function(){
+						var newTitle = $(this).val();
+						column.title = newTitle;
+						options.colTitleChanged(newTitle, column, options.columns);
+					});
 
-				titleElement.on("click", function(e){
-					e.stopPropagation();
-					$(this).focus();
-				});
-
-				titleElement.on("change", function(){
-					var newTitle = $(this).val();
-					column.title = newTitle;
-					options.colTitleChanged(newTitle, column, options.columns);
-				});
-
-				title = titleElement;
-			}
+					title = titleElement;
+				}
 
 			//Manage Header Column Filters
 			if(column.headerFilter){
@@ -2148,14 +2298,13 @@
 				});
 
 				//add filter to column header
-				col.append(title);
+				colTitle.append(title);
 
-				col.append(filter);
+				colTitle.append(filter);
 
 			}else{
 
-
-				col.html(title);
+				colTitle.html(title);
 			}
 
 
@@ -2193,140 +2342,17 @@
 				})
 			}
 
-			self.header.append(col);
-
-		});
-
-		//handle resizable columns
-		if(self.options.colResizable){
-			//create resize handle
-			var handle = $("<div class='tabulator-handle'></div>");
-			var prevHandle = $("<div class='tabulator-handle prev'></div>");
-
-			$(".tabulator-col", self.header).append(handle)
-			.append(prevHandle);
-
-			$(".tabulator-col .tabulator-handle", self.header).on("mousedown", function(e){
-
-				e.stopPropagation(); //prevent resize from interfereing with movable columns
-
-				var colHandle = $(this);
-
-				var colElement = !colHandle.hasClass("prev") ? colHandle.closest(".tabulator-col") : colHandle.closest(".tabulator-col").prev(".tabulator-col");
-
-				if(colElement){
-					self.mouseDrag = e.screenX;
-					self.mouseDragWidth = colElement.outerWidth();
-					self.mouseDragElement = colElement;
-				}
-
-				$("body").on("mouseup", endColMove);
-			})
-			self.element.on("mousemove", function(e){
-				if(self.mouseDrag){
-					self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
-					self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
-				}
-			})
-
-			var endColMove = function(e){
-				if(self.mouseDrag){
-					e.stopPropagation();
-					e.stopImmediatePropagation();
-
-					$("body").off("mouseup", endColMove);
-
-					self.mouseDragOut = true;
-
-					self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
-
-
-					$.each(self.options.columns, function(i, item){
-						if(item.field == self.mouseDragElement.data("field")){
-							item.width = self.mouseDragElement.outerWidth();
-						}
-					});
-
-
-					if(self.options.persistentLayout){
-						self._setPersistentCol();
-					}
-
-					self.mouseDrag = false;
-					self.mouseDragWidth = false;
-					self.mouseDragElement = false;
-				}
-			}
-
-		}
-
-		element.append(self.header);
-		self.tableHolder.append(self.table);
-		element.append(self.tableHolder);
-
-		//add pagination footer if needed
-		if(self.footer){
-			element.append(self.footer);
-
-			var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
-
-			self.tableHolder.css({
-				"min-height":"calc(100% - " + footerHeight + "px)",
-				"max-height":"calc(100% - " + footerHeight + "px)",
-			});
 		}else{
-			if(self.options.height){
-				self.tableHolder.css({
-					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				});
-			}
+			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-title">' + column.title + '</div></div>');
+			self._colLayoutGroup(column.columns, col);
 		}
 
-		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
-		if(self.options.pagination == "local" && !self.options.paginationSize){
-			if(self.options.height){
-				self.options.paginationSize = Math.floor(self.tableHolder.outerHeight() / (self.header.outerHeight() - 1));
-			}else{
-				self.options.paginationSize = 10;
-			}
-		}
+		container.append(col);
 
-		element.on("editval", ".tabulator-cell", function(e, value){
-			var element = $(this);
-			if(element.is(":focus")){element.blur()}
-				self._cellDataChange(element, value);
-		});
 
-		element.on("editcancel", ".tabulator-cell", function(e, value){
-			self._cellDataChange($(this), $(this).data("value"));
-		});
+	});
 
-		//append sortable arrows to sortable headers
-		$(".tabulator-col[data-sortable=true]", self.header)
-		.data("sortdir", "desc")
-		.append(arrow.clone());
-
-		//render column headings
-		self._colRender(false, forceRedraw);
-
-		if(self.firstRender){
-			if(self.options.data){
-				setTimeout(function(){ //give columns time to render before aloding data set
-					self._parseData(self.options.data);
-				}, 100);
-			}else{
-				if(self.options.ajaxURL){
-					if(self.options.pagination === "remote"){
-						self.setPage(1);
-					}else{
-						self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
-					}
-				}
-			}
-		}
-
-	},
+},
 
 	//layout coluns on first render
 	_colRender:function(fixedwidth, forceRedraw){
@@ -2338,7 +2364,7 @@
 
 		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
 			//free sized table
-			$.each(options.columns, function(i, column){
+			$.each(self.columnList, function(i, column){
 				colWidth = $(".tabulator-col[data-field='" + column.field + "']", element).outerWidth();
 				var col = $(".tabulator-cell[data-field='" + column.field + "']", element);
 				col.css({width:colWidth});
@@ -2364,7 +2390,7 @@
 				var widthIdealCount = 0;
 				var lastVariableCol = "";
 
-				$.each(options.columns, function(i, column){
+				$.each(self.columnList, function(i, column){
 					if(column.visible){
 
 						colCount++;
@@ -2391,7 +2417,7 @@
 
 				if(proposedWidth >= parseInt(options.colMinWidth)){
 
-					$.each(options.columns, function(i, column){
+					$.each(self.columnList, function(i, column){
 						if(column.visible){
 							var newWidth = column.width ? column.width : proposedWidth;
 
@@ -2414,7 +2440,7 @@
 			}else{
 
 				//free sized table
-				$.each(options.columns, function(i, column){
+				$.each(self.columnList, function(i, column){
 
 					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]", element);
 
