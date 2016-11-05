@@ -2186,12 +2186,8 @@
 
 					//splice column into new position
 					var column = container.splice(search(container, from), 1)[0];
-
 					to = search(container, to);
-
 					container.splice(to !== false ? to : container.length , 0, column);
-
-					console.log("updated", options.columns);
 
 					//trigger callback
 					options.colMoved(ui.item.data("field"), options.columns);
