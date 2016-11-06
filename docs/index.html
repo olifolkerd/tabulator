@@ -1119,22 +1119,34 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-js">var colDefs = $("#example-table").tabulator("getColumns") //get column definition array</pre>
 
                     <a class="anchor" id="persistant-columns"></a>
-                    <h2>Persistent Column Layout</h2>
-                    <p>Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page, the table is laid out just as they left it. To enable this feature set the <span class='param'>columnLayoutCookie</span> options parameter to <span class='param'>true</span></p>
+                    <h2>Persistent Column Layout <span class="label label-primary">Updated</span></h2>
+                    <p>Tabulator can store the layout of columns so that each time a user comes back to the page, the table is laid out just as they left it.</p>
+
+                    <p>
+                        To enable column layout persistence, use the <span class='param'>persistentLayout</span> parameter. This can take one of three possible values:
+
+                        <ul>
+                            <li><strong>local</strong> - <i>(string)</i> Store the persistence information in the localStorage object</li>
+                            <li><strong>cookie</strong> - <i>(string)</i> Store the persistence information in a cookie</li>
+                            <li><strong>true</strong> - <i>(boolean)</i> check if localStorage is available and store persistance information, otherwise store in cookie</li>
+                        </ul>
+                    </p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columnLayoutCookie:true, //Set column layout persistence cookie
+    persistentLayout:true, //Enable column layout persistence
 });</pre>
 
-                    <p>If you are planning on having multiple tables on the same page with <span class='param'>columnLayoutCookie</span> set to <span class='param'>true</span> then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the cookie.</p>
+                    <p>If you are planning on having multiple tables on the same page using column persistence then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the storage id.</p>
 
                     <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
-                    <p>Or if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>columnLayoutCookieID</span> to a unique string value for that table.</p>
+                    <p>Alternatively if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>persistentLayoutID</span> to a unique storage id for that table.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columnLayoutCookieID:"example1", //cookie id string, can only be numbers, letters, hyphens and underscores.
-    columnLayoutCookie:true, //Set column layout persistence cookie
+    persistentLayout:true, //Enable column layout persistence
+    persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
+                    <strong>NOTE:</strong> If you update the column definition array after the the layout has been stored you may have to change the storage id to clear out the old column layout information.
+
                     <a class="anchor" id="editable-column-title"></a>
                     <h2>Editable Column Titles</h2>
                     <p>Column titles can be made user editable by setting the <span class='param'>editableTitle</span> parameter to <span class='param'>true</span> in a columns definition object.<p>
@@ -1957,7 +1969,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="depricated"></a>
                 <article>
-                    <h1>Depricated Functionality</h1>
+                    <h1>Depricated Functionality <span class="label label-primary">Updated</span></h1>
                     <p>The following sections have been updated and now have elements of obsolete functionality that have been depricated and will be removed in version 3.0.</p>
 
                     <h2>Pagination</h2>
@@ -1968,9 +1980,23 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     pagination:true, //enable local pagination
 });</pre>
                     <h3>Replacement Function</h3>
-                    <p>This has been replaced with using a string to choose between <span class='param'>local</span> and <span class='param'>remote</span> pagination options.</p>
+                    <p>This has been replaced with using a string to choose between <span class='param'>local</span> and <span class='param'>remote</span> pagination options:</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     pagination:"local", //enable local pagination
+});</pre>
+
+                    <h2>Persistent Column Layout <span class="label label-danger">New</span></h2>
+                    <h3>Depricated Function</h3>
+                    <p>enabling persistent column layouts using the <span class='param'>columnLayoutCookie</span> and <span class='param'>columnLayoutCookie</span> options:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columnLayoutCookie:true, //Enable column layout persistence
+    columnLayoutCookieID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
+});</pre>
+                    <h3>Replacement Function</h3>
+                    <p>This has been replaced with using the <span class='param'>persistentLayout</span> and <span class='param'>persistentLayoutID</span> options:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    persistentLayout:true, //Enable column layout persistence
+    persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
 
                 </article>
@@ -1989,16 +2015,16 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
                         <li><a href="#filtering">Filtering Data</a></li>
-                        <li><a href="#manipulating-data">Editing &amp; Manipulating Data </a></li>
-                        <li><a href="#get-set">Mutators &amp; Accessors </a></li>
-                        <li><a href="#movable">Movable Rows and Columns</a></li>
+                        <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
+                        <li><a href="#get-set">Mutators &amp; Accessors</a></li>
+                        <li><a href="#movable">Movable Rows and Columns <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
                         <li><a href="#options">Table Options</a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
-                        <li><a href="#callbacks">Callbacks &amp; Events </a></li>
-                        <li><a href="#extending">Extending Tabulator </a></li>
+                        <li><a href="#callbacks">Callbacks &amp; Events</a></li>
+                        <li><a href="#extending">Extending Tabulator</a></li>
                         <li><a href="#accessibility">Accessibility <span class="label label-danger">New</span></a></li>
-                        <li><a href="#depricated">Depricated Functionality </a></li>
+                        <li><a href="#depricated">Depricated Functionality <span class="label label-primary">Updated</span></a></li>
                     </ul>
                 </nav>
             </div>
