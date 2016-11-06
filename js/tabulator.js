@@ -56,12 +56,15 @@
 
 	progressiveRenderTimer:null, //timer for progressiver rendering
 
+	columnList:[], //an array of all acutal columns ignoring column groupings
+
 	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"), //loader blockout div
 
 	//setup options
 	options: {
 		colMinWidth:"40px", //minimum global width for a column
 		colResizable:true, //resizable columns
+		colVertAlign:"bottom", //vertical alignment of column headers
 
 		height:false, //height of tabulator
 		fitColumns:false, //fit colums to width of screen;
@@ -70,8 +73,8 @@
 		movableRows:false, //enable movable rows
 		movableRowHandle:"<div></div><div></div><div></div>", //handle for movable rows
 
-		columnLayoutCookie:false, //store cookie with column _styles
-		columnLayoutCookieID:"", //id for stored cookie
+		persistentLayout:false, //store cookie with column _styles
+		persistentLayoutID:"", //id for stored cookie
 
 		pagination:false, //enable pagination
 		paginationSize:false, //size of pages
@@ -181,52 +184,87 @@
 		var element = self.element;
 		var options = self.options;
 
+		var rows = $("tbody tr", element);
+		var headers = $("th", element);
+
 		var hasIndex = false;
 
-		//build columns from table header if they havnt been set;
-		if(!options.columns.length){
-			var headers = $("th", element);
+		var columns = options.columns;
 
-			if(headers.length){
-				//create column array from headers
-				headers.each(function(index){
+		//find column if it has already been defined
+		function search(title){
 
-					var header = $(this);
+			var match = false;
 
-					var col = {title:header.text(), field:header.text().toLowerCase().replace(" ", "_")};
+			$.each(columns, function(index, column) {
+				if(column.title === title){
+					match = column;
+					return false;
+				}
+			});
 
-					var width = header.attr("width");
-
-					if(width){
-						col.width = width;
-					}
-
-					if(col.field == options.index){
-						hasIndex = true;
-					}
-
-					options.columns.push(col);
-				});
-			}else{
-				//create blank table headers
-				headers = $("tr:first td", element);
-
-				headers.each(function(index){
-					var col = {title:"", field:"col" + index};
-
-					var width = $(this).attr("width");
-
-					if(width){
-						col.width = width;
-					}
-
-					options.columns.push(col);
-				});
-			}
+			return match;
 		}
 
+		//build columns from table header if they havnt been set;
+
+
+		if(headers.length){
+			//create column array from headers
+			headers.each(function(index){
+
+				var header = $(this);
+				var exists = false;
+
+				var col = search(header.text());
+
+				if(col){
+					exists = true;
+				}else{
+					col = {title:header.text()};
+				}
+
+				if(!col.field) {
+					col.field = header.text().toLowerCase().replace(" ", "_");
+				}
+
+				$("td:eq(" + index + ")", rows).data("field", col.field)
+
+				var width = header.attr("width");
+
+				if(width && !col.width)	{
+					col.width = width;
+				}
+
+				if(col.field == options.index){
+					hasIndex = true;
+				}
+
+				if(!exists){
+					columns.push(col)
+				}
+			});
+		}else{
+			//create blank table headers
+			headers = $("tr:first td", element);
+
+			headers.each(function(index){
+				var col = {title:"", field:"col" + index};
+				$("td:eq(" + index + ")", rows).data("field", col.field)
+
+				var width = $(this).attr("width");
+
+				if(width){
+					col.width = width;
+				}
+
+				columns.push(col);
+			});
+		}
+
+
 		//iterate through table rows and build data set
-		$("tbody tr", element).each(function(rowIndex){
+		rows.each(function(rowIndex){
 			var item = {};
 
 			//create index if the dont exist in table
@@ -236,7 +274,7 @@
 
 			//add row data to item
 			$("td", $(this)).each(function(colIndex){
-				item[options.columns[colIndex].field] = $(this).text();
+				item[$(this).data("field")] = $(this).text();
 			});
 
 			self.data.push(item);
@@ -267,6 +305,26 @@
 		var options = self.options;
 		var element = self.element;
 
+
+		//// backwards compatability options adjustments ////
+
+		//old persistan column layout adjustment
+		if( typeof options.columnLayoutCookie != 'undefined'){
+			options.persistentLayout = options.columnLayoutCookie;
+			options.persistentLayoutID = options.columnLayoutCookieID;
+		}
+		/////////////////////////////////////////////////////
+
+
+		//setup persistent layout storage if needed
+		if(self.options.persistentLayout){
+			//determine persistant layout storage type
+			self.options.persistentLayout = self.options.persistentLayout !== true ?  self.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
+
+			//set storage tag
+			self.options.persistentLayoutID = "tabulator-" + (self.options.persistentLayoutID ? self.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
+		}
+
 		options.colMinWidth = isNaN(options.colMinWidth) ? options.colMinWidth : options.colMinWidth + "px";
 
 		if(options.height){
@@ -274,7 +332,7 @@
 			element.css({"height": options.height});
 		}
 
-		element.addClass("tabulator");
+		element.addClass("tabulator").attr("role", "grid");
 
 		self.header = $("<div class='tabulator-header'></div>")
 
@@ -318,7 +376,7 @@
 				self.footer = options.paginationElement;
 			}
 
-			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first'>First</span><span class='tabulator-page' data-page='prev'>Prev</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next'>Next</span><span class='tabulator-page' data-page='last'>Last</span></span>");
+			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first' role='button' aria-label='First Page'>First</span><span class='tabulator-page' data-page='prev' role='button' aria-label='Previous Page'>Prev</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next' role='button' aria-label='Next Page'>Next</span><span class='tabulator-page' data-page='last' role='button' aria-label='Last Page'>Last</span></span>");
 
 			self.paginator.on("click", ".tabulator-page", function(){
 				if(!$(this).hasClass("disabled")){
@@ -330,8 +388,8 @@
 		}
 
 		//layout columns
-		if(options.columnLayoutCookie){
-			self._getColCookie();
+		if(options.persistentLayout){
+			self._getPersistentCol();
 		}else{
 			self._colLayout();
 		}
@@ -416,65 +474,82 @@
 	////////////////// Column Manipulation //////////////////
 
 	//set column style cookie
-	_setColCookie:function(){
+	_setPersistentCol:function(){
 		var self = this;
 
-		//set cookie ied
-		var cookieID = self.options.columnLayoutCookieID ? self.options.columnLayoutCookieID : self.element.attr("id") ? self.element.attr("id") : "";
-		cookieID = "tabulator-" + cookieID;
+		//parse styles from columns
+		function parseCols(columns){
+			var cols = [];
 
-		//set cookie expiration far in the future
-		var expDate = new Date();
-		expDate.setDate(expDate.getDate() + 10000);
+			columns.forEach(function(column){
+				var style = {
+					field: column.field,
+					width: column.width,
+					visible: column.visible,
+				};
 
+				if(column.columns){
+					style.title = column.title;
+					style.columns = parseCols(column.columns);
+				}
+
+				cols.push(style);
+
+			})
+
+			return cols;
+		}
 
 		//create array of column styles only
-		var columnStyles = [];
-
-		$.each(self.options.columns, function(i, column){
-
-			var style = {
-				field: column.field,
-				width: column.width,
-				visible:column.visible,
-			};
-
-			columnStyles.push(style);
-		});
-
+		var columnStyles = parseCols(self.options.columns);
 
 		//JSON format column data
 		var data = JSON.stringify(columnStyles);
 
-		//save cookie
-		document.cookie = cookieID + "=" + data + "; expires=" + expDate.toUTCString();
+		if(self.options.persistentLayout == "cookie"){
+			//set cookie expiration far in the future
+			var expDate = new Date();
+			expDate.setDate(expDate.getDate() + 10000);
+
+			//save cookie
+			document.cookie = self.options.persistentLayoutID + "=" + data + "; expires=" + expDate.toUTCString();
+		}else{
+			//save data to local storage
+			localStorage.setItem(self.options.persistentLayoutID, data);
+		}
 	},
 
 	//set Column style cookie
-	_getColCookie:function(){
+	_getPersistentCol:function(){
 		var self = this;
 
-		//set cookie ied
-		var cookieID = self.options.columnLayoutCookieID ? self.options.columnLayoutCookieID : self.element.attr("id") ? self.element.attr("id") : "";
-		cookieID = "tabulator-" + cookieID;
+		var colString = "";
 
-		//find cookie
-		var cookie = document.cookie;
-		var cookiePos = cookie.indexOf(cookieID+"=");
+		if(self.options.persistentLayout == "cookie"){
+			//find cookie
+			var cookie = document.cookie;
+			var cookiePos = cookie.indexOf(self.options.persistentLayoutID + "=");
 
-		//if cookie exists, decode and load column data into tabulator
-		if(cookiePos > -1){
-			cookie = cookie.substr(cookiePos);
+			//if cookie exists, decode and load column data into tabulator
+			if(cookiePos > -1){
+				cookie = cookie.substr(cookiePos);
 
-			var end = cookie.indexOf(";");
+				var end = cookie.indexOf(";");
 
-			if(end > -1){
-				cookie = cookie.substr(0, end);
+				if(end > -1){
+					cookie = cookie.substr(0, end);
+				}
+
+				colString = cookie.replace(self.options.persistentLayoutID + "=", "");
 			}
 
-			cookie = cookie.replace(cookieID+"=", "");
+		}else{
+			//find loocal storage value
+			var colString = localStorage.getItem(self.options.persistentLayoutID);
+		}
 
-			self.setColumns(JSON.parse(cookie), true);
+		if(colString){
+			self.setColumns(JSON.parse(colString), true);
 		}else{
 			self._colLayout();
 		}
@@ -483,50 +558,69 @@
 	//set tabulator columns
 	setColumns: function(columns, update){
 		var self = this;
-		var oldColumns = self.options.columns;
 
 		if(Array.isArray(columns)){
 
 			//if updateing columns work through exisiting column data
 			if(update){
 
-				var newColumns = [];
+				function updateCols(oldCols, newCols){
+					newCols.forEach(function(item, to){
 
-				//iterate through each of the new columns
-				$.each(columns, function(i, column){
+						var type = item.columns ? "group" : (item.field ? "field" : "object");
+						var from = search(oldCols, item, type);
 
-					//find a match in the original column array
-					//var find = column.field;
-					var find = column.field == "" ? column : column.field;
+						if(from !== false){
+							var column = oldCols.splice(from, 1)[0];
 
-					$.each(self.options.columns, function(i, origColumn){
+							column.width = item.width;
+							column.visible = item.visible;
 
-						var match = typeof(find) == "object" ? origColumn == find : origColumn.field == find;
+							oldCols.splice(to , 0, column);
 
-						//if matching, update layout data and add to new column array
-						if(match){
-
-							var result = self.options.columns.splice(i, 1)[0];
-
-							result.width = column.width;
-							result.visible = column.visible;
-
-							newColumns.push(result);
-
-							return false;
+							if(type == "group"){
+								updateCols(column.columns, item.columns);
+							}
 						}
 
 					});
-
-				});
-
-				//if any aditional columns left add them to the end of the table
-				if(self.options.columns.length > 0){
-					newColumns.concat(self.options.columns);
 				}
 
-				//replace old columns with new
-				self.options.columns = newColumns;
+				function search(columns, col, type){
+
+					var match = false;
+
+					$.each(columns, function(i, column){;
+
+						switch(type){
+							case "group":
+							if(col.title === column.title && col.columns.length === column.columns.length){
+								match = i;
+							}
+							break;
+
+							case "field":
+							if(col.field === column.field){
+								match = i;
+							}
+							break;
+
+							case "object":
+							if(col === column){
+								match = i;
+							}
+							break;
+						}
+
+						if(match !== false){
+							return false;
+						}
+					});
+
+					return match;
+				}
+
+				updateCols(self.options.columns, columns);
 
 			}else{
 				// if replaceing columns, replace columns array with new
@@ -536,8 +630,8 @@
 			//Trigger Redraw
 			self._colLayout(true);
 
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
+			if(self.options.persistentLayout){
+				self._setPersistentCol();
 			}
 		}
 	},
@@ -554,37 +648,17 @@
 		var self = this;
 
 		if(newCol){
-			var columns = self.options.columns;
-
-			var index = false;
-
 			if(field){
+				var match = self._findColumn(field);
 
-				index = isNaN(field) ? false : field;
-
-				if(index === false){
-
-					$.each(self.options.columns, function(i, item){
-						if(item.field == field){
-							index = i;
-							return false;
-						}
-					});
+				if(match){
+					match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
 				}
-
-				if(!before){
-					++index;
-				}
-
+			}else{
+				self.options.columns.splice(before ? 0 : self.options.columns.length + 1, 0, newCol);
 			}
 
-			if(index === false){
-				index = before ? 0 : columns.length + 1;
-			}
-
-			columns.splice(index, 0, newCol);
-
-			self.setColumns(columns);
+			self.setColumns(self.options.columns);
 		}
 	},
 
@@ -593,135 +667,125 @@
 		var self = this;
 
 		if(field){
-			var columns = self.options.columns;
 
-			var index = isNaN(field) ? false : field;
+			var match = self._findColumn(field);
 
-			if(index === false){
-				$.each(self.options.columns, function(i, item){
-					if(item.field == field){
-						index = i;
-						return false;
-					}
-				});
+			if(match){
+				match.parent.splice(match.index, 1);
 			}
 
-			if(index !== false){
-				columns.splice(index, 1);
-			}
-
-			self.setColumns(columns);
+			self.setColumns(self.options.columns);
 		}
 	},
 
-	//find column
-	_findColumn:function(field){
+	//traverse all columns and trigger callback on each column
+	_traverseColumns:function(callback, columns){
 		var self = this;
+		columns = columns ? columns : self.options.columns;
 
-		var result = false;
+		$.each(columns, function(i, column){
 
-		$.each(self.options.columns, function(i, column){
-			if(typeof(field) == "object"){
+			if(column.columns){
+				self._traverseColumns(callback, column.columns);
+			}else{
+				callback(column);
+			}
+
+		});
+	},
+
+	//find column
+	_findColumn:function(field, columns){
+		var self = this;
+		var match = false;
+
+		columns = columns ? columns : self.options.columns;
+
+		$.each(columns, function(i, column){
+			switch(typeof field){
+				case "object":
 				if(column == field){
-					result = column;
+					match = {parent:columns, column:column, index:i};
 					return false;
 				}
-			}else{
+				break;
+
+				case "function":
+				if(field(column)){
+					match = {parent:columns, column:column, index:i};
+					return false;
+				}
+				break;
+
+				default:
 				if(column.field == field){
-					result = column;
+					match = {parent:columns, column:column, index:i};
+					return false;
+				}
+			}
+
+			if(column.columns){
+				var children = self._findColumn(field, column.columns);
+
+				if(children){
+					match = children;
 					return false;
 				}
 			}
 		});
 
-		return result;
+		return match;
 	},
 
+	_setColVisibility:function(column, visibility){
+		var self = this;
+
+		if(column){
+			column.visible = visibility;
+
+			var elements = $(".tabulator-col[data-field=" + column.field + "], .tabulator-cell[data-field=" + column.field + "]", self.element)
+
+			if(visibility){
+				elements.show();
+			}else{
+				elements.hide();
+			}
+
+			self._renderTable();
+
+			if(self.options.persistentLayout){
+				self._setPersistentCol();
+			}
+		}
+	},
 
 	//hide column
 	hideCol: function(field){
 		var self = this;
-		var column = false;
+		var match = self._findColumn(field);
 
-		$.each(self.options.columns, function(i, item){
-			if(item.field == field){
-				column = i;
-				return false;
-			}
-		});
-
-		if(column === false){
-			return false;
-		}else{
-			self.options.columns[column].visible = false;
-			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
-			self._renderTable();
-
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
-			}
-
-			return true;
+		if(match){
+			self._setColVisibility(match.column, false);
 		}
 	},
 
 	//show column
 	showCol: function(field){
 		var self = this;
-		var column = false;
+		var match = self._findColumn(field);
 
-		$.each(self.options.columns, function(i, item){
-			if(item.field == field){
-				column = i;
-				return false;
-			}
-		});
-
-		if(column === false){
-			return false;
-		}else{
-			self.options.columns[column].visible = true;
-			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show();
-			self._renderTable();
-
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
-			}
-			return true;
+		if(match){
+			self._setColVisibility(match.column, true);
 		}
 	},
 
 	//toggle column visibility
 	toggleCol: function(field){
 		var self = this;
-		var column = false;
+		var match = self._findColumn(field);
 
-		$.each(self.options.columns, function(i, item){
-			if(item.field == field){
-				column = i;
-				return false;
-			}
-		});
-
-		if(column === false){
-			return false;
-		}else{
-			self.options.columns[column].visible = !self.options.columns[column].visible;
-
-			var cell = $(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element);
-
-			if(self.options.columns[column].visible){
-				cell.show();
-			}else{
-				cell.hide();
-			}
-
-			if(self.options.columnLayoutCookie){
-				self._setColCookie();
-			}
-
-			self._renderTable();
-			return true;
+		if(match){
+			self._setColVisibility(match.column, !match.column.visible);
 		}
 	},
 
@@ -818,6 +882,9 @@
 			item = {id:0};
 		}
 
+		//Apply mutators if present
+		item = self._mutateData(item);
+
 		//create blank row
 		var row = self._renderRow(item);
 
@@ -855,6 +922,9 @@
 		if(row.length){
 			var rowData = row.data("data");
 
+			//Apply mutators if present
+			item = self._mutateData(item);
+
 			//makesure there are differences between the new and old data before updating
 			if(JSON.stringify(rowData) !== JSON.stringify(item)){
 
@@ -862,7 +932,7 @@
 				for (var attrname in item) { rowData[attrname] = item[attrname]; }
 
 				//render new row
-				var newRow = self._renderRow(rowData);
+			var newRow = self._renderRow(rowData);
 
 				//replace old row with new row
 				row.replaceWith(newRow);
@@ -927,7 +997,7 @@
 	_applyAccessors:function(data){
 		var self = this;
 
-		self.options.columns.forEach(function(col, i){
+		self._traverseColumns(function(col){
 			if(col.accessor){
 				var accessor = typeof col.accessor === "function" ? col.accessor : self.accessors[col.accessor];
 
@@ -935,7 +1005,7 @@
 					item[col.field] = accessor(item[col.field], item);
 				});
 			}
-		});
+		})
 
 		return data;
 	},
@@ -1108,33 +1178,39 @@
 				}
 			}
 
-			self.data = newData;
+			self.options.dataLoaded(newData);
 
-			self.options.dataLoaded(self.data);
+			self.data = self._mutateData(newData);
 
-			self._mutateData();
+			//filter incomming data
+			self._filterData();
 		}
 
 	},
 
 	//applu mutators if present
-	_mutateData:function(){
+	_mutateData:function(data){
 		var self = this;
 
-		self.options.columns.forEach(function(col, i){
+		self._traverseColumns(function(col){
 			if(col.mutator && col.mutateType !== "edit"){
 
 				var mutator = typeof col.mutator === "function" ? col.mutator : self.mutators[col.mutator];
 
-				self.data.forEach(function(item, j){
-					item[col.field] = mutator(item[col.field], "data", item);
-				});
+				if(Array.isArray(data)){
+					data.forEach(function(item, j){
+						item[col.field] = mutator(item[col.field], "data", item);
+					});
+				}else{
+					data[col.field] = mutator(data[col.field], "data", data);
+				}
 			}
 		});
 
-		//filter incomming data
-		self._filterData();
+		return data;
 	},
+
+
 
 	////////////////// Data Filtering //////////////////
 
@@ -1291,9 +1367,9 @@
 		var self = this;
 
 		if (element.data("sortdir") == "desc"){
-			element.data("sortdir", "asc");
+			element.data("sortdir", "asc").attr("aria-sort", "ascending");
 		}else{
-			element.data("sortdir", "desc");
+			element.data("sortdir", "desc").attr("aria-sort", "descending");
 		}
 
 		self.sort(column, element.data("sortdir"));
@@ -1311,18 +1387,19 @@
 
 		$.each(sortList, function(i, item){
 
-			//convert colmun name to column object
+
+
+			//convert column name to column object
 			if(typeof(item.field) == "string"){
-				$.each(options.columns, function(i, col){
-					if(col.field == item.field){
-						item.field = col;
-						return false;
-					}
-				});
+				var match = self._findColumn(item.field);
+
+				if(match){
+					item.field = match.column;
+				}
 			}
 
 			//reset all column sorts
-			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc");
+			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc").attr("aria-sort", "none");
 			$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc");
 
 			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
@@ -1494,7 +1571,7 @@
 
 			var active = i == self.paginationCurrentPage ? "active" : "";
 
-			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "'>" + i + "</span>");
+			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "' role='button' aria-label='Show Page " + i + "'>" + i + "</span>");
 		}
 
 		if(self.paginationMaxPage > 10){
@@ -1503,14 +1580,14 @@
 			}
 		}
 
-		$(".tabulator-page", self.paginator).removeClass("disabled");
+		$(".tabulator-page", self.paginator).removeClass("disabled").attr("aria-disabled", "false");
 
 		if(self.paginationCurrentPage == 1){
-			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled");
+			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled").attr("aria-disabled", "true");
 		}
 
 		if(self.paginationCurrentPage == self.paginationMaxPage){
-			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled");
+			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled").attr("aria-disabled", "true");
 		}
 	},
 
@@ -1662,7 +1739,7 @@
 	//render individual rows
 	_renderRow:function(item){
 		var self = this;
-		var row = $("<div class='tabulator-row' data-id='" + item[self.options.index] + "'></div>");
+		var row = $("<div class='tabulator-row' data-id='" + item[self.options.index] + "' role='row'></div>");
 
 		//bind row data to row
 		row.data("data", item);
@@ -1679,7 +1756,7 @@
 			row.append(handle);
 		}
 
-		$.each(self.options.columns, function(i, column){
+		$.each(self.columnList, function(i, column){
 			//deal with values that arnt declared
 			var value = typeof(item[column.field]) == "undefined" ? "" : item[column.field];
 
@@ -1698,7 +1775,7 @@
 			//set style as string rather than using .css for massive improvement in rendering time
 			var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
 
-			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' ></div>");
+			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
 
 			//add tooltip to cell
 			self._generateTooltip(cell, item, column.tooltip);
@@ -1774,12 +1851,12 @@
 
 	//render group element
 	_renderGroup:function(value){
-		var group = $("<div class='tabulator-group show' data-value='" + value + "'><div class='tabulator-group-header'></div><div class='tabulator-group-body'></div></div>");
+		var group = $("<div class='tabulator-group show' data-value='" + value + "' role='rowgroup'><div class='tabulator-group-header' role='rowheader'></div><div class='tabulator-group-body'></div></div>");
 
 		return group;
 	},
 
-	//render group header
+	//render group set
 	_renderGroupHeader:function(group){
 		var self = this;
 
@@ -1804,6 +1881,7 @@
 	//show loader blockout div
 	_showLoader:function(self, msg){
 		if(self.options.showLoader){
+			$(".tabulator-loader-msg", self.loaderDiv).attr("role","alert")
 			$(".tabulator-loader-msg", self.loaderDiv).empty().append(msg);
 			$(".tabulator-loader-msg", self.loaderDiv).css({"margin-top":(self.element.innerHeight() / 2) - ($(".tabulator-loader-msg", self.loaderDiv).outerHeight()/2)});
 			self.element.append(self.loaderDiv);
@@ -1858,9 +1936,28 @@
 
 		if(self.header){
 			var headerHeight = self.header.outerHeight();
+			var subheadings = $(".tabulator-col-group-cols>.tabulator-col:not(.tabulator-col-group)", self.header);
+			var cols = $(".tabulator-col:not(.tabulator-col-group)", self.header);
 
-			$(".tabulator-col, .tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			//resize header elements
+			cols.css({"padding-top":""})
+			subheadings.css({"height":""});
+			$(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			subheadings.each(function(){
+				$(this).css({"height":$(this).parent().innerHeight()})
+			})
 
+			//vertical align column headers
+			if(self.options.colVertAlign !== "top"){
+				cols.each(function(){
+					var col = $(this);
+					var height = $(".tabulator-col-content", col).outerHeight();
+
+					col.css({"padding-top": col.innerHeight() - (self.options.colVertAlign === "bottom" ? height : height*1.5)})
+				});
+			}
+
+			//resize table holder to match header height
 			if(self.options.height && headerHeight != self.header.outerHeight()){
 				self.tableHolder.css({
 					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
@@ -1893,268 +1990,14 @@
 		var element = self.element;
 
 		self.header.empty();
+		self.columnList = [];
+
+		self._colLayoutGroup(self.options.columns, self.header);
+
 
 		//create sortable arrow chevrons
 		var arrow = $("<div class='tabulator-arrow'></div>");
 
-		//add column for row handle if movable rows enabled
-		if(options.movableRows){
-			var handle = $("<div class='tabulator-col-row-handle'>&nbsp</div>");
-			self.header.append(handle);
-		}
-
-		//setup movable columns
-		if(options.movableCols){
-			self.header.sortable({
-				axis: "x",
-				opacity:1,
-				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
-				start: function(event, ui){
-					ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
-				},
-				change: function(event, ui){
-					ui.placeholder.css({"display":"inline-block", "width":ui.item.outerWidth()});
-
-					var field = ui.item.data("field");
-					var newPos = ui.placeholder.next(".tabulator-col").data("field");
-
-					//cover situation where user moves back to original position
-					if(newPos == field){
-						newPos = ui.placeholder.next(".tabulator-col").next(".tabulator-col").data("field");
-					}
-
-					$(".tabulator-row", self.table).each(function(){
-
-						if(newPos){
-							$(".tabulator-cell[data-field=" + field + "]", $(this)).insertBefore($(".tabulator-cell[data-field=" + newPos + "]", $(this)));
-						}else{
-							$(this).append($(".tabulator-cell[data-field=" + field + "]", $(this)));
-						}
-
-
-					})
-				},
-				update: function(event, ui){
-
-					//update columns array with new positional data
-					var fromField = ui.item.data("field");
-					var toField = ui.item.next(".tabulator-col").data("field");
-
-					var from = null;
-					var to = toField ? null : options.columns.length;
-
-					$.each(options.columns, function(i, column){
-
-						if(column.field && column.field == fromField){
-							from = i;
-						}
-
-						if(from !== null){
-							return false;
-						}
-
-					});
-
-					var columns = options.columns.splice(from, 1)[0]
-
-					$.each(options.columns, function(i, column){
-
-						if(column.field && column.field == toField){
-							to = i;
-						}
-
-						if(to !== null){
-							return false;
-						}
-					});
-
-					options.columns.splice(to , 0, columns);
-
-					//trigger callback
-					options.colMoved(ui.item.data("field"), options.columns);
-
-					if(self.options.columnLayoutCookie){
-						self._setColCookie();
-					}
-				},
-			});
-		}//
-
-
-		//handle filter update
-		function updateFilter(){
-
-			var filters = {};
-
-			$(".tabulator-header-filter", self.header).each(function(){
-				var element = $(this);
-				var filterVal = element.data("filter-val");
-
-				if(filterVal){
-					filters[element.closest(".tabulator-col").data("field")] = filterVal;
-				}
-			});
-
-
-			function colFilter(data){
-				var match = true;
-
-				for(var field in filters){
-					if(typeof data[field] == "string"){
-						if(data[field].toLowerCase().indexOf(filters[field].toLowerCase()) == -1){
-							match = false;
-						}
-					}else{
-					    //match everything else explicitly
-					    if(data[field] != filters[field]){
-					    	match = false;
-					    }
-					}
-				}
-
-				return match;
-			}
-
-			self.setFilter(colFilter);
-		}
-
-
-
-		$.each(options.columns, function(i, column){
-
-			column.index = i;
-
-			column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-			column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
-			column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
-			column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
-			column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
-
-
-			if(options.sortBy == column.field){
-				var sortdir = " data-sortdir='" + options.sortDir + "' ";
-				self.sortCurCol= column;
-				self.sortCurDir = options.sortDir;
-			}else{
-				var sortdir = "";
-			}
-
-			var visibility = column.visible ? "inline-block" : "none";
-
-			var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + i + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' ></div>');
-
-
-			var title = column.title ? column.title : "&nbsp";
-
-
-			if(column.editableTitle){
-				var titleElement = $("<input class='tabulator-title-editor'>");
-				titleElement.val(title);
-
-				titleElement.on("click", function(e){
-					e.stopPropagation();
-					$(this).focus();
-				});
-
-				titleElement.on("change", function(){
-					var newTitle = $(this).val();
-					column.title = newTitle;
-					options.colTitleChanged(newTitle, column, options.columns);
-				});
-
-				title = titleElement;
-			}
-
-			//Manage Header Column Filters
-			if(column.headerFilter){
-
-				//select appropriate filter
-				if(column.headerFilter === true){
-					if(column.editor){
-						var editor = column.editor;
-					}else{
-						var editor = self.editors[column.formatter] ? column.formatter: "input";
-					}
-				}else{
-					var editor = column.headerFilter;
-				}
-
-
-				//build filter element from editor
-				var editorFunc = typeof(editor) == "string" ? self.editors[editor] : editor;
-
-				var filter = $("<div class='tabulator-header-filter'></div>");
-
-				var cellEditor = editorFunc.call(self, filter, "");
-
-				filter.append(cellEditor);
-				filter.children().attr("placeholder", self.options.headerFilterPlaceholder);
-
-				//handle events
-				cellEditor.on("click", function(e){
-					e.stopPropagation();
-					$(this).focus();
-				});
-
-				cellEditor.on("keyup change", function(e){
-					$(this).closest(".tabulator-header-filter").data("filter-val", $(this).val());
-					updateFilter()
-				});
-
-				filter.on("editval editcancel", function(e, value){
-					$(this).data("filter-val", value);
-					updateFilter()
-				});
-
-				//add filter to column header
-				col.append(title);
-
-				col.append(filter);
-
-			}else{
-
-
-				col.html(title);
-			}
-
-
-			//added callback for custom header tooltips
-			var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
-
-			if(tooltip === true){
-				tooltip = title;
-			}else if(typeof(tooltip) == "function"){
-				tooltip = tooltip(column);
-			}
-
-			if(tooltip){
-				col.attr("title", tooltip);
-			}else{
-				col.attr("title", "");
-			}
-
-
-			if(typeof(column.width) != "undefined"){
-				column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
-
-				col.data("width", column.width);
-
-				col.css({width:column.width});
-			}
-
-			//sort tabl click binding
-			if(column.sortable){
-				col.on("click", function(){
-					if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
-						self._sortClick(column, col); //trigger sort
-					}
-					self.mouseDragOut = false;
-				})
-			}
-
-			self.header.append(col);
-
-		});
 
 		//handle resizable columns
 		if(self.options.colResizable){
@@ -2173,6 +2016,10 @@
 
 				var colElement = !colHandle.hasClass("prev") ? colHandle.closest(".tabulator-col") : colHandle.closest(".tabulator-col").prev(".tabulator-col");
 
+				if(typeof colElement.attr("data-index") === "undefined"){
+					colElement = $(".tabulator-col", colElement).last();
+				}
+
 				if(colElement){
 					self.mouseDrag = e.screenX;
 					self.mouseDragWidth = colElement.outerWidth();
@@ -2184,7 +2031,7 @@
 			self.element.on("mousemove", function(e){
 				if(self.mouseDrag){
 					self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
-					self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
+					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
 				}
 			})
 
@@ -2197,18 +2044,16 @@
 
 					self.mouseDragOut = true;
 
-					self._resizeCol(self.mouseDragElement.data("index"), self.mouseDragElement.outerWidth());
+					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
 
+					var match = self._findColumn(self.mouseDragElement.data("field"));
 
-					$.each(self.options.columns, function(i, item){
-						if(item.field == self.mouseDragElement.data("field")){
-							item.width = self.mouseDragElement.outerWidth();
-						}
-					});
+					if(match){
+						match.column.width = self.mouseDragElement.outerWidth();
+					}
 
-
-					if(self.options.columnLayoutCookie){
-						self._setColCookie();
+					if(self.options.persistentLayout){
+						self._setPersistentCol();
 					}
 
 					self.mouseDrag = false;
@@ -2262,32 +2107,320 @@
 		});
 
 		//append sortable arrows to sortable headers
-		$(".tabulator-col[data-sortable=true]", self.header)
+		$(".tabulator-col[data-sortable=true] .tabulator-col-content", self.header)
 		.data("sortdir", "desc")
 		.append(arrow.clone());
 
-		//render column headings
-		self._colRender(false, forceRedraw);
+		setTimeout(function(){//give columns time to be built before rendering
+			//render column headings
+			self._colRender(false, forceRedraw);
 
-		if(self.firstRender){
-			if(self.options.data){
-				setTimeout(function(){ //give columns time to render before aloding data set
-					self._parseData(self.options.data);
-				}, 100);
-			}else{
-				if(self.options.ajaxURL){
-					if(self.options.pagination === "remote"){
-						self.setPage(1);
-					}else{
-						self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
+			if(self.firstRender){
+				if(self.options.data){
+					setTimeout(function(){ //give columns time to render before looding data set
+						self._parseData(self.options.data);
+					}, 100);
+				}else{
+					if(self.options.ajaxURL){
+						if(self.options.pagination === "remote"){
+							self.setPage(1);
+						}else{
+							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
+						}
 					}
 				}
 			}
-		}
-
+		}, 100);
 	},
 
-	//layout coluns on first render
+	_colLayoutGroup:function(columns, container){
+		var self = this;
+		var options = self.options;
+		var element = self.element;
+
+		//add column for row handle if movable rows enabled
+		if(options.movableRows){
+			var handle = $("<div class='tabulator-col-row-handle' role='gridcell'>&nbsp</div>");
+			self.header.append(handle);
+		}
+
+		//setup movable columns
+		if(options.movableCols){
+
+			container.sortable({
+				axis: "x",
+				opacity:1,
+				// containment: container,
+				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
+				start: function(event, ui){
+					ui.placeholder.css({"display":"inline-block", visibility:"visible", "width":ui.item.outerWidth()});
+				},
+				change: function(event, ui){
+					var item = ui.item;
+					var placeholder = ui.placeholder;
+
+					placeholder.css({"display":"inline-block", visibility:"visible", "width":ui.item.outerWidth()});
+
+					//find next column
+					function nextColumn(element){
+
+						var nextCol = element.next(".tabulator-col");
+
+						//handle cells at end of group
+						if(!nextCol.length){
+							var group = element.parent().closest(".tabulator-col.tabulator-col-group");
+							if(group.length){
+								var nextCol = nextColumn(group);
+							}
+						}
+
+						//handle next column being a column group
+						if(nextCol.hasClass("tabulator-col-group")){
+							return $(".tabulator-col[data-index]", nextCol).first();
+						}
+
+						return nextCol;
+					}
+
+					//move cells in column
+					function moveColumn(from, to){
+						$(".tabulator-row", self.table).each(function(){
+							if(to.length){
+								$(".tabulator-cell[data-index=" + from.data("index") + "]", $(this)).insertBefore($(".tabulator-cell[data-index=" + to.data("index") + "]", $(this)));
+							}else{
+								$(this).append($(".tabulator-cell[data-index=" + from.data("index") + "]", $(this)));
+							}
+						})
+					}
+
+					var next = nextColumn(ui.placeholder);
+
+					if(item.index != next.data("index")){
+						//move whole column groups or individual columns
+						if(item.hasClass("tabulator-col-group")){
+							var to = next
+							$($(".tabulator-col[data-index]", item).get().reverse()).each(function(){
+								moveColumn($(this), to);
+								to = $(this);
+							});
+						}else{
+							moveColumn(item, next);
+						}
+					}
+
+				},
+				update: function(event, ui){
+
+					//find column layout structure
+					var neighbour = ui.item.next(".tabulator-col");
+					var group = ui.item.parent().closest(".tabulator-col-group");
+
+
+					var from = ui.item.data("column");
+					var container = group.length ? group.data("column").columns : options.columns;
+					var to = neighbour.length ? neighbour.data("column") : null;
+
+					//splice column into new position
+					var column = container.splice(self._findColumn(from, container).index, 1)[0];
+					to = self._findColumn(to, container).index;
+					container.splice(typeof to !== "undefined" ? to : container.length , 0, column);
+
+					//trigger callback
+					options.colMoved(ui.item.data("field"), options.columns);
+
+					if(self.options.persistentLayout){
+						self._setPersistentCol();
+					}
+
+				},
+			});
+		}
+
+		//handle filter update
+		function updateFilter(){
+
+			var filters = {};
+
+			$(".tabulator-header-filter", self.header).each(function(){
+				var element = $(this);
+				var filterVal = element.data("filter-val");
+
+				if(filterVal){
+					filters[element.closest(".tabulator-col").data("field")] = filterVal;
+				}
+			});
+
+
+			function colFilter(data){
+				var match = true;
+
+				for(var field in filters){
+					if(typeof data[field] == "string"){
+						if(data[field].toLowerCase().indexOf(filters[field].toLowerCase()) == -1){
+							match = false;
+						}
+					}else{
+					    //match everything else explicitly
+					    if(data[field] != filters[field]){
+					    	match = false;
+					    }
+					}
+				}
+
+				return match;
+			}
+
+			self.setFilter(colFilter);
+		}
+
+		//iterate through columns
+		columns.forEach(function(column, i){
+
+			if(!column.columns){
+				self.columnList.push(column);
+				column.index = self.columnList.length -1;
+
+				column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+				column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
+				column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
+				column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
+				column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
+
+
+
+
+				if(options.sortBy == column.field){
+					var sortdir = " data-sortdir='" + options.sortDir + "' ";
+					self.sortCurCol= column;
+					self.sortCurDir = options.sortDir;
+				}else{
+					var sortdir = "";
+				}
+
+				var visibility = column.visible ? "inline-block" : "none";
+
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + options.colMinWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var colContent = $(".tabulator-col-content", col);
+				var colTitle = $(".tabulator-col-title", col);
+
+				var title = column.title ? column.title : "&nbsp";
+
+
+				if(column.editableTitle){
+					var titleElement = $("<input class='tabulator-title-editor'>");
+					titleElement.val(title);
+
+					titleElement.on("click", function(e){
+						e.stopPropagation();
+						$(this).focus();
+					});
+
+					titleElement.on("change", function(){
+						var newTitle = $(this).val();
+						column.title = newTitle;
+						options.colTitleChanged(newTitle, column, options.columns);
+					});
+
+					title = titleElement;
+				}
+
+			//Manage Header Column Filters
+			if(column.headerFilter){
+
+				//select appropriate filter
+				if(column.headerFilter === true){
+					if(column.editor){
+						var editor = column.editor;
+					}else{
+						var editor = self.editors[column.formatter] ? column.formatter: "input";
+					}
+				}else{
+					var editor = column.headerFilter;
+				}
+
+
+				//build filter element from editor
+				var editorFunc = typeof(editor) == "string" ? self.editors[editor] : editor;
+
+				var filter = $("<div class='tabulator-header-filter'></div>");
+
+				var cellEditor = editorFunc.call(self, filter, "");
+
+				filter.append(cellEditor);
+				filter.children().attr("placeholder", self.options.headerFilterPlaceholder);
+
+				//handle events
+				cellEditor.on("click", function(e){
+					e.stopPropagation();
+					$(this).focus();
+				});
+
+				cellEditor.on("keyup change", function(e){
+					$(this).closest(".tabulator-header-filter").data("filter-val", $(this).val());
+					updateFilter()
+				});
+
+				filter.on("editval editcancel", function(e, value){
+					$(this).data("filter-val", value);
+					updateFilter()
+				});
+
+				//add filter to column header
+				colTitle.append(title);
+
+				colContent.append(filter);
+
+			}else{
+
+				colTitle.html(title);
+			}
+
+
+			//added callback for custom header tooltips
+			var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
+
+			if(tooltip === true){
+				tooltip = title;
+			}else if(typeof(tooltip) == "function"){
+				tooltip = tooltip(column);
+			}
+
+			if(tooltip){
+				col.attr("title", tooltip);
+			}else{
+				col.attr("title", "");
+			}
+
+
+			if(typeof(column.width) != "undefined"){
+				column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
+
+				col.data("width", column.width);
+
+				col.css({width:column.width});
+			}
+
+			//sort tabl click binding
+			if(column.sortable){
+				col.on("click", function(){
+					if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
+						self._sortClick(column, col); //trigger sort
+					}
+					self.mouseDragOut = false;
+				})
+			}
+
+		}else{
+			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
+			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
+		}
+		col.data("column", column);
+		container.append(col);
+	});
+
+},
+
+	//layout columns on first render
 	_colRender:function(fixedwidth, forceRedraw){
 		var self = this;
 		var options = self.options;
@@ -2295,9 +2428,9 @@
 		var header = self.header;
 		var element = self.element;
 
-		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
+		if(fixedwidth || !options.fitColumns){ //if columns have been resized and now data needs to match them
 			//free sized table
-			$.each(options.columns, function(i, column){
+			$.each(self.columnList, function(i, column){
 				colWidth = $(".tabulator-col[data-field='" + column.field + "']", element).outerWidth();
 				var col = $(".tabulator-cell[data-field='" + column.field + "']", element);
 				col.css({width:colWidth});
@@ -2323,7 +2456,7 @@
 				var widthIdealCount = 0;
 				var lastVariableCol = "";
 
-				$.each(options.columns, function(i, column){
+				$.each(self.columnList, function(i, column){
 					if(column.visible){
 
 						colCount++;
@@ -2350,7 +2483,7 @@
 
 				if(proposedWidth >= parseInt(options.colMinWidth)){
 
-					$.each(options.columns, function(i, column){
+					$.each(self.columnList, function(i, column){
 						if(column.visible){
 							var newWidth = column.width ? column.width : proposedWidth;
 
@@ -2373,7 +2506,7 @@
 			}else{
 
 				//free sized table
-				$.each(options.columns, function(i, column){
+				$.each(self.columnList, function(i, column){
 
 					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]", element);
 
@@ -2475,11 +2608,16 @@
 
 	//carry out action on cell click
 	_cellClick: function(e, cell){
-		var column = this.options.columns.filter(function(column){
-			return column.index == cell.data("index");
+		var self = this;
+		var index = cell.data("index");
+
+		var match = self._findColumn(function(column){
+			return column.index == index;
 		});
 
-		column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		if(match){
+			match.column.onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		}
 	},
 
 	//handle cell data change
@@ -2515,7 +2653,7 @@
 		if(hasChanged){
 			//triger event
 			self.options.cellEdited(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
-			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
+			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).column.tooltip);
 		}
 
 		self._styleRows();
@@ -2647,8 +2785,10 @@
 			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 			if(value === true || value === "true" || value === "True" || value === 1){
+				cell.attr("aria-checked", true);
 				return tick;
 			}else{
+				cell.attr("aria-checked", false);
 				return "";
 			}
 		},
@@ -2657,8 +2797,10 @@
 			var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
 			if(value === true || value === "true" || value === "True" || value === 1){
+				cell.attr("aria-checked", true);
 				return tick;
 			}else{
+				cell.attr("aria-checked", false);
 				return cross;
 			}
 		},
@@ -2684,6 +2826,8 @@
 				"text-overflow": "ellipsis",
 			});
 
+			cell.attr("aria-label", value);
+
 			return stars.html();
 		},
 		progress:function(value, data, cell, row, options, formatterParams){ //progress bar
@@ -2705,6 +2849,8 @@
 				"min-width":"30px",
 				"position":"relative",
 			});
+
+			cell.attr("aria-label", value);
 
 			return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
 		},
@@ -2933,9 +3079,13 @@
 				padding:"0 4px",
 			});
 
+			cell.attr("aria-valuemin", min).attr("aria-valuemax", max)
+
+
 			var newVal = function(){
 				var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
 				cell.trigger("editval", newval);
+				cell.attr("aria-valuenow", newval).attr("aria-label", value);
 			}
 
 			var bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
