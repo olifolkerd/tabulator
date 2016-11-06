@@ -441,25 +441,34 @@
 	_setPersistentCol:function(){
 		var self = this;
 
+		//parse styles from columns
+		function parseCols(columns){
+			var cols = [];
+
+			columns.forEach(function(column){
+				var style = {
+					field: column.field,
+					width: column.width,
+					visible: column.visible,
+				};
+
+				if(column.columns){
+					style.title = column.title;
+					style.columns = parseCols(column.columns);
+				}
+
+				cols.push(style);
+
+			})
+
+			return cols;
+		}
+
 		//create array of column styles only
-		var columnStyles = [];
-
-		$.each(self.options.columns, function(i, column){
-
-			var style = {
-				field: column.field,
-				width: column.width,
-				visible:column.visible,
-			};
-
-			columnStyles.push(style);
-		});
-
+		var columnStyles = parseCols(self.options.columns);
 
 		//JSON format column data
 		var data = JSON.stringify(columnStyles);
-
-
 
 		if(self.options.persistentLayout == "cookie"){
 			//set cookie expiration far in the future
@@ -513,50 +522,69 @@
 	//set tabulator columns
 	setColumns: function(columns, update){
 		var self = this;
-		var oldColumns = self.options.columns;
 
 		if(Array.isArray(columns)){
 
 			//if updateing columns work through exisiting column data
 			if(update){
 
-				var newColumns = [];
+				function updateCols(oldCols, newCols){
+					newCols.forEach(function(item, to){
 
-				//iterate through each of the new columns
-				$.each(columns, function(i, column){
+						var type = item.columns ? "group" : (item.field ? "field" : "object");
+						var from = search(oldCols, item, type);
 
-					//find a match in the original column array
-					//var find = column.field;
-					var find = column.field == "" ? column : column.field;
+						if(from !== false){
+							var column = oldCols.splice(from, 1)[0];
 
-					$.each(self.options.columns, function(i, origColumn){
+							column.width = item.width;
+							column.visible = item.visible;
 
-						var match = typeof(find) == "object" ? origColumn == find : origColumn.field == find;
+							oldCols.splice(to , 0, column);
 
-						//if matching, update layout data and add to new column array
-						if(match){
-
-							var result = self.options.columns.splice(i, 1)[0];
-
-							result.width = column.width;
-							result.visible = column.visible;
-
-							newColumns.push(result);
-
-							return false;
+							if(type == "group"){
+								updateCols(column.columns, item.columns);
+							}
 						}
 
 					});
-
-				});
-
-				//if any aditional columns left add them to the end of the table
-				if(self.options.columns.length > 0){
-					newColumns.concat(self.options.columns);
 				}
 
-				//replace old columns with new
-				self.options.columns = newColumns;
+				function search(columns, col, type){
+
+					var match = false;
+
+					$.each(columns, function(i, column){;
+
+						switch(type){
+							case "group":
+							if(col.title === column.title && col.columns.length === column.columns.length){
+								match = i;
+							}
+							break;
+
+							case "field":
+							if(col.field === column.field){
+								match = i;
+							}
+							break;
+
+							case "object":
+							if(col === column){
+								match = i;
+							}
+							break;
+						}
+
+						if(match !== false){
+							return false;
+						}
+					});
+
+					return match;
+				}
+
+				updateCols(self.options.columns, columns);
 
 			}else{
 				// if replaceing columns, replace columns array with new
@@ -1821,7 +1849,7 @@
 		return group;
 	},
 
-	//render group header
+	//render group set
 	_renderGroupHeader:function(group){
 		var self = this;
 
