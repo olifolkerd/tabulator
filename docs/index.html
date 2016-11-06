@@ -259,9 +259,10 @@ $("#example-table").tabulator({
 });</pre>
 
                     <a class="anchor" id="table-load"></a>
-                    <h2>Extract Data from an HTML Table Element</h2>
+                    <h2>Extract Data from an HTML Table Element <span class="label label-primary">Updated</span></h2>
                     <p>You can create a Tabulator table directly from an HTML table element. You can define the columns in the usual way with the columns option, or you can set them as <span class='param'>th</span> elements in the  <span class='param'>thead</span> of a table.</p>
                     <p>Any rows of data in the <span class='param'>tbody</span> of the table will automatically be converted to tabulator data in displayed in the resulting table.</p>
+                    <p>If you define the <span class='param'>width</span> attribute in a table header cell, this will be used to set the width of the column in Tabulator.</p>
 
                     <pre class="prettyprint lang-html">&lt;table id="example-table"&gt;
     &lt;thead&gt;
@@ -295,6 +296,24 @@ $("#example-table").tabulator({
 &lt;/table&gt;</pre>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({});</pre>
+
+                    <p>If you need to set up any column options on the imported table you can declare these in table constructor as you would do for any other table. It is important to note that the <span class='param'>title</span> parameter for each column definition must match the text in the table element's header cell exactly for the imported data to link to the correct column.</p>
+                    <p>If you use a column definition array in the Tabulator constructor, the order of columns in this array will take priority over the order of the columns in the table element.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    fitColumns:true, //example option (sets column widths to fill table)
+    columns:[ //set column definitions for imported table data
+        {title:"Name", sortable:true, editable:true},
+        {title:"Age", sortable:true, sorter:"number"},
+        {title:"Gender", sortable:true},
+        {title:"Height", sortable:true, sorter:"number"},
+        {title:"Favourite Color", sortable:true},
+        {title:"Date of Birth", sortable:true, sorter:"date"},
+    ],
+});</pre>
+
+<strong>NOTE:</strong> Tabulator can only parse simple tables. Tables using multiple header rows, colspan or rowspan attributes will cause the import to fail.
+
 
                 </article>
                 <a class="anchor" id="pagination"></a>
@@ -1643,7 +1662,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
 
                     <h2>Column Moved</h2>
-                    <p>The <span class='param'>colMoved</span> callback will be triggeredw hen a column has been successfully moved, .</p>
+                    <p>The <span class='param'>colMoved</span> callback will be triggered when a column has been successfully moved, .</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     colMoved:function(field, columns){
         //field- the filed name of the moved column
@@ -2008,7 +2027,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
                         <li><a href="#define-column-headers">Define Column Headers</a></li>
-                        <li><a href="#set-data">Set Table Data</a></li>
+                        <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout</a></li>
                         <li><a href="#sorting">Sorting Data</a></li>
