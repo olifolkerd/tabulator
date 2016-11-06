@@ -24,10 +24,18 @@
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
 }
-.tabulator .tabulator-header .tabulator-col:first-child .tabulator-handle.prev {
-  display: none;
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+  position: relative;
+  padding: 4px;
 }
-.tabulator .tabulator-header .tabulator-col .tabulator-title-editor {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-title-editor {
   box-sizing: border-box;
   width: 100%;
   border: 1px solid #3759D7;
@@ -36,7 +44,7 @@
   font-size: 1em;
   color: #3759D7;
 }
-.tabulator .tabulator-header .tabulator-col .tabulator-arrow {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
   display: inline-block;
   position: absolute;
   top: 9px;
@@ -47,11 +55,11 @@
   border-right: 6px solid transparent;
   border-bottom: 6px solid #b6c3f1;
 }
-.tabulator .tabulator-header .tabulator-col .tabulator-arrow.asc {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow.asc {
   border-top: none;
   border-bottom: 6px solid #3759D7;
 }
-.tabulator .tabulator-header .tabulator-col .tabulator-arrow.desc {
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow.desc {
   border-top: 6px solid #3759D7;
   border-bottom: none;
 }
@@ -69,8 +77,26 @@
 .tabulator .tabulator-header .tabulator-col .tabulator-handle:hover {
   cursor: ew-resize;
 }
+.tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
+  position: relative;
+  display: flex;
+  border-top: 2px solid #3759D7;
+  overflow: hidden;
+}
+.tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols .tabulator-col:last-child {
+  margin-right: -1px;
+}
+.tabulator .tabulator-header .tabulator-col:first-child .tabulator-handle.prev {
+  display: none;
+}
+.tabulator .tabulator-header .tabulator-col.ui-sortable-helper {
+  position: absolute;
+  background-color: #e6e6e6 !important;
+  border: 1px solid #fff;
+}
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
   position: relative;
+  box-sizing: border-box;
   margin-top: 2px;
   width: 100%;
   text-align: center;
@@ -81,16 +107,12 @@
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter svg {
   margin-top: 3px;
 }
-.tabulator .tabulator-header .tabulator-col[data-sortable=true] {
-  padding-right: 25px;
+.tabulator .tabulator-header .tabulator-col[data-sortable=true] .tabulator-col-title {
+  width: calc(100% - 25px);
 }
 .tabulator .tabulator-header .tabulator-col[data-sortable=true]:hover {
   cursor: pointer;
-  background-color: rgba(0, 0, 0, 0.1);
-}
-.tabulator .tabulator-header .tabulator-col[data-sortable=true] .tabulator-header-filter {
-  margin-top: 2px;
-  width: calc(100% + 20px);
+  background-color: #e6e6e6;
 }
 .tabulator .tabulator-header .tabulator-col-row-handle {
   display: inline-block;
@@ -103,12 +125,9 @@
   position: relative;
   box-sizing: border-box;
   border-right: 2px solid #fff;
-  padding: 6px 4px 4px 4px;
   text-align: left;
   vertical-align: bottom;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 .tabulator .tabulator-tableHolder {
   position: relative;

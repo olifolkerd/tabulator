@@ -70,47 +70,60 @@
 		.tabulator-col{
 			display:inline-block;
 
-			&:first-child{
-				.tabulator-handle.prev{
-					display: none;
-				}
-			}
 
-			.tabulator-title-editor{
-				box-sizing: border-box;
-				width: 100%;
+			//hold content of column header
+			.tabulator-col-content{
+				position: relative;
+				padding:4px;
 
-				border:1px solid @primary;
+				//hold title of column header
+				.tabulator-col-title{
+					width: 100%;
 
-				padding:1px;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					vertical-align:bottom;
 
-				background: #fff;
+					//element to hold title editor
+					.tabulator-title-editor{
+						box-sizing: border-box;
+						width: 100%;
 
-				font-size: 1em;
-				color: @primary;
-			}
+						border:1px solid @primary;
 
-			//column sorter arrow
-			.tabulator-arrow{
-				display: inline-block;
-				position: absolute;
-				top:9px;
-				right:8px;
-				width: 0;
-				height: 0;
-				border-left: 6px solid transparent;
-				border-right: 6px solid transparent;
-				border-bottom: 6px solid @sortArrowInactive;
+						padding:1px;
 
-				&.asc{
-					border-top: none;
-					border-bottom: 6px solid @sortArrowActive;
+						background: #fff;
+
+						font-size: 1em;
+						color: @primary;
+					}
 				}
 
-				&.desc{
-					border-top: 6px solid @sortArrowActive;
-					border-bottom: none;
+				//column sorter arrow
+				.tabulator-arrow{
+					display: inline-block;
+					position: absolute;
+					top:9px;
+					right:8px;
+					width: 0;
+					height: 0;
+					border-left: 6px solid transparent;
+					border-right: 6px solid transparent;
+					border-bottom: 6px solid @sortArrowInactive;
+
+					&.asc{
+						border-top: none;
+						border-bottom: 6px solid @sortArrowActive;
+					}
+
+					&.desc{
+						border-top: 6px solid @sortArrowActive;
+						border-bottom: none;
+					}
 				}
+
 			}
 
 			//column resize handles
@@ -129,11 +142,44 @@
 				&:hover{
 					cursor:ew-resize;
 				}
-
 			}
 
+			//complex header column group
+			&.tabulator-col-group{
+
+				//gelement to hold sub columns in column group
+				.tabulator-col-group-cols{
+					position:relative;
+					display: flex;
+
+					border-top:2px solid @headerSeperatorColor;
+					overflow: hidden;
+
+					.tabulator-col:last-child{
+						margin-right:-1px;
+					}
+				}
+			}
+
+
+			//hide left resize handle on first column
+			&:first-child{
+				.tabulator-handle.prev{
+					display: none;
+				}
+			}
+
+			//placeholder element for sortable columns
+			&.ui-sortable-helper{
+				position: absolute;
+				background-color: darken(@headerBackgroundColor, 10%) !important;
+				border:1px solid @headerBorderColor;
+			}
+
+			//header filter containing element
 			.tabulator-header-filter{
 				position: relative;
+				box-sizing: border-box;
 				margin-top:2px;
 				width:100%;
 				text-align: center;
@@ -148,18 +194,15 @@
 				}
 			}
 
-
+			//styling child elements for sortable columns
 			&[data-sortable=true]{
-				padding-right:25px;
+				.tabulator-col-title{
+					width:calc(~"100% - 25px");
+				}
 
 				&:hover{
 					cursor:pointer;
-					background-color:rgba(0,0,0,.1);
-				}
-
-				.tabulator-header-filter{
-					margin-top:2px;
-					width:calc(~"100% + 20px");
+					background-color:darken(@headerBackgroundColor, 10%);
 				}
 			}
 
@@ -178,12 +221,9 @@
 			position:relative;
 			box-sizing:border-box;
 			border-right:2px solid @headerBorderColor;
-			padding:6px 4px 4px 4px;
 			text-align:left;
 			vertical-align: bottom;
-			white-space: nowrap;
 			overflow: hidden;
-			text-overflow: ellipsis;
 		}
 	}
 
