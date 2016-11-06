@@ -376,7 +376,7 @@
 				self.footer = options.paginationElement;
 			}
 
-			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first'>First</span><span class='tabulator-page' data-page='prev'>Prev</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next'>Next</span><span class='tabulator-page' data-page='last'>Last</span></span>");
+			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first' role='button' aria-label='First Page'>First</span><span class='tabulator-page' data-page='prev' role='button' aria-label='Previous Page'>Prev</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next' role='button' aria-label='Next Page'>Next</span><span class='tabulator-page' data-page='last' role='button' aria-label='Last Page'>Last</span></span>");
 
 			self.paginator.on("click", ".tabulator-page", function(){
 				if(!$(this).hasClass("disabled")){
@@ -1571,7 +1571,7 @@
 
 			var active = i == self.paginationCurrentPage ? "active" : "";
 
-			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "'>" + i + "</span>");
+			pages.append("<span class='tabulator-page " + active + "' data-page='" + i + "' role='button' aria-label='Show Page " + i + "'>" + i + "</span>");
 		}
 
 		if(self.paginationMaxPage > 10){
@@ -1580,14 +1580,14 @@
 			}
 		}
 
-		$(".tabulator-page", self.paginator).removeClass("disabled");
+		$(".tabulator-page", self.paginator).removeClass("disabled").attr("aria-disabled", "false");
 
 		if(self.paginationCurrentPage == 1){
-			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled");
+			$(".tabulator-page[data-page=first], .tabulator-page[data-page=prev]", self.paginator).addClass("disabled").attr("aria-disabled", "true");
 		}
 
 		if(self.paginationCurrentPage == self.paginationMaxPage){
-			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled");
+			$(".tabulator-page[data-page=next], .tabulator-page[data-page=last]", self.paginator).addClass("disabled").attr("aria-disabled", "true");
 		}
 	},
 
