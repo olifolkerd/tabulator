@@ -613,37 +613,17 @@
 		var self = this;
 
 		if(newCol){
-			var columns = self.options.columns;
-
-			var index = false;
-
 			if(field){
+				var match = self._findColumn(field);
 
-				index = isNaN(field) ? false : field;
-
-				if(index === false){
-
-					$.each(self.options.columns, function(i, item){
-						if(item.field == field){
-							index = i;
-							return false;
-						}
-					});
+				if(match){
+					match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
 				}
-
-				if(!before){
-					++index;
-				}
-
+			}else{
+				self.options.columns.splice(before ? 0 : self.options.columns.length + 1, 0, newCol);
 			}
 
-			if(index === false){
-				index = before ? 0 : columns.length + 1;
-			}
-
-			columns.splice(index, 0, newCol);
-
-			self.setColumns(columns);
+			self.setColumns(self.options.columns);
 		}
 	},
 
@@ -652,135 +632,125 @@
 		var self = this;
 
 		if(field){
-			var columns = self.options.columns;
 
-			var index = isNaN(field) ? false : field;
+			var match = self._findColumn(field);
 
-			if(index === false){
-				$.each(self.options.columns, function(i, item){
-					if(item.field == field){
-						index = i;
-						return false;
-					}
-				});
+			if(match){
+				match.parent.splice(match.index, 1);
 			}
 
-			if(index !== false){
-				columns.splice(index, 1);
-			}
-
-			self.setColumns(columns);
+			self.setColumns(self.options.columns);
 		}
 	},
 
-	//find column
-	_findColumn:function(field){
+	//traverse all columns and trigger callback on each column
+	_traverseColumns:function(callback, columns){
 		var self = this;
+		columns = columns ? columns : self.options.columns;
 
-		var result = false;
+		$.each(columns, function(i, column){
 
-		$.each(self.options.columns, function(i, column){
-			if(typeof(field) == "object"){
-				if(column == field){
-					result = column;
-					return false;
-				}
+			if(column.columns){
+				self._traverseColumns(callback, column.columns);
 			}else{
-				if(column.field == field){
-					result = column;
-					return false;
-				}
+				callback(column);
 			}
-		});
 
-		return result;
+		});
 	},
 
-
-	//hide column
-	hideCol: function(field){
+	//find column
+	_findColumn:function(field, columns){
 		var self = this;
-		var column = false;
+		var match = false;
 
-		$.each(self.options.columns, function(i, item){
-			if(item.field == field){
-				column = i;
-				return false;
+		columns = columns ? columns : self.options.columns;
+
+		$.each(columns, function(i, column){
+			switch(typeof field){
+				case "object":
+				if(column == field){
+					match = {parent:columns, column:column, index:i};
+					return false;
+				}
+				break;
+
+				case "function":
+				if(field(column)){
+					match = {parent:columns, column:column, index:i};
+					return false;
+				}
+				break;
+
+				default:
+				if(column.field == field){
+					match = {parent:columns, column:column, index:i};
+					return false;
+				}
+			}
+
+			if(column.columns){
+				var children = self._findColumn(field, column.columns);
+
+				if(children){
+					match = children;
+					return false;
+				}
 			}
 		});
 
-		if(column === false){
-			return false;
-		}else{
-			self.options.columns[column].visible = false;
-			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).hide();
+		return match;
+	},
+
+	_setColVisibility:function(column, visibility){
+		var self = this;
+
+		if(column){
+			column.visible = visibility;
+
+			var elements = $(".tabulator-col[data-field=" + column.field + "], .tabulator-cell[data-field=" + column.field + "]", self.element)
+
+			if(visibility){
+				elements.show();
+			}else{
+				elements.hide();
+			}
+
 			self._renderTable();
 
 			if(self.options.persistentLayout){
 				self._setPersistentCol();
 			}
+		}
+	},
 
-			return true;
+	//hide column
+	hideCol: function(field){
+		var self = this;
+		var match = self._findColumn(field);
+
+		if(match){
+			self._setColVisibility(match.column, false);
 		}
 	},
 
 	//show column
 	showCol: function(field){
 		var self = this;
-		var column = false;
+		var match = self._findColumn(field);
 
-		$.each(self.options.columns, function(i, item){
-			if(item.field == field){
-				column = i;
-				return false;
-			}
-		});
-
-		if(column === false){
-			return false;
-		}else{
-			self.options.columns[column].visible = true;
-			$(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element).show();
-			self._renderTable();
-
-			if(self.options.persistentLayout){
-				self._setPersistentCol();
-			}
-			return true;
+		if(match){
+			self._setColVisibility(match.column, true);
 		}
 	},
 
 	//toggle column visibility
 	toggleCol: function(field){
 		var self = this;
-		var column = false;
+		var match = self._findColumn(field);
 
-		$.each(self.options.columns, function(i, item){
-			if(item.field == field){
-				column = i;
-				return false;
-			}
-		});
-
-		if(column === false){
-			return false;
-		}else{
-			self.options.columns[column].visible = !self.options.columns[column].visible;
-
-			var cell = $(".tabulator-col[data-field=" + field + "], .tabulator-cell[data-field=" + field + "]", self.element);
-
-			if(self.options.columns[column].visible){
-				cell.show();
-			}else{
-				cell.hide();
-			}
-
-			if(self.options.persistentLayout){
-				self._setPersistentCol();
-			}
-
-			self._renderTable();
-			return true;
+		if(match){
+			self._setColVisibility(match.column, !match.column.visible);
 		}
 	},
 
@@ -992,7 +962,7 @@
 	_applyAccessors:function(data){
 		var self = this;
 
-		self.options.columns.forEach(function(col, i){
+		self._traverseColumns(function(col){
 			if(col.accessor){
 				var accessor = typeof col.accessor === "function" ? col.accessor : self.accessors[col.accessor];
 
@@ -1000,7 +970,7 @@
 					item[col.field] = accessor(item[col.field], item);
 				});
 			}
-		});
+		})
 
 		return data;
 	},
@@ -1187,7 +1157,7 @@
 	_mutateData:function(data){
 		var self = this;
 
-		self.options.columns.forEach(function(col, i){
+		self._traverseColumns(function(col){
 			if(col.mutator && col.mutateType !== "edit"){
 
 				var mutator = typeof col.mutator === "function" ? col.mutator : self.mutators[col.mutator];
@@ -1382,14 +1352,15 @@
 
 		$.each(sortList, function(i, item){
 
-			//convert colmun name to column object
+
+
+			//convert column name to column object
 			if(typeof(item.field) == "string"){
-				$.each(options.columns, function(i, col){
-					if(col.field == item.field){
-						item.field = col;
-						return false;
-					}
-				});
+				var match = self._findColumn(item.field);
+
+				if(match){
+					item.field = match.column;
+				}
 			}
 
 			//reset all column sorts
@@ -2040,13 +2011,11 @@
 
 					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
 
+					var match = self._findColumn(self.mouseDragElement.data("field"));
 
-					$.each(self.options.columns, function(i, item){
-						if(item.field == self.mouseDragElement.data("field")){
-							item.width = self.mouseDragElement.outerWidth();
-						}
-					});
-
+					if(match){
+						match.column.width = self.mouseDragElement.outerWidth();
+					}
 
 					if(self.options.persistentLayout){
 						self._setPersistentCol();
@@ -2216,27 +2185,10 @@
 					var container = group.length ? group.data("column").columns : options.columns;
 					var to = neighbour.length ? neighbour.data("column") : null;
 
-					//find index for column
-					function search(columns, col){
-
-						var match = false;
-
-						$.each(columns, function(i, column){;
-							if(col === column){
-								match = i;
-							}
-							if(match !== false){
-								return false;
-							}
-						});
-
-						return match;
-					}
-
 					//splice column into new position
-					var column = container.splice(search(container, from), 1)[0];
-					to = search(container, to);
-					container.splice(to !== false ? to : container.length , 0, column);
+					var column = container.splice(self._findColumn(from, container).index, 1)[0];
+					to = self._findColumn(to, container).index;
+					container.splice(typeof to !== "undefined" ? to : container.length , 0, column);
 
 					//trigger callback
 					options.colMoved(ui.item.data("field"), options.columns);
@@ -2621,11 +2573,16 @@
 
 	//carry out action on cell click
 	_cellClick: function(e, cell){
-		var column = this.options.columns.filter(function(column){
-			return column.index == cell.data("index");
+		var self = this;
+		var index = cell.data("index");
+
+		var match = self._findColumn(function(column){
+			return column.index == index;
 		});
 
-		column[0].onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		if(match){
+			match.column.onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		}
 	},
 
 	//handle cell data change
@@ -2661,7 +2618,7 @@
 		if(hasChanged){
 			//triger event
 			self.options.cellEdited(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
-			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).tooltip);
+			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).column.tooltip);
 		}
 
 		self._styleRows();
