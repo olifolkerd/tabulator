@@ -1920,6 +1920,41 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
                 </article>
 
+                <a class="anchor" id="accessibility"></a>
+                <article>
+                    <h1>Accessibility <span class="label label-danger">New</span></h1>
+                    <p>Tabulator makes full use of aria accessibility tags to make the table machine readable by screen readers and other digital accessibility equipment.</p>
+
+                    <p>The following role tags are used:
+
+                        <ul>
+                            <li><strong>grid</strong> - Marks the element containing the tabulator as a grid</li>
+                            <li><strong>columngroup</strong> - Marks any column group title cells</li>
+                            <li><strong>columnheader</strong> - Marks each column header cell</li>
+                            <li><strong>row</strong> - Marks each row of the table</li>
+                            <li><strong>rowgroup</strong> - Marks any sections of grouped rows</li>
+                            <li><strong>rowheader</strong> - Marks the header of row group sections</li>
+                            <li><strong>gridcell</strong> - Marks each cell of the table</li>
+                            <li><strong>alert</strong> - Marks ant popup messages such as the ajax loader message</li>
+                            <li><strong>button</strong> - used to mark the pagination controls as buttons</li>
+                        </ul>
+                    </p>
+
+                    <p>In addition a number of other tags are used as needed throughout Tabulator:
+
+                        <ul>
+                            <li><strong>aria-label</strong> - Used to hold cell value on graphically formatted cells. also used to give useful information on pagination controls</li>
+                            <li><strong>aria-sort</strong> - Shows current sort property of each column</li>
+                            <li><strong>aria-disabled</strong> - Shows the disabled state of pagination controls</li>
+                            <li><strong>aria-checked</strong> - Shows the checked state of cells that use a tick formatter</li>
+                            <li><strong>aria-valuemin</strong> - Shows the minimum possible value on the progressbar editor</li>
+                            <li><strong>aria-valuemax</strong> - Shows the maximum possible value on the progressbar editor</li>
+                            <li><strong>aria-valuenow</strong> - Shows the current value on the progressbar editor</li>
+                        </ul>
+                    </p>
+
+                </article>
+
                 <a class="anchor" id="depricated"></a>
                 <article>
                     <h1>Depricated Functionality</h1>
@@ -1962,6 +1997,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events </a></li>
                         <li><a href="#extending">Extending Tabulator </a></li>
+                        <li><a href="#accessibility">Accessibility <span class="label label-danger">New</span></a></li>
                         <li><a href="#depricated">Depricated Functionality </a></li>
                     </ul>
                 </nav>
