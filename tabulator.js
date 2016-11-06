@@ -2300,6 +2300,8 @@
 				column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
 
 
+
+
 				if(options.sortBy == column.field){
 					var sortdir = " data-sortdir='" + options.sortDir + "' ";
 					self.sortCurCol= column;
@@ -2310,7 +2312,7 @@
 
 				var visibility = column.visible ? "inline-block" : "none";
 
-				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + options.colMinWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
 				var colContent = $(".tabulator-col-content", col);
 				var colTitle = $(".tabulator-col-title", col);
 
@@ -2431,7 +2433,7 @@
 
 },
 
-	//layout coluns on first render
+	//layout columns on first render
 	_colRender:function(fixedwidth, forceRedraw){
 		var self = this;
 		var options = self.options;
@@ -2439,7 +2441,7 @@
 		var header = self.header;
 		var element = self.element;
 
-		if(fixedwidth || !options.fitColumns){ //it columns have been resized and now data needs to match them
+		if(fixedwidth || !options.fitColumns){ //if columns have been resized and now data needs to match them
 			//free sized table
 			$.each(self.columnList, function(i, column){
 				colWidth = $(".tabulator-col[data-field='" + column.field + "']", element).outerWidth();
