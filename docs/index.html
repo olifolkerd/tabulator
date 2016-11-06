@@ -171,6 +171,40 @@
 
 
                     </ul>
+
+                    <a class="anchor" id="column-groups"></a>
+                    <h2>Column Grouping <span class="label label-danger">New</span></h2>
+                    <p>You can group headers togeather to create a multi-row table header.</p>
+
+                    <p>To group columns, you need to add a column group object in the column definition array. You must give a column group a <span class='param'>title</span> and add the grouped column objects into the <span class='param'>columns</span> property of the group.</p>
+
+                    <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your column headers should be vertically aligned, this can take one of three string values: &quot;top&quot;, &quot;middle&quot;, &quot;bottom&quot;</p>
+
+                    <p>You can nest column groups, so you can create column groups many levels deep.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
+    colVertAlign:"bottom", //align header contents to bottom of cell
+    columns:[
+        {title:"Name", field:"name", width:160},
+        {//create column group
+            title:"Work Info",
+            columns:[
+                {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+                {title:"Rating", field:"rating", align:"center", width:80},
+                {title:"Driver", field:"car", align:"center", width:80},
+            ],
+        },
+        {//create column group
+            title:"Personal Info",
+            columns:[
+                {title:"Gender", field:"gender", width:90},
+                {title:"Favourite Color", field:"col", width:140},
+                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+            ],
+        },
+
+    ],
+});</pre>
                 </article>
                 <a class="anchor" id="set-data"></a>
                 <article>
@@ -2026,7 +2060,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                 <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
-                        <li><a href="#define-column-headers">Define Column Headers</a></li>
+                        <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout</a></li>
