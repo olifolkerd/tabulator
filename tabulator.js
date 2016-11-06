@@ -64,6 +64,7 @@
 	options: {
 		colMinWidth:"40px", //minimum global width for a column
 		colResizable:true, //resizable columns
+		colVertAlign:"bottom", //vertical alignment of column headers
 
 		height:false, //height of tabulator
 		fitColumns:false, //fit colums to width of screen;
@@ -1929,8 +1930,28 @@
 
 		if(self.header){
 			var headerHeight = self.header.outerHeight();
-			$(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			var subheadings = $(".tabulator-col-group-cols>.tabulator-col:not(.tabulator-col-group)", self.header);
+			var cols = $(".tabulator-col:not(.tabulator-col-group)", self.header);
 
+			//resize header elements
+			cols.css({"padding-top":""})
+			subheadings.css({"height":""});
+			$(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			subheadings.each(function(){
+				$(this).css({"height":$(this).parent().innerHeight()})
+			})
+
+			//vertical align column headers
+			if(self.options.colVertAlign !== "top"){
+				cols.each(function(){
+					var col = $(this);
+					var height = $(".tabulator-col-content", col).outerHeight();
+
+					col.css({"padding-top": col.innerHeight() - (self.options.colVertAlign === "bottom" ? height : height*1.5)})
+				});
+			}
+
+			//resize table holder to match header height
 			if(self.options.height && headerHeight != self.header.outerHeight()){
 				self.tableHolder.css({
 					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
@@ -2082,7 +2103,7 @@
 		});
 
 		//append sortable arrows to sortable headers
-		$(".tabulator-col[data-sortable=true]", self.header)
+		$(".tabulator-col[data-sortable=true] .tabulator-col-content", self.header)
 		.data("sortdir", "desc")
 		.append(arrow.clone());
 
@@ -2289,10 +2310,9 @@
 
 				var visibility = column.visible ? "inline-block" : "none";
 
-				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"></div>');
-				var colTitle = $("<div class='tabulator-col-title'></div>")
-
-				col.append(colTitle);
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var colContent = $(".tabulator-col-content", col);
+				var colTitle = $(".tabulator-col-title", col);
 
 				var title = column.title ? column.title : "&nbsp";
 
@@ -2359,7 +2379,7 @@
 				//add filter to column header
 				colTitle.append(title);
 
-				colTitle.append(filter);
+				colContent.append(filter);
 
 			}else{
 
@@ -2402,7 +2422,7 @@
 			}
 
 		}else{
-			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-title">' + column.title + '</div><div class="tabulator-col-group-cols"></div></div>');
+			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
 			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
 		}
 		col.data("column", column);
