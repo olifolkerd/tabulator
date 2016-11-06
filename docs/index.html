@@ -205,6 +205,9 @@
 
     ],
 });</pre>
+
+                <p>An example of column grouping in action can be found on the <a href="../examples?#column-groups">Examples page.</a></p>
+
                 </article>
                 <a class="anchor" id="set-data"></a>
                 <article>
@@ -1441,7 +1444,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <p>A demo of each of these in action can be found on the <a href="../examples?#theming">Examples page.</a></p>
 
-                    <h2>CSS Classes</h2>
+                    <h2>CSS Classes <span class="label label-primary">Updated</span></h2>
 
                     <p>All elements of Tabulator have classes set to make theming your tables as easy as possible.</p>
 
@@ -1459,6 +1462,18 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             </tr>
                             <tr>
                                 <td>tabulator-col</td><td>Column header (in header row)</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-col-content</td><td>Holds the contents for the column header</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-col-title</td><td>Holds the text for the column header title</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-col-group</td><td>Marks a column header as a group that contains other columns</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-col-group-cols</td><td>Holds the column headers contained in a column group</td>
                             </tr>
                             <tr>
                                 <td>tabulator-handle</td><td>Invisible resize handle on the right of each column header</td>
@@ -2073,7 +2088,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#movable">Movable Rows and Columns <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
                         <li><a href="#options">Table Options</a></li>
-                        <li><a href="#css">CSS Classes &amp; Theming</a></li>
+                        <li><a href="#css">CSS Classes &amp; Theming <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events</a></li>
                         <li><a href="#extending">Extending Tabulator</a></li>
                         <li><a href="#accessibility">Accessibility <span class="label label-danger">New</span></a></li>
