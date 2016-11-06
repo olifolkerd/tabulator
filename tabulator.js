@@ -274,7 +274,7 @@
 
 			//add row data to item
 			$("td", $(this)).each(function(colIndex){
-				item[$(this).data("field")] = $(this).text();
+				item[$(this).data("field")] = $(this).html();
 			});
 
 			self.data.push(item);
