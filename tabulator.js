@@ -2090,7 +2090,7 @@
 		//set paginationSize if pagination enabled, height is set but no pagination number set, else set to ten;
 		if(self.options.pagination == "local" && !self.options.paginationSize){
 			if(self.options.height){
-				self.options.paginationSize = Math.floor(self.tableHolder.outerHeight() / (self.header.outerHeight() - 1));
+				self.options.paginationSize = Math.floor(self.tableHolder.outerHeight() / ($(".tabulator-col .tabulator-col-content", self.header).first().outerHeight()));
 			}else{
 				self.options.paginationSize = 10;
 			}
