@@ -184,52 +184,87 @@
 		var element = self.element;
 		var options = self.options;
 
+		var rows = $("tbody tr", element);
+		var headers = $("th", element);
+
 		var hasIndex = false;
 
-		//build columns from table header if they havnt been set;
-		if(!options.columns.length){
-			var headers = $("th", element);
+		var columns = options.columns;
 
-			if(headers.length){
-				//create column array from headers
-				headers.each(function(index){
+		//find column if it has already been defined
+		function search(title){
 
-					var header = $(this);
+			var match = false;
 
-					var col = {title:header.text(), field:header.text().toLowerCase().replace(" ", "_")};
+			$.each(columns, function(index, column) {
+				if(column.title === title){
+					match = column;
+					return false;
+				}
+			});
 
-					var width = header.attr("width");
-
-					if(width){
-						col.width = width;
-					}
-
-					if(col.field == options.index){
-						hasIndex = true;
-					}
-
-					options.columns.push(col);
-				});
-			}else{
-				//create blank table headers
-				headers = $("tr:first td", element);
-
-				headers.each(function(index){
-					var col = {title:"", field:"col" + index};
-
-					var width = $(this).attr("width");
-
-					if(width){
-						col.width = width;
-					}
-
-					options.columns.push(col);
-				});
-			}
+			return match;
 		}
 
+		//build columns from table header if they havnt been set;
+
+
+		if(headers.length){
+			//create column array from headers
+			headers.each(function(index){
+
+				var header = $(this);
+				var exists = false;
+
+				var col = search(header.text());
+
+				if(col){
+					exists = true;
+				}else{
+					col = {title:header.text()};
+				}
+
+				if(!col.field) {
+					col.field = header.text().toLowerCase().replace(" ", "_");
+				}
+
+				$("td:eq(" + index + ")", rows).data("field", col.field)
+
+				var width = header.attr("width");
+
+				if(width && !col.width)	{
+					col.width = width;
+				}
+
+				if(col.field == options.index){
+					hasIndex = true;
+				}
+
+				if(!exists){
+					columns.push(col)
+				}
+			});
+		}else{
+			//create blank table headers
+			headers = $("tr:first td", element);
+
+			headers.each(function(index){
+				var col = {title:"", field:"col" + index};
+				$("td:eq(" + index + ")", rows).data("field", col.field)
+
+				var width = $(this).attr("width");
+
+				if(width){
+					col.width = width;
+				}
+
+				columns.push(col);
+			});
+		}
+
+
 		//iterate through table rows and build data set
-		$("tbody tr", element).each(function(rowIndex){
+		rows.each(function(rowIndex){
 			var item = {};
 
 			//create index if the dont exist in table
@@ -239,7 +274,7 @@
 
 			//add row data to item
 			$("td", $(this)).each(function(colIndex){
-				item[options.columns[colIndex].field] = $(this).text();
+				item[$(this).data("field")] = $(this).text();
 			});
 
 			self.data.push(item);
