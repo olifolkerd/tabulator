@@ -197,6 +197,50 @@
                         </fieldset>
                     </article>
 
+                    </article>
+                    <a class="anchor" id="column-groups"></a>
+                    <article>
+                        <h1>Column Groups <a class="doc-link" href="../docs?#column-groups"><i class="fa fa-external-link"></i> Documentation</a></h1>
+
+                        <p>By creating groups in the column definition array, you can create multi line headers with groups of columns.</p>
+
+                        <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your columns headers should be vertically aligned.</p>
+
+                        <div id="example-table-column-grouping"></div>
+
+                        <button class="view-source">View Source</button>
+                        <fieldset class="source">
+                            <legend>Source Code</legend>
+                            <h3>HTML</h3>
+                            <pre class="prettyprint lang-html">&lt;div id="example-table-fittowidth"&gt;&lt;/div&gt;</pre>
+
+                            <h3>JavaScript</h3>
+                            <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
+    colVertAlign:"bottom", //align header contents to bottom of cell
+    columns:[
+        {title:"Name", field:"name", width:160},
+        {//create column group
+            title:"Work Info",
+            columns:[
+                {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+                {title:"Rating", field:"rating", align:"center", width:80},
+                {title:"Driver", field:"car", align:"center", width:80},
+            ],
+        },
+        {//create column group
+            title:"Personal Info",
+            columns:[
+                {title:"Gender", field:"gender", width:90},
+                {title:"Favourite Color", field:"col", width:140},
+                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+            ],
+        },
+
+    ],
+});</pre>
+                        </fieldset>
+                    </article>
+
                     <a class="anchor" id="table-load"></a>
                     <article>
                         <h1>Create from HTML Table Element <a class="doc-link" href="../docs?#table-load"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -1019,7 +1063,7 @@ $("#reset").click(function(){
                         <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_modern.css" rel="stylesheet"&gt;</pre>
                     </fieldset>
 
-                    <h2>Autumn Theme</h2>
+                    <h2>autumn Theme</h2>
                     <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
                     <div id="example-table-theme-autumn" class="example-themes"></div>
                     <button class="view-source">View Source</button>
@@ -1135,6 +1179,7 @@ $("#reset").click(function(){
                     <li><a href="#simple">Simple Table</a></li>
                     <li><a href="#fittodata">Fit To Data</a></li>
                     <li><a href="#fittowidth">Fit To Width</a></li>
+                    <li><a href="#column-groups">Column Groups</a></li>
                     <li><a href="#table-load">Create From Table Element</a></li>
                     <li><a href="#editable">Editable Data</a></li>
                     <li><a href="#sorters">Sorters</a></li>
@@ -1285,6 +1330,37 @@ $("#reset").click(function(){
         });
 
         $("#example-table-fittowidth").tabulator("setData", tabledata);
+
+
+        //Column Grouping Example
+        $("#example-table-column-grouping").tabulator({
+            height:"311px",
+            colVertAlign:"bottom", //align header contents to bottom of cell
+            columns:[
+                {title:"Name", field:"name", width:160},
+                {//create column group
+                    title:"Work Info",
+                    columns:[
+                        {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+                        {title:"Rating", field:"rating", align:"center", width:80},
+                        {title:"Driver", field:"car", align:"center", width:80},
+                    ],
+                },
+                {//create column group
+                    title:"Personal Info",
+                    columns:[
+                        {title:"Gender", field:"gender", width:90},
+                        {title:"Favourite Color", field:"col", width:140},
+                        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+                    ],
+                },
+
+            ],
+        });
+
+        $("#example-table-column-grouping").tabulator("setData", tabledata);
+
+
 
         //build tabulator from HTML table example
         $("#example-table-table").tabulator({fitColumns:true,});
