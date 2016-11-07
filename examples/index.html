@@ -451,7 +451,7 @@ $("#example-table-editable").tabulator({
 
                         <p>
                             <fieldset>
-                               Programmatic Sort
+                               <legend>Programmatic Sort Parameters</legend>
 
                                <label>Field: </label>
                                <select id="sort-field">
@@ -471,7 +471,7 @@ $("#example-table-editable").tabulator({
                                 <option value="desc">desc</option>
                             </select>
 
-                            <input id="sort-trigger" type="button" value="Trigger Sort" style="margin-left:40px;">
+                            <button id="sort-trigger">Trigger Sort</button>
 
                         </fieldset>
 
@@ -666,7 +666,7 @@ $("#example-table-formatter").tabulator({
 
                             <label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter">
 
-                            <input id="filter-clear" type="button" value="Clear Filter" style="margin-left:40px;">
+                            <button id="filter-clear">Clear Filter</button>
 
                         </fieldset>
 
@@ -844,7 +844,10 @@ $("#example-table-pagination").tabulator("setPage", 1);</pre>
                     <p>If you always request the same URL for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
 
                     <p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
-                    <p><input id="ajax-trigger" type="button" value="Load Data via AJAX"></p>
+                    <fieldset>
+                        <legend>AJAX Controls</legend>
+                        <button id="ajax-trigger">Load Data via AJAX</button>
+                    </fieldset>
                     <div id="example-table-ajax"></div>
 
                     <button class="view-source">View Source</button>
@@ -894,12 +897,14 @@ echo(json_encode($data));</pre>
                     <p>
                         Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
                     </p>
-                    <p>
-                        <button id="add-row">Add Blank Row to bottom of table</button>
-                        <button id="del-row">Remove "Oli Bob" From the table</button>
+                    <fieldset>
+                        <legend>Row Controls</legend>
+
+                        <button id="add-row">Add Blank Row to bottom</button>
+                        <button id="del-row">Remove Row "Oli Bob"</button>
                         <button id="clear">Empty the table</button>
-                        <button id="reset">Reset the table</button>
-                    </p>
+                        <button id="reset">Reset</button>
+                    </fieldset>
                     <div id="example-table-adddel"></div>
 
                     <button class="view-source">View Source</button>
@@ -1063,7 +1068,7 @@ $("#reset").click(function(){
                         <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_modern.css" rel="stylesheet"&gt;</pre>
                     </fieldset>
 
-                    <h2>autumn Theme</h2>
+                    <h2>Autumn Theme</h2>
                     <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
                     <div id="example-table-theme-autumn" class="example-themes"></div>
                     <button class="view-source">View Source</button>
