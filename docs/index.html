@@ -173,7 +173,7 @@
                     </ul>
 
                     <a class="anchor" id="column-groups"></a>
-                    <h2>Column Grouping <span class="label label-danger">New</span></h2>
+                    <h2>Column Grouping <span class="label label-danger">New</span> <a class="example-link" href="../examples?#column-groups"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>You can group column headers togeather to create complex multi-row table headers.</p>
 
                     <p>To group columns, you need to add a column group object in the column definition array. You must give a column group a <span class='param'>title</span> and add the grouped column objects into the <span class='param'>columns</span> property of the group.</p>
@@ -205,9 +205,6 @@
 
     ],
 });</pre>
-
-                <p>An example of column grouping in action can be found on the <a href="../examples?#column-groups">Examples page.</a></p>
-
                 </article>
                 <a class="anchor" id="set-data"></a>
                 <article>
@@ -251,7 +248,7 @@ index:"age", //set the index field to the "age" field.
     {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
 ]);</pre>
                     <a class="anchor" id="ajax"></a>
-                    <h2>Set data using AJAX</h2>
+                    <h2>Set data using AJAX <a class="example-link" href="../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>  If you wish to retrieve your data from a remote source, pass the URL to the <span class='param'>setData</span> method and it will perform the AJAX request for you. The URL can be absolute or relative.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now");</pre>
@@ -296,7 +293,7 @@ $("#example-table").tabulator({
 });</pre>
 
                     <a class="anchor" id="table-load"></a>
-                    <h2>Extract Data from an HTML Table Element <span class="label label-primary">Updated</span></h2>
+                    <h2>Extract Data from an HTML Table Element <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#table-load"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>You can create a Tabulator table directly from an HTML table element. You can define the columns in the usual way with the columns option, or you can set them as <span class='param'>th</span> elements in the  <span class='param'>thead</span> of a table.</p>
                     <p>Any rows of data in the <span class='param'>tbody</span> of the table will automatically be converted to tabulator data in displayed in the resulting table.</p>
                     <p>If you define the <span class='param'>width</span> attribute in a table header cell, this will be used to set the width of the column in Tabulator.</p>
@@ -355,7 +352,7 @@ $("#example-table").tabulator({
                 </article>
                 <a class="anchor" id="pagination"></a>
                 <article>
-                    <h1>Pagination </h1>
+                    <h1>Pagination <a class="example-link" href="../examples?#pagination"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator allows for pagination of table data, displaying only a section of data at a time, allowing for smaller tables without scroll bars.</p>
 
@@ -367,9 +364,7 @@ $("#example-table").tabulator({
 
                     <p>If you are a Laravel user then you should find that the auto generated URL's and data processing work straight out the box with no aditional configuration needed.</p>
 
-                    <p>An example of pagination in action can be found on the <a href="../examples?#pagination">Examples page.</a></p>
-
-                    <strong>NOTE:</strong> Changing the filter or sorting while pagination is enabled will revert the table back to the first page.
+                    <p><strong>NOTE:</strong> Changing the filter or sorting while pagination is enabled will revert the table back to the first page.</p>
 
 
 
@@ -530,11 +525,11 @@ $("#example-table").tabulator({
                     </ul>
 
                     <a class="anchor" id="fittodata"></a>
-                    <h2>Fit Columns to data</h2>
+                    <h2>Fit Columns to Data <a class="example-link" href="../examples?#fittodata"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>This is the default table layout style and will cause columns to resize to fit the widest element they contain (unless a column width was set in the column options). If the width of all columns exceeds the width of the containing element, a scroll bar will appear.</p>
 
                     <a class="anchor" id="fittowidth"></a>
-                    <h2>Fit Columns to container</h2>
+                    <h2>Fit Columns to Container <a class="example-link" href="../examples?#fittowidth"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>This option will resize columns so that they fit perfectly inside the width of the container.</p>
 
                     <p>If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.</p>
@@ -546,7 +541,7 @@ $("#example-table").tabulator({
     fitColumns:true, // this option takes a boolean value (default = false)
 });</pre>
 
-                    <h2>Resizable columns</h2>
+                    <h2>Resizable Columns</h2>
                     <p>By default it is possible to manually resize columns by dragging the borders of the column headers.</p>
 
                     <p>To disable this option globally set the <span class='param'>colResizable</span> option to false when you create your Tabulator.</p>
@@ -607,7 +602,7 @@ $("#example-table").tabulator({
                 <a class="anchor" id="sorting"></a>
                 <article>
 
-                    <h1>Sorting Data</h1>
+                    <h1>Sorting Data <a class="example-link" href="../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the <span class='param'>sortable</span> option when you create your Tabulator.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -661,7 +656,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="formatting"></a>
                 <article>
-                    <h1>Formatting Data</h1>
+                    <h1>Formatting Data <a class="example-link" href="../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
                     <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
                     <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
@@ -798,7 +793,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
                 <a class="anchor" id="grouping"></a>
                 <article>
-                    <h1>Grouping Data</h1>
+                    <h1>Grouping Data <a class="example-link" href="../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p> With Tabulator you can group rows together using the <span class='param'>groupBy</span> option.</p>
                     <p>To group by a field, set this option to the name of the field to be grouped.</p>
@@ -818,7 +813,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
                 <a class="anchor" id="filtering"></a>
                 <article>
-                    <h1>Filtering Data</h1>
+                    <h1>Filtering Data <a class="example-link" href="../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator allows you to filter the table data by any field in the data set.</p>
 
@@ -869,10 +864,8 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter");</pre>
 
                     <a class="anchor" id="header-filters"></a>
-                    <h2>Header Filtering</h2>
+                    <h2>Header Filtering <a class="example-link" href="../examples?#filter-header"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Is is possible to filter the table data directly from the column headers, by setting the <span class='param'>headerFilter</span> parameter in the column definition object for that column.</p>
-
-                    <p>A demo of this feature in action can be found on the <a href="../examples#filter-header">Header Filtering Example Page.</a> </p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerFilter:true} //show header filter matching the cells editor</pre>
 
@@ -902,7 +895,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>Tabulator allows you to manipulate the data in the table in a number of different ways</p>
 
-                    <h2>Editable Data</h2>
+                    <h2>Editable Data <a class="example-link" href="../examples?#editable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Columns of the table can be set as editable using the <span class='param'>editable</span> parameter in the column definition. (see <a href="#define-column-headers">Define Column Headers</a> for more details).</p>
 
                     <p>When a user clicks on an editable column the will be able to edit the value for that cell.</p>
@@ -995,7 +988,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <p>You can remove all data from the table using the <span class='param'>clear</span> function:</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("clear");</pre>
 
-                    <h2>Row Manipulation</h2>
+                    <h2>Row Manipulation <a class="example-link" href="../examples?#adddel"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <p>There are a number of ways to manipulate individual rows in the table without affecting any other currently rendered rows.</p>
 
@@ -1090,7 +1083,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                 <article>
                     <h1>Movable Rows and Columns</h1>
 
-                    <h2>Movable Rows</h2>
+                    <h2>Movable Rows <a class="example-link" href="../examples?#movable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <p>To allow the user to move rows up and down the table, set the <span class='param'>movableRows</span> parameter in the options:</p>
                     <pre class="prettyprint lang-js">$('#example-table'),tabulator({
@@ -1175,7 +1168,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-js">var colDefs = $("#example-table").tabulator("getColumns") //get column definition array</pre>
 
                     <a class="anchor" id="persistant-columns"></a>
-                    <h2>Persistent Column Layout <span class="label label-primary">Updated</span></h2>
+                    <h2>Persistent Column Layout <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Tabulator can store the layout of columns so that each time a user comes back to the page, the table is laid out just as they left it.</p>
 
                     <p>
@@ -1421,7 +1414,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="css"></a>
                 <article>
-                    <h1>CSS Classes &amp; Theming</h1>
+                    <h1>CSS Classes &amp; Theming <a class="example-link" href="../examples?#theming"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>As of version 2.1 all Tabulator elements are styled using a range CSS classes to make it easier for you to manipulate the look, feel and function of the table.</p>
 
@@ -1441,8 +1434,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><strong>Modern</strong> - A neat, stylish layout using one primary color. <i>(/themes/tabulator_modern.css)</i></li>
                         <li><strong>Autumn</strong> - A colorful, bright layout using shades of orange and brown. <i>(/themes/tabulator_autumn.css)</i></li>
                     </ul>
-
-                    <p>A demo of each of these in action can be found on the <a href="../examples?#theming">Examples page.</a></p>
 
                     <h2>CSS Classes <span class="label label-primary">Updated</span></h2>
 
@@ -1616,7 +1607,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks &amp; Events</h1>
+                    <h1>Callbacks &amp; Events <a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
