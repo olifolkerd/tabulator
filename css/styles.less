@@ -203,11 +203,11 @@ ul.docs-sidenav{
 
 .docs{
 	a.anchor {
-	    display: block;
-	    position: relative;
-	    margin-top: -20px;
-	    padding-top: 20px;
-	    visibility: hidden;
+		display: block;
+		position: relative;
+		margin-top: -20px;
+		padding-top: 20px;
+		visibility: hidden;
 	}
 
 	.intro{
@@ -323,6 +323,35 @@ ul.docs-sidenav{
 			&:hover{
 				background:darken(@green, 20%);
 				border:2px solid  @green;
+			}
+
+		}
+
+		a.example-link{
+
+			color: #fff;
+			font-weight: bold;
+			font-size: 14px;
+
+			vertical-align: middle;
+
+			 button{
+
+				margin-top: 20px;
+				margin-left:5px;
+
+				border:2px solid darken(@green, 20%);
+				border-radius: 5px;
+
+				padding: 5px 10px;
+
+				background: @green;
+
+
+				&:hover{
+					background:darken(@green, 20%);
+					border:2px solid  @green;
+				}
 			}
 
 		}

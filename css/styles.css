@@ -226,6 +226,24 @@ ul.docs-sidenav li a:hover {
   background: #32631f;
   border: 2px solid #59B038;
 }
+.docs article a.example-link {
+  color: #fff;
+  font-weight: bold;
+  font-size: 14px;
+  vertical-align: middle;
+}
+.docs article a.example-link button {
+  margin-top: 20px;
+  margin-left: 5px;
+  border: 2px solid #32631f;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background: #59B038;
+}
+.docs article a.example-link button:hover {
+  background: #32631f;
+  border: 2px solid #59B038;
+}
 .docs article fieldset {
   margin-top: 20px;
   border: 2px solid #59B038;
