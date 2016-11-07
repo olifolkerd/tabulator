@@ -823,7 +823,7 @@ $("#example-table-pagination").tabulator("setPage", 1);</pre>
                         <pre class="prettyprint lang-js">$("#example-table-colum-layout").tabulator({
     height:"311px",
     movableCols:true,
-    columnLayoutCookie: true,
+    persistentLayout: true,
     columns:[
     {title:"Name", field:"name", width:200},
     {title:"Progress", field:"progress", width:1000, sorter:"number"},
@@ -1597,7 +1597,7 @@ $("#reset").click(function(){
         $("#example-table-colum-layout").tabulator({
             height:"311px",
             movableCols:true,
-            columnLayoutCookie: true,
+            persistentLayout: true,
             columns:[
             {title:"Name", field:"name", width:200},
             {title:"Progress", field:"progress", width:1000, sorter:"number"},
