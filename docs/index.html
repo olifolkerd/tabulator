@@ -243,10 +243,12 @@ index:"age", //set the index field to the "age" field.
                     <h2>Set data using array</h2>
                     <p>You can pass an array directly to the table using the <span class='param'>setData</span> method.</p>
 
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setData",[
+                    <pre class="prettyprint lang-js">var tableData = [
     {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
     {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
-]);</pre>
+]
+
+$("#example-table").tabulator("setData", tableData);</pre>
                     <a class="anchor" id="ajax"></a>
                     <h2>Set data using AJAX <a class="example-link" href="../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>  If you wish to retrieve your data from a remote source, pass the URL to the <span class='param'>setData</span> method and it will perform the AJAX request for you. The URL can be absolute or relative.</p>
