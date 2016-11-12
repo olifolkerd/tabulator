@@ -1574,21 +1574,21 @@ alert("Row " + id + " Context Clicked!!!!")
         //generate line chart
         var lineFormatter = function(value, data, cell, row, options){
             setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"line"});
+                cell.sparkline(value, {width:"100%", type:"line", disableTooltips:true});
             }, 10);
         };
 
         //generate bar chart
         var barFormatter = function(value, data, cell, row, options){
             setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"bar", barWidth:14});
+                cell.sparkline(value, {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
             }, 10);
         };
 
         //generate discrete chart
         var tristateFormatter = function(value, data, cell, row, options){
             setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14});
+                cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
             }, 10);
         };
 
@@ -1596,7 +1596,7 @@ alert("Row " + id + " Context Clicked!!!!")
         //generate box plot
         var boxFormatter = function(value, data, cell, row, options){
             setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"box"});
+                cell.sparkline(value, {width:"100%", type:"box", disableTooltips:true});
             }, 10);
         };
 
