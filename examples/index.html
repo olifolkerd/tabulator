@@ -121,17 +121,17 @@
 
                             <h3>JavaScript</h3>
                             <pre class="prettyprint lang-js">$("#example-table-simple").tabulator({
-    height:"311px",
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", width:100, sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", width:80},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob"},
-    {title:"Driver", field:"car"},
-    ],
-});</pre>
+                                height:"311px",
+                                columns:[
+                                {title:"Name", field:"name", width:200},
+                                {title:"Progress", field:"progress", width:100, sorter:"number"},
+                                {title:"Gender", field:"gender"},
+                                {title:"Rating", field:"rating", width:80},
+                                {title:"Favourite Color", field:"col"},
+                                {title:"Date Of Birth", field:"dob"},
+                                {title:"Driver", field:"car"},
+                                ],
+                            });</pre>
                         </fieldset>
                     </article>
                     <a class="anchor" id="fittodata"></a>
@@ -150,17 +150,17 @@
 
                             <h3>JavaScript</h3>
                             <pre class="prettyprint lang-js">$("#example-table-fittodata").tabulator({
-    height:"311px",
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", align:"center", width:80},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center"},
-    ],
-});</pre>
+                                height:"311px",
+                                columns:[
+                                {title:"Name", field:"name", width:200},
+                                {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+                                {title:"Gender", field:"gender"},
+                                {title:"Rating", field:"rating", align:"center", width:80},
+                                {title:"Favourite Color", field:"col"},
+                                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+                                {title:"Driver", field:"car", align:"center"},
+                                ],
+                            });</pre>
                         </fieldset>
                     </article>
                     <a class="anchor" id="fittowidth"></a>
@@ -182,237 +182,237 @@
 
                             <h3>JavaScript</h3>
                             <pre class="prettyprint lang-js">$("#example-table-fittowidth").tabulator({
-    height:"311px",
-    fitColumns:true,
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", align:"right", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", align:"center", width:60},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center"},
-    ],
-});</pre>
+                                height:"311px",
+                                fitColumns:true,
+                                columns:[
+                                {title:"Name", field:"name", width:200},
+                                {title:"Progress", field:"progress", align:"right", sorter:"number"},
+                                {title:"Gender", field:"gender"},
+                                {title:"Rating", field:"rating", align:"center", width:60},
+                                {title:"Favourite Color", field:"col"},
+                                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+                                {title:"Driver", field:"car", align:"center"},
+                                ],
+                            });</pre>
                         </fieldset>
                     </article>
 
-                    </article>
-                    <a class="anchor" id="column-groups"></a>
-                    <article>
-                        <h1>Column Groups <a class="doc-link" href="../docs?#column-groups"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                </article>
+                <a class="anchor" id="column-groups"></a>
+                <article>
+                    <h1>Column Groups <a class="doc-link" href="../docs?#column-groups"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
-                        <p>By creating groups in the column definition array, you can create multi line headers with groups of columns.</p>
+                    <p>By creating groups in the column definition array, you can create multi line headers with groups of columns.</p>
 
-                        <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your columns headers should be vertically aligned.</p>
+                    <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your columns headers should be vertically aligned.</p>
 
-                        <div id="example-table-column-grouping"></div>
+                    <div id="example-table-column-grouping"></div>
 
-                        <button class="view-source">View Source</button>
-                        <fieldset class="source">
-                            <legend>Source Code</legend>
-                            <h3>HTML</h3>
-                            <pre class="prettyprint lang-html">&lt;div id="example-table-fittowidth"&gt;&lt;/div&gt;</pre>
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;div id="example-table-fittowidth"&gt;&lt;/div&gt;</pre>
 
-                            <h3>JavaScript</h3>
-                            <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
-    colVertAlign:"bottom", //align header contents to bottom of cell
-    columns:[
-        {title:"Name", field:"name", width:160},
-        {//create column group
-            title:"Work Info",
-            columns:[
-                {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
-                {title:"Rating", field:"rating", align:"center", width:80},
-                {title:"Driver", field:"car", align:"center", width:80},
-            ],
-        },
-        {//create column group
-            title:"Personal Info",
-            columns:[
-                {title:"Gender", field:"gender", width:90},
-                {title:"Favourite Color", field:"col", width:140},
-                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
-            ],
-        },
+                        <h3>JavaScript</h3>
+                        <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
+                            colVertAlign:"bottom", //align header contents to bottom of cell
+                            columns:[
+                            {title:"Name", field:"name", width:160},
+                            {//create column group
+                            title:"Work Info",
+                            columns:[
+                            {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+                            {title:"Rating", field:"rating", align:"center", width:80},
+                            {title:"Driver", field:"car", align:"center", width:80},
+                            ],
+                        },
+                        {//create column group
+                        title:"Personal Info",
+                        columns:[
+                        {title:"Gender", field:"gender", width:90},
+                        {title:"Favourite Color", field:"col", width:140},
+                        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+                        ],
+                    },
 
-    ],
-});</pre>
-                        </fieldset>
-                    </article>
+                    ],
+                });</pre>
+            </fieldset>
+        </article>
 
-                    <a class="anchor" id="table-load"></a>
-                    <article>
-                        <h1>Create from HTML Table Element <a class="doc-link" href="../docs?#table-load"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                        <p>
-                            It is possible to convert a standard HTML Table element into a tabulator, pulling all the data directly from the table into the tabulator when it is created.
-                        </p>
-                        <p>
-                            If you want to pull the column headers in from the table, you need to make sure that you have defiend a <span class='param'>thead</span> element with each column header in a <span class='param'>th</span> element. If you specify the <span class='param'>width</span> attribute on a header, then this will be set as the width of the column in the tabulator.
-                        </p>
-                        <p>
-                            You can set any of the standard Tabulator options when you create your table this way, so can easily convert old tables to take advantage of the many features Tabulator has to offer.
-                        </p>
+        <a class="anchor" id="table-load"></a>
+        <article>
+            <h1>Create from HTML Table Element <a class="doc-link" href="../docs?#table-load"><i class="fa fa-external-link"></i> Documentation</a></h1>
+            <p>
+                It is possible to convert a standard HTML Table element into a tabulator, pulling all the data directly from the table into the tabulator when it is created.
+            </p>
+            <p>
+                If you want to pull the column headers in from the table, you need to make sure that you have defiend a <span class='param'>thead</span> element with each column header in a <span class='param'>th</span> element. If you specify the <span class='param'>width</span> attribute on a header, then this will be set as the width of the column in the tabulator.
+            </p>
+            <p>
+                You can set any of the standard Tabulator options when you create your table this way, so can easily convert old tables to take advantage of the many features Tabulator has to offer.
+            </p>
 
-                        <h3>Standard HTML Table:</h3>
-                        <table id="plain-table" class="plain">
-                            <thead>
-                                <tr>
-                                    <th width="200">Name</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Height</th>
-                                    <th width="150">Favourite Color</th>
-                                    <th>Date of Birth</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Billy Bob</td>
-                                    <td>12</td>
-                                    <td>male</td>
-                                    <td>1</td>
-                                    <td>red</td>
-                                    <td>22/04/1994</td>
-                                </tr>
-                                <tr>
-                                    <td>Mary May</td>
-                                    <td>1</td>
-                                    <td>female</td>
-                                    <td>2</td>
-                                    <td>blue</td>
-                                    <td>14/05/1982</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <h3>Standard HTML Table:</h3>
+            <table id="plain-table" class="plain">
+                <thead>
+                    <tr>
+                        <th width="200">Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Height</th>
+                        <th width="150">Favourite Color</th>
+                        <th>Date of Birth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Billy Bob</td>
+                        <td>12</td>
+                        <td>male</td>
+                        <td>1</td>
+                        <td>red</td>
+                        <td>22/04/1994</td>
+                    </tr>
+                    <tr>
+                        <td>Mary May</td>
+                        <td>1</td>
+                        <td>female</td>
+                        <td>2</td>
+                        <td>blue</td>
+                        <td>14/05/1982</td>
+                    </tr>
+                </tbody>
+            </table>
 
-                        <h3>Converted to Tabulator:</h3>
-                        <table id="example-table-table">
-                            <thead>
-                                <tr>
-                                    <th width="200">Name</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Height</th>
-                                    <th width="150">Favourite Color</th>
-                                    <th>Date of Birth</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Billy Bob</td>
-                                    <td>12</td>
-                                    <td>male</td>
-                                    <td>1</td>
-                                    <td>red</td>
-                                    <td>22/04/1994</td>
-                                </tr>
-                                <tr>
-                                    <td>Mary May</td>
-                                    <td>1</td>
-                                    <td>female</td>
-                                    <td>2</td>
-                                    <td>blue</td>
-                                    <td>14/05/1982</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <h3>Converted to Tabulator:</h3>
+            <table id="example-table-table">
+                <thead>
+                    <tr>
+                        <th width="200">Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Height</th>
+                        <th width="150">Favourite Color</th>
+                        <th>Date of Birth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Billy Bob</td>
+                        <td>12</td>
+                        <td>male</td>
+                        <td>1</td>
+                        <td>red</td>
+                        <td>22/04/1994</td>
+                    </tr>
+                    <tr>
+                        <td>Mary May</td>
+                        <td>1</td>
+                        <td>female</td>
+                        <td>2</td>
+                        <td>blue</td>
+                        <td>14/05/1982</td>
+                    </tr>
+                </tbody>
+            </table>
 
-                        <button class="view-source">View Source</button>
-                        <fieldset class="source">
-                            <legend>Source Code</legend>
-                            <h3>HTML</h3>
-                            <pre class="prettyprint lang-html">&lt;table id="example-table-table"&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th width="200"&gt;Name&lt;/th&gt;
-            &lt;th&gt;Age&lt;/th&gt;
-            &lt;th&gt;Gender&lt;/th&gt;
-            &lt;th&gt;Height&lt;/th&gt;
-            &lt;th width="150"&gt;Favourite Color&lt;/th&gt;
-            &lt;th&gt;Date of Birth&lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Billy Bob&lt;/td&gt;
-            &lt;td&gt;12&lt;/td&gt;
-            &lt;td&gt;male&lt;/td&gt;
-            &lt;td&gt;1&lt;/td&gt;
-            &lt;td&gt;red&lt;/td&gt;
-            &lt;td&gt;22/04/1994&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Mary May&lt;/td&gt;
-            &lt;td&gt;1&lt;/td&gt;
-            &lt;td&gt;female&lt;/td&gt;
-            &lt;td&gt;2&lt;/td&gt;
-            &lt;td&gt;blue&lt;/td&gt;
-            &lt;td&gt;14/05/1982&lt;/td&gt;
-        &lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;</pre>
+            <button class="view-source">View Source</button>
+            <fieldset class="source">
+                <legend>Source Code</legend>
+                <h3>HTML</h3>
+                <pre class="prettyprint lang-html">&lt;table id="example-table-table"&gt;
+                    &lt;thead&gt;
+                    &lt;tr&gt;
+                    &lt;th width="200"&gt;Name&lt;/th&gt;
+                    &lt;th&gt;Age&lt;/th&gt;
+                    &lt;th&gt;Gender&lt;/th&gt;
+                    &lt;th&gt;Height&lt;/th&gt;
+                    &lt;th width="150"&gt;Favourite Color&lt;/th&gt;
+                    &lt;th&gt;Date of Birth&lt;/th&gt;
+                    &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                    &lt;tr&gt;
+                    &lt;td&gt;Billy Bob&lt;/td&gt;
+                    &lt;td&gt;12&lt;/td&gt;
+                    &lt;td&gt;male&lt;/td&gt;
+                    &lt;td&gt;1&lt;/td&gt;
+                    &lt;td&gt;red&lt;/td&gt;
+                    &lt;td&gt;22/04/1994&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr&gt;
+                    &lt;td&gt;Mary May&lt;/td&gt;
+                    &lt;td&gt;1&lt;/td&gt;
+                    &lt;td&gt;female&lt;/td&gt;
+                    &lt;td&gt;2&lt;/td&gt;
+                    &lt;td&gt;blue&lt;/td&gt;
+                    &lt;td&gt;14/05/1982&lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                    &lt;/table&gt;</pre>
 
-                            <h3>JavaScript</h3>
-                            <pre class="prettyprint lang-js"> $("#example-table-table").tabulator({fitColumns:true});</pre>
-                        </fieldset>
+                    <h3>JavaScript</h3>
+                    <pre class="prettyprint lang-js"> $("#example-table-table").tabulator({fitColumns:true});</pre>
+                </fieldset>
 
-                    </article>
-                    <a class="anchor" id="editable"></a>
-                    <article>
-                        <h1>Editable Data <a class="doc-link" href="../docs?#manipulating-data"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                        <p>
-                            Using the <span class='param'>editable</span> setting on each column, you can make a user editable table.
-                        </p>
-                        <p>
-                            Any time a cell is edited it triggers the <span class='param'>rowEdit</span> callback, to allow you to process any changes.
-                        </p>
-                        <p>
-                            You can call the <span class='param'>getData</span> method to get an array of all of the tables data, including any edits
-                        </p>
-                        <div id="example-table-editable"></div>
+            </article>
+            <a class="anchor" id="editable"></a>
+            <article>
+                <h1>Editable Data <a class="doc-link" href="../docs?#manipulating-data"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                <p>
+                    Using the <span class='param'>editable</span> setting on each column, you can make a user editable table.
+                </p>
+                <p>
+                    Any time a cell is edited it triggers the <span class='param'>rowEdit</span> callback, to allow you to process any changes.
+                </p>
+                <p>
+                    You can call the <span class='param'>getData</span> method to get an array of all of the tables data, including any edits
+                </p>
+                <div id="example-table-editable"></div>
 
-                        <button class="view-source">View Source</button>
-                        <fieldset class="source">
-                            <legend>Source Code</legend>
-                            <h3>HTML</h3>
-                            <pre class="prettyprint lang-html">&lt;div id="example-table-editable"&gt;&lt;/div&gt;</pre>
+                <button class="view-source">View Source</button>
+                <fieldset class="source">
+                    <legend>Source Code</legend>
+                    <h3>HTML</h3>
+                    <pre class="prettyprint lang-html">&lt;div id="example-table-editable"&gt;&lt;/div&gt;</pre>
 
-                            <h3>JavaScript</h3>
-                            <pre class="prettyprint lang-js">//Create Gender
-var genderEditor = function(cell, value){
-    //cell - JQuery object for current cell
-    //value - the current value for current cell
+                    <h3>JavaScript</h3>
+                    <pre class="prettyprint lang-js">//Create Gender
+                        var genderEditor = function(cell, value){
+                        //cell - JQuery object for current cell
+                        //value - the current value for current cell
 
-    //create and style editor
-    var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
-    editor.css({
-        "padding":"3px",
-        "width":"100%",
-        "box-sizing":"border-box",
-    })
+                        //create and style editor
+                        var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+                        editor.css({
+                        "padding":"3px",
+                        "width":"100%",
+                        "box-sizing":"border-box",
+                    })
 
-    //Set value of editor to the value of the cell
-    .val(value);
+                    //Set value of editor to the value of the cell
+                    .val(value);
 
-    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-    if(cell.hasClass("tabulator-cell")){
-        setTimeout(function(){
-            editor.focus();
-        },100);
+                    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+                    if(cell.hasClass("tabulator-cell")){
+                    setTimeout(function(){
+                    editor.focus();
+                },100);
+            }
+
+            //when the value has been set, update the cell
+            editor.on("change blur", function(e){
+            cell.trigger("editval", editor.val());
+        });
+
+        //return the editor element
+        return editor;
     }
 
-    //when the value has been set, update the cell
-    editor.on("change blur", function(e){
-        cell.trigger("editval", editor.val());
-    });
-
-    //return the editor element
-    return editor;
-}
-
-//Build Tabulator
-$("#example-table-editable").tabulator({
+    //Build Tabulator
+    $("#example-table-editable").tabulator({
     height:"311px",
     columns:[
     {title:"Name", field:"name", width:150, editable:true},
@@ -424,78 +424,78 @@ $("#example-table-editable").tabulator({
     ],
     rowEdit:function(id,data,row){
 
-    },
+},
 });</pre>
-                        </fieldset>
-                    </article>
-                    <a class="anchor" id="sorters"></a>
-                    <article>
-                        <h1>Sorters <a class="doc-link" href="../docs?#sorting"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                        <p>Sorting is enabled by default, and can be toggled on or off by column using the <span class='param'>sortable</span> option.</p>
+</fieldset>
+</article>
+<a class="anchor" id="sorters"></a>
+<article>
+    <h1>Sorters <a class="doc-link" href="../docs?#sorting"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Sorting is enabled by default, and can be toggled on or off by column using the <span class='param'>sortable</span> option.</p>
 
-                        <p>By default all columns are sorted as text, different sort functions can be set using the <span class='param'>sorter</span> option
+    <p>By default all columns are sorted as text, different sort functions can be set using the <span class='param'>sorter</span> option
 
-                            <ul>
-                                <li><strong>string</strong> - sorts column as strings of characters</li>
-                                <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
-                                <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
-                                <li><strong>boolean</strong> - sorts column as booleans</li>
-                                <li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span class='param'>dateFormat</span> option when you create your table. default format is "dd/mm/yyyy")</li>
-                            </ul>
+        <ul>
+            <li><strong>string</strong> - sorts column as strings of characters</li>
+            <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
+            <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
+            <li><strong>boolean</strong> - sorts column as booleans</li>
+            <li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span class='param'>dateFormat</span> option when you create your table. default format is "dd/mm/yyyy")</li>
+        </ul>
 
-                        </p>
+    </p>
 
-                        <p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
+    <p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
 
-                        <p>You can programmatically trigger a sort using the <span class='param'>sort</span> function.</p>
+    <p>You can programmatically trigger a sort using the <span class='param'>sort</span> function.</p>
 
-                        <p>
-                            <fieldset>
-                               <legend>Programmatic Sort Parameters</legend>
+    <p>
+        <fieldset>
+         <legend>Programmatic Sort Parameters</legend>
 
-                               <label>Field: </label>
-                               <select id="sort-field">
-                                <option value="name" selected>Name</option>
-                                <option value="progress">Progress</option>
-                                <option value="gender">Gender</option>
-                                <option value="rating">Rating</option>
-                                <option value="col">Favourite Colour</option>
-                                <option value="dob">Date Of Birth</option>
-                                <option value="car">Driver</option>
-                            </select>
+         <label>Field: </label>
+         <select id="sort-field">
+            <option value="name" selected>Name</option>
+            <option value="progress">Progress</option>
+            <option value="gender">Gender</option>
+            <option value="rating">Rating</option>
+            <option value="col">Favourite Colour</option>
+            <option value="dob">Date Of Birth</option>
+            <option value="car">Driver</option>
+        </select>
 
 
-                            <label>Direction:</label>
-                            <select id="sort-direction">
-                                <option value="asc" selected>asc</option>
-                                <option value="desc">desc</option>
-                            </select>
+        <label>Direction:</label>
+        <select id="sort-direction">
+            <option value="asc" selected>asc</option>
+            <option value="desc">desc</option>
+        </select>
 
-                            <button id="sort-trigger">Trigger Sort</button>
+        <button id="sort-trigger">Trigger Sort</button>
 
-                        </fieldset>
+    </fieldset>
 
-                    </p>
+</p>
 
-                    <div id="example-table-sorting"></div>
+<div id="example-table-sorting"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-sorting"&gt;&lt;/div&gt;</pre>
+<button class="view-source">View Source</button>
+<fieldset class="source">
+    <legend>Source Code</legend>
+    <h3>HTML</h3>
+    <pre class="prettyprint lang-html">&lt;div id="example-table-sorting"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-sorting").tabulator({
-    height:"311px",
-    fitColumns:true,
-    columns:[
-    {title:"Name", field:"name", sorter:"string", width:200},
-    {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
-    {title:"Gender", field:"gender", sorter:"string"},
-    {title:"Rating", field:"rating",  align:"center", width:100},
-    {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
+    <h3>JavaScript</h3>
+    <pre class="prettyprint lang-js">//Build Tabulator
+        $("#example-table-sorting").tabulator({
+        height:"311px",
+        fitColumns:true,
+        columns:[
+        {title:"Name", field:"name", sorter:"string", width:200},
+        {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
+        {title:"Gender", field:"gender", sorter:"string"},
+        {title:"Rating", field:"rating",  align:"center", width:100},
+        {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
         return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
     }},
     {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -505,201 +505,279 @@ $("#example-table-sorting").tabulator({
 
 //Trigger sort when "Trigger Sort" button is clicked
 $("#sort-trigger").click(function(){
-    $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+$("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
 })</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="formatters"></a>
-                <article>
-                    <h1>Formatters <a class="doc-link" href="../docs?#formatting"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
+</fieldset>
+</article>
+<a class="anchor" id="formatters"></a>
+<article>
+    <h1>Formatters <a class="doc-link" href="../docs?#formatting"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
-                    <p>you can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
+    <p>you can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
 
-                    <p>
-                        Tabulator comes with a number of preconfigured formatters including:
-                        <ul>
-                            <li><strong>money</strong> - formats a number into a currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
-                            <li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
-                            <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
-                            <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
-                            <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
-                            <li><strong>color</strong> - sets the background color of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
-                            <li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
-                            <li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
-                            <li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
-                            <li><strong>buttonCross</strong> - displays a cross icon on eac row (for use as a button)</li>
-                        </ul>
-                    </p>
+    <p>
+        Tabulator comes with a number of preconfigured formatters including:
+        <ul>
+            <li><strong>money</strong> - formats a number into a currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
+            <li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
+            <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
+            <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
+            <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
+            <li><strong>color</strong> - sets the background color of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
+            <li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
+            <li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
+            <li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
+            <li><strong>buttonCross</strong> - displays a cross icon on eac row (for use as a button)</li>
+        </ul>
+    </p>
 
-                    <p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
+    <p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
 
-                    <p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+    <p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
 
-                    <p>You can also set a row formatter using the <span class='param'>rowFormatter</span> option, this allows you to format the styling of the row as a whole</p>
+    <p>You can also set a row formatter using the <span class='param'>rowFormatter</span> option, this allows you to format the styling of the row as a whole</p>
 
-                    <div id="example-table-formatter"></div>
+    <div id="example-table-formatter"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-formatter"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-formatter"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Generate print icon
-var printIcon = function(value, data, cell, row, options){ //plain text value
-    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
-};
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Generate print icon
+            var printIcon = function(value, data, cell, row, options){ //plain text value
+            return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
+        };
 
-//Build Tabulator
-$("#example-table-formatter").tabulator({
-    height:"311px",
-    fitColumns:true,
-    rowFormatter:function(row, data){
+        //Build Tabulator
+        $("#example-table-formatter").tabulator({
+        height:"311px",
+        fitColumns:true,
+        rowFormatter:function(row, data){
 
         if(data.col == "blue"){
-            row.css({"background-color":"#A6A6DF"});
-        }
-    },
-    columns:[
-    {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-    {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
-        if(value.indexOf("o") > 0){
-            return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
-        }else{
-            return value;
-        }
-    }},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {formatter:"buttonCross", width:30, align:"center"},
-    ],
-});</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="grouping"></a>
-                <article>
-                    <h1>Grouping Data <a class="doc-link" href="../docs?#grouping"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>You can group rows together using the <span class='param'>groupBy</span> option. To group by a field, set this option to the name of the field.</p>
-                    <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
-
-                    <div id="example-table-grouping"></div>
-
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-grouping"&gt;&lt;/div&gt;</pre>
-
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-grouping").tabulator({
-    height:"311px",
-    fitColumns:true,
-    groupBy:"gender",
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
-});</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="filter"></a>
-                <article>
-                    <h1>Filter Data <a class="doc-link" href="../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>Tabulator allows you to filter the table data by any field in the data set.</p>
-
-                    <p>To set a filter you need to call the <span class='param'>setFilter</span> method, passing the field you wish to filter, the comparison type and the value to filter for</p>
-
-                    <p>
-                        Tabulator comes with a number of filter comparison types including:
-                        <ul>
-                            <li><strong>=</strong> - Displays only rows with data that is the same as the filter</li>
-                            <li><strong>&lt;</strong> - displays rows with a value less than the filter value</li>
-                            <li><strong>&lt;=</strong> - displays rows with a value less than or qual to the filter value</li>
-                            <li><strong>&gt;</strong> - displays rows with a value greater than the filter value</li>
-                            <li><strong>&gt;=</strong> - displays rows with a value greater than or qual to the filter value</li>
-                            <li><strong>!=</strong> - displays rows with a value that is not equal to the filter value</li>
-                            <li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
-                        </ul>
-                    </p>
-
-                    <p>
-                        <fieldset>
-                            <legend>Filter Parameters</legend>
-
-
-                            <label>Field: </label>
-                            <select id="filter-field">
-                                <option></option>
-                                <option value="name">Name</option>
-                                <option value="progress">Progress</option>
-                                <option value="gender">Gender</option>
-                                <option value="rating">Rating</option>
-                                <option value="col">Favourite Colour</option>
-                                <option value="dob">Date Of Birth</option>
-                                <option value="car">Drives</option>
-                                <option value="function">Drives &amp;Rating &lt; 3</option>
-                            </select>
-
-
-                            <label>Type: </label>
-                            <select id="filter-type">
-                                <option value="=">=</option>
-                                <option value="<">&lt;</option>
-                                <option value="<=">&lt;=</option>
-                                <option value=">">&gt;</option>
-                                <option value=">=">&gt;=</option>
-                                <option value="!=">!=</option>
-                                <option value="like">like</option>
-                            </select>
-
-
-                            <label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter">
-
-                            <button id="filter-clear">Clear Filter</button>
-
-                        </fieldset>
-
-                    </p>
-
-                    <div id="example-table-filters"></div>
-
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-filters"&gt;&lt;/div&gt;</pre>
-
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Custom filter example
-function customFilter(data){
-    return data.car &amp;&amp; data.rating < 3;
+        row.css({"background-color":"#A6A6DF"});
+    }
+},
+columns:[
+{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
+{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
+if(value.indexOf("o") > 0){
+return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
+}else{
+return value;
 }
+}},
+{title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+{title:"Gender", field:"gender"},
+{title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+{title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+{title:"Favourite Color", field:"col" ,formatter:"color", width:160},
+{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+{formatter:"buttonCross", width:30, align:"center"},
+],
+});</pre>
+</fieldset>
+</article>
+<a class="anchor" id="sparklines"></a>
+<article>
+    <h1>Sparklines</h1>
+    <p>You can use external JavaScript libraries in any of your formatters. in this example we will use the popular sparklines.js library.</p>
+    <p>We will be passing an array of falues into a field and then using a custom formatter to turn this array into a sparkline.</p>
+    <p>The Sparklines library can be downloaded from <a href="https://github.com/gwatts/jquery.sparkline/">Git Hub.</a></p>
 
-//Trigger setFilter function with correct parameters
-function updateFilter(){
+    <div id="example-table-sparkline"></div>
 
-    var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
 
-    if($("#filter-field").val() == "function" ){
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;!-- Include sparkline library --&gt;
+&lt;script src="sparkline.js"&gt;&lt;/script&gt;
+
+&lt;!-- Element to hold Tabulator --&gt;
+&lt;div id="example-table-sparkline"&gt;&lt;/div&gt;</pre>
+
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Formatter to generate line chart
+var lineFormatter = function(value, data, cell, row, options){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.sparkline(value, {width:"100%", type:"line"});
+    }, 10);
+};
+
+//Formatter to generate bar chart
+var barFormatter = function(value, data, cell, row, options){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.sparkline(value, {width:"100%", type:"bar", barWidth:14});
+    }, 10);
+};
+
+//Formatter to generate tristart chart
+var tristateFormatter = function(value, data, cell, row, options){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14});
+    }, 10);
+};
+
+
+//Formatter to generate box plot
+var boxFormatter = function(value, data, cell, row, options){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.sparkline(value, {width:"100%", type:"box"});
+    }, 10);
+};
+
+//Sample Data with array values for graph fields
+var sparkData = [
+    {id:1, name:"Oli Bob", line:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], bar:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], tristate:[1, 20, -5, -3, 10, 13, 0, 15, 9, 11], box:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11]},
+    {id:2, name:"Mary May", line:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], bar:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], tristate:[-10, 12, 14, 16, 13, 9, 7, 0, 10, 13], box:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
+    {id:3, name:"Christine Lobowski", line:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], bar:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], tristate:[1, 2, 5, 0, 1, 16, 4, 2, 1, 3], box:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
+    {id:4, name:"Brendon Philips", line:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], bar:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], tristate:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], box:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
+    {id:5, name:"Margret Marmajuke", line:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], bar:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], tristate:[1, -3, 1, 3, -3, 1, -1, 3, 1, 3], box:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
+    {id:6, name:"Frank Harbours", line:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], bar:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], tristate:[20, 17, 15, 11, 16, -9, 12, 14, 20, 12], box:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
+    {id:7, name:"Jamie Newhart", line:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], bar:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], tristate:[11, 7, 6, -12, 1-13, 11, 10, 9, 6], box:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
+    {id:8, name:"Gemma Jane", line:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], bar:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], tristate:[4, 17, 11, -12, 0, 5, 12, -14, 18, 11], box:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
+    {id:9, name:"Emily Sykes", line:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], bar:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], tristate:[11, 15, 19, -20, 17, 16, 16, -5, 3, 2], box:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
+    {id:10, name:"James Newman", line:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], bar:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], tristate:[1, 2, 0, -4, -5, -4, 2, 5, 9, 8], box:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
+];
+
+
+//Table Constructor
+$("#example-table-sparkline").tabulator({
+    height:"311px",
+    columns:[
+    {title:"Name", field:"name", width:190},
+    {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
+    {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
+    {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
+    {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
+    ],
+});</pre>
+    </fieldset>
+</article>
+<a class="anchor" id="grouping"></a>
+<article>
+    <h1>Grouping Data <a class="doc-link" href="../docs?#grouping"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>You can group rows together using the <span class='param'>groupBy</span> option. To group by a field, set this option to the name of the field.</p>
+    <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+
+    <div id="example-table-grouping"></div>
+
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-grouping"&gt;&lt;/div&gt;</pre>
+
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#example-table-grouping").tabulator({
+            height:"311px",
+            fitColumns:true,
+            groupBy:"gender",
+            columns:[
+            {title:"Name", field:"name", width:200},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Gender", field:"gender"},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+            {title:"Favourite Color", field:"col"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+            ],
+        });</pre>
+    </fieldset>
+</article>
+<a class="anchor" id="filter"></a>
+<article>
+    <h1>Filter Data <a class="doc-link" href="../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Tabulator allows you to filter the table data by any field in the data set.</p>
+
+    <p>To set a filter you need to call the <span class='param'>setFilter</span> method, passing the field you wish to filter, the comparison type and the value to filter for</p>
+
+    <p>
+        Tabulator comes with a number of filter comparison types including:
+        <ul>
+            <li><strong>=</strong> - Displays only rows with data that is the same as the filter</li>
+            <li><strong>&lt;</strong> - displays rows with a value less than the filter value</li>
+            <li><strong>&lt;=</strong> - displays rows with a value less than or qual to the filter value</li>
+            <li><strong>&gt;</strong> - displays rows with a value greater than the filter value</li>
+            <li><strong>&gt;=</strong> - displays rows with a value greater than or qual to the filter value</li>
+            <li><strong>!=</strong> - displays rows with a value that is not equal to the filter value</li>
+            <li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
+        </ul>
+    </p>
+
+    <p>
+        <fieldset>
+            <legend>Filter Parameters</legend>
+
+
+            <label>Field: </label>
+            <select id="filter-field">
+                <option></option>
+                <option value="name">Name</option>
+                <option value="progress">Progress</option>
+                <option value="gender">Gender</option>
+                <option value="rating">Rating</option>
+                <option value="col">Favourite Colour</option>
+                <option value="dob">Date Of Birth</option>
+                <option value="car">Drives</option>
+                <option value="function">Drives &amp;Rating &lt; 3</option>
+            </select>
+
+
+            <label>Type: </label>
+            <select id="filter-type">
+                <option value="=">=</option>
+                <option value="<">&lt;</option>
+                <option value="<=">&lt;=</option>
+                <option value=">">&gt;</option>
+                <option value=">=">&gt;=</option>
+                <option value="!=">!=</option>
+                <option value="like">like</option>
+            </select>
+
+
+            <label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter">
+
+            <button id="filter-clear">Clear Filter</button>
+
+        </fieldset>
+
+    </p>
+
+    <div id="example-table-filters"></div>
+
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-filters"&gt;&lt;/div&gt;</pre>
+
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Custom filter example
+            function customFilter(data){
+            return data.car &amp;&amp; data.rating < 3;
+        }
+
+        //Trigger setFilter function with correct parameters
+        function updateFilter(){
+
+        var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
+
+        if($("#filter-field").val() == "function" ){
         $("#filter-type").prop("disabled", true);
         $("#filter-value").prop("disabled", true);
     }else{
-        $("#filter-type").prop("disabled", false);
-        $("#filter-value").prop("disabled", false);
-    }
+    $("#filter-type").prop("disabled", false);
+    $("#filter-value").prop("disabled", false);
+}
 
-    $("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
+$("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
 }
 
 //Update filters on value change
@@ -708,429 +786,429 @@ $("#filter-value").keyup(updateFilter);
 
 //Clear filters on "Clear Filters" button click
 $("#filter-clear").click(function(){
-    $("#filter-field").val("");
-    $("#filter-type").val("=");
-    $("#filter-value").val("");
+$("#filter-field").val("");
+$("#filter-type").val("=");
+$("#filter-value").val("");
 
-    $("#example-table-filters").tabulator("clearFilter");
+$("#example-table-filters").tabulator("clearFilter");
 });
 
 //Build Tabulator
 $("#example-table-filters").tabulator({
-    height:"311px",
-    fitColumns:true,
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
+height:"311px",
+fitColumns:true,
+columns:[
+{title:"Name", field:"name", width:200},
+{title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+{title:"Gender", field:"gender"},
+{title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+{title:"Favourite Color", field:"col"},
+{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+{title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+],
 });</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="filter-header"></a>
-                <article>
-                    <h1>Filter Data In Header<a class="doc-link" href="../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>By settting the <span class='param'>headerFilter</span> parameter for a column you can add column based filtering directly into your table.</p>
+</fieldset>
+</article>
+<a class="anchor" id="filter-header"></a>
+<article>
+    <h1>Filter Data In Header<a class="doc-link" href="../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>By settting the <span class='param'>headerFilter</span> parameter for a column you can add column based filtering directly into your table.</p>
 
-                    <p>See the documentation for <a href="../docs#header-filters">Header Filtering</a> for more information.</p>
+    <p>See the documentation for <a href="../docs#header-filters">Header Filtering</a> for more information.</p>
 
-                    <div id="example-table-filters-header"></div>
+    <div id="example-table-filters-header"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-filters-header"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-filters-header"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-filters-header").tabulator({
-    height:"311px",
-    fitColumns:true,
-    columns:[
-    {title:"Name", field:"name", width:150, headerFilter:true},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
-    {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
-    {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
-    {title:"Favourite Color", field:"col", headerFilter:true},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
-    ],
-});</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="pagination"></a>
-                <article>
-                    <h1>Pagination <a class="doc-link" href="../docs?#pagination"><i class="fa fa-external-link"></i> Documentation</a></h1>
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#example-table-filters-header").tabulator({
+            height:"311px",
+            fitColumns:true,
+            columns:[
+            {title:"Name", field:"name", width:150, headerFilter:true},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
+            {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
+            {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+            {title:"Favourite Color", field:"col", headerFilter:true},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
+            ],
+        });</pre>
+    </fieldset>
+</article>
+<a class="anchor" id="pagination"></a>
+<article>
+    <h1>Pagination <a class="doc-link" href="../docs?#pagination"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
-                    <p>Tabulator allows you to paginate your data. simply set the <span class='param'>pagination</span> property to true.</p>
+    <p>Tabulator allows you to paginate your data. simply set the <span class='param'>pagination</span> property to true.</p>
 
-                    <p>If you have set the height of the table then the data will be automatically paginated to fit within the table.</p>
+    <p>If you have set the height of the table then the data will be automatically paginated to fit within the table.</p>
 
-                    <p>If you wish to define how many rows should be shown on a page, set this in the <span class='param'>paginationSize</span> property. If you set the paginationSize without setting the height, the Tabulator will automatically resize to fit the data</p>
+    <p>If you wish to define how many rows should be shown on a page, set this in the <span class='param'>paginationSize</span> property. If you set the paginationSize without setting the height, the Tabulator will automatically resize to fit the data</p>
 
-                    <div id="example-table-pagination"></div>
+    <div id="example-table-pagination"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-pagination"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-pagination"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-pagination").tabulator({
-    height:"292px",
-    fitColumns:true,
-    pagination:"local",
-    paginationSize:8,
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
-});
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Build Tabulator
+            $("#example-table-pagination").tabulator({
+            height:"292px",
+            fitColumns:true,
+            pagination:"local",
+            paginationSize:8,
+            columns:[
+            {title:"Name", field:"name", width:200},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Gender", field:"gender"},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+            {title:"Favourite Color", field:"col"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+            ],
+        });
 
-//Set initial page
-$("#example-table-pagination").tabulator("setPage", 1);</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="persistance"></a>
-                <article>
-                    <h1>Persistent Column Layout <a class="doc-link" href="../docs?#persistant-columns"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>
-                        Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
-                    </p>
-                    <p>
-                        Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
-                    </P>
-                    <div id="example-table-colum-layout"></div>
+        //Set initial page
+        $("#example-table-pagination").tabulator("setPage", 1);</pre>
+    </fieldset>
+</article>
+<a class="anchor" id="persistance"></a>
+<article>
+    <h1>Persistent Column Layout <a class="doc-link" href="../docs?#persistant-columns"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>
+        Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
+    </p>
+    <p>
+        Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
+    </P>
+    <div id="example-table-colum-layout"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-colum-layout"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-colum-layout"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-colum-layout").tabulator({
-    height:"311px",
-    movableCols:true,
-    persistentLayout: true,
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", width:1000, sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", width:80},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
-});</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="ajax"></a>
-                <article>
-                    <h1>AJAX Data Loading <a class="doc-link" href="../docs?#ajax"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#example-table-colum-layout").tabulator({
+            height:"311px",
+            movableCols:true,
+            persistentLayout: true,
+            columns:[
+            {title:"Name", field:"name", width:200},
+            {title:"Progress", field:"progress", width:1000, sorter:"number"},
+            {title:"Gender", field:"gender"},
+            {title:"Rating", field:"rating", width:80},
+            {title:"Favourite Color", field:"col"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+            ],
+        });</pre>
+    </fieldset>
+</article>
+<a class="anchor" id="ajax"></a>
+<article>
+    <h1>AJAX Data Loading <a class="doc-link" href="../docs?#ajax"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
 
-                    <p>If you always request the same URL for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
+    <p>If you always request the same URL for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
 
-                    <p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
-                    <fieldset>
-                        <legend>AJAX Controls</legend>
-                        <button id="ajax-trigger">Load Data via AJAX</button>
-                    </fieldset>
-                    <div id="example-table-ajax"></div>
+    <p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
+    <fieldset>
+        <legend>AJAX Controls</legend>
+        <button id="ajax-trigger">Load Data via AJAX</button>
+    </fieldset>
+    <div id="example-table-ajax"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-ajax"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-ajax"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-ajax").tabulator({
-    height:"311px",
-    fitColumns:true,
-    ajaxURL:"data.php",
-    columns:[
-    {title:"Name", field:"name", sorter:"string", width:200},
-    {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-    {title:"Gender", field:"gender", sorter:"string"},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-    {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-    ],
-});
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Build Tabulator
+            $("#example-table-ajax").tabulator({
+            height:"311px",
+            fitColumns:true,
+            ajaxURL:"data.php",
+            columns:[
+            {title:"Name", field:"name", sorter:"string", width:200},
+            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+            {title:"Gender", field:"gender", sorter:"string"},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+            ],
+        });
 
-//trigger AJAX load on "Load Data via AJAX" button click
-$("#ajax-trigger").click(function(){
-    $("#example-table-ajax").tabulator("setData");
-});</pre>
-                        <h3>Server Side PHP</h3>
-                        <pre class="prettyprint lang-php">//build data array
-$data = array(
-    array(id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1),
-    array(id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true),
-    array(id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"),
-    array(id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"),
-    array(id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"),
-);
+        //trigger AJAX load on "Load Data via AJAX" button click
+        $("#ajax-trigger").click(function(){
+        $("#example-table-ajax").tabulator("setData");
+    });</pre>
+    <h3>Server Side PHP</h3>
+    <pre class="prettyprint lang-php">//build data array
+        $data = array(
+        array(id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1),
+        array(id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true),
+        array(id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"),
+        array(id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"),
+        array(id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"),
+        );
 
-//return JSON formatted data
-echo(json_encode($data));</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="adddel"></a>
-                <article>
-                    <h1>Add / Delete Rows <a class="doc-link" href="../docs?#addrow"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>
-                        Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
-                    </p>
-                    <fieldset>
-                        <legend>Row Controls</legend>
+        //return JSON formatted data
+        echo(json_encode($data));</pre>
+    </fieldset>
+</article>
+<a class="anchor" id="adddel"></a>
+<article>
+    <h1>Add / Delete Rows <a class="doc-link" href="../docs?#addrow"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>
+        Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
+    </p>
+    <fieldset>
+        <legend>Row Controls</legend>
 
-                        <button id="add-row">Add Blank Row to bottom</button>
-                        <button id="del-row">Remove Row "Oli Bob"</button>
-                        <button id="clear">Empty the table</button>
-                        <button id="reset">Reset</button>
-                    </fieldset>
-                    <div id="example-table-adddel"></div>
+        <button id="add-row">Add Blank Row to bottom</button>
+        <button id="del-row">Remove Row "Oli Bob"</button>
+        <button id="clear">Empty the table</button>
+        <button id="reset">Reset</button>
+    </fieldset>
+    <div id="example-table-adddel"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-adddel").tabulator({
-    height:"311px",
-    addRowPos:"bottom",
-    columns:[
-    {title:"Name", field:"name", width:200, editable:true},
-    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number", editable:true},
-    {title:"Gender", field:"gender", editable:true},
-    {title:"Rating", field:"rating", align:"center", width:80, editable:true},
-    {title:"Favourite Color", field:"col", editable:true},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-    {title:"Driver", field:"car", align:"center", editable:true},
-    ],
-    rowEdit:function(id,data,row,index){
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Build Tabulator
+            $("#example-table-adddel").tabulator({
+            height:"311px",
+            addRowPos:"bottom",
+            columns:[
+            {title:"Name", field:"name", width:200, editable:true},
+            {title:"Progress", field:"progress", width:100, align:"right", sorter:"number", editable:true},
+            {title:"Gender", field:"gender", editable:true},
+            {title:"Rating", field:"rating", align:"center", width:80, editable:true},
+            {title:"Favourite Color", field:"col", editable:true},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
+            {title:"Driver", field:"car", align:"center", editable:true},
+            ],
+            rowEdit:function(id,data,row,index){
 
-    }
-});
+        }
+    });
 
-//Add row on "Add Row" button click
-$("#add-row").click(function(){
+    //Add row on "Add Row" button click
+    $("#add-row").click(function(){
     $("#example-table-adddel").tabulator("addRow");
 });
 
 //Delete row on "Delete Row" button click
 $("#del-row").click(function(){
-    $("#example-table-adddel").tabulator("deleteRow", 1);
+$("#example-table-adddel").tabulator("deleteRow", 1);
 });
 
 //Clear table on "Empty the table" button click
 $("#clear").click(function(){
-    $("#example-table-adddel").tabulator("clear");
+$("#example-table-adddel").tabulator("clear");
 });
 
 //Reset table contents on "Reset the table" button click
 $("#reset").click(function(){
-    $("#example-table-adddel").tabulator("setData", tabledata);
+$("#example-table-adddel").tabulator("setData", tabledata);
 });</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="movable"></a>
-                <article>
-                    <h1>Movable Rows <a class="doc-link" href="../docs?#movable"><i class="fa fa-external-link"></i> Documentation</a></h1>
+</fieldset>
+</article>
+<a class="anchor" id="movable"></a>
+<article>
+    <h1>Movable Rows <a class="doc-link" href="../docs?#movable"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
-                    <p>
-                        Using the <span class='param'>movableRows</span> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
-                    </p>
-                    <div id="example-table-movable-rows"></div>
+    <p>
+        Using the <span class='param'>movableRows</span> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
+    </p>
+    <div id="example-table-movable-rows"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-movable-rows"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-movable-rows"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-movable-rows").tabulator({
-    height:"311px",
-    movableRows:true,
-    columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
-    rowMoved:function(id,data,row,index){
-        alert("Row: " + data.name + " has been moved to position " + index)
-    }
-});</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="callbacks"></a>
-                <article>
-                    <h1>Callbacks <a class="doc-link" href="../docs?#callbacks"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#example-table-movable-rows").tabulator({
+            height:"311px",
+            movableRows:true,
+            columns:[
+            {title:"Name", field:"name", width:200},
+            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+            {title:"Gender", field:"gender"},
+            {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+            {title:"Favourite Color", field:"col"},
+            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+            ],
+            rowMoved:function(id,data,row,index){
+            alert("Row: " + data.name + " has been moved to position " + index)
+        }
+    });</pre>
+</fieldset>
+</article>
+<a class="anchor" id="callbacks"></a>
+<article>
+    <h1>Callbacks <a class="doc-link" href="../docs?#callbacks"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
 
-                    <ul>
-                        <li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>onClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
-                        <li><strong>Row Click</strong> - The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the<span><strong>rowClick</strong></span>option when you create your Tabulator. (left click any row in this example)</li>
-                        <li><strong>Row Context Menu</strong> - The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span class='param'>rowContext</span> option when you create your Tabulator. (right click any row in this example)</li>
-                        <li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span class='param'>dataLoaded</span> option when you create your</li>
-                    </ul>
+    <ul>
+        <li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>onClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
+        <li><strong>Row Click</strong> - The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the<span><strong>rowClick</strong></span>option when you create your Tabulator. (left click any row in this example)</li>
+        <li><strong>Row Context Menu</strong> - The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span class='param'>rowContext</span> option when you create your Tabulator. (right click any row in this example)</li>
+        <li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span class='param'>dataLoaded</span> option when you create your</li>
+    </ul>
 
-                    <div id="example-table-callbacks"></div>
+    <div id="example-table-callbacks"></div>
 
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-callbacks"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-callbacks"&gt;&lt;/div&gt;</pre>
 
-                        <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-callbacks").tabulator({
-    height:"311px",
-    fitColumns:true,
-    columns:[
-    {title:"Name", field:"name", sorter:"string", width:150},
-    {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-    {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-    {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-    ],
-    rowClick:function(e, id, data, row){
-        alert("Row " + id + " Clicked!!!!")
-    },
-    rowContext:function(e, id, data, row){
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#example-table-callbacks").tabulator({
+            height:"311px",
+            fitColumns:true,
+            columns:[
+            {title:"Name", field:"name", sorter:"string", width:150},
+            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+            {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+            ],
+            rowClick:function(e, id, data, row){
+            alert("Row " + id + " Clicked!!!!")
+        },
+        rowContext:function(e, id, data, row){
         alert("Row " + id + " Context Clicked!!!!")
     },
 });</pre>
-                    </fieldset>
-                </article>
-                <a class="anchor" id="theming"></a>
-                <article>
-                    <h1>Theming <a class="doc-link" href="../docs?#css"><i class="fa fa-external-link"></i> Documentation</a></h1>
-                    <p>Tabulator is styled using a full set of CSS classes, making theming of the table very simple. A full list of these can be found <a href="../docs?#css">here.</a></p>
+</fieldset>
+</article>
+<a class="anchor" id="theming"></a>
+<article>
+    <h1>Theming <a class="doc-link" href="../docs?#css"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Tabulator is styled using a full set of CSS classes, making theming of the table very simple. A full list of these can be found <a href="../docs?#css">here.</a></p>
 
-                    <p>A <span class='param'>LESS</span> file is also provided, containing a set of variables to make generating your own theme even easier. This can be found in <span class='param'>tabulator.less</span></p>
+    <p>A <span class='param'>LESS</span> file is also provided, containing a set of variables to make generating your own theme even easier. This can be found in <span class='param'>tabulator.less</span></p>
 
-                    <p>Tabulator comes with a number of packaged themes in the <span class='param'>/themes</span> directory of the package. To use one of these simply include the matching css file instead of the default <span class='param'>tabulator.css</span></p>
+    <p>Tabulator comes with a number of packaged themes in the <span class='param'>/themes</span> directory of the package. To use one of these simply include the matching css file instead of the default <span class='param'>tabulator.css</span></p>
 
-                    <h2>Simple Theme</h2>
-                    <p>A plain, simplistic layout showing only basic grid lines. This can be found in <span class='param'>/themes/tabulator_simple.css</span></p>
-                    <div id="example-table-theme-simple" class="example-themes"></div>
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_simple.css" rel="stylesheet"&gt;</pre>
-                    </fieldset>
+    <h2>Simple Theme</h2>
+    <p>A plain, simplistic layout showing only basic grid lines. This can be found in <span class='param'>/themes/tabulator_simple.css</span></p>
+    <div id="example-table-theme-simple" class="example-themes"></div>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_simple.css" rel="stylesheet"&gt;</pre>
+    </fieldset>
 
-                    <h2>Midnight Theme</h2>
-                    <p>A dark, stylish layout using simple shades of grey. This can be found in <span class='param'>/themes/tabulator_midnight.css</span></p>
-                    <div id="example-table-theme-midnight" class="example-themes"></div>
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_midnight.css" rel="stylesheet"&gt;</pre>
-                    </fieldset>
+    <h2>Midnight Theme</h2>
+    <p>A dark, stylish layout using simple shades of grey. This can be found in <span class='param'>/themes/tabulator_midnight.css</span></p>
+    <div id="example-table-theme-midnight" class="example-themes"></div>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_midnight.css" rel="stylesheet"&gt;</pre>
+    </fieldset>
 
-                    <h2>Modern Theme</h2>
-                    <p>A neat, stylish layout using one primary color. This color can be set in the <span class='param'>@primary</span> variable in the <span class='param'>/themes/tabulator_modern.less</span> file to alter the style to match your colour scheme. This can be found in <span class='param'>/themes/tabulator_modern.css</span></p>
-                    <div id="example-table-theme-modern" class="example-themes"></div>
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_modern.css" rel="stylesheet"&gt;</pre>
-                    </fieldset>
+    <h2>Modern Theme</h2>
+    <p>A neat, stylish layout using one primary color. This color can be set in the <span class='param'>@primary</span> variable in the <span class='param'>/themes/tabulator_modern.less</span> file to alter the style to match your colour scheme. This can be found in <span class='param'>/themes/tabulator_modern.css</span></p>
+    <div id="example-table-theme-modern" class="example-themes"></div>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_modern.css" rel="stylesheet"&gt;</pre>
+    </fieldset>
 
-                    <h2>Autumn Theme</h2>
-                    <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
-                    <div id="example-table-theme-autumn" class="example-themes"></div>
-                    <button class="view-source">View Source</button>
-                    <fieldset class="source">
-                        <legend>Source Code</legend>
-                        <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_autumn.css" rel="stylesheet"&gt;</pre>
-                    </fieldset>
+    <h2>Autumn Theme</h2>
+    <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
+    <div id="example-table-theme-autumn" class="example-themes"></div>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_autumn.css" rel="stylesheet"&gt;</pre>
+    </fieldset>
 
-                    <h2>Manually Adjusted Theme</h2>
-                    <p>You can override the defualt tabulator styling in document, or simply edit the provided <span class='param'>tabulator.css</span> file to make your own custom theme.</p>
-                    <style>
-                        /*Theme the Tabulator element*/
-                        #example-table-theme{
-                            background-color:#ccc;
-                            border: 1px solid #333;
-                            border-radius: 10px;
-                        }
+    <h2>Manually Adjusted Theme</h2>
+    <p>You can override the defualt tabulator styling in document, or simply edit the provided <span class='param'>tabulator.css</span> file to make your own custom theme.</p>
+    <style>
+        /*Theme the Tabulator element*/
+        #example-table-theme{
+            background-color:#ccc;
+            border: 1px solid #333;
+            border-radius: 10px;
+        }
 
-                        /*Theme the header*/
-                        #example-table-theme .tabulator-header {
-                            background-color:#333;
-                            color:#fff;
-                        }
+        /*Theme the header*/
+        #example-table-theme .tabulator-header {
+            background-color:#333;
+            color:#fff;
+        }
 
-                        /*Allow column header names to wrap lines*/
-                        #example-table-theme .tabulator-header .tabulator-col,
-                        #example-table-theme .tabulator-header .tabulator-col-row-handle {
-                            white-space: normal;
-                        }
+        /*Allow column header names to wrap lines*/
+        #example-table-theme .tabulator-header .tabulator-col,
+        #example-table-theme .tabulator-header .tabulator-col-row-handle {
+            white-space: normal;
+        }
 
-                        /*Color the table rows*/
-                        #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
-                            color:#fff;
-                            background-color: #666;
-                        }
+        /*Color the table rows*/
+        #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
+            color:#fff;
+            background-color: #666;
+        }
 
-                        /*Color even rows*/
-                        #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
-                            background-color: #444;
-                        }
-                  </style>
+        /*Color even rows*/
+        #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+            background-color: #444;
+        }
+    </style>
 
 
-                  <div id="example-table-theme"></div>
+    <div id="example-table-theme"></div>
 
-                  <button class="view-source">View Source</button>
-                  <fieldset class="source">
-                      <legend>Source Code</legend>
-                      <h3>HTML</h3>
-                      <pre class="prettyprint lang-html">&lt;div id="example-table-theme"&gt;&lt;/div&gt;</pre>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+      <legend>Source Code</legend>
+      <h3>HTML</h3>
+      <pre class="prettyprint lang-html">&lt;div id="example-table-theme"&gt;&lt;/div&gt;</pre>
 
-                      <h3>CSS</h3>
-                      <pre class="prettyprint lang-css">/*Theme the Tabulator element*/
-#example-table-theme{
-    background-color:#ccc;
-    border: 1px solid #333;
-    border-radius: 10px;
-}
+      <h3>CSS</h3>
+      <pre class="prettyprint lang-css">/*Theme the Tabulator element*/
+        #example-table-theme{
+        background-color:#ccc;
+        border: 1px solid #333;
+        border-radius: 10px;
+    }
 
-/*Theme the header*/
-#example-table-theme .tabulator-header {
+    /*Theme the header*/
+    #example-table-theme .tabulator-header {
     background-color:#333;
     color:#fff;
 }
@@ -1138,22 +1216,22 @@ $("#reset").click(function(){
 /*Allow column header names to wrap lines*/
 #example-table-theme .tabulator-header .tabulator-col,
 #example-table-theme .tabulator-header .tabulator-col-row-handle {
-    white-space: normal;
+white-space: normal;
 }
 
 /*Color the table rows*/
 #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
-    color:#fff;
-    background-color: #666;
+color:#fff;
+background-color: #666;
 }
 
 /*Color even rows*/
 #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
-    background-color: #444;
+background-color: #444;
 }</pre>
 
-                      <h3>JavaScript</h3>
-                      <pre class="prettyprint lang-js">$("#example-table-theme").tabulator({
+<h3>JavaScript</h3>
+<pre class="prettyprint lang-js">$("#example-table-theme").tabulator({
     height:"331px",
     fitColumns:true,
     tooltipsHeader: false,
@@ -1167,43 +1245,44 @@ $("#reset").click(function(){
     {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
     ],
     rowClick:function(e, id, data, row){
-        alert("Row " + id + " Clicked!!!!")
-    },
-    rowContext:function(e, id, data, row){
-        alert("Row " + id + " Context Clicked!!!!")
-    },
+    alert("Row " + id + " Clicked!!!!")
+},
+rowContext:function(e, id, data, row){
+alert("Row " + id + " Context Clicked!!!!")
+},
 });</pre>
-                  </fieldset>
-              </article>
+</fieldset>
+</article>
 
-          </div>
+</div>
 
-          <div class="col-md-3" role="complementary">
-            <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
-                <ul class="nav docs-sidenav">
-                    <li><a href="#simple">Simple Table</a></li>
-                    <li><a href="#fittodata">Fit To Data</a></li>
-                    <li><a href="#fittowidth">Fit To Width</a></li>
-                    <li><a href="#column-groups">Column Groups</a></li>
-                    <li><a href="#table-load">Create From Table Element</a></li>
-                    <li><a href="#editable">Editable Data</a></li>
-                    <li><a href="#sorters">Sorters</a></li>
-                    <li><a href="#formatters">Formatters</a></li>
-                    <li><a href="#grouping">Grouping Data</a></li>
-                    <li><a href="#filter">Filter Data</a></li>
-                    <li><a href="#filter-header">Filter Data In Column Header</a></li>
-                    <li><a href="#pagination">Pagination</a></li>
-                    <li><a href="#persistance">Persistent Column Layout</a></li>
-                    <li><a href="#ajax">AJAX Data Loading</a></li>
-                    <li><a href="#adddel">Add / Delete Rows</a></li>
-                    <li><a href="#movable">Movable Rows</a></li>
-                    <li><a href="#callbacks">Callbacks</a></li>
-                    <li><a href="#theming">Theming</a></li>
-                </ul>
-            </nav>
-        </div>
+<div class="col-md-3" role="complementary">
+    <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
+        <ul class="nav docs-sidenav">
+            <li><a href="#simple">Simple Table</a></li>
+            <li><a href="#fittodata">Fit To Data</a></li>
+            <li><a href="#fittowidth">Fit To Width</a></li>
+            <li><a href="#column-groups">Column Groups</a></li>
+            <li><a href="#table-load">Create From Table Element</a></li>
+            <li><a href="#editable">Editable Data</a></li>
+            <li><a href="#sorters">Sorters</a></li>
+            <li><a href="#formatters">Formatters</a></li>
+            <li><a href="#sparklines">Sparklines</a></li>
+            <li><a href="#grouping">Grouping Data</a></li>
+            <li><a href="#filter">Filter Data</a></li>
+            <li><a href="#filter-header">Filter Data In Column Header</a></li>
+            <li><a href="#pagination">Pagination</a></li>
+            <li><a href="#persistance">Persistent Column Layout</a></li>
+            <li><a href="#ajax">AJAX Data Loading</a></li>
+            <li><a href="#adddel">Add / Delete Rows</a></li>
+            <li><a href="#movable">Movable Rows</a></li>
+            <li><a href="#callbacks">Callbacks</a></li>
+            <li><a href="#theming">Theming</a></li>
+        </ul>
+    </nav>
+</div>
 
-    </div>
+</div>
 
 
 </div>
@@ -1231,6 +1310,7 @@ $("#reset").click(function(){
 
 <!-- Tabulator -->
 <script src="../js/tabulator.js"></script>
+<script src="../js/sparkline.js"></script>
 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/lang-css.js"></script>
@@ -1342,26 +1422,26 @@ $("#reset").click(function(){
             height:"311px",
             colVertAlign:"bottom", //align header contents to bottom of cell
             columns:[
-                {title:"Name", field:"name", width:160},
+            {title:"Name", field:"name", width:160},
                 {//create column group
                     title:"Work Info",
                     columns:[
-                        {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
-                        {title:"Rating", field:"rating", align:"center", width:80},
-                        {title:"Driver", field:"car", align:"center", width:80},
+                    {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+                    {title:"Rating", field:"rating", align:"center", width:80},
+                    {title:"Driver", field:"car", align:"center", width:80},
                     ],
                 },
                 {//create column group
                     title:"Personal Info",
                     columns:[
-                        {title:"Gender", field:"gender", width:90},
-                        {title:"Favourite Color", field:"col", width:140},
-                        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+                    {title:"Gender", field:"gender", width:90},
+                    {title:"Favourite Color", field:"col", width:140},
+                    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
                     ],
                 },
 
-            ],
-        });
+                ],
+            });
 
         $("#example-table-column-grouping").tabulator("setData", tabledata);
 
@@ -1447,8 +1527,6 @@ $("#reset").click(function(){
         })
 
 
-
-
         //Formatter Example
         //generate print icon
         var printIcon = function(value, data, cell, row, options){ //plain text value
@@ -1485,7 +1563,65 @@ $("#reset").click(function(){
 
         $("#example-table-formatter").tabulator("setData", tabledata);
 
+        //Sparkline Example
 
+        //generate line chart
+        var lineFormatter = function(value, data, cell, row, options){
+            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+                cell.sparkline(value, {width:"100%", type:"line"});
+            }, 10);
+        };
+
+        //generate bar chart
+        var barFormatter = function(value, data, cell, row, options){
+            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+                cell.sparkline(value, {width:"100%", type:"bar", barWidth:14});
+            }, 10);
+        };
+
+        //generate discrete chart
+        var tristateFormatter = function(value, data, cell, row, options){
+            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+                cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14});
+            }, 10);
+        };
+
+
+        //generate box plot
+        var boxFormatter = function(value, data, cell, row, options){
+            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+                cell.sparkline(value, {width:"100%", type:"box"});
+            }, 10);
+        };
+
+
+
+        $("#example-table-sparkline").tabulator({
+            height:"311px",
+            columns:[
+            {title:"Name", field:"name", width:190},
+            {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
+            {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
+            {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
+            {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
+            ],
+        });
+
+        var sparkData = [
+        {id:1, name:"Oli Bob", line:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], bar:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], tristate:[1, 20, -5, -3, 10, 13, 0, 15, 9, 11], box:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11]},
+        {id:2, name:"Mary May", line:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], bar:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], tristate:[-10, 12, 14, 16, 13, 9, 7, 0, 10, 13], box:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
+        {id:3, name:"Christine Lobowski", line:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], bar:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], tristate:[1, 2, 5, 0, 1, 16, 4, 2, 1, 3], box:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
+        {id:4, name:"Brendon Philips", line:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], bar:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], tristate:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], box:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
+        {id:5, name:"Margret Marmajuke", line:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], bar:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], tristate:[1, -3, 1, 3, -3, 1, -1, 3, 1, 3], box:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
+        {id:6, name:"Frank Harbours", line:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], bar:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], tristate:[20, 17, 15, 11, 16, -9, 12, 14, 20, 12], box:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
+        {id:7, name:"Jamie Newhart", line:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], bar:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], tristate:[11, 7, 6, -12, 1-13, 11, 10, 9, 6], box:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
+        {id:8, name:"Gemma Jane", line:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], bar:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], tristate:[4, 17, 11, -12, 0, 5, 12, -14, 18, 11], box:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
+        {id:9, name:"Emily Sykes", line:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], bar:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], tristate:[11, 15, 19, -20, 17, 16, 16, -5, 3, 2], box:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
+        {id:10, name:"James Newman", line:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], bar:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], tristate:[1, 2, 0, -4, -5, -4, 2, 5, 9, 8], box:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
+        ];
+
+
+        $("#example-table-sparkline").tabulator("setData", sparkData);
 
         //Grouping Example
         $("#example-table-grouping").tabulator({
