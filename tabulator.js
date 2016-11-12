@@ -64,7 +64,7 @@
 	options: {
 		colMinWidth:"40px", //minimum global width for a column
 		colResizable:true, //resizable columns
-		colVertAlign:"bottom", //vertical alignment of column headers
+		colVertAlign:"top", //vertical alignment of column headers
 
 		height:false, //height of tabulator
 		fitColumns:false, //fit colums to width of screen;
