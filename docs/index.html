@@ -282,6 +282,7 @@ $data = array(
 //return JSON formatted data
 echo(json_encode($data));</pre>
 
+                    <a class="anchor" id="table-data"></a>
                     <h2>Set Data at Table Creation</h2>
                     <p>You can set the data at the same time as the table creation by passing the data array to the data option.</p>
                     <pre class="prettyprint lang-js">var dataArray = [
@@ -368,7 +369,7 @@ $("#example-table").tabulator({
                     <p><strong>NOTE:</strong> Changing the filter or sorting while pagination is enabled will revert the table back to the first page.</p>
 
 
-
+                    <a class="anchor" id="pagination-remote"></a>
                     <h2>Remote Pagination </h2>
 
                     <p>To enable remote pagination, set the <span class='param'>pagination</span> option to <span class='param'>remote</span>, and set the url for the Ajax request using the <span class='param'>ajaxURL</span> paramter. You can also pass an optional object to <span class='param'>ajaxParams</span> for any paramters you want to pass with the url (these should be static parameters, the page number etc, will be added later on).</p>
@@ -442,6 +443,7 @@ $("#example-table").tabulator({
     } ,
 });</pre>
 
+                    <a class="anchor" id="pagination-local"></a>
                     <h2>Local Pagination </h2>
                     <p>Local pagination works by loading the entier data set into the table then generating paged views of that data.</p>
                     <p>To enable local pagination set the <span class='param'>pagination</span> option to <span class='param'>local</span>.</p>
@@ -466,7 +468,7 @@ $("#example-table").tabulator({
     pagination:"local", //enable local pagination.
 });</pre>
 
-
+                    <a class="anchor" id="pagination-features"></a>
                     <h2>Additional Features</h2>
                     <p>A number of aditional features are available to help customize the pagination experience.</p>
 
@@ -541,7 +543,7 @@ $("#example-table").tabulator({
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     fitColumns:true, // this option takes a boolean value (default = false)
 });</pre>
-
+                    <a class="anchor" id="col-resize"></a>
                     <h2>Resizable Columns</h2>
                     <p>By default it is possible to manually resize columns by dragging the borders of the column headers.</p>
 
@@ -549,7 +551,7 @@ $("#example-table").tabulator({
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     colResizable:false, // this option takes a boolean value (default = true)
 });</pre>
-
+                    <a class="anchor" id="col-min-width"></a>
                     <h2>Minimum Column Width</h2>
                     <p>It is possible to set a minimum column width to prevent resizing columns from becoming too small.</p>
 
@@ -633,7 +635,7 @@ $("#example-table").tabulator({
         return a - b; //you must return the difference between the two values
     },
 }</pre>
-
+                    <a class="anchor" id="sort-load"></a>
                     <h2>Sort Data on Load</h2>
                     <p>When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the <span class='param'>sortBy</span> and <span class='param'>sortDir</span> parameters. (see <a href="#initial-data-sorting">Initial Data Sorting</a> for more details)</p>
 
@@ -718,6 +720,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 //column definition in the columns array
 {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},</pre>
 
+                    <a class="anchor" id="row-formatter"></a>
                     <h2>Row Formatting</h2>
                     <p>Tabulator also allows you to define a row level formatter using the <span class='param'>rowFormatter</span> option. this lets you alter each row of the table based on the data it contains.</p>
 
@@ -764,6 +767,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
                     <p><strong>NOTE</strong> setting a <span class='param'>tooltip</span> value on a column will override the global setting.</p>
 
+                    <a class="anchor" id="col-tooltips"></a>
                     <h2>Header ToolTips</h2>
                     <p>It is also possible to set tooltips to display on the column headers. This is particularly useful when your columns are too narrow to display full header names.</p>
 
@@ -1109,8 +1113,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     }
 });</pre>
 
+                    <a class="anchor" id="col-move"></a>
                     <h2>Movable Columns</h2>
-
                     <p>To allow the user to move columns along the table, set the <span class='param'>movableCols</span> parameter in the options:</p>
                     <pre class="prettyprint lang-js">$('#example-table'),tabulator({
     movableCols: true, //enable user movable rows, by default this is set to false
@@ -1242,11 +1246,18 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="options"></a>
                 <article>
-                    <h1>Table Options</h1>
+                    <h1>Setup Options</h1>
 
-                    <p>In addition to the features mentioned above Tabulator has a range of additional options to help customise your table.</p>
+                    <p>Tabulator has a wide range of setup options to help you customise the user experience of your tables. This section outlines all the available options and links to the relevant section in this documentation to show you how to use them.</p>
 
-                    <h2>Table Size</h2>
+                    <p>Each of these options can be set in the constructor object when you define your Tabulator.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    height:"300px", //set the table height option
+});</pre>
+
+
+                    <h2>General Table Configuration</h2>
 
                     <table>
                         <thead>
@@ -1254,54 +1265,88 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>height</td><td>string/int</td><td>false</td><td>Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.</td>
+                                <td>height</td><td>string/int</td><td>false</td><td>Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.</td><td></td>
+                            </tr>
+                            <tr>
+                                <td>tooltips</td><td>boolean/function</td><td>false</td><td>Function to generate tooltips for cells</td><td><a href="#tooltips"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>dateFormat</td><td>string</td><td>dd/mm/yyyy</td><td>The date format that should be used when sorting date fields</td><td></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <a class="anchor" id="initial-data-sorting"></a>
-                    <h2>Initial Data Sorting</h2>
-                    <p>When data is loaded into the table it can be automatically sorted by a specified field</p>
-
+                    <h2>Columns</h2>
                     <table>
                         <thead>
                             <th>Option</th>
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>sortBy</td><td>string</td><td>"id"</td><td>The name of the field to be sorted.</td>
+                                <td>columns</td><td>array</td><td>[]</td><td>Holder for column definition array</td><td><a href="#define-column-headers"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>sortDir</td><td>string</td><td>"DESC"</td><td>The direction of the sort (ASC or DESC).</td>
+                                <td>fitColumns</td><td>boolean</td><td>false</td><td>Resize column widths to horizontally fill the table</td><td><a href="#fittowidth"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>colMinWidth</td><td>CSS width value</td><td>40px</td><td>Minimum width for a column</td><td><a href="#col-min-width"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>colResizable</td><td>boolean</td><td>true</td><td>Allow user to resize columns (via handles on the left and right edges of the column header)</td><td><a href="#col-resize"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>movableCols</td><td>boolean</td><td>false</td><td>Allow users to move and reorder columns</td><td><a href="#col-move"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>tooltipsHeader</td><td>boolean/function</td><td>false</td><td>Function to generate tooltips for column headers</td><td><a href="#col-tooltips"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>colVertAlign</td><td>string</td><td>top</td><td>Vertical alignment for contents of column header (used in column grouping)</td><td><a href="#column-groups"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>headerFilterPlaceholder</td><td>string</td><td>"filter column..."</td><td>The placeholder text to be set in any header filter input elements</td><td><a href="#header-filters"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h2>Movable Rows and Columns</h2>
-                    <p>Define if the user can move the order/position of rows and columns.</p>
-
+                    <h2>Rows</h2>
                     <table>
                         <thead>
                             <th>Option</th>
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>movableCols</td><td>boolean</td><td>false</td><td>Allow users to move and reorder columns</td>
+                                <td>rowFormatter</td><td>function/boolean</td><td>false</td><td>Function to alter layout of rows</td><td><a href="#row-formatter"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>movableRows</td><td>boolean</td><td>false</td><td>Allow users to move and reorder rows</td>
+                                <td>groupBy</td><td>string/function</td><td>false</td><td>String/function to select field to group rows by</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>movableRowHandle</td><td>string</td><td>html (see below)</td><td>html for the movable row handle</td>
+                                <td>groupHeader</td><td>function</td><td>(see documnetation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>addRowPos</td><td>string</td><td>"bottom"</td><td>The position in the table for new rows to be added, "bottom" or "top"</td><td><a href="#addrow"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>selectable</td><td>boolean</td><td>true</td><td>Highlight rows on hover</td><td></td>
+                            </tr>
+                            <tr>
+                                <td>movableRows</td><td>boolean</td><td>false</td><td>Allow users to move and reorder rows</td><td><a href="#movable"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>movableRowHandle</td><td>string</td><td>html (see below)</td><td>html for the movable row handle</td><td><a href="#movable"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1309,17 +1354,71 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <h3>Default movable row handle</h3>
                     <pre class="prettyprint lang-html">&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'&gt;&lt;/div&gt;&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'&gt;&lt;/div&gt;&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'&gt;&lt;/div&gt;</pre>
 
-                    <h2>Added Rows</h2>
+
+                    <h2>Data</h2>
                     <table>
                         <thead>
                             <th>Option</th>
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>addRowPos</td><td>string</td><td>"bottom"</td><td>The position in the table for new rows to be added, "bottom" or "top"</td>
+                                <td>index</td><td>string</td><td>id</td><td>The field to be used as the unique index for each row</td><td><a href="#set-data"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>data</td><td>array</td><td>[]</td><td>Array to hold data that should be loaded on table creation</td><td><a href="#table-data"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>ajaxURL</td><td>string/boolean</td><td>false</td><td>URL for remote Ajax data loading</td><td><a href="#ajax"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>ajaxParams</td><td>object</td><td>{}</td><td>Parameters to be passed to remote Ajax data loading request</td><td><a href="#ajax"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>showLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td><td></td>
+                            </tr>
+                            <tr>
+                                <td>loader</td><td>string</td><td>html (see below)</td><td>html for loader element</td><td></td>
+                            </tr>
+                            <tr>
+                                <td>loaderError</td><td>string</td><td>html (see below)</td><td>html for the loader element in the event of an error</td><td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p style="margin-top:10px;">When loading data, Tabulator can display a loading overlay over the table. This consists of a modal background and a loader element. The loader element can be set globally in the options and should be specified as a div with a <span class='param'>display</span> style of <span class='param'>inline-block</span>.</p>
+
+
+                    <h3>Default loader element</h3>
+                    <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'&gt;Loading Data&lt;/div&gt;</pre>
+
+                    <h3>Default loader error element</h3>
+                    <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'&gt;Loading Error&lt;/div&gt;</pre>
+
+                    <a class="anchor" id="initial-data-sorting"></a>
+                    <h2>Global Data Sorting</h2>
+                    <p>You can set the table sorting options on a global level, specifying what sort should be applied when data is first loaded into the table.</p>
+
+                    <table>
+                        <thead>
+                            <th>Option</th>
+                            <th>Data Type</th>
+                            <th>Default Value</th>
+                            <th>Description</th>
+                            <th width=105></th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>sortable</td><td>boolean</td><td>true</td><td>enable sorting in all columns</td><td><a href="#sorting"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>sortBy</td><td>string</td><td>"id"</td><td>The name of the field to be sorted.</td><td><a href="#sort-load"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>sortDir</td><td>string</td><td>"desc"</td><td>The direction of the sort (asc or desc).</td><td><a href="#sort-load"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -1331,83 +1430,77 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>pagination</td><td>boolean</td><td>false</td><td>Enable Pagination</td>
+                                <td>pagination</td><td>string</td><td>false</td><td>Choose pagination method, "local" or "remote"</td><td><a href="#pagination"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>paginationSize</td><td>integer</td><td>10</td><td>Set the number of rows in each page</td>
+                                <td>paginationSize</td><td>integer</td><td>10</td><td>Set the number of rows in each page</td><td><a href="#pagination-local"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>paginationElement</td><td>JQuery Element</td><td>(generated tabulator footer)</td><td>The element to contain the pagination selectors</td>
+                                <td>paginationElement</td><td>JQuery Element</td><td>(generated tabulator footer)</td><td>The element to contain the pagination selectors</td><td><a href="#pagination-features"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>paginationDataReceived</td><td>object</td><td>{<br>"current_page":"current_page",<br>
+                                "last_page":"last_page",<br>
+                                    "data":"data",<br>
+                                }</td><td>Lookup list to link expected data feilds from the server to their function</td><td><a href="#pagination-remote"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                </tr>
+                                <tr>
+                                    <td>paginationDataSent</td><td>object</td><td>{<br>"page":"page",<br>
+                                    "size":"size",<br>
+                                    "sort":"sort",<br>
+                                    "sort_dir":"sort_dir",<br>
+                                    "filter":"filter",<br>
+                                    "filter_value":"filter_value",<br>
+                                    "filter_type":"fitler_type",<br>
+                                }</td><td>Lookup list to link fields expected by the server to their function</td><td><a href="#pagination-remote"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>paginator</td><td>function</td><td>null</td><td>Function used to build pagination request URL string</td><td><a href="#pagination-remote"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h2>Progressive Rendering</h2>
+                    <h2>Persistent Layout</h2>
                     <table>
                         <thead>
                             <th>Option</th>
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>progressiveRender</td><td>boolean</td><td>true</td><td>Enable progressive rendering</td>
+                                <td>persistentLayout</td><td>boolean/string</td><td>false</td><td>Enable persistsnt storage of column layout information in a cookie or localStorage</td><td><a href="#persistant-columns"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>progressiveRenderSize</td><td>integer</td><td>200</td><td>Set the number of rows to be rendered in each block</td>
-                            </tr>
-                            <tr>
-                                <td>progressiveRenderPeriod</td><td>integer</td><td>100</td><td>Set the time delay between reach block rendering</td>
+                                <td>persistentLayoutID</td><td>string</td><td></td><td>ID tag used to identify persistent storage information</td><td><a href="#persistant-columns"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
 
-                    <h2>Data Loaders</h2>
-                    <p>When loading data, Tabulator can display a loading overlay over the table. This consists of a modal background and a loader element. The loader element can be set globally in the options and should be specified as a div with a <span class='param'>display</span> style of <span class='param'>inline-block</span>.</p>
-
+                    <h2>Progresive Render</h2>
                     <table>
                         <thead>
                             <th>Option</th>
                             <th>Data Type</th>
                             <th>Default Value</th>
                             <th>Description</th>
+                            <th width=105></th>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>showLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td>
+                                <td>progressiveRender</td><td>boolean</td><td>true</td><td>Enable progressive rendering</td><td><a href="#progressive-render"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>loader</td><td>string</td><td>html (see below)</td><td>html for loader element</td>
+                                <td>progressiveRenderSize</td><td>integer</td><td>200</td><td>Set the number of rows to be rendered in each block</td><td><a href="#progressive-render"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>loaderError</td><td>string</td><td>html (see below)</td><td>html for the loader element in the event of an error</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <h3>Default loader element</h3>
-                    <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #333; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#000; padding:10px 20px;'&gt;Loading Data&lt;/div&gt;</pre>
-
-                    <h3>Default loader error element</h3>
-                    <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'&gt;Loading Error&lt;/div&gt;</pre>
-
-                    <h2>Header Filtering</h2>
-                    <p>Available when using the <span class='param'>headerFilter</span> option in a column definition.</p>
-
-                    <table>
-                        <thead>
-                            <th>Option</th>
-                            <th>Data Type</th>
-                            <th>Default Value</th>
-                            <th>Description</th>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>headerFilterPlaceholder</td><td>string</td><td>"filter column..."</td><td>The placeholder text to be set in any header filter input elements</td>
+                                <td>progressiveRenderMargin</td><td>integer</td><td>200</td><td>The distance in pixels from the end of the scroll before the progressive render is triggered</td><td><a href="#progressive-render"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -2079,7 +2172,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
                         <li><a href="#movable">Movable Rows and Columns <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
-                        <li><a href="#options">Table Options</a></li>
+                        <li><a href="#options">Setup Options</a></li>
                         <li><a href="#css">CSS Classes &amp; Theming <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events</a></li>
                         <li><a href="#extending">Extending Tabulator</a></li>
