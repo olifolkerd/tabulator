@@ -36,6 +36,26 @@ body {
 .jumbotron .btn .glyphicon {
   margin-right: 10px;
 }
+.jumbotron .container {
+  position: relative;
+}
+.jumbotron .container .share {
+  position: absolute;
+  bottom: -20px;
+  right: 30px;
+}
+.jumbotron .container .share span {
+  vertical-align: middle;
+  font-size: 1.4em;
+}
+.jumbotron .container .share a {
+  vertical-align: middle;
+  font-size: 2em;
+  color: #fff;
+}
+.jumbotron .container .share a:hover {
+  color: #222;
+}
 .tabulator {
   font-family: sans-serif;
 }
