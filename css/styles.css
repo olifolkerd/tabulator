@@ -328,6 +328,9 @@ ul.docs-sidenav li a:hover {
 .docs article table:not(.plain) tbody tr td:last-of-type {
   border-right: 1px solid #999;
 }
+.docs article table:not(.plain) tbody tr td a button {
+  margin: 0;
+}
 footer {
   margin: 50px 0;
 }
