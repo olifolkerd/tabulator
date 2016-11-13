@@ -59,6 +59,21 @@ body {
 .tabulator {
   font-family: sans-serif;
 }
+.docs-sidebar .share {
+  margin-left: 5px;
+}
+.docs-sidebar .share span {
+  vertical-align: middle;
+  font-size: 1.4em;
+}
+.docs-sidebar .share a {
+  vertical-align: middle;
+  font-size: 2em;
+  color: #59B038;
+}
+.docs-sidebar .share a:hover {
+  color: #222;
+}
 .docs-sidenav .label {
   margin-left: 3px;
 }
