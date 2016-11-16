@@ -922,6 +922,8 @@
 		if(row.length){
 			var rowData = row.data("data");
 
+			console.log("before", rowData)
+
 			//Apply mutators if present
 			item = self._mutateData(item);
 
@@ -930,9 +932,10 @@
 
 				//update row data
 				for (var attrname in item) { rowData[attrname] = item[attrname]; }
+					console.log("after", rowData)
 
 				//render new row
-			var newRow = self._renderRow(rowData);
+				var newRow = self._renderRow(rowData);
 
 				//replace old row with new row
 				row.replaceWith(newRow);
@@ -1199,10 +1202,14 @@
 
 				if(Array.isArray(data)){
 					data.forEach(function(item, j){
-						item[col.field] = mutator(item[col.field], "data", item);
+						if(typeof item[col.field] != "undefined"){
+							item[col.field] = mutator(item[col.field], "data", item);
+						}
 					});
 				}else{
-					data[col.field] = mutator(data[col.field], "data", data);
+					if(typeof data[col.field] != "undefined"){
+						data[col.field] = mutator(data[col.field], "data", data);
+					}
 				}
 			}
 		});
