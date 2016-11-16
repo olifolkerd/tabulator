@@ -81,5 +81,7 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Print Styling
 - Minified source files
 - Minified CSS and JS
+- Localization
+- Ajax Progressive Rendering
 
 Get in touch if there are any features you feel Tabulator needs.
