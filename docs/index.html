@@ -721,10 +721,10 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},</pre>
 
                     <a class="anchor" id="row-formatter"></a>
-                    <h2>Row Formatting</h2>
+                    <h2>Row Formatting <a class="example-link" href="../examples?#row-formatter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Tabulator also allows you to define a row level formatter using the <span class='param'>rowFormatter</span> option. this lets you alter each row of the table based on the data it contains.</p>
 
-                    <p>The example below changes the background colour of a cell to blue if the <span class='param'>col</span> value for that row is <span class='param'>"blue"</span>.</p>
+                    <p>The example below changes the background colour of a row to blue if the <span class='param'>col</span> value for that row is <span class='param'>"blue"</span>.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     rowFormatter:function(row, data){

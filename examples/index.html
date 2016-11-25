@@ -57,6 +57,28 @@
         .example-table{
             height:311px;
         }
+
+        #example-table-rowformat table{
+            vertical-align: middle;
+            border:none;
+            border-collapse:collapse;
+        }
+
+        #example-table-rowformat table img{
+            border:2px solid #ccc;
+        }
+
+        #example-table-rowformat table tr td{
+             border:none !important;
+        }
+
+        #example-table-rowformat table tr td:first-of-type{
+            width:60px !important;
+        }
+
+        #example-table-rowformat table tr td div{
+            padding:5px;
+        }
         </style>
 
         <!-- Navigation -->
@@ -587,6 +609,82 @@ return value;
 ],
 });</pre>
 </fieldset>
+</article>
+<a class="anchor" id="row-formatter"></a>
+<article>
+    <h1>Row Formatters <a class="doc-link" href="../docs?#row-formatter"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>If you are looking for a non grid based format to your table then you can use a row formatter to create custom row layouts.</p>
+    <p>You can use the <span class='param'>rowFormatter</span> callback to replace the contents of the row with any layout you like. In this example we will create a simple table in each row containg and image and some vertically centered text properties.</p>
+    <p>When replacing the entier contents of the row it is important to include only one column in your column definition array to ensure the table renders correctly. It is also advisable to enable <span class='param'>fitColumns</span> and disabled <span class='param'>colResizable</span> options.</p>
+    <div class="example-table" id="example-table-rowformat"></div>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>CSS</h3>
+        <pre class="prettyprint lang-css">/*Style row formatter contents*/
+#example-table-rowformat .tabulator-row table{
+    vertical-align: middle;
+    border-collapse:collapse;
+}
+
+#example-table-rowformat .tabulator-row table img{
+    border:2px solid #ccc;
+}
+
+#example-table-rowformat .tabulator-row table tr td{
+     border:none;
+}
+
+#example-table-rowformat .tabulator-row table tr td:first-of-type{
+    width:60px;
+}
+
+#example-table-rowformat .tabulator-row table tr td div{
+    padding:5px;
+}</pre>
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Define some test data
+var cheeseData = [
+    {id:1, type:"Brie", rind:"mould", age:"4 weeks", color:"white", image:"brie.jpg"},
+    {id:2, type:"Cheddar", rind:"none", age:"1 year", color:"yellow", image:"cheddar.jpg"},
+    {id:3, type:"Gouda", rind:"wax", age:"6 months", color:"cream", image:"gouda.jpg"},
+    {id:4, type:"Swiss", rind:"none", age:"9 months", color:"yellow", image:"swiss.jpg"},
+]
+
+//define Tabulator
+$("#example-table-rowformat").tabulator({
+    height:"311px",
+    fitColumns:true,
+    colResizable:false,
+    columns:[
+    {title:"Cheese", field:"type", sorter:"string"},
+    ],
+    rowFormatter:function(row, data){
+        //get current width of row
+        var width = row.outerWidth();
+
+        //clear current row data
+        row.empty();
+
+        //define a table layout structure and set width of row
+        var table = $("&lt;table style='width:" + (width - 18) + "px;'&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/table&gt;");
+
+        //add image on left of row
+        $("tr", table).append("&lt;td&gt;&lt;img src='row_formatter/" + data.image + "'&gt;&lt;/td&gt;");
+
+        //add row data on right hand side
+        $("tr", table).append("&lt;td&gt;&lt;div&gt;&lt;strong&gt;Type:&lt;/strong&gt; " + data.type + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Age:&lt;/strong&gt; " + data.age + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Rind:&lt;/strong&gt; " + data.rind + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Colour:&lt;/strong&gt; " + data.color + "&lt;/div>&lt;/td>");
+
+        //append newly formatted contents to the row
+        row.append(table);
+    },
+})
+
+//Load Data
+$("#example-table-rowformat").tabulator("setData", cheeseData);
+
+        </pre>
+    </fieldset>
 </article>
 <a class="anchor" id="sparklines"></a>
 <article>
@@ -1273,6 +1371,7 @@ alert("Row " + id + " Context Clicked!!!!")
             <li><a href="#editable">Editable Data</a></li>
             <li><a href="#sorters">Sorters</a></li>
             <li><a href="#formatters">Formatters</a></li>
+            <li><a href="#row-formatter">Row Formatter</a></li>
             <li><a href="#sparklines">Sparklines</a></li>
             <li><a href="#grouping">Grouping Data</a></li>
             <li><a href="#filter">Filter Data</a></li>
@@ -1573,6 +1672,47 @@ alert("Row " + id + " Context Clicked!!!!")
         });
 
         $("#example-table-formatter").tabulator("setData", tabledata);
+
+
+        //Row Formatter Example
+
+        var cheeseData = [
+            {id:1, type:"Brie", rind:"mould", age:"4 weeks", color:"white", image:"brie.jpg"},
+            {id:2, type:"Cheddar", rind:"none", age:"1 year", color:"yellow", image:"cheddar.jpg"},
+            {id:3, type:"Gouda", rind:"wax", age:"6 months", color:"cream", image:"gouda.jpg"},
+            {id:4, type:"Swiss", rind:"none", age:"9 months", color:"yellow", image:"swiss.jpg"},
+        ]
+
+        $("#example-table-rowformat").tabulator({
+            height:"311px",
+            fitColumns:true,
+            colResizable:false,
+            columns:[
+            {title:"Cheese", field:"type", sorter:"string"},
+            ],
+            rowFormatter:function(row, data){
+                var width = row.outerWidth();
+
+                //clear current row data
+                row.empty();
+
+                //define a table layout structure and set width of row
+                var table = $("<table style='width:" + (width - 18) + "px;'><tr></tr></table>");
+
+                //add image on left of row
+                $("tr", table).append("<td><img src='row_formatter/" + data.image + "'></td>");
+
+                //add row data on right hand side
+                $("tr", table).append("<td><div><strong>Type:</strong> " + data.type + "</div><div><strong>Age:</strong> " + data.age + "</div><div><strong>Rind:</strong> " + data.rind + "</div><div><strong>Colour:</strong> " + data.color + "</div></td>");
+
+                //append newly formatted contents to the row
+                row.append(table);
+            },
+        })
+
+        $("#example-table-rowformat").tabulator("setData", cheeseData);
+
+
 
         //Sparkline Example
 
