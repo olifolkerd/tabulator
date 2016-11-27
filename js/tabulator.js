@@ -497,8 +497,8 @@
 		//load default lang template
 		self.lang = $.extend(true, [], self.defaultLang);
 
-		if(locale){
 
+		if(locale){
 			//fill in any matching languge values
 			function traverseLang(trans, path){
 				for(var prop in trans){
@@ -515,21 +515,20 @@
 			}
 
 			traverseLang(self.options.langs[locale], self.lang);
-
-			self.options.locale = locale;
-
-			//update ui elements that need translating
-			if(!self.firstRender){
-				self._updateLocaleText();
-			}
-
-			//triger localized callback
-			self.options.localized(locale, self.lang);
-
-			return locale;
 		}
 
-		return false;
+
+		self.options.locale = locale;
+
+		//update ui elements that need translating
+		if(!self.firstRender){
+			self._updateLocaleText();
+		}
+
+		//triger localized callback
+		self.options.localized(locale, self.lang);
+
+		return locale;
 
 	},
 
@@ -538,9 +537,12 @@
 		var self = this;
 
 		//update column titles
-		for(var prop in self.lang.columns){
-			$(".tabulator-col[data-field=" + prop + "] .tabulator-col-title", self.header).text(self.lang.columns[prop]);
-		}
+		self.columnList.forEach(function(column){
+			console.log("col", column.field, column)
+			if(column.field){
+				$(".tabulator-col[data-field=" + column.field + "] .tabulator-col-title", self.header).text(self.lang.columns[column.field] || column.title);
+			}
+		});
 
 		//update pagination if enabled
 		if(self.options.pagination){
@@ -558,6 +560,9 @@
 				}
 			}
 		}
+
+		//redraw incase column headers change width
+		self.redraw(true);
 	},
 
 	//return the current locale
