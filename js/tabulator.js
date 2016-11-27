@@ -538,7 +538,6 @@
 
 		//update column titles
 		self.columnList.forEach(function(column){
-			console.log("col", column.field, column)
 			if(column.field){
 				$(".tabulator-col[data-field=" + column.field + "] .tabulator-col-title", self.header).text(self.lang.columns[column.field] || column.title);
 			}
