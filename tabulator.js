@@ -537,8 +537,10 @@
 		var self = this;
 
 		//update column titles
-		for(var prop in self.lang.columns){
-			$(".tabulator-col[data-field=" + prop + "] .tabulator-col-title", self.header).text(self.lang.columns[prop]);
+		self.columnList.foeach(column){
+			if(column.field){
+				$(".tabulator-col[data-field=" + column.field + "] .tabulator-col-title", self.header).text(self.lang.columns[prop] || column.title);
+			}
 		}
 
 		//update pagination if enabled
