@@ -173,7 +173,7 @@
                     </ul>
 
                     <a class="anchor" id="column-groups"></a>
-                    <h2>Column Grouping <span class="label label-danger">New</span> <a class="example-link" href="../examples?#column-groups"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Column Grouping <a class="example-link" href="../examples?#column-groups"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>You can group column headers togeather to create complex multi-row table headers.</p>
 
                     <p>To group columns, you need to add a column group object in the column definition array. You must give a column group a <span class='param'>title</span> and add the grouped column objects into the <span class='param'>columns</span> property of the group.</p>
@@ -295,7 +295,7 @@ $("#example-table").tabulator({
 });</pre>
 
                     <a class="anchor" id="table-load"></a>
-                    <h2>Extract Data from an HTML Table Element <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#table-load"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Extract Data from an HTML Table Element <a class="example-link" href="../examples?#table-load"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>You can create a Tabulator table directly from an HTML table element. You can define the columns in the usual way with the columns option, or you can set them as <span class='param'>th</span> elements in the  <span class='param'>thead</span> of a table.</p>
                     <p>Any rows of data in the <span class='param'>tbody</span> of the table will automatically be converted to tabulator data in displayed in the resulting table.</p>
                     <p>If you define the <span class='param'>width</span> attribute in a table header cell, this will be used to set the width of the column in Tabulator.</p>
@@ -1173,7 +1173,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-js">var colDefs = $("#example-table").tabulator("getColumns") //get column definition array</pre>
 
                     <a class="anchor" id="persistant-columns"></a>
-                    <h2>Persistent Column Layout <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Persistent Column Layout <a class="example-link" href="../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Tabulator can store the layout of columns so that each time a user comes back to the page, the table is laid out just as they left it.</p>
 
                     <p>
@@ -1246,7 +1246,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="options"></a>
                 <article>
-                    <h1>Setup Options <span class="label label-primary">Updated</span></h1>
+                    <h1>Setup Options</h1>
 
                     <p>Tabulator has a wide range of setup options to help you customise the user experience of your tables. This section outlines all the available options and links to the relevant section in this documentation to show you how to use them.</p>
 
@@ -1529,7 +1529,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><strong>Autumn</strong> - A colorful, bright layout using shades of orange and brown. <i>(/themes/tabulator_autumn.css)</i></li>
                     </ul>
 
-                    <h2>CSS Classes <span class="label label-primary">Updated</span></h2>
+                    <h2>CSS Classes</h2>
 
                     <p>All elements of Tabulator have classes set to make theming your tables as easy as possible.</p>
 
@@ -1769,7 +1769,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks &amp; Events <a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Callbacks &amp; Events <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
@@ -1977,6 +1977,16 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //pageno - the number of the loaded page
     }
 });</pre>
+
+                    <h2>Table Localized <span class="label label-danger">New</span></h2>
+                    <p>When a localization event has occured, the <span class='param'>localized</span> callback will triggered, passing the current locale code and language object:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    localized:function(locale, lang){
+        //locale - a string representing the current locale
+        //lang - the language object for the current locale
+    },
+});</pre>
                 </article>
                 <a class="anchor" id="extending"></a>
                 <article>
@@ -2152,10 +2162,100 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     ],
 });</pre>
                 </article>
+                <a class="anchor" id="localization"></a>
+                <article>
+                    <h1>Localization <span class="label label-danger">New</span></h1>
+                    <p>If you want to make your table accessible to users from a wide variety of languages then Tabulators localization features are for you.</p>
 
+                    <p>Using the <span class='param'>langs</span> option you can specify the localized content for the table in any number of languages.</p>
+
+                    <p>You can store as many languages as you like, creating an object inside the <span class='param'>langs</span> object with a property of the locale code for that language. A list of locale codes can be found <a href="http://www.science.co.il/Language/Locale-codes.php">here.</a></p>
+
+                    <p>At present there are two parts of the table that can be localised, the column headers and the pagination buttons. To localize the pagination buttons, create a <span class='param'>pagination</span> property inside your language object and give it the properties outlined below.</p>
+
+                    <p>If you wish you can also localize column titles by adding a <span class='param'>columns</span> property to your language object. You should store a property of the field name of the column you wish to change, with a value of its title. Any fields that match this will use this title instead of the one provided by the column definition array.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    locale:true,
+    langs:{
+        "en-gb":{
+            "columns":{
+                "name":"Name", //replace the title of column name with the value "Name";
+            },
+            "pagination":{
+                "first":"First", //text for the first page button
+                "first_title":"First Page", //tooltip text for the first page button
+                "last":"Last",
+                "last_title":"Last Page",
+                "prev":"Prev",
+                "prev_title":"Prev Page",
+                "next":"Next",
+                "next_title":"Next Page",
+            },
+        }
+    },
+});</pre>
+
+                    <h2>Setting the Locale</h2>
+                    <p>You can set the current local in one of two ways. If you want to set it when the table is created, simply include the <span class='param'>locale</span> option in your Tabulator constructor. You can either pass in a string matching one of the language options you have defined, or pass in the boolean <span class='param'>true</span> which will cause Tabulator to auto-detect the browsers language settings from the <span class='param'>navigator.language</span> object.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    locale:true, //auto detect the current language.
+});</pre>
+
+                    <p>You can also set the language at any point after the table has loaded using the <span class='param'>setLocale</span> function, which takes the same range of values as the <span class='param'>locale</span> setup option mentioned above.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setLocale", "fr"); //set locale to french</pre>
+
+                    <p>It is worth noting that if Tabulator cant find a match, it will try and find the next best thing. For example if you were trying to set the locale to Belgian French <span class='param'>"fr-be"</span>, if that option had not been defined, then Tabulator would go on to look for an<span class='param'>"fr"</span> option instead. if no matching locale is found then Then tabulator will default to using its built-in English language text.</p>
+
+                    <p>When a localization event has occured, the <span class='param'>localized</span> callback will triggered, passing the current locale code and language object:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    localized:function(locale, lang){
+        //locale - a string representing the current locale
+        //lang - the language object for the current locale
+    },
+});</pre>
+
+                    <h2>Getting the Current Locale</h2>
+                    <p>It is possible to retrive the locale code currently being used by Tabulator using the <span class='param'>getLocale</span> function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getLocale"); //return string for current locale code</pre>
+
+                    <h2>Extending Localization</h2>
+                    <p>As well as the default <span class='param'>columns</span> and <span class='param'>pagination</span> properties required in the language object, you can also add any additional properties you like to the object to be used in localising other elements.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    langs:{
+        "en-gb":{
+            "custom":{
+                "site_name":"What A Great Table Based Site!!!",
+            },
+            "columns":{
+                "name":"Name", //replace the title of column name with the value "Name";
+            },
+            "pagination":{
+                "first":"First", //text for the first page button
+                "first_title":"First Page", //tooltip text for the first page button
+                "last":"Last",
+                "last_title":"Last Page",
+                "prev":"Prev",
+                "prev_title":"Prev Page",
+                "next":"Next",
+                "next_title":"Next Page",
+            },
+        }
+    },
+});</pre>
+                    <p>You can then access these at any point using the <span class='param'>getLang</span> function, which will return the language object for the currently active locale.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getLang"); //return current lang object</pre>
+
+
+
+                </article>
                 <a class="anchor" id="accessibility"></a>
                 <article>
-                    <h1>Accessibility <span class="label label-danger">New</span></h1>
+                    <h1>Accessibility</h1>
                     <p>Tabulator makes full use of aria accessibility tags to make the table machine readable by screen readers and other digital accessibility equipment.</p>
 
                     <p>The following role tags are used:
@@ -2190,7 +2290,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="depricated"></a>
                 <article>
-                    <h1>Depricated Functionality <span class="label label-primary">Updated</span></h1>
+                    <h1>Depricated Functionality</h1>
                     <p>The following sections have been updated and now have elements of obsolete functionality that have been depricated and will be removed in version 3.0.</p>
 
                     <h2>Pagination</h2>
@@ -2206,7 +2306,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     pagination:"local", //enable local pagination
 });</pre>
 
-                    <h2>Persistent Column Layout <span class="label label-danger">New</span></h2>
+                    <h2>Persistent Column Layout</h2>
                     <h3>Depricated Function</h3>
                     <p>enabling persistent column layouts using the <span class='param'>columnLayoutCookie</span> and <span class='param'>columnLayoutCookie</span> options:</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -2228,8 +2328,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                 <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
-                        <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
+                        <li><a href="#define-column-headers">Define Column Headers</a></li>
+                        <li><a href="#set-data">Set Table Data</a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout</a></li>
                         <li><a href="#sorting">Sorting Data</a></li>
@@ -2238,14 +2338,15 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#filtering">Filtering Data</a></li>
                         <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
-                        <li><a href="#movable">Movable Rows and Columns <span class="label label-primary">Updated</span></a></li>
+                        <li><a href="#movable">Movable Rows and Columns</a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
-                        <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#css">CSS Classes &amp; Theming <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#callbacks">Callbacks &amp; Events</a></li>
+                        <li><a href="#options">Setup Options</a></li>
+                        <li><a href="#css">CSS Classes &amp; Theming</a></li>
+                        <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#extending">Extending Tabulator</a></li>
-                        <li><a href="#accessibility">Accessibility <span class="label label-danger">New</span></a></li>
-                        <li><a href="#depricated">Depricated Functionality <span class="label label-primary">Updated</span></a></li>
+                        <li><a href="#localization">Localization <span class="label label-danger">New</span></a></li>
+                        <li><a href="#accessibility">Accessibility</a></li>
+                        <li><a href="#depricated">Depricated Functionality</a></li>
                     </ul>
                     <div class="share">
                        <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=400,toolbar=1,resizable=0'); return false;" title="Share On Facebook"><i class="fa fa-fw fa-facebook"></i></a>
