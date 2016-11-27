@@ -537,11 +537,11 @@
 		var self = this;
 
 		//update column titles
-		self.columnList.foeach(column){
+		self.columnList.forEach(function(column){
 			if(column.field){
-				$(".tabulator-col[data-field=" + column.field + "] .tabulator-col-title", self.header).text(self.lang.columns[prop] || column.title);
+				$(".tabulator-col[data-field=" + column.field + "] .tabulator-col-title", self.header).text(self.lang.columns[column.field] || column.title);
 			}
-		}
+		});
 
 		//update pagination if enabled
 		if(self.options.pagination){
@@ -559,6 +559,9 @@
 				}
 			}
 		}
+
+		//redraw incase column headers change width
+		self.redraw(true);
 	},
 
 	//return the current locale
