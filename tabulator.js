@@ -497,8 +497,8 @@
 		//load default lang template
 		self.lang = $.extend(true, [], self.defaultLang);
 
-		if(locale){
 
+		if(locale){
 			//fill in any matching languge values
 			function traverseLang(trans, path){
 				for(var prop in trans){
@@ -515,21 +515,20 @@
 			}
 
 			traverseLang(self.options.langs[locale], self.lang);
-
-			self.options.locale = locale;
-
-			//update ui elements that need translating
-			if(!self.firstRender){
-				self._updateLocaleText();
-			}
-
-			//triger localized callback
-			self.options.localized(locale, self.lang);
-
-			return locale;
 		}
 
-		return false;
+
+		self.options.locale = locale;
+
+		//update ui elements that need translating
+		if(!self.firstRender){
+			self._updateLocaleText();
+		}
+
+		//triger localized callback
+		self.options.localized(locale, self.lang);
+
+		return locale;
 
 	},
 
