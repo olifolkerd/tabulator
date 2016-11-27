@@ -60,6 +60,24 @@
 
 	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"), //loader blockout div
 
+	lang:{}, // hold current locale text
+
+	defaultLang:{ //hold default locale text
+		"columns":{
+		},
+		"pagination":{
+			"first":"First",
+			"first_title":"First Page",
+			"last":"Last",
+			"last_title":"Last Page",
+			"prev":"Prev",
+			"prev_title":"Prev Page",
+			"next":"Next",
+			"next_title":"Next Page",
+		},
+	},
+
+
 	//setup options
 	options: {
 		colMinWidth:"40px", //minimum global width for a column
@@ -72,6 +90,9 @@
 		movableCols:false, //enable movable columns
 		movableRows:false, //enable movable rows
 		movableRowHandle:"<div></div><div></div><div></div>", //handle for movable rows
+
+		locale:"en-gb", //durrent system language
+		langs:{},
 
 		persistentLayout:false, //store cookie with column _styles
 		persistentLayoutID:"", //id for stored cookie
@@ -306,6 +327,10 @@
 		var element = self.element;
 
 
+		//set current locale
+		self.setLocale(self.options.locale);
+
+
 		//// backwards compatability options adjustments ////
 
 		//old persistan column layout adjustment
@@ -376,7 +401,7 @@
 				self.footer = options.paginationElement;
 			}
 
-			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first' role='button' aria-label='First Page'>First</span><span class='tabulator-page' data-page='prev' role='button' aria-label='Previous Page'>Prev</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next' role='button' aria-label='Next Page'>Next</span><span class='tabulator-page' data-page='last' role='button' aria-label='Last Page'>Last</span></span>");
+			self.paginator = $("<span class='tabulator-paginator'><span class='tabulator-page' data-page='first' role='button' aria-label='" + self.lang.pagination.first_title + "' title='" + self.lang.pagination.first_title + "'>" + self.lang.pagination.first + "</span><span class='tabulator-page' data-page='prev' role='button' aria-label='" + self.lang.pagination.prev_title + "' title='" + self.lang.pagination.prev_title + "'>" + self.lang.pagination.prev + "</span><span class='tabulator-pages'></span><span class='tabulator-page' data-page='next' role='button' aria-label='" + self.lang.pagination.next_title + "' title='" + self.lang.pagination.next_title + "'>" + self.lang.pagination.next + "</span><span class='tabulator-page' data-page='last' role='button' aria-label='" + self.lang.pagination.last_title + "' title='" + self.lang.pagination.last_title + "'>" + self.lang.pagination.last + "</span></span>");
 
 			self.paginator.on("click", ".tabulator-page", function(){
 				if(!$(this).hasClass("disabled")){
@@ -393,6 +418,110 @@
 		}else{
 			self._colLayout();
 		}
+	},
+
+	//set current locale
+	setLocale:function(desiredLocale){
+		var self = this;
+
+		var locale = false; //hold the matching locale
+
+		//determing correct locale to load
+		if(desiredLocale === true && navigator.language){
+			//get local from system
+			desiredLocale = navigator.language.toLowerCase();
+		}
+
+		if(desiredLocale){
+
+			if(self.options.langs[desiredLocale]){
+				locale = desiredLocale;
+			}else{
+				//see if matching top level local is present
+				var prefix = desiredLocale.split("-")[0];
+				if(self.options.langs[prefix]){
+					locale = prefix;
+				}
+			}
+		}
+
+		//load default lang template
+		self.lang = $.extend(true, [], self.defaultLang);
+
+		if(locale){
+
+			//fill in any matching languge values
+			function traverseLang(trans, path){
+				for(var prop in trans){
+
+					if(typeof trans[prop] == "object"){
+						if(!path[prop]){
+							path[prop] = {};
+						}
+						traverseLang(trans[prop], path[prop]);
+					}else{
+						path[prop] = trans[prop];
+					}
+				}
+			}
+
+			traverseLang(self.options.langs[locale], self.lang);
+
+			self.options.locale = locale;
+
+			//update ui elements that need translating
+			if(!self.firstRender){
+				self._updateLocaleText();
+			}
+
+			return locale;
+		}
+
+		return false;
+
+	},
+
+	//quick update of elements with local based text
+	_updateLocaleText:function(){
+		var self = this;
+
+		//update column titles
+		for(var prop in self.lang.columns){
+			$(".tabulator-col[data-field=" + prop + "] .tabulator-col-title", self.header).text(self.lang.columns[prop]);
+		}
+
+		//update pagination if enabled
+		if(self.options.pagination){
+			for(var prop in self.lang.pagination){
+
+				var propParts = prop.split("_");
+
+				var element = $(".tabulator-paginator .tabulator-page[data-page=" + propParts[0] + "]", self.element);
+
+				if (propParts.length > 1){
+					element.attr("title",self.lang.pagination[prop])
+					.attr("aria-label",self.lang.pagination[prop]);
+				}else{
+					element.text(self.lang.pagination[prop]);
+				}
+			}
+		}
+	},
+
+	//return the current locale
+	getLocale(){
+		var self = this;
+
+		return self.options.locale;
+	},
+
+	//return the language definitions for the curent locale
+	getLang(){
+		var self = this;
+
+		var lang = self.options.langs[self.options.locale]
+
+		return lang ? lang : false;
 	},
 
 	//set options
@@ -2316,8 +2445,7 @@
 				var colContent = $(".tabulator-col-content", col);
 				var colTitle = $(".tabulator-col-title", col);
 
-				var title = column.title ? column.title : "&nbsp";
-
+				var title = self.lang.columns[column.field] || (column.title ? column.title : "&nbsp");
 
 				if(column.editableTitle){
 					var titleElement = $("<input class='tabulator-title-editor'>");
