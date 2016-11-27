@@ -1186,6 +1186,7 @@ $("#reset").click(function(){
         <pre class="prettyprint lang-js">//Build Tabulator
 $("#example-table-localization").tabulator({
     height:"311px",
+    fitColumns:true,
     pagination:true,
     langs:{
         "fr-fr":{ //French language definition
@@ -1232,13 +1233,13 @@ $("#example-table-localization").tabulator({
         },
     },
     columns:[
-    {title:"Name", field:"name", width:200},
-    {title:"Progress", field:"progress", width:100, sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", width:80},
-    {title:"Favourite Color", field:"col"},
-    {title:"Date Of Birth", field:"dob"},
-    {title:"Driver", field:"car"},
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", width:100, sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", width:80},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob"},
+        {title:"Driver", field:"car"},
     ],
 });
 
@@ -2071,6 +2072,7 @@ $("#lang-default").click(function(){
         $("#example-table-localization").tabulator({
             height:"311px",
             pagination:true,
+            fitColumns:true,
             langs:{
                 "fr-fr":{
                     "columns":{
