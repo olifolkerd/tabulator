@@ -149,17 +149,17 @@
 
                             <h3>JavaScript</h3>
                             <pre class="prettyprint lang-js">$("#example-table-simple").tabulator({
-                                height:"311px",
-                                columns:[
-                                {title:"Name", field:"name", width:200},
-                                {title:"Progress", field:"progress", width:100, sorter:"number"},
-                                {title:"Gender", field:"gender"},
-                                {title:"Rating", field:"rating", width:80},
-                                {title:"Favourite Color", field:"col"},
-                                {title:"Date Of Birth", field:"dob"},
-                                {title:"Driver", field:"car"},
-                                ],
-                            });</pre>
+    height:"311px",
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", width:100, sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", width:80},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob"},
+        {title:"Driver", field:"car"},
+    ],
+});</pre>
                         </fieldset>
                     </article>
                     <a class="anchor" id="fittodata"></a>
@@ -178,17 +178,17 @@
 
                             <h3>JavaScript</h3>
                             <pre class="prettyprint lang-js">$("#example-table-fittodata").tabulator({
-                                height:"311px",
-                                columns:[
-                                {title:"Name", field:"name", width:200},
-                                {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
-                                {title:"Gender", field:"gender"},
-                                {title:"Rating", field:"rating", align:"center", width:80},
-                                {title:"Favourite Color", field:"col"},
-                                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-                                {title:"Driver", field:"car", align:"center"},
-                                ],
-                            });</pre>
+    height:"311px",
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", align:"center", width:80},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center"},
+    ],
+});</pre>
                         </fieldset>
                     </article>
                     <a class="anchor" id="fittowidth"></a>
@@ -210,18 +210,18 @@
 
                             <h3>JavaScript</h3>
                             <pre class="prettyprint lang-js">$("#example-table-fittowidth").tabulator({
-                                height:"311px",
-                                fitColumns:true,
-                                columns:[
-                                {title:"Name", field:"name", width:200},
-                                {title:"Progress", field:"progress", align:"right", sorter:"number"},
-                                {title:"Gender", field:"gender"},
-                                {title:"Rating", field:"rating", align:"center", width:60},
-                                {title:"Favourite Color", field:"col"},
-                                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-                                {title:"Driver", field:"car", align:"center"},
-                                ],
-                            });</pre>
+    height:"311px",
+    fitColumns:true,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", align:"right", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", align:"center", width:60},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center"},
+    ],
+});</pre>
                         </fieldset>
                     </article>
 
@@ -244,28 +244,27 @@
 
                         <h3>JavaScript</h3>
                         <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
-                            colVertAlign:"bottom", //align header contents to bottom of cell
-                            columns:[
-                            {title:"Name", field:"name", width:160},
-                            {//create column group
-                            title:"Work Info",
-                            columns:[
-                            {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
-                            {title:"Rating", field:"rating", align:"center", width:80},
-                            {title:"Driver", field:"car", align:"center", width:80},
-                            ],
-                        },
-                        {//create column group
-                        title:"Personal Info",
-                        columns:[
-                        {title:"Gender", field:"gender", width:90},
-                        {title:"Favourite Color", field:"col", width:140},
-                        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
-                        ],
-                    },
-
-                    ],
-                });</pre>
+    colVertAlign:"bottom", //align header contents to bottom of cell
+    columns:[
+        {title:"Name", field:"name", width:160},
+        {//create column group
+            title:"Work Info",
+            columns:[
+                {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+                {title:"Rating", field:"rating", align:"center", width:80},
+                {title:"Driver", field:"car", align:"center", width:80},
+            ],
+        },
+        {//create column group
+            title:"Personal Info",
+            columns:[
+                {title:"Gender", field:"gender", width:90},
+                {title:"Favourite Color", field:"col", width:140},
+                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+            ],
+        },
+    ],
+});</pre>
             </fieldset>
         </article>
 
@@ -351,35 +350,35 @@
                 <legend>Source Code</legend>
                 <h3>HTML</h3>
                 <pre class="prettyprint lang-html">&lt;table id="example-table-table"&gt;
-                    &lt;thead&gt;
-                    &lt;tr&gt;
-                    &lt;th width="200"&gt;Name&lt;/th&gt;
-                    &lt;th&gt;Age&lt;/th&gt;
-                    &lt;th&gt;Gender&lt;/th&gt;
-                    &lt;th&gt;Height&lt;/th&gt;
-                    &lt;th width="150"&gt;Favourite Color&lt;/th&gt;
-                    &lt;th&gt;Date of Birth&lt;/th&gt;
-                    &lt;/tr&gt;
-                    &lt;/thead&gt;
-                    &lt;tbody&gt;
-                    &lt;tr&gt;
-                    &lt;td&gt;Billy Bob&lt;/td&gt;
-                    &lt;td&gt;12&lt;/td&gt;
-                    &lt;td&gt;male&lt;/td&gt;
-                    &lt;td&gt;1&lt;/td&gt;
-                    &lt;td&gt;red&lt;/td&gt;
-                    &lt;td&gt;22/04/1994&lt;/td&gt;
-                    &lt;/tr&gt;
-                    &lt;tr&gt;
-                    &lt;td&gt;Mary May&lt;/td&gt;
-                    &lt;td&gt;1&lt;/td&gt;
-                    &lt;td&gt;female&lt;/td&gt;
-                    &lt;td&gt;2&lt;/td&gt;
-                    &lt;td&gt;blue&lt;/td&gt;
-                    &lt;td&gt;14/05/1982&lt;/td&gt;
-                    &lt;/tr&gt;
-                    &lt;/tbody&gt;
-                    &lt;/table&gt;</pre>
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th width="200"&gt;Name&lt;/th&gt;
+            &lt;th&gt;Age&lt;/th&gt;
+            &lt;th&gt;Gender&lt;/th&gt;
+            &lt;th&gt;Height&lt;/th&gt;
+            &lt;th width="150"&gt;Favourite Color&lt;/th&gt;
+            &lt;th&gt;Date of Birth&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Billy Bob&lt;/td&gt;
+            &lt;td&gt;12&lt;/td&gt;
+            &lt;td&gt;male&lt;/td&gt;
+            &lt;td&gt;1&lt;/td&gt;
+            &lt;td&gt;red&lt;/td&gt;
+            &lt;td&gt;22/04/1994&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Mary May&lt;/td&gt;
+            &lt;td&gt;1&lt;/td&gt;
+            &lt;td&gt;female&lt;/td&gt;
+            &lt;td&gt;2&lt;/td&gt;
+            &lt;td&gt;blue&lt;/td&gt;
+            &lt;td&gt;14/05/1982&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</pre>
 
                     <h3>JavaScript</h3>
                     <pre class="prettyprint lang-js"> $("#example-table-table").tabulator({fitColumns:true});</pre>
@@ -393,7 +392,7 @@
                     Using the <span class='param'>editable</span> setting on each column, you can make a user editable table.
                 </p>
                 <p>
-                    Any time a cell is edited it triggers the <span class='param'>rowEdit</span> callback, to allow you to process any changes.
+                    Any time a cell is edited it triggers the <span class='param'>cellEdited</span> callback, to allow you to process any changes.
                 </p>
                 <p>
                     You can call the <span class='param'>getData</span> method to get an array of all of the tables data, including any edits
@@ -408,51 +407,51 @@
 
                     <h3>JavaScript</h3>
                     <pre class="prettyprint lang-js">//Create Gender
-                        var genderEditor = function(cell, value){
-                        //cell - JQuery object for current cell
-                        //value - the current value for current cell
+var genderEditor = function(cell, value){
+//cell - JQuery object for current cell
+//value - the current value for current cell
 
-                        //create and style editor
-                        var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
-                        editor.css({
-                        "padding":"3px",
-                        "width":"100%",
-                        "box-sizing":"border-box",
-                    })
+//create and style editor
+var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+editor.css({
+    "padding":"3px",
+    "width":"100%",
+    "box-sizing":"border-box",
+})
 
-                    //Set value of editor to the value of the cell
-                    .val(value);
+//Set value of editor to the value of the cell
+.val(value);
 
-                    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-                    if(cell.hasClass("tabulator-cell")){
-                    setTimeout(function(){
-                    editor.focus();
-                },100);
-            }
+//set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+if(cell.hasClass("tabulator-cell")){
+    setTimeout(function(){
+        editor.focus();
+    },100);
+}
 
-            //when the value has been set, update the cell
-            editor.on("change blur", function(e){
-            cell.trigger("editval", editor.val());
-        });
+//when the value has been set, update the cell
+editor.on("change blur", function(e){
+    cell.trigger("editval", editor.val());
+});
 
-        //return the editor element
-        return editor;
-    }
+//return the editor element
+    return editor;
+}
 
-    //Build Tabulator
-    $("#example-table-editable").tabulator({
+//Build Tabulator
+$("#example-table-editable").tabulator({
     height:"311px",
     columns:[
-    {title:"Name", field:"name", width:150, editable:true},
-    {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
-    {title:"Gender", field:"gender", editable:true, editor:genderEditor},
-    {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-    {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
+        {title:"Name", field:"name", width:150, editable:true},
+        {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
+        {title:"Gender", field:"gender", editable:true, editor:genderEditor},
+        {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
+        {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
     ],
-    rowEdit:function(id,data,row){
-
-},
+    cellEdited:function(id,data,row){
+        //This callback is called any time a cell is edidted
+    },
 });</pre>
 </fieldset>
 </article>
@@ -515,26 +514,26 @@
 
     <h3>JavaScript</h3>
     <pre class="prettyprint lang-js">//Build Tabulator
-        $("#example-table-sorting").tabulator({
-        height:"311px",
-        fitColumns:true,
-        columns:[
+$("#example-table-sorting").tabulator({
+    height:"311px",
+    fitColumns:true,
+    columns:[
         {title:"Name", field:"name", sorter:"string", width:200},
         {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
         {title:"Gender", field:"gender", sorter:"string"},
         {title:"Rating", field:"rating",  align:"center", width:100},
         {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
-        return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-    }},
-    {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-    {title:"Driver", field:"car", align:"center", sorter:"boolean"},
+            return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+        }},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+        {title:"Driver", field:"car", align:"center", sorter:"boolean"},
     ],
 });
 
 //Trigger sort when "Trigger Sort" button is clicked
 $("#sort-trigger").click(function(){
-$("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
-})</pre>
+    $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+});</pre>
 </fieldset>
 </article>
 <a class="anchor" id="formatters"></a>
@@ -576,37 +575,36 @@ $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-d
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Generate print icon
-            var printIcon = function(value, data, cell, row, options){ //plain text value
-            return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
-        };
+var printIcon = function(value, data, cell, row, options){ //plain text value
+    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
+};
 
-        //Build Tabulator
-        $("#example-table-formatter").tabulator({
-        height:"311px",
-        fitColumns:true,
-        rowFormatter:function(row, data){
-
+//Build Tabulator
+$("#example-table-formatter").tabulator({
+    height:"311px",
+    fitColumns:true,
+    rowFormatter:function(row, data){
         if(data.col == "blue"){
-        row.css({"background-color":"#A6A6DF"});
-    }
-},
-columns:[
-{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-{title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
-if(value.indexOf("o") > 0){
-return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
-}else{
-return value;
-}
-}},
-{title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-{title:"Gender", field:"gender"},
-{title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-{title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-{title:"Favourite Color", field:"col" ,formatter:"color", width:160},
-{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-{formatter:"buttonCross", width:30, align:"center"},
-],
+            row.css({"background-color":"#A6A6DF"});
+        }
+    },
+    columns:[
+        {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
+        {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
+            if(value.indexOf("o") > 0){
+                return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
+            }else{
+                return value;
+            }
+        }},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+        {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {formatter:"buttonCross", width:30, align:"center"},
+    ],
 });</pre>
 </fieldset>
 </article>
@@ -657,7 +655,7 @@ $("#example-table-rowformat").tabulator({
     fitColumns:true,
     colResizable:false,
     columns:[
-    {title:"Cheese", field:"type", sorter:"string"},
+        {title:"Cheese", field:"type", sorter:"string"},
     ],
     rowFormatter:function(row, data){
         //get current width of row
@@ -681,9 +679,7 @@ $("#example-table-rowformat").tabulator({
 })
 
 //Load Data
-$("#example-table-rowformat").tabulator("setData", cheeseData);
-
-        </pre>
+$("#example-table-rowformat").tabulator("setData", cheeseData);</pre>
     </fieldset>
 </article>
 <a class="anchor" id="sparklines"></a>
@@ -755,11 +751,11 @@ var sparkData = [
 $("#example-table-sparkline").tabulator({
     height:"311px",
     columns:[
-    {title:"Name", field:"name", width:190},
-    {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
-    {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
-    {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
-    {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
+        {title:"Name", field:"name", width:190},
+        {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
+        {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
+        {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
+        {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
     ],
 });</pre>
     </fieldset>
@@ -780,19 +776,19 @@ $("#example-table-sparkline").tabulator({
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">$("#example-table-grouping").tabulator({
-            height:"311px",
-            fitColumns:true,
-            groupBy:"gender",
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });</pre>
+    height:"311px",
+    fitColumns:true,
+    groupBy:"gender",
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+});</pre>
     </fieldset>
 </article>
 <a class="anchor" id="filter"></a>
@@ -864,24 +860,24 @@ $("#example-table-sparkline").tabulator({
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Custom filter example
-            function customFilter(data){
-            return data.car &amp;&amp; data.rating < 3;
-        }
+function customFilter(data){
+    return data.car &amp;&amp; data.rating < 3;
+}
 
-        //Trigger setFilter function with correct parameters
-        function updateFilter(){
+//Trigger setFilter function with correct parameters
+function updateFilter(){
 
-        var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
+    var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
 
-        if($("#filter-field").val() == "function" ){
+    if($("#filter-field").val() == "function" ){
         $("#filter-type").prop("disabled", true);
         $("#filter-value").prop("disabled", true);
     }else{
-    $("#filter-type").prop("disabled", false);
-    $("#filter-value").prop("disabled", false);
-}
+        $("#filter-type").prop("disabled", false);
+        $("#filter-value").prop("disabled", false);
+    }
 
-$("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
+    $("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
 }
 
 //Update filters on value change
@@ -890,26 +886,26 @@ $("#filter-value").keyup(updateFilter);
 
 //Clear filters on "Clear Filters" button click
 $("#filter-clear").click(function(){
-$("#filter-field").val("");
-$("#filter-type").val("=");
-$("#filter-value").val("");
+    $("#filter-field").val("");
+    $("#filter-type").val("=");
+    $("#filter-value").val("");
 
-$("#example-table-filters").tabulator("clearFilter");
+    $("#example-table-filters").tabulator("clearFilter");
 });
 
 //Build Tabulator
 $("#example-table-filters").tabulator({
-height:"311px",
-fitColumns:true,
-columns:[
-{title:"Name", field:"name", width:200},
-{title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-{title:"Gender", field:"gender"},
-{title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-{title:"Favourite Color", field:"col"},
-{title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-{title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-],
+    height:"311px",
+    fitColumns:true,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
 });</pre>
 </fieldset>
 </article>
@@ -930,18 +926,18 @@ columns:[
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">$("#example-table-filters-header").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", width:150, headerFilter:true},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
-            {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
-            {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
-            {title:"Favourite Color", field:"col", headerFilter:true},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
-            ],
-        });</pre>
+    height:"311px",
+    fitColumns:true,
+    columns:[
+        {title:"Name", field:"name", width:150, headerFilter:true},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
+        {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
+        {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+        {title:"Favourite Color", field:"col", headerFilter:true},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
+    ],
+});</pre>
     </fieldset>
 </article>
 <a class="anchor" id="pagination"></a>
@@ -964,24 +960,24 @@ columns:[
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-            $("#example-table-pagination").tabulator({
-            height:"292px",
-            fitColumns:true,
-            pagination:"local",
-            paginationSize:8,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });
+$("#example-table-pagination").tabulator({
+    height:"292px",
+    fitColumns:true,
+    pagination:"local",
+    paginationSize:8,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+});
 
-        //Set initial page
-        $("#example-table-pagination").tabulator("setPage", 1);</pre>
+//Set initial page
+$("#example-table-pagination").tabulator("setPage", 1);</pre>
     </fieldset>
 </article>
 <a class="anchor" id="persistance"></a>
@@ -1003,19 +999,19 @@ columns:[
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">$("#example-table-colum-layout").tabulator({
-            height:"311px",
-            movableCols:true,
-            persistentLayout: true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", width:1000, sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", width:80},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });</pre>
+    height:"311px",
+    movableCols:true,
+    persistentLayout: true,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", width:1000, sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", width:80},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+});</pre>
     </fieldset>
 </article>
 <a class="anchor" id="ajax"></a>
@@ -1040,37 +1036,37 @@ columns:[
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-            $("#example-table-ajax").tabulator({
-            height:"311px",
-            fitColumns:true,
-            ajaxURL:"data.php",
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:200},
-            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-            {title:"Gender", field:"gender", sorter:"string"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-            ],
-        });
+$("#example-table-ajax").tabulator({
+    height:"311px",
+    fitColumns:true,
+    ajaxURL:"data.php",
+    columns:[
+        {title:"Name", field:"name", sorter:"string", width:200},
+        {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+        {title:"Gender", field:"gender", sorter:"string"},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+    ],
+});
 
-        //trigger AJAX load on "Load Data via AJAX" button click
-        $("#ajax-trigger").click(function(){
-        $("#example-table-ajax").tabulator("setData");
-    });</pre>
+//trigger AJAX load on "Load Data via AJAX" button click
+$("#ajax-trigger").click(function(){
+    $("#example-table-ajax").tabulator("setData");
+});</pre>
     <h3>Server Side PHP</h3>
     <pre class="prettyprint lang-php">//build data array
-        $data = array(
-        array(id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1),
-        array(id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true),
-        array(id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"),
-        array(id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"),
-        array(id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"),
-        );
+$data = [
+    [id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1],
+    [id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true],
+    [id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"],
+    [id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"],
+    [id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"],
+];
 
-        //return JSON formatted data
-        echo(json_encode($data));</pre>
+//return JSON formatted data
+echo(json_encode($data));</pre>
     </fieldset>
 </article>
 <a class="anchor" id="adddel"></a>
@@ -1097,41 +1093,38 @@ columns:[
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-            $("#example-table-adddel").tabulator({
-            height:"311px",
-            addRowPos:"bottom",
-            columns:[
-            {title:"Name", field:"name", width:200, editable:true},
-            {title:"Progress", field:"progress", width:100, align:"right", sorter:"number", editable:true},
-            {title:"Gender", field:"gender", editable:true},
-            {title:"Rating", field:"rating", align:"center", width:80, editable:true},
-            {title:"Favourite Color", field:"col", editable:true},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-            {title:"Driver", field:"car", align:"center", editable:true},
-            ],
-            rowEdit:function(id,data,row,index){
+$("#example-table-adddel").tabulator({
+    height:"311px",
+    addRowPos:"bottom",
+    columns:[
+        {title:"Name", field:"name", width:200, editable:true},
+        {title:"Progress", field:"progress", width:100, align:"right", sorter:"number", editable:true},
+        {title:"Gender", field:"gender", editable:true},
+        {title:"Rating", field:"rating", align:"center", width:80, editable:true},
+        {title:"Favourite Color", field:"col", editable:true},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
+        {title:"Driver", field:"car", align:"center", editable:true},
+    ],
+});
 
-        }
-    });
-
-    //Add row on "Add Row" button click
-    $("#add-row").click(function(){
+//Add row on "Add Row" button click
+$("#add-row").click(function(){
     $("#example-table-adddel").tabulator("addRow");
 });
 
 //Delete row on "Delete Row" button click
 $("#del-row").click(function(){
-$("#example-table-adddel").tabulator("deleteRow", 1);
+    $("#example-table-adddel").tabulator("deleteRow", 1);
 });
 
 //Clear table on "Empty the table" button click
 $("#clear").click(function(){
-$("#example-table-adddel").tabulator("clear");
+    $("#example-table-adddel").tabulator("clear");
 });
 
 //Reset table contents on "Reset the table" button click
 $("#reset").click(function(){
-$("#example-table-adddel").tabulator("setData", tabledata);
+    $("#example-table-adddel").tabulator("setData", tabledata);
 });</pre>
 </fieldset>
 </article>
@@ -1152,21 +1145,21 @@ $("#example-table-adddel").tabulator("setData", tabledata);
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">$("#example-table-movable-rows").tabulator({
-            height:"311px",
-            movableRows:true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-            rowMoved:function(id,data,row,index){
-            alert("Row: " + data.name + " has been moved to position " + index)
-        }
-    });</pre>
+    height:"311px",
+    movableRows:true,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+    rowMoved:function(id,data,row,index){
+        alert("Row: " + data.name + " has been moved to position " + index)
+    }
+});</pre>
 </fieldset>
 </article>
 <a class="anchor" id="callbacks"></a>
@@ -1191,21 +1184,21 @@ $("#example-table-adddel").tabulator("setData", tabledata);
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">$("#example-table-callbacks").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:150},
-            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-            {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-            ],
-            rowClick:function(e, id, data, row){
-            alert("Row " + id + " Clicked!!!!")
-        },
-        rowContext:function(e, id, data, row){
+    height:"311px",
+    fitColumns:true,
+    columns:[
+        {title:"Name", field:"name", sorter:"string", width:150},
+        {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+        {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+    ],
+    rowClick:function(e, id, data, row){
+        alert("Row " + id + " Clicked!!!!")
+    },
+    rowContext:function(e, id, data, row){
         alert("Row " + id + " Context Clicked!!!!")
     },
 });</pre>
@@ -1305,14 +1298,14 @@ $("#example-table-adddel").tabulator("setData", tabledata);
 
       <h3>CSS</h3>
       <pre class="prettyprint lang-css">/*Theme the Tabulator element*/
-        #example-table-theme{
-        background-color:#ccc;
-        border: 1px solid #333;
-        border-radius: 10px;
-    }
+#example-table-theme{
+    background-color:#ccc;
+    border: 1px solid #333;
+    border-radius: 10px;
+}
 
-    /*Theme the header*/
-    #example-table-theme .tabulator-header {
+/*Theme the header*/
+#example-table-theme .tabulator-header {
     background-color:#333;
     color:#fff;
 }
@@ -1320,18 +1313,18 @@ $("#example-table-adddel").tabulator("setData", tabledata);
 /*Allow column header names to wrap lines*/
 #example-table-theme .tabulator-header .tabulator-col,
 #example-table-theme .tabulator-header .tabulator-col-row-handle {
-white-space: normal;
+    white-space: normal;
 }
 
 /*Color the table rows*/
 #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row{
-color:#fff;
-background-color: #666;
+    color:#fff;
+    background-color: #666;
 }
 
 /*Color even rows*/
-#example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
-background-color: #444;
+    #example-table-theme .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+    background-color: #444;
 }</pre>
 
 <h3>JavaScript</h3>
@@ -1340,20 +1333,20 @@ background-color: #444;
     fitColumns:true,
     tooltipsHeader: false,
     columns:[
-    {title:"Name", field:"name", sorter:"string", width:150},
-    {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-    {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
-    {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+        {title:"Name", field:"name", sorter:"string", width:150},
+        {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+        {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
+        {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
     ],
     rowClick:function(e, id, data, row){
-    alert("Row " + id + " Clicked!!!!")
-},
-rowContext:function(e, id, data, row){
-alert("Row " + id + " Context Clicked!!!!")
-},
+        alert("Row " + id + " Clicked!!!!")
+    },
+    rowContext:function(e, id, data, row){
+        alert("Row " + id + " Context Clicked!!!!")
+    },
 });</pre>
 </fieldset>
 </article>
@@ -1604,7 +1597,7 @@ alert("Row " + id + " Context Clicked!!!!")
             {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
             {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
             ],
-            rowEdit:function(id,data,row){
+            cellEdited:function(id,data,row){
 
             },
         });
@@ -1956,7 +1949,7 @@ alert("Row " + id + " Context Clicked!!!!")
             {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
             {title:"Driver", field:"car", align:"center", editable:true},
             ],
-            rowEdit:function(id,data,row,index){
+            cellEdited:function(id,data,row,index){
 
             }
         });
