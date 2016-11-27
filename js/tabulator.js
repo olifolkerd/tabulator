@@ -922,6 +922,8 @@
 		if(row.length){
 			var rowData = row.data("data");
 
+			console.log("before", rowData)
+
 			//Apply mutators if present
 			item = self._mutateData(item);
 
@@ -930,9 +932,10 @@
 
 				//update row data
 				for (var attrname in item) { rowData[attrname] = item[attrname]; }
+					console.log("after", rowData)
 
 				//render new row
-			var newRow = self._renderRow(rowData);
+				var newRow = self._renderRow(rowData);
 
 				//replace old row with new row
 				row.replaceWith(newRow);
@@ -1199,10 +1202,14 @@
 
 				if(Array.isArray(data)){
 					data.forEach(function(item, j){
-						item[col.field] = mutator(item[col.field], "data", item);
+						if(typeof item[col.field] != "undefined"){
+							item[col.field] = mutator(item[col.field], "data", item);
+						}
 					});
 				}else{
-					data[col.field] = mutator(data[col.field], "data", data);
+					if(typeof data[col.field] != "undefined"){
+						data[col.field] = mutator(data[col.field], "data", data);
+					}
 				}
 			}
 		});
@@ -2215,7 +2222,6 @@
 					var neighbour = ui.item.next(".tabulator-col");
 					var group = ui.item.parent().closest(".tabulator-col-group");
 
-
 					var from = ui.item.data("column");
 					var container = group.length ? group.data("column").columns : options.columns;
 					var to = neighbour.length ? neighbour.data("column") : null;
@@ -2225,12 +2231,19 @@
 					to = self._findColumn(to, container).index;
 					container.splice(typeof to !== "undefined" ? to : container.length , 0, column);
 
+					//regenerate column render list
+					self.columnList = [];
+					self._traverseColumns(function(column){
+						self.columnList.push(column);
+					})
+
 					//trigger callback
 					options.colMoved(ui.item.data("field"), options.columns);
 
 					if(self.options.persistentLayout){
 						self._setPersistentCol();
 					}
+
 
 				},
 			});
