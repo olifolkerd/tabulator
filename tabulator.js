@@ -183,6 +183,8 @@
 		renderComplete:function(){},
 
 		pageLoaded:function(){},
+
+		localized:function(){},
 	},
 
 	////////////////// Element Construction //////////////////
@@ -420,6 +422,53 @@
 		}
 	},
 
+	//set options
+	_setOption: function(option, value){
+		var self = this;
+
+		//block update if option cannot be updated this way
+		if(["columns"].indexOf(option) > -1){
+			return false;
+		}
+
+		//set option to value
+		$.Widget.prototype._setOption.apply(this, arguments);
+
+		//trigger appropriate table response
+
+		if(["colMinWidth", "colResizable", "fitColumns", "movableCols", "movableRows", "movableRowHandle", "sortable", "groupBy", "groupHeader", "rowFormatter", "selectable"].indexOf(option) > -1){
+
+			//triger rerender
+			self._renderTable();
+
+		}else if(["height", "pagination", "paginationSize", "tooltips"].indexOf(option) > -1){
+
+			//triger render/reset page
+			if(self.options.pagination){
+				self.setPage(1);
+			}else{
+				self._renderTable();
+			}
+
+		}else if(["dateFormat", "sortBy", "sortDir"].indexOf(option) > -1){
+
+			//trigger sort
+			if(self.sortCurCol){
+				self.sort(self.sortCurCol, self.sortCurDir);
+			}
+
+		}else if(["index"].indexOf(option) > -1){
+
+			//trigger reparse data
+			self._parseData(self.data);
+
+		}else if(["paginationElement"].indexOf(option) > -1){
+			//trigger complete redraw
+		}
+	},
+
+	////////////////// Localization Functions //////////////////
+
 	//set current locale
 	setLocale:function(desiredLocale){
 		var self = this;
@@ -474,6 +523,9 @@
 				self._updateLocaleText();
 			}
 
+			//triger localized callback
+			self.options.localized(locale, self.lang);
+
 			return locale;
 		}
 
@@ -522,51 +574,6 @@
 		var lang = self.options.langs[self.options.locale]
 
 		return lang ? lang : false;
-	},
-
-	//set options
-	_setOption: function(option, value){
-		var self = this;
-
-		//block update if option cannot be updated this way
-		if(["columns"].indexOf(option) > -1){
-			return false;
-		}
-
-		//set option to value
-		$.Widget.prototype._setOption.apply(this, arguments);
-
-		//trigger appropriate table response
-
-		if(["colMinWidth", "colResizable", "fitColumns", "movableCols", "movableRows", "movableRowHandle", "sortable", "groupBy", "groupHeader", "rowFormatter", "selectable"].indexOf(option) > -1){
-
-			//triger rerender
-			self._renderTable();
-
-		}else if(["height", "pagination", "paginationSize", "tooltips"].indexOf(option) > -1){
-
-			//triger render/reset page
-			if(self.options.pagination){
-				self.setPage(1);
-			}else{
-				self._renderTable();
-			}
-
-		}else if(["dateFormat", "sortBy", "sortDir"].indexOf(option) > -1){
-
-			//trigger sort
-			if(self.sortCurCol){
-				self.sort(self.sortCurCol, self.sortCurDir);
-			}
-
-		}else if(["index"].indexOf(option) > -1){
-
-			//trigger reparse data
-			self._parseData(self.data);
-
-		}else if(["paginationElement"].indexOf(option) > -1){
-			//trigger complete redraw
-		}
 	},
 
 	////////////////// General Public Functions //////////////////
