@@ -1162,6 +1162,102 @@ $("#reset").click(function(){
 });</pre>
 </fieldset>
 </article>
+<a class="anchor" id="localization"></a>
+<article>
+    <h1>Localization <a class="doc-link" href="../docs?#localization"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>
+        You can localize the content of your tables to meet the needs of your regional users. Any number of language options can be configured for column headers and pagination controls.
+    </p>
+    <fieldset>
+        <legend>Language Controls</legend>
+
+        <button id="lang-french">French</button>
+        <button id="lang-german">German</button>
+        <button id="lang-default">Default (English)</button>
+    </fieldset>
+    <div class="example-table" id="example-table-localization"></div>
+
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Build Tabulator
+$("#example-table-localization").tabulator({
+    height:"311px",
+    pagination:true,
+    langs:{
+        "fr-fr":{ //French language definition
+            "columns":{
+                "name":"Nom",
+                "progress":"Progression",
+                "gender":"Genre",
+                "rating":"Évaluation",
+                "col":"Couleur",
+                "dob":"Date de Naissance",
+                "car":"Voiture",
+            },
+            "pagination":{
+                "first":"Premier",
+                "first_title":"Premier Page",
+                "last":"Dernier",
+                "last_title":"Dernier Page",
+                "prev":"Précédent",
+                "prev_title":"Précédent Page",
+                "next":"Prochain",
+                "next_title":"Prochain Page",
+            },
+        },
+        "de-de":{ //German language definition
+            "columns":{
+                "name":"Name",
+                "progress":"Fortschritt",
+                "gender":"Genre",
+                "rating":"Geschlecht",
+                "col":"Farbe",
+                "dob":"Geburtsdatum",
+                "car":"Auto",
+            },
+            "pagination":{
+                "first":"Zuerst",
+                "first_title":"Zuerst Seite",
+                "last":"Last",
+                "last_title":"Letzte Seite",
+                "prev":"Zurück",
+                "prev_title":"Zurück Seite",
+                "next":"Nächster",
+                "next_title":"Nächster Seite",
+            },
+        },
+    },
+    columns:[
+    {title:"Name", field:"name", width:200},
+    {title:"Progress", field:"progress", width:100, sorter:"number"},
+    {title:"Gender", field:"gender"},
+    {title:"Rating", field:"rating", width:80},
+    {title:"Favourite Color", field:"col"},
+    {title:"Date Of Birth", field:"dob"},
+    {title:"Driver", field:"car"},
+    ],
+});
+
+//set locale to French
+$("#lang-french").click(function(){
+    $("#example-table-localization").tabulator("setLocale", "fr-fr");
+});
+
+//set locale to German
+$("#lang-german").click(function(){
+    $("#example-table-localization").tabulator("setLocale", "de-de");
+});
+
+//set default locale
+$("#lang-default").click(function(){
+    $("#example-table-localization").tabulator("setLocale", "");
+});</pre>
+        </fieldset>
+</article>
 <a class="anchor" id="callbacks"></a>
 <article>
     <h1>Callbacks <a class="doc-link" href="../docs?#callbacks"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -1374,6 +1470,7 @@ $("#reset").click(function(){
             <li><a href="#ajax">AJAX Data Loading</a></li>
             <li><a href="#adddel">Add / Delete Rows</a></li>
             <li><a href="#movable">Movable Rows</a></li>
+            <li><a href="#localization">Localization</a></li>
             <li><a href="#callbacks">Callbacks</a></li>
             <li><a href="#theming">Theming</a></li>
         </ul>
@@ -1956,6 +2053,80 @@ $("#reset").click(function(){
 
         $("#example-table-adddel").tabulator("setData", tabledata);
 
+
+        //Localization Example
+
+        $("#lang-french").click(function(){
+            $("#example-table-localization").tabulator("setLocale", "fr-fr");
+        })
+
+        $("#lang-german").click(function(){
+            $("#example-table-localization").tabulator("setLocale", "de-de");
+        })
+
+        $("#lang-default").click(function(){
+            $("#example-table-localization").tabulator("setLocale", "");
+        })
+
+        $("#example-table-localization").tabulator({
+            height:"311px",
+            pagination:true,
+            langs:{
+                "fr-fr":{
+                    "columns":{
+                        "name":"Nom",
+                        "progress":"Progression",
+                        "gender":"Genre",
+                        "rating":"Évaluation",
+                        "col":"Couleur",
+                        "dob":"Date de Naissance",
+                        "car":"Voiture",
+                    },
+                    "pagination":{
+                        "first":"Premier",
+                        "first_title":"Premier Page",
+                        "last":"Dernier",
+                        "last_title":"Dernier Page",
+                        "prev":"Précédent",
+                        "prev_title":"Précédent Page",
+                        "next":"Prochain",
+                        "next_title":"Prochain Page",
+                    },
+                },
+                "de-de":{
+                    "columns":{
+                        "name":"Name",
+                        "progress":"Fortschritt",
+                        "gender":"Genre",
+                        "rating":"Geschlecht",
+                        "col":"Farbe",
+                        "dob":"Geburtsdatum",
+                        "car":"Auto",
+                    },
+                    "pagination":{
+                        "first":"Zuerst",
+                        "first_title":"Zuerst Seite",
+                        "last":"Last",
+                        "last_title":"Letzte Seite",
+                        "prev":"Zurück",
+                        "prev_title":"Zurück Seite",
+                        "next":"Nächster",
+                        "next_title":"Nächster Seite",
+                    },
+                },
+            },
+            columns:[
+            {title:"Name", field:"name", width:200},
+            {title:"Progress", field:"progress", width:100, sorter:"number"},
+            {title:"Gender", field:"gender"},
+            {title:"Rating", field:"rating", width:80},
+            {title:"Favourite Color", field:"col"},
+            {title:"Date Of Birth", field:"dob"},
+            {title:"Driver", field:"car"},
+            ],
+        });
+
+        $("#example-table-localization").tabulator("setData", tabledata);
 
 
         //Movable Rows Example
