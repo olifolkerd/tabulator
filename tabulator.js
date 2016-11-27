@@ -2222,7 +2222,6 @@
 					var neighbour = ui.item.next(".tabulator-col");
 					var group = ui.item.parent().closest(".tabulator-col-group");
 
-
 					var from = ui.item.data("column");
 					var container = group.length ? group.data("column").columns : options.columns;
 					var to = neighbour.length ? neighbour.data("column") : null;
@@ -2232,12 +2231,19 @@
 					to = self._findColumn(to, container).index;
 					container.splice(typeof to !== "undefined" ? to : container.length , 0, column);
 
+					//regenerate column render list
+					self.columnList = [];
+					self._traverseColumns(function(column){
+						self.columnList.push(column);
+					})
+
 					//trigger callback
 					options.colMoved(ui.item.data("field"), options.columns);
 
 					if(self.options.persistentLayout){
 						self._setPersistentCol();
 					}
+
 
 				},
 			});
