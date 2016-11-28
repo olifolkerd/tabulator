@@ -1162,6 +1162,46 @@ $("#reset").click(function(){
 });</pre>
 </fieldset>
 </article>
+<a class="anchor" id="download"></a>
+<article>
+    <h1>Download Table Data as File <a class="doc-link" href="../docs?#download"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>Tabulator allows you to download the table data as a file directly from your browser, no server needed.</p>
+
+    <p>The download will contain the text values of all data currently visible in the table, matching the current column layout, column titles, sorting and filtering.</p>
+    <fieldset>
+        <legend>Download Controls</legend>
+
+        <button id="download-csv">Download CSV</button>
+    </fieldset>
+    <div class="example-table" id="example-table-download"></div>
+
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">//Build Tabulator
+$("#example-table-download").tabulator({
+    height:"311px",
+    movableCols:true,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", width:100, sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", width:80},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+});
+
+//trigger download of data.csv file
+$("#download-csv").click(function(){
+    $("#example-table-download").tabulator("download", "csv", "data.csv");
+});</pre>
+    </fieldset>
+</article>
 <a class="anchor" id="localization"></a>
 <article>
     <h1>Localization <a class="doc-link" href="../docs?#localization"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -1181,7 +1221,7 @@ $("#reset").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-localization"&gt;&lt;/div&gt;</pre>
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
 $("#example-table-localization").tabulator({
@@ -1471,6 +1511,7 @@ $("#lang-default").click(function(){
             <li><a href="#ajax">AJAX Data Loading</a></li>
             <li><a href="#adddel">Add / Delete Rows</a></li>
             <li><a href="#movable">Movable Rows</a></li>
+            <li><a href="#download">Download Data</a></li>
             <li><a href="#localization">Localization</a></li>
             <li><a href="#callbacks">Callbacks</a></li>
             <li><a href="#theming">Theming</a></li>
@@ -2053,6 +2094,30 @@ $("#lang-default").click(function(){
         });
 
         $("#example-table-adddel").tabulator("setData", tabledata);
+
+
+        //Data Download Example
+
+        $("#download-csv").click(function(){
+            $("#example-table-download").tabulator("download", "csv", "data.csv");
+        })
+
+        $("#example-table-download").tabulator({
+            height:"311px",
+            movableCols:true,
+            columns:[
+                {title:"Name", field:"name", width:200},
+                {title:"Progress", field:"progress", width:100, sorter:"number"},
+                {title:"Gender", field:"gender"},
+                {title:"Rating", field:"rating", width:80},
+                {title:"Favourite Color", field:"col"},
+                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+                {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+            ],
+        });
+
+        $("#example-table-download").tabulator("setData", tabledata);
+
 
 
         //Localization Example
