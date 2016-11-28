@@ -611,6 +611,67 @@
 		}
 	},
 
+	//trigger file download
+	download:function(type, filename){
+		var self = this;
+
+		//create temporary link element to trigger download
+		var element = document.createElement('a');
+
+		switch(type){
+			case "csv":
+
+			//get field lists
+			var titles = [];
+			var fields = [];
+
+			self.columnList.forEach(function(column){
+				if(column.field){
+					titles.push(column.title)
+					fields.push(column.field)
+				}
+			})
+
+			//generate header row
+			var fileContents = [titles.join(",")];
+
+			//generate each row of the table
+			self.activeData.forEach(function(row){
+
+				var rowData = [];
+
+				fields.forEach(function(field){
+					rowData.push(row[field]);
+				})
+
+				fileContents.push(rowData.join(","));
+
+			});
+
+			//create the download link
+			element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(fileContents.join("\n")));
+
+			break;
+
+			default:
+			return false;
+			break;
+		}
+
+			//set file title
+			element.setAttribute('download', filename || "Tabulator." + type);
+
+			//trigger download
+			element.style.display = 'none';
+			document.body.appendChild(element);
+			element.click();
+
+			//remove temporary link element
+			document.body.removeChild(element);
+
+		return true;
+	},
+
 	////////////////// Column Manipulation //////////////////
 
 	//set column style cookie
