@@ -1509,6 +1509,16 @@
 
 	////////////////// Data Sorting //////////////////
 
+	//return the current sorter
+	getSort:function(){
+		var self = this;
+
+		return {
+			"field" : self.sortCurCol ? self.sortCurCol.field : false,
+			"dir" : self.sortCurDir || false,
+		};
+	},
+
 	//handle user clicking on column header sort
 	_sortClick: function(column, element){
 		var self = this;
