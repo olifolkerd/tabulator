@@ -605,7 +605,7 @@ $("#example-table").tabulator({
                 <a class="anchor" id="sorting"></a>
                 <article>
 
-                    <h1>Sorting Data <a class="example-link" href="../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Sorting Data <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the <span class='param'>sortable</span> option when you create your Tabulator.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -654,6 +654,13 @@ $("#example-table").tabulator({
     {field:"age", dir:"asc"}, //sort by this first
     {field:"height", dir:"desc"}, //then sort by this second
 ]);</pre>
+
+                    <h2>Get Currently Sorted Column <span class="label label-danger">New</span></h2>
+                    <p>If you need to retrieve the details of the currently sorted column at any point you can use the <span class='param'>getSort</span> function. This will return an object with two properties, <span class='param'>field</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
+
+                    <p>If a the table is not currently sorted then the value of both of these properties will be <span class='param'>false</span>.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getSort");</pre>
 
                 </article>
 
@@ -2332,7 +2339,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <li><a href="#set-data">Set Table Data</a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout</a></li>
-                        <li><a href="#sorting">Sorting Data</a></li>
+                        <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
                         <li><a href="#filtering">Filtering Data</a></li>
