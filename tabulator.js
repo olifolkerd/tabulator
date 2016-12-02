@@ -173,6 +173,8 @@
 		dataLoadError:function(){},
 		dataEdited:function(){},
 
+		ajaxResponse:function(){},
+
 		dataFiltering:function(){},
 		dataFiltered:function(){},
 
@@ -1343,6 +1345,8 @@
 			async: true,
 			dataType:"json",
 			success: function (data){
+
+				self.options.ajaxResponse(url, params ? params : self.options.ajaxParams, data);
 
 				if(self.options.pagination == "remote"){
 					self._parsePageData(data);
