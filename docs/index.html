@@ -1911,6 +1911,16 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //data - all data loaded into the table
     },
 });</pre>
+                    <h2>Ajax Response <span class="label label-danger">New</span></h2>
+                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxResponse:function(url, params, response){
+        //url - the URL of the request
+        //params - the parameters passed with the request
+        //response - the JSON object returend in the body of the response.
+    },
+});</pre>
+
 
                     <h2>Data Loading Error</h2>
                     <p>The <span class='param'>dataLoadError</span> callback is triggered when a there is an error AJAX loading data. The arguments are passed straight from the AJAX error function.</p>
