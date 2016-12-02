@@ -1237,7 +1237,7 @@
 	///////////////// Pagination Data Loading //////////////////
 
 	//parse paginated data
-	_parsePageData:function(data){
+	_parsePageData:function(data, update){
 		var self = this;
 		var options = self.options;
 
@@ -1245,7 +1245,7 @@
 
 		self._layoutPageSelector();
 
-		self._parseData(data[options.paginationDataReceived.data]);
+		self._parseData(data[options.paginationDataReceived.data], update);
 	},
 
 
@@ -1351,7 +1351,7 @@
 	},
 
 	//get json data via ajax
-	_getAjaxData:function(url, params){
+	_getAjaxData:function(url, params, update){
 		var self = this;
 		var options = self.options;
 
@@ -1366,9 +1366,9 @@
 				self.options.ajaxResponse(url, params ? params : self.options.ajaxParams, data);
 
 				if(self.options.pagination == "remote"){
-					self._parsePageData(data);
+					self._parsePageData(data, update);
 				}else{
-					self._parseData(data);
+					self._parseData(data, update);
 				}
 
 			},
@@ -1382,7 +1382,7 @@
 	},
 
 	//parse and index data
-	_parseData:function(data){
+	_parseData:function(data, update){
 		var self = this;
 
 		if(Array.isArray(data)){
@@ -1405,7 +1405,14 @@
 
 			self.options.dataLoaded(newData);
 
-			self.data = self._mutateData(newData);
+			var mutatedData = self._mutateData(newData);
+
+			if(update){
+				self.data = mutatedData;
+				self.data = self.data.concat(mutatedData);
+			}else{
+				self.data = mutatedData;
+			}
 
 			//filter incomming data
 			self._filterData();
