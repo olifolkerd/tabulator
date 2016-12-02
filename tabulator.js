@@ -1711,6 +1711,12 @@
 		return self.options.pagination ? self.paginationCurrentPage : false;
 	},
 
+	//return max page
+	getPageMax:function(){
+		var self = this;
+		return self.options.pagination ? self.paginationMaxPage : false;
+	},
+
 	//set current paginated page
 	setPage:function(page){
 		var self = this;
