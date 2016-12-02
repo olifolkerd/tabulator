@@ -595,7 +595,7 @@
 		var self = this;
 
 		//redraw columns
-		if(self.options.fitColumns){
+		if(self.options.fitColumns || fullRedraw){
 			self._colRender();
 		}
 
@@ -2749,7 +2749,7 @@
 					});
 
 				}else{
-					var col = $(".tabulator-cell, .tabulator-col",element);
+					var col = $(".tabulator-cell, .tabulator-col:not(.tabulator-col-group)",element);
 					col.css({width:colWidth});
 				}
 
