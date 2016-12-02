@@ -505,7 +505,14 @@ $("#example-table").tabulator({
 
                     <p>To retrieve the curren page use the <span class='param'>getPage</span> function. this will return the number of the current page. If pagination is disabled this will return <span class='param'>false</span>.</p>
 
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getPage"); // returns furrent page</pre>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getPage"); // returns current page</pre>
+
+                    <h3>Get Maximum Page Number <span class="label label-danger">New</span></h3>
+
+                    <p>To retrieve the maximum available page use the <span class='param'>getPageMax</span> function. this will return the number of the maximum available page. If pagination is disabled this will return <span class='param'>false</span>.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getPageMax"); // returns maximum page</pre>
+
 
                     <h3>Custom Pagination Control Element</h3>
                     <p>By default the pagination controls are added to the footer of the table. If you wish the controls to be created in another element pass a JQuery object for that element to the <span class='param'>paginationElement</span> option.</p>
