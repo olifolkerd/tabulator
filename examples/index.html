@@ -1172,6 +1172,7 @@ $("#reset").click(function(){
         <legend>Download Controls</legend>
 
         <button id="download-csv">Download CSV</button>
+        <button id="download-json">Download JSON</button>
     </fieldset>
     <div class="example-table" id="example-table-download"></div>
 
@@ -1179,7 +1180,7 @@ $("#reset").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table-download"&gt;&lt;/div&gt;</pre>
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
 $("#example-table-download").tabulator({
@@ -1199,6 +1200,11 @@ $("#example-table-download").tabulator({
 //trigger download of data.csv file
 $("#download-csv").click(function(){
     $("#example-table-download").tabulator("download", "csv", "data.csv");
+});
+
+//trigger download of data.json file
+$("#download-json").click(function(){
+    $("#example-table-download").tabulator("download", "json", "data.json");
 });</pre>
     </fieldset>
 </article>
@@ -2101,6 +2107,10 @@ $("#lang-default").click(function(){
         $("#download-csv").click(function(){
             $("#example-table-download").tabulator("download", "csv", "data.csv");
         })
+
+        $("#download-json").click(function(){
+            $("#example-table-download").tabulator("download", "json", "data.json");
+        });
 
         $("#example-table-download").tabulator({
             height:"311px",
