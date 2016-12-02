@@ -173,6 +173,8 @@
 		dataLoadError:function(){},
 		dataEdited:function(){},
 
+		ajaxResponse:function(){},
+
 		dataFiltering:function(){},
 		dataFiltered:function(){},
 
@@ -1344,6 +1346,8 @@
 			dataType:"json",
 			success: function (data){
 
+				self.options.ajaxResponse(url, params ? params : self.options.ajaxParams, data);
+
 				if(self.options.pagination == "remote"){
 					self._parsePageData(data);
 				}else{
@@ -1705,6 +1709,12 @@
 	getPage:function(){
 		var self = this;
 		return self.options.pagination ? self.paginationCurrentPage : false;
+	},
+
+	//return max page
+	getPageMax:function(){
+		var self = this;
+		return self.options.pagination ? self.paginationMaxPage : false;
 	},
 
 	//set current paginated page
