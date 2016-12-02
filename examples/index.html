@@ -148,7 +148,7 @@
                             <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
                             <h3>JavaScript</h3>
-                            <pre class="prettyprint lang-js">$("#example-table-simple").tabulator({
+                            <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     columns:[
         {title:"Name", field:"name", width:200},
@@ -174,10 +174,10 @@
                         <fieldset class="source">
                             <legend>Source Code</legend>
                             <h3>HTML</h3>
-                            <pre class="prettyprint lang-html">&lt;div id="example-table-fittodata"&gt;&lt;/div&gt;</pre>
+                            <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
                             <h3>JavaScript</h3>
-                            <pre class="prettyprint lang-js">$("#example-table-fittodata").tabulator({
+                            <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     columns:[
         {title:"Name", field:"name", width:200},
@@ -206,10 +206,10 @@
                         <fieldset class="source">
                             <legend>Source Code</legend>
                             <h3>HTML</h3>
-                            <pre class="prettyprint lang-html">&lt;div id="example-table-fittowidth"&gt;&lt;/div&gt;</pre>
+                            <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
                             <h3>JavaScript</h3>
-                            <pre class="prettyprint lang-js">$("#example-table-fittowidth").tabulator({
+                            <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
@@ -240,10 +240,10 @@
                     <fieldset class="source">
                         <legend>Source Code</legend>
                         <h3>HTML</h3>
-                        <pre class="prettyprint lang-html">&lt;div id="example-table-fittowidth"&gt;&lt;/div&gt;</pre>
+                        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
                         <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
+                        <pre class="prettyprint lang-js">$("#example-table-column").tabulator({
     colVertAlign:"bottom", //align header contents to bottom of cell
     columns:[
         {title:"Name", field:"name", width:160},
@@ -349,7 +349,7 @@
             <fieldset class="source">
                 <legend>Source Code</legend>
                 <h3>HTML</h3>
-                <pre class="prettyprint lang-html">&lt;table id="example-table-table"&gt;
+                <pre class="prettyprint lang-html">&lt;table id="example-table"&gt;
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th width="200"&gt;Name&lt;/th&gt;
@@ -381,7 +381,7 @@
 &lt;/table&gt;</pre>
 
                     <h3>JavaScript</h3>
-                    <pre class="prettyprint lang-js"> $("#example-table-table").tabulator({fitColumns:true});</pre>
+                    <pre class="prettyprint lang-js"> $("#example-table").tabulator({fitColumns:true});</pre>
                 </fieldset>
 
             </article>
@@ -403,7 +403,7 @@
                 <fieldset class="source">
                     <legend>Source Code</legend>
                     <h3>HTML</h3>
-                    <pre class="prettyprint lang-html">&lt;div id="example-table-editable"&gt;&lt;/div&gt;</pre>
+                    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
                     <h3>JavaScript</h3>
                     <pre class="prettyprint lang-js">//Create Gender
@@ -439,7 +439,7 @@ editor.on("change blur", function(e){
 }
 
 //Build Tabulator
-$("#example-table-editable").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     columns:[
         {title:"Name", field:"name", width:150, editable:true},
@@ -510,11 +510,11 @@ $("#example-table-editable").tabulator({
 <fieldset class="source">
     <legend>Source Code</legend>
     <h3>HTML</h3>
-    <pre class="prettyprint lang-html">&lt;div id="example-table-sorting"&gt;&lt;/div&gt;</pre>
+    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
     <h3>JavaScript</h3>
     <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-sorting").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
@@ -532,7 +532,7 @@ $("#example-table-sorting").tabulator({
 
 //Trigger sort when "Trigger Sort" button is clicked
 $("#sort-trigger").click(function(){
-    $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+    $("#example-table").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
 });</pre>
 </fieldset>
 </article>
@@ -571,7 +571,7 @@ $("#sort-trigger").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-formatter"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Generate print icon
@@ -580,7 +580,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 };
 
 //Build Tabulator
-$("#example-table-formatter").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     rowFormatter:function(row, data){
@@ -620,24 +620,24 @@ $("#example-table-formatter").tabulator({
         <legend>Source Code</legend>
         <h3>CSS</h3>
         <pre class="prettyprint lang-css">/*Style row formatter contents*/
-#example-table-rowformat .tabulator-row table{
+#example-table .tabulator-row table{
     vertical-align: middle;
     border-collapse:collapse;
 }
 
-#example-table-rowformat .tabulator-row table img{
+#example-table .tabulator-row table img{
     border:2px solid #ccc;
 }
 
-#example-table-rowformat .tabulator-row table tr td{
+#example-table .tabulator-row table tr td{
      border:none;
 }
 
-#example-table-rowformat .tabulator-row table tr td:first-of-type{
+#example-table .tabulator-row table tr td:first-of-type{
     width:60px;
 }
 
-#example-table-rowformat .tabulator-row table tr td div{
+#example-table .tabulator-row table tr td div{
     padding:5px;
 }</pre>
         <h3>JavaScript</h3>
@@ -650,7 +650,7 @@ var cheeseData = [
 ]
 
 //define Tabulator
-$("#example-table-rowformat").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     colResizable:false,
@@ -679,7 +679,7 @@ $("#example-table-rowformat").tabulator({
 })
 
 //Load Data
-$("#example-table-rowformat").tabulator("setData", cheeseData);</pre>
+$("#example-table").tabulator("setData", cheeseData);</pre>
     </fieldset>
 </article>
 <a class="anchor" id="sparklines"></a>
@@ -700,7 +700,7 @@ $("#example-table-rowformat").tabulator("setData", cheeseData);</pre>
 &lt;script src="sparkline.js"&gt;&lt;/script&gt;
 
 &lt;!-- Element to hold Tabulator --&gt;
-&lt;div id="example-table-sparkline"&gt;&lt;/div&gt;</pre>
+&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Formatter to generate line chart
@@ -748,7 +748,7 @@ var sparkData = [
 
 
 //Table Constructor
-$("#example-table-sparkline").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     columns:[
         {title:"Name", field:"name", width:190},
@@ -772,10 +772,10 @@ $("#example-table-sparkline").tabulator({
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-grouping"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table-grouping").tabulator({
+        <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     groupBy:"gender",
@@ -856,7 +856,7 @@ $("#example-table-sparkline").tabulator({
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-filters"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Custom filter example
@@ -877,7 +877,7 @@ function updateFilter(){
         $("#filter-value").prop("disabled", false);
     }
 
-    $("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
+    $("#example-table").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
 }
 
 //Update filters on value change
@@ -890,11 +890,11 @@ $("#filter-clear").click(function(){
     $("#filter-type").val("=");
     $("#filter-value").val("");
 
-    $("#example-table-filters").tabulator("clearFilter");
+    $("#example-table").tabulator("clearFilter");
 });
 
 //Build Tabulator
-$("#example-table-filters").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
@@ -922,10 +922,10 @@ $("#example-table-filters").tabulator({
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-filters-header"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table-filters-header").tabulator({
+        <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
@@ -956,11 +956,11 @@ $("#example-table-filters").tabulator({
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-pagination"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-pagination").tabulator({
+$("#example-table").tabulator({
     height:"292px",
     fitColumns:true,
     pagination:"local",
@@ -977,7 +977,7 @@ $("#example-table-pagination").tabulator({
 });
 
 //Set initial page
-$("#example-table-pagination").tabulator("setPage", 1);</pre>
+$("#example-table").tabulator("setPage", 1);</pre>
     </fieldset>
 </article>
 <a class="anchor" id="persistance"></a>
@@ -995,10 +995,10 @@ $("#example-table-pagination").tabulator("setPage", 1);</pre>
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-colum-layout"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table-colum-layout").tabulator({
+        <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     movableCols:true,
     persistentLayout: true,
@@ -1032,11 +1032,11 @@ $("#example-table-pagination").tabulator("setPage", 1);</pre>
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-ajax"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-ajax").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     ajaxURL:"data.php",
@@ -1053,7 +1053,7 @@ $("#example-table-ajax").tabulator({
 
 //trigger AJAX load on "Load Data via AJAX" button click
 $("#ajax-trigger").click(function(){
-    $("#example-table-ajax").tabulator("setData");
+    $("#example-table").tabulator("setData");
 });</pre>
     <h3>Server Side PHP</h3>
     <pre class="prettyprint lang-php">//build data array
@@ -1093,7 +1093,7 @@ echo(json_encode($data));</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-adddel").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     addRowPos:"bottom",
     columns:[
@@ -1109,22 +1109,22 @@ $("#example-table-adddel").tabulator({
 
 //Add row on "Add Row" button click
 $("#add-row").click(function(){
-    $("#example-table-adddel").tabulator("addRow");
+    $("#example-table").tabulator("addRow");
 });
 
 //Delete row on "Delete Row" button click
 $("#del-row").click(function(){
-    $("#example-table-adddel").tabulator("deleteRow", 1);
+    $("#example-table").tabulator("deleteRow", 1);
 });
 
 //Clear table on "Empty the table" button click
 $("#clear").click(function(){
-    $("#example-table-adddel").tabulator("clear");
+    $("#example-table").tabulator("clear");
 });
 
 //Reset table contents on "Reset the table" button click
 $("#reset").click(function(){
-    $("#example-table-adddel").tabulator("setData", tabledata);
+    $("#example-table").tabulator("setData", tabledata);
 });</pre>
 </fieldset>
 </article>
@@ -1141,10 +1141,10 @@ $("#reset").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-movable-rows"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table-movable-rows").tabulator({
+        <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     movableRows:true,
     columns:[
@@ -1180,10 +1180,10 @@ $("#reset").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-download"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-download").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     movableCols:true,
     columns:[
@@ -1199,12 +1199,12 @@ $("#example-table-download").tabulator({
 
 //trigger download of data.csv file
 $("#download-csv").click(function(){
-    $("#example-table-download").tabulator("download", "csv", "data.csv");
+    $("#example-table").tabulator("download", "csv", "data.csv");
 });
 
 //trigger download of data.json file
 $("#download-json").click(function(){
-    $("#example-table-download").tabulator("download", "json", "data.json");
+    $("#example-table").tabulator("download", "json", "data.json");
 });</pre>
     </fieldset>
 </article>
@@ -1227,10 +1227,10 @@ $("#download-json").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-localization"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table-localization").tabulator({
+$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     pagination:true,
@@ -1291,17 +1291,17 @@ $("#example-table-localization").tabulator({
 
 //set locale to French
 $("#lang-french").click(function(){
-    $("#example-table-localization").tabulator("setLocale", "fr-fr");
+    $("#example-table").tabulator("setLocale", "fr-fr");
 });
 
 //set locale to German
 $("#lang-german").click(function(){
-    $("#example-table-localization").tabulator("setLocale", "de-de");
+    $("#example-table").tabulator("setLocale", "de-de");
 });
 
 //set default locale
 $("#lang-default").click(function(){
-    $("#example-table-localization").tabulator("setLocale", "");
+    $("#example-table").tabulator("setLocale", "");
 });</pre>
         </fieldset>
 </article>
@@ -1323,10 +1323,10 @@ $("#lang-default").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table-callbacks"&gt;&lt;/div&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
         <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table-callbacks").tabulator({
+        <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
