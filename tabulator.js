@@ -126,7 +126,7 @@
 		tooltips: false, //Tool tip value
 		tooltipsHeader: false, //Tool tip for headers
 
-		columns:[],//store for colum header info
+		columns:false,//store for colum header info
 		data:false, //store for initial table data if set at construction
 
 		index:"id",
@@ -198,6 +198,11 @@
 		var self = this;
 		var element = self.element;
 
+		//prevent column array being copied over when not explicitly set
+		if(!self.options.columns){
+			self.options.columns = [];
+		}
+
 		if(element.is("table")){
 			self._parseTable();
 		}else{
@@ -234,8 +239,6 @@
 		}
 
 		//build columns from table header if they havnt been set;
-
-
 		if(headers.length){
 			//create column array from headers
 			headers.each(function(index){
@@ -289,6 +292,7 @@
 			});
 		}
 
+		self.data = [];
 
 		//iterate through table rows and build data set
 		rows.each(function(rowIndex){
