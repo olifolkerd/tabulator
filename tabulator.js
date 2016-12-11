@@ -2586,7 +2586,9 @@
 
 				var visibility = column.visible ? "inline-block" : "none";
 
-				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + options.colMinWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWith + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
 				var colContent = $(".tabulator-col-content", col);
 				var colTitle = $(".tabulator-col-title", col);
 
@@ -2715,6 +2717,7 @@
 		var element = self.element;
 
 		if(fixedwidth || !options.fitColumns){ //if columns have been resized and now data needs to match them
+
 			//free sized table
 			$.each(self.columnList, function(i, column){
 				colWidth = $(".tabulator-col[data-field='" + column.field + "']", element).outerWidth();
@@ -2749,7 +2752,20 @@
 
 						if(column.width){
 
-							var thisWidth = typeof(column.width) == "string" ? parseInt(column.width) : column.width;
+							var thisWidth = 0;
+
+							if(typeof(column.width) == "string"){
+								if(column.width.indexOf("%") > -1){
+									thisWidth = (totWidth / 100) * parseInt(column.width) ;
+								}else{
+									thisWidth = parseInt(column.width);
+								}
+								
+							}else{
+								thisWidth = column.width;
+							}
+
+							console.log("width", thisWidth)
 
 							widthIdeal += thisWidth;
 							widthIdealCount++;
@@ -2767,11 +2783,27 @@
 				var gapFill = totWidth - widthIdeal - (proposedWidth * (colCount - widthIdealCount));
 				gapFill = gapFill > 0 ? gapFill : 0;
 
-				if(proposedWidth >= parseInt(options.colMinWidth)){
+				$.each(self.columnList, function(i, column){
+					if(column.visible){
 
-					$.each(self.columnList, function(i, column){
-						if(column.visible){
-							var newWidth = column.width ? column.width : proposedWidth;
+						var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+
+						if(proposedWidth >= parseInt(minWith)){
+
+							var newWidth = proposedWidth;
+
+							if(column.width){
+								if(typeof(column.width) == "string"){
+									if(column.width.indexOf("%") > -1){
+										newWidth = (totWidth / 100) * parseInt(column.width) ;
+									}else{
+										newWidth = parseInt(column.width);
+									}
+									
+								}else{
+									newWidth = column.width;
+								}
+							}
 
 							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]", element);
 
@@ -2781,16 +2813,16 @@
 								col.css({width:newWidth});
 							}
 
-						}
-					});
+						}else{
+							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]", element);
+							col.css({width:colWidth});
+						}	
+					}
+				});
 
-				}else{
-					var col = $(".tabulator-cell, .tabulator-col:not(.tabulator-col-group)",element);
-					col.css({width:colWidth});
-				}
 
 			}else{
-
+				console.log("min", column.minWidth)
 				//free sized table
 				$.each(self.columnList, function(i, column){
 
@@ -2808,8 +2840,11 @@
 							max = $(this).outerWidth() > max ? $(this).outerWidth() : max;
 						});
 
-						if(options.colMinWidth){
-							max = max < options.colMinWidth ? options.colMinWidth : max;
+						if(options.colMinWidth || typeof column.minWidth !== "undefined"){
+
+							var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+
+							max = max < minWith ? minWith : max;
 						}
 
 					}
