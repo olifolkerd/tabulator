@@ -55,6 +55,7 @@
 	paginationMaxPage:1, // pagination maxpage
 
 	progressiveRenderTimer:null, //timer for progressiver rendering
+	progressiveRenderFill:false, //initial fill of a progressive rendering table
 
 	columnList:[], //an array of all acutal columns ignoring column groupings
 
@@ -380,9 +381,15 @@
 			//trigger progressive rendering on scroll
 			if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
 				if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
-					if(self.paginationCurrentPage < self.paginationMaxPage){
-						self.paginationCurrentPage++;
-						self._renderTable(true);
+					if(self.options.progressiveRender == "remote"){
+						if(self.paginationCurrentPage <= self.paginationMaxPage){
+							self._renderTable(true);
+						}
+					}else{
+						if(self.paginationCurrentPage < self.paginationMaxPage){
+							self.paginationCurrentPage++;
+							self._renderTable(true);
+						}
 					}
 				}
 			}
@@ -1142,8 +1149,6 @@
 		if(row.length){
 			var rowData = row.data("data");
 
-			console.log("before", rowData)
-
 			//Apply mutators if present
 			item = self._mutateData(item);
 
@@ -1152,10 +1157,9 @@
 
 				//update row data
 				for (var attrname in item) { rowData[attrname] = item[attrname]; }
-					console.log("after", rowData)
 
 				//render new row
-				var newRow = self._renderRow(rowData);
+			var newRow = self._renderRow(rowData);
 
 				//replace old row with new row
 				row.replaceWith(newRow);
@@ -1249,13 +1253,13 @@
 	},
 
 
-	_getRemotePageData:function(){
+	_getRemotePageData:function(update){
 		var self = this;
 		var options = self.options;
 
 		if(typeof options.paginator == "function"){
 			var url = options.paginator(options.ajaxURL, self.paginationCurrentPage, options.paginationSize, options.ajaxParams);
-			self._getAjaxData(url, {});
+			self._getAjaxData(url, {}, update);
 		}else{
 			var pageParams = {};
 
@@ -1283,7 +1287,7 @@
 				pageParams[options.paginationDataSent.filter_type] = self.filterType;
 			}
 
-			self._getAjaxData(options.ajaxURL, pageParams);
+			self._getAjaxData(options.ajaxURL, pageParams, update);
 		}
 
 	},
@@ -1365,7 +1369,7 @@
 
 				self.options.ajaxResponse(url, params ? params : self.options.ajaxParams, data);
 
-				if(self.options.pagination == "remote"){
+				if(self.options.pagination == "remote" || self.options.progressiveRender == "remote"){
 					self._parsePageData(data, update);
 				}else{
 					self._parseData(data, update);
@@ -1410,14 +1414,17 @@
 			if(update){
 				self.data = mutatedData;
 				self.data = self.data.concat(mutatedData);
+				self.activeData = self.activeData.concat(mutatedData);
+
+				if(self.progressiveRenderFill){
+					self._renderTable(true);
+				}
 			}else{
 				self.data = mutatedData;
+				//filter incomming data
+				self._filterData();
 			}
-
-			//filter incomming data
-			self._filterData();
 		}
-
 	},
 
 	//applu mutators if present
@@ -1775,6 +1782,7 @@
 			self._layoutPageSelector();
 			self._renderTable();
 		}else{
+
 			self._getRemotePageData();
 		}
 
@@ -1869,10 +1877,14 @@
 
 
 		if(!options.pagination && options.progressiveRender && !progressiveRender){
-			self.paginationCurrentPage = 1;
-			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.progressiveRenderSize);
+			if(options.progressiveRender !== "remote"){
+				self.paginationCurrentPage = 1;
+				self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.progressiveRenderSize);
+				options.paginationSize = options.progressiveRenderSize;
+			}else{
+				options.paginationSize = self.activeData.length
+			}
 
-			options.paginationSize = options.progressiveRenderSize;
 			progressiveRender = true;
 		}
 
@@ -1966,10 +1978,17 @@
 		self._styleRows();
 
 		if(progressiveRender && self.paginationCurrentPage < self.paginationMaxPage && self.tableHolder[0].scrollHeight <= self.tableHolder.innerHeight()){
-				//trigger progressive render to fill element
-				self.paginationCurrentPage++;
-				self._renderTable(true);
+			self.progressiveRenderFill = true;
+
+			//trigger progressive render to fill element
+			self.paginationCurrentPage++;
+			if(options.progressiveRender == "remote"){
+				self._getRemotePageData(true);
 			}else{
+				self._renderTable(true);
+			}
+
+		}else{
 
 			//hide loader div
 			self._hideLoader(self);
@@ -1977,6 +1996,13 @@
 
 			if(self.options.pagination){
 				self.options.pageLoaded(self.paginationCurrentPage);
+			}
+
+
+			if(options.progressiveRender == "remote"){
+				self.progressiveRenderFill = false;
+				self.paginationCurrentPage++;
+				self._getRemotePageData(true);
 			}
 		}
 
@@ -2376,6 +2402,9 @@
 					if(self.options.ajaxURL){
 						if(self.options.pagination === "remote"){
 							self.setPage(1);
+						}else if(self.options.progressiveRender == "remote"){
+							self.paginationCurrentPage = 1;
+							self._getRemotePageData();
 						}else{
 							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
 						}
