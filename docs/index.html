@@ -616,7 +616,7 @@ $("#example-table").tabulator({
                     <p>If you are loading from a remote data source then in is possible to combine progressive rendering with ajax pagination to make successive calls to the server to fill the table as you scroll rather than trying to load the data all in one go.</p>
                     <p>To do this you need to set the <span class='param'>progressiveRender</span> option to a value of <span class='param'>"remote"</span> and set the <span class='param'>ajaxURL</span> option to the url of the remote data source.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    progressiveRender:true, //enable progressive rendering
+    progressiveRender:"remote", //enable progressive rendering
     ajaxURL:"/data/page", //set the ajax URL
 });</pre>
                     <p>For a full overview of the remote pagination paramaters have a look at the <a href="#pagination-remote">Remote Pagination Documentation</a></p>
