@@ -352,7 +352,7 @@ $("#example-table").tabulator({
 
 
                 </article>
-                <a class="anchor" id="pagination"></a>
+                <a class="anchor" id="pagination">  <span class="label label-primary">Updated</span></a>
                 <article>
                     <h1>Pagination <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#pagination"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
@@ -370,7 +370,7 @@ $("#example-table").tabulator({
 
 
                     <a class="anchor" id="pagination-remote"></a>
-                    <h2>Remote Pagination </h2>
+                    <h2>Remote Pagination  <span class="label label-primary">Updated</span></h2>
 
                     <p>To enable remote pagination, set the <span class='param'>pagination</span> option to <span class='param'>remote</span>, and set the url for the Ajax request using the <span class='param'>ajaxURL</span> paramter. You can also pass an optional object to <span class='param'>ajaxParams</span> for any paramters you want to pass with the url (these should be static parameters, the page number etc, will be added later on).</p>
 
@@ -443,6 +443,9 @@ $("#example-table").tabulator({
     } ,
 });</pre>
 
+                    <h3>Remote Pagination with Progressive Rendering <span class="label label-danger">New</span></h3>
+                    <p>An alternative to using the page control buttons would be to use progressive rendering, where as the user scrolls through the table new pages of data are automatically requested from the server and added to the bottom of the table.</p>
+                    <p>For more details on how to do this, have a look at the documentation for <a href="#progressive-ajax">Progressive Rendering with Ajax Pagination</a></p>
                     <a class="anchor" id="pagination-local"></a>
                     <h2>Local Pagination </h2>
                     <p>Local pagination works by loading the entier data set into the table then generating paged views of that data.</p>
@@ -525,7 +528,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="layout"></a>
                 <article>
-                    <h1>Table Layout</h1>
+                    <h1>Table Layout <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:</p>
 
@@ -607,6 +610,18 @@ $("#example-table").tabulator({
     progressiveRenderMargin:350, //distance in px before end of scroll before progressive render is triggered (default = 200)
 });</pre>
 
+                    <a class="anchor" id="progressive-ajax"></a>
+
+                    <h3>Progressive Rendering with Ajax Pagination <span class="label label-danger">New</span></h3>
+                    <p>If you are loading from a remote data source then in is possible to combine progressive rendering with ajax pagination to make successive calls to the server to fill the table as you scroll rather than trying to load the data all in one go.</p>
+                    <p>To do this you need to set the <span class='param'>progressiveRender</span> option to a value of <span class='param'>"remote"</span> and set the <span class='param'>ajaxURL</span> option to the url of the remote data source.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    progressiveRender:true, //enable progressive rendering
+    ajaxURL:"/data/page", //set the ajax URL
+});</pre>
+                    <p>For a full overview of the remote pagination paramaters have a look at the <a href="#pagination-remote">Remote Pagination Documentation</a></p>
+
+                    <p><strong>NOTE:</strong> To ensure the best user experience it is recomended that the number of reows returned by the server for each page at least fills the hight of the table, while the system can handle smaller sizes it will result in a lot of ajax calls in very quick succession.</p>
                 </article>
 
                 <a class="anchor" id="sorting"></a>
@@ -2402,7 +2417,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#define-column-headers">Define Column Headers</a></li>
                         <li><a href="#set-data">Set Table Data</a></li>
                         <li><a href="#pagination">Pagination <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#layout">Table Layout</a></li>
+                        <li><a href="#layout">Table Layout  <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
