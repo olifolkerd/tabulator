@@ -130,7 +130,7 @@
                 </article>
                 <a class="anchor" id="define-column-headers"></a>
                 <article>
-                    <h1>Define Column Headers</h1>
+                    <h1>Define Column Headers  <span class="label label-primary">Updated</span></h1>
 
                     <p>Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator</p>
 
@@ -152,7 +152,8 @@
                         <li><strong>title</strong> - <strong><i>Required</i></strong> This is the title that will be displayed in the header for this column</li>
                         <li><strong>field</strong> - <strong><i>Required</i></strong> <i>(not required in icon/button columns)</i> this is the key for this column in the data array</li>
                         <li><strong>align</strong> - sets the text alignment for this column (left|center|right)</li>
-                        <li><strong>width</strong> - sets the width of this column (if not set the system will determine the best)</li>
+                        <li><strong>width</strong> - sets the width of this column, this can be set in pixels or as a percentage of total table width (if not set the system will determine the best)</li>
+                        <li><strong>minWidth</strong> - sets the minimum width of this column, this can be set in pixels or as a percentage of total table width (this takes priority over the global option of colMinWidth)</li>
                         <li><strong>sortable</strong> - determines if the user can sort data by this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
@@ -562,10 +563,12 @@ $("#example-table").tabulator({
     colResizable:false, // this option takes a boolean value (default = true)
 });</pre>
                     <a class="anchor" id="col-min-width"></a>
-                    <h2>Minimum Column Width</h2>
+                    <h2>Minimum Column Width  <span class="label label-primary">Updated</span></h2>
                     <p>It is possible to set a minimum column width to prevent resizing columns from becoming too small.</p>
 
                     <p>This can be set globally, by setting the <span class='param'>colMinWidth</span> option to the column width when you create your Tabulator.</p>
+
+                    <p>This option can be overridden on a per column basis by setting the <span class='param'>minWidth</span> property on the column definition.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     colMinWidth:80, //Minimum column width in px (default = 40)
 });</pre>
@@ -2414,7 +2417,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                 <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
-                        <li><a href="#define-column-headers">Define Column Headers</a></li>
+                        <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#set-data">Set Table Data</a></li>
                         <li><a href="#pagination">Pagination <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#layout">Table Layout  <span class="label label-primary">Updated</span></a></li>
