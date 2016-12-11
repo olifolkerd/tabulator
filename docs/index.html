@@ -1938,12 +1938,14 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
                     <h2>Ajax Response <span class="label label-danger">New</span></h2>
-                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made.</p>
+                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made. This callback can also be used to modify the received data before it is parsed by the table. If you use this callback it <strong>must</strong> return the data to be parsed by Tabulator, otherwise no data will be rendered.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     ajaxResponse:function(url, params, response){
         //url - the URL of the request
         //params - the parameters passed with the request
         //response - the JSON object returend in the body of the response.
+
+        return response; //return the response data to tabulator
     },
 });</pre>
 
