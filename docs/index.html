@@ -208,7 +208,7 @@
                 </article>
                 <a class="anchor" id="set-data"></a>
                 <article>
-                    <h1>Set Table Data</h1>
+                    <h1>Set Table Data <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved as a JSON formatted string via AJAX from a URL.</p>
 
@@ -250,21 +250,26 @@ index:"age", //set the index field to the "age" field.
 
 $("#example-table").tabulator("setData", tableData);</pre>
                     <a class="anchor" id="ajax"></a>
-                    <h2>Set data using AJAX <a class="example-link" href="../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Set data using AJAX <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>  If you wish to retrieve your data from a remote source, pass the URL to the <span class='param'>setData</span> method and it will perform the AJAX request for you. The URL can be absolute or relative.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now");</pre>
 
-                    <p>If you wish to pass parameters with your request you can either include them in-line with the url string, or as a second parameter to the <span class='param'>setData</span> function. In the latter case they should be provided in the form of an object with key/value pairs.</p>
+                    <p>If you wish to pass parameters with your request you can either include them in-line with the url string, or as an optional second parameter to the <span class='param'>setData</span> function. In the latter case they should be provided in the form of an object with key/value pairs.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now", {key1:"value1", key2:"value2"});</pre>
+
+                    <p>By default Tabulator will make all ajax requests using the HTTP request type of <span class='param'>GET</span>. If you need to use a different request type for any reason, this can be passed as an optional third paramter.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, "POST"); //make a post request</pre>
 
                     <p>The server will need to return a JSON formatted array of objects.</p>
 
                     <h3>Repeated Requests</h3>
-                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator. This will cause the table to immediately load the data from the remote resource as soon as the table is created.</p>
+                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL, ajaxParams &amp; ajaxType</span> options as needed when you create your Tabulator. This will cause the table to immediately load the data from the remote resource as soon as the table is created.</p>
                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    ajaxURL:"http://www.getmydata.com/now",
+    ajaxURL:"http://www.getmydata.com/now", //ajax URL
+    ajaxParams:{key1:"value1", key2:"value2"}, //ajax parameters
+    ajaxType:"POST", //ajax HTTP request type
 });</pre>
                     <p>You can call the <span class='param'>setData</span> function to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
@@ -1410,6 +1415,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>ajaxParams</td><td>object</td><td>{}</td><td>Parameters to be passed to remote Ajax data loading request</td><td><a href="#ajax"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
+                                <td>ajaxType</td><td>string</td><td>"GET"</td><td>The HTTP request type for Ajax requests</td><td><a href="#ajax"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
                                 <td>showLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td><td></td>
                             </tr>
                             <tr>
@@ -2418,7 +2426,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
                         <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#set-data">Set Table Data</a></li>
+                        <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#pagination">Pagination <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#layout">Table Layout  <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
