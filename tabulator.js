@@ -150,7 +150,8 @@
 		selectable:true, //highlight rows on hover
 
 		ajaxURL:false, //url for ajax loading
-		ajaxParams:{}, //url for ajax loading
+		ajaxParams:{}, //params for ajax loading
+		ajaxType:"get", //ajax request type
 
 		showLoader:true, //show loader while data loading
 		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
@@ -1259,7 +1260,7 @@
 
 		if(typeof options.paginator == "function"){
 			var url = options.paginator(options.ajaxURL, self.paginationCurrentPage, options.paginationSize, options.ajaxParams);
-			self._getAjaxData(url, {}, update);
+			self._getAjaxData(url, {}, null, update);
 		}else{
 			var pageParams = {};
 
@@ -1287,7 +1288,7 @@
 				pageParams[options.paginationDataSent.filter_type] = self.filterType;
 			}
 
-			self._getAjaxData(options.ajaxURL, pageParams, update);
+			self._getAjaxData(options.ajaxURL, pageParams, null, update);
 		}
 
 	},
@@ -1296,7 +1297,7 @@
 
 
 	//load data
-	setData:function(data, params){
+	setData:function(data, params, type){
 		var self = this;
 
 		self.options.dataLoading(data, params);
@@ -1320,7 +1321,7 @@
 					self.setPage(1);
 				}else{
 					//assume data is url, make ajax call to url to get data
-					self._getAjaxData(data, params);
+					self._getAjaxData(data, params, type);
 				}
 
 			}
@@ -1336,7 +1337,7 @@
 					if(self.options.pagination == "remote"){
 						self.setPage(1);
 					}else{
-						self._getAjaxData(this.options.ajaxURL, params);
+						self._getAjaxData(this.options.ajaxURL, params, type);
 					}
 
 				}else{
@@ -1355,14 +1356,14 @@
 	},
 
 	//get json data via ajax
-	_getAjaxData:function(url, params, update){
+	_getAjaxData:function(url, params, type, update){
 		var self = this;
 		var options = self.options;
 
 		$.ajax({
 			url: url,
-			type: "GET",
-			data:params ? params : self.options.ajaxParams,
+			type: type || self.options.ajaxType,
+			data: params || self.options.ajaxParams,
 			async: true,
 			dataType:"json",
 			success: function (data){
@@ -2406,7 +2407,7 @@
 							self.paginationCurrentPage = 1;
 							self._getRemotePageData();
 						}else{
-							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams);
+							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams, self.options.ajaxType);
 						}
 					}
 				}
@@ -2760,12 +2761,10 @@
 								}else{
 									thisWidth = parseInt(column.width);
 								}
-								
+
 							}else{
 								thisWidth = column.width;
 							}
-
-							console.log("width", thisWidth)
 
 							widthIdeal += thisWidth;
 							widthIdealCount++;
@@ -2799,7 +2798,7 @@
 									}else{
 										newWidth = parseInt(column.width);
 									}
-									
+
 								}else{
 									newWidth = column.width;
 								}
@@ -2816,13 +2815,12 @@
 						}else{
 							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]", element);
 							col.css({width:colWidth});
-						}	
+						}
 					}
 				});
 
-
 			}else{
-				console.log("min", column.minWidth)
+
 				//free sized table
 				$.each(self.columnList, function(i, column){
 
