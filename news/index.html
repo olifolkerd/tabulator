@@ -118,13 +118,66 @@
 
 
                     <article>
-                    <h1>Sparklines Demo Added<span class="datestamp">12/11/2016</span></h1>
+                    <h1>Version 2.9 Released<span class="datestamp">12/12/2016</span></h1>
+
+                        <p>It has been a busy month in the world of Tabulator, this months update sees a bucket load of new and improved features:</p>
+
+                        <h2>Localization</h2>
+                        <p>You can now localize the contents of a Tabulator to the language of the browser being used to view it. A whole host of configuration options are now available to make your tables accessible no mater where in the world they are being used.</p>
+
+                        <p>More information can be found in the <a href="../docs#localization">Localization documentation</a></p>
+
+                        <h2>Downloadable Table Data</h2>
+                        <p>It is now possible to download data as a file direct from Tabulator with no need to download files from the server. At present <span class='param'>CSV</span> and <span class='param'>JSON</span> files are available, with more coming soon. You can even define your own file formatter to create your own custom file types.</p>
+
+                        <p>More information can be found in the <a href="../docs#download">Downloading Table Data documentation</a></p>
+
+
+                        <h2>Progressive Rendering with Ajax</h2>
+                        <p>The existing progressive rendering functionality can now be combined with ajax pagination, to allow table data to be loaded from a remote server as a user scrolls down the table.</p>
+
+                        <p>More information can be found in the <a href="../docs#pagination-remote">Remote Pagination documentation</a></p>
+
+                        <h2>Ajax Request Methods</h2>
+                        <p>You can now set the HTTP request method to be used with ajax requests</p>
+
+                        <p>More information can be found in the <a href="../docs#ajax">Ajax Request documentation</a></p>
+
+
+                        <h2>Column Sizing</h2>
+                        <p>Column sizing has been improved so you can now specify column widths in both pixes and perventage of total table width.</p>
+                        <p>the <span class='param'>minWidth</span> column definition option is now available to set minimum width on a column by column basis.</p>
+
+                        <p>More information can be found in the <a href="../docs#define-column-headers">Column Definition documentation</a></p>
+
+                        <h2>Aditional Functions and Callbacks</h2>
+
+                        <h3>getSort Function</h3>
+                        <p>Returns information on the currently sorted column and sort direction.</p>
+
+                        <p>More information can be found in the <a href="../docs#sorting">Sorting documentation</a></p>
+
+                        <h3>getPageMax Function</h3>
+                        <p>When using pagination this function returns the maxium available page for the paginated data.</p>
+
+                        <p>More information can be found in the <a href="../docs#pagination">Pagination documentation</a></p>
+
+                        <h3>ajaxResponse Callback</h3>
+                        <p>The <span class='param'>ajaxResponse</span> callback is triggered whenever a response from an ajax request is received. It allows access to all received ajax data before the data is loaded into the table, and provides an opertunity to make and changes to the data before it is parsed into Tabulator.</p>
+
+                        <p>More information can be found in the <a href="../docs#callbacks">Callbacks &amp; Events documentation</a></p>
+
+
+                    </article>
+
+                    <article>
+                        <h1>Sparklines Demo Added<span class="datestamp">12/11/2016</span></h1>
                         <p>A guide to using the Sparklines js library to add graphs to your Tabulator..</p>
                         <p>The demo can be found <a href="../examples/#sparklines">here.</a></p>
                     </article>
 
                     <article>
-                    <h1>We're Amazing!<span class="datestamp">10/11/2016</span></h1>
+                        <h1>We're Amazing!<span class="datestamp">10/11/2016</span></h1>
                         <p>Tabulator has just been featured on SitePoint's list of 12 Amazing jQuery Tables. </p>
                         <p>The full article can be found at  <a href="https://www.sitepoint.com/12-amazing-jquery-tables/">https://www.sitepoint.com/12-amazing-jquery-tables/</a></p>
                     </article>
@@ -154,7 +207,7 @@
                     </article>
 
                     <article>
-                    <h1>How To Guide Published on SitePoint<span class="datestamp">01/11/2016</span></h1>
+                        <h1>How To Guide Published on SitePoint<span class="datestamp">01/11/2016</span></h1>
                         <p>SitePoint has just published a guide on how to use Tabulator to spice up your HTML tables.</p>
                         <p>The full article can be found at <a href="https://www.sitepoint.com/dynamic-tables-json/">https://www.sitepoint.com/dynamic-tables-json/</a></p>
                     </article>
