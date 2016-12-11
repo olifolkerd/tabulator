@@ -175,7 +175,7 @@
 		dataLoadError:function(){},
 		dataEdited:function(){},
 
-		ajaxResponse:function(){},
+		ajaxResponse:false,
 
 		dataFiltering:function(){},
 		dataFiltered:function(){},
@@ -1368,12 +1368,12 @@
 			dataType:"json",
 			success: function (data){
 
-				self.options.ajaxResponse(url, params ? params : self.options.ajaxParams, data);
+				var returnedData = typeof self.options.ajaxResponse === "function" ? self.options.ajaxResponse(url, params ? params : self.options.ajaxParams, data) : data;
 
 				if(self.options.pagination == "remote" || self.options.progressiveRender == "remote"){
-					self._parsePageData(data, update);
+					self._parsePageData(returnedData, update);
 				}else{
-					self._parseData(data, update);
+					self._parseData(returnedData, update);
 				}
 
 			},
