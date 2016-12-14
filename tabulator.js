@@ -2591,9 +2591,9 @@
 
 				var visibility = column.visible ? "inline-block" : "none";
 
-				var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+				var minWidth = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
 
-				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWith + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
 				var colContent = $(".tabulator-col-content", col);
 				var colTitle = $(".tabulator-col-title", col);
 
@@ -2789,9 +2789,9 @@
 				$.each(self.columnList, function(i, column){
 					if(column.visible){
 
-						var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+						var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-						if(proposedWidth >= parseInt(minWith)){
+						if(proposedWidth >= minWidth){
 
 							var newWidth = proposedWidth;
 
@@ -2813,7 +2813,11 @@
 							if(column.field == lastVariableCol){
 								col.css({width:newWidth + gapFill});
 							}else{
-								col.css({width:newWidth});
+								if(newWidth < minWidth){
+									col.css({width:minWidth});
+								}else{
+									col.css({width:newWidth});
+								}
 							}
 
 						}else{
@@ -2844,9 +2848,9 @@
 
 						if(options.colMinWidth || typeof column.minWidth !== "undefined"){
 
-							var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+							var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-							max = max < minWith ? minWith : max;
+							max = max < minWidth ? minWidth : max;
 						}
 
 					}
