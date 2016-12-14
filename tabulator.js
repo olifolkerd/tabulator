@@ -579,14 +579,14 @@
 	},
 
 	//return the current locale
-	getLocale(){
+	getLocale:function(){
 		var self = this;
 
 		return self.options.locale;
 	},
 
 	//return the language definitions for the curent locale
-	getLang(){
+	getLang:function(){
 		var self = this;
 
 		var lang = self.options.langs[self.options.locale]
