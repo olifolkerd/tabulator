@@ -2814,10 +2814,10 @@
 								col.css({width:newWidth + gapFill});
 							}else{
 								if(newWidth < minWidth){
-									col.css({width:minWidth});
-								}else{
-									col.css({width:newWidth});
+									col.css({"min-width":newWidth});
 								}
+									col.css({width:newWidth});
+
 							}
 
 						}else{
