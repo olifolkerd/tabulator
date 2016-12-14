@@ -126,7 +126,7 @@
 		tooltips: false, //Tool tip value
 		tooltipsHeader: false, //Tool tip for headers
 
-		columns:[],//store for colum header info
+		columns:false,//store for colum header info
 		data:false, //store for initial table data if set at construction
 
 		index:"id",
@@ -198,6 +198,11 @@
 		var self = this;
 		var element = self.element;
 
+		//prevent column array being copied over when not explicitly set
+		if(!self.options.columns){
+			self.options.columns = [];
+		}
+
 		if(element.is("table")){
 			self._parseTable();
 		}else{
@@ -234,8 +239,6 @@
 		}
 
 		//build columns from table header if they havnt been set;
-
-
 		if(headers.length){
 			//create column array from headers
 			headers.each(function(index){
@@ -289,6 +292,7 @@
 			});
 		}
 
+		self.data = [];
 
 		//iterate through table rows and build data set
 		rows.each(function(rowIndex){
@@ -575,14 +579,14 @@
 	},
 
 	//return the current locale
-	getLocale(){
+	getLocale:function(){
 		var self = this;
 
 		return self.options.locale;
 	},
 
 	//return the language definitions for the curent locale
-	getLang(){
+	getLang:function(){
 		var self = this;
 
 		var lang = self.options.langs[self.options.locale]
@@ -2587,9 +2591,9 @@
 
 				var visibility = column.visible ? "inline-block" : "none";
 
-				var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+				var minWidth = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
 
-				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWith + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
 				var colContent = $(".tabulator-col-content", col);
 				var colTitle = $(".tabulator-col-title", col);
 
@@ -2785,9 +2789,9 @@
 				$.each(self.columnList, function(i, column){
 					if(column.visible){
 
-						var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+						var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-						if(proposedWidth >= parseInt(minWith)){
+						if(proposedWidth >= minWidth){
 
 							var newWidth = proposedWidth;
 
@@ -2809,7 +2813,11 @@
 							if(column.field == lastVariableCol){
 								col.css({width:newWidth + gapFill});
 							}else{
-								col.css({width:newWidth});
+								if(newWidth < minWidth){
+									col.css({"min-width":newWidth});
+								}
+									col.css({width:newWidth});
+
 							}
 
 						}else{
@@ -2840,9 +2848,9 @@
 
 						if(options.colMinWidth || typeof column.minWidth !== "undefined"){
 
-							var minWith = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+							var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-							max = max < minWith ? minWith : max;
+							max = max < minWidth ? minWidth : max;
 						}
 
 					}
