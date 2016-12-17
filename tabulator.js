@@ -189,6 +189,9 @@
 		pageLoaded:function(){},
 
 		localized:function(){},
+
+		tableBuilding:function(){},
+		tableBuilt:function(){},
 	},
 
 	////////////////// Element Construction //////////////////
@@ -336,6 +339,7 @@
 		var options = self.options;
 		var element = self.element;
 
+		options.tableBuilding();
 
 		//set current locale
 		self.setLocale(self.options.locale);
@@ -2018,7 +2022,11 @@
 			self.tableHolder.scrollLeft(hozScrollPos);
 		}
 
-		self.firstRender = false;
+		if(self.firstRender){
+			self.firstRender = false;
+			options.tableBuilt();
+		}
+
 	},
 
 	//render individual rows
