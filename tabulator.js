@@ -368,6 +368,7 @@
 		}
 
 		element.addClass("tabulator").attr("role", "grid");
+		element.empty();
 
 		self.header = $("<div class='tabulator-header'></div>")
 
