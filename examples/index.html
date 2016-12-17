@@ -1635,766 +1635,911 @@ $("#lang-default").click(function(){
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/lang-css.js"></script>
 <script type="text/javascript">
 
-    $('body').scrollspy({
-        target: '.docs-sidebar',
-        offset: 40
-    });
-
-    $(".view-source").on("click", function(){
-        $(this).next(".source").slideToggle();
-    });
-
-
-        //sample data to be used in all tabulators
-        var tabledata = [
-        {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
-        {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
-        {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
-        {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
-        {id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999", lucky_no:33},
-        {id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1, lucky_no:2},
-        {id:7, name:"Jamie Newhart", progress:23, gender:"male", rating:3, col:"green", dob:"14/05/1985", car:true, lucky_no:63},
-        {id:8, name:"Gemma Jane", progress:60, gender:"female", rating:0, col:"red", dob:"22/05/1982", car:"true", lucky_no:72},
-        {id:9, name:"Emily Sykes", progress:42, gender:"female", rating:1, col:"maroon", dob:"11/11/1970", lucky_no:44},
-        {id:10, name:"James Newman", progress:73, gender:"male", rating:5, col:"red", dob:"22/03/1998", lucky_no:9},
-        ];
-
-        var tabledatabig = [
-        {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
-        {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
-        {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
-        {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
-        {id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999", lucky_no:33},
-        {id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1, lucky_no:2},
-        {id:7, name:"Jamie Newhart", progress:23, gender:"male", rating:3, col:"green", dob:"14/05/1985", car:true, lucky_no:63},
-        {id:8, name:"Gemma Jane", progress:60, gender:"female", rating:0, col:"red", dob:"22/05/1982", car:"true", lucky_no:72},
-        {id:9, name:"Emily Sykes", progress:42, gender:"female", rating:1, col:"maroon", dob:"11/11/1970", lucky_no:44},
-        {id:10, name:"James Newman", progress:73, gender:"male", rating:5, col:"red", dob:"22/03/1998", lucky_no:9},
-        {id:11, name:"Martin Barryman", progress:20, gender:"male", rating:5, col:"violet", dob:"04/04/2001"},
-        {id:12, name:"Jenny Green", progress:56, gender:"female", rating:4, col:"indigo", dob:"12/11/1998", car:true},
-        {id:13, name:"Alan Francis", progress:90, gender:"male", rating:3, col:"blue", dob:"07/08/1972", car:true},
-        {id:14, name:"John Phillips", progress:80, gender:"male", rating:1, col:"green", dob:"24/09/1950", car:true},
-        {id:15, name:"Ed White", progress:70, gender:"male", rating:0, col:"yellow", dob:"19/06/1976"},
-        {id:16, name:"Paul Branderson", progress:60, gender:"male", rating:5, col:"orange", dob:"01/01/1982"},
-        {id:17, name:"Gemma Jane", progress:50, gender:"female", rating:2, col:"red", dob:"14/04/1983", car:true},
-        {id:18, name:"Emma Netwon", progress:40, gender:"female", rating:4, col:"brown", dob:"07/10/1963", car:true},
-        {id:19, name:"Hannah Farnsworth", progress:30, gender:"female", rating:1, col:"pink", dob:"11/02/1991"},
-        {id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986"},
-        ];
-
-
-        //Simple Example
-        $("#example-table-simple").tabulator({
-            height:"311px",
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", width:100, sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", width:80},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob"},
-            {title:"Driver", field:"car"},
-            ],
-        });
-
-        $("#example-table-simple").tabulator("setData", tabledata);
-
-
-        //Fit To Data Example
-        $("#example-table-fittodata").tabulator({
-            height:"311px",
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", align:"center", width:80},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center"},
-            ],
-        });
-
-        $("#example-table-fittodata").tabulator("setData", tabledata);
-
-
-        //Fit To Width Example
-        $("#example-table-fittowidth").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", align:"right", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", align:"center", width:60},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center"},
-            ],
-        });
-
-        $("#example-table-fittowidth").tabulator("setData", tabledata);
-
-
-        //Column Grouping Example
-        $("#example-table-column-grouping").tabulator({
-            height:"311px",
-            colVertAlign:"bottom", //align header contents to bottom of cell
-            columns:[
-            {title:"Name", field:"name", width:160},
-                {//create column group
-                    title:"Work Info",
-                    columns:[
-                    {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
-                    {title:"Rating", field:"rating", align:"center", width:80},
-                    {title:"Driver", field:"car", align:"center", width:80},
-                    ],
-                },
-                {//create column group
-                    title:"Personal Info",
-                    columns:[
-                    {title:"Gender", field:"gender", width:90},
-                    {title:"Favourite Color", field:"col", width:140},
-                    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
-                    ],
-                },
-
-                ],
-            });
-
-        $("#example-table-column-grouping").tabulator("setData", tabledata);
-
-
-
-        //build tabulator from HTML table example
-        $("#example-table-table").tabulator({fitColumns:true,});
-
-        //Editable Example
-        //custom editor
-        var genderEditor = function(cell, value){
-            //cell - JQuery object for current cell
-            //value - the current value for current cell
-
-            //create and style editor
-            var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
-            editor.css({
-                "padding":"3px",
-                "width":"100%",
-                "box-sizing":"border-box",
-            })
-
-            //Set value of editor to the value of the cell
-            .val(value);
-
-            //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-            if(cell.hasClass("tabulator-cell")){
-                setTimeout(function(){
-                    editor.focus();
-                },100);
-            }
-
-
-            //when the value has been set, update the cell
-            editor.on("change blur", function(e){
-                cell.trigger("editval", editor.val());
-            });
-
-            //return the editor element
-            return editor;
-        }
-
-        $("#example-table-editable").tabulator({
-            height:"311px",
-            columns:[
-            {title:"Name", field:"name", width:150, editable:true},
-            {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
-            {title:"Gender", field:"gender", editable:true, editor:genderEditor},
-            {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-            {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
-            ],
-            cellEdited:function(id,data,row){
-
-            },
-        });
-
-        $("#example-table-editable").tabulator("setData", tabledata);
-
-
-
-        //Sorting Examples
-        $("#example-table-sorting").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:200},
-            {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
-            {title:"Gender", field:"gender", sorter:"string"},
-            {title:"Rating", field:"rating",  align:"center", width:100},
-            {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
-                return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-            }},
-            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Driver", field:"car", align:"center", sorter:"boolean"},
-            ],
-        });
-
-        $("#example-table-sorting").tabulator("setData", tabledata);
-
-        $("#sort-trigger").click(function(){
-            $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
-        })
-
-
-        //Formatter Example
-        //generate print icon
-        var printIcon = function(value, data, cell, row, options){ //plain text value
-            return "<i class='fa fa-print'></i> "
-        };
-
-        $("#example-table-formatter").tabulator({
-            height:"311px",
-            fitColumns:true,
-            rowFormatter:function(row, data){
-
-                if(data.col == "blue"){
-                    row.css({"background-color":"#A6A6DF"});
-                }
-            },
-            columns:[
-            {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-            {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
-                if(value.indexOf("o") > 0){
-                    return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
-                }else{
-                    return value;
-                }
-            }},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {formatter:"buttonCross", width:30, align:"center"},
-            ],
-        });
-
-        $("#example-table-formatter").tabulator("setData", tabledata);
-
-
-        //Row Formatter Example
-
-        var cheeseData = [
-            {id:1, type:"Brie", rind:"mould", age:"4 weeks", color:"white", image:"brie.jpg"},
-            {id:2, type:"Cheddar", rind:"none", age:"1 year", color:"yellow", image:"cheddar.jpg"},
-            {id:3, type:"Gouda", rind:"wax", age:"6 months", color:"cream", image:"gouda.jpg"},
-            {id:4, type:"Swiss", rind:"none", age:"9 months", color:"yellow", image:"swiss.jpg"},
-        ]
-
-        $("#example-table-rowformat").tabulator({
-            height:"311px",
-            fitColumns:true,
-            colResizable:false,
-            columns:[
-            {title:"Cheese", field:"type", sorter:"string"},
-            ],
-            rowFormatter:function(row, data){
-                var width = row.outerWidth();
-
-                //clear current row data
-                row.empty();
-
-                //define a table layout structure and set width of row
-                var table = $("<table style='width:" + (width - 18) + "px;'><tr></tr></table>");
-
-                //add image on left of row
-                $("tr", table).append("<td><img src='row_formatter/" + data.image + "'></td>");
-
-                //add row data on right hand side
-                $("tr", table).append("<td><div><strong>Type:</strong> " + data.type + "</div><div><strong>Age:</strong> " + data.age + "</div><div><strong>Rind:</strong> " + data.rind + "</div><div><strong>Colour:</strong> " + data.color + "</div></td>");
-
-                //append newly formatted contents to the row
-                row.append(table);
-            },
-        })
-
-        $("#example-table-rowformat").tabulator("setData", cheeseData);
-
-
-
-        //Sparkline Example
-
-        //generate line chart
-        var lineFormatter = function(value, data, cell, row, options){
-            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"line", disableTooltips:true});
-            }, 10);
-        };
-
-        //generate bar chart
-        var barFormatter = function(value, data, cell, row, options){
-            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
-            }, 10);
-        };
-
-        //generate discrete chart
-        var tristateFormatter = function(value, data, cell, row, options){
-            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
-            }, 10);
-        };
-
-
-        //generate box plot
-        var boxFormatter = function(value, data, cell, row, options){
-            setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-                cell.sparkline(value, {width:"100%", type:"box", disableTooltips:true});
-            }, 10);
-        };
-
-
-
-        $("#example-table-sparkline").tabulator({
-            height:"311px",
-            columns:[
-            {title:"Name", field:"name", width:190},
-            {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
-            {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
-            {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
-            {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
-            ],
-        });
-
-        var sparkData = [
-        {id:1, name:"Oli Bob", line:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], bar:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], tristate:[1, 20, -5, -3, 10, 13, 0, 15, 9, 11], box:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11]},
-        {id:2, name:"Mary May", line:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], bar:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], tristate:[-10, 12, 14, 16, 13, 9, 7, 0, 10, 13], box:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
-        {id:3, name:"Christine Lobowski", line:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], bar:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], tristate:[1, 2, 5, 0, 1, 16, 4, 2, 1, 3], box:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
-        {id:4, name:"Brendon Philips", line:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], bar:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], tristate:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], box:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
-        {id:5, name:"Margret Marmajuke", line:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], bar:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], tristate:[1, -3, 1, 3, -3, 1, -1, 3, 1, 3], box:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
-        {id:6, name:"Frank Harbours", line:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], bar:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], tristate:[20, 17, 15, 11, 16, -9, 12, 14, 20, 12], box:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
-        {id:7, name:"Jamie Newhart", line:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], bar:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], tristate:[11, 7, 6, -12, 1-13, 11, 10, 9, 6], box:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
-        {id:8, name:"Gemma Jane", line:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], bar:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], tristate:[4, 17, 11, -12, 0, 5, 12, -14, 18, 11], box:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
-        {id:9, name:"Emily Sykes", line:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], bar:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], tristate:[11, 15, 19, -20, 17, 16, 16, -5, 3, 2], box:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
-        {id:10, name:"James Newman", line:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], bar:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], tristate:[1, 2, 0, -4, -5, -4, 2, 5, 9, 8], box:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
-        ];
-
-
-        $("#example-table-sparkline").tabulator("setData", sparkData);
-
-        //Grouping Example
-        $("#example-table-grouping").tabulator({
-            height:"311px",
-            fitColumns:true,
-            groupBy:"gender",
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });
-
-        $("#example-table-grouping").tabulator("setData", tabledata);
-
-
-
-        //Filtering Example
-        function customFilter(data){
-            return data.car && data.rating < 3;
-        }
-
-        function updateFilter(){
-
-            var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
-
-            if($("#filter-field").val() == "function" ){
-                $("#filter-type").prop("disabled", true);
-                $("#filter-value").prop("disabled", true);
-            }else{
-                $("#filter-type").prop("disabled", false);
-                $("#filter-value").prop("disabled", false);
-            }
-
-            $("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
-        }
-
-        $("#filter-field, #filter-type").change(updateFilter);
-        $("#filter-value").keyup(updateFilter);
-
-        $("#filter-clear").click(function(){
-            $("#filter-field").val("");
-            $("#filter-type").val("=");
-            $("#filter-value").val("");
-
-            $("#example-table-filters").tabulator("clearFilter");
-        });
-
-
-
-        $("#example-table-filters").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });
-
-        $("#example-table-filters").tabulator("setData", tabledata);
-
-
-        /////// filter data in column headers ///////
-
-        $("#example-table-filters-header").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", width:150, headerFilter:true},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
-            {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
-            {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
-            {title:"Favourite Color", field:"col", headerFilter:true},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
-
-            ],
-        });
-
-        $("#example-table-filters-header").tabulator("setData", tabledata);
-
-        /////// Pagination Example ///////
-        $("#example-table-pagination").tabulator({
-            height:"292px",
-            fitColumns:true,
-            pagination:"local",
-            paginationSize:8,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });
-
-        $("#example-table-pagination").tabulator("setData", tabledatabig);
-
-        $("#example-table-pagination").tabulator("setPage", 1);
-
-
-
-        //Persistant Columns Example
-        $("#example-table-colum-layout").tabulator({
-            height:"311px",
-            movableCols:true,
-            persistentLayout: true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", width:1000, sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", width:80},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });
-
-        $("#example-table-colum-layout").tabulator("setData", tabledata);
-
-
-        //AJAX Example
-        $("#example-table-ajax").tabulator({
-            height:"311px",
-            fitColumns:true,
-            ajaxURL:"data.json",
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:200},
-            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-            {title:"Gender", field:"gender", sorter:"string"},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-            ],
-        });
-
-        $("#ajax-trigger").click(function(){
-            $("#example-table-ajax").tabulator("setData");
-        })
-
-
-
-        //Add/Del Rows Example
-        $("#add-row").click(function(){
-            $("#example-table-adddel").tabulator("addRow");
-        })
-
-        $("#del-row").click(function(){
-            $("#example-table-adddel").tabulator("deleteRow", 1);
-        })
-
-        $("#clear").click(function(){
-            $("#example-table-adddel").tabulator("clear");
-        })
-
-        $("#reset").click(function(){
-            $("#example-table-adddel").tabulator("setData", tabledata);
-        })
-
-
-        $("#example-table-adddel").tabulator({
-            height:"311px",
-            addRowPos:"bottom",
-            columns:[
-            {title:"Name", field:"name", width:200, editable:true},
-            {title:"Progress", field:"progress", width:100, align:"right", sorter:"number", editable:true},
-            {title:"Gender", field:"gender", editable:true},
-            {title:"Rating", field:"rating", align:"center", width:80, editable:true},
-            {title:"Favourite Color", field:"col", editable:true},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-            {title:"Driver", field:"car", align:"center", editable:true},
-            ],
-            cellEdited:function(id,data,row,index){
-
-            }
-        });
-
-        $("#example-table-adddel").tabulator("setData", tabledata);
-
-
-        //Data Download Example
-
-        $("#download-csv").click(function(){
-            $("#example-table-download").tabulator("download", "csv", "data.csv");
-        })
-
-        $("#download-json").click(function(){
-            $("#example-table-download").tabulator("download", "json", "data.json");
-        });
-
-        $("#example-table-download").tabulator({
-            height:"311px",
-            movableCols:true,
-            columns:[
-                {title:"Name", field:"name", width:200},
-                {title:"Progress", field:"progress", width:100, sorter:"number"},
-                {title:"Gender", field:"gender"},
-                {title:"Rating", field:"rating", width:80},
-                {title:"Favourite Color", field:"col"},
-                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-                {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-        });
-
-        $("#example-table-download").tabulator("setData", tabledata);
-
-
-
-        //Localization Example
-
-        $("#lang-french").click(function(){
-            $("#example-table-localization").tabulator("setLocale", "fr-fr");
-        })
-
-        $("#lang-german").click(function(){
-            $("#example-table-localization").tabulator("setLocale", "de-de");
-        })
-
-        $("#lang-default").click(function(){
-            $("#example-table-localization").tabulator("setLocale", "");
-        })
-
-        $("#example-table-localization").tabulator({
-            height:"311px",
-            pagination:true,
-            fitColumns:true,
-            langs:{
-                "fr-fr":{
-                    "columns":{
-                        "name":"Nom",
-                        "progress":"Progression",
-                        "gender":"Genre",
-                        "rating":"Évaluation",
-                        "col":"Couleur",
-                        "dob":"Date de Naissance",
-                        "car":"Voiture",
-                    },
-                    "pagination":{
-                        "first":"Premier",
-                        "first_title":"Premier Page",
-                        "last":"Dernier",
-                        "last_title":"Dernier Page",
-                        "prev":"Précédent",
-                        "prev_title":"Précédent Page",
-                        "next":"Prochain",
-                        "next_title":"Prochain Page",
-                    },
-                },
-                "de-de":{
-                    "columns":{
-                        "name":"Name",
-                        "progress":"Fortschritt",
-                        "gender":"Genre",
-                        "rating":"Geschlecht",
-                        "col":"Farbe",
-                        "dob":"Geburtsdatum",
-                        "car":"Auto",
-                    },
-                    "pagination":{
-                        "first":"Zuerst",
-                        "first_title":"Zuerst Seite",
-                        "last":"Last",
-                        "last_title":"Letzte Seite",
-                        "prev":"Zurück",
-                        "prev_title":"Zurück Seite",
-                        "next":"Nächster",
-                        "next_title":"Nächster Seite",
-                    },
-                },
-            },
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", width:100, sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", width:80},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob"},
-            {title:"Driver", field:"car"},
-            ],
-        });
-
-        $("#example-table-localization").tabulator("setData", tabledata);
-
-
-        //Movable Rows Example
-        $("#example-table-movable-rows").tabulator({
-            height:"311px",
-            movableRows:true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-            {title:"Gender", field:"gender"},
-            {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-            ],
-            rowMoved:function(id,data,row,index){
-                alert("Row: " + data.name + " has been moved to position " + index)
-            }
-        });
-
-        $("#example-table-movable-rows").tabulator("setData", tabledata);
-
-
-
-
-        //Callbacks Example
-        $("#example-table-callbacks").tabulator({
-            height:"311px",
-            fitColumns:true,
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:150},
-            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-            {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-            ],
-            rowClick:function(e, id, data, row){
-                alert("Row " + id + " Clicked!!!!")
-            },
-            rowContext:function(e, id, data, row){
-                alert("Row " + id + " Context Clicked!!!!")
-            },
-        });
-
-        $("#example-table-callbacks").tabulator("setData", tabledata);
-
-
-
-        //Theming Example
-
-        $(".example-themes").tabulator({
-            tooltipsHeader: false,
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:226},
-            {title:"Progress", field:"progress", width:120, sorter:"number"},
-            {title:"Gender", field:"gender", width:100, sorter:"string"},
-            {title:"Rating", field:"rating", align:"center", width:100},
-            {title:"Favourite Color", field:"col", width:150, sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", width:150, sorter:"date", align:"center"},
-            ],
-            rowClick:function(e, id, data, row){
-                alert("Row " + id + " Clicked!!!!")
-            },
-            rowContext:function(e, id, data, row){
-                alert("Row " + id + " Context Clicked!!!!")
-            },
-        });
-
-        $(".example-themes").tabulator("setData", tabledata);
-
-
-        $("#example-table-theme").tabulator({
-            height:"331px",
-            fitColumns:true,
-            tooltipsHeader: false,
-            columns:[
-            {title:"Name", field:"name", sorter:"string", width:150},
-            {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-            {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
-            {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-            {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
-            {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},
-            {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-            ],
-            rowClick:function(e, id, data, row){
-                alert("Row " + id + " Clicked!!!!")
-            },
-            rowContext:function(e, id, data, row){
-                alert("Row " + id + " Context Clicked!!!!")
-            },
-        });
-
-        $("#example-table-theme").tabulator("setData", tabledata);
-
-
-        $(window).resize(function(){
-            $(".tabulator").tabulator("redraw");
-        });
-
-
-        //google analytics tracking code
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-77206751-1', 'auto');
-        ga('send', 'pageview');
-
-
-        $("#github-link").click(function(){
-            ga('send', 'event', {
-                eventCategory: 'Github Link',
-                eventAction: 'click',
-                eventLabel: 'Github Link',
-                transport: 'beacon'
-            })
-        });
-
+ $('body').scrollspy({
+     target: '.docs-sidebar',
+     offset: 40
+ });
+
+ $(".view-source").on("click", function(){
+     $(this).next(".source").slideToggle();
+ });
+
+
+     //sample data to be used in all tabulators
+     var tabledata = [
+     {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
+     {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
+     {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
+     {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
+     {id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999", lucky_no:33},
+     {id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1, lucky_no:2},
+     {id:7, name:"Jamie Newhart", progress:23, gender:"male", rating:3, col:"green", dob:"14/05/1985", car:true, lucky_no:63},
+     {id:8, name:"Gemma Jane", progress:60, gender:"female", rating:0, col:"red", dob:"22/05/1982", car:"true", lucky_no:72},
+     {id:9, name:"Emily Sykes", progress:42, gender:"female", rating:1, col:"maroon", dob:"11/11/1970", lucky_no:44},
+     {id:10, name:"James Newman", progress:73, gender:"male", rating:5, col:"red", dob:"22/03/1998", lucky_no:9},
+     ];
+
+     var tabledatabig = [
+     {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
+     {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
+     {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
+     {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
+     {id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999", lucky_no:33},
+     {id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1, lucky_no:2},
+     {id:7, name:"Jamie Newhart", progress:23, gender:"male", rating:3, col:"green", dob:"14/05/1985", car:true, lucky_no:63},
+     {id:8, name:"Gemma Jane", progress:60, gender:"female", rating:0, col:"red", dob:"22/05/1982", car:"true", lucky_no:72},
+     {id:9, name:"Emily Sykes", progress:42, gender:"female", rating:1, col:"maroon", dob:"11/11/1970", lucky_no:44},
+     {id:10, name:"James Newman", progress:73, gender:"male", rating:5, col:"red", dob:"22/03/1998", lucky_no:9},
+     {id:11, name:"Martin Barryman", progress:20, gender:"male", rating:5, col:"violet", dob:"04/04/2001"},
+     {id:12, name:"Jenny Green", progress:56, gender:"female", rating:4, col:"indigo", dob:"12/11/1998", car:true},
+     {id:13, name:"Alan Francis", progress:90, gender:"male", rating:3, col:"blue", dob:"07/08/1972", car:true},
+     {id:14, name:"John Phillips", progress:80, gender:"male", rating:1, col:"green", dob:"24/09/1950", car:true},
+     {id:15, name:"Ed White", progress:70, gender:"male", rating:0, col:"yellow", dob:"19/06/1976"},
+     {id:16, name:"Paul Branderson", progress:60, gender:"male", rating:5, col:"orange", dob:"01/01/1982"},
+     {id:17, name:"Gemma Jane", progress:50, gender:"female", rating:2, col:"red", dob:"14/04/1983", car:true},
+     {id:18, name:"Emma Netwon", progress:40, gender:"female", rating:4, col:"brown", dob:"07/10/1963", car:true},
+     {id:19, name:"Hannah Farnsworth", progress:30, gender:"female", rating:1, col:"pink", dob:"11/02/1991"},
+     {id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986"},
+     ];
+
+     $("#example-table-simple").closest("article").on("build", function(){
+
+         //Simple Example
+         $("#example-table-simple").tabulator({
+             height:"311px",
+             columns:[
+             {title:"Name", field:"name", width:200},
+             {title:"Progress", field:"progress", width:100, sorter:"number"},
+             {title:"Gender", field:"gender"},
+             {title:"Rating", field:"rating", width:80},
+             {title:"Favourite Color", field:"col"},
+             {title:"Date Of Birth", field:"dob"},
+             {title:"Driver", field:"car"},
+             ],
+             tableBuilt:function(){
+                 $("#example-table-simple").closest("article").nextAll("article:first").trigger("build");
+             }
+         });
+
+         $("#example-table-simple").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-fittodata").closest("article").on("build", function(){
+
+     //Fit To Data Example
+     $("#example-table-fittodata").tabulator({
+         height:"311px",
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", align:"center", width:80},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center"},
+         ],
+         tableBuilt:function(){
+             console.log("built");
+             $("#example-table-fittodata").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-fittodata").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-fittowidth").closest("article").on("build", function(){
+
+     //Fit To Width Example
+     $("#example-table-fittowidth").tabulator({
+         height:"311px",
+         fitColumns:true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", align:"right", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", align:"center", width:60},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-fittowidth").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-fittowidth").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-column-grouping").closest("article").on("build", function(){
+
+     //Column Grouping Example
+     $("#example-table-column-grouping").tabulator({
+         height:"311px",
+         colVertAlign:"bottom", //align header contents to bottom of cell
+         columns:[
+         {title:"Name", field:"name", width:160},
+         {//create column group
+             title:"Work Info",
+             columns:[
+             {title:"Progress", field:"progress", align:"right", sorter:"number", width:100},
+             {title:"Rating", field:"rating", align:"center", width:80},
+             {title:"Driver", field:"car", align:"center", width:80},
+             ],
+         },
+         {//create column group
+             title:"Personal Info",
+             columns:[
+             {title:"Gender", field:"gender", width:90},
+             {title:"Favourite Color", field:"col", width:140},
+             {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
+             ],
+         },
+
+         ],
+         tableBuilt:function(){
+             $("#example-table-column-grouping").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-column-grouping").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-table").closest("article").on("build", function(){
+
+
+     //build tabulator from HTML table example
+     $("#example-table-table").tabulator({
+         fitColumns:true,
+         tableBuilt:function(){
+             $("#example-table-table").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     });
+
+
+     //Editable Example
+     //custom editor
+     var genderEditor = function(cell, value){
+         //cell - JQuery object for current cell
+         //value - the current value for current cell
+
+         //create and style editor
+         var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
+         editor.css({
+             "padding":"3px",
+             "width":"100%",
+             "box-sizing":"border-box",
+         })
+
+         //Set value of editor to the value of the cell
+         .val(value);
+
+         //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+         if(cell.hasClass("tabulator-cell")){
+             setTimeout(function(){
+                 editor.focus();
+             },100);
+         }
+
+
+         //when the value has been set, update the cell
+         editor.on("change blur", function(e){
+             cell.trigger("editval", editor.val());
+         });
+
+         //return the editor element
+         return editor;
+     }
+
+     $("#example-table-editable").closest("article").on("build", function(){
+
+     $("#example-table-editable").tabulator({
+         height:"311px",
+         columns:[
+         {title:"Name", field:"name", width:150, editable:true},
+         {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
+         {title:"Gender", field:"gender", editable:true, editor:genderEditor},
+         {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
+         {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
+         ],
+         cellEdited:function(id,data,row){
+
+         },
+         tableBuilt:function(){
+             $("#example-table-editable").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-editable").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-sorting").closest("article").on("build", function(){
+
+
+     //Sorting Examples
+     $("#example-table-sorting").tabulator({
+         height:"311px",
+         fitColumns:true,
+         columns:[
+         {title:"Name", field:"name", sorter:"string", width:200},
+         {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
+         {title:"Gender", field:"gender", sorter:"string"},
+         {title:"Rating", field:"rating",  align:"center", width:100},
+         {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
+             return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+         }},
+         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+         {title:"Driver", field:"car", align:"center", sorter:"boolean"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-sorting").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-sorting").tabulator("setData", tabledata);
+
+     $("#sort-trigger").click(function(){
+         $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+     })
+
+     });
+
+     $("#example-table-formatter").closest("article").on("build", function(){
+
+
+     //Formatter Example
+     //generate print icon
+     var printIcon = function(value, data, cell, row, options){ //plain text value
+         return "<i class='fa fa-print'></i> "
+     };
+
+     $("#example-table-formatter").tabulator({
+         height:"311px",
+         fitColumns:true,
+         rowFormatter:function(row, data){
+
+             if(data.col == "blue"){
+                 row.css({"background-color":"#A6A6DF"});
+             }
+         },
+         columns:[
+         {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
+         {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
+             if(value.indexOf("o") > 0){
+                 return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
+             }else{
+                 return value;
+             }
+         }},
+         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         {title:"Favourite Color", field:"col" ,formatter:"color", width:160},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {formatter:"buttonCross", width:30, align:"center"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-formatter").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-formatter").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-rowformat").closest("article").on("build", function(){
+
+
+     //Row Formatter Example
+
+     var cheeseData = [
+     {id:1, type:"Brie", rind:"mould", age:"4 weeks", color:"white", image:"brie.jpg"},
+     {id:2, type:"Cheddar", rind:"none", age:"1 year", color:"yellow", image:"cheddar.jpg"},
+     {id:3, type:"Gouda", rind:"wax", age:"6 months", color:"cream", image:"gouda.jpg"},
+     {id:4, type:"Swiss", rind:"none", age:"9 months", color:"yellow", image:"swiss.jpg"},
+     ]
+
+     $("#example-table-rowformat").tabulator({
+         height:"311px",
+         fitColumns:true,
+         colResizable:false,
+         columns:[
+         {title:"Cheese", field:"type", sorter:"string"},
+         ],
+         rowFormatter:function(row, data){
+             var width = row.outerWidth();
+
+             //clear current row data
+             row.empty();
+
+             //define a table layout structure and set width of row
+             var table = $("<table style='width:" + (width - 18) + "px;'><tr></tr></table>");
+
+             //add image on left of row
+             $("tr", table).append("<td><img src='row_formatter/" + data.image + "'></td>");
+
+             //add row data on right hand side
+             $("tr", table).append("<td><div><strong>Type:</strong> " + data.type + "</div><div><strong>Age:</strong> " + data.age + "</div><div><strong>Rind:</strong> " + data.rind + "</div><div><strong>Colour:</strong> " + data.color + "</div></td>");
+
+             //append newly formatted contents to the row
+             row.append(table);
+         },
+         tableBuilt:function(){
+             $("#example-table-rowformat").closest("article").nextAll("article:first").trigger("build");
+         }
+     })
+
+     $("#example-table-rowformat").tabulator("setData", cheeseData);
+
+     });
+
+     $("#example-table-sparkline").closest("article").on("build", function(){
+
+
+     //Sparkline Example
+
+     //generate line chart
+     var lineFormatter = function(value, data, cell, row, options){
+         setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+             cell.sparkline(value, {width:"100%", type:"line", disableTooltips:true});
+         }, 10);
+     };
+
+     //generate bar chart
+     var barFormatter = function(value, data, cell, row, options){
+         setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+             cell.sparkline(value, {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
+         }, 10);
+     };
+
+     //generate discrete chart
+     var tristateFormatter = function(value, data, cell, row, options){
+         setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+             cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
+         }, 10);
+     };
+
+
+     //generate box plot
+     var boxFormatter = function(value, data, cell, row, options){
+         setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+             cell.sparkline(value, {width:"100%", type:"box", disableTooltips:true});
+         }, 10);
+     };
+
+
+
+     $("#example-table-sparkline").tabulator({
+         height:"311px",
+         columns:[
+         {title:"Name", field:"name", width:190},
+         {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
+         {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
+         {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
+         {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
+         ],
+         tableBuilt:function(){
+             $("#example-table-sparkline").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     var sparkData = [
+     {id:1, name:"Oli Bob", line:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], bar:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], tristate:[1, 20, -5, -3, 10, 13, 0, 15, 9, 11], box:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11]},
+     {id:2, name:"Mary May", line:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], bar:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], tristate:[-10, 12, 14, 16, 13, 9, 7, 0, 10, 13], box:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
+     {id:3, name:"Christine Lobowski", line:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], bar:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], tristate:[1, 2, 5, 0, 1, 16, 4, 2, 1, 3], box:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
+     {id:4, name:"Brendon Philips", line:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], bar:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], tristate:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], box:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
+     {id:5, name:"Margret Marmajuke", line:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], bar:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], tristate:[1, -3, 1, 3, -3, 1, -1, 3, 1, 3], box:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
+     {id:6, name:"Frank Harbours", line:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], bar:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], tristate:[20, 17, 15, 11, 16, -9, 12, 14, 20, 12], box:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
+     {id:7, name:"Jamie Newhart", line:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], bar:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], tristate:[11, 7, 6, -12, 1-13, 11, 10, 9, 6], box:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
+     {id:8, name:"Gemma Jane", line:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], bar:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], tristate:[4, 17, 11, -12, 0, 5, 12, -14, 18, 11], box:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
+     {id:9, name:"Emily Sykes", line:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], bar:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], tristate:[11, 15, 19, -20, 17, 16, 16, -5, 3, 2], box:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
+     {id:10, name:"James Newman", line:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], bar:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], tristate:[1, 2, 0, -4, -5, -4, 2, 5, 9, 8], box:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
+     ];
+
+
+     $("#example-table-sparkline").tabulator("setData", sparkData);
+
+
+     });
+
+     $("#example-table-grouping").closest("article").on("build", function(){
+
+     //Grouping Example
+     $("#example-table-grouping").tabulator({
+         height:"311px",
+         fitColumns:true,
+         groupBy:"gender",
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-grouping").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-grouping").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-filters").closest("article").on("build", function(){
+
+     //Filtering Example
+     function customFilter(data){
+         return data.car && data.rating < 3;
+     }
+
+     function updateFilter(){
+
+         var filter = $("#filter-field").val() == "function" ? customFilter : $("#filter-field").val();
+
+         if($("#filter-field").val() == "function" ){
+             $("#filter-type").prop("disabled", true);
+             $("#filter-value").prop("disabled", true);
+         }else{
+             $("#filter-type").prop("disabled", false);
+             $("#filter-value").prop("disabled", false);
+         }
+
+         $("#example-table-filters").tabulator("setFilter", filter, $("#filter-type").val(), $("#filter-value").val());
+     }
+
+     $("#filter-field, #filter-type").change(updateFilter);
+     $("#filter-value").keyup(updateFilter);
+
+     $("#filter-clear").click(function(){
+         $("#filter-field").val("");
+         $("#filter-type").val("=");
+         $("#filter-value").val("");
+
+         $("#example-table-filters").tabulator("clearFilter");
+     });
+
+
+
+     $("#example-table-filters").tabulator({
+         height:"311px",
+         fitColumns:true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-filters").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-filters").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-filters-header").closest("article").on("build", function(){
+        console.log("build")
+
+     /////// filter data in column headers ///////
+
+     $("#example-table-filters-header").tabulator({
+         height:"311px",
+         fitColumns:true,
+         columns:[
+         {title:"Name", field:"name", width:150, headerFilter:true},
+         {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
+         {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
+         {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+         {title:"Favourite Color", field:"col", headerFilter:true},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
+
+         ],
+         tableBuilt:function(){
+             $("#example-table-filters-header").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-filters-header").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-pagination").closest("article").on("build", function(){
+
+     /////// Pagination Example ///////
+     $("#example-table-pagination").tabulator({
+         height:"292px",
+         fitColumns:true,
+         pagination:"local",
+         paginationSize:8,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-pagination").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-pagination").tabulator("setData", tabledatabig);
+
+     $("#example-table-pagination").tabulator("setPage", 1);
+
+     });
+
+     $("#example-table-colum-layout").closest("article").on("build", function(){
+
+     //Persistant Columns Example
+     $("#example-table-colum-layout").tabulator({
+         height:"311px",
+         movableCols:true,
+         persistentLayout: true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", width:1000, sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", width:80},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-colum-layout").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-colum-layout").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-ajax").closest("article").on("build", function(){
+
+     //AJAX Example
+     $("#example-table-ajax").tabulator({
+         height:"311px",
+         fitColumns:true,
+         ajaxURL:"data.json",
+         columns:[
+         {title:"Name", field:"name", sorter:"string", width:200},
+         {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+         {title:"Gender", field:"gender", sorter:"string"},
+         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+         {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-ajax").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#ajax-trigger").click(function(){
+         $("#example-table-ajax").tabulator("setData");
+     })
+
+     });
+
+     $("#example-table-adddel").closest("article").on("build", function(){
+
+     //Add/Del Rows Example
+     $("#add-row").click(function(){
+         $("#example-table-adddel").tabulator("addRow");
+     })
+
+     $("#del-row").click(function(){
+         $("#example-table-adddel").tabulator("deleteRow", 1);
+     })
+
+     $("#clear").click(function(){
+         $("#example-table-adddel").tabulator("clear");
+     })
+
+     $("#reset").click(function(){
+         $("#example-table-adddel").tabulator("setData", tabledata);
+     })
+
+
+     $("#example-table-adddel").tabulator({
+         height:"311px",
+         addRowPos:"bottom",
+         columns:[
+         {title:"Name", field:"name", width:200, editable:true},
+         {title:"Progress", field:"progress", width:100, align:"right", sorter:"number", editable:true},
+         {title:"Gender", field:"gender", editable:true},
+         {title:"Rating", field:"rating", align:"center", width:80, editable:true},
+         {title:"Favourite Color", field:"col", editable:true},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
+         {title:"Driver", field:"car", align:"center", editable:true},
+         ],
+         cellEdited:function(id,data,row,index){
+
+         },
+         tableBuilt:function(){
+             $("#example-table-adddel").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-adddel").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-download").closest("article").on("build", function(){
+
+     //Data Download Example
+
+     $("#download-csv").click(function(){
+         $("#example-table-download").tabulator("download", "csv", "data.csv");
+     })
+
+     $("#download-json").click(function(){
+         $("#example-table-download").tabulator("download", "json", "data.json");
+     });
+
+     $("#example-table-download").tabulator({
+         height:"311px",
+         movableCols:true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", width:100, sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", width:80},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-download").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-download").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-localization").closest("article").on("build", function(){
+
+
+     //Localization Example
+
+     $("#lang-french").click(function(){
+         $("#example-table-localization").tabulator("setLocale", "fr-fr");
+     })
+
+     $("#lang-german").click(function(){
+         $("#example-table-localization").tabulator("setLocale", "de-de");
+     })
+
+     $("#lang-default").click(function(){
+         $("#example-table-localization").tabulator("setLocale", "");
+     })
+
+     $("#example-table-localization").tabulator({
+         height:"311px",
+         pagination:true,
+         fitColumns:true,
+         langs:{
+             "fr-fr":{
+                 "columns":{
+                     "name":"Nom",
+                     "progress":"Progression",
+                     "gender":"Genre",
+                     "rating":"Évaluation",
+                     "col":"Couleur",
+                     "dob":"Date de Naissance",
+                     "car":"Voiture",
+                 },
+                 "pagination":{
+                     "first":"Premier",
+                     "first_title":"Premier Page",
+                     "last":"Dernier",
+                     "last_title":"Dernier Page",
+                     "prev":"Précédent",
+                     "prev_title":"Précédent Page",
+                     "next":"Prochain",
+                     "next_title":"Prochain Page",
+                 },
+             },
+             "de-de":{
+                 "columns":{
+                     "name":"Name",
+                     "progress":"Fortschritt",
+                     "gender":"Genre",
+                     "rating":"Geschlecht",
+                     "col":"Farbe",
+                     "dob":"Geburtsdatum",
+                     "car":"Auto",
+                 },
+                 "pagination":{
+                     "first":"Zuerst",
+                     "first_title":"Zuerst Seite",
+                     "last":"Last",
+                     "last_title":"Letzte Seite",
+                     "prev":"Zurück",
+                     "prev_title":"Zurück Seite",
+                     "next":"Nächster",
+                     "next_title":"Nächster Seite",
+                 },
+             },
+         },
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", width:100, sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", width:80},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob"},
+         {title:"Driver", field:"car"},
+         ],
+         tableBuilt:function(){
+             $("#example-table-localization").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-localization").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-movable-rows").closest("article").on("build", function(){
+
+     //Movable Rows Example
+     $("#example-table-movable-rows").tabulator({
+         height:"311px",
+         movableRows:true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+         ],
+         rowMoved:function(id,data,row,index){
+             alert("Row: " + data.name + " has been moved to position " + index)
+         },
+         tableBuilt:function(){
+             $("#example-table-movable-rows").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-movable-rows").tabulator("setData", tabledata);
+
+
+     });
+
+     $("#example-table-callbacks").closest("article").on("build", function(){
+
+     //Callbacks Example
+     $("#example-table-callbacks").tabulator({
+         height:"311px",
+         fitColumns:true,
+         columns:[
+         {title:"Name", field:"name", sorter:"string", width:150},
+         {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+         {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+         {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+         ],
+         rowClick:function(e, id, data, row){
+             alert("Row " + id + " Clicked!!!!")
+         },
+         rowContext:function(e, id, data, row){
+             alert("Row " + id + " Context Clicked!!!!")
+         },
+         tableBuilt:function(){
+             $("#example-table-callbacks").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-callbacks").tabulator("setData", tabledata);
+
+     });
+
+     $(".example-themes").closest("article").on("build", function(){
+
+     //Theming Example
+
+     $(".example-themes").tabulator({
+         tooltipsHeader: false,
+         columns:[
+         {title:"Name", field:"name", sorter:"string", width:226},
+         {title:"Progress", field:"progress", width:120, sorter:"number"},
+         {title:"Gender", field:"gender", width:100, sorter:"string"},
+         {title:"Rating", field:"rating", align:"center", width:100},
+         {title:"Favourite Color", field:"col", width:150, sorter:"string", sortable:false},
+         {title:"Date Of Birth", field:"dob", width:150, sorter:"date", align:"center"},
+         ],
+         rowClick:function(e, id, data, row){
+             alert("Row " + id + " Clicked!!!!")
+         },
+         rowContext:function(e, id, data, row){
+             alert("Row " + id + " Context Clicked!!!!")
+         },
+         tableBuilt:function(){
+             $(".example-themes").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $(".example-themes").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-theme").closest("article").on("build", function(){
+
+     $("#example-table-theme").tabulator({
+         height:"331px",
+         fitColumns:true,
+         tooltipsHeader: false,
+         columns:[
+         {title:"Name", field:"name", sorter:"string", width:150},
+         {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+         {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+         {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
+         {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+         ],
+         rowClick:function(e, id, data, row){
+             alert("Row " + id + " Clicked!!!!")
+         },
+         rowContext:function(e, id, data, row){
+             alert("Row " + id + " Context Clicked!!!!")
+         },
+         tableBuilt:function(){
+             $("#example-table-theme").closest("article").nextAll("article:first").trigger("build");
+         }
+     });
+
+     $("#example-table-theme").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-simple").closest("article").trigger("build");
+
+
+     $(window).resize(function(){
+         $(".tabulator").tabulator("redraw");
+     });
+
+
+     //google analytics tracking code
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+     ga('create', 'UA-77206751-1', 'auto');
+     ga('send', 'pageview');
+
+
+     $("#github-link").click(function(){
+         ga('send', 'event', {
+             eventCategory: 'Github Link',
+             eventAction: 'click',
+             eventLabel: 'Github Link',
+             transport: 'beacon'
+         })
+     });
 
     </script>
 
