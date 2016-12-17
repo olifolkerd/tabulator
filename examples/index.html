@@ -1635,14 +1635,21 @@ $("#lang-default").click(function(){
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/lang-css.js"></script>
 <script type="text/javascript">
 
- $('body').scrollspy({
-     target: '.docs-sidebar',
-     offset: 40
- });
+    $('body').scrollspy({
+        target: '.docs-sidebar',
+        offset: 40
+    });
 
- $(".view-source").on("click", function(){
-     $(this).next(".source").slideToggle();
- });
+    $(".view-source").on("click", function(){
+        $(this).next(".source").slideToggle();
+
+        ga('send', 'event', {
+            eventCategory: 'View Source',
+            eventAction: 'click',
+            eventLabel: $(this).closest("article").prev(".anchor").attr("id"),
+            transport: 'beacon'
+        })
+    });
 
 
      //sample data to be used in all tabulators
