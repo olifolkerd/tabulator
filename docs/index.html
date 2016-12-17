@@ -2039,6 +2039,23 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //lang - the language object for the current locale
     },
 });</pre>
+
+                    <h2>Table Building <span class="label label-danger">New</span></h2>
+                    <p>When a the tabulator constructor is called, the <span class='param'>tableBuilding</span> callback will triggered:
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    tableBuilding:function(){
+    },
+});</pre>
+
+                    <h2>Table Built <span class="label label-danger">New</span></h2>
+                    <p>When a the tabulator constructor is called and the table has finished being rendered, the <span class='param'>tableBuilt</span> callback will triggered:
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    tableBuilt:function(){
+    },
+});</pre>
+
+
+
                 </article>
                 <a class="anchor" id="download"></a>
                 <article>
