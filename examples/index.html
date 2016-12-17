@@ -58,6 +58,27 @@
             height:311px;
         }
 
+        .loader{
+            box-sizing: border-box;
+            height:100%;
+            width:100%;
+
+            padding-top:100px;
+
+            background-color: #ddd;
+
+            color: #fff;
+            font-size: 30px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .loader i{
+            margin-bottom:20px;
+
+            font-size: 60px;
+        }
+
         #example-table-rowformat table{
             vertical-align: middle;
             border:none;
@@ -140,7 +161,9 @@
                         <p>In its simplest form, all you need to set in the options are the column titles and field names.</p>
                         <p>By default columns are resizable (using edge of column header) and sortable (as strings).</p>
 
-                        <div class="example-table" id="example-table-simple"></div>
+                        <div class="example-table" id="example-table-simple">
+                            <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                        </div>
                         <button class="view-source">View Source</button>
                         <fieldset class="source">
                             <legend>Source Code</legend>
@@ -168,7 +191,9 @@
                         <p>
                             Tables will automatically resize to fit the data
                         </p>
-                        <div class="example-table" id="example-table-fittodata"></div>
+                        <div class="example-table" id="example-table-fittodata">
+                            <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                        </div>
 
                         <button class="view-source">View Source</button>
                         <fieldset class="source">
@@ -200,7 +225,9 @@
                         <p>
                             If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
                         </p>
-                        <div class="example-table" id="example-table-fittowidth"></div>
+                        <div class="example-table" id="example-table-fittowidth">
+                            <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                        </div>
 
                         <button class="view-source">View Source</button>
                         <fieldset class="source">
@@ -234,7 +261,9 @@
 
                     <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your columns headers should be vertically aligned.</p>
 
-                    <div class="example-table" id="example-table-column-grouping"></div>
+                    <div class="example-table" id="example-table-column-grouping">
+                        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                    </div>
 
                     <button class="view-source">View Source</button>
                     <fieldset class="source">
@@ -397,7 +426,9 @@
                 <p>
                     You can call the <span class='param'>getData</span> method to get an array of all of the tables data, including any edits
                 </p>
-                <div class="example-table" id="example-table-editable"></div>
+                <div class="example-table" id="example-table-editable">
+                    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                </div>
 
                 <button class="view-source">View Source</button>
                 <fieldset class="source">
@@ -504,7 +535,9 @@ $("#example-table").tabulator({
 
 </p>
 
-<div class="example-table" id="example-table-sorting"></div>
+<div class="example-table" id="example-table-sorting">
+    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+</div>
 
 <button class="view-source">View Source</button>
 <fieldset class="source">
@@ -565,7 +598,9 @@ $("#sort-trigger").click(function(){
 
     <p>You can also set a row formatter using the <span class='param'>rowFormatter</span> option, this allows you to format the styling of the row as a whole</p>
 
-    <div class="example-table" id="example-table-formatter"></div>
+    <div class="example-table" id="example-table-formatter">
+    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+</div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -614,7 +649,9 @@ $("#example-table").tabulator({
     <p>If you are looking for a non grid based format to your table then you can use a row formatter to create custom row layouts.</p>
     <p>You can use the <span class='param'>rowFormatter</span> callback to replace the contents of the row with any layout you like. In this example we will create a simple table in each row containg and image and some vertically centered text properties.</p>
     <p>When replacing the entier contents of the row it is important to include only one column in your column definition array to ensure the table renders correctly. It is also advisable to enable <span class='param'>fitColumns</span> and disabled <span class='param'>colResizable</span> options.</p>
-    <div class="example-table" id="example-table-rowformat"></div>
+    <div class="example-table" id="example-table-rowformat">
+    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+</div>
     <button class="view-source">View Source</button>
     <fieldset class="source">
         <legend>Source Code</legend>
@@ -689,7 +726,9 @@ $("#example-table").tabulator("setData", cheeseData);</pre>
     <p>We will be passing an array of values into a field and then using a custom formatter to turn this array into a sparkline.</p>
     <p>The Sparklines library can be downloaded from <a href="https://github.com/gwatts/jquery.sparkline/" target="_blank">Git Hub.</a></p>
 
-    <div class="example-table" id="example-table-sparkline"></div>
+    <div class="example-table" id="example-table-sparkline">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -766,7 +805,9 @@ $("#example-table").tabulator({
     <p>You can group rows together using the <span class='param'>groupBy</span> option. To group by a field, set this option to the name of the field.</p>
     <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
 
-    <div class="example-table" id="example-table-grouping"></div>
+    <div class="example-table" id="example-table-grouping">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -850,7 +891,9 @@ $("#example-table").tabulator({
 
     </p>
 
-    <div class="example-table" id="example-table-filters"></div>
+    <div class="example-table" id="example-table-filters">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -916,7 +959,9 @@ $("#example-table").tabulator({
 
     <p>See the documentation for <a href="../docs#header-filters">Header Filtering</a> for more information.</p>
 
-    <div class="example-table" id="example-table-filters-header"></div>
+    <div class="example-table" id="example-table-filters-header">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -949,7 +994,9 @@ $("#example-table").tabulator({
 
     <p>If you wish to define how many rows should be shown on a page, set this in the <span class='param'>paginationSize</span> property. If you set the paginationSize without setting the height, the Tabulator will automatically resize to fit the data</p>
 
-    <div class="example-table" id="example-table-pagination"></div>
+    <div class="example-table" id="example-table-pagination">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -988,7 +1035,9 @@ $("#example-table").tabulator("setPage", 1);</pre>
     <p>
         Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
     </P>
-    <div class="example-table" id="example-table-colum-layout"></div>
+    <div class="example-table" id="example-table-colum-layout">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1026,7 +1075,9 @@ $("#example-table").tabulator("setPage", 1);</pre>
         <legend>AJAX Controls</legend>
         <button id="ajax-trigger">Load Data via AJAX</button>
     </fieldset>
-    <div class="example-table" id="example-table-ajax"></div>
+    <div class="example-table" id="example-table-ajax">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1083,7 +1134,9 @@ echo(json_encode($data));</pre>
         <button id="clear">Empty the table</button>
         <button id="reset">Reset</button>
     </fieldset>
-    <div class="example-table" id="example-table-adddel"></div>
+    <div class="example-table" id="example-table-adddel">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1135,7 +1188,9 @@ $("#reset").click(function(){
     <p>
         Using the <span class='param'>movableRows</span> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
     </p>
-    <div class="example-table" id="example-table-movable-rows"></div>
+    <div class="example-table" id="example-table-movable-rows">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1174,7 +1229,9 @@ $("#reset").click(function(){
         <button id="download-csv">Download CSV</button>
         <button id="download-json">Download JSON</button>
     </fieldset>
-    <div class="example-table" id="example-table-download"></div>
+    <div class="example-table" id="example-table-download">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1221,7 +1278,9 @@ $("#download-json").click(function(){
         <button id="lang-german">German</button>
         <button id="lang-default">Default (English)</button>
     </fieldset>
-    <div class="example-table" id="example-table-localization"></div>
+    <div class="example-table" id="example-table-localization">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1317,7 +1376,9 @@ $("#lang-default").click(function(){
         <li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span class='param'>dataLoaded</span> option when you create your</li>
     </ul>
 
-    <div class="example-table" id="example-table-callbacks"></div>
+    <div class="example-table" id="example-table-callbacks">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1358,7 +1419,9 @@ $("#lang-default").click(function(){
 
     <h2>Simple Theme</h2>
     <p>A plain, simplistic layout showing only basic grid lines. This can be found in <span class='param'>/themes/tabulator_simple.css</span></p>
-    <div id="example-table-theme-simple" class="example-themes"></div>
+    <div id="example-table-theme-simple" class="example-themes">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
     <button class="view-source">View Source</button>
     <fieldset class="source">
         <legend>Source Code</legend>
@@ -1368,7 +1431,9 @@ $("#lang-default").click(function(){
 
     <h2>Midnight Theme</h2>
     <p>A dark, stylish layout using simple shades of grey. This can be found in <span class='param'>/themes/tabulator_midnight.css</span></p>
-    <div id="example-table-theme-midnight" class="example-themes"></div>
+    <div id="example-table-theme-midnight" class="example-themes">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
     <button class="view-source">View Source</button>
     <fieldset class="source">
         <legend>Source Code</legend>
@@ -1378,7 +1443,9 @@ $("#lang-default").click(function(){
 
     <h2>Modern Theme</h2>
     <p>A neat, stylish layout using one primary color. This color can be set in the <span class='param'>@primary</span> variable in the <span class='param'>/themes/tabulator_modern.less</span> file to alter the style to match your colour scheme. This can be found in <span class='param'>/themes/tabulator_modern.css</span></p>
-    <div id="example-table-theme-modern" class="example-themes"></div>
+    <div id="example-table-theme-modern" class="example-themes">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
     <button class="view-source">View Source</button>
     <fieldset class="source">
         <legend>Source Code</legend>
@@ -1388,7 +1455,9 @@ $("#lang-default").click(function(){
 
     <h2>Autumn Theme</h2>
     <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
-    <div id="example-table-theme-autumn" class="example-themes"></div>
+    <div id="example-table-theme-autumn" class="example-themes">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
     <button class="view-source">View Source</button>
     <fieldset class="source">
         <legend>Source Code</legend>
@@ -1431,7 +1500,9 @@ $("#lang-default").click(function(){
     </style>
 
 
-    <div id="example-table-theme"></div>
+    <div id="example-table-theme">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
 
     <button class="view-source">View Source</button>
     <fieldset class="source">
@@ -1610,7 +1681,6 @@ $("#lang-default").click(function(){
         {id:19, name:"Hannah Farnsworth", progress:30, gender:"female", rating:1, col:"pink", dob:"11/02/1991"},
         {id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986"},
         ];
-
 
 
         //Simple Example
@@ -2301,9 +2371,6 @@ $("#lang-default").click(function(){
         $("#example-table-theme").tabulator("setData", tabledata);
 
 
-
-
-
         $(window).resize(function(){
             $(".tabulator").tabulator("redraw");
         });
@@ -2327,6 +2394,7 @@ $("#lang-default").click(function(){
                 transport: 'beacon'
             })
         });
+
 
     </script>
 
