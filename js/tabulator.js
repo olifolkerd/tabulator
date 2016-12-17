@@ -489,6 +489,21 @@
 
 		var locale = false; //hold the matching locale
 
+		//fill in any matching languge values
+		function traverseLang(trans, path){
+			for(var prop in trans){
+
+				if(typeof trans[prop] == "object"){
+					if(!path[prop]){
+						path[prop] = {};
+					}
+					traverseLang(trans[prop], path[prop]);
+				}else{
+					path[prop] = trans[prop];
+				}
+			}
+		}
+
 		//determing correct locale to load
 		if(desiredLocale === true && navigator.language){
 			//get local from system
@@ -513,21 +528,6 @@
 
 
 		if(locale){
-			//fill in any matching languge values
-			function traverseLang(trans, path){
-				for(var prop in trans){
-
-					if(typeof trans[prop] == "object"){
-						if(!path[prop]){
-							path[prop] = {};
-						}
-						traverseLang(trans[prop], path[prop]);
-					}else{
-						path[prop] = trans[prop];
-					}
-				}
-			}
-
 			traverseLang(self.options.langs[locale], self.lang);
 		}
 
@@ -791,69 +791,70 @@
 	setColumns: function(columns, update){
 		var self = this;
 
+		//update column properties
+		function updateCols(oldCols, newCols){
+			newCols.forEach(function(item, to){
+
+				var type = item.columns ? "group" : (item.field ? "field" : "object");
+				var from = search(oldCols, item, type);
+
+				if(from !== false){
+					var column = oldCols.splice(from, 1)[0];
+
+					column.width = item.width;
+					column.visible = item.visible;
+
+					oldCols.splice(to , 0, column);
+
+					if(type == "group"){
+						updateCols(column.columns, item.columns);
+					}
+				}
+
+			});
+		}
+
+		//find matching column
+		function search(columns, col, type){
+
+			var match = false;
+
+			$.each(columns, function(i, column){;
+
+				switch(type){
+					case "group":
+					if(col.title === column.title && col.columns.length === column.columns.length){
+						match = i;
+					}
+					break;
+
+					case "field":
+					if(col.field === column.field){
+						match = i;
+					}
+					break;
+
+					case "object":
+					if(col === column){
+						match = i;
+					}
+					break;
+				}
+
+				if(match !== false){
+					return false;
+				}
+			});
+
+			return match;
+		}
+
+
 		if(Array.isArray(columns)){
 
-			//if updateing columns work through exisiting column data
+			//if updating columns work through exisiting column data
 			if(update){
-
-				function updateCols(oldCols, newCols){
-					newCols.forEach(function(item, to){
-
-						var type = item.columns ? "group" : (item.field ? "field" : "object");
-						var from = search(oldCols, item, type);
-
-						if(from !== false){
-							var column = oldCols.splice(from, 1)[0];
-
-							column.width = item.width;
-							column.visible = item.visible;
-
-							oldCols.splice(to , 0, column);
-
-							if(type == "group"){
-								updateCols(column.columns, item.columns);
-							}
-						}
-
-					});
-				}
-
-				function search(columns, col, type){
-
-					var match = false;
-
-					$.each(columns, function(i, column){;
-
-						switch(type){
-							case "group":
-							if(col.title === column.title && col.columns.length === column.columns.length){
-								match = i;
-							}
-							break;
-
-							case "field":
-							if(col.field === column.field){
-								match = i;
-							}
-							break;
-
-							case "object":
-							if(col === column){
-								match = i;
-							}
-							break;
-						}
-
-						if(match !== false){
-							return false;
-						}
-					});
-
-					return match;
-				}
-
 				updateCols(self.options.columns, columns);
-
 			}else{
 				// if replaceing columns, replace columns array with new
 				self.options.columns = columns;
