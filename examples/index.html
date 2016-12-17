@@ -1720,7 +1720,6 @@ $("#lang-default").click(function(){
          {title:"Driver", field:"car", align:"center"},
          ],
          tableBuilt:function(){
-             console.log("built");
              $("#example-table-fittodata").closest("article").nextAll("article:first").trigger("build");
          }
      });
@@ -2132,7 +2131,6 @@ $("#lang-default").click(function(){
      });
 
      $("#example-table-filters-header").closest("article").on("build", function(){
-        console.log("build")
 
      /////// filter data in column headers ///////
 
