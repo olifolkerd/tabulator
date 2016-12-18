@@ -14,7 +14,7 @@
   color: #3759D7;
   font-weight: bold;
   white-space: nowrap;
-  overflow-x: hidden;
+  overflow: hidden;
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
