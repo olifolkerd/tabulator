@@ -2561,16 +2561,14 @@
 					var comparison = "match";
 
 					if($("input", $(this)).length){
-						if($("input").attr("type") != "number"){
+						if($("input", $(this)).attr("type") == "text" || $("input", $(this)).attr("type") == ""){
 							comparison = "partial";
 						}
 					}
 
-
 					filters[element.closest(".tabulator-col").data("field")] = {value:filterVal, comparison:comparison};
 				}
 			});
-
 
 			//filter all columns
 			function colFilter(data){
