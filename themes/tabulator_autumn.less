@@ -42,14 +42,18 @@
 
 	//column header containing element
 	.tabulator-header{
+		display: inline-block;
 		position:relative;
+
+		width:100%;
+
 		border-bottom:2px solid @headerSeperatorColor;
 		background-color: @headerBackgroundColor;
 		color: @headerTextColor;
 		font-weight:bold;
 
 		white-space: nowrap;
-		overflow:visible;
+		overflow-x:hidden;
 
 		-moz-user-select: none;
 		-khtml-user-select: none;

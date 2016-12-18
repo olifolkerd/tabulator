@@ -6,13 +6,15 @@
   font-size: 14px;
 }
 .tabulator .tabulator-header {
+  display: inline-block;
   position: relative;
+  width: 100%;
   border-bottom: 1px solid #999;
   background-color: #333;
   color: #fff;
   font-weight: bold;
   white-space: nowrap;
-  overflow: visible;
+  overflow-x: hidden;
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;

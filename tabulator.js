@@ -382,11 +382,19 @@
 		var scrollLeft = 0;
 		self.tableHolder.scroll(function(){
 
+			//scroll header along with table body
 			var holder = $(this);
 
-			// if(scrollLeft != $(this).scrollLeft()){
-				self.header.css({"margin-left": "-1" * holder.scrollLeft()});
-			// }
+			var left = holder.scrollLeft();
+			self.header.scrollLeft(left);
+
+			//adjust for vertical scrollbar moving table when present
+			var scrollWidth = self.header[0].scrollWidth - self.element.innerWidth();
+			if(left > scrollWidth){
+				self.header.css("margin-left", -(left - scrollWidth));
+			}else{
+				self.header.css("margin-left", 0);
+			}
 
 			//trigger progressive rendering on scroll
 			if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
