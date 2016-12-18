@@ -906,7 +906,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter");</pre>
 
                     <a class="anchor" id="header-filters"></a>
-                    <h2>Header Filtering <a class="example-link" href="../examples?#filter-header"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Header Filtering <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#filter-header"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Is is possible to filter the table data directly from the column headers, by setting the <span class='param'>headerFilter</span> parameter in the column definition object for that column.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerFilter:true} //show header filter matching the cells editor</pre>
@@ -917,17 +917,24 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerFilter:"input"} //show headerFilter using "input" editor</pre>
 
-                    <p>You can also pass a custom editor function to this parameter in the same way as you would for column editor. for more information see the <a href="#manipulating-data">Manipulating Data</a> section.</p>
+                    <p>You can also pass a custom editor function to this parameter in the same way as you would for column editor. For more information see the <a href="#manipulating-data">Manipulating Data</a> section.</p>
 
-                    <p>Filtering on string data types is done using a case insesitive comparison where even a partial match counts as successful. For all other data types it is a direct like for like comparison.</p>
+                    <p><STRONG>NOTE:</STRONG> At present, the <span class='param'>progress</span> and <span class='param'>star</span> editors are not available as header filters.</p>
+
+                    <h3>Filter Comparison Types <span class="label label-primary">Updated</span></h3>
+                    <p>The type of comparison function used on the filter value is dependent on the type of element used for the header filter. </p>
+
+                    <p>Standard input elements use a case insensitive comparison where even a partial match counts as successful, this allows for the matches to be displayed as the user types.</p>
+
+                    <p>For all other element types (select boxes, check boxes, input elements of type number) an exact match is needed for the comparison to be successful.</p>
+
+                    <h3>Placeholder Text</h3>
 
                     <p>The placeholder text used for input elements can be set using the <span class='param'>headerFilterPlaceholder</span> option in the table definition</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     headerFilterPlaceholder:"filter data...", //set column header placeholder text
 });</pre>
-
-                    <p><STRONG>NOTE:</STRONG> At present, the <span class='param'>progress</span> and <span class='param'>star</span> editors are not available as header filters.</p>
 
                 </article>
 
@@ -2451,7 +2458,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
-                        <li><a href="#filtering">Filtering Data</a></li>
+                        <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
                         <li><a href="#movable">Movable Rows and Columns</a></li>
