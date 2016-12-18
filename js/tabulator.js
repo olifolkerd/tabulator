@@ -2551,29 +2551,47 @@
 
 			var filters = {};
 
+			//determine filter value and type
 			$(".tabulator-header-filter", self.header).each(function(){
 				var element = $(this);
 				var filterVal = element.data("filter-val");
 
-				if(filterVal){
-					filters[element.closest(".tabulator-col").data("field")] = filterVal;
+				if(typeof filterVal !== "undefined" && filterVal !== ""){
+
+					var comparison = "match";
+
+					if($("input", $(this)).length){
+						if($("input").attr("type") != "number"){
+							comparison = "partial";
+						}
+					}
+
+
+					filters[element.closest(".tabulator-col").data("field")] = {value:filterVal, comparison:comparison};
 				}
 			});
 
 
+			//filter all columns
 			function colFilter(data){
 				var match = true;
 
 				for(var field in filters){
-					if(typeof data[field] == "string"){
-						if(data[field].toLowerCase().indexOf(filters[field].toLowerCase()) == -1){
+
+					switch(filters[field].comparison){
+						case "partial":
+						//match partial string mathes
+						if(String(data[field]).toLowerCase().indexOf(String(filters[field].value).toLowerCase()) == -1){
 							match = false;
 						}
-					}else{
-					    //match everything else explicitly
-					    if(data[field] != filters[field]){
-					    	match = false;
-					    }
+						break;
+
+						default:
+						//match everything else explicitly
+						if(data[field] != filters[field].value){
+							match = false;
+						}
+						break;
 					}
 				}
 
@@ -2666,10 +2684,16 @@
 					$(this).focus();
 				});
 
-				cellEditor.on("keyup change", function(e){
-					$(this).closest(".tabulator-header-filter").data("filter-val", $(this).val());
-					updateFilter()
+				cellEditor.on("keyup", function(e){
+					filter.trigger("editval", $(this).val())
 				});
+
+				//special case for numeric inputs, ad additional binding incase increment buttons are used
+				if(cellEditor.attr("type") == "number"){
+					cellEditor.on("change", function(e){
+						filter.trigger("editval", $(this).val())
+					});
+				}
 
 				filter.on("editval editcancel", function(e, value){
 					$(this).data("filter-val", value);
