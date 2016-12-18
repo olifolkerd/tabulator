@@ -1672,6 +1672,16 @@ $("#lang-default").click(function(){
         })
     });
 
+    //track sidebar navigation
+    $(".docs-sidenav li a").on("click", function(){
+        ga('send', 'event', {
+            eventCategory: 'Sidebar Nav - Examples',
+            eventAction: 'click',
+            eventLabel: $(this).attr("href").split("#")[1],
+            transport: 'beacon'
+        });
+    });
+
 
 
      //sample data to be used in all tabulators

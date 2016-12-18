@@ -2466,8 +2466,8 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#depricated">Depricated Functionality</a></li>
                     </ul>
                     <div class="share">
-                       <a data-type="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=400,toolbar=1,resizable=0'); return false;" title="Share On Facebook"><i data-type="fa fa-fw fa-facebook"></i></a>
-                       <a class="twitter" href="https://twitter.com/home?status=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=260,toolbar=1,resizable=0'); return false;"  title="Share On Twitter"><i class="fa fa-fw fa-twitter"></i></a>
+                       <a data-type="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=400,toolbar=1,resizable=0'); return false;" title="Share On Facebook"><i class="fa fa-fw fa-facebook"></i></a>
+                       <a data-type="twitter" href="https://twitter.com/home?status=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=260,toolbar=1,resizable=0'); return false;"  title="Share On Twitter"><i class="fa fa-fw fa-twitter"></i></a>
                        <a data-type="google" href="https://plus.google.com/share?url=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=510,toolbar=1,resizable=0'); return false;"  title="Share On Google+"><i class="fa fa-fw fa-google-plus"></i></a>
                     </div>
                 </nav>
@@ -2530,6 +2530,18 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                 transport: 'beacon'
             })
         });
+
+
+        //track sidebar navigation
+        $(".docs-sidenav li a").on("click", function(){
+            ga('send', 'event', {
+                eventCategory: 'Sidebar Nav - Documentation',
+                eventAction: 'click',
+                eventLabel: $(this).attr("href").split("#")[1],
+                transport: 'beacon'
+            });
+        });
+
 
         //google analytics tracking code
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

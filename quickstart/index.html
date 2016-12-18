@@ -235,6 +235,16 @@ $("#example-table").tabulator("setData", tabledata);</pre>
             })
         });
 
+        //track sidebar navigation
+        $(".docs-sidenav li a").on("click", function(){
+            ga('send', 'event', {
+                eventCategory: 'Sidebar Nav - Quickstart',
+                eventAction: 'click',
+                eventLabel: $(this).attr("href").split("#")[1],
+                transport: 'beacon'
+            });
+        });
+
         //sample data to be used in all tabulators
         var tabledata = [
             {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
