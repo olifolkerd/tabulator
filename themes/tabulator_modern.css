@@ -6,7 +6,6 @@
   font-size: 16px;
 }
 .tabulator .tabulator-header {
-  display: inline-block;
   position: relative;
   width: 100%;
   border-bottom: 3px solid #3759D7;
