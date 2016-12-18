@@ -1662,6 +1662,17 @@ $("#lang-default").click(function(){
         })
     });
 
+    //track documentation lookups
+    $(".doc-link").on("click", function(){
+        ga('send', 'event', {
+            eventCategory: 'Documentation Lookup',
+            eventAction: 'click',
+            eventLabel: $(this).attr("href").split("#")[1],
+            transport: 'beacon'
+        })
+    });
+
+
 
      //sample data to be used in all tabulators
      var tabledata = [
