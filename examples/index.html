@@ -1054,7 +1054,7 @@ $("#example-table").tabulator("setPage", 1);</pre>
     persistentLayoutID:"examplePerststance",
     columns:[
         {title:"Name", field:"name", width:200},
-        {title:"Progress", field:"progress", width:1000, sorter:"number"},
+        {title:"Progress", field:"progress", width:100, sorter:"number"},
         {title:"Gender", field:"gender"},
         {title:"Rating", field:"rating", width:80},
         {title:"Favourite Color", field:"col"},
@@ -2230,9 +2230,10 @@ $("#lang-default").click(function(){
          height:"311px",
          movableCols:true,
          persistentLayout: true,
+         persistentLayoutID:"examplePerststance2",
          columns:[
          {title:"Name", field:"name", width:200},
-         {title:"Progress", field:"progress", width:1000, sorter:"number"},
+         {title:"Progress", field:"progress", width:100, sorter:"number"},
          {title:"Gender", field:"gender"},
          {title:"Rating", field:"rating", width:80},
          {title:"Favourite Color", field:"col"},
