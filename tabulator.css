@@ -2,8 +2,9 @@
   position: relative;
   border: 1px solid #999;
   background-color: #888;
-  overflow: hidden;
   font-size: 14px;
+  text-align: left;
+  overflow: hidden;
 }
 .tabulator .tabulator-header {
   position: relative;

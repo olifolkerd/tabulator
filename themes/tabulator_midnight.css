@@ -4,6 +4,7 @@
   background-color: #222;
   overflow: hidden;
   font-size: 14px;
+  text-align: left;
 }
 .tabulator .tabulator-header {
   position: relative;
