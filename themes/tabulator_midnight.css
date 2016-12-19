@@ -137,6 +137,7 @@
   width: 100%;
   white-space: nowrap;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .tabulator .tabulator-tableHolder .tabulator-table {
   position: relative;
