@@ -617,6 +617,7 @@ $("#example-table").tabulator({
     progressiveRenderSize:500, //sets the number of rows to render per block (default = 20)
     progressiveRenderMargin:350, //distance in px before end of scroll before progressive render is triggered (default = 200)
 });</pre>
+                    <p><strong>NOTE:</strong> You must have the <span class='param'>height</span> option set for your table for progressive rendering to work. If your table does not have a height set then all the rows will be rendered in one go.</p>
 
                     <a class="anchor" id="progressive-ajax"></a>
 
@@ -629,7 +630,8 @@ $("#example-table").tabulator({
 });</pre>
                     <p>For a full overview of the remote pagination paramaters have a look at the <a href="#pagination-remote">Remote Pagination Documentation</a></p>
 
-                    <p><strong>NOTE:</strong> To ensure the best user experience it is recomended that the number of reows returned by the server for each page at least fills the hight of the table, while the system can handle smaller sizes it will result in a lot of ajax calls in very quick succession.</p>
+                    <p><strong>NOTE:</strong> To ensure the best user experience it is recomended that the number of rows returned by the server for each page at least fills the hight of the table, while the system can handle smaller sizes it will result in a lot of ajax calls in very quick succession.</p>
+
                 </article>
 
                 <a class="anchor" id="sorting"></a>
@@ -1530,7 +1532,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         </tbody>
                     </table>
 
-                    <h2>Progresive Render</h2>
+                    <h2>Progressive Render</h2>
                     <table>
                         <thead>
                             <th>Option</th>
