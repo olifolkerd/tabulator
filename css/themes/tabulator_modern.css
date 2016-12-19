@@ -135,6 +135,7 @@
   width: 100%;
   white-space: nowrap;
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 #example-table-theme-modern.tabulator .tabulator-tableHolder .tabulator-table {
   position: relative;
