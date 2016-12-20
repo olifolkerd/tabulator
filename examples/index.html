@@ -2502,20 +2502,15 @@ $("#lang-default").click(function(){
 
      });
 
-     //triger table load on #load
-     if(window.location.hash){
-         var element = $(".anchor[id=" + window.location.hash.substr(1) + "]").nextAll("article:first");
 
-         triggerBuild(element);
-         triggerBuild(element.prevAll("article:first"));
-         triggerBuild(element.nextAll("article:first"));
-     }else{
-         var element = $("#example-table-simple").closest("article");
+    $( document ).ready(function(){
+        var element = $(".anchor[id=" + $(".docs-sidenav li.active a").attr("href").substr(1) + "]").nextAll("article:first");
 
-         triggerBuild(element);
-         triggerBuild(element.prevAll("article:first"));
-         triggerBuild(element.nextAll("article:first"));
-     }
+        triggerBuild(element);
+        triggerBuild(element.prevAll("article:first"));
+        triggerBuild(element.nextAll("article:first"));
+    });
+
 
 
      $(window).resize(function(){
