@@ -1641,6 +1641,24 @@ $("#lang-default").click(function(){
         offset: 40
     });
 
+    //trigger build on tabulator element if present
+    function triggerBuild(element){
+        if(!$(".tabulator", element).length){
+            element.trigger("build");
+        }
+    }
+
+    //trigger table loads on focus
+    $('li').on('activate.bs.scrollspy', function (e) {
+        var id = $(this).find("a").attr("href").split("#")[1];
+
+        var element = $(".anchor[id=" + id + "]").nextAll("article:first")
+
+        triggerBuild(element);
+        triggerBuild(element.prevAll("article:first"));
+        triggerBuild(element.nextAll("article:first"));
+    });
+
     //track source views
     $(".view-source").on("click", function(){
         $(this).next(".source").slideToggle();
@@ -1736,9 +1754,6 @@ $("#lang-default").click(function(){
              {title:"Date Of Birth", field:"dob"},
              {title:"Driver", field:"car"},
              ],
-             tableBuilt:function(){
-                 $("#example-table-simple").closest("article").nextAll("article:first").trigger("build");
-             }
          });
 
          $("#example-table-simple").tabulator("setData", tabledata);
@@ -1759,9 +1774,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center"},
          ],
-         tableBuilt:function(){
-             $("#example-table-fittodata").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-fittodata").tabulator("setData", tabledata);
@@ -1783,9 +1795,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center"},
          ],
-         tableBuilt:function(){
-             $("#example-table-fittowidth").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-fittowidth").tabulator("setData", tabledata);
@@ -1818,9 +1827,6 @@ $("#lang-default").click(function(){
          },
 
          ],
-         tableBuilt:function(){
-             $("#example-table-column-grouping").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-column-grouping").tabulator("setData", tabledata);
@@ -1833,9 +1839,6 @@ $("#lang-default").click(function(){
      //build tabulator from HTML table example
      $("#example-table-table").tabulator({
          fitColumns:true,
-         tableBuilt:function(){
-             $("#example-table-table").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      });
@@ -1890,9 +1893,6 @@ $("#lang-default").click(function(){
          cellEdited:function(id,data,row){
 
          },
-         tableBuilt:function(){
-             $("#example-table-editable").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-editable").tabulator("setData", tabledata);
@@ -1917,9 +1917,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
          {title:"Driver", field:"car", align:"center", sorter:"boolean"},
          ],
-         tableBuilt:function(){
-             $("#example-table-sorting").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-sorting").tabulator("setData", tabledata);
@@ -1965,9 +1962,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {formatter:"buttonCross", width:30, align:"center"},
          ],
-         tableBuilt:function(){
-             $("#example-table-formatter").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-formatter").tabulator("setData", tabledata);
@@ -2011,9 +2005,6 @@ $("#lang-default").click(function(){
              //append newly formatted contents to the row
              row.append(table);
          },
-         tableBuilt:function(){
-             $("#example-table-rowformat").closest("article").nextAll("article:first").trigger("build");
-         }
      })
 
      $("#example-table-rowformat").tabulator("setData", cheeseData);
@@ -2065,9 +2056,6 @@ $("#lang-default").click(function(){
          {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
          {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
          ],
-         tableBuilt:function(){
-             $("#example-table-sparkline").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      var sparkData = [
@@ -2105,9 +2093,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
-         tableBuilt:function(){
-             $("#example-table-grouping").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-grouping").tabulator("setData", tabledata);
@@ -2161,9 +2146,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
-         tableBuilt:function(){
-             $("#example-table-filters").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-filters").tabulator("setData", tabledata);
@@ -2186,9 +2168,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
          ],
-         tableBuilt:function(){
-             $("#example-table-filters-header").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-filters-header").tabulator("setData", tabledata);
@@ -2212,9 +2191,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
-         tableBuilt:function(){
-             $("#example-table-pagination").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-pagination").tabulator("setData", tabledatabig);
@@ -2240,9 +2216,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
-         tableBuilt:function(){
-             $("#example-table-colum-layout").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-colum-layout").tabulator("setData", tabledata);
@@ -2265,9 +2238,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
          ],
-         tableBuilt:function(){
-             $("#example-table-ajax").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#ajax-trigger").click(function(){
@@ -2311,9 +2281,6 @@ $("#lang-default").click(function(){
          cellEdited:function(id,data,row,index){
 
          },
-         tableBuilt:function(){
-             $("#example-table-adddel").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-adddel").tabulator("setData", tabledata);
@@ -2344,9 +2311,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
-         tableBuilt:function(){
-             $("#example-table-download").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-download").tabulator("setData", tabledata);
@@ -2427,9 +2391,6 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob"},
          {title:"Driver", field:"car"},
          ],
-         tableBuilt:function(){
-             $("#example-table-localization").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-localization").tabulator("setData", tabledata);
@@ -2454,9 +2415,6 @@ $("#lang-default").click(function(){
          rowMoved:function(id,data,row,index){
              alert("Row: " + data.name + " has been moved to position " + index)
          },
-         tableBuilt:function(){
-             $("#example-table-movable-rows").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-movable-rows").tabulator("setData", tabledata);
@@ -2485,9 +2443,6 @@ $("#lang-default").click(function(){
          rowContext:function(e, id, data, row){
              alert("Row " + id + " Context Clicked!!!!")
          },
-         tableBuilt:function(){
-             $("#example-table-callbacks").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-callbacks").tabulator("setData", tabledata);
@@ -2514,9 +2469,6 @@ $("#lang-default").click(function(){
          rowContext:function(e, id, data, row){
              alert("Row " + id + " Context Clicked!!!!")
          },
-         tableBuilt:function(){
-             $(".example-themes").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $(".example-themes").tabulator("setData", tabledata);
@@ -2544,16 +2496,26 @@ $("#lang-default").click(function(){
          rowContext:function(e, id, data, row){
              alert("Row " + id + " Context Clicked!!!!")
          },
-         tableBuilt:function(){
-             $("#example-table-theme").closest("article").nextAll("article:first").trigger("build");
-         }
      });
 
      $("#example-table-theme").tabulator("setData", tabledata);
 
      });
 
-     $("#example-table-simple").closest("article").trigger("build");
+     //triger table load on #load
+     if(window.location.hash){
+         var element = $(".anchor[id=" + window.location.hash.substr(1) + "]").nextAll("article:first");
+
+         triggerBuild(element);
+         triggerBuild(element.prevAll("article:first"));
+         triggerBuild(element.nextAll("article:first"));
+     }else{
+         var element = $("#example-table-simple").closest("article");
+
+         triggerBuild(element);
+         triggerBuild(element.prevAll("article:first"));
+         triggerBuild(element.nextAll("article:first"));
+     }
 
 
      $(window).resize(function(){
