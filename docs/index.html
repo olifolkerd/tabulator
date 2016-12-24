@@ -1149,6 +1149,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 })</pre>
                     <p><strong>NOTE:</strong> When grouping is enabled, rows can only be moved within their own group.</p>
 
+                    <h3>Row Moved Event</h3>
+
                     <p>When a row has been successfully moved, the <span class='param'>rowMoved</span> callback will be triggered.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     rowMoved:function(id, data, row, index){
@@ -1158,6 +1160,10 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
         //index - new position of row in table
     }
 });</pre>
+
+					<h3>Moving on Touch Devices</h3>
+
+					<p>The jQuery library does not currently support touch events. To enable movable rows on a touch device, you will need to include the excellent <a href="http://touchpunch.furf.com/" target="_blank">touchpunch.js library</a> which adds touch event support touch event support to jQuery.</p>
 
                     <a class="anchor" id="col-move"></a>
                     <h2>Movable Columns</h2>
@@ -1169,6 +1175,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <p>This will allow users to drag columns around using the column headers at the top of the table.</p>
 
                     <p><strong>NOTE:</strong> icon/button columns and row handle columns are not movable.</p>
+
+                    <h3>Column Moved Event</h3>
 
                     <p>When a column has been successfully moved, the <span class='param'>colMoved</span> callback will be triggered.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
