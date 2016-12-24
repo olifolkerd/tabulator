@@ -2454,6 +2454,7 @@
 			container.sortable({
 				axis: "x",
 				opacity:1,
+				tolerance: "pointer",
 				// containment: container,
 				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
 				start: function(event, ui){
