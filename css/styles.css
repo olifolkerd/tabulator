@@ -153,6 +153,10 @@ h3 .label {
 .features .feature .frame .fa {
   font-size: 5em;
 }
+.docs-sidebar {
+  height: calc(100% - 52px);
+  overflow-y: auto;
+}
 ul.docs-sidenav {
   margin-top: 20px;
 }
