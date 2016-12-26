@@ -158,6 +158,13 @@
   background-color: #999;
   cursor: pointer;
 }
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected {
+  background-color: #000;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected:hover {
+  background-color: #888;
+  cursor: pointer;
+}
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
   display: inline-block;
   box-sizing: border-box;
