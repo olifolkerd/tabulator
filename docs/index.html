@@ -940,65 +940,6 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                 </article>
 
-                <a class="anchor" id="selectable"></a>
-                <article>
-                    <h1>Selectable Rows <span class="label label-danger">New</span> <a class="example-link" href="../examples#selectable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
-
-                    <p>You can make your table row selectable, using the <span class='param'>selectable</span> option. This will allow userts to toggle the selected state of a row by clicking on it.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-	selectable:true,
-});</pre>
-
-					<p>The selectable option can take one of a number of different value:
-						<ul>
-						<li><strong>false</strong> - selectable rows are disabled</li>
-						<li><strong>true</strong> - selectable rows are enabled, and you can select as many as you want</li>
-						<li><strong>integer</strong> - any integer value, this sets the maximum number of rows that can be selected</li>
-						<li><strong>"highlight"</strong> <i>(default)</i> - rows have the same hover stylings as selectable rows but do not change state when clicked. This is great for when you want to trigger other options on row hover.</li>
-						</ul>
-					</p>
-
-					<h2>Selection Changed Event</h2>
-
-					<p>Whenever the number of selected rows changes, through selection or deselection, the <span class='param'>rowSelectionChanged</span> event is triggered. This passes an array of the data objects for each row in the order they were selected as the first argument, and an array of jQuery elements for each of the rows in order of selection as the second argument.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowSelectionChanged:function(data, rows){
-    	//data - array of data objects for the selected rows in order of selection
-    	//rows - array of jQuery elements for the selected rows in order of selection
-    },
-});</pre>
-
-					<h2>Programatic Row Selection</h2>
-
-					<p>As well as clicking on a row, you can trigger the selection or deselection of a row programatically.</p>
-
-					<h3>Select Row</h3>
-					<p>To programatically select a row you can use the <span class='param'>selectRow</span> function.</p>
-
-					<p>To select a specific you you can pass the id for the row or the jQuery element of that row into the first argument of the function. If you leave the argument blank you will select all rows (if you have set the selectable option to a numeric value, it will be ignored when selecting all rows).</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("selectRow", 1); //select row with id of 1</pre>
-
-                    <h3>Deselect Row</h3>
-
-					<p>To programatically deselect a row you can use the <span class='param'>deselectRow</span> function.</p>
-
-					<p>To deselect a specific you you can pass the id for the row or the jQuery element of that row into the first argument of the function. If you leave the argument blank you will deselect all rows.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("deselectRow", 1); //deselect row with id of 1</pre>
-
-                    <h2>Get Selected Data</h2>
-
-                    <p>To get the data objects for the selected rows at any time you can use the <span class='param'>getSelectedData</span> function.</p>
-
-                    <p>This will return an array of the selected rows data objects in the order in which they were selected.</p>
-
-                    <pre class="prettyprint lang-js">var selectedData = $("#example-table").tabulator("getSelectedData"); //get array of currently selected data.</pre>
-
-				</article>
-
                 <a class="anchor" id="manipulating-data"></a>
                 <article>
                     <h1>Editing &amp; Manipulating Data </h1>
@@ -1188,6 +1129,65 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p>Accessors will only be applied to the data returned by the <span class='param'>getData</span> function and will not affect the data used by the table itself.</p>
                 </article>
+
+                <a class="anchor" id="selectable"></a>
+                <article>
+                    <h1>Selectable Rows <span class="label label-danger">New</span> <a class="example-link" href="../examples#selectable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+
+                    <p>You can make your table row selectable, using the <span class='param'>selectable</span> option. This will allow userts to toggle the selected state of a row by clicking on it.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+	selectable:true,
+});</pre>
+
+					<p>The selectable option can take one of a number of different value:
+						<ul>
+						<li><strong>false</strong> - selectable rows are disabled</li>
+						<li><strong>true</strong> - selectable rows are enabled, and you can select as many as you want</li>
+						<li><strong>integer</strong> - any integer value, this sets the maximum number of rows that can be selected</li>
+						<li><strong>"highlight"</strong> <i>(default)</i> - rows have the same hover stylings as selectable rows but do not change state when clicked. This is great for when you want to trigger other options on row hover.</li>
+						</ul>
+					</p>
+
+					<h2>Selection Changed Event</h2>
+
+					<p>Whenever the number of selected rows changes, through selection or deselection, the <span class='param'>rowSelectionChanged</span> event is triggered. This passes an array of the data objects for each row in the order they were selected as the first argument, and an array of jQuery elements for each of the rows in order of selection as the second argument.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowSelectionChanged:function(data, rows){
+    	//data - array of data objects for the selected rows in order of selection
+    	//rows - array of jQuery elements for the selected rows in order of selection
+    },
+});</pre>
+
+					<h2>Programatic Row Selection</h2>
+
+					<p>As well as clicking on a row, you can trigger the selection or deselection of a row programatically.</p>
+
+					<h3>Select Row</h3>
+					<p>To programatically select a row you can use the <span class='param'>selectRow</span> function.</p>
+
+					<p>To select a specific you you can pass the id for the row or the jQuery element of that row into the first argument of the function. If you leave the argument blank you will select all rows (if you have set the selectable option to a numeric value, it will be ignored when selecting all rows).</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("selectRow", 1); //select row with id of 1</pre>
+
+                    <h3>Deselect Row</h3>
+
+					<p>To programatically deselect a row you can use the <span class='param'>deselectRow</span> function.</p>
+
+					<p>To deselect a specific you you can pass the id for the row or the jQuery element of that row into the first argument of the function. If you leave the argument blank you will deselect all rows.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("deselectRow", 1); //deselect row with id of 1</pre>
+
+                    <h2>Get Selected Data</h2>
+
+                    <p>To get the data objects for the selected rows at any time you can use the <span class='param'>getSelectedData</span> function.</p>
+
+                    <p>This will return an array of the selected rows data objects in the order in which they were selected.</p>
+
+                    <pre class="prettyprint lang-js">var selectedData = $("#example-table").tabulator("getSelectedData"); //get array of currently selected data.</pre>
+
+				</article>
 
                 <a class="anchor" id="movable"></a>
                 <article>
@@ -2549,9 +2549,9 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
                         <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#selectable">Selectable Rows <span class="label label-danger">New</span></a></li>
                         <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
+                        <li><a href="#selectable">Selectable Rows <span class="label label-danger">New</span></a></li>
                         <li><a href="#movable">Movable Rows and Columns</a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
                         <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
