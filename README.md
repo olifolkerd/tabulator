@@ -72,7 +72,6 @@ Coming Soon
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
 
-- Selectable Rows
 - Custom Row Templates
 - Aditional Editors and Formatters
 - Column Calculations
