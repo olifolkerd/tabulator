@@ -22,6 +22,9 @@
 @rowTextColor:#333; //table text color
 @rowHoverBackground:#bbb; //row background color on hover
 
+@rowSelectedBackground: #9ABCEA; //row background color when selected
+@rowSelectedBackgroundHover: #769BCC;//row background color when selected and hovered
+
 @editBoxColor:#1D68CD; //border color for edit boxes
 
 //footer themeing
@@ -35,10 +38,14 @@
 //Tabulator Containing Element
 .tabulator{
 	position: relative;
+
 	border: 1px solid @borderColor;
+
 	background-color: @backgroundColor;
-	overflow:hidden;
+
 	font-size:@textSize;
+	text-align: left;
+	overflow:hidden;
 
 	//column header containing element
 	.tabulator-header{
@@ -239,8 +246,17 @@
 					background-color: @rowAltBackgroundColor;
 				}
 
-				&.selectable:hover{
+				&.tabulator-selectable:hover{
 					background-color:@rowHoverBackground;
+					cursor: pointer;
+				}
+
+				&.tabulator-selected{
+					background-color:@rowSelectedBackground;
+				}
+
+				&.tabulator-selected:hover{
+					background-color:@rowSelectedBackgroundHover;
 					cursor: pointer;
 				}
 

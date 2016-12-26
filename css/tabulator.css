@@ -2,8 +2,9 @@
   position: relative;
   border: 1px solid #999;
   background-color: #888;
-  overflow: hidden;
   font-size: 14px;
+  text-align: left;
+  overflow: hidden;
 }
 .tabulator .tabulator-header {
   position: relative;
@@ -146,8 +147,15 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
   background-color: #EFEFEF;
 }
-.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover {
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover {
   background-color: #bbb;
+  cursor: pointer;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected {
+  background-color: #9ABCEA;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected:hover {
+  background-color: #769BCC;
   cursor: pointer;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-moving {

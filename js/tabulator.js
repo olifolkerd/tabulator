@@ -38,6 +38,8 @@
 	data:[],//array to hold data for table
 	activeData:[],//array to hold data that is active in the DOM
 
+	selectedRows:[], //array to hold currently selected rows
+
 	firstRender:true, //layout table widths correctly on first render
 	mouseDrag:false, //mouse drag tracker;
 	mouseDragWidth:false, //starting width of colum on mouse drag
@@ -147,7 +149,7 @@
 
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
 
-		selectable:true, //highlight rows on hover
+		false:"highlight", //highlight rows on hover
 
 		ajaxURL:false, //url for ajax loading
 		ajaxParams:{}, //params for ajax loading
@@ -164,6 +166,7 @@
 		rowContext:function(){},
 		rowMoved:function(){},
 		rowUpdated:function(){},
+		rowSelectionChanged:function(){},
 
 		cellEdited:function(){},
 
@@ -2049,6 +2052,11 @@
 		row.on("click", function(e){self._rowClick(e, row, item)});
 		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
+		//bind row select events
+		if(self.options.selectable && self.options.selectable != "highlight"){
+			row.on("click", function(e){self._rowSelect(row)});
+		}
+
 		//add row handle if movable rows enabled
 		if(self.options.movableRows){
 
@@ -2628,7 +2636,7 @@
 
 				var minWidth = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
 
-				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="none"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
+				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="' + (options.sortBy == column.field ? (options.sortDir == "asc" ? "ascending" : "descending") : "none") + '"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
 				var colContent = $(".tabulator-col-content", col);
 				var colTitle = $(".tabulator-col-title", col);
 
@@ -2857,7 +2865,7 @@
 								if(newWidth < minWidth){
 									col.css({"min-width":newWidth});
 								}
-									col.css({width:newWidth});
+								col.css({width:newWidth});
 
 							}
 
@@ -2916,10 +2924,10 @@
 
 		if(!minimal){
 			//hover over rows
-			if(self.options.selectable){
-				$(".tabulator-row").addClass("selectable");
+			if(self.options.selectable !== false){
+				$(".tabulator-row", self.tableHolder).addClass("tabulator-selectable");
 			}else{
-				$(".tabulator-row").removeClass("selectable");
+				$(".tabulator-row", self.tableHolder).removeClass("tabulator-selectable");
 			}
 
 			//apply row formatter
@@ -2960,6 +2968,103 @@
 		formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
 
 		return formatter.call(self, value, data, cell, row, this.options, formatterParams);
+	},
+
+
+	//////////////////// Row Selection Handlers ////////////////////
+
+	//toggle row selection
+	_rowSelect:function(row){
+		var self = this;
+
+		if(row.hasClass("tabulator-selected")){
+			self.deselectRow(row);
+		}else{
+			self.selectRow(row);
+		}
+	},
+
+	//select row
+	selectRow:function(row, silent){
+		var self = this;
+
+		//handle select all situation
+		if(typeof row === "undefined"){
+			$(".tabulator-row:not(.tabulator-selected)", self.tableHolder).each(function(){
+				self.selectRow($(this), true);
+			})
+
+			self._rowSelectionChanged();
+
+			return true;
+		}
+
+		if(isNaN(self.options.selectable) || self.options.selectable === true || (!isNaN(self.options.selectable) && self.selectedRows.length < self.options.selectable)){
+
+			var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
+
+			if(row.length){
+				self.selectedRows.push(row);
+
+				row.addClass("tabulator-selected");
+
+				if(!silent){
+					self._rowSelectionChanged();
+				}
+			}else{
+				console.error("Tablulator ERROR (row select): No Matching Row Found");
+			}
+		}else{
+			console.error("Tablulator ERROR (row select): Max selectable rows set at " + self.options.selectable);
+		}
+
+	},
+
+	//deselect row
+	deselectRow:function(row, silent){
+		var self = this;
+
+		//handle deselect all situation
+		if(typeof row === "undefined"){
+			$(".tabulator-row.tabulator-selected", self.tableHolder).each(function(){
+				self.deselectRow($(this), true);
+			})
+
+			self._rowSelectionChanged();
+
+			return true;
+		}
+
+		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
+
+		if(row.length){
+			self.selectedRows.forEach(function(element, i){
+				if(element[0] === row[0]){
+					self.selectedRows.splice(i, 1);
+				}
+			});
+
+			row.removeClass("tabulator-selected");
+
+			if(!silent){
+				self._rowSelectionChanged();
+			}
+		}else{
+			console.error("Tablulator ERROR (row select): No Matching Row Found");
+		}
+	},
+
+	//handle change in row selection count
+	_rowSelectionChanged:function(){
+		var self = this;
+
+		var data = [];
+
+		self.selectedRows.forEach(function(row){
+			data.push(row.data("data"));
+		});
+
+		self.options.rowSelectionChanged(data, self.selectedRows);
 	},
 
 	////////////////// Table Interaction Handlers //////////////////
