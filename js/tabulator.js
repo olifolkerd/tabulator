@@ -3065,7 +3065,7 @@
 		});
 
 		return data;
-	}
+	},
 
 	//handle change in row selection count
 	_rowSelectionChanged:function(){
