@@ -2985,31 +2985,59 @@
 	},
 
 	//select row
-	selectRow:function(row){
+	selectRow:function(row, silent){
 		var self = this;
 
-		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
-
-		if(row.length){
-			self.selectedRows.push(row);
-
-			row.addClass("tabulator-selected");
+		//handle select all situation
+		if(typeof row === "undefined"){
+			$(".tabulator-row:not(.tabulator-selected)", self.tableHolder).each(function(){
+				self.selectRow($(this), true);
+			})
 
 			self._rowSelectionChanged();
+
+			return true;
+		}
+
+		if(isNaN(self.options.selectable) || (!isNaN(self.options.selectable) && self.selectedRows.length < self.options.selectable)){
+
+			var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
+
+			if(row.length){
+				self.selectedRows.push(row);
+
+				row.addClass("tabulator-selected");
+
+				if(!silent){
+					self._rowSelectionChanged();
+				}
+			}else{
+				console.error("Tablulator ERROR (row select): No Matching Row Found");
+			}
 		}else{
-			console.error("Tablulator ERROR (row select): No Matching Row Found");
+			console.error("Tablulator ERROR (row select): Max selectable rows set at " + self.options.selectable);
 		}
 
 	},
 
 	//deselect row
-	deselectRow:function(row){
+	deselectRow:function(row, silent){
 		var self = this;
+
+		//handle deselect all situation
+		if(typeof row === "undefined"){
+			$(".tabulator-row.tabulator-selected", self.tableHolder).each(function(){
+				self.deselectRow($(this), true);
+			})
+
+			self._rowSelectionChanged();
+
+			return true;
+		}
 
 		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
 
 		if(row.length){
-
 			self.selectedRows.forEach(function(element, i){
 				if(element[0] === row[0]){
 					self.selectedRows.splice(i, 1);
@@ -3018,7 +3046,9 @@
 
 			row.removeClass("tabulator-selected");
 
-			self._rowSelectionChanged();
+			if(!silent){
+				self._rowSelectionChanged();
+			}
 		}else{
 			console.error("Tablulator ERROR (row select): No Matching Row Found");
 		}
@@ -3035,7 +3065,6 @@
 		});
 
 		self.options.rowSelectionChanged(data, self.selectedRows);
-
 	},
 
 	////////////////// Table Interaction Handlers //////////////////
