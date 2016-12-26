@@ -2049,6 +2049,11 @@
 		row.on("click", function(e){self._rowClick(e, row, item)});
 		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
+		//bind row select events
+		if(self.options.selectable && self.options.selectable != "highlight"){
+			row.on("click", function(e){self._rowSelect(row)});
+		}
+
 		//add row handle if movable rows enabled
 		if(self.options.movableRows){
 
@@ -2960,6 +2965,30 @@
 		formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
 
 		return formatter.call(self, value, data, cell, row, this.options, formatterParams);
+	},
+
+
+	//////////////////// Row Selection Handlers ////////////////////
+
+	//toggle row selection
+	_rowSelect:function(row){
+		var self = this;
+
+		if(row.hasClass("tabulator-selected")){
+			self.deselectRow(row);
+		}else{
+			self.selectRow(row);
+		}
+	},
+
+	//select row
+	selectRow:function(row){
+		row.addClass("tabulator-selected");
+	},
+
+	//deselect row
+	deselectRow:function(row){
+		row.removeClass("tabulator-selected");
 	},
 
 	////////////////// Table Interaction Handlers //////////////////

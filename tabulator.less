@@ -22,6 +22,9 @@
 @rowTextColor:#333; //table text color
 @rowHoverBackground:#bbb; //row background color on hover
 
+@rowSelectedBackground: #9ABCEA; //row background color when selected
+@rowSelectedBackgroundHover: #769BCC;//row background color when selected and hovered
+
 @editBoxColor:#1D68CD; //border color for edit boxes
 
 //footer themeing
@@ -245,6 +248,15 @@
 
 				&.tabulator-selectable:hover{
 					background-color:@rowHoverBackground;
+					cursor: pointer;
+				}
+
+				&.tabulator-selected{
+					background-color:@rowSelectedBackground;
+				}
+
+				&.tabulator-selected:hover{
+					background-color:@rowSelectedBackgroundHover;
 					cursor: pointer;
 				}
 
