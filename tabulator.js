@@ -3054,6 +3054,19 @@
 		}
 	},
 
+	//return currently selected data
+	getSelectedData:function(){
+		var self = this;
+
+		var data = [];
+
+		self.selectedRows.forEach(function(row){
+			data.push(row.data("data"));
+		});
+
+		return data;
+	},
+
 	//handle change in row selection count
 	_rowSelectionChanged:function(){
 		var self = this;
