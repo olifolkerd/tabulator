@@ -156,7 +156,7 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
   background-color: #DE8D1A;
 }
-.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover {
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover {
   background-color: #A0640F;
   cursor: pointer;
 }

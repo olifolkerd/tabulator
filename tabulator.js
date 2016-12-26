@@ -2917,9 +2917,9 @@
 		if(!minimal){
 			//hover over rows
 			if(self.options.selectable){
-				$(".tabulator-row").addClass("selectable");
+				$(".tabulator-row").addClass("tabulator-selectable");
 			}else{
-				$(".tabulator-row").removeClass("selectable");
+				$(".tabulator-row").removeClass("tabulator-selectable");
 			}
 
 			//apply row formatter

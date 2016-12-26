@@ -159,10 +159,10 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) .tabulator-cell {
   background-color: #fff;
 }
-.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover {
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover {
   cursor: pointer;
 }
-.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.selectable:hover .tabulator-cell {
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover .tabulator-cell {
   background-color: #bbb;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
