@@ -688,11 +688,17 @@ $("#example-table").tabulator({
 ]);</pre>
 
                     <h2>Get Currently Sorted Column </h2>
-                    <p>If you need to retrieve the details of the currently sorted column at any point you can use the <span class='param'>getSort</span> function. This will return an object with two properties, <span class='param'>field</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
+                    <p>If you need to retrieve the details of the currently sorted column at any point you can use the <span class='param'>getSort</span> function. </p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getSort");</pre>
+
+                    <p>This will return an object with two properties, <span class='param'>field</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
+
+					<pre class="prettyprint lang-js">{
+	field:"name",
+	dir:"asc",
+}</pre>
 
                     <p>If a the table is not currently sorted then the value of both of these properties will be <span class='param'>false</span>.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getSort");</pre>
 
                 </article>
 
