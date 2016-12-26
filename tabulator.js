@@ -149,7 +149,7 @@
 
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
 
-		selectable:true, //highlight rows on hover
+		false:"highlight", //highlight rows on hover
 
 		ajaxURL:false, //url for ajax loading
 		ajaxParams:{}, //params for ajax loading
@@ -2925,9 +2925,9 @@
 		if(!minimal){
 			//hover over rows
 			if(self.options.selectable !== false){
-				$(".tabulator-row").addClass("tabulator-selectable");
+				$(".tabulator-row", self.tableHolder).addClass("tabulator-selectable");
 			}else{
-				$(".tabulator-row").removeClass("tabulator-selectable");
+				$(".tabulator-row", self.tableHolder).removeClass("tabulator-selectable");
 			}
 
 			//apply row formatter
@@ -2999,7 +2999,7 @@
 			return true;
 		}
 
-		if(isNaN(self.options.selectable) || (!isNaN(self.options.selectable) && self.selectedRows.length < self.options.selectable)){
+		if(isNaN(self.options.selectable) || self.options.selectable === true || (!isNaN(self.options.selectable) && self.selectedRows.length < self.options.selectable)){
 
 			var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
 
