@@ -1121,6 +1121,77 @@ $data = [
 echo(json_encode($data));</pre>
     </fieldset>
 </article>
+
+<a class="anchor" id="selectable"></a>
+<article>
+    <h1>Selectable Rows <a class="doc-link" href="../docs#selectable"><i class="fa fa-external-link"></i> Documentation</a></h1>
+
+	<p>Tabulator allows for row selection by clicking on rows or through function calls.</p>
+
+	<fieldset>
+	    <legend>Selection Controls</legend>
+
+		<button id="select-row">Select "Oli Bob"</button>
+		<button id="deselect-row">Deselect "Oli Bob"</button>
+		<button id="select-all">Select All</button>
+		<button id="deselect-all">Deselect All</button>
+
+		<span id="select-stats" style="margin:20px 20px 0 20px; font-size: 1em;"><strong>Selected: <span>0</span></strong></span>
+	</fieldset>
+
+	<div class="example-table" id="example-table-selectable">
+	    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+	</div>
+
+	<button class="view-source">View Source</button>
+	<fieldset class="source">
+	    <legend>Source Code</legend>
+	    <h3>HTML</h3>
+	    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+	    <h3>JavaScript</h3>
+	    <pre class="prettyprint lang-js">//Build Tabulator
+$("#example-table").tabulator({
+    height:"311px",
+    selectable:true, //make rows selectable
+    columns:[
+	    {title:"Name", field:"name", width:200},
+	    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+	    {title:"Gender", field:"gender", width:100},
+	    {title:"Rating", field:"rating", align:"center", width:80},
+	    {title:"Favourite Color", field:"col"},
+	    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+	    {title:"Driver", field:"car", align:"center", width:100},
+    ],
+    rowSelectionChanged:function(data, rows){
+        //update selected row counter on selection change
+    	$("#select-stats span").text(data.length);
+    },
+});
+
+//select row on "select" button click
+$("#select-row").click(function(){
+    $("#example-table").tabulator("selectRow", 1);
+});
+
+//deselect row on "deselect" button click
+$("#deselect-row").click(function(){
+    $("#example-table").tabulator("deselectRow", 1);
+});
+
+//select row on "select all" button click
+$("#select-all").click(function(){
+    $("#example-table").tabulator("selectRow");
+});
+
+//deselect row on "deselect all" button click
+$("#deselect-all").click(function(){
+    $("#example-table").tabulator("deselectRow");
+});</pre>
+
+	</fieldset>
+
+</article>
 <a class="anchor" id="adddel"></a>
 <article>
     <h1>Add / Delete Rows <a class="doc-link" href="../docs?#addrow"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -1587,6 +1658,7 @@ $("#lang-default").click(function(){
             <li><a href="#pagination">Pagination</a></li>
             <li><a href="#persistance">Persistent Column Layout</a></li>
             <li><a href="#ajax">AJAX Data Loading</a></li>
+            <li><a href="#selectable">Selectable Rows</a></li>
             <li><a href="#adddel">Add / Delete Rows</a></li>
             <li><a href="#movable">Movable Rows</a></li>
             <li><a href="#download">Download Table Data</a></li>
@@ -2245,6 +2317,46 @@ $("#lang-default").click(function(){
          $("#example-table-ajax").tabulator("setData");
      })
 
+     });
+
+
+     //Selectable rows example
+     $("#example-table-selectable").closest("article").on("build", function(){
+
+     	$("#select-row").click(function(){
+     	    $("#example-table-selectable").tabulator("selectRow", 1);
+     	})
+
+     	$("#deselect-row").click(function(){
+     	    $("#example-table-selectable").tabulator("deselectRow", 1);
+     	})
+
+     	$("#select-all").click(function(){
+     	    $("#example-table-selectable").tabulator("selectRow");
+     	})
+
+     	$("#deselect-all").click(function(){
+     	    $("#example-table-selectable").tabulator("deselectRow");
+     	})
+
+     	$("#example-table-selectable").tabulator({
+     	    height:"311px",
+     	    selectable:true,
+     	    columns:[
+     	    {title:"Name", field:"name", width:200},
+     	    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+     	    {title:"Gender", field:"gender", width:100},
+     	    {title:"Rating", field:"rating", align:"center", width:80},
+     	    {title:"Favourite Color", field:"col"},
+     	    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+     	    {title:"Driver", field:"car", align:"center", width:100},
+     	    ],
+     	    rowSelectionChanged:function(data, rows){
+     	    	$("#select-stats span").text(data.length);
+     	    },
+     	});
+
+     	$("#example-table-selectable").tabulator("setData", tabledata);
      });
 
      $("#example-table-adddel").closest("article").on("build", function(){
