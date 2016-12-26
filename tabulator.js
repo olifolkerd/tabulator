@@ -38,6 +38,8 @@
 	data:[],//array to hold data for table
 	activeData:[],//array to hold data that is active in the DOM
 
+	selectedRows:[], //array to hold currently selected rows
+
 	firstRender:true, //layout table widths correctly on first render
 	mouseDrag:false, //mouse drag tracker;
 	mouseDragWidth:false, //starting width of colum on mouse drag
@@ -164,6 +166,7 @@
 		rowContext:function(){},
 		rowMoved:function(){},
 		rowUpdated:function(){},
+		rowSelectionChanged:function(){},
 
 		cellEdited:function(){},
 
@@ -2862,7 +2865,7 @@
 								if(newWidth < minWidth){
 									col.css({"min-width":newWidth});
 								}
-									col.css({width:newWidth});
+								col.css({width:newWidth});
 
 							}
 
@@ -2983,12 +2986,56 @@
 
 	//select row
 	selectRow:function(row){
-		row.addClass("tabulator-selected");
+		var self = this;
+
+		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
+
+		if(row.length){
+			self.selectedRows.push(row);
+
+			row.addClass("tabulator-selected");
+
+			self._rowSelectionChanged();
+		}else{
+			console.error("Tablulator ERROR (row select): No Matching Row Found");
+		}
+
 	},
 
 	//deselect row
 	deselectRow:function(row){
-		row.removeClass("tabulator-selected");
+		var self = this;
+
+		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
+
+		if(row.length){
+
+			self.selectedRows.forEach(function(element, i){
+				if(element[0] === row[0]){
+					self.selectedRows.splice(i, 1);
+				}
+			});
+
+			row.removeClass("tabulator-selected");
+
+			self._rowSelectionChanged();
+		}else{
+			console.error("Tablulator ERROR (row select): No Matching Row Found");
+		}
+	},
+
+	//handle change in row selection count
+	_rowSelectionChanged:function(){
+		var self = this;
+
+		var data = [];
+
+		self.selectedRows.forEach(function(row){
+			data.push(row.data("data"));
+		});
+
+		self.options.rowSelectionChanged(data, self.selectedRows);
+
 	},
 
 	////////////////// Table Interaction Handlers //////////////////

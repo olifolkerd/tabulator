@@ -118,6 +118,9 @@
 			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
 			],
+			rowSelectionChanged:function(data, rows){
+				console.log("sel", data.length, data, rows);
+			},
 			// rowClick:function(e, id, data, row){
 			// 	alert("Row " + id + " Clicked!!!!")
 			// },
