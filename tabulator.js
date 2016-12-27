@@ -151,7 +151,8 @@
 
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
 
-		false:"highlight", //highlight rows on hover
+		selectable:"highlight", //highlight rows on hover
+		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 		ajaxURL:false, //url for ajax loading
 		ajaxParams:{}, //params for ajax loading
@@ -2057,7 +2058,10 @@
 		//bind row select events
 
 		var endSelect = function(){
-			self.selecting = false;
+
+			setTimeout(function(){
+				self.selecting = false;
+			}, 50)
 
 			self.tableHolder.css("user-select", "");
 
@@ -2066,7 +2070,12 @@
 		}
 
 		if(self.options.selectable && self.options.selectable != "highlight"){
-			row.on("click", function(e){self._rowSelect(row)});
+			row.on("click", function(e){
+				if(!self.selecting){
+					self._rowSelect(row);
+				}
+			});
+
 			row.on("mousedown", function(e){
 				if(e.shiftKey){
 					self.selecting = true;
@@ -2966,7 +2975,16 @@
 		if(!minimal){
 			//hover over rows
 			if(self.options.selectable !== false){
-				$(".tabulator-row", self.tableHolder).addClass("tabulator-selectable");
+				$(".tabulator-row", self.table).each(function(){
+					var row = $(this);
+
+					if(self.options.selectableCheck(row.data("data"), row)){
+						row.addClass("tabulator-selectable");
+					}else{
+						row.addClass("tabulator-unselectable");
+					}
+
+				});
 			}else{
 				$(".tabulator-row", self.tableHolder).removeClass("tabulator-selectable");
 			}
@@ -3018,11 +3036,14 @@
 	_rowSelect:function(row){
 		var self = this;
 
-		if(row.hasClass("tabulator-selected")){
-			self.deselectRow(row);
-		}else{
-			self.selectRow(row);
+		if(self.options.selectableCheck(row.data("data"), row)){
+			if(row.hasClass("tabulator-selected")){
+				self.deselectRow(row);
+			}else{
+				self.selectRow(row);
+			}
 		}
+
 	},
 
 	//select row
