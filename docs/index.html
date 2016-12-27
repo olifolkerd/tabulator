@@ -1140,7 +1140,19 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                 <article>
                     <h1>Selectable Rows <span class="label label-danger">New</span> <a class="example-link" href="../examples#selectable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
-                    <p>You can make your table row selectable, using the <span class='param'>selectable</span> option. This will allow users to toggle the selected state of a row by clicking on it.</p>
+                    <p>You can make your tables rows selectable using the <span class='param'>selectable</span> option. This will allow rows to be selected in a number of ways:
+
+                    <ul>
+                    	<li>
+                    		Clicking on a row, to toggle its state.
+                    	</li>
+                    	<li>
+                    		Holding down the shift key and click dragging over a number of rows to toggle the state of all rows the cursor passes over.
+                    	</li>
+                    	<li>
+                    		Programatically with the <span class='param'>selectRow</span> and <span class='param'>deselectRow</span> functions.
+                    	</li>
+                    </ul></p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
 	selectable:true,
@@ -1184,6 +1196,22 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 					<p>To deselect a specific row you can pass the id for the row or the jQuery element of that row into the first argument of the function. If you leave the argument blank you will deselect all rows.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("deselectRow", 1); //deselect row with id of 1</pre>
+
+                    <h2>Enable/Disable Selection Per Row</h2>
+
+                    <p>The <span class='param'>selectableCheck</span> option can be set with a function to check if a row should be selectable or not. It should return <span class='param'>true</span> for selectable or <span class='param'>false</span> for unselectable.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+	selectable:true,
+	selectableCheck:function(data, row){
+		//data - data object for this row
+		//row - jQuery element for this row
+
+		return data.age > 50; //only allow rows with an age great than 50 to be selected.
+	},
+});</pre>
+
+					<p>Any selectable rows will be assigned the <span class='param'>tabulator-selectable</span> class, any unselectable rows will be assigned the <span class='param'>tabulator-unselectable</span> class.</p>
 
                     <h2>Get Selected Data</h2>
 
@@ -1453,13 +1481,16 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>groupBy</td><td>string/function</td><td>false</td><td>String/function to select field to group rows by</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupHeader</td><td>function</td><td>(see documnetation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupHeader</td><td>function</td><td>(see documentation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>addRowPos</td><td>string</td><td>"bottom"</td><td>The position in the table for new rows to be added, "bottom" or "top"</td><td><a href="#addrow"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>selectable</td><td>boolean/integer/string</td><td>"highlight"</td><td>Set Selectable state for rows</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>selectable</td><td>boolean/integer/string</td><td>"highlight"</td><td>Enable/Disable row selection</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>selectableCheck</td><td>function</td><td>(see documentation)</td><td>Check if row should be selectable or unselectable</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>movableRows</td><td>boolean</td><td>false</td><td>Allow users to move and reorder rows</td><td><a href="#movable"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -1742,7 +1773,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>tabulator-cell</td><td>Data cell</td>
                             </tr>
                             <tr>
-                                <td>tabulator-selectable</td><td>Hover styling for selectable rows</td>
+                                <td>tabulator-selectable</td><td>Styling for selectable rows</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-unselectable</td><td>Styling for unselectable rows</td>
                             </tr>
                             <tr>
                                 <td>tabulator-selected</td><td>Currently selected row</td>
