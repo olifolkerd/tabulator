@@ -207,6 +207,11 @@
 		var self = this;
 		var element = self.element;
 
+		//initialize arrays
+		self.selectedRows = [];
+		self.selectPrev = [];
+		self.columnList = [];
+
 		//prevent column array being copied over when not explicitly set
 		if(!self.options.columns){
 			self.options.columns = [];
