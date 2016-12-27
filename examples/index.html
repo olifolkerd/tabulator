@@ -1126,7 +1126,18 @@ echo(json_encode($data));</pre>
 <article>
     <h1>Selectable Rows <a class="doc-link" href="../docs#selectable"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
-	<p>Tabulator allows for row selection by clicking on rows or through function calls.</p>
+	<p>Using the <span class='param'>selectable</span> option, you can allow users to select rows in the table via a number of different routes:
+	<ul>
+	<li>
+		Clicking on a row, to toggle its state.
+	</li>
+	<li>
+		Holding down the shift key and click dragging over a number of rows to toggle the state of all rows the cursor passes over.
+	</li>
+	<li>
+		Programatically with the <span class='param'>selectRow</span> and <span class='param'>deselectRow</span> functions.
+	</li>
+</ul></p>
 
 	<fieldset>
 	    <legend>Selection Controls</legend>
