@@ -39,6 +39,8 @@
 	activeData:[],//array to hold data that is active in the DOM
 
 	selectedRows:[], //array to hold currently selected rows
+	selecting:false, //is selection currently happening
+	selectPrev:[], //hold jQuery element for previously selected row to handle changing direction when selecting
 
 	firstRender:true, //layout table widths correctly on first render
 	mouseDrag:false, //mouse drag tracker;
@@ -2053,8 +2055,47 @@
 		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
 		//bind row select events
+
+		var endSelect = function(){
+			self.selecting = false;
+
+			self.tableHolder.css("user-select", "");
+
+			$("body").off("mouseup", endSelect);
+			$("body").off("keyup", endSelect);
+		}
+
 		if(self.options.selectable && self.options.selectable != "highlight"){
 			row.on("click", function(e){self._rowSelect(row)});
+			row.on("mousedown", function(e){
+				if(e.shiftKey){
+					self.selecting = true;
+
+					self.tableHolder.css("user-select", "none");
+					self.selectPrev = [];
+
+					$("body").on("mouseup", endSelect);
+					$("body").on("keyup", endSelect);
+
+					self._rowSelect($(this));
+				}
+			})
+
+			row.on("mouseenter", function(e){
+				if(self.selecting){
+					self._rowSelect($(this));
+
+					if(self.selectPrev[1] == this){
+						self._rowSelect($(self.selectPrev[0]));
+					}
+				}
+			})
+
+			row.on("mouseout", function(e){
+				if(self.selecting){
+					self.selectPrev.unshift(this);
+				}
+			})
 		}
 
 		//add row handle if movable rows enabled
