@@ -1491,6 +1491,8 @@
 	setFilter:function(field, type, value){
 		var self = this;
 
+		self._clearSelection();
+
 		self.options.dataFiltering(field, type, value);
 
 		//set filter
@@ -1664,6 +1666,8 @@
 		var header = self.header;
 		var options = this.options;
 
+		self._clearSelection();
+
 		if(!Array.isArray(sortList)){
 			sortList = [{field: sortList, dir:dir}];
 		}
@@ -1781,6 +1785,8 @@
 	//set current paginated page
 	setPage:function(page){
 		var self = this;
+
+		self._clearSelection();
 
 		if(page > 0 && page <= self.paginationMaxPage){
 			self.paginationCurrentPage = page;
@@ -3048,6 +3054,17 @@
 				self.selectRow(row);
 			}
 		}
+
+	},
+
+
+	//clear all selected data
+	_clearSelection:function(){
+		var self = this;
+
+		self.selectedRows = [];
+		self.selecting = false;
+		self.selectPrev = [];
 
 	},
 
