@@ -2074,8 +2074,6 @@
 				self.selecting = false;
 			}, 50)
 
-			self.tableHolder.css("user-select", "");
-
 			$("body").off("mouseup", endSelect);
 			$("body").off("keyup", endSelect);
 		}
@@ -2091,13 +2089,14 @@
 				if(e.shiftKey){
 					self.selecting = true;
 
-					self.tableHolder.css("user-select", "none");
 					self.selectPrev = [];
 
 					$("body").on("mouseup", endSelect);
 					$("body").on("keyup", endSelect);
 
 					self._rowSelect($(this));
+
+					return false;
 				}
 			})
 
