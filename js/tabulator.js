@@ -164,6 +164,7 @@
 
 		//Callbacks from events
 		rowClick:function(){},
+		rowDblClick:function(){},
 		rowAdded:function(){},
 		rowDeleted:function(){},
 		rowContext:function(){},
@@ -2064,6 +2065,7 @@
 
 		//bind row click events
 		row.on("click", function(e){self._rowClick(e, row, item)});
+		row.on("dblclick", function(e){self._rowDblClick(e, row, item)});
 		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
 		//bind row select events
@@ -2164,7 +2166,10 @@
 			cell.data("formatterParams", column.formatterParams);
 			cell.html(self._formatCell(column.formatter, value, item, cell, row, column.formatterParams));
 
-
+			//bind cell double click function
+			if(typeof(column.onDblClick) == "function"){
+				cell.on("dblclick", function(e){self._cellDblClick(e, cell)});
+			}
 
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
@@ -3170,6 +3175,11 @@
 		this.options.rowClick(e, row.data("id"), data, row);
 	},
 
+	//carry out action on row double click
+	_rowDblClick: function(e, row, data){
+		this.options.rowDblClick(e, row.data("id"), data, row);
+	},
+
 	//carry out action on row context
 	_rowContext: function(e, row, data){
 		this.options.rowContext(e, row.data("id"), data, row);
@@ -3186,6 +3196,20 @@
 
 		if(match){
 			match.column.onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		}
+	},
+
+	//carry out action on cell double click
+	_cellDblClick: function(e, cell){
+		var self = this;
+		var index = cell.data("index");
+
+		var match = self._findColumn(function(column){
+			return column.index == index;
+		});
+
+		if(match){
+			match.column.onDblClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 		}
 	},
 
