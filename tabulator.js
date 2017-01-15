@@ -2166,7 +2166,10 @@
 			cell.data("formatterParams", column.formatterParams);
 			cell.html(self._formatCell(column.formatter, value, item, cell, row, column.formatterParams));
 
-
+			//bind cell double click function
+			if(typeof(column.onDblClick) == "function"){
+				cell.on("dblclick", function(e){self._cellDblClick(e, cell)});
+			}
 
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
@@ -3193,6 +3196,20 @@
 
 		if(match){
 			match.column.onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		}
+	},
+
+	//carry out action on cell double click
+	_cellDblClick: function(e, cell){
+		var self = this;
+		var index = cell.data("index");
+
+		var match = self._findColumn(function(column){
+			return column.index == index;
+		});
+
+		if(match){
+			match.column.onDblClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 		}
 	},
 
