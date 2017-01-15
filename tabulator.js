@@ -3083,23 +3083,23 @@
 			return true;
 		}
 
-		if(isNaN(self.options.selectable) || self.options.selectable === true || (!isNaN(self.options.selectable) && self.selectedRows.length < self.options.selectable)){
+		if(!isNaN(self.options.selectable) && self.selectedRows.length >= self.options.selectable){
+			self.deselectRow(self.selectedRows[0], true);
+		}
 
-			var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
 
-			if(row.length){
-				self.selectedRows.push(row);
+		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
 
-				row.addClass("tabulator-selected");
+		if(row.length){
+			self.selectedRows.push(row);
 
-				if(!silent){
-					self._rowSelectionChanged();
-				}
-			}else{
-				console.error("Tablulator ERROR (row select): No Matching Row Found");
+			row.addClass("tabulator-selected");
+
+			if(!silent){
+				self._rowSelectionChanged();
 			}
 		}else{
-			console.error("Tablulator ERROR (row select): Max selectable rows set at " + self.options.selectable);
+			console.error("Tablulator ERROR (row select): No Matching Row Found");
 		}
 
 	},
