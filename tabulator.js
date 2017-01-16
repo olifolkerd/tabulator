@@ -3087,10 +3087,9 @@
 			return true;
 		}
 
-		if(!isNaN(self.options.selectable) && self.selectedRows.length >= self.options.selectable){
+		if(!isNaN(self.options.selectable) && self.options.selectable !== true && self.selectedRows.length >= self.options.selectable){
 			self.deselectRow(self.selectedRows[0], true);
 		}
-
 
 		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
 
