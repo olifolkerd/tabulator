@@ -82,8 +82,9 @@
   box-sizing: border-box;
   margin-top: -10px;
   margin-bottom: 20px;
-  border-top: 2px solid #59B038;
-  border-bottom: 2px solid #59B038;
+  border-top: 3px solid #59B038;
+  border-bottom: 3px solid #59B038;
+  box-shadow: 0 0 7px 0 #000;
   background: #222;
   color: #222;
 }
