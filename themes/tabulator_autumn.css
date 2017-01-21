@@ -8,6 +8,7 @@
 }
 .tabulator .tabulator-header {
   position: relative;
+  box-sizing: border-box;
   width: 100%;
   border-bottom: 2px solid #391D04;
   background-color: #59270C;
@@ -134,6 +135,18 @@
   vertical-align: bottom;
   overflow: hidden;
 }
+.tabulator .tabulator-header .tabulator-frozen {
+  display: inline-block;
+  position: absolute;
+  background-color: inherit;
+  z-index: 10;
+}
+.tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-left {
+  border-right: 1px solid #933907;
+}
+.tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-right {
+  border-left: 2px solid #933907;
+}
 .tabulator .tabulator-tableHolder {
   position: relative;
   width: 100%;
@@ -150,6 +163,8 @@
   color: #090601;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row {
+  position: relative;
+  box-sizing: border-box;
   min-height: 22px;
   background-color: #DEB21A;
 }
@@ -173,7 +188,7 @@
   width: 30px;
   max-width: 30px;
   padding: 4px;
-  border-right: 1px solid #fff;
+  border-right: 1px solid #933907;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
@@ -189,6 +204,18 @@
   height: 3px;
   margin: 2px 10% 0 10%;
   background: #666;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen {
+  display: inline-block;
+  position: absolute;
+  background-color: inherit;
+  z-index: 10;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-left {
+  border-right: 1px solid #933907;
+}
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-right {
+  border-left: 2px solid #933907;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
   position: relative;
@@ -224,7 +251,7 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-group .tabulator-group-header {
   box-sizing: border-box;
   border-bottom: 1px solid #592808;
-  border-right: 1px solid #fff;
+  border-right: 1px solid #933907;
   border-top: 1px solid #592808;
   padding: 5px;
   background: #813808;

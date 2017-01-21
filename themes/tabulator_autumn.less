@@ -18,7 +18,7 @@
 //row themeing
 @rowBackgroundColor:#DEB21A; //table row background color
 @rowAltBackgroundColor:#DE8D1A; //table row background color
-@rowBorderColor:#fff; //table border color
+@rowBorderColor:#933907; //table border color
 @rowTextColor:#090601; //table text color
 @rowHoverBackground:#A0640F; //row background color on hover
 
@@ -48,6 +48,7 @@
 	//column header containing element
 	.tabulator-header{
 		position:relative;
+		box-sizing: border-box;
 
 		width:100%;
 
@@ -227,6 +228,24 @@
 			vertical-align: bottom;
 			overflow: hidden;
 		}
+
+		.tabulator-frozen{
+			display: inline-block;
+			position: absolute;
+
+			background-color: inherit;
+
+			z-index: 10;
+
+			&.tabulator-frozen-left{
+				border-right:1px solid @rowBorderColor;
+			}
+
+			&.tabulator-frozen-right{
+				border-left:2px solid @rowBorderColor;
+			}
+		}
+
 	}
 
 	//scrolling element to hold table
@@ -248,9 +267,11 @@
 
 			//row element
 			.tabulator-row{
+				position: relative;
+				box-sizing: border-box;
+
 				min-height:@textSize + (@headerMargin * 2);
 				background-color: @rowBackgroundColor;
-
 
 				&:nth-child(even){
 					background-color: @rowAltBackgroundColor;
@@ -296,6 +317,23 @@
 						margin:2px 10% 0 10%;
 						background:#666;
 					}
+				}
+
+				.tabulator-frozen{
+				    display: inline-block;
+				    position: absolute;
+
+				    background-color: inherit;
+
+				    z-index: 10;
+
+				    &.tabulator-frozen-left{
+				        border-right:1px solid @rowBorderColor;
+				    }
+
+				    &.tabulator-frozen-right{
+				        border-left:2px solid @rowBorderColor;
+				    }
 				}
 
 				//cell element
