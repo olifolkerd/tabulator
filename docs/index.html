@@ -154,6 +154,7 @@
                         <li><strong>align</strong> - sets the text alignment for this column (left|center|right)</li>
                         <li><strong>width</strong> - sets the width of this column, this can be set in pixels or as a percentage of total table width (if not set the system will determine the best)</li>
                         <li><strong>minWidth</strong> - sets the minimum width of this column, this should be set in pixels (this takes priority over the global option of colMinWidth)</li>
+                        <li><strong>frozen</strong> - freezes the column in place when scrolling (see <a href="#frozen-col">Frozen Columns</a> for more details)</li>
                         <li><strong>sortable</strong> - determines if the user can sort data by this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
@@ -535,7 +536,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="layout"></a>
                 <article>
-                    <h1>Table Layout </h1>
+                    <h1>Table Layout <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:</p>
 
@@ -586,6 +587,26 @@ $("#example-table").tabulator({
 .tabulator .tabulator-header .tabulator-col-row-handle {
     white-space: normal;
 }</pre>
+
+                    <a class="anchor" id="frozen-col"></a>
+                    <h2>Frozen Columns <span class="label label-danger">New</span> <a class="example-link" href="../examples?#frozen-col"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <p>You can freeze the position of columns on the left and right of the table using the <span class='param'>frozen</span> property in the column definition array. This will keep the column still when the table is scrolled horizontally.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    [
+        {title:"Name", field:"name", frozen:true}, //frozen column on left of table
+        {title:"Age", field:"age"},
+        {title:"Eye Colour", field:"eyes"},
+        {title:"Height", field:"height"}, //frozen column on right of table
+    ]
+});</pre>
+
+                    <p>You can freeze any number of columns on the left or right of the table, but they must be next to eachother in the column definition array. </p>
+
+                    <p>Tabulator builds the frozen columns by looking through the column definition array from both sides, building up the frozen columns as it see the <span class='param'>frozen</span> property. Once a non-frozen column is reached it stops building the frozen list for that side of the table.</p>
+
+                    <p><strong>NOTE: </strong> Frozen columns are locked in place and cannot be reordered by dragging and dropping the column header. It is also not possible to freeze a column that is part of a column group.</p>
+
 
                     <h2>Redrawing the table</h2>
                     <p>If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit the new dimensions.</p>
@@ -2643,7 +2664,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#set-data">Set Table Data </a></li>
                         <li><a href="#pagination">Pagination </a></li>
-                        <li><a href="#layout">Table Layout  </a></li>
+                        <li><a href="#layout">Table Layout  <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#sorting">Sorting Data </a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data <span class="label label-primary">Updated</span></a></li>
