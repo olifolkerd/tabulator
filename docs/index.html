@@ -852,12 +852,18 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
                     <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
                     <pre class="prettyprint lang-js">groupBy:function(data){
+    //data - the data object for the row being grouped
+
     return data.gender + " - " + data.age; //groups by data and age
 }</pre>
 
                     <h2>Custom Group Headers</h2>
                     <p>You can set the contents of the group headers with the <span class='param'>groupHeader</span> option. This should return the contents of the group header.</p>
                     <pre class="prettyprint lang-js">groupHeader:function(value, count, data){
+    //value - the value all members of this group share
+    //count - the number of rows in this group
+    //data - an arrya of all the row data objects in this group
+
     return value + "&lt;span style='color:#d00; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
 },</pre>
                 </article>
