@@ -1,0 +1,48 @@
+#home-controls {
+  padding: 7px 10px;
+  border: 2px solid #45892c;
+  border-radius: 5px;
+  background: #59B038;
+}
+#home-controls i {
+  margin-right: 3px;
+  color: #1e3c13;
+  font-weight: bold;
+}
+#home-controls input {
+  width: calc(100% - 560px);
+  padding: 2px 5px;
+  border: 2px solid #45892c;
+}
+#home-controls button {
+  float: right;
+  margin-left: 20px;
+  padding: 2px 5px;
+  border: 2px solid #45892c;
+  background: #fff;
+  color: #45892c;
+  font-weight: bold;
+  text-align: center;
+  outline: none;
+}
+#home-controls button i {
+  color: inherit;
+  font-weight: normal;
+}
+#home-controls button:hover {
+  border: 2px solid #fff;
+  background: #45892c;
+  color: #fff;
+}
+#home-controls button[name="hide-col"] {
+  width: 180px;
+}
+#home-controls button[name="hide-col"] .hide-rating {
+  display: none;
+}
+#home-controls button[name="hide-col"].col-hide .show-rating {
+  display: none;
+}
+#home-controls button[name="hide-col"].col-hide .hide-rating {
+  display: inline-block;
+}

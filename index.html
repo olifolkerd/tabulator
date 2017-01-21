@@ -41,7 +41,8 @@
 
 	<!-- Custom CSS -->
 	<link href="css/styles.css" rel="stylesheet">
-    <link href="css/prettyprint.css" rel="stylesheet">
+  <link href="css/home.css" rel="stylesheet">
+  <link href="css/prettyprint.css" rel="stylesheet">
 
 	<!-- Tabulator CSS -->
 	<link href="css/tabulator.css" rel="stylesheet">
@@ -164,6 +165,16 @@
 
 <div class="row">
  <div class="col-lg-12 hidden-xs">
+
+    <div id="home-controls">
+      <i class="fa fa-search"></i> <input name="name" type="text" placeholder="Filter Table By Name">
+      <button name="download"><i class="fa fa-download"></i> Download Data as CSV</button>
+
+      <button name="add-row"><i class="fa fa-plus"></i> Add Row</button>
+
+      <button name="hide-col" class="col-hide"><span class="show-rating"><i class="fa fa-eye"></i> Show Rating Column</span><span class="hide-rating"><i class="fa fa-eye-slash"></i> Hide Rating Column</span></button>
+    </div>
+
     <div id="tabulator-example"></div>
 
         <h3>HTML</h3>
@@ -522,6 +533,7 @@
 			height:"320px",
 			fitColumns:true,
 			tooltips:true,
+      addRowPos:"top",
 			pagination:true,
             movableCols:true,
             sortBy:"name",
@@ -543,6 +555,30 @@
 		$(window).resize(function(){
 			$("#tabulator-example").tabulator("redraw");
 		});
+
+
+    $("#home-controls input[name=name]").on("keyup", function(){
+      $("#tabulator-example").tabulator("setFilter", "name", "like", $(this).val())
+    });
+
+    $("#home-controls  button[name=hide-col]").on("click", function(){
+      $(this).toggleClass("col-hide");
+
+      if($(this).hasClass("col-hide")){
+        $("#tabulator-example").tabulator("showCol","rating");
+      }else{
+        $("#tabulator-example").tabulator("hideCol","rating");
+      }
+    });
+
+    $("#home-controls  button[name=add-row]").on("click", function(){
+      $("#tabulator-example").tabulator("addRow", {});
+    });
+
+    $("#home-controls  button[name=download]").on("click", function(){
+      $("#tabulator-example").tabulator("download", "csv", "Tabulator Example Download.csv");
+    });
+
 
 
 		//google analytics tracking code
