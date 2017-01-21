@@ -703,7 +703,9 @@
 					var rowData = [];
 
 					fields.forEach(function(field){
-						rowData.push(row[field]);
+						var value = typeof row[field] == "object" ? '"' + JSON.stringify(row[field]) + '"' : row[field];
+
+						rowData.push(value);
 					})
 
 					fileContents.push(rowData.join(","));
