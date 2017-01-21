@@ -2420,14 +2420,17 @@
 			}
 		}
 
-		freezeCont = true;
+		//build right column freeze list if entire table isnt frozen
+		if(self.columnFrozenLeft.length != self.columnList.length){
+			freezeCont = true;
 
-		//build right column freeze list
-		for (var i = colCount - 1; i >= 0; --i) {;
-			if(self.columnList[i].frozen && freezeCont){
-				self.columnFrozenRight.push(self.columnList[i]);
-			}else{
-				freezeCont = false;
+			//build right column freeze list
+			for (var i = colCount - 1; i >= 0; --i) {;
+				if(self.columnList[i].frozen && freezeCont){
+					self.columnFrozenRight.push(self.columnList[i]);
+				}else{
+					freezeCont = false;
+				}
 			}
 		}
 
