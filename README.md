@@ -19,6 +19,7 @@ Tabulator is packed with useful  features including:
 - Fully CSS styleable
 - JSON, array or AJAX data loading
 - Column sorting
+- Column Freezing
 - Pagination
 - Editable cells
 - Data Accessors and Mutators
@@ -75,7 +76,7 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Custom Row Templates
 - Aditional Editors and Formatters
 - Column Calculations
-- Frozen Rows and Columns
+- Responsive Design
 - Copy to Clipboard
 - Print Styling
 - Minified source files
