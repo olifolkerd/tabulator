@@ -135,11 +135,11 @@
 .tabulator .tabulator-header .tabulator-frozen {
   display: inline-block;
   position: absolute;
-  padding-left: 10px;
   background-color: inherit;
   z-index: 10;
 }
 .tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-left {
+  padding-left: 10px;
   border-right: 1px solid #fff;
 }
 .tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-right {
@@ -217,11 +217,11 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen {
   display: inline-block;
   position: absolute;
-  padding-left: 10px;
   background-color: inherit;
   z-index: 10;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-left {
+  padding-left: 10px;
   border-right: 1px solid #fff;
 }
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-right {
