@@ -844,7 +844,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
                 <a class="anchor" id="grouping"></a>
                 <article>
-                    <h1>Grouping Data <a class="example-link" href="../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Grouping Data <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p> With Tabulator you can group rows together using the <span class='param'>groupBy</span> option.</p>
                     <p>To group by a field, set this option to the name of the field to be grouped.</p>
@@ -866,6 +866,30 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
     return value + "&lt;span style='color:#d00; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
 },</pre>
+                    <h2>Group Open State <span class="label label-danger">New</span></h2>
+                    <p>You can set the default open state of groups using the <span class='param'>groupStartOpen</span> property.</p>
+                    <pre class="prettyprint lang-js">groupStartOpen:true,</pre>
+
+                    <p>This can take one of three possible values:
+                        <ul>
+                            <li><strong>true</strong> - all groups start open <i>(default value)</i></li>
+                            <li><strong>false</strong> - all groups start closed</li>
+                            <li><strong>function()</strong> - a callback to decide if a group should start open or closed</li>
+                        </ul>
+                    </p>
+
+                    <h3>Group Open Function</h3>
+                    <p>If you want to decide on a group by group basis which should start open or closed then you can pass a function to the <span class='param'>groupStartOpen</span> property. This should return <span class='param'>true</span> if the group should start open or <span class='param'>false</span> if the group should start closed.</p>
+
+                    <pre class="prettyprint lang-js">groupStartOpen:function(value, count, data){
+    //value - the value all members of this group share
+    //count - the number of rows in this group
+    //data - an arrya of all the row data objects in this group
+
+    return count > 3; //all groups with more than three rows start open, any with three or less start closed
+},</pre>
+
+
                 </article>
 
                 <a class="anchor" id="filtering"></a>
@@ -2619,7 +2643,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#layout">Table Layout  </a></li>
                         <li><a href="#sorting">Sorting Data </a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
-                        <li><a href="#grouping">Grouping Data</a></li>
+                        <li><a href="#grouping">Grouping Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
