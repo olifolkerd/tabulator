@@ -404,17 +404,20 @@
 			var left = holder.scrollLeft();
 			self.header.scrollLeft(left);
 
-			//keep frozen columns fixed in position
-			self._calcFrozenColumnsPos();
-
+			var hozAdjust = 0;
 
 			//adjust for vertical scrollbar moving table when present
 			var scrollWidth = self.header[0].scrollWidth - self.element.innerWidth();
 			if(left > scrollWidth){
-				self.header.css("margin-left", -(left - scrollWidth));
+				hozAdjust = left - scrollWidth
+				self.header.css("margin-left", -(hozAdjust));
 			}else{
 				self.header.css("margin-left", 0);
 			}
+
+			//keep frozen columns fixed in position
+			self._calcFrozenColumnsPos(hozAdjust + 3);
+
 
 
 			//trigger progressive rendering on scroll
@@ -3134,7 +3137,7 @@
 		}
 	},
 
-	_calcFrozenColumnsPos:function(){
+	_calcFrozenColumnsPos:function(hozAdjust){
 		var self = this;
 		var rows, left, width;
 
@@ -3150,9 +3153,10 @@
 			}
 
 			if(self.columnFrozenRight.length){
-				width = $(".tabulator-frozen-right", self.header).outerWidth();
+				width = $(".tabulator-frozen-right", self.header).innerWidth();
 				rows.css("padding-right", width)
-				$(".tabulator-frozen-right", self.element).css("left",self.tableHolder.innerWidth() - width + left);
+
+				$(".tabulator-frozen-right", self.element).css("left",self.tableHolder.innerWidth() - width + left - (hozAdjust || 0));
 
 			}
 		}
