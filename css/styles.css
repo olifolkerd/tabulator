@@ -14,48 +14,6 @@ body {
   height: 30px;
   margin-top: -7px;
 }
-.jumbotron {
-  background-color: #59B038;
-  background-image: url(../images/jumbotron_background.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  margin-bottom: 0;
-  color: #fff;
-}
-.jumbotron h1 {
-  font-family: 'Bevan', 'Open Sans', sans-serif;
-}
-.jumbotron .btn {
-  background-color: #2C801E;
-  border-color: #1E5715;
-}
-.jumbotron .btn:hover {
-  background-color: #59DA43;
-  border-color: #368D27;
-}
-.jumbotron .btn .glyphicon {
-  margin-right: 10px;
-}
-.jumbotron .container {
-  position: relative;
-}
-.jumbotron .container .share {
-  position: absolute;
-  bottom: -20px;
-  right: 30px;
-}
-.jumbotron .container .share span {
-  vertical-align: middle;
-  font-size: 1.4em;
-}
-.jumbotron .container .share a {
-  vertical-align: middle;
-  font-size: 2em;
-  color: #fff;
-}
-.jumbotron .container .share a:hover {
-  color: #222;
-}
 .tabulator {
   font-family: sans-serif;
 }
@@ -83,75 +41,6 @@ h3 .label {
   margin-left: 5px;
   font-size: 11px;
   vertical-align: middle;
-}
-.news {
-  border-top: 2px solid #59B038;
-  border-bottom: 2px solid #59B038;
-  background: #ddd;
-  background: -moz-linear-gradient(top, #f4f4f4 1%, #cccccc 100%);
-  background: -webkit-linear-gradient(top, #f4f4f4 1%, #cccccc 100%);
-  background: linear-gradient(to bottom, #f4f4f4 1%, #cccccc 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#cccccc', GradientType=0);
-}
-.news h1 {
-  margin-top: 10px;
-  color: #59B038;
-  font-weight: bold;
-  font-size: 2em;
-}
-.news p {
-  font-weight: bold;
-}
-.news a {
-  color: #59B038;
-  font-weight: bold;
-}
-.news i {
-  color: #59B038;
-  font-size: 3em;
-  margin-right: 10px;
-}
-.features {
-  margin-top: 30px;
-}
-.features #tabulator-example {
-  border-radius: 3px;
-}
-.features .main-title h2 {
-  margin-top: 00px;
-  margin-bottom: 10px;
-}
-.features h2 {
-  color: #59B038;
-  font-weight: bold;
-  font-size: 2.5em;
-  margin-bottom: 40px;
-}
-.features .tabulator {
-  margin-top: 20px;
-  margin-bottom: 30px;
-}
-.features .feature a {
-  text-decoration: none;
-  color: inherit;
-}
-.features .feature .frame {
-  padding: 20px 10px 10px 10px;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-  margin: 1px 1px 20px 1px;
-}
-.features .feature .frame:hover {
-  margin: 0 0 19px 0;
-  border: 2px solid #59B038;
-  cursor: pointer;
-}
-.features .feature .frame:hover .fa {
-  color: #59B038;
-}
-.features .feature .frame .fa {
-  font-size: 5em;
 }
 .docs-sidebar {
   height: calc(100% - 52px);

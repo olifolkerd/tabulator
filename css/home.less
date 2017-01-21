@@ -1,6 +1,216 @@
 @green:#59B038;
 @green-dark: darken(@green, 10%);
 
+.jumbotron{
+
+	margin-bottom:0;
+
+	border-bottom:2px solid #222;
+
+	background-color: @green;
+	background-image: url(../images/jumbotron_background.png);
+	background-repeat: no-repeat;
+	background-position: center;
+
+	color: #fff;
+
+	h1{
+		font-family: 'Bevan', 'Open Sans', sans-serif;
+	}
+
+	h2{
+		font-size: 21px;
+	}
+
+	.btn{
+
+		background-color: #2C801E;
+		border-color: #1E5715;
+
+		&:hover{
+			background-color: #59DA43;
+			border-color: #368D27;
+		}
+
+		.glyphicon{
+			margin-right: 10px;
+		}
+	}
+
+	.container{
+		position: relative;
+
+		.share{
+			position: absolute;
+			bottom:-20px;
+			right:30px;
+
+			span{
+				vertical-align: middle;
+				font-size: 1.4em;
+			}
+
+			a{
+				vertical-align: middle;
+
+				font-size: 2em;
+				color: #fff;
+
+				&:hover{
+					color:#222;
+				}
+			}
+
+		}
+	}
+}
+
+
+.features{
+
+	margin-top:30px;
+
+	#tabulator-example{
+		border-radius: 3px;
+	}
+
+	.main-title{
+		h1{
+			margin-top:00px;
+			margin-bottom:10px;
+		}
+
+		h3{
+			margin-top: 0;
+			margin-bottom:30px;
+
+			color: #666;
+			font-weight: bold;
+			font-size: 18px;
+		}
+	}
+
+	h1{
+		color:@green;
+		font-weight: bold;
+		font-size: 2.5em;
+
+		margin-bottom: 40px;
+	}
+
+	h2{
+		color:@green;
+		font-weight: bold;
+		font-size: 2em;
+
+		margin-top:0;
+		margin-bottom: 10px;
+	}
+
+	p{
+		a{
+			color: @green;
+			font-weight: bold;
+		}
+	}
+
+	.news{
+		box-sizing: border-box;
+
+		margin-top:-10px;
+		margin-bottom:20px;
+
+		border-top:2px solid @green;
+		border-bottom:2px solid @green;
+
+		background: #222;
+
+		color: #222;
+
+		&:hover{
+			background: #000;
+		}
+
+		h2{
+			margin-top: 10px;
+			margin-bottom:3px;
+
+			color:@green;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+
+		p{
+			font-weight: bold;
+		}
+
+		a{
+			color: #fff;
+		}
+
+		strong{
+			color: @green;
+		}
+
+		i{
+			color: @green;
+			font-size: 3em;
+			margin-right:20px;
+		}
+	}
+
+
+
+	.tabulator{
+		margin-top:20px;
+		margin-bottom:30px;
+	}
+
+	.feature{
+
+		a{
+			text-decoration: none;
+			color:inherit;
+		}
+
+		.frame{
+
+			padding:20px 10px 10px 10px;
+			border-radius: 10px;
+			border:1px solid #ccc;
+			box-sizing: border-box;
+
+			margin:1px 1px 20px 1px;
+
+			&:hover{
+
+				margin:0 0 19px 0;
+
+				border:2px solid @green;
+
+				cursor: pointer;
+
+				.fa{
+					color:@green;
+				}
+			}
+
+			.fa{
+				font-size: 5em;
+			}
+		}
+	}
+
+	.tiles{
+		margin-top:20px;
+
+		h3{
+
+		}
+	}
+
+}
+
 #home-controls{
 
 	padding:7px 10px;
