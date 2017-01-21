@@ -142,6 +142,7 @@
 		sortDir:"desc", //default sort direction
 
 		groupBy:false, //enable table grouping and set field to group by
+		groupStartOpen:true, //starting state of group
 
 		groupHeader:function(value, count, data){ //header layout function
 			return value + "<span>(" + count + " " + ((count === 1) ? "item" : "items") + ")</span>";
@@ -2250,6 +2251,25 @@
 		$(".tabulator-group-header", group)
 		.html(arrow)
 		.append(self.options.groupHeader(group.data("value"), $(".tabulator-row", group).length, data));
+
+		self._setGroupOpenState(group, group.data("value"), $(".tabulator-row", group).length, data);
+	},
+
+	//set group starting open state
+	_setGroupOpenState:function(group, value, count, data){
+		var self = this;
+
+		var state = self.options.groupStartOpen;
+
+		if(typeof state == "function"){
+			state = state(value, count, data);
+		}
+
+		if(state === true){
+			group.addClass("show");
+		}else{
+			group.removeClass("show");
+		}
 	},
 
 	//show loader blockout div
