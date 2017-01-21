@@ -272,7 +272,7 @@
                         <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
                         <h3>JavaScript</h3>
-                        <pre class="prettyprint lang-js">$("#example-table-column").tabulator({
+                        <pre class="prettyprint lang-js">$("#example-table").tabulator({
     colVertAlign:"bottom", //align header contents to bottom of cell
     columns:[
         {title:"Name", field:"name", width:160},
@@ -292,6 +292,40 @@
                 {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:130},
             ],
         },
+    ],
+});</pre>
+            </fieldset>
+        </article>
+
+
+
+
+                <a class="anchor" id="frozen-col"></a>
+                <article>
+                    <h1>Frozen Columns <a class="doc-link" href="../docs?#frozen-col"><i class="fa fa-external-link"></i> Documentation</a></h1>
+
+                    <p>You can use the <span class='param'>frozen</span> property in a columns definition object to freeze that column in place during horizontal scrollling.</p>
+
+                    <div class="example-table" id="example-table-frozen-columns">
+                        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                    </div>
+
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                        <h3>JavaScript</h3>
+                        <pre class="prettyprint lang-js">$("#example-table-column").tabulator({
+    height:"311px",
+    columns:[
+        {title:"Name", field:"name", width:250, frozen:true}, //frozen column
+        {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
+        {title:"Gender", field:"gender", width:150},
+        {title:"Rating", field:"rating",  formatter:"star", align:"center", width:200},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross", width:150},
     ],
 });</pre>
             </fieldset>
@@ -1657,6 +1691,7 @@ $("#lang-default").click(function(){
             <li><a href="#fittodata">Fit To Data</a></li>
             <li><a href="#fittowidth">Fit To Width</a></li>
             <li><a href="#column-groups">Column Groups</a></li>
+            <li><a href="#frozen-col">Frozen Columns</a></li>
             <li><a href="#table-load">Create From Table Element</a></li>
             <li><a href="#editable">Editable Data</a></li>
             <li><a href="#sorters">Sorters</a></li>
@@ -1914,6 +1949,26 @@ $("#lang-default").click(function(){
      });
 
      $("#example-table-column-grouping").tabulator("setData", tabledata);
+
+     });
+
+
+     $("#example-table-frozen-columns").closest("article").on("build", function(){
+
+     //Column Grouping Example
+     $("#example-table-frozen-columns").tabulator({
+         height:"311px",
+         columns:[
+         {title:"Name", field:"name", width:250, frozen:true},
+         {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
+         {title:"Gender", field:"gender", width:150},
+         {title:"Rating", field:"rating",  formatter:"star", align:"center", width:200},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross", width:150},
+         ],
+     });
+
+     $("#example-table-frozen-columns").tabulator("setData", tabledata);
 
      });
 
