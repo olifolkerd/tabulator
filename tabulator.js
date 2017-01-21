@@ -63,6 +63,9 @@
 
 	columnList:[], //an array of all acutal columns ignoring column groupings
 
+	columnFrozenLeft:[], //list of frozen columns left
+	columnFrozenRight:[], //list of frozen columns right
+
 	loaderDiv: $("<div class='tablulator-loader'><div class='tabulator-loader-msg'></div></div>"), //loader blockout div
 
 	lang:{}, // hold current locale text
@@ -401,6 +404,10 @@
 			var left = holder.scrollLeft();
 			self.header.scrollLeft(left);
 
+			//keep frozen columns fixed in position
+			self._calcFrozenColumnsPos();
+
+
 			//adjust for vertical scrollbar moving table when present
 			var scrollWidth = self.header[0].scrollWidth - self.element.innerWidth();
 			if(left > scrollWidth){
@@ -408,6 +415,7 @@
 			}else{
 				self.header.css("margin-left", 0);
 			}
+
 
 			//trigger progressive rendering on scroll
 			if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
@@ -424,6 +432,8 @@
 					}
 				}
 			}
+
+
 
 			scrollTop = holder.scrollTop();
 		});
@@ -642,6 +652,8 @@
 			var msg = $(".tabulator-loader-msg", self.loaderDiv);
 			msg.css({"margin-top":(self.element.innerHeight() / 2) - (msg.outerHeight()/2)})
 		}
+
+		self._calcFrozenColumnsPos();
 
 		//trigger row restyle
 		self._styleRows(true);
@@ -2322,6 +2334,8 @@
 		}
 
 		self._vertAlignColHeaders();
+
+		self._calcFrozenColumnsPos();
 	},
 
 	//set all headers to the same height
@@ -2387,6 +2401,36 @@
 		self.columnList = [];
 
 		self._colLayoutGroup(self.options.columns, self.header);
+
+
+		//build list of frozen columns
+		var colCount = self.columnList.length;
+
+		self.columnFrozenLeft = [];
+		self.columnFrozenRight = [];
+
+		var freezeCont = true;
+
+		//build left column freeze list
+		for (var i = 0; i < colCount; ++i) {;
+			if(self.columnList[i].frozen && freezeCont){
+				self.columnFrozenLeft.push(self.columnList[i]);
+			}else{
+				freezeCont = false;
+			}
+		}
+
+		freezeCont = true;
+
+		//build right column freeze list
+		for (var i = colCount - 1; i >= 0; --i) {;
+			if(self.columnList[i].frozen && freezeCont){
+				self.columnFrozenRight.push(self.columnList[i]);
+			}else{
+				freezeCont = false;
+			}
+		}
+
 
 
 		//create sortable arrow chevrons
@@ -2461,6 +2505,29 @@
 		element.append(self.header);
 		self.tableHolder.append(self.table);
 		element.append(self.tableHolder);
+
+		//handle frozen columns
+		if(self.columnFrozenLeft.length){
+			var leftFrozen = $("<div class='tabulator-col tabulator-frozen tabulator-frozen-left'></div>");
+			self.header.prepend(leftFrozen);
+
+			//handle movable rows
+			leftFrozen.append($(".tabulator-col-row-handle", self.header));
+
+			self.columnFrozenLeft.forEach(function(column){
+				leftFrozen.append($(".tabulator-col[data-index=" + column.index + "]", self.header));
+			});
+		}
+
+		if(self.columnFrozenRight.length){
+			var rightFrozen = $("<div class='tabulator-col tabulator-frozen tabulator-frozen-right'></div>");
+			self.header.append(rightFrozen);
+
+			self.columnFrozenRight.forEach(function(column){
+				rightFrozen.prepend($(".tabulator-col[data-index=" + column.index + "]", self.header));
+			});
+		}
+
 
 		//add pagination footer if needed
 		if(self.footer){
@@ -2549,7 +2616,7 @@
 				opacity:1,
 				tolerance: "pointer",
 				// containment: container,
-				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined]",
+				cancel:".tabulator-col-row-handle, .tabulator-col[data-field=''], .tabulator-col[data-field=undefined], .tabulator-frozen",
 				start: function(event, ui){
 					ui.placeholder.css({"display":"inline-block", visibility:"visible", "width":ui.item.outerWidth()});
 				},
@@ -2625,6 +2692,7 @@
 					//regenerate column render list
 					self.columnList = [];
 					self._traverseColumns(function(column){
+						// column.index = self.columnList.length -1;
 						self.columnList.push(column);
 					})
 
@@ -2996,10 +3064,98 @@
 		//vertically align headers
 		self._vertAlignColHeaders();
 
+		//handle frozen columns
+		self._renderFrozenColumns();
+
 		if(forceRedraw){
 			self._renderTable();
 		}
 	},
+
+
+	////////////////// Frozen Columns //////////////////
+
+
+	_renderFrozenColumns:function(){
+		var self = this;
+		var rows;
+
+		if(self.columnFrozenLeft.length || self.columnFrozenRight.length){
+
+			rows = $(".tabulator-row", self.tableHolder);
+
+			if(self.columnFrozenLeft.length){
+
+				rows.each(function(){
+					var row = $(this)
+					var frozLeft;
+
+					if(!$(".tabulator-frozen-left", row).length){
+						frozLeft = $("<div class='tabulator-frozen tabulator-frozen-left'></div>");
+
+						//handle movable rows
+						frozLeft.append($(".tabulator-row-handle", row));
+
+						row.prepend(frozLeft);
+					}
+				});
+
+				self.columnFrozenLeft.forEach(function(column){
+					rows.each(function(){
+						var row = $(this);
+						$(".tabulator-frozen-left",row).append($(".tabulator-cell[data-index=" + column.index + "]",row));
+					});
+				});
+
+			}
+
+			if(self.columnFrozenRight.length){
+
+				rows.each(function(){
+					var row = $(this)
+					if(!$(".tabulator-frozen-right", row).length){
+						row.append("<div class='tabulator-frozen tabulator-frozen-right'></div>");
+					}
+				});
+
+				self.columnFrozenRight.forEach(function(column){
+					rows.each(function(){
+						var row = $(this);
+						$(".tabulator-frozen-right",row).prepend($(".tabulator-cell[data-index=" + column.index + "]",row));
+					});
+				});
+
+			}
+
+			self._calcFrozenColumnsPos();
+		}
+	},
+
+	_calcFrozenColumnsPos:function(){
+		var self = this;
+		var rows, left, width;
+
+		if(self.columnFrozenLeft.length || self.columnFrozenRight.length){
+
+			rows = $(".tabulator-row, .tabulator-header", self.element);
+			left = self.tableHolder.scrollLeft()
+
+			if(self.columnFrozenLeft.length){
+				width = $(".tabulator-frozen-left", self.header).outerWidth();
+				rows.css("padding-left", width);
+				$(".tabulator-frozen-left", self.element).css("left", left);
+			}
+
+			if(self.columnFrozenRight.length){
+				width = $(".tabulator-frozen-right", self.header).outerWidth();
+				rows.css("padding-right", width)
+				$(".tabulator-frozen-right", self.element).css("left",self.tableHolder.innerWidth() - width + left);
+
+			}
+		}
+	},
+
+
 
 	////////////////// Row Styling //////////////////
 
