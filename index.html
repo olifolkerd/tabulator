@@ -133,24 +133,24 @@
     <div class="col-lg-12">
       <h1>Interactive Tables Made Simple</h1>
       <h3>A lightweight, fully featured, interactive table jQuery plugin.</h3>
-      <div class="news hidden-xs">
+      <div class="feature-box version">
         <div class="container">
           <a href="news">
-          <div class="row">
-            <div class="col-lg-12 content " role="main">
-              <table>
-                <tr>
-                  <td>
-                    <i class="fa fa-asterisk"></i>
-                  </td>
-                  <td>
-                    <h2>Version 2.10 Released!</h2>
-                    <p>Selectable Rows, Freezable Columns, New Callbacks and Events, and much, much more... <strong>Click to find out more!</strong></p>
-                  </td>
-                </tr>
-              </table>
+            <div class="row">
+              <div class="col-lg-12 content " role="main">
+                <table>
+                  <tr>
+                    <td>
+                      <i class="fa fa-asterisk"></i>
+                    </td>
+                    <td>
+                      <h2>Version 2.10 Released!</h2>
+                      <p>Selectable Rows, Freezable Columns, New Callbacks and Events, and much, much more... <strong>Click to find out more!</strong></p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </div>
-          </div>
           </a>
         </div>
       </div>
@@ -172,17 +172,24 @@
     <div class="col-lg-12 hidden-xs">
 
       <h2>Try It For Yourself</h2>
-      <p>Actions speak louder than words, so instead of telling you about the enormous list of features available with Tabulator, why dont we just let you have a play!</p>
+      <h3>Actions speak louder than words</h3>
+      <p>Instead of telling you about the enormous list of features available with Tabulator, why dont we just let you have a play!</p>
 
       <p>There are a ton of interactive demos for you to check out over on the <a href="examples">Examples Page</a>.</p>
 
-      <div id="home-controls">
-        <i class="fa fa-search"></i> <input name="name" type="text" placeholder="Filter Table By Name">
-        <button name="download"><i class="fa fa-download"></i> Download Data as CSV</button>
+      <div id="tabulator-controls" class="feature-box">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12 content " role="main">
+            <i class="fa fa-search"></i> <input name="name" type="text" placeholder="Filter Table By Name">
+            <button name="download"><i class="fa fa-download"></i> Download Data as CSV</button>
 
-        <button name="add-row"><i class="fa fa-plus"></i> Add Row</button>
+            <button name="add-row"><i class="fa fa-plus"></i> Add Row</button>
 
-        <button name="hide-col" class="col-hide"><span class="show-rating"><i class="fa fa-eye"></i> Show Rating Column</span><span class="hide-rating"><i class="fa fa-eye-slash"></i> Hide Rating Column</span></button>
+            <button name="hide-col" class="col-hide"><span class="show-rating"><i class="fa fa-eye"></i> Show Rating Column</span><span class="hide-rating"><i class="fa fa-eye-slash"></i> Hide Rating Column</span></button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="tabulator-example"></div>
@@ -192,24 +199,24 @@
 
       <h3>JavaScript</h3>
       <pre class="prettyprint lang-js">$("#tabulator-example").tabulator({
-  height:"320px",
-  fitColumns:true,
-  tooltips:true,
-  pagination:true,
-  movableCols:true,
-  sortBy:"name",
-  sortDir:"asc",
-  columns:[
-    {title:"Name", field:"name", sorter:"string", editable:true},
-    {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
-    {title:"Activity", field:"activity", width:160, formatter:lineFormatter},
-    {title:"Gender", field:"gender", width:90, sorter:"string", editable:true, editor:genderEditor},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
-    {title:"Favourite Color", field:"col", width:130, sorter:"string", sortable:false, editable:true},
-    {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-    {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true}
-  ],
-});</pre>
+        height:"320px",
+        fitColumns:true,
+        tooltips:true,
+        pagination:true,
+        movableCols:true,
+        sortBy:"name",
+        sortDir:"asc",
+        columns:[
+        {title:"Name", field:"name", sorter:"string", editable:true},
+        {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
+        {title:"Activity", field:"activity", width:160, formatter:lineFormatter},
+        {title:"Gender", field:"gender", width:90, sorter:"string", editable:true, editor:genderEditor},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
+        {title:"Favourite Color", field:"col", width:130, sorter:"string", sortable:false, editable:true},
+        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
+        {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true}
+        ],
+      });</pre>
     </div>
   </div>
 
@@ -219,6 +226,7 @@
   <div class="row">
     <div class="col-lg-12">
       <h2>Extensive Feature Set</h2>
+      <h3>More Features than you can shake a stick at</h3>
       <p>Tabulator has an enormous number of features to help customize your experience to your needs.</p>
       <p>With new features released every month, there is bound to be something to get your intertactive table juices flowing.</p>
       <p>A detailed breakdown of all of the vailable features can be found on the <a href="docs">Documentation Page</a></p>
@@ -229,7 +237,7 @@
   <!-- Page Features -->
   <div class="row text-center tiles">
 
-    <div class="col-md-3 col-sm-6 feature">
+    <div class="col-md-3 col-sm-6 tile">
       <a href="docs#filtering">
         <div class="frame">
           <i class="fa fa-filter"></i>
@@ -241,7 +249,7 @@
       </a>
     </div>
 
-    <div class="col-md-3 col-sm-6 feature">
+    <div class="col-md-3 col-sm-6 tile">
       <a href="docs#sorting">
         <div class="frame">
           <i class="fa fa-sort-amount-asc"></i>
@@ -253,7 +261,7 @@
       </a>
     </div>
 
-    <div class="col-md-3 col-sm-6 feature">
+    <div class="col-md-3 col-sm-6 tile">
       <a href="docs#formatting">
         <div class="frame">
           <i class="fa fa-tasks"></i>
@@ -265,7 +273,7 @@
       </a>
     </div>
 
-    <div class="col-md-3 col-sm-6 feature">
+    <div class="col-md-3 col-sm-6 tile">
       <a href="docs#grouping">
         <div class="frame">
           <i class="fa fa-object-group"></i>
@@ -281,7 +289,7 @@
 
   <div class="row text-center">
 
-   <div class="col-md-3 col-sm-6 feature">
+   <div class="col-md-3 col-sm-6 tile">
     <a href="docs#set-data">
       <div class="frame">
         <i class="fa fa-retweet"></i>
@@ -293,7 +301,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#manipulating-data">
       <div class="frame">
         <i class="fa fa-edit"></i>
@@ -305,7 +313,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#callbacks">
       <div class="frame">
         <i class="fa fa-random"></i>
@@ -317,7 +325,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#layout">
       <div class="frame">
         <i class="fa fa-list-alt"></i>
@@ -333,7 +341,7 @@
 
 <div class="row text-center">
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#css">
       <div class="frame">
         <i class="fa fa-css3"></i>
@@ -346,7 +354,7 @@
   </div>
 
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#pagination">
       <div class="frame">
         <i class="fa fa-files-o"></i>
@@ -358,7 +366,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#css">
       <div class="frame">
         <i class="fa fa-dropbox"></i>
@@ -370,7 +378,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#get-set">
       <div class="frame">
         <i class="fa fa-gears"></i>
@@ -386,7 +394,7 @@
 
 <div class="row text-center">
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#accessibility">
       <div class="frame">
         <i class="fa fa-universal-access"></i>
@@ -398,7 +406,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#layout">
       <div class="frame">
         <i class="fa fa-columns"></i>
@@ -410,7 +418,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#selectable">
       <div class="frame">
         <i class="fa fa-check-square-o"></i>
@@ -422,7 +430,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#localization">
       <div class="frame">
         <i class="fa fa-language"></i>
@@ -438,7 +446,7 @@
 
 <div class="row text-center">
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#download">
       <div class="frame">
         <i class="fa fa-download"></i>
@@ -450,7 +458,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#progressive-render">
       <div class="frame">
         <i class="fa fa-cubes"></i>
@@ -462,7 +470,7 @@
     </a>
   </div>
 
-  <div class="col-md-3 col-sm-6 feature">
+  <div class="col-md-3 col-sm-6 tile">
     <a href="docs#persistant-columns">
       <div class="frame">
         <i class="fa fa-floppy-o"></i>
@@ -606,11 +614,11 @@
      });
 
 
-      $("#home-controls input[name=name]").on("keyup", function(){
+      $("#tabulator-controls input[name=name]").on("keyup", function(){
         $("#tabulator-example").tabulator("setFilter", "name", "like", $(this).val())
       });
 
-      $("#home-controls  button[name=hide-col]").on("click", function(){
+      $("#tabulator-controls  button[name=hide-col]").on("click", function(){
         $(this).toggleClass("col-hide");
 
         if($(this).hasClass("col-hide")){
@@ -620,11 +628,11 @@
         }
       });
 
-      $("#home-controls  button[name=add-row]").on("click", function(){
+      $("#tabulator-controls  button[name=add-row]").on("click", function(){
         $("#tabulator-example").tabulator("addRow", {});
       });
 
-      $("#home-controls  button[name=download]").on("click", function(){
+      $("#tabulator-controls  button[name=download]").on("click", function(){
         $("#tabulator-example").tabulator("download", "csv", "Tabulator Example Download.csv");
       });
 
