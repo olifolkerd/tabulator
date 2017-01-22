@@ -121,6 +121,7 @@ footer {
   color: #fff;
   font-weight: bold;
   text-align: center;
+  text-shadow: 0 0 5px #000;
   outline: none;
 }
 .feature-box button i {

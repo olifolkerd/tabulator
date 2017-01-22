@@ -27,6 +27,7 @@
 }
 .jumbotron .btn:hover {
   background-color: #000;
+  border-color: #40B115;
 }
 .jumbotron .btn .glyphicon {
   margin-right: 10px;
@@ -135,6 +136,7 @@
 }
 .feature-box.version:hover {
   background: #000;
+  border-color: #40B115;
 }
 .feature-box.version a {
   color: #fff;
