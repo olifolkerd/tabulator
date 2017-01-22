@@ -252,6 +252,10 @@ article .param {
   font-weight: bold;
   font-style: italic;
 }
+article .highlight {
+  color: #59B038;
+  font-weight: bold;
+}
 article fieldset {
   margin-top: 20px;
   margin-bottom: 10px;

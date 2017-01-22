@@ -26,6 +26,7 @@
 
     <!-- Custom CSS -->
     <link href="../css/styles.css" rel="stylesheet">
+    <link href="../css/examples.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="../css/prettyprint.css" rel="stylesheet">
@@ -548,6 +549,8 @@ $("#example-table").tabulator({
       <div class="container">
         <div class="row">
           <div class="col-lg-12 content " role="main">
+
+          <span>
            <label>Field: </label>
            <select id="sort-field">
               <option value="name" selected>Name</option>
@@ -558,13 +561,16 @@ $("#example-table").tabulator({
               <option value="dob">Date Of Birth</option>
               <option value="car">Driver</option>
           </select>
+          </span>
 
-
+        <span>
           <label>Direction:</label>
           <select id="sort-direction">
               <option value="asc" selected>asc</option>
               <option value="desc">desc</option>
           </select>
+        </span>
+
 
           <button id="sort-trigger">Trigger Sort</button>
           </div>
@@ -899,6 +905,8 @@ $("#example-table").tabulator({
           <div class="container">
             <div class="row">
               <div class="col-lg-12 content " role="main">
+
+            <span>
               <label>Field: </label>
               <select id="filter-field">
                   <option></option>
@@ -911,8 +919,9 @@ $("#example-table").tabulator({
                   <option value="car">Drives</option>
                   <option value="function">Drives &amp;Rating &lt; 3</option>
               </select>
+            </span>
 
-
+            <span>
               <label>Type: </label>
               <select id="filter-type">
                   <option value="=">=</option>
@@ -923,9 +932,9 @@ $("#example-table").tabulator({
                   <option value="!=">!=</option>
                   <option value="like">like</option>
               </select>
+            </span>
 
-
-              <label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter">
+              <span><label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter"></span>
 
               <button id="filter-clear">Clear Filter</button>
               </div>
@@ -1203,7 +1212,7 @@ echo(json_encode($data));</pre>
           <button id="select-all">Select All</button>
           <button id="deselect-all">Deselect All</button>
 
-          <span id="select-stats" style="margin:20px 20px 0 20px; font-size: 1em;"><strong>Selected: <span>0</span></strong></span>
+          <span id="select-stats" style="margin:20px 20px 0 20px; font-size: 1em;"><strong>Selected: <span class="highlight">0</span></strong></span>
           </div>
         </div>
       </div>

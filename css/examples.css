@@ -1,0 +1,12 @@
+.feature-box {
+  padding-bottom: 0px;
+}
+.feature-box label,
+.feature-box input,
+.feature-box select,
+.feature-box button {
+  margin-bottom: 10px;
+}
+.feature-box span {
+  white-space: nowrap;
+}
