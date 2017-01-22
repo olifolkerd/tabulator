@@ -194,29 +194,32 @@
 
       <div id="tabulator-example"></div>
 
-      <h3>HTML</h3>
-      <pre class="prettyprint lang-html">&lt;div id="tabulator-example"&gt;&lt;/div&gt;</pre>
+      <div id="tabulator-code">
 
-      <h3>JavaScript</h3>
-      <pre class="prettyprint lang-js">$("#tabulator-example").tabulator({
-        height:"320px",
-        fitColumns:true,
-        tooltips:true,
-        pagination:true,
-        movableCols:true,
-        sortBy:"name",
-        sortDir:"asc",
-        columns:[
-        {title:"Name", field:"name", sorter:"string", editable:true},
-        {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
-        {title:"Activity", field:"activity", width:160, formatter:lineFormatter},
-        {title:"Gender", field:"gender", width:90, sorter:"string", editable:true, editor:genderEditor},
-        {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
-        {title:"Favourite Color", field:"col", width:130, sorter:"string", sortable:false, editable:true},
-        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-        {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true}
-        ],
-      });</pre>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="tabulator-example"&gt;&lt;/div&gt;</pre>
+
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#tabulator-example").tabulator({
+  height:"320px",
+  fitColumns:true,
+  tooltips:true,
+  pagination:true,
+  movableCols:true,
+  sortBy:"name",
+  sortDir:"asc",
+  columns:[
+    {title:"Name", field:"name", sorter:"string", editable:true},
+    {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
+    {title:"Activity", field:"activity", width:160, formatter:lineFormatter},
+    {title:"Gender", field:"gender", width:90, sorter:"string", editable:true, editor:genderEditor},
+    {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
+    {title:"Favourite Color", field:"col", width:130, sorter:"string", sortable:false, editable:true},
+    {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
+    {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true}
+  ],
+});</pre>
+      </div>
     </div>
   </div>
 
