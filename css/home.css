@@ -14,15 +14,22 @@
   font-size: 21px;
 }
 .jumbotron .btn {
-  background-color: #2C801E;
-  border-color: #1E5715;
+  margin-top: 10px;
+  border: none;
+  border-top: 2px solid #59B038;
+  border-bottom: 2px solid #59B038;
+  border-radius: 0;
+  box-shadow: 0 0 8px 1px #000;
+  background-color: #222;
+  color: #59B038;
+  font-weight: bold;
 }
 .jumbotron .btn:hover {
-  background-color: #59DA43;
-  border-color: #368D27;
+  background-color: #000;
 }
 .jumbotron .btn .glyphicon {
   margin-right: 10px;
+  font-weight: normal;
 }
 .jumbotron .container {
   position: relative;
