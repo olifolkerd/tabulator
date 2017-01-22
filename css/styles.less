@@ -109,34 +109,6 @@ footer {
 ////////////////////////// Special Elements ///////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-.intro{
-	box-sizing: border-box;
-	margin-top: 40px;
-
-	border-top:2px solid @green;
-	border-bottom:2px solid @green;
-
-	padding:10px;
-
-	background-color: #E9FBE3;
-
-	font-size: 18px;
-	color: #000;
-
-	i{
-		font-size: 65px;
-		color: @green;
-	}
-
-	p:last-child{
-		margin-bottom:0;
-	}
-
-	a{
-		color: @green;
-		font-weight: bold;
-	}
-}
 
 .feature-box{
 	box-sizing: border-box;
@@ -153,6 +125,24 @@ footer {
 
 	color: #fff;
 	font-size: 14px;
+
+	&.intro{
+		box-sizing: border-box;
+		margin-top: 40px;
+
+		padding: 10px;
+
+		p{
+			font-size: 18px;
+			font-weight: normal !important;
+		}
+
+
+		i{
+			margin-right: 30px;
+			font-size: 65px;
+		}
+	}
 
 	.container{
 		box-sizing: border-box;
@@ -222,6 +212,7 @@ footer {
 
 		a{
 			color: @green;
+			font-weight: bold;
 		}
 
 		strong{
@@ -235,6 +226,7 @@ footer {
 		}
 	}
 }
+
 
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////// Body Styling ////////////////////////////////

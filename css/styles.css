@@ -60,27 +60,6 @@ footer {
 .docs-sidebar .docs-sidenav .label {
   margin-left: 3px;
 }
-.intro {
-  box-sizing: border-box;
-  margin-top: 40px;
-  border-top: 2px solid #59B038;
-  border-bottom: 2px solid #59B038;
-  padding: 10px;
-  background-color: #E9FBE3;
-  font-size: 18px;
-  color: #000;
-}
-.intro i {
-  font-size: 65px;
-  color: #59B038;
-}
-.intro p:last-child {
-  margin-bottom: 0;
-}
-.intro a {
-  color: #59B038;
-  font-weight: bold;
-}
 .feature-box {
   box-sizing: border-box;
   margin: 20px 0;
@@ -91,6 +70,19 @@ footer {
   background: #222;
   color: #fff;
   font-size: 14px;
+}
+.feature-box.intro {
+  box-sizing: border-box;
+  margin-top: 40px;
+  padding: 10px;
+}
+.feature-box.intro p {
+  font-size: 18px;
+  font-weight: normal !important;
+}
+.feature-box.intro i {
+  margin-right: 30px;
+  font-size: 65px;
 }
 .feature-box .container {
   box-sizing: border-box;
@@ -140,6 +132,7 @@ footer {
 }
 .feature-box table a {
   color: #59B038;
+  font-weight: bold;
 }
 .feature-box table strong {
   color: #59B038;
