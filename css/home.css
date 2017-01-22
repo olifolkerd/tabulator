@@ -12,7 +12,7 @@
 }
 .jumbotron h2 {
   font-size: 21px;
-  text-shadow: 0 0 5px #000;
+  text-shadow: 0 0 10px #000;
 }
 .jumbotron .btn {
   margin-top: 10px;
@@ -39,7 +39,7 @@
   position: absolute;
   bottom: -20px;
   right: 30px;
-  text-shadow: 0 0 5px #000;
+  text-shadow: 0 0 10px #000;
 }
 .jumbotron .container .share span {
   vertical-align: middle;
