@@ -1,5 +1,9 @@
 @green:#59B038;
-@green-dark: darken(@green, 10%);
+@green-dark: darken(@green, 20%);
+
+///////////////////////////////////////////////////////////////////////////
+////////////////////////////// Jumbotron //////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
 .jumbotron{
 
@@ -65,30 +69,16 @@
 	}
 }
 
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////// Body Styling ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
 
 .features{
 
 	margin-top:30px;
 
-	#tabulator-example{
-		border-radius: 3px;
-	}
-
-	.main-title{
-		h1{
-			margin-top:00px;
-			margin-bottom:10px;
-		}
-
-		h3{
-			margin-top: 0;
-			margin-bottom:30px;
-
-			color: #666;
-			font-weight: bold;
-			font-size: 18px;
-		}
-	}
+	//// Header Styling ////
 
 	h1{
 		color:@green;
@@ -107,6 +97,15 @@
 		margin-bottom: 10px;
 	}
 
+	h3{
+		margin-top: 0;
+		margin-bottom:20px;
+
+		color: #666;
+		font-weight: bold;
+		font-size: 16px;
+	}
+
 	p{
 		a{
 			color: @green;
@@ -114,65 +113,44 @@
 		}
 	}
 
-	.news{
-		box-sizing: border-box;
+	//// Main Title Styling ////
 
-		margin-top:-10px;
-		margin-bottom:20px;
-
-		border-top:3px solid @green;
-		border-bottom:3px solid @green;
-
-		box-shadow: 0 0 7px 0 #000;
-
-		background: #222;
-
-		color: #222;
-
-		&:hover{
-			background: #000;
+	.main-title{
+		h1{
+			margin-top:00px;
+			margin-bottom:10px;
 		}
 
-		h2{
-			margin-top: 10px;
-			margin-bottom:3px;
+		h3{
+			margin-top: 0;
+			margin-bottom:30px;
 
-			color:@green;
+			color: #666;
 			font-weight: bold;
-			font-size: 1.5em;
-		}
-
-		p{
-			font-weight: bold;
-		}
-
-		a{
-			color: #fff;
-		}
-
-		strong{
-			color: @green;
-		}
-
-		i{
-			color: @green;
-			font-size: 3em;
-			margin-right:20px;
+			font-size: 18px;
 		}
 	}
 
+	//// Feature Tiles ////
 
-
-	.tabulator{
+	.tiles{
 		margin-top:20px;
-		margin-bottom:30px;
 	}
 
-	.feature{
+	.tile{
 
 		a{
 			text-decoration: none;
 			color:inherit;
+		}
+
+
+		h3{
+			font-size: 24px;
+			margin-top: 20px;
+			margin-bottom: 10px;
+			color: inherit;
+			font-weight: 500;
 		}
 
 		.frame{
@@ -203,67 +181,52 @@
 		}
 	}
 
-	.tiles{
-		margin-top:20px;
-
-		h3{
-
-		}
-	}
-
 }
 
-#home-controls{
+///////////////////////////////////////////////////////////////////////////
+////////////////////////// Special Elements ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
 
-	padding:7px 10px;
 
-	border:2px solid @green-dark;
-	border-radius: 5px;
 
-	background: @green;
+.feature-box.version{
+	margin-top:-10px;
+	margin-bottom:20px;
+
+	&:hover{
+		background: #000;
+	}
+
+	a{
+		color: #fff;
+	}
+}
+
+
+
+#tabulator-controls{
 
 	i{
 		margin-right:3px;
 
-		color: darken(@green-dark, 20%);
+		color: @green;
 		font-weight: bold;
 	}
 
 	input{
 		width:calc(~"100% - 560px");
-
-		padding:2px 5px;
-
-		border:2px solid @green-dark;
 	}
 
 	button{
 
 		float: right;
 
+		margin-right: 0;
 		margin-left: 20px;
-		padding:2px 5px;
-
-		border:2px solid @green-dark;
-
-		background: #fff;
-
-		color: @green-dark;
-		font-weight: bold;
-		text-align: center;
-
-		outline: none;
 
 		i{
 			color: inherit;
 			font-weight: normal;
-		}
-
-		&:hover{
-			border:2px solid #fff;
-
-			background: @green-dark;
-			color: #fff;
 		}
 	}
 
@@ -284,4 +247,12 @@
 			}
 		}
 	}
+}
+
+
+#tabulator-example{
+	margin-top:20px;
+	margin-bottom:30px;
+
+	border-radius: 3px;
 }

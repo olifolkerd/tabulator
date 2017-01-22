@@ -3,6 +3,9 @@ body {
   padding-top: 50px;
   /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
+footer {
+  margin: 50px 0;
+}
 .navbar {
   margin-bottom: 0px !important;
   border-bottom: 2px solid #59B038;
@@ -16,6 +19,10 @@ body {
 }
 .tabulator {
   font-family: sans-serif;
+}
+.docs-sidebar {
+  height: calc(100% - 52px);
+  overflow-y: auto;
 }
 .docs-sidebar .share {
   margin-left: 5px;
@@ -32,46 +39,28 @@ body {
 .docs-sidebar .share a:hover {
   color: #222;
 }
-.docs-sidenav .label {
-  margin-left: 3px;
-}
-h1 .label,
-h2 .label,
-h3 .label {
-  margin-left: 5px;
-  font-size: 11px;
-  vertical-align: middle;
-}
-.docs-sidebar {
-  height: calc(100% - 52px);
-  overflow-y: auto;
-}
-ul.docs-sidenav {
+.docs-sidebar .docs-sidenav {
   margin-top: 20px;
 }
-ul.docs-sidenav li.active {
+.docs-sidebar .docs-sidenav li.active {
   border-left: 3px solid #59B038;
 }
-ul.docs-sidenav li.active a {
+.docs-sidebar .docs-sidenav li.active a {
   padding-left: 12px;
   color: #59B038;
 }
-ul.docs-sidenav li a {
+.docs-sidebar .docs-sidenav li a {
   padding: 5px 15px;
   font-weight: bold;
   color: #999;
 }
-ul.docs-sidenav li a:hover {
+.docs-sidebar .docs-sidenav li a:hover {
   color: #59B038;
 }
-.docs a.anchor {
-  display: block;
-  position: relative;
-  margin-top: -20px;
-  padding-top: 20px;
-  visibility: hidden;
+.docs-sidebar .docs-sidenav .label {
+  margin-left: 3px;
 }
-.docs .intro {
+.intro {
   box-sizing: border-box;
   margin-top: 40px;
   border-top: 2px solid #59B038;
@@ -81,113 +70,191 @@ ul.docs-sidenav li a:hover {
   font-size: 18px;
   color: #000;
 }
-.docs .intro i {
+.intro i {
   font-size: 65px;
   color: #59B038;
 }
-.docs .intro p:last-child {
+.intro p:last-child {
   margin-bottom: 0;
 }
-.docs .intro a {
+.intro a {
   color: #59B038;
   font-weight: bold;
 }
-.docs article {
+.feature-box {
+  box-sizing: border-box;
+  margin: 20px 0;
+  padding: 10px 0;
+  border-top: 3px solid #59B038;
+  border-bottom: 3px solid #59B038;
+  box-shadow: 0 0 7px 0 #000;
+  background: #222;
+  color: #fff;
+  font-size: 14px;
+}
+.feature-box .container {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+}
+.feature-box input {
+  padding: 2px 5px;
+  border: 2px solid #59B038;
+  color: #000;
+}
+.feature-box input:focus {
+  outline-color: #59B038;
+}
+.feature-box button {
+  margin-right: 20px;
+  padding: 2px 5px;
+  border: 2px solid #32631f;
+  background: #59B038;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  outline: none;
+}
+.feature-box button i {
+  font-weight: normal;
+}
+.feature-box button:hover {
+  border: 2px solid #fff;
+  background: #32631f;
+  color: #fff;
+}
+.feature-box table {
+  box-sizing: border-box;
+}
+.feature-box table h2 {
+  margin-bottom: 3px;
+  color: #59B038;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+.feature-box table p {
+  font-weight: bold;
+}
+.feature-box table p:last-of-type {
+  margin-bottom: 0;
+}
+.feature-box table a {
+  color: #59B038;
+}
+.feature-box table strong {
+  color: #59B038;
+}
+.feature-box table i {
+  color: #59B038;
+  font-size: 3em;
+  margin-right: 20px;
+}
+h1 .label,
+h2 .label,
+h3 .label {
+  margin-left: 5px;
+  font-size: 11px;
+  vertical-align: middle;
+}
+a.anchor {
+  display: block;
+  position: relative;
+  margin-top: -20px;
+  padding-top: 20px;
+  visibility: hidden;
+}
+article {
   position: relative;
   margin-top: 50px;
 }
-.docs article .green {
-  color: green;
-  font-weight: bold;
-}
-.docs article h1 {
+article h1 {
   border-bottom: 1px solid #59B038;
   padding-bottom: 10px;
   font-weight: bold;
 }
-.docs article h1 .datestamp {
+article h1 .datestamp {
   color: #59B038;
 }
-.docs article h1 .doc-link,
-.docs article h1 .datestamp {
+article h1 .doc-link,
+article h1 .datestamp {
   margin-left: 20px;
   font-size: 20px;
   vertical-align: middle;
   white-space: nowrap;
 }
-.docs article h1 .doc-link i,
-.docs article h1 .datestamp i {
+article h1 .doc-link i,
+article h1 .datestamp i {
   font-size: .9em;
 }
-.docs article h2 {
+article h2 {
   font-size: 25px;
   margin-top: 30px;
   font-weight: bold;
 }
-.docs article h3 {
+article h3 {
   margin-top: 18px;
   font-size: 17px;
   font-weight: bold;
 }
-.docs article a {
+article a {
   color: #59B038;
   font-weight: bold;
 }
-.docs article .param {
-  font-weight: bold;
-  font-style: italic;
-}
-.docs article button,
-.docs article select {
-  margin-right: 20px;
-}
-.docs article button {
-  border: 2px solid #32631f;
-  border-radius: 5px;
-  padding: 5px 10px;
-  background: #59B038;
-  color: #fff;
-  font-weight: bold;
-}
-.docs article button:hover {
-  background: #32631f;
-  border: 2px solid #59B038;
-}
-.docs article button.view-source {
-  margin-top: 20px;
-}
-.docs article a.example-link {
+article a.example-link {
   color: #fff;
   font-weight: bold;
   font-size: 14px;
   vertical-align: middle;
 }
-.docs article a.example-link button {
+article a.example-link button {
   margin-left: 5px;
   border: 2px solid #32631f;
   border-radius: 5px;
   padding: 5px 10px;
   background: #59B038;
 }
-.docs article a.example-link button:hover {
+article a.example-link button:hover {
   background: #32631f;
   border: 2px solid #59B038;
 }
-.docs article fieldset {
+article .param {
+  font-weight: bold;
+  font-style: italic;
+}
+article button,
+article select {
+  margin-right: 20px;
+}
+article button {
+  border: 2px solid #32631f;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background: #59B038;
+  color: #fff;
+  font-weight: bold;
+}
+article button:hover {
+  background: #32631f;
+  border: 2px solid #59B038;
+}
+article button.view-source {
+  margin-top: 20px;
+}
+article fieldset {
   margin-top: 20px;
   margin-bottom: 10px;
   border: 2px solid #59B038;
   border-radius: 5px;
   padding: 10px 20px;
 }
-.docs article fieldset.source {
+article fieldset.source {
   display: none;
   margin-bottom: 0;
 }
-.docs article fieldset.source legend {
+article fieldset.source legend {
   margin-bottom: 10px;
 }
-.docs article fieldset legend {
+article fieldset legend {
   width: inherit;
   border: none;
   color: #59B038;
@@ -198,67 +265,64 @@ ul.docs-sidenav li a:hover {
   padding: 0 10px;
   margin-bottom: 0;
 }
-.docs article fieldset h3:first-of-type {
+article fieldset h3:first-of-type {
   margin-top: 0;
 }
-.docs article fieldset label {
+article fieldset label {
   margin-right: 5px;
 }
-.docs article fieldset button {
+article fieldset button {
   margin-top: 0;
   margin-left: 20px;
   padding: 2px 10px;
 }
-.docs article fieldset input,
-.docs article fieldset select {
+article fieldset input,
+article fieldset select {
   padding: 1px;
 }
-.docs article fieldset input,
-.docs article fieldset select,
-.docs article fieldset button {
+article fieldset input,
+article fieldset select,
+article fieldset button {
   vertical-align: middle;
 }
-.docs article table.plain {
+article table.plain {
   width: 100%;
 }
-.docs article table.plain td,
-.docs article table.plain th {
+article table.plain td,
+article table.plain th {
   border: 1px solid #999;
   padding: 3px;
 }
-.docs article table.plain th {
+article table.plain th {
   background: #eee;
 }
-.docs article table:not(.plain) {
+article table:not(.plain) {
   width: 100%;
 }
-.docs article table:not(.plain) thead {
+article table:not(.plain) thead {
   font-weight: bold;
   background: #ddd;
 }
-.docs article table:not(.plain) thead th {
+article table:not(.plain) thead th {
   border: 1px solid #999;
 }
-.docs article table:not(.plain) th,
-.docs article table:not(.plain) td {
+article table:not(.plain) th,
+article table:not(.plain) td {
   border: 1px solid #ccc;
   padding: 5px;
 }
-.docs article table:not(.plain) tbody tr:nth-of-type(even) td {
+article table:not(.plain) tbody tr:nth-of-type(even) td {
   background: #f9f9f9;
 }
-.docs article table:not(.plain) tbody tr:last-of-type td {
+article table:not(.plain) tbody tr:last-of-type td {
   border-bottom: 1px solid #999;
 }
-.docs article table:not(.plain) tbody tr td:first-of-type {
+article table:not(.plain) tbody tr td:first-of-type {
   border-left: 1px solid #999;
 }
-.docs article table:not(.plain) tbody tr td:last-of-type {
+article table:not(.plain) tbody tr td:last-of-type {
   border-right: 1px solid #999;
 }
-.docs article table:not(.plain) tbody tr td a button {
+article table:not(.plain) tbody tr td a button {
   margin: 0;
-}
-footer {
-  margin: 50px 0;
 }

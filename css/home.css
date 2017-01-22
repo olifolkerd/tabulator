@@ -47,20 +47,6 @@
 .features {
   margin-top: 30px;
 }
-.features #tabulator-example {
-  border-radius: 3px;
-}
-.features .main-title h1 {
-  margin-top: 00px;
-  margin-bottom: 10px;
-}
-.features .main-title h3 {
-  margin-top: 0;
-  margin-bottom: 30px;
-  color: #666;
-  font-weight: bold;
-  font-size: 18px;
-}
 .features h1 {
   color: #59B038;
   font-weight: bold;
@@ -74,118 +60,101 @@
   margin-top: 0;
   margin-bottom: 10px;
 }
+.features h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #666;
+  font-weight: bold;
+  font-size: 16px;
+}
 .features p a {
   color: #59B038;
   font-weight: bold;
 }
-.features .news {
-  box-sizing: border-box;
-  margin-top: -10px;
-  margin-bottom: 20px;
-  border-top: 3px solid #59B038;
-  border-bottom: 3px solid #59B038;
-  box-shadow: 0 0 7px 0 #000;
-  background: #222;
-  color: #222;
+.features .main-title h1 {
+  margin-top: 00px;
+  margin-bottom: 10px;
 }
-.features .news:hover {
-  background: #000;
-}
-.features .news h2 {
-  margin-top: 10px;
-  margin-bottom: 3px;
-  color: #59B038;
-  font-weight: bold;
-  font-size: 1.5em;
-}
-.features .news p {
-  font-weight: bold;
-}
-.features .news a {
-  color: #fff;
-}
-.features .news strong {
-  color: #59B038;
-}
-.features .news i {
-  color: #59B038;
-  font-size: 3em;
-  margin-right: 20px;
-}
-.features .tabulator {
-  margin-top: 20px;
+.features .main-title h3 {
+  margin-top: 0;
   margin-bottom: 30px;
+  color: #666;
+  font-weight: bold;
+  font-size: 18px;
 }
-.features .feature a {
+.features .tiles {
+  margin-top: 20px;
+}
+.features .tile a {
   text-decoration: none;
   color: inherit;
 }
-.features .feature .frame {
+.features .tile h3 {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: inherit;
+  font-weight: 500;
+}
+.features .tile .frame {
   padding: 20px 10px 10px 10px;
   border-radius: 10px;
   border: 1px solid #ccc;
   box-sizing: border-box;
   margin: 1px 1px 20px 1px;
 }
-.features .feature .frame:hover {
+.features .tile .frame:hover {
   margin: 0 0 19px 0;
   border: 2px solid #59B038;
   cursor: pointer;
 }
-.features .feature .frame:hover .fa {
+.features .tile .frame:hover .fa {
   color: #59B038;
 }
-.features .feature .frame .fa {
+.features .tile .frame .fa {
   font-size: 5em;
 }
-.features .tiles {
-  margin-top: 20px;
+.feature-box.version {
+  margin-top: -10px;
+  margin-bottom: 20px;
 }
-#home-controls {
-  padding: 7px 10px;
-  border: 2px solid #45892c;
-  border-radius: 5px;
-  background: #59B038;
+.feature-box.version:hover {
+  background: #000;
 }
-#home-controls i {
+.feature-box.version a {
+  color: #fff;
+}
+#tabulator-controls i {
   margin-right: 3px;
-  color: #1e3c13;
+  color: #59B038;
   font-weight: bold;
 }
-#home-controls input {
+#tabulator-controls input {
   width: calc(100% - 560px);
-  padding: 2px 5px;
-  border: 2px solid #45892c;
 }
-#home-controls button {
+#tabulator-controls button {
   float: right;
+  margin-right: 0;
   margin-left: 20px;
-  padding: 2px 5px;
-  border: 2px solid #45892c;
-  background: #fff;
-  color: #45892c;
-  font-weight: bold;
-  text-align: center;
-  outline: none;
 }
-#home-controls button i {
+#tabulator-controls button i {
   color: inherit;
   font-weight: normal;
 }
-#home-controls button:hover {
-  border: 2px solid #fff;
-  background: #45892c;
-  color: #fff;
-}
-#home-controls button[name="hide-col"] {
+#tabulator-controls button[name="hide-col"] {
   width: 180px;
 }
-#home-controls button[name="hide-col"] .hide-rating {
+#tabulator-controls button[name="hide-col"] .hide-rating {
   display: none;
 }
-#home-controls button[name="hide-col"].col-hide .show-rating {
+#tabulator-controls button[name="hide-col"].col-hide .show-rating {
   display: none;
 }
-#home-controls button[name="hide-col"].col-hide .hide-rating {
+#tabulator-controls button[name="hide-col"].col-hide .hide-rating {
   display: inline-block;
+}
+#tabulator-example {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  border-radius: 3px;
 }

@@ -1,10 +1,27 @@
 @green:#59B038;
+@green-dark: darken(@green, 20%);
 
+///////////////////////////////////////////////////////////////////////////
+/////////////////////////// Page Structure ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+//Page Body
 body {
 	font-family: 'Open Sans', sans-serif;
 	padding-top: 50px; /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
 }
 
+footer {
+	margin: 50px 0;
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////// Navigation //////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
+//top nav bar
 .navbar {
 	margin-bottom: 0px !important;
 
@@ -24,11 +41,17 @@ body {
 
 }
 
+//generic tabulator styling
 .tabulator{
 	font-family: sans-serif;
 }
 
+//side bar
 .docs-sidebar{
+
+	height:calc(~"100% - 52px");
+	overflow-y: auto;
+
 	.share{
 		margin-left:5px;
 
@@ -48,16 +71,177 @@ body {
 			}
 		}
 	}
+
+	.docs-sidenav{
+
+		margin-top:20px;
+
+		li{
+
+			&.active{
+				border-left:3px solid @green;
+
+				a{
+					padding-left:12px;
+					color: @green;
+				}
+			}
+
+			a{
+				padding:5px 15px;
+
+				font-weight: bold;
+				color:#999;
+
+				&:hover{
+					color:@green;
+				}
+			}
+		}
+
+		.label{
+			margin-left:3px;
+		}
+	}
 }
 
-.docs-sidenav{
-	.label{
-		margin-left:3px;
+///////////////////////////////////////////////////////////////////////////
+////////////////////////// Special Elements ///////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+.intro{
+	box-sizing: border-box;
+	margin-top: 40px;
+
+	border-top:2px solid @green;
+	border-bottom:2px solid @green;
+
+	padding:10px;
+
+	background-color: #E9FBE3;
+
+	font-size: 18px;
+	color: #000;
+
+	i{
+		font-size: 65px;
+		color: @green;
+	}
+
+	p:last-child{
+		margin-bottom:0;
+	}
+
+	a{
+		color: @green;
+		font-weight: bold;
+	}
+}
+
+.feature-box{
+	box-sizing: border-box;
+
+	margin:20px 0;
+	padding:10px 0;
+
+	border-top:3px solid @green;
+	border-bottom:3px solid @green;
+
+	box-shadow: 0 0 7px 0 #000;
+
+	background: #222;
+
+	color: #fff;
+	font-size: 14px;
+
+	.container{
+		box-sizing: border-box;
+		width: 100%;
+		margin:0;
+	}
+
+	input{
+		padding:2px 5px;
+
+		border:2px solid @green;
+
+		color: #000;
+
+		&:focus{
+			outline-color: @green;
+		}
+	}
+
+	button{
+
+		margin-right: 20px;
+		padding:2px 5px;
+
+		border:2px solid @green-dark;
+
+		background: @green;
+
+		color: #fff;
+		font-weight: bold;
+		text-align: center;
+
+		outline: none;
+
+		i{
+			font-weight: normal;
+		}
+
+		&:hover{
+			border:2px solid #fff;
+
+			background: @green-dark;
+			color: #fff;
+		}
 	}
 
 
+	table{
+
+		box-sizing: border-box;
+
+		h2{
+			margin-bottom:3px;
+
+			color:@green;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+
+		p{
+			font-weight: bold;
+
+			&:last-of-type{
+				margin-bottom:0;
+			}
+		}
+
+		a{
+			color: @green;
+		}
+
+		strong{
+			color: @green;
+		}
+
+		i{
+			color: @green;
+			font-size: 3em;
+			margin-right:20px;
+		}
+	}
 }
 
+///////////////////////////////////////////////////////////////////////////
+///////////////////////////// Body Styling ////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+
+
+//updated/new pills
 h1, h2, h3{
 	.label{
 		margin-left:5px;
@@ -67,168 +251,71 @@ h1, h2, h3{
 	}
 }
 
-.docs-sidebar{
-	height:calc(~"100% - 52px");
-	overflow-y: auto;
-}
-
-ul.docs-sidenav{
-	margin-top:20px;
-
-	li{
-
-		&.active{
-			border-left:3px solid @green;
-
-			a{
-				padding-left:12px;
-				color: @green;
-			}
-		}
-
-		a{
-			padding:5px 15px;
-
-			font-weight: bold;
-			color:#999;
-
-			&:hover{
-				color:@green;
-			}
-		}
-	}
+//hidden link ancors
+a.anchor {
+	display: block;
+	position: relative;
+	margin-top: -20px;
+	padding-top: 20px;
+	visibility: hidden;
 }
 
 
-.docs{
-	a.anchor {
-		display: block;
-		position: relative;
-		margin-top: -20px;
-		padding-top: 20px;
-		visibility: hidden;
-	}
+article{
 
-	.intro{
-		box-sizing: border-box;
-		margin-top: 40px;
+	position: relative;
 
-		border-top:2px solid @green;
-		border-bottom:2px solid @green;
-		// border-radius: 5px;
+	margin-top: 50px;
 
-		padding:10px;
 
-		background-color: #E9FBE3;
+	//// header styling ////
 
-		font-size: 18px;
-		color: #000;
+	h1{
 
-		i{
-			font-size: 65px;
+		border-bottom:1px solid @green;
+
+		padding-bottom:10px;
+
+		font-weight: bold;
+
+		.datestamp{
 			color: @green;
 		}
 
-		p:last-child{
-			margin-bottom:0;
-		}
+		.doc-link, .datestamp{
+			margin-left:20px;
 
-		a{
-			color: @green;
-			font-weight: bold;
+			font-size: 20px;
+			vertical-align: middle;
+
+			white-space: nowrap;
+
+			i{
+				font-size: .9em;
+			}
 		}
 	}
 
-	article{
+	h2{
+		font-size: 25px;
+		margin-top:30px;
+		font-weight: bold;
+	}
 
-		position: relative;
+	h3{
 
-		margin-top: 50px;
+		margin-top:18px;
+		font-size: 17px;
+		font-weight: bold;
+	}
 
-		.green{
-			color: green;
-			font-weight: bold;
-		}
+	//// Links & Highlighting ////
 
-		h1{
+	a{
+		color: @green;
+		font-weight: bold;
 
-			border-bottom:1px solid @green;
-
-			padding-bottom:10px;
-
-			font-weight: bold;
-
-			.datestamp{
-				color: @green;
-			}
-
-			.doc-link, .datestamp{
-				margin-left:20px;
-
-				font-size: 20px;
-				vertical-align: middle;
-
-				white-space: nowrap;
-
-				i{
-					font-size: .9em;
-				}
-			}
-		}
-
-		h2{
-			font-size: 25px;
-			margin-top:30px;
-			// font-size: 1.5em;
-			font-weight: bold;
-		}
-
-		h3{
-
-			margin-top:18px;
-			font-size: 17px;
-			font-weight: bold;
-			// color: #666;
-		}
-
-		a{
-			color: @green;
-			font-weight: bold;
-		}
-
-		.param{
-			font-weight: bold;
-			font-style: italic;
-		}
-
-		button, select{
-			margin-right:20px;
-		}
-
-		button{
-
-			border:2px solid darken(@green, 20%);
-			border-radius: 5px;
-
-			padding: 5px 10px;
-
-			background: @green;
-
-			color: #fff;
-			font-weight: bold;
-
-			&:hover{
-				background:darken(@green, 20%);
-				border:2px solid  @green;
-			}
-
-			&.view-source{
-				margin-top: 20px;
-			}
-
-		}
-
-		a.example-link{
+		&.example-link{
 
 			color: #fff;
 			font-weight: bold;
@@ -254,135 +341,167 @@ ul.docs-sidenav{
 			}
 
 		}
+	}
+
+	.param{
+		font-weight: bold;
+		font-style: italic;
+	}
 
 
+	//// Forms & Controls ////
 
-		fieldset{
-			margin-top:20px;
-			margin-bottom:10px;
 
-			border: 2px solid @green;
-			border-radius: 5px;
+	button, select{
+		margin-right:20px;
+	}
 
-			padding:10px 20px;
+	button{
 
-			&.source{
-				display: none;
+		border:2px solid darken(@green, 20%);
+		border-radius: 5px;
 
-				margin-bottom:0;
+		padding: 5px 10px;
 
-				legend{
-					margin-bottom: 10px;
-				}
-			}
+		background: @green;
+
+		color: #fff;
+		font-weight: bold;
+
+		&:hover{
+			background:darken(@green, 20%);
+			border:2px solid  @green;
+		}
+
+		&.view-source{
+			margin-top: 20px;
+		}
+
+	}
+
+	fieldset{
+		margin-top:20px;
+		margin-bottom:10px;
+
+		border: 2px solid @green;
+		border-radius: 5px;
+
+		padding:10px 20px;
+
+		&.source{
+			display: none;
+
+			margin-bottom:0;
 
 			legend{
-				width: inherit;
-				border:none;
-
-				color: @green;
-				font-size: 16px;
-				line-height: 16px;
-				font-weight: bold;
-
-				background: #fff;
-				padding:0 10px;
-
-				margin-bottom: 0;
-
-			}
-
-			h3:first-of-type{
-				margin-top: 0;
-			}
-
-			label{
-				margin-right:5px;
-			}
-
-			button{
-				margin-top: 0;
-				margin-left:20px;
-				padding: 2px 10px;
-			}
-
-			input, select{
-				padding:1px;
-			}
-
-			input, select, button{
-				vertical-align: middle;
+				margin-bottom: 10px;
 			}
 		}
 
-		table.plain{
+		legend{
+			width: inherit;
+			border:none;
 
-			width:100%;
+			color: @green;
+			font-size: 16px;
+			line-height: 16px;
+			font-weight: bold;
 
-			td, th{
-				border:1px solid #999;
-				padding:3px;
-			}
+			background: #fff;
+			padding:0 10px;
+
+			margin-bottom: 0;
+
+		}
+
+		h3:first-of-type{
+			margin-top: 0;
+		}
+
+		label{
+			margin-right:5px;
+		}
+
+		button{
+			margin-top: 0;
+			margin-left:20px;
+			padding: 2px 10px;
+		}
+
+		input, select{
+			padding:1px;
+		}
+
+		input, select, button{
+			vertical-align: middle;
+		}
+	}
+
+	//// Tables ////
+
+	table.plain{
+
+		width:100%;
+
+		td, th{
+			border:1px solid #999;
+			padding:3px;
+		}
+
+		th{
+			background: #eee;
+		}
+
+	}
+
+	table:not(.plain){
+
+		width:100%;
+
+		thead{
+			font-weight: bold;
+
+			background: #ddd;
 
 			th{
-				background: #eee;
+				border: 1px solid #999;
 			}
-
 		}
 
-		table:not(.plain){
+		th,td{
+			border:1px solid #ccc;
+			padding:5px;
+		}
 
-			width:100%;
-
-			thead{
-				font-weight: bold;
-
-				background: #ddd;
-
-				th{
-					border: 1px solid #999;
+		tbody{
+			tr{
+				&:nth-of-type(even){
+					td{
+						background: #f9f9f9;
+					}
 				}
-			}
 
-			th,td{
-				border:1px solid #ccc;
-				padding:5px;
-			}
+				&:last-of-type{
+					td{
+						border-bottom: 1px solid #999;
+					}
+				}
 
-			tbody{
-				tr{
-					&:nth-of-type(even){
-						td{
-							background: #f9f9f9;
-						}
+				td{
+					&:first-of-type{
+						border-left: 1px solid #999;
 					}
 
 					&:last-of-type{
-						td{
-							border-bottom: 1px solid #999;
-						}
+						border-right: 1px solid #999;
 					}
-
-					td{
-						&:first-of-type{
-							border-left: 1px solid #999;
-						}
-
-						&:last-of-type{
-							border-right: 1px solid #999;
-						}
-						a{
-							button{
-								margin: 0;
-							}
+					a{
+						button{
+							margin: 0;
 						}
 					}
 				}
 			}
 		}
 	}
-}
-
-footer {
-	margin: 50px 0;
 }
