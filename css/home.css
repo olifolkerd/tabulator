@@ -136,6 +136,7 @@
   float: right;
   margin-right: 0;
   margin-left: 20px;
+  padding: 2px 5px !important;
 }
 #tabulator-controls button i {
   color: inherit;

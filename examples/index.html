@@ -541,30 +541,36 @@ $("#example-table").tabulator({
     <p>You can programmatically trigger a sort using the <span class='param'>sort</span> function.</p>
 
     <p>
-        <fieldset>
-         <legend>Programmatic Sort Parameters</legend>
 
-         <label>Field: </label>
-         <select id="sort-field">
-            <option value="name" selected>Name</option>
-            <option value="progress">Progress</option>
-            <option value="gender">Gender</option>
-            <option value="rating">Rating</option>
-            <option value="col">Favourite Colour</option>
-            <option value="dob">Date Of Birth</option>
-            <option value="car">Driver</option>
-        </select>
+    <div class="feature-box-legend">Programmatic Sort Parameters</div>
+
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+           <label>Field: </label>
+           <select id="sort-field">
+              <option value="name" selected>Name</option>
+              <option value="progress">Progress</option>
+              <option value="gender">Gender</option>
+              <option value="rating">Rating</option>
+              <option value="col">Favourite Colour</option>
+              <option value="dob">Date Of Birth</option>
+              <option value="car">Driver</option>
+          </select>
 
 
-        <label>Direction:</label>
-        <select id="sort-direction">
-            <option value="asc" selected>asc</option>
-            <option value="desc">desc</option>
-        </select>
+          <label>Direction:</label>
+          <select id="sort-direction">
+              <option value="asc" selected>asc</option>
+              <option value="desc">desc</option>
+          </select>
 
-        <button id="sort-trigger">Trigger Sort</button>
-
-    </fieldset>
+          <button id="sort-trigger">Trigger Sort</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 </p>
 
@@ -886,41 +892,46 @@ $("#example-table").tabulator({
     </p>
 
     <p>
-        <fieldset>
-            <legend>Filter Parameters</legend>
+
+        <div class="feature-box-legend">Filter Parameters</div>
+
+        <div class="feature-box">
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12 content " role="main">
+              <label>Field: </label>
+              <select id="filter-field">
+                  <option></option>
+                  <option value="name">Name</option>
+                  <option value="progress">Progress</option>
+                  <option value="gender">Gender</option>
+                  <option value="rating">Rating</option>
+                  <option value="col">Favourite Colour</option>
+                  <option value="dob">Date Of Birth</option>
+                  <option value="car">Drives</option>
+                  <option value="function">Drives &amp;Rating &lt; 3</option>
+              </select>
 
 
-            <label>Field: </label>
-            <select id="filter-field">
-                <option></option>
-                <option value="name">Name</option>
-                <option value="progress">Progress</option>
-                <option value="gender">Gender</option>
-                <option value="rating">Rating</option>
-                <option value="col">Favourite Colour</option>
-                <option value="dob">Date Of Birth</option>
-                <option value="car">Drives</option>
-                <option value="function">Drives &amp;Rating &lt; 3</option>
-            </select>
+              <label>Type: </label>
+              <select id="filter-type">
+                  <option value="=">=</option>
+                  <option value="<">&lt;</option>
+                  <option value="<=">&lt;=</option>
+                  <option value=">">&gt;</option>
+                  <option value=">=">&gt;=</option>
+                  <option value="!=">!=</option>
+                  <option value="like">like</option>
+              </select>
 
 
-            <label>Type: </label>
-            <select id="filter-type">
-                <option value="=">=</option>
-                <option value="<">&lt;</option>
-                <option value="<=">&lt;=</option>
-                <option value=">">&gt;</option>
-                <option value=">=">&gt;=</option>
-                <option value="!=">!=</option>
-                <option value="like">like</option>
-            </select>
+              <label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter">
 
-
-            <label>Value: </label> <input id="filter-value" type="text" placeholder="value to filter">
-
-            <button id="filter-clear">Clear Filter</button>
-
-        </fieldset>
+              <button id="filter-clear">Clear Filter</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
     </p>
 
@@ -1105,10 +1116,19 @@ $("#example-table").tabulator("setPage", 1);</pre>
     <p>If you always request the same URL for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
 
     <p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
-    <fieldset>
-        <legend>AJAX Controls</legend>
-        <button id="ajax-trigger">Load Data via AJAX</button>
-    </fieldset>
+
+    <div class="feature-box-legend">AJAX Controls</div>
+
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+          <button id="ajax-trigger">Load Data via AJAX</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="example-table" id="example-table-ajax">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1172,16 +1192,22 @@ echo(json_encode($data));</pre>
 	</li>
 </ul></p>
 
-	<fieldset>
-	    <legend>Selection Controls</legend>
+    <div class="feature-box-legend">Selection Controls</div>
 
-		<button id="select-row">Select "Oli Bob"</button>
-		<button id="deselect-row">Deselect "Oli Bob"</button>
-		<button id="select-all">Select All</button>
-		<button id="deselect-all">Deselect All</button>
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+          <button id="select-row">Select "Oli Bob"</button>
+          <button id="deselect-row">Deselect "Oli Bob"</button>
+          <button id="select-all">Select All</button>
+          <button id="deselect-all">Deselect All</button>
 
-		<span id="select-stats" style="margin:20px 20px 0 20px; font-size: 1em;"><strong>Selected: <span>0</span></strong></span>
-	</fieldset>
+          <span id="select-stats" style="margin:20px 20px 0 20px; font-size: 1em;"><strong>Selected: <span>0</span></strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
 
 	<div class="example-table" id="example-table-selectable">
 	    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
@@ -1242,14 +1268,22 @@ $("#deselect-all").click(function(){
     <p>
         Tablulator allows you to add new rows, delete existing rows and cleat all table data with ease.
     </p>
-    <fieldset>
-        <legend>Row Controls</legend>
 
-        <button id="add-row">Add Blank Row to bottom</button>
-        <button id="del-row">Remove Row "Oli Bob"</button>
-        <button id="clear">Empty the table</button>
-        <button id="reset">Reset</button>
-    </fieldset>
+    <div class="feature-box-legend">Row Controls</div>
+
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+          <button id="add-row">Add Blank Row to bottom</button>
+          <button id="del-row">Remove Row "Oli Bob"</button>
+          <button id="clear">Empty the table</button>
+          <button id="reset">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="example-table" id="example-table-adddel">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1339,12 +1373,20 @@ $("#reset").click(function(){
     <p>Tabulator allows you to download the table data as a file directly from your browser, no server needed.</p>
 
     <p>The download will contain the text values of all data currently visible in the table, matching the current column layout, column titles, sorting and filtering.</p>
-    <fieldset>
-        <legend>Download Controls</legend>
 
-        <button id="download-csv">Download CSV</button>
-        <button id="download-json">Download JSON</button>
-    </fieldset>
+    <div class="feature-box-legend">Download Controls</div>
+
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+          <button id="download-csv">Download CSV</button>
+          <button id="download-json">Download JSON</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="example-table" id="example-table-download">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1387,13 +1429,21 @@ $("#download-json").click(function(){
     <p>
         You can localize the content of your tables to meet the needs of your regional users. Any number of language options can be configured for column headers and pagination controls.
     </p>
-    <fieldset>
-        <legend>Language Controls</legend>
 
-        <button id="lang-french">French</button>
-        <button id="lang-german">German</button>
-        <button id="lang-default">Default (English)</button>
-    </fieldset>
+    <div class="feature-box-legend">Language Controls</div>
+
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+          <button id="lang-french">French</button>
+          <button id="lang-german">German</button>
+          <button id="lang-default">Default (English)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="example-table" id="example-table-localization">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>

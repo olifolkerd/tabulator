@@ -60,6 +60,13 @@ footer {
 .docs-sidebar .docs-sidenav .label {
   margin-left: 3px;
 }
+.feature-box-legend {
+  margin-top: 20px;
+  margin-bottom: -10px;
+  color: #59B038;
+  font-weight: bold;
+  font-size: 16px;
+}
 .feature-box {
   box-sizing: border-box;
   margin: 20px 0;
@@ -89,18 +96,27 @@ footer {
   width: 100%;
   margin: 0;
 }
-.feature-box input {
+.feature-box label {
+  margin-right: 5px;
+  color: #59B038;
+}
+.feature-box input,
+.feature-box select {
   padding: 2px 5px;
   border: 2px solid #59B038;
-  color: #000;
+  color: #fff;
+  background: #666;
+  font-weight: bold;
 }
-.feature-box input:focus {
+.feature-box input:focus,
+.feature-box select:focus {
   outline-color: #59B038;
 }
 .feature-box button {
-  margin-right: 20px;
-  padding: 2px 5px;
+  margin: 0 20px;
+  padding: 2px 10px;
   border: 2px solid #32631f;
+  border-radius: 0;
   background: #59B038;
   color: #fff;
   font-weight: bold;
@@ -111,9 +127,12 @@ footer {
   font-weight: normal;
 }
 .feature-box button:hover {
-  border: 2px solid #fff;
-  background: #32631f;
+  border: 2px solid #59B038;
+  background: #222;
   color: #fff;
+}
+.feature-box button:active {
+  color: #59B038;
 }
 .feature-box table {
   box-sizing: border-box;
@@ -155,6 +174,25 @@ a.anchor {
   margin-top: -20px;
   padding-top: 20px;
   visibility: hidden;
+}
+button,
+select {
+  margin-right: 20px;
+}
+button {
+  border: 2px solid #32631f;
+  border-radius: 5px;
+  padding: 5px 10px;
+  background: #59B038;
+  color: #fff;
+  font-weight: bold;
+}
+button:hover {
+  background: #32631f;
+  border: 2px solid #59B038;
+}
+button.view-source {
+  margin-top: 20px;
 }
 article {
   position: relative;
@@ -213,25 +251,6 @@ article a.example-link button:hover {
 article .param {
   font-weight: bold;
   font-style: italic;
-}
-article button,
-article select {
-  margin-right: 20px;
-}
-article button {
-  border: 2px solid #32631f;
-  border-radius: 5px;
-  padding: 5px 10px;
-  background: #59B038;
-  color: #fff;
-  font-weight: bold;
-}
-article button:hover {
-  background: #32631f;
-  border: 2px solid #59B038;
-}
-article button.view-source {
-  margin-top: 20px;
 }
 article fieldset {
   margin-top: 20px;
