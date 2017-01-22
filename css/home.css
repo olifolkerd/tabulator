@@ -109,6 +109,7 @@
   border: 1px solid #ccc;
   box-sizing: border-box;
   margin: 1px 1px 20px 1px;
+  transition: border-color 0.3s;
 }
 .features .tile .frame:hover {
   margin: 0 0 19px 0;
@@ -116,6 +117,11 @@
   cursor: pointer;
 }
 .features .tile .frame:hover .fa {
+  color: #59B038;
+  transition: transform .7s;
+  transform: rotateY(360deg);
+}
+.features .tile .frame:active {
   color: #59B038;
 }
 .features .tile .frame .fa {

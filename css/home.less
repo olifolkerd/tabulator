@@ -173,6 +173,8 @@
 
 			margin:1px 1px 20px 1px;
 
+			transition: border-color .3s;
+
 			&:hover{
 
 				margin:0 0 19px 0;
@@ -183,7 +185,15 @@
 
 				.fa{
 					color:@green;
+
+					transition: transform .7s;
+
+					transform:rotateY(360deg);
 				}
+			}
+
+			&:active{
+				color: @green;
 			}
 
 			.fa{
