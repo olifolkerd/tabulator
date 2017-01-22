@@ -112,16 +112,33 @@ footer {
 .feature-box select:focus {
   outline-color: #59B038;
 }
+.feature-box input::-webkit-input-placeholder,
+.feature-box select::-webkit-input-placeholder {
+  color: #6B8362;
+}
+.feature-box input:-moz-placeholder,
+.feature-box select:-moz-placeholder {
+  /* Firefox 18- */
+  color: #6B8362;
+}
+.feature-box input::-moz-placeholder,
+.feature-box select::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #6B8362;
+}
+.feature-box input:-ms-input-placeholder,
+.feature-box select:-ms-input-placeholder {
+  color: #6B8362;
+}
 .feature-box button {
   margin: 0 20px;
   padding: 2px 10px;
   border: 2px solid #32631f;
   border-radius: 0;
   background: #59B038;
-  color: #fff;
+  color: #222;
   font-weight: bold;
   text-align: center;
-  text-shadow: 0 0 5px #000;
   outline: none;
 }
 .feature-box button i {
@@ -130,7 +147,7 @@ footer {
 .feature-box button:hover {
   border: 2px solid #59B038;
   background: #222;
-  color: #fff;
+  color: #59B038;
 }
 .feature-box button:active {
   color: #59B038;

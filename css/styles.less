@@ -179,6 +179,23 @@ footer {
 		&:focus{
 			outline-color: @green;
 		}
+
+
+		&::-webkit-input-placeholder {
+		   color:#6B8362;
+		}
+
+		&:-moz-placeholder { /* Firefox 18- */
+		   color:#6B8362;
+		}
+
+		&::-moz-placeholder {  /* Firefox 19+ */
+		   color:#6B8362;
+		}
+
+		&:-ms-input-placeholder {
+		   color:#6B8362;
+		}
 	}
 
 	button{
@@ -191,10 +208,10 @@ footer {
 
 		background: @green;
 
-		color: #fff;
+		color: #222;
 		font-weight: bold;
 		text-align: center;
-		text-shadow: 0 0 5px #000;
+		// text-shadow: 0 0 5px #000;
 
 		outline: none;
 
@@ -206,7 +223,7 @@ footer {
 			border:2px solid @green;
 
 			background:#222;
-			color: #fff;
+			color: @green;
 		}
 
 		&:active{
