@@ -2947,8 +2947,8 @@
 
 			//free sized table
 			$.each(self.columnList, function(i, column){
-				colWidth = $(".tabulator-col[data-field='" + column.field + "']", element).outerWidth();
-				var col = $(".tabulator-cell[data-field='" + column.field + "']", element);
+				colWidth = $(".tabulator-col[data-index='" + column.index + "']", element).outerWidth();
+				var col = $(".tabulator-cell[data-index='" + column.index + "']", element);
 				col.css({width:colWidth});
 			});
 		}else{
