@@ -1145,6 +1145,14 @@
 			self.options.rowDeleted(id);
 
 			self.options.dataEdited(self.data);
+
+			if(self.options.pagination){
+				self.paginationMaxPage = Math.max(1, Math.ceil(self.activeData.length/self.options.paginationSize));
+
+				self._layoutPageSelector();
+
+				self.setPage(self.paginationCurrentPage);
+			}
 		}
 	},
 
@@ -1577,7 +1585,7 @@
 
 		//set the max pages available given the filter results
 		if(self.options.pagination == "local"){
-			self.paginationMaxPage = Math.ceil(self.activeData.length/self.options.paginationSize);
+			self.paginationMaxPage = Math.max(1, Math.ceil(self.activeData.length/self.options.paginationSize));
 		}
 
 		self.options.dataFiltered(self.activeData, self.filterField, self.filterType, self.filterValue);
@@ -1807,30 +1815,34 @@
 
 		self._clearSelection();
 
-		if(page > 0 && page <= self.paginationMaxPage){
-			self.paginationCurrentPage = page;
-		}else{
-			switch(page){
-				case "first":
-				self.paginationCurrentPage = 1;
-				break;
+		switch(page){
+			case "first":
+			self.paginationCurrentPage = 1;
+			break;
 
-				case "prev":
-				if(self.paginationCurrentPage > 1){
-					self.paginationCurrentPage--;
-				}
-				break;
-
-				case "next":
-				if(self.paginationCurrentPage < self.paginationMaxPage){
-					self.paginationCurrentPage++;
-				}
-				break;
-
-				case "last":
-				self.paginationCurrentPage = self.paginationMaxPage;
-				break;
+			case "prev":
+			if(self.paginationCurrentPage > 1){
+				self.paginationCurrentPage--;
 			}
+			break;
+
+			case "next":
+			if(self.paginationCurrentPage < self.paginationMaxPage){
+				self.paginationCurrentPage++;
+			}
+			break;
+
+			case "last":
+			self.paginationCurrentPage = self.paginationMaxPage;
+			break;
+
+			default:
+			if(page > self.paginationMaxPage){
+				page = self.paginationMaxPage;
+			}
+
+			self.paginationCurrentPage = page;
+			break;
 		}
 
 		if(self.options.pagination == "local"){
