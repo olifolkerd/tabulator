@@ -1071,9 +1071,11 @@
 	deleteRow: function(item){
 		var self = this;
 
-		var id = !isNaN(item) ? item : item.data("data")[self.options.index];
+		var itemType = typeof item;
 
-		var row = !isNaN(item) ? $("[data-id=" + item + "]", self.element) : item;
+		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
+
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
 
 		if(row.length){
 			var rowData = row.data("data");
@@ -1199,9 +1201,11 @@
 	updateRow:function(index, item, bulk){
 		var self = this;
 
-		var id = !isNaN(index) ? index : index.data("data")[self.options.index];
+		var itemType = typeof index;
 
-		var row = !isNaN(index) ? $("[data-id=" + index + "]", self.element) : index;
+		var id = (itemType == "number" || itemType == "string") ? index : index.data("data")[self.options.index];
+
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + index + "]", self.element) : index;
 
 		if(row.length){
 			var rowData = row.data("data");
