@@ -234,7 +234,7 @@
                     <p>It is worth noting that if you have defined any mutator functions in your column definition array, these will be applied to your data as it is being parsed into the table. (see <a href="#mutators">Mutators</a> for more details)</p>
 
                     <h2>Row Index</h2>
-                    <p> A unique numerical index value must be present for each row of data. By default Tabulator will look for this value in the <span class='param'>id</span> field for the data. If you wish to use a different field as the index, set this using the <span class='param'>index</span> option parameter.</p>
+                    <p> A unique index value must be present for each row of data, which must be either numeric or a string. By default Tabulator will look for this value in the <span class='param'>id</span> field for the data. If you wish to use a different field as the index, set this using the <span class='param'>index</span> option parameter.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
 index:"age", //set the index field to the "age" field.
