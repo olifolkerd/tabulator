@@ -2902,6 +2902,8 @@
 
 				var cellEditor = editorFunc.call(self, filter, "");
 
+				var typingTimer = false;
+
 				filter.append(cellEditor);
 				filter.children().attr("placeholder", self.options.headerFilterPlaceholder);
 
@@ -2912,7 +2914,15 @@
 				});
 
 				cellEditor.on("keyup", function(e){
-					filter.trigger("editval", $(this).val())
+					var element = $(this);
+
+					if(typingTimer){
+						clearTimeout(typingTimer);
+					}
+
+					typingTimer = setTimeout(function(){
+						filter.trigger("editval", element.val())
+					},300);
 				});
 
 				//special case for numeric inputs, ad additional binding incase increment buttons are used
