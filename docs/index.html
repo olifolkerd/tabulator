@@ -1266,12 +1266,12 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     selectableRollingSelection:false, // disable rolling selection
 });</pre>
 
-                    <h2>Persistant Selection <span class="label label-danger">New</span></h2>
+                    <h2>Persistent Selection <span class="label label-danger">New</span></h2>
                     <p>By default Tabulator will maintain selected rows when the table is filtered, sorted or paginated (but <strong>NOT</strong> when the <span class='param'>setData</span> function is used). If you want the selected rows to be cleared whenever the table view is updated then set the <span class='param'>selectablePersistance</span> option to <span class='param'>false</span>.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     selectable:true,
-    selectablePersistance:false, // disable rolling selection
+    selectablePersistence:false, // disable rolling selection
 });</pre>
 
 					<h2>Selection Changed Event</h2>
