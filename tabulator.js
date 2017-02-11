@@ -259,13 +259,52 @@
 			return match;
 		}
 
+		//get attributes of cell
+		var attributes = element[0].attributes;
+
+		function attribValue(value){
+			if(value === "true"){
+				return true;
+			}
+
+			if(value === "false"){
+				return false;
+			}
+
+			return value;
+		}
+
+
+		//check for tablator inline options
+		for(var index in attributes){
+			var attrib = attributes[index];
+			var name;
+
+			if(attrib.name && attrib.name.indexOf("tabulator-") === 0){
+
+				name = attrib.name.replace("tabulator-", "");
+
+				for(var key in options){
+					if(key.toLowerCase() == name){
+						options[key] = attribValue(attrib.value);
+					}
+				}
+			}
+		}
+
 		//build columns from table header if they havnt been set;
 		if(headers.length){
+
+			//list of possible attributes
+			var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "onClick", "onDblClick", "onContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
+
 			//create column array from headers
 			headers.each(function(index){
 
 				var header = $(this);
 				var exists = false;
+
+				var attributes = header[0].attributes;
 
 				var col = search(header.text());
 
@@ -289,6 +328,23 @@
 
 				if(col.field == options.index){
 					hasIndex = true;
+				}
+
+				//check for tablator inline options
+				for(var index in attributes){
+					var attrib = attributes[index];
+					var name;
+
+					if(attrib.name && attrib.name.indexOf("tabulator-") === 0){
+
+						name = attrib.name.replace("tabulator-", "");
+
+						attribList.forEach(function(key){
+							if(key.toLowerCase() == name){
+								col[key] = attribValue(attrib.value);
+							}
+						});
+					}
 				}
 
 				if(!exists){
