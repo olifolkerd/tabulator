@@ -211,7 +211,7 @@
                 </article>
                 <a class="anchor" id="set-data"></a>
                 <article>
-                    <h1>Set Table Data </h1>
+                    <h1>Set Table Data <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved as a JSON formatted string via AJAX from a URL.</p>
 
@@ -304,7 +304,7 @@ $("#example-table").tabulator({
 });</pre>
 
                     <a class="anchor" id="table-load"></a>
-                    <h2>Extract Data from an HTML Table Element <a class="example-link" href="../examples?#table-load"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Extract Data from an HTML Table Element <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#table-load"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>You can create a Tabulator table directly from an HTML table element. You can define the columns in the usual way with the columns option, or you can set them as <span class='param'>th</span> elements in the  <span class='param'>thead</span> of a table.</p>
                     <p>Any rows of data in the <span class='param'>tbody</span> of the table will automatically be converted to tabulator data in displayed in the resulting table.</p>
                     <p>If you define the <span class='param'>width</span> attribute in a table header cell, this will be used to set the width of the column in Tabulator.</p>
@@ -341,6 +341,39 @@ $("#example-table").tabulator({
 &lt;/table&gt;</pre>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({});</pre>
+
+                    <h3>Options Attributes <span class="label label-danger">New</span></h3>
+                    <p>You can set options parameters directly in the HTML by using <span class='param'>tabulator-</span> attributes on the <span class='param'>table</span> and <span class='param'>th</span> elements, these will then be set as configuration options on the table.</p>
+
+                    <p>Setting option on table:</p>
+                    <pre class="prettyprint lang-html">&lt;table id="example-table" tabulator-fitcolumns="true"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Name&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Billy Bob&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</pre>
+                    <p>Setting option on row:</p>
+                    <pre class="prettyprint lang-html">&lt;table id="example-table"&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th tabulator-align="center"&gt;Name&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Billy Bob&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;</pre>
+                    <p><strong>NOTE:</strong> This approach can only be used for text, numeric and boolean options, for callbacks and functions you will need to use the constructor object outlined below.</p>
+
+                    <h3>Complex Options Setup <span class="label label-primary">Updated</span></h3>
 
                     <p>If you need to set up any column options on the imported table you can declare these in table constructor as you would do for any other table. It is important to note that the <span class='param'>title</span> parameter for each column definition must match the text in the table element's header cell exactly for the imported data to link to the correct column.</p>
                     <p>If you use a column definition array in the Tabulator constructor, the order of columns in this array will take priority over the order of the columns in the table element.</p>
@@ -2702,7 +2735,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup</a></li>
                         <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#set-data">Set Table Data </a></li>
+                        <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout </a></li>
                         <li><a href="#sorting">Sorting Data </a></li>

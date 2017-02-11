@@ -345,11 +345,11 @@
             </p>
 
             <h3>Standard HTML Table:</h3>
-            <table id="plain-table" class="plain">
+            <table id="plain-table" tabulator-fitColumns="true" class="plain">
                 <thead>
                     <tr>
                         <th width="200">Name</th>
-                        <th>Age</th>
+                        <th tabulator-align="center">Age</th>
                         <th>Gender</th>
                         <th>Height</th>
                         <th width="150">Favourite Color</th>
@@ -377,11 +377,11 @@
             </table>
 
             <h3>Converted to Tabulator:</h3>
-            <table id="example-table-table">
+            <table id="example-table-table" tabulator-fitColumns="true">
                 <thead>
                     <tr>
                         <th width="200">Name</th>
-                        <th>Age</th>
+                        <th tabulator-align="center">Age</th>
                         <th>Gender</th>
                         <th>Height</th>
                         <th width="150">Favourite Color</th>
@@ -416,7 +416,7 @@
     &lt;thead&gt;
         &lt;tr&gt;
             &lt;th width="200"&gt;Name&lt;/th&gt;
-            &lt;th&gt;Age&lt;/th&gt;
+            &lt;th tabulator-align="center"&gt;Age&lt;/th&gt;
             &lt;th&gt;Gender&lt;/th&gt;
             &lt;th&gt;Height&lt;/th&gt;
             &lt;th width="150"&gt;Favourite Color&lt;/th&gt;
@@ -444,7 +444,7 @@
 &lt;/table&gt;</pre>
 
                     <h3>JavaScript</h3>
-                    <pre class="prettyprint lang-js"> $("#example-table").tabulator({fitColumns:true});</pre>
+                    <pre class="prettyprint lang-js"> $("#example-table").tabulator({});</pre>
                 </fieldset>
 
             </article>
@@ -2034,9 +2034,7 @@ $("#lang-default").click(function(){
 
 
      //build tabulator from HTML table example
-     $("#example-table-table").tabulator({
-         fitColumns:true,
-     });
+     $("#example-table-table").tabulator({});
 
      });
 
