@@ -157,7 +157,7 @@
 
 		selectable:"highlight", //highlight rows on hover
 		selectableRollingSelection:true,
-		selectablePersistance:false,
+		selectablePersistance:true,
 		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 		ajaxURL:false, //url for ajax loading
