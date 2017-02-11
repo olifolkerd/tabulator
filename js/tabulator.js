@@ -157,7 +157,7 @@
 
 		selectable:"highlight", //highlight rows on hover
 		selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
-		selectablePersistance:true, // maintain selection when table view is updated
+		selectablePersistence:true, // maintain selection when table view is updated
 		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 		ajaxURL:false, //url for ajax loading
@@ -431,7 +431,7 @@
 
 		//setup persistent layout storage if needed
 		if(self.options.persistentLayout){
-			//determine persistant layout storage type
+			//determine persistent layout storage type
 			self.options.persistentLayout = self.options.persistentLayout !== true ?  self.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
 
 			//set storage tag
@@ -1601,7 +1601,7 @@
 	setFilter:function(field, type, value){
 		var self = this;
 
-		if(!self.options.selectablePersistance){
+		if(!self.options.selectablePersistence){
 			self._clearSelection();
 		}
 
@@ -1778,7 +1778,7 @@
 		var header = self.header;
 		var options = this.options;
 
-		if(!self.options.selectablePersistance){
+		if(!self.options.selectablePersistence){
 			self._clearSelection();
 		}
 
@@ -1898,7 +1898,7 @@
 	setPage:function(page){
 		var self = this;
 
-		if(!self.options.selectablePersistance){
+		if(!self.options.selectablePersistence){
 			self._clearSelection();
 		}
 
@@ -2181,7 +2181,7 @@
 		row.data("data", item);
 
 		//handle persistent selection
-		if(self.options.selectablePersistance){
+		if(self.options.selectablePersistence){
 
 			if(self.selectedRows.some(function(sel){
 				return sel === item;
