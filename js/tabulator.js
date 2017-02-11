@@ -156,6 +156,8 @@
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 		selectable:"highlight", //highlight rows on hover
+		selectableRollingSelection:true,
+		selectablePersistance:false,
 		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 		ajaxURL:false, //url for ajax loading
@@ -1067,6 +1069,24 @@
 
 	////////////////// Row Manipulation //////////////////
 
+	//find row in data set
+	_findRow: function(id){
+		var self = this;
+		var row;
+
+		if(typeof id == "object"){
+			row = self.data.find(function(item){
+				return item === id;
+			});
+		}else{
+			row = self.data.find(function(item){
+				return item[self.options.index] == id;
+			});
+		}
+
+		return row;
+	},
+
 	//delete row from table by id
 	deleteRow: function(item){
 		var self = this;
@@ -1482,6 +1502,9 @@
 				}
 			}else{
 				self.data = mutatedData;
+
+				self._clearSelection();
+
 				//filter incomming data
 				self._filterData();
 			}
@@ -1522,7 +1545,9 @@
 	setFilter:function(field, type, value){
 		var self = this;
 
-		self._clearSelection();
+		if(!self.options.selectablePersistance){
+			self._clearSelection();
+		}
 
 		self.options.dataFiltering(field, type, value);
 
@@ -1697,15 +1722,15 @@
 		var header = self.header;
 		var options = this.options;
 
-		self._clearSelection();
+		if(!self.options.selectablePersistance){
+			self._clearSelection();
+		}
 
 		if(!Array.isArray(sortList)){
 			sortList = [{field: sortList, dir:dir}];
 		}
 
 		$.each(sortList, function(i, item){
-
-
 
 			//convert column name to column object
 			if(typeof(item.field) == "string"){
@@ -1817,7 +1842,9 @@
 	setPage:function(page){
 		var self = this;
 
-		self._clearSelection();
+		if(!self.options.selectablePersistance){
+			self._clearSelection();
+		}
 
 		switch(page){
 			case "first":
@@ -2096,6 +2123,17 @@
 
 		//bind row data to row
 		row.data("data", item);
+
+		//handle persistent selection
+		if(self.options.selectablePersistance){
+
+			if(self.selectedRows.some(function(sel){
+				return sel === item;
+			})){
+				row.addClass("tabulator-selected");
+			}
+
+		}
 
 		//bind row click events
 		row.on("click", function(e){self._rowClick(e, row, item)});
@@ -3276,6 +3314,8 @@
 	//select row
 	selectRow:function(row, silent){
 		var self = this;
+		var rowElement = $();
+		var rowData = {};
 
 		//handle select all situation
 		if(typeof row === "undefined"){
@@ -3288,22 +3328,63 @@
 			return true;
 		}
 
-		if(!isNaN(self.options.selectable) && self.options.selectable !== true && self.selectedRows.length >= self.options.selectable){
-			self.deselectRow(self.selectedRows[0], true);
+
+		if(!isNaN(self.options.selectable) && self.options.selectable !== true){
+			if(self.selectedRows.length >= self.options.selectable){
+
+				if(self.options.selectableRollingSelection){
+					self.deselectRow(self.selectedRows[0], true);
+				}else{
+					return false;
+				}
+			}
 		}
 
-		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
+		//handle different types of row input
+		if(typeof row == "object"){
 
-		if(row.length){
-			self.selectedRows.push(row);
+			if(row instanceof jQuery){
 
+				//handle juery objects
+				rowElement = row;
+				rowData = rowElement.data("data");
+
+			}else{
+
+				//handle row data objects
+				if(row[self.options.index]){
+					rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+				}else{
+					var rowElements =  $(".tabulator-row[data-id=0]", self.element);
+
+					rowElements.each(function(){
+						var data = $(this).data("data");
+
+						if(data === row){
+							rowElement = $(this);
+						}
+					})
+				}
+
+				rowData = self._findRow(row);
+			}
+
+		}else{
+			//handle index
+			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
+			rowData = slef._findRow(row);
+		}
+
+		self.selectedRows.push(rowData);
+
+		if(rowElement.length){
 			row.addClass("tabulator-selected");
 
 			if(!silent){
 				self._rowSelectionChanged();
 			}
 		}else{
-			console.error("Tablulator ERROR (row select): No Matching Row Found");
+			return false;
 		}
 
 	},
@@ -3311,6 +3392,8 @@
 	//deselect row
 	deselectRow:function(row, silent){
 		var self = this;
+		var rowElement = $();
+		var rowData = {};
 
 		//handle deselect all situation
 		if(typeof row === "undefined"){
@@ -3323,49 +3406,93 @@
 			return true;
 		}
 
-		var row = isNaN(row) ? row : $(".tabulator-row[data-id=" + row + "]", self.element);
 
-		if(row.length){
-			self.selectedRows.forEach(function(element, i){
-				if(element[0] === row[0]){
-					self.selectedRows.splice(i, 1);
+		//handle different types of row input
+		if(typeof row == "object"){
+
+			if(row instanceof jQuery){
+
+				//handle juery objects
+				rowElement = row;
+				rowData = rowElement.data("data");
+
+			}else{
+
+				//handle row data objects
+				if(row[self.options.index]){
+					rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+				}else{
+					var rowElements =  $(".tabulator-row[data-id=0]", self.element);
+
+					rowElements.each(function(){
+						var data = $(this).data("data");
+
+						if(data === row){
+							rowElement = $(this);
+						}
+					})
 				}
-			});
 
-			row.removeClass("tabulator-selected");
-
-			if(!silent){
-				self._rowSelectionChanged();
+				rowData = self._findRow(row);
 			}
+
 		}else{
-			console.error("Tablulator ERROR (row select): No Matching Row Found");
+			//handle index
+			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
+			rowData = slef._findRow(row);
 		}
+
+		self.selectedRows.forEach(function(element, i){
+			if(element === rowData){
+				self.selectedRows.splice(i, 1);
+			}
+		});
+
+
+		rowElement.removeClass("tabulator-selected");
+
+		if(!silent){
+			self._rowSelectionChanged();
+		}
+
 	},
 
 	//return currently selected data
 	getSelectedData:function(){
 		var self = this;
 
-		var data = [];
-
-		self.selectedRows.forEach(function(row){
-			data.push(row.data("data"));
-		});
-
-		return data;
+		return self.selectedRows;
 	},
 
 	//handle change in row selection count
 	_rowSelectionChanged:function(){
 		var self = this;
 
-		var data = [];
+		var rows = [];
 
 		self.selectedRows.forEach(function(row){
-			data.push(row.data("data"));
+
+			var rowElement = false;
+
+			//handle row data objects
+			if(row[self.options.index]){
+				rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+			}else{
+				var rowElements =  $(".tabulator-row[data-id=0]", self.element);
+
+				rowElements.each(function(){
+					var data = $(this).data("data");
+
+					if(data === row){
+						rowElement = $(this);
+					}
+				})
+			}
+
+			rows.push(rowElement);
 		});
 
-		self.options.rowSelectionChanged(data, self.selectedRows);
+		self.options.rowSelectionChanged(self.selectedRows, rows);
 	},
 
 	////////////////// Table Interaction Handlers //////////////////
