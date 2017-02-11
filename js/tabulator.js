@@ -156,8 +156,8 @@
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 		selectable:"highlight", //highlight rows on hover
-		selectableRollingSelection:true,
-		selectablePersistance:true,
+		selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
+		selectablePersistance:true, // maintain selection when table view is updated
 		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 		ajaxURL:false, //url for ajax loading
@@ -2243,6 +2243,11 @@
 				cell.on("dblclick", function(e){self._cellDblClick(e, cell)});
 			}
 
+			//bind cell context function
+			if(typeof(column.onContext) == "function"){
+				cell.on("contextmenu", function(e){self._cellContext(e, cell)});
+			}
+
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
 				cell.on("click", function(e){self._cellClick(e, cell)});
@@ -3537,6 +3542,20 @@
 
 		if(match){
 			match.column.onDblClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+		}
+	},
+
+	//carry out action on cell context click
+	_cellContext: function(e, cell){
+		var self = this;
+		var index = cell.data("index");
+
+		var match = self._findColumn(function(column){
+			return column.index == index;
+		});
+
+		if(match){
+			match.column.onContext(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 		}
 	},
 
