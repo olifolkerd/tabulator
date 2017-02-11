@@ -156,8 +156,8 @@
 		addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 		selectable:"highlight", //highlight rows on hover
-		selectableRollingSelection:true,
-		selectablePersistance:false,
+		selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
+		selectablePersistance:true, // maintain selection when table view is updated
 		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
 		ajaxURL:false, //url for ajax loading
