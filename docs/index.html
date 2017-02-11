@@ -916,7 +916,7 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 
                 <a class="anchor" id="filtering"></a>
                 <article>
-                    <h1>Filtering Data <a class="example-link" href="../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Filtering Data <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator allows you to filter the table data by any field in the data set.</p>
 
@@ -967,7 +967,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter");</pre>
 
                     <a class="anchor" id="header-filters"></a>
-                    <h2>Header Filtering  <a class="example-link" href="../examples?#filter-header"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Header Filtering  <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#filter-header"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Is is possible to filter the table data directly from the column headers, by setting the <span class='param'>headerFilter</span> parameter in the column definition object for that column.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerFilter:true} //show header filter matching the cells editor</pre>
@@ -981,6 +981,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <p>You can also pass a custom editor function to this parameter in the same way as you would for column editor. For more information see the <a href="#manipulating-data">Manipulating Data</a> section.</p>
 
                     <p><STRONG>NOTE:</STRONG> At present, the <span class='param'>progress</span> and <span class='param'>star</span> editors are not available as header filters.</p>
+
+                    <h3>Real Time Filtering <span class="label label-danger">New</span></h3>
+                    <p>If an input element is used as the filter element, then then the table will be filtered in real time as the user types in the input element. To prevent exessive redrawing of the table Tabulator will wait 300 miliseconds after the user has finished typing before tirggering the filter, this ensures that the table is not redrawn for every character typed by the user.</p>
 
                     <h3>Filter Comparison Types</h3>
                     <p>The type of comparison function used on the filter value is dependent on the type of element used for the header filter. </p>
@@ -2705,7 +2708,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#sorting">Sorting Data </a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
-                        <li><a href="#filtering">Filtering Data</a></li>
+                        <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
                         <li><a href="#selectable">Selectable Rows <span class="label label-primary">Updated</span></a></li>
