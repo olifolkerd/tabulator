@@ -63,6 +63,9 @@
 
 	columnList:[], //an array of all acutal columns ignoring column groupings
 
+	responsiveColumnList:[], //array of responsive columns
+	responsiveColumnIndex:0, //current possition in responsive array
+
 	columnFrozenLeft:[], //list of frozen columns left
 	columnFrozenRight:[], //list of frozen columns right
 
@@ -159,6 +162,8 @@
 		selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
 		selectablePersistence:true, // maintain selection when table view is updated
 		selectableCheck:function(data, row){return true;}, //check wheather row is selectable
+
+		responsiveLayout:false, //enable responsive column layout
 
 		ajaxURL:false, //url for ajax loading
 		ajaxParams:{}, //params for ajax loading
@@ -704,7 +709,7 @@
 		var self = this;
 
 		//redraw columns
-		if(self.options.fitColumns || fullRedraw){
+		if(self.options.fitColumns || self.options.responsiveLayout || fullRedraw){
 			self._colRender();
 		}
 
@@ -1077,7 +1082,7 @@
 		if(column){
 			column.visible = visibility;
 
-			var elements = $(".tabulator-col[data-field=" + column.field + "], .tabulator-cell[data-field=" + column.field + "]", self.element)
+			var elements = $(".tabulator-col[data-index=" + column.index + "], .tabulator-cell[data-index=" + column.index + "]", self.element)
 
 			if(visibility){
 				elements.show();
@@ -2522,6 +2527,10 @@
 
 		self._colLayoutGroup(self.options.columns, self.header);
 
+		if(options.responsiveLayout){
+			self._buildResponsiveColumnsList();
+		}
+
 
 		//build list of frozen columns
 		var colCount = self.columnList.length;
@@ -3057,10 +3066,13 @@
 		var element = self.element;
 
 		if(fixedwidth || !options.fitColumns){ //if columns have been resized and now data needs to match them
+			if(options.responsiveLayout){
+				self._renderResponsiveColumns();
+			}
 
 			//free sized table
 			$.each(self.columnList, function(i, column){
-				colWidth = $(".tabulator-col[data-index='" + column.index + "']", element).outerWidth();
+				var colWidth = $(".tabulator-col[data-index='" + column.index + "']", element).outerWidth();
 				var col = $(".tabulator-cell[data-index='" + column.index + "']", element);
 				col.css({width:colWidth});
 			});
@@ -3090,24 +3102,32 @@
 
 						colCount++;
 
-						if(column.width){
+						if(column.width || column.minWidth){
 
 							var thisWidth = 0;
 
+							var colWidth = 0;
+							var minWidth =  parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
+
 							if(typeof(column.width) == "string"){
 								if(column.width.indexOf("%") > -1){
-									thisWidth = (totWidth / 100) * parseInt(column.width) ;
+									colWidth = (totWidth / 100) * parseInt(column.width) ;
 								}else{
-									thisWidth = parseInt(column.width);
+									colWidth = parseInt(column.width);
 								}
 
 							}else{
-								thisWidth = column.width;
+								colWidth = column.width;
 							}
+
+							thisWidth = colWidth > minWidth ? colWidth : minWidth;
 
 							widthIdeal += thisWidth;
 							widthIdealCount++;
 						}else{
+
+							// widthIdeal +=options.colMinWidth;
+
 							lastVariableCol = column.field;
 						}
 					}
@@ -3126,24 +3146,24 @@
 
 						var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-						if(proposedWidth >= minWidth){
+						var newWidth = proposedWidth;
 
-							var newWidth = proposedWidth;
-
-							if(column.width){
-								if(typeof(column.width) == "string"){
-									if(column.width.indexOf("%") > -1){
-										newWidth = (totWidth / 100) * parseInt(column.width) ;
-									}else{
-										newWidth = parseInt(column.width);
-									}
-
+						if(column.width){
+							if(typeof(column.width) == "string"){
+								if(column.width.indexOf("%") > -1){
+									newWidth = (totWidth / 100) * parseInt(column.width) ;
 								}else{
-									newWidth = column.width;
+									newWidth = parseInt(column.width);
 								}
-							}
 
-							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]", element);
+							}else{
+								newWidth = column.width;
+							}
+						}
+
+						if(newWidth >= minWidth){
+
+							var col = $(".tabulator-cell[data-index=" + column.index + "], .tabulator-col[data-index=" + column.index + "]", element);
 
 							if(column.field == lastVariableCol){
 								col.css({width:newWidth + gapFill});
@@ -3156,11 +3176,15 @@
 							}
 
 						}else{
-							var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i + "]", element);
-							col.css({width:colWidth});
+							var col = $(".tabulator-cell[data-index=" + column.index + "], .tabulator-col[data-index=" + column.index + "]", element);
+							col.css({width:minWidth});
 						}
 					}
 				});
+
+				if(options.responsiveLayout){
+					self._renderResponsiveColumns();
+				}
 
 			}else{
 
@@ -3191,6 +3215,11 @@
 					}
 					col.css({width:max});
 				});
+
+				if(options.responsiveLayout){
+					self._renderResponsiveColumns();
+				}
+
 			}//
 		}
 
@@ -3205,6 +3234,81 @@
 		}
 	},
 
+
+	////////////////// Responsive Columns //////////////////
+
+	//build the responsive columns list
+	_buildResponsiveColumnsList:function(){
+		var self = this;
+
+		self.responsiveColumnList = [];
+		self.responsiveColumnIndex = 0;
+
+		self.columnList.forEach(function(col){
+			if(typeof col.responsive === "undefined"){
+				col.responsive = 1;
+			}
+
+			if(col.responsive){
+				self.responsiveColumnList.push(col);
+			}
+		});
+
+
+		self.responsiveColumnList = self.responsiveColumnList.reverse();
+		self.responsiveColumnList = self.responsiveColumnList.sort(function(a,b){
+			return b.responsive - a.responsive;
+		});
+
+	},
+
+	//show and hide responsive columns
+	_renderResponsiveColumns:function(){
+		var self = this;
+
+		var working = true;
+
+		while(working){
+			if(self.tableHolder.innerWidth() < self.tableHolder[0].scrollWidth){
+				var col = self.responsiveColumnList[self.responsiveColumnIndex];
+				if(col){
+					var index = col.index;
+					$(".tabulator-col[data-index=" + index + "], .tabulator-cell[data-index=" + index + "]", self.element).hide();
+
+					self.responsiveColumnIndex++;
+				}else{
+					working = false;
+				}
+			}else{
+				working = false;
+
+				var col = self.responsiveColumnList[self.responsiveColumnIndex - 1];
+
+				if(col){
+
+					var diff = self.tableHolder.innerWidth() - self.table.outerWidth();
+
+					if(diff > 0){
+
+						var index = col.index;
+
+						var first = parseInt($(".tabulator-cell[data-index=" + index + "]:first", self.element).css("width"));
+
+						if(diff >= first){
+							$(".tabulator-col[data-index=" + index + "], .tabulator-cell[data-index=" + index + "]", self.element).show();
+
+							self.responsiveColumnIndex--;
+						}else{
+							working = false;
+						}
+					}
+
+				}else{
+					working = false;
+				}
+			}
+		}
+	},
 
 	////////////////// Frozen Columns //////////////////
 
