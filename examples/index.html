@@ -221,7 +221,7 @@
                     <article>
                         <h1>Fit To Width <a class="doc-link" href="../docs?#fittowidth"><i class="fa fa-external-link"></i> Documentation</a></h1>
                         <p>
-                            By setting the <span class='param'>fitColumns</span> to true, the table will resize columns so that they fit perfectly inside the width of the container.
+                            By setting the <span class='param'>fitColumns</span> option to true, the table will resize columns so that they fit perfectly inside the width of the container.
                         </p>
                         <p>
                             If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.
@@ -250,6 +250,43 @@
         {title:"Driver", field:"car", align:"center"},
     ],
 });</pre>
+                        </fieldset>
+                    </article>
+
+                    </article>
+                    <a class="anchor" id="responsive-layout"></a>
+                    <article>
+                        <h1>Responsive Layout<a class="doc-link" href="../docs?#responsive-layout"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                        <p>
+                            By setting the <span class='param'>responsiveLayout</span> option to true, the table will automatically hide/show columns to prevent the columns from exceeding the width of container.
+                        </p>
+
+                        <p>If you resize the the width of the window you will see the number of columns change to ensure the data fits with the table. This option can be combined with <span class='param'>fitColumns</span> to make a table that gracefully responds to all display widths.</p>
+
+                        <div class="example-table" id="example-table-responsive">
+                            <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                        </div>
+
+                        <button class="view-source">View Source</button>
+                        <fieldset class="source">
+                            <legend>Source Code</legend>
+                            <h3>HTML</h3>
+                            <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                            <h3>JavaScript</h3>
+                            <pre class="prettyprint lang-js">$("#example-table").tabulator({
+     height:"311px",
+     responsiveLayout:true,
+     columns:[
+     {title:"Name", field:"name", width:200, responsive:0}, //never hide this column
+     {title:"Progress", field:"progress", align:"right", sorter:"number", width:150},
+     {title:"Gender", field:"gender", width:150, responsive:2}, //hide this column first
+     {title:"Rating", field:"rating", align:"center", width:150},
+     {title:"Favourite Color", field:"col", width:150},
+     {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:150},
+     {title:"Driver", field:"car", align:"center", width:150},
+     ],
+ });</pre>
                         </fieldset>
                     </article>
 
@@ -1748,6 +1785,7 @@ $("#lang-default").click(function(){
             <li><a href="#simple">Simple Table</a></li>
             <li><a href="#fittodata">Fit To Data</a></li>
             <li><a href="#fittowidth">Fit To Width</a></li>
+            <li><a href="#responsive-layout">Responsive Layout</a></li>
             <li><a href="#column-groups">Column Groups</a></li>
             <li><a href="#frozen-col">Frozen Columns</a></li>
             <li><a href="#table-load">Create From Table Element</a></li>
@@ -1975,6 +2013,27 @@ $("#lang-default").click(function(){
      });
 
      $("#example-table-fittowidth").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-responsive").closest("article").on("build", function(){
+
+     //Fit To Width Example
+     $("#example-table-responsive").tabulator({
+         height:"311px",
+         responsiveLayout:true,
+         columns:[
+         {title:"Name", field:"name", width:200, responsive:0},
+         {title:"Progress", field:"progress", align:"right", sorter:"number", width:150},
+         {title:"Gender", field:"gender", width:150, responsive:2},
+         {title:"Rating", field:"rating", align:"center", width:150},
+         {title:"Favourite Color", field:"col", width:150},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", width:150},
+         {title:"Driver", field:"car", align:"center", width:150},
+         ],
+     });
+
+     $("#example-table-responsive").tabulator("setData", tabledata);
 
      });
 

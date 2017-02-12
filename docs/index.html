@@ -155,6 +155,7 @@
                         <li><strong>width</strong> - sets the width of this column, this can be set in pixels or as a percentage of total table width (if not set the system will determine the best)</li>
                         <li><strong>minWidth</strong> - sets the minimum width of this column, this should be set in pixels (this takes priority over the global option of colMinWidth)</li>
                         <li><strong>frozen</strong> - freezes the column in place when scrolling (see <a href="#frozen-col">Frozen Columns</a> for more details)</li>
+                        <li><strong>responsive</strong> - an integer to determine when the column should be hidden in responsive mode (see <a href="#responsive-layout">Responsive Layout</a> for more details)</li>
                         <li><strong>sortable</strong> - determines if the user can sort data by this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
@@ -570,7 +571,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="layout"></a>
                 <article>
-                    <h1>Table Layout</h1>
+                    <h1>Table Layout <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:</p>
 
@@ -595,6 +596,34 @@ $("#example-table").tabulator({
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     fitColumns:true, // this option takes a boolean value (default = false)
 });</pre>
+
+                    <a class="anchor" id="responsive-layout"></a>
+                    <h2>Responsive Layout <span class="label label-danger">New</span><a class="example-link" href="../examples?#responsive-layout"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <p>Responsive layout will automatically hide/show columns to fit the width of the Tabulator element. This allows for clean rendering of tables on smaller mobile devices, showing important data while avoiding horizontal scroll bars. You can enable responsive layouts using the <span class='param'>responsiveLayout</span> option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    responsiveLayout:true, // this option takes a boolean value (default = false)
+});</pre>
+
+                    <p>By default, columns will be hidden from right to left as the width of the table decreases. You can choose exatly how columns are hidden using the <span class='param'>responsive</span> property in the column definition object.</p>
+
+                    <p>When responsive layout is enabled, all columns are given a default <span class='param'>responsive</span> value of 1. The higher you set this value the sooner that column will be hidden as the table width decreases. If two columns have the same responsive value then they are hidden from right to left (as defined in the column definition array, ignoring user moving of the columns). If you set the value to 0 then the column will never be hidden regardless of how narrow the table gets.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    responsiveLayout:true, // enable responsive layouts
+    columns:[ //set column definitions for imported table data
+        {title:"Name", field:"name", responsive:0}, // this column wil never be hidden
+        {title:"Age", field:"age" , responsive:3}, // hidden first
+        {title:"Gender", field:"gender" }, // hidden fifth
+        {title:"Height", field:"height" , responsive:2}, // hidden third
+        {title:"Favourite Color", field:"color" , responsive:2}, // hidden second
+        {title:"Date of Birth", field:"dob" }, // hidden fourth
+    ],
+});</pre>
+
+                    <p><strong>NOTE:</strong> At present responsive layout will only function once a data has been set on a table.</p>
+
+
                     <a class="anchor" id="col-resize"></a>
                     <h2>Resizable Columns</h2>
                     <p>By default it is possible to manually resize columns by dragging the borders of the column headers.</p>
@@ -1500,7 +1529,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="options"></a>
                 <article>
-                    <h1>Setup Options</h1>
+                    <h1>Setup Options <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator has a wide range of setup options to help you customise the user experience of your tables. This section outlines all the available options and links to the relevant section in this documentation to show you how to use them.</p>
 
@@ -1534,7 +1563,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         </tbody>
                     </table>
 
-                    <h2>Columns</h2>
+                    <h2>Columns <span class="label label-primary">Updated</span></h2>
                     <table>
                         <thead>
                             <th>Option</th>
@@ -1549,6 +1578,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             </tr>
                             <tr>
                                 <td>fitColumns</td><td>boolean</td><td>false</td><td>Resize column widths to horizontally fill the table</td><td><a href="#fittowidth"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>responsiveLayout</td><td>boolean</td><td>false</td><td>Automatically hide/show columns to fit the width of the Tabulator element</td><td><a href="#responsive-layout"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>colMinWidth</td><td>CSS width value</td><td>40px</td><td>Minimum width for a column</td><td><a href="#col-min-width"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -2737,7 +2769,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#pagination">Pagination </a></li>
-                        <li><a href="#layout">Table Layout </a></li>
+                        <li><a href="#layout">Table Layout <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#sorting">Sorting Data </a></li>
                         <li><a href="#formatting">Formatting Data</a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
@@ -2747,7 +2779,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#selectable">Selectable Rows <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#movable">Movable Rows and Columns</a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
-                        <li><a href="#options">Setup Options</a></li>
+                        <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#download">Download Table Data </a></li>
