@@ -730,7 +730,7 @@
 	},
 
 	//trigger file download
-	download:function(type, filename){
+	download:function(type, filename, options){
 		var self = this;
 
 		//create temporary link element to trigger download
@@ -739,12 +739,14 @@
 		if(typeof type === "function"){
 
 			//create the download link
-			element.setAttribute('href', type(self.columnList, self.activeData));
+			element.setAttribute('href', type(self.columnList, self.activeData, options));
 
 		}else{
 
 			switch(type){
 				case "csv":
+
+				var delimiter = options && options.delimiter ? options.delimiter : ",";
 
 				//get field lists
 				var titles = [];
@@ -758,7 +760,7 @@
 				})
 
 				//generate header row
-				var fileContents = [titles.join(",")];
+				var fileContents = [titles.join(delimiter)];
 
 				//generate each row of the table
 				self.activeData.forEach(function(row){
@@ -766,12 +768,13 @@
 					var rowData = [];
 
 					fields.forEach(function(field){
-						var value = typeof row[field] == "object" ? '"' + JSON.stringify(row[field]) + '"' : row[field];
+						var value = typeof row[field] == "object" ? JSON.stringify(row[field]) : row[field];
 
-						rowData.push(value);
+						//escape uotation marks
+						rowData.push('"' + String(value).split('"').join('""') + '"');
 					})
 
-					fileContents.push(rowData.join(","));
+					fileContents.push(rowData.join(delimiter));
 
 				});
 
