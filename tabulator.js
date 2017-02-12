@@ -1260,9 +1260,11 @@
 		//append to top or bottom of table based on preference
 		if(top == "top"){
 			self.activeData.unshift(item);
+			self.data.unshift(item);
 			self.table.prepend(row);
 		}else{
 			self.activeData.push(item);
+			self.data.push(item);
 			self.table.append(row);
 		}
 
