@@ -789,7 +789,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="formatting"></a>
                 <article>
-                    <h1>Formatting Data <a class="example-link" href="../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Formatting Data <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
                     <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
                     <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
@@ -823,6 +823,7 @@ $("#example-table").tabulator({
                         </li>
                         <li><strong>buttonTick</strong> - displays a tick icon on eac row <i>(for use as a button)</i></li>
                         <li><strong>buttonCross</strong> - displays a cross icon on eac row <i>(for use as a button)</i></li>
+                        <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
                     </ul>
 
                     <p>You can define a custom formatter function in the formatter option:</p>
@@ -2777,7 +2778,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#sorting">Sorting Data </a></li>
-                        <li><a href="#formatting">Formatting Data</a></li>
+                        <li><a href="#formatting">Formatting Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
                         <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
