@@ -1,6 +1,6 @@
 ![Tabluator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
 
-### Version 2.10 Out Now!
+### Version 2.11 Out Now!
 
 An easy to use interactive table generation plugin for JQuery UI
 
@@ -20,6 +20,7 @@ Tabulator is packed with useful  features including:
 - JSON, array or AJAX data loading
 - Column sorting
 - Column Freezing
+- Responsive Layout
 - Pagination
 - Editable cells
 - Data Accessors and Mutators
@@ -76,12 +77,14 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Custom Row Templates
 - Aditional Editors and Formatters
 - Column Calculations
-- Responsive Design
 - Copy to Clipboard
 - Print Styling
+- Drag Rows Between Tables
+- Keyboard Cell Navigation
 - Minified source files
 - Minified CSS and JS
-- Mobile Responsive Design
+
+
 
 
 Get in touch if there are any features you feel Tabulator needs.
