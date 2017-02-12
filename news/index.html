@@ -123,6 +123,48 @@
                 <div class="col-lg-12" role="main">
 
                     <article>
+                        <h1>Version 2.11 Released<span class="datestamp">12/02/2017</span></h1>
+                        <p>Its been a busy month in the world of Tabulator. This release contains a number of new features and a ton of improvements to existing components.</p>
+
+                        <h2>Responsive Layout</h2>
+                        <p>Responsive layout will automatically hide/show columns to fit the width of the Tabulator element.</p>
+
+                        <p>More information can be found in the <a href="../docs#responsive-layout">Responsive Layout documentation</a></p>
+
+                        <h2>Row Selection Improvements</h2>
+                        <p>The <span class='param'>selectableRollingSelection</span> and <span class='param'>selectablePersistence</span> options have been added to give you more control over how the row selection feature functions.</p>
+
+                        <p>More information can be found in the <a href="../docs#selectable">Selectable Rows documentation</a></p>
+
+                        <h2>HTML Options Parsing</h2>
+                        <p>When building a Tabulator from an HTML table, you can now set tabulator options directly in the table markup using <span class='param'>tabulator-</span> attributes.</p>
+
+                        <p>More information can be found in the <a href="../docs#table-load">Set Table Data documentation</a></p>
+
+                        <h2>Improved CSV Generation</h2>
+                        <p>CSV generation now automatically escapes reserved characters, and you can pass additional setup options and custom delimiters in the new options object.</p>
+
+                        <p>More information can be found in the <a href="../docs#download">Download Table Data documentation</a></p>
+
+                        <h2>Row Number Formatter</h2>
+                        <p>A new <span class='param'>rownum</span> formatter has been added to show an incrementing row number next to each row in a table. The formatter has been designed to work with standard and paginated tables.</p>
+                        <p>More information can be found in the <a href="../docs#formatting">Formatters documentation</a></p>
+
+                        <h2>Cell Context Menu Callback</h2>
+                        <p>The <span class='param'>onContext</span> callback has been added to the column definition object to trigger an action on a right click on a cell.</p>
+
+                        <p>More information can be found in the <a href="../docs#define-column-headers">Column Definition documentation</a></p>
+
+                        <h2>Fixes and Improvements</h2>
+                        <p>There have been a number of small tweaks to Tabulator to improve functionality, including:
+                            <ul>
+                                <li>String row id's can now be used throughout Tabulator.</li>
+                                <li>Header filters that use an input element now have a 300ms delay before they trigger a filter on keypress.</li>
+                            </ul>
+                        </p>
+                    </article>
+
+                    <article>
                         <h1>Version 2.10 Released<span class="datestamp">21/01/2017</span></h1>
 
                         <p>To celebrate the new year, we have a new release of Tabulator, packed full of new and improved features:</p>
