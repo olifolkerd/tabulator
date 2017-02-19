@@ -3552,7 +3552,7 @@
 		}else{
 			//handle index
 			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
-			rowData = slef._findRow(row);
+			rowData = self._findRow(row);
 		}
 
 		self.selectedRows.push(rowData);
@@ -3619,7 +3619,7 @@
 		}else{
 			//handle index
 			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
-			rowData = slef._findRow(row);
+			rowData = self._findRow(row);
 		}
 
 		self.selectedRows.forEach(function(element, i){
