@@ -3558,7 +3558,7 @@
 		self.selectedRows.push(rowData);
 
 		if(rowElement.length){
-			row.addClass("tabulator-selected");
+			rowElement.addClass("tabulator-selected");
 
 			if(!silent){
 				self._rowSelectionChanged();
