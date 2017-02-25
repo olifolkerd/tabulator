@@ -754,8 +754,8 @@
 
 				self.columnList.forEach(function(column){
 					if(column.field){
-						titles.push(column.title)
-						fields.push(column.field)
+						titles.push('"' + String(column.title).split('"').join('""') + '"');
+						fields.push(column.field);
 					}
 				})
 
