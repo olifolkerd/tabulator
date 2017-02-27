@@ -1260,15 +1260,33 @@
 
 		var top = typeof top == "undefined" ? self.options.addRowPos : (top === true || top === "top" ? "top" : "bottom");
 
+		// initial place to append the row in the table, by default in the table row container
+		var newRowPosition = self.table;
+		// if group are used, look for the corresponding row of the group.
+		if(self.options.groupBy){
+			var groupVal = typeof(self.options.groupBy) == "function" ? self.options.groupBy(item) : item[self.options.groupBy];
+			var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
+			//if group does not exist, build it
+			if(group.length == 0){
+				group = self._renderGroup(groupVal);
+				self.table.append(group);
+				self._renderGroupHeader(group);
+			}
+			//set the place to append the row to the corresponding group container.
+			newRowPosition = group;
+		}
 		//append to top or bottom of table based on preference
 		if(top == "top"){
-			self.activeData.unshift(item);
+			if (self.activeData !== self.data)
+				self.activeData.unshift(item);
 			self.data.unshift(item);
-			self.table.prepend(row);
+			newRowPosition.prepend(row);
 		}else{
-			self.activeData.push(item);
+			if (self.activeData !== self.data){
+				self.activeData.push(item);
+			}
 			self.data.push(item);
-			self.table.append(row);
+			newRowPosition.append(row);
 		}
 
 		//align column widths
