@@ -1261,7 +1261,7 @@
 		var top = typeof top == "undefined" ? self.options.addRowPos : (top === true || top === "top" ? "top" : "bottom");
 
 		// initial place to append the row in the table, by default in the table row container
-		var newRowPosition = self.table;
+		var newRowContainer = self.table;
 		// if group are used, look for the corresponding row of the group.
 		if(self.options.groupBy){
 			var groupVal = typeof(self.options.groupBy) == "function" ? self.options.groupBy(item) : item[self.options.groupBy];
@@ -1273,20 +1273,23 @@
 				self._renderGroupHeader(group);
 			}
 			//set the place to append the row to the corresponding group container.
-			newRowPosition = group;
+			newRowContainer = group;
 		}
 		//append to top or bottom of table based on preference
 		if(top == "top"){
-			if (self.activeData !== self.data)
+			if (self.activeData !== self.data){
 				self.activeData.unshift(item);
+			}
+
 			self.data.unshift(item);
-			newRowPosition.prepend(row);
+			newRowContainer.prepend(row);
 		}else{
 			if (self.activeData !== self.data){
 				self.activeData.push(item);
 			}
+
 			self.data.push(item);
-			newRowPosition.append(row);
+			newRowContainer.append(row);
 		}
 
 		//align column widths
