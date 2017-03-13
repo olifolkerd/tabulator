@@ -991,10 +991,19 @@
 
 		if(newCol){
 			if(field){
-				var match = self._findColumn(field);
 
-				if(match){
-					match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
+				if(typeof field == "string"){
+					var match = self._findColumn(field);
+
+					if(match){
+						match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
+					}
+				}else{
+					var match = self._findColumn(self.columnList[field]);
+
+					if(match){
+						match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
+					}
 				}
 			}else{
 				self.options.columns.splice(before ? 0 : self.options.columns.length + 1, 0, newCol);
