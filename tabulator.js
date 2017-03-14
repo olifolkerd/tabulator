@@ -1478,9 +1478,9 @@
 
 		self.options.dataLoading(data, params);
 
-		params = params ? params : {};
-
-		self.options.ajaxParams = params;
+		if(params){
+			self.options.ajaxParams = params;
+		}
 
 		//show loader if needed
 		self._showLoader(this, this.options.loader);
@@ -1497,7 +1497,7 @@
 					self.setPage(1);
 				}else{
 					//assume data is url, make ajax call to url to get data
-					self._getAjaxData(data, params, type);
+					self._getAjaxData(data, self.options.ajaxParams, type);
 				}
 
 			}
@@ -1513,7 +1513,7 @@
 					if(self.options.pagination == "remote"){
 						self.setPage(1);
 					}else{
-						self._getAjaxData(this.options.ajaxURL, params, type);
+						self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, type);
 					}
 
 				}else{
