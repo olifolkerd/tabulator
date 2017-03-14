@@ -3137,7 +3137,7 @@
 
 						colCount++;
 
-						if(column.width || column.minWidth){
+						if(column.width){
 
 							var thisWidth = 0;
 
