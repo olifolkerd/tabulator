@@ -2527,10 +2527,21 @@
 
 			//resize table holder to match header height
 			if(self.options.height && headerHeight != self.header.outerHeight()){
-				self.tableHolder.css({
-					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				});
+
+				if(self.footer){
+					var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
+
+					self.tableHolder.css({
+						"min-height":"calc(100% - " + footerHeight + "px)",
+						"max-height":"calc(100% - " + footerHeight + "px)",
+					});
+				}else{
+					self.tableHolder.css({
+						"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+						"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					});
+				}
+
 			}
 		}
 
@@ -2699,7 +2710,6 @@
 		//add pagination footer if needed
 		if(self.footer){
 			element.append(self.footer);
-
 			var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
 
 			self.tableHolder.css({
