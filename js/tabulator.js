@@ -754,8 +754,8 @@
 
 				self.columnList.forEach(function(column){
 					if(column.field){
-						titles.push(column.title)
-						fields.push(column.field)
+						titles.push('"' + String(column.title).split('"').join('""') + '"');
+						fields.push(column.field);
 					}
 				})
 
@@ -991,10 +991,19 @@
 
 		if(newCol){
 			if(field){
-				var match = self._findColumn(field);
 
-				if(match){
-					match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
+				if(typeof field == "string"){
+					var match = self._findColumn(field);
+
+					if(match){
+						match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
+					}
+				}else{
+					var match = self._findColumn(self.columnList[field]);
+
+					if(match){
+						match.parent.splice(before ? match.index : match.index + 1, 0, newCol);
+					}
 				}
 			}else{
 				self.options.columns.splice(before ? 0 : self.options.columns.length + 1, 0, newCol);
@@ -1165,6 +1174,8 @@
 			var rowData = row.data("data");
 			rowData.tabulator_delete_row = true;
 
+			self.deselectRow(row);
+
 			//remove from data
 			var line = self.data.find(function(item){
 				return item.tabulator_delete_row;
@@ -1260,15 +1271,36 @@
 
 		var top = typeof top == "undefined" ? self.options.addRowPos : (top === true || top === "top" ? "top" : "bottom");
 
+		// initial place to append the row in the table, by default in the table row container
+		var newRowContainer = self.table;
+		// if group are used, look for the corresponding row of the group.
+		if(self.options.groupBy){
+			var groupVal = typeof(self.options.groupBy) == "function" ? self.options.groupBy(item) : item[self.options.groupBy];
+			var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
+			//if group does not exist, build it
+			if(group.length == 0){
+				group = self._renderGroup(groupVal);
+				self.table.append(group);
+				self._renderGroupHeader(group);
+			}
+			//set the place to append the row to the corresponding group container.
+			newRowContainer = group;
+		}
 		//append to top or bottom of table based on preference
 		if(top == "top"){
-			self.activeData.unshift(item);
+			if (self.activeData !== self.data){
+				self.activeData.unshift(item);
+			}
+
 			self.data.unshift(item);
-			self.table.prepend(row);
+			newRowContainer.prepend(row);
 		}else{
-			self.activeData.push(item);
+			if (self.activeData !== self.data){
+				self.activeData.push(item);
+			}
+
 			self.data.push(item);
-			self.table.append(row);
+			newRowContainer.append(row);
 		}
 
 		//align column widths
@@ -1333,6 +1365,26 @@
 		}
 
 		return false;
+	},
+
+	//scroll to sepcified row
+	scrollToRow:function(item){
+		var self = this;
+
+		var itemType = typeof item;
+
+		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
+
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
+
+
+		if(row){
+			self.tableHolder.stop();
+			self.tableHolder.animate({
+				scrollTop: row.offset().top - self.tableHolder.offset().top + self.tableHolder.scrollTop()
+			}, 1000);
+		}
+
 	},
 
 	////////////////// Data Manipulation //////////////////
@@ -1448,9 +1500,9 @@
 
 		self.options.dataLoading(data, params);
 
-		params = params ? params : {};
-
-		self.options.ajaxParams = params;
+		if(params){
+			self.options.ajaxParams = params;
+		}
 
 		//show loader if needed
 		self._showLoader(this, this.options.loader);
@@ -1467,7 +1519,7 @@
 					self.setPage(1);
 				}else{
 					//assume data is url, make ajax call to url to get data
-					self._getAjaxData(data, params, type);
+					self._getAjaxData(data, self.options.ajaxParams, type);
 				}
 
 			}
@@ -1483,7 +1535,7 @@
 					if(self.options.pagination == "remote"){
 						self.setPage(1);
 					}else{
-						self._getAjaxData(this.options.ajaxURL, params, type);
+						self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, type);
 					}
 
 				}else{
@@ -2284,7 +2336,7 @@
 			//set style as string rather than using .css for massive improvement in rendering time
 			var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
 
-			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
+			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + column.index + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
 
 			//add tooltip to cell
 			self._generateTooltip(cell, item, column.tooltip);
@@ -2497,10 +2549,21 @@
 
 			//resize table holder to match header height
 			if(self.options.height && headerHeight != self.header.outerHeight()){
-				self.tableHolder.css({
-					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-				});
+
+				if(self.footer){
+					var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
+
+					self.tableHolder.css({
+						"min-height":"calc(100% - " + footerHeight + "px)",
+						"max-height":"calc(100% - " + footerHeight + "px)",
+					});
+				}else{
+					self.tableHolder.css({
+						"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+						"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					});
+				}
+
 			}
 		}
 
@@ -2669,7 +2732,6 @@
 		//add pagination footer if needed
 		if(self.footer){
 			element.append(self.footer);
-
 			var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
 
 			self.tableHolder.css({
@@ -3107,7 +3169,7 @@
 
 						colCount++;
 
-						if(column.width || column.minWidth){
+						if(column.width){
 
 							var thisWidth = 0;
 
@@ -3552,13 +3614,13 @@
 		}else{
 			//handle index
 			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
-			rowData = slef._findRow(row);
+			rowData = self._findRow(row);
 		}
 
 		self.selectedRows.push(rowData);
 
 		if(rowElement.length){
-			row.addClass("tabulator-selected");
+			rowElement.addClass("tabulator-selected");
 
 			if(!silent){
 				self._rowSelectionChanged();
@@ -3619,7 +3681,7 @@
 		}else{
 			//handle index
 			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
-			rowData = slef._findRow(row);
+			rowData = self._findRow(row);
 		}
 
 		self.selectedRows.forEach(function(element, i){
