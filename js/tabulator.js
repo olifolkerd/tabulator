@@ -344,7 +344,7 @@
 					var attrib = attributes[index];
 					var name;
 
-					if(attrib.name && attrib.name.indexOf("tabulator-") === 0){
+					if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
 
 						name = attrib.name.replace("tabulator-", "");
 
