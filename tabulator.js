@@ -2314,7 +2314,7 @@
 			//set style as string rather than using .css for massive improvement in rendering time
 			var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
 
-			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + i + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
+			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + column.index + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
 
 			//add tooltip to cell
 			self._generateTooltip(cell, item, column.tooltip);
