@@ -2145,7 +2145,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks &amp; Events <a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Callbacks &amp; Events <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
@@ -2378,8 +2378,18 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
-                    <h2>Render Started</h2>
-                    <p>The <span class='param'>renderStarted</span> callback is triggered whenever the table is about to be rendered. this can be when the table is first created, when data is loaded, when pages are changed or when a <span class='param'>redraw</span> is called.</p>
+                    <h2>Render Started <span class="label label-primary">Updated</span></h2>
+                    <p>The <span class='param'>renderStarted</span> callback is triggered whenever all the rows in the table are about to be rendered. This can include:
+                    <ul>
+                        <li>Data is loaded into the table when <span class='param'>setData</span> is called</li>
+                        <li>A page is loaded through any form of pagination</li>
+                        <li>Rows are added to the table during progressive rendering</li>
+                        <li>Columns are changed by <span class='param'>setColumns</span></li>
+                        <li>The data is filtered</li>
+                        <li>The data is sorted</li>
+                        <li>The <span class='param'>redraw</span> function is called</li>
+                    </ul>
+                    </p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     renderStarted:function(){
     },
@@ -2852,7 +2862,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#options">Setup Options <span class="label label-primary">Updated</span>
 </a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
-                        <li><a href="#callbacks">Callbacks &amp; Events </a></li>
+                        <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#download">Download Table Data </a></li>
                         <li><a href="#extending">Extending Tabulator</a></li>
                         <li><a href="#localization">Localization <span class="label label-primary">Updated</span></a></li>
