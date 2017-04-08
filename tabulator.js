@@ -1457,6 +1457,7 @@
 		return false;
 	},
 
+
 	//scroll to sepcified row
 	scrollToRow:function(item){
 		var self = this;
@@ -1483,11 +1484,30 @@
 	getData:function(filteredData){
 		var self = this;
 
-		//clone data array with deep copy to isolate internal data from returend result
+		//clone data array with deep copy to isolate internal data from returned result
 		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data);
 
 		//check for accessors and return the processed data
 		return self._applyAccessors(outputData);
+	},
+
+	getRowData:function(row){
+		var self = this;
+		var rowData;
+
+		if(row instanceof jQuery){
+			rowData = row.data("data");
+		}else{
+			rowData = self.data.find(function(item){
+				return item[self.options.index] === row;
+			});
+		}
+
+		//clone data object with deep copy to isolate internal data from returned result
+		var outputData = $.extend(true, [], rowData || []);
+
+		//check for accessors and return the processed data
+		return self._applyAccessors([outputData])[0];
 	},
 
 	//update existing data
