@@ -1394,6 +1394,15 @@
 		self.options.dataEdited(self.data);
 	},
 
+	//update row if it exits or create if it dosnt
+	updateOrAddRow(index, item){
+		var self = this;
+
+		if(!self.updateRow(index, item)){
+			self.addRow(item);
+		}
+	},
+
 	//update row data
 	updateRow:function(index, item, bulk){
 		var self = this;
