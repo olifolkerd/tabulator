@@ -1181,7 +1181,7 @@
 
 		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
 
-		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + item + "']", self.element) : item;
 
 		if(row.length){
 			var rowData = row.data("data");
@@ -1336,7 +1336,7 @@
 
 		var id = (itemType == "number" || itemType == "string") ? index : index.data("data")[self.options.index];
 
-		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + index + "]", self.element) : index;
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + index + "']", self.element) : index;
 
 		if(row.length){
 			var rowData = row.data("data");
@@ -1388,7 +1388,7 @@
 
 		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
 
-		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + item + "']", self.element) : item;
 
 
 		if(row){
@@ -3613,7 +3613,7 @@
 
 				//handle row data objects
 				if(row[self.options.index]){
-					rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+					rowElement = $(".tabulator-row[data-id='" + row[self.options.index] + "']", self.element)
 				}else{
 					var rowElements =  $(".tabulator-row[data-id=0]", self.element);
 
@@ -3631,7 +3631,7 @@
 
 		}else{
 			//handle index
-			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
+			rowElement = $(".tabulator-row[data-id='" + row + "']", self.element)
 			rowData = self._findRow(row);
 		}
 
@@ -3680,7 +3680,7 @@
 
 				//handle row data objects
 				if(row[self.options.index]){
-					rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+					rowElement = $(".tabulator-row[data-id='" + row[self.options.index] + "']", self.element)
 				}else{
 					var rowElements =  $(".tabulator-row[data-id=0]", self.element);
 
@@ -3698,7 +3698,7 @@
 
 		}else{
 			//handle index
-			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
+			rowElement = $(".tabulator-row[data-id='" + row + "']", self.element)
 			rowData = self._findRow(row);
 		}
 
@@ -3736,7 +3736,7 @@
 
 			//handle row data objects
 			if(row[self.options.index]){
-				rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+				rowElement = $(".tabulator-row[data-id='" + row[self.options.index] + "']", self.element)
 			}else{
 				var rowElements =  $(".tabulator-row[data-id=0]", self.element);
 
