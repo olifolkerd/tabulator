@@ -1409,6 +1409,8 @@
 
 		var itemType = typeof index;
 
+		console.log("type", itemType, index)
+
 		var id = (itemType == "number" || itemType == "string") ? index : index.data("data")[self.options.index];
 
 		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + index + "']", self.element) : index;
@@ -1489,13 +1491,17 @@
 	},
 
 	//update existing data
-	updateData:function(data){
+	updateData:function(data, orAdd){
 		var self = this;
 
 		if(data){
 			data.forEach(function(item){
 				//update each row in turn
-				self.updateRow(item[self.options.index], item, true);
+				var success = self.updateRow(item[self.options.index], item, true);
+
+				if(!success){
+					self.addRow(item);
+				}
 			});
 
 			//align column widths
@@ -1506,6 +1512,12 @@
 			self.options.dataEdited(self.data);
 		}
 	},
+
+	//update data if it exits or create if it dosnt
+	updateOrAddData(data){
+		this.updateData(data, true);
+	},
+
 
 	//apply any column accessors to the data before returing the result
 	_applyAccessors:function(data){

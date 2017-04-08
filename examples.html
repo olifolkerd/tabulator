@@ -132,6 +132,18 @@
 			$("#example-table-demo").tabulator("redraw");
 		});
 
+		setTimeout(function(){
+			$("#example-table-demo").tabulator("updateOrAddData", [{id:1, name:"AAAAAAAA"}])
+		}, 1000);
+
+		setTimeout(function(){
+			$("#example-table-demo").tabulator("updateOrAddData", [{id:12, name:"CCCCCC"}])
+		}, 2000);
+
+		// setTimeout(function(){
+
+		// }, 3000);
+
 	</script>
 </section>
 
