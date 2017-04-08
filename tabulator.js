@@ -1267,8 +1267,10 @@
 	},
 
 	//add blank row to table
-	addRow:function(item, top){
+	addRow:function(item, top, indexRowVal){
 		var self = this;
+		var line, activeLine, indexRow, indexID;
+
 
 		if(item){
 			item[self.options.index] = item[self.options.index] ? item[self.options.index] : 0;
@@ -1282,38 +1284,102 @@
 		//create blank row
 		var row = self._renderRow(item);
 
-		var top = typeof top == "undefined" ? self.options.addRowPos : (top === true || top === "top" ? "top" : "bottom");
+		var top = typeof top == "undefined" ? self.options.addRowPos : top;
+
+		if(top === "top"){
+			top = true;
+		}
+
+		if(top === "bottom"){
+			top = false;
+		}
+
+		//work out row to put new row next to
+		if(typeof indexRowVal !== "undefined"){
+
+			indexRow = indexRowVal instanceof jQuery ? indexRowVal : $(".tabulator-row[data-id='" + indexRowVal + "']", self.element);
+			indexID =  indexRowVal instanceof jQuery ? indexRowVal.data("id") : indexRowVal;
+
+			console.log("index defined", indexID, indexRow)
+		}
 
 		// initial place to append the row in the table, by default in the table row container
 		var newRowContainer = self.table;
 		// if group are used, look for the corresponding row of the group.
-		if(self.options.groupBy){
-			var groupVal = typeof(self.options.groupBy) == "function" ? self.options.groupBy(item) : item[self.options.groupBy];
-			var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
-			//if group does not exist, build it
-			if(group.length == 0){
-				group = self._renderGroup(groupVal);
-				self.table.append(group);
-				self._renderGroupHeader(group);
-			}
-			//set the place to append the row to the corresponding group container.
-			newRowContainer = group;
-		}
-		//append to top or bottom of table based on preference
-		if(top == "top"){
-			if (self.activeData !== self.data){
-				self.activeData.unshift(item);
+
+		if(!indexRow || !indexRow.length){
+
+			//create new line at top or bottom of table or group
+
+			if(self.options.groupBy){
+				var groupVal = typeof(self.options.groupBy) == "function" ? self.options.groupBy(item) : item[self.options.groupBy];
+				var group = $(".tabulator-group[data-value='" + groupVal + "']", self.table);
+				//if group does not exist, build it
+				if(group.length == 0){
+					group = self._renderGroup(groupVal);
+					self.table.append(group);
+					self._renderGroupHeader(group);
+				}
+				//set the place to append the row to the corresponding group container.
+				newRowContainer = group;
 			}
 
-			self.data.unshift(item);
-			newRowContainer.prepend(row);
+			//append to top or bottom of table based on preference
+			if(top){
+				if (self.activeData !== self.data){
+					self.activeData.unshift(item);
+				}
+
+				self.data.unshift(item);
+				newRowContainer.prepend(row);
+			}else{
+				if (self.activeData !== self.data){
+					self.activeData.push(item);
+				}
+
+				self.data.push(item);
+				newRowContainer.append(row);
+			}
 		}else{
+
+			//insert new line next to existing row
+
 			if (self.activeData !== self.data){
-				self.activeData.push(item);
+				//remove from active data
+				activeLine = self.activeData.find(function(item){
+					return item[self.options.index] == indexID;
+				});
+
+				activeLine = self.activeData.indexOf(activeLine);
 			}
 
-			self.data.push(item);
-			newRowContainer.append(row);
+			line = self.data.find(function(item){
+				return item[self.options.index] == indexID;
+			});
+
+			line = self.data.indexOf(line);
+
+			if(line > -1){
+				if(top){
+					if (self.activeData !== self.data){
+						self.activeData.splice(activeLine, 0, item);
+					}
+					self.data.splice(line, 0, item);
+
+					if(indexRow){
+						indexRow.before(row);
+					}
+				}else{
+					if (self.activeData !== self.data){
+						self.activeData.splice(activeLine+1, 0, item);
+					}
+					self.data.splice(line+1, 0, item);
+
+					if(indexRow){
+						indexRow.after(row);
+					}
+				}
+			}
 		}
 
 		//align column widths
