@@ -1119,7 +1119,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                 <a class="anchor" id="manipulating-data"></a>
                 <article>
-                    <h1>Editing &amp; Manipulating Data </h1>
+                    <h1>Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator allows you to manipulate the data in the table in a number of different ways</p>
 
@@ -1216,12 +1216,12 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <p>You can remove all data from the table using the <span class='param'>clear</span> function:</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("clear");</pre>
 
-                    <h2>Row Manipulation <a class="example-link" href="../examples?#adddel"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Row Manipulation <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#adddel"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <p>There are a number of ways to manipulate individual rows in the table without affecting any other currently rendered rows.</p>
 
                     <a class="anchor" id="addrow"></a>
-                    <h3>Add Row</h3>
+                    <h3>Add Row <span class="label label-primary">Updated</span></h3>
                     <p>You can add a row to the table using the <span class='param'>addRow</span> function.</p>
 
                     <p>The first argument should be a row data object. If you do not pass data for a column, it will be left empty. To create a blank row (ie for a user to fill in), pass an empty object to the function.</p>
@@ -1231,6 +1231,10 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12", gender:"male", height:1}, true);</pre>
 
                     <p>By default any new rows will be added to the bottom of the table, to change this to the top set the <span class='param'>addRowPos</span> option to "top";</p>
+
+                    <p>If you want to add the row next to an existing row you can pass an optional third agument to the function that will position the new row next to the specified row (above or below based on the value of the second argument). You can either pass the index of the existing row or its jQuery object to this argument:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12"}, true, 3); //add new row above existing row with index of 3</pre>
 
                     <p>It is worth noting that if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is added. (see <a href="#mutators">Mutators</a> for more details)</p>
 
@@ -2857,15 +2861,13 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#formatting">Formatting Data </a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
-                        <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span>
-</a></li>
-                        <li><a href="#manipulating-data">Editing &amp; Manipulating Data</a></li>
+                        <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span></a></li>
+                        <li><a href="#manipulating-data">Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#get-set">Mutators &amp; Accessors</a></li>
                         <li><a href="#selectable">Selectable Rows <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#movable">Movable Rows and Columns</a></li>
                         <li><a href="#column-visibility">Column Visibility</a></li>
-                        <li><a href="#options">Setup Options <span class="label label-primary">Updated</span>
-</a></li>
+                        <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#css">CSS Classes &amp; Theming</a></li>
                         <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#download">Download Table Data </a></li>
