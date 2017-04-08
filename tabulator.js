@@ -1367,6 +1367,26 @@
 		return false;
 	},
 
+	//scroll to sepcified row
+	scrollToRow:function(item){
+		var self = this;
+
+		var itemType = typeof item;
+
+		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
+
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
+
+
+		if(row){
+			self.tableHolder.stop();
+			self.tableHolder.animate({
+				scrollTop: row.offset().top - self.tableHolder.offset().top + self.tableHolder.scrollTop()
+			}, 1000);
+		}
+
+	},
+
 	////////////////// Data Manipulation //////////////////
 
 	//get array of data from the table
