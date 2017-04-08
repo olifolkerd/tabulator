@@ -1457,7 +1457,7 @@
 		return false;
 	},
 
-
+	//return jQuery object for row
 	getRow:function(index){
 		var self = this;
 
@@ -3146,6 +3146,22 @@
 					title = titleElement;
 				}
 
+				//bind header click function
+				if(typeof(column.headerOnClick) == "function"){
+					col.on("click", function(e){column.headerOnClick(e, col, column.field, column)});
+				}
+
+				//bind header double click function
+				if(typeof(column.headerOnDblClick) == "function"){
+					col.on("dblclick", function(e){column.headerOnDblClick(e, col, column.field, column)});
+				}
+
+				//bind header context function
+				if(typeof(column.headerOnContext) == "function"){
+					col.on("contextmenu", function(e){column.headerOnContext(e, col, column.field, column)});
+				}
+
+
 			//Manage Header Column Filters
 			if(column.headerFilter){
 
@@ -3251,6 +3267,21 @@
 		}else{
 			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
 			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
+
+			//bind header click function
+			if(typeof(column.headerOnClick) == "function"){
+				col.on("click", function(e){column.headerOnClick(e, col, column.field, column)});
+			}
+
+			//bind header double click function
+			if(typeof(column.headerOnDblClick) == "function"){
+				col.on("dblclick", function(e){column.headerOnDblClick(e, col, column.field, column)});
+			}
+
+			//bind header context function
+			if(typeof(column.headerOnContext) == "function"){
+				col.on("contextmenu", function(e){column.headerOnContext(e, col, column.field, column)});
+			}
 		}
 		col.data("column", column);
 		container.append(col);
