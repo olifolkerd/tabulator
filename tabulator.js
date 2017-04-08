@@ -1707,6 +1707,10 @@
 		self.filterType = null;
 		self.filterValue = null;
 
+		//clear header filter values
+		var headerFilters = $(".tabulator-header-filter", self.header);
+		$("input, select", headerFilters).val("");
+
 		//render table
 		this._filterData();
 	},
