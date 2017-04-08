@@ -1458,6 +1458,15 @@
 	},
 
 
+	getRow:function(index){
+		var self = this;
+
+		var row = $(".tabulator-row[data-id='" + index + "']", self.element);
+
+		return row.length ? row : false;
+	},
+
+
 	//scroll to sepcified row
 	scrollToRow:function(item){
 		var self = this;
