@@ -757,7 +757,7 @@ $("#example-table").tabulator({
                 <a class="anchor" id="sorting"></a>
                 <article>
 
-                    <h1>Sorting Data  <a class="example-link" href="../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Sorting Data  <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the <span class='param'>sortable</span> option when you create your Tabulator.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -780,10 +780,14 @@ $("#example-table").tabulator({
                         <li><strong>time</strong> - sorts column as time (formatted as hh:mm)</li>
                     </ul>
 
+                    <h2>Custom Sorters <span class="label label-primary">Updated</span></h2>
                     <p>You can define a custom sorter function in the sorter option:</p>
-                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b, aData, bData){
-        //a and b are the two values being compared
-        //aData and bData are the row objects for the values being compared (useful if you need to access additional fields in the row data for the sort)
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b, aData, bData, field, dir){
+        //a, b - the two values being compared
+        //aData, bData - the row objects for the values being compared (useful if you need to access additional fields in the row data for the sort)
+        //field - the name of the column being sorted
+        //dir - the direction of the sort ("asc" or "desc")
+
         return a - b; //you must return the difference between the two values
     },
 }</pre>
@@ -861,6 +865,7 @@ $("#example-table").tabulator({
                         <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
                     </ul>
 
+                    <h2>Custom Formatters</h2>
                     <p>You can define a custom formatter function in the formatter option:</p>
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:function(value, data, cell, row, options, formatterParams){
         //value - the value of the cell
@@ -2626,7 +2631,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
     },
 });</pre>
 
-                    <p>Using a sorter defined in the extension is as simple as passing the name to the <span class='param'>editor</span> parameter in the column definition array.</p>
+                    <p>Using a editor defined in the extension is as simple as passing the name to the <span class='param'>editor</span> parameter in the column definition array.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     columns:[
@@ -2849,7 +2854,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#set-data">Set Table Data </a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout </a></li>
-                        <li><a href="#sorting">Sorting Data </a></li>
+                        <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#formatting">Formatting Data </a></li>
                         <li><a href="#grouping">Grouping Data</a></li>
                         <li><a href="#filtering">Filtering Data <span class="label label-primary">Updated</span>
