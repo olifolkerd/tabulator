@@ -1174,6 +1174,8 @@
 			var rowData = row.data("data");
 			rowData.tabulator_delete_row = true;
 
+			self.deselectRow(row);
+
 			//remove from data
 			var line = self.data.find(function(item){
 				return item.tabulator_delete_row;
