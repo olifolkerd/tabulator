@@ -87,9 +87,9 @@
 			"next_title":"Next Page",
 		},
 		"headerFilters":{
-				"default":"filter column...",
-				"columns":{
-				}
+			"default":"filter column...",
+			"columns":{
+			}
 		}
 	},
 
@@ -2382,48 +2382,49 @@
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
 				cell.on("click", function(e){self._cellClick(e, cell)});
-			}else{
-				//handle input replacement on editable cells
-				if(cell.data("editor")){
+			}
 
-					cell.on("click", function(e){
-						if(!$(this).hasClass("tabulator-editing")){
-							$(this).focus();
-						}
-					});
+			//handle input replacement on editable cells
+			if(cell.data("editor")){
 
-					cell.on("focus", function(e){
-						e.stopPropagation();
-
-						//Load editor
-						var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
-
-						var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
-
-						//if editor returned, add to DOM, if false, abort edit
-						if(cellEditor !== false){
-							cell.addClass("tabulator-editing");
-							cell.empty();
-							cell.append(cellEditor);
-
-							//prevent editing from tirggering rowClick event
-							cell.children().click(function(e){
-								e.stopPropagation();
-							})
-						}else{
-							cell.blur();
-						}
-
-					});
-
-					//assign cell mutator function if needed
-					if(column.mutator && column.mutateType !== "data"){
-						var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
-
-						cell.data("mutator", mutator);
+				cell.on("click", function(e){
+					if(!$(this).hasClass("tabulator-editing")){
+						$(this).focus();
 					}
+				});
+
+				cell.on("focus", function(e){
+					e.stopPropagation();
+
+					//Load editor
+					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
+
+					var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+
+					//if editor returned, add to DOM, if false, abort edit
+					if(cellEditor !== false){
+						cell.addClass("tabulator-editing");
+						cell.empty();
+						cell.append(cellEditor);
+
+						//prevent editing from tirggering rowClick event
+						cell.children().click(function(e){
+							e.stopPropagation();
+						})
+					}else{
+						cell.blur();
+					}
+
+				});
+
+				//assign cell mutator function if needed
+				if(column.mutator && column.mutateType !== "data"){
+					var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
+
+					cell.data("mutator", mutator);
 				}
 			}
+
 
 			row.append(cell);
 		});
