@@ -86,8 +86,12 @@
 			"next":"Next",
 			"next_title":"Next Page",
 		},
+		"headerFilters":{
+				"default":"filter column...",
+				"columns":{
+				}
+		}
 	},
-
 
 	//setup options
 	options: {
@@ -131,7 +135,8 @@
 		progressiveRenderSize:20, //block size for progressive rendering
 		progressiveRenderMargin:200, //disance in px before end of scroll before progressive render is triggered
 
-		headerFilterPlaceholder: "filter column...", //placeholder text to display in header filters
+		headerFilterPlaceholder: "", //placeholder text to display in header filters
+		headerFilterColumnPlaceholders:{}, //placeholders by column
 
 		tooltips: false, //Tool tip value
 		tooltipsHeader: false, //Tool tip for headers
@@ -624,6 +629,15 @@
 				}
 			}
 		}
+
+		if(self.options.headerFilterPlaceholder){
+			self.defaultLang.headerFilters.default = self.options.headerFilterPlaceholder;
+		}
+
+		if(self.options.headerFilterColumnPlaceholders){
+			self.defaultLang.headerFilters.columns = self.options.headerFilterColumnPlaceholders;
+		}
+
 
 		//load default lang template
 		self.lang = $.extend(true, [], self.defaultLang);
@@ -3037,7 +3051,7 @@
 				var typingTimer = false;
 
 				filter.append(cellEditor);
-				filter.children().attr("placeholder", self.options.headerFilterPlaceholder);
+				filter.children().attr("placeholder", self.lang.headerFilters.columns[column.field] || self.lang.headerFilters.default);
 
 				//handle events
 				cellEditor.on("click", function(e){
