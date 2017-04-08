@@ -103,7 +103,7 @@
             <div class="col-md-9 col-xs-12 content" role="main">
                 <a class="anchor" id="setup"></a>
                 <article>
-                    <h1>Setup <a class="example-link" href="../quickstart"> <button><i class="fa fa-paper-plane"></i> Try Quickstart Guide</button></a></h1>
+                    <h1>Setup <span class="label label-primary">Updated</span><a class="example-link" href="../quickstart"> <button><i class="fa fa-paper-plane"></i> Try Quickstart Guide</button></a></h1>
 
                     <p>Setting up tabulator could not be simpler.</p>
 
@@ -119,21 +119,48 @@
                     <p>Turn the element into a tabulator with some simple javascript</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator();</pre>
 
+                    <h2>Installation</h2>
 
-                    <h2>Bower Installation</h2>
+                    <h3>Bower Installation</h3>
                     <p>To get Tabulator via the Bower package manager, open a terminal in your project directory and run the following commmand:</p>
                     <pre class="prettyprint lang-bsh">bower install tabulator --save</pre>
 
-                    <h2>NPM Installation</h2>
+                    <h3>NPM Installation</h3>
                     <p>To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:</p>
                     <pre class="prettyprint lang-bsh">npm install jquery.tabulator --save</pre>
 
-                    <h2>CDNJS</h2>
+                    <h3>CDNJS</h3>
                     <p>To access Tabulator directly from the CDNJS CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:</p>
                     <pre class="prettyprint lang-html">&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.11.0/tabulator.min.css" rel="stylesheet"&gt;
 &lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.11.0/tabulator.min.js"&gt;&lt;/script&gt;</pre>
 
                     <p>Check out more of the great libraries available to use direclty from CDNJS at <a href="https://cdnjs.com/">https://cdnjs.com/</a></p>
+
+                    <a class="anchor" id="dependences"></a>
+                    <h2>jQuery Dependences <span class="label label-danger">New</span></h2>
+
+                    <p>Tabulator is dependant on the <a href="http://jquery.com/" targe="_blank">jQuery</a> and <a href="https://jqueryui.com/" targe="_blank">jQuery UI</a> libraries. You can include these files in your project or reference them from a CDN of your choice.</p>
+                    <p>If you are looking for the most optimized packages possible, then Tabulator only depends on a few of the features available in jQUery UI:</p>
+
+                    <p>
+                        <strong>Core Dependencies</strong>
+                        <ul>
+                            <li>Widget</li>
+                            <li>:data Selector</li>
+                            <li>scrollParent</li>
+                        </ul>
+
+                        <strong>Movable Rows/Columns</strong>
+                        <ul>
+                            <li>Draggable</li>
+                            <li>Droppable</li>
+                            <li>Selectable</li>
+                            <li>Sortable</li>
+                            <li>Mouse</li>
+                        </ul>
+                    </p>
+
+                    <p>An opmimized jQuery UI library can be downloaded <a href="https://jqueryui.com/download/#!version=1.12.1&components=101000000100110110000000010000000000000000000000" target="_blank">here</a>.</p>
 
                 </article>
                 <a class="anchor" id="define-column-headers"></a>
@@ -2807,7 +2834,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
             <div class="col-md-3" role="complementary">
                 <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
                     <ul class="nav docs-sidenav">
-                        <li><a href="#setup">Setup</a></li>
+                        <li><a href="#setup">Setup <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#define-column-headers">Define Column Headers </a></li>
                         <li><a href="#set-data">Set Table Data </a></li>
                         <li><a href="#pagination">Pagination </a></li>
