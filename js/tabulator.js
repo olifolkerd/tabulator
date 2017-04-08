@@ -87,9 +87,9 @@
 			"next_title":"Next Page",
 		},
 		"headerFilters":{
-				"default":"filter column...",
-				"columns":{
-				}
+			"default":"filter column...",
+			"columns":{
+			}
 		}
 	},
 
@@ -1181,7 +1181,7 @@
 
 		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
 
-		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + item + "']", self.element) : item;
 
 		if(row.length){
 			var rowData = row.data("data");
@@ -1336,7 +1336,7 @@
 
 		var id = (itemType == "number" || itemType == "string") ? index : index.data("data")[self.options.index];
 
-		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + index + "]", self.element) : index;
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + index + "']", self.element) : index;
 
 		if(row.length){
 			var rowData = row.data("data");
@@ -1388,7 +1388,7 @@
 
 		var id = (itemType == "number" || itemType == "string") ? item : item.data("data")[self.options.index];
 
-		var row = (itemType == "number" || itemType == "string") ? $("[data-id=" + item + "]", self.element) : item;
+		var row = (itemType == "number" || itemType == "string") ? $("[data-id='" + item + "']", self.element) : item;
 
 
 		if(row){
@@ -1706,6 +1706,10 @@
 		self.filterField = null;
 		self.filterType = null;
 		self.filterValue = null;
+
+		//clear header filter values
+		var headerFilters = $(".tabulator-header-filter", self.header);
+		$("input, select", headerFilters).val("");
 
 		//render table
 		this._filterData();
@@ -2382,48 +2386,49 @@
 			//bind cell click function
 			if(typeof(column.onClick) == "function"){
 				cell.on("click", function(e){self._cellClick(e, cell)});
-			}else{
-				//handle input replacement on editable cells
-				if(cell.data("editor")){
+			}
 
-					cell.on("click", function(e){
-						if(!$(this).hasClass("tabulator-editing")){
-							$(this).focus();
-						}
-					});
+			//handle input replacement on editable cells
+			if(cell.data("editor")){
 
-					cell.on("focus", function(e){
-						e.stopPropagation();
-
-						//Load editor
-						var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
-
-						var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
-
-						//if editor returned, add to DOM, if false, abort edit
-						if(cellEditor !== false){
-							cell.addClass("tabulator-editing");
-							cell.empty();
-							cell.append(cellEditor);
-
-							//prevent editing from tirggering rowClick event
-							cell.children().click(function(e){
-								e.stopPropagation();
-							})
-						}else{
-							cell.blur();
-						}
-
-					});
-
-					//assign cell mutator function if needed
-					if(column.mutator && column.mutateType !== "data"){
-						var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
-
-						cell.data("mutator", mutator);
+				cell.on("click", function(e){
+					if(!$(this).hasClass("tabulator-editing")){
+						$(this).focus();
 					}
+				});
+
+				cell.on("focus", function(e){
+					e.stopPropagation();
+
+					//Load editor
+					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
+
+					var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+
+					//if editor returned, add to DOM, if false, abort edit
+					if(cellEditor !== false){
+						cell.addClass("tabulator-editing");
+						cell.empty();
+						cell.append(cellEditor);
+
+						//prevent editing from tirggering rowClick event
+						cell.children().click(function(e){
+							e.stopPropagation();
+						})
+					}else{
+						cell.blur();
+					}
+
+				});
+
+				//assign cell mutator function if needed
+				if(column.mutator && column.mutateType !== "data"){
+					var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
+
+					cell.data("mutator", mutator);
 				}
 			}
+
 
 			row.append(cell);
 		});
@@ -3608,7 +3613,7 @@
 
 				//handle row data objects
 				if(row[self.options.index]){
-					rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+					rowElement = $(".tabulator-row[data-id='" + row[self.options.index] + "']", self.element)
 				}else{
 					var rowElements =  $(".tabulator-row[data-id=0]", self.element);
 
@@ -3626,7 +3631,7 @@
 
 		}else{
 			//handle index
-			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
+			rowElement = $(".tabulator-row[data-id='" + row + "']", self.element)
 			rowData = self._findRow(row);
 		}
 
@@ -3675,7 +3680,7 @@
 
 				//handle row data objects
 				if(row[self.options.index]){
-					rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+					rowElement = $(".tabulator-row[data-id='" + row[self.options.index] + "']", self.element)
 				}else{
 					var rowElements =  $(".tabulator-row[data-id=0]", self.element);
 
@@ -3693,7 +3698,7 @@
 
 		}else{
 			//handle index
-			rowElement = $(".tabulator-row[data-id=" + row + "]", self.element)
+			rowElement = $(".tabulator-row[data-id='" + row + "']", self.element)
 			rowData = self._findRow(row);
 		}
 
@@ -3731,7 +3736,7 @@
 
 			//handle row data objects
 			if(row[self.options.index]){
-				rowElement = $(".tabulator-row[data-id=" + row[self.options.index] + "]", self.element)
+				rowElement = $(".tabulator-row[data-id='" + row[self.options.index] + "']", self.element)
 			}else{
 				var rowElements =  $(".tabulator-row[data-id=0]", self.element);
 
