@@ -1101,6 +1101,27 @@
 		return match;
 	},
 
+	_setColGroupVisibility:function(column, visibility){
+		var self = this;
+
+		var group = column.parent().closest(".tabulator-col-group");
+
+		console.log("group", visibility, group.length, group)
+
+		if(group.length){
+			var visCols = $(".tabulator-col:visible", group);
+
+			if(visCols.length || visibility){
+				group.show();
+			}else{
+				group.hide();
+			}
+
+			self._setColGroupVisibility(group, visibility);
+		}
+
+	},
+
 	_setColVisibility:function(column, visibility){
 		var self = this;
 
@@ -1114,6 +1135,8 @@
 			}else{
 				elements.hide();
 			}
+
+			self._setColGroupVisibility($(".tabulator-col[data-index=" + column.index + "]"), visibility);
 
 			self._renderTable();
 
