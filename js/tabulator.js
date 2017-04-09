@@ -1394,11 +1394,22 @@
 		self.options.dataEdited(self.data);
 	},
 
+	//update row if it exits or create if it dosnt
+	updateOrAddRow(index, item){
+		var self = this;
+
+		if(!self.updateRow(index, item)){
+			self.addRow(item);
+		}
+	},
+
 	//update row data
 	updateRow:function(index, item, bulk){
 		var self = this;
 
 		var itemType = typeof index;
+
+		console.log("type", itemType, index)
 
 		var id = (itemType == "number" || itemType == "string") ? index : index.data("data")[self.options.index];
 
@@ -1446,6 +1457,16 @@
 		return false;
 	},
 
+	//return jQuery object for row
+	getRow:function(index){
+		var self = this;
+
+		var row = $(".tabulator-row[data-id='" + index + "']", self.element);
+
+		return row.length ? row : false;
+	},
+
+
 	//scroll to sepcified row
 	scrollToRow:function(item){
 		var self = this;
@@ -1472,21 +1493,44 @@
 	getData:function(filteredData){
 		var self = this;
 
-		//clone data array with deep copy to isolate internal data from returend result
+		//clone data array with deep copy to isolate internal data from returned result
 		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data);
 
 		//check for accessors and return the processed data
 		return self._applyAccessors(outputData);
 	},
 
+	getRowData:function(row){
+		var self = this;
+		var rowData;
+
+		if(row instanceof jQuery){
+			rowData = row.data("data");
+		}else{
+			rowData = self.data.find(function(item){
+				return item[self.options.index] === row;
+			});
+		}
+
+		//clone data object with deep copy to isolate internal data from returned result
+		var outputData = $.extend(true, [], rowData || []);
+
+		//check for accessors and return the processed data
+		return self._applyAccessors([outputData])[0];
+	},
+
 	//update existing data
-	updateData:function(data){
+	updateData:function(data, orAdd){
 		var self = this;
 
 		if(data){
 			data.forEach(function(item){
 				//update each row in turn
-				self.updateRow(item[self.options.index], item, true);
+				var success = self.updateRow(item[self.options.index], item, true);
+
+				if(!success){
+					self.addRow(item);
+				}
 			});
 
 			//align column widths
@@ -1497,6 +1541,12 @@
 			self.options.dataEdited(self.data);
 		}
 	},
+
+	//update data if it exits or create if it dosnt
+	updateOrAddData(data){
+		this.updateData(data, true);
+	},
+
 
 	//apply any column accessors to the data before returing the result
 	_applyAccessors:function(data){
@@ -3058,8 +3108,6 @@
 				column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
 
 
-
-
 				if(options.sortBy == column.field){
 					var sortdir = " data-sortdir='" + options.sortDir + "' ";
 					self.sortCurCol= column;
@@ -3202,6 +3250,22 @@
 			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
 			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
 		}
+
+		//bind header click function
+		if(typeof(column.headerOnClick) == "function"){
+			col.on("click", function(e){column.headerOnClick(e, col, column.field, column)});
+		}
+
+		//bind header double click function
+		if(typeof(column.headerOnDblClick) == "function"){
+			col.on("dblclick", function(e){column.headerOnDblClick(e, col, column.field, column)});
+		}
+
+		//bind header context function
+		if(typeof(column.headerOnContext) == "function"){
+			col.on("contextmenu", function(e){column.headerOnContext(e, col, column.field, column)});
+		}
+
 		col.data("column", column);
 		container.append(col);
 	});
