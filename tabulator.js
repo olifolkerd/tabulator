@@ -2789,7 +2789,6 @@
 		}
 
 
-
 		//create sortable arrow chevrons
 		var arrow = $("<div class='tabulator-arrow'></div>");
 
@@ -3354,6 +3353,12 @@
 				}
 
 				var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
+
+				//adjust for vertical scrollbar if present
+				if(self.tableHolder[0].scrollHeight > self.tableHolder.innerHeight()){
+					totWidth -= self.tableHolder[0].offsetWidth - self.tableHolder[0].clientWidth;
+				}
+
 				var colCount = 0;
 
 				var widthIdeal = 0;
