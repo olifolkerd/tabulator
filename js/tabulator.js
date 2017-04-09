@@ -1101,6 +1101,27 @@
 		return match;
 	},
 
+	_setColGroupVisibility:function(column, visibility){
+		var self = this;
+
+		var group = column.parent().closest(".tabulator-col-group");
+
+		console.log("group", visibility, group.length, group)
+
+		if(group.length){
+			var visCols = $(".tabulator-col:visible", group);
+
+			if(visCols.length || visibility){
+				group.show();
+			}else{
+				group.hide();
+			}
+
+			self._setColGroupVisibility(group, visibility);
+		}
+
+	},
+
 	_setColVisibility:function(column, visibility){
 		var self = this;
 
@@ -1114,6 +1135,8 @@
 			}else{
 				elements.hide();
 			}
+
+			self._setColGroupVisibility($(".tabulator-col[data-index=" + column.index + "]"), visibility);
 
 			self._renderTable();
 
@@ -3094,6 +3117,26 @@
 			self.setFilter(colFilter);
 		}
 
+		//check if column group contains any columns
+		function isColGroupEmpty(column){
+			var empty = true;
+
+			if(column.columns){
+				if(column.columns.length){
+					column.columns.forEach(function(col){
+						if(!isColGroupEmpty(col)){
+							empty = false;
+						}
+					});
+				}
+			}else{
+				return false;
+			}
+
+			return empty;
+		}
+
+
 		//iterate through columns
 		columns.forEach(function(column, i){
 
@@ -3247,8 +3290,11 @@
 			}
 
 		}else{
-			var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
-			self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
+
+			if(!isColGroupEmpty(column)){
+				var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
+				self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
+			}
 		}
 
 		//bind header click function
@@ -3266,8 +3312,10 @@
 			col.on("contextmenu", function(e){column.headerOnContext(e, col, column.field, column)});
 		}
 
-		col.data("column", column);
-		container.append(col);
+		if(col){
+			col.data("column", column);
+			container.append(col);
+		}
 	});
 
 },
