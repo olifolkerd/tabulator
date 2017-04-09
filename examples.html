@@ -5,7 +5,7 @@
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="tabulator.css">
+	<link rel="stylesheet" href="/themes/bootstrap/tabulator_bootstrap.css">
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -111,38 +111,67 @@
 			columns:[
 			{formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)} },
 			{title:"Name", field:"name", sorter:"string", width:150, tooltipHeader:"Custom Header Tooltip"},
-			{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
-			{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, data){console.log("cell click - " + val, cell)}},
-			{title:"Height", field:"height", formatter:"star", align:"center", sorter:"number", width:100},
+			{
+				title:"Group",
+				columns:[
+				{title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
+				{title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, val, cell, data){console.log("cell click - " + val, cell)}},
+				{
+					title:"subgroup",
+					columns:[
+					{title:"Height", field:"height", formatter:"star", align:"center", sorter:"number", width:100},
+					]
+				}
+
+				]
+			},
 			{title:"Favourite Color", field:"col", sorter:"string", sortable:false},
 			{title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
 			{title:"Likes Cheese", field:"cheese", align:"center", formatter:"tickCross", sorter:"boolean"},
 			],
-			rowClick:function(e, id, data, row){
-				alert("Row " + id + " Clicked!!!!")
-			},
-			rowContext:function(e, id, data, row){
-				alert("Row " + id + " Context Clicked!!!!")
-			},
 		});
 
 		$("#example-table-demo").tabulator("setData", tabledata);
+
+
 
 		$(window).resize(function(){
 			$("#example-table-demo").tabulator("redraw");
 		});
 
-		setTimeout(function(){
-			$("#example-table-demo").tabulator("updateOrAddData", [{id:1, name:"AAAAAAAA"}])
-		}, 1000);
-
-		setTimeout(function(){
-			$("#example-table-demo").tabulator("updateOrAddData", [{id:12, name:"CCCCCC"}])
-		}, 2000);
-
 		// setTimeout(function(){
+		// 	$("#example-table-demo").tabulator("addColumn",  {title:"newgroup", columns:[{title:"Farb", field:"farb"}, {title:"slarb", field:"slarb"}]}, false, "dob")
 
-		// }, 3000);
+		// }, 1000);
+
+
+		// // setTimeout(function(){
+		// // 	$("#example-table-demo").tabulator("deleteColumn", "age")
+		// // }, 2000);
+
+		// // setTimeout(function(){
+		// // 	$("#example-table-demo").tabulator("deleteColumn", "gender")
+		// // }, 3000);
+
+		// // setTimeout(function(){
+		// // 	$("#example-table-demo").tabulator("showCol", "height")
+		// // }, 4000);
+
+		// // setTimeout(function(){
+		// // 	$("#example-table-demo").tabulator("showCol", "age")
+		// // }, 5000);
+
+		// // setTimeout(function(){
+		// // 	$("#example-table-demo").tabulator("showCol", "gender")
+		// // }, 6000);
+
+		// // setTimeout(function(){
+		// // 	$("#example-table-demo").tabulator("updateOrAddData", [{id:12, name:"CCCCCC"}])
+		// // }, 2000);
+
+		// // setTimeout(function(){
+
+		// // }, 3000);
 
 	</script>
 </section>
@@ -155,7 +184,7 @@
 	<p>
 		By default columns are resizable (using edge of column header) and sortable (as strings).
 	</P>
-	<div id="example-table-simple"></div>
+	<div id="example-table-simple" class="table-striped table-bordered table-condensed"></div>
 	<script type="text/javascript">
 
 		$("#example-table-simple").tabulator({
@@ -170,6 +199,9 @@
 			{title:"Date Of Birth", field:"dob"},
 			{title:"Likes Cheese", field:"cheese"},
 			],
+			rowFormatter:function(row){
+				row.addClass("danger");
+			}
 		});
 
 		$(window).resize(function(){
