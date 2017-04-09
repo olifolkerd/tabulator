@@ -1418,7 +1418,7 @@
 	},
 
 	//update row if it exits or create if it dosnt
-	updateOrAddRow(index, item){
+	updateOrAddRow:function(index, item){
 		var self = this;
 
 		if(!self.updateRow(index, item)){
@@ -1566,7 +1566,7 @@
 	},
 
 	//update data if it exits or create if it dosnt
-	updateOrAddData(data){
+	updateOrAddData:function(data){
 		this.updateData(data, true);
 	},
 
