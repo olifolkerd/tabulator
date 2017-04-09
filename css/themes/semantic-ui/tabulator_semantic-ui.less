@@ -35,9 +35,21 @@
 @footerSeperatorColor:#999; //footer bottom seperator color
 
 
+//demo base tabulator override
+#example-table-theme-semantic-ui.tabulator{
+
+	.tabulator-cell, .tabulator-col{
+		border-right:none !important;
+	}
+
+	.tabulator-row{
+		background-color: transparent !important;
+	}
+}
+
 
 //Tabulator Containing Element
-.tabulator{
+#example-table-theme-semantic-ui.tabulator{
 	position: relative;
 	background-color: @backgroundColor;
 	overflow:hidden;

@@ -64,10 +64,21 @@
 @footerBorderColor:@table-border-color; //footer border color
 @footerSeperatorColor:@table-border-color; //footer bottom seperator color
 
+//demo base tabulator override
+#example-table-theme-bootstrap.tabulator{
+	border:none !important;
 
+	.tabulator-cell, .tabulator-col{
+		border-right:none !important;
+	}
+
+	.tabulator-row{
+		background-color: transparent !important;
+	}
+}
 
 //Tabulator Containing Element
-.tabulator{
+#example-table-theme-bootstrap.tabulator{
 	position: relative;
 	background-color: @backgroundColor;
 	overflow:hidden;
@@ -132,7 +143,7 @@
 				.tabulator-arrow{
 					display: inline-block;
 					position: absolute;
-					top:9px;
+					top:14px;
 					right:8px;
 					width: 0;
 					height: 0;
