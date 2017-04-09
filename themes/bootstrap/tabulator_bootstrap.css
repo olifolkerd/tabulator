@@ -272,10 +272,8 @@
 }
 .tabulator .tabulator-footer {
   padding: 5px 10px;
-  border-top: 1px solid #999;
-  background-color: #fff;
+  border-top: 2px solid #ddd;
   text-align: right;
-  color: #555;
   font-weight: bold;
   white-space: nowrap;
   user-select: none;
@@ -290,11 +288,10 @@
 .tabulator .tabulator-footer .tabulator-page {
   display: inline-block;
   margin: 0 2px;
-  border: 1px solid #aaa;
+  border: 1px solid #ddd;
   border-radius: 3px;
   padding: 2px 5px;
   background: rgba(255, 255, 255, 0.2);
-  color: #555;
 }
 .tabulator .tabulator-footer .tabulator-page.active {
   color: #d00;

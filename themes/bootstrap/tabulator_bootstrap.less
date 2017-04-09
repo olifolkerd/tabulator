@@ -61,10 +61,8 @@
 @editBoxColor:#1D68CD; //border color for edit boxes
 
 //footer themeing
-@footerBackgroundColor:#fff; //border to tablulator
-@footerTextColor:#555; //footer text colour
-@footerBorderColor:#aaa; //footer border color
-@footerSeperatorColor:#999; //footer bottom seperator color
+@footerBorderColor:@table-border-color; //footer border color
+@footerSeperatorColor:@table-border-color; //footer bottom seperator color
 
 
 
@@ -452,10 +450,8 @@
 	//footer element
 	.tabulator-footer{
 		padding:5px 10px;
-		border-top:1px solid @footerSeperatorColor;
-		background-color: @footerBackgroundColor;
+		border-top:2px solid @footerSeperatorColor;
 		text-align:right;
-		color: @footerTextColor;
 		font-weight:bold;
 		white-space:nowrap;
 		user-select:none;
@@ -478,7 +474,7 @@
 			border-radius:3px;
 			padding:2px 5px;
 			background:rgba(255,255,255,.2);
-			color: @footerTextColor;
+
 
 			&.active{
 				color:#d00;
