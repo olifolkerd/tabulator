@@ -2571,6 +2571,7 @@
 					//if editor returned, add to DOM, if false, abort edit
 					if(cellEditor !== false){
 						cell.addClass("tabulator-editing");
+						cell.closest(".tabulator-row").addClass("tabulator-row-editing");
 						cell.empty();
 						cell.append(cellEditor);
 
@@ -4027,6 +4028,7 @@
 		var row = cell.closest(".tabulator-row");
 
 		cell.removeClass("tabulator-editing");
+		cell.closest(".tabulator-row").removeClass("tabulator-row-editing");
 
 		//update row data
 		var rowData = row.data("data");
