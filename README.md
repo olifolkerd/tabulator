@@ -1,6 +1,6 @@
 ![Tabluator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
 
-### Version 2.11 Out Now!
+### Version 2.12 Out Now!
 
 An easy to use interactive table generation plugin for JQuery UI
 
