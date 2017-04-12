@@ -261,7 +261,7 @@
                 </article>
                 <a class="anchor" id="set-data"></a>
                 <article>
-                    <h1>Set Table Data </h1>
+                    <h1>Set Table Data <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator row data is defined as an array of objects, that can either be passed as an array or retrieved as a JSON formatted string via AJAX from a URL.</p>
 
@@ -303,7 +303,7 @@ index:"age", //set the index field to the "age" field.
 
 $("#example-table").tabulator("setData", tableData);</pre>
                     <a class="anchor" id="ajax"></a>
-                    <h2>Set data using AJAX  <a class="example-link" href="../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Set data using AJAX  <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>  If you wish to retrieve your data from a remote source, pass the URL to the <span class='param'>setData</span> method and it will perform the AJAX request for you. The URL can be absolute or relative.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now");</pre>
@@ -312,17 +312,45 @@ $("#example-table").tabulator("setData", tableData);</pre>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now", {key1:"value1", key2:"value2"});</pre>
 
+                    <p>The server will need to return a JSON formatted array of objects.</p>
+
+
+                    <h3>Advanced Configuration <span class="label label-danger">New</span></h3>
+
                     <p>By default Tabulator will make all ajax requests using the HTTP request type of <span class='param'>GET</span>. If you need to use a different request type for any reason, this can be passed as an optional third paramter.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, "POST"); //make a post request</pre>
 
-                    <p>The server will need to return a JSON formatted array of objects.</p>
+                    <p>The third parameter can also be used to pass a config object containing any of the options from the standard jQuery ajax configuration object:</p>
 
-                    <h3>Repeated Requests</h3>
-                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL, ajaxParams &amp; ajaxType</span> options as needed when you create your Tabulator. This will cause the table to immediately load the data from the remote resource as soon as the table is created.</p>
+                    <pre class="prettyprint lang-js">var ajaxConfig = {
+    type:"POST", //set request type to Position
+    contentType: 'application/json; charset=utf-8', //set specific content type
+};
+
+$("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajaxConfig); //make ajax request with advanced config options</pre>
+
+                    <p>A full list of the available config options can be found on the <a href="http://api.jquery.com/jquery.ajax/" target="_black">jQuery website</a>.</p>
+
+                    <p><strong>NOTE:</strong> You <strong>MUST NOT</strong> set any of the following options in the advanced config option as they are set by Tabulator and needed for correct operation of the library:
+
+                        <ul>
+                            <li>url</li>
+                            <li>async</li>
+                            <li>dataType</li>
+                            <li>success</li>
+                            <li>error</li>
+                        </ul>
+
+                    </p>
+
+
+
+                    <h3>Repeated Requests <span class="label label-primary">Updated</span></h3>
+                    <p>If you always request the same url for your data then you can set it in the <span class='param'>ajaxURL</span>, <span class='param'>ajaxParams</span> &amp; <span class='param'>ajaxConfig</span> options as needed when you create your Tabulator. This will cause the table to immediately load the data from the remote resource as soon as the table is created. These options take the same input options as the first second and third arguments of the <span class='param'>setData</span> function.</p>
                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
     ajaxURL:"http://www.getmydata.com/now", //ajax URL
     ajaxParams:{key1:"value1", key2:"value2"}, //ajax parameters
-    ajaxType:"POST", //ajax HTTP request type
+    ajaxConfig:"POST", //ajax HTTP request type
 });</pre>
                     <p>You can call the <span class='param'>setData</span> function to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
@@ -3011,7 +3039,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <h2>Persistent Column Layout</h2>
                     <h3>Deprecated Function</h3>
-                    <p>enabling persistent column layouts using the <span class='param'>columnLayoutCookie</span> and <span class='param'>columnLayoutCookie</span> options:</p>
+                    <p>Enabling persistent column layouts using the <span class='param'>columnLayoutCookie</span> and <span class='param'>columnLayoutCookie</span> options:</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     columnLayoutCookie:true, //Enable column layout persistence
     columnLayoutCookieID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
@@ -3023,6 +3051,18 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
     persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
 
+                    <h2>Set Ajax Request Type <span class="label label-danger">New</span></h2>
+                    <h3>Deprecated Function</h3>
+                    <p>Setting the AJAX request type using the <span class='param'>ajaxType</span> option:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxType:"POST", //ajax HTTP request type
+});</pre>
+
+                    <h3>Replacement Function</h3>
+                    <p>This has been replaced with the <span class='param'>ajaxConfig</span> option which allows the type to be set as well as all other ajax config options:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxConfig:"POST", //ajax HTTP request type
+});</pre>
                 </article>
 
             </div>
@@ -3032,7 +3072,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <ul class="nav docs-sidenav">
                         <li><a href="#setup">Setup <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
-                        <li><a href="#set-data">Set Table Data </a></li>
+                        <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#pagination">Pagination </a></li>
                         <li><a href="#layout">Table Layout </a></li>
                         <li><a href="#sorting">Sorting Data <span class="label label-primary">Updated</span></a></li>
@@ -3051,7 +3091,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <li><a href="#extending">Extending Tabulator</a></li>
                         <li><a href="#localization">Localization <span class="label label-primary">Updated</span></a></li>
                         <li><a href="#accessibility">Accessibility</a></li>
-                        <li><a href="#deprecated">Deprecated Functionality</a></li>
+                        <li><a href="#deprecated">Deprecated Functionality <span class="label label-primary">Updated</span></a></li>
                     </ul>
                     <div class="share">
                        <a data-type="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A//olifolkerd.github.io/tabulator/docs/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=400,toolbar=1,resizable=0'); return false;" title="Share On Facebook"><i class="fa fa-fw fa-facebook"></i></a>
