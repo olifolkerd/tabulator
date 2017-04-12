@@ -172,7 +172,7 @@
 
 		ajaxURL:false, //url for ajax loading
 		ajaxParams:{}, //params for ajax loading
-		ajaxType:"get", //ajax request type
+		ajaxConfig:"get", //ajax request type
 
 		showLoader:true, //show loader while data loading
 		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
@@ -430,10 +430,16 @@
 
 		//// backwards compatability options adjustments ////
 
+
 		//old persistan column layout adjustment
 		if( typeof options.columnLayoutCookie != 'undefined'){
 			options.persistentLayout = options.columnLayoutCookie;
 			options.persistentLayoutID = options.columnLayoutCookieID;
+		}
+
+		//ajax type backwards compatability
+		if(options.ajaxType){
+			options.ajaxConfig = options.ajaxType;
 		}
 		/////////////////////////////////////////////////////
 
@@ -1647,7 +1653,7 @@
 
 
 	//load data
-	setData:function(data, params, type){
+	setData:function(data, params, config){
 		var self = this;
 
 		self.options.dataLoading(data, params);
@@ -1671,7 +1677,7 @@
 					self.setPage(1);
 				}else{
 					//assume data is url, make ajax call to url to get data
-					self._getAjaxData(data, self.options.ajaxParams, type);
+					self._getAjaxData(data, self.options.ajaxParams, config);
 				}
 
 			}
@@ -1687,7 +1693,7 @@
 					if(self.options.pagination == "remote"){
 						self.setPage(1);
 					}else{
-						self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, type);
+						self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, config);
 					}
 
 				}else{
@@ -1706,13 +1712,13 @@
 	},
 
 	//get json data via ajax
-	_getAjaxData:function(url, params, type, update){
+	_getAjaxData:function(url, params, config, update){
 		var self = this;
 		var options = self.options;
 
-		$.ajax({
+		var ajaxConfig = {
 			url: url,
-			type: type || self.options.ajaxType,
+			type: "GET",
 			data: params || self.options.ajaxParams,
 			async: true,
 			dataType:"json",
@@ -1733,7 +1739,25 @@
 				self.options.dataLoadError(xhr, textStatus, errorThrown);
 				self._showLoader(self, self.options.loaderError);
 			},
-		});
+		}
+
+		function configUpdate(configData){
+			if (configData){
+				if(typeof configData == "string"){
+					ajaxConfig.type = configData;
+				}else if(typeof configData == "object"){
+					for(var key in configData){
+						ajaxConfig[key] = configData[key];
+					}
+				}
+			}
+		}
+
+		//configure ajax request
+		configUpdate(self.options.ajaxConfig);
+		configUpdate(config);
+
+		$.ajax(ajaxConfig);
 	},
 
 	//parse and index data
@@ -2944,7 +2968,7 @@
 							self.paginationCurrentPage = 1;
 							self._getRemotePageData();
 						}else{
-							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams, self.options.ajaxType);
+							self._getAjaxData(self.options.ajaxURL, self.options.ajaxParams, self.options.ajaxConfig);
 						}
 					}
 				}
