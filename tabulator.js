@@ -60,6 +60,8 @@
 
 	progressiveRenderTimer:null, //timer for progressiver rendering
 	progressiveRenderFill:false, //initial fill of a progressive rendering table
+	progressiveRenderLoading:false, //flag to prevent concurrent progresive render loading
+	progressiveRenderLoadingNext:false, //flag to trigger loading of next items if list was loading when next request was triggered
 
 	columnList:[], //an array of all acutal columns ignoring column groupings
 
@@ -495,17 +497,22 @@
 
 			//trigger progressive rendering on scroll
 			if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
-				if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
-					if(self.options.progressiveRender == "remote"){
-						if(self.paginationCurrentPage <= self.paginationMaxPage){
-							self._renderTable(true);
-						}
-					}else{
-						if(self.paginationCurrentPage < self.paginationMaxPage){
-							self.paginationCurrentPage++;
-							self._renderTable(true);
+				if(!self.progressiveRenderLoading){
+					if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
+						if(self.options.progressiveRender == "remote"){
+							if(self.paginationCurrentPage <= self.paginationMaxPage){
+								self.progressiveRenderLoading = true;
+								self._renderTable(true);
+							}
+						}else{
+							if(self.paginationCurrentPage < self.paginationMaxPage){
+								self.paginationCurrentPage++;
+								self._renderTable(true);
+							}
 						}
 					}
+				}else{
+					self.progressiveRenderLoadingNext = true;
 				}
 			}
 
@@ -1112,8 +1119,6 @@
 
 		var group = column.parent().closest(".tabulator-col-group");
 
-		console.log("group", visibility, group.length, group)
-
 		if(group.length){
 			var visCols = $(".tabulator-col:visible", group);
 
@@ -1325,11 +1330,8 @@
 
 		//work out row to put new row next to
 		if(typeof indexRowVal !== "undefined"){
-
 			indexRow = indexRowVal instanceof jQuery ? indexRowVal : $(".tabulator-row[data-id='" + indexRowVal + "']", self.element);
 			indexID =  indexRowVal instanceof jQuery ? indexRowVal.data("id") : indexRowVal;
-
-			console.log("index defined", indexID, indexRow)
 		}
 
 		// initial place to append the row in the table, by default in the table row container
@@ -1437,8 +1439,6 @@
 		var self = this;
 
 		var itemType = typeof index;
-
-		console.log("type", itemType, index)
 
 		var id = (itemType == "number" || itemType == "string") ? index : index.data("data")[self.options.index];
 
@@ -1728,6 +1728,17 @@
 
 				if(self.options.pagination == "remote" || self.options.progressiveRender == "remote"){
 					self._parsePageData(returnedData, update);
+
+					if(self.options.progressiveRender == "remote"){
+
+						if(self.progressiveRenderLoadingNext){
+							self.progressiveRenderLoadingNext = false;
+							self._renderTable(true);
+						}else{
+							self.progressiveRenderLoading = false;
+						}
+					}
+
 				}else{
 					self._parseData(returnedData, update);
 				}
@@ -2284,6 +2295,7 @@
 			progressiveRender = true;
 		}
 
+
 		var renderData = options.pagination == "local" || options.progressiveRender ? self.activeData.slice((self.paginationCurrentPage-1) * self.options.paginationSize, ((self.paginationCurrentPage-1) * self.options.paginationSize) + self.options.paginationSize) : self.activeData;
 
 		//build rows of table
@@ -2737,11 +2749,13 @@
 
 					self.tableHolder.css({
 						"min-height":"calc(100% - " + footerHeight + "px)",
+						"height":"calc(100% - " + footerHeight + "px)",
 						"max-height":"calc(100% - " + footerHeight + "px)",
 					});
 				}else{
 					self.tableHolder.css({
 						"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+						"height":"calc(100% - " + self.header.outerHeight() + "px)",
 						"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
 					});
 				}
@@ -2917,12 +2931,14 @@
 
 			self.tableHolder.css({
 				"min-height":"calc(100% - " + footerHeight + "px)",
+				"height":"calc(100% - " + footerHeight + "px)",
 				"max-height":"calc(100% - " + footerHeight + "px)",
 			});
 		}else{
 			if(self.options.height){
 				self.tableHolder.css({
 					"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					"height":"calc(100% - " + self.header.outerHeight() + "px)",
 					"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
 				});
 			}
