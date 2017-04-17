@@ -266,6 +266,13 @@ article a.example-link button:hover {
   background: #32631f;
   border: 2px solid #59B038;
 }
+article p.note {
+  box-sizing: border-box;
+  margin-top: 20px;
+  padding: 10px;
+  border-left: 5px solid #59B038;
+  background: #f5f5f5;
+}
 article .param {
   font-weight: bold;
   font-style: italic;
