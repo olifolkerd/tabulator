@@ -3284,6 +3284,10 @@
 					updateFilter()
 				});
 
+				$("input, select", filter).on("mousedown",function(e){
+					e.stopPropagation();
+				});
+
 				//add filter to column header
 				colTitle.append(title);
 
