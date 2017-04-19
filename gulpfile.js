@@ -11,34 +11,60 @@ var gulp = require('gulp'),
     cache = require('gulp-cache'),
     livereload = require('gulp-livereload'),
     del = require('del');
+    include = require('gulp-include'),
+    sourcemaps = require('gulp-sourcemaps'),
+    babel = require('gulp-babel'),
+    plumber = require('gulp-plumber'),
+    gutil = require('gulp-util')
+
+    var gulp_src = gulp.src;
+    gulp.src = function() {
+      return gulp_src.apply(gulp, arguments)
+        .pipe(plumber(function(error) {
+          // Output an error message
+          gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+          // emit the end event, to properly end the task
+          this.emit('end');
+        })
+      );
+    };
 
 
     gulp.task('styles', function() {
       return gulp.src('src/scss/**/tabulator*.scss')
+     	.pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer('last 2 version'))
         .pipe(gulp.dest('dist/css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(cssnano())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/css'))
         .pipe(notify({ message: 'Styles task complete' }));
     });
 
     gulp.task('scripts', function() {
      	//return gulp.src('src/js/**/*.js')
-      	return gulp.src('src/js/core.js')
+      	return gulp.src('src/js/jquery_wrapper.js')
+      	.pipe(sourcemaps.init())
+      	.pipe(include())
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
+        .pipe(babel({
+         	presets:['es2015']
+       	}))
         .pipe(concat('tabulator.js'))
         .pipe(gulp.dest('dist/js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/js'))
         .pipe(notify({ message: 'Scripts task complete' }));
+        //.on("error", console.log)
     });
 
     gulp.task('clean', function() {
-      //  return del(['dist/css', 'dist/js']);
+        return del(['dist/css', 'dist/js']);
     });
 
 
