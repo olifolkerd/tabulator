@@ -38,4 +38,7 @@
 	 		},
 	 };
 
+
+	 /*=include extensions_enabled.js */
+
  })();
