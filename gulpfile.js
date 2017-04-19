@@ -25,14 +25,15 @@ var gulp = require('gulp'),
     });
 
     gulp.task('scripts', function() {
-      return gulp.src('src/js/**/*.js')
-        //.pipe(jshint('.jshintrc'))
+     	//return gulp.src('src/js/**/*.js')
+      	return gulp.src('src/js/core.js')
+        .pipe(jshint())
         .pipe(jshint.reporter('default'))
-        .pipe(concat('core.js'))
+        .pipe(concat('tabulator.js'))
         .pipe(gulp.dest('dist/js'))
         .pipe(rename({suffix: '.min'}))
-        //.pipe(uglify())
-        //.pipe(gulp.dest('dist/js'))
+        .pipe(uglify())
+        .pipe(gulp.dest('dist/js'))
         .pipe(notify({ message: 'Scripts task complete' }));
     });
 
