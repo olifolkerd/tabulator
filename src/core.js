@@ -27,6 +27,13 @@
  			var element = self.element;
  		},
 
+
+ 		//set options
+ 		_setOption: function(option, value){
+ 			var self = this;
+
+ 		},
+
  		//deconstructor
  		_destroy: function(){
  			var self = this;

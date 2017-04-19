@@ -1,3 +1,5 @@
 *.sublime-project
 *.sublime-workspace
 
+node_modules/
+npm-debug.log
