@@ -1,48 +1,41 @@
-/*
- * This file is part of the Tabulator package.
- *
- * (c) Oliver Folkerd <oliver.folkerd@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * Full Documentation & Demos can be found at: http://olifolkerd.github.io/tabulator/
- *
- */
+(function(){
 
- (function(){
+	'use strict';
 
- 	'use strict';
+	/*=include column_manager.js */
+	/*=include column.js */
+	/*=include row_manager.js */
+	/*=include row.js */
+	/*=include cell.js */
 
- 	$.widget("ui.tabulator", {
+	window.Tabulator = {
+	 		//setup options
+	 		options: {
 
- 		//setup options
- 		options: {
+	 		},
 
- 		},
-
- 		//constructor
- 		_create: function(){
- 			var self = this;
- 			var element = self.element;
- 		},
+	 		//constructor
+	 		_create: function(){
+	 			var self = this;
+	 			var element = self.element;
+	 		},
 
 
- 		//set options
- 		_setOption: function(option, value){
- 			var self = this;
+	 		//set options
+	 		_setOption: function(option, value){
+	 			var self = this;
 
- 		},
+	 		},
 
- 		//deconstructor
- 		_destroy: function(){
- 			var self = this;
- 			var element = self.element;
+	 		//deconstructor
+	 		_destroy: function(){
+	 			var self = this;
+	 			var element = self.element;
 
- 			element.empty();
+	 			element.empty();
 
- 			element.removeClass("tabulator");
- 		},
- 	});
+	 			element.removeClass("tabulator");
+	 		},
+	 };
 
  })();
