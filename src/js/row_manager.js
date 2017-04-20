@@ -1,10 +1,10 @@
-RowManager = function(config){
+RowManager = function(table){
 
 	var manager = {
+		table:table,
 		element:$("<div class='tabulator-tableHolder'></div>"), //containing element
-		table:$("<div class='tabulator-table'></div>"), //table element
+		tableElement:$("<div class='tabulator-table'></div>"), //table element
 		columnManager:null, //hold column manager object
-		config:config, //hold table config settings
 
 		scrollTop:0,
 		scrollLeft:0,
@@ -19,22 +19,10 @@ RowManager = function(config){
 			this.columnManager = manager;
 		},
 
-		//Check for plugin
-		pluginExists:function(plugin, required){
-			if(this[plugin]){
-				return true;
-			}else{
-				if(required){
-					console.error("Tabulator Plugin Not Installed: " + plugin);
-				}
-
-				return false;
-			}
-		},
 	}
 
 	//initialize manager
-	manager.element.append(manager.table);
+	manager.element.append(manager.tableElement);
 
 	//scroll header along with table body
 	manager.element.scroll(function(){

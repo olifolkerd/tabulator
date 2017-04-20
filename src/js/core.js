@@ -29,8 +29,8 @@
 	 			var self = this,
 	 			element = this.element;
 
-	 			self.columnManager = new ColumnManager(self.config);
-	 			self.rowManager = new RowManager(self.config);
+	 			self.columnManager = new ColumnManager(self);
+	 			self.rowManager = new RowManager(self);
 
 	 			self.columnManager.setRowManager(self.rowManager);
 	 			self.rowManager.setColumnManager(self.columnManager);
@@ -66,8 +66,6 @@
 	 			var config = this.config;
 
 	 			config.options = this.options;
-
-	 			config.element = this.element;
 
 	 			//setup persistent layout storage if needed
 	 			if(config.options.persistentLayout){

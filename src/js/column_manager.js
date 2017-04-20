@@ -1,9 +1,8 @@
-ColumnManager = function(config){
+ColumnManager = function(table){
 	var manager = {
+		table:table, //hold parent table
 		element:$("<div class='tabulator-header'></div>"), //containing element
 		rowManager:null, //hold row manager object
-		config:config, //hold table config settings
-
 		columns:[], // column definition object
 		columnsByIndex:[], //columns by index
 		columnsByField:[], //columns by field
@@ -22,7 +21,7 @@ ColumnManager = function(config){
 		scrollHoz:function(left){
 			var self = this;
 			var hozAdjust = 0;
-			var scrollWidth = self.element[0].scrollWidth - self.config.element.innerWidth();
+			var scrollWidth = self.element[0].scrollWidth - table.element.innerWidth();
 
 			self.element(left);
 
@@ -55,21 +54,6 @@ ColumnManager = function(config){
 
 			if(col.definition.field){
 				this.columnsByField[col.definition.field] = col;
-			}
-		},
-
-
-
-		//Check for plugin
-		pluginExists:function(plugin, required){
-			if(this[plugin]){
-				return true;
-			}else{
-				if(required){
-					console.error("Tabulator Plugin Not Installed: " + plugin);
-				}
-
-				return false;
 			}
 		},
 	}

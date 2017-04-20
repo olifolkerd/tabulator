@@ -1,6 +1,7 @@
 Column = function(def, parent){
 
 	var col = {
+		table:parent.table,
 		definition:def, //column definition
 		parent:parent, //hold parent object
 		colums:[], //child columns
@@ -20,19 +21,6 @@ Column = function(def, parent){
 		//register column position with column manager
 		registerColumnPosition:function(col){
 			parent.registerColumnPosition(col);
-		},
-
-		//Check for plugin
-		pluginExists:function(plugin, required){
-			if(this[plugin]){
-				return true;
-			}else{
-				if(required){
-					console.error("Tabulator Plugin Not Installed: " + plugin);
-				}
-
-				return false;
-			}
 		},
 	};
 
