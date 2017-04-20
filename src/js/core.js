@@ -54,8 +54,9 @@
 	 			element.empty();
 
 	 			element.append(self.columnManager.getElement());
-
 	 			element.append(self.rowManager.getElement());
+
+	 			self.columnManager.setColumns(self.options.columns);
 	 		},
 
 	 		//configure the table
@@ -90,7 +91,6 @@
 	 		//set options
 	 		_setOption: function(option, value){
 	 			var self = this;
-
 	 		},
 
 	 		//Check for plugin
@@ -102,7 +102,7 @@
 	 					console.error("Tabulator Plugin Not Installed: " + plugin);
 	 				}
 
-	 				creturn false;
+	 				return false;
 	 			}
 	 		},
 

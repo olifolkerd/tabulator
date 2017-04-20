@@ -4,6 +4,10 @@ ColumnManager = function(config){
 		rowManager:null, //hold row manager object
 		config:config, //hold table config settings
 
+		columns:[], // column definition object
+		columnsByIndex:[], //columns by index
+		columnsByField:[], //columns by field
+
 		//link to row manager
 		setRowManager:function(manager){
 			this.rowManager = manager;
@@ -34,6 +38,25 @@ ColumnManager = function(config){
 			//self._calcFrozenColumnsPos(hozAdjust + 3);
 		},
 
+		setColumns:function(cols){
+			var self = this;
+
+			self.element.empty();
+
+			self._parseColumnGroup(cols);
+		},
+
+		_parseColumnGroup:function(columns){
+			var self = this;
+
+			//iterate through columns
+			columns.forEach(function(def, i){
+				var col = new Column(def, self);
+
+				self.columns.push(col);
+			});
+		},
+
 
 		//Check for plugin
 		pluginExists:function(plugin, required){
@@ -44,7 +67,7 @@ ColumnManager = function(config){
 					console.error("Tabulator Plugin Not Installed: " + plugin);
 				}
 
-				creturn false;
+				return false;
 			}
 		},
 	}

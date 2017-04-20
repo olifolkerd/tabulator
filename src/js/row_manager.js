@@ -28,7 +28,7 @@ RowManager = function(config){
 					console.error("Tabulator Plugin Not Installed: " + plugin);
 				}
 
-				creturn false;
+				return false;
 			}
 		},
 	}
@@ -41,6 +41,7 @@ RowManager = function(config){
 
 		var holder = $(this);
 		var left = holder.scrollLeft();
+		var top = holder.top();
 
 		if(manager.scrollLeft != left){
 			manager.columnManager.scrolHoz(left);
@@ -70,7 +71,7 @@ RowManager = function(config){
 
 
 		manager.scrollLeft = left;
-		manager.scrollTop = holder.scrollTop();
+		manager.scrollTop = top;
 	});
 
 

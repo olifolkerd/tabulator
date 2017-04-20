@@ -9,7 +9,7 @@ Cell = function(){
 					console.error("Tabulator Plugin Not Installed: " + plugin);
 				}
 
-				creturn false;
+				return false;
 			}
 		},
 	}
