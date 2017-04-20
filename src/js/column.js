@@ -5,7 +5,7 @@ Column = function(def, parent){
 		definition:def, //column definition
 		parent:parent, //hold parent object
 		columns:[], //child columns
-		element:$("<div class='tabulator-col'></div>"), //column header element
+		element:$("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"), //column header element
 		groupElement:false, //column group holder element
 
 		sorter:false, //default sortable state for columns

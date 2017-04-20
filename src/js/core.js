@@ -52,8 +52,9 @@
 
 	 			self._configureTable();
 
-	 			element.addClass("tabulator").attr("role", "grid");
-	 			element.empty();
+	 			element.addClass("tabulator")
+	 			.attr("role", "grid")
+	 			.empty();
 
 	 			element.append(self.columnManager.getElement());
 	 			element.append(self.rowManager.getElement());
