@@ -34,7 +34,7 @@ var gulp = require('gulp'),
       return gulp.src('src/scss/**/tabulator*.scss')
      	.pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
-        .pipe(autoprefixer('last 2 version'))
+        .pipe(autoprefixer('last 4 version'))
         .pipe(gulp.dest('dist/css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(cssnano())
@@ -46,18 +46,24 @@ var gulp = require('gulp'),
     gulp.task('scripts', function() {
      	//return gulp.src('src/js/**/*.js')
       	return gulp.src('src/js/jquery_wrapper.js')
-      	.pipe(sourcemaps.init())
+      	//.pipe(sourcemaps.init())
       	.pipe(include())
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'))
+        //.pipe(jshint())
+       // .pipe(jshint.reporter('default'))
         .pipe(babel({
-         	presets:['es2015']
+         	//presets:['es2015']
+         	presets: [["env", {
+         	      "targets": {
+         	        "browsers": ["last 4 versions"]
+         	      }
+         	    }]
+         	  ]
        	}))
         .pipe(concat('tabulator.js'))
         .pipe(gulp.dest('dist/js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
-        .pipe(sourcemaps.write('.'))
+       // .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/js'))
         .pipe(notify({ message: 'Scripts task complete' }));
         //.on("error", console.log)
