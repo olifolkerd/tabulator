@@ -1,10 +1,10 @@
-/*=include extensions/sorters.js */
-/*=include extensions/formatters.js */
-/*=include extensions/editors.js */
-/*=include extensions/pagination.js */
+/*=include extensions/sort.js */
+/*=include extensions/format.js */
+/*=include extensions/edit.js */
+/*=include extensions/page.js */
 
-/*=include extensions/accessors.js */
-/*=include extensions/mutators.js */
+/*=include extensions/accessor.js */
+/*=include extensions/mutator.js */
 
 /*=include extensions/download.js */
 
