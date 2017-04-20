@@ -13,6 +13,8 @@
 			columnManager:null, // hold Column Manager
 			rowManager:null, //hold Row Manager
 
+			plugins:{}, //hold plugins
+
 			config:{ //config object for holding all table setup options
 
 			},
@@ -95,7 +97,7 @@
 
 	 		//Check for plugin
 	 		pluginExists:function(plugin, required){
-	 			if(this[plugin]){
+	 			if(this.plugins[plugin]){
 	 				return true;
 	 			}else{
 	 				if(required){

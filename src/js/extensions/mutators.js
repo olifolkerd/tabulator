@@ -1,0 +1,3 @@
+Tabulator.plugins.mutators = {
+
+}
