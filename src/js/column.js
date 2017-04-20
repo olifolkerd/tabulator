@@ -1,7 +1,7 @@
 Column = function(def, parent){
 
 	var col = {
-		def:def, //column definition
+		definition:def, //column definition
 		parent:parent, //hold parent object
 		colums:[], //child columns
 		element:$(""), //column header element
@@ -15,6 +15,11 @@ Column = function(def, parent){
 		//return colunm group element
 		getGroupElement:function(){
 			return this.groupElement;
+		},
+
+		//register column position with column manager
+		registerColumnPosition:function(col){
+			parent.registerColumnPosition(col);
 		},
 
 		//Check for plugin
@@ -38,6 +43,8 @@ Column = function(def, parent){
 
 			col.columns.push(newCol);
 		});
+	}else{
+		parent.registerColumnPosition(col);
 	}
 
 	return col;

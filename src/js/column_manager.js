@@ -43,19 +43,21 @@ ColumnManager = function(config){
 
 			self.element.empty();
 
-			self._parseColumnGroup(cols);
-		},
-
-		_parseColumnGroup:function(columns){
-			var self = this;
-
-			//iterate through columns
-			columns.forEach(function(def, i){
+			cols.forEach(function(def, i){
 				var col = new Column(def, self);
 
 				self.columns.push(col);
 			});
 		},
+
+		registerColumnPosition:function(col){
+			this.columnsByIndex.push(col);
+
+			if(col.definition.field){
+				this.columnsByField[col.definition.field] = col;
+			}
+		},
+
 
 
 		//Check for plugin
