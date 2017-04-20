@@ -1,3 +1,0 @@
-Tabulator.plugins.editors = {
-
-}
