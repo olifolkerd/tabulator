@@ -1,3 +1,3 @@
-Tabulator.plugins.download = {
+Tabulator.extensions.download = {
 
 }

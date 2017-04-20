@@ -1,4 +1,4 @@
-Tabulator.plugins.format = {
+Tabulator.extensions.format = {
 
 	//default data formatters
 	formatters:{

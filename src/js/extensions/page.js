@@ -1,3 +1,3 @@
-Tabulator.plugins.page = {
+Tabulator.extensions.page = {
 
 }

@@ -1,4 +1,4 @@
-Tabulator.plugins.accessor = {
+Tabulator.extensions.accessor = {
 	//default accessors
 	accessors:{},
 }

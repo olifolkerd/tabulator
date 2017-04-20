@@ -1,4 +1,4 @@
-Tabulator.plugins.edit = {
+Tabulator.extensions.edit = {
 		//default data editors
 		editors:{
 			input:function(cell, value, data){

@@ -1,3 +1,3 @@
-Tabulator.plugins.persistentColumnLayout = {
+Tabulator.extensions.persistentColumnLayout = {
 
 }

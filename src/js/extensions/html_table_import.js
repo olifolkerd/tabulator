@@ -1,3 +1,3 @@
-Tabulator.plugins.htmlTableImport = {
+Tabulator.extensions.htmlTableImport = {
 
 }

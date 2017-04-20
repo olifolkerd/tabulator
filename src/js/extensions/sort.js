@@ -1,4 +1,4 @@
-Tabulator.plugins.sort = {
+Tabulator.extensions.sort = {
 
 	//default data sorters
 	sorters:{

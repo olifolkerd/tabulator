@@ -1,4 +1,4 @@
-Tabulator.plugins.mutator = {
+Tabulator.extensions.mutator = {
 	//default mutators
 	mutators:{},
 }
