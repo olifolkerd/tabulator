@@ -1,8 +1,16 @@
 Column = function(){
 	return {
-		//alert user that the plugin they are trying to use is missing
-		missingPlugin:function(plugin){
-			console.error("Tabulator Plugin Not Installed: " + plugin);
+		//Check for plugin
+		pluginExists:function(plugin, required){
+			if(this[plugin]){
+				return true;
+			}else{
+				if(required){
+					console.error("Tabulator Plugin Not Installed: " + plugin);
+				}
+
+				creturn false;
+			}
 		},
 	}
 }
