@@ -1,4 +1,6 @@
-Tabulator.extensions.localize = {
+Tabulator.registerExtension("localize", {
+	table:null, //hold Tbulator object
+
 	lang:{}, // hold current locale text
 
 	default:{ //hold default locale text
@@ -20,4 +22,4 @@ Tabulator.extensions.localize = {
 			}
 		}
 	},
-}
+});

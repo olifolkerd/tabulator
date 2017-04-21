@@ -1,4 +1,6 @@
-Tabulator.extensions.sort = {
+Tabulator.registerExtension("sort", {
+
+	table:null, //hold Tbulator object
 
 	sort:function(sortlist, dir){
 		var self = this;
@@ -61,4 +63,4 @@ Tabulator.extensions.sort = {
 			return a > b;
 		},
 	},
-}
+});

@@ -1,3 +1,3 @@
-Tabulator.extensions.frozenColumns = {
-
-}
+Tabulator.registerExtension("frozenColumns", {
+	table:null, //hold Tbulator object
+});

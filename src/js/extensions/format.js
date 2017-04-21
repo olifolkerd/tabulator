@@ -1,4 +1,5 @@
-Tabulator.extensions.format = {
+Tabulator.registerExtension("format", {
+	table:null, //hold Tbulator object
 
 	//default data formatters
 	formatters:{
@@ -133,4 +134,4 @@ Tabulator.extensions.format = {
 			return rownum;
 		}
 	},
-}
+});

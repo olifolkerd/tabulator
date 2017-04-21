@@ -1,3 +1,3 @@
-Tabulator.extensions.page = {
-
-}
+Tabulator.registerExtension("page", {
+	table:null, //hold Tbulator object
+});

@@ -13,8 +13,6 @@
 			columnManager:null, // hold Column Manager
 			rowManager:null, //hold Row Manager
 
-			extensions:{}, //hold extensions
-
 			config:{ //config object for holding all table setup options
 
 			},
@@ -105,6 +103,18 @@
 
 	 				return false;
 	 			}
+	 		},
+
+	 		//// Extension Management ////
+
+	 		//object to hold extensions
+	 		extensions:{},
+
+	 		//add extension to tabulator
+	 		registerExtension:function(name, extension){
+	 			extension.table = this;
+
+	 			this.extensions[name] = extension;
 	 		},
 
 	 		//deconstructor

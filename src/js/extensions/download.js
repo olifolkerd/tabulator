@@ -1,3 +1,3 @@
-Tabulator.extensions.download = {
-
-}
+Tabulator.registerExtension("download", {
+	table:null, //hold Tbulator object
+});
