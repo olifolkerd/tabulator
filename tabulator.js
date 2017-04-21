@@ -2534,7 +2534,7 @@
 			self._generateTooltip(cell, item, column.tooltip);
 
 			//match editor if one exists
-			if (column.editable || column.editor){
+			if (column.editable){
 				if(column.editor){
 					var editor = column.editor;
 				}else{
