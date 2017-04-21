@@ -37,6 +37,10 @@ ColumnManager = function(table){
 			//self._calcFrozenColumnsPos(hozAdjust + 3);
 		},
 
+
+		//// Column Setup ////
+
+
 		setColumns:function(cols){
 			var self = this;
 
@@ -55,6 +59,28 @@ ColumnManager = function(table){
 			if(col.definition.field){
 				this.columnsByField[col.definition.field] = col;
 			}
+		},
+
+
+		//// Column Sort Arrows
+		clearSort:function(){
+
+			this.columnsByField.forEach(function(col){
+				col.element.attr("sortdir", "ascending")
+				.attr("aria-sort", "none");
+			});
+
+		},
+
+		setSort:function(field, dir){
+
+			var col = this.columnsByField[field];
+
+			if(col){
+				col.element.attr("sortdir", dir)
+				.attr("aria-sort", dir == "asc" ? "ascending" : "descending");
+			}
+
 		},
 	}
 

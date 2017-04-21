@@ -1,5 +1,13 @@
 Tabulator.extensions.sort = {
 
+	sort:function(sortlist, dir){
+		var self = this;
+
+		// if(typeof sortlist == "string"){
+
+		// }
+	},
+
 	//default data sorters
 	sorters:{
 		number:function(a, b){ //sort numbers
