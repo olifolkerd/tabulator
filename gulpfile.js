@@ -15,7 +15,7 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     babel = require('gulp-babel'),
     plumber = require('gulp-plumber'),
-    gutil = require('gulp-util')
+    gutil = require('gulp-util');
 
     var gulp_src = gulp.src;
     gulp.src = function() {
@@ -40,7 +40,8 @@ var gulp = require('gulp'),
         .pipe(cssnano())
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/css'))
-        .pipe(notify({ message: 'Styles task complete' }));
+        //.pipe(notify({ message: 'Styles task complete' }));
+        .on('end', function(){ gutil.log('Styles task complete'); })
     });
 
     gulp.task('scripts', function() {
@@ -65,7 +66,8 @@ var gulp = require('gulp'),
         .pipe(uglify())
        // .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/js'))
-        .pipe(notify({ message: 'Scripts task complete' }));
+        //.pipe(notify({ message: 'Scripts task complete' }));
+        .on('end', function(){ gutil.log('Scripts task complete'); })
         //.on("error", console.log)
     });
 
@@ -82,9 +84,9 @@ var gulp = require('gulp'),
     gulp.task('watch', function() {
 
       // Watch .scss files
-      gulp.watch('src/styles/**/*.scss', ['styles']);
+      gulp.watch('src/css/**/*.scss', ['styles']);
 
       // Watch .js files
-      gulp.watch('src/scripts/**/*.js', ['scripts']);
+      gulp.watch('src/js/**/*.js', ['scripts']);
 
     });
