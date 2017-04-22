@@ -13,6 +13,10 @@ var Row = function(data, parent){
 			return this.element;
 		},
 
+		getData:function(){
+			return this.data;
+		},
+
 		generateElement:function(){
 			var self = this;
 			self.element.empty();

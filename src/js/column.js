@@ -9,6 +9,8 @@ var Column = function(def, parent){
 		element:$("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"), //column header element
 		groupElement:false, //column group holder element
 
+		extensions:{}, //hold extension variables;
+
 		width:null, //column width,
 		minWidth:null, //column minimum width,
 
@@ -39,17 +41,19 @@ var Column = function(def, parent){
 		_buildColumnHeader:function(){
 			var self = this,
 			def = self.definition,
-			table = self.table;
+			table = self.table,
+			sortable;
 
-			self.element.append(self._buildColumnHeaderContent());
+			var content = self._buildColumnHeaderContent()
+
+			self.element.append(content);
+
+			console.log("should sort", table.extExists("sort"), typeof def.sorter != "undefined")
 
 			//set column sorter
 			if(table.extExists("sort") && typeof def.sorter != "undefined"){
-				if(typeof def.sorter == "string"){
-					self.sorter = table.sort.sorters[def.sorter];
-				}else{
-					self.sorter = def.sorter;
-				}
+
+				table.extensions.sort.initializeColumnHeader(self, content);
 			}
 
 			//set column visibility
@@ -95,11 +99,11 @@ var Column = function(def, parent){
 
 			var titleHolderElement = $("<div class='tabulator-col-title'></div>");
 
-			if(table.extExists("localize")){
-				title = table.localize.lang.columns[def.field] || (def.title ? def.title : "&nbsp");
-			}else{
+			// if(table.extExists("localize")){
+			// 	title = table.extensions.localize.lang.columns[def.field] || (def.title ? def.title : "&nbsp");
+			// }else{
 				title = def.title ? def.title : "&nbsp";
-			}
+			//}
 
 
 			if(def.editableTitle){

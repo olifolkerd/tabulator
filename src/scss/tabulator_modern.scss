@@ -120,16 +120,6 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 					border-left: 6px solid transparent;
 					border-right: 6px solid transparent;
 					border-bottom: 6px solid $sortArrowInactive;
-
-					&.asc{
-						border-top: none;
-						border-bottom: 6px solid $sortArrowActive;
-					}
-
-					&.desc{
-						border-top: 6px solid $sortArrowActive;
-						border-bottom: none;
-					}
 				}
 
 			}
@@ -203,7 +193,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			}
 
 			//styling child elements for sortable columns
-			&[data-sortable=true]{
+			&.tabulator-sortable{
 				.tabulator-col-title{
 					width:calc(100% - 25px);
 				}
@@ -211,6 +201,28 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 				&:hover{
 					cursor:pointer;
 					background-color:darken($headerBackgroundColor, 10%);
+				}
+
+
+				&[aria-sort="none"]{
+					.tabulator-col-content .tabulator-arrow{
+						border-top: none;
+						border-bottom: 6px solid $sortArrowInactive;
+					}
+				}
+
+				&[aria-sort="asc"]{
+					.tabulator-col-content .tabulator-arrow{
+						border-top: none;
+						border-bottom: 6px solid $sortArrowActive;
+					}
+				}
+
+				&[aria-sort="desc"]{
+					.tabulator-col-content .tabulator-arrow{
+						border-top: 6px solid $sortArrowActive;
+						border-bottom: none;
+					}
 				}
 			}
 

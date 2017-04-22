@@ -67,26 +67,15 @@ var ColumnManager = function(table){
 			}
 		},
 
+		//////////////// Column Details /////////////////
 
-		//// Column Sort Arrows
-		clearSort:function(){
-
-			this.columnsByField.forEach(function(col){
-				col.element.attr("sortdir", "ascending")
-				.attr("aria-sort", "none");
-			});
-
+		getColumnByField:function(field){
+			return this.columnsByField[field];
 		},
 
-		setSort:function(field, dir){
-
-			var col = this.columnsByField[field];
-
-			if(col){
-				col.element.attr("sortdir", dir)
-				.attr("aria-sort", dir == "asc" ? "ascending" : "descending");
-			}
-
+		//return all columns that are not groups
+		getRealColumns:function(){
+			return this.columnsByIndex;
 		},
 
 		//////////////// Cell Management /////////////////
