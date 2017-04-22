@@ -17,7 +17,8 @@ var Cell = function(column, row){
 		},
 
 		setValue:function(value){
-			row.data[column.definition.field] = value;
+			this.value = value;
+			this.row.data[this.column.definition.field] = value;
 
 			this.generateContents();
 		},
@@ -25,7 +26,11 @@ var Cell = function(column, row){
 		generateContents:function(){
 			var self = this;
 
-			self.element.html(self.row.data[column.definition.field]);
+			if(self.table.extExists("format")){
+				self.element.html(self.table.extensions.format.formatValue(self));
+			}else{
+				self.element.html(self.value);
+			}
 		},
 
 		//////////////////// Actions ////////////////////
@@ -54,9 +59,8 @@ var Cell = function(column, row){
 		},
 	}
 
-	cell.generateContents();
-
 	cell.setWidth(column.width);
+	cell.setValue(row.data[column.definition.field]);
 	// cell.setMinWidth(column.minWidth);
 
 	return cell;

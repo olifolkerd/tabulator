@@ -14,7 +14,6 @@ var Column = function(def, parent){
 		width:null, //column width,
 		minWidth:null, //column minimum width,
 
-		sorter:false, //default sortable state for columns
 		visible:true, //default visible state
 
 		//////////////// Setup Functions /////////////////
@@ -48,12 +47,14 @@ var Column = function(def, parent){
 
 			self.element.append(content);
 
-			console.log("should sort", table.extExists("sort"), typeof def.sorter != "undefined")
-
 			//set column sorter
 			if(table.extExists("sort") && typeof def.sorter != "undefined"){
+				table.extensions.sort.initializeColumn(self, content);
+			}
 
-				table.extensions.sort.initializeColumnHeader(self, content);
+			//set column formatter
+			if(table.extExists("format")){
+				table.extensions.format.initializeColumn(self);
 			}
 
 			//set column visibility

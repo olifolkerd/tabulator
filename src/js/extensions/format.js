@@ -3,6 +3,35 @@ var Format = function(table){
 	var extension = {
 		table:table, //hold Tabulator object
 
+		//initialize column formatter
+		initializeColumn:function(column){
+			var self = this;
+
+			column.extensions.format = {params:column.definition.formatterParams || {}};
+
+			//set column formatter
+			switch(typeof column.definition.formatter){
+				case "string":
+				column.extensions.format.formatter = self.formatters[column.definition.formatter];
+				break;
+
+				case "function":
+				column.extensions.format.formatter = column.definition.formatter;
+				break;
+
+				default:
+				column.extensions.format.formatter = self.formatters.plaintext;
+				break;
+			}
+		},
+
+		//return a formatted value for a cell
+		formatValue:function(cell){
+			var value = cell.column.extensions.format.formatter(cell.value, cell.row.data, cell.element, cell.row.data, this.table.options, cell.column.extensions.format.params);
+
+			return value;
+		},
+
 		//default data formatters
 		formatters:{
 			plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
