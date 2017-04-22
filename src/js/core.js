@@ -205,7 +205,20 @@
 
 	 		//clear data
 	 		clearData:function(){
-	 			self.rowManager.setData([]);
+	 			this.rowManager.setData([]);
+	 		},
+
+	 		//////////// General Public Functions ////////////
+
+	 		//redraw list without updating data
+	 		redraw:function(force){
+	 			this.columnManager.redraw(force);
+
+	 			if(force){
+	 				this.rowManager.renderTable();
+	 			}else{
+	 				this.rowManager.normalizeHeight();
+	 			}
 	 		},
 
 
@@ -229,9 +242,9 @@
 
 	 			element.removeClass("tabulator");
 	 		},
-	 };
+	 	};
 
 
-	 /*=include extensions_enabled.js */
+	 	/*=include extensions_enabled.js */
 
- })();
+	 })();

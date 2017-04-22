@@ -60,8 +60,17 @@ var RowManager = function(table){
 
 			if(self.firstRender && self.activeRows.length){
 				self.firstRender = false;
-				self.columnManager.fitColumnsToData();
+				self.columnManager.fitToData();
 			}
+		},
+
+		//normalize height of active rows
+		normalizeHeight:function(){
+			var self = this;
+
+			self.activeRows.forEach(function(row){
+				row.normalizeHeight();
+			});
 		},
 
 	}

@@ -55,7 +55,7 @@ var ColumnManager = function(table){
 			});
 
 			if(self.table.options.fitColumns){
-				self.fitColumnsToTable();
+				self.fitToTable();
 			}
 		},
 
@@ -106,7 +106,7 @@ var ColumnManager = function(table){
 		//////////////// Column Management /////////////////
 
 		//resize columns to fit data in cells
-		fitColumnsToData:function(){
+		fitToData:function(){
 			var self = this;
 
 			console.log("fit to data")
@@ -117,7 +117,7 @@ var ColumnManager = function(table){
 		},
 
 		//resize columns to fill the table element
-		fitColumnsToTable:function(){
+		fitToTable:function(){
 			var self = this;
 
 			var totalWidth = self.table.element.innerWidth(); //table element width
@@ -155,7 +155,6 @@ var ColumnManager = function(table){
 						fixedWidth += colWidth > minWidth ? colWidth : minWidth;
 
 					}else{
-
 						flexColumns.push(column);
 					}
 				}
@@ -180,6 +179,17 @@ var ColumnManager = function(table){
 
 				column.setWidth(width);
 			});
+		},
+
+		//redraw columns
+		redraw:function(force){
+			if(this.table.options.fitColumns){
+				this.fitToTable();
+			}else{
+				if(force){
+					this.fitToData();
+				}
+			}
 		},
 	}
 
