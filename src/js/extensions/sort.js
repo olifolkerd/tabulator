@@ -6,7 +6,7 @@
 		sortlist:[], //holder current sort
 
 		//initialize column header for sorting
-		initializeColumnHeader:function(column, content){
+		initializeColumn:function(column, content){
 			var self = this;
 
 			column.element.addClass("tabulator-sortable");
