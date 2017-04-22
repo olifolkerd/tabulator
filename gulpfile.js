@@ -84,7 +84,7 @@ var gulp = require('gulp'),
     gulp.task('watch', function() {
 
       // Watch .scss files
-      gulp.watch('src/css/**/*.scss', ['styles']);
+      gulp.watch('src/scss/**/*.scss', ['styles']);
 
       // Watch .js files
       gulp.watch('src/js/**/*.js', ['scripts']);
