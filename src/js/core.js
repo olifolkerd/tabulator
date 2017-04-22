@@ -26,6 +26,7 @@
 	 			colMinWidth:40, //minimum global width for a column
 
 	 			columns:[],//store for colum header info
+	 			dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
 	 			//Callbacks from events
 	 			rowClick:function(){},
@@ -70,6 +71,8 @@
 	 		_create: function(){
 	 			var self = this,
 	 			element = this.element;
+
+	 			self.bindExtensions();
 
 	 			self.columnManager = new ColumnManager(self);
 	 			self.rowManager = new RowManager(self);
@@ -133,20 +136,6 @@
 	 		_setOption: function(option, value){
 	 			var self = this;
 	 		},
-
-	 		//Check for plugin
-	 		extExists:function(plugin, required){
-	 			if(this.extensions[plugin]){
-	 				return true;
-	 			}else{
-	 				if(required){
-	 					console.error("Tabulator Plugin Not Installed: " + plugin);
-	 				}
-
-	 				return false;
-	 			}
-	 		},
-
 
 	 		////////////////// Data Loading //////////////////
 
@@ -226,13 +215,35 @@
 
 	 		//object to hold extensions
 	 		extensions:{},
+	 		extensionBindings:{},
 
 	 		//add extension to tabulator
 	 		registerExtension:function(name, extension){
-	 			// extension.table = this;
-
-	 			// this.extensions[name] = extension;
+	 			var self = this;
+	 			this.extensionBindings[name] = extension;
 	 		},
+
+	 		//ensure that extensions are bound to instantiated function
+	 		bindExtensions:function(){
+	 			var self = this;
+	 			console.log("build")
+	 			for(var name in self.extensionBindings){
+	 				self.extensions[name] = new self.extensionBindings[name](self);
+	 			}
+	 		},
+
+	 		//Check for plugin
+	 		extExists:function(plugin, required){
+	 			if(this.extensions[plugin]){
+	 				return true;
+	 			}else{
+	 				if(required){
+	 					console.error("Tabulator Plugin Not Installed: " + plugin);
+	 				}
+	 				return false;
+	 			}
+	 		},
+
 
 	 		//deconstructor
 	 		_destroy: function(){

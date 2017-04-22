@@ -1,3 +1,10 @@
-Tabulator.registerExtension("htmlTableImport", {
-	table:null, //hold Tbulator object
-});
+var HtmlTableImport = function(table){
+
+	var extension = {
+		table:table, //hold Tabulator object
+	}
+
+	return extension;
+}
+
+Tabulator.registerExtension("htmlTableImport", HtmlTableImport);

@@ -1,3 +1,10 @@
-Tabulator.registerExtension("page", {
-	table:null, //hold Tbulator object
-});
+var Page = function(table){
+
+	var extension = {
+		table:table, //hold Tabulator object
+	}
+
+	return extension;
+}
+
+Tabulator.registerExtension("page", Page);

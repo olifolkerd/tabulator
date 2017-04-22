@@ -1,3 +1,10 @@
-Tabulator.registerExtension("download", {
-	table:null, //hold Tbulator object
-});
+var Download = function(table){
+
+	var extension = {
+		table:table, //hold Tabulator object
+	}
+
+	return extension;
+}
+
+Tabulator.registerExtension("download", Download);

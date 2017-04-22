@@ -1,3 +1,10 @@
-Tabulator.registerExtension("frozenColumns", {
-	table:null, //hold Tbulator object
-});
+var FrozenColumns = function(table){
+
+	var extension = {
+		table:table, //hold Tabulator object
+	}
+
+	return extension;
+}
+
+Tabulator.registerExtension("frozenColumns", FrozenColumns);

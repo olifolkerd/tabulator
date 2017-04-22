@@ -1,7 +1,10 @@
-Tabulator.registerExtension("accessor", {
+var Accessor = function(table){
 
-	table:null, //hold Tbulator object
+	var extension = {
+		table:table, //hold Tabulator object
+	}
 
-	//default accessors
-	accessors:{},
-});
+	return extension;
+}
+
+Tabulator.registerExtension("accessor", Accessor);

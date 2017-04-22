@@ -1,6 +1,13 @@
-Tabulator.registerExtension("mutator", {
-	table:null, //hold Tbulator object
+var Mutator = function(table){
 
-	//default mutators
-	mutators:{},
-});
+	var extension = {
+		table:table, //hold Tabulator object
+
+		//default mutators
+		mutators:{},
+	}
+
+	return extension;
+}
+
+Tabulator.registerExtension("mutator", Mutator);
