@@ -113,7 +113,6 @@
 
 		//clear sort arrows on columns
 		clearColumnHeaders:function(){
-			console.log(this.table);
 			this.table.columnManager.getRealColumns().forEach(function(column){
 				if(column.extensions.sort){
 					column.extensions.sort.dir = "none";

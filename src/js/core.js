@@ -240,7 +240,7 @@
 	 		//ensure that extensions are bound to instantiated function
 	 		bindExtensions:function(){
 	 			var self = this;
-	 			console.log("build")
+
 	 			for(var name in self.extensionBindings){
 	 				self.extensions[name] = new self.extensionBindings[name](self);
 	 			}

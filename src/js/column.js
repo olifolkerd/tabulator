@@ -217,8 +217,6 @@ var Column = function(def, parent){
 					}
 				});
 
-				console.log("column", maxWidth)
-
 				if(maxWidth){
 					self.setWidth(maxWidth);
 				}

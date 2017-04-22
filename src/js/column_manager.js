@@ -98,8 +98,6 @@ var ColumnManager = function(table){
 		fitToData:function(){
 			var self = this;
 
-			console.log("fit to data")
-
 			self.columnsByIndex.forEach(function(column){
 				column.fitToData();
 			});
