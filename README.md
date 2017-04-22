@@ -36,6 +36,19 @@ Tabulator is packed with useful  features including:
 - Custom click and context Events
 - Callbacks at every stage of data processing and rendering
 
+Version 3.0 Comming Soon!
+================================
+Work has begun on the next big installment of Tabulator. I am doing a ground up rebuild of the core code to make it more modular, extensible and manageable. Version 3.0 will include the following features:
+- Virtual DOM to massively improve render efficiency
+- Modularised code to improve maintainablity and extension
+- Extension Modules, breaking down sorting, formatting, mutating data and more into optional modules so you only have to includethe code you want to use
+- Uniform Function and Callback naming to improve usability
+- Improved CSS structure
+- Uniform callback arguments
+- New folder structure
+- Webpack project build files
+- A load of new features and tweaks
+
 Setup
 ================================
 Setting up tabulator could not be simpler.
