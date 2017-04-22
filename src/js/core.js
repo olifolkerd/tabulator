@@ -22,6 +22,9 @@
 
 	 			height:false, //height of tabulator
 
+	 			fitColumns:false, //fit colums to width of screen;
+	 			colMinWidth:40, //minimum global width for a column
+
 	 			columns:[],//store for colum header info
 
 	 			//Callbacks from events
@@ -116,9 +119,6 @@
 	 				//set storage tag
 	 				config.options.persistentLayoutID = "tabulator-" + (config.options.persistentLayoutID ? config.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
 	 			}
-
-	 			//set column min width
-	 			config.options.colMinWidth = isNaN(config.options.colMinWidth) ? config.options.colMinWidth : config.options.colMinWidth + "px";
 
 	 			//set table height
 	 			if(config.options.height){

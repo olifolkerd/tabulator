@@ -9,6 +9,9 @@ var Column = function(def, parent){
 		element:$("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"), //column header element
 		groupElement:false, //column group holder element
 
+		width:null, //column width,
+		minWidth:null, //column minimum width,
+
 		sorter:false, //default sortable state for columns
 		visible:true, //default visible state
 
@@ -63,8 +66,11 @@ var Column = function(def, parent){
 				self.element.appendClass(def.cssClass);
 			}
 
-			//set min width if needed
-			self.element.css("min-width", typeof def.minWidth != "undefined" ? def.minWidth : table.options.colMinWidth);
+			//set min width if present
+			self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.colMinWidth : def.minWidth);
+
+			//set width if present
+			self.setWidth(def.width);
 
 		},
 
@@ -158,8 +164,29 @@ var Column = function(def, parent){
 			this.element.hide();
 		},
 
+		setWidth:function(width){
+			this.width = width;
+
+			this.element.css("width", width || "");
+
+			this.cells.forEach(function(cell){
+				cell.setWidth(width);
+			});
+		},
+
+		setMinWidth:function(minWidth){
+			this.minWidth = minWidth;
+
+			this.element.css("min-width", minWidth || "");
+
+			this.cells.forEach(function(cell){
+				cell.setMinWidth(minWidth);
+			});
+		},
+
 		//////////////// Cell Management /////////////////
 
+		//generate cell for this column
 		generateCell:function(row){
 			var self = this;
 
@@ -168,7 +195,31 @@ var Column = function(def, parent){
 			this.cells.push(cell);
 
 			return cell;
-		}
+		},
+
+		//set column width to maximum cell width
+		fitToData:function(){
+			var self = this;
+
+			var maxWidth = 0;
+
+			if(!self.width){
+				self.cells.forEach(function(cell){
+					var width = cell.getWidth();
+
+					if(width > maxWidth){
+						maxWidth = width;
+					}
+				});
+
+				console.log("column", maxWidth)
+
+				if(maxWidth){
+					self.setWidth(maxWidth);
+				}
+
+			}
+		},
 	};
 
 	//initialize column

@@ -6,6 +6,10 @@ var Cell = function(column, row){
 		element:$("<div class='tabulator-cell' role='gridcell'></div>"),
 		value:null,
 
+		height:null,
+		width:null,
+		minWidth:null,
+
 		//////////////// Setup Functions /////////////////
 
 		getElement:function(){
@@ -21,11 +25,39 @@ var Cell = function(column, row){
 		generateContents:function(){
 			var self = this;
 
-			self.element.html(row.data[column.definition.field]);
+			self.element.html(self.row.data[column.definition.field]);
+		},
+
+		//////////////////// Actions ////////////////////
+
+		setWidth:function(width){
+			this.width = width;
+			this.element.css("width", width || "");
+		},
+
+		getWidth:function(){
+			return this.width || this.element.outerWidth();
+		},
+
+		// setMinWidth:function(minWidth){
+		// 	this.minWidth = minWidth;
+		// 	this.element.css("min-width", minWidth || "");
+		// },
+
+		setHeight:function(height){
+			this.height = height;
+			this.element.css("height", height || "");
+		},
+
+		getHeight:function(){
+			return this.height || this.element.outerHeight();
 		},
 	}
 
 	cell.generateContents();
+
+	cell.setWidth(column.width);
+	// cell.setMinWidth(column.minWidth);
 
 	return cell;
 }

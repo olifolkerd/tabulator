@@ -6,6 +6,8 @@ var RowManager = function(table){
 		tableElement:$("<div class='tabulator-table'></div>"), //table element
 		columnManager:null, //hold column manager object
 
+		firstRender:false, //handle first render
+
 		rows:[], //hold row data objects
 		activeRows:[], //rows currently on display in the table
 
@@ -53,13 +55,24 @@ var RowManager = function(table){
 			element.empty();
 			self.activeRows.forEach(function(row){
 				element.append(row.getElement());
+				row.normalizeHeight();
 			});
+
+			if(self.firstRender && self.activeRows.length){
+				self.firstRender = false;
+				self.columnManager.fitColumnsToData();
+			}
 		},
 
 	}
 
 	//initialize manager
 	manager.element.append(manager.tableElement);
+
+	if(!manager.table.options.fitColumns){
+		manager.firstRender = true;
+	}
+
 
 	//scroll header along with table body
 	manager.element.scroll(function(){

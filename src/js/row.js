@@ -19,12 +19,20 @@ var Row = function(data, parent){
 
 			self.cells = parent.columnManager.generateCells(self);
 
-			console.log("row", self.cells);
-
 			self.cells.forEach(function(cell){
 				self.element.append(cell.getElement());
 			});
 		},
+
+		normalizeHeight:function(){
+			var self = this;
+
+			var height = self.element.innerHeight();
+
+			self.cells.forEach(function(cell){
+				cell.setHeight(height);
+			});
+		}
 
 	}
 
