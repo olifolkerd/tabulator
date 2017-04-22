@@ -215,13 +215,13 @@
 	 		//trigger sort
 	 		setSort:function(sortList, dir){
 	 			if(this.extExists("sort", true)){
-	 				self.extensions.sort.setSort(sortList, dir);
+	 				this.extensions.sort.setSort(sortList, dir);
 	 			}
 	 		},
 
 	 		getSort:function(){
 	 			if(this.extExists("sort", true)){
-	 				return self.extensions.sort.getSort();
+	 				return this.extensions.sort.getSort();
 	 			}
 	 		},
 
