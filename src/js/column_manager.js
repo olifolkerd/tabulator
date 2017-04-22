@@ -1,4 +1,4 @@
-ColumnManager = function(table){
+var ColumnManager = function(table){
 	var manager = {
 		table:table, //hold parent table
 		element:$("<div class='tabulator-header'></div>"), //containing element
@@ -6,6 +6,8 @@ ColumnManager = function(table){
 		columns:[], // column definition object
 		columnsByIndex:[], //columns by index
 		columnsByField:[], //columns by field
+
+		//////////////// Setup Functions /////////////////
 
 		//link to row manager
 		setRowManager:function(manager){
@@ -38,18 +40,18 @@ ColumnManager = function(table){
 		},
 
 
-		//// Column Setup ////
+		///////////// Column Setup Functions /////////////
 
-
-		setColumns:function(cols){
+		setColumns:function(cols, row){
 			var self = this;
 
 			self.element.empty();
 
 			cols.forEach(function(def, i){
-				var col = new Column(def, self);
+				var col = new Column(def, self, row);
 
 				self.columns.push(col);
+				self.element.append(col.getElement());
 			});
 		},
 
@@ -81,6 +83,20 @@ ColumnManager = function(table){
 				.attr("aria-sort", dir == "asc" ? "ascending" : "descending");
 			}
 
+		},
+
+		//////////////// Cell Management /////////////////
+
+		generateCells:function(row){
+			var self = this;
+
+			var cells = [];
+
+			self.columnsByIndex.forEach(function(column){
+				cells.push(column.generateCell(row));
+			});
+
+			return cells;
 		},
 	}
 

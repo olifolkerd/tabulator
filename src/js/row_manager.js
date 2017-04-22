@@ -1,4 +1,4 @@
-RowManager = function(table){
+var RowManager = function(table){
 
 	var manager = {
 		table:table,
@@ -6,8 +6,13 @@ RowManager = function(table){
 		tableElement:$("<div class='tabulator-table'></div>"), //table element
 		columnManager:null, //hold column manager object
 
+		rows:[], //hold row data objects
+		activeRows:[], //rows currently on display in the table
+
 		scrollTop:0,
 		scrollLeft:0,
+
+		//////////////// Setup Functions /////////////////
 
 		//return containing element
 		getElement:function(){
@@ -17,6 +22,38 @@ RowManager = function(table){
 		//link to column manager
 		setColumnManager:function(manager){
 			this.columnManager = manager;
+		},
+
+
+		////////////////// Data Loading //////////////////
+
+		setData:function(data){
+			var self = this;
+
+			data.forEach(function(def, i){
+				var row = new Row(def, self);
+				self.rows.push(row);
+			});
+
+			self.activeRows = self.rows;
+
+			self.renderTable();
+		},
+
+		clearData:function(){
+
+		},
+
+		///////////////// Table Rendering /////////////////
+
+		renderTable:function(){
+			var self = this,
+			element = self.tableElement;
+
+			element.empty();
+			self.activeRows.forEach(function(row){
+				element.append(row.getElement());
+			});
 		},
 
 	}

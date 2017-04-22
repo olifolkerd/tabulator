@@ -20,6 +20,47 @@
 	 		//setup options
 	 		options: {
 
+	 			height:false, //height of tabulator
+
+	 			columns:[],//store for colum header info
+
+	 			//Callbacks from events
+	 			rowClick:function(){},
+	 			rowDblClick:function(){},
+	 			rowAdded:function(){},
+	 			rowDeleted:function(){},
+	 			rowContext:function(){},
+	 			rowMoved:function(){},
+	 			rowUpdated:function(){},
+	 			rowSelectionChanged:function(){},
+
+	 			cellEdited:function(){},
+
+	 			colMoved:function(){},
+	 			colTitleChanged:function(){},
+
+	 			dataLoading:function(){},
+	 			dataLoaded:function(){},
+	 			dataLoadError:function(){},
+	 			dataEdited:function(){},
+
+	 			ajaxResponse:false,
+
+	 			dataFiltering:function(){},
+	 			dataFiltered:function(){},
+
+	 			dataSorting:function(){},
+	 			dataSorted:function(){},
+
+	 			renderStarted:function(){},
+	 			renderComplete:function(){},
+
+	 			pageLoaded:function(){},
+
+	 			localized:function(){},
+
+	 			tableBuilding:function(){},
+	 			tableBuilt:function(){},
 	 		},
 
 	 		//constructor
@@ -46,7 +87,7 @@
 	 			var self = this,
 	 			element = this.element;
 
-	 			options.tableBuilding();
+	 			self.options.tableBuilding();
 
 	 			self._configureTable();
 
@@ -62,6 +103,7 @@
 
 	 		//configure the table
 	 		_configureTable: function(){
+	 			var self = this;
 	 			var config = this.config;
 
 	 			config.options = this.options;
@@ -81,7 +123,7 @@
 	 			//set table height
 	 			if(config.options.height){
 	 				config.options.height = isNaN(config.options.height) ? config.options.height : config.options.height + "px";
-	 				element.css({"height": config.options.height});
+	 				self.element.css({"height": config.options.height});
 	 			}
 	 		},
 
@@ -105,16 +147,78 @@
 	 			}
 	 		},
 
-	 		//// Extension Management ////
+
+	 		////////////////// Data Loading //////////////////
+
+
+	 		//load data
+	 		setData:function(data, params, config){
+	 			var self = this;
+
+	 			self.options.dataLoading(data, params);
+
+	 			if(params){
+	 				self.options.ajaxParams = params;
+	 			}
+
+	 			//show loader if needed
+	 			// self._showLoader(this, this.options.loader);
+
+	 			if(typeof(data) === "string"){
+	 				if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+	 					//data is a json encoded string
+	 					self.rowManager.setData(JSON.parse(data));
+	 				}else{
+
+	 					// self.options.ajaxURL = data;
+
+	 					// if(self.options.pagination == "remote"){
+	 					// 	self.setPage(1);
+	 					// }else{
+	 					// 	//assume data is url, make ajax call to url to get data
+	 					// 	self._getAjaxData(data, self.options.ajaxParams, config);
+	 					// }
+
+	 				}
+	 			}else{
+	 				if(data){
+	 					//asume data is already an object
+	 					self.rowManager.setData(data);
+
+	 				}else{
+	 					// //no data provided, check if ajaxURL is present;
+	 					// if(this.options.ajaxURL){
+
+	 					// 	if(self.options.pagination == "remote"){
+	 					// 		self.setPage(1);
+	 					// 	}else{
+	 					// 		self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, config);
+	 					// 	}
+
+	 					// }else{
+	 					// 	//empty data
+	 					// 	self._parseData([]);
+	 					// }
+	 				}
+	 			}
+	 		},
+
+	 		//clear data
+	 		clearData:function(){
+	 			self.rowManager.setData([]);
+	 		},
+
+
+	 		////////////// Extension Management //////////////
 
 	 		//object to hold extensions
 	 		extensions:{},
 
 	 		//add extension to tabulator
 	 		registerExtension:function(name, extension){
-	 			extension.table = this;
+	 			// extension.table = this;
 
-	 			this.extensions[name] = extension;
+	 			// this.extensions[name] = extension;
 	 		},
 
 	 		//deconstructor

@@ -1,17 +1,18 @@
-Column = function(def, parent){
+var Column = function(def, parent){
 
 	var col = {
 		table:parent.table,
 		definition:def, //column definition
 		parent:parent, //hold parent object
 		columns:[], //child columns
+		cells:[], //cells bound to this column
 		element:$("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"), //column header element
 		groupElement:false, //column group holder element
 
 		sorter:false, //default sortable state for columns
 		visible:true, //default visible state
 
-		/// Setup ////
+		//////////////// Setup Functions /////////////////
 
 		//register column position with column manager
 		registerColumnPosition:function(col){
@@ -37,8 +38,10 @@ Column = function(def, parent){
 			def = self.definition,
 			table = self.table;
 
+			self.element.append(self._buildColumnHeaderContent());
+
 			//set column sorter
-			if(table.extExists(sort) && typeof def.sorter != "undefined"){
+			if(table.extExists("sort") && typeof def.sorter != "undefined"){
 				if(typeof def.sorter == "string"){
 					self.sorter = table.sort.sorters[def.sorter];
 				}else{
@@ -65,6 +68,61 @@ Column = function(def, parent){
 
 		},
 
+		_buildColumnHeaderContent:function(){
+			var self = this,
+			def = self.definition,
+			table = self.table;
+
+			var contentElement = $("<div class='tabulator-col-content'></div>");
+
+			contentElement.append(self._buildColumnHeaderTitle());
+
+			return contentElement;
+		},
+
+		//build title element of column
+		_buildColumnHeaderTitle:function(){
+			var self = this,
+			def = self.definition,
+			table = self.table,
+			title;
+
+			var titleHolderElement = $("<div class='tabulator-col-title'></div>");
+
+			if(table.extExists("localize")){
+				title = table.localize.lang.columns[def.field] || (def.title ? def.title : "&nbsp");
+			}else{
+				title = def.title ? def.title : "&nbsp";
+			}
+
+
+			if(def.editableTitle){
+				var titleElement = $("<input class='tabulator-title-editor'>");
+				titleElement.val(title);
+
+				titleElement.on("click", function(e){
+					e.stopPropagation();
+					$(this).focus();
+				});
+
+				titleElement.on("change", function(){
+					var newTitle = $(this).val();
+					def.title = newTitle;
+					// table.options.colTitleChanged(newTitle, column, options.columns);
+				});
+
+				title = titleElement;
+			}
+
+			if(typeof title == "string"){
+				titleHolderElement.html(title);
+			}else{
+				titleHolderElement.append(title);
+			}
+
+			return titleHolderElement;
+		},
+
 		//build header element for column group
 		_buildGroupHeader:function(){
 			var self = this,
@@ -76,7 +134,7 @@ Column = function(def, parent){
 
 		//return column header element
 		getElement:function(){
-			return this.groupElement;
+			return this.element;
 		},
 
 		//return colunm group element
@@ -84,7 +142,7 @@ Column = function(def, parent){
 			return this.groupElement;
 		},
 
-		//// Actions ////
+		//////////////////// Actions ////////////////////
 
 		//show column
 		show:function(){
@@ -100,7 +158,17 @@ Column = function(def, parent){
 			this.element.hide();
 		},
 
+		//////////////// Cell Management /////////////////
 
+		generateCell:function(row){
+			var self = this;
+
+			var cell = new Cell(self, row);
+
+			this.cells.push(cell);
+
+			return cell;
+		}
 	};
 
 	//initialize column
@@ -115,6 +183,10 @@ Column = function(def, parent){
 	}
 
 	col._buildHeader();
+
+	if(col.visible){
+		col.parent.element.append(col.element);
+	}
 
 	return col;
 }
