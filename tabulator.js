@@ -222,26 +222,26 @@
 	////////////////// Element Construction //////////////////
 
 	//constructor
-	_create: function(){
-		var self = this;
-		var element = self.element;
+	// _create: function(){
+	// 	var self = this;
+	// 	var element = self.element;
 
-		//initialize arrays
-		self.selectedRows = [];
-		self.selectPrev = [];
-		self.columnList = [];
+	// 	//initialize arrays
+	// 	self.selectedRows = [];
+	// 	self.selectPrev = [];
+	// 	self.columnList = [];
 
-		//prevent column array being copied over when not explicitly set
-		if(!self.options.columns){
-			self.options.columns = [];
-		}
+	// 	//prevent column array being copied over when not explicitly set
+	// 	if(!self.options.columns){
+	// 		self.options.columns = [];
+	// 	}
 
-		if(element.is("table")){
-			self._parseTable();
-		}else{
-			self._buildElement();
-		}
-	},
+	// 	if(element.is("table")){
+	// 		self._parseTable();
+	// 	}else{
+	// 		self._buildElement();
+	// 	}
+	// },
 
 	//parse table element to create data set
 	_parseTable:function(){
@@ -424,105 +424,105 @@
 		var options = self.options;
 		var element = self.element;
 
-		options.tableBuilding();
+		// options.tableBuilding();
 
 		//set current locale
-		self.setLocale(self.options.locale);
+		// self.setLocale(self.options.locale);
 
 
 		//// backwards compatability options adjustments ////
 
 
-		//old persistan column layout adjustment
-		if( typeof options.columnLayoutCookie != 'undefined'){
-			options.persistentLayout = options.columnLayoutCookie;
-			options.persistentLayoutID = options.columnLayoutCookieID;
-		}
+		// //old persistan column layout adjustment
+		// if( typeof options.columnLayoutCookie != 'undefined'){
+		// 	options.persistentLayout = options.columnLayoutCookie;
+		// 	options.persistentLayoutID = options.columnLayoutCookieID;
+		// }
 
-		//ajax type backwards compatability
-		if(options.ajaxType){
-			options.ajaxConfig = options.ajaxType;
-		}
-		/////////////////////////////////////////////////////
+		// //ajax type backwards compatability
+		// if(options.ajaxType){
+		// 	options.ajaxConfig = options.ajaxType;
+		// }
+		// /////////////////////////////////////////////////////
 
 
 		//setup persistent layout storage if needed
-		if(self.options.persistentLayout){
-			//determine persistent layout storage type
-			self.options.persistentLayout = self.options.persistentLayout !== true ?  self.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
+		// if(self.options.persistentLayout){
+		// 	//determine persistent layout storage type
+		// 	self.options.persistentLayout = self.options.persistentLayout !== true ?  self.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
 
-			//set storage tag
-			self.options.persistentLayoutID = "tabulator-" + (self.options.persistentLayoutID ? self.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
-		}
+		// 	//set storage tag
+		// 	self.options.persistentLayoutID = "tabulator-" + (self.options.persistentLayoutID ? self.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
+		// }
 
-		options.colMinWidth = isNaN(options.colMinWidth) ? options.colMinWidth : options.colMinWidth + "px";
+		// options.colMinWidth = isNaN(options.colMinWidth) ? options.colMinWidth : options.colMinWidth + "px";
 
-		if(options.height){
-			options.height = isNaN(options.height) ? options.height : options.height + "px";
-			element.css({"height": options.height});
-		}
+		// if(options.height){
+		// 	options.height = isNaN(options.height) ? options.height : options.height + "px";
+		// 	element.css({"height": options.height});
+		// }
 
-		element.addClass("tabulator").attr("role", "grid");
-		element.empty();
+		// element.addClass("tabulator").attr("role", "grid");
+		// element.empty();
 
-		self.header = $("<div class='tabulator-header'></div>")
+		// self.header = $("<div class='tabulator-header'></div>")
 
-		self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
+		// self.tableHolder = $("<div class='tabulator-tableHolder'></div>");
 
-		var scrollTop = 0;
-		var scrollLeft = 0;
-		self.tableHolder.scroll(function(){
+		// var scrollTop = 0;
+		// var scrollLeft = 0;
+		// self.tableHolder.scroll(function(){
 
-			//scroll header along with table body
-			var holder = $(this);
+		// 	//scroll header along with table body
+		// 	var holder = $(this);
 
-			var left = holder.scrollLeft();
-			self.header.scrollLeft(left);
+		// 	var left = holder.scrollLeft();
+		// 	self.header.scrollLeft(left);
 
-			var hozAdjust = 0;
+		// 	var hozAdjust = 0;
 
-			//adjust for vertical scrollbar moving table when present
-			var scrollWidth = self.header[0].scrollWidth - self.element.innerWidth();
-			if(left > scrollWidth){
-				hozAdjust = left - scrollWidth
-				self.header.css("margin-left", -(hozAdjust));
-			}else{
-				self.header.css("margin-left", 0);
-			}
+		// 	//adjust for vertical scrollbar moving table when present
+		// 	var scrollWidth = self.header[0].scrollWidth - self.element.innerWidth();
+		// 	if(left > scrollWidth){
+		// 		hozAdjust = left - scrollWidth
+		// 		self.header.css("margin-left", -(hozAdjust));
+		// 	}else{
+		// 		self.header.css("margin-left", 0);
+		// 	}
 
-			//keep frozen columns fixed in position
-			self._calcFrozenColumnsPos(hozAdjust + 3);
-
-
-
-			//trigger progressive rendering on scroll
-			if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
-				if(!self.progressiveRenderLoading){
-					if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
-						if(self.options.progressiveRender == "remote"){
-							if(self.paginationCurrentPage <= self.paginationMaxPage){
-								self.progressiveRenderLoading = true;
-								self._renderTable(true);
-							}
-						}else{
-							if(self.paginationCurrentPage < self.paginationMaxPage){
-								self.paginationCurrentPage++;
-								self._renderTable(true);
-							}
-						}
-					}
-				}else{
-					self.progressiveRenderLoadingNext = true;
-				}
-			}
+		// 	//keep frozen columns fixed in position
+		// 	self._calcFrozenColumnsPos(hozAdjust + 3);
 
 
 
-			scrollTop = holder.scrollTop();
-		});
+		// 	//trigger progressive rendering on scroll
+		// 	if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
+		// 		if(!self.progressiveRenderLoading){
+		// 			if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
+		// 				if(self.options.progressiveRender == "remote"){
+		// 					if(self.paginationCurrentPage <= self.paginationMaxPage){
+		// 						self.progressiveRenderLoading = true;
+		// 						self._renderTable(true);
+		// 					}
+		// 				}else{
+		// 					if(self.paginationCurrentPage < self.paginationMaxPage){
+		// 						self.paginationCurrentPage++;
+		// 						self._renderTable(true);
+		// 					}
+		// 				}
+		// 			}
+		// 		}else{
+		// 			self.progressiveRenderLoadingNext = true;
+		// 		}
+		// 	}
+
+
+
+		// 	scrollTop = holder.scrollTop();
+		// });
 
 		//create scrollable table holder
-		self.table = $("<div class='tabulator-table'></div>");
+		// self.table = $("<div class='tabulator-table'></div>");
 
 		//build pagination footer if needed
 		if(options.pagination){
@@ -551,7 +551,7 @@
 		if(options.persistentLayout){
 			self._getPersistentCol();
 		}else{
-			self._colLayout();
+			// self._colLayout();
 		}
 	},
 
@@ -2782,12 +2782,12 @@
 
 	//layout columns
 	_colLayout:function(forceRedraw){
-		var self = this;
-		var options = self.options;
-		var element = self.element;
+		// var self = this;
+		// var options = self.options;
+		// var element = self.element;
 
-		self.header.empty();
-		self.columnList = [];
+		// self.header.empty();
+		// self.columnList = [];
 
 		self._colLayoutGroup(self.options.columns, self.header);
 
@@ -2897,9 +2897,9 @@
 
 		}
 
-		element.append(self.header);
-		self.tableHolder.append(self.table);
-		element.append(self.tableHolder);
+		//element.append(self.header);
+		// self.tableHolder.append(self.table);
+		//element.append(self.tableHolder);
 
 		//handle frozen columns
 		if(self.columnFrozenLeft.length){
@@ -3181,14 +3181,14 @@
 		columns.forEach(function(column, i){
 
 			if(!column.columns){
-				self.columnList.push(column);
-				column.index = self.columnList.length -1;
+				// self.columnList.push(column);
+				// column.index = self.columnList.length -1;
 
-				column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-				column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
-				column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
-				column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
-				column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
+				// column.sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+				// column.sortable = typeof(column.sortable) == "undefined" ? options.sortable : column.sortable;
+				// column.sortable = typeof(column.field) == "undefined" ? false : column.sortable;
+				// column.visible = typeof(column.visible) == "undefined" ? true : column.visible;
+				// column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
 
 
 				if(options.sortBy == column.field){
@@ -3199,9 +3199,9 @@
 					var sortdir = "";
 				}
 
-				var visibility = column.visible ? "inline-block" : "none";
+				// var visibility = column.visible ? "inline-block" : "none";
 
-				var minWidth = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
+				// var minWidth = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
 
 				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="' + (options.sortBy == column.field ? (options.sortDir == "asc" ? "ascending" : "descending") : "none") + '"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
 				var colContent = $(".tabulator-col-content", col);
@@ -4112,564 +4112,564 @@
 
 	////////////////// Default Sorter/Formatter/Editor Elements //////////////////
 
-	//custom data sorters
-	sorters:{
-		number:function(a, b){ //sort numbers
-			return parseFloat(String(a).replace(",","")) - parseFloat(String(b).replace(",",""));
-		},
-		string:function(a, b){ //sort strings
-			return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-		},
-		date:function(a, b){ //sort dates
-			var self = this;
-
-			return self._formatDate(a) - self._formatDate(b);
-		},
-		boolean:function(a, b){ //sort booleans
-			var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
-			var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
-
-			return el1 - el2;
-		},
-		alphanum:function(as, bs){//sort alpha numeric strings
-			var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
-
-			if(isFinite(as) && isFinite(bs)) return as - bs;
-			a = String(as).toLowerCase();
-			b = String(bs).toLowerCase();
-			if(a === b) return 0;
-			if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
-			a = a.match(rx);
-			b = b.match(rx);
-			L = a.length > b.length ? b.length : a.length;
-			while(i < L){
-				a1= a[i];
-				b1= b[i++];
-				if(a1 !== b1){
-					if(isFinite(a1) && isFinite(b1)){
-						if(a1.charAt(0) === "0") a1 = "." + a1;
-						if(b1.charAt(0) === "0") b1 = "." + b1;
-						return a1 - b1;
-					}
-					else return a1 > b1 ? 1 : -1;
-				}
-			}
-			return a.length > b.length;
-		},
-		time:function(a, b){ //sort hh:mm formatted times
-			a = a.split(":");
-			b = b.split(":");
-
-			a = (a[0]*60) + a[1];
-			b = (b[0]*60) + b[1];
-			return a > b;
-		},
-	},
-
-	//custom data formatters
-	formatters:{
-		plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
-			return value;
-		},
-		textarea:function(value, data, cell, row, options, formatterParams){ //multiline text area
-			cell.css({"white-space":"pre-wrap"});
-			return value;
-		},
-		money:function(value, data, cell, row, options, formatterParams){
-
-			var floatVal = parseFloat(value);
-
-			if(isNaN(floatVal)){
-				return value;
-			}
-
-			var number = floatVal.toFixed(2);
-
-			var number = number.split(".");
-
-			var integer = number[0];
-			var decimal = number.length > 1 ? "." + number[1] : "";
-
-			var rgx = /(\d+)(\d{3})/;
-
-			while (rgx.test(integer)){
-				integer = integer.replace(rgx, "$1" + "," + "$2");
-			}
-
-			return integer + decimal;
-		},
-		email:function(value, data, cell, row, options, formatterParams){
-			return "<a href='mailto:" + value + "'>" + value + "</a>";
-		},
-		link:function(value, data, cell, row, options, formatterParams){
-			return "<a href='" + value + "'>" + value + "</a>";
-		},
-		tick:function(value, data, cell, row, options, formatterParams){
-			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
-
-			if(value === true || value === "true" || value === "True" || value === 1){
-				cell.attr("aria-checked", true);
-				return tick;
-			}else{
-				cell.attr("aria-checked", false);
-				return "";
-			}
-		},
-		tickCross:function(value, data, cell, row, options, formatterParams){
-			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
-			var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
-
-			if(value === true || value === "true" || value === "True" || value === 1){
-				cell.attr("aria-checked", true);
-				return tick;
-			}else{
-				cell.attr("aria-checked", false);
-				return cross;
-			}
-		},
-		star:function(value, data, cell, row, options, formatterParams){
-			var maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5;
-			var stars=$("<span style='vertical-align:middle;'></span>");
-
-			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
-
-			var starActive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-			var starInactive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-
-			for(var i=1;i<= maxStars;i++){
-
-				var nextStar = i <= value ? starActive : starInactive;
-
-				stars.append(nextStar.clone());
-			}
-
-			cell.css({
-				"white-space": "nowrap",
-				"overflow": "hidden",
-				"text-overflow": "ellipsis",
-			});
-
-			cell.attr("aria-label", value);
-
-			return stars.html();
-		},
-		progress:function(value, data, cell, row, options, formatterParams){ //progress bar
-			//set default parameters
-			var max = formatterParams && formatterParams.max ? formatterParams.max : 100;
-			var min = formatterParams && formatterParams.min ? formatterParams.min : 0;
-
-			var color = formatterParams && formatterParams.color ? formatterParams.color : "#2DC214";
-
-			//make sure value is in range
-			value = parseFloat(value) <= max ? parseFloat(value) : max;
-			value = parseFloat(value) >= min ? parseFloat(value) : min;
-
-			//workout percentage
-			var percent = (max - min) / 100;
-			value = 100 - Math.round((value - min) / percent);
-
-			cell.css({
-				"min-width":"30px",
-				"position":"relative",
-			});
-
-			cell.attr("aria-label", value);
-
-			return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
-		},
-		color:function(value, data, cell, row, options, formatterParams){
-			cell.css({"background-color":value});
-			return "";
-		},
-		buttonTick:function(value, data, cell, row, options, formatterParams){
-			return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
-		},
-		buttonCross:function(value, data, cell, row, options, formatterParams){
-			return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
-		},
-		rownum:function(value, data, cell, row, options, formatterParams){
-			var self = this;
-
-			var rownum = $(".tabulator-row", self.table).length + 1;
-
-			if(self.options.pagination){
-				rownum = (self.options.paginationSize * (self.paginationCurrentPage-1)) + rownum;
-			}
-
-			return rownum;
-		}
-	},
-
-	//custom data editors
-	editors:{
-		input:function(cell, value, data){
-			//create and style input
-			var input = $("<input type='text'/>");
-			input.css({
-				"padding":"4px",
-				"width":"100%",
-				"box-sizing":"border-box",
-			})
-			.val(value);
-
-			if(cell.hasClass("tabulator-cell")){
-				setTimeout(function(){
-					input.focus();
-				},100);
-			}
-
-			//submit new value on blur
-			input.on("change blur", function(e){
-				cell.trigger("editval", input.val());
-			});
-
-			//submit new value on enter
-			input.on("keydown", function(e){
-				if(e.keyCode == 13){
-					cell.trigger("editval", input.val());
-				}
-			});
-
-			return input;
-		},
-		textarea:function(cell, value, data){
-			var self = this;
-
-			var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
-			var row = cell.closest(".tabulator-row")
-
-            //create and style input
-            var input = $("<textarea></textarea>");
-            input.css({
-            	"display":"block",
-            	"height":"100%",
-            	"width":"100%",
-            	"padding":"2px",
-            	"box-sizing":"border-box",
-            	"white-space":"pre-wrap",
-            	"resize": "none",
-            })
-            .val(value);
-
-            if(cell.hasClass("tabulator-cell")){
-            	setTimeout(function(){
-            		input.focus();
-            	},100);
-            }
-
-            //submit new value on blur
-            input.on("change blur", function(e){
-            	cell.trigger("editval", input.val());
-            	setTimeout(function(){
-            		self._resizeRow(row);
-            	},300)
-            });
-
-            input.on("keyup", function(){
-            	var value = $(this).val();
-            	var newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
-
-            	if(newCount != count){
-            		var line = input.innerHeight() / count;
-
-            		input.css({"height": (line * newCount) + "px"});
-
-            		self._resizeRow(row);
-
-            		count = newCount;
-            	}
-            });
-
-            return input;
-        },
-        number:function(cell, value, data){
-			//create and style input
-			var input = $("<input type='number'/>");
-			input.css({
-				"padding":"4px",
-				"width":"100%",
-				"box-sizing":"border-box",
-			})
-			.val(value);
-
-			if(cell.hasClass("tabulator-cell")){
-				setTimeout(function(){
-					input.focus();
-				},100);
-			}
-
-			//submit new value on blur
-			input.on("blur", function(e){
-				cell.trigger("editval", input.val());
-			});
-
-			//submit new value on enter
-			input.on("keydown", function(e){
-				if(e.keyCode == 13){
-					cell.trigger("editval", input.val());
-				}
-			});
-
-			return input;
-		},
-		star:function(cell, value, data){
-
-			var maxStars = $("svg", cell).length;
-			maxStars = maxStars ?maxStars : 5;
-
-			var size = $("svg:first", cell).attr("width")
-			size = size ? size : 14;
-
-			var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
-
-			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
-
-			var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-			var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-
-			for(var i=1;i<= maxStars;i++){
-
-				var nextStar = i <= value ? starActive : starInactive;
-				stars.append(nextStar.clone());
-			}
-
-			//change number of active stars
-			var starChange = function(element){
-				if($(".tabulator-star-active", element.closest("div")).length != element.prevAll("svg").length + 1){
-					element.prevAll("svg").replaceWith(starActive.clone());
-					element.nextAll("svg").replaceWith(starInactive.clone());
-					element.replaceWith(starActive.clone());
-				}
-			}
-
-			stars.on("mouseover", "svg", function(e){
-				e.stopPropagation();
-				starChange($(this));
-			});
-
-			stars.on("mouseover", function(e){
-				$("svg", $(this)).replaceWith(starInactive.clone());
-			});
-
-			stars.on("click", function(e){
-				$(this).closest(".tabulator-cell").trigger("editval", 0);
-			});
-
-			stars.on("click", "svg", function(e){
-				var val = $(this).prevAll("svg").length + 1;
-				cell.trigger("editval", val);
-			});
-
-			cell.css({
-				"white-space": "nowrap",
-				"overflow": "hidden",
-				"text-overflow": "ellipsis",
-			});
-
-			cell.on("blur", function(){
-				$(this).trigger("editcancel");
-			});
-
-			//allow key based navigation
-			cell.on("keydown", function(e){
-				switch(e.keyCode){
-					case 39: //right arrow
-					starChange($(".tabulator-star-inactive:first", stars));
-					break;
-
-					case 37: //left arrow
-					var prevstar = $(".tabulator-star-active:last", stars).prev("svg");
-
-					if(prevstar.length){
-						starChange(prevstar);
-					}else{
-						$("svg", stars).replaceWith(starInactive.clone());
-					}
-					break;
-
-					case 13: //enter
-					cell.trigger("editval", $(".tabulator-star-active", stars).length);
-					break;
-
-				}
-			});
-
-			return stars;
-		},
-		progress:function(cell, value, data){
-			//set default parameters
-			var max = $("div", cell).data("max");
-			var min = $("div", cell).data("min");
-
-			//make sure value is in range
-			value = parseFloat(value) <= max ? parseFloat(value) : max;
-			value = parseFloat(value) >= min ? parseFloat(value) : min;
-
-			//workout percentage
-			var percent = (max - min) / 100;
-			value = 100 - Math.round((value - min) / percent);
-
-			cell.css({
-				padding:"0 4px",
-			});
-
-			cell.attr("aria-valuemin", min).attr("aria-valuemax", max)
-
-
-			var newVal = function(){
-				var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
-				cell.trigger("editval", newval);
-				cell.attr("aria-valuenow", newval).attr("aria-label", value);
-			}
-
-			var bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
-
-			var handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
-
-			bar.append(handle);
-
-			handle.on("mousedown", function(e){
-				bar.data("mouseDrag", e.screenX);
-				bar.data("mouseDragWidth", bar.outerWidth());
-			});
-
-			handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})});
-
-			cell.on("mousemove", function(e){
-				if(bar.data("mouseDrag")){
-					bar.css({width: bar.data("mouseDragWidth") + (e.screenX - bar.data("mouseDrag"))})
-				}
-			});
-
-			cell.on("mouseup", function(e){
-				if(bar.data("mouseDrag")){
-					e.stopPropagation();
-					e.stopImmediatePropagation();
-
-					bar.data("mouseDragOut", true);
-					bar.data("mouseDrag", false);
-					bar.data("mouseDragWidth", false);
-
-					newVal();
-
-				}
-			});
-
-			//allow key based navigation
-			cell.on("keydown", function(e){
-				switch(e.keyCode){
-					case 39: //right arrow
-					bar.css({"width" : bar.width() + cell.width()/100});
-					break;
-
-					case 37: //left arrow
-					bar.css({"width" : bar.width() - cell.width()/100});
-					break;
-
-					case 13: //enter
-					newVal();
-					break;
-
-				}
-			});
-
-			cell.on("blur", function(){
-				$(this).trigger("editcancel");
-			});
-
-			return bar;
-		},
-
-		tickCross:function(cell, value, data){
-			//create and style input
-			var input = $("<input type='checkbox'/>");
-			input.css({
-				"margin-top":"5px",
-				"box-sizing":"border-box",
-			})
-			.val(value);
-
-			if(cell.hasClass("tabulator-cell")){
-				setTimeout(function(){
-					input.focus();
-				},100);
-			}
-
-			if(value === true || value === "true" || value === "True" || value === 1){
-				input.prop("checked", true);
-			}else{
-				input.prop("checked", false);
-			}
-
-			//submit new value on blur
-			input.on("change blur", function(e){
-				cell.trigger("editval", input.is(":checked"));
-			});
-
-			//submit new value on enter
-			input.on("keydown", function(e){
-				if(e.keyCode == 13){
-					cell.trigger("editval", input.is(":checked"));
-				}
-			});
-
-			return input;
-		},
-
-		tick:function(cell, value, data){
-			//create and style input
-			var input = $("<input type='checkbox'/>");
-			input.css({
-				"margin-top":"5px",
-				"box-sizing":"border-box",
-			})
-			.val(value);
-
-			if(cell.hasClass("tabulator-cell")){
-				setTimeout(function(){
-					input.focus();
-				},100);
-			}
-
-			if(value === true || value === "true" || value === "True" || value === 1){
-				input.prop("checked", true);
-			}else{
-				input.prop("checked", false);
-			}
-
-			//submit new value on blur
-			input.on("change blur", function(e){
-				cell.trigger("editval", input.is(":checked"));
-			});
-
-			//submit new value on enter
-			input.on("keydown", function(e){
-				if(e.keyCode == 13){
-					cell.trigger("editval", input.is(":checked"));
-				}
-			});
-
-			return input;
-		},
-	},
-
-	//custom mutators
-	mutators:{},
-
-	//custom accessors
-	accessors:{},
+	// //custom data sorters
+	// sorters:{
+	// 	number:function(a, b){ //sort numbers
+	// 		return parseFloat(String(a).replace(",","")) - parseFloat(String(b).replace(",",""));
+	// 	},
+	// 	string:function(a, b){ //sort strings
+	// 		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+	// 	},
+	// 	date:function(a, b){ //sort dates
+	// 		var self = this;
+
+	// 		return self._formatDate(a) - self._formatDate(b);
+	// 	},
+	// 	boolean:function(a, b){ //sort booleans
+	// 		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
+	// 		var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
+
+	// 		return el1 - el2;
+	// 	},
+	// 	alphanum:function(as, bs){//sort alpha numeric strings
+	// 		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
+
+	// 		if(isFinite(as) && isFinite(bs)) return as - bs;
+	// 		a = String(as).toLowerCase();
+	// 		b = String(bs).toLowerCase();
+	// 		if(a === b) return 0;
+	// 		if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+	// 		a = a.match(rx);
+	// 		b = b.match(rx);
+	// 		L = a.length > b.length ? b.length : a.length;
+	// 		while(i < L){
+	// 			a1= a[i];
+	// 			b1= b[i++];
+	// 			if(a1 !== b1){
+	// 				if(isFinite(a1) && isFinite(b1)){
+	// 					if(a1.charAt(0) === "0") a1 = "." + a1;
+	// 					if(b1.charAt(0) === "0") b1 = "." + b1;
+	// 					return a1 - b1;
+	// 				}
+	// 				else return a1 > b1 ? 1 : -1;
+	// 			}
+	// 		}
+	// 		return a.length > b.length;
+	// 	},
+	// 	time:function(a, b){ //sort hh:mm formatted times
+	// 		a = a.split(":");
+	// 		b = b.split(":");
+
+	// 		a = (a[0]*60) + a[1];
+	// 		b = (b[0]*60) + b[1];
+	// 		return a > b;
+	// 	},
+	// },
+
+	// //custom data formatters
+	// formatters:{
+	// 	plaintext:function(value, data, cell, row, options, formatterParams){ //plain text value
+	// 		return value;
+	// 	},
+	// 	textarea:function(value, data, cell, row, options, formatterParams){ //multiline text area
+	// 		cell.css({"white-space":"pre-wrap"});
+	// 		return value;
+	// 	},
+	// 	money:function(value, data, cell, row, options, formatterParams){
+
+	// 		var floatVal = parseFloat(value);
+
+	// 		if(isNaN(floatVal)){
+	// 			return value;
+	// 		}
+
+	// 		var number = floatVal.toFixed(2);
+
+	// 		var number = number.split(".");
+
+	// 		var integer = number[0];
+	// 		var decimal = number.length > 1 ? "." + number[1] : "";
+
+	// 		var rgx = /(\d+)(\d{3})/;
+
+	// 		while (rgx.test(integer)){
+	// 			integer = integer.replace(rgx, "$1" + "," + "$2");
+	// 		}
+
+	// 		return integer + decimal;
+	// 	},
+	// 	email:function(value, data, cell, row, options, formatterParams){
+	// 		return "<a href='mailto:" + value + "'>" + value + "</a>";
+	// 	},
+	// 	link:function(value, data, cell, row, options, formatterParams){
+	// 		return "<a href='" + value + "'>" + value + "</a>";
+	// 	},
+	// 	tick:function(value, data, cell, row, options, formatterParams){
+	// 		var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+
+	// 		if(value === true || value === "true" || value === "True" || value === 1){
+	// 			cell.attr("aria-checked", true);
+	// 			return tick;
+	// 		}else{
+	// 			cell.attr("aria-checked", false);
+	// 			return "";
+	// 		}
+	// 	},
+	// 	tickCross:function(value, data, cell, row, options, formatterParams){
+	// 		var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+	// 		var cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+
+	// 		if(value === true || value === "true" || value === "True" || value === 1){
+	// 			cell.attr("aria-checked", true);
+	// 			return tick;
+	// 		}else{
+	// 			cell.attr("aria-checked", false);
+	// 			return cross;
+	// 		}
+	// 	},
+	// 	star:function(value, data, cell, row, options, formatterParams){
+	// 		var maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5;
+	// 		var stars=$("<span style='vertical-align:middle;'></span>");
+
+	// 		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+
+	// 		var starActive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+	// 		var starInactive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+
+	// 		for(var i=1;i<= maxStars;i++){
+
+	// 			var nextStar = i <= value ? starActive : starInactive;
+
+	// 			stars.append(nextStar.clone());
+	// 		}
+
+	// 		cell.css({
+	// 			"white-space": "nowrap",
+	// 			"overflow": "hidden",
+	// 			"text-overflow": "ellipsis",
+	// 		});
+
+	// 		cell.attr("aria-label", value);
+
+	// 		return stars.html();
+	// 	},
+	// 	progress:function(value, data, cell, row, options, formatterParams){ //progress bar
+	// 		//set default parameters
+	// 		var max = formatterParams && formatterParams.max ? formatterParams.max : 100;
+	// 		var min = formatterParams && formatterParams.min ? formatterParams.min : 0;
+
+	// 		var color = formatterParams && formatterParams.color ? formatterParams.color : "#2DC214";
+
+	// 		//make sure value is in range
+	// 		value = parseFloat(value) <= max ? parseFloat(value) : max;
+	// 		value = parseFloat(value) >= min ? parseFloat(value) : min;
+
+	// 		//workout percentage
+	// 		var percent = (max - min) / 100;
+	// 		value = 100 - Math.round((value - min) / percent);
+
+	// 		cell.css({
+	// 			"min-width":"30px",
+	// 			"position":"relative",
+	// 		});
+
+	// 		cell.attr("aria-label", value);
+
+	// 		return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
+	// 	},
+	// 	color:function(value, data, cell, row, options, formatterParams){
+	// 		cell.css({"background-color":value});
+	// 		return "";
+	// 	},
+	// 	buttonTick:function(value, data, cell, row, options, formatterParams){
+	// 		return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+	// 	},
+	// 	buttonCross:function(value, data, cell, row, options, formatterParams){
+	// 		return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+	// 	},
+	// 	rownum:function(value, data, cell, row, options, formatterParams){
+	// 		var self = this;
+
+	// 		var rownum = $(".tabulator-row", self.table).length + 1;
+
+	// 		if(self.options.pagination){
+	// 			rownum = (self.options.paginationSize * (self.paginationCurrentPage-1)) + rownum;
+	// 		}
+
+	// 		return rownum;
+	// 	}
+	// },
+
+	// //custom data editors
+	// editors:{
+	// 	input:function(cell, value, data){
+	// 		//create and style input
+	// 		var input = $("<input type='text'/>");
+	// 		input.css({
+	// 			"padding":"4px",
+	// 			"width":"100%",
+	// 			"box-sizing":"border-box",
+	// 		})
+	// 		.val(value);
+
+	// 		if(cell.hasClass("tabulator-cell")){
+	// 			setTimeout(function(){
+	// 				input.focus();
+	// 			},100);
+	// 		}
+
+	// 		//submit new value on blur
+	// 		input.on("change blur", function(e){
+	// 			cell.trigger("editval", input.val());
+	// 		});
+
+	// 		//submit new value on enter
+	// 		input.on("keydown", function(e){
+	// 			if(e.keyCode == 13){
+	// 				cell.trigger("editval", input.val());
+	// 			}
+	// 		});
+
+	// 		return input;
+	// 	},
+	// 	textarea:function(cell, value, data){
+	// 		var self = this;
+
+	// 		var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+	// 		var row = cell.closest(".tabulator-row")
+
+ //            //create and style input
+ //            var input = $("<textarea></textarea>");
+ //            input.css({
+ //            	"display":"block",
+ //            	"height":"100%",
+ //            	"width":"100%",
+ //            	"padding":"2px",
+ //            	"box-sizing":"border-box",
+ //            	"white-space":"pre-wrap",
+ //            	"resize": "none",
+ //            })
+ //            .val(value);
+
+ //            if(cell.hasClass("tabulator-cell")){
+ //            	setTimeout(function(){
+ //            		input.focus();
+ //            	},100);
+ //            }
+
+ //            //submit new value on blur
+ //            input.on("change blur", function(e){
+ //            	cell.trigger("editval", input.val());
+ //            	setTimeout(function(){
+ //            		self._resizeRow(row);
+ //            	},300)
+ //            });
+
+ //            input.on("keyup", function(){
+ //            	var value = $(this).val();
+ //            	var newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+
+ //            	if(newCount != count){
+ //            		var line = input.innerHeight() / count;
+
+ //            		input.css({"height": (line * newCount) + "px"});
+
+ //            		self._resizeRow(row);
+
+ //            		count = newCount;
+ //            	}
+ //            });
+
+ //            return input;
+ //        },
+ //        number:function(cell, value, data){
+	// 		//create and style input
+	// 		var input = $("<input type='number'/>");
+	// 		input.css({
+	// 			"padding":"4px",
+	// 			"width":"100%",
+	// 			"box-sizing":"border-box",
+	// 		})
+	// 		.val(value);
+
+	// 		if(cell.hasClass("tabulator-cell")){
+	// 			setTimeout(function(){
+	// 				input.focus();
+	// 			},100);
+	// 		}
+
+	// 		//submit new value on blur
+	// 		input.on("blur", function(e){
+	// 			cell.trigger("editval", input.val());
+	// 		});
+
+	// 		//submit new value on enter
+	// 		input.on("keydown", function(e){
+	// 			if(e.keyCode == 13){
+	// 				cell.trigger("editval", input.val());
+	// 			}
+	// 		});
+
+	// 		return input;
+	// 	},
+	// 	star:function(cell, value, data){
+
+	// 		var maxStars = $("svg", cell).length;
+	// 		maxStars = maxStars ?maxStars : 5;
+
+	// 		var size = $("svg:first", cell).attr("width")
+	// 		size = size ? size : 14;
+
+	// 		var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
+
+	// 		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+
+	// 		var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+	// 		var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+
+	// 		for(var i=1;i<= maxStars;i++){
+
+	// 			var nextStar = i <= value ? starActive : starInactive;
+	// 			stars.append(nextStar.clone());
+	// 		}
+
+	// 		//change number of active stars
+	// 		var starChange = function(element){
+	// 			if($(".tabulator-star-active", element.closest("div")).length != element.prevAll("svg").length + 1){
+	// 				element.prevAll("svg").replaceWith(starActive.clone());
+	// 				element.nextAll("svg").replaceWith(starInactive.clone());
+	// 				element.replaceWith(starActive.clone());
+	// 			}
+	// 		}
+
+	// 		stars.on("mouseover", "svg", function(e){
+	// 			e.stopPropagation();
+	// 			starChange($(this));
+	// 		});
+
+	// 		stars.on("mouseover", function(e){
+	// 			$("svg", $(this)).replaceWith(starInactive.clone());
+	// 		});
+
+	// 		stars.on("click", function(e){
+	// 			$(this).closest(".tabulator-cell").trigger("editval", 0);
+	// 		});
+
+	// 		stars.on("click", "svg", function(e){
+	// 			var val = $(this).prevAll("svg").length + 1;
+	// 			cell.trigger("editval", val);
+	// 		});
+
+	// 		cell.css({
+	// 			"white-space": "nowrap",
+	// 			"overflow": "hidden",
+	// 			"text-overflow": "ellipsis",
+	// 		});
+
+	// 		cell.on("blur", function(){
+	// 			$(this).trigger("editcancel");
+	// 		});
+
+	// 		//allow key based navigation
+	// 		cell.on("keydown", function(e){
+	// 			switch(e.keyCode){
+	// 				case 39: //right arrow
+	// 				starChange($(".tabulator-star-inactive:first", stars));
+	// 				break;
+
+	// 				case 37: //left arrow
+	// 				var prevstar = $(".tabulator-star-active:last", stars).prev("svg");
+
+	// 				if(prevstar.length){
+	// 					starChange(prevstar);
+	// 				}else{
+	// 					$("svg", stars).replaceWith(starInactive.clone());
+	// 				}
+	// 				break;
+
+	// 				case 13: //enter
+	// 				cell.trigger("editval", $(".tabulator-star-active", stars).length);
+	// 				break;
+
+	// 			}
+	// 		});
+
+	// 		return stars;
+	// 	},
+	// 	progress:function(cell, value, data){
+	// 		//set default parameters
+	// 		var max = $("div", cell).data("max");
+	// 		var min = $("div", cell).data("min");
+
+	// 		//make sure value is in range
+	// 		value = parseFloat(value) <= max ? parseFloat(value) : max;
+	// 		value = parseFloat(value) >= min ? parseFloat(value) : min;
+
+	// 		//workout percentage
+	// 		var percent = (max - min) / 100;
+	// 		value = 100 - Math.round((value - min) / percent);
+
+	// 		cell.css({
+	// 			padding:"0 4px",
+	// 		});
+
+	// 		cell.attr("aria-valuemin", min).attr("aria-valuemax", max)
+
+
+	// 		var newVal = function(){
+	// 			var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
+	// 			cell.trigger("editval", newval);
+	// 			cell.attr("aria-valuenow", newval).attr("aria-label", value);
+	// 		}
+
+	// 		var bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
+
+	// 		var handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
+
+	// 		bar.append(handle);
+
+	// 		handle.on("mousedown", function(e){
+	// 			bar.data("mouseDrag", e.screenX);
+	// 			bar.data("mouseDragWidth", bar.outerWidth());
+	// 		});
+
+	// 		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})});
+
+	// 		cell.on("mousemove", function(e){
+	// 			if(bar.data("mouseDrag")){
+	// 				bar.css({width: bar.data("mouseDragWidth") + (e.screenX - bar.data("mouseDrag"))})
+	// 			}
+	// 		});
+
+	// 		cell.on("mouseup", function(e){
+	// 			if(bar.data("mouseDrag")){
+	// 				e.stopPropagation();
+	// 				e.stopImmediatePropagation();
+
+	// 				bar.data("mouseDragOut", true);
+	// 				bar.data("mouseDrag", false);
+	// 				bar.data("mouseDragWidth", false);
+
+	// 				newVal();
+
+	// 			}
+	// 		});
+
+	// 		//allow key based navigation
+	// 		cell.on("keydown", function(e){
+	// 			switch(e.keyCode){
+	// 				case 39: //right arrow
+	// 				bar.css({"width" : bar.width() + cell.width()/100});
+	// 				break;
+
+	// 				case 37: //left arrow
+	// 				bar.css({"width" : bar.width() - cell.width()/100});
+	// 				break;
+
+	// 				case 13: //enter
+	// 				newVal();
+	// 				break;
+
+	// 			}
+	// 		});
+
+	// 		cell.on("blur", function(){
+	// 			$(this).trigger("editcancel");
+	// 		});
+
+	// 		return bar;
+	// 	},
+
+	// 	tickCross:function(cell, value, data){
+	// 		//create and style input
+	// 		var input = $("<input type='checkbox'/>");
+	// 		input.css({
+	// 			"margin-top":"5px",
+	// 			"box-sizing":"border-box",
+	// 		})
+	// 		.val(value);
+
+	// 		if(cell.hasClass("tabulator-cell")){
+	// 			setTimeout(function(){
+	// 				input.focus();
+	// 			},100);
+	// 		}
+
+	// 		if(value === true || value === "true" || value === "True" || value === 1){
+	// 			input.prop("checked", true);
+	// 		}else{
+	// 			input.prop("checked", false);
+	// 		}
+
+	// 		//submit new value on blur
+	// 		input.on("change blur", function(e){
+	// 			cell.trigger("editval", input.is(":checked"));
+	// 		});
+
+	// 		//submit new value on enter
+	// 		input.on("keydown", function(e){
+	// 			if(e.keyCode == 13){
+	// 				cell.trigger("editval", input.is(":checked"));
+	// 			}
+	// 		});
+
+	// 		return input;
+	// 	},
+
+	// 	tick:function(cell, value, data){
+	// 		//create and style input
+	// 		var input = $("<input type='checkbox'/>");
+	// 		input.css({
+	// 			"margin-top":"5px",
+	// 			"box-sizing":"border-box",
+	// 		})
+	// 		.val(value);
+
+	// 		if(cell.hasClass("tabulator-cell")){
+	// 			setTimeout(function(){
+	// 				input.focus();
+	// 			},100);
+	// 		}
+
+	// 		if(value === true || value === "true" || value === "True" || value === 1){
+	// 			input.prop("checked", true);
+	// 		}else{
+	// 			input.prop("checked", false);
+	// 		}
+
+	// 		//submit new value on blur
+	// 		input.on("change blur", function(e){
+	// 			cell.trigger("editval", input.is(":checked"));
+	// 		});
+
+	// 		//submit new value on enter
+	// 		input.on("keydown", function(e){
+	// 			if(e.keyCode == 13){
+	// 				cell.trigger("editval", input.is(":checked"));
+	// 			}
+	// 		});
+
+	// 		return input;
+	// 	},
+	// },
+
+	// //custom mutators
+	// mutators:{},
+
+	// //custom accessors
+	// accessors:{},
 
 	////////////////// Tabulator Desconstructor //////////////////
 
-	//deconstructor
-	_destroy: function(){
-		var self = this;
-		var element = self.element;
+	// //deconstructor
+	// _destroy: function(){
+	// 	var self = this;
+	// 	var element = self.element;
 
-		element.empty();
+	// 	element.empty();
 
-		element.removeClass("tabulator");
-	},
+	// 	element.removeClass("tabulator");
+	// },
 
 });
 
