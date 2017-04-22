@@ -9,30 +9,42 @@
 		initializeColumn:function(column, content){
 			var self = this;
 
-			column.element.addClass("tabulator-sortable");
+			var sorter = false;
 
-			column.extensions.sort = {sorter:false, dir:"none"};
+
+
 
 			//set sorter on column
 			if(typeof column.definition.sorter == "string"){
-				column.extensions.sort.sorter = self.sorters[column.definition.sorter];
+				if(self.sorters[column.definition.sorter]){
+					sorter = self.sorters[column.definition.sorter];
+				}else{
+					console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+				}
 			}else{
 				column.extensions.sort.sorter = column.definition.sorter;
 			}
 
-			//create sorter arrow
-			content.append($("<div class='tabulator-arrow'></div>"));
+			if(sorter){
 
-			//sort on click
-			column.element.on("click", function(){
-				if(column.extensions.sort){
-					if(column.extensions.sort.dir == "asc"){
-						self.setSort(column, "desc");
-					}else{
-						self.setSort(column, "asc");
+				column.extensions.sort = {sorter:sorter, dir:"none"};
+
+				column.element.addClass("tabulator-sortable");
+
+				//create sorter arrow
+				content.append($("<div class='tabulator-arrow'></div>"));
+
+				//sort on click
+				column.element.on("click", function(){
+					if(column.extensions.sort){
+						if(column.extensions.sort.dir == "asc"){
+							self.setSort(column, "desc");
+						}else{
+							self.setSort(column, "asc");
+						}
 					}
-				}
-			})
+				});
+			}
 		},
 
 		//return current sorters
@@ -67,8 +79,7 @@
 					if(column){
 						item.column = column;
 					}else{
-						console.warning("Search Warning - Search field does not exist and is being ignored: " + item.column);
-
+						console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
 						item.column = false;
 					}
 				}

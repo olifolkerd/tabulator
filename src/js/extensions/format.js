@@ -7,22 +7,28 @@ var Format = function(table){
 		initializeColumn:function(column){
 			var self = this;
 
-			column.extensions.format = {params:column.definition.formatterParams || {}};
+			var config = {params:column.definition.formatterParams || {}};
 
 			//set column formatter
 			switch(typeof column.definition.formatter){
 				case "string":
-				column.extensions.format.formatter = self.formatters[column.definition.formatter];
+				if(self.formatters[column.definition.formatter]){
+					config.formatter = self.formatters[column.definition.formatter]
+				}else{
+					console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
+					config.formatter = self.formatters.plaintext;
+				}
 				break;
 
 				case "function":
-				column.extensions.format.formatter = column.definition.formatter;
+				config.formatter = column.definition.formatter;
 				break;
 
 				default:
-				column.extensions.format.formatter = self.formatters.plaintext;
+				config.formatter = self.formatters.plaintext;
 				break;
 			}
+			column.extensions.format = config;
 		},
 
 		//return a formatted value for a cell
