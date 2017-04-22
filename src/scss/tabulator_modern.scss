@@ -368,6 +368,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 				//cell element
 				.tabulator-cell{
+					display:inline-block;
 					position: relative;
 					box-sizing:border-box;
 					padding:6px 4px;

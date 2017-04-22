@@ -327,6 +327,7 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 
 				//cell element
 				.tabulator-cell{
+					display:inline-block;
 					position: relative;
 					box-sizing:border-box;
 					padding:$cellPadding;
