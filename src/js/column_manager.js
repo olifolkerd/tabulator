@@ -152,7 +152,7 @@ var ColumnManager = function(table){
 
 			//adjust for vertical scrollbar if present
 			if(self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()){
-				totWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
+				totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
 			}
 
 			self.columnsByIndex.forEach(function(column){
