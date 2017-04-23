@@ -26,6 +26,57 @@ var RowManager = function(table){
 			this.columnManager = manager;
 		},
 
+		_initialize(){
+			var self = this;
+
+			//initialize manager
+			self.element.append(self.tableElement);
+
+			if(!self.table.options.fitColumns){
+				self.firstRender = true;
+			}
+
+
+			//scroll header along with table body
+			self.element.scroll(function(){
+
+				var holder = $(this);
+				var left = holder.scrollLeft();
+				var top = holder.scrollTop();
+
+				if(self.scrollLeft != left){
+					self.columnManager.scrollHorizontal(left);
+				}
+
+
+				// //trigger progressive rendering on scroll
+				// // if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
+				// // 	if(!self.progressiveRenderLoading){
+				// // 		if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
+				// // 			if(self.options.progressiveRender == "remote"){
+				// // 				if(self.paginationCurrentPage <= self.paginationMaxPage){
+				// // 					self.progressiveRenderLoading = true;
+				// // 					self._renderTable(true);
+				// // 				}
+				// // 			}else{
+				// // 				if(self.paginationCurrentPage < self.paginationMaxPage){
+				// // 					self.paginationCurrentPage++;
+				// // 					self._renderTable(true);
+				// // 				}
+				// // 			}
+				// // 		}
+				// // 	}else{
+				// // 		self.progressiveRenderLoadingNext = true;
+				// // 	}
+				// // }
+
+
+				self.scrollLeft = left;
+				self.scrollTop = top;
+			});
+
+		},
+
 
 		////////////////// Data Handling //////////////////
 
@@ -103,52 +154,7 @@ var RowManager = function(table){
 
 	}
 
-	//initialize manager
-	manager.element.append(manager.tableElement);
-
-	if(!manager.table.options.fitColumns){
-		manager.firstRender = true;
-	}
-
-
-	//scroll header along with table body
-	manager.element.scroll(function(){
-
-		// var holder = $(this);
-		// var left = holder.scrollLeft();
-		// var top = holder.top();
-
-		// if(manager.scrollLeft != left){
-		// 	manager.columnManager.scrolHoz(left);
-		// }
-
-
-		// //trigger progressive rendering on scroll
-		// // if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
-		// // 	if(!self.progressiveRenderLoading){
-		// // 		if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
-		// // 			if(self.options.progressiveRender == "remote"){
-		// // 				if(self.paginationCurrentPage <= self.paginationMaxPage){
-		// // 					self.progressiveRenderLoading = true;
-		// // 					self._renderTable(true);
-		// // 				}
-		// // 			}else{
-		// // 				if(self.paginationCurrentPage < self.paginationMaxPage){
-		// // 					self.paginationCurrentPage++;
-		// // 					self._renderTable(true);
-		// // 				}
-		// // 			}
-		// // 		}
-		// // 	}else{
-		// // 		self.progressiveRenderLoadingNext = true;
-		// // 	}
-		// // }
-
-
-		// manager.scrollLeft = left;
-		// manager.scrollTop = top;
-	});
-
+	manager._initialize();
 
 	return manager;
 }

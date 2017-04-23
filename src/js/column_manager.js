@@ -20,12 +20,10 @@ var ColumnManager = function(table){
 		},
 
 		//scroll horizontally to match table body
-		scrollHoz:function(left){
+		scrollHorizontal:function(left){
 			var self = this;
 			var hozAdjust = 0;
 			var scrollWidth = self.element[0].scrollWidth - table.element.innerWidth();
-
-			self.element(left);
 
 			//adjust for vertical scrollbar moving table when present
 			if(left > scrollWidth){
