@@ -7,7 +7,9 @@ var Column = function(def, parent){
 		columns:[], //child columns
 		cells:[], //cells bound to this column
 		element:$("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"), //column header element
-		groupElement:false, //column group holder element
+		contentElement:false,
+		groupElement:$("<div class='tabulator-col-group-cols'></div>"), //column group holder element
+		isGroup:false,
 
 		extensions:{}, //hold extension variables;
 
@@ -36,12 +38,15 @@ var Column = function(def, parent){
 
 			self.element.empty();
 
-			if(self.columns.length){
+			self.contentElement = self._buildColumnHeaderContent();
+
+			self.element.append(self.contentElement);
+
+			if(self.isGroup){
 				self._buildGroupHeader();
 			}else{
 				self._buildColumnHeader();
 			}
-
 
 			//set header tooltips
 			var tooltip = self.definition.tooltipHeader || self.definition.tooltip === false  ? self.definition.tooltipHeader : self.table.options.tooltipsHeader;
@@ -94,13 +99,9 @@ var Column = function(def, parent){
 			table = self.table,
 			sortable;
 
-			var content = self._buildColumnHeaderContent()
-
-			self.element.append(content);
-
 			//set column sorter
 			if(table.extExists("sort") && typeof def.sorter != "undefined"){
-				table.extensions.sort.initializeColumn(self, content);
+				table.extensions.sort.initializeColumn(self, self.contentElement);
 			}
 
 			//set column formatter
@@ -198,9 +199,56 @@ var Column = function(def, parent){
 		//build header element for column group
 		_buildGroupHeader:function(){
 			var self = this,
+			def = self.definition,
 			table = self.table;
+
+			self.element.addClass("tabulator-col-group")
+			.attr("role", "columngroup")
+			.attr("aria-title", def.title);
+
+			self.element.append(self.groupElement);
 		},
 
+		//attach column to this group
+		attachColumn(column){
+			var self = this;
+
+			if(self.groupElement){
+				self.columns.push(column);
+				self.groupElement.append(column.getElement());
+			}else{
+				console.warn("Column Warning - Column being attached to another column instead of column group");
+			}
+		},
+
+		//vertically align header in column
+		verticalAlign:function(alignment){
+
+			if(this.parent.isGroup){
+				this.element.css("height", this.parent.getGroupElement().innerHeight())
+			}else{
+				this.element.css("height", this.parent.getElement().innerHeight())
+			}
+
+			//vertically align cell contents
+			if(!this.isGroup && alignment !== "top"){
+				if(alignment === "bottom"){
+					this.element.css({"padding-top": this.element.innerHeight() - this.contentElement.outerHeight()});
+				}else{
+					this.element.css({"padding-top": (this.element.innerHeight() -this.contentElement.outerHeight()) / 2 });
+				}
+			}
+
+			this.columns.forEach(function(column){
+				column.verticalAlign(alignment);
+			});
+		},
+
+		//clear vertical alignmenet
+		clearVerticalAlign:function(){
+			this.element.css("padding-top","");
+			this.element.css("ehight","");
+		},
 
 		//// Retreive Column Information ////
 
@@ -295,20 +343,18 @@ var Column = function(def, parent){
 
 	//initialize column
 	if(def.columns){
+
+		col.isGroup = true;
+
 		def.columns.forEach(function(def, i){
 			var newCol = new Column(def, col);
-
-			col.columns.push(newCol);
+			col.attachColumn(newCol);
 		});
 	}else{
 		parent.registerColumnPosition(col);
 	}
 
 	col._buildHeader();
-
-	if(col.visible){
-		col.parent.element.append(col.element);
-	}
 
 	return col;
 }

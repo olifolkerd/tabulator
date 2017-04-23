@@ -57,6 +57,8 @@ var ColumnManager = function(table){
 			if(self.table.options.fitColumns){
 				self.fitToTable();
 			}
+
+			self._verticalAlignHeaders();
 		},
 
 		registerColumnPosition:function(col){
@@ -65,6 +67,19 @@ var ColumnManager = function(table){
 			if(col.definition.field){
 				this.columnsByField[col.definition.field] = col;
 			}
+		},
+
+		//ensure column headers take up the correct amount of space in column groups
+		_verticalAlignHeaders(){
+			var self = this;
+
+			self.columns.forEach(function(column){
+				column.clearVerticalAlign();
+			});
+
+			self.columns.forEach(function(column){
+				column.verticalAlign(self.table.options.colVertAlign);
+			});
 		},
 
 		//////////////// Column Details /////////////////
