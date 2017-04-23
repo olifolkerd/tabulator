@@ -7,7 +7,7 @@ var Edit = function(table){
 		initializeColumn:function(column){
 			var self = this;
 
-			var config = {editor:false};
+			var config = {editor:false, blocked:false};
 
 			//set column editor
 			switch(typeof column.definition.editor){
@@ -61,23 +61,28 @@ var Edit = function(table){
 			});
 
 			element.on("focus", function(e){
-				e.stopPropagation();
 
-				var cellEditor = cell.column.extensions.edit.editor.call(self, element, cell.getValue(), cell.row.getData(), success, cancel);
+				if(!cell.column.extensions.edit.blocked){
+					e.stopPropagation();
 
-				//if editor returned, add to DOM, if false, abort edit
-				if(cellEditor !== false){
-					element.addClass("tabulator-editing");
-					cell.row.getElement().addClass("tabulator-row-editing");
-					element.empty();
-					element.append(cellEditor);
+					var cellEditor = cell.column.extensions.edit.editor.call(self, element, cell.getValue(), cell.row.getData(), success, cancel);
 
-					//prevent editing from triggering rowClick event
-					element.children().click(function(e){
-						e.stopPropagation();
-					})
+					//if editor returned, add to DOM, if false, abort edit
+					if(cellEditor !== false){
+						element.addClass("tabulator-editing");
+						cell.row.getElement().addClass("tabulator-row-editing");
+						element.empty();
+						element.append(cellEditor);
+
+						//prevent editing from triggering rowClick event
+						element.children().click(function(e){
+							e.stopPropagation();
+						})
+					}else{
+						element.blur();
+					}
 				}else{
-					cell.blur();
+					element.blur();
 				}
 
 			});

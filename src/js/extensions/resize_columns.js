@@ -57,11 +57,22 @@ var ResizeColumns = function(table){
 			}
 
 			function mouseUp(e){
+
+				//block editor from taking action while resizing is taking place
+				if(column.extensions.edit){
+					column.extensions.edit.blocked = false;
+				}
+
 				$("body").off("mouseup", mouseMove);
 				$("body").off("mousemove", mouseMove);
 			}
 
 			e.stopPropagation(); //prevent resize from interfereing with movable columns
+
+			//block editor from taking action while resizing is taking place
+			if(column.extensions.edit){
+				column.extensions.edit.blocked = true;
+			}
 
 			self.column = column;
 			self.startX = e.screenX;
