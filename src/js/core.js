@@ -33,7 +33,7 @@
 	 			tooltips: false, //Tool tip value
 	 			tooltipsHeader: false, //Tool tip for headers
 
-	 			initialSort:[{column:"id", dir:"asc"}], //initial sorting criteria
+	 			initialSort:false, //initial sorting criteria
 
 	 			index:"id", //filed for row index
 
