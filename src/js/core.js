@@ -33,6 +33,8 @@
 	 			tooltips: false, //Tool tip value
 	 			tooltipsHeader: false, //Tool tip for headers
 
+	 			initialSort:[{column:"id", dir:"asc"}], //initial sorting criteria
+
 
 	 			//Callbacks from events
 	 			rowClick:false,
@@ -111,6 +113,10 @@
 	 			element.append(self.rowManager.getElement());
 
 	 			self.columnManager.setColumns(self.options.columns);
+
+	 			if(self.extExists("sort") && self.options.initialSort){
+	 				self.extensions.sort.setSort(self.options.initialSort);
+	 			}
 	 		},
 
 	 		//configure the table

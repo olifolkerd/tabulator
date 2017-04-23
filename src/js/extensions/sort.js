@@ -3,7 +3,7 @@
  	var extension = {
 
 		table:table, //hold Tabulator object
-		sortlist:[], //holder current sort
+		sortList:[], //holder current sort
 
 		//initialize column header for sorting
 		initializeColumn:function(column, content){
@@ -42,6 +42,8 @@
 						}else{
 							self.setSort(column, "asc");
 						}
+
+						self.table.rowManager.renderTable();
 					}
 				});
 			}
@@ -53,9 +55,9 @@
 
 			sorters = [];
 
-			self.sortlist.forEach(function(item){
+			self.sortList.forEach(function(item){
 				if(item.column){
-					sorters.push({field:item.column.definition.field, dir:item.dir});
+					sorters.push({field:item.column.getField(), dir:item.dir});
 				}
 			});
 
@@ -66,30 +68,33 @@
 		setSort:function(sortList, dir){
 			var self = this;
 
+			var newSortList = [];
+
 			if(!Array.isArray(sortList)){
 				sortList = [{column: sortList, dir:dir}];
 			}
 
 			sortList.forEach(function(item){
 				var column;
+
 				if(typeof item.column == "string"){
 
 					column = self.table.columnManager.getColumnByField(item.column);
 
 					if(column){
 						item.column = column;
+						newSortList.push(item);
 					}else{
 						console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
-						item.column = false;
 					}
+				}else{
+					newSortList.push(item)
 				}
 			});
 
-			self.sortList = sortList;
+			self.sortList = newSortList;
 
 			self.sort();
-
-			self.table.rowManager.renderTable();
 		},
 
 		//work through sort list sorting data
@@ -104,9 +109,12 @@
 				}
 			})
 
-			if(self.sortList){
+			if(self.sortList.length){
 				lastSort = self.sortList[self.sortList.length-1];
-				self.setColumnHeader(lastSort.column, lastSort.dir);
+
+				if(lastSort.column){
+					self.setColumnHeader(lastSort.column, lastSort.dir);
+				}
 			}
 
 		},
@@ -131,6 +139,8 @@
 		//sort each item in sort list
 		_sortItem:function(column, dir, sortList, i){
 			var self = this;
+
+			console.log("sorting", column.getField())
 
 			var activeRows = self.table.rowManager.activeRows;
 
@@ -160,8 +170,8 @@
 			var el1 = dir == "asc" ? a : b;
 			var el2 = dir == "asc" ? b : a;
 
-			a = el1[column.definition.field];
-			b = el2[column.definition.field];
+			a = el1[column.getField()];
+			b = el2[column.getField()];
 
 			return column.extensions.sort.sorter.call(self, a, b, el1, el2, column, dir);
 		},

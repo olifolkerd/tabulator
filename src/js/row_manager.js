@@ -92,6 +92,11 @@ var RowManager = function(table){
 
 			self.activeRows = self.rows;
 
+			if(self.table.extExists("sort")){
+				console.log("datasort")
+				table.extensions.sort.sort();
+			}
+
 			self.renderTable();
 		},
 
