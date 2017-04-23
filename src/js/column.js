@@ -319,6 +319,8 @@ var Column = function(def, parent){
 		},
 
 		setWidth:function(width){
+			width = Math.max(this.minWidth, width);
+
 			this.width = width;
 
 			if(!this.isGroup){

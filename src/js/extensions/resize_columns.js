@@ -17,6 +17,10 @@ var ResizeColumns = function(table){
 			element.append(handle)
 			.append(prevHandle);
 
+			handle.on("click", function(e){
+				e.stopPropagation();
+			});
+
 			handle.on("mousedown", function(e){
 				var nearestColumn = column.getLastColumn();
 
