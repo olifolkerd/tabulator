@@ -29,11 +29,11 @@
 	 			dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
 	 			//Callbacks from events
-	 			rowClick:function(){},
-	 			rowDblClick:function(){},
+	 			rowClick:false,
+	 			rowDblClick:false,
+	 			rowContext:false,
 	 			rowAdded:function(){},
 	 			rowDeleted:function(){},
-	 			rowContext:function(){},
 	 			rowMoved:function(){},
 	 			rowUpdated:function(){},
 	 			rowSelectionChanged:function(){},
