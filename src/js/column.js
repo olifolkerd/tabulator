@@ -113,7 +113,10 @@ var Column = function(def, parent){
 				table.extensions.mutator.initializeColumn(self);
 			}
 
-
+			//set column mutator
+			if(table.extExists("accessor") && typeof def.accessor != "undefined"){
+				table.extensions.accessor.initializeColumn(self);
+			}
 
 			//set column visibility
 			if(typeof def.visible != "undefined"){

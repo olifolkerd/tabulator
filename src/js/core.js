@@ -141,7 +141,7 @@
 	 			var self = this;
 	 		},
 
-	 		////////////////// Data Loading //////////////////
+	 		////////////////// Data Handling //////////////////
 
 
 	 		//load data
@@ -198,7 +198,13 @@
 
 	 		//clear data
 	 		clearData:function(){
-	 			this.rowManager.setData([]);
+	 			this.rowManager.clearData();
+	 		},
+
+	 		//get table data array
+
+	 		getData:function(active){
+	 			return this.rowManager.getData(active);
 	 		},
 
 	 		//////////// General Public Functions ////////////

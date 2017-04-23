@@ -29,7 +29,7 @@ var Mutator = function(table){
 		},
 
 		//apply mutator to row
-		mutateRow(data){
+		transformRow(data){
 			var self = this;
 
 			self.table.columnManager.traverse(function(column){
@@ -40,7 +40,7 @@ var Mutator = function(table){
 					field = column.getField();
 
 					if(typeof data[field] != "undefined" && column.extensions.mutate.type != "edit"){
-						data[field] = column.extensions.mutate.mutator(data[field], "data", data);
+						data[field] = column.extensions.mutate.mutator(data[field], data, "data");
 					}
 				}
 			});

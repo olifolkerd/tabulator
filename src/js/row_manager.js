@@ -27,10 +27,12 @@ var RowManager = function(table){
 		},
 
 
-		////////////////// Data Loading //////////////////
+		////////////////// Data Handling //////////////////
 
 		setData:function(data){
 			var self = this;
+
+			self.rows = [];
 
 			data.forEach(function(def, i){
 				var row = new Row(def, self);
@@ -43,7 +45,20 @@ var RowManager = function(table){
 		},
 
 		clearData:function(){
+			this.setData([]);
+		},
 
+		getData:function(active){
+			var self = this,
+			output = [];
+
+			var rows = active ? self.rows : self.activeRows;
+
+			rows.forEach(function(row){
+				output.push(row.getData(true));
+			});
+
+			return output;
 		},
 
 		///////////////// Table Rendering /////////////////

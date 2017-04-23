@@ -13,9 +13,6 @@ var Row = function(data, parent){
 			return this.element;
 		},
 
-		getData:function(){
-			return this.data;
-		},
 
 		generateElement:function(){
 			var self = this;
@@ -47,17 +44,6 @@ var Row = function(data, parent){
 			}
 		},
 
-		setData:function(data){
-			var self = this;
-
-			if(self.table.extExists("mutator")){
-
-				self.data = self.table.extensions.mutator.mutateRow(data);
-			}else{
-				self.data = data;
-			}
-		},
-
 		normalizeHeight:function(){
 			var self = this;
 
@@ -66,7 +52,33 @@ var Row = function(data, parent){
 			self.cells.forEach(function(cell){
 				cell.setHeight(height);
 			});
-		}
+		},
+
+
+		//////////////// Data Management /////////////////
+
+		setData:function(data){
+			var self = this;
+
+			if(self.table.extExists("mutator")){
+				self.data = self.table.extensions.mutator.transformRow(data);
+			}else{
+				self.data = data;
+			}
+		},
+
+		getData:function(transform){
+			var self = this;
+
+			if(transform){
+				if(self.table.extExists("accessor")){
+					return self.table.extensions.accessor.transformRow(self.data);
+				}
+			}else{
+				return this.data;
+			}
+
+		},
 
 	}
 
