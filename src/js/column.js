@@ -42,6 +42,23 @@ var Column = function(def, parent){
 				self._buildColumnHeader();
 			}
 
+
+			//set header tooltips
+			var tooltip = self.definition.tooltipHeader || self.definition.tooltip === false  ? self.definition.tooltipHeader : self.table.options.tooltipsHeader;
+
+			if(tooltip){
+				if(tooltip === true){
+					tooltip = self.definition.title;
+				}else if(typeof(tooltip) == "function"){
+					tooltip = tooltip(column);
+				}
+
+				self.element.attr("title", tooltip);
+			}else{
+				self.element.attr("title", "");
+			}
+
+
 			//setup header click event bindings
 			if(typeof(def.headerOnClick) == "function"){
 				self.element.on("click", function(e){def.headerOnClick(e, self.element, self.definition.field, self.definition)})
@@ -185,6 +202,11 @@ var Column = function(def, parent){
 		//return colunm group element
 		getGroupElement:function(){
 			return this.groupElement;
+		},
+
+		//return field name
+		getField:function(){
+			return this.definition.field;
 		},
 
 		//////////////////// Actions ////////////////////

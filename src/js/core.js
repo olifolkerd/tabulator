@@ -28,6 +28,10 @@
 	 			columns:[],//store for colum header info
 	 			dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
+	 			tooltips: false, //Tool tip value
+	 			tooltipsHeader: false, //Tool tip for headers
+
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,

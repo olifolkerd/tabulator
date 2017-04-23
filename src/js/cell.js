@@ -12,21 +12,25 @@ var Cell = function(column, row){
 
 		//////////////// Setup Functions /////////////////
 
-		initialize:function(){
-			this.setWidth(column.width);
-			this.setValue(row.data[column.definition.field]);
-			this.setEventBindings();
+		//generate element
+		generateElement:function(){
+			this.setWidth(this.column.width);
+
+			this._configureCell();
+
+			this.setValue(this.row.data[this.column.getField()]);
 		},
 
-		getElement:function(){
-			return this.element;
-		},
 
-		setEventBindings:function(){
+		_configureCell:function(){
 			var self = this,
-			cellEvents = this.column.cellEvents,
-			element = this.element;
+			cellEvents = self.column.cellEvents,
+			element = self.element;
 
+			//set text alignment
+			element.css("text-align", typeof(self.column.definition.align) == "undefined" ? "" : self.column.definition.align);
+
+			//set event bindings
 			if (cellEvents.onClick){
 				self.element.on("click", function(e){
 					cellEvents.onClick(e, self.element, self.value, self.row.getData());
@@ -46,14 +50,8 @@ var Cell = function(column, row){
 			}
 		},
 
-		setValue:function(value){
-			this.value = value;
-			this.row.data[this.column.definition.field] = value;
-
-			this.generateContents();
-		},
-
-		generateContents:function(){
+		//generate cell contents
+		_generateContents:function(){
 			var self = this;
 
 			if(self.table.extExists("format")){
@@ -63,9 +61,41 @@ var Cell = function(column, row){
 			}
 		},
 
+		//generate tooltip text
+		_generateTooltip:function(){
+			var self = this;
+
+			var tooltip = self.column.definition.tooltip || self.column.definition.tooltip === false ? self.column.definition.tooltip : self.table.options.tooltips;
+
+			if(tooltip){
+				if(tooltip === true){
+					tooltip = self.value;
+				}else if(typeof(tooltip) == "function"){
+					tooltip = tooltip(self.column.getField(), self.value, self.row.getData());
+				}
+
+				self.element.attr("title", tooltip);
+			}else{
+				self.element.attr("title", "");
+			}
+		},
+
+
+		//////////////////// Getters ////////////////////
+		getElement:function(){
+			return this.element;
+		},
 
 
 		//////////////////// Actions ////////////////////
+
+		setValue:function(value){
+			this.value = value;
+			this.row.data[this.column.getField()] = value;
+
+			this._generateContents();
+			this._generateTooltip();
+		},
 
 		setWidth:function(width){
 			this.width = width;
@@ -76,10 +106,10 @@ var Cell = function(column, row){
 			return this.width || this.element.outerWidth();
 		},
 
-		// setMinWidth:function(minWidth){
-		// 	this.minWidth = minWidth;
-		// 	this.element.css("min-width", minWidth || "");
-		// },
+		setMinWidth:function(minWidth){
+			this.minWidth = minWidth;
+			this.element.css("min-width", minWidth || "");
+		},
 
 		setHeight:function(height){
 			this.height = height;
@@ -91,7 +121,7 @@ var Cell = function(column, row){
 		},
 	}
 
-	cell.initialize();
+	cell.generateElement();
 
 	return cell;
 }
