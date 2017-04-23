@@ -88,6 +88,19 @@ var RowManager = function(table){
 			});
 		},
 
+		//adjust the height of the table holder to fit in the Tabulator element
+		adjustTableSize:function(){
+			var self = this;
+
+			if(self.table.options.height){
+				self.element.css({
+					"min-height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
+					"height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
+					"max-height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
+				});
+			}
+		},
+
 	}
 
 	//initialize manager
@@ -101,39 +114,39 @@ var RowManager = function(table){
 	//scroll header along with table body
 	manager.element.scroll(function(){
 
-		var holder = $(this);
-		var left = holder.scrollLeft();
-		var top = holder.top();
+		// var holder = $(this);
+		// var left = holder.scrollLeft();
+		// var top = holder.top();
 
-		if(manager.scrollLeft != left){
-			manager.columnManager.scrolHoz(left);
-		}
-
-
-		//trigger progressive rendering on scroll
-		// if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
-		// 	if(!self.progressiveRenderLoading){
-		// 		if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
-		// 			if(self.options.progressiveRender == "remote"){
-		// 				if(self.paginationCurrentPage <= self.paginationMaxPage){
-		// 					self.progressiveRenderLoading = true;
-		// 					self._renderTable(true);
-		// 				}
-		// 			}else{
-		// 				if(self.paginationCurrentPage < self.paginationMaxPage){
-		// 					self.paginationCurrentPage++;
-		// 					self._renderTable(true);
-		// 				}
-		// 			}
-		// 		}
-		// 	}else{
-		// 		self.progressiveRenderLoadingNext = true;
-		// 	}
+		// if(manager.scrollLeft != left){
+		// 	manager.columnManager.scrolHoz(left);
 		// }
 
 
-		manager.scrollLeft = left;
-		manager.scrollTop = top;
+		// //trigger progressive rendering on scroll
+		// // if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
+		// // 	if(!self.progressiveRenderLoading){
+		// // 		if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
+		// // 			if(self.options.progressiveRender == "remote"){
+		// // 				if(self.paginationCurrentPage <= self.paginationMaxPage){
+		// // 					self.progressiveRenderLoading = true;
+		// // 					self._renderTable(true);
+		// // 				}
+		// // 			}else{
+		// // 				if(self.paginationCurrentPage < self.paginationMaxPage){
+		// // 					self.paginationCurrentPage++;
+		// // 					self._renderTable(true);
+		// // 				}
+		// // 			}
+		// // 		}
+		// // 	}else{
+		// // 		self.progressiveRenderLoadingNext = true;
+		// // 	}
+		// // }
+
+
+		// manager.scrollLeft = left;
+		// manager.scrollTop = top;
 	});
 
 

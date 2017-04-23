@@ -80,6 +80,8 @@ var ColumnManager = function(table){
 			self.columns.forEach(function(column){
 				column.verticalAlign(self.table.options.colVertAlign);
 			});
+
+			self.rowManager.adjustTableSize();
 		},
 
 		//////////////// Column Details /////////////////

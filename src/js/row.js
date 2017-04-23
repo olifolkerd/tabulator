@@ -44,6 +44,7 @@ var Row = function(data, parent){
 			}
 		},
 
+		//normalize the height of elements in the row
 		normalizeHeight:function(){
 			var self = this;
 
@@ -53,7 +54,6 @@ var Row = function(data, parent){
 				cell.setHeight(height);
 			});
 		},
-
 
 		//////////////// Data Management /////////////////
 
