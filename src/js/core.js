@@ -115,7 +115,7 @@
 
 	 			self.columnManager.setColumns(self.options.columns);
 
-	 			if(self.extExists("sort") && self.options.initialSort){
+	 			if(self.options.initialSort && self.extExists("sort", true)){
 	 				self.extensions.sort.setSort(self.options.initialSort);
 	 			}
 	 		},
