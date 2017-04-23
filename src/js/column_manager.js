@@ -78,6 +78,15 @@ var ColumnManager = function(table){
 			return this.columnsByIndex;
 		},
 
+		//travers across columns and call action
+		traverse:function(callback){
+			var self = this;
+
+			self.columnsByIndex.forEach(function(column,i){
+				callback(column, i);
+			});
+		},
+
 		//////////////// Cell Management /////////////////
 
 		generateCells:function(row){
