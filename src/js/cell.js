@@ -12,8 +12,38 @@ var Cell = function(column, row){
 
 		//////////////// Setup Functions /////////////////
 
+		initialize:function(){
+			this.setWidth(column.width);
+			this.setValue(row.data[column.definition.field]);
+			this.setEventBindings();
+		},
+
 		getElement:function(){
 			return this.element;
+		},
+
+		setEventBindings:function(){
+			var self = this,
+			cellEvents = this.column.cellEvents,
+			element = this.element;
+
+			if (cellEvents.onClick){
+				self.element.on("click", function(e){
+					cellEvents.onClick(e, self.element, self.value, self.row.getData());
+				});
+			}
+
+			if (cellEvents.onDblClick){
+				self.element.on("dblclick", function(e){
+					cellEvents.onDblClick(e, self.element, self.value, self.row.getData());
+				});
+			}
+
+			if (cellEvents.onContext){
+				self.element.on("contextmenu", function(e){
+					cellEvents.onContext(e, self.element, self.value, self.row.getData());
+				});
+			}
 		},
 
 		setValue:function(value){
@@ -32,6 +62,8 @@ var Cell = function(column, row){
 				self.element.html(self.value);
 			}
 		},
+
+
 
 		//////////////////// Actions ////////////////////
 
@@ -59,9 +91,7 @@ var Cell = function(column, row){
 		},
 	}
 
-	cell.setWidth(column.width);
-	cell.setValue(row.data[column.definition.field]);
-	// cell.setMinWidth(column.minWidth);
+	cell.initialize();
 
 	return cell;
 }

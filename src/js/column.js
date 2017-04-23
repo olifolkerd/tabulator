@@ -11,6 +11,12 @@ var Column = function(def, parent){
 
 		extensions:{}, //hold extension variables;
 
+		cellEvents:{
+			onClick:false,
+			onDblClick:false,
+			onContext:false,
+		},
+
 		width:null, //column width,
 		minWidth:null, //column minimum width,
 
@@ -25,7 +31,8 @@ var Column = function(def, parent){
 
 		//build header element
 		_buildHeader:function(){
-			var self = this;
+			var self = this,
+			def = self.definition;
 
 			self.element.empty();
 
@@ -34,6 +41,33 @@ var Column = function(def, parent){
 			}else{
 				self._buildColumnHeader();
 			}
+
+			//setup header click event bindings
+			if(typeof(def.headerOnClick) == "function"){
+				self.element.on("click", function(e){def.headerOnClick(e, self.element, self.definition.field, self.definition)})
+			}
+
+			if(typeof(def.headerOnDblClick) == "function"){
+				self.element.on("dblclick", function(e){def.headerOnDblClick(e, self.element, self.definition.field, self.definition)});
+			}
+
+			if(typeof(def.headerOnContext) == "function"){
+				self.element.on("contextmenu", function(e){def.headerOnContext(e, self.element, self.definition.field, self.definition)});
+			}
+
+			//store column cell click event bindings
+			if(typeof(def.onClick) == "function"){
+				self.cellEvents.onClick = def.onClick;
+			}
+
+			if(typeof(def.onDblClick) == "function"){
+				self.cellEvents.onDblClick = def.onDblClick;
+			}
+
+			if(typeof(def.onContext) == "function"){
+				self.cellEvents.onContext = def.onContext;
+			}
+
 		},
 
 		//build header element for header
@@ -223,6 +257,8 @@ var Column = function(def, parent){
 
 			}
 		},
+
+		//////////////// Event Bindings /////////////////
 	};
 
 	//initialize column
