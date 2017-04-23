@@ -61,11 +61,16 @@ var Edit = function(table){
 			});
 
 			element.on("focus", function(e){
+				var rendered = function(){};
+
+				function onRendered(callback){
+					rendered = callback;
+				}
 
 				if(!cell.column.extensions.edit.blocked){
 					e.stopPropagation();
 
-					var cellEditor = cell.column.extensions.edit.editor.call(self, element, cell.getValue(), cell.row.getData(), success, cancel);
+					var cellEditor = cell.column.extensions.edit.editor.call(self, element, cell.getValue(), cell.row.getData(), onRendered, success, cancel);
 
 					//if editor returned, add to DOM, if false, abort edit
 					if(cellEditor !== false){
@@ -73,6 +78,9 @@ var Edit = function(table){
 						cell.row.getElement().addClass("tabulator-row-editing");
 						element.empty();
 						element.append(cellEditor);
+
+						//trigger onRendered Callback
+						rendered();
 
 						//prevent editing from triggering rowClick event
 						element.children().click(function(e){
@@ -91,7 +99,7 @@ var Edit = function(table){
 
 		//default data editors
 		editors:{
-			input:function(cell, value, data, success, cancel){
+			input:function(cell, value, data, onRendered, success, cancel){
 				//create and style input
 				var input = $("<input type='text'/>");
 				input.css({
@@ -101,11 +109,9 @@ var Edit = function(table){
 				})
 				.val(value);
 
-				if(cell.hasClass("tabulator-cell")){
-					setTimeout(function(){
-						input.focus();
-					},100);
-				}
+				onRendered(function(){
+					input.focus();
+				});
 
 				//submit new value on blur
 				input.on("change blur", function(e){
@@ -121,7 +127,7 @@ var Edit = function(table){
 
 				return input;
 			},
-			textarea:function(cell, value, data, success, cancel){
+			textarea:function(cell, value, data, onRendered, success, cancel){
 				var self = this;
 
 				var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
@@ -140,11 +146,9 @@ var Edit = function(table){
 		        })
 		        .val(value);
 
-		        if(cell.hasClass("tabulator-cell")){
-		        	setTimeout(function(){
-		        		input.focus();
-		        	},100);
-		        }
+		        onRendered(function(){
+		        	input.focus();
+		        });
 
 		        //submit new value on blur
 		        input.on("change blur", function(e){
@@ -171,7 +175,7 @@ var Edit = function(table){
 
 		        return input;
 		    },
-		    number:function(cell, value, data, success, cancel){
+		    number:function(cell, value, data, onRendered, success, cancel){
 				//create and style input
 				var input = $("<input type='number'/>");
 				input.css({
@@ -181,11 +185,9 @@ var Edit = function(table){
 				})
 				.val(value);
 
-				if(cell.hasClass("tabulator-cell")){
-					setTimeout(function(){
-						input.focus();
-					},100);
-				}
+				onRendered(function(){
+					input.focus();
+				});
 
 				//submit new value on blur
 				input.on("blur", function(e){
@@ -201,7 +203,7 @@ var Edit = function(table){
 
 				return input;
 			},
-			star:function(cell, value, data, success, cancel){
+			star:function(cell, value, data, onRendered, success, cancel){
 
 				var maxStars = $("svg", cell).length;
 				maxStars = maxStars ?maxStars : 5;
@@ -285,7 +287,7 @@ var Edit = function(table){
 
 				return stars;
 			},
-			progress:function(cell, value, data, success, cancel){
+			progress:function(cell, value, data, onRendered, success, cancel){
 				//set default parameters
 				var max = $("div", cell).data("max");
 				var min = $("div", cell).data("min");
@@ -369,7 +371,7 @@ var Edit = function(table){
 				return bar;
 			},
 
-			tickCross:function(cell, value, data, success, cancel){
+			tickCross:function(cell, value, data, onRendered, success, cancel){
 				//create and style input
 				var input = $("<input type='checkbox'/>");
 				input.css({
@@ -378,11 +380,9 @@ var Edit = function(table){
 				})
 				.val(value);
 
-				if(cell.hasClass("tabulator-cell")){
-					setTimeout(function(){
-						input.focus();
-					},100);
-				}
+				onRendered(function(){
+					input.focus();
+				});
 
 				if(value === true || value === "true" || value === "True" || value === 1){
 					input.prop("checked", true);
@@ -405,7 +405,7 @@ var Edit = function(table){
 				return input;
 			},
 
-			tick:function(cell, value, data, success, cancel){
+			tick:function(cell, value, data, onRendered, success, cancel){
 				//create and style input
 				var input = $("<input type='checkbox'/>");
 				input.css({
@@ -414,11 +414,9 @@ var Edit = function(table){
 				})
 				.val(value);
 
-				if(cell.hasClass("tabulator-cell")){
-					setTimeout(function(){
-						input.focus();
-					},100);
-				}
+				onRendered(function(){
+					input.focus();
+				});
 
 				if(value === true || value === "true" || value === "True" || value === 1){
 					input.prop("checked", true);
