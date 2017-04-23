@@ -48,6 +48,11 @@ var Mutator = function(table){
 			return data;
 		},
 
+		//apply mutator to new cell value
+		transformCell:function(cell, value){
+			return cell.column.extensions.mutate.mutator(value, cell.roww.getData(), "edit")
+		},
+
 		//default mutators
 		mutators:{},
 	}

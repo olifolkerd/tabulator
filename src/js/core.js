@@ -35,6 +35,7 @@
 
 	 			initialSort:[{column:"id", dir:"asc"}], //initial sorting criteria
 
+	 			index:"id", //filed for row index
 
 	 			//Callbacks from events
 	 			rowClick:false,

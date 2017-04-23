@@ -112,15 +112,21 @@ var Column = function(def, parent){
 				table.extensions.format.initializeColumn(self);
 			}
 
+			//set column editor
+			if(typeof def.editor != "undefined" && table.extExists("edit")){
+				table.extensions.edit.initializeColumn(self);
+			}
+
 			//set column mutator
 			if(typeof def.mutator != "undefined" && table.extExists("mutator")){
 				table.extensions.mutator.initializeColumn(self);
 			}
 
-			//set column mutator
+			//set column accessor
 			if(typeof def.accessor != "undefined" && table.extExists("accessor")){
 				table.extensions.accessor.initializeColumn(self);
 			}
+
 
 			//set column visibility
 			if(typeof def.visible != "undefined"){

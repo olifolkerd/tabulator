@@ -140,8 +140,6 @@
 		_sortItem:function(column, dir, sortList, i){
 			var self = this;
 
-			console.log("sorting", column.getField())
-
 			var activeRows = self.table.rowManager.activeRows;
 
 			activeRows.sort(function(a, b){

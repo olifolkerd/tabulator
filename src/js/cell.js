@@ -48,6 +48,10 @@ var Cell = function(column, row){
 					cellEvents.onContext(e, self.element, self.value, self.row.getData());
 				});
 			}
+
+			if(self.column.extensions.edit){
+				self.table.extensions.edit.bindEditor(self);
+			}
 		},
 
 		//generate cell contents
@@ -86,12 +90,31 @@ var Cell = function(column, row){
 			return this.element;
 		},
 
+		getValue:function(){
+			return this.value;
+		},
+
 
 		//////////////////// Actions ////////////////////
 
-		setValue:function(value){
-			this.value = value;
-			this.row.data[this.column.getField()] = value;
+		setValue:function(value, userEdit){
+			var oldVal,
+			changed = false;
+
+			if(this.value != value){
+
+				if(userEdit){
+					changed = true;
+					oldVal = this.value;
+				}
+
+				if(userEdit && this.column.extensions.mutate && this.column.extensions.mutate.type !== "data"){
+					value = this.table.extensions.mutator.transformCell(cell, value);
+				}
+
+				this.value = value;
+				this.row.data[this.column.getField()] = value;
+			}
 
 			this._generateContents();
 			this._generateTooltip();
@@ -99,6 +122,11 @@ var Cell = function(column, row){
 			//set resizable handles
 			if(this.table.options.colResizable && this.table.extExists("resizeColumns")){
 				this.table.extensions.resizeColumns.initializeColumn(this.column, this.element);
+			}
+
+			if(changed){
+				this.table.options.cellEdited(this.row.getData()[this.table.options.index], this.column.getField(), value, oldVal, this.row.getData(), this.getElement(), this.row.getElement());
+				this.table.options.dataEdited(this.table.rowManager.getData());
 			}
 		},
 

@@ -3,9 +3,90 @@ var Edit = function(table){
 	var extension = {
 		table:table, //hold Tabulator object
 
+		//initialize column editor
+		initializeColumn:function(column){
+			var self = this;
+
+			var config = {editor:false};
+
+			//set column editor
+			switch(typeof column.definition.editor){
+				case "string":
+				if(self.editors[column.definition.editor]){
+					config.editor = self.editors[column.definition.editor]
+				}else{
+					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+				}
+				break;
+
+				case "function":
+				config.editor = column.definition.editor;
+				break;
+			}
+
+			if(config.editor){
+				column.extensions.edit = config;
+			}
+
+		},
+
+		clearEditor:function(cell){
+			cell.getElement().removeClass("tabulator-editing").empty();
+			cell.row.getElement().removeClass("tabulator-row-editing");
+		},
+
+		//return a formatted value for a cell
+		bindEditor:function(cell){
+			var self = this,
+			element = cell.getElement();
+
+			//handle successfull value change
+			function success(value){
+				self.clearEditor(cell);
+				cell.setValue(value, true);
+			};
+
+			//handle aborted edit
+			function cancel(){
+				self.clearEditor(cell);
+				cell.setValue(cell.getValue());
+			};
+
+			element.attr("tabindex", 0);
+
+			element.on("click", function(e){
+				if(!$(this).hasClass("tabulator-editing")){
+					$(this).focus();
+				}
+			});
+
+			element.on("focus", function(e){
+				e.stopPropagation();
+
+				var cellEditor = cell.column.extensions.edit.editor.call(self, element, cell.getValue(), cell.row.getData(), success, cancel);
+
+				//if editor returned, add to DOM, if false, abort edit
+				if(cellEditor !== false){
+					element.addClass("tabulator-editing");
+					cell.row.getElement().addClass("tabulator-row-editing");
+					element.empty();
+					element.append(cellEditor);
+
+					//prevent editing from triggering rowClick event
+					element.children().click(function(e){
+						e.stopPropagation();
+					})
+				}else{
+					cell.blur();
+				}
+
+			});
+		},
+
+
 		//default data editors
 		editors:{
-			input:function(cell, value, data){
+			input:function(cell, value, data, success, cancel){
 				//create and style input
 				var input = $("<input type='text'/>");
 				input.css({
@@ -23,19 +104,19 @@ var Edit = function(table){
 
 				//submit new value on blur
 				input.on("change blur", function(e){
-					cell.trigger("editval", input.val());
+					success(input.val());
 				});
 
 				//submit new value on enter
 				input.on("keydown", function(e){
 					if(e.keyCode == 13){
-						cell.trigger("editval", input.val());
+						success(input.val());
 					}
 				});
 
 				return input;
 			},
-			textarea:function(cell, value, data){
+			textarea:function(cell, value, data, success, cancel){
 				var self = this;
 
 				var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
@@ -62,7 +143,7 @@ var Edit = function(table){
 
 		        //submit new value on blur
 		        input.on("change blur", function(e){
-		        	cell.trigger("editval", input.val());
+		        	success(input.val());
 		        	setTimeout(function(){
 		        		self._resizeRow(row);
 		        	},300)
@@ -85,7 +166,7 @@ var Edit = function(table){
 
 		        return input;
 		    },
-		    number:function(cell, value, data){
+		    number:function(cell, value, data, success, cancel){
 				//create and style input
 				var input = $("<input type='number'/>");
 				input.css({
@@ -103,19 +184,19 @@ var Edit = function(table){
 
 				//submit new value on blur
 				input.on("blur", function(e){
-					cell.trigger("editval", input.val());
+					success(input.val());
 				});
 
 				//submit new value on enter
 				input.on("keydown", function(e){
 					if(e.keyCode == 13){
-						cell.trigger("editval", input.val());
+						success(input.val());
 					}
 				});
 
 				return input;
 			},
-			star:function(cell, value, data){
+			star:function(cell, value, data, success, cancel){
 
 				var maxStars = $("svg", cell).length;
 				maxStars = maxStars ?maxStars : 5;
@@ -155,12 +236,12 @@ var Edit = function(table){
 				});
 
 				stars.on("click", function(e){
-					$(this).closest(".tabulator-cell").trigger("editval", 0);
+					success(0);
 				});
 
 				stars.on("click", "svg", function(e){
-					var val = $(this).prevAll("svg").length + 1;
-					cell.trigger("editval", val);
+					e.stopPropagation();
+					success($(this).prevAll("svg").length + 1);
 				});
 
 				cell.css({
@@ -170,7 +251,7 @@ var Edit = function(table){
 				});
 
 				cell.on("blur", function(){
-					$(this).trigger("editcancel");
+					cancel();
 				});
 
 				//allow key based navigation
@@ -191,7 +272,7 @@ var Edit = function(table){
 						break;
 
 						case 13: //enter
-						cell.trigger("editval", $(".tabulator-star-active", stars).length);
+						success($(".tabulator-star-active", stars).length);
 						break;
 
 					}
@@ -199,7 +280,7 @@ var Edit = function(table){
 
 				return stars;
 			},
-			progress:function(cell, value, data){
+			progress:function(cell, value, data, success, cancel){
 				//set default parameters
 				var max = $("div", cell).data("max");
 				var min = $("div", cell).data("min");
@@ -221,7 +302,7 @@ var Edit = function(table){
 
 				var newVal = function(){
 					var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
-					cell.trigger("editval", newval);
+					success(newval);
 					cell.attr("aria-valuenow", newval).attr("aria-label", value);
 				}
 
@@ -277,13 +358,13 @@ var Edit = function(table){
 				});
 
 				cell.on("blur", function(){
-					$(this).trigger("editcancel");
+					cancel();
 				});
 
 				return bar;
 			},
 
-			tickCross:function(cell, value, data){
+			tickCross:function(cell, value, data, success, cancel){
 				//create and style input
 				var input = $("<input type='checkbox'/>");
 				input.css({
@@ -306,20 +387,20 @@ var Edit = function(table){
 
 				//submit new value on blur
 				input.on("change blur", function(e){
-					cell.trigger("editval", input.is(":checked"));
+					success(input.is(":checked"));
 				});
 
 				//submit new value on enter
 				input.on("keydown", function(e){
 					if(e.keyCode == 13){
-						cell.trigger("editval", input.is(":checked"));
+						success(input.is(":checked"));
 					}
 				});
 
 				return input;
 			},
 
-			tick:function(cell, value, data){
+			tick:function(cell, value, data, success, cancel){
 				//create and style input
 				var input = $("<input type='checkbox'/>");
 				input.css({
@@ -342,13 +423,13 @@ var Edit = function(table){
 
 				//submit new value on blur
 				input.on("change blur", function(e){
-					cell.trigger("editval", input.is(":checked"));
+					success(input.is(":checked"));
 				});
 
 				//submit new value on enter
 				input.on("keydown", function(e){
 					if(e.keyCode == 13){
-						cell.trigger("editval", input.is(":checked"));
+						success(input.is(":checked"));
 					}
 				});
 
