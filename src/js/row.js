@@ -2,7 +2,7 @@ var Row = function(data, parent){
 
 	var row = {
 		table:parent.table,
-		data:data,
+		data:{},
 		parent:parent,
 		element:$("<div class='tabulator-row' role='row'></div>"),
 		cells:[],
@@ -47,6 +47,17 @@ var Row = function(data, parent){
 			}
 		},
 
+		setData:function(data){
+			var self = this;
+
+			if(self.table.extExists("mutator")){
+
+				self.data = self.table.extensions.mutator.mutateRow(data);
+			}else{
+				self.data = data;
+			}
+		},
+
 		normalizeHeight:function(){
 			var self = this;
 
@@ -59,6 +70,7 @@ var Row = function(data, parent){
 
 	}
 
+	row.setData(data);
 	row.generateElement();
 
 	return row;

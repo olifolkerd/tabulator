@@ -108,6 +108,13 @@ var Column = function(def, parent){
 				table.extensions.format.initializeColumn(self);
 			}
 
+			//set column mutator
+			if(table.extExists("mutator") && typeof def.mutator != "undefined"){
+				table.extensions.mutator.initializeColumn(self);
+			}
+
+
+
 			//set column visibility
 			if(typeof def.visible != "undefined"){
 				if(def.visible){
