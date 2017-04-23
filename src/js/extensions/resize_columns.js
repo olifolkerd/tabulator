@@ -3,7 +3,7 @@ var ResizeColumns = function(table){
 	var extension = {
 		table:table, //hold Tabulator object
 
-		column:false,
+		startColumn:false,
 		startX:false,
 		startWidth:false,
 
@@ -29,6 +29,7 @@ var ResizeColumns = function(table){
 				var nearestColumn = column.getLastColumn();
 
 				if(nearestColumn){
+					self.startColumn = column;
 					self._mouseDown(e, nearestColumn);
 				}
 			});
@@ -43,6 +44,7 @@ var ResizeColumns = function(table){
 					prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
 
 					if(prevColumn){
+						self.startColumn = column;
 						self._mouseDown(e, prevColumn);
 					}
 				}
@@ -59,8 +61,8 @@ var ResizeColumns = function(table){
 			function mouseUp(e){
 
 				//block editor from taking action while resizing is taking place
-				if(column.extensions.edit){
-					column.extensions.edit.blocked = false;
+				if(self.startColumn.extensions.edit){
+					self.startColumn.extensions.edit.blocked = false;
 				}
 
 				$("body").off("mouseup", mouseMove);
@@ -70,11 +72,10 @@ var ResizeColumns = function(table){
 			e.stopPropagation(); //prevent resize from interfereing with movable columns
 
 			//block editor from taking action while resizing is taking place
-			if(column.extensions.edit){
-				column.extensions.edit.blocked = true;
+			if(self.startColumn.extensions.edit){
+				self.startColumn.extensions.edit.blocked = true;
 			}
 
-			self.column = column;
 			self.startX = e.screenX;
 			self.startWidth = column.getWidth();
 
