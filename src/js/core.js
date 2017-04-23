@@ -25,6 +25,7 @@
 	 			fitColumns:false, //fit colums to width of screen;
 	 			colMinWidth:40, //minimum global width for a column
 	 			colVertAlign:"top", //vertical alignment of column headers
+	 			colResizable:true, //resizable columns
 
 	 			columns:[],//store for colum header info
 	 			dateFormat: "dd/mm/yyyy", //date format to be used for sorting

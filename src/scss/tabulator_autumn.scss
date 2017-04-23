@@ -115,24 +115,6 @@ $footerSeperatorColor:#391D04; //footer bottom seperator color
 				}
 			}
 
-			//column resize handles
-			.tabulator-handle{
-				position:absolute;
-				right:0;
-				top:0;
-				bottom:0;
-				width:5px;
-
-				&.prev{
-					left:0;
-					right:auto;
-				}
-
-				&:hover{
-					cursor:ew-resize;
-				}
-			}
-
 			//complex header column group
 			&.tabulator-col-group{
 
@@ -152,7 +134,7 @@ $footerSeperatorColor:#391D04; //footer bottom seperator color
 
 			//hide left resize handle on first column
 			&:first-child{
-				.tabulator-handle.prev{
+				.tabulator-col-resize-handle.prev{
 					display: none;
 				}
 			}
@@ -332,20 +314,20 @@ $footerSeperatorColor:#391D04; //footer bottom seperator color
 				}
 
 				.tabulator-frozen{
-				    display: inline-block;
-				    position: absolute;
+					display: inline-block;
+					position: absolute;
 
-				    background-color: inherit;
+					background-color: inherit;
 
-				    z-index: 10;
+					z-index: 10;
 
-				    &.tabulator-frozen-left{
-				        border-right:1px solid $rowBorderColor;
-				    }
+					&.tabulator-frozen-left{
+						border-right:1px solid $rowBorderColor;
+					}
 
-				    &.tabulator-frozen-right{
-				        border-left:2px solid $rowBorderColor;
-				    }
+					&.tabulator-frozen-right{
+						border-left:2px solid $rowBorderColor;
+					}
 				}
 
 				//cell element
@@ -368,6 +350,13 @@ $footerSeperatorColor:#391D04; //footer bottom seperator color
 						input, select{
 							border:1px;
 							background:transparent;
+						}
+					}
+
+					//hide left resize handle on first column
+					&:first-child{
+						.tabulator-col-resize-handle.prev{
+							display: none;
 						}
 					}
 				}
@@ -439,6 +428,25 @@ $footerSeperatorColor:#391D04; //footer bottom seperator color
 			}
 		}
 	}
+
+	//column resize handles
+	.tabulator-col-resize-handle{
+		position:absolute;
+		right:0;
+		top:0;
+		bottom:0;
+		width:5px;
+
+		&.prev{
+			left:0;
+			right:auto;
+		}
+
+		&:hover{
+			cursor:ew-resize;
+		}
+	}
+
 
 	//footer element
 	.tabulator-footer{

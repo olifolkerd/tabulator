@@ -63,6 +63,10 @@ var Column = function(def, parent){
 				self.element.attr("title", "");
 			}
 
+			//set resizable handles
+			if(self.table.options.colResizable && self.table.extExists("resizeColumns")){
+				self.table.extensions.resizeColumns.initializeColumn(self, self.element);
+			}
 
 			//setup header click event bindings
 			if(typeof(def.headerOnClick) == "function"){
@@ -89,7 +93,6 @@ var Column = function(def, parent){
 			if(typeof(def.onContext) == "function"){
 				self.cellEvents.onContext = def.onContext;
 			}
-
 		},
 
 		//build header element for header
@@ -100,7 +103,7 @@ var Column = function(def, parent){
 			sortable;
 
 			//set column sorter
-			if(table.extExists("sort") && typeof def.sorter != "undefined"){
+			if(typeof def.sorter != "undefined" && table.extExists("sort")){
 				table.extensions.sort.initializeColumn(self, self.contentElement);
 			}
 
@@ -110,12 +113,12 @@ var Column = function(def, parent){
 			}
 
 			//set column mutator
-			if(table.extExists("mutator") && typeof def.mutator != "undefined"){
+			if(typeof def.mutator != "undefined" && table.extExists("mutator")){
 				table.extensions.mutator.initializeColumn(self);
 			}
 
 			//set column mutator
-			if(table.extExists("accessor") && typeof def.accessor != "undefined"){
+			if(typeof def.accessor != "undefined" && table.extExists("accessor")){
 				table.extensions.accessor.initializeColumn(self);
 			}
 
@@ -267,6 +270,32 @@ var Column = function(def, parent){
 			return this.definition.field;
 		},
 
+		//return the first column in a group
+		getFirstColumn:function(){
+			if(!this.isGroup){
+				return this;
+			}else{
+				if(this.columns.length){
+					return this.columns[0].getFirstColumn();
+				}else{
+					return false;
+				}
+			}
+		},
+
+		//return the last column in a group
+		getLastColumn:function(){
+			if(!this.isGroup){
+				return this;
+			}else{
+				if(this.columns.length){
+					return this.columns[this.columns.length -1].getLastColumn();
+				}else{
+					return false;
+				}
+			}
+		},
+
 		//////////////////// Actions ////////////////////
 
 		//show column
@@ -286,11 +315,17 @@ var Column = function(def, parent){
 		setWidth:function(width){
 			this.width = width;
 
-			this.element.css("width", width || "");
+			if(!this.isGroup){
+				this.element.css("width", width || "");
 
-			this.cells.forEach(function(cell){
-				cell.setWidth(width);
-			});
+				this.cells.forEach(function(cell){
+					cell.setWidth(width);
+				});
+			}
+		},
+
+		getWidth:function(){
+			return this.element.outerWidth();
 		},
 
 		setMinWidth:function(minWidth){

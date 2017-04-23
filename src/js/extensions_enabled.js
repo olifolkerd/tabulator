@@ -2,6 +2,7 @@
 /*=include extensions/format.js */
 /*=include extensions/edit.js */
 /*=include extensions/page.js */
+/*=include extensions/resize_columns.js */
 
 /*=include extensions/accessor.js */
 /*=include extensions/mutator.js */

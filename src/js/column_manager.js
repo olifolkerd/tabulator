@@ -25,6 +25,8 @@ var ColumnManager = function(table){
 			var hozAdjust = 0;
 			var scrollWidth = self.element[0].scrollWidth - table.element.innerWidth();
 
+			self.element.scrollLeft(left);
+
 			//adjust for vertical scrollbar moving table when present
 			if(left > scrollWidth){
 				hozAdjust = left - scrollWidth
@@ -86,6 +88,16 @@ var ColumnManager = function(table){
 
 		getColumnByField:function(field){
 			return this.columnsByField[field];
+		},
+
+		getColumnByIndex:function(index){
+			return this.columnsByIndex[index];
+		},
+
+		findColumnIndex:function(column){
+			return this.columnsByIndex.findIndex(function(col){
+				return column === col;
+			});
 		},
 
 		//return all columns that are not groups
