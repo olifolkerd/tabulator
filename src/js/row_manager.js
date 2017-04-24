@@ -125,7 +125,7 @@ var RowManager = function(table){
 			}else{
 				self.activeRows = self.rows;
 			}
-			console.log(self.activeRows.length);
+
 			if(self.table.extExists("sort")){
 				if(table.extensions.filter.hasChanged() || filterChanged || dataChanged){
 					table.extensions.sort.sort();

@@ -68,6 +68,12 @@ var Column = function(def, parent){
 				self.table.extensions.resizeColumns.initializeColumn(self, self.element);
 			}
 
+			//set resizable handles
+			if(def.headerFilter && self.table.extExists("filter") && self.table.extExists("edit")){
+				self.table.extensions.filter.initializeColumn(self);
+			}
+
+
 			//setup header click event bindings
 			if(typeof(def.headerOnClick) == "function"){
 				self.element.on("click", function(e){def.headerOnClick(e, self.element, self.definition.field, self.definition)})
