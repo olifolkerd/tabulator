@@ -5,14 +5,13 @@
 		table:table, //hold Tabulator object
 		sortList:[], //holder current sort
 
+		changed:false,
+
 		//initialize column header for sorting
 		initializeColumn:function(column, content){
 			var self = this;
 
 			var sorter = false;
-
-
-
 
 			//set sorter on column
 			if(typeof column.definition.sorter == "string"){
@@ -47,6 +46,13 @@
 					}
 				});
 			}
+		},
+
+		//check if the sorters have changed since last use
+		hasChanged(){
+			var changed = this.changed;
+			this.changed = false;
+			return changed;
 		},
 
 		//return current sorters
@@ -84,11 +90,13 @@
 					if(column){
 						item.column = column;
 						newSortList.push(item);
+						self.changed = true;
 					}else{
 						console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
 					}
 				}else{
-					newSortList.push(item)
+					newSortList.push(item);
+					self.changed = true;
 				}
 			});
 

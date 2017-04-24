@@ -90,13 +90,7 @@ var RowManager = function(table){
 				self.rows.push(row);
 			});
 
-			self.activeRows = self.rows;
-
-			if(self.table.extExists("sort")){
-				table.extensions.sort.sort();
-			}
-
-			self.renderTable();
+			self.refreshActiveData(true);
 		},
 
 		clearData:function(){
@@ -114,6 +108,31 @@ var RowManager = function(table){
 			});
 
 			return output;
+		},
+
+		//set active data set
+		refreshActiveData:function(dataChanged){
+			var self = this,
+			filterChanged = false;
+
+			if(self.table.extExists("filter")){
+				filterChanged = table.extensions.filter.hasChanged()
+
+				if(filterChanged || dataChanged){
+					table.extensions.filter.filter();
+				}
+
+			}else{
+				self.activeRows = self.rows;
+			}
+			console.log(self.activeRows.length);
+			if(self.table.extExists("sort")){
+				if(table.extensions.filter.hasChanged() || filterChanged || dataChanged){
+					table.extensions.sort.sort();
+				}
+			}
+
+			self.renderTable();
 		},
 
 		///////////////// Table Rendering /////////////////

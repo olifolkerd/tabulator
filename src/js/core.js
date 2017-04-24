@@ -244,6 +244,56 @@
 	 			}
 	 		},
 
+
+	 		///////////////////// Filtering ////////////////////
+
+	 		//set standard filters
+	 		setFilter:function(field, type, value){
+	 			if(this.extExists("filter", true)){
+	 				this.extensions.filter.setFilter(field, type, value);
+	 				this.rowManager.refreshActiveData();
+	 			}
+	 		},
+
+	 		//add filter to array
+	 		addFilter:function(field, type, value){
+	 			if(this.extExists("filter", true)){
+	 				this.extensions.filter.addFilter(field, type, value);
+	 				this.rowManager.refreshActiveData();
+	 			}
+	 		},
+
+	 		//get all filters
+	 		getFilter:function(){
+	 			if(this.extExists("filter", true)){
+	 				return this.extensions.filter.getFilter();
+	 			}
+	 		},
+
+	 		//remove filter from array
+	 		removeFilter:function(field, type, value){
+	 			if(this.extExists("filter", true)){
+	 				this.extensions.filter.removeFilter(field, type, value);
+	 				this.rowManager.refreshActiveData();
+	 			}
+	 		},
+
+	 		//clear filters
+	 		clearFilter:function(all){
+	 			if(this.extExists("filter", true)){
+	 				this.extensions.filter.clearFilter(all);
+	 				this.rowManager.refreshActiveData();
+	 			}
+	 		},
+
+	 		//clear header filters
+	 		clearHeaderFilter:function(){
+	 			if(this.extExists("filter", true)){
+	 				this.extensions.filter.clearHeaderFilter();
+	 				this.rowManager.refreshActiveData();
+	 			}
+	 		},
+
 	 		////////////// Extension Management //////////////
 
 	 		//object to hold extensions
