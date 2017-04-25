@@ -114,6 +114,17 @@ var ColumnManager = function(table){
 			});
 		},
 
+		getDefinitions:function(active){
+			var self = this,
+			output = [];
+
+			self.columnsByIndex.forEach(function(column){
+				output.push(column.getDefinition());
+			});
+
+			return output;
+		},
+
 		//////////////// Cell Management /////////////////
 
 		generateCells:function(row){

@@ -47,9 +47,7 @@ var Filter = function(table){
 			};
 
 			//handle aborted edit
-			function cancel(){
-
-			};
+			function cancel(){};
 
 			if(field){
 

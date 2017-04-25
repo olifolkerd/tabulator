@@ -294,6 +294,14 @@
 	 			}
 	 		},
 
+	 		/////////////// Download Management //////////////
+
+	 		download:function(type, filename, options){
+	 			if(this.extExists("download", true)){
+	 				this.extensions.download.download(type, filename, options);
+	 			}
+	 		},
+
 	 		////////////// Extension Management //////////////
 
 	 		//object to hold extensions

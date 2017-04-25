@@ -308,6 +308,11 @@ var Column = function(def, parent){
 			}
 		},
 
+		//return column definition object
+		getDefinition:function(){
+			return this.definition;
+		},
+
 		//////////////////// Actions ////////////////////
 
 		//show column
