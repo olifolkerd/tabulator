@@ -83,19 +83,26 @@
 
 	 			self.bindExtensions();
 
-	 			self.columnManager = new ColumnManager(self);
-	 			self.rowManager = new RowManager(self);
-
-	 			self.columnManager.setRowManager(self.rowManager);
-	 			self.rowManager.setColumnManager(self.columnManager);
-
-
 	 			if(element.is("table")){
-	 				self._parseTable();
+	 				if(this.extExists("htmlTableImport", true)){
+	 					self.extensions.htmlTableImport.parseTable();
+	 				}
 	 			}else{
+
+	 				self.columnManager = new ColumnManager(self);
+	 				self.rowManager = new RowManager(self);
+
+	 				self.columnManager.setRowManager(self.rowManager);
+	 				self.rowManager.setColumnManager(self.columnManager);
+
 	 				self._buildElement();
+
+	 				if(self.options.data && self.options.data.length){
+	 					self.rowManager.setData(self.options.data);
+	 				}
 	 			}
 	 		},
+
 
 	 		//build tabulator element
 	 		_buildElement: function(){
