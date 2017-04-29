@@ -37,6 +37,11 @@
 
 	 			index:"id", //filed for row index
 
+	 			selectable:"highlight", //highlight rows on hover
+	 			selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
+	 			selectablePersistence:true, // maintain selection when table view is updated
+	 			selectableCheck:function(data, row){return true;}, //check wheather row is selectable
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,

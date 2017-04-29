@@ -5,6 +5,7 @@ var Row = function(data, parent){
 		data:{},
 		parent:parent,
 		element:$("<div class='tabulator-row' role='row'></div>"),
+		extensions:{}, //hold extension variables;
 		cells:[],
 
 		//////////////// Setup Functions /////////////////
@@ -23,6 +24,11 @@ var Row = function(data, parent){
 			self.cells.forEach(function(cell){
 				self.element.append(cell.getElement());
 			});
+
+			//set row selection characteristics
+			if(self.table.options.selectable !== false && self.table.extExists("rowSelect")){
+				self.table.extensions.rowSelect.initializeRow(this);
+			}
 
 			//handle row click events
 			if (self.table.options.rowClick){

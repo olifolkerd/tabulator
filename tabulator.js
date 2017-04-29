@@ -35,21 +35,21 @@
 
  	$.widget("ui.tabulator", {
 
-	data:[],//array to hold data for table
-	activeData:[],//array to hold data that is active in the DOM
+	// data:[],//array to hold data for table
+	// activeData:[],//array to hold data that is active in the DOM
 
 	selectedRows:[], //array to hold currently selected rows
 	selecting:false, //is selection currently happening
 	selectPrev:[], //hold jQuery element for previously selected row to handle changing direction when selecting
 
-	firstRender:true, //layout table widths correctly on first render
-	mouseDrag:false, //mouse drag tracker;
-	mouseDragWidth:false, //starting width of colum on mouse drag
-	mouseDragElement:false, //column being dragged
-	mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on sort
+	// firstRender:true, //layout table widths correctly on first render
+	// mouseDrag:false, //mouse drag tracker;
+	// mouseDragWidth:false, //starting width of colum on mouse drag
+	// mouseDragElement:false, //column being dragged
+	// mouseDragOut:false, //catch to prevent mouseup on col drag triggering click on sort
 
-	sortCurCol:null,//column name of currently sorted column
-	sortCurDir:null,//column name of currently sorted column
+	// sortCurCol:null,//column name of currently sorted column
+	// sortCurDir:null,//column name of currently sorted column
 
 	filterField:null, //field to be filtered on data render
 	filterValue:null, //value to match on filter
@@ -63,7 +63,7 @@
 	progressiveRenderLoading:false, //flag to prevent concurrent progresive render loading
 	progressiveRenderLoadingNext:false, //flag to trigger loading of next items if list was loading when next request was triggered
 
-	columnList:[], //an array of all acutal columns ignoring column groupings
+	// columnList:[], //an array of all acutal columns ignoring column groupings
 
 	responsiveColumnList:[], //array of responsive columns
 	responsiveColumnIndex:0, //current possition in responsive array
@@ -97,12 +97,12 @@
 
 	//setup options
 	options: {
-		colMinWidth:"40px", //minimum global width for a column
-		colResizable:true, //resizable columns
-		colVertAlign:"top", //vertical alignment of column headers
+		// colMinWidth:"40px", //minimum global width for a column
+		// colResizable:true, //resizable columns
+		// colVertAlign:"top", //vertical alignment of column headers
 
-		height:false, //height of tabulator
-		fitColumns:false, //fit colums to width of screen;
+		// height:false, //height of tabulator
+		// fitColumns:false, //fit colums to width of screen;
 
 		movableCols:false, //enable movable columns
 		movableRows:false, //enable movable rows
@@ -140,10 +140,10 @@
 		headerFilterPlaceholder: "", //placeholder text to display in header filters
 		headerFilterColumnPlaceholders:{}, //placeholders by column
 
-		tooltips: false, //Tool tip value
-		tooltipsHeader: false, //Tool tip for headers
+		// tooltips: false, //Tool tip value
+		// tooltipsHeader: false, //Tool tip for headers
 
-		columns:false,//store for colum header info
+		// columns:false,//store for colum header info
 		data:false, //store for initial table data if set at construction
 
 		index:"id",
@@ -151,8 +151,8 @@
 		sortable:true, //global default for sorting
 		dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
-		sortBy:"id", //defualt column to sort by
-		sortDir:"desc", //default sort direction
+		// sortBy:"id", //defualt column to sort by
+		// sortDir:"desc", //default sort direction
 
 		groupBy:false, //enable table grouping and set field to group by
 		groupStartOpen:true, //starting state of group
@@ -180,43 +180,43 @@
 		loader:"<div class='tabulator-loading'>Loading Data</div>", //loader element
 		loaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
 
-		//Callbacks from events
-		rowClick:function(){},
-		rowDblClick:function(){},
-		rowAdded:function(){},
-		rowDeleted:function(){},
-		rowContext:function(){},
-		rowMoved:function(){},
-		rowUpdated:function(){},
-		rowSelectionChanged:function(){},
+		// //Callbacks from events
+		// rowClick:function(){},
+		// rowDblClick:function(){},
+		// rowAdded:function(){},
+		// rowDeleted:function(){},
+		// rowContext:function(){},
+		// rowMoved:function(){},
+		// rowUpdated:function(){},
+		// rowSelectionChanged:function(){},
 
-		cellEdited:function(){},
+		// cellEdited:function(){},
 
-		colMoved:function(){},
-		colTitleChanged:function(){},
+		// colMoved:function(){},
+		// colTitleChanged:function(){},
 
-		dataLoading:function(){},
-		dataLoaded:function(){},
-		dataLoadError:function(){},
-		dataEdited:function(){},
+		// dataLoading:function(){},
+		// dataLoaded:function(){},
+		// dataLoadError:function(){},
+		// dataEdited:function(){},
 
-		ajaxResponse:false,
+		// ajaxResponse:false,
 
-		dataFiltering:function(){},
-		dataFiltered:function(){},
+		// dataFiltering:function(){},
+		// dataFiltered:function(){},
 
-		dataSorting:function(){},
-		dataSorted:function(){},
+		// dataSorting:function(){},
+		// dataSorted:function(){},
 
-		renderStarted:function(){},
-		renderComplete:function(){},
+		// renderStarted:function(){},
+		// renderComplete:function(){},
 
-		pageLoaded:function(){},
+		// pageLoaded:function(){},
 
-		localized:function(){},
+		// localized:function(){},
 
-		tableBuilding:function(){},
-		tableBuilt:function(){},
+		// tableBuilding:function(){},
+		// tableBuilt:function(){},
 	},
 
 	////////////////// Element Construction //////////////////
@@ -244,179 +244,179 @@
 	// },
 
 	//parse table element to create data set
-	_parseTable:function(){
-		var self = this;
-		var element = self.element;
-		var options = self.options;
+	// _parseTable:function(){
+	// 	var self = this;
+	// 	var element = self.element;
+	// 	var options = self.options;
 
-		var rows = $("tbody tr", element);
-		var headers = $("th", element);
+	// 	var rows = $("tbody tr", element);
+	// 	var headers = $("th", element);
 
-		var hasIndex = false;
+	// 	var hasIndex = false;
 
-		var columns = options.columns;
+	// 	var columns = options.columns;
 
-		//find column if it has already been defined
-		function search(title){
+	// 	//find column if it has already been defined
+	// 	function search(title){
 
-			var match = false;
+	// 		var match = false;
 
-			$.each(columns, function(index, column) {
-				if(column.title === title){
-					match = column;
-					return false;
-				}
-			});
+	// 		$.each(columns, function(index, column) {
+	// 			if(column.title === title){
+	// 				match = column;
+	// 				return false;
+	// 			}
+	// 		});
 
-			return match;
-		}
+	// 		return match;
+	// 	}
 
-		//get attributes of cell
-		var attributes = element[0].attributes;
+	// 	//get attributes of cell
+	// 	var attributes = element[0].attributes;
 
-		function attribValue(value){
-			if(value === "true"){
-				return true;
-			}
+	// 	function attribValue(value){
+	// 		if(value === "true"){
+	// 			return true;
+	// 		}
 
-			if(value === "false"){
-				return false;
-			}
+	// 		if(value === "false"){
+	// 			return false;
+	// 		}
 
-			return value;
-		}
+	// 		return value;
+	// 	}
 
-		//check for tablator inline options
-		for(var index in attributes){
-			var attrib = attributes[index];
-			var name;
+	// 	//check for tablator inline options
+	// 	for(var index in attributes){
+	// 		var attrib = attributes[index];
+	// 		var name;
 
-			if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
+	// 		if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
 
-				name = attrib.name.replace("tabulator-", "");
+	// 			name = attrib.name.replace("tabulator-", "");
 
-				for(var key in options){
-					if(key.toLowerCase() == name){
-						options[key] = attribValue(attrib.value);
-					}
-				}
-			}
-		}
+	// 			for(var key in options){
+	// 				if(key.toLowerCase() == name){
+	// 					options[key] = attribValue(attrib.value);
+	// 				}
+	// 			}
+	// 		}
+	// 	}
 
-		//build columns from table header if they havnt been set;
-		if(headers.length){
+	// 	//build columns from table header if they havnt been set;
+	// 	if(headers.length){
 
-			//list of possible attributes
-			var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "onClick", "onDblClick", "onContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
+	// 		//list of possible attributes
+	// 		var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "onClick", "onDblClick", "onContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
 
-			//create column array from headers
-			headers.each(function(index){
+	// 		//create column array from headers
+	// 		headers.each(function(index){
 
-				var header = $(this);
-				var exists = false;
+	// 			var header = $(this);
+	// 			var exists = false;
 
-				var attributes = header[0].attributes;
+	// 			var attributes = header[0].attributes;
 
-				var col = search(header.text());
+	// 			var col = search(header.text());
 
-				if(col){
-					exists = true;
-				}else{
-					col = {title:header.text()};
-				}
+	// 			if(col){
+	// 				exists = true;
+	// 			}else{
+	// 				col = {title:header.text()};
+	// 			}
 
-				if(!col.field) {
-					col.field = header.text().toLowerCase().replace(" ", "_");
-				}
+	// 			if(!col.field) {
+	// 				col.field = header.text().toLowerCase().replace(" ", "_");
+	// 			}
 
-				$("td:eq(" + index + ")", rows).data("field", col.field)
+	// 			$("td:eq(" + index + ")", rows).data("field", col.field)
 
-				var width = header.attr("width");
+	// 			var width = header.attr("width");
 
-				if(width && !col.width)	{
-					col.width = width;
-				}
+	// 			if(width && !col.width)	{
+	// 				col.width = width;
+	// 			}
 
-				if(col.field == options.index){
-					hasIndex = true;
-				}
+	// 			if(col.field == options.index){
+	// 				hasIndex = true;
+	// 			}
 
-				//check for tablator inline options
-				for(var index in attributes){
-					var attrib = attributes[index];
-					var name;
+	// 			//check for tablator inline options
+	// 			for(var index in attributes){
+	// 				var attrib = attributes[index];
+	// 				var name;
 
-					if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
+	// 				if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
 
-						name = attrib.name.replace("tabulator-", "");
+	// 					name = attrib.name.replace("tabulator-", "");
 
-						attribList.forEach(function(key){
-							if(key.toLowerCase() == name){
-								col[key] = attribValue(attrib.value);
-							}
-						});
-					}
-				}
+	// 					attribList.forEach(function(key){
+	// 						if(key.toLowerCase() == name){
+	// 							col[key] = attribValue(attrib.value);
+	// 						}
+	// 					});
+	// 				}
+	// 			}
 
-				if(!exists){
-					columns.push(col)
-				}
-			});
-		}else{
-			//create blank table headers
-			headers = $("tr:first td", element);
+	// 			if(!exists){
+	// 				columns.push(col)
+	// 			}
+	// 		});
+	// 	}else{
+	// 		//create blank table headers
+	// 		headers = $("tr:first td", element);
 
-			headers.each(function(index){
-				var col = {title:"", field:"col" + index};
-				$("td:eq(" + index + ")", rows).data("field", col.field)
+	// 		headers.each(function(index){
+	// 			var col = {title:"", field:"col" + index};
+	// 			$("td:eq(" + index + ")", rows).data("field", col.field)
 
-				var width = $(this).attr("width");
+	// 			var width = $(this).attr("width");
 
-				if(width){
-					col.width = width;
-				}
+	// 			if(width){
+	// 				col.width = width;
+	// 			}
 
-				columns.push(col);
-			});
-		}
+	// 			columns.push(col);
+	// 		});
+	// 	}
 
-		self.data = [];
+	// 	self.data = [];
 
-		//iterate through table rows and build data set
-		rows.each(function(rowIndex){
-			var item = {};
+	// 	//iterate through table rows and build data set
+	// 	rows.each(function(rowIndex){
+	// 		var item = {};
 
-			//create index if the dont exist in table
-			if(!hasIndex){
-				item[options.index] = rowIndex;
-			}
+	// 		//create index if the dont exist in table
+	// 		if(!hasIndex){
+	// 			item[options.index] = rowIndex;
+	// 		}
 
-			//add row data to item
-			$("td", $(this)).each(function(colIndex){
-				item[$(this).data("field")] = $(this).html();
-			});
+	// 		//add row data to item
+	// 		$("td", $(this)).each(function(colIndex){
+	// 			item[$(this).data("field")] = $(this).html();
+	// 		});
 
-			self.data.push(item);
-		});
+	// 		self.data.push(item);
+	// 	});
 
-		//create new element
-		var newElement = $("<div></div>");
+	// 	//create new element
+	// 	var newElement = $("<div></div>");
 
-		//transfer attributes to new element
-		var attributes = element.prop("attributes");
+	// 	//transfer attributes to new element
+	// 	var attributes = element.prop("attributes");
 
-		// loop through attributes and apply them on div
-		$.each(attributes, function(){
-			newElement.attr(this.name, this.value);
-		});
+	// 	// loop through attributes and apply them on div
+	// 	$.each(attributes, function(){
+	// 		newElement.attr(this.name, this.value);
+	// 	});
 
-		// replace table with div element
-		element.replaceWith(newElement);
+	// 	// replace table with div element
+	// 	element.replaceWith(newElement);
 
-		options.data = self.data;
+	// 	options.data = self.data;
 
-		newElement.tabulator(options);
-	},
+	// 	newElement.tabulator(options);
+	// },
 
 	//build tabulator element
 	_buildElement: function(){
@@ -731,112 +731,112 @@
 
 
 	//redraw list without updating data
-	redraw:function(fullRedraw){
-		var self = this;
+	// redraw:function(fullRedraw){
+	// 	var self = this;
 
-		//redraw columns
-		if(self.options.fitColumns || self.options.responsiveLayout || fullRedraw){
-			self._colRender();
-		}
+	// 	//redraw columns
+	// 	if(self.options.fitColumns || self.options.responsiveLayout || fullRedraw){
+	// 		self._colRender();
+	// 	}
 
-		//reposition loader if present
-		if(self.element.innerHeight() > 0){
-			var msg = $(".tabulator-loader-msg", self.loaderDiv);
-			msg.css({"margin-top":(self.element.innerHeight() / 2) - (msg.outerHeight()/2)})
-		}
+	// 	//reposition loader if present
+	// 	if(self.element.innerHeight() > 0){
+	// 		var msg = $(".tabulator-loader-msg", self.loaderDiv);
+	// 		msg.css({"margin-top":(self.element.innerHeight() / 2) - (msg.outerHeight()/2)})
+	// 	}
 
-		self._calcFrozenColumnsPos();
+	// 	self._calcFrozenColumnsPos();
 
-		//trigger row restyle
-		self._styleRows(true);
+	// 	//trigger row restyle
+	// 	self._styleRows(true);
 
-		if(fullRedraw){
-			self._renderTable();
-		}
-	},
+	// 	if(fullRedraw){
+	// 		self._renderTable();
+	// 	}
+	// },
 
-	//trigger file download
-	download:function(type, filename, options){
-		var self = this;
+	// //trigger file download
+	// download:function(type, filename, options){
+	// 	// var self = this;
 
-		//create temporary link element to trigger download
-		var element = document.createElement('a');
+	// 	// //create temporary link element to trigger download
+	// 	// var element = document.createElement('a');
 
-		if(typeof type === "function"){
+	// 	if(typeof type === "function"){
 
-			//create the download link
-			element.setAttribute('href', type(self.columnList, self.activeData, options));
+	// 		//create the download link
+	// 		element.setAttribute('href', type(self.columnList, self.activeData, options));
 
-		}else{
+	// 	}else{
 
-			switch(type){
-				case "csv":
+	// 		switch(type){
+	// 			case "csv":
 
-				var delimiter = options && options.delimiter ? options.delimiter : ",";
+	// 			var delimiter = options && options.delimiter ? options.delimiter : ",";
 
-				//get field lists
-				var titles = [];
-				var fields = [];
+	// 			//get field lists
+	// 			var titles = [];
+	// 			var fields = [];
 
-				self.columnList.forEach(function(column){
-					if(column.field){
-						titles.push('"' + String(column.title).split('"').join('""') + '"');
-						fields.push(column.field);
-					}
-				})
+	// 			self.columnList.forEach(function(column){
+	// 				if(column.field){
+	// 					titles.push('"' + String(column.title).split('"').join('""') + '"');
+	// 					fields.push(column.field);
+	// 				}
+	// 			})
 
-				//generate header row
-				var fileContents = [titles.join(delimiter)];
+	// 			//generate header row
+	// 			var fileContents = [titles.join(delimiter)];
 
-				//generate each row of the table
-				self.activeData.forEach(function(row){
+	// 			//generate each row of the table
+	// 			self.activeData.forEach(function(row){
 
-					var rowData = [];
+	// 				var rowData = [];
 
-					fields.forEach(function(field){
-						var value = typeof row[field] == "object" ? JSON.stringify(row[field]) : row[field];
+	// 				fields.forEach(function(field){
+	// 					var value = typeof row[field] == "object" ? JSON.stringify(row[field]) : row[field];
 
-						//escape uotation marks
-						rowData.push('"' + String(value).split('"').join('""') + '"');
-					})
+	// 					//escape uotation marks
+	// 					rowData.push('"' + String(value).split('"').join('""') + '"');
+	// 				})
 
-					fileContents.push(rowData.join(delimiter));
+	// 				fileContents.push(rowData.join(delimiter));
 
-				});
+	// 			});
 
-				//create the download link
-				element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(fileContents.join("\n")));
+	// 			//create the download link
+	// 			element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(fileContents.join("\n")));
 
-				break;
+	// 			break;
 
-				case "json":
+	// 			case "json":
 
-				var fileContents = JSON.stringify(self.activeData, null, '\t');
+	// 			var fileContents = JSON.stringify(self.activeData, null, '\t');
 
-				//create the download link
-				element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(fileContents));
+	// 			//create the download link
+	// 			element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(fileContents));
 
-				break;
+	// 			break;
 
-				default:
-				return false;
-				break;
-			}
-		}
+	// 			default:
+	// 			return false;
+	// 			break;
+	// 		}
+	// 	}
 
-		//set file title
-		element.setAttribute('download', filename || "Tabulator." + (typeof type === "function" ? "txt" : type));
+	// 	//set file title
+	// 	element.setAttribute('download', filename || "Tabulator." + (typeof type === "function" ? "txt" : type));
 
-		//trigger download
-		element.style.display = 'none';
-		document.body.appendChild(element);
-		element.click();
+	// 	//trigger download
+	// 	element.style.display = 'none';
+	// 	document.body.appendChild(element);
+	// 	element.click();
 
-		//remove temporary link element
-		document.body.removeChild(element);
+	// 	//remove temporary link element
+	// 	document.body.removeChild(element);
 
-		return true;
-	},
+	// 	return true;
+	// },
 
 	////////////////// Column Manipulation //////////////////
 
@@ -1313,7 +1313,7 @@
 		}
 
 		//Apply mutators if present
-		item = self._mutateData(item);
+		// item = self._mutateData(item);
 
 		//create blank row
 		var row = self._renderRow(item);
@@ -1518,16 +1518,16 @@
 
 	////////////////// Data Manipulation //////////////////
 
-	//get array of data from the table
-	getData:function(filteredData){
-		var self = this;
+	// //get array of data from the table
+	// getData:function(filteredData){
+	// 	var self = this;
 
-		//clone data array with deep copy to isolate internal data from returned result
-		var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data);
+	// 	//clone data array with deep copy to isolate internal data from returned result
+	// 	var outputData = $.extend(true, [], filteredData === true ? self.activeData: self.data);
 
-		//check for accessors and return the processed data
-		return self._applyAccessors(outputData);
-	},
+	// 	//check for accessors and return the processed data
+	// 	// return self._applyAccessors(outputData);
+	// },
 
 	getRowData:function(row){
 		var self = this;
@@ -1577,22 +1577,22 @@
 	},
 
 
-	//apply any column accessors to the data before returing the result
-	_applyAccessors:function(data){
-		var self = this;
+	// //apply any column accessors to the data before returing the result
+	// _applyAccessors:function(data){
+	// 	var self = this;
 
-		self._traverseColumns(function(col){
-			if(col.accessor){
-				var accessor = typeof col.accessor === "function" ? col.accessor : self.accessors[col.accessor];
+	// 	self._traverseColumns(function(col){
+	// 		if(col.accessor){
+	// 			var accessor = typeof col.accessor === "function" ? col.accessor : self.accessors[col.accessor];
 
-				data.forEach(function(item, j){
-					item[col.field] = accessor(item[col.field], item);
-				});
-			}
-		})
+	// 			data.forEach(function(item, j){
+	// 				item[col.field] = accessor(item[col.field], item);
+	// 			});
+	// 		}
+	// 	})
 
-		return data;
-	},
+	// 	return data;
+	// },
 
 
 	///////////////// Pagination Data Loading //////////////////
@@ -1652,64 +1652,64 @@
 	////////////////// Data Loading //////////////////
 
 
-	//load data
-	setData:function(data, params, config){
-		var self = this;
+	// //load data
+	// setData:function(data, params, config){
+	// 	var self = this;
 
-		self.options.dataLoading(data, params);
+	// 	self.options.dataLoading(data, params);
 
-		if(params){
-			self.options.ajaxParams = params;
-		}
+	// 	if(params){
+	// 		self.options.ajaxParams = params;
+	// 	}
 
-		//show loader if needed
-		self._showLoader(this, this.options.loader);
+	// 	//show loader if needed
+	// 	self._showLoader(this, this.options.loader);
 
-		if(typeof(data) === "string"){
-			if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
-				//data is a json encoded string
-				self._parseData(jQuery.parseJSON(data));
-			}else{
+	// 	if(typeof(data) === "string"){
+	// 		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
+	// 			//data is a json encoded string
+	// 			self._parseData(jQuery.parseJSON(data));
+	// 		}else{
 
-				self.options.ajaxURL = data;
+	// 			self.options.ajaxURL = data;
 
-				if(self.options.pagination == "remote"){
-					self.setPage(1);
-				}else{
-					//assume data is url, make ajax call to url to get data
-					self._getAjaxData(data, self.options.ajaxParams, config);
-				}
+	// 			if(self.options.pagination == "remote"){
+	// 				self.setPage(1);
+	// 			}else{
+	// 				//assume data is url, make ajax call to url to get data
+	// 				self._getAjaxData(data, self.options.ajaxParams, config);
+	// 			}
 
-			}
-		}else{
-			if(data){
-				//asume data is already an object
-				self._parseData(data);
+	// 		}
+	// 	}else{
+	// 		if(data){
+	// 			//asume data is already an object
+	// 			self._parseData(data);
 
-			}else{
-				//no data provided, check if ajaxURL is present;
-				if(this.options.ajaxURL){
+	// 		}else{
+	// 			//no data provided, check if ajaxURL is present;
+	// 			if(this.options.ajaxURL){
 
-					if(self.options.pagination == "remote"){
-						self.setPage(1);
-					}else{
-						self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, config);
-					}
+	// 				if(self.options.pagination == "remote"){
+	// 					self.setPage(1);
+	// 				}else{
+	// 					self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, config);
+	// 				}
 
-				}else{
-					//empty data
-					self._parseData([]);
-				}
-			}
-		}
-	},
+	// 			}else{
+	// 				//empty data
+	// 				self._parseData([]);
+	// 			}
+	// 		}
+	// 	}
+	// },
 
-	//clear data
-	clear:function(){
-		this.table.empty();
-		this.data = [];
-		this._filterData();
-	},
+	// //clear data
+	// clear:function(){
+	// 	this.table.empty();
+	// 	this.data = [];
+	// 	this._filterData();
+	// },
 
 	//get json data via ajax
 	_getAjaxData:function(url, params, config, update){
@@ -1795,7 +1795,7 @@
 
 			self.options.dataLoaded(newData);
 
-			var mutatedData = self._mutateData(newData);
+			// var mutatedData = self._mutateData(newData);
 
 			if(update){
 				self.data = mutatedData;
@@ -1817,30 +1817,30 @@
 	},
 
 	//applu mutators if present
-	_mutateData:function(data){
-		var self = this;
+	// _mutateData:function(data){
+	// 	var self = this;
 
-		self._traverseColumns(function(col){
-			if(col.mutator && col.mutateType !== "edit"){
+	// 	self._traverseColumns(function(col){
+	// 		if(col.mutator && col.mutateType !== "edit"){
 
-				var mutator = typeof col.mutator === "function" ? col.mutator : self.mutators[col.mutator];
+	// 			var mutator = typeof col.mutator === "function" ? col.mutator : self.mutators[col.mutator];
 
-				if(Array.isArray(data)){
-					data.forEach(function(item, j){
-						if(typeof item[col.field] != "undefined"){
-							item[col.field] = mutator(item[col.field], "data", item);
-						}
-					});
-				}else{
-					if(typeof data[col.field] != "undefined"){
-						data[col.field] = mutator(data[col.field], "data", data);
-					}
-				}
-			}
-		});
+	// 			if(Array.isArray(data)){
+	// 				data.forEach(function(item, j){
+	// 					if(typeof item[col.field] != "undefined"){
+	// 						item[col.field] = mutator(item[col.field], "data", item);
+	// 					}
+	// 				});
+	// 			}else{
+	// 				if(typeof data[col.field] != "undefined"){
+	// 					data[col.field] = mutator(data[col.field], "data", data);
+	// 				}
+	// 			}
+	// 		}
+	// 	});
 
-		return data;
-	},
+	// 	return data;
+	// },
 
 
 
@@ -1848,7 +1848,7 @@
 
 	//filter data in table
 	setFilter:function(field, type, value){
-		var self = this;
+		// var self = this;
 
 		if(!self.options.selectablePersistence){
 			self._clearSelection();
@@ -1856,70 +1856,70 @@
 
 		self.options.dataFiltering(field, type, value);
 
-		//set filter
-		if(field){
-			//set filter
-			self.filterField = field;
-			self.filterType = typeof(value) == "undefined" ? "=" : type;
-			self.filterValue = typeof(value) == "undefined" ? type : value;
-		}else{
-			//clear filter
-			self.filterField = null;
-			self.filterType = null;
-			self.filterValue = null;
-		}
+		// //set filter
+		// if(field){
+		// 	//set filter
+		// 	self.filterField = field;
+		// 	self.filterType = typeof(value) == "undefined" ? "=" : type;
+		// 	self.filterValue = typeof(value) == "undefined" ? type : value;
+		// }else{
+		// 	//clear filter
+		// 	self.filterField = null;
+		// 	self.filterType = null;
+		// 	self.filterValue = null;
+		// }
 
-		//render table
-		this._filterData();
+		// //render table
+		// this._filterData();
 	},
 
 	//clear filter
 	clearFilter:function(){
-		var self = this;
+		// var self = this;
 
-		self.filterField = null;
-		self.filterType = null;
-		self.filterValue = null;
+		// self.filterField = null;
+		// self.filterType = null;
+		// self.filterValue = null;
 
 		//clear header filter values
 		var headerFilters = $(".tabulator-header-filter", self.header);
 		$("input, select", headerFilters).val("");
 
-		//render table
-		this._filterData();
+		// //render table
+		// this._filterData();
 	},
 
-	//get current filter info
-	getFilter:function(){
-		var self = this;
+	// //get current filter info
+	// getFilter:function(){
+	// 	var self = this;
 
-		if(self.filterField){
+	// 	if(self.filterField){
 
-			var filter = {
-				"field":self.filterField,
-				"type":self.filterType,
-				"value":self.filterValue,
-			};
+	// 		var filter = {
+	// 			"field":self.filterField,
+	// 			"type":self.filterType,
+	// 			"value":self.filterValue,
+	// 		};
 
-			return filter;
+	// 		return filter;
 
-		}else{
-			return false;
-		}
-	},
+	// 	}else{
+	// 		return false;
+	// 	}
+	// },
 
 	//filter data set
 	_filterData:function(){
 		var self = this;
 
-		//filter data set
-		if(self.filterField){
-			self.activeData = self.data.filter(function(row){
-				return self._filterRow(row);
-			});
-		}else{
-			self.activeData = self.data;
-		}
+		// //filter data set
+		// if(self.filterField){
+		// 	self.activeData = self.data.filter(function(row){
+		// 		return self._filterRow(row);
+		// 	});
+		// }else{
+		// 	self.activeData = self.data;
+		// }
 
 		//set the max pages available given the filter results
 		if(self.options.pagination == "local"){
@@ -1928,102 +1928,102 @@
 
 		self.options.dataFiltered(self.activeData, self.filterField, self.filterType, self.filterValue);
 
-		//sort or render data
-		if(self.sortCurCol && self.options.pagination != "remote"){
-			self.sort(self.sortCurCol, self.sortCurDir);
-		}else{
-			//determine pagination information / render table
-			if(self.options.pagination == "local"){
-				self.setPage(1);
-			}else{
-				self._renderTable();
-			}
-		}
+		// //sort or render data
+		// if(self.sortCurCol && self.options.pagination != "remote"){
+		// 	self.sort(self.sortCurCol, self.sortCurDir);
+		// }else{
+		// 	//determine pagination information / render table
+		// 	if(self.options.pagination == "local"){
+		// 		self.setPage(1);
+		// 	}else{
+		// 		self._renderTable();
+		// 	}
+		// }
 	},
 
-	//check if row data matches filter
-	_filterRow:function(row){
-		var self = this;
+	// //check if row data matches filter
+	// _filterRow:function(row){
+	// 	var self = this;
 
-		// if no filter set display row
-		if(!self.filterField){
-			return true;
-		}else{
+	// 	// if no filter set display row
+	// 	if(!self.filterField){
+	// 		return true;
+	// 	}else{
 
-			if(typeof(self.filterField) == "function"){
+	// 		if(typeof(self.filterField) == "function"){
 
-				return self.filterField(row);
+	// 			return self.filterField(row);
 
-			}else{
-				var value = row[self.filterField];
-				var term = self.filterValue;
+	// 		}else{
+	// 			var value = row[self.filterField];
+	// 			var term = self.filterValue;
 
-				switch(self.filterType){
-					case "=": //equal to
-					return value == term ? true : false;
-					break;
+	// 			switch(self.filterType){
+	// 				case "=": //equal to
+	// 				return value == term ? true : false;
+	// 				break;
 
-					case "<": //less than
-					return value < term ? true : false;
-					break;
+	// 				case "<": //less than
+	// 				return value < term ? true : false;
+	// 				break;
 
-					case "<=": //less than or equal too
-					return value <= term ? true : false;
-					break;
+	// 				case "<=": //less than or equal too
+	// 				return value <= term ? true : false;
+	// 				break;
 
-					case ">": //greater than
-					return value > term ? true : false;
-					break;
+	// 				case ">": //greater than
+	// 				return value > term ? true : false;
+	// 				break;
 
-					case ">=": //greater than or equal too
-					return value >= term ? true : false;
-					break;
+	// 				case ">=": //greater than or equal too
+	// 				return value >= term ? true : false;
+	// 				break;
 
-					case "!=": //not equal to
-					return value != term ? true : false;
-					break;
+	// 				case "!=": //not equal to
+	// 				return value != term ? true : false;
+	// 				break;
 
-					case "like": //text like
-					if(value === null){
-						return term === value ? true : false;
-					}else{
-						return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
-					}
-					break;
+	// 				case "like": //text like
+	// 				if(value === null){
+	// 					return term === value ? true : false;
+	// 				}else{
+	// 					return value.toLowerCase().indexOf(term.toLowerCase()) > -1 ? true : false;
+	// 				}
+	// 				break;
 
-					default:
-					return false;
-				}
-			}
-		}
+	// 				default:
+	// 				return false;
+	// 			}
+	// 		}
+	// 	}
 
-		return false;
-	},
+	// 	return false;
+	// },
 
 	////////////////// Data Sorting //////////////////
 
 	//return the current sorter
-	getSort:function(){
-		var self = this;
+	// getSort:function(){
+	// 	var self = this;
 
-		return {
-			"field" : self.sortCurCol ? self.sortCurCol.field : false,
-			"dir" : self.sortCurDir || false,
-		};
-	},
+	// 	return {
+	// 		"field" : self.sortCurCol ? self.sortCurCol.field : false,
+	// 		"dir" : self.sortCurDir || false,
+	// 	};
+	// },
 
-	//handle user clicking on column header sort
-	_sortClick: function(column, element){
-		var self = this;
+	// //handle user clicking on column header sort
+	// _sortClick: function(column, element){
+	// 	var self = this;
 
-		if (element.data("sortdir") == "desc"){
-			element.data("sortdir", "asc").attr("aria-sort", "ascending");
-		}else{
-			element.data("sortdir", "desc").attr("aria-sort", "descending");
-		}
+	// 	if (element.data("sortdir") == "desc"){
+	// 		element.data("sortdir", "asc").attr("aria-sort", "ascending");
+	// 	}else{
+	// 		element.data("sortdir", "desc").attr("aria-sort", "descending");
+	// 	}
 
-		self.sort(column, element.data("sortdir"));
-	},
+	// 	self.sort(column, element.data("sortdir"));
+	// },
 
 	// public sorter function
 	sort: function(sortList, dir){
@@ -2035,38 +2035,38 @@
 			self._clearSelection();
 		}
 
-		if(!Array.isArray(sortList)){
-			sortList = [{field: sortList, dir:dir}];
-		}
+		// if(!Array.isArray(sortList)){
+		// 	sortList = [{field: sortList, dir:dir}];
+		// }
 
-		$.each(sortList, function(i, item){
+		// $.each(sortList, function(i, item){
 
-			//convert column name to column object
-			if(typeof(item.field) == "string"){
-				var match = self._findColumn(item.field);
+		// 	//convert column name to column object
+		// 	if(typeof(item.field) == "string"){
+		// 		var match = self._findColumn(item.field);
 
-				if(match){
-					item.field = match.column;
-				}
-			}
+		// 		if(match){
+		// 			item.field = match.column;
+		// 		}
+		// 	}
 
-			//reset all column sorts
-			$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc").attr("aria-sort", "none");
-			$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc");
+		// 	//reset all column sorts
+		// 	$(".tabulator-col[data-sortable=true][data-field!=" + item.field.field + "]", self.header).data("sortdir", "desc").attr("aria-sort", "none");
+		// 	$(".tabulator-col .tabulator-arrow", self.header).removeClass("asc desc");
 
-			var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
+		// 	var element = $(".tabulator-col[data-field='" + item.field.field + "']", header);
 
-			var arrow = $(".tabulator-arrow", element);
+		// 	var arrow = $(".tabulator-arrow", element);
 
-			if (dir == "asc"){
-				arrow.removeClass("desc").addClass("asc");
-			}else{
-				arrow.removeClass("asc").addClass("desc");
-			}
+		// 	if (dir == "asc"){
+		// 		arrow.removeClass("desc").addClass("asc");
+		// 	}else{
+		// 		arrow.removeClass("asc").addClass("desc");
+		// 	}
 
-			self._sorter(item.field, item.dir, sortList, i);
+		// 	self._sorter(item.field, item.dir, sortList, i);
 
-		});
+		// });
 
 		self.options.dataSorted(self.data, sortList, dir);
 
@@ -2078,60 +2078,60 @@
 		}
 	},
 
-	//sort table
-	_sorter: function(column, dir, sortList, i){
-		var self = this;
-		var table = self.table;
-		var options = self.options;
-		var data = self.data;
+	// //sort table
+	// _sorter: function(column, dir, sortList, i){
+	// 	var self = this;
+	// 	var table = self.table;
+	// 	var options = self.options;
+	// 	var data = self.data;
 
-		self.options.dataSorting(sortList, dir);
+	// 	self.options.dataSorting(sortList, dir);
 
-		self.sortCurCol = column;
-		self.sortCurDir = dir;
+	// 	self.sortCurCol = column;
+	// 	self.sortCurDir = dir;
 
-		self._sortElement(table, column, dir, sortList, i);
-	},
+	// 	self._sortElement(table, column, dir, sortList, i);
+	// },
 
-	//itterate through nested sorters
-	_sortElement:function(element, column, dir, sortList, i){
-		var self = this;
+	// //itterate through nested sorters
+	// _sortElement:function(element, column, dir, sortList, i){
+	// 	var self = this;
 
-		self.activeData = self.activeData.sort(function(a,b){
+	// 	self.activeData = self.activeData.sort(function(a,b){
 
-			var result = self._processSorter(a, b, column, dir);
+	// 		var result = self._processSorter(a, b, column, dir);
 
-			//if results match recurse through previous searchs to be sure
-			if(result == 0 && i){
-				for(var j = i-1; j>= 0; j--){
-					result = self._processSorter(a, b, sortList[j].field, sortList[j].dir);
+	// 		//if results match recurse through previous searchs to be sure
+	// 		if(result == 0 && i){
+	// 			for(var j = i-1; j>= 0; j--){
+	// 				result = self._processSorter(a, b, sortList[j].field, sortList[j].dir);
 
-					if(result != 0){
-						break;
-					}
-				}
-			}
+	// 				if(result != 0){
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
 
-			return result;
-		})
-	},
+	// 		return result;
+	// 	})
+	// },
 
-	//process individual sort functions on active data
-	_processSorter:function(a, b, column, dir){
-		var self = this;
-		//switch elements depending on search direction
-		var el1 = dir == "asc" ? a : b;
-		var el2 = dir == "asc" ? b : a;
+	// //process individual sort functions on active data
+	// _processSorter:function(a, b, column, dir){
+	// 	var self = this;
+	// 	//switch elements depending on search direction
+	// 	var el1 = dir == "asc" ? a : b;
+	// 	var el2 = dir == "asc" ? b : a;
 
-		a = el1[column.field];
-		b = el2[column.field];
+	// 	a = el1[column.field];
+	// 	b = el2[column.field];
 
-		//run sorter
-		var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
-		sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
+	// 	//run sorter
+	// 	var sorter = typeof(column.sorter) == "undefined" ? "string" : column.sorter;
+	// 	sorter = typeof(sorter) == "string" ? self.sorters[sorter] : sorter;
 
-		return sorter.call(self, a, b, el1, el2, column, dir);
-	},
+	// 	return sorter.call(self, a, b, el1, el2, column, dir);
+	// },
 
 	////////////////// Data Pagination //////////////////
 
@@ -2445,10 +2445,10 @@
 
 		}
 
-		//bind row click events
-		row.on("click", function(e){self._rowClick(e, row, item)});
-		row.on("dblclick", function(e){self._rowDblClick(e, row, item)});
-		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
+		// //bind row click events
+		// row.on("click", function(e){self._rowClick(e, row, item)});
+		// row.on("dblclick", function(e){self._rowDblClick(e, row, item)});
+		// row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
 		//bind row select events
 
@@ -2519,90 +2519,90 @@
 			}
 
 			//set column text alignment
-			var align = typeof(column.align) == "undefined" ? "left" : column.align;
+			// var align = typeof(column.align) == "undefined" ? "left" : column.align;
 
 			//allow tabbing on editable cells
-			var tabbable = column.editable || column.editor ? "tabindex='0'" : "";
+			// var tabbable = column.editable || column.editor ? "tabindex='0'" : "";
 			var visibility = column.visible ? "inline-block" : "none";
 
 			//set style as string rather than using .css for massive improvement in rendering time
-			var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
+			// var cellStyle = "text-align: " + align + "; display:" + visibility + ";";
 
 			var cell = $("<div class='tabulator-cell " + column.cssClass + "' " + tabbable + " style='" + cellStyle + "' data-index='" + column.index + "' data-field='" + column.field + "' data-value='" + self._safeString(value) + "' role='gridcell'></div>");
 
-			//add tooltip to cell
-			self._generateTooltip(cell, item, column.tooltip);
+			// //add tooltip to cell
+			// self._generateTooltip(cell, item, column.tooltip);
 
 			//match editor if one exists
-			if (column.editable || column.editor){
-				if(column.editor){
-					var editor = column.editor;
-				}else{
-					var editor = self.editors[column.formatter] ? column.formatter: "input";
-				}
-				cell.data("editor", editor);
-			}
+			// if (column.editable || column.editor){
+			// 	if(column.editor){
+			// 		var editor = column.editor;
+			// 	}else{
+			// 		var editor = self.editors[column.formatter] ? column.formatter: "input";
+			// 	}
+			// 	cell.data("editor", editor);
+			// }
 
-			//format cell contents
-			cell.data("formatter", column.formatter);
-			cell.data("formatterParams", column.formatterParams);
-			cell.html(self._formatCell(column.formatter, value, item, cell, row, column.formatterParams));
+			// //format cell contents
+			// cell.data("formatter", column.formatter);
+			// cell.data("formatterParams", column.formatterParams);
+			// cell.html(self._formatCell(column.formatter, value, item, cell, row, column.formatterParams));
 
 			//bind cell double click function
-			if(typeof(column.onDblClick) == "function"){
-				cell.on("dblclick", function(e){self._cellDblClick(e, cell)});
-			}
+			// if(typeof(column.onDblClick) == "function"){
+			// 	cell.on("dblclick", function(e){self._cellDblClick(e, cell)});
+			// }
 
-			//bind cell context function
-			if(typeof(column.onContext) == "function"){
-				cell.on("contextmenu", function(e){self._cellContext(e, cell)});
-			}
+			// //bind cell context function
+			// if(typeof(column.onContext) == "function"){
+			// 	cell.on("contextmenu", function(e){self._cellContext(e, cell)});
+			// }
 
-			//bind cell click function
-			if(typeof(column.onClick) == "function"){
-				cell.on("click", function(e){self._cellClick(e, cell)});
-			}
+			// //bind cell click function
+			// if(typeof(column.onClick) == "function"){
+			// 	cell.on("click", function(e){self._cellClick(e, cell)});
+			// }
 
 			//handle input replacement on editable cells
-			if(cell.data("editor")){
+			// if(cell.data("editor")){
 
-				cell.on("click", function(e){
-					if(!$(this).hasClass("tabulator-editing")){
-						$(this).focus();
-					}
-				});
+				// cell.on("click", function(e){
+				// 	if(!$(this).hasClass("tabulator-editing")){
+				// 		$(this).focus();
+				// 	}
+				// });
 
-				cell.on("focus", function(e){
-					e.stopPropagation();
+				// cell.on("focus", function(e){
+				// 	e.stopPropagation();
 
-					//Load editor
-					var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
+				// 	//Load editor
+				// 	var editorFunc = typeof(cell.data("editor")) == "string" ? self.editors[cell.data("editor")] : cell.data("editor");
 
-					var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+				// 	var cellEditor = editorFunc.call(self, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
 
-					//if editor returned, add to DOM, if false, abort edit
-					if(cellEditor !== false){
-						cell.addClass("tabulator-editing");
-						cell.closest(".tabulator-row").addClass("tabulator-row-editing");
-						cell.empty();
-						cell.append(cellEditor);
+				// 	//if editor returned, add to DOM, if false, abort edit
+				// 	if(cellEditor !== false){
+				// 		cell.addClass("tabulator-editing");
+				// 		cell.closest(".tabulator-row").addClass("tabulator-row-editing");
+				// 		cell.empty();
+				// 		cell.append(cellEditor);
 
-						//prevent editing from tirggering rowClick event
-						cell.children().click(function(e){
-							e.stopPropagation();
-						})
-					}else{
-						cell.blur();
-					}
+				// 		//prevent editing from tirggering rowClick event
+				// 		cell.children().click(function(e){
+				// 			e.stopPropagation();
+				// 		})
+				// 	}else{
+				// 		cell.blur();
+				// 	}
 
-				});
+				// });
 
-				//assign cell mutator function if needed
-				if(column.mutator && column.mutateType !== "data"){
-					var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
+				// //assign cell mutator function if needed
+				// if(column.mutator && column.mutateType !== "data"){
+				// 	var mutator = typeof column.mutator === "function" ? column.mutator : self.mutators[column.mutator];
 
-					cell.data("mutator", mutator);
-				}
+				// 	cell.data("mutator", mutator);
+				// }
 			}
 
 
@@ -2675,41 +2675,41 @@
 		$(".tablulator-loader", self.element).remove();
 	},
 
-	//generate tooltip text
-	_generateTooltip:function(cell, data, tooltip){
-		var self = this;
+	// //generate tooltip text
+	// _generateTooltip:function(cell, data, tooltip){
+	// 	var self = this;
 
-		var tooltip = tooltip || tooltip === false ? tooltip : self.options.tooltips;
+	// 	var tooltip = tooltip || tooltip === false ? tooltip : self.options.tooltips;
 
-		if(tooltip === true){
-			tooltip = cell.data("value");
-		}else if(typeof(tooltip) == "function"){
-			tooltip = tooltip(cell.data("field"), cell.data("value"), data);
-		}
+	// 	if(tooltip === true){
+	// 		tooltip = cell.data("value");
+	// 	}else if(typeof(tooltip) == "function"){
+	// 		tooltip = tooltip(cell.data("field"), cell.data("value"), data);
+	// 	}
 
-		if(tooltip){
-			cell.attr("title", tooltip);
-		}else{
-			cell.attr("title", "");
-		}
-	},
+	// 	if(tooltip){
+	// 		cell.attr("title", tooltip);
+	// 	}else{
+	// 		cell.attr("title", "");
+	// 	}
+	// },
 
 
 	////////////////// Column Styling //////////////////
 
 	//resize a colum to specified width
 	_resizeCol:function(index, width){
-		var self = this;
+		// var self = this;
 
-		$(".tabulator-cell[data-index=" + index + "], .tabulator-col[data-index=" + index + "]",this.element).css({width:width});
+		// $(".tabulator-cell[data-index=" + index + "], .tabulator-col[data-index=" + index + "]",this.element).css({width:width});
 
-		//reinstate right edge on table if fitted columns resized
-		if(self.options.fitColumns){
-			$(".tabulator-row .tabulator-cell:last-of-type",self.element).css("border-right","");
-			$(".tabulator-col:last",self.element).css("border-right","");
-		}
+		// //reinstate right edge on table if fitted columns resized
+		// if(self.options.fitColumns){
+		// 	$(".tabulator-row .tabulator-cell:last-of-type",self.element).css("border-right","");
+		// 	$(".tabulator-col:last",self.element).css("border-right","");
+		// }
 
-		self._vertAlignColHeaders();
+		// self._vertAlignColHeaders();
 
 		self._calcFrozenColumnsPos();
 	},
@@ -2719,30 +2719,30 @@
 		var self = this;
 
 		if(self.header){
-			var headerHeight = self.header.outerHeight();
-			var subheadings = $(".tabulator-col-group-cols>.tabulator-col:not(.tabulator-col-group)", self.header);
-			var cols = $(".tabulator-col:not(.tabulator-col-group)", self.header);
+			// var headerHeight = self.header.outerHeight();
+			// var subheadings = $(".tabulator-col-group-cols>.tabulator-col:not(.tabulator-col-group)", self.header);
+			// var cols = $(".tabulator-col:not(.tabulator-col-group)", self.header);
 
-			//resize header elements
-			cols.css({"padding-top":""})
-			subheadings.css({"height":""});
-			$(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
-			subheadings.each(function(){
-				$(this).css({"height":$(this).parent().innerHeight()})
-			})
+			// //resize header elements
+			// cols.css({"padding-top":""})
+			// subheadings.css({"height":""});
+			// $(">.tabulator-col, >.tabulator-col-row-handle", self.header).css({"height":""}).css({"height":self.header.innerHeight() + "px"});
+			// subheadings.each(function(){
+			// 	$(this).css({"height":$(this).parent().innerHeight()})
+			// })
 
-			//vertical align column headers
-			if(self.options.colVertAlign !== "top"){
-				cols.each(function(){
-					var col = $(this);
-					var height = $(".tabulator-col-content", col).outerHeight();
+			// //vertical align column headers
+			// if(self.options.colVertAlign !== "top"){
+			// 	cols.each(function(){
+			// 		var col = $(this);
+			// 		var height = $(".tabulator-col-content", col).outerHeight();
 
-					col.css({"padding-top": col.innerHeight() - (self.options.colVertAlign === "bottom" ? height : height*1.5)})
-				});
-			}
+			// 		col.css({"padding-top": col.innerHeight() - (self.options.colVertAlign === "bottom" ? height : height*1.5)})
+			// 	});
+			// }
 
-			//resize table holder to match header height
-			if(self.options.height && headerHeight != self.header.outerHeight()){
+			// //resize table holder to match header height
+			// if(self.options.height && headerHeight != self.header.outerHeight()){
 
 				if(self.footer){
 					var footerHeight = self.header.outerHeight() + self.footer.outerHeight();
@@ -2753,14 +2753,14 @@
 						"max-height":"calc(100% - " + footerHeight + "px)",
 					});
 				}else{
-					self.tableHolder.css({
-						"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
-						"height":"calc(100% - " + self.header.outerHeight() + "px)",
-						"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
-					});
+					// self.tableHolder.css({
+					// 	"min-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					// 	"height":"calc(100% - " + self.header.outerHeight() + "px)",
+					// 	"max-height":"calc(100% - " + self.header.outerHeight() + "px)",
+					// });
 				}
 
-			}
+			// }
 		}
 
 		//allow for scrolling of headers if table is empty
@@ -2833,69 +2833,70 @@
 
 
 		//handle resizable columns
-		if(self.options.colResizable){
-			//create resize handle
-			var handle = $("<div class='tabulator-handle'></div>");
-			var prevHandle = $("<div class='tabulator-handle prev'></div>");
+		// if(self.options.colResizable){
+		// 	//create resize handle
+		// 	var handle = $("<div class='tabulator-handle'></div>");
+		// 	var prevHandle = $("<div class='tabulator-handle prev'></div>");
 
-			$(".tabulator-col", self.header).append(handle)
-			.append(prevHandle);
+		// 	$(".tabulator-col", self.header).append(handle)
+		// 	.append(prevHandle);
 
-			$(".tabulator-col .tabulator-handle", self.header).on("mousedown", function(e){
+		// 	$(".tabulator-col .tabulator-handle", self.header).on("mousedown", function(e){
 
 				e.stopPropagation(); //prevent resize from interfereing with movable columns
 
-				var colHandle = $(this);
+		// 		var colHandle = $(this);
 
-				var colElement = !colHandle.hasClass("prev") ? colHandle.closest(".tabulator-col") : colHandle.closest(".tabulator-col").prev(".tabulator-col");
+		// 		var colElement = !colHandle.hasClass("prev") ? colHandle.closest(".tabulator-col") : colHandle.closest(".tabulator-col").prev(".tabulator-col");
 
-				if(typeof colElement.attr("data-index") === "undefined"){
-					colElement = $(".tabulator-col", colElement).last();
-				}
+		// 		if(typeof colElement.attr("data-index") === "undefined"){
+		// 			colElement = $(".tabulator-col", colElement).last();
+		// 		}
 
-				if(colElement){
-					self.mouseDrag = e.screenX;
-					self.mouseDragWidth = colElement.outerWidth();
-					self.mouseDragElement = colElement;
-				}
+		// 		if(colElement){
+		// 			self.mouseDrag = e.screenX;
+		// 			self.mouseDragWidth = colElement.outerWidth();
+		// 			self.mouseDragElement = colElement;
+		// 		}
 
-				$("body").on("mouseup", endColMove);
-			})
-			self.element.on("mousemove", function(e){
-				if(self.mouseDrag){
-					self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
-					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
-				}
-			})
+		// 		$("body").on("mouseup", endColMove);
+		// 	})
 
-			var endColMove = function(e){
-				if(self.mouseDrag){
+		// 	self.element.on("mousemove", function(e){
+		// 		if(self.mouseDrag){
+		// 			self.mouseDragElement.css({width: self.mouseDragWidth + (e.screenX - self.mouseDrag)})
+		// 			self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
+		// 		}
+		// 	})
+
+			// var endColMove = function(e){
+			// 	if(self.mouseDrag){
 					e.stopPropagation();
 					e.stopImmediatePropagation();
 
-					$("body").off("mouseup", endColMove);
+			// 		$("body").off("mouseup", endColMove);
 
-					self.mouseDragOut = true;
+			// 		self.mouseDragOut = true;
 
-					self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
+			// 		self._resizeCol(self.mouseDragElement.attr("data-index"), self.mouseDragElement.outerWidth());
 
-					var match = self._findColumn(self.mouseDragElement.data("field"));
+			// 		var match = self._findColumn(self.mouseDragElement.data("field"));
 
-					if(match){
-						match.column.width = self.mouseDragElement.outerWidth();
-					}
+			// 		if(match){
+			// 			match.column.width = self.mouseDragElement.outerWidth();
+			// 		}
 
 					if(self.options.persistentLayout){
 						self._setPersistentCol();
 					}
 
-					self.mouseDrag = false;
-					self.mouseDragWidth = false;
-					self.mouseDragElement = false;
-				}
-			}
+				// 	self.mouseDrag = false;
+				// 	self.mouseDragWidth = false;
+				// 	self.mouseDragElement = false;
+				// }
+		// 	}
 
-		}
+		// }
 
 		//element.append(self.header);
 		// self.tableHolder.append(self.table);
@@ -2953,15 +2954,15 @@
 			}
 		}
 
-		element.on("editval", ".tabulator-cell", function(e, value){
-			var element = $(this);
-			if(element.is(":focus")){element.blur()}
-				self._cellDataChange(element, value);
-		});
+		// element.on("editval", ".tabulator-cell", function(e, value){
+		// 	var element = $(this);
+		// 	if(element.is(":focus")){element.blur()}
+		// 		self._cellDataChange(element, value);
+		// });
 
-		element.on("editcancel", ".tabulator-cell", function(e, value){
-			self._cellDataChange($(this), $(this).data("value"));
-		});
+		// element.on("editcancel", ".tabulator-cell", function(e, value){
+		// 	self._cellDataChange($(this), $(this).data("value"));
+		// });
 
 		//append sortable arrows to sortable headers
 		$(".tabulator-col[data-sortable=true] .tabulator-col-content", self.header)
@@ -3105,57 +3106,57 @@
 		}
 
 		//handle filter update
-		function updateFilter(){
+		// function updateFilter(){
 
-			var filters = {};
+		// 	var filters = {};
 
-			//determine filter value and type
-			$(".tabulator-header-filter", self.header).each(function(){
-				var element = $(this);
-				var filterVal = element.data("filter-val");
+		// 	//determine filter value and type
+		// 	$(".tabulator-header-filter", self.header).each(function(){
+		// 		var element = $(this);
+		// 		var filterVal = element.data("filter-val");
 
-				if(typeof filterVal !== "undefined" && filterVal !== ""){
+		// 		if(typeof filterVal !== "undefined" && filterVal !== ""){
 
-					var comparison = "match";
+		// 			var comparison = "match";
 
-					if($("input", $(this)).length){
-						if($("input", $(this)).attr("type") == "text" || $("input", $(this)).attr("type") == ""){
-							comparison = "partial";
-						}
-					}
+		// 			if($("input", $(this)).length){
+		// 				if($("input", $(this)).attr("type") == "text" || $("input", $(this)).attr("type") == ""){
+		// 					comparison = "partial";
+		// 				}
+		// 			}
 
-					filters[element.closest(".tabulator-col").data("field")] = {value:filterVal, comparison:comparison};
-				}
-			});
+		// 			filters[element.closest(".tabulator-col").data("field")] = {value:filterVal, comparison:comparison};
+		// 		}
+		// 	});
 
-			//filter all columns
-			function colFilter(data){
-				var match = true;
+		// 	//filter all columns
+		// 	function colFilter(data){
+		// 		var match = true;
 
-				for(var field in filters){
+		// 		for(var field in filters){
 
-					switch(filters[field].comparison){
-						case "partial":
-						//match partial string mathes
-						if(String(data[field]).toLowerCase().indexOf(String(filters[field].value).toLowerCase()) == -1){
-							match = false;
-						}
-						break;
+		// 			switch(filters[field].comparison){
+		// 				case "partial":
+		// 				//match partial string mathes
+		// 				if(String(data[field]).toLowerCase().indexOf(String(filters[field].value).toLowerCase()) == -1){
+		// 					match = false;
+		// 				}
+		// 				break;
 
-						default:
-						//match everything else explicitly
-						if(data[field] != filters[field].value){
-							match = false;
-						}
-						break;
-					}
-				}
+		// 				default:
+		// 				//match everything else explicitly
+		// 				if(data[field] != filters[field].value){
+		// 					match = false;
+		// 				}
+		// 				break;
+		// 			}
+		// 		}
 
-				return match;
-			}
+		// 		return match;
+		// 	}
 
-			self.setFilter(colFilter);
-		}
+		// 	self.setFilter(colFilter);
+		// }
 
 		//check if column group contains any columns
 		function isColGroupEmpty(column){
@@ -3191,41 +3192,41 @@
 				// column.cssClass = typeof(column.cssClass) == "undefined" ? "" : column.cssClass;
 
 
-				if(options.sortBy == column.field){
-					var sortdir = " data-sortdir='" + options.sortDir + "' ";
-					self.sortCurCol= column;
-					self.sortCurDir = options.sortDir;
-				}else{
-					var sortdir = "";
-				}
+				// if(options.sortBy == column.field){
+				// 	var sortdir = " data-sortdir='" + options.sortDir + "' ";
+				// 	self.sortCurCol= column;
+				// 	self.sortCurDir = options.sortDir;
+				// }else{
+				// 	var sortdir = "";
+				// }
 
 				// var visibility = column.visible ? "inline-block" : "none";
 
 				// var minWidth = typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth;
 
 				var col = $('<div class="tabulator-col ' + column.cssClass + '" style="display:' + visibility + '; min-width:' + minWidth + ';" data-index="' + column.index + '" data-field="' + column.field + '" data-sortable=' + column.sortable + sortdir + ' role="columnheader" aria-sort="' + (options.sortBy == column.field ? (options.sortDir == "asc" ? "ascending" : "descending") : "none") + '"><div class="tabulator-col-content"><div class="tabulator-col-title"></div></div></div>');
-				var colContent = $(".tabulator-col-content", col);
-				var colTitle = $(".tabulator-col-title", col);
+				// var colContent = $(".tabulator-col-content", col);
+				// var colTitle = $(".tabulator-col-title", col);
 
-				var title = self.lang.columns[column.field] || (column.title ? column.title : "&nbsp");
+				// var title = self.lang.columns[column.field] || (column.title ? column.title : "&nbsp");
 
-				if(column.editableTitle){
-					var titleElement = $("<input class='tabulator-title-editor'>");
-					titleElement.val(title);
+				// if(column.editableTitle){
+				// 	var titleElement = $("<input class='tabulator-title-editor'>");
+				// 	titleElement.val(title);
 
-					titleElement.on("click", function(e){
-						e.stopPropagation();
-						$(this).focus();
-					});
+				// 	titleElement.on("click", function(e){
+				// 		e.stopPropagation();
+				// 		$(this).focus();
+				// 	});
 
-					titleElement.on("change", function(){
-						var newTitle = $(this).val();
-						column.title = newTitle;
-						options.colTitleChanged(newTitle, column, options.columns);
-					});
+				// 	titleElement.on("change", function(){
+				// 		var newTitle = $(this).val();
+				// 		column.title = newTitle;
+				// 		options.colTitleChanged(newTitle, column, options.columns);
+				// 	});
 
-					title = titleElement;
-				}
+				// 	title = titleElement;
+				// }
 
 			//Manage Header Column Filters
 			if(column.headerFilter){
@@ -3243,257 +3244,256 @@
 
 
 				//build filter element from editor
-				var editorFunc = typeof(editor) == "string" ? self.editors[editor] : editor;
+				// var editorFunc = typeof(editor) == "string" ? self.editors[editor] : editor;
 
-				var filter = $("<div class='tabulator-header-filter'></div>");
+				// var filter = $("<div class='tabulator-header-filter'></div>");
 
-				var cellEditor = editorFunc.call(self, filter, "");
+				// var cellEditor = editorFunc.call(self, filter, "");
 
-				var typingTimer = false;
+				// var typingTimer = false;
 
-				filter.append(cellEditor);
-				filter.children().attr("placeholder", self.lang.headerFilters.columns[column.field] || self.lang.headerFilters.default);
+				// filter.append(cellEditor);
+				// filter.children().attr("placeholder", self.lang.headerFilters.columns[column.field] || self.lang.headerFilters.default);
 
-				//handle events
-				cellEditor.on("click", function(e){
-					e.stopPropagation();
-					$(this).focus();
-				});
+				// //handle events
+				// cellEditor.on("click", function(e){
+				// 	e.stopPropagation();
+				// 	$(this).focus();
+				// });
 
-				cellEditor.on("keyup", function(e){
-					var element = $(this);
+				// cellEditor.on("keyup", function(e){
+				// 	var element = $(this);
 
-					if(typingTimer){
-						clearTimeout(typingTimer);
-					}
+				// 	if(typingTimer){
+				// 		clearTimeout(typingTimer);
+				// 	}
 
-					typingTimer = setTimeout(function(){
-						filter.trigger("editval", element.val())
-					},300);
-				});
+				// 	typingTimer = setTimeout(function(){
+				// 		filter.trigger("editval", element.val())
+				// 	},300);
+				// });
 
 				//special case for numeric inputs, ad additional binding incase increment buttons are used
-				if(cellEditor.attr("type") == "number"){
-					cellEditor.on("change", function(e){
-						filter.trigger("editval", $(this).val())
-					});
-				}
+				// if(cellEditor.attr("type") == "number"){
+				// 	cellEditor.on("change", function(e){
+				// 		filter.trigger("editval", $(this).val())
+				// 	});
+				// }
 
-				filter.on("editval editcancel", function(e, value){
-					$(this).data("filter-val", value);
-					updateFilter()
-				});
+				// filter.on("editval editcancel", function(e, value){
+				// 	$(this).data("filter-val", value);
+				// 	updateFilter()
+				// });
 
-				$("input, select", filter).on("mousedown",function(e){
-					e.stopPropagation();
-				});
+				// $("input, select", filter).on("mousedown",function(e){
+				// 	e.stopPropagation();
+				// });
 
-				//add filter to column header
-				colTitle.append(title);
+				// //add filter to column header
+				// colTitle.append(title);
 
-				colContent.append(filter);
+				// colContent.append(filter);
 
-			}else{
+			// }else{
 
-				colTitle.html(title);
-			}
-
-
-			//added callback for custom header tooltips
-			var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
-
-			if(tooltip === true){
-				tooltip = title;
-			}else if(typeof(tooltip) == "function"){
-				tooltip = tooltip(column);
-			}
-
-			if(tooltip){
-				col.attr("title", tooltip);
-			}else{
-				col.attr("title", "");
-			}
+			// 	colTitle.html(title);
+			// }
 
 
-			if(typeof(column.width) != "undefined"){
-				column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
+			// //added callback for custom header tooltips
+			// var tooltip = column.tooltipHeader ? column.tooltipHeader : (options.tooltipsHeader && column.tooltipHeader !== false ? true : false);
 
-				col.data("width", column.width);
+			// if(tooltip === true){
+			// 	tooltip = title;
+			// }else if(typeof(tooltip) == "function"){
+			// 	tooltip = tooltip(column);
+			// }
 
-				col.css({width:column.width});
-			}
+			// if(tooltip){
+			// 	col.attr("title", tooltip);
+			// }else{
+			// 	col.attr("title", "");
+			// }
 
-			//sort tabl click binding
-			if(column.sortable){
-				col.on("click", function(){
-					if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
-						self._sortClick(column, col); //trigger sort
-					}
-					self.mouseDragOut = false;
-				})
-			}
+
+			// if(typeof(column.width) != "undefined"){
+			// 	column.width = isNaN(column.width) ? column.width : column.width + "px"; //format number
+
+			// 	col.data("width", column.width);
+
+			// 	col.css({width:column.width});
+			// }
+
+			// //sort tabl click binding
+			// if(column.sortable){
+			// 	col.on("click", function(){
+			// 		if(!self.mouseDragOut){ //prevent accidental trigger my mouseup on column drag
+			// 			self._sortClick(column, col); //trigger sort
+			// 		}
+			// 		self.mouseDragOut = false;
+			// 	})
+			// }
 
 		}else{
 
 			if(!isColGroupEmpty(column)){
-				var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
-				self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
+				// var col = $('<div class="tabulator-col tabulator-col-group" role="columngroup" aria-label="' + column.title + '"><div class="tabulator-col-content"><div class="tabulator-col-title">' + column.title + '</div></div><div class="tabulator-col-group-cols"></div></div>');
+				// self._colLayoutGroup(column.columns, $(".tabulator-col-group-cols", col));
 			}
 		}
 
-		//bind header click function
-		if(typeof(column.headerOnClick) == "function"){
-			col.on("click", function(e){column.headerOnClick(e, col, column.field, column)});
-		}
+		// //bind header click function
+		// if(typeof(column.headerOnClick) == "function"){
+		// 	col.on("click", function(e){column.headerOnClick(e, col, column.field, column)});
+		// }
 
-		//bind header double click function
-		if(typeof(column.headerOnDblClick) == "function"){
-			col.on("dblclick", function(e){column.headerOnDblClick(e, col, column.field, column)});
-		}
+		// //bind header double click function
+		// if(typeof(column.headerOnDblClick) == "function"){
+		// 	col.on("dblclick", function(e){column.headerOnDblClick(e, col, column.field, column)});
+		// }
 
-		//bind header context function
-		if(typeof(column.headerOnContext) == "function"){
-			col.on("contextmenu", function(e){column.headerOnContext(e, col, column.field, column)});
-		}
+		// //bind header context function
+		// if(typeof(column.headerOnContext) == "function"){
+		// 	col.on("contextmenu", function(e){column.headerOnContext(e, col, column.field, column)});
+		// }
 
-		if(col){
-			col.data("column", column);
-			container.append(col);
-		}
+		// if(col){
+		// 	col.data("column", column);
+		// 	container.append(col);
+		// }
 	});
 
 },
 
 	//layout columns on first render
 	_colRender:function(fixedwidth, forceRedraw){
-		var self = this;
-		var options = self.options;
-		var table = self.table;
-		var header = self.header;
-		var element = self.element;
+		// var self = this;
+		// var options = self.options;
+		// var table = self.table;
+		// var header = self.header;
+		// var element = self.element;
 
-		if(fixedwidth || !options.fitColumns){ //if columns have been resized and now data needs to match them
-			if(options.responsiveLayout){
-				self._renderResponsiveColumns();
-			}
+		// if(fixedwidth || !options.fitColumns){ //if columns have been resized and now data needs to match them
+		// 	if(options.responsiveLayout){
+		// 		self._renderResponsiveColumns();
+		// 	}
 
-			//free sized table
-			$.each(self.columnList, function(i, column){
-				var colWidth = $(".tabulator-col[data-index='" + column.index + "']", element).outerWidth();
-				var col = $(".tabulator-cell[data-index='" + column.index + "']", element);
-				col.css({width:colWidth});
-			});
-		}else{
+		// 	//free sized table
+		// 	$.each(self.columnList, function(i, column){
+		// 		var colWidth = $(".tabulator-col[data-index='" + column.index + "']", element).outerWidth();
+		// 		var col = $(".tabulator-cell[data-index='" + column.index + "']", element);
+		// 		col.css({width:colWidth});
+		// 	});
+		// }else{
 
-			if(options.fitColumns){
-				//resize columns to fit in window
+			// if(options.fitColumns){
+			// 	//resize columns to fit in window
 
-				//remove right edge border on table if fitting to width to prevent double border
-				$(".tabulator-row .tabulator-cell:last-child, .tabulator-col:last", element).css("border-right","none");
+			// 	//remove right edge border on table if fitting to width to prevent double border
+			// 	$(".tabulator-row .tabulator-cell:last-child, .tabulator-col:last", element).css("border-right","none");
 
-				if(self.options.fitColumns){
-					$(".tabulator-row", self.table).css({
-						"width":"100%",
-					});
-				}
+			// 	if(self.options.fitColumns){
+			// 		$(".tabulator-row", self.table).css({
+			// 			"width":"100%",
+			// 		});
+			// 	}
 
-				var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
+			// 	var totWidth = options.movableRows ? self.element.innerWidth() - 30 : self.element.innerWidth();
 
-				//adjust for vertical scrollbar if present
-				if(self.tableHolder[0].scrollHeight > self.tableHolder.innerHeight()){
-					totWidth -= self.tableHolder[0].offsetWidth - self.tableHolder[0].clientWidth;
-				}
+			// 	//adjust for vertical scrollbar if present
+			// 	if(self.tableHolder[0].scrollHeight > self.tableHolder.innerHeight()){
+			// 		totWidth -= self.tableHolder[0].offsetWidth - self.tableHolder[0].clientWidth;
+			// 	}
 
-				var colCount = 0;
+			// 	var colCount = 0;
 
-				var widthIdeal = 0;
-				var widthIdealCount = 0;
-				var lastVariableCol = "";
+			// 	var widthIdeal = 0;
+			// 	var widthIdealCount = 0;
+			// 	var lastVariableCol = "";
 
-				$.each(self.columnList, function(i, column){
-					if(column.visible){
+			// 	$.each(self.columnList, function(i, column){
+			// 		if(column.visible){
 
-						colCount++;
+			// 			colCount++;
 
-						if(column.width){
+			// 			if(column.width){
 
-							var thisWidth = 0;
+			// 				var thisWidth = 0;
 
-							var colWidth = 0;
-							var minWidth =  parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
+			// 				var colWidth = 0;
+			// 				var minWidth =  parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-							if(typeof(column.width) == "string"){
-								if(column.width.indexOf("%") > -1){
-									colWidth = (totWidth / 100) * parseInt(column.width) ;
-								}else{
-									colWidth = parseInt(column.width);
-								}
+			// 				if(typeof(column.width) == "string"){
+			// 					if(column.width.indexOf("%") > -1){
+			// 						colWidth = (totWidth / 100) * parseInt(column.width) ;
+			// 					}else{
+			// 						colWidth = parseInt(column.width);
+			// 					}
+			// 				}else{
+			// 					colWidth = column.width;
+			// 				}
 
-							}else{
-								colWidth = column.width;
-							}
+			// 				thisWidth = colWidth > minWidth ? colWidth : minWidth;
 
-							thisWidth = colWidth > minWidth ? colWidth : minWidth;
+			// 				widthIdeal += thisWidth;
+			// 				widthIdealCount++;
+			// 			}else{
 
-							widthIdeal += thisWidth;
-							widthIdealCount++;
-						}else{
+			// 				// widthIdeal +=options.colMinWidth;
 
-							// widthIdeal +=options.colMinWidth;
+			// 				lastVariableCol = column.field;
+			// 			}
+			// 		}
+			// 	});
 
-							lastVariableCol = column.field;
-						}
-					}
-				});
+			// 	var colWidth = totWidth / colCount;
 
-				var colWidth = totWidth / colCount;
+			// 	var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount));
 
-				var proposedWidth = Math.floor((totWidth - widthIdeal) / (colCount - widthIdealCount));
+			// 	//prevent underflow on non integer width tables
+			// 	var gapFill = totWidth - widthIdeal - (proposedWidth * (colCount - widthIdealCount));
+			// 	gapFill = gapFill > 0 ? gapFill : 0;
 
-				//prevent underflow on non integer width tables
-				var gapFill = totWidth - widthIdeal - (proposedWidth * (colCount - widthIdealCount));
-				gapFill = gapFill > 0 ? gapFill : 0;
+			// 	$.each(self.columnList, function(i, column){
+			// 		if(column.visible){
 
-				$.each(self.columnList, function(i, column){
-					if(column.visible){
+			// 			var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-						var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
+			// 			var newWidth = proposedWidth;
 
-						var newWidth = proposedWidth;
+			// 			if(column.width){
+			// 				if(typeof(column.width) == "string"){
+			// 					if(column.width.indexOf("%") > -1){
+			// 						newWidth = (totWidth / 100) * parseInt(column.width) ;
+			// 					}else{
+			// 						newWidth = parseInt(column.width);
+			// 					}
 
-						if(column.width){
-							if(typeof(column.width) == "string"){
-								if(column.width.indexOf("%") > -1){
-									newWidth = (totWidth / 100) * parseInt(column.width) ;
-								}else{
-									newWidth = parseInt(column.width);
-								}
+			// 				}else{
+			// 					newWidth = column.width;
+			// 				}
+			// 			}
 
-							}else{
-								newWidth = column.width;
-							}
-						}
+			// 			if(newWidth >= minWidth){
 
-						if(newWidth >= minWidth){
+			// 				var col = $(".tabulator-cell[data-index=" + column.index + "], .tabulator-col[data-index=" + column.index + "]", element);
 
-							var col = $(".tabulator-cell[data-index=" + column.index + "], .tabulator-col[data-index=" + column.index + "]", element);
+			// 				if(column.field == lastVariableCol){
+			// 					col.css({width:newWidth + gapFill});
+			// 				}else{
+			// 					if(newWidth < minWidth){
+			// 						col.css({"min-width":newWidth});
+			// 					}
+			// 					col.css({width:newWidth});
 
-							if(column.field == lastVariableCol){
-								col.css({width:newWidth + gapFill});
-							}else{
-								if(newWidth < minWidth){
-									col.css({"min-width":newWidth});
-								}
-								col.css({width:newWidth});
+			// 				}
 
-							}
-
-						}else{
-							var col = $(".tabulator-cell[data-index=" + column.index + "], .tabulator-col[data-index=" + column.index + "]", element);
-							col.css({width:minWidth});
-						}
-					}
-				});
+			// 			}else{
+			// 				var col = $(".tabulator-cell[data-index=" + column.index + "], .tabulator-col[data-index=" + column.index + "]", element);
+			// 				col.css({width:minWidth});
+			// 			}
+			// 		}
+			// 	});
 
 				if(options.responsiveLayout){
 					self._renderResponsiveColumns();
@@ -3501,33 +3501,33 @@
 
 			}else{
 
-				//free sized table
-				$.each(self.columnList, function(i, column){
+				// //free sized table
+				// $.each(self.columnList, function(i, column){
 
-					var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]", element);
+				// 	var col = $(".tabulator-cell[data-index=" + i + "], .tabulator-col[data-index=" + i+ "]", element);
 
-					if(column.width){
-						//reseize to match specified column width
-						max = column.width;
-					}else{
-						//resize columns to widest element
+				// 	if(column.width){
+				// 		//reseize to match specified column width
+				// 		max = column.width;
+				// 	}else{
+				// 		//resize columns to widest element
 
-						var max = 0;
+				// 		var max = 0;
 
-						col.each(function(){
-							max = $(this).outerWidth() > max ? $(this).outerWidth() : max;
-						});
+				// 		col.each(function(){
+				// 			max = $(this).outerWidth() > max ? $(this).outerWidth() : max;
+				// 		});
 
-						if(options.colMinWidth || typeof column.minWidth !== "undefined"){
+				// 		if(options.colMinWidth || typeof column.minWidth !== "undefined"){
 
-							var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
+				// 			var minWidth = parseInt(typeof column.minWidth === "undefined" ? options.colMinWidth : column.minWidth);
 
-							max = max < minWidth ? minWidth : max;
-						}
+				// 			max = max < minWidth ? minWidth : max;
+				// 		}
 
-					}
-					col.css({width:max});
-				});
+				// 	}
+				// 	col.css({width:max});
+				// });
 
 				if(options.responsiveLayout){
 					self._renderResponsiveColumns();
@@ -3542,9 +3542,9 @@
 		//handle frozen columns
 		self._renderFrozenColumns();
 
-		if(forceRedraw){
-			self._renderTable();
-		}
+		// if(forceRedraw){
+		// 	self._renderTable();
+		// }
 	},
 
 
@@ -3762,14 +3762,14 @@
 	},
 
 	//format cell contents
-	_formatCell:function(formatter, value, data, cell, row, formatterParams){
-		var self = this;
+	// _formatCell:function(formatter, value, data, cell, row, formatterParams){
+	// 	var self = this;
 
-		var formatter = typeof(formatter) == "undefined" ? "plaintext" : formatter;
-		formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
+	// 	var formatter = typeof(formatter) == "undefined" ? "plaintext" : formatter;
+	// 	formatter = typeof(formatter) == "string" ? this.formatters[formatter] : formatter;
 
-		return formatter.call(self, value, data, cell, row, this.options, formatterParams);
-	},
+	// 	return formatter.call(self, value, data, cell, row, this.options, formatterParams);
+	// },
 
 
 	//////////////////// Row Selection Handlers ////////////////////
@@ -3985,101 +3985,101 @@
 
 	////////////////// Table Interaction Handlers //////////////////
 
-	//carry out action on row click
-	_rowClick: function(e, row, data){
-		this.options.rowClick(e, row.data("id"), data, row);
-	},
+	// //carry out action on row click
+	// _rowClick: function(e, row, data){
+	// 	this.options.rowClick(e, row.data("id"), data, row);
+	// },
 
-	//carry out action on row double click
-	_rowDblClick: function(e, row, data){
-		this.options.rowDblClick(e, row.data("id"), data, row);
-	},
+	// //carry out action on row double click
+	// _rowDblClick: function(e, row, data){
+	// 	this.options.rowDblClick(e, row.data("id"), data, row);
+	// },
 
-	//carry out action on row context
-	_rowContext: function(e, row, data){
-		this.options.rowContext(e, row.data("id"), data, row);
-	},
+	// //carry out action on row context
+	// _rowContext: function(e, row, data){
+	// 	this.options.rowContext(e, row.data("id"), data, row);
+	// },
 
-	//carry out action on cell click
-	_cellClick: function(e, cell){
-		var self = this;
-		var index = cell.data("index");
+	// //carry out action on cell click
+	// _cellClick: function(e, cell){
+	// 	var self = this;
+	// 	var index = cell.data("index");
 
-		var match = self._findColumn(function(column){
-			return column.index == index;
-		});
+	// 	var match = self._findColumn(function(column){
+	// 		return column.index == index;
+	// 	});
 
-		if(match){
-			match.column.onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
-		}
-	},
+	// 	if(match){
+	// 		match.column.onClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+	// 	}
+	// },
 
-	//carry out action on cell double click
-	_cellDblClick: function(e, cell){
-		var self = this;
-		var index = cell.data("index");
+	// //carry out action on cell double click
+	// _cellDblClick: function(e, cell){
+	// 	var self = this;
+	// 	var index = cell.data("index");
 
-		var match = self._findColumn(function(column){
-			return column.index == index;
-		});
+	// 	var match = self._findColumn(function(column){
+	// 		return column.index == index;
+	// 	});
 
-		if(match){
-			match.column.onDblClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
-		}
-	},
+	// 	if(match){
+	// 		match.column.onDblClick(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+	// 	}
+	// },
 
-	//carry out action on cell context click
-	_cellContext: function(e, cell){
-		var self = this;
-		var index = cell.data("index");
+	// //carry out action on cell context click
+	// _cellContext: function(e, cell){
+	// 	var self = this;
+	// 	var index = cell.data("index");
 
-		var match = self._findColumn(function(column){
-			return column.index == index;
-		});
+	// 	var match = self._findColumn(function(column){
+	// 		return column.index == index;
+	// 	});
 
-		if(match){
-			match.column.onContext(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
-		}
-	},
+	// 	if(match){
+	// 		match.column.onContext(e, cell, cell.data("value"), cell.closest(".tabulator-row").data("data"));
+	// 	}
+	// },
 
 	//handle cell data change
 	_cellDataChange: function(cell, value){
-		var self = this;
-		var row = cell.closest(".tabulator-row");
+		// var self = this;
+		// var row = cell.closest(".tabulator-row");
 
-		cell.removeClass("tabulator-editing");
-		cell.closest(".tabulator-row").removeClass("tabulator-row-editing");
+		// cell.removeClass("tabulator-editing");
+		// cell.closest(".tabulator-row").removeClass("tabulator-row-editing");
 
-		//update row data
-		var rowData = row.data("data");
-		var hasChanged = rowData[cell.data("field")] != value;
-		var oldVal = rowData[cell.data("field")];
+		// //update row data
+		// var rowData = row.data("data");
+		// var hasChanged = rowData[cell.data("field")] != value;
+		// var oldVal = rowData[cell.data("field")];
 
-		if(hasChanged){
-			//handle cell mutation if needed
-			var mutator = cell.data("mutator");
+		// if(hasChanged){
+		// 	//handle cell mutation if needed
+		// 	var mutator = cell.data("mutator");
 
-			if(mutator){
-				value = mutator(value, "edit", rowData);
-			}
+		// 	if(mutator){
+		// 		value = mutator(value, "edit", rowData);
+		// 	}
 
-			//update cell data value
-			cell.data("value", value);
+		// 	//update cell data value
+		// 	cell.data("value", value);
 
-			rowData[cell.data("field")] = value;
-			row.data("data", rowData);
-		}
+		// 	rowData[cell.data("field")] = value;
+		// 	row.data("data", rowData);
+		// }
 
-		//reformat cell data
-		cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
+		// //reformat cell data
+		// cell.html(self._formatCell(cell.data("formatter"), value, rowData, cell, row, cell.data("formatterParams")));
 
-		if(hasChanged){
-			//triger event
-			self.options.cellEdited(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
-			self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).column.tooltip);
-		}
+		// if(hasChanged){
+		// 	//triger event
+		// 	self.options.cellEdited(rowData[self.options.index], cell.data("field"), value, oldVal, rowData, cell, row);
+		// 	self._generateTooltip(cell, rowData, self._findColumn(cell.data("field")).column.tooltip);
+		// }
 
-		self._styleRows();
+		// self._styleRows();
 
 		self.options.dataEdited(self.data);
 	},
@@ -4091,24 +4091,24 @@
 		return String(value).replace(/'/g, "&#39;");
 	},
 
-	//format date for date comparison
-	_formatDate:function(dateString){
-		var format = this.options.dateFormat;
+	// //format date for date comparison
+	// _formatDate:function(dateString){
+	// 	var format = this.options.dateFormat;
 
-		var ypos = format.indexOf("yyyy");
-		var mpos = format.indexOf("mm");
-		var dpos = format.indexOf("dd");
+	// 	var ypos = format.indexOf("yyyy");
+	// 	var mpos = format.indexOf("mm");
+	// 	var dpos = format.indexOf("dd");
 
-		if(dateString){
-			var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
+	// 	if(dateString){
+	// 		var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
 
-			var newDate = Date.parse(formattedString);
-		}else{
-			var newDate = 0;
-		}
+	// 		var newDate = Date.parse(formattedString);
+	// 	}else{
+	// 		var newDate = 0;
+	// 	}
 
-		return isNaN(newDate) ? 0 : newDate;
-	},
+	// 	return isNaN(newDate) ? 0 : newDate;
+	// },
 
 	////////////////// Default Sorter/Formatter/Editor Elements //////////////////
 
