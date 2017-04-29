@@ -25,7 +25,7 @@ var Filter = function(table){
 					switch(filterType){
 						case "partial":
 						filterFunc = function(data){
-							return String(data[field]).toLowerCase().indexOf(String(value).toLowerCase()) > -1
+							return String(data[field]).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
 						}
 						break;
 
