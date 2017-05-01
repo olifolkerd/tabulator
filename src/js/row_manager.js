@@ -53,9 +53,7 @@ var RowManager = function(table){
 
 			//scroll header along with table body
 			self.element.scroll(function(){
-				var holder = $(this);
-				var left = holder.scrollLeft();
-				var top = holder.scrollTop();
+				var left = self.element.scrollLeft();
 
 
 				//handle horizontal scrolling
@@ -63,16 +61,26 @@ var RowManager = function(table){
 					self.columnManager.scrollHorizontal(left);
 				}
 
-				//handle verical scrolling
-				if(self.height && self.scrollTop != top){
-					self.scrollTop = top;
-					self.scrollVertical();
-				}else{
-					self.scrollTop = top;
-				}
 
 				self.scrollLeft = left;
 			});
+
+			//handle virtual dom scrolling
+			if(self.table.options.height && self.table.options.virtualDom){
+
+				self.element.scroll(function(){
+					var top = self.element.scrollTop();
+
+					//handle verical scrolling
+					if(self.scrollTop != top){
+						self.scrollTop = top;
+						self.scrollVertical();
+					}else{
+						self.scrollTop = top;
+					}
+
+				});
+			}
 
 		},
 
@@ -147,7 +155,7 @@ var RowManager = function(table){
 		renderTable:function(){
 			var self = this;
 
-			if(self.height){
+			if(self.height && self.table.options.virtualDom){
 				self._virtualRenderFill();
 			}else{
 				self._simpleRender();

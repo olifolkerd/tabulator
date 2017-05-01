@@ -42,6 +42,8 @@
 	 			selectablePersistence:true, // maintain selection when table view is updated
 	 			selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
+	 			virtualDom:true, //enable DOM virtualization
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
