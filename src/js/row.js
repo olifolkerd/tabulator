@@ -22,12 +22,6 @@ var Row = function(data, parent){
 			var self = this;
 			self.element.empty();
 
-			self.cells = parent.columnManager.generateCells(self);
-
-			self.cells.forEach(function(cell){
-				self.element.append(cell.getElement());
-			});
-
 			//set row selection characteristics
 			if(self.table.options.selectable !== false && self.table.extExists("rowSelect")){
 				self.table.extensions.rowSelect.initializeRow(this);
@@ -60,9 +54,18 @@ var Row = function(data, parent){
 
 		//functions to setup on first render
 		initialize:function(){
-			if(!this.initialized){
-				this.normalizeHeight();
-				this.initialized = true;
+			var self = this;
+
+			if(!self.initialized){
+
+				self.cells = parent.columnManager.generateCells(self);
+
+				self.cells.forEach(function(cell){
+					self.element.append(cell.getElement());
+				});
+
+				self.normalizeHeight();
+				self.initialized = true;
 			}
 		},
 
