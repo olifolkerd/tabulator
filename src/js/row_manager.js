@@ -92,12 +92,9 @@ var RowManager = function(table){
 
 			self.rows = [];
 
-			console.log("setting Data")
-
 			data.forEach(function(def, i){
 				var row = new Row(def, self);
 				self.rows.push(row);
-				console.log("rowAdded")
 			});
 
 			self.refreshActiveData(true);

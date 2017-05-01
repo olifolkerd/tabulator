@@ -6,16 +6,13 @@ var ResizeColumns = function(table){
 		startColumn:false,
 		startX:false,
 		startWidth:false,
+		handle:$("<div class='tabulator-col-resize-handle'></div>"),
+		prevHandle:$("<div class='tabulator-col-resize-handle prev'></div>"),
 
 		initializeColumn:function(column, element){
-			var self = this;
-
-			//create resize handle
-			var handle = $("<div class='tabulator-col-resize-handle'></div>");
-			var prevHandle = $("<div class='tabulator-col-resize-handle prev'></div>");
-
-			element.append(handle)
-			.append(prevHandle);
+			var self = this,
+			handle = self.handle.clone(),
+			prevHandle = self.prevHandle.clone();
 
 			handle.on("click", function(e){
 				e.stopPropagation();
@@ -49,6 +46,9 @@ var ResizeColumns = function(table){
 					}
 				}
 			});
+
+			element.append(handle)
+			.append(prevHandle);
 		},
 
 		_mouseDown:function(e, column){
