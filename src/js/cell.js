@@ -106,10 +106,10 @@ var Cell = function(column, row){
 				if(userEdit){
 					changed = true;
 					oldVal = this.value;
-				}
 
-				if(userEdit && this.column.extensions.mutate && this.column.extensions.mutate.type !== "data"){
-					value = this.table.extensions.mutator.transformCell(cell, value);
+					if(this.column.extensions.mutate && this.column.extensions.mutate.type !== "data"){
+						value = this.table.extensions.mutator.transformCell(cell, value);
+					}
 				}
 
 				this.value = value;
