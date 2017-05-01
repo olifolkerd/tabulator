@@ -262,10 +262,10 @@ var Filter = function(table){
 					}
 				});
 
-				self.table.rowManager.activeRows = activeRows;
+				self.table.rowManager.setActiveRows(activeRows);
 
 			}else{
-				self.table.rowManager.activeRows = self.table.rowManager.rows;
+				self.table.rowManager.setActiveRows(self.table.rowManager.rows);
 			}
 		},
 

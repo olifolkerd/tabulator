@@ -5,14 +5,30 @@ var RowManager = function(table){
 		element:$("<div class='tabulator-tableHolder'></div>"), //containing element
 		tableElement:$("<div class='tabulator-table'></div>"), //table element
 		columnManager:null, //hold column manager object
+		height:0, //hold height of table element
 
 		firstRender:false, //handle first render
 
 		rows:[], //hold row data objects
 		activeRows:[], //rows currently on display in the table
+		activeRowsCount:0, //count of active rows
 
 		scrollTop:0,
 		scrollLeft:0,
+
+		vDomRowHeight:20, //approximation of row heights for padding
+
+		vDomTop:0, //hold position for first rendered row in the virtual DOM
+		vDomBottom:0, //hold possition for last rendered row in the virtual DOM
+
+		vDomScrollPosTop:0, //last scroll position of the vDom top;
+		vDomScrollPosBottom:0, //last scroll position of the vDom bottom;
+
+		vDomTopPad:0, //hold value of padding for top of virtual DOM
+		vDomBottomPad:0, //hold value of padding for bottom of virtual DOM
+
+		vDomWindowPad:0, //window padding before removing elements, to smooth scrolling
+
 
 		//////////////// Setup Functions /////////////////
 
@@ -44,32 +60,15 @@ var RowManager = function(table){
 				var left = holder.scrollLeft();
 				var top = holder.scrollTop();
 
+				//handle horizontal scrolling
 				if(self.scrollLeft != left){
 					self.columnManager.scrollHorizontal(left);
 				}
 
-
-				// //trigger progressive rendering on scroll
-				// // if(self.options.progressiveRender && scrollTop != holder.scrollTop() && scrollTop < holder.scrollTop()){
-				// // 	if(!self.progressiveRenderLoading){
-				// // 		if(holder[0].scrollHeight - holder.innerHeight() - holder.scrollTop() < self.options.progressiveRenderMargin){
-				// // 			if(self.options.progressiveRender == "remote"){
-				// // 				if(self.paginationCurrentPage <= self.paginationMaxPage){
-				// // 					self.progressiveRenderLoading = true;
-				// // 					self._renderTable(true);
-				// // 				}
-				// // 			}else{
-				// // 				if(self.paginationCurrentPage < self.paginationMaxPage){
-				// // 					self.paginationCurrentPage++;
-				// // 					self._renderTable(true);
-				// // 				}
-				// // 			}
-				// // 		}
-				// // 	}else{
-				// // 		self.progressiveRenderLoadingNext = true;
-				// // 	}
-				// // }
-
+				//handle verical scrolling
+				if(self.height && self.scrollTop != top){
+					self.scrollVertical();
+				}
 
 				self.scrollLeft = left;
 				self.scrollTop = top;
@@ -123,7 +122,7 @@ var RowManager = function(table){
 				}
 
 			}else{
-				self.activeRows = self.rows;
+				self.setActiveRows(self.rows);
 			}
 
 			if(self.table.extExists("sort")){
@@ -135,22 +134,273 @@ var RowManager = function(table){
 			self.renderTable();
 		},
 
+		setActiveRows:function(activeRows){
+			this.activeRows = activeRows;
+			this.activeRowsCount = this.activeRows.length;
+		},
+
 		///////////////// Table Rendering /////////////////
 
 		renderTable:function(){
-			var self = this,
-			element = self.tableElement;
+			var self = this;
 
-			element.empty();
-			self.activeRows.forEach(function(row){
-				element.append(row.getElement());
-				row.normalizeHeight();
-			});
+			if(self.height){
+				self._virtualRenderFill();
+			}else{
+				self._simpleRender();
+			}
 
 			if(self.firstRender && self.activeRows.length){
 				self.firstRender = false;
 				self.columnManager.fitToData();
 			}
+		},
+
+		//simple render on heightless table
+		_simpleRender:function(){
+			var element = this.tableElement;
+
+			this._clearVirtualDom();
+
+			this.activeRows.forEach(function(row){
+				element.append(row.getElement());
+				row.initialize();
+			});
+		},
+
+		_clearVirtualDom:function(){
+			var element = this.tableElement;
+
+			element.empty();
+
+			element.css({
+				"padding-top":"",
+				"padding-bottom":"",
+			});
+
+			this.scrollTop = 0;
+			this.scrollLeft = 0;
+			this.vDomTop = 0;
+			this.vDomBottom = 0;
+			this.vDomScollPos = 0;
+			this.vDomTopPad = 0;
+			this.vDomBottomPad = 0;
+		},
+
+		//full virtual render
+		_virtualRenderFill:function(position){
+			var self = this,
+			element = self.tableElement,
+			holder = self.element;
+
+			console.log("redraw", position);
+
+			position = position || 0;
+
+			if(!position){
+				self._clearVirtualDom();
+			}else{
+
+				element.empty();
+
+				//check if position is too close to bottom of table
+				let heightOccpied = (self.activeRowsCount - position) * self.vDomRowHeight
+
+				if(heightOccpied < self.height){
+					position -= Math.Ceil((self.height - heightOccpied) / self.activeRowsCount);
+
+					if(position < 0){
+						position = 0;
+					}
+				}
+			}
+
+
+
+
+			if(self.activeRowsCount){
+
+				this.vDomTop = position;
+
+				self.vDomBottom = position -1;
+
+				var rowsHeight = 0;
+
+				while (rowsHeight <= self.height + self.vDomWindowPad && self.vDomBottom < self.activeRowsCount){
+					var row = self.activeRows[self.vDomBottom + 1]
+					element.append(row.getElement());
+					row.initialize();
+					row.element.attr("index", self.vDomBottom);
+					rowsHeight += row.getHeight();
+					self.vDomBottom ++;
+				}
+
+				if(position){
+
+				}else{
+					if(holder[0].scrollHeight > holder.innerHeight()){
+						var hidden = self.activeRowsCount - self.vDomBottom -1;
+
+						self.vDomRowHeight = self.activeRows[0].getHeight();
+
+						self.vDomBottomPad = hidden * self.vDomRowHeight;
+
+						element.css({"padding-bottom":self.vDomBottomPad});
+					}
+				}
+			}
+		},
+
+		//handle vertical scrolling
+		scrollVertical:function(){
+			var topDiff = this.scrollTop - this.vDomScrollPosTop;
+			var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
+
+			if(Math.abs(topDiff) > this.vDomWindowPad * 2 || Math.abs(bottomDiff) > this.vDomWindowPad){
+				//if big scroll redraw table;
+				// this._virtualRenderFill(Math.floor((this.scrollTop / this.element[0].scrollHeight) * this.activeRowsCount));
+			}else{
+
+				//handle top rows
+				if(topDiff >= 0){
+					//scrolling down
+					this._removeTopRow(topDiff);
+				}else{
+					//scrolling up
+					this._addTopRow(topDiff * -1)
+				}
+
+				//handle bottom rows
+				if(bottomDiff >= 0){
+					//scrolling down
+					this._addBottomRow(bottomDiff);
+				}else{
+					//scrolling up
+					this._removeBottomRow(bottomDiff * -1);
+				}
+			}
+
+		},
+
+		_addTopRow:function(topDiff){
+			var table = this.tableElement;
+
+			if(this.vDomTop){
+
+				let topRow = this.activeRows[this.vDomTop -1];
+				let topRowHeight = topRow.getHeight() || this.vDomRowHeight;
+
+				//hide top row if needed
+				if(topDiff >= topRowHeight){
+
+					table.prepend(topRow.getElement());
+					topRow.initialize();
+
+					this.vDomTopPad -= topRowHeight;
+
+					if(this.vDomTopPad < 0){
+						this.vDomTopPad == (this.vDomTop -1) * this.vDomRowHeight;
+					}
+
+					table.css("padding-top", this.vDomTopPad);
+					this.vDomScrollPosTop -= topRowHeight;
+					this.vDomTop--;
+				}
+
+				topDiff = -(this.scrollTop - this.vDomScrollPosTop);
+
+				if(this.vDomTop && topDiff >= (this.activeRows[this.vDomTop -1].getHeight() || this.vDomRowHeight)){
+					this._addTopRow(topDiff);
+				}
+
+			}
+
+		},
+
+		_removeTopRow:function(topDiff){
+			var table = this.tableElement,
+			topRow = this.activeRows[this.vDomTop],
+			topRowHeight = topRow.getHeight();
+
+			//hide top row if needed
+			if(topDiff >= (this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowPad)){
+
+				topRow.element.detach();
+
+				this.vDomTopPad += topRowHeight;
+				table.css("padding-top", this.vDomTopPad);
+				this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowPad;
+				this.vDomTop++;
+
+				topDiff = this.scrollTop - this.vDomScrollPosTop;
+
+				if(topDiff >= (this.activeRows[this.vDomTop].getHeight() || this.vDomRowHeight)){
+					this._removeTopRow(topDiff);
+				}
+			}
+
+		},
+
+		_addBottomRow:function(bottomDiff){
+			var table = this.tableElement;
+
+			if(this.vDomBottom < this.activeRowsCount -1){
+
+				let bottomRow = this.activeRows[this.vDomBottom + 1];
+				let bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
+
+				//hide bottom row if needed
+				if(bottomDiff >= bottomRowHeight){
+
+					table.append(bottomRow.getElement());
+					bottomRow.initialize();
+
+					this.vDomBottomPad -= bottomRowHeight;
+
+					if(this.vDomBottomPad < 0){
+						this.vDomBottomPad == 0;
+					}
+
+					table.css("padding-bottom", this.vDomBottomPad);
+					this.vDomScrollPosBottom += bottomRowHeight;
+					this.vDomBottom++;
+				}
+
+				bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
+
+				if(this.vDomBottom < this.activeRowsCount -1 && bottomDiff >= (this.activeRows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
+					this._addBottomRow(bottomDiff);
+				}
+			}
+		},
+
+		_removeBottomRow:function(bottomDiff){
+			var table = this.tableElement,
+			bottomRow = this.activeRows[this.vDomBottom],
+			bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
+
+			//hide bottom row if needed
+			if(bottomDiff >= bottomRowHeight){
+
+				bottomRow.element.detach();
+
+				this.vDomBottomPad += bottomRowHeight;
+
+				if(this.vDomBottomPad < 0){
+					this.vDomBottomPad == 0;
+				}
+
+				table.css("padding-bottom", this.vDomBottomPad);
+				this.vDomScrollPosBottom -= bottomRowHeight;
+				this.vDomBottom--;
+
+				bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
+
+				if(bottomDiff >= (this.activeRows[this.vDomBottom].getHeight() || this.vDomRowHeight)){
+					this._removeBottomRow(bottomDiff);
+				}
+			}
+
 		},
 
 		//normalize height of active rows
@@ -167,11 +417,15 @@ var RowManager = function(table){
 			var self = this;
 
 			if(self.table.options.height){
+
 				self.element.css({
 					"min-height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
 					"height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
 					"max-height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
 				});
+
+				self.height = self.element.innerHeight();
+				self.vDomWindowPad = self.height;
 			}
 		},
 

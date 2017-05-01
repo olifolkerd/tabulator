@@ -7,6 +7,9 @@ var Row = function(data, parent){
 		element:$("<div class='tabulator-row' role='row'></div>"),
 		extensions:{}, //hold extension variables;
 		cells:[],
+		height:0, //hold element height
+		outerHeight:0, //holde lements outer height
+		initialized:false, //element has been rendered
 
 		//////////////// Setup Functions /////////////////
 
@@ -52,13 +55,35 @@ var Row = function(data, parent){
 
 		//normalize the height of elements in the row
 		normalizeHeight:function(){
+			this.setHeight(this.element.innerHeight())
+		},
+
+		//functions to setup on first render
+		initialize:function(){
+			if(!this.initialized){
+				this.normalizeHeight();
+				this.initialized = true;
+			}
+		},
+
+		setHeight:function(height){
 			var self = this;
 
-			var height = self.element.innerHeight();
+			if(self.height != height){
 
-			self.cells.forEach(function(cell){
-				cell.setHeight(height);
-			});
+				self.height = height;
+
+				self.cells.forEach(function(cell){
+					cell.setHeight(height);
+				});
+
+				self.outerHeight = this.element.outerHeight();
+			}
+		},
+
+		//return rows outer height
+		getHeight:function(){
+			return this.outerHeight;
 		},
 
 		//////////////// Data Management /////////////////

@@ -74,8 +74,15 @@ var RowSelect = function(table){
 
 		},
 
+		//toggle row selection
 		toggleRow:function(row){
-
+			if(this.table.options.selectableCheck(row.getData(), element)){
+				if(row.extensions.select.selected){
+					this.deselectRow(row);
+				}else{
+					this.selectRow(row);
+				}
+			}
 		},
 
 		selectRow:function(row){
