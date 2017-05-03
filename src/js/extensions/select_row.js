@@ -1,4 +1,4 @@
-var RowSelect = function(table){
+var SelectRow = function(table){
 
 	var extension = {
 		table:table, //hold Tabulator object
@@ -109,4 +109,4 @@ var RowSelect = function(table){
 	return extension;
 }
 
-Tabulator.registerExtension("rowSelect", RowSelect);
+Tabulator.registerExtension("selectRow", SelectRow);
