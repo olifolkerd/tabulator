@@ -164,7 +164,7 @@ var RowManager = function(table){
 				filterChanged = table.extensions.filter.hasChanged()
 
 				if(filterChanged || dataChanged){
-					table.extensions.filter.filter();
+					self.setActiveRows(table.extensions.filter.filter(self.rows));
 				}
 
 			}else{

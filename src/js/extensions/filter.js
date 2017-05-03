@@ -250,22 +250,21 @@ var Filter = function(table){
 		},
 
 		//filter row array
-		filter:function(){
+		filter:function(rowList){
 			var self = this,
 			activeRows = [];
 
 			if(self.filterList.length || Object.keys(self.headerFilters).length){
 
-				self.table.rowManager.rows.forEach(function(row){
+				rowList.forEach(function(row){
 					if(self.filterRow(row)){
 						activeRows.push(row);
 					}
 				});
 
-				self.table.rowManager.setActiveRows(activeRows);
-
+				return activeRows;
 			}else{
-				self.table.rowManager.setActiveRows(self.table.rowManager.rows);
+				return rowList;
 			}
 		},
 
