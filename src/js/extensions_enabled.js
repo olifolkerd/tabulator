@@ -4,6 +4,8 @@
 /*=include extensions/page.js */
 /*=include extensions/resize_columns.js */
 
+/*=include extensions/select_row.js */
+
 /*=include extensions/filter.js */
 
 /*=include extensions/accessor.js */
