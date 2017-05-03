@@ -45,8 +45,6 @@ var Download = function(table){
 		downloaders:{
 			csv:function(columns, data, options){
 
-				console.log(columns);
-
 				var delimiter = options && options.delimiter ? options.delimiter : ",";
 
 				//get field lists

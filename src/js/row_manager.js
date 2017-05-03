@@ -153,9 +153,14 @@ var RowManager = function(table){
 		//set active data set
 		refreshActiveData:function(dataChanged){
 			var self = this,
+			table = this.table,
 			filterChanged = false;
 
-			if(self.table.extExists("filter")){
+			if(table.options.selectable && !table.options.selectablePersistence && table.extExists("selectRow")){
+				table.extensions.selectRow.deselectRows();
+			}
+
+			if(table.extExists("filter")){
 				filterChanged = table.extensions.filter.hasChanged()
 
 				if(filterChanged || dataChanged){
@@ -166,7 +171,7 @@ var RowManager = function(table){
 				self.setActiveRows(self.rows);
 			}
 
-			if(self.table.extExists("sort")){
+			if(table.extExists("sort")){
 				if(table.extensions.filter.hasChanged() || filterChanged || dataChanged){
 					table.extensions.sort.sort();
 				}
@@ -270,7 +275,6 @@ var RowManager = function(table){
 
 				while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.activeRowsCount -1){
 
-					// console.log("row");
 					var row = self.activeRows[self.vDomBottom + 1]
 
 					element.append(row.getElement());

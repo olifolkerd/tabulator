@@ -36,8 +36,6 @@ var ResizeColumns = function(table){
 
 				nearestColumn = column.getFirstColumn();
 
-				console.log("nearestColumn", nearestColumn)
-
 				if(nearestColumn){
 					colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
 					prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
