@@ -23,8 +23,8 @@ var Row = function(data, parent){
 			self.element.empty();
 
 			//set row selection characteristics
-			if(self.table.options.selectable !== false && self.table.extExists("rowSelect")){
-				self.table.extensions.rowSelect.initializeRow(this);
+			if(self.table.options.selectable !== false && self.table.extExists("selectRow")){
+				self.table.extensions.selectRow.initializeRow(this);
 			}
 
 			//handle row click events

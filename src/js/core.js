@@ -308,6 +308,19 @@
 	 			}
 	 		},
 
+	 		///////////////////// Filtering ////////////////////
+	 		selectRow:function(rows){
+	 			if(this.extExists("selectRow", true)){
+	 				this.extensions.selectRow.selectRows(rows);
+	 			}
+	 		},
+
+	 		deselectRow:function(rows){
+	 			if(this.extExists("selectRow", true)){
+	 				this.extensions.selectRow.deselectRows(rows);
+	 			}
+	 		},
+
 	 		/////////////// Download Management //////////////
 
 	 		download:function(type, filename, options){
