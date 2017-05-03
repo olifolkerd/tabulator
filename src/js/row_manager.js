@@ -85,6 +85,39 @@ var RowManager = function(table){
 		},
 
 
+		////////////////// Row Manipulation //////////////////
+
+		findRow:function(subject){
+			var self = this;
+
+			if(typeof subject == "object"){
+				if(subject.table === this.table){
+					//subject is a row element
+					return subject;
+				}else if(subject instanceof jQuery){
+					//subject is a jquery element of the row
+					let match = self.rows.find(function(row){
+						return row.element === subject;
+					});
+
+					return match || false;
+				}
+			}else{
+				//subject should be treated as the index of the row
+				let match = self.rows.find(function(row){
+					return row.data[self.table.options.index] == subject;
+				});
+
+				return match || false;
+			}
+
+			//catch all for any other type of input
+
+			return false;
+
+		},
+
+
 		////////////////// Data Handling //////////////////
 
 		setData:function(data){
