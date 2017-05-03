@@ -91,7 +91,7 @@ var SelectRow = function(table){
 
 			if(typeof rows == "undefined"){
 				self.table.rowManager.rows.forEach(function(row){
-					self._selectRow(row, true);
+					self._selectRow(row, true, true);
 				});
 
 				self._rowSelectionChanged();
@@ -109,9 +109,20 @@ var SelectRow = function(table){
 		},
 
 		//select an individual row
-		_selectRow:function(rowInfo, silent){
+		_selectRow:function(rowInfo, silent, force){
 			var self = this,
 			index;
+
+			//handle max row count
+			if(!isNaN(self.table.options.selectable) && self.table.options.selectable !== true && !force){
+				if(self.selectedRows.length >= self.table.options.selectable){
+					if(self.table.options.selectableRollingSelection){
+						self._deselectRow(self.selectedRows[0], true);
+					}else{
+						return false;
+					}
+				}
+			}
 
 			var row = self.table.rowManager.findRow(rowInfo);
 

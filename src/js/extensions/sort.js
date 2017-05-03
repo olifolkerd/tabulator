@@ -42,7 +42,7 @@
 							self.setSort(column, "asc");
 						}
 
-						self.table.rowManager.renderTable();
+						self.table.rowManager.refreshActiveData();
 					}
 				});
 			}

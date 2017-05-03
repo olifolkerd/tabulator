@@ -249,6 +249,7 @@
 	 		setSort:function(sortList, dir){
 	 			if(this.extExists("sort", true)){
 	 				this.extensions.sort.setSort(sortList, dir);
+	 				this.rowManager.refreshActiveData();
 	 			}
 	 		},
 
