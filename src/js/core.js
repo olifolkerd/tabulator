@@ -37,6 +37,8 @@
 
 	 			index:"id", //filed for row index
 
+	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
+
 	 			selectable:"highlight", //highlight rows on hover
 	 			selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
 	 			selectablePersistence:true, // maintain selection when table view is updated
@@ -242,19 +244,74 @@
 	 		},
 
 	 		//get table data array
-
 	 		getData:function(active){
 	 			return this.rowManager.getData(active);
 	 		},
 
+	 		//get row object
+	 		getRow:function(index){
+	 			row = this.rowManager.findRow(index);
+
+	 			if(row){
+	 				return row;
+	 			}else{
+	 				console.warn("Find Error - No matching row found:", index);
+	 				return false;
+	 			}
+	 		},
+
+	 		//delete row from table
+	 		deleteRow:function(row){
+	 			row = this.rowManager.findRow(row);
+
+	 			if(row){
+	 				this.rowManager.deleteRow(row);
+	 				return true;
+	 			}else{
+	 				console.warn("Delete Error - No matching row found:", row);
+	 				return false;
+	 			}
+	 		},
+
+	 		//add row to table
+	 		addRow:function(data, pos, index){
+	 			return this.rowManager.addRow(data, pos, index);
+	 		},
+
+	 		//update a row if it exitsts otherwise create it
+	 		updateOrAddRow:function(index, data){
+	 			var row = this.rowManager.findRow(index);
+
+	 			if(row){
+	 				row.updateData(data);
+	 			}else{
+	 				row = this.rowManager.addRow(data);
+	 			}
+
+	 			return row;
+	 		},
+
+	 		//update row data
 	 		updateRow:function(index, data){
 	 			row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				row.updateData(data);
-	 				return true;
+	 				return row;
 	 			}else{
 	 				console.warn("Update Error - No matching row found:", index);
+	 				return false;
+	 			}
+	 		},
+
+	 		//scroll to row in DOM
+	 		scrollToRow:function(index){
+	 			row = this.rowManager.findRow(index);
+
+	 			if(row){
+	 				return this.rowManager.scrollToRow(row);
+	 			}else{
+	 				console.warn("Scroll Error - No matching row found:", index);
 	 				return false;
 	 			}
 	 		},

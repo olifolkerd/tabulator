@@ -8,6 +8,7 @@ var RowManager = function(table){
 		height:0, //hold height of table element
 
 		firstRender:false, //handle first render
+		renderMode:"classic", //current rendering mode
 
 		rows:[], //hold row data objects
 		activeRows:[], //rows currently on display in the table
@@ -114,7 +115,27 @@ var RowManager = function(table){
 			//catch all for any other type of input
 
 			return false;
+		},
 
+		scrollToRow:function(row){
+			var rowIndex;
+
+			rowIndex = this.activeRows.indexOf(row);
+
+			if(rowIndex > -1){
+
+				switch(this.renderMode){
+					case"classic":
+					this.element.scrollTop(row.element.offset().top - this.element.offset().top + this.element.scrollTop());
+					break;
+					case"virtual":
+					this._virtualRenderFill(rowIndex, true);
+					break;
+				}
+
+			}else{
+				console.warn("Scroll Error - Row not visible");
+			}
 		},
 
 
@@ -131,6 +152,87 @@ var RowManager = function(table){
 			});
 
 			self.refreshActiveData(true);
+		},
+
+		deleteRow:function(row){
+			var allIndex = this.rows.indexOf(row),
+			activeIndex = this.activeRows.indexOf(row);
+
+			console.log("del", allIndex, activeIndex, row)
+
+			if (self.activeRows !== self.rows){
+				if(activeIndex > -1){
+					this.activeRows.splice(activeIndex, 1);
+				}
+			}
+
+			if(allIndex > -1){
+				this.rows.splice(allIndex, 1);
+			}
+
+			this.table.options.rowDeleted(row);
+
+			this.table.options.dataEdited(this.getData());
+
+			this.setActiveRows(this.activeRows);
+
+			this.renderTable();
+		},
+
+		addRow:function(data, pos, index){
+			var row = new Row(data, this);
+			var top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
+
+			if(index){
+				index = this.findRow(index);
+			}
+
+			if(top === "top"){
+				top = true;
+			}
+
+			if(top === "bottom"){
+				top = false;
+			}
+
+			if(index){
+				let allIndex = this.rows.indexOf(index),
+				activeIndex = this.activeRows.indexOf(index);
+
+				if (this.activeRows !== this.rows){
+					if(activeIndex > -1){
+						this.activeRows.splice((top ? activeIndex : activeIndex + 1), 0, row);
+					}
+				}
+
+				if(allIndex > -1){
+					this.rows.splice((top ? allIndex : allIndex + 1), 0, row);
+				}
+			}else{
+				if(top){
+					if (this.activeRows !== this.rows){
+						this.activeRows.unshift(row);
+					}
+
+					this.rows.unshift(row);
+				}else{
+					if (this.activeRows !== this.rows){
+						this.activeRows.push(row);
+					}
+
+					this.rows.push(row);
+				}
+			}
+
+			this.setActiveRows(this.activeRows);
+
+			this.table.options.rowAdded(row);
+
+			this.table.options.dataEdited(this.getData);
+
+			this.renderTable();
+
+			return row;
 		},
 
 		clearData:function(){
@@ -191,8 +293,10 @@ var RowManager = function(table){
 			var self = this;
 
 			if(self.height && self.table.options.virtualDom){
+				self.renderMode = "virtual";
 				self._virtualRenderFill();
 			}else{
+				self.renderMode = "classic";
 				self._simpleRender();
 			}
 
@@ -233,7 +337,7 @@ var RowManager = function(table){
 		},
 
 		//full virtual render
-		_virtualRenderFill:function(position){
+		_virtualRenderFill:function(position, forceMove){
 			var self = this,
 			element = self.tableElement,
 			holder = self.element,
@@ -254,7 +358,7 @@ var RowManager = function(table){
 				let heightOccpied = (self.activeRowsCount - position) * self.vDomRowHeight
 
 				if(heightOccpied < self.height){
-					position -= Math.Ceil((self.height - heightOccpied) / self.activeRowsCount);
+					position -= Math.ceil((self.height - heightOccpied) / self.activeRowsCount);
 
 					if(position < 0){
 						position = 0;
@@ -303,8 +407,20 @@ var RowManager = function(table){
 					"padding-bottom":self.vDomBottomPad,
 				});
 
-				this.vDomScrollPosTop = this.scrollTop;
-				this.vDomScrollPosBottom = this.scrollTop;
+				// this.vDomScrollPosTop = this.scrollTop;
+				// this.vDomScrollPosBottom = this.scrollTop;
+
+				if(forceMove){
+					this.scrollTop = self.vDomTopPad + (topPad * self.vDomRowHeight)
+
+					this.vDomScrollPosTop = this.scrollTop;
+					this.vDomScrollPosBottom = this.scrollTop;
+
+					holder.scrollTop(this.scrollTop);
+				}else{
+					this.vDomScrollPosTop = this.scrollTop;
+					this.vDomScrollPosBottom = this.scrollTop;
+				}
 			}
 		},
 
