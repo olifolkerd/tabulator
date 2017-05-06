@@ -17,4 +17,3 @@
 /*=include extensions/frozen_columns.js */
 /*=include extensions/persistent_column_layout.js */
 
-/*=include extensions/localize.js */
