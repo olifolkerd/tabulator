@@ -247,6 +247,18 @@
 	 			return this.rowManager.getData(active);
 	 		},
 
+	 		updateRow:function(index, data){
+	 			row = this.rowManager.findRow(index);
+
+	 			if(row){
+	 				row.updateData(data);
+	 				return true;
+	 			}else{
+	 				console.warn("Update Error - No matching row found:", index);
+	 				return false;
+	 			}
+	 		},
+
 	 		//////////// Localization Functions  ////////////
 	 		setLocale:function(locale){
 	 			this.extensions.localize.setLocale(locale);

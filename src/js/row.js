@@ -20,7 +20,6 @@ var Row = function(data, parent){
 
 		generateElement:function(){
 			var self = this;
-			self.element.empty();
 
 			//set row selection characteristics
 			if(self.table.options.selectable !== false && self.table.extExists("selectRow")){
@@ -53,10 +52,12 @@ var Row = function(data, parent){
 		},
 
 		//functions to setup on first render
-		initialize:function(){
+		initialize:function(force){
 			var self = this;
 
-			if(!self.initialized){
+			if(!self.initialized || force){
+
+				self.element.empty();
 
 				self.cells = parent.columnManager.generateCells(self);
 
@@ -66,6 +67,15 @@ var Row = function(data, parent){
 
 				self.normalizeHeight();
 				self.initialized = true;
+			}
+		},
+
+		reinitialize:function(){
+			this.initialized = false;
+			this.height=0;
+
+			if(this.element.is(":visible")){
+				this.initialize(true);
 			}
 		},
 
@@ -99,6 +109,26 @@ var Row = function(data, parent){
 			}else{
 				self.data = data;
 			}
+		},
+
+		//update the rows data
+		updateData:function(data){
+			var self = this;
+
+			//mutate incomming data if needed
+			if(self.table.extExists("mutator")){
+				data = self.table.extensions.mutator.transformRow(data);
+			}else{
+				data = data;
+			}
+
+			for (var attrname in data) {
+				self.data[attrname] = data[attrname];
+			}
+
+			self.reinitialize();
+
+			self.table.options.rowUpdated(self);
 		},
 
 		getData:function(transform){
