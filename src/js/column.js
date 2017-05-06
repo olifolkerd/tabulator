@@ -53,15 +53,27 @@ var Column = function(def, parent){
 
 			if(tooltip){
 				if(tooltip === true){
-					tooltip = self.definition.title;
-				}else if(typeof(tooltip) == "function"){
-					tooltip = tooltip(column);
+					if(def.field){
+						self.table.extensions.localize.bind("columns." + def.field, function(value){
+							self.element.attr("title", value || self.definition.title);
+						});
+					}else{
+						self.element.attr("title", self.definition.title);
+					}
+
+				}else{
+					if(typeof(tooltip) == "function"){
+						tooltip = tooltip(column);
+					}
+
+					self.element.attr("title", tooltip);
 				}
 
-				self.element.attr("title", tooltip);
 			}else{
 				self.element.attr("title", "");
 			}
+
+
 
 			//set resizable handles
 			if(self.table.options.colResizable && self.table.extExists("resizeColumns")){
@@ -70,6 +82,11 @@ var Column = function(def, parent){
 
 			//set resizable handles
 			if(def.headerFilter && self.table.extExists("filter") && self.table.extExists("edit")){
+				if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
+					console.log("setting placeholder", def.headerFilterPlaceholder)
+					self.table.extensions.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+				}
+
 				self.table.extensions.filter.initializeColumn(self);
 			}
 
@@ -177,16 +194,8 @@ var Column = function(def, parent){
 
 			var titleHolderElement = $("<div class='tabulator-col-title'></div>");
 
-			// if(table.extExists("localize")){
-			// 	title = table.extensions.localize.lang.columns[def.field] || (def.title ? def.title : "&nbsp");
-			// }else{
-				title = def.title ? def.title : "&nbsp";
-			//}
-
-
 			if(def.editableTitle){
 				var titleElement = $("<input class='tabulator-title-editor'>");
-				titleElement.val(title);
 
 				titleElement.on("click", function(e){
 					e.stopPropagation();
@@ -199,13 +208,24 @@ var Column = function(def, parent){
 					// table.options.colTitleChanged(newTitle, column, options.columns);
 				});
 
-				title = titleElement;
-			}
+				titleHolderElement.append(titleElement);
 
-			if(typeof title == "string"){
-				titleHolderElement.html(title);
+				if(def.field){
+					table.extensions.localize.bind("columns." + def.field, function(text){
+						titleElement.val(text || (def.title || "&nbsp"));
+					});
+				}else{
+					titleElement.val(def.title || "&nbsp");
+				}
+
 			}else{
-				titleHolderElement.append(title);
+				if(def.field){
+					table.extensions.localize.bind("columns." + def.field, function(text){
+						titleHolderElement.html(text || (def.title || "&nbsp"));
+					});
+				}else{
+					titleHolderElement.html(def.title || "&nbsp");
+				}
 			}
 
 			return titleHolderElement;

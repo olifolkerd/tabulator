@@ -42,6 +42,11 @@
 	 			selectablePersistence:true, // maintain selection when table view is updated
 	 			selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
+	 			headerFilterPlaceholder: false, //placeholder text to display in header filters
+
+	 			locale:false, //current system language
+	 			langs:{},
+
 	 			virtualDom:true, //enable DOM virtualization
 
 	 			//Callbacks from events
@@ -124,6 +129,18 @@
 	 			.attr("role", "grid")
 	 			.empty();
 
+	 			//set localization
+	 			if(self.options.headerFilterPlaceholder !== false){
+	 				self.extensions.localize.setHeaderFilterPlaceholder(self.options.headerFilterPlaceholder);
+	 			}
+
+	 			for(let locale in self.options.langs){
+	 				self.extensions.localize.installLang(locale, self.options.langs[locale]);
+	 			}
+
+	 			self.extensions.localize.setLocale(self.options.locale);
+
+	 			//build table elements
 	 			element.append(self.columnManager.getElement());
 	 			element.append(self.rowManager.getElement());
 
@@ -141,14 +158,14 @@
 
 	 			config.options = this.options;
 
-	 			//setup persistent layout storage if needed
-	 			if(config.options.persistentLayout){
-	 				//determine persistent layout storage type
-	 				config.options.persistentLayout = config.options.persistentLayout !== true ?  config.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
+	 			// //setup persistent layout storage if needed
+	 			// if(config.options.persistentLayout){
+	 			// 	//determine persistent layout storage type
+	 			// 	config.options.persistentLayout = config.options.persistentLayout !== true ?  config.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
 
-	 				//set storage tag
-	 				config.options.persistentLayoutID = "tabulator-" + (config.options.persistentLayoutID ? config.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
-	 			}
+	 			// 	//set storage tag
+	 			// 	config.options.persistentLayoutID = "tabulator-" + (config.options.persistentLayoutID ? config.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
+	 			// }
 
 	 			//set table height
 	 			if(config.options.height){
@@ -228,6 +245,19 @@
 
 	 		getData:function(active){
 	 			return this.rowManager.getData(active);
+	 		},
+
+	 		//////////// Localization Functions  ////////////
+	 		setLocale:function(locale){
+	 			this.extensions.localize.setLocale(locale);
+	 		},
+
+	 		getLocale:function(){
+	 			return this.extensions.localize.getLocale();
+	 		},
+
+	 		getLang:function(locale){
+	 			return this.extensions.localize.getLang(locale);
 	 		},
 
 	 		//////////// General Public Functions ////////////
@@ -374,6 +404,7 @@
 	 		},
 	 	};
 
+	 	/*=include extensions/localize.js */
 
 	 	/*=include extensions_enabled.js */
 

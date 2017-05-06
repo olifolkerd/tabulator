@@ -71,8 +71,19 @@ var Filter = function(table){
 				if(editor){
 
 					editorElement = editor.call(self, filterElement, null, null, function(){}, success, cancel);
+
 					//set Placeholder Text
-					//editorElement.children().attr("placeholder", self.lang.headerFilters.columns[column.field] || self.lang.headerFilters.default);
+					if(column.definition.field){
+						self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function(value){
+							console.log("localling", value)
+							editorElement.attr("placeholder", typeof value !== "undefined" ? value : self.table.extensions.localize.getText("headerFilters.default"));
+						});
+					}else{
+						self.table.extensions.localize.bind("headerFilters.default", function(value){
+							console.log("defaulting", value)
+							editorElement.attr("placeholder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" ? self.column.definition.headerFilterPlaceholder : value);
+						});
+					}
 
 					//focus on element on click
 					editorElement.on("click", function(e){
