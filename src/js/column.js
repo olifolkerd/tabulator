@@ -83,7 +83,6 @@ var Column = function(def, parent){
 			//set resizable handles
 			if(def.headerFilter && self.table.extExists("filter") && self.table.extExists("edit")){
 				if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-					console.log("setting placeholder", def.headerFilterPlaceholder)
 					self.table.extensions.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
 				}
 
