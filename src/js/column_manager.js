@@ -47,26 +47,68 @@ var ColumnManager = function(table){
 
 			self.element.empty();
 
-			cols.forEach(function(def, i){
-				var col = new Column(def, self, row);
+			self.columns = [];
+			self.columnsByIndex = [];
+			self.columnsByField = [];
 
-				self.columns.push(col);
-				self.element.append(col.getElement());
+			cols.forEach(function(def, i){
+				self._addColumn(def);
 			});
+
+			self._reIndexColumns();
 
 			if(self.table.options.fitColumns){
 				self.fitToTable();
 			}
 
 			self._verticalAlignHeaders();
+
+			self.table.rowManager.reinitialize();
+		},
+
+		_addColumn:function(definition, before, nextToColumn){
+			var column = new Column(definition, this);
+			var index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
+
+			if(nextToColumn && index > -1){
+
+				let parentIndex = this.columns.indexOf(nextToColumn.getTopColumn());
+
+				if(before){
+					this.columns.splice(parentIndex, 0, column);
+					nextToColumn.getElement().before(column.getElement());
+				}else{
+					this.columns.splice(parentIndex + 1, 0, column);
+					nextToColumn.getElement().after(column.getElement());
+				}
+
+			}else{
+				if(before){
+					this.columns.unshift(column);
+					this.element.prepend(column.getElement());
+				}else{
+					this.columns.push(column);
+					this.element.append(column.getElement());
+				}
+			}
+		},
+
+		registerColumnField:function(col){
+			if(col.definition.field){
+				this.columnsByField[col.definition.field] = col;
+			}
 		},
 
 		registerColumnPosition:function(col){
 			this.columnsByIndex.push(col);
+		},
 
-			if(col.definition.field){
-				this.columnsByField[col.definition.field] = col;
-			}
+		_reIndexColumns:function(){
+			this.columnsByIndex = [];
+
+			this.columns.forEach(function(column){
+				column.reRegisterPosition();
+			});
 		},
 
 		//ensure column headers take up the correct amount of space in column groups
@@ -85,6 +127,31 @@ var ColumnManager = function(table){
 		},
 
 		//////////////// Column Details /////////////////
+
+		findColumn:function(subject){
+			var self = this;
+
+			if(typeof subject == "object"){
+				if(subject.table === this.table){
+					//subject is a column element
+					return subject;
+				}else if(subject instanceof jQuery){
+					//subject is a jquery element of the column header
+					let match = self.columns.find(function(column){
+						return column.element === subject;
+					});
+
+					return match || false;
+				}
+			}else{
+				//subject should be treated as the field name of the column
+				return this.columnsByField[subject] || false;
+			}
+
+			//catch all for any other type of input
+
+			return false;
+		},
 
 		getColumnByField:function(field){
 			return this.columnsByField[field];
@@ -114,12 +181,38 @@ var ColumnManager = function(table){
 			});
 		},
 
+		//get defintions of actual columns
 		getDefinitions:function(active){
 			var self = this,
 			output = [];
 
 			self.columnsByIndex.forEach(function(column){
-				output.push(column.getDefinition());
+				if(!active || (active && column.visible)){
+					output.push(column.getDefinition());
+				}
+			});
+
+			return output;
+		},
+
+		//get full nested definition tree
+		getDefinitionTree:function(){
+			var self = this,
+			output = [];
+
+			self.columns.forEach(function(column){
+				output.push(column.getDefinition(true));
+			});
+
+			return output;
+		},
+
+		getObjects(){
+			var self = this,
+			output = [];
+
+			self.columnsByIndex.forEach(function(column){
+				output.push(column.getObject());
 			});
 
 			return output;
@@ -213,6 +306,46 @@ var ColumnManager = function(table){
 
 				column.setWidth(width);
 			});
+
+		},
+
+		addColumn:function(definition, before, nextToColumn){
+			this._addColumn(definition, before, nextToColumn);
+
+			this._reIndexColumns();
+
+			if(this.table.options.fitColumns){
+				this.fitToTable();
+			}
+
+			this._verticalAlignHeaders();
+
+			this.table.rowManager.reinitialize();
+		},
+
+		//remove column from system
+		deregisterColumn:function(column){
+			var field = column.getField(),
+			index;
+
+			//remove from field list
+			if(field){
+				delete this.columnsByField[field];
+			}
+
+			//remove from index list
+			index = this.columnsByIndex.indexOf(column);
+
+			if(index > -1){
+				this.columnsByIndex.splice(index, 1);
+			}
+
+			//remove from column list
+			index = this.columns.indexOf(column);
+
+			if(index > -1){
+				this.columns.splice(index, 1);
+			}
 		},
 
 		//redraw columns

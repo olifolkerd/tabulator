@@ -10,6 +10,10 @@ var ColumnObject = function (column){
 		getDefinition:function(){
 			return column.getDefinition();
 		},
+
+		getField:function(){
+			return column.getField();
+		},
 	}
 
 	return obj;
@@ -44,8 +48,24 @@ var Column = function(def, parent){
 		//////////////// Setup Functions /////////////////
 
 		//register column position with column manager
-		registerColumnPosition:function(col){
-			parent.registerColumnPosition(col);
+		registerColumnPosition:function(column){
+			parent.registerColumnPosition(column);
+		},
+
+		//register column position with column manager
+		registerColumnField:function(column){
+			parent.registerColumnField(column);
+		},
+
+		//trigger position registration
+		reRegisterPosition:function(){
+			if(this.isGroup){
+				this.columns.forEach(function(column){
+					column.reRegisterPosition();
+				});
+			}else{
+				this.registerColumnPosition(this);
+			}
 		},
 
 		//build header element
@@ -286,7 +306,7 @@ var Column = function(def, parent){
 				if(alignment === "bottom"){
 					this.element.css({"padding-top": this.element.innerHeight() - this.contentElement.outerHeight()});
 				}else{
-					this.element.css({"padding-top": (this.element.innerHeight() -this.contentElement.outerHeight()) / 2 });
+					this.element.css({"padding-top": (this.element.innerHeight() - this.contentElement.outerHeight()) / 2 });
 				}
 			}
 
@@ -298,7 +318,11 @@ var Column = function(def, parent){
 		//clear vertical alignmenet
 		clearVerticalAlign:function(){
 			this.element.css("padding-top","");
-			this.element.css("ehight","");
+			this.element.css("height","");
+
+			this.columns.forEach(function(column){
+				column.clearVerticalAlign();
+			});
 		},
 
 		//// Retreive Column Information ////
@@ -344,25 +368,83 @@ var Column = function(def, parent){
 			}
 		},
 
+		//retreive the top column in a group of columns
+		getTopColumn:function(){
+			if(this.parent.isGroup){
+				return this.parent.getTopColumn();
+			}else{
+				return this;
+			}
+		},
+
 		//return column definition object
-		getDefinition:function(){
+		getDefinition:function(updateBranches){
+			var colDefs = [];
+
+			if(this.isGroup && updateBranches){
+				this.columns.forEach(function(column){
+					colDefs.push(column.getDefinition(true));
+				});
+
+				this.definition.columns = colDefs;
+			}
+
 			return this.definition;
 		},
 
 		//////////////////// Actions ////////////////////
 
+		checkGroupVisibility:function(){
+			var visible = false;
+
+			this.columns.forEach(function(column){
+				if(column.visible){
+					visible = true;
+				}
+			});
+
+			if(visible){
+				this.show()
+			}else{
+				this.hide();
+			}
+
+		},
+
 		//show column
 		show:function(){
-			this.visible = true;
+			if(!this.visible){
+				this.visible = true;
 
-			this.element.show();
+				this.element.show();
+				this.table.columnManager._verticalAlignHeaders();
+
+				if(this.parent.isGroup){
+					this.parent.checkGroupVisibility();
+				}
+
+				this.cells.forEach(function(cell){
+					cell.show();
+				});
+			}
 		},
 
 		//hide column
 		hide:function(){
-			this.visible = false;
+			if(this.visible){
+				this.visible = false;
 
-			this.element.hide();
+				this.element.hide();
+				this.table.columnManager._verticalAlignHeaders();
+
+				if(this.parent.isGroup){
+					this.parent.checkGroupVisibility();
+				}
+
+				this.cells.forEach(function(cell){
+					cell.hide();
+				});
+			}
 		},
 
 		setWidth:function(width){
@@ -391,6 +473,24 @@ var Column = function(def, parent){
 			this.cells.forEach(function(cell){
 				cell.setMinWidth(minWidth);
 			});
+		},
+
+		delete:function(){
+			if(this.isGroup){
+				this.columns.forEach(function(column){
+					column.delete();
+				});
+			}
+
+			var cellCount = this.cells.length;
+
+			for(let i = 0; i < cellCount; i++){
+				this.cells[0].delete();
+			}
+
+			this.element.detach();
+
+			this.table.columnManager.deregisterColumn(this);
 		},
 
 		//////////////// Cell Management /////////////////
@@ -428,6 +528,14 @@ var Column = function(def, parent){
 			}
 		},
 
+		deleteCell:function(cell){
+			var index = this.cells.indexOf(cell);
+
+			if(index > -1){
+				this.cells.splice(index, 1);
+			}
+		},
+
 		//////////////// Event Bindings /////////////////
 
 		//////////////// Object Generation /////////////////
@@ -445,8 +553,10 @@ var Column = function(def, parent){
 			var newCol = new Column(def, col);
 			col.attachColumn(newCol);
 		});
+
+		col.checkGroupVisibility();
 	}else{
-		parent.registerColumnPosition(col);
+		parent.registerColumnField(col);
 	}
 
 	col._buildHeader();

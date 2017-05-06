@@ -158,8 +158,6 @@ var RowManager = function(table){
 			var allIndex = this.rows.indexOf(row),
 			activeIndex = this.activeRows.indexOf(row);
 
-			console.log("del", allIndex, activeIndex, row)
-
 			if (self.activeRows !== self.rows){
 				if(activeIndex > -1){
 					this.activeRows.splice(activeIndex, 1);
@@ -600,6 +598,13 @@ var RowManager = function(table){
 				self.height = self.element.innerHeight();
 				self.vDomWindowBuffer = self.height;
 			}
+		},
+
+		//renitialize all rows
+		reinitialize:function(){
+			this.rows.forEach(function(row){
+				row.reinitialize();
+			});
 		},
 
 	}

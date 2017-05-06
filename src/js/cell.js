@@ -78,6 +78,12 @@ var Cell = function(column, row){
 			if(self.column.extensions.edit){
 				self.table.extensions.edit.bindEditor(self);
 			}
+
+			if(self.column.visible){
+				self.show();
+			}else{
+				self.hide();
+			}
 		},
 
 		//generate cell contents
@@ -123,8 +129,6 @@ var Cell = function(column, row){
 		getOldValue:function(){
 			return this.oldValue;
 		},
-
-
 
 		//////////////////// Actions ////////////////////
 
@@ -184,6 +188,20 @@ var Cell = function(column, row){
 
 		getHeight:function(){
 			return this.height || this.element.outerHeight();
+		},
+
+		show:function(){
+			this.element.css("display","");
+		},
+
+		hide:function(){
+			this.element.css("display","none");
+		},
+
+		delete:function(){
+			this.element.detach();
+			this.column.deleteCell(this);
+			this.row.deleteCell(this);
 		},
 
 		//////////////// Object Generation /////////////////

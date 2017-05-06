@@ -301,7 +301,7 @@
 	 			row = this.rowManager.findRow(row);
 
 	 			if(row){
-	 				this.rowManager.deleteRow(row);
+	 				row.delete();
 	 				return true;
 	 			}else{
 	 				console.warn("Delete Error - No matching row found:", row);
@@ -351,6 +351,76 @@
 	 				return false;
 	 			}
 	 		},
+
+	 		/////////////// Column Functions  ///////////////
+
+	 		setColumns:function(definition){
+	 			this.columnManager.setColumns(definition);
+	 		},
+
+	 		getColumns:function(){
+	 			return this.columnManager.getObjects();
+	 		},
+
+	 		getColumnDefinitions:function(){
+	 			return this.columnManager.getDefinitionTree();
+	 		},
+
+	 		showColumn:function(field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			if(column){
+	 				column.show();
+	 			}else{
+	 				console.warn("Column Show Error - No matching column found:", field);
+	 				return false;
+	 			}
+	 		},
+
+	 		hideColumn:function(field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			if(column){
+	 				column.hide();
+	 			}else{
+	 				console.warn("Column Hide Error - No matching column found:", field);
+	 				return false;
+	 			}
+	 		},
+
+
+	 		toggleColumn:function(field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			if(column){
+	 				if(column.visible){
+	 					column.hide();
+	 				}else{
+	 					column.show();
+	 				}
+	 			}else{
+	 				console.warn("Column Visibility Toggle Error - No matching column found:", field);
+	 				return false;
+	 			}
+	 		},
+
+	 		addColumn:function(definition, before, field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			this.columnManager.addColumn(definition, before, column)
+	 		},
+
+	 		deleteColumn:function(field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			if(column){
+	 				column.delete();
+	 			}else{
+	 				console.warn("Column Delete Error - No matching column found:", field);
+	 				return false;
+	 			}
+	 		},
+
 
 	 		//////////// Localization Functions  ////////////
 	 		setLocale:function(locale){

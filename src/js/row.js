@@ -127,6 +127,16 @@ var Row = function(data, parent){
 			return this.outerHeight;
 		},
 
+		//////////////// Cell Management /////////////////
+
+		deleteCell:function(cell){
+			var index = this.cells.indexOf(cell);
+
+			if(index > -1){
+				this.cells.splice(index, 1);
+			}
+		},
+
 		//////////////// Data Management /////////////////
 
 		setData:function(data){
@@ -170,6 +180,18 @@ var Row = function(data, parent){
 				return this.data;
 			}
 
+		},
+
+		///////////////////// Actions  /////////////////////
+
+		delete:function(){
+			this.table.rowManager.deleteRow(this);
+
+			var cellCount = this.cells.length;
+
+			for(let i = 0; i < cellCount; i++){
+				this.cells[0].delete();
+			}
 		},
 
 		//////////////// Object Generation /////////////////
