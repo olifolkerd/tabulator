@@ -1,3 +1,20 @@
+
+//public column object
+var ColumnObject = function (column){
+
+	var obj = {
+		getElement:function(){
+			return column.getElement();
+		},
+
+		getDefinition:function(){
+			return column.getDefinition();
+		},
+	}
+
+	return obj;
+}
+
 var Column = function(def, parent){
 
 	var col = {
@@ -412,6 +429,11 @@ var Column = function(def, parent){
 		},
 
 		//////////////// Event Bindings /////////////////
+
+		//////////////// Object Generation /////////////////
+		getObject:function(){
+			return new ColumnObject(row);
+		},
 	};
 
 	//initialize column

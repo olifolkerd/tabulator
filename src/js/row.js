@@ -1,3 +1,31 @@
+
+//public row object
+var RowObject = function (row){
+
+	var obj = {
+		getData:function(){
+			return row.getData(true);
+		},
+
+		getElement:function(){
+			return row.getElement();
+		},
+
+		getCells:function(){
+			var cells = [];
+
+			row.cells.forEach(function(cell){
+				cells.push(cell.getObject());
+			});
+
+			return cells;
+		},
+	}
+
+	return obj;
+}
+
+
 var Row = function(data, parent){
 
 	var row = {
@@ -29,19 +57,19 @@ var Row = function(data, parent){
 			//handle row click events
 			if (self.table.options.rowClick){
 				self.element.on("click", function(e){
-					self.table.options.rowClick(e, self.getElement(), self.getData());
+					self.table.options.rowClick(e, self.getObject());
 				})
 			}
 
 			if (self.table.options.rowDblClick){
 				self.element.on("dblclick", function(e){
-					self.table.options.rowDblClick(e, self.getElement(), self.getData());
+					self.table.options.rowDblClick(e, self.getObject());
 				})
 			}
 
 			if (self.table.options.rowContext){
 				self.element.on("contextmenu", function(e){
-					self.table.options.rowContext(e, self.getElement(), self.getData());
+					self.table.options.rowContext(e, self.getObject());
 				})
 			}
 		},
@@ -128,7 +156,7 @@ var Row = function(data, parent){
 
 			self.reinitialize();
 
-			self.table.options.rowUpdated(self);
+			self.table.options.rowUpdated(self.getObject());
 		},
 
 		getData:function(transform){
@@ -144,6 +172,10 @@ var Row = function(data, parent){
 
 		},
 
+		//////////////// Object Generation /////////////////
+		getObject:function(){
+			return new RowObject(row);
+		},
 	}
 
 	row.setData(data);

@@ -1,3 +1,28 @@
+
+//public row object
+var CellObject = function (cell){
+
+	var obj = {
+		getValue:function(){
+			return cell.getValue();
+		},
+
+		getOldValue:function(){
+			return cell.getOldValue();
+		},
+
+		getRow:function(){
+			return cell.row.getObject();
+		},
+
+		getColumn:function(){
+			return cell.column.getObject();
+		},
+	}
+
+	return obj;
+}
+
 var Cell = function(column, row){
 	var cell = {
 		table:column.table,
@@ -5,6 +30,7 @@ var Cell = function(column, row){
 		row:row,
 		element:$("<div class='tabulator-cell' role='gridcell'></div>"),
 		value:null,
+		oldValue:null,
 
 		height:null,
 		width:null,
@@ -33,19 +59,19 @@ var Cell = function(column, row){
 			//set event bindings
 			if (cellEvents.onClick){
 				self.element.on("click", function(e){
-					cellEvents.onClick(e, self.element, self.value, self.row.getData());
+					cellEvents.onClick(e, self.getObject());
 				});
 			}
 
 			if (cellEvents.onDblClick){
 				self.element.on("dblclick", function(e){
-					cellEvents.onDblClick(e, self.element, self.value, self.row.getData());
+					cellEvents.onDblClick(e, self.getObject());
 				});
 			}
 
 			if (cellEvents.onContext){
 				self.element.on("contextmenu", function(e){
-					cellEvents.onContext(e, self.element, self.value, self.row.getData());
+					cellEvents.onContext(e, self.getObject());
 				});
 			}
 
@@ -94,6 +120,11 @@ var Cell = function(column, row){
 			return this.value;
 		},
 
+		getOldValue:function(){
+			return this.oldValue;
+		},
+
+
 
 		//////////////////// Actions ////////////////////
 
@@ -112,6 +143,8 @@ var Cell = function(column, row){
 					}
 				}
 
+				this.oldValue = this.value;
+
 				this.value = value;
 				this.row.data[this.column.getField()] = value;
 			}
@@ -125,7 +158,7 @@ var Cell = function(column, row){
 			}
 
 			if(changed){
-				this.table.options.cellEdited(this.row.getData()[this.table.options.index], this.column.getField(), value, oldVal, this.row.getData(), this.getElement(), this.row.getElement());
+				this.table.options.cellEdited(this.getObject());
 				this.table.options.dataEdited(this.table.rowManager.getData());
 			}
 		},
@@ -151,6 +184,11 @@ var Cell = function(column, row){
 
 		getHeight:function(){
 			return this.height || this.element.outerHeight();
+		},
+
+		//////////////// Object Generation /////////////////
+		getObject:function(){
+			return new CellObject(row);
 		},
 	}
 

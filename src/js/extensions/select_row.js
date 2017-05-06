@@ -26,7 +26,7 @@ var SelectRow = function(table){
 			row.extensions.select = {selected:false};
 
 			//set row selection class
-			if(self.table.options.selectableCheck(row.getData(), element)){
+			if(self.table.options.selectableCheck(row.getObject())){
 				element.addClass("tabulator-selectable").removeClass("tabulator-unselectable");
 
 				if(self.table.options.selectable && self.table.options.selectable != "highlight"){
@@ -76,7 +76,7 @@ var SelectRow = function(table){
 
 		//toggle row selection
 		toggleRow:function(row){
-			if(this.table.options.selectableCheck(row.getData(), row.getElement())){
+			if(this.table.options.selectableCheck(row.getObject())){
 				if(row.extensions.select.selected){
 					this._deselectRow(row);
 				}else{
@@ -205,7 +205,14 @@ var SelectRow = function(table){
 		},
 
 		getSelectedRows:function(){
-			return this.selectedRows;
+
+			var rows = []
+
+			this.selectedRows.forEach(function(row){
+				rows.push(row.getObject());
+			})
+
+			return rows;
 		},
 
 		_rowSelectionChanged:function(){
