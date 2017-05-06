@@ -180,7 +180,7 @@
 
 	 		//set options
 	 		_setOption: function(option, value){
-	 			var self = this;
+	 			console.error("Options Error - Tabulator does not allow options to be set after initialization unless there is a function defined for that purpose");
 	 		},
 
 	 		////////////////// Data Handling //////////////////
