@@ -248,12 +248,48 @@
 	 			return this.rowManager.getData(active);
 	 		},
 
+	 		//update table data
+	 		updateData:function(data){
+	 			var self = this;
+
+	 			if(data){
+	 				data.forEach(function(item){
+	 					var row = self.rowManager.findRow(item[self.options.index]);
+
+	 					if(row){
+	 						row.updateData(item);
+	 					}
+	 				})
+	 			}else{
+	 				console.warn("Update Error - No data provided");
+	 			}
+	 		},
+
+	 		//update table data
+	 		updateOrAddData:function(data){
+	 			var self = this;
+
+	 			if(data){
+	 				data.forEach(function(item){
+	 					var row = self.rowManager.findRow(item[self.options.index]);
+
+	 					if(row){
+	 						row.updateData(item);
+	 					}else{
+	 						self.rowManager.addRow(item);
+	 					}
+	 				})
+	 			}else{
+	 				console.warn("Update Error - No data provided");
+	 			}
+	 		},
+
 	 		//get row object
 	 		getRow:function(index){
 	 			row = this.rowManager.findRow(index);
 
 	 			if(row){
-	 				return row;
+	 				return row.getObject();
 	 			}else{
 	 				console.warn("Find Error - No matching row found:", index);
 	 				return false;
@@ -275,7 +311,7 @@
 
 	 		//add row to table
 	 		addRow:function(data, pos, index){
-	 			return this.rowManager.addRow(data, pos, index);
+	 			return this.rowManager.addRow(data, pos, index).getObject();
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
@@ -288,7 +324,7 @@
 	 				row = this.rowManager.addRow(data);
 	 			}
 
-	 			return row;
+	 			return row.getObject();
 	 		},
 
 	 		//update row data
@@ -297,7 +333,7 @@
 
 	 			if(row){
 	 				row.updateData(data);
-	 				return row;
+	 				return row.getObject();
 	 			}else{
 	 				console.warn("Update Error - No matching row found:", index);
 	 				return false;
