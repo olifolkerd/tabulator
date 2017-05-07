@@ -57,9 +57,11 @@ var ColumnManager = function(table){
 
 			self._reIndexColumns();
 
-			if(self.table.options.fitColumns){
-				self.fitToTable();
+			if(self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)){
+				self.table.extensions.responsiveLayout.initialize();
 			}
+
+			self.redraw();
 
 			self._verticalAlignHeaders();
 
@@ -322,9 +324,11 @@ var ColumnManager = function(table){
 
 			this._reIndexColumns();
 
-			if(this.table.options.fitColumns){
-				this.fitToTable();
+			if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+				this.table.extensions.responsiveLayout.initialize();
 			}
+
+			self.redraw();
 
 			this._verticalAlignHeaders();
 
@@ -354,6 +358,12 @@ var ColumnManager = function(table){
 			if(index > -1){
 				this.columns.splice(index, 1);
 			}
+
+			if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+				this.table.extensions.responsiveLayout.initialize();
+			}
+
+			self.redraw();
 		},
 
 		//redraw columns
@@ -363,6 +373,10 @@ var ColumnManager = function(table){
 			}else{
 				if(force){
 					this.fitToData();
+				}
+
+				if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+					this.table.extensions.responsiveLayout.update();
 				}
 			}
 		},

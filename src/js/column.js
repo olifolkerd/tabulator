@@ -432,7 +432,7 @@ var Column = function(def, parent){
 					cell.show();
 				});
 
-				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+				if(this.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
 					self.table.extensions.persistentLayout.save();
 				}
 			}
@@ -454,7 +454,7 @@ var Column = function(def, parent){
 					cell.hide();
 				});
 
-				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+				if(this.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
 					self.table.extensions.persistentLayout.save();
 				}
 			}

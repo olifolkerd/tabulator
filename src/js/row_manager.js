@@ -301,6 +301,10 @@ var RowManager = function(table){
 			if(self.firstRender && self.activeRows.length){
 				self.firstRender = false;
 				self.columnManager.fitToData();
+
+				if(self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)){
+					self.table.extensions.responsiveLayout.update();
+				}
 			}
 		},
 

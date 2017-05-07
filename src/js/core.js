@@ -54,6 +54,8 @@
 	 			persistentLayout:false, //store cookie with column _styles
 	 			persistentLayoutID:"", //id for stored cookie
 
+	 			responsiveLayout:false, //responsive layout flags
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
