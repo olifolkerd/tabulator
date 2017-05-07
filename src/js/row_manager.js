@@ -48,9 +48,7 @@ var RowManager = function(table){
 			//initialize manager
 			self.element.append(self.tableElement);
 
-			if(!self.table.options.fitColumns){
-				self.firstRender = true;
-			}
+			self.firstRender = true;
 
 			//scroll header along with table body
 			self.element.scroll(function(){
@@ -285,6 +283,7 @@ var RowManager = function(table){
 			this.activeRowsCount = this.activeRows.length;
 		},
 
+		//return only actual rows (not group headers etc)
 		getRows:function(){
 			return this.rows;
 		},
@@ -306,7 +305,13 @@ var RowManager = function(table){
 
 				if(self.activeRowsCount){
 					self.firstRender = false;
-					self.columnManager.fitToData();
+					if(self.table.options.fitColumns){
+						console.log("fit tow idth")
+						self.columnManager.fitToTable();
+					}else{
+						self.columnManager.fitToData();
+					}
+
 				}else{
 					self.renderEmptyScroll();
 				}
@@ -314,6 +319,10 @@ var RowManager = function(table){
 				if(self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)){
 					self.table.extensions.responsiveLayout.update();
 				}
+			}
+
+			if(this.table.extExists("frozenColumns")){
+				this.table.extensions.frozenColumns.layout();
 			}
 		},
 
