@@ -87,6 +87,11 @@ var Row = function(data, parent){
 
 				self.element.empty();
 
+				//handle frozen cells
+				if(this.table.extExists("frozenColumns")){
+					this.table.extensions.frozenColumns.layoutRow(this);
+				}
+
 				self.cells = parent.columnManager.generateCells(self);
 
 				self.cells.forEach(function(cell){

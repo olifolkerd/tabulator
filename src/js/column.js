@@ -127,6 +127,12 @@ var Column = function(def, parent){
 			}
 
 
+			//set resizable handles
+			if(self.table.extExists("frozenColumns")){
+				self.table.extensions.frozenColumns.initializeColumn(self);
+			}
+
+
 			//setup header click event bindings
 			if(typeof(def.headerOnClick) == "function"){
 				self.element.on("click", function(e){def.headerOnClick(e, self.element, self.definition.field, self.definition)})
@@ -472,6 +478,12 @@ var Column = function(def, parent){
 					cell.setWidth(width);
 				});
 			}
+
+			//set resizable handles
+			if(this.table.extExists("frozenColumns")){
+				this.table.extensions.frozenColumns.layout();
+			}
+
 		},
 
 		getWidth:function(){

@@ -228,7 +228,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			z-index: 10;
 
 			&.tabulator-frozen-left{
-				border-right:1px solid $rowBorderColor;
+				border-right:2px solid $rowBorderColor;
 			}
 
 			&.tabulator-frozen-right{
@@ -319,7 +319,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 					z-index: 10;
 
 					&.tabulator-frozen-left{
-						border-right:1px solid $rowBorderColor;
+						border-right:2px solid $rowBorderColor;
 					}
 
 					&.tabulator-frozen-right{

@@ -161,6 +161,11 @@ var Cell = function(column, row){
 				this.table.extensions.resizeColumns.initializeColumn(this.column, this.element);
 			}
 
+			//handle frozen cells
+			if(this.table.extExists("frozenColumns")){
+				this.table.extensions.frozenColumns.layoutElement(this.element, this.column);
+			}
+
 			if(changed){
 				this.table.options.cellEdited(this.getObject());
 				this.table.options.dataEdited(this.table.rowManager.getData());

@@ -7,6 +7,8 @@ var ColumnManager = function(table){
 		columnsByIndex:[], //columns by index
 		columnsByField:[], //columns by field
 
+		scrollLeft:0,
+
 		//////////////// Setup Functions /////////////////
 
 		//link to row manager
@@ -37,6 +39,12 @@ var ColumnManager = function(table){
 
 			//keep frozen columns fixed in position
 			//self._calcFrozenColumnsPos(hozAdjust + 3);
+
+			this.scrollLeft = left;
+
+			if(this.table.extExists("frozenColumns")){
+				this.table.extensions.frozenColumns.layout();
+			}
 		},
 
 
@@ -50,6 +58,11 @@ var ColumnManager = function(table){
 			self.columns = [];
 			self.columnsByIndex = [];
 			self.columnsByField = [];
+
+			//reset frozen columns
+			if(self.table.extExists("frozenColumns")){
+				self.table.extensions.frozenColumns.reset();
+			}
 
 			cols.forEach(function(def, i){
 				self._addColumn(def);
@@ -390,6 +403,10 @@ var ColumnManager = function(table){
 				if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
 					this.table.extensions.responsiveLayout.update();
 				}
+			}
+
+			if(this.table.extExists("frozenColumns")){
+				this.table.extensions.frozenColumns.layout();
 			}
 		},
 	}

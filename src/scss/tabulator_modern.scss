@@ -239,7 +239,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			&.tabulator-frozen-left{
 				padding-left: $handleWidth;
 
-				border-right:1px solid $rowBorderColor;
+				border-right:2px solid $rowBorderColor;
 			}
 
 			&.tabulator-frozen-right{
@@ -352,7 +352,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 					&.tabulator-frozen-left{
 						padding-left: $handleWidth;
-						border-right:1px solid $rowBorderColor;
+						border-right:2px solid $rowBorderColor;
 					}
 
 					&.tabulator-frozen-right{

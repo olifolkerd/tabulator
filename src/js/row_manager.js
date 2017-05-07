@@ -285,6 +285,10 @@ var RowManager = function(table){
 			this.activeRowsCount = this.activeRows.length;
 		},
 
+		getRows:function(){
+			return this.rows;
+		},
+
 		///////////////// Table Rendering /////////////////
 
 		renderTable:function(){
