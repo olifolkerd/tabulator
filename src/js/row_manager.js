@@ -298,9 +298,14 @@ var RowManager = function(table){
 				self._simpleRender();
 			}
 
-			if(self.firstRender && self.activeRows.length){
-				self.firstRender = false;
-				self.columnManager.fitToData();
+			if(self.firstRender){
+
+				if(self.activeRowsCount){
+					self.firstRender = false;
+					self.columnManager.fitToData();
+				}else{
+					self.renderEmptyScroll();
+				}
 
 				if(self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)){
 					self.table.extensions.responsiveLayout.update();
@@ -314,9 +319,23 @@ var RowManager = function(table){
 
 			this._clearVirtualDom();
 
-			this.activeRows.forEach(function(row){
-				element.append(row.getElement());
-				row.initialize();
+			if(this.activeRowsCount){
+				this.activeRows.forEach(function(row){
+					element.append(row.getElement());
+					row.initialize();
+				});
+			}else{
+				this.renderEmptyScroll();
+			}
+		},
+
+		//show scrollbars on empty table div
+		renderEmptyScroll:function(){
+			var self = this;
+			self.tableElement.css({
+				"min-width":self.table.columnManager.getWidth(),
+				"min-height":"1px",
+				"visibility":"hidden",
 			});
 		},
 
@@ -328,6 +347,9 @@ var RowManager = function(table){
 			element.css({
 				"padding-top":"",
 				"padding-bottom":"",
+				"min-width":"",
+				"min-height":"",
+				"visibility":"",
 			});
 
 			this.scrollTop = 0;
@@ -371,7 +393,6 @@ var RowManager = function(table){
 				topPad = Math.min(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight), position);
 				position -= topPad;
 			}
-
 
 			if(self.activeRowsCount){
 
@@ -423,6 +444,8 @@ var RowManager = function(table){
 					this.vDomScrollPosTop = this.scrollTop;
 					this.vDomScrollPosBottom = this.scrollTop;
 				}
+			}else{
+				this.renderEmptyScroll();
 			}
 		},
 

@@ -34,10 +34,11 @@ var ResponsiveLayout = function(table){
 			var self = this,
 			working = true;
 
-			console.log("responsive update");
-
 			while(working){
-				if(self.table.rowManager.element.innerWidth() < self.table.rowManager.element[0].scrollWidth){
+
+				let diff = self.table.columnManager.element.innerWidth() -  self.table.columnManager.getWidth();
+
+				if(diff < 0){
 					//table is too wide
 					let column = self.columns[self.index];
 
@@ -53,11 +54,9 @@ var ResponsiveLayout = function(table){
 					let column = self.columns[self.index -1];
 
 					if(column){
-						let width = self.table.rowManager.element.innerWidth() - self.table.rowManager.tableElement.outerWidth();
+						if(diff > 0){
 
-						if(width > 0){
-
-							if(width >= column.getWidth()){
+							if(diff >= column.getWidth()){
 								column.show();
 								self.index --;
 							}else{
@@ -69,6 +68,10 @@ var ResponsiveLayout = function(table){
 					}else{
 						working = false;
 					}
+				}
+
+				if(!self.table.rowManager.activeRowsCount){
+					self.table.rowManager.renderEmptyScroll();
 				}
 			}
 		},

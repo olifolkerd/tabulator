@@ -30,6 +30,8 @@
 	 			columns:[],//store for colum header info
 	 			dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
+	 			data:[], //default starting data
+
 	 			tooltips: false, //Tool tip value
 	 			tooltipsHeader: false, //Tool tip for headers
 
@@ -116,9 +118,8 @@
 
 	 				self._buildElement();
 
-	 				if(self.options.data && self.options.data.length){
-	 					self.rowManager.setData(self.options.data);
-	 				}
+	 				self.rowManager.setData(self.options.data);
+
 	 			}
 	 		},
 

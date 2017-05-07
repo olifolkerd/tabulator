@@ -228,6 +228,18 @@ var ColumnManager = function(table){
 			return output;
 		},
 
+		getWidth:function(){
+			var width = 0;
+
+			this.columnsByIndex.forEach(function(column){
+				if(column.visible){
+					width += column.getWidth();
+				}
+			});
+
+			return width;
+		},
+
 		//////////////// Cell Management /////////////////
 
 		generateCells:function(row){
