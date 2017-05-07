@@ -183,6 +183,8 @@
 		//Callbacks from events
 		rowClick:function(){},
 		rowDblClick:function(){},
+		rowMouseEnter:function(){},
+		rowMouseLeave:function(){},
 		rowAdded:function(){},
 		rowDeleted:function(){},
 		rowContext:function(){},
@@ -2448,6 +2450,8 @@
 		//bind row click events
 		row.on("click", function(e){self._rowClick(e, row, item)});
 		row.on("dblclick", function(e){self._rowDblClick(e, row, item)});
+		row.on("mouseenter", function(e){self._rowMouseEnter(e, row, item)});
+		row.on("mouseleave", function(e){self._rowMouseLeave(e, row, item)});
 		row.on("contextmenu", function(e){self._rowContext(e, row, item)});
 
 		//bind row select events
@@ -3993,6 +3997,16 @@
 	//carry out action on row double click
 	_rowDblClick: function(e, row, data){
 		this.options.rowDblClick(e, row.data("id"), data, row);
+	},
+
+	//carry out action on mouse entering row
+	_rowMouseEnter: function(e, row, data){
+		this.options.rowMouseEnter(e, row.data("id"), data, row);
+	},
+
+	//carry out action on mouse leaving row
+	_rowMouseLeave: function(e, row, data){
+		this.options.rowMouseLeave(e, row.data("id"), data, row);
 	},
 
 	//carry out action on row context
