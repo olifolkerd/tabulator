@@ -58,6 +58,9 @@
 
 	 			responsiveLayout:false, //responsive layout flags
 
+	 			pagination:false, //set pagination type
+	 			paginationSize:0, //set number of rows to a page
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
@@ -95,6 +98,7 @@
 
 	 			tableBuilding:function(){},
 	 			tableBuilt:function(){},
+
 	 		},
 
 	 		//constructor
@@ -162,6 +166,10 @@
 
 	 			if(self.options.initialSort && self.extExists("sort", true)){
 	 				self.extensions.sort.setSort(self.options.initialSort);
+	 			}
+
+	 			if(self.options.pagination && self.extExists("page", true)){
+	 				self.extensions.page.initialize();
 	 			}
 	 		},
 
@@ -538,6 +546,60 @@
 	 				this.extensions.selectRow.deselectRows(rows);
 	 			}
 	 		},
+
+	 		//////////// Pagination Functions  ////////////
+
+	 		setMaxPage:function(max){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.setMaxPage(max);
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		setPage:function(page){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.setPage(page);
+	 				this.rowManager.refreshActiveData();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		previousPage:function(){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.previousPage();
+	 				this.rowManager.refreshActiveData();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		nextPage:function(){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.nextPage();
+	 				this.rowManager.refreshActiveData();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		getPage:function(){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.getPage();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		getPageMax:function(){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.getPageMax();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
 
 	 		/////////////// Download Management //////////////
 

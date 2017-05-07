@@ -11,8 +11,11 @@ var RowManager = function(table){
 		renderMode:"classic", //current rendering mode
 
 		rows:[], //hold row data objects
-		activeRows:[], //rows currently on display in the table
-		activeRowsCount:0, //count of active rows
+		displayRows:[], //rows currently available to on display in the table
+		displayRowsCount:0, //count of active rows
+
+		displayRows:[], //rows currently on display in the table
+		displayRowsCount:0, //count of display rows
 
 		scrollTop:0,
 		scrollLeft:0,
@@ -118,7 +121,7 @@ var RowManager = function(table){
 		scrollToRow:function(row){
 			var rowIndex;
 
-			rowIndex = this.activeRows.indexOf(row);
+			rowIndex = this.displayRows.indexOf(row);
 
 			if(rowIndex > -1){
 
@@ -155,6 +158,13 @@ var RowManager = function(table){
 		deleteRow:function(row){
 			var allIndex = this.rows.indexOf(row),
 			activeIndex = this.activeRows.indexOf(row);
+			displayIndex = this.displayRows.indexOf(row);
+
+			if (self.displayRows !== self.rows){
+				if(displayIndex > -1){
+					this.displayRows.splice(displayIndex, 1);
+				}
+			}
 
 			if (self.activeRows !== self.rows){
 				if(activeIndex > -1){
@@ -171,6 +181,8 @@ var RowManager = function(table){
 			this.table.options.dataEdited(this.getData());
 
 			this.setActiveRows(this.activeRows);
+
+			this.setDisplayRows(this.displayRows);
 
 			this.renderTable();
 		},
@@ -194,11 +206,15 @@ var RowManager = function(table){
 			if(index){
 				let allIndex = this.rows.indexOf(index),
 				activeIndex = this.activeRows.indexOf(index);
+				displayIndex = this.displayRows.indexOf(index);
 
-				if (this.activeRows !== this.rows){
-					if(activeIndex > -1){
-						this.activeRows.splice((top ? activeIndex : activeIndex + 1), 0, row);
-					}
+				if(displayIndex > -1){
+					this.displayRows.splice((top ? displayIndex : displayIndex + 1), 0, row);
+				}
+
+
+				if(activeIndex > -1){
+					this.activeRows.splice((top ? activeIndex : activeIndex + 1), 0, row);
 				}
 
 				if(allIndex > -1){
@@ -206,19 +222,17 @@ var RowManager = function(table){
 				}
 			}else{
 				if(top){
-					if (this.activeRows !== this.rows){
-						this.activeRows.unshift(row);
-					}
-
+					this.displayRows.unshift(row);
+					this.activeRows.unshift(row);
 					this.rows.unshift(row);
 				}else{
-					if (this.activeRows !== this.rows){
-						this.activeRows.push(row);
-					}
-
+					this.displayRows.push(row);
+					this.activeRows.push(row);
 					this.rows.push(row);
 				}
 			}
+
+			this.setDisplayRows(this.displayRows)
 
 			this.setActiveRows(this.activeRows);
 
@@ -251,28 +265,40 @@ var RowManager = function(table){
 		//set active data set
 		refreshActiveData:function(dataChanged){
 			var self = this,
-			table = this.table,
-			filterChanged = false;
+			table = this.table;
 
 			if(table.options.selectable && !table.options.selectablePersistence && table.extExists("selectRow")){
 				table.extensions.selectRow.deselectRows();
 			}
 
 			if(table.extExists("filter")){
-				filterChanged = table.extensions.filter.hasChanged()
 
-				if(filterChanged || dataChanged){
+				if(table.extensions.filter.hasChanged() || dataChanged){
 					self.setActiveRows(table.extensions.filter.filter(self.rows));
+
+					dataChanged = true;
 				}
 
 			}else{
-				self.setActiveRows(self.rows);
+				self.setActiveRows(self.rows.slice(0));
 			}
 
 			if(table.extExists("sort")){
-				if(table.extensions.filter.hasChanged() || filterChanged || dataChanged){
+				if(table.extensions.sort.hasChanged() || dataChanged){
 					table.extensions.sort.sort();
+
+					dataChanged = true;
 				}
+			}
+
+			if(table.options.pagination && table.extExists("page")){
+				if(dataChanged){
+					table.extensions.page.setPage(1);
+				}
+				table.extensions.page.setMaxRows(self.activeRows.length);
+				self.setDisplayRows(table.extensions.page.getPageRows(self.activeRows));
+			}else{
+				self.setDisplayRows(self.activeRows.slice(0));
 			}
 
 			self.renderTable();
@@ -281,6 +307,11 @@ var RowManager = function(table){
 		setActiveRows:function(activeRows){
 			this.activeRows = activeRows;
 			this.activeRowsCount = this.activeRows.length;
+		},
+
+		setDisplayRows:function(displayRows){
+			this.displayRows = displayRows;
+			this.displayRowsCount = this.displayRows.length;
 		},
 
 		//return only actual rows (not group headers etc)
@@ -293,20 +324,19 @@ var RowManager = function(table){
 		renderTable:function(){
 			var self = this;
 
-			if(self.height && self.table.options.virtualDom){
-				self.renderMode = "virtual";
-				self._virtualRenderFill();
-			}else{
+			if(!self.height || !self.table.options.virtualDom || self.table.options.pagination){
 				self.renderMode = "classic";
 				self._simpleRender();
+			}else{
+				self.renderMode = "virtual";
+				self._virtualRenderFill();
 			}
 
 			if(self.firstRender){
 
-				if(self.activeRowsCount){
+				if(self.displayRowsCount){
 					self.firstRender = false;
 					if(self.table.options.fitColumns){
-						console.log("fit tow idth")
 						self.columnManager.fitToTable();
 					}else{
 						self.columnManager.fitToData();
@@ -332,8 +362,8 @@ var RowManager = function(table){
 
 			this._clearVirtualDom();
 
-			if(this.activeRowsCount){
-				this.activeRows.forEach(function(row){
+			if(this.displayRowsCount){
+				this.displayRows.forEach(function(row){
 					element.append(row.getElement());
 					row.initialize();
 				});
@@ -392,10 +422,10 @@ var RowManager = function(table){
 				element.empty();
 
 				//check if position is too close to bottom of table
-				let heightOccpied = (self.activeRowsCount - position) * self.vDomRowHeight
+				let heightOccpied = (self.displayRowsCount - position) * self.vDomRowHeight
 
 				if(heightOccpied < self.height){
-					position -= Math.ceil((self.height - heightOccpied) / self.activeRowsCount);
+					position -= Math.ceil((self.height - heightOccpied) / self.displayRowsCount);
 
 					if(position < 0){
 						position = 0;
@@ -407,15 +437,15 @@ var RowManager = function(table){
 				position -= topPad;
 			}
 
-			if(self.activeRowsCount){
+			if(self.displayRowsCount){
 
 				this.vDomTop = position;
 
 				self.vDomBottom = position -1;
 
-				while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.activeRowsCount -1){
+				while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.displayRowsCount -1){
 
-					var row = self.activeRows[self.vDomBottom + 1]
+					var row = self.displayRows[self.vDomBottom + 1]
 
 					element.append(row.getElement());
 					row.initialize();
@@ -431,12 +461,12 @@ var RowManager = function(table){
 				}
 
 				if(!position){
-					self.vDomRowHeight = self.activeRows[0].getHeight();
+					self.vDomRowHeight = self.displayRows[0].getHeight();
 				}
 
 				self.vDomTopPad = self.vDomRowHeight * this.vDomTop;
 
-				self.vDomBottomPad = self.vDomRowHeight * (self.activeRowsCount - self.vDomBottom -1);
+				self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom -1);
 
 				element.css({
 					"padding-top":self.vDomTopPad,
@@ -469,7 +499,7 @@ var RowManager = function(table){
 
 			if(Math.abs(topDiff) > this.vDomWindowBuffer * 2 || Math.abs(bottomDiff) > this.vDomWindowBuffer){
 				//if big scroll redraw table;
-				this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.activeRowsCount));
+				this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 			}else{
 
 				//handle top rows
@@ -498,7 +528,7 @@ var RowManager = function(table){
 
 			if(this.vDomTop){
 
-				let topRow = this.activeRows[this.vDomTop -1];
+				let topRow = this.displayRows[this.vDomTop -1];
 				let topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
 				//hide top row if needed
@@ -520,7 +550,7 @@ var RowManager = function(table){
 
 				topDiff = -(this.scrollTop - this.vDomScrollPosTop);
 
-				if(this.vDomTop && topDiff >= (this.activeRows[this.vDomTop -1].getHeight() || this.vDomRowHeight)){
+				if(this.vDomTop && topDiff >= (this.displayRows[this.vDomTop -1].getHeight() || this.vDomRowHeight)){
 					this._addTopRow(topDiff);
 				}
 
@@ -530,7 +560,7 @@ var RowManager = function(table){
 
 		_removeTopRow:function(topDiff){
 			var table = this.tableElement,
-			topRow = this.activeRows[this.vDomTop],
+			topRow = this.displayRows[this.vDomTop],
 			topRowHeight = topRow.getHeight();
 
 			//hide top row if needed
@@ -545,7 +575,7 @@ var RowManager = function(table){
 
 				topDiff = this.scrollTop - this.vDomScrollPosTop;
 
-				if(topDiff >= (this.activeRows[this.vDomTop].getHeight() || this.vDomRowHeight)){
+				if(topDiff >= (this.displayRows[this.vDomTop].getHeight() || this.vDomRowHeight)){
 					this._removeTopRow(topDiff);
 				}
 			}
@@ -555,9 +585,9 @@ var RowManager = function(table){
 		_addBottomRow:function(bottomDiff){
 			var table = this.tableElement;
 
-			if(this.vDomBottom < this.activeRowsCount -1){
+			if(this.vDomBottom < this.displayRowsCount -1){
 
-				let bottomRow = this.activeRows[this.vDomBottom + 1];
+				let bottomRow = this.displayRows[this.vDomBottom + 1];
 				let bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
 				//hide bottom row if needed
@@ -579,7 +609,7 @@ var RowManager = function(table){
 
 				bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 
-				if(this.vDomBottom < this.activeRowsCount -1 && bottomDiff >= (this.activeRows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
+				if(this.vDomBottom < this.displayRowsCount -1 && bottomDiff >= (this.displayRows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
 					this._addBottomRow(bottomDiff);
 				}
 			}
@@ -587,7 +617,7 @@ var RowManager = function(table){
 
 		_removeBottomRow:function(bottomDiff){
 			var table = this.tableElement,
-			bottomRow = this.activeRows[this.vDomBottom],
+			bottomRow = this.displayRows[this.vDomBottom],
 			bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
 			//hide bottom row if needed
@@ -607,7 +637,7 @@ var RowManager = function(table){
 
 				bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
 
-				if(bottomDiff >= (this.activeRows[this.vDomBottom].getHeight() || this.vDomRowHeight)){
+				if(bottomDiff >= (this.displayRows[this.vDomBottom].getHeight() || this.vDomRowHeight)){
 					this._removeBottomRow(bottomDiff);
 				}
 			}
@@ -618,7 +648,7 @@ var RowManager = function(table){
 		normalizeHeight:function(){
 			var self = this;
 
-			self.activeRows.forEach(function(row){
+			self.displayRows.forEach(function(row){
 				row.normalizeHeight();
 			});
 		},
