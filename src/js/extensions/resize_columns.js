@@ -67,6 +67,10 @@ var ResizeColumns = function(table){
 
 				$("body").off("mouseup", mouseMove);
 				$("body").off("mousemove", mouseMove);
+
+				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+					self.table.extensions.persistentLayout.save();
+				}
 			}
 
 			e.stopPropagation(); //prevent resize from interfereing with movable columns

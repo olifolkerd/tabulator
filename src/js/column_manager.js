@@ -64,6 +64,10 @@ var ColumnManager = function(table){
 			self._verticalAlignHeaders();
 
 			self.table.rowManager.reinitialize();
+
+			if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+				self.table.extensions.persistentLayout.save();
+			}
 		},
 
 		_addColumn:function(definition, before, nextToColumn){
@@ -159,6 +163,10 @@ var ColumnManager = function(table){
 
 		getColumnByIndex:function(index){
 			return this.columnsByIndex[index];
+		},
+
+		getColumns:function(){
+			return this.columns;
 		},
 
 		findColumnIndex:function(column){

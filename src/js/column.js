@@ -368,6 +368,11 @@ var Column = function(def, parent){
 			}
 		},
 
+		//return all columns in a group
+		getColumns:function(){
+			return this.columns;
+		},
+
 		//retreive the top column in a group of columns
 		getTopColumn:function(){
 			if(this.parent.isGroup){
@@ -426,6 +431,10 @@ var Column = function(def, parent){
 				this.cells.forEach(function(cell){
 					cell.show();
 				});
+
+				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+					self.table.extensions.persistentLayout.save();
+				}
 			}
 		},
 
@@ -444,6 +453,10 @@ var Column = function(def, parent){
 				this.cells.forEach(function(cell){
 					cell.hide();
 				});
+
+				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+					self.table.extensions.persistentLayout.save();
+				}
 			}
 		},
 

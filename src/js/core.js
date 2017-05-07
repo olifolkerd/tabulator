@@ -51,6 +51,9 @@
 
 	 			virtualDom:true, //enable DOM virtualization
 
+	 			persistentLayout:false, //store cookie with column _styles
+	 			persistentLayoutID:"", //id for stored cookie
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
@@ -145,6 +148,12 @@
 	 			//build table elements
 	 			element.append(self.columnManager.getElement());
 	 			element.append(self.rowManager.getElement());
+
+
+	 			if(self.options.persistentLayout && self.extExists("persistentLayout", true)){
+	 				self.extensions.persistentLayout.initialize(self.options.persistentLayout, self.options.persistentLayoutID);
+	 				self.options.columns = self.extensions.persistentLayout.load(self.options.columns);
+	 			}
 
 	 			self.columnManager.setColumns(self.options.columns);
 

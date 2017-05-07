@@ -15,5 +15,5 @@
 
 /*=include extensions/html_table_import.js */
 /*=include extensions/frozen_columns.js */
-/*=include extensions/persistent_column_layout.js */
+/*=include extensions/persistent_layout.js */
 
