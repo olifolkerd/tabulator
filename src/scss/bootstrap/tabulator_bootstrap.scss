@@ -464,13 +464,16 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 			border-radius:3px;
 			padding:2px 5px;
 			background:rgba(255,255,255,.2);
+			font-family:inherit;
+			font-weight:inherit;
+			font-size:inherit;
 
 
 			&.active{
 				color:#d00;
 			}
 
-			&.disabled{
+			&:disabled{
 				opacity:.5;
 			}
 

@@ -490,12 +490,15 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			padding:2px 5px;
 			background:rgba(255,255,255,.2);
 			color: $footerTextColor;
+			font-family:inherit;
+			font-weight:inherit;
+			font-size:inherit;
 
 			&.active{
 				color:#d00;
 			}
 
-			&.disabled{
+			&:disabled{
 				opacity:.5;
 			}
 

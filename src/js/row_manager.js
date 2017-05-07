@@ -293,7 +293,7 @@ var RowManager = function(table){
 
 			if(table.options.pagination && table.extExists("page")){
 				if(dataChanged){
-					table.extensions.page.setPage(1);
+					table.extensions.page.reset();
 				}
 				table.extensions.page.setMaxRows(self.activeRows.length);
 				self.setDisplayRows(table.extensions.page.getPageRows(self.activeRows));
@@ -659,10 +659,12 @@ var RowManager = function(table){
 
 			if(self.table.options.height){
 
+				let otherHeigt = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+
 				self.element.css({
-					"min-height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
-					"height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
-					"max-height":"calc(100% - " + self.columnManager.element.outerHeight() + "px)",
+					"min-height":"calc(100% - " + otherHeigt + "px)",
+					"height":"calc(100% - " + otherHeigt + "px)",
+					"max-height":"calc(100% - " + otherHeigt + "px)",
 				});
 
 				self.height = self.element.innerHeight();

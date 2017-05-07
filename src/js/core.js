@@ -8,6 +8,8 @@
 	/*=include row.js */
 	/*=include cell.js */
 
+	/*=include footer_manager.js */
+
 	window.Tabulator = {
 
 			columnManager:null, // hold Column Manager
@@ -59,7 +61,8 @@
 	 			responsiveLayout:false, //responsive layout flags
 
 	 			pagination:false, //set pagination type
-	 			paginationSize:0, //set number of rows to a page
+	 			paginationSize:false, //set number of rows to a page
+	 			paginationElement:false, //element to hold pagination numbers
 
 	 			//Callbacks from events
 	 			rowClick:false,
@@ -116,6 +119,7 @@
 
 	 				self.columnManager = new ColumnManager(self);
 	 				self.rowManager = new RowManager(self);
+	 				self.footerManager = new FooterManager(self);
 
 	 				self.columnManager.setRowManager(self.rowManager);
 	 				self.rowManager.setColumnManager(self.columnManager);
@@ -155,6 +159,10 @@
 	 			//build table elements
 	 			element.append(self.columnManager.getElement());
 	 			element.append(self.rowManager.getElement());
+
+	 			if(self.options.pagination && self.extExists("page", true)){
+	 				element.append(self.footerManager.getElement());
+	 			}
 
 
 	 			if(self.options.persistentLayout && self.extExists("persistentLayout", true)){
@@ -560,7 +568,6 @@
 	 		setPage:function(page){
 	 			if(this.options.pagination && this.extExists("page")){
 	 				this.extensions.page.setPage(page);
-	 				this.rowManager.refreshActiveData();
 	 			}else{
 	 				return false;
 	 			}
@@ -569,7 +576,6 @@
 	 		previousPage:function(){
 	 			if(this.options.pagination && this.extExists("page")){
 	 				this.extensions.page.previousPage();
-	 				this.rowManager.refreshActiveData();
 	 			}else{
 	 				return false;
 	 			}
@@ -578,7 +584,6 @@
 	 		nextPage:function(){
 	 			if(this.options.pagination && this.extExists("page")){
 	 				this.extensions.page.nextPage();
-	 				this.rowManager.refreshActiveData();
 	 			}else{
 	 				return false;
 	 			}
