@@ -64,6 +64,10 @@
 	 			paginationSize:false, //set number of rows to a page
 	 			paginationElement:false, //element to hold pagination numbers
 
+	 			ajaxURL:false, //url for ajax loading
+	 			ajaxParams:{}, //params for ajax loading
+	 			ajaxConfig:"get", //ajax request type
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
@@ -220,10 +224,6 @@
 
 	 			self.options.dataLoading(data, params);
 
-	 			if(params){
-	 				self.options.ajaxParams = params;
-	 			}
-
 	 			//show loader if needed
 	 			// self._showLoader(this, this.options.loader);
 
@@ -233,35 +233,48 @@
 	 					self.rowManager.setData(JSON.parse(data));
 	 				}else{
 
-	 					// self.options.ajaxURL = data;
+	 					if(this.extExists("ajax", true)){
+	 						if(params){
+	 							self.extensions.ajax.setParams(params);
+	 						}
 
-	 					// if(self.options.pagination == "remote"){
-	 					// 	self.setPage(1);
-	 					// }else{
-	 					// 	//assume data is url, make ajax call to url to get data
-	 					// 	self._getAjaxData(data, self.options.ajaxParams, config);
-	 					// }
+	 						if(config){
+	 							self.extensions.ajax.setConfig(config);
+	 						}
 
+	 						self.extensions.ajax.setUrl(data);
+
+	 						if(self.options.pagination == "remote"){
+	 							self.setPage(1);
+	 						}else{
+	 							//assume data is url, make ajax call to url to get data
+	 							self.extensions.ajax.sendRequest(function(data){
+	 								self.rowManager.setData(data);
+	 							});
+	 						}
+	 					}
 	 				}
 	 			}else{
 	 				if(data){
 	 					//asume data is already an object
 	 					self.rowManager.setData(data);
-
 	 				}else{
-	 					// //no data provided, check if ajaxURL is present;
-	 					// if(this.options.ajaxURL){
 
-	 					// 	if(self.options.pagination == "remote"){
-	 					// 		self.setPage(1);
-	 					// 	}else{
-	 					// 		self._getAjaxData(this.options.ajaxURL, self.options.ajaxParams, config);
-	 					// 	}
+	 					//no data provided, check if ajaxURL is present;
+	 					if(this.extExists("ajax") && self.extensions.ajax.getUrl){
 
-	 					// }else{
-	 					// 	//empty data
-	 					// 	self._parseData([]);
-	 					// }
+	 						if(self.options.pagination == "remote"){
+	 							self.setPage(1);
+	 						}else{
+	 							self.extensions.ajax.sendRequest(function(data){
+	 								self.rowManager.setData(data);
+	 							});
+	 						}
+
+	 					}else{
+	 						//empty data
+	 						self.rowManager.setData([]);
+	 					}
 	 				}
 	 			}
 	 		},
