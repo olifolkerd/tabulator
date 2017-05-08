@@ -292,10 +292,14 @@ var RowManager = function(table){
 			}
 
 			if(table.options.pagination && table.extExists("page")){
-				if(dataChanged){
-					table.extensions.page.reset();
+
+				if(table.extensions.page.getMode() == "local"){
+					if(dataChanged){
+						table.extensions.page.reset();
+					}
+					table.extensions.page.setMaxRows(self.activeRows.length);
 				}
-				table.extensions.page.setMaxRows(self.activeRows.length);
+
 				self.setDisplayRows(table.extensions.page.getPageRows(self.activeRows));
 			}else{
 				self.setDisplayRows(self.activeRows.slice(0));

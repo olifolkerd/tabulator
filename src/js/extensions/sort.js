@@ -5,6 +5,7 @@
 		table:table, //hold Tabulator object
 		sortList:[], //holder current sort
 
+
 		changed:false,
 
 		//initialize column header for sorting
@@ -59,7 +60,7 @@
 		getSort:function(){
 			var self = this;
 
-			sorters = [];
+			var sorters = [];
 
 			self.sortList.forEach(function(item){
 				if(item.column){

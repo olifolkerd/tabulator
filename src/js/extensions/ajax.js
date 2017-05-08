@@ -11,6 +11,10 @@ var Ajax = function(table){
 			this.params = params;
 		},
 
+		getParams:function(){
+			return this.params || {};
+		},
+
 		//load config object
 		setConfig:function(config){
 			this._loadDefaultConfig();
@@ -55,7 +59,7 @@ var Ajax = function(table){
 				this.config.url = this.url;
 
 				if(this.params){
-					this.config.data = params;
+					this.config.data = this.params;
 				}
 
 				this.config.success = function (data){callback(data);};
@@ -67,8 +71,6 @@ var Ajax = function(table){
 				return false;
 			}
 		},
-
-
 
 		defaultConfig:{ //default ajax config object
 			url: "",

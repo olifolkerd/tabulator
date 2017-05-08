@@ -63,6 +63,10 @@
 	 			pagination:false, //set pagination type
 	 			paginationSize:false, //set number of rows to a page
 	 			paginationElement:false, //element to hold pagination numbers
+	 			paginationDataSent:{}, //pagination data sent to the server
+	 			paginationDataReceived:{}, //pagination data received from the server
+	 			paginator:false, //pagination url string builder
+
 
 	 			ajaxURL:false, //url for ajax loading
 	 			ajaxParams:{}, //params for ajax loading
@@ -233,7 +237,7 @@
 	 					self.rowManager.setData(JSON.parse(data));
 	 				}else{
 
-	 					if(this.extExists("ajax", true)){
+	 					if(self.extExists("ajax", true)){
 	 						if(params){
 	 							self.extensions.ajax.setParams(params);
 	 						}
@@ -244,8 +248,9 @@
 
 	 						self.extensions.ajax.setUrl(data);
 
-	 						if(self.options.pagination == "remote"){
-	 							self.setPage(1);
+	 						if(self.options.pagination == "remote" && self.extExists("page", true)){
+	 							self.extensions.page.reset(true);
+	 							self.extensions.page.setPage(1);
 	 						}else{
 	 							//assume data is url, make ajax call to url to get data
 	 							self.extensions.ajax.sendRequest(function(data){
@@ -261,10 +266,11 @@
 	 				}else{
 
 	 					//no data provided, check if ajaxURL is present;
-	 					if(this.extExists("ajax") && self.extensions.ajax.getUrl){
+	 					if(self.extExists("ajax") && self.extensions.ajax.getUrl){
 
-	 						if(self.options.pagination == "remote"){
-	 							self.setPage(1);
+	 						if(self.options.pagination == "remote" && self.extExists("page", true)){
+								self.extensions.page.reset(true);
+								self.extensions.page.setPage(1);
 	 						}else{
 	 							self.extensions.ajax.sendRequest(function(data){
 	 								self.rowManager.setData(data);
@@ -581,6 +587,15 @@
 	 		setPage:function(page){
 	 			if(this.options.pagination && this.extExists("page")){
 	 				this.extensions.page.setPage(page);
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		setPageSize:function(size){
+	 			if(this.options.pagination && this.extExists("page")){
+	 				this.extensions.page.setPageSize(size);
+	 				this.extensions.page.setPage(1);
 	 			}else{
 	 				return false;
 	 			}
