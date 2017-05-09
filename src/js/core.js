@@ -71,6 +71,9 @@
 	 			ajaxURL:false, //url for ajax loading
 	 			ajaxParams:{}, //params for ajax loading
 	 			ajaxConfig:"get", //ajax request type
+	 			ajaxLoader:true, //loader blockout div
+	 			ajaxLoaderLoading:"<div class='tabulator-loading'>Loading Data</div>", //loader element
+	 			ajaxLoaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
 
 	 			//Callbacks from events
 	 			rowClick:false,
@@ -187,6 +190,11 @@
 	 			if(self.options.pagination && self.extExists("page", true)){
 	 				self.extensions.page.initialize();
 	 			}
+
+	 			if(self.extExists("ajax")){
+	 				self.extensions.ajax.initialize();
+	 			}
+
 	 		},
 
 	 		//configure the table

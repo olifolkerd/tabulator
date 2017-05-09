@@ -155,6 +155,10 @@ var Localize = function(table){
 			"default":{ //hold default locale text
 				"columns":{
 				},
+				"ajax":{
+					"loading":"Loading",
+					"error":"Error",
+				},
 				"pagination":{
 					"first":"First",
 					"first_title":"First Page",

@@ -3,8 +3,27 @@ var Ajax = function(table){
 	var extension = {
 		table:table, //hold Tabulator object
 		config:false, //hold config object for ajax request
-		url:"",
-		params:false,
+		url:"", //request URL
+		params:false, //request parameters
+
+		loaderElement:$("<div class='tablulator-loader'></div>"), //loader message div
+		msgElement:$("<div class='tabulator-loader-msg' role='alert'></div>"), //message element
+		loadingElement:false,
+		errorElement:false,
+
+
+		//initialize setup options
+		initialize:function(){
+			this.loaderElement.append(this.msgElement);
+
+			if(this.table.options.ajaxLoaderLoading){
+				this.loadingElement = this.table.options.ajaxLoaderLoading;
+			}
+
+			if(this.table.options.ajaxLoaderError){
+				this.errorElement = this.table.options.ajaxLoaderError;
+			}
+		},
 
 		//set ajax params
 		setParams:function(params){
@@ -30,13 +49,25 @@ var Ajax = function(table){
 
 		//create config object from default
 		_loadDefaultConfig:function(force){
-			if(!this.config || force){
+			var self = this;
+			if(!self.config || force){
 
-				this.config = {};
+				self.config = {};
 
 				//load base config from defaults
-				for(let key in this.defaultConfig){
-					this.config[key] = this.defaultConfig[key];
+				for(let key in self.defaultConfig){
+					self.config[key] = self.defaultConfig[key];
+				}
+
+				self.config.error = function (xhr, textStatus, errorThrown){
+					console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
+
+					self.table.options.dataLoadError(xhr, textStatus, errorThrown);
+					self.showError();
+
+					setTimeout(function(){
+						self.hideLoader();
+					}, 3000);
 				}
 			}
 		},
@@ -53,23 +84,65 @@ var Ajax = function(table){
 
 		//send ajax request
 		sendRequest:function(callback){
-			if(this.url){
-				this._loadDefaultConfig();
+		var self = this;
+			if(self.url){
+				self._loadDefaultConfig();
 
-				this.config.url = this.url;
+				self.config.url = self.url;
 
-				if(this.params){
-					this.config.data = this.params;
+				if(self.params){
+					self.config.data = self.params;
 				}
 
-				this.config.success = function (data){callback(data);};
+				self.config.success = function (data){
+					callback(data);
+					self.hideLoader();
+				};
 
-				$.ajax(this.config);
+				self.showLoader();
+
+				$.ajax(self.config);
 
 			}else{
 				console.warn("Ajax Load Error - No URL Set");
 				return false;
 			}
+		},
+
+		showLoader:function(){
+			this.loaderElement.detach();
+
+			this.msgElement.empty()
+			.removeClass("tabulator-error")
+			.addClass("tabulator-loading")
+
+			if(this.loadingElement){
+				this.msgElement.append(this.loadingElement);
+			}else{
+				this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
+			}
+
+			this.table.element.append(this.loaderElement);
+		},
+
+		showError:function(){
+			this.loaderElement.detach();
+
+			this.msgElement.empty()
+			.removeClass("tabulator-loading")
+			.addClass("tabulator-error")
+
+			if(this.errorElement){
+				this.msgElement.append(this.errorElement);
+			}else{
+				this.msgElement.append(this.table.extensions.localize.getText("ajax.error"));
+			}
+
+			this.table.element.append(this.loaderElement);
+		},
+
+		hideLoader:function(){
+			this.loaderElement.detach();
 		},
 
 		defaultConfig:{ //default ajax config object
@@ -78,11 +151,6 @@ var Ajax = function(table){
 			async: true,
 			dataType:"json",
 			success: function (data){},
-			error: function (xhr, textStatus, errorThrown){
-				console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
-
-				self.table.options.dataLoadError(xhr, textStatus, errorThrown);
-			},
 		},
 	}
 

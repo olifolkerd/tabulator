@@ -534,9 +534,13 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 	//holding div that contains loader and covers tabulator element to prevent interaction
 	.tablulator-loader{
 		position:absolute;
+		display: flex;
+		align-items:center;
+
 		top:0;
 		left:0;
 		z-index:100;
+
 		height:100%;
 		width:100%;
 		background:rgba(0,0,0,.4);
@@ -544,28 +548,26 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 		//loading message element
 		.tabulator-loader-msg{
+			display:inline-block;
+
+			margin:0 auto;
+			padding:10px 20px;
+
+			border-radius:10px;
+
+			background:#fff;
+			font-weight:bold;
+			font-size:16px;
 
 			//loading message
-			.tabulator-loading{
-				display:inline-block;
+			&.tabulator-loading{
 				border:4px solid #333;
-				border-radius:10px;
-				padding:10px 20px;
-				background:#fff;
-				font-weight:bold;
-				font-size:16px;
 				color:#000;
 			}
 
 			//error message
-			.tabulator-error{
-				display:inline-block;
+			&.tabulator-error{
 				border:4px solid #D00;
-				border-radius:10px;
-				padding:10px 20px;
-				background:#fff;
-				font-weight:bold;
-				font-size:16px;
 				color:#590000;
 			}
 		}
