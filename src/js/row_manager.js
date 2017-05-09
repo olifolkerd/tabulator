@@ -262,6 +262,11 @@ var RowManager = function(table){
 			return output;
 		},
 
+
+		getDataCount:function(active){
+			return active ? this.rows.length : this.activeRows.length;
+		},
+
 		//set active data set
 		refreshActiveData:function(dataChanged){
 			var self = this,

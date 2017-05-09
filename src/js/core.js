@@ -71,9 +71,9 @@
 	 			ajaxURL:false, //url for ajax loading
 	 			ajaxParams:{}, //params for ajax loading
 	 			ajaxConfig:"get", //ajax request type
-	 			ajaxLoader:true, //loader blockout div
-	 			ajaxLoaderLoading:"<div class='tabulator-loading'>Loading Data</div>", //loader element
-	 			ajaxLoaderError:"<div class='tabulator-error'>Loading Error</div>", //loader element
+	 			ajaxLoader:true, //show loader
+	 			ajaxLoaderLoading:false, //loader element
+	 			ajaxLoaderError:false, //loader element
 
 	 			//Callbacks from events
 	 			rowClick:false,
@@ -301,6 +301,11 @@
 	 		//get table data array
 	 		getData:function(active){
 	 			return this.rowManager.getData(active);
+	 		},
+
+	 		//get table data array count
+	 		getDataCount:function(active){
+	 			return this.rowManager.getDataCount(active);
 	 		},
 
 	 		//update table data
