@@ -44,6 +44,8 @@ var Group = function(parent, id, generator, visible){
 		},
 
 		getRows:function(){
+			this._visSet();
+
 			return this.visible ? this.rows : [];
 		},
 
@@ -71,10 +73,25 @@ var Group = function(parent, id, generator, visible){
 			self.visible = true;
 		},
 
+		_visSet:function(){
+			var data = [];
+
+			if(typeof this.visible == "function"){
+
+				this.rows.forEach(function(row){
+					data.push(row.getData());
+				});
+
+				this.visible = this.visible(this.id, this.getRowCount(), data);
+			}
+		},
+
 		////////////// Standard Row Functions //////////////
 
 		getElement:function(){
 			this.addBindingsd = false;
+
+			this._visSet();
 
 			var data = [];
 
@@ -147,7 +164,7 @@ var GroupRows = function(table){
 		table:table, //hold Tabulator object
 
 		findGroupId:false, //enable table grouping and set field to group by
-		startOpen:true, //starting state of group
+		startOpen:function(){return false;}, //starting state of group
 		headerGenerator:function(value, count, data){ //header layout function
 			return value + "<span>(" + count + " " + ((count === 1) ? "item" : "items") + ")</span>";
 		},
@@ -168,7 +185,7 @@ var GroupRows = function(table){
 			}
 
 			if(self.table.options.groupStartOpen){
-				self.startOpen = self.table.options.groupStartOpen;
+				self.startOpen = typeof self.table.options.groupStartOpen == "function" ? self.table.options.groupStartOpen : function(){return true;};
 			}
 
 			if(self.table.options.groupHeader){
