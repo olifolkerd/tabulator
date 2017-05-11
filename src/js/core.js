@@ -75,6 +75,11 @@
 	 			ajaxLoaderLoading:false, //loader element
 	 			ajaxLoaderError:false, //loader element
 
+	 			groupBy:false, //enable table grouping and set field to group by
+				groupStartOpen:true, //starting state of group
+
+				groupHeader:false, //header generation function
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
@@ -191,6 +196,10 @@
 	 				self.extensions.page.initialize();
 	 			}
 
+	 			if(self.options.groupBy && self.extExists("groupRows", true)){
+	 				self.extensions.groupRows.initialize();
+	 			}
+
 	 			if(self.extExists("ajax")){
 	 				self.extensions.ajax.initialize();
 	 			}
@@ -277,8 +286,8 @@
 	 					if(self.extExists("ajax") && self.extensions.ajax.getUrl){
 
 	 						if(self.options.pagination == "remote" && self.extExists("page", true)){
-								self.extensions.page.reset(true);
-								self.extensions.page.setPage(1);
+	 							self.extensions.page.reset(true);
+	 							self.extensions.page.setPage(1);
 	 						}else{
 	 							self.extensions.ajax.sendRequest(function(data){
 	 								self.rowManager.setData(data);

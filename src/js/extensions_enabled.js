@@ -15,6 +15,8 @@
 
 /*=include extensions/download.js */
 
+/*=include extensions/group_rows.js */
+
 /*=include extensions/html_table_import.js */
 /*=include extensions/frozen_columns.js */
 /*=include extensions/persistent_layout.js */

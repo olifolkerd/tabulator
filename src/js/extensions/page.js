@@ -164,7 +164,6 @@ var Page = function(table){
 		//setup the pagination buttons
 		_setPageButtons:function(){
 			var self = this;
-			console.log("max", this.max);
 
 			var min = this.page < this.max-2 ? (this.page - 2) : (this.page - (4 - (this.max - this.page)));
 			var max = this.page > 3 ? (this.page + 2) : (this.page + (5 - this.page));
@@ -244,7 +243,7 @@ var Page = function(table){
 		},
 
 		//return appropriate rows for current page
-		getPageRows:function(data){
+		getRows:function(data){
 			var output, start, end;
 
 			if(this.mode == "local"){
@@ -265,7 +264,7 @@ var Page = function(table){
 
 				this._setPageButtons();
 
-				return data;
+				return data.slice(0);
 			}
 		},
 

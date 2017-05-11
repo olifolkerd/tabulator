@@ -276,18 +276,19 @@ var RowManager = function(table){
 				table.extensions.selectRow.deselectRows();
 			}
 
-			if(table.extExists("filter")){
 
+			//filter data
+			if(table.extExists("filter")){
 				if(table.extensions.filter.hasChanged() || dataChanged){
 					self.setActiveRows(table.extensions.filter.filter(self.rows));
 
 					dataChanged = true;
 				}
-
 			}else{
 				self.setActiveRows(self.rows.slice(0));
 			}
 
+			//sort data
 			if(table.extExists("sort")){
 				if(table.extensions.sort.hasChanged() || dataChanged){
 					table.extensions.sort.sort();
@@ -296,17 +297,28 @@ var RowManager = function(table){
 				}
 			}
 
-			if(table.options.pagination && table.extExists("page")){
+			//group data
+			if(table.options.groupBy && table.extExists("groupRows")){
+				self.setDisplayRows(table.extensions.groupRows.getRows(this.activeRows, dataChanged));
 
-				if(table.extensions.page.getMode() == "local"){
-					if(dataChanged){
-						table.extensions.page.reset();
+				if(table.options.pagination){
+					console.warn("Invalid Setup Combination - Pagination and Row Grouping cannot be enabled at the same time");
+				}
+			}else{
+
+				//paginate data
+				if(table.options.pagination && table.extExists("page")){
+
+					if(table.extensions.page.getMode() == "local"){
+						if(dataChanged){
+							table.extensions.page.reset();
+						}
+						table.extensions.page.setMaxRows(this.activeRows.length);
 					}
-					table.extensions.page.setMaxRows(self.activeRows.length);
+
+					self.setDisplayRows(table.extensions.page.getRows(this.activeRows));
 				}
 
-				self.setDisplayRows(table.extensions.page.getPageRows(self.activeRows));
-			}else{
 				self.setDisplayRows(self.activeRows.slice(0));
 			}
 

@@ -3,6 +3,7 @@
 var ColumnObject = function (column){
 
 	var obj = {
+		type:"columnObject", //type of element
 		getElement:function(){
 			return column.getElement();
 		},
@@ -25,6 +26,7 @@ var Column = function(def, parent){
 		table:parent.table,
 		definition:def, //column definition
 		parent:parent, //hold parent object
+		type:"column", //type of element
 		columns:[], //child columns
 		cells:[], //cells bound to this column
 		element:$("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"), //column header element

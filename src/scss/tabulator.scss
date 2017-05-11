@@ -355,13 +355,25 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 					}
 				}
 
-			}
+				//row grouping element
+				&.tabulator-group{
+					box-sizing:border-box;
+					border-bottom:1px solid #999;
+					border-right:1px solid $rowBorderColor;
+					border-top:1px solid #999;
+					padding:5px;
+					background:#ccc;
+					font-weight:bold;
 
-			//row grouping element
-			.tabulator-group{
+					min-width: 100%;
 
-				&.show{
-					.tabulator-group-header{
+					&:hover{
+						cursor:pointer;
+						background-color:rgba(0,0,0,.1);
+					}
+
+					&.tabulator-group-visible{
+
 						.tabulator-arrow{
 							margin-left:5px;
 							margin-right:10px;
@@ -370,23 +382,8 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 							border-top: 6px solid $sortArrowActive;
 							border-bottom: 0;
 						}
-					}
 
-					.tabulator-group-body{
-						visibility: visible;
-						height:auto;
 					}
-				}
-
-				//row grouping header
-				.tabulator-group-header{
-					box-sizing:border-box;
-					border-bottom:1px solid #999;
-					border-right:1px solid $rowBorderColor;
-					border-top:1px solid #999;
-					padding:5px;
-					background:#ccc;
-					font-weight:bold;
 
 					//sorting arrow
 					.tabulator-arrow{
@@ -400,11 +397,6 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 						border-right: 0;
 						border-left: 6px solid $sortArrowActive;
 						vertical-align:middle;
-
-						&:hover{
-							cursor:pointer;
-							background-color:rgba(0,0,0,.1);
-						}
 					}
 
 					span{
@@ -413,11 +405,6 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 					}
 				}
 
-				//row grouping footer
-				.tabulator-group-body{
-					visibility:hidden;
-					height:0;
-				}
 			}
 		}
 	}

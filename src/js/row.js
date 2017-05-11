@@ -3,6 +3,7 @@
 var RowObject = function (row){
 
 	var obj = {
+		type:"rowObject", //type of element
 		getData:function(){
 			return row.getData(true);
 		},
@@ -30,8 +31,9 @@ var Row = function(data, parent){
 
 	var row = {
 		table:parent.table,
-		data:{},
 		parent:parent,
+		type:"row", //type of element
+		data:{},
 		element:$("<div class='tabulator-row' role='row'></div>"),
 		extensions:{}, //hold extension variables;
 		cells:[],
