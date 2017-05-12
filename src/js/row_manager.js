@@ -377,6 +377,10 @@ var RowManager = function(table){
 			}
 		},
 
+		getRenderMode:function(){
+			return this.renderMode;
+		},
+
 		//simple render on heightless table
 		_simpleRender:function(){
 			var element = this.tableElement;

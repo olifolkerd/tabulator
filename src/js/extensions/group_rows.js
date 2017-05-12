@@ -59,18 +59,33 @@ var Group = function(parent, id, generator, visible){
 			}else{
 				this.show();
 			}
-
-			this.parent.updateGroupRows(true);
 		},
 
 		hide:function(){
 			this.visible = false;
+
+			if(this.parent.table.rowManager.getRenderMode() == "classic"){
+				this.rows.forEach(function(row){
+					row.getElement().detach();
+				});
+			}else{
+				this.parent.updateGroupRows(true);
+			}
 		},
 
 		show:function(){
 			var self = this;
 
 			self.visible = true;
+
+			if(this.parent.table.rowManager.getRenderMode() == "classic"){
+				self.rows.forEach(function(row){
+					self.getElement().after(row.getElement());
+					row.initialize();
+				});
+			}else{
+				this.parent.updateGroupRows(true);
+			}
 		},
 
 		_visSet:function(){
