@@ -26,6 +26,10 @@ var RowObject = function (row){
 		getIndex:function(){
 			return row.getData(true)[row.table.options.index];
 		},
+
+		normalizeHeight:function(){
+			row.normalizeHeight();
+		},
 	}
 
 	return obj;
@@ -224,7 +228,7 @@ var Row = function(data, parent){
 
 		//////////////// Object Generation /////////////////
 		getObject:function(){
-			return new RowObject(row);
+			return new RowObject(this);
 		},
 	}
 

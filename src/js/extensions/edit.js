@@ -70,7 +70,7 @@ var Edit = function(table){
 				if(!cell.column.extensions.edit.blocked){
 					e.stopPropagation();
 
-					var cellEditor = cell.column.extensions.edit.editor.call(self, element, cell.getValue(), cell.row.getData(), onRendered, success, cancel);
+					var cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
 
 					//if editor returned, add to DOM, if false, abort edit
 					if(cellEditor !== false){
@@ -99,7 +99,8 @@ var Edit = function(table){
 
 		//default data editors
 		editors:{
-			input:function(cell, value, data, onRendered, success, cancel){
+			input:function(cell, onRendered, success, cancel){
+
 				//create and style input
 				var input = $("<input type='text'/>");
 				input.css({
@@ -107,7 +108,7 @@ var Edit = function(table){
 					"width":"100%",
 					"box-sizing":"border-box",
 				})
-				.val(value);
+				.val(cell.getValue());
 
 				onRendered(function(){
 					input.focus();
@@ -127,11 +128,13 @@ var Edit = function(table){
 
 				return input;
 			},
-			textarea:function(cell, value, data, onRendered, success, cancel){
+			textarea:function(cell, onRendered, success, cancel){
 				var self = this;
+				var value = cell.getValue();
+
+				console.log("cell", cell);
 
 				var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
-				var row = cell.closest(".tabulator-row")
 
 		        //create and style input
 		        var input = $("<textarea></textarea>");
@@ -154,7 +157,7 @@ var Edit = function(table){
 		        input.on("change blur", function(e){
 		        	success(input.val());
 		        	setTimeout(function(){
-		        		self._resizeRow(row);
+		        		cell.getRow().normalizeHeight();
 		        	},300)
 		        });
 
@@ -167,7 +170,7 @@ var Edit = function(table){
 
 		        		input.css({"height": (line * newCount) + "px"});
 
-		        		self._resizeRow(row);
+		        		cell.getRow().normalizeHeight();
 
 		        		count = newCount;
 		        	}
@@ -175,7 +178,7 @@ var Edit = function(table){
 
 		        return input;
 		    },
-		    number:function(cell, value, data, onRendered, success, cancel){
+		    number:function(cell, onRendered, success, cancel){
 				//create and style input
 				var input = $("<input type='number'/>");
 				input.css({
@@ -183,7 +186,7 @@ var Edit = function(table){
 					"width":"100%",
 					"box-sizing":"border-box",
 				})
-				.val(value);
+				.val(cell.getValue());
 
 				onRendered(function(){
 					input.focus();
@@ -203,17 +206,18 @@ var Edit = function(table){
 
 				return input;
 			},
-			star:function(cell, value, data, onRendered, success, cancel){
+			star:function(cell, onRendered, success, cancel){
+				var element = cell.getElement();
 
-				var maxStars = $("svg", cell).length;
+				var maxStars = $("svg", element).length;
 				maxStars = maxStars ?maxStars : 5;
 
-				var size = $("svg:first", cell).attr("width")
+				var size = $("svg:first", element).attr("width")
 				size = size ? size : 14;
 
 				var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
 
-				value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+				var value = parseInt(cell.getValue()) < maxStars ? parseInt(cell.getValue()) : maxStars;
 
 				var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 				var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
@@ -251,18 +255,18 @@ var Edit = function(table){
 					success($(this).prevAll("svg").length + 1);
 				});
 
-				cell.css({
+				element.css({
 					"white-space": "nowrap",
 					"overflow": "hidden",
 					"text-overflow": "ellipsis",
 				});
 
-				cell.on("blur", function(){
+				element.on("blur", function(){
 					cancel();
 				});
 
 				//allow key based navigation
-				cell.on("keydown", function(e){
+				element.on("keydown", function(e){
 					switch(e.keyCode){
 						case 39: //right arrow
 						starChange($(".tabulator-star-inactive:first", stars));
@@ -287,10 +291,14 @@ var Edit = function(table){
 
 				return stars;
 			},
-			progress:function(cell, value, data, onRendered, success, cancel){
+			progress:function(cell, onRendered, success, cancel){
+				var element = cell.getElement();
+
 				//set default parameters
-				var max = $("div", cell).data("max");
-				var min = $("div", cell).data("min");
+				var max = $("div", element).data("max");
+				var min = $("div", element).data("min");
+
+				var value = cell.getValue();
 
 				//make sure value is in range
 				value = parseFloat(value) <= max ? parseFloat(value) : max;
@@ -300,17 +308,18 @@ var Edit = function(table){
 				var percent = (max - min) / 100;
 				value = 100 - Math.round((value - min) / percent);
 
-				cell.css({
+				element.css({
 					padding:"0 4px",
 				});
 
-				cell.attr("aria-valuemin", min).attr("aria-valuemax", max)
+				element.attr("aria-valuemin", min).attr("aria-valuemax", max)
 
 
 				var newVal = function(){
-					var newval = (percent * Math.round(bar.outerWidth() / (cell.width()/100))) + min;
+					var newval = (percent * Math.round(bar.outerWidth() / (element.width()/100))) + min;
+					console.log("suc", newval)
 					success(newval);
-					cell.attr("aria-valuenow", newval).attr("aria-label", value);
+					element.attr("aria-valuenow", newval).attr("aria-label", value);
 				}
 
 				var bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
@@ -326,13 +335,13 @@ var Edit = function(table){
 
 				handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})});
 
-				cell.on("mousemove", function(e){
+				element.on("mousemove", function(e){
 					if(bar.data("mouseDrag")){
 						bar.css({width: bar.data("mouseDragWidth") + (e.screenX - bar.data("mouseDrag"))})
 					}
 				});
 
-				cell.on("mouseup", function(e){
+				element.on("mouseup", function(e){
 					if(bar.data("mouseDrag")){
 						e.stopPropagation();
 						e.stopImmediatePropagation();
@@ -347,14 +356,14 @@ var Edit = function(table){
 				});
 
 				//allow key based navigation
-				cell.on("keydown", function(e){
+				element.on("keydown", function(e){
 					switch(e.keyCode){
 						case 39: //right arrow
-						bar.css({"width" : bar.width() + cell.width()/100});
+						bar.css({"width" : bar.width() + element.width()/100});
 						break;
 
 						case 37: //left arrow
-						bar.css({"width" : bar.width() - cell.width()/100});
+						bar.css({"width" : bar.width() - element.width()/100});
 						break;
 
 						case 13: //enter
@@ -364,14 +373,16 @@ var Edit = function(table){
 					}
 				});
 
-				cell.on("blur", function(){
+				element.on("blur", function(){
 					cancel();
 				});
 
 				return bar;
 			},
 
-			tickCross:function(cell, value, data, onRendered, success, cancel){
+			tickCross:function(cell, onRendered, success, cancel){
+				var value = cell.getValue();
+
 				//create and style input
 				var input = $("<input type='checkbox'/>");
 				input.css({
@@ -405,7 +416,10 @@ var Edit = function(table){
 				return input;
 			},
 
-			tick:function(cell, value, data, onRendered, success, cancel){
+			tick:function(cell, onRendered, success, cancel){
+
+				var value = cell.getValue();
+
 				//create and style input
 				var input = $("<input type='checkbox'/>");
 				input.css({
