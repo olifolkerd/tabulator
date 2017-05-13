@@ -34,7 +34,7 @@ var MoveColumns = function(table){
 							}
 						}
 					}
-				}
+				}.bind(self)
 
 				column.getElement().on("mousedown", function(e){
 					self.checkTimeout = setTimeout(function(){
@@ -82,8 +82,8 @@ var MoveColumns = function(table){
 
 			self._bindMouseMove();
 
-			$("body").on("mousemove", self.moveHover.bind(self))
-			$("body").on("mouseup", self.endMove.bind(self))
+			$("body").on("mousemove", self.moveHover)
+			$("body").on("mouseup", self.endMove)
 
 			self.moveHover(e);
 		},
@@ -93,7 +93,7 @@ var MoveColumns = function(table){
 
 			self.table.columnManager.columnsByIndex.forEach(function(column){
 				if(column.extensions.moveColumn.mousemove){
-					column.element.on("mousemove", column.extensions.moveColumn.mousemove.bind(self));
+					column.element.on("mousemove", column.extensions.moveColumn.mousemove);
 				}
 			});
 		},
@@ -103,7 +103,7 @@ var MoveColumns = function(table){
 
 			self.table.columnManager.columnsByIndex.forEach(function(column){
 				if(column.extensions.moveColumn.mousemove){
-					column.element.off("mousemove", column.extensions.moveColumn.mousemove.bind(self));
+					column.element.off("mousemove", column.extensions.moveColumn.mousemove);
 				}
 			});
 		},
@@ -145,8 +145,8 @@ var MoveColumns = function(table){
 			self.toCol = false;
 			self.toColAfter = false;
 
-			$("body").off("mousemove");
-			$("body").off("mouseup");
+			$("body").off("mousemove", self.moveHover);
+			$("body").off("mouseup", self.endMove);
 		},
 
 		moveHover:function(e){
@@ -182,6 +182,9 @@ var MoveColumns = function(table){
 			}
 		},
 	}
+
+	extension.moveHover = extension.moveHover.bind(extension)
+	extension.endMove = extension.endMove.bind(extension)
 
 	return extension;
 }
