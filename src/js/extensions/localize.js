@@ -80,6 +80,8 @@ var Localize = function(table){
 				traverseLang(self.langs[desiredLocale], self.lang);
 			}
 
+			self.table.options.localized(self.locale, self.lang)
+
 			self._executeBindings();
 		},
 

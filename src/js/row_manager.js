@@ -68,7 +68,6 @@ var RowManager = function(table){
 					self.columnManager.scrollHorizontal(left);
 				}
 
-
 				self.scrollLeft = left;
 			});
 
@@ -162,26 +161,22 @@ var RowManager = function(table){
 
 		deleteRow:function(row){
 			var allIndex = this.rows.indexOf(row),
-			activeIndex = this.activeRows.indexOf(row);
+			activeIndex = this.activeRows.indexOf(row),
 			displayIndex = this.displayRows.indexOf(row);
 
-			if (self.displayRows !== self.rows){
-				if(displayIndex > -1){
-					this.displayRows.splice(displayIndex, 1);
-				}
+			if(displayIndex > -1){
+				this.displayRows.splice(displayIndex, 1);
 			}
 
-			if (self.activeRows !== self.rows){
-				if(activeIndex > -1){
-					this.activeRows.splice(activeIndex, 1);
-				}
+			if(activeIndex > -1){
+				this.activeRows.splice(activeIndex, 1);
 			}
 
 			if(allIndex > -1){
 				this.rows.splice(allIndex, 1);
 			}
 
-			this.table.options.rowDeleted(row);
+			this.table.options.rowDeleted(row.getObject());
 
 			this.table.options.dataEdited(this.getData());
 
@@ -210,13 +205,12 @@ var RowManager = function(table){
 
 			if(index){
 				let allIndex = this.rows.indexOf(index),
-				activeIndex = this.activeRows.indexOf(index);
+				activeIndex = this.activeRows.indexOf(index),
 				displayIndex = this.displayRows.indexOf(index);
 
 				if(displayIndex > -1){
 					this.displayRows.splice((top ? displayIndex : displayIndex + 1), 0, row);
 				}
-
 
 				if(activeIndex > -1){
 					this.activeRows.splice((top ? activeIndex : activeIndex + 1), 0, row);
@@ -225,6 +219,7 @@ var RowManager = function(table){
 				if(allIndex > -1){
 					this.rows.splice((top ? allIndex : allIndex + 1), 0, row);
 				}
+
 			}else{
 				if(top){
 					this.displayRows.unshift(row);
@@ -241,7 +236,7 @@ var RowManager = function(table){
 
 			this.setActiveRows(this.activeRows);
 
-			this.table.options.rowAdded(row);
+			this.table.options.rowAdded(row.getObject());
 
 			this.table.options.dataEdited(this.getData);
 
@@ -254,6 +249,8 @@ var RowManager = function(table){
 			this._moveRowInArray(this.rows, from, to, after);
 			this._moveRowInArray(this.activeRows, from, to, after);
 			this._moveRowInArray(this.displayRows, from, to, after);
+
+			this.table.options.rowMoved(from.getObject());
 		},
 
 		_moveRowInArray:function(rows, from, to, after){
@@ -343,18 +340,16 @@ var RowManager = function(table){
 
 				//paginate data
 				if(table.options.pagination && table.extExists("page")){
-
 					if(table.extensions.page.getMode() == "local"){
 						if(dataChanged){
 							table.extensions.page.reset();
 						}
 						table.extensions.page.setMaxRows(this.activeRows.length);
 					}
-
 					self.setDisplayRows(table.extensions.page.getRows(this.activeRows));
+				}else{
+					self.setDisplayRows(self.activeRows.slice(0));
 				}
-
-				self.setDisplayRows(self.activeRows.slice(0));
 			}
 
 			self.renderTable();
@@ -379,6 +374,8 @@ var RowManager = function(table){
 
 		renderTable:function(){
 			var self = this;
+
+			self.table.options.renderStarted();
 
 			if(!self.height || !self.table.options.virtualDom || self.table.options.pagination){
 				self.renderMode = "classic";
@@ -410,6 +407,8 @@ var RowManager = function(table){
 			if(this.table.extExists("frozenColumns")){
 				this.table.extensions.frozenColumns.layout();
 			}
+
+			self.table.options.renderComplete();
 		},
 
 		getRenderMode:function(){

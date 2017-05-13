@@ -258,6 +258,8 @@ var ColumnManager = function(table){
 			this._moveColumnInArray(this.columns, from, to, after);
 			this._moveColumnInArray(this.columnsByIndex, from, to, after);
 
+			this.table.options.columnMoved(from.getObject());
+
 			if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
 				this.table.extensions.persistentLayout.save();
 			}

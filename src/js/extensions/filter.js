@@ -265,11 +265,19 @@ var Filter = function(table){
 
 			if(self.filterList.length || Object.keys(self.headerFilters).length){
 
+				if(self.table.options.dataFiltering){
+					self.table.options.dataFiltering(self.getFilter());
+				}
+
 				rowList.forEach(function(row){
 					if(self.filterRow(row)){
 						activeRows.push(row);
 					}
 				});
+
+				if(self.table.options.dataFiltered){
+					self.table.options.dataFiltered(self.getFilter());
+				}
 
 				return activeRows;
 			}else{

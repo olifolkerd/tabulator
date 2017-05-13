@@ -142,15 +142,15 @@ var Column = function(def, parent){
 
 			//setup header click event bindings
 			if(typeof(def.headerOnClick) == "function"){
-				self.element.on("click", function(e){def.headerOnClick(e, self.element, self.definition.field, self.definition)})
+				self.element.on("click", function(e){def.headerOnClick(e, self.getObject())})
 			}
 
 			if(typeof(def.headerOnDblClick) == "function"){
-				self.element.on("dblclick", function(e){def.headerOnDblClick(e, self.element, self.definition.field, self.definition)});
+				self.element.on("dblclick", function(e){def.headerOnDblClick(e, self.getObject())});
 			}
 
 			if(typeof(def.headerOnContext) == "function"){
-				self.element.on("contextmenu", function(e){def.headerOnContext(e, self.element, self.definition.field, self.definition)});
+				self.element.on("contextmenu", function(e){def.headerOnContext(e, self.getObject())});
 			}
 
 			//store column cell click event bindings
@@ -253,7 +253,7 @@ var Column = function(def, parent){
 				titleElement.on("change", function(){
 					var newTitle = $(this).val();
 					def.title = newTitle;
-					// table.options.colTitleChanged(newTitle, column, options.columns);
+					table.options.columnTitleChanged(self.getObject());
 				});
 
 				titleHolderElement.append(titleElement);

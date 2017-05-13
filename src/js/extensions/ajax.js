@@ -95,7 +95,14 @@ var Ajax = function(table){
 				}
 
 				self.config.success = function (data){
+					if(self.table.options.ajaxResponse){
+						data = self.table.options.ajaxResponse(self.url, self.params, data);
+					}
+
+					self.table.options.dataLoaded(data);
+
 					callback(data);
+
 					self.hideLoader();
 				};
 

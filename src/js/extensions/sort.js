@@ -102,13 +102,15 @@
 			});
 
 			self.sortList = newSortList;
-
-			self.sort();
 		},
 
 		//work through sort list sorting data
 		sort:function(){
 			var self = this, lastSort;
+
+			if(self.table.options.dataSorting){
+				self.table.options.dataSorting(self.getSort());
+			}
 
 			self.clearColumnHeaders();
 
@@ -124,6 +126,10 @@
 				if(lastSort.column){
 					self.setColumnHeader(lastSort.column, lastSort.dir);
 				}
+			}
+
+			if(self.table.options.dataSorted){
+				self.table.options.dataSorted(self.getSort());
 			}
 
 		},

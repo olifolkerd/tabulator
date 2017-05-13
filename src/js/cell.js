@@ -11,6 +11,10 @@ var CellObject = function (cell){
 			return cell.getOldValue();
 		},
 
+		getElement:function(){
+			return cell.getElement();
+		},
+
 		getRow:function(){
 			return cell.row.getObject();
 		},

@@ -4,6 +4,7 @@ var RowObject = function (row){
 
 	var obj = {
 		type:"rowObject", //type of element
+
 		getData:function(){
 			return row.getData(true);
 		},
@@ -20,6 +21,10 @@ var RowObject = function (row){
 			});
 
 			return cells;
+		},
+
+		getIndex:function(){
+			return row.getData(true)[row.table.options.index];
 		},
 	}
 

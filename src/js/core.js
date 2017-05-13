@@ -67,7 +67,6 @@
 	 			paginationDataReceived:{}, //pagination data received from the server
 	 			paginator:false, //pagination url string builder
 
-
 	 			ajaxURL:false, //url for ajax loading
 	 			ajaxParams:{}, //params for ajax loading
 	 			ajaxConfig:"get", //ajax request type
@@ -97,8 +96,8 @@
 
 	 			cellEdited:function(){},
 
-	 			colMoved:function(){},
-	 			colTitleChanged:function(){},
+	 			columnMoved:function(){},
+	 			columnTitleChanged:function(){},
 
 	 			dataLoading:function(){},
 	 			dataLoaded:function(){},
@@ -107,8 +106,8 @@
 
 	 			ajaxResponse:false,
 
-	 			dataFiltering:function(){},
-	 			dataFiltered:function(){},
+	 			dataFiltering:false,
+	 			dataFiltered:false,
 
 	 			dataSorting:function(){},
 	 			dataSorted:function(){},
@@ -209,6 +208,8 @@
 	 				self.extensions.ajax.initialize();
 	 			}
 
+	 			self.options.tableBuilt();
+
 	 		},
 
 	 		//configure the table
@@ -249,9 +250,6 @@
 	 			var self = this;
 
 	 			self.options.dataLoading(data, params);
-
-	 			//show loader if needed
-	 			// self._showLoader(this, this.options.loader);
 
 	 			if(typeof(data) === "string"){
 	 				if (data.indexOf("{") == 0 || data.indexOf("[") == 0){

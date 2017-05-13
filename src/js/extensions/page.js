@@ -281,6 +281,8 @@ var Page = function(table){
 				default:
 				console.warn("Pagination Error - no such pagination mode:", this.mode);
 			}
+
+			this.table.options.pageLoaded(this.getPage());
 		},
 
 		_getRemotePage:function(){
