@@ -163,7 +163,7 @@ var Group = function(parent, id, generator, visible){
 
 		//////////////// Object Generation /////////////////
 		getObject:function(){
-			return new GroupObject(group);
+			return new GroupObject(this);
 		},
 	}
 

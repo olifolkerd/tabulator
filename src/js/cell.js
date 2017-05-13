@@ -215,7 +215,7 @@ var Cell = function(column, row){
 
 		//////////////// Object Generation /////////////////
 		getObject:function(){
-			return new CellObject(row);
+			return new CellObject(this);
 		},
 	}
 

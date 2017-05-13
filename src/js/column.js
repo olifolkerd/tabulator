@@ -580,7 +580,7 @@ var Column = function(def, parent){
 
 		//////////////// Object Generation /////////////////
 		getObject:function(){
-			return new ColumnObject(row);
+			return new ColumnObject(this);
 		},
 	};
 
