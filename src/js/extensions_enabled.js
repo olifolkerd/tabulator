@@ -21,3 +21,5 @@
 /*=include extensions/frozen_columns.js */
 /*=include extensions/persistent_layout.js */
 /*=include extensions/responsive_layout.js */
+
+/*=include extensions/moveable_columns.js */

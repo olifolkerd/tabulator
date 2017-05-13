@@ -107,7 +107,7 @@ var Row = function(data, parent){
 
 		reinitialize:function(){
 			this.initialized = false;
-			this.height=0;
+			this.height = 0;
 
 			if(this.element.is(":visible")){
 				this.initialize(true);

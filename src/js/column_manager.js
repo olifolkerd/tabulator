@@ -253,6 +253,40 @@ var ColumnManager = function(table){
 			return width;
 		},
 
+		moveColumn:function(from, to, after){
+
+			this._moveColumnInArray(this.columns, from, to, after);
+			this._moveColumnInArray(this.columnsByIndex, from, to, after);
+
+			if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
+				this.table.extensions.persistentLayout.save();
+			}
+		},
+
+		_moveColumnInArray:function(columns, from, to, after){
+			var	fromIndex = columns.indexOf(from),
+			toIndex;
+
+			if (fromIndex > -1) {
+
+				columns.splice(fromIndex, 1);
+
+				toIndex = columns.indexOf(to);
+
+				if (toIndex > -1) {
+
+					if(after){
+						columns.splice(toIndex+1, 0, from);
+					}else{
+						columns.splice(toIndex, 0, from);
+					}
+
+				}else{
+					columns.splice(fromIndex, 0, from);
+				}
+			}
+		},
+
 		//////////////// Cell Management /////////////////
 
 		generateCells:function(row){

@@ -51,6 +51,10 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	border-radius: $borderRadius;
 	color: $color;
 
+	&.tabulator-block-select{
+		user-select: none;
+	}
+
 	//column header containing element
 	.tabulator-header{
 		position:relative;
@@ -80,6 +84,12 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		.tabulator-col{
 			display:inline-block;
 
+			&.tabulator-moving{
+				position: absolute;
+				border:1px solid  $headerSeperatorColor;
+				background:darken($headerBackgroundColor, 10%);
+				pointer-events: none;
+			}
 
 			//hold content of column header
 			.tabulator-col-content{

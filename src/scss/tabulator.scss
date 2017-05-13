@@ -47,6 +47,10 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	text-align: left;
 	overflow:hidden;
 
+	&.tabulator-block-select{
+		user-select: none;
+	}
+
 	//column header containing element
 	.tabulator-header{
 		position:relative;
@@ -70,6 +74,13 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;
+
+			&.tabulator-moving{
+				position: absolute;
+				border:1px solid  $headerSeperatorColor;
+				background:darken($headerBackgroundColor, 10%);
+				pointer-events: none;
+			}
 
 			//hold content of column header
 			.tabulator-col-content{
@@ -170,7 +181,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 				&:hover{
 					cursor:pointer;
-					background-color:rgba(0,0,0,.1);
+					background-color:darken($headerBackgroundColor, 10%);
 				}
 
 				&[aria-sort="none"]{

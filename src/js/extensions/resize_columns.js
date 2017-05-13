@@ -54,6 +54,8 @@ var ResizeColumns = function(table){
 		_mouseDown:function(e, column){
 			var self = this;
 
+			self.table.element.addClass("tabulator-block-select");
+
 			function mouseMove(e){
 				column.setWidth(self.startWidth + (e.screenX - self.startX))
 			}
@@ -67,6 +69,8 @@ var ResizeColumns = function(table){
 
 				$("body").off("mouseup", mouseMove);
 				$("body").off("mousemove", mouseMove);
+
+				self.table.element.removeClass("tabulator-block-select");
 
 				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
 					self.table.extensions.persistentLayout.save();

@@ -134,6 +134,11 @@ var Column = function(def, parent){
 				self.table.extensions.frozenColumns.initializeColumn(self);
 			}
 
+			//set movable column
+			if(self.table.options.movableColumns && !self.isGroup && self.table.extExists("moveColumn")){
+				self.table.extensions.moveColumn.initializeColumn(self);
+			}
+
 
 			//setup header click event bindings
 			if(typeof(def.headerOnClick) == "function"){
@@ -193,7 +198,6 @@ var Column = function(def, parent){
 			if(typeof def.accessor != "undefined" && table.extExists("accessor")){
 				table.extensions.accessor.initializeColumn(self);
 			}
-
 
 			//set column visibility
 			if(typeof def.visible != "undefined"){
@@ -381,6 +385,11 @@ var Column = function(def, parent){
 			return this.columns;
 		},
 
+		//return all columns in a group
+		getCells:function(){
+			return this.cells;
+		},
+
 		//retreive the top column in a group of columns
 		getTopColumn:function(){
 			if(this.parent.isGroup){
@@ -490,6 +499,10 @@ var Column = function(def, parent){
 
 		getWidth:function(){
 			return this.element.outerWidth();
+		},
+
+		getHeight:function(){
+			return this.element.outerHeight();
 		},
 
 		setMinWidth:function(minWidth){

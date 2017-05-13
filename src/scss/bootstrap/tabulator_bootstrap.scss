@@ -47,6 +47,10 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 	max-width: 100%;
 	margin-bottom: $line-height-computed;
 
+	&.tabulator-block-select{
+		user-select: none;
+	}
+
 	//column header containing element
 	.tabulator-header{
 		position:relative;
@@ -70,6 +74,12 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 		.tabulator-col{
 			display:inline-block;
 
+			&.tabulator-moving{
+				position: absolute;
+				border:1px solid  $headerSeperatorColor;
+				background:darken($headerBackgroundColor, 10%);
+				pointer-events: none;
+			}
 
 			//hold content of column header
 			.tabulator-col-content{

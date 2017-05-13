@@ -80,6 +80,8 @@
 
 				groupHeader:false, //header generation function
 
+				movableColumns:false, //enable movable columns
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
