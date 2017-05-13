@@ -106,6 +106,11 @@ var Row = function(data, parent){
 				});
 
 				self.normalizeHeight();
+
+				if(self.table.options.rowFormatter){
+					self.table.options.rowFormatter(row.getObject());
+				}
+
 				self.initialized = true;
 			}
 		},

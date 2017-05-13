@@ -83,6 +83,8 @@
 				movableColumns:false, //enable movable columns
 				movableRows:false, //enable movable rows
 
+				rowFormatter:false,
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
