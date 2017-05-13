@@ -267,6 +267,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				min-height:$textSize + ($headerMargin * 2);
 				background-color: $rowBackgroundColor;
 
+
 				&:nth-child(even){
 					background-color: $rowAltBackgroundColor;
 				}
@@ -288,6 +289,16 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				&.tabulator-row-moving{
 					border:1px solid #000;
 					background:#fff;
+				}
+
+				&.tabulator-moving{
+					position: absolute;
+
+					border-top:1px solid  $rowBorderColor;
+					border-bottom:1px solid  $rowBorderColor;
+
+					pointer-events: none;
+					z-index:15;
 				}
 
 				//movable row handle

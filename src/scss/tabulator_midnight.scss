@@ -293,6 +293,16 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 					cursor: pointer;
 				}
 
+				&.tabulator-moving{
+					position: absolute;
+
+					border-top:1px solid  $rowBorderColor;
+					border-bottom:1px solid  $rowBorderColor;
+
+					pointer-events: none;
+					z-index:15;
+				}
+
 				//movable row handle
 				.tabulator-row-handle{
 					display:inline-block;

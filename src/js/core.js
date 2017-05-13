@@ -81,6 +81,7 @@
 				groupHeader:false, //header generation function
 
 				movableColumns:false, //enable movable columns
+				movableRows:false, //enable movable rows
 
 	 			//Callbacks from events
 	 			rowClick:false,

@@ -56,6 +56,11 @@ var Row = function(data, parent){
 				self.table.extensions.selectRow.initializeRow(this);
 			}
 
+			//setup movable rows
+			if(self.table.options.movableRows !== false && self.table.extExists("moveRow")){
+				self.table.extensions.moveRow.initializeRow(this);
+			}
+
 			//handle row click events
 			if (self.table.options.rowClick){
 				self.element.on("click", function(e){
@@ -133,6 +138,12 @@ var Row = function(data, parent){
 		getHeight:function(){
 			return this.outerHeight;
 		},
+
+		//return rows outer Width
+		getWidth:function(){
+			return this.element.outerWidth();
+		},
+
 
 		//////////////// Cell Management /////////////////
 

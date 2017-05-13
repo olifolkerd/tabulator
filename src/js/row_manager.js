@@ -11,8 +11,8 @@ var RowManager = function(table){
 		renderMode:"classic", //current rendering mode
 
 		rows:[], //hold row data objects
-		displayRows:[], //rows currently available to on display in the table
-		displayRowsCount:0, //count of active rows
+		activeRows:[], //rows currently available to on display in the table
+		activeRowsCount:0, //count of active rows
 
 		displayRows:[], //rows currently on display in the table
 		displayRowsCount:0, //count of display rows
@@ -38,6 +38,11 @@ var RowManager = function(table){
 		//return containing element
 		getElement:function(){
 			return this.element;
+		},
+
+		//return table element
+		getTableElement:function(){
+			return this.tableElement;
 		},
 
 		//link to column manager
@@ -243,6 +248,36 @@ var RowManager = function(table){
 			this.renderTable();
 
 			return row;
+		},
+
+		moveRow:function(from, to, after){
+			this._moveRowInArray(this.rows, from, to, after);
+			this._moveRowInArray(this.activeRows, from, to, after);
+			this._moveRowInArray(this.displayRows, from, to, after);
+		},
+
+		_moveRowInArray:function(rows, from, to, after){
+			var	fromIndex = rows.indexOf(from),
+			toIndex;
+
+			if (fromIndex > -1) {
+
+				rows.splice(fromIndex, 1);
+
+				toIndex = rows.indexOf(to);
+
+				if (toIndex > -1) {
+
+					if(after){
+						rows.splice(toIndex+1, 0, from);
+					}else{
+						rows.splice(toIndex, 0, from);
+					}
+
+				}else{
+					rows.splice(fromIndex, 0, from);
+				}
+			}
 		},
 
 		clearData:function(){

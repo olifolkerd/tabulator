@@ -23,3 +23,4 @@
 /*=include extensions/responsive_layout.js */
 
 /*=include extensions/moveable_columns.js */
+/*=include extensions/moveable_rows.js */
