@@ -62,10 +62,15 @@ Cell.prototype.generateElement = function(){
 Cell.prototype._configureCell = function(){
 	var self = this,
 	cellEvents = self.column.cellEvents,
-	element = self.element;
+	element = self.element,
+	field = this.column.getField();
 
 	//set text alignment
 	element.css("text-align", typeof(self.column.definition.align) == "undefined" ? "" : self.column.definition.align);
+
+	if(field){
+		element.attr("tabulator-field", field);
+	}
 
 	//set event bindings
 	if (cellEvents.onClick){
