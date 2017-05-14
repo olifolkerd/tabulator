@@ -16,6 +16,26 @@ var ColumnObject = function (column){
 			return column.getField();
 		},
 
+		show:function(){
+			column.show();
+		},
+
+		hide:function(){
+			column.hide();
+		},
+
+		toggle:function(){
+			if(column.visible){
+				column.hide();
+			}else{
+				column.show();
+			}
+		},
+
+		delete:function(){
+			column.delete();
+		},
+
 		_getSelf:function(){
 			return column;
 		},

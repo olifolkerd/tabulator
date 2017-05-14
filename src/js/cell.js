@@ -23,6 +23,14 @@ var CellObject = function (cell){
 			return cell.column.getObject();
 		},
 
+		setValue:function(value, mutate){
+			cell.setValue(value, mutate);
+		},
+
+		checkHeight:function(){
+			cell.checkHeight();
+		},
+
 		_getSelf:function(){
 			return cell;
 		},
@@ -148,13 +156,13 @@ Cell.prototype.getOldValue = function(){
 
 //////////////////// Actions ////////////////////
 
-Cell.prototype.setValue = function(value, userEdit){
+Cell.prototype.setValue = function(value, mutate){
 	var oldVal,
 	changed = false;
 
 	if(this.value != value){
 
-		if(userEdit){
+		if(mutate){
 			changed = true;
 			oldVal = this.value;
 

@@ -666,6 +666,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return column.getField();
       },
 
+      show: function show() {
+
+        column.show();
+      },
+
+      hide: function hide() {
+
+        column.hide();
+      },
+
+      toggle: function toggle() {
+
+        if (column.visible) {
+
+          column.hide();
+        } else {
+
+          column.show();
+        }
+      },
+
+      delete: function _delete() {
+
+        column.delete();
+      },
+
       _getSelf: function _getSelf() {
 
         return column;
@@ -2556,6 +2582,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return row.getData(true)[row.table.options.index];
       },
 
+      delete: function _delete() {
+
+        row.delete();
+      },
+
+      scrollTo: function scrollTo() {
+
+        row.table.rowManager.scrollToRow(row);
+      },
+
+      update: function update(data) {
+
+        row.updateData(data);
+      },
+
       normalizeHeight: function normalizeHeight() {
 
         row.normalizeHeight(true);
@@ -2882,6 +2923,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return cell.column.getObject();
       },
 
+      setValue: function setValue(value, mutate) {
+
+        cell.setValue(value, mutate);
+      },
+
+      checkHeight: function checkHeight() {
+
+        cell.checkHeight();
+      },
+
       _getSelf: function _getSelf() {
 
         return cell;
@@ -3051,14 +3102,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////////// Actions ////////////////////
 
 
-  Cell.prototype.setValue = function (value, userEdit) {
+  Cell.prototype.setValue = function (value, mutate) {
 
     var oldVal,
         changed = false;
 
     if (this.value != value) {
 
-      if (userEdit) {
+      if (mutate) {
 
         changed = true;
 

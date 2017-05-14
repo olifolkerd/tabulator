@@ -26,6 +26,18 @@ var RowObject = function (row){
 			return row.getData(true)[row.table.options.index];
 		},
 
+		delete:function(){
+			row.delete();
+		},
+
+		scrollTo:function(){
+			row.table.rowManager.scrollToRow(row);
+		},
+
+		update:function(data){
+			row.updateData(data);
+		},
+
 		normalizeHeight:function(){
 			row.normalizeHeight(true);
 		},
