@@ -5298,7 +5298,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Edit.prototype.initializeColumn = function (column) {
 
     var self = this,
-        config = { editor: false, blocked: false };
+        config = { editor: false, blocked: false, check: column.definition.editable };
 
     //set column editor
 
@@ -5378,7 +5378,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     element.on("focus", function (e) {
 
-      var rendered = function rendered() {};
+      var rendered = function rendered() {},
+          allowEdit = true,
+          cellEditor;
 
       function onRendered(callback) {
 
@@ -5389,33 +5391,44 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         e.stopPropagation();
 
-        var cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
+        if (typeof cell.column.extensions.edit.check == "function") {
 
-        //if editor returned, add to DOM, if false, abort edit
+          allowEdit = cell.column.extensions.edit.check(cell.getObject());
+        }
 
+        if (allowEdit) {
 
-        if (cellEditor !== false) {
+          cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
 
-          element.addClass("tabulator-editing");
-
-          cell.row.getElement().addClass("tabulator-row-editing");
-
-          element.empty();
-
-          element.append(cellEditor);
-
-          //trigger onRendered Callback
+          //if editor returned, add to DOM, if false, abort edit
 
 
-          rendered();
+          if (cellEditor !== false) {
 
-          //prevent editing from triggering rowClick event
+            element.addClass("tabulator-editing");
+
+            cell.row.getElement().addClass("tabulator-row-editing");
+
+            element.empty();
+
+            element.append(cellEditor);
+
+            //trigger onRendered Callback
 
 
-          element.children().click(function (e) {
+            rendered();
 
-            e.stopPropagation();
-          });
+            //prevent editing from triggering rowClick event
+
+
+            element.children().click(function (e) {
+
+              e.stopPropagation();
+            });
+          } else {
+
+            element.blur();
+          }
         } else {
 
           element.blur();

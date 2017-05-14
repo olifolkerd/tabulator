@@ -6,7 +6,7 @@ var Edit = function(table){
 //initialize column editor
 Edit.prototype.initializeColumn = function(column){
 	var self = this,
-	config = {editor:false, blocked:false};
+	config = {editor:false, blocked:false, check:column.definition.editable};
 
 	//set column editor
 	switch(typeof column.definition.editor){
@@ -59,7 +59,9 @@ Edit.prototype.bindEditor = function(cell){
 	});
 
 	element.on("focus", function(e){
-		var rendered = function(){};
+		var rendered = function(){},
+		allowEdit = true,
+		cellEditor;
 
 		function onRendered(callback){
 			rendered = callback;
@@ -68,22 +70,31 @@ Edit.prototype.bindEditor = function(cell){
 		if(!cell.column.extensions.edit.blocked){
 			e.stopPropagation();
 
-			var cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
+			if(typeof cell.column.extensions.edit.check == "function"){
+				allowEdit = cell.column.extensions.edit.check(cell.getObject());
+			}
 
-			//if editor returned, add to DOM, if false, abort edit
-			if(cellEditor !== false){
-				element.addClass("tabulator-editing");
-				cell.row.getElement().addClass("tabulator-row-editing");
-				element.empty();
-				element.append(cellEditor);
+			if(allowEdit){
 
-				//trigger onRendered Callback
-				rendered();
+				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
 
-				//prevent editing from triggering rowClick event
-				element.children().click(function(e){
-					e.stopPropagation();
-				})
+				//if editor returned, add to DOM, if false, abort edit
+				if(cellEditor !== false){
+					element.addClass("tabulator-editing");
+					cell.row.getElement().addClass("tabulator-row-editing");
+					element.empty();
+					element.append(cellEditor);
+
+					//trigger onRendered Callback
+					rendered();
+
+					//prevent editing from triggering rowClick event
+					element.children().click(function(e){
+						e.stopPropagation();
+					})
+				}else{
+					element.blur();
+				}
 			}else{
 				element.blur();
 			}
