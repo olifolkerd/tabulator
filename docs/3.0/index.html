@@ -103,7 +103,7 @@
             <div class="col-md-9 col-xs-12 content" role="main">
                 <a class="anchor" id="setup"></a>
                 <article>
-                    <h1>Setup <a class="example-link" href="../../quickstart"> <button><i class="fa fa-paper-plane"></i> Try Quickstart Guide</button></a></h1>
+                    <h1>Setup <span class="label label-primary">Updated</span> <a class="example-link" href="../../quickstart"> <button><i class="fa fa-paper-plane"></i> Try Quickstart Guide</button></a></h1>
 
                     <p>You can have yourself up and running in a couple of minutes using the steps below:</p>
 
@@ -159,55 +159,72 @@
                 </article>
                 <a class="anchor" id="define-column-headers"></a>
                 <article>
-                    <h1>Define Column Headers </h1>
+                    <h1>Define Column Headers <span class="label label-primary">Updated</span></h1>
 
                     <p>Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     columns:[
-        {title:"Name", field:"name", sortable:true, sorter:"string", width:200, editable:true},
-        {title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
-        {title:"Gender", field:"gender", sortable:true, sorter:"string", onClick:function(e, val, cell, row){console.log("cell click")},},
-        {title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
+        {title:"Name", field:"name", sorter:"string", width:200, editor:true},
+        {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+        {title:"Gender", field:"gender", sorter:"string", onClick:function(e, val, cell, row){console.log("cell click")},},
+        {title:"Height", field:"height", formatter:"star", align:"center", width:100},
         {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-        {title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
-        {title:"Cheese Preference", field:"cheese", sortable:true, sorter:"boolean", align:"center", formatter:"tickCross"},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+        {title:"Cheese Preference", field:"cheese", sorter:"boolean", align:"center", formatter:"tickCross"},
     ],
 });</pre>
 
-                    <p>There are a number of parameters that can be passed in with each column to determine how it is displayed:</p>
+                    <p>There are a number of properties that can be set in a defintion object to determine how the column is displayed:</p>
 
+                    <h3>General</h3>
                     <ul>
                         <li><strong>title</strong> - <strong><i>Required</i></strong> This is the title that will be displayed in the header for this column</li>
                         <li><strong>field</strong> - <strong><i>Required</i></strong> <i>(not required in icon/button columns)</i> this is the key for this column in the data array</li>
+                        <li><strong>visible</strong> - <i>(boolean, default - true)</i> determines if the column is visible. (see <a href="#column-visibility">Column Visibility</a> for more details)</li>
+                    </ul>
+
+                    <h3>Layout</h3>
+                    <ul>
                         <li><strong>align</strong> - sets the text alignment for this column (left|center|right)</li>
                         <li><strong>width</strong> - sets the width of this column, this can be set in pixels or as a percentage of total table width (if not set the system will determine the best)</li>
                         <li><strong>minWidth</strong> - sets the minimum width of this column, this should be set in pixels (this takes priority over the global option of colMinWidth)</li>
                         <li><strong>frozen</strong> - freezes the column in place when scrolling (see <a href="#frozen-col">Frozen Columns</a> for more details)</li>
                         <li><strong>responsive</strong> - an integer to determine when the column should be hidden in responsive mode (see <a href="#responsive-layout">Responsive Layout</a> for more details)</li>
-                        <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
-                        <li><strong>headerSort</strong> - user can sort by clicking on the header (see <a href="#sorting">Sorting Data</a> for more details)</li>
-                        <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
-                        <li><strong>onClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>onDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>onContext</strong> - callback for when user right clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnClick</strong>  - callback for when user clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnDblClick</strong>  - callback for when user double clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnContext</strong>  - callback for when user right clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>editable</strong>callback to check if the cell is editable (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
-                        <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
-                        <li><strong>visible</strong> - <i>(boolean, default - true)</i> determines if the column is visible. (see <a href="#column-visibility">Column Visibility</a> for more details)</li>
-                        <li><strong>cssClass</strong> - sets css classes on header and cells in this column. <i>(value should be a string containing space seperated class names)</i></li>
                         <li><strong>tooltip</strong> - sets the on hover tooltip for each cell in this column (see <a href="#formatting">Formatting Data</a> for more details)</li>
-                        <li><strong>tooltipHeader</strong> - sets the on hover tooltip for the column header (see <a href="#formatting">Formatting Data</a> for more details)</li>
-                        <li><strong>editableTitle</strong> - allows the user to edit the header titles. (see <a href="#editable-column-title">Editable Column Titles</a> for more details)</li>
-                        <li><strong>headerFilter</strong> - filtering of columns from elements in the header (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>cssClass</strong> - sets css classes on header and cells in this column. <i>(value should be a string containing space seperated class names)</i></li>
+                    </ul>
+
+                    <h3>Data Manipulation</h3>
+                    <ul>
+                        <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
+                        <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
+                        <li><strong>editable <span class="label label-primary">Updated</span></strong> - callback to check if the cell is editable (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
+                        <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>mutator</strong> - function for manipulating column values as they are parsed into the table (see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>mutateType </strong> - defines whether mutation should occur on data parsing, cell editing or both (see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>accessor</strong> - function to alter column values before they are read out the table using the <span class='param'>getData</span> function (see <a href="#accessors">Accessors</a> for more details)</li>
-
-
                     </ul>
+
+                    <h3>Cell Events</h3>
+                    <ul>
+                        <li><strong>onClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>onDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>onContext</strong> - callback for when user right clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                    </ul>
+
+                    <h3>Column Headers</h3>
+                    <ul>
+                        <li><strong>headerSort <span class="label label-danger">New</span></strong> - user can sort by clicking on the header (see <a href="#sorting">Sorting Data</a> for more details)</li>
+                        <li><strong>headerOnClick</strong>  - callback for when user clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerOnDblClick</strong>  - callback for when user double clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerOnContext</strong>  - callback for when user right clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>tooltipHeader</strong> - sets the on hover tooltip for the column header (see <a href="#formatting">Formatting Data</a> for more details)</li>
+                        <li><strong>editableTitle</strong> - allows the user to edit the header titles. (see <a href="#editable-column-title">Editable Column Titles</a> for more details)</li>
+                        <li><strong>headerFilter</strong> - filtering of columns from elements in the header (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>HeaderFilterPlaceholder <span class="label label-danger">New</span></strong> - placeholder text for the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                    </ul>
+
 
                     <a class="anchor" id="column-groups"></a>
                     <h2>Column Grouping <a class="example-link" href="../../examples?#column-groups"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
