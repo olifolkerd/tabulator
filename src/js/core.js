@@ -147,8 +147,8 @@
 	 				self._buildElement();
 
 	 				self.rowManager.setData(self.options.data);
-
 	 			}
+
 	 		},
 
 
@@ -682,6 +682,8 @@
 	 		//ensure that extensions are bound to instantiated function
 	 		bindExtensions:function(){
 	 			var self = this;
+
+	 			this.extensions = {};
 
 	 			for(var name in self.extensionBindings){
 	 				self.extensions[name] = new self.extensionBindings[name](self);
