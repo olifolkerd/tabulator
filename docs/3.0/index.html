@@ -185,8 +185,8 @@
                         <li><strong>minWidth</strong> - sets the minimum width of this column, this should be set in pixels (this takes priority over the global option of colMinWidth)</li>
                         <li><strong>frozen</strong> - freezes the column in place when scrolling (see <a href="#frozen-col">Frozen Columns</a> for more details)</li>
                         <li><strong>responsive</strong> - an integer to determine when the column should be hidden in responsive mode (see <a href="#responsive-layout">Responsive Layout</a> for more details)</li>
-                        <li><strong>sortable</strong> - determines if the user can sort data by this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
+                        <li><strong>headerSort</strong> - user can sort by clicking on the header (see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>onClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>onDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
@@ -194,7 +194,7 @@
                         <li><strong>headerOnClick</strong>  - callback for when user clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>headerOnDblClick</strong>  - callback for when user double clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>headerOnContext</strong>  - callback for when user right clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>editable</strong> - <i>(boolean, default - false)</i> determines if this data is editable by the user. will use the editor that matches the formatter by default. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
+                        <li><strong>editable</strong>callback to check if the cell is editable (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>visible</strong> - <i>(boolean, default - true)</i> determines if the column is visible. (see <a href="#column-visibility">Column Visibility</a> for more details)</li>
                         <li><strong>cssClass</strong> - sets css classes on header and cells in this column. <i>(value should be a string containing space seperated class names)</i></li>
