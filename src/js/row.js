@@ -105,7 +105,7 @@ var Row = function(data, parent){
 				});
 			}
 
-			this.setHeight(this.element.innerHeight())
+			this.setHeight(this.element.innerHeight(), force)
 		},
 
 		//functions to setup on first render
@@ -146,10 +146,10 @@ var Row = function(data, parent){
 			}
 		},
 
-		setHeight:function(height){
+		setHeight:function(height, force){
 			var self = this;
 
-			if(self.height != height){
+			if(self.height != height || force){
 
 				self.height = height;
 
