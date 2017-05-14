@@ -58,6 +58,7 @@ var ResizeColumns = function(table){
 
 			function mouseMove(e){
 				column.setWidth(self.startWidth + (e.screenX - self.startX))
+				column.checkCellHeights();
 			}
 
 			function mouseUp(e){

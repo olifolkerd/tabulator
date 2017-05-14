@@ -135,7 +135,8 @@ var Edit = function(table){
 				var self = this,
 				value = cell.getValue(),
 				count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
-				input = $("<textarea></textarea>");
+				input = $("<textarea></textarea>"),
+				scrollHeight = 0;
 
 		        //create and style input
 		        input.css({
@@ -162,18 +163,15 @@ var Edit = function(table){
 		        });
 
 		        input.on("keyup", function(){
-		        	var value = $(this).val(),
-		        	newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
-		        	line;
 
-		        	if(newCount != count){
-		        		line = input.innerHeight() / count;
+		        	input.css({"height": ""});
 
-		        		input.css({"height": (line * newCount) + "px"});
+		        	var heightNow = input[0].scrollHeight;
+		        	input.css({"height": heightNow});
 
+		        	if(heightNow != scrollHeight){
+		        		scrollHeight = heightNow;
 		        		cell.getRow().normalizeHeight();
-
-		        		count = newCount;
 		        	}
 		        });
 
@@ -305,7 +303,6 @@ var Edit = function(table){
 
 				var newVal = function(){
 					var newval = (percent * Math.round(bar.outerWidth() / (element.width()/100))) + min;
-					console.log("suc", newval)
 					success(newval);
 					element.attr("aria-valuenow", newval).attr("aria-label", value);
 				}

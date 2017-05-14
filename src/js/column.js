@@ -498,7 +498,12 @@ var Column = function(def, parent){
 			if(this.table.extExists("frozenColumns")){
 				this.table.extensions.frozenColumns.layout();
 			}
+		},
 
+		checkCellHeights:function(){
+			this.cells.forEach(function(cell){
+				cell.checkHeight();
+			});
 		},
 
 		getWidth:function(){

@@ -28,7 +28,7 @@ var RowObject = function (row){
 		},
 
 		normalizeHeight:function(){
-			row.normalizeHeight();
+			row.normalizeHeight(true);
 		},
 
 		_getSelf:function(){
@@ -94,8 +94,17 @@ var Row = function(data, parent){
 			}
 		},
 
+
 		//normalize the height of elements in the row
-		normalizeHeight:function(){
+		normalizeHeight:function(force){
+
+			if(force){
+				//zero cell heights
+				this.cells.forEach(function(cell){
+					cell.setHeight();
+				});
+			}
+
 			this.setHeight(this.element.innerHeight())
 		},
 

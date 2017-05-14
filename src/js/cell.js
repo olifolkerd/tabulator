@@ -194,6 +194,22 @@ var Cell = function(column, row){
 			this.element.css("min-width", minWidth || "");
 		},
 
+		checkHeight:function(){
+			var height = this.element.css("height");
+
+			if(this.element.is(":visible") && height){
+				this.element.css("height", "");
+
+				if(this.element.outerHeight() != parseInt(height)){
+					this.row.normalizeHeight(true);
+				}else{
+					this.element.css("height", height);
+				}
+			}else{
+				this.row.reinitialize();
+			}
+		},
+
 		setHeight:function(height){
 			this.height = height;
 			this.element.css("height", height || "");

@@ -46,7 +46,7 @@ var Format = function(table){
 
 			//multiline text area
 			textarea:function(cell, options, formatterParams){
-				cell.css({"white-space":"pre-wrap"});
+				cell.getElement().css({"white-space":"pre-wrap"});
 				return cell.getValue();
 			},
 
