@@ -2,7 +2,7 @@ var Sort = function(table){
  	this.table = table; //hold Tabulator object
  	this.sortList = []; //holder current sort
  	this.changed = false; //has the sort changed since last render
-};
+ };
 
 //initialize column header for sorting
 Sort.prototype.initializeColumn = function(column, content){
@@ -24,23 +24,26 @@ Sort.prototype.initializeColumn = function(column, content){
 
 		column.extensions.sort = {sorter:sorter, dir:"none"};
 
-		column.element.addClass("tabulator-sortable");
+		if(column.definition.headerSort !== false){
 
-		//create sorter arrow
-		content.append($("<div class='tabulator-arrow'></div>"));
+			column.element.addClass("tabulator-sortable");
 
-		//sort on click
-		column.element.on("click", function(){
-			if(column.extensions.sort){
-				if(column.extensions.sort.dir == "asc"){
-					self.setSort(column, "desc");
-				}else{
-					self.setSort(column, "asc");
+			//create sorter arrow
+			content.append($("<div class='tabulator-arrow'></div>"));
+
+			//sort on click
+			column.element.on("click", function(){
+				if(column.extensions.sort){
+					if(column.extensions.sort.dir == "asc"){
+						self.setSort(column, "desc");
+					}else{
+						self.setSort(column, "asc");
+					}
+
+					self.table.rowManager.refreshActiveData();
 				}
-
-				self.table.rowManager.refreshActiveData();
-			}
-		});
+			});
+		}
 	}
 };
 

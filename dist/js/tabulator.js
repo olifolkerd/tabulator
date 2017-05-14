@@ -4615,31 +4615,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       column.extensions.sort = { sorter: sorter, dir: "none" };
 
-      column.element.addClass("tabulator-sortable");
+      if (column.definition.headerSort !== false) {
 
-      //create sorter arrow
+        column.element.addClass("tabulator-sortable");
 
-
-      content.append($("<div class='tabulator-arrow'></div>"));
-
-      //sort on click
+        //create sorter arrow
 
 
-      column.element.on("click", function () {
+        content.append($("<div class='tabulator-arrow'></div>"));
 
-        if (column.extensions.sort) {
+        //sort on click
 
-          if (column.extensions.sort.dir == "asc") {
 
-            self.setSort(column, "desc");
-          } else {
+        column.element.on("click", function () {
 
-            self.setSort(column, "asc");
+          if (column.extensions.sort) {
+
+            if (column.extensions.sort.dir == "asc") {
+
+              self.setSort(column, "desc");
+            } else {
+
+              self.setSort(column, "asc");
+            }
+
+            self.table.rowManager.refreshActiveData();
           }
-
-          self.table.rowManager.refreshActiveData();
-        }
-      });
+        });
+      }
     }
   };
 
