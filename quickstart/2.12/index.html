@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create interactive data tables in seconds with Tabulator. A lightweight, fully featured JQuery table generation plugin.">
+    <meta name="author" content="Oli Folkerd">
+
+    <meta property="og:url" content="http://olifolkerd.github.io/tabulator" />
+    <meta property="og:title" content="Tabulator" />
+    <meta property="og:description" content="Create interactive data tables in seconds with Tabulator. A lightweight, fully featured JQuery table generation plugin." />
+    <meta property="og:image" content="http://olifolkerd.github.io/tabulator/images/tabulator_icon.jpg"/>
+    <meta property="og:image:secure_url" content="https://olifolkerd.github.io/tabulator/images/tabulator_icon.jpg" />
+
+    <title>Tabulator</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:800,400,700,400italic,700italic|Bevan' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+     <!-- Custom CSS -->
+    <link href="../css/styles.css" rel="stylesheet">
+
+     <!-- Custom CSS -->
+    <link href="../css/prettyprint.css" rel="stylesheet">
+
+    <!-- Tabulator CSS -->
+    <link href="../css/tabulator.css" rel="stylesheet">
+
+    <link rel="icon"
+      type="image/png"
+      href="../images/tabulator_favicon_simple.png">
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../"><img src="../images/tabulator_small.png" alt="Tabulator"></a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="../">Home</a>
+                    </li>
+                    <li>
+                        <a href="../docs/">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="../quickstart/" class="active">Quick Start</a>
+                    </li>
+                    <li>
+                        <a href="../examples/">Examples</a>
+                    </li>
+                    <li>
+                        <a class="hidden-sm" href="../news/">News</a>
+                    </li>
+                    <li>
+                        <a class="hidden-sm" href="../community/">Community</a>
+                    </li>
+                    <li>
+                        <a id="github-link" href="https://github.com/olifolkerd/tabulator">Github</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+
+    <!-- Page Content -->
+
+    <div class="container docs">
+
+        <div class="row">
+
+            <div class="col-md-9 col-xs-12 content" role="main">
+                <a class="anchor" id="setup"></a>
+                <article>
+                    <h1>Quick Start Guide</h1>
+
+                    <p>Setting up tabulator could not be simpler. After including jQuery and jQueryUI in your project, follow the below steps</p>
+
+                    <p>Include the library and the css</p>
+
+                    <pre class="prettyprint lang-html">&lt;link href="tabulator.css" rel="stylesheet"&gt;
+&lt;script type="text/javascript" src="tabulator.js"&gt;&lt;/script&gt;</pre>
+
+                    <p>Create an element to hold the table</p>
+                    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+
+                    <p>Turn the element into a tabulator with some simple javascript</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator();</pre>
+
+
+                    <h3>Bower Installation</h3>
+                    <p>To get Tabulator via the Bower package manager, open a terminal in your project directory and run the following commmand:</p>
+                    <pre class="prettyprint lang-bsh">bower install tabulator --save</pre>
+
+                    <h3>NPM Installation</h3>
+                    <p>To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:</p>
+                    <pre class="prettyprint lang-bsh">npm install jquery.tabulator --save</pre>
+
+                    <h3>CDNJS</h3>
+                    <p>To access Tabulator directly from the CDNJS CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:</p>
+                    <pre class="prettyprint lang-html">&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.11.0/tabulator.min.css" rel="stylesheet"&gt;
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.11.0/tabulator.min.js"&gt;&lt;/script&gt;</pre>
+
+                    <p>Check out more of the great libraries available to use direclty from CDNJS at <a href="https://cdnjs.com/">https://cdnjs.com/</a></p>
+
+                    <a class="anchor" id="basic-example"></a>
+                    <h1>Basic Example</h1>
+                    <p>Below is a basic example of a functioning Tabulator setup.</p>
+
+                    <p style="margin-top:20px;"><strong>1.</strong> Create your DOM element</p>
+                    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                    <p style="margin-top:30px;"><strong>2.</strong> Turn element into a Tabulator</p>
+                    <pre class="prettyprint lang-js">//create Tabulator on DOM element with id "example-table"
+$("#example-table").tabulator({
+    height:"320px", // set height of table (optional)
+    fitColumns:true, //fit columns to width of table (optional)
+    columns:[ //Define Table Columns
+        {title:"Name", field:"name", sorter:"string", width:150},
+        {title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
+        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+    ],
+    rowClick:function(e, id, data, row){ //trigger an alert message when the row is clicked
+        alert("Row " + id + " Clicked!!!!");
+    },
+});</pre>
+
+                    <p style="margin-top:30px;"><strong>3.</strong> Load data into your Tabulator</p>
+
+                    <pre class="prettyprint lang-js">//define some sample data
+var tabledata = [
+    {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
+    {id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
+    {id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
+    {id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
+    {id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
+];
+
+//load sample data into the table
+$("#example-table").tabulator("setData", tabledata);</pre>
+
+                    <p style="margin-top:30px;"><strong>4. SMILE</strong> - You are all setup and ready to go!</p>
+
+                    <div id="example-table"></div>
+
+                </article>
+
+            </div>
+
+            <div class="col-md-3" role="complementary">
+                <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
+                    <ul class="nav docs-sidenav">
+                        <li><a href="#setup">Setup</a></li>
+                        <li><a href="#basic-example">Basic Example</a></li>
+                    </ul>
+                    <div class="share">
+                       <a data-type="facebook" href="https://www.facebook.com/sharer/sharer.php?u=http%3A//olifolkerd.github.io/tabulator/quickstart/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=400,toolbar=1,resizable=0'); return false;" title="Share On Facebook"><i class="fa fa-fw fa-facebook"></i></a>
+                       <a data-type="twitter" href="https://twitter.com/home?status=http%3A//olifolkerd.github.io/tabulator/quickstart/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=260,toolbar=1,resizable=0'); return false;"  title="Share On Twitter"><i class="fa fa-fw fa-twitter"></i></a>
+                       <a data-type="google" href="https://plus.google.com/share?url=http%3A//olifolkerd.github.io/tabulator/quickstart/" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=510,toolbar=1,resizable=0'); return false;"  title="Share On Google+"><i class="fa fa-fw fa-google-plus"></i></a>
+                       <a data-type="linkedin" href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A//olifolkerd.github.io/tabulator/quickstart/&title=Tabulator%20-%20Interactive%20JavaScript%20Tables&summary=Create%20interactive%20data%20tables%20in%20seconds%20with%20Tabulator.%20A%20lightweight,%20fully%20featured%20JQuery%20table%20generation%20plugin&source=" onclick="window.open(this.href, 'share','left=20,top=20,width=500,height=510,toolbar=1,resizable=0'); return false;"  title="Share On LinkedIn"><i class="fa fa-fw fa-linkedin"></i></a>
+                    </div>
+                </nav>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <!-- Footer -->
+    <div class="container">
+
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Oli Folkerd 2016 - 2017</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+     <!-- jQuery -->
+    <script src="../js/jquery.js"></script>
+    <script src="../js/jqueryui.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../js/bootstrap.min.js"></script>
+
+    <!-- Tabulator -->
+    <script src="../js/tabulator.js"></script>
+
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
+
+    <script type="text/javascript">
+
+        $('body').scrollspy({
+            target: '.docs-sidebar',
+            offset: 40
+        });
+
+        //track social shares
+        $(".share a").on("click", function(){
+            ga('send', 'event', {
+                eventCategory: 'Social Share',
+                eventAction: 'click',
+                eventLabel: $(this).data("type"),
+                transport: 'beacon'
+            })
+        });
+
+        //track sidebar navigation
+        $(".docs-sidenav li a").on("click", function(){
+            ga('send', 'event', {
+                eventCategory: 'Sidebar Nav - Quickstart',
+                eventAction: 'click',
+                eventLabel: $(this).attr("href").split("#")[1],
+                transport: 'beacon'
+            });
+        });
+
+        //sample data to be used in all tabulators
+        var tabledata = [
+            {id:1, name:"Oli Bob", age:"12", col:"red", dob:""},
+            {id:2, name:"Mary May", age:"1", col:"blue", dob:"14/05/1982"},
+            {id:3, name:"Christine Lobowski", age:"42", col:"green", dob:"22/05/1982"},
+            {id:4, name:"Brendon Philips", age:"125", col:"orange", dob:"01/08/1980"},
+            {id:5, name:"Margret Marmajuke", age:"16", col:"yellow", dob:"31/01/1999"},
+        ];
+
+        $("#example-table").tabulator({
+            height:"320px", // set height of table (optional)
+            fitColumns:true, //fit columns to width of table (optional)
+            columns:[ //Define Table Columns
+                {title:"Name", field:"name", sorter:"string", width:150},
+                {title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
+                {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+                {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+            ],
+            rowClick:function(e, id, data, row){ //trigger an alert message when the row is clicked
+                alert("Row " + id + " Clicked!!!!");
+            },
+        });
+
+        $("#example-table").tabulator("setData", tabledata);
+
+        //google analytics tracking code
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-77206751-1', 'auto');
+        ga('send', 'pageview');
+
+        $("#github-link").click(function(){
+            ga('send', 'event', {
+                eventCategory: 'Github Link',
+                eventAction: 'click',
+                eventLabel: 'Github Link',
+                transport: 'beacon'
+              })
+        });
+
+    </script>
+
+</body>
+
+</html>
