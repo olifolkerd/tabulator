@@ -139,7 +139,7 @@ Column.prototype._buildHeader = function(){
 
 
 	//set resizable handles
-	if(self.table.options.colResizable && self.table.extExists("resizeColumns")){
+	if(self.table.options.resizableColumns && self.table.extExists("resizeColumns")){
 		self.table.extensions.resizeColumns.initializeColumn(self, self.element);
 	}
 
@@ -238,7 +238,7 @@ Column.prototype._buildColumnHeader = function(){
 	}
 
 	//set min width if present
-	self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.colMinWidth : def.minWidth);
+	self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
 
 	//set width if present
 	self.setWidth(def.width);

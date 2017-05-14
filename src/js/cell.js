@@ -173,7 +173,7 @@ Cell.prototype.setValue = function(value, userEdit){
 	this._generateTooltip();
 
 	//set resizable handles
-	if(this.table.options.colResizable && this.table.extExists("resizeColumns")){
+	if(this.table.options.resizableColumns && this.table.extExists("resizeColumns")){
 		this.table.extensions.resizeColumns.initializeColumn(this.column, this.element);
 	}
 

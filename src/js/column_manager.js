@@ -139,7 +139,7 @@ ColumnManager.prototype._verticalAlignHeaders = function(){
 	});
 
 	self.columns.forEach(function(column){
-		column.verticalAlign(self.table.options.colVertAlign);
+		column.verticalAlign(self.table.options.columnVertAlign);
 	});
 
 	self.rowManager.adjustTableSize();

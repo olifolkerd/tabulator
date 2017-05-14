@@ -221,7 +221,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.columns.forEach(function (column) {
 
-      column.verticalAlign(self.table.options.colVertAlign);
+      column.verticalAlign(self.table.options.columnVertAlign);
     });
 
     self.rowManager.adjustTableSize();
@@ -844,7 +844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set resizable handles
 
 
-    if (self.table.options.colResizable && self.table.extExists("resizeColumns")) {
+    if (self.table.options.resizableColumns && self.table.extExists("resizeColumns")) {
 
       self.table.extensions.resizeColumns.initializeColumn(self, self.element);
     }
@@ -996,7 +996,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set min width if present
 
 
-    self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.colMinWidth : def.minWidth);
+    self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
 
     //set width if present
 
@@ -3084,7 +3084,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set resizable handles
 
 
-    if (this.table.options.colResizable && this.table.extExists("resizeColumns")) {
+    if (this.table.options.resizableColumns && this.table.extExists("resizeColumns")) {
 
       this.table.extensions.resizeColumns.initializeColumn(this.column, this.element);
     }
@@ -3228,13 +3228,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       fitColumns: false, //fit colums to width of screen;
 
 
-      colMinWidth: 40, //minimum global width for a column
+      columnMinWidth: 40, //minimum global width for a column
 
 
-      colVertAlign: "top", //vertical alignment of column headers
+      columnVertAlign: "top", //vertical alignment of column headers
 
 
-      colResizable: true, //resizable columns
+      resizableColumns: true, //resizable columns
 
 
       columns: [], //store for colum header info
