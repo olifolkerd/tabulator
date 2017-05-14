@@ -253,6 +253,17 @@ select {
 .container button.view-source {
   margin-top: 20px;
 }
+.alert {
+  font-size: 16px;
+  font-weight: bold;
+}
+.alert:first-child {
+  margin-top: 25px;
+  margin-bottom: -10px;
+}
+.alert i {
+  margin-right: 10px;
+}
 article {
   position: relative;
   margin-top: 50px;
