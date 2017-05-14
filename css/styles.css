@@ -21,26 +21,36 @@ footer {
   font-family: sans-serif;
 }
 .docs-sidebar {
+  padding-top: 10px;
   height: calc(100% - 52px);
   overflow-y: auto;
 }
-.docs-sidebar .share {
-  margin-left: 5px;
-}
-.docs-sidebar .share span {
+.docs-sidebar #verseion-select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 5px 0;
+  border-bottom: 3px solid #59B038;
+  font-weight: bold !important;
+  font-size: 16px;
+  text-align: center;
   vertical-align: middle;
-  font-size: 1.4em;
 }
-.docs-sidebar .share a {
+.docs-sidebar #verseion-select button {
+  display: block;
+  width: 100%;
+  padding: 2px 5px;
+  margin-bottom: 10px;
+  font-size: 16px;
   vertical-align: middle;
-  font-size: 2em;
-  color: #59B038;
 }
-.docs-sidebar .share a:hover {
-  color: #222;
+.docs-sidebar #verseion-select li a {
+  font-weight: bold;
 }
 .docs-sidebar .docs-sidenav {
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #59B038;
 }
 .docs-sidebar .docs-sidenav li.active {
   border-left: 3px solid #59B038;
@@ -59,6 +69,21 @@ footer {
 }
 .docs-sidebar .docs-sidenav .label {
   margin-left: 3px;
+}
+.docs-sidebar .share {
+  margin-left: 5px;
+}
+.docs-sidebar .share span {
+  vertical-align: middle;
+  font-size: 1.4em;
+}
+.docs-sidebar .share a {
+  vertical-align: middle;
+  font-size: 2em;
+  color: #59B038;
+}
+.docs-sidebar .share a:hover {
+  color: #222;
 }
 .feature-box-legend {
   margin-top: 20px;
@@ -197,7 +222,7 @@ button,
 select {
   margin-right: 20px;
 }
-button {
+.container button {
   border: 2px solid #32631f;
   border-radius: 5px;
   padding: 5px 10px;
@@ -205,16 +230,19 @@ button {
   color: #fff;
   font-weight: bold;
 }
-button:hover {
+.container button:hover {
   background: #32631f;
   border: 2px solid #59B038;
 }
-button.view-source {
+.container button.view-source {
   margin-top: 20px;
 }
 article {
   position: relative;
   margin-top: 50px;
+}
+article:first-of-type {
+  margin-top: 25px;
 }
 article h1 {
   border-bottom: 1px solid #59B038;

@@ -49,32 +49,52 @@ footer {
 //side bar
 .docs-sidebar{
 
+	padding-top:10px;
+
 	height:calc(~"100% - 52px");
 	overflow-y: auto;
 
-	.share{
-		margin-left:5px;
+	#verseion-select{
+		box-sizing: border-box;
+		width:100%;
 
-		span{
+		padding:5px 0;
+
+		// border-top:1px solid @green;
+		border-bottom:3px solid @green;
+
+		// background: #eee;
+
+		font-weight: bold !important;
+		font-size: 16px;
+		text-align: center;
+		vertical-align: middle;
+
+
+		button{
+			display: block;
+			width: 100%;
+
+			padding:2px 5px;
+			margin-bottom:10px;
+
+			font-size: 16px;
 			vertical-align: middle;
-			font-size: 1.4em;
 		}
 
-		a{
-			vertical-align: middle;
-
-			font-size: 2em;
-			color: @green;
-
-			&:hover{
-				color:#222;
-			}
+		li a{
+			font-weight: bold;
 		}
 	}
 
+
 	.docs-sidenav{
 
-		margin-top:20px;
+		margin-top:10px;
+		margin-bottom:10px;
+		padding-bottom:10px;
+
+		border-bottom:3px solid @green;
 
 		li{
 
@@ -101,6 +121,27 @@ footer {
 
 		.label{
 			margin-left:3px;
+		}
+	}
+
+
+	.share{
+		margin-left:5px;
+
+		span{
+			vertical-align: middle;
+			font-size: 1.4em;
+		}
+
+		a{
+			vertical-align: middle;
+
+			font-size: 2em;
+			color: @green;
+
+			&:hover{
+				color:#222;
+			}
 		}
 	}
 }
@@ -182,19 +223,19 @@ footer {
 
 
 		&::-webkit-input-placeholder {
-		   color:#6B8362;
+			color:#6B8362;
 		}
 
 		&:-moz-placeholder { /* Firefox 18- */
-		   color:#6B8362;
+			color:#6B8362;
 		}
 
 		&::-moz-placeholder {  /* Firefox 19+ */
-		   color:#6B8362;
+			color:#6B8362;
 		}
 
 		&:-ms-input-placeholder {
-		   color:#6B8362;
+			color:#6B8362;
 		}
 	}
 
@@ -302,27 +343,29 @@ button, select{
 	margin-right:20px;
 }
 
-button{
+.container{
+	button{
 
-	border:2px solid darken(@green, 20%);
-	border-radius: 5px;
+		border:2px solid darken(@green, 20%);
+		border-radius: 5px;
 
-	padding: 5px 10px;
+		padding: 5px 10px;
 
-	background: @green;
+		background: @green;
 
-	color: #fff;
-	font-weight: bold;
+		color: #fff;
+		font-weight: bold;
 
-	&:hover{
-		background:darken(@green, 20%);
-		border:2px solid  @green;
+		&:hover{
+			background:darken(@green, 20%);
+			border:2px solid  @green;
+		}
+
+		&.view-source{
+			margin-top: 20px;
+		}
+
 	}
-
-	&.view-source{
-		margin-top: 20px;
-	}
-
 }
 
 
@@ -331,6 +374,10 @@ article{
 	position: relative;
 
 	margin-top: 50px;
+
+	&:first-of-type{
+		margin-top:25px;
+	}
 
 
 	//// header styling ////
