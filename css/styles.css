@@ -25,25 +25,26 @@ footer {
   height: calc(100% - 52px);
   overflow-y: auto;
 }
-.docs-sidebar #verseion-select {
+.docs-sidebar #version-select {
   display: inline-block;
   float: right;
   font-size: 10px;
 }
-.docs-sidebar #verseion-select button {
+.docs-sidebar #version-select button {
   display: block;
   margin-right: 5px;
+  margin-left: 5px;
   margin-top: -5px;
   padding: 2px 10px;
   font-size: 13px;
   vertical-align: middle;
 }
-.docs-sidebar #verseion-select ul.dropdown-menu {
+.docs-sidebar #version-select ul.dropdown-menu {
   max-width: 20px;
   width: 20px;
   overflow: hidden;
 }
-.docs-sidebar #verseion-select ul.dropdown-menu li a {
+.docs-sidebar #version-select ul.dropdown-menu li a {
   font-weight: bold;
 }
 .docs-sidebar .docs-sidenav {
