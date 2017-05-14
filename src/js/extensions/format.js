@@ -5,9 +5,8 @@ var Format = function(table){
 
 		//initialize column formatter
 		initializeColumn:function(column){
-			var self = this;
-
-			var config = {params:column.definition.formatterParams || {}};
+			var self = this,
+			config = {params:column.definition.formatterParams || {}};
 
 			//set column formatter
 			switch(typeof column.definition.formatter){
@@ -40,13 +39,18 @@ var Format = function(table){
 
 		//default data formatters
 		formatters:{
-			plaintext:function(cell, options, formatterParams){ //plain text value
+			//plain text value
+			plaintext:function(cell, options, formatterParams){
 				return cell.getValue();
 			},
-			textarea:function(cell, options, formatterParams){ //multiline text area
+
+			//multiline text area
+			textarea:function(cell, options, formatterParams){
 				cell.css({"white-space":"pre-wrap"});
 				return cell.getValue();
 			},
+
+			//currency formatting
 			money:function(cell, options, formatterParams){
 
 				var floatVal = parseFloat(cell.getValue());
@@ -70,18 +74,26 @@ var Format = function(table){
 
 				return integer + decimal;
 			},
+
+			//clickable mailto link
 			email:function(cell, options, formatterParams){
 				var value = cell.getValue();
 				return "<a href='mailto:" + value + "'>" + value + "</a>";
 			},
+
+			//clickable anchor tag
 			link:function(cell, options, formatterParams){
 				var value = cell.getValue();
 				return "<a href='" + value + "'>" + value + "</a>";
 			},
+
+			//image element
 			image:function(cell, options, formatterParams){
 				var value = cell.getValue();
 				return "<img url='" + value + "'/>";
 			},
+
+			//tick or empty cell
 			tick:function(cell, options, formatterParams){
 				var value = cell.getValue(),
 				element = cell.getElement();
@@ -96,6 +108,8 @@ var Format = function(table){
 					return "";
 				}
 			},
+
+			//tick or cross
 			tickCross:function(cell, options, formatterParams){
 				var value = cell.getValue(),
 				element = cell.getElement(),
@@ -110,6 +124,8 @@ var Format = function(table){
 					return cross;
 				}
 			},
+
+			//star rating
 			star:function(cell, options, formatterParams){
 				var value = cell.getValue(),
 				element = cell.getElement(),
@@ -137,6 +153,8 @@ var Format = function(table){
 
 				return stars.html();
 			},
+
+			//progress bar
 			progress:function(cell, options, formatterParams){ //progress bar
 				var value = cell.getValue(),
 				element = cell.getElement(),
@@ -162,16 +180,24 @@ var Format = function(table){
 
 				return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
 			},
+
+			//background color
 			color:function(cell, options, formatterParams){
 				cell.getElement().css({"background-color":cell.getValue()});
 				return "";
 			},
+
+			//tick icon
 			buttonTick:function(cell, options, formatterParams){
 				return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 			},
+
+			//cross icon
 			buttonCross:function(cell, options, formatterParams){
 				return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 			},
+
+			//current row number
 			rownum:function(cell, options, formatterParams){
 				return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
 			}

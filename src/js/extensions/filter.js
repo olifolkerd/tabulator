@@ -7,7 +7,7 @@ var Filter = function(table){
 		headerFilters:{}, //hold column filters
 		headerFilterElements:[], //hold header filter elements for manipulation
 
-		changed:false,
+		changed:false, //has filtering changed since last render
 
 		//initialize column header filter
 		initializeColumn:function(column){
@@ -137,11 +137,6 @@ var Filter = function(table){
 			var changed = this.changed;
 			this.changed = false;
 			return changed;
-		},
-
-		//set the header filters
-		setHeaderFilter:function(){
-
 		},
 
 		//set standard filters
@@ -309,30 +304,38 @@ var Filter = function(table){
 
 		//list of available filters
 		filters:{
+
+			//equal to
 			"=":function(filterVal, rowVal){
 				return rowVal == filterVal ? true : false;
 			},
 
+			//less than
 			"<":function(filterVal, rowVal){
 				return rowVal < filterVal ? true : false;
 			},
 
+			//less than or equal to
 			"<=":function(filterVal, rowVal){
 				return rowVal <= filterVal ? true : false;
 			},
 
+			//greater than
 			">":function(filterVal, rowVal){
 				return rowVal > filterVal ? true : false;
 			},
 
+			//greater than or equal to
 			">=":function(filterVal, rowVal){
 				return rowVal >= filterVal ? true : false;
 			},
 
+			//not equal to
 			"!=":function(filterVal, rowVal){
 				return rowVal != filterVal ? true : false;
 			},
 
+			//contains the string
 			"like":function(filterVal, rowVal){
 				if(filterVal === null){
 					return rowVal === filterVal ? true : false;

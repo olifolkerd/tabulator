@@ -5,9 +5,8 @@ var Edit = function(table){
 
 		//initialize column editor
 		initializeColumn:function(column){
-			var self = this;
-
-			var config = {editor:false, blocked:false};
+			var self = this,
+			config = {editor:false, blocked:false};
 
 			//set column editor
 			switch(typeof column.definition.editor){
@@ -27,7 +26,6 @@ var Edit = function(table){
 			if(config.editor){
 				column.extensions.edit = config;
 			}
-
 		},
 
 		clearEditor:function(cell){
@@ -99,10 +97,13 @@ var Edit = function(table){
 
 		//default data editors
 		editors:{
+
+			//input element
 			input:function(cell, onRendered, success, cancel){
 
 				//create and style input
 				var input = $("<input type='text'/>");
+
 				input.css({
 					"padding":"4px",
 					"width":"100%",
@@ -128,16 +129,15 @@ var Edit = function(table){
 
 				return input;
 			},
+
+			//resizable text area element
 			textarea:function(cell, onRendered, success, cancel){
-				var self = this;
-				var value = cell.getValue();
-
-				console.log("cell", cell);
-
-				var count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+				var self = this,
+				value = cell.getValue(),
+				count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
+				input = $("<textarea></textarea>");
 
 		        //create and style input
-		        var input = $("<textarea></textarea>");
 		        input.css({
 		        	"display":"block",
 		        	"height":"100%",
@@ -162,11 +162,12 @@ var Edit = function(table){
 		        });
 
 		        input.on("keyup", function(){
-		        	var value = $(this).val();
-		        	var newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1;
+		        	var value = $(this).val(),
+		        	newCount = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
+		        	line;
 
 		        	if(newCount != count){
-		        		var line = input.innerHeight() / count;
+		        		line = input.innerHeight() / count;
 
 		        		input.css({"height": (line * newCount) + "px"});
 
@@ -178,9 +179,12 @@ var Edit = function(table){
 
 		        return input;
 		    },
+
+		    //input element with type of number
 		    number:function(cell, onRendered, success, cancel){
+		    	var input = $("<input type='number'/>");
+
 				//create and style input
-				var input = $("<input type='number'/>");
 				input.css({
 					"padding":"4px",
 					"width":"100%",
@@ -206,27 +210,17 @@ var Edit = function(table){
 
 				return input;
 			},
+
+			//start rating
 			star:function(cell, onRendered, success, cancel){
-				var element = cell.getElement();
+				var element = cell.getElement(),
+				value = cell.getValue(),
+				maxStars = $("svg", element).length || 5,
+				size = $("svg:first", element).attr("width") || 14,
+				stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>"),
+				starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>'),
+				starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
 
-				var maxStars = $("svg", element).length;
-				maxStars = maxStars ?maxStars : 5;
-
-				var size = $("svg:first", element).attr("width")
-				size = size ? size : 14;
-
-				var stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>");
-
-				var value = parseInt(cell.getValue()) < maxStars ? parseInt(cell.getValue()) : maxStars;
-
-				var starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-				var starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
-
-				for(var i=1;i<= maxStars;i++){
-
-					var nextStar = i <= value ? starActive : starInactive;
-					stars.append(nextStar.clone());
-				}
 
 				//change number of active stars
 				var starChange = function(element){
@@ -235,6 +229,13 @@ var Edit = function(table){
 						element.nextAll("svg").replaceWith(starInactive.clone());
 						element.replaceWith(starActive.clone());
 					}
+				}
+
+				value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+
+				for(var i=1;i<= maxStars;i++){
+					let nextStar = i <= value ? starActive : starInactive;
+					stars.append(nextStar.clone());
 				}
 
 				stars.on("mouseover", "svg", function(e){
@@ -273,7 +274,7 @@ var Edit = function(table){
 						break;
 
 						case 37: //left arrow
-						var prevstar = $(".tabulator-star-active:last", stars).prev("svg");
+						let prevstar = $(".tabulator-star-active:last", stars).prev("svg");
 
 						if(prevstar.length){
 							starChange(prevstar);
@@ -291,29 +292,16 @@ var Edit = function(table){
 
 				return stars;
 			},
+
+			//draggable progress bar
 			progress:function(cell, onRendered, success, cancel){
-				var element = cell.getElement();
-
-				//set default parameters
-				var max = $("div", element).data("max");
-				var min = $("div", element).data("min");
-
-				var value = cell.getValue();
-
-				//make sure value is in range
-				value = parseFloat(value) <= max ? parseFloat(value) : max;
-				value = parseFloat(value) >= min ? parseFloat(value) : min;
-
-				//workout percentage
-				var percent = (max - min) / 100;
-				value = 100 - Math.round((value - min) / percent);
-
-				element.css({
-					padding:"0 4px",
-				});
-
-				element.attr("aria-valuemin", min).attr("aria-valuemax", max)
-
+				var element = cell.getElement(),
+				max = $("div", element).data("max"),
+				min = $("div", element).data("min"),
+				percent = (max - min) / 100,
+				value = cell.getValue(),
+				bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>"),
+				handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
 
 				var newVal = function(){
 					var newval = (percent * Math.round(bar.outerWidth() / (element.width()/100))) + min;
@@ -322,9 +310,18 @@ var Edit = function(table){
 					element.attr("aria-valuenow", newval).attr("aria-label", value);
 				}
 
-				var bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>");
+				//make sure value is in range
+				value = parseFloat(value) <= max ? parseFloat(value) : max;
+				value = parseFloat(value) >= min ? parseFloat(value) : min;
 
-				var handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
+				//workout percentage
+				value = 100 - Math.round((value - min) / percent);
+
+				element.css({
+					padding:"0 4px",
+				});
+
+				element.attr("aria-valuemin", min).attr("aria-valuemax", max);
 
 				bar.append(handle);
 
@@ -380,11 +377,12 @@ var Edit = function(table){
 				return bar;
 			},
 
+			//checkbox
 			tickCross:function(cell, onRendered, success, cancel){
-				var value = cell.getValue();
+				var value = cell.getValue(),
+				input = $("<input type='checkbox'/>");
 
 				//create and style input
-				var input = $("<input type='checkbox'/>");
 				input.css({
 					"margin-top":"5px",
 					"box-sizing":"border-box",
@@ -416,12 +414,12 @@ var Edit = function(table){
 				return input;
 			},
 
+			//checkbox
 			tick:function(cell, onRendered, success, cancel){
-
-				var value = cell.getValue();
+				var value = cell.getValue(),
+				input = $("<input type='checkbox'/>");
 
 				//create and style input
-				var input = $("<input type='checkbox'/>");
 				input.css({
 					"margin-top":"5px",
 					"box-sizing":"border-box",

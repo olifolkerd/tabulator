@@ -5,14 +5,12 @@
 		table:table, //hold Tabulator object
 		sortList:[], //holder current sort
 
-
-		changed:false,
+		changed:false, //has the sort changed since last render
 
 		//initialize column header for sorting
 		initializeColumn:function(column, content){
-			var self = this;
-
-			var sorter = false;
+			var self = this,
+			sorter = false;
 
 			//set sorter on column
 			if(typeof column.definition.sorter == "string"){
@@ -22,7 +20,7 @@
 					console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
 				}
 			}else{
-				column.extensions.sort.sorter = column.definition.sorter;
+				sorter = column.definition.sorter;
 			}
 
 			if(sorter){
@@ -58,9 +56,8 @@
 
 		//return current sorters
 		getSort:function(){
-			var self = this;
-
-			var sorters = [];
+			var self = this,
+			sorters = [];
 
 			self.sortList.forEach(function(item){
 				if(item.column){
@@ -73,9 +70,8 @@
 
 		//change sort list and trigger sort
 		setSort:function(sortList, dir){
-			var self = this;
-
-			var newSortList = [];
+			var self = this,
+			newSortList = [];
 
 			if(!Array.isArray(sortList)){
 				sortList = [{column: sortList, dir:dir}];
@@ -144,6 +140,7 @@
 			});
 		},
 
+		//set the column header sort direction
 		setColumnHeader:function(column, dir){
 			this.clearColumnHeaders();
 
@@ -159,12 +156,12 @@
 
 			activeRows.sort(function(a, b){
 
-				var result = self._sortRow(a.getData(), b.getData(), column, dir);
+				var result = self._sortRow(a, b, column, dir);
 
 				//if results match recurse through previous searchs to be sure
 				if(result == 0 && i){
 					for(var j = i-1; j>= 0; j--){
-						result = self._sortRow(a.getData(), b.getData(), sortList[j].column, sortList[j].dir);
+						result = self._sortRow(a, b, sortList[j].column, sortList[j].dir);
 
 						if(result != 0){
 							break;
@@ -179,12 +176,13 @@
 		//process individual rows for a sort function on active data
 		_sortRow:function(a, b, column, dir){
 			var self = this;
+
 			//switch elements depending on search direction
 			var el1 = dir == "asc" ? a : b;
 			var el2 = dir == "asc" ? b : a;
 
-			a = el1[column.getField()];
-			b = el2[column.getField()];
+			a = el1.getData()[column.getField()];
+			b = el2.getData()[column.getField()];
 
 			return column.extensions.sort.sorter.call(self, a, b, el1, el2, column, dir);
 		},
@@ -210,24 +208,34 @@
 
 		//default data sorters
 		sorters:{
-			number:function(a, b){ //sort numbers
+
+			//sort numbers
+			number:function(a, b){
 				return parseFloat(String(a).replace(",","")) - parseFloat(String(b).replace(",",""));
 			},
-			string:function(a, b){ //sort strings
+
+			//sort strings
+			string:function(a, b){
 				return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
 			},
-			date:function(a, b){ //sort dates
+
+			//sort date
+			date:function(a, b){
 				var self = this;
 
 				return self._formatDate(a) - self._formatDate(b);
 			},
-			boolean:function(a, b){ //sort booleans
+
+			//sort booleans
+			boolean:function(a, b){
 				var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
 				var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
 
 				return el1 - el2;
 			},
-			alphanum:function(as, bs){//sort alpha numeric strings
+
+			//sort alpha numeric strings
+			alphanum:function(as, bs){
 				var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
 
 				if(isFinite(as) && isFinite(bs)) return as - bs;
@@ -252,7 +260,9 @@
 				}
 				return a.length > b.length;
 			},
-			time:function(a, b){ //sort hh:mm formatted times
+
+			//sort hh:mm formatted times
+			time:function(a, b){
 				a = a.split(":");
 				b = b.split(":");
 
