@@ -30,6 +30,10 @@ var RowObject = function (row){
 		normalizeHeight:function(){
 			row.normalizeHeight();
 		},
+
+		_getSelf:function(){
+			return row;
+		},
 	}
 
 	return obj;

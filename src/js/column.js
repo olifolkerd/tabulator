@@ -15,6 +15,10 @@ var ColumnObject = function (column){
 		getField:function(){
 			return column.getField();
 		},
+
+		_getSelf:function(){
+			return column;
+		},
 	}
 
 	return obj;

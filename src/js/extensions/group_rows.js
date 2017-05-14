@@ -6,6 +6,9 @@ var GroupObject = function (group){
 	var obj = {
 		type:"groupObject", //type of element
 
+		_getSelf:function(){
+			return group;
+		},
 	}
 
 	return obj;

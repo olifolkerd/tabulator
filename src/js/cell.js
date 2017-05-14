@@ -22,6 +22,10 @@ var CellObject = function (cell){
 		getColumn:function(){
 			return cell.column.getObject();
 		},
+
+		_getSelf:function(){
+			return cell;
+		},
 	}
 
 	return obj;
