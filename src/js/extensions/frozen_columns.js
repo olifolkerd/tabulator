@@ -1,149 +1,143 @@
 var FrozenColumns = function(table){
+	this.table = table; //hold Tabulator object
+	this.leftColumns = [];
+	this.rightColumns = [];
+	this.leftMargin = 0;
+	this.rightMargin = 0;
+	this.initializationMode = "left";
+	this.active = false;
+};
 
-	var extension = {
-		table:table, //hold Tabulator object
+//reset initial state
+FrozenColumns.prototype.reset = function(){
+	this.initializationMode = "left";
+	this.leftColums = [];
+	this.rightColumns = [];
+	this.active = false;
+};
 
-		leftColumns:[],
-		rightColumns:[],
-		leftMargin:0,
-		rightMargin:0,
-		initializationMode:"left",
-		active:false,
+//initialize specific column
+FrozenColumns.prototype.initializeColumn = function(column){
+	var config = {margin:0, edge:false};
 
-		//reset initial state
-		reset:function(){
-			this.initializationMode = "left";
-			this.leftColums = [];
-			this.rightColumns = [];
-			this.active = false;
-		},
+	if(column.definition.frozen && !column.parent.isGroup){
 
-		//initialize specific column
-		initializeColumn:function(column){
-			var config = {margin:0, edge:false};
+		config.position = this.initializationMode;
 
-			if(column.definition.frozen && !column.parent.isGroup){
+		if(this.initializationMode == "left"){
+			this.leftColumns.push(column);
+		}else{
+			this.rightColumns.unshift(column);
+		}
 
-				config.position = this.initializationMode;
+		this.active = true;
 
-				if(this.initializationMode == "left"){
-					this.leftColumns.push(column);
-				}else{
-					this.rightColumns.unshift(column);
-				}
+		column.extensions.frozen = config;
 
-				this.active = true;
+	}else{
+		this.initializationMode = "right";
+	}
+};
 
-				column.extensions.frozen = config;
+//layout columns appropropriatly
+FrozenColumns.prototype.layout = function(){
+	var self = this,
+	tableHolder = this.table.rowManager.element,
+	rightMargin = 0;
 
+	if(self.active){
+
+		//calculate row padding
+
+		self.leftMargin = self._calcSpace(self.leftColumns, self.leftColumns.length);
+		self.table.columnManager.element.css("padding-left", self.leftMargin);
+
+		self.rightMargin = self._calcSpace(self.rightColumns, self.rightColumns.length);
+		self.table.columnManager.element.css("padding-right", self.rightMargin);
+
+		self.table.rowManager.getRows().forEach(function(row){
+			self.layoutRow(row);
+		});
+
+
+		//calculate left columns
+		self.leftColumns.forEach(function(column, i){
+			column.extensions.frozen.margin = self._calcSpace(self.leftColumns, i) + self.table.columnManager.scrollLeft;
+
+			if(i == self.leftColumns.length - 1){
+				column.extensions.frozen.edge = true;
 			}else{
-				this.initializationMode = "right";
-			}
-		},
-
-		//layout columns appropropriatly
-		layout:function(){
-			var self = this,
-			tableHolder = this.table.rowManager.element,
-			rightMargin = 0;
-
-			if(self.active){
-
-				//calculate row padding
-
-				self.leftMargin = self._calcSpace(self.leftColumns, self.leftColumns.length);
-				self.table.columnManager.element.css("padding-left", self.leftMargin);
-
-				self.rightMargin = self._calcSpace(self.rightColumns, self.rightColumns.length);
-				self.table.columnManager.element.css("padding-right", self.rightMargin);
-
-				self.table.rowManager.getRows().forEach(function(row){
-					self.layoutRow(row);
-				});
-
-
-				//calculate left columns
-				self.leftColumns.forEach(function(column, i){
-					column.extensions.frozen.margin = self._calcSpace(self.leftColumns, i) + self.table.columnManager.scrollLeft;
-
-					if(i == self.leftColumns.length - 1){
-						column.extensions.frozen.edge = true;
-					}else{
-						column.extensions.frozen.edge = false;
-					}
-
-					self.layoutColumn(column);
-				});
-
-				//calculate right frozen columns
-				rightMargin = self.table.rowManager.element.innerWidth() + self.table.columnManager.scrollLeft;
-
-				if(tableHolder[0].scrollHeight > tableHolder.innerHeight()){
-					rightMargin -= tableHolder[0].offsetWidth - tableHolder[0].clientWidth;
-				}
-
-				self.rightColumns.forEach(function(column, i){
-					column.extensions.frozen.margin = rightMargin - self._calcSpace(self.rightColumns, i + 1);
-
-					if(i == self.rightColumns.length - 1){
-						column.extensions.frozen.edge = true;
-					}else{
-						column.extensions.frozen.edge = false;
-					}
-
-					self.layoutColumn(column);
-				});
-			}
-		},
-
-		layoutColumn:function(column){
-			var self = this;
-
-			self.layoutElement(column.element, column);
-
-			column.cells.forEach(function(cell){
-				self.layoutElement(cell.element, column);
-			});
-		},
-
-		layoutRow:function(row){
-			row.getElement().css({
-				"padding-left": this.leftMargin,
-				"padding-right": this.rightMargin,
-			});
-		},
-
-		layoutElement:function(element, column){
-
-			if(column.extensions.frozen){
-				var css = {
-					position:"absolute",
-					left:column.extensions.frozen.margin
-				}
-
-				element.css(css);
-				element.addClass("tabulator-frozen");
-
-				if(column.extensions.frozen.edge){
-					element.addClass("tabulator-frozen-" + column.extensions.frozen.position);
-				}
-			}
-		},
-
-		_calcSpace:function(columns, index){
-			var width = 0;
-
-			for (let i = 0; i < index; i++){
-				if(columns[i].visible){
-					width += columns[i].getWidth();
-				}
+				column.extensions.frozen.edge = false;
 			}
 
-			return width;
-		},
+			self.layoutColumn(column);
+		});
+
+		//calculate right frozen columns
+		rightMargin = self.table.rowManager.element.innerWidth() + self.table.columnManager.scrollLeft;
+
+		if(tableHolder[0].scrollHeight > tableHolder.innerHeight()){
+			rightMargin -= tableHolder[0].offsetWidth - tableHolder[0].clientWidth;
+		}
+
+		self.rightColumns.forEach(function(column, i){
+			column.extensions.frozen.margin = rightMargin - self._calcSpace(self.rightColumns, i + 1);
+
+			if(i == self.rightColumns.length - 1){
+				column.extensions.frozen.edge = true;
+			}else{
+				column.extensions.frozen.edge = false;
+			}
+
+			self.layoutColumn(column);
+		});
+	}
+};
+
+FrozenColumns.prototype.layoutColumn = function(column){
+	var self = this;
+
+	self.layoutElement(column.element, column);
+
+	column.cells.forEach(function(cell){
+		self.layoutElement(cell.element, column);
+	});
+};
+
+FrozenColumns.prototype.layoutRow = function(row){
+	row.getElement().css({
+		"padding-left": this.leftMargin,
+		"padding-right": this.rightMargin,
+	});
+};
+
+FrozenColumns.prototype.layoutElement = function(element, column){
+
+	if(column.extensions.frozen){
+		var css = {
+			position:"absolute",
+			left:column.extensions.frozen.margin
+		}
+
+		element.css(css);
+		element.addClass("tabulator-frozen");
+
+		if(column.extensions.frozen.edge){
+			element.addClass("tabulator-frozen-" + column.extensions.frozen.position);
+		}
+	}
+};
+
+FrozenColumns.prototype._calcSpace = function(columns, index){
+	var width = 0;
+
+	for (let i = 0; i < index; i++){
+		if(columns[i].visible){
+			width += columns[i].getWidth();
+		}
 	}
 
-	return extension;
-}
+	return width;
+};
 
 Tabulator.registerExtension("frozenColumns", FrozenColumns);

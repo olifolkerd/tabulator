@@ -1,100 +1,94 @@
 var ResizeColumns = function(table){
+	this.table = table; //hold Tabulator object
+	this.startColumn = false;
+	this.startX = false;
+	this.startWidth = false;
+	this.handle = $("<div class='tabulator-col-resize-handle'></div>");
+	this.prevHandle = $("<div class='tabulator-col-resize-handle prev'></div>");
+};
 
-	var extension = {
-		table:table, //hold Tabulator object
+ResizeColumns.prototype.initializeColumn = function(column, element){
+	var self = this,
+	handle = self.handle.clone(),
+	prevHandle = self.prevHandle.clone();
 
-		startColumn:false,
-		startX:false,
-		startWidth:false,
-		handle:$("<div class='tabulator-col-resize-handle'></div>"),
-		prevHandle:$("<div class='tabulator-col-resize-handle prev'></div>"),
+	handle.on("click", function(e){
+		e.stopPropagation();
+	});
 
-		initializeColumn:function(column, element){
-			var self = this,
-			handle = self.handle.clone(),
-			prevHandle = self.prevHandle.clone();
+	prevHandle.on("click", function(e){
+		e.stopPropagation();
+	});
 
-			handle.on("click", function(e){
-				e.stopPropagation();
-			});
+	handle.on("mousedown", function(e){
+		var nearestColumn = column.getLastColumn();
 
-			prevHandle.on("click", function(e){
-				e.stopPropagation();
-			});
+		if(nearestColumn){
+			self.startColumn = column;
+			self._mouseDown(e, nearestColumn);
+		}
+	});
 
-			handle.on("mousedown", function(e){
-				var nearestColumn = column.getLastColumn();
+	prevHandle.on("mousedown", function(e){
+		var nearestColumn, colIndex, prevColumn;
 
-				if(nearestColumn){
-					self.startColumn = column;
-					self._mouseDown(e, nearestColumn);
-				}
-			});
+		nearestColumn = column.getFirstColumn();
 
-			prevHandle.on("mousedown", function(e){
-				var nearestColumn, colIndex, prevColumn;
+		if(nearestColumn){
+			colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
+			prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
 
-				nearestColumn = column.getFirstColumn();
-
-				if(nearestColumn){
-					colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
-					prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
-
-					if(prevColumn){
-						self.startColumn = column;
-						self._mouseDown(e, prevColumn);
-					}
-				}
-			});
-
-			element.append(handle)
-			.append(prevHandle);
-		},
-
-		_mouseDown:function(e, column){
-			var self = this;
-
-			self.table.element.addClass("tabulator-block-select");
-
-			function mouseMove(e){
-				column.setWidth(self.startWidth + (e.screenX - self.startX))
-				column.checkCellHeights();
+			if(prevColumn){
+				self.startColumn = column;
+				self._mouseDown(e, prevColumn);
 			}
+		}
+	});
 
-			function mouseUp(e){
+	element.append(handle)
+	.append(prevHandle);
+};
 
-				//block editor from taking action while resizing is taking place
-				if(self.startColumn.extensions.edit){
-					self.startColumn.extensions.edit.blocked = false;
-				}
+ResizeColumns.prototype._mouseDown = function(e, column){
+	var self = this;
 
-				$("body").off("mouseup", mouseMove);
-				$("body").off("mousemove", mouseMove);
+	self.table.element.addClass("tabulator-block-select");
 
-				self.table.element.removeClass("tabulator-block-select");
+	function mouseMove(e){
+		column.setWidth(self.startWidth + (e.screenX - self.startX))
+		column.checkCellHeights();
+	}
 
-				if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
-					self.table.extensions.persistentLayout.save();
-				}
-			}
+	function mouseUp(e){
 
-			e.stopPropagation(); //prevent resize from interfereing with movable columns
+		//block editor from taking action while resizing is taking place
+		if(self.startColumn.extensions.edit){
+			self.startColumn.extensions.edit.blocked = false;
+		}
 
-			//block editor from taking action while resizing is taking place
-			if(self.startColumn.extensions.edit){
-				self.startColumn.extensions.edit.blocked = true;
-			}
+		$("body").off("mouseup", mouseMove);
+		$("body").off("mousemove", mouseMove);
 
-			self.startX = e.screenX;
-			self.startWidth = column.getWidth();
+		self.table.element.removeClass("tabulator-block-select");
 
-			$("body").on("mousemove", mouseMove);
-
-			$("body").on("mouseup", mouseUp);
+		if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
+			self.table.extensions.persistentLayout.save();
 		}
 	}
 
-	return extension;
-}
+	e.stopPropagation(); //prevent resize from interfereing with movable columns
+
+	//block editor from taking action while resizing is taking place
+	if(self.startColumn.extensions.edit){
+		self.startColumn.extensions.edit.blocked = true;
+	}
+
+	self.startX = e.screenX;
+	self.startWidth = column.getWidth();
+
+	$("body").on("mousemove", mouseMove);
+
+	$("body").on("mouseup", mouseUp);
+};
 
 Tabulator.registerExtension("resizeColumns", ResizeColumns);
