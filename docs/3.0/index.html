@@ -2065,6 +2065,147 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     </table>
                 </article>
 
+                <a class="anchor" id="components"></a>
+                <article>
+                    <h1>Component Object <span class="label label-danger">New</span></h1>
+                    <p>Component objects allow you to interact directly with various parts of your tables. They are usually passed in the arguments of callbacks and expose a range of functions that can be called directly on the object.</p>
+
+                    <a class="anchor" id="component-row"></a>
+                    <h2>Row Component</h2>
+                    <p>The row component provides access to a specific row. The example below shows how it is passed to the <span class='param'>rowFormatter</span> callback:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowFormatter:function(row){
+        var data = row.getData(); //get data object for row
+
+        if(data.col == "blue"){
+            row.getElement().css({"background-color":"#A6A6DF"}); //apply css change to row element
+        }
+    },
+});</pre>
+
+                    <p>The component provides the following functions:</p>
+
+                    <h3>Get Data</h3>
+                    <p>The <span class='param'>getData</span> function returns the data object for the row.</p>
+                    <pre class="prettyprint lang-js">var rowData = row.getData();</pre>
+
+                    <h3>Get Element</h3>
+                    <p>The <span class='param'>getElement</span> function returns the jQuery DOM element for the row.</p>
+                    <pre class="prettyprint lang-js">var rowElement = row.getElement();</pre>
+
+                    <h3>Get Cells</h3>
+                    <p>The <span class='param'>getCells</span> function returns an array of <a href='#component-cell'>CellComponent</a> objects, one for each cell in the row.</p>
+                    <pre class="prettyprint lang-js">var cells = row.getCells();</pre>
+
+                    <h3>Get Index</h3>
+                    <p>The <span class='param'>getInde</span> function returns the index value for the row.</p>
+                    <pre class="prettyprint lang-js">var rowIndex = row.getInde();</pre>
+
+                    <h3>Delete</h3>
+                    <p>The <span class='param'>delete</span> function deletes the row, removing its data from the table</p>
+                    <pre class="prettyprint lang-js">row.delete();</pre>
+
+                    <h3>Scroll To</h3>
+                    <p>The <span class='param'>scrollTo</span> function will scroll the table to the row if it passes the current filters.</p>
+                    <pre class="prettyprint lang-js">row.scrollTo();</pre>
+
+                    <h3>Update</h3>
+                    <p>You can update the data in the row using the <span class='param'>update</span> function. You should pass an object to the function containing any fields you wish to update. This object will not replace the row data, only the fields included in the object will be updated.</p>
+                    <pre class="prettyprint lang-js">row.update({"name":"steve"}); //update the row data for field "name"</pre>
+
+                    <h3>Normalize Height</h3>
+                    <p>If you are making manual adjustments to elements conained within the row, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>normalizeHeight</span> function to do this.</p>
+                    <pre class="prettyprint lang-js">row.normalizeHeight();</pre>
+
+
+
+                    <a class="anchor" id="component-column"></a>
+                    <h2>Column Component</h2>
+                    <p>The column component provides access to a specific column. The example below shows how it is passed to the <span class='param'>columnMoved</span> callback.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columnMoved:function(column){
+        alert("The user has moved column: " + column.getField()); //display the columns field name
+    }
+});</pre>
+
+                    <p>The component provides the following functions:</p>
+
+                    <h3>Get Element</h3>
+                    <p>The <span class='param'>getElement</span> function returns the jQuery DOM element for the column.</p>
+                    <pre class="prettyprint lang-js">var columnElement = column.getElement();</pre>
+
+                    <h3>Get Defition</h3>
+                    <p>The <span class='param'>getDefinition</span> function returns the column defintion object for the column.</p>
+                    <pre class="prettyprint lang-js">var columnDefinition = column.getDefinition();</pre>
+
+                    <h3>Get Field</h3>
+                    <p>The <span class='param'>getField</span> function returns the field name for the column.</p>
+                    <pre class="prettyprint lang-js">var columnField = column.getField();</pre>
+
+                    <h3>Show Column</h3>
+                    <p>The <span class='param'>show</span> function shows the column if it is hidden.</p>
+                    <pre class="prettyprint lang-js">column.show();</pre>
+
+                    <h3>Hide Column</h3>
+                    <p>The <span class='param'>hide</span> function hides the column if it is visible.</p>
+                    <pre class="prettyprint lang-js">column.hide();</pre>
+
+                    <h3>Toggle Visibility</h3>
+                    <p>The <span class='param'>toggle</span> function toggles the visibility of the column, switching between hidden and visible.</p>
+                    <pre class="prettyprint lang-js">column.toggle();</pre>
+
+                    <h3>Delete</h3>
+                    <p>The <span class='param'>delete</span> function deletes the column, removing it from the table</p>
+                    <pre class="prettyprint lang-js">column.delete();</pre>
+
+
+                    <a class="anchor" id="component-cell"></a>
+                    <h2>Cell Component</h2>
+                    <p>The cell component provides access to a specific cell. The example below shows how it is passed to the <span class='param'>onClick</span> callback for a cell.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", onClick:function(e, cell){
+        alert("The cell has a value of:" + cell.getValue()); //display the cells value
+    },
+}</pre>
+
+                    <p>The Component provides the following functions:</p>
+
+                    <h3>Get Value</h3>
+                    <p>The <span class='param'>getValue</span> function returns the current value for the cell.</p>
+                    <pre class="prettyprint lang-js">var cellValue = cell.getValue();</pre>
+
+                    <h3>Get Old Value</h3>
+                    <p>The <span class='param'>getOldValue</span> function returns the previous value of the cell. Very usefull in the event of cell update callbacks.</p>
+                    <pre class="prettyprint lang-js">var cellOldValue = cell.getOldValue();</pre>
+
+                    <h3>Get Element</h3>
+                    <p>The <span class='param'>getElement</span> function returns the jQuery DOM element for the cell.</p>
+                    <pre class="prettyprint lang-js">var cellElement = cell.getElement();</pre>
+
+                    <h3>Get Row</h3>
+                    <p>The <span class='param'>getRow</span> function returns the <a href='#component-row'>RowComponent</a> for the row that contains the cell.</p
+                        >
+                    <pre class="prettyprint lang-js">var row = cell.getRow();</pre>
+
+                    <h3>Get Column</h3>
+                    <p>The <span class='param'>getColumn</span> function returns the <a href='#component-column'>ColumnComponent</a> for the column that contains the cell.</p
+                        >
+                    <pre class="prettyprint lang-js">var column = cell.getColumn();</pre>
+
+                    <h3>Set Value</h3>
+                    <p>You can change the value of the cell using the <span class='param'>setValue</span> function. The first parameter should be the new value for the cell, the second optional parameter will apply the column mutators to the value when set to <span class='param'>true</span>.</p>
+                    <pre class="prettyprint lang-js">cell.setValue("Steve", true); //set the cell's value to "Steve" and apply the column mutators if present</pre>
+
+                    <h3>Check Height</h3>
+                    <p>If you are making manual adjustments to elements contained withing the cell, or the cell itself, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>checkHeight</span> function to check if the height of the cell has changed and normalize the row if it has.</p>
+                    <pre class="prettyprint lang-js">cell.checkHeight();</pre>
+
+
+                </article>
+
+
                 <a class="anchor" id="options"></a>
                 <article>
                     <h1>Setup Options </h1>
