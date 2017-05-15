@@ -857,7 +857,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof tooltip == "function") {
 
-          tooltip = tooltip(column);
+          tooltip = tooltip(column.getComponent());
         }
 
         self.element.attr("title", tooltip);
@@ -3086,7 +3086,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         tooltip = self.value;
       } else if (typeof tooltip == "function") {
 
-        tooltip = tooltip(self.column.getField(), self.value, self.row.getData());
+        tooltip = tooltip(self.getComponent());
       }
 
       self.element.attr("title", tooltip);

@@ -131,7 +131,7 @@ Cell.prototype._generateTooltip = function(){
 		if(tooltip === true){
 			tooltip = self.value;
 		}else if(typeof(tooltip) == "function"){
-			tooltip = tooltip(self.column.getField(), self.value, self.row.getData());
+			tooltip = tooltip(self.getComponent());
 		}
 
 		self.element.attr("title", tooltip);
