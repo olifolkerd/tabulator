@@ -371,7 +371,7 @@ $("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajax
                     <p>You can call the <span class='param'>setData</span> function to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
 
-                    <h3>Ajax Response Alteration</h3>
+                    <h3>Ajax Response Alteration <span class="label label-primary">Updated</span></h3>
                     <p>Tabulator expects the response to an ajax request to be a JSON encoded string representing an array of data objects. If you need to pass other data back in your request as well, you can use the <span class='param'>ajaxResponse</span> callback to process the returned data before it is passed to the table. The return value of this callback should be an array of row data objects.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     ajaxResponse:function(url, params, response){
@@ -446,6 +446,8 @@ $("#example-table").tabulator({
 &lt;/table&gt;</pre>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({});</pre>
+
+                    <p class="note"><strong>Note:</strong> Tabulator can only parse simple tables. Tables using multiple header rows, colspan or rowspan attributes will cause the import to fail.</p>
 
                     <h3>Options Attributes </h3>
                     <p>You can set options parameters directly in the HTML by using <span class='param'>tabulator-</span> attributes on the <span class='param'>table</span> and <span class='param'>th</span> elements, these will then be set as configuration options on the table.</p>
@@ -530,8 +532,10 @@ $("#example-table").tabulator({
                     </ul>
                     </p>
 
-                    <h3>Mutators vs Formatters</h3>
-                    <p>An important difference between a mutator and a formatter is that a mutator will alter the data contained in the table, which will then be visible in the data retrieved using the <span class='param'>getData</span> function, a formatter will only alter how data is displayed in cells but will not affect the data itself. (see <a href="#formatting">Formatting</a> for more details)</p>
+                    <p class="note">
+                    <strong>Mutators vs Formatters</strong><br>
+                    An important difference between a mutator and a formatter is that a mutator will alter the data contained in the table, which will then be visible in the data retrieved using the <span class='param'>getData</span> function, a formatter will only alter how data is displayed in cells but will not affect the data itself. (see <a href="#formatting">Formatting</a> for more details)
+                    </p>
 
                     <a class="anchor" id="accessors"></a>
                     <h2>Accessors</h2>
@@ -550,7 +554,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="formatting"></a>
                 <article>
-                    <h1>Formatting Data <a class="example-link" href="../../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Formatting Data <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
                     <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
                     <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
@@ -587,50 +591,58 @@ $("#example-table").tabulator({
                         <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
                     </ul>
 
-                    <h2>Custom Formatters</h2>
-                    <p>You can define a custom formatter function in the formatter option:</p>
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:function(value, data, cell, row, options, formatterParams){
-        //value - the value of the cell
-        //data - the data for the row the cell is in
-        //cell - the DOM element of the cell
-        //row - the DOM element of the row
-        //options - the options set for this tabulator
+                    <p class="note"><strong>Note:</strong> For a guide to adding your own formatters to this list, have a look at the <a href="#extending">Extending Tabulator</a> section.</p>
+
+                    <h2>Custom Formatters <span class="label label-primary">Updated</span></h2>
+                    <p>As well as the built-in formatters you can define a formatter using a custom formatter function.</p>
+
+                    <p>The formatter function accepts two arguments, the <a href='#component-cell'>CellComponent</a> for the cell being formatted and the <span class='param'>formatterParams</span> option from the column defintion.</p>
+
+                    <p>The function must return the contents of the cell, either the text value of the cell, valid HTML or a jQuery element.</p>
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:function(cell, formatterParams){
+        //cell - the cell component
         //formatterParams - parameters set for the column
-        return "&lt;div&gt;&lt;/div&gt;"; // must return the html or jquery element of the html for the contents of the cell;
+
+        return "Mr" + cell.getValue(); //return the contents of the cell;
     },
 }</pre>
-                    <h3>Formatters vs Mutators</h3>
-                    <p>An important difference between a formatter and a mutator is that a formatter will only alter how data is displayed in cells but will not affect the data itself, while a mutator will alter the data contained in the table, which will then be visible in the data retrieved using the <span class='param'>getData</span> function. (see <a href="#mutators">Mutators</a> for more details)
+                    <p class="note">
+                        <strong>Formatters vs Mutators</strong><br>
+                        An important difference between a formatter and a mutator is that a formatter will only alter how data is displayed in cells but will not affect the data itself, while a mutator will alter the data contained in the table, which will then be visible in the data retrieved using the <span class='param'>getData</span> function. (see <a href="#mutators">Mutators</a> for more details)
+                    </p>
 
-                    <h2>Icon/Button Columns</h2>
+                    <h2>Icon/Button Columns<span class="label label-primary">Updated</span> </h2>
                     <p>You can create icon/button columns, by not specifying the <span class='param'>field</span> parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
 
                    <pre class="prettyprint lang-js">//custom formatter definition
-var printIcon = function(value, data, cell, row, options){ //plain text value
-    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;"
+var printIcon = function(cell, formatterParams){ //plain text value
+    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
 };
 
 //column definition in the columns array
-{formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, row){alert("Printing row data for: " + row.name)}},</pre>
+{formatter:printIcon, width:40, align:"center", onClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},</pre>
 
                     <a class="anchor" id="row-formatter"></a>
-                    <h2>Row Formatting <a class="example-link" href="../../examples?#row-formatter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Row Formatting <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#row-formatter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Tabulator also allows you to define a row level formatter using the <span class='param'>rowFormatter</span> option. this lets you alter each row of the table based on the data it contains.</p>
+
+                    <p>The function accepts one argument, the <a href='#component-row'>RowComponent</a> for the row being formatted.</p>
 
                     <p>The example below changes the background colour of a row to blue if the <span class='param'>col</span> value for that row is <span class='param'>"blue"</span>.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowFormatter:function(row, data){
-        //row - JQuery object for row
-        //data - the data for the row
+    rowFormatter:function(row){
+        //row - row component
+
+        var data = row.getData();
 
         if(data.col == "blue"){
-            row.css({"background-color":"#A6A6DF"});
+            row.getElement().css({"background-color":"#A6A6DF"});
         }
     },
 });</pre>
                     <a class="anchor" id="tooltips"></a>
-                    <h2>ToolTips</h2>
+                    <h2>ToolTips <span class="label label-primary">Updated</span></h2>
                     <p>You can set tooltips to be displayed when the cursor hovers over cells. By default, tooltips are not displayed.</p>
 
                     <p>Tooltips can either be set globally using the <span class='param'>tooltips</span> options parameter:</p>
@@ -647,21 +659,21 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
                         <li><strong>string</strong> - a string that will be displayed for all cells in the matching column/table.</li>
                         <li><strong>function</strong> - a callback function that returns the string for the cell. see below:</li>
                     </ul>
+
+                    <p>The function accepts one argument, the <a href='#component-cell'>CellComponent</a> for the cell the tooltip is being generated for.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    tooltips:function(field, value, data){
-        //field - field name of the cell's column
-        //value - value of the cell
-        //data - data for the cell's row
+    tooltips:function(cell){
+        //cell - cell component
 
         //function should return a string for the tooltip of false to hide the tooltip
-        return  field + " - " + value; //return cells "field - value";
+        return  cell.getColumn().getField() + " - " + cell.getValue(); //return cells "field - value";
     },
 });</pre>
 
                     <p class="note"><strong>Note:</strong> setting a <span class='param'>tooltip</span> value on a column will override the global setting.</p>
 
                     <a class="anchor" id="col-tooltips"></a>
-                    <h2>Header ToolTips</h2>
+                    <h2>Header ToolTips <span class="label label-primary">Updated</span></h2>
                     <p>It is also possible to set tooltips to display on the column headers. This is particularly useful when your columns are too narrow to display full header names.</p>
 
                     <p>Header tooltips can either be set globally using the <span class='param'>tooltipsHeader</span> options parameter:</p>
@@ -678,19 +690,18 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
                         <li><strong>string</strong> - a string that will be displayed for the tooltip.</li>
                         <li><strong>function</strong> - a callback function that returns the string for the column header. see below:</li>
                     </ul>
+
+                    <p>The function accepts one argument, the <a href='#component-column'>ColumnComponent</a> for the column the tooltip is being generated for.</p>
+
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    tooltips:function(col){
-        //col - column definition object
+    tooltips:function(column){
+        //column - column component
 
         //function should return a string for the header tooltip of false to hide the tooltip
-        return  col.title;
+        return  column.getDefinition().title;
     },
 });</pre>
                     <p class="note"><strong>Note:</strong> setting a <span class='param'>tooltipHeader</span> value on a column will override the global setting.</p>
-                </article>
-
-                <p class="note"><strong>Note:</strong> Tabulator can only parse simple tables. Tables using multiple header rows, colspan or rowspan attributes will cause the import to fail.</p>
-
                 </article>
 
 
