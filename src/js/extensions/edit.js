@@ -71,12 +71,12 @@ Edit.prototype.bindEditor = function(cell){
 			e.stopPropagation();
 
 			if(typeof cell.column.extensions.edit.check == "function"){
-				allowEdit = cell.column.extensions.edit.check(cell.getObject());
+				allowEdit = cell.column.extensions.edit.check(cell.getComponent());
 			}
 
 			if(allowEdit){
 
-				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
+				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
 
 				//if editor returned, add to DOM, if false, abort edit
 				if(cellEditor !== false){

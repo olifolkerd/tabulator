@@ -1,10 +1,10 @@
 
 
 //public group object
-var GroupObject = function (group){
+var GroupComponent = function (group){
 
 	var obj = {
-		type:"groupObject", //type of element
+		type:"GroupComponent", //type of element
 
 		_getSelf:function(){
 			return group;
@@ -168,8 +168,8 @@ Group.prototype.getHeight = function(){
 
 
 //////////////// Object Generation /////////////////
-Group.prototype.getObject = function(){
-	return new GroupObject(this);
+Group.prototype.getComponent = function(){
+	return new GroupComponent(this);
 };
 
 //////////////////////////////////////////////////

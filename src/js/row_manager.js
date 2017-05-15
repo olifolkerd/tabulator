@@ -185,7 +185,7 @@ RowManager.prototype.deleteRow = function(row){
 		this.rows.splice(allIndex, 1);
 	}
 
-	this.table.options.rowDeleted(row.getObject());
+	this.table.options.rowDeleted(row.getComponent());
 
 	this.table.options.dataEdited(this.getData());
 
@@ -245,7 +245,7 @@ RowManager.prototype.addRow = function(data, pos, index){
 
 	this.setActiveRows(this.activeRows);
 
-	this.table.options.rowAdded(row.getObject());
+	this.table.options.rowAdded(row.getComponent());
 
 	this.table.options.dataEdited(this.getData);
 
@@ -259,7 +259,7 @@ RowManager.prototype.moveRow = function(from, to, after){
 	this._moveRowInArray(this.activeRows, from, to, after);
 	this._moveRowInArray(this.displayRows, from, to, after);
 
-	this.table.options.rowMoved(from.getObject());
+	this.table.options.rowMoved(from.getComponent());
 };
 
 RowManager.prototype._moveRowInArray = function(rows, from, to, after){

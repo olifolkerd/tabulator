@@ -1,9 +1,9 @@
 
 //public column object
-var ColumnObject = function (column){
+var ColumnComponent = function (column){
 
 	var obj = {
-		type:"columnObject", //type of element
+		type:"ColumnComponent", //type of element
 		getElement:function(){
 			return column.getElement();
 		},
@@ -186,15 +186,15 @@ Column.prototype._buildHeader = function(){
 
 	//setup header click event bindings
 	if(typeof(def.headerOnClick) == "function"){
-		self.element.on("click", function(e){def.headerOnClick(e, self.getObject())})
+		self.element.on("click", function(e){def.headerOnClick(e, self.getComponent())})
 	}
 
 	if(typeof(def.headerOnDblClick) == "function"){
-		self.element.on("dblclick", function(e){def.headerOnDblClick(e, self.getObject())});
+		self.element.on("dblclick", function(e){def.headerOnDblClick(e, self.getComponent())});
 	}
 
 	if(typeof(def.headerOnContext) == "function"){
-		self.element.on("contextmenu", function(e){def.headerOnContext(e, self.getObject())});
+		self.element.on("contextmenu", function(e){def.headerOnContext(e, self.getComponent())});
 	}
 
 	//store column cell click event bindings
@@ -297,7 +297,7 @@ Column.prototype._buildColumnHeaderTitle = function(){
 		titleElement.on("change", function(){
 			var newTitle = $(this).val();
 			def.title = newTitle;
-			table.options.columnTitleChanged(self.getObject());
+			table.options.columnTitleChanged(self.getComponent());
 		});
 
 		titleHolderElement.append(titleElement);
@@ -628,6 +628,6 @@ Column.prototype.deleteCell = function(cell){
 //////////////// Event Bindings /////////////////
 
 //////////////// Object Generation /////////////////
-Column.prototype.getObject = function(){
-	return new ColumnObject(this);
+Column.prototype.getComponent = function(){
+	return new ColumnComponent(this);
 };

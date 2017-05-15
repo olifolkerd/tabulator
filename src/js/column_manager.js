@@ -235,12 +235,12 @@ ColumnManager.prototype.getDefinitionTree = function(){
 	return output;
 };
 
-ColumnManager.prototype.getObjects = function(){
+ColumnManager.prototype.getComponents = function(){
 	var self = this,
 	output = [];
 
 	self.columnsByIndex.forEach(function(column){
-		output.push(column.getObject());
+		output.push(column.getComponent());
 	});
 
 	return output;
@@ -263,7 +263,7 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	this._moveColumnInArray(this.columns, from, to, after);
 	this._moveColumnInArray(this.columnsByIndex, from, to, after);
 
-	this.table.options.columnMoved(from.getObject());
+	this.table.options.columnMoved(from.getComponent());
 
 	if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
 		this.table.extensions.persistentLayout.save();

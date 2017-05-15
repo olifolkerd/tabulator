@@ -353,14 +353,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return output;
   };
 
-  ColumnManager.prototype.getObjects = function () {
+  ColumnManager.prototype.getComponents = function () {
 
     var self = this,
         output = [];
 
     self.columnsByIndex.forEach(function (column) {
 
-      output.push(column.getObject());
+      output.push(column.getComponent());
     });
 
     return output;
@@ -387,7 +387,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this._moveColumnInArray(this.columnsByIndex, from, to, after);
 
-    this.table.options.columnMoved(from.getObject());
+    this.table.options.columnMoved(from.getComponent());
 
     if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
 
@@ -644,11 +644,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //public column object
 
 
-  var ColumnObject = function ColumnObject(column) {
+  var ColumnComponent = function ColumnComponent(column) {
 
     var obj = {
 
-      type: "columnObject", //type of element
+      type: "ColumnComponent", //type of element
 
 
       getElement: function getElement() {
@@ -910,21 +910,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (typeof def.headerOnClick == "function") {
 
       self.element.on("click", function (e) {
-        def.headerOnClick(e, self.getObject());
+        def.headerOnClick(e, self.getComponent());
       });
     }
 
     if (typeof def.headerOnDblClick == "function") {
 
       self.element.on("dblclick", function (e) {
-        def.headerOnDblClick(e, self.getObject());
+        def.headerOnDblClick(e, self.getComponent());
       });
     }
 
     if (typeof def.headerOnContext == "function") {
 
       self.element.on("contextmenu", function (e) {
-        def.headerOnContext(e, self.getObject());
+        def.headerOnContext(e, self.getComponent());
       });
     }
 
@@ -1072,7 +1072,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         def.title = newTitle;
 
-        table.options.columnTitleChanged(self.getObject());
+        table.options.columnTitleChanged(self.getComponent());
       });
 
       titleHolderElement.append(titleElement);
@@ -1523,9 +1523,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////// Object Generation /////////////////
 
 
-  Column.prototype.getObject = function () {
+  Column.prototype.getComponent = function () {
 
-    return new ColumnObject(this);
+    return new ColumnComponent(this);
   };
 
   var RowManager = function RowManager(table) {
@@ -1798,7 +1798,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.rows.splice(allIndex, 1);
     }
 
-    this.table.options.rowDeleted(row.getObject());
+    this.table.options.rowDeleted(row.getComponent());
 
     this.table.options.dataEdited(this.getData());
 
@@ -1873,7 +1873,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.setActiveRows(this.activeRows);
 
-    this.table.options.rowAdded(row.getObject());
+    this.table.options.rowAdded(row.getComponent());
 
     this.table.options.dataEdited(this.getData);
 
@@ -1890,7 +1890,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this._moveRowInArray(this.displayRows, from, to, after);
 
-    this.table.options.rowMoved(from.getObject());
+    this.table.options.rowMoved(from.getComponent());
   };
 
   RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
@@ -2566,7 +2566,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //public row object
 
 
-  var RowObject = function RowObject(row) {
+  var RowComponent = function RowComponent(row) {
 
     var obj = {
 
@@ -2586,7 +2586,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         row.cells.forEach(function (cell) {
 
-          cells.push(cell.getObject());
+          cells.push(cell.getComponent());
         });
 
         return cells;
@@ -2688,7 +2688,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.on("click", function (e) {
 
-        self.table.options.rowClick(e, self.getObject());
+        self.table.options.rowClick(e, self.getComponent());
       });
     }
 
@@ -2696,7 +2696,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.on("dblclick", function (e) {
 
-        self.table.options.rowDblClick(e, self.getObject());
+        self.table.options.rowDblClick(e, self.getComponent());
       });
     }
 
@@ -2704,7 +2704,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.on("contextmenu", function (e) {
 
-        self.table.options.rowContext(e, self.getObject());
+        self.table.options.rowContext(e, self.getComponent());
       });
     }
   };
@@ -2758,7 +2758,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.rowFormatter) {
 
-        self.table.options.rowFormatter(row.getObject());
+        self.table.options.rowFormatter(row.getComponent());
       }
 
       self.initialized = true;
@@ -2864,7 +2864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.reinitialize();
 
-    self.table.options.rowUpdated(self.getObject());
+    self.table.options.rowUpdated(self.getComponent());
   };
 
   Row.prototype.getData = function (transform) {
@@ -2901,15 +2901,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////// Object Generation /////////////////
 
 
-  Row.prototype.getObject = function () {
+  Row.prototype.getComponent = function () {
 
-    return new RowObject(this);
+    return new RowComponent(this);
   };
 
   //public row object
 
 
-  var CellObject = function CellObject(cell) {
+  var CellComponent = function CellComponent(cell) {
 
     var obj = {
 
@@ -2930,12 +2930,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       getRow: function getRow() {
 
-        return cell.row.getObject();
+        return cell.row.getComponent();
       },
 
       getColumn: function getColumn() {
 
-        return cell.column.getObject();
+        return cell.column.getComponent();
       },
 
       setValue: function setValue(value, mutate) {
@@ -3020,7 +3020,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.on("click", function (e) {
 
-        cellEvents.onClick(e, self.getObject());
+        cellEvents.onClick(e, self.getComponent());
       });
     }
 
@@ -3028,7 +3028,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.on("dblclick", function (e) {
 
-        cellEvents.onDblClick(e, self.getObject());
+        cellEvents.onDblClick(e, self.getComponent());
       });
     }
 
@@ -3036,7 +3036,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.on("contextmenu", function (e) {
 
-        cellEvents.onContext(e, self.getObject());
+        cellEvents.onContext(e, self.getComponent());
       });
     }
 
@@ -3165,7 +3165,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (changed) {
 
-      this.table.options.cellEdited(this.getObject());
+      this.table.options.cellEdited(this.getComponent());
 
       this.table.options.dataEdited(this.table.rowManager.getData());
     }
@@ -3245,9 +3245,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////// Object Generation /////////////////
 
 
-  Cell.prototype.getObject = function () {
+  Cell.prototype.getComponent = function () {
 
-    return new CellObject(this);
+    return new CellComponent(this);
   };
 
   var FooterManager = function FooterManager(table) {
@@ -3811,7 +3811,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (row) {
 
-        return row.getObject();
+        return row.getComponent();
       } else {
 
         console.warn("Find Error - No matching row found:", index);
@@ -3845,7 +3845,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     addRow: function addRow(data, pos, index) {
 
-      return this.rowManager.addRow(data, pos, index).getObject();
+      return this.rowManager.addRow(data, pos, index).getComponent();
     },
 
     //update a row if it exitsts otherwise create it
@@ -3863,7 +3863,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         row = this.rowManager.addRow(data);
       }
 
-      return row.getObject();
+      return row.getComponent();
     },
 
     //update row data
@@ -3877,7 +3877,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         row.updateData(data);
 
-        return row.getObject();
+        return row.getComponent();
       } else {
 
         console.warn("Update Error - No matching row found:", index);
@@ -3914,7 +3914,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     getColumns: function getColumns() {
 
-      return this.columnManager.getObjects();
+      return this.columnManager.getComponents();
     },
 
     getColumnDefinitions: function getColumnDefinitions() {
@@ -5059,7 +5059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Format.prototype.formatValue = function (cell) {
 
-    var value = cell.column.extensions.format.formatter.call(this, cell.getObject(), cell.column.extensions.format.params);
+    var value = cell.column.extensions.format.formatter.call(this, cell.getComponent(), cell.column.extensions.format.params);
 
     return value;
   };
@@ -5415,12 +5415,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof cell.column.extensions.edit.check == "function") {
 
-          allowEdit = cell.column.extensions.edit.check(cell.getObject());
+          allowEdit = cell.column.extensions.edit.check(cell.getComponent());
         }
 
         if (allowEdit) {
 
-          cellEditor = cell.column.extensions.edit.editor.call(self, cell.getObject(), onRendered, success, cancel);
+          cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
 
           //if editor returned, add to DOM, if false, abort edit
 
@@ -6927,7 +6927,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set row selection class
 
 
-    if (self.table.options.selectableCheck(row.getObject())) {
+    if (self.table.options.selectableCheck(row.getComponent())) {
 
       element.addClass("tabulator-selectable").removeClass("tabulator-unselectable");
 
@@ -6991,7 +6991,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   SelectRow.prototype.toggleRow = function (row) {
 
-    if (this.table.options.selectableCheck(row.getObject())) {
+    if (this.table.options.selectableCheck(row.getComponent())) {
 
       if (row.extensions.select.selected) {
 
@@ -7170,7 +7170,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.selectedRows.forEach(function (row) {
 
-      rows.push(row.getObject());
+      rows.push(row.getComponent());
     });
 
     return rows;
@@ -7968,11 +7968,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //public group object
 
 
-  var GroupObject = function GroupObject(group) {
+  var GroupComponent = function GroupComponent(group) {
 
     var obj = {
 
-      type: "groupObject", //type of element
+      type: "GroupComponent", //type of element
 
 
       _getSelf: function _getSelf() {
@@ -8197,9 +8197,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////// Object Generation /////////////////
 
 
-  Group.prototype.getObject = function () {
+  Group.prototype.getComponent = function () {
 
-    return new GroupObject(this);
+    return new GroupComponent(this);
   };
 
   //////////////////////////////////////////////////

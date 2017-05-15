@@ -1,6 +1,6 @@
 
 //public row object
-var CellObject = function (cell){
+var CellComponent = function (cell){
 
 	var obj = {
 		getValue:function(){
@@ -16,11 +16,11 @@ var CellObject = function (cell){
 		},
 
 		getRow:function(){
-			return cell.row.getObject();
+			return cell.row.getComponent();
 		},
 
 		getColumn:function(){
-			return cell.column.getObject();
+			return cell.column.getComponent();
 		},
 
 		setValue:function(value, mutate){
@@ -83,19 +83,19 @@ Cell.prototype._configureCell = function(){
 	//set event bindings
 	if (cellEvents.onClick){
 		self.element.on("click", function(e){
-			cellEvents.onClick(e, self.getObject());
+			cellEvents.onClick(e, self.getComponent());
 		});
 	}
 
 	if (cellEvents.onDblClick){
 		self.element.on("dblclick", function(e){
-			cellEvents.onDblClick(e, self.getObject());
+			cellEvents.onDblClick(e, self.getComponent());
 		});
 	}
 
 	if (cellEvents.onContext){
 		self.element.on("contextmenu", function(e){
-			cellEvents.onContext(e, self.getObject());
+			cellEvents.onContext(e, self.getComponent());
 		});
 	}
 
@@ -191,7 +191,7 @@ Cell.prototype.setValue = function(value, mutate){
 	}
 
 	if(changed){
-		this.table.options.cellEdited(this.getObject());
+		this.table.options.cellEdited(this.getComponent());
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 };
@@ -250,6 +250,6 @@ Cell.prototype.delete = function(){
 };
 
 //////////////// Object Generation /////////////////
-Cell.prototype.getObject = function(){
-	return new CellObject(this);
+Cell.prototype.getComponent = function(){
+	return new CellComponent(this);
 };

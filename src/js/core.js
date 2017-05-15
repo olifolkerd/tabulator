@@ -369,7 +369,7 @@
 	 			row = this.rowManager.findRow(index);
 
 	 			if(row){
-	 				return row.getObject();
+	 				return row.getComponent();
 	 			}else{
 	 				console.warn("Find Error - No matching row found:", index);
 	 				return false;
@@ -391,7 +391,7 @@
 
 	 		//add row to table
 	 		addRow:function(data, pos, index){
-	 			return this.rowManager.addRow(data, pos, index).getObject();
+	 			return this.rowManager.addRow(data, pos, index).getComponent();
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
@@ -404,7 +404,7 @@
 	 				row = this.rowManager.addRow(data);
 	 			}
 
-	 			return row.getObject();
+	 			return row.getComponent();
 	 		},
 
 	 		//update row data
@@ -413,7 +413,7 @@
 
 	 			if(row){
 	 				row.updateData(data);
-	 				return row.getObject();
+	 				return row.getComponent();
 	 			}else{
 	 				console.warn("Update Error - No matching row found:", index);
 	 				return false;
@@ -439,7 +439,7 @@
 	 		},
 
 	 		getColumns:function(){
-	 			return this.columnManager.getObjects();
+	 			return this.columnManager.getComponents();
 	 		},
 
 	 		getColumnDefinitions:function(){

@@ -32,7 +32,7 @@ Format.prototype.initializeColumn = function(column){
 
 //return a formatted value for a cell
 Format.prototype.formatValue = function(cell){
-	var value = cell.column.extensions.format.formatter.call(this, cell.getObject(), cell.column.extensions.format.params);
+	var value = cell.column.extensions.format.formatter.call(this, cell.getComponent(), cell.column.extensions.format.params);
 
 	return value;
 };

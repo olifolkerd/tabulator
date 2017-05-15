@@ -23,7 +23,7 @@ SelectRow.prototype.initializeRow = function(row){
 	row.extensions.select = {selected:false};
 
 	//set row selection class
-	if(self.table.options.selectableCheck(row.getObject())){
+	if(self.table.options.selectableCheck(row.getComponent())){
 		element.addClass("tabulator-selectable").removeClass("tabulator-unselectable");
 
 		if(self.table.options.selectable && self.table.options.selectable != "highlight"){
@@ -72,7 +72,7 @@ SelectRow.prototype.initializeRow = function(row){
 
 //toggle row selection
 SelectRow.prototype.toggleRow = function(row){
-	if(this.table.options.selectableCheck(row.getObject())){
+	if(this.table.options.selectableCheck(row.getComponent())){
 		if(row.extensions.select.selected){
 			this._deselectRow(row);
 		}else{
@@ -205,7 +205,7 @@ SelectRow.prototype.getSelectedRows = function(){
 	var rows = []
 
 	this.selectedRows.forEach(function(row){
-		rows.push(row.getObject());
+		rows.push(row.getComponent());
 	})
 
 	return rows;

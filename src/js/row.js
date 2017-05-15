@@ -1,6 +1,6 @@
 
 //public row object
-var RowObject = function (row){
+var RowComponent = function (row){
 
 	var obj = {
 
@@ -16,7 +16,7 @@ var RowObject = function (row){
 			var cells = [];
 
 			row.cells.forEach(function(cell){
-				cells.push(cell.getObject());
+				cells.push(cell.getComponent());
 			});
 
 			return cells;
@@ -87,19 +87,19 @@ Row.prototype.generateElement = function(){
 	//handle row click events
 	if (self.table.options.rowClick){
 		self.element.on("click", function(e){
-			self.table.options.rowClick(e, self.getObject());
+			self.table.options.rowClick(e, self.getComponent());
 		})
 	}
 
 	if (self.table.options.rowDblClick){
 		self.element.on("dblclick", function(e){
-			self.table.options.rowDblClick(e, self.getObject());
+			self.table.options.rowDblClick(e, self.getComponent());
 		})
 	}
 
 	if (self.table.options.rowContext){
 		self.element.on("contextmenu", function(e){
-			self.table.options.rowContext(e, self.getObject());
+			self.table.options.rowContext(e, self.getComponent());
 		})
 	}
 };
@@ -140,7 +140,7 @@ Row.prototype.initialize = function(force){
 		self.normalizeHeight();
 
 		if(self.table.options.rowFormatter){
-			self.table.options.rowFormatter(row.getObject());
+			self.table.options.rowFormatter(row.getComponent());
 		}
 
 		self.initialized = true;
@@ -221,7 +221,7 @@ Row.prototype.updateData = function(data){
 
 	self.reinitialize();
 
-	self.table.options.rowUpdated(self.getObject());
+	self.table.options.rowUpdated(self.getComponent());
 };
 
 Row.prototype.getData = function(transform){
@@ -250,6 +250,6 @@ Row.prototype.delete = function(){
 };
 
 //////////////// Object Generation /////////////////
-Row.prototype.getObject = function(){
-	return new RowObject(this);
+Row.prototype.getComponent = function(){
+	return new RowComponent(this);
 };
