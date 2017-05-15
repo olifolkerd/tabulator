@@ -119,6 +119,22 @@
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
+    .tabulator .tabulator-tableHolder .tabulator-placeholder {
+      position: absolute;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-align: center;
+          align-items: center;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%; }
+      .tabulator .tabulator-tableHolder .tabulator-placeholder span {
+        display: inline-block;
+        margin: 0 auto;
+        color: #000;
+        font-weight: bold;
+        font-size: 20px; }
     .tabulator .tabulator-tableHolder .tabulator-table {
       position: relative;
       display: inline-block;

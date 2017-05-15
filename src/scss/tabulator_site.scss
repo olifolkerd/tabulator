@@ -251,6 +251,28 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 		overflow:auto;
 		-webkit-overflow-scrolling: touch;
 
+		//default placeholder element
+		.tabulator-placeholder{
+			position: absolute;
+			display: flex;
+			align-items:center;
+
+			top:0;
+			left:0;
+			height:100%;
+			width:100%;
+
+			span{
+				display: inline-block;
+
+				margin:0 auto;
+
+				color:$headerSeperatorColor;
+				font-weight: bold;
+				font-size: 20px;
+			}
+		}
+
 		//element to hold table rows
 		.tabulator-table{
 			position:relative;

@@ -2023,6 +2023,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     self.renderTable();
+
+    if (!this.displayRowsCount) {
+
+      if (table.options.placeholder) {
+
+        console.log("empty");
+
+        self.getElement().append(table.options.placeholder);
+      }
+    }
   };
 
   RowManager.prototype.setActiveRows = function (activeRows) {
@@ -2149,6 +2159,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   RowManager.prototype._clearVirtualDom = function () {
 
     var element = this.tableElement;
+
+    if (this.table.options.placeholder) {
+
+      this.table.options.placeholder.detach();
+    }
 
     element.empty();
 
@@ -3399,6 +3414,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rowFormatter: false,
 
+      placeholder: false,
+
       //Callbacks from events
 
 
@@ -3594,6 +3611,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       // }
 
+
+      if (typeof self.options.placeholder == "string") {
+
+        self.options.placeholder = $("<div class='tabulator-placeholder'><span>" + self.options.placeholder + "</span></div>");
+      }
 
       //set table height
 

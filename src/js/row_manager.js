@@ -362,6 +362,13 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 	}
 
 	self.renderTable();
+
+	if(!this.displayRowsCount){
+		if(table.options.placeholder){
+console.log("empty");
+			self.getElement().append(table.options.placeholder);
+		}
+	}
 };
 
 RowManager.prototype.setActiveRows = function(activeRows){
@@ -452,6 +459,10 @@ RowManager.prototype.renderEmptyScroll = function(){
 
 RowManager.prototype._clearVirtualDom = function(){
 	var element = this.tableElement;
+
+	if(this.table.options.placeholder){
+		this.table.options.placeholder.detach();
+	}
 
 	element.empty();
 

@@ -86,6 +86,8 @@
 
 				rowFormatter:false,
 
+				placeholder:false,
+
 	 			//Callbacks from events
 	 			rowClick:false,
 	 			rowDblClick:false,
@@ -229,6 +231,10 @@
 	 			// 	//set storage tag
 	 			// 	config.options.persistentLayoutID = "tabulator-" + (config.options.persistentLayoutID ? config.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
 	 			// }
+
+	 			if(typeof self.options.placeholder == "string"){
+	 				self.options.placeholder = $("<div class='tabulator-placeholder'><span>" + self.options.placeholder + "</span></div>");
+	 			}
 
 	 			//set table height
 	 			if(config.options.height){
