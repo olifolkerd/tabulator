@@ -303,10 +303,10 @@
                     <p class="note"><strong>Note:</strong> if you have defined any mutator functions in your column definition array, these will be applied to your data as it is being parsed into the table. (see <a href="#mutators">Mutators</a> for more details)</p>
 
                     <h2>Row Index</h2>
-                    <p> A unique index value must be present for each row of data, which must be either numeric or a string. By default Tabulator will look for this value in the <span class='param'>id</span> field for the data. If you wish to use a different field as the index, set this using the <span class='param'>index</span> option parameter.</p>
+                    <p>A unique index value should be present for each row of data if you want to be able to programatically alter that data at a later point, this should be either numeric or a string. By default Tabulator will look for this value in the <span class='param'>id</span> field for the data. If you wish to use a different field as the index, set this using the <span class='param'>index</span> option parameter.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-index:"age", //set the index field to the "age" field.
+    index:"age", //set the index field to the "age" field.
 });</pre>
 
                     <p>If the index is missing from the provided data, tabulator will generate one from the position of the data in the original array.</p>
@@ -371,6 +371,17 @@ $("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajax
                     <p>You can call the <span class='param'>setData</span> function to refresh the data at any point</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setData");</pre>
 
+                    <h3>Ajax Response Alteration</h3>
+                    <p>Tabulator expects the response to an ajax request to be a JSON encoded string representing an array of data objects. If you need to pass other data back in your request as well, you can use the <span class='param'>ajaxResponse</span> callback to process the returned data before it is passed to the table. The return value of this callback should be an array of row data objects.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxResponse:function(url, params, response){
+        //url - the URL of the request
+        //params - the parameters passed with the request
+        //response - the JSON object returned in the body of the response.
+
+        return response.tableData; //return the tableData peroperty of a response json object
+    },
+});</pre>
                     <h3>Server Side Code (PHP)</h3>
                     <p>When using ajax loading, the server should respond with a JSON encoded string representing an array of row objects. An example in PHP can be seen below:</p>
                     <pre class="prettyprint lang-php">//build data array
