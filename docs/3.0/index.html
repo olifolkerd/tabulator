@@ -2120,6 +2120,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <p>The <span class='param'>getCells</span> function returns an array of <a href='#component-cell'>CellComponent</a> objects, one for each cell in the row.</p>
                     <pre class="prettyprint lang-js">var cells = row.getCells();</pre>
 
+                    <h3>Get Cell in Specific Column</h3>
+                    <p>The <span class='param'>getCell</span> function returns the <a href='#component-cell'>CellComponent</a> for the specified <a href='#component-lookup'>column</a> from this row.</p>
+                    <pre class="prettyprint lang-js">var cells = row.getCell(column);</pre>
+
                     <h3>Get Index</h3>
                     <p>The <span class='param'>getInde</span> function returns the index value for the row.</p>
                     <pre class="prettyprint lang-js">var rowIndex = row.getInde();</pre>
@@ -2165,6 +2169,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <h3>Get Field</h3>
                     <p>The <span class='param'>getField</span> function returns the field name for the column.</p>
                     <pre class="prettyprint lang-js">var columnField = column.getField();</pre>
+
+                    <h3>Get Cells</h3>
+                    <p>The <span class='param'>getCells</span> function returns an array of <a href='#component-cell'>CellComponent</a> objects, one for each cell in the column.</p>
+                    <pre class="prettyprint lang-js">var cells = column.getCells();</pre>
 
                     <h3>Show Column</h3>
                     <p>The <span class='param'>show</span> function shows the column if it is hidden.</p>
@@ -2224,7 +2232,26 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <p>If you are making manual adjustments to elements contained withing the cell, or the cell itself, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>checkHeight</span> function to check if the height of the cell has changed and normalize the row if it has.</p>
                     <pre class="prettyprint lang-js">cell.checkHeight();</pre>
 
+                    <a class="anchor" id="component-lookup"></a>
+                    <h2>Component Lookup</h2>
+                    <p>Any function that takes a component as and argument will also attempt to find that component based on the value provided if it is not a component iteslf. The following values can be used for each copmonent type:</p>
 
+                    <h3>Row</h3>
+                    <ul>
+                        <li>A <a href='#component-row'>RowComponent</a></li>
+                        <li>The index value of the row</li>
+                        <li>jQuery Element of the row</li>
+                    </ul>
+                    <h3>Column</h3>
+                    <ul>
+                        <li>A <a href='#component-column'>ColumnComponent</a></li>
+                        <li>The field name of the column</li>
+                        <li>jQuery Element of the column</li>
+                    </ul>
+                    <h3>Cell</h3>
+                    <ul>
+                        <li>A <a href='#component-cell'>CellComponent</a></li>
+                    </ul>
                 </article>
 
 
