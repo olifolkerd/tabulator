@@ -16,6 +16,16 @@ var ColumnComponent = function (column){
 			return column.getField();
 		},
 
+		getCells:function(){
+			var cells = [];
+
+			column.cells.forEach(function(cell){
+				cells.push(cell.getComponent());
+			});
+
+			return cells;
+		},
+
 		show:function(){
 			column.show();
 		},

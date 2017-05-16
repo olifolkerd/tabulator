@@ -22,6 +22,17 @@ var RowComponent = function (row){
 			return cells;
 		},
 
+		getCell:function(column){
+			var match = false,
+			column = row.table.columnManager.findColumn(column);
+
+			match = row.cells.find(function(cell){
+				return cell.column === column;
+			});
+
+			return match;
+		},
+
 		getIndex:function(){
 			return row.getData(true)[row.table.options.index];
 		},

@@ -666,6 +666,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return column.getField();
       },
 
+      getCells: function getCells() {
+
+        var cells = [];
+
+        column.cells.forEach(function (cell) {
+
+          cells.push(cell.getComponent());
+        });
+
+        return cells;
+      },
+
       show: function show() {
 
         column.show();
@@ -2590,6 +2602,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         return cells;
+      },
+
+      getCell: function getCell(column) {
+
+        var match = false,
+            column = row.table.columnManager.findColumn(column);
+
+        match = row.cells.find(function (cell) {
+
+          return cell.column === column;
+        });
+
+        return match;
       },
 
       getIndex: function getIndex() {
