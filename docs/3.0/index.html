@@ -382,6 +382,11 @@ $("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajax
         return response.tableData; //return the tableData peroperty of a response json object
     },
 });</pre>
+
+                    <h3>Callbacks</h3>
+                    <p>A range of callbacks are avaialble for tracking progress of ajax data loading. (see the <a href="#callbacks-ajax">Ajax Callbacks</a> section for more information.</p>
+
+
                     <h3>Server Side Code (PHP)</h3>
                     <p>When using ajax loading, the server should respond with a JSON encoded string representing an array of row objects. An example in PHP can be seen below:</p>
                     <pre class="prettyprint lang-php">//build data array
@@ -715,11 +720,14 @@ var printIcon = function(cell, formatterParams){ //plain text value
 
                 <a class="anchor" id="filtering"></a>
                 <article>
-                    <h1>Filtering Data <a class="example-link" href="../../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Filtering Data <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator allows you to filter the table data by any field in the data set.</p>
 
                     <p>To set a filter you need to call the <span class='param'>setFilter</span> method, passing the field you wish to filter, the comparison type and the value to filter for.</p>
+
+                    <p>This funtion will replace any exiting filters on the table with the specified filters.</p>
+
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", "age", ">", 10);</pre>
 
                     <p>Tabulator comes with a number of filter comparison types including:</p>
@@ -733,10 +741,11 @@ var printIcon = function(cell, formatterParams){ //plain text value
                         <li><strong>like</strong> - displays any rows with data that contains the specified string anywhere in the specified field. (case insesitive)</li>
                     </ul>
 
-                    <p>By default tabulator will assume you want to use the "=" comparison unless otherwise stated. This allows for the short hand use of the function:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", "name", "bob");</pre>
-
-                    <p>You can only have one filter active at a time, calling setFilter a second time will over write the previous filter.</p>
+                    <p>If you wish to apply multiple filters then you can pass an array of filter objects to this function, the data will then have to pass all filters to be displayed in the table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", [
+    {field:"age", type:">", value:52}, //filter by age greater than 52
+    {field:"height", type:"<", value:142}, //and by height less than 142
+]);</pre>
 
                     <p>Filters will remain in effect until they are cleared, including during <span class='param'>setData</span> calls.</p>
 
@@ -749,24 +758,38 @@ var printIcon = function(cell, formatterParams){ //plain text value
 
 $("#example-table").tabulator("setFilter", customFilter);</pre>
 
-                    <h2>Get Current Filter</h2>
-                    <p>To find out what filter is currently applied to the table you should use the <span class='param'>getFilter</span> method.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("getFilter");</pre>
-                    <p>If there is no filter set, this will return <span class='param'>false</span>, otherwise it will return an object with the filter information.</p>
-                    <pre class="prettyprint lang-js">{
-    "field":"age",
-    "type":">",
-    "value":10,
-}</pre>
+                    <h2>Additional Filter Functions</h2>
 
-                    <h2>Clearing Filters</h2>
-                    <p>To remove filters from the table you should use the <span class='param'>clearFilter</span> method.</p>
+                    <p>There are a number of additional filter functions that can be called to customise your filtering experience</p>
+
+                    <h3>Add Filter to Exsiting Filters <span class="label label-danger">New</span></h3>
+                    <p>If you want to add another filter to the existing filters then you can call the <span class='param'>addFilter</span> function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("addFilter", "age", ">", 22);</pre>
+
+                    <h3>Remove One of Many Existing Filters <span class="label label-danger">New</span></h3>
+                    <p>If you want to remove one filter from the current list of filters you can use the <span class='param'>removeFilter</span> function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("removeFilter", "age", ">", 22);</pre>
+
+
+                    <h3>Get Current Filters <span class="label label-primary">Updated</span></h3>
+                    <p>You can retreive an array of the current filters using the <span class='param'>getFilter</span> function:</p>
+                    <pre class="prettyprint lang-js">var filters = $("#example-table").tabulator("getFilter");</pre>
+                    <p>This will return an array of filter objects</p>
+                    <pre class="prettyprint lang-js">[
+    {field:"age", type:">", value:52}, //filter by age greater than 52
+    {field:"height", type:"<", value:142}, //and by height less than 142
+]</pre>
+
+                    <h3>Clear All Filters <span class="label label-primary">Updated</span></h3>
+                    <p>To remove all filters from the table, use the <span class='param'>clearFilter</span> function. </p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("clearFilter");</pre>
-                    <p>alternatively you can also call the <span class='param'>setFilter</span> method with no parameters to clear the filter.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter");</pre>
+                    <p>This will clear all programatically set filters, if you wisht to clear all header filters as well pass an argument of <span class='param'>true</span> to this function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clearFilter", true);</pre>
+
+
 
                     <a class="anchor" id="header-filters"></a>
-                    <h2>Header Filtering
+                    <h2>Header Filtering <span class="label label-primary">Updated</span>
 <a class="example-link" href="../../examples?#filter-header"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Is is possible to filter the table data directly from the column headers, by setting the <span class='param'>headerFilter</span> parameter in the column definition object for that column.</p>
 
@@ -782,7 +805,10 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p class="note"><STRONG>Note:</STRONG> At present, the <span class='param'>progress</span> and <span class='param'>star</span> editors are not available as header filters.</p>
 
-                    <h3>Real Time Filtering </h3>
+                    <h3>Header Filters and Programmatic Filters <span class="label label-danger">New</span></h3>
+                    <p>Header filters and programatic filters can be set independently allowing you to use a header filter to further restrict the rows shown in an already filtered data set.</p>
+
+                    <h3>Real Time Filtering</h3>
                     <p>If an input element is used as the filter element, then then the table will be filtered in real time as the user types in the input element. To prevent exessive redrawing of the table Tabulator will wait 300 miliseconds after the user has finished typing before tirggering the filter, this ensures that the table is not redrawn for every character typed by the user.</p>
 
                     <h3>Filter Comparison Types</h3>
@@ -792,8 +818,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>For all other element types (select boxes, check boxes, input elements of type number) an exact match is needed for the comparison to be successful.</p>
 
-                    <h3>Placeholder Text
-</h3>
+                    <h3>Placeholder Text <span class="label label-primary">Updated</span></h3>
 
                     <p>The default placeholder text used for input elements can be set using the <span class='param'>headerFilterPlaceholder</span> option in the table definition</p>
 
@@ -801,33 +826,26 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     headerFilterPlaceholder:"filter data...", //set column header placeholder text
 });</pre>
 
-                    <p>To set the placeholder text on a per column basis you can use the <span class='param'>headerFilterColumnPlaceholders</span> option. </p>
-
-                    <p>Pass an object containing key value pairs for each column you want to set the placholder text for. If a column is not in  this object it will use the default text specified in the <span class='param'>headerFilterPlaceholder</span> option.</p>
+                    <p>To set the placeholder text on a per column basis you can use the <span class='param'>headerFilterPlaceholder</span> option in the column's definition object. </p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     headerFilterPlaceholder:"filter data...", //set column header placeholder text
-    headerFilterColumnPlaceholders:{
-        name:"choose your name", //set placeholder text on name column header filter
-    },
+    columns:[
+        {title:"Name", field:"name", headerFilter:true, headerFilterPlaceholder:"Find a Person..."} //set placeholder text on name column header filter
+    ]
 });</pre>
                 </article>
 
 
                 <a class="anchor" id="sorting"></a>
                 <article>
-                    <h1>Sorting Data  <a class="example-link" href="../../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Sorting Data <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#sorters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
-                    <p>Sorting of data by column is enabled by default on all columns. It is possible to turn sorting on or off globally using the <span class='param'>sortable</span> option when you create your Tabulator.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    sortable:false, // this option takes a boolean value (default = true)
-});</pre>
+                    <p>Tabulator allows you to sort the data in your table in any way you want.</p>
 
-                    <p>you can set sorting on a per column basis using the <span class='param'>sortable</span> option in the column data.</p>
-                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string"}</pre>
+                    <p>By default all data is sorted as a string. If you wish to specify a different sorting method, you should include the <span class='param'>sorter</span> option in the column defintion object.</p>
 
-                    <h2>Sorter type</h2>
-                    <p>By default all data is sorted as a string. if you wish to specify a different sorting method then you should include the <span class='param'>sorter</span> option in the column data.</p>
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string"}</pre>
 
                     <p>Tabulator comes with a number of preconfigured sorters including:</p>
                     <ul>
@@ -839,17 +857,28 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                         <li><strong>time</strong> - sorts column as time (formatted as hh:mm)</li>
                     </ul>
 
-                    <h2>Custom Sorters </h2>
-                    <p>You can define a custom sorter function in the sorter option:</p>
-                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b, aData, bData, field, dir){
+                    <h2>Custom Sorters <span class="label label-primary">Updated</span></h2>
+                    <p>for advanced sorting can define a custom sorter function in the <span class='param'>sorter</span> option:</p>
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b, aData, bData, column, dir){
         //a, b - the two values being compared
         //aData, bData - the row objects for the values being compared (useful if you need to access additional fields in the row data for the sort)
-        //field - the name of the column being sorted
+        //column - the column component for the column being sorted
         //dir - the direction of the sort ("asc" or "desc")
 
         return a - b; //you must return the difference between the two values
     },
 }</pre>
+                    <p>The fifth paramter in this callback is a <a href='#component-column'>ColumnComponent</a> for the column being fitered.</p>
+
+                    <h2>Header Sorting <span class="label label-danger">New</span></h2>
+
+                    <p>If you want a user to be able to sort a column by clicking on the column header, set the <span class='param'>headerSort</span> option to <span class='param'>true</span> in the column defintion array:</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string", headerSort:true}</pre>
+
+                    <p>This will cause a sort arrow to be displayed in the column.</p>
+
+
                     <a class="anchor" id="sort-load"></a>
                     <h2>Sort Data on Load</h2>
                     <p>When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the <span class='param'>sortBy</span> and <span class='param'>sortDir</span> parameters. (see <a href="#initial-data-sorting">Initial Data Sorting</a> for more details)</p>
@@ -859,29 +888,30 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     sortDir:'asc', //when data is loaded into the table, sort it in ascending order.
 });</pre>
 
-                    <h2>Trigger Sorting Programmatically</h2>
-                    <p>You can trigger sorting using the <span class='param'>sort</span> function</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("sort", "age", "asc");</pre>
+                    <h2>Trigger Sorting Programmatically <span class="label label-primary">Updated</span></h2>
+
+                    <p>You can trigger sorting using the <span class='param'>setSort</span> function</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setSort", "age", "asc");</pre>
 
                     <p>If you wish to sort by multiple columns then you can pass an array of sorting objects to this function, the data will then be sorted in the order of the objects.</p>
 
-                   <pre class="prettyprint lang-js">$("#example-table").tabulator("sort", [
+                   <pre class="prettyprint lang-js">$("#example-table").tabulator("setSort", [
     {field:"age", dir:"asc"}, //sort by this first
     {field:"height", dir:"desc"}, //then sort by this second
 ]);</pre>
 
-                    <h2>Get Currently Sorted Column </h2>
+                    <h2>Get Current Sorters <span class="label label-primary">Updated</span></h2>
                     <p>If you need to retrieve the details of the currently sorted column at any point you can use the <span class='param'>getSort</span> function. </p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("getSort");</pre>
 
-                    <p>This will return an object with two properties, <span class='param'>field</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
+                    <p>This will return an array of sort objects with two properties, <span class='param'>field</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
 
-                    <pre class="prettyprint lang-js">{
-    field:"name",
-    dir:"asc",
-}</pre>
+                    <pre class="prettyprint lang-js">[
+    {field:"age", dir:"asc"},
+    {field:"height", dir:"desc"}
+]</pre>
 
-                    <p>If a the table is not currently sorted then the value of both of these properties will be <span class='param'>false</span>.</p>
+                    <p>If a the table is not currently sorted then the array will be empty.</p>
 
                 </article>
 
@@ -2774,18 +2804,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //data - all data loaded into the table
     },
 });</pre>
-                    <h3>Ajax Response </h3>
-                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made. This callback can also be used to modify the received data before it is parsed by the table. If you use this callback it <strong>must</strong> return the data to be parsed by Tabulator, otherwise no data will be rendered.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    ajaxResponse:function(url, params, response){
-        //url - the URL of the request
-        //params - the parameters passed with the request
-        //response - the JSON object returned in the body of the response.
-
-        return response; //return the response data to tabulator
-    },
-});</pre>
-
 
                     <h3>Data Loading Error</h3>
                     <p>The <span class='param'>dataLoadError</span> callback is triggered when a there is an error AJAX loading data. The arguments are passed straight from the AJAX error function.</p>
@@ -2844,6 +2862,23 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //dir - the direction of the sort
     },
 });</pre>
+
+                    <a class="anchor" id="callbacks-ajax"></a>
+                    <h2>Ajax Callbacks</h2>
+
+                    <h3>Ajax Response </h3>
+                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made. This callback can also be used to modify the received data before it is parsed by the table. If you use this callback it <strong>must</strong> return the data to be parsed by Tabulator, otherwise no data will be rendered.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxResponse:function(url, params, response){
+        //url - the URL of the request
+        //params - the parameters passed with the request
+        //response - the JSON object returned in the body of the response.
+
+        return response; //return the response data to tabulator
+    },
+});</pre>
+
+
 
                     <h2>Layout Callbacks</h2>
 
@@ -3326,17 +3361,17 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             </div>
                         </h2>
                         <ul class="nav">
-                            <li><a href="#setup">Setup </a></li>
-                            <li><a href="#define-column-headers">Define Column Headers </a></li>
+                            <li><a href="#setup">Setup <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#define-column-headers">Define Column Headers <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                         <h2>Data</h2>
                         <ul class="nav">
-                            <li><a href="#set-data">Set Table Data </a></li>
+                            <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#get-set">Mutators &amp; Accessors</a></li>
-                            <li><a href="#formatting">Formatting </a></li>
-                            <li><a href="#filtering">Filtering </a></li>
-                            <li><a href="#sorting">Sorting </a></li>
+                            <li><a href="#formatting">Formatting <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#sorting">Sorting <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#manipulating-data">Editing &amp; Manipulating Data </a></li>
                         </ul>
 
