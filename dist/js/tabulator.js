@@ -6805,20 +6805,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.config[key] = self.defaultConfig[key];
       }
-
-      self.config.error = function (xhr, textStatus, errorThrown) {
-
-        console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
-
-        self.table.options.dataLoadError(xhr, textStatus, errorThrown);
-
-        self.showError();
-
-        setTimeout(function () {
-
-          self.hideLoader();
-        }, 3000);
-      };
     }
   },
 
@@ -6856,7 +6842,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.config.data = self.params;
       }
 
-      self.config.success = function (data) {
+      self.showLoader();
+
+      $.ajax(self.config).done(function (data) {
 
         if (self.table.options.ajaxResponse) {
 
@@ -6868,11 +6856,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         callback(data);
 
         self.hideLoader();
-      };
+      }).fail(function (xhr, textStatus, errorThrown) {
 
-      self.showLoader();
+        console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
 
-      $.ajax(self.config);
+        self.table.options.dataLoadError(xhr, textStatus, errorThrown);
+
+        self.showError();
+
+        setTimeout(function () {
+
+          self.hideLoader();
+        }, 3000);
+      });
     } else {
 
       console.warn("Ajax Load Error - No URL Set");

@@ -66,17 +66,6 @@ Ajax.prototype._loadDefaultConfig = function(force){
 		for(let key in self.defaultConfig){
 			self.config[key] = self.defaultConfig[key];
 		}
-
-		self.config.error = function (xhr, textStatus, errorThrown){
-			console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
-
-			self.table.options.dataLoadError(xhr, textStatus, errorThrown);
-			self.showError();
-
-			setTimeout(function(){
-				self.hideLoader();
-			}, 3000);
-		}
 	}
 },
 
@@ -92,7 +81,8 @@ Ajax.prototype.getUrl = function(){
 
 //send ajax request
 Ajax.prototype.sendRequest = function(callback){
-var self = this;
+	var self = this;
+
 	if(self.url){
 		self._loadDefaultConfig();
 
@@ -102,7 +92,10 @@ var self = this;
 			self.config.data = self.params;
 		}
 
-		self.config.success = function (data){
+		self.showLoader();
+
+		$.ajax(self.config)
+		.done(function(data){
 			if(self.table.options.ajaxResponse){
 				data = self.table.options.ajaxResponse(self.url, self.params, data);
 			}
@@ -112,11 +105,17 @@ var self = this;
 			callback(data);
 
 			self.hideLoader();
-		};
+		})
+		.fail(function(xhr, textStatus, errorThrown){
+			console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
 
-		self.showLoader();
+			self.table.options.dataLoadError(xhr, textStatus, errorThrown);
+			self.showError();
 
-		$.ajax(self.config);
+			setTimeout(function(){
+				self.hideLoader();
+			}, 3000);
+		});
 
 	}else{
 		console.warn("Ajax Load Error - No URL Set");
