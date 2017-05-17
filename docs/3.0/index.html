@@ -568,7 +568,15 @@ $("#example-table").tabulator({
                         <li><strong>plaintext</strong> - This is the default formatter for all cells, and simply displays the value of the cell as text.</li>
                         <li><strong>textarea</strong> - shows text with carriage returns intact (great for multiline text)</li>
                         <li><strong>money</strong> - formats a number into currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
-                        <li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
+                        <ul>
+                            <li>optional <strong>formatterParams</strong></li>
+                            <li><strong>decimal</strong> - Symbol to represent the decimal point <i>(default ".")</i></li>
+                            <li><strong>thousand</strong> - Symbol to represent the thousands seperator <i>(default ",")</i></li>
+                            <li><strong>symbol</strong> - currency symbol <i>(no default)</i></li>
+                            <li><strong>symbolAfter</strong> - position the symbol after the number <i>(default false)</i></li>
+                        </ul>
+                        <li><strong>email</strong> - renders data as an anchor with a mailto: link to the cell value</li>
+                        <li><strong>image</strong> - created an img tag with the src attribute set to the cell value</li>
                         <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
                         <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
                         <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
