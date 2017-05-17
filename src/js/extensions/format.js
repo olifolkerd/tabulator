@@ -40,61 +40,65 @@ Format.prototype.formatValue = function(cell){
 //default data formatters
 Format.prototype.formatters = {
 	//plain text value
-	plaintext:function(cell, options, formatterParams){
+	plaintext:function(cell, formatterParams){
 		return cell.getValue();
 	},
 
 	//multiline text area
-	textarea:function(cell, options, formatterParams){
+	textarea:function(cell, formatterParams){
 		cell.getElement().css({"white-space":"pre-wrap"});
 		return cell.getValue();
 	},
 
 	//currency formatting
-	money:function(cell, options, formatterParams){
+	money:function(cell, formatterParams){
+		var floatVal = parseFloat(cell.getValue()),
+		number, integer, decimal, rgx;
 
-		var floatVal = parseFloat(cell.getValue());
+		var decimalSym = formatterParams.decimal || ".";
+		var thousandSym = formatterParams.thousand || ",";
+		var symbol = formatterParams.symbol || "";
+		var after = !!formatterParams.symbolAfter;
 
 		if(isNaN(floatVal)){
-			return value;
+			return cell.getValue();
 		}
 
-		var number = floatVal.toFixed(2);
+		number = floatVal.toFixed(2);
+		number = number.split(".");
 
-		var number = number.split(".");
+		integer = number[0];
+		decimal = number.length > 1 ? decimalSym + number[1] : "";
 
-		var integer = number[0];
-		var decimal = number.length > 1 ? "." + number[1] : "";
-
-		var rgx = /(\d+)(\d{3})/;
+		rgx = /(\d+)(\d{3})/;
 
 		while (rgx.test(integer)){
-			integer = integer.replace(rgx, "$1" + "," + "$2");
+			integer = integer.replace(rgx, "$1" + thousandSym + "$2");
 		}
 
-		return integer + decimal;
+		return after ? integer + decimal + symbol : symbol + integer + decimal;
 	},
 
 	//clickable mailto link
-	email:function(cell, options, formatterParams){
+	email:function(cell, formatterParams){
 		var value = cell.getValue();
 		return "<a href='mailto:" + value + "'>" + value + "</a>";
 	},
 
 	//clickable anchor tag
-	link:function(cell, options, formatterParams){
+	link:function(cell, formatterParams){
 		var value = cell.getValue();
 		return "<a href='" + value + "'>" + value + "</a>";
 	},
 
 	//image element
-	image:function(cell, options, formatterParams){
+	image:function(cell, formatterParams){
 		var value = cell.getValue();
 		return "<img url='" + value + "'/>";
 	},
 
 	//tick or empty cell
-	tick:function(cell, options, formatterParams){
+	tick:function(cell, formatterParams){
 		var value = cell.getValue(),
 		element = cell.getElement();
 
@@ -110,7 +114,7 @@ Format.prototype.formatters = {
 	},
 
 	//tick or cross
-	tickCross:function(cell, options, formatterParams){
+	tickCross:function(cell, formatterParams){
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>',
@@ -126,7 +130,7 @@ Format.prototype.formatters = {
 	},
 
 	//star rating
-	star:function(cell, options, formatterParams){
+	star:function(cell, formatterParams){
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
@@ -155,7 +159,7 @@ Format.prototype.formatters = {
 	},
 
 	//progress bar
-	progress:function(cell, options, formatterParams){ //progress bar
+	progress:function(cell, formatterParams){ //progress bar
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
@@ -182,23 +186,23 @@ Format.prototype.formatters = {
 	},
 
 	//background color
-	color:function(cell, options, formatterParams){
+	color:function(cell, formatterParams){
 		cell.getElement().css({"background-color":cell.getValue()});
 		return "";
 	},
 
 	//tick icon
-	buttonTick:function(cell, options, formatterParams){
+	buttonTick:function(cell, formatterParams){
 		return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 	},
 
 	//cross icon
-	buttonCross:function(cell, options, formatterParams){
+	buttonCross:function(cell, formatterParams){
 		return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 	},
 
 	//current row number
-	rownum:function(cell, options, formatterParams){
+	rownum:function(cell, formatterParams){
 		return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
 	}
 };
