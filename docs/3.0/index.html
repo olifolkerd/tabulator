@@ -3045,7 +3045,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                 <a class="anchor" id="localization"></a>
                 <article>
-                    <h1>Localization <a class="example-link" href="../../examples?#localization"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Localization <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#localization"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
                     <p>If you want to make your table accessible to users from a wide variety of languages then Tabulators localization features are for you.</p>
 
                     <p>Using the <span class='param'>langs</span> option you can specify the localized content for the table in any number of languages.</p>
@@ -3062,6 +3062,10 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
         "en-gb":{
             "columns":{
                 "name":"Name", //replace the title of column name with the value "Name"
+            },
+            "ajax":{
+                "loading":"Loading", //ajax loader text
+                "error":"Error", //ajax error text
             },
             "pagination":{
                 "first":"First", //text for the first page button
@@ -3356,48 +3360,8 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                 <a class="anchor" id="deprecated"></a>
                 <article>
-                    <h1>Deprecated Functionality</h1>
-                    <p>The following sections have been updated and now have elements of obsolete functionality that have been deprecated and will be removed in version 3.0.</p>
-
-                    <h2>Pagination</h2>
-
-                    <h3>Deprecated Function</h3>
-                    <p>The use of a boolean value to enable local pagination through the <span class='param'>pagination</span> option:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:true, //enable local pagination
-});</pre>
-                    <h3>Replacement Function</h3>
-                    <p>This has been replaced with using a string to choose between <span class='param'>local</span> and <span class='param'>remote</span> pagination options:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:"local", //enable local pagination
-});</pre>
-
-                    <h2>Persistent Column Layout</h2>
-                    <h3>Deprecated Function</h3>
-                    <p>Enabling persistent column layouts using the <span class='param'>columnLayoutCookie</span> and <span class='param'>columnLayoutCookie</span> options:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columnLayoutCookie:true, //Enable column layout persistence
-    columnLayoutCookieID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
-});</pre>
-                    <h3>Replacement Function</h3>
-                    <p>This has been replaced with using the <span class='param'>persistentLayout</span> and <span class='param'>persistentLayoutID</span> options:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    persistentLayout:true, //Enable column layout persistence
-    persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
-});</pre>
-
-                    <h2>Set Ajax Request Type </h2>
-                    <h3>Deprecated Function</h3>
-                    <p>Setting the AJAX request type using the <span class='param'>ajaxType</span> option:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    ajaxType:"POST", //ajax HTTP request type
-});</pre>
-
-                    <h3>Replacement Function</h3>
-                    <p>This has been replaced with the <span class='param'>ajaxConfig</span> option which allows the type to be set as well as all other ajax config options:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    ajaxConfig:"POST", //ajax HTTP request type
-});</pre>
+                    <h1>Deprecated Functionality <span class="label label-primary">Updated</span></h1>
+                    <p>All depricated functions from version 2.12 and below have now been removed.</p>
                 </article>
 
             </div>
@@ -3451,12 +3415,12 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <ul class="nav">
                             <li><a href="#components">Component Objects <span class="label label-danger">New</span></a></li>
                             <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#callbacks">Callbacks &amp; Events </a></li>
+                            <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#download">Download Table Data </a></li>
-                            <li><a href="#localization">Localization </a></li>
+                            <li><a href="#localization">Localization <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#accessibility">Accessibility</a></li>
                             <li><a href="#extending">Extending Tabulator</a></li>
-                            <li><a href="#deprecated">Deprecated Functionality </a></li>
+                            <li><a href="#deprecated">Deprecated Functionality <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                     </div>
