@@ -880,12 +880,14 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
 
                     <a class="anchor" id="sort-load"></a>
-                    <h2>Sort Data on Load</h2>
-                    <p>When data is loaded into the table it can be automatically sorted by a specified field, this field can be set in the options using the <span class='param'>sortBy</span> and <span class='param'>sortDir</span> parameters. (see <a href="#initial-data-sorting">Initial Data Sorting</a> for more details)</p>
+                    <h2>Sort Data on Load <span class="label label-primary">Updated</span></h2>
+                    <p>When the table is first created it can be setwith an initial set of sorters. These can be set using the <span class='param'>initialSort</span> option. This will take the same sorter array as the <span class='param'>setSort</span> function. (see <a href="#initial-data-sorting">Initial Data Sorting</a> for more details)</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    sortBy:'name', // when data is loaded into the table, sort it by name
-    sortDir:'asc', //when data is loaded into the table, sort it in ascending order.
+    initialSort:[
+        {field:"age", dir:"asc"}, //sort by this first
+        {field:"height", dir:"desc"}, //then sort by this second
+    ]
 });</pre>
 
                     <h2>Trigger Sorting Programmatically <span class="label label-primary">Updated</span></h2>
@@ -1242,6 +1244,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p class="note"><strong>Note:</strong> You must have the <span class='param'>height</span> option set to enable progressive rendering.</p>
 
+                    <a class="anchor" id="placeholder-empty"></a>
                     <h2>Empty Table Placeholder <span class="label label-danger">New</span></h2>
                     <p>You can use the <span class='param'>placeholder</span> option to display a message to your users when the table has no data set. The function can either take a string to display or, the HTML or jQuery element to display in the empty table.</p>
 
@@ -1255,7 +1258,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                 </article>
 
 
-                <a class="anchor" id="pagination">  </a>
+                <a class="anchor" id="pagination"></a>
                 <article>
                     <h1>Pagination <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#pagination"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
@@ -2328,7 +2331,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="options"></a>
                 <article>
-                    <h1>Setup Options </h1>
+                    <h1>Setup Options <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator has a wide range of setup options to help you customise the user experience of your tables. This section outlines all the available options and links to the relevant section in this documentation to show you how to use them.</p>
 
@@ -2339,7 +2342,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
 
 
-                    <h2>General Table Configuration</h2>
+                    <h2>General Table Configuration <span class="label label-primary">Updated</span></h2>
 
                     <table>
                         <thead>
@@ -2354,15 +2357,27 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>height</td><td>string/int</td><td>false</td><td>Sets the height of the containing element, can be set to any valid height css value. If set to false (the default), the height of the table will resize to fit the table data.</td><td></td>
                             </tr>
                             <tr>
+                                <td>virtualDom</td><td>boolean</td><td>true</td><td>Enable rendering using the Virtual DOM engine</td><td><a href="#virtual-dom"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>placeholder</td><td>string or element</td><td>""</td><td>placeholder element to display on empty table</td><td><a href="#placeholder-empty"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
                                 <td>tooltips</td><td>boolean/function</td><td>false</td><td>Function to generate tooltips for cells</td><td><a href="#tooltips"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>dateFormat</td><td>string</td><td>dd/mm/yyyy</td><td>The date format that should be used when sorting date fields</td><td></td>
                             </tr>
+                            <tr>
+                                <td>locale</td><td>string/boolean</td><td>false</td><td>set the current localization language </td><td><a href="#localization"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>langs</td><td>object</td><td>(see documentation)</td><td>hold localization templates </td><td><a href="#localization"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
                         </tbody>
                     </table>
 
-                    <h2>Columns </h2>
+                    <h2>Columns <span class="label label-primary">Updated</span></h2>
                     <table>
                         <thead>
                             <th>Option</th>
@@ -2385,7 +2400,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>colMinWidth</td><td>CSS width value</td><td>40px</td><td>Minimum width for a column</td><td><a href="#col-min-width"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>colResizable</td><td>boolean</td><td>true</td><td>Allow user to resize columns (via handles on the left and right edges of the column header)</td><td><a href="#col-resize"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>resizableColumns</td><td>boolean</td><td>true</td><td>Allow user to resize columns (via handles on the left and right edges of the column header)</td><td><a href="#col-resize"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>movableColumns</td><td>boolean</td><td>false</td><td>Allow users to move and reorder columns</td><td><a href="#col-move"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -2399,13 +2414,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             <tr>
                                 <td>headerFilterPlaceholder</td><td>string</td><td>"filter column..."</td><td>The placeholder text to be set in any header filter input elements</td><td><a href="#header-filters"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
-                            <tr>
-                                <td>headerFilterColumnPlaceholders</td><td>object</td><td>{}</td><td>The placeholder text to be set per column in their header filter input element</td><td><a href="#header-filters"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
                         </tbody>
                     </table>
 
-                    <h2>Rows</h2>
+                    <h2>Rows <span class="label label-primary">Updated</span></h2>
                     <table>
                         <thead>
                             <th>Option</th>
@@ -2434,22 +2446,21 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>selectable</td><td>boolean/integer/string</td><td>"highlight"</td><td>Enable/Disable row selection</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
+                                <td>selectableRollingSelection</td><td>boolean</td><td>true</td><td>Allow rolling selection</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>selectablePersistence</td><td>boolean</td><td>true</td><td>Maintain selected rows on filter or sort</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
                                 <td>selectableCheck</td><td>function</td><td>(see documentation)</td><td>Check if row should be selectable or unselectable</td><td><a href="#selectable"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>movableRows</td><td>boolean</td><td>false</td><td>Allow users to move and reorder rows</td><td><a href="#movable"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
-                            <tr>
-                                <td>movableRowHandle</td><td>string</td><td>html (see below)</td><td>html for the movable row handle</td><td><a href="#movable"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
                         </tbody>
                     </table>
 
-                    <h3>Default movable row handle</h3>
-                    <pre class="prettyprint lang-html">&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:3px;'&gt;&lt;/div&gt;&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'&gt;&lt;/div&gt;&lt;div style='margin:0 10%; width:80%; height:3px; background:#666; margin-top:2px;'&gt;&lt;/div&gt;</pre>
-
-
-                    <h2>Data </h2>
+                    <h2>Data <span class="label label-primary">Updated</span></h2>
                     <table>
                         <thead>
                             <th>Option</th>
@@ -2475,13 +2486,13 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>ajaxConfig</td><td>string/object</td><td>"GET"</td><td>The HTTP request type for Ajax requests or config object for the request</td><td><a href="#ajax"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>showLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td><td></td>
+                                <td>ajaxLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td><td></td>
                             </tr>
                             <tr>
-                                <td>loader</td><td>string</td><td>html (see below)</td><td>html for loader element</td><td></td>
+                                <td>ajaxLoaderLoading</td><td>string</td><td>html (see below)</td><td>html for loader element</td><td></td>
                             </tr>
                             <tr>
-                                <td>loaderError</td><td>string</td><td>html (see below)</td><td>html for the loader element in the event of an error</td><td></td>
+                                <td>ajaxLoaderError</td><td>string</td><td>html (see below)</td><td>html for the loader element in the event of an error</td><td></td>
                             </tr>
                         </tbody>
                     </table>
@@ -2496,8 +2507,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-html">&lt;div style='display:inline-block; border:4px solid #D00; border-radius:10px; background:#fff; font-weight:bold; font-size:16px; color:#590000; padding:10px 20px;'&gt;Loading Error&lt;/div&gt;</pre>
 
                     <a class="anchor" id="initial-data-sorting"></a>
-                    <h2>Global Data Sorting</h2>
-                    <p>You can set the table sorting options on a global level, specifying what sort should be applied when data is first loaded into the table.</p>
+                    <h2>Initial Data Sorting <span class="label label-primary">Updated</span></h2>
+                    <p>You can set initial sorters, specifying what sort should be applied when data is first loaded into the table.</p>
 
                     <table>
                         <thead>
@@ -2509,13 +2520,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         </thead>
                         <tbody>
                             <tr>
-                                <td>sortable</td><td>boolean</td><td>true</td><td>enable sorting in all columns</td><td><a href="#sorting"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
-                            <tr>
-                                <td>sortBy</td><td>string</td><td>"id"</td><td>The name of the field to be sorted.</td><td><a href="#sort-load"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
-                            <tr>
-                                <td>sortDir</td><td>string</td><td>"desc"</td><td>The direction of the sort (asc or desc).</td><td><a href="#sort-load"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>initialSort</td><td>array</td><td>[]</td><td>Array of sorters to be applied on load.</td><td><a href="#sort-load"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -2580,7 +2585,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         </tbody>
                     </table>
 
-                    <h2>Progressive Render </h2>
+                    <h2></h2>
                     <table>
                         <thead>
                             <th>Option</th>
@@ -2592,12 +2597,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         <tbody>
                             <tr>
                                 <td>progressiveRender</td><td>boolean</td><td>false</td><td>Enable progressive rendering</td><td><a href="#progressive-render"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
-                            <tr>
-                                <td>progressiveRenderSize</td><td>integer</td><td>20</td><td>Set the number of rows to be rendered in each block</td><td><a href="#progressive-render"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
-                            <tr>
-                                <td>progressiveRenderMargin</td><td>integer</td><td>200</td><td>The distance in pixels from the end of the scroll before the progressive render is triggered</td><td><a href="#progressive-render"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -3436,7 +3435,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <h2>Advanced</h2>
                         <ul class="nav">
                             <li><a href="#components">Component Objects <span class="label label-danger">New</span></a></li>
-                            <li><a href="#options">Setup Options </a></li>
+                            <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#callbacks">Callbacks &amp; Events </a></li>
                             <li><a href="#download">Download Table Data </a></li>
                             <li><a href="#localization">Localization </a></li>
