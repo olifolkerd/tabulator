@@ -1242,6 +1242,13 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p class="note"><strong>Note:</strong> You must have the <span class='param'>height</span> option set to enable progressive rendering.</p>
 
+                    <h2>Empty Table Placeholder <span class="label label-danger">New</span></h2>
+                    <p>You can use the <span class='param'>placeholder</span> option to display a message to your users when the table has no data set. The function can either take a string to display or, the HTML or jQuery element to display in the empty table.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    placeholder:"No Data Available", //display message to user on empty table
+});</pre>
+
                     <h2>Callbacks <span class="label label-primary">Updated</span></h2>
                     <p>A range of callbacks are avaialble for tracking progress of table rendering. See the <a href="#callbacks-layout">Layout Callbacks</a> section for more information.</p>
 
@@ -3417,13 +3424,13 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                         <h2>Layout</h2>
                         <ul class="nav">
-                            <li><a href="#layout">Table Layout </a></li>
-                            <li><a href="#pagination">Pagination </a></li>
-                            <li><a href="#grouping">Grouping</a></li>
-                            <li><a href="#selectable">Selectable Rows </a></li>
-                            <li><a href="#movable">Movable Rows and Columns</a></li>
-                            <li><a href="#column-management">Column Management</a></li>
-                            <li><a href="#css">CSS Classes &amp; Theming </a></li>
+                            <li><a href="#layout">Table Layout <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#pagination">Pagination <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#grouping">Grouping <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#selectable">Selectable Rows <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#movable">Movable Rows and Columns <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#column-management">Column Management <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#css">CSS Classes &amp; Theming <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                         <h2>Advanced</h2>
