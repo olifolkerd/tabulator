@@ -1577,68 +1577,49 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                 <a class="anchor" id="movable"></a>
                 <article>
-                    <h1>Movable Rows and Columns</h1>
+                    <h1>Movable Rows and Columns <span class="label label-primary">Updated</span></h1>
 
-                    <h2>Movable Rows <a class="example-link" href="../../examples?#movable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Movable Rows <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#movable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <p>To allow the user to move rows up and down the table, set the <span class='param'>movableRows</span> parameter in the options:</p>
                     <pre class="prettyprint lang-js">$('#example-table'),tabulator({
-    movableRows: true, //enable user movable rows, by default this is set to false
+    movableRows: true, //enable user movable rows
 })</pre>
-                    <p>This will allow users to drag rows around using the handle on the left hand side of each row.</p>
+                    <p>This will allow users to drag rows around by clicking and dragging on any part of the row.</p>
 
-                    <p>If you would like to use a custom handle for a row then set the <span class='param'>movableRowHandle</span> parameter with the HTML for the handle graphic.</p>
-                    <pre class="prettyprint lang-js">$('#example-table'),tabulator({
-    movableRows: true, //enable user movable rows, by default this is set to false
-    movableRowHandle: "&lt;div style='height:10px; width:10px; background:#f00;'&gt;&lt;/div&gt;", //custom handle html
-})</pre>
                     <p class="note"><strong>Note:</strong> When grouping is enabled, rows can only be moved within their own group.</p>
-
-                    <a class="anchor" id="scroll-to-row"></a>
-                    <h2>Scroll To Row </h2>
-                    <p>If you want to trigger an animated scroll to a row then you can use the <span class='param'>scrollToRow</span> function:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("scrollToRow", 23);</pre>
-                    <p>You can either pass the function the id of the row you wish to scroll to or the jQuery object that represents that row.</p>
-
-
-                    <h3>Row Moved Event</h3>
-
-                    <p>When a row has been successfully moved, the <span class='param'>rowMoved</span> callback will be triggered.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowMoved:function(id, data, row, index){
-        //id - the id of the row
-        //data - the data for the row
-        //row - the DOM element of the row
-        //index - new position of row in table
-    }
-});</pre>
-
 
 
 					<h3>Moving on Touch Devices</h3>
 
 					<p>The jQuery library does not currently support touch events. To enable movable rows on a touch device, you will need to include the excellent <a href="http://touchpunch.furf.com/" target="_blank">touchpunch.js library</a> which adds touch event support touch event support to jQuery.</p>
 
+
+                    <a class="anchor" id="scroll-to-row"></a>
+                    <h2>Scroll To Row <span class="label label-primary">Updated</span></h2>
+                    <p>If you want to trigger an animated scroll to a row then you can use the <span class='param'>scrollToRow</span> function. The first argument should be any of the standard <a href='#component-lookup'>row component looukup</a> options for the row you want to scroll to.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("scrollToRow", 23);</pre>
+
+
                     <a class="anchor" id="col-move"></a>
                     <h2>Movable Columns</h2>
-                    <p>To allow the user to move columns along the table, set the <span class='param'>movableCols</span> parameter in the options:</p>
+                    <p>To allow the user to move columns along the table, set the <span class='param'>movableColumns</span> parameter in the options:</p>
                     <pre class="prettyprint lang-js">$('#example-table'),tabulator({
-    movableCols: true, //enable user movable rows, by default this is set to false
+    movableColumns: true, //enable user movable columns
 })</pre>
 
                     <p>This will allow users to drag columns around using the column headers at the top of the table.</p>
 
-                    <p class="note"><strong>Note:</strong> icon/button columns and row handle columns are not movable.</p>
 
-                    <h3>Column Moved Event</h3>
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for table movements. See the <a href="#callbacks-move">Movement Callbacks</a> section for more information.</p>
 
-                    <p>When a column has been successfully moved, the <span class='param'>colMoved</span> callback will be triggered.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    colMoved:function(field, columns){
-        //field- the filed name of the moved column
-        //columns- the updated columns config array
-    }
-});</pre>
+                </article>
+
+                <a class="anchor" id="column-management"></a>
+                <article>
+                    <h1>Column Management <span class="label label-primary">Updated</span></h1>
+
 
                     <h2>Set New Column Definitions</h2>
                     <p>To update the current column definitions for a table use the <span class='param'>setColumns</span> function. this function takes two parameters. the first should be the new columns definition array. The second is a boolean value that determines the type of column update you wish to use. If you set this to <span class='param'>false</span>, the current column definition array will be completely overwritten. Set it to <span class='param'>true</span> and only the column layout information (width, order, visibility) will be overwritten, perfect for loading user layout preferences from an external store.</p>
@@ -1654,7 +1635,7 @@ var newColumns = [
 
 $("#example-table").tabulator("setColumns", newColumns , false) //completely overwrite existing columns with new columns definition array</pre>
 
-                    <h2>Add Column</h2>
+                    <h2>Add Column <span class="label label-primary">Updated</span></h2>
                     <p>If you wish to add a single column to the table, you can do this using the <span class='param'>addColumn</span> function.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("addColumn", {title:"Age", field:"age"}, true, "name");</pre>
@@ -1663,22 +1644,28 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <ul>
                         <li><strong>Columns Definition</strong> - The column definition object for the column you want to add.</li>
                         <li><strong>Before</strong> (optional) - Determines how to position the new column. A value of <span class='param'>true</span> will insert the column to the left of exisiting columns, a value of <span class='param'>false</span> will insert it to the right. If a <span class='param'>Position</span> argument is supplied then this will determine whether the new colum is inserted before or after this column.</li>
-                        <li><strong>Position</strong> (optional) - The field to insert the new column next to, this can be either the <span class='param'>field</span> value of the column you wish to insert next to, or its index in the column definition array (starting from zero).</li>
+                        <li><strong>Position</strong> (optional) - The field to insert the new column next to, this can be any of the standard <a href='#component-lookup'>column component looukup</a> options.</li>
                     </ul>
 
 
 
-
-                    <h2>Delete Column</h2>
-                    <p>If you wish to remove a single column to the table, you can do this using the <span class='param'>deleteColumn</span> function.</p>
+                    <h2>Delete Column <span class="label label-primary">Updated</span></h2>
+                    <p>To permanently remove a column from the table <span class='param'>deleteColumn</span> function. This function takes any of the standard <a href='#component-lookup'>column component looukup</a> options as its first parameter.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("deleteColumn", "name");</pre>
 
-                    <p>You can pass either the <span class='param'>field</span> value of the column you wish to delete, or its index in the column definition array (starting from zero).</p>
+                    <p>Alternativly if you have the <a href='#component-column'>ColumnComponent</a> of the column you wish to delete, you can call the <span class='param'>delete</span> function directly on the component.</p>
 
-                    <h2>Get Column Definitions</h2>
+                    <pre class="prettyprint lang-js">column.delete();</pre>
+
+                    <h2>Get Column Definitions <span class="label label-primary">Updated</span></h2>
                     <p>To get the current column definition array (including any changes made through user actions, such as resizing or re-ordering columns), call the <span class='param'>getColumns</span> function. this will return the current columns definition array.</p>
                     <pre class="prettyprint lang-js">var colDefs = $("#example-table").tabulator("getColumns") //get column definition array</pre>
+
+                    <h2>Get Column Components <span class="label label-danger">New</span></h2>
+                    <p>To get an array of <a href='#component-column'>ColumnComponent's</a> for the current table setup, call the <span class='param'>getColumns</span> function.</p>
+                    <pre class="prettyprint lang-js">var colDefs = $("#example-table").tabulator("getColumns") //get array of column components</pre>
+
 
                     <a class="anchor" id="persistant-columns"></a>
                     <h2>Persistent Column Layout <a class="example-link" href="../../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
@@ -1726,30 +1713,47 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //cols - the updated column definition array for all columns in the table
     },
 });</pre>
-                </article>
 
-                <a class="anchor" id="column-visibility"></a>
-                <article>
-                    <h1>Column Visibility</h1>
+
+                    <a class="anchor" id="column-visibility"></a>
+
+                    <h2>Column Visibility</h2>
 
                     <p>Column visibility can be set in a number of different ways.</p>
 
-                    <h2>Column Definition Visibility</h2>
+                    <h3>Column Definition Visibility <span class="label label-primary">Updated</span></h3>
                     <p>You can set the column visibility when you create the column definition array:</p>
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", visible:false}, //create hidden column for the field "name"</pre>
                     <p>By default columns are set with a <span class='param'>visible</span> parameter value of <span class='param'>true</span>.</p>
 
-                    <h2>Show Column Function</h2>
-                    <p>You can show a hidden column at any point using the <span class='param'>showCol</span> function. Pass the field name of the column you wish to show as the first parameter of the function.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("showCol","name") //show the "name" column</pre>
+                    <h3>Show Column <span class="label label-primary">Updated</span></h3>
+                    <p>You can show a hidden column at any point using the <span class='param'>showColumn</span> function. Pass the field name of the column you wish to show as the first parameter of the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("showColumn","name") //show the "name" column</pre>
 
-                    <h2>Hide Column Function</h2>
-                    <p>You can hide a visible column at any point using the <span class='param'>hideCol</span> function. Pass the field name of the column you wish to hide as the first parameter of the function.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("hideCol","name") //hide the "name" column</pre>
+                    <p>Alternativly if you have the <a href='#component-column'>ColumnComponent</a> of the column you wish to show, you can call the <span class='param'>show</span> function directly on the component.</p>
 
-                    <h2>Toggle Column Function</h2>
-                    <p>You can toggle the visibility of a column at any point using the <span class='param'>toggleCol</span> function. Pass the field name of the column you wish to toggle as the first parameter of the function.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("toggleCol","name") ////toggle the visibility of the "name" column</pre>
+                    <pre class="prettyprint lang-js">column.show();</pre>
+
+                    <h3>Hide Column <span class="label label-primary">Updated</span></h3>
+                    <p>You can hide a visible column at any point using the <span class='param'>hideColumn</span> function. Pass the field name of the column you wish to hide as the first parameter of the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("hideColumn","name") //hide the "name" column</pre>
+
+                    <p>Alternativly if you have the <a href='#component-column'>ColumnComponent</a> of the column you wish to hide, you can call the <span class='param'>hide</span> function directly on the component.</p>
+
+                    <pre class="prettyprint lang-js">column.hide();</pre>
+
+
+                    <h3>Toggle Column <span class="label label-primary">Updated</span></h3>
+                    <p>You can toggle the visibility of a column at any point using the <span class='param'>toggleColumn</span> function. Pass the field name of the column you wish to toggle as the first parameter of the function.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("toggleColumn","name") ////toggle the visibility of the "name" column</pre>
+
+                    <p>Alternativly if you have the <a href='#component-column'>ColumnComponent</a> of the column you wish to toggle, you can call the <span class='param'>toggle</span> function directly on the component.</p>
+
+                    <pre class="prettyprint lang-js">column.toggle();</pre>
+
+
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for columns. See the <a href="#callbacks-column">Column Callbacks</a> section for more information.</p>
                 </article>
 
 
@@ -2365,7 +2369,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>colResizable</td><td>boolean</td><td>true</td><td>Allow user to resize columns (via handles on the left and right edges of the column header)</td><td><a href="#col-resize"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>movableCols</td><td>boolean</td><td>false</td><td>Allow users to move and reorder columns</td><td><a href="#col-move"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>movableColumns</td><td>boolean</td><td>false</td><td>Allow users to move and reorder columns</td><td><a href="#col-move"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>tooltipsHeader</td><td>boolean/function</td><td>false</td><td>Function to generate tooltips for column headers</td><td><a href="#col-tooltips"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -2606,6 +2610,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     tableBuilt:function(){
     },
 });</pre>
+
+                    <a class="anchor" id="callbacks-column"></a>
                     <h2>Column Callbacks</h2>
 
                     <h3>Column Header Click </h3>
@@ -2944,6 +2950,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                 <a class="anchor" id="callbacks-select"></a>
                 <h2>Selection Callbacks</h2>
 
+                <a class="anchor" id="callbacks-move"></a>
+                <h2>Movement Callbacks</h2>
 
 
                 </article>
@@ -3402,7 +3410,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#grouping">Grouping</a></li>
                             <li><a href="#selectable">Selectable Rows </a></li>
                             <li><a href="#movable">Movable Rows and Columns</a></li>
-                            <li><a href="#column-visibility">Column Visibility</a></li>
+                            <li><a href="#column-management">Column Management</a></li>
                             <li><a href="#css">CSS Classes &amp; Theming </a></li>
                         </ul>
 
