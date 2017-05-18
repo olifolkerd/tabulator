@@ -383,8 +383,8 @@ $("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajax
     },
 });</pre>
 
-                    <h3>Callbacks</h3>
-                    <p>A range of callbacks are avaialble for tracking progress of ajax data loading. (see the <a href="#callbacks-ajax">Ajax Callbacks</a> section for more information.</p>
+                    <h3>Callbacks <span class="label label-primary">Updated</span></h3>
+                    <p>A range of callbacks are avaialble for tracking progress of ajax data loading. See the <a href="#callbacks-ajax">Ajax Callbacks</a> section for more information.</p>
 
 
                     <h3>Server Side Code (PHP)</h3>
@@ -917,16 +917,16 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                 <a class="anchor" id="manipulating-data"></a>
                 <article>
-                    <h1>Editing &amp; Manipulating Data </h1>
+                    <h1>Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator allows you to manipulate the data in the table in a number of different ways</p>
 
-                    <h2>Editable Data <a class="example-link" href="../../examples?#editable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
-                    <p>Columns of the table can be set as editable using the <span class='param'>editable</span> parameter in the column definition. (see <a href="#define-column-headers">Define Column Headers</a> for more details).</p>
+                    <h2>Editable Data <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#editable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <p>Columns of the table can be set as editable using the <span class='param'>editor</span> parameter in the column definition. (see <a href="#define-column-headers">Define Column Headers</a> for more details).</p>
 
                     <p>When a user clicks on an editable column the will be able to edit the value for that cell.</p>
 
-                    <p>By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column using the <span class='param'>editor</span> option in the column definition.</p>
+                    <p>By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column using the <span class='param'>editor</span> option in the column definition. Passing a value of <span class='param'>true</span> to this option will result in Tabulator applying the editor that best matches the columns formatter, if present.</p>
 
                     <pre class="prettyprint lang-js">{title:"Rating", field:"rating", editor:"star"}</pre>
 
@@ -940,45 +940,58 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                         <li><strong>progress</strong> -  editor for progress bar columns (can use left/right arrow keys and enter for selection as well as mouse)</li>
                     </ul>
 
-                    <p>You can define a custom editor function in the editor option:</p>
+                    <h3>Custom Editor <span class="label label-primary">Updated</span></h3>
 
-                    <pre class="prettyprint lang-js">{title:"Gender", field:"gender", editor:function(cell, value, data){
-        //cell - JQuery object for current cell
-        //value - the current value for current cell
-        //data - the data for the current row
+                    <p>If you need a different type of editor, you can pass a custom editor function to the <span class='param'>editor</span> option. This function should take four parameters, a <a href='#component-cell'>CellComponent</a> for the cell being edited, a function to call when the cell has ben rendered, which can be used to set focus or tidy up the display after the element has become visible, a function to call to pass back the new value, when the user has successfully entered new data in the cell, and a function to call if the user aborts the edit. </p>
 
-        //create and style editor
-        var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
-        editor.css({
-            "padding":"3px",
-            "width":"100%",
-            "box-sizing":"border-box",
-        })
+                    <pre class="prettyprint lang-js">var selectEditor = function(cell, onRendered, success, cancel){
+    //cell - the cell component for the editable cell
+    //onRendered - function to call when the editor has been rendered
+    //success - function to call to pass the succesfully updated value to Tabulator
+    //cancel - function to call to abort the edit and return to a normal cell
 
-        //Set value of editor to the current value of the cell
-        editor.val(value);
+    //create and style editor
+    var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+    editor.css({
+        "padding":"3px",
+        "width":"100%",
+        "box-sizing":"border-box",
+    })
 
-        //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-        if(cell.hasClass("tabulator-cell")){ //check to make sure this editor isnt being used as a header filter
-            setTimeout(function(){
-                editor.focus();
-            },100);
-        }
+    //Set value of editor to the current value of the cell
+    editor.val(cell.getValue());
 
-        //when the value has been set, trigger the cell to update
-        editor.on("change blur", function(e){
-            cell.trigger("editval", editor.val());
-        });
+    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+    onRendered(function(){
+      input.focus();
+    });}
 
-        //return the editor element
-        return editor;
-    },
-}</pre>
+    //when the value has been set, trigger the cell to update
+    editor.on("change blur", function(e){
+        success(editor.val());
+    });
 
-                    <p>Returning a value of <span class='param'>false</span> from this function will abort the edit and prevent the cell from being selected.</p>
+    //return the editor element
+    return editor;
+};
 
-                    <h3>Data Mutation</h3>
-                    <p class="note"><strong>Note:</strong> if you have defined any mutator functions in your column definition array, these will be applied to your edited value as it is being parsed into the table. (see <a href="#mutators">Mutators</a> for more details)</p>
+{title:"Gender", field:"gender", editor:selectEditor}}</pre>
+                    <h3>Optional Editing <span class="label label-danger">New</span></h3>
+
+                    <p>There are some circumstances where you may want to block editibility of a cell for one reason or another. To meet this need you can use the <span class='param'>editable</span> option. This lets you set a callback that is executed before the editor is built, if this callback returns <span class='param'>true</span> the editor is added, if it returns <span class='param'>false</span> the edit is aborted and the cell remains a non editable cell. The function has one paramter, the <a href='#component-cell'>CellComponent</a> of the cell about to be edited.</p>
+
+                    <pre class="prettyprint lang-js">var editCheck = function(cell){
+    //cell - the cell component for the editable cell
+
+    //get row data
+    var data = cell.getRow().getData();
+
+    return data.age > 18; // only allow the name cell to be edited if the age is over 18
+}
+
+{title:"Name", field:"name", editor:"string", editable:editCheck}}</pre>
+
+                    <p class="note"><strong>Data Mutation</strong> <br>if you have defined any mutator functions in your column definition array, these will be applied to your edited value as it is being parsed into the table. (see <a href="#mutators">Mutators</a> for more details)</p>
 
                     <h2>Updating Data </h2>
                     <p>If you want to update an existing set of data in the table, without completely replacing the data as the <span class='param'>setData</span> method would do, you can use the <span class='param'>updateData</span> method.</p>
@@ -999,12 +1012,11 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("updateOrAddData", [{id:1, name:"bob"}, {id:3, name:"steve"}]);</pre>
 
-                    <h3>Data Mutation</h3>
-                   <p class="note"><strong>Note:</strong> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the table is updated. (see <a href="#mutators">Mutators</a> for more details)</p>
+                    <p class="note"><strong>Data Mutation</strong> <br> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the table is updated. (see <a href="#mutators">Mutators</a> for more details)</p>
 
 
 
-                    <h2>Retreiving Data </h2>
+                    <h2>Retreiving Data <span class="label label-primary">Updated</span></h2>
                     <h3>Retreive All Data</h3>
                     <p>You can retreive the data stored in the table using the <span class='param'>getData</span> function.</p>
                     <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData");</pre>
@@ -1014,25 +1026,27 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData", true); //return currently filtered data</pre>
 
-                    <h3>Retreive Row Data </h3>
-                    <p>The <span class='param'>getRowData</span> function will return the row data object for a single row. The first argument will take either the index of the row data or the jQuery object representing the row element.</p>
+                    <h3>Retreive Row Data <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>getRowData</span> function will return the row data object for a single row. The first argument is the row you are looking for, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
 
                     <pre class="prettyprint lang-js">var rowData = $("#example-table").tabulator("getRowData", 1); //return data for row with index of 1</pre>
 
-                    <h3>Data Accessors</h3>
+                    <p>Alternatively, if you already have the <a href='#component-row'>RowComponent</a> row you can call the <span class='param'>getData</span> function directly on the component.</p>
+                    <pre class="prettyprint lang-js">var rowData = row.getData();</pre>
 
-                    If you have defined any accessors on your columns, then these will be applied to the data before the data is returned from either of the above functions. (see <a href="#accessors">Accessors</a> for more details)</li>
+                    <p class="note"><strong>Data Accessors</strong> <br> If you have defined any accessors on your columns, then these will be applied to the data before the data is returned from any of the above functions. (see <a href="#accessors">Accessors</a> for more details)</p>
 
-                    <h2>Emptying the Table</h2>
-                    <p>You can remove all data from the table using the <span class='param'>clear</span> function:</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clear");</pre>
+
+                    <h2>Emptying the Table <span class="label label-primary">Updated</span></h2>
+                    <p>You can remove all data from the table using the <span class='param'>clearData</span> function:</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clearData");</pre>
 
                     <h2>Row Manipulation <a class="example-link" href="../../examples?#adddel"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <p>There are a number of ways to manipulate individual rows in the table without affecting any other currently rendered rows.</p>
 
                     <a class="anchor" id="addrow"></a>
-                    <h3>Add Row </h3>
+                    <h3>Add Row <span class="label label-primary">Updated</span></h3>
                     <p>You can add a row to the table using the <span class='param'>addRow</span> function.</p>
 
                     <p>The first argument should be a row data object. If you do not pass data for a column, it will be left empty. To create a blank row (ie for a user to fill in), pass an empty object to the function.</p>
@@ -1043,16 +1057,18 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p>By default any new rows will be added to the bottom of the table, to change this to the top set the <span class='param'>addRowPos</span> option to "top";</p>
 
-                    <p>If you want to add the row next to an existing row you can pass an optional third agument to the function that will position the new row next to the specified row (above or below based on the value of the second argument). You can either pass the index of the existing row or its jQuery object to this argument:</p>
+                    <p>If you want to add the row next to an existing row you can pass an optional third agument to the function that will position the new row next to the specified row (above or below based on the value of the second argument). This argument will take any of the standard <a href='#component-lookup'>row component looukup</a> options:</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("addRow", {name:"Billy Bob", age:"12"}, true, 3); //add new row above existing row with index of 3</pre>
 
-                    <p class="note"><strong>Note:</strong> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is added. (see <a href="#mutators">Mutators</a> for more details)</p>
+                    <p class="note"><strong>Data Mutation</strong> <br> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is added. (see <a href="#mutators">Mutators</a> for more details)</p>
 
-                    <h3>Update Row </h3>
+                    <h3>Update Row <span class="label label-primary">Updated</span></h3>
                     <p>You can update any row in the table using the <span class='param'>updateRow</span> function. The first argument of this function should be the index of the row you want to update (the index field being defined by the <span class='param'>index</span> option in the tabulator constructor, which defaults to "id"), alternativly you could pass a jQuery object of the row itself. </p>
 
-                    <p>The second function should be the updated data object for the row. as per the <span class='param'>updateData</span> function, this will not replace the exisiting row data object, it will only update any of the provided parameters.</p>
+                    <p>The second argument is the row you want to update, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
+
+                    <p>The third argument should be the updated data object for the row. As with the <span class='param'>updateData</span> function, this will not replace the exisiting row data object, it will only update any of the provided parameters.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("updateRow", 1, {id:1, name:"bob", gender:"male"});</pre>
 
@@ -1060,24 +1076,34 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p>This function will return <span class='param'>true</span> if the update was successfull or <span class='param'>false</span> if the requested row could not be found. If the new data matches the existing row data, no update will be performed.</p>
 
-                    <p class="note"><strong>Note:</strong> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is updated. (see <a href="#mutators">Mutators</a> for more details)</p>
+                    <p>If you already have the <a href='#component-row'>RowComponent</a> for the row you wish to update, you can call the <span class='param'>update</span> function directly on the component:</p>
+                    <pre class="prettyprint lang-js">row.update({"name":"steve"}); //update the row data for field "name"</pre>
 
-                    <h3>Update or Add Row </h3>
-                    <p>If you don't know whether a row already exists you can use the <span class='param'>updateOrAddRow</span> function. This will check if a row with a matching index exists, if it does it will update it, if not it will add a new row with that data.</p>
+                    <p class="note"><strong>Data Mutation</strong> <br> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is updated. (see <a href="#mutators">Mutators</a> for more details)</p>
+
+                    <h3>Update or Add Row <span class="label label-primary">Updated</span></h3>
+                    <p>If you don't know whether a row already exists you can use the <span class='param'>updateOrAddRow</span> function. This will check if a row with a matching index exists, if it does it will update it, if not it will add a new row with that data. This takes the same arguments as the <span class='param'>updateRow</span> function.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("updateOrAddRow", 3, {id:3, name:"steve", gender:"male"});</pre>
 
-                    <h3>Get Row Element </h3>
-                    <p>You can use the <span class='param'>getRow</span> function to return the jQuery object for a specific row element. Pass the index of the rows data object into the first argument.</p>
+                    <h3>Get Row Element <span class="label label-primary">Updated</span></h3>
+                    <p>You can use the <span class='param'>getRow</span> function to return the jQuery object for a specific row element. The first argument is the row you want to get, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
 
                     <pre class="prettyprint lang-js">var rowElement = $("#example-table").tabulator("getRow", 4);</pre>
 
                     <p>If a row with a matching index is not found, the function will return <span class='param'>false</span>.</p>
 
-                    <h3>Delete Row</h3>
-                    <p>You can delete any row in the table using the <span class='param'>deleteRow</span> function;</p>
+                    <p>If you already have the <a href='#component-row'>RowComponent</a> for the row you wish to get the element of, you can call the <span class='param'>getElement</span> function directly on the component:</p>
+                    <pre class="prettyprint lang-js">var rowElement = row.getElement();</pre>
+
+                    <h3>Delete Row <span class="label label-primary">Updated</span></h3>
+                    <p>You can delete any row in the table using the <span class='param'>deleteRow</span> function. The first argument is the row you want to delete, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("deleteRow", 15);</pre>
-                    <p>You can either pass the function the id of the row you wish to delete or the data object that represents that row.</p>
+                    <p>If you already have the <a href='#component-row'>RowComponent</a> for the row you wish to delete, you can call the <span class='param'>delete</span> function directly on the component:</p>
+                    <pre class="prettyprint lang-js">row.delete();</pre>
+
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for tracking progress of data manipulation. See the <a href="#callbacks-data">Data Callbacks</a> section for more information.</p>
 
                 </article>
 
@@ -2786,6 +2812,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //row - the DOM element of the row
     },
 });</pre>
+                    <a class="anchor" id="callbacks-data"></a>
                     <h2>Data Callbacks</h2>
 
                     <h3>Data Loading</h3>
@@ -3372,7 +3399,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#formatting">Formatting <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#sorting">Sorting <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#manipulating-data">Editing &amp; Manipulating Data </a></li>
+                            <li><a href="#manipulating-data">Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                         <h2>Layout</h2>
