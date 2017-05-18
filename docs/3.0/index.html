@@ -834,6 +834,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
         {title:"Name", field:"name", headerFilter:true, headerFilterPlaceholder:"Find a Person..."} //set placeholder text on name column header filter
     ]
 });</pre>
+
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for tracking progress of filtering. See the <a href="#callbacks-filter">Filter Callbacks</a> section for more information.</p>
                 </article>
 
 
@@ -913,7 +916,10 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     {field:"height", dir:"desc"}
 ]</pre>
 
-                    <p>If a the table is not currently sorted then the array will be empty.</p>
+                    <p>If the table is not currently sorted then the array will be empty.</p>
+
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for tracking progress of sorting. See the <a href="#callbacks-sort">Sorting Callbacks</a> section for more information.</p>
 
                 </article>
 
@@ -1622,7 +1628,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
 
                     <h2>Callbacks <span class="label label-primary">Updated</span></h2>
-                    <p>A range of callbacks are avaialble for table movements. See the <a href="#callbacks-move">Movement Callbacks</a> section for more information.</p>
+                    <p>A range of callbacks are avaialble for row and column movements. See the <a href="#callbacks-row">Row Callbacks</a> and <a href="#callbacks-column">Column Callbacks</a> sections for more information.</p>
 
                 </article>
 
@@ -2612,7 +2618,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <p>These callbacks can all be set in the options object when you create your Tabulator.</p>
 
-
+                    <a class="anchor" id="callbacks-table"></a>
                     <h2>Table Callbacks</h2>
 
                     <h3>Table Building</h3>
@@ -2685,7 +2691,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
 
 
-
+                    <a class="anchor" id="callbacks-row"></a>
                     <h2>Row Callbacks</h2>
 
                     <h3>Row Click</h3>
@@ -2762,16 +2768,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     }
 });</pre>
 
-                    <h3>Row Selection Changed</h3>
-                    <p>Whenever the number of selected rows changes, through selection or deselection, the <span class='param'>rowSelectionChanged</span> event is triggered. This passes an array of the data objects for each row in the order they were selected as the first argument, and an array of jQuery elements for each of the rows in order of selection as the second argument.</p>
 
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowSelectionChanged:function(data, rows){
-        //data - array of data objects for the selected rows in order of selection
-        //rows - array of jQuery elements for the selected rows in order of selection
-    },
-});</pre>
 
+
+                    <a class="anchor" id="callbacks-cell"></a>
                     <h2>Cell Callbacks</h2>
 
                     <h3>Cell Click</h3>
@@ -2820,8 +2820,23 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //row - the DOM element of the row
     },
 });</pre>
+
                     <a class="anchor" id="callbacks-data"></a>
                     <h2>Data Callbacks</h2>
+
+
+                    <h3>Data Edited</h3>
+                    <p>The <span class='param'>dataEdited</span> callback is triggered whenever the table data is changed by the user. Triggers for this include editing any cell in the table, adding a row and deleting a row.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataEdited:function(data){
+        //data - the updated table data
+    },
+});</pre>
+
+
+
+                    <a class="anchor" id="callbacks-ajax"></a>
+                    <h2>Ajax Callbacks</h2>
 
                     <h3>Data Loading</h3>
                     <p>The <span class='param'>dataLoading</span> callback is triggered when the <span class='param'>setData</span> function is called.</p>
@@ -2850,14 +2865,20 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
-                    <h3>Data Edited</h3>
-                    <p>The <span class='param'>dataEdited</span> callback is triggered whenever the table data is changed by the user. Triggers for this include editing any cell in the table, adding a row and deleting a row.</p>
+                    <h3>Ajax Response </h3>
+                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made. This callback can also be used to modify the received data before it is parsed by the table. If you use this callback it <strong>must</strong> return the data to be parsed by Tabulator, otherwise no data will be rendered.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataEdited:function(data){
-        //data - the updated table data
+    ajaxResponse:function(url, params, response){
+        //url - the URL of the request
+        //params - the parameters passed with the request
+        //response - the JSON object returned in the body of the response.
+
+        return response; //return the response data to tabulator
     },
 });</pre>
 
+                    <a class="anchor" id="callbacks-filter"></a>
+                    <h2>Filter Callbacks</h2>
 
                     <h3>Data Filtering</h3>
                     <p>The <span class='param'>dataFiltering</span> callback is triggered whenever a filter event occurs, before the filter happens.</p>
@@ -2880,6 +2901,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
+                    <a class="anchor" id="callbacks-sort"></a>
+                    <h2>Sorting Callbacks</h2>
+
                     <h3>Data Sorting</h3>
                     <p>The <span class='param'>dataSorting</span> callback is triggered whenever a sort event occurs, before sort happens.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -2897,22 +2921,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //dir - the direction of the sort
     },
 });</pre>
-
-                    <a class="anchor" id="callbacks-ajax"></a>
-                    <h2>Ajax Callbacks</h2>
-
-                    <h3>Ajax Response </h3>
-                    <p>The <span class='param'>ajaxResponse</span> callback is triggered when a successful ajax request has been made. This callback can also be used to modify the received data before it is parsed by the table. If you use this callback it <strong>must</strong> return the data to be parsed by Tabulator, otherwise no data will be rendered.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    ajaxResponse:function(url, params, response){
-        //url - the URL of the request
-        //params - the parameters passed with the request
-        //response - the JSON object returned in the body of the response.
-
-        return response; //return the response data to tabulator
-    },
-});</pre>
-
 
                     <a class="anchor" id="callbacks-layout"></a>
                     <h2>Layout Callbacks</h2>
@@ -2962,15 +2970,22 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
+
+
                 <a class="anchor" id="callbacks-group"></a>
                 <h2>Group Callbacks</h2>
 
                 <a class="anchor" id="callbacks-select"></a>
                 <h2>Selection Callbacks</h2>
+                <h3>Row Selection Changed</h3>
+                <p>Whenever the number of selected rows changes, through selection or deselection, the <span class='param'>rowSelectionChanged</span> event is triggered. This passes an array of the data objects for each row in the order they were selected as the first argument, and an array of jQuery elements for each of the rows in order of selection as the second argument.</p>
 
-                <a class="anchor" id="callbacks-move"></a>
-                <h2>Movement Callbacks</h2>
-
+                <pre class="prettyprint lang-js">$("#example-table").tabulator({
+rowSelectionChanged:function(data, rows){
+    //data - array of data objects for the selected rows in order of selection
+    //rows - array of jQuery elements for the selected rows in order of selection
+},
+});</pre>
 
                 </article>
                 <a class="anchor" id="download"></a>
