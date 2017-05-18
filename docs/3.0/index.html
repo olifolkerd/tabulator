@@ -1111,34 +1111,29 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                 <a class="anchor" id="layout"></a>
                 <article>
-                    <h1>Table Layout </h1>
+                    <h1>Table Layout <span class="label label-primary">Updated</span></h1>
 
-                    <p>Tabulator will arrange your data to fit as neatly as possible into the space provided. It has two different layout styles:</p>
-
-                    <ul>
-                        <li>Fit columns to data (default)</li>
-                        <li>Fit columns to container</li>
-                    </ul>
+                    <p>Tabulator has tons of different ways of customizing the layout the table, have a look through the next few sections to see how you can configure your tables to meet your use case. </p>
 
                     <a class="anchor" id="fittodata"></a>
                     <h2>Fit Columns to Data <a class="example-link" href="../../examples?#fittodata"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
-                    <p>This is the default table layout style and will cause columns to resize to fit the widest element they contain (unless a column width was set in the column options). If the width of all columns exceeds the width of the containing element, a scroll bar will appear.</p>
+                    <p>By default Tabulator will resize your tables columns to fit the data held in each column, unless you specify a <span class='param'>width</span> or <span class='param'>minWidth</span> in the column constructor. If the width of all columns exceeds the width of the containing element, a scroll bar will appear.</p>
 
                     <a class="anchor" id="fittowidth"></a>
                     <h2>Fit Columns to Container <a class="example-link" href="../../examples?#fittowidth"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
-                    <p>This option will resize columns so that they fit perfectly inside the width of the container.</p>
+                    <p>As an alternative to the default column fit you can use the <span class='param'>fitColumns</span> option to cause tabulato to resize columns so they fit perfectly in the available table width.</p>
 
                     <p>If a width is specified on any columns, where possible the columns will be set at this width and other columns will be resized around them. If there is not enough space to fit all the columns in, then all column widths are ignored and they are sized equally.</p>
 
                     <p>In this layout style at least one column must not have a width specified so it can be resized to fill any spare space.</p>
 
-                    <p>to enable this layout mode set the <span class='param'>fitColumns</span> option to true when you create your Tabulator.</p>
+                    <p>To enable this layout mode set the <span class='param'>fitColumns</span> option to <span class='param'>true</span> in your table constructor object.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     fitColumns:true, // this option takes a boolean value (default = false)
 });</pre>
 
                     <a class="anchor" id="responsive-layout"></a>
-                    <h2>Responsive Layout <a class="example-link" href="../../examples?#responsive-layout"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Responsive Layout <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#responsive-layout"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <p>Responsive layout will automatically hide/show columns to fit the width of the Tabulator element. This allows for clean rendering of tables on smaller mobile devices, showing important data while avoiding horizontal scroll bars. You can enable responsive layouts using the <span class='param'>responsiveLayout</span> option.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -1161,16 +1156,14 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     ],
 });</pre>
 
-                    <p class="note"><strong>Note:</strong> At present responsive layout will only function once a data has been set on a table.</p>
-
 
                     <a class="anchor" id="col-resize"></a>
-                    <h2>Resizable Columns</h2>
-                    <p>By default it is possible to manually resize columns by dragging the borders of the column headers.</p>
+                    <h2>Resizable Columns <span class="label label-primary">Updated</span></h2>
+                    <p>By default it is possible to manually resize columns by dragging the borders of the column in both the column headers and the cells of the column.<p>
 
-                    <p>To disable this option globally set the <span class='param'>colResizable</span> option to false when you create your Tabulator.</p>
+                    <p>To disable this option globally set the <span class='param'>resizableColumns</span> option to false when you create your Tabulator.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    colResizable:false, // this option takes a boolean value (default = true)
+    resizableColumns:false, // this option takes a boolean value (default = true)
 });</pre>
                     <a class="anchor" id="col-min-width"></a>
                     <h2>Minimum Column Width  </h2>
@@ -1212,7 +1205,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
 
                     <h2>Redrawing the table</h2>
-                    <p>If the size of the element containing the Tabulator changes it is necessary to redraw the table to make sure the columns fit the new dimensions.</p>
+                    <p>If the size of the element containing the Tabulator changes or you create a table before its containing element is visible, it will necessary to redraw the table to make sure the rows and columns render correctly.</p>
 
                     <p>This can be done by calling the <span class='param'>redraw</span> method. For example, to trigger a redraw whenever the viewport width is changed:</p>
                     <pre class="prettyprint lang-js">$(window).resize(function(){
@@ -1224,38 +1217,34 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     $("#example-table").tabulator("redraw", true); //trigger full rerender including all data and rows
 });</pre>
 
+
                     <a class="anchor" id="progressive-render"></a>
-                    <h2>Progressive Rendering</h2>
-                    <p>Progressive rendering allow large data sets to be loaded into Tabulator without blocking the UI.</p>
+                    <a class="anchor" id="virtual-dom"></a>
+                    <h2>Virtual DOM <span class="label label-danger">New</span></h2>
 
-                    <p>It works by rendering blocks of rows progressively as you scroll down the table rather than all at once. On smaller tables this wont be noticeable at all but on tables with more than 200 rows it should significantly improve loading times.</p>
+                    <p>As of version 3.0 tabulator renders its table using a Virtual DOM, this means that it only renders the rows you seen in the table (plus a few above and below the current view) and creates and destroys the rows as you scroll through the table. If no height is set the table will revert to the standard DOM mode and try and render all rows at once, which will have a performance impact on tables with a large number of rows.</p>
 
-                    <p>If you wish to enable progressive rendering on your table, set the <span class='param'>progressiveRender</span> option to <span class='param'>true</span>.</p>
+                    <p>This allows tabulator to handle thousands of rows with no overhead as it only processes the information it nedds to display.</p>
+
+                    <p>This does mean it isnt possible to externally add event bindings to objects in the table as they are created and destoryed as needed. The good news is there are callbacks and options to register almsost every binding through the setup options.</p>
+
+                    <h3>Standard DOM Exceptions</h3>
+                    <p>In order for the virtual DOM to function correctly it needs to know the height of the table, so you must ensure that the <span class='param'>height</span> option of the table is set so the table can calculate correctly what it should be displaying.</p>
+
+                    <p>When pagination is enabled Tabulator will revert to using standard DOM rendering as it will only be displaying one page at a time.</p>
+
+                    <h3>Disabling the Virtual DOM</h3>
+                    <p>f you need to disable virtual rendering for any reason you can set the <span class='param'>virtualDom</span> option to <span class='param'>false</span> to force standard rendering.</p>
+
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    progressiveRender:true, //enable progressive rendering
+    virtualDom:false, //disable virtual DOM rendering
 });</pre>
 
-                    <p>By default data is progressively rendered to the table 20 rows at a time when the vertical scroll bar scroll position is less than 200px from the bottom of the table.</p>
+                    <p class="note"><strong>Note:</strong> You must have the <span class='param'>height</span> option set to enable progressive rendering.</p>
 
-                    <p>It is possible to configure the progressive rendering system using the <span class='param'>progressiveRenderSize</span> and <span class='param'>progressiveRenderMargin</span> options.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    progressiveRenderSize:500, //sets the number of rows to render per block (default = 20)
-    progressiveRenderMargin:350, //distance in px before end of scroll before progressive render is triggered (default = 200)
-});</pre>
-                    <p class="note"><strong>Note:</strong> You must have the <span class='param'>height</span> option set for your table for progressive rendering to work. If your table does not have a height set then all the rows will be rendered in one go.</p>
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for tracking progress of table rendering. See the <a href="#callbacks-layout">Layout Callbacks</a> section for more information.</p>
 
-                    <a class="anchor" id="progressive-ajax"></a>
-
-                    <h3>Progressive Rendering with Ajax Pagination </h3>
-                    <p>If you are loading from a remote data source then in is possible to combine progressive rendering with ajax pagination to make successive calls to the server to fill the table as you scroll rather than trying to load the data all in one go.</p>
-                    <p>To do this you need to set the <span class='param'>progressiveRender</span> option to a value of <span class='param'>"remote"</span> and set the <span class='param'>ajaxURL</span> option to the url of the remote data source.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    progressiveRender:"remote", //enable progressive rendering
-    ajaxURL:"/data/page", //set the ajax URL
-});</pre>
-                    <p>For a full overview of the remote pagination paramaters have a look at the <a href="#pagination-remote">Remote Pagination Documentation</a></p>
-
-                    <p class="note"><strong>Note:</strong> To ensure the best user experience it is recomended that the number of rows returned by the server for each page at least fills the hight of the table, while the system can handle smaller sizes it will result in a lot of ajax calls in very quick succession.</p>
 
                 </article>
 
@@ -1265,7 +1254,7 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                 <article>
                     <h1>Pagination  <a class="example-link" href="../../examples?#pagination"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
-                    <p>Tabulator allows for pagination of table data, displaying only a section of data at a time, allowing for smaller tables without scroll bars.</p>
+                    <p>If you would prefer to display your data as pages rather than a scrolling list Tabulator can help you out there too.</p>
 
                     <p>There are two forms of pagination available. <span class='param'>local</span> pagination, where Tabulator will parse in all available data and then paginate this data set. Or <span class='param'>remote</span> pagination, where Tabulator will load indiviudal pages of data via Ajax from a remote server.</p>
 
@@ -1276,6 +1265,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <p>If you are a Laravel user then you should find that the auto generated URL's and data processing work straight out the box with no aditional configuration needed.</p>
 
                     <p class="note"><strong>Note:</strong> Changing the filter or sorting while pagination is enabled will revert the table back to the first page.</p>
+
+                    <p class="note"><strong>Note:</strong> Pagination and row grouping cannot be used togeather, enabling one will disable the other.</p>
 
 
                     <a class="anchor" id="pagination-remote"></a>
@@ -2906,7 +2897,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 });</pre>
 
 
-
+                    <a class="anchor" id="callbacks-layout"></a>
                     <h2>Layout Callbacks</h2>
 
                     <h3>Render Started </h3>
