@@ -1245,14 +1245,12 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <h2>Callbacks <span class="label label-primary">Updated</span></h2>
                     <p>A range of callbacks are avaialble for tracking progress of table rendering. See the <a href="#callbacks-layout">Layout Callbacks</a> section for more information.</p>
 
-
                 </article>
-
 
 
                 <a class="anchor" id="pagination">  </a>
                 <article>
-                    <h1>Pagination  <a class="example-link" href="../../examples?#pagination"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Pagination <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#pagination"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>If you would prefer to display your data as pages rather than a scrolling list Tabulator can help you out there too.</p>
 
@@ -1268,9 +1266,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <p class="note"><strong>Note:</strong> Pagination and row grouping cannot be used togeather, enabling one will disable the other.</p>
 
-
                     <a class="anchor" id="pagination-remote"></a>
-                    <h2>Remote Pagination  </h2>
+                    <h2>Remote Pagination <span class="label label-primary">Updated</span></h2>
 
                     <p>To enable remote pagination, set the <span class='param'>pagination</span> option to <span class='param'>remote</span>, and set the url for the Ajax request using the <span class='param'>ajaxURL</span> paramter. You can also pass an optional object to <span class='param'>ajaxParams</span> for any paramters you want to pass with the url (these should be static parameters, the page number etc, will be added later on).</p>
 
@@ -1291,11 +1288,11 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <ul>
                         <li><strong>page</strong> - the page number being requested</li>
                         <li><strong>size</strong> - the number of rows to a page <i>(if <span class='param'>paginationSize</span> is set)</i></li>
-                        <li><strong>sort</strong> - the currently sorted field <i>(if data is sorted by user)</i></li>
-                        <li><strong>sort_dir</strong> - the current sort direction <i>(if data is sorted by user)</i></li>
-                        <li><strong>filter</strong> - the currently filtered field <i>(if data is filtered by user)</i></li>
-                        <li><strong>filter_value</strong> - the current filter value <i>(if data is filtered by user)</i></li>
-                        <li><strong>filter_type</strong> - the current filter type <i>(if data is filtered by user)</i></li>
+                        <li><strong>sort</strong> - the first currently sorted field <i>(if any)</i></li>
+                        <li><strong>sort_dir</strong> - the first currently sort direction <i>(if any)</i></li>
+                        <li><strong>filter</strong> - the first currently filtered field <i>(if any)</i></li>
+                        <li><strong>filter_value</strong> - the first current filter value <i>(if any)</i></li>
+                        <li><strong>filter_type</strong> - the first current filter type <i>(if any)</i></li>
                     </ul>
 
                     <p>If you need to change the names of any of these paramters to fit your existing system, you can use the <span class='param'>paginationDataSent</span> option to set alternative parameter names.</p>
@@ -1308,7 +1305,9 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     } ,
 });</pre>
 
-                    <p>If you need to have more complex control over the request URL, you can pass a callback to the <span class='param'>paginator</span> paramter to return the URL you wish to use for each page.</p>
+                    <h3>Custom Pagination URL Construction</h3>
+
+                    <p>If you need to have more complex control over the request URL, you can pass a callback to the <span class='param'>paginator</span> option to return the URL you wish to use for each page.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     pagination:"remote", //enable remote pagination
     ajaxURL:"http://testdata.com/data", //set url for ajax request
@@ -1321,6 +1320,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
         return ""; //must return the string of the page request URL
     },
 });</pre>
+
+<p class="note"><strong>Note:</strong> If you use a paginator function you will need to manyally add the sort and filter parameters to the request url.</p>
 
                     <h3>Returned Data</h3>
 
@@ -1343,9 +1344,6 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     } ,
 });</pre>
 
-                    <h3>Remote Pagination with Progressive Rendering </h3>
-                    <p>An alternative to using the page control buttons would be to use progressive rendering, where as the user scrolls through the table new pages of data are automatically requested from the server and added to the bottom of the table.</p>
-                    <p>For more details on how to do this, have a look at the documentation for <a href="#progressive-ajax">Progressive Rendering with Ajax Pagination</a></p>
                     <a class="anchor" id="pagination-local"></a>
                     <h2>Local Pagination </h2>
                     <p>Local pagination works by loading the entier data set into the table then generating paged views of that data.</p>
@@ -1372,8 +1370,8 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 });</pre>
 
                     <a class="anchor" id="pagination-features"></a>
-                    <h2>Additional Features</h2>
-                    <p>A number of aditional features are available to help customize the pagination experience.</p>
+                    <h2>Advance Controls</h2>
+                    <p>A number of additional controls are available to help customize the pagination experience.</p>
 
                     <h3>Set Current Page</h3>
                     <p>When pagination is enabled the table footer will contain a number of pagination controls for navigating through the data.</p>
@@ -1393,16 +1391,6 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <p>You can change the page size at any point by using the <span class='param'>setPageSize</span> function. <i>(this setting will be ignored if using remote pagination with the page size set by the server)</i></p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setPageSize", 50); // show 50 rows per page</pre>
 
-                    <h3>pageLoaded Callback</h3>
-
-                    <p>Whenever a page has been loaded, the <span class='param'>pageLoaded</span> callback is called, passing the current page number as an argument.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    pagination:"local",
-    pageLoaded:function(pageno){
-        alert("Number of loaded page:" + pageno);
-    }
-});</pre>
 
                     <h3>Get Current Page Number</h3>
 
@@ -1424,22 +1412,29 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
     paginationElement:$("#pagination-element"), //build pagination controls in this element
 });</pre>
 
+                    <h2>Callbacks <span class="label label-primary">Updated</span></h2>
+                    <p>A range of callbacks are avaialble for pagination. See the <a href="#callbacks-page">Pagination Callbacks</a> section for more information.</p>
+
                 </article>
 
                 <a class="anchor" id="grouping"></a>
                 <article>
                     <h1>Grouping Data <a class="example-link" href="../../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
-                    <p> With Tabulator you can group rows together using the <span class='param'>groupBy</span> option.</p>
-                    <p>To group by a field, set this option to the name of the field to be grouped.</p>
+                    <p>You can group rows togeather that share a column value, this creates a visible header for each group and allows the user to colapse groups that they dont want to see.</p>
+
+                    <p>Rows can be grouped by a common field value  by setting the <span class='param'>groupBy</span> option to the name of the field to be grouped.</p>
                     <pre class="prettyprint lang-js">groupBy:"gender",</pre>
 
-                    <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+                    <p>If you need to group by more complex value, you can pass a function that returns a string that represents the group.</p>
                     <pre class="prettyprint lang-js">groupBy:function(data){
     //data - the data object for the row being grouped
 
     return data.gender + " - " + data.age; //groups by data and age
 }</pre>
+
+                    <p class="note"><strong>Note:</strong> Grouping and pagination cannot be used togeather, enabling one will disable the other.</p>
+
 
                     <h2>Custom Group Headers</h2>
                     <p>You can set the contents of the group headers with the <span class='param'>groupHeader</span> option. This should return the contents of the group header.</p>
@@ -1472,11 +1467,10 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
     return count > 3; //all groups with more than three rows start open, any with three or less start closed
 },</pre>
-
+                    <h2>Callbacks <span class="label label-danger">New</span></h2>
+                    <p>A range of callbacks are avaialble for grouping. See the <a href="#callbacks-group">Group Callbacks</a> section for more information.</p>
 
                 </article>
-
-
 
 
 
@@ -2924,6 +2918,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
+
+                    <a class="anchor" id="callbacks-page"></a>
+                    <h2>Pagination Callbacks</h2>
                     <h3>Page Loaded</h3>
                     <p>Whenever a page has been loaded, the <span class='param'>pageLoaded</span> callback is called, passing the current page number as an argument.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -2941,6 +2938,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //lang - the language object for the current locale
     },
 });</pre>
+
+                <a class="anchor" id="callbacks-group"></a>
+                <h2>Group Callbacks</h2>
 
 
 
