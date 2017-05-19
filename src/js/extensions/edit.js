@@ -48,6 +48,7 @@ Edit.prototype.bindEditor = function(cell){
 	function cancel(){
 		self.clearEditor(cell);
 		cell.setValue(cell.getValue());
+		self.table.options.cellEditCancelled(cell.getComponent())
 	};
 
 	element.attr("tabindex", 0);
@@ -75,6 +76,8 @@ Edit.prototype.bindEditor = function(cell){
 			}
 
 			if(allowEdit){
+
+				self.table.options.cellEditing(cell.getComponent());
 
 				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
 

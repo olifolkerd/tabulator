@@ -481,6 +481,7 @@ Column.prototype.checkGroupVisibility = function(){
 
 	if(visible){
 		this.show()
+		this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
 	}else{
 		this.hide();
 	}
@@ -506,6 +507,8 @@ Column.prototype.show = function(){
 		if(this.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
 			self.table.extensions.persistentLayout.save();
 		}
+
+		this.table.options.groupVisibilityChanged(this.getComponent(), true);
 	}
 };
 
@@ -528,6 +531,8 @@ Column.prototype.hide = function(){
 		if(this.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
 			self.table.extensions.persistentLayout.save();
 		}
+
+		this.table.options.groupVisibilityChanged(this.getComponent(), false);
 	}
 };
 

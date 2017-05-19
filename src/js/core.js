@@ -96,25 +96,38 @@
 	 			rowDeleted:function(){},
 	 			rowMoved:function(){},
 	 			rowUpdated:function(){},
-	 			rowSelectionChanged:function(){},
 
+
+	 			rowSelectionChanged:function(){},
+	 			rowSelected:function(){},
+	 			rowDeselected:function(){},
+
+	 			cellEditing:function(){},
 	 			cellEdited:function(){},
+	 			cellEditCancelled:function(){},
 
 	 			columnMoved:function(){},
 	 			columnTitleChanged:function(){},
+	 			columnVisibilityChanged:function(){},
 
 	 			dataLoading:function(){},
 	 			dataLoaded:function(){},
-	 			dataLoadError:function(){},
+
 	 			dataEdited:function(){},
 
+	 			ajaxRequesting:function(){},
 	 			ajaxResponse:false,
+	 			ajaxError:function(){},
 
 	 			dataFiltering:false,
 	 			dataFiltered:false,
 
 	 			dataSorting:function(){},
 	 			dataSorted:function(){},
+
+	 			dataGrouping:function(){},
+	 			dataGrouped:false,
+	 			groupVisibilityChanged:function(){},
 
 	 			renderStarted:function(){},
 	 			renderComplete:function(){},
@@ -256,8 +269,7 @@
 	 		//load data
 	 		setData:function(data, params, config){
 	 			var self = this;
-
-	 			self.options.dataLoading(data, params);
+	 			var self = this;
 
 	 			if(typeof(data) === "string"){
 	 				if (data.indexOf("{") == 0 || data.indexOf("[") == 0){

@@ -157,6 +157,8 @@ RowManager.prototype.scrollToRow = function(row){
 RowManager.prototype.setData = function(data){
 	var self = this;
 
+	self.tabble.options.dataLoading(data);
+
 	self.rows = [];
 
 	data.forEach(function(def, i){
@@ -164,6 +166,8 @@ RowManager.prototype.setData = function(data){
 
 		self.rows.push(row);
 	});
+
+	self.tabble.options.dataLoaded(data);
 
 	self.refreshActiveData(true);
 };

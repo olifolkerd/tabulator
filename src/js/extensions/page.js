@@ -272,6 +272,7 @@ Page.prototype.trigger = function(){
 	switch(this.mode){
 		case "local":
 		this.table.rowManager.refreshActiveData();
+		this.table.options.pageLoaded(this.getPage());
 		break;
 
 		case "remote":
@@ -281,8 +282,6 @@ Page.prototype.trigger = function(){
 		default:
 		console.warn("Pagination Error - no such pagination mode:", this.mode);
 	}
-
-	this.table.options.pageLoaded(this.getPage());
 };
 
 Page.prototype._getRemotePage = function(){
@@ -291,7 +290,7 @@ Page.prototype._getRemotePage = function(){
 		if(this.paginator){
 			this._getRemotePagePaginator();
 		}else{
-			this._getRemotePageAudo();
+			this._getRemotePageAuto();
 		}
 	}
 };
@@ -310,7 +309,7 @@ Page.prototype._getRemotePagePaginator = function(){
 	ajax.setUrl(oldUrl);
 };
 
-Page.prototype._getRemotePageAudo = function(){
+Page.prototype._getRemotePageAuto = function(){
 	var self = this,
 	oldParams, pageParams;
 
@@ -367,6 +366,8 @@ Page.prototype._parseRemoteData = function(data){
 			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
 			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+			this.table.options.pageLoaded(this.getPage());
 		}else{
 			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
 		}

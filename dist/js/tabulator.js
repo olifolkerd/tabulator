@@ -1331,6 +1331,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (visible) {
 
       this.show();
+
+      this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
     } else {
 
       this.hide();
@@ -1364,6 +1366,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.extensions.persistentLayout.save();
       }
+
+      this.table.options.groupVisibilityChanged(this.getComponent(), true);
     }
   };
 
@@ -1394,6 +1398,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.extensions.persistentLayout.save();
       }
+
+      this.table.options.groupVisibilityChanged(this.getComponent(), false);
     }
   };
 
@@ -1777,6 +1783,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
+    self.tabble.options.dataLoading(data);
+
     self.rows = [];
 
     data.forEach(function (def, i) {
@@ -1785,6 +1793,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.rows.push(row);
     });
+
+    self.tabble.options.dataLoaded(data);
 
     self.refreshActiveData(true);
   };
@@ -3460,21 +3470,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rowSelectionChanged: function rowSelectionChanged() {},
 
+      rowSelected: function rowSelected() {},
+
+      rowDeselected: function rowDeselected() {},
+
+      cellEditing: function cellEditing() {},
+
       cellEdited: function cellEdited() {},
+
+      cellEditCancelled: function cellEditCancelled() {},
 
       columnMoved: function columnMoved() {},
 
       columnTitleChanged: function columnTitleChanged() {},
 
+      columnVisibilityChanged: function columnVisibilityChanged() {},
+
       dataLoading: function dataLoading() {},
 
       dataLoaded: function dataLoaded() {},
 
-      dataLoadError: function dataLoadError() {},
-
       dataEdited: function dataEdited() {},
 
+      ajaxRequesting: function ajaxRequesting() {},
+
       ajaxResponse: false,
+
+      ajaxError: function ajaxError() {},
 
       dataFiltering: false,
 
@@ -3483,6 +3505,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       dataSorting: function dataSorting() {},
 
       dataSorted: function dataSorted() {},
+
+      dataGrouping: function dataGrouping() {},
+
+      dataGrouped: false,
+
+      groupVisibilityChanged: function groupVisibilityChanged() {},
 
       renderStarted: function renderStarted() {},
 
@@ -3671,7 +3699,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      self.options.dataLoading(data, params);
+      var self = this;
 
       if (typeof data === "string") {
 
@@ -5423,6 +5451,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.clearEditor(cell);
 
       cell.setValue(cell.getValue());
+
+      self.table.options.cellEditCancelled(cell.getComponent());
     };
 
     element.attr("tabindex", 0);
@@ -5456,6 +5486,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         if (allowEdit) {
+
+          self.table.options.cellEditing(cell.getComponent());
 
           cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
 
@@ -6414,6 +6446,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.rowManager.refreshActiveData();
 
+        this.table.options.pageLoaded(this.getPage());
+
         break;
 
       case "remote":
@@ -6427,8 +6461,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         console.warn("Pagination Error - no such pagination mode:", this.mode);
 
     }
-
-    this.table.options.pageLoaded(this.getPage());
   };
 
   Page.prototype._getRemotePage = function () {
@@ -6440,7 +6472,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this._getRemotePagePaginator();
       } else {
 
-        this._getRemotePageAudo();
+        this._getRemotePageAuto();
       }
     }
   };
@@ -6461,7 +6493,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     ajax.setUrl(oldUrl);
   };
 
-  Page.prototype._getRemotePageAudo = function () {
+  Page.prototype._getRemotePageAuto = function () {
 
     var self = this,
         oldParams,
@@ -6538,6 +6570,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
         this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+        this.table.options.pageLoaded(this.getPage());
       } else {
 
         console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
@@ -6854,6 +6888,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.config.data = self.params;
       }
 
+      self.table.options.ajaxRequesting(self.url, self.params, data);
+
       self.showLoader();
 
       $.ajax(self.config).done(function (data) {
@@ -6872,7 +6908,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
 
-        self.table.options.dataLoadError(xhr, textStatus, errorThrown);
+        self.table.options.ajaxError(xhr, textStatus, errorThrown);
 
         self.showError();
 
@@ -7107,6 +7143,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!silent) {
 
+        self.table.options.rowSelected(row.getComponent());
+
         self._rowSelectionChanged();
       }
     } else {
@@ -7175,6 +7213,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.selectedRows.splice(index, 1);
 
         if (!silent) {
+
+          self.table.options.rowDeselected(row.getComponent());
 
           self._rowSelectionChanged();
         }
@@ -8008,6 +8048,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       type: "GroupComponent", //type of element
 
 
+      getElement: function getElement() {
+
+        return group.element;
+      },
+
+      getRows: function getRows() {
+
+        var output = [];
+
+        group.rows.forEach(function (row) {
+
+          output.push(row.getComponent());
+        });
+
+        return output;
+      },
+
+      getVisibility: function getVisibility() {
+
+        return group.visible;
+      },
+
+      show: function show() {
+
+        group.show();
+      },
+
+      hide: function hide() {
+
+        group.hide();
+      },
+
+      toggle: function toggle() {
+
+        group.toggleVisibility();
+      },
+
       _getSelf: function _getSelf() {
 
         return group;
@@ -8111,6 +8188,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.parent.updateGroupRows(true);
     }
+
+    this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
   };
 
   Group.prototype.show = function () {
@@ -8131,6 +8210,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.parent.updateGroupRows(true);
     }
+
+    this.parent.table.options.groupVisibilityChanged(this.getComponent(), true);
   };
 
   Group.prototype._visSet = function () {
@@ -8307,15 +8388,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   GroupRows.prototype.getRows = function (data) {
 
-    var self = this;
-
-    var oldGroups = self.groups;
+    var self = this,
+        oldGroups = self.groups,
+        groupComponents = [];
 
     self.groups = {};
 
     self.groupList = [];
 
     if (self.findGroupId) {
+
+      self.table.options.dataGrouping();
 
       data.forEach(function (row) {
 
@@ -8332,6 +8415,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.groups[groupID].addRow(row);
       });
+
+      if (self.table.options.dataGrouped) {
+
+        self.groupList.forEach(function (group) {
+
+          self.groupComponents.push(group.getComponent());
+        });
+
+        self.table.options.dataGrouped();
+      };
 
       return self.updateGroupRows();
     } else {

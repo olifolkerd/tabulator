@@ -131,6 +131,7 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 		self.selectedRows.push(row);
 
 		if(!silent){
+			self.table.options.rowSelected(row.getComponent());
 			self._rowSelectionChanged();
 		}
 	}else{
@@ -182,6 +183,7 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			self.selectedRows.splice(index, 1);
 
 			if(!silent){
+				self.table.options.rowDeselected(row.getComponent());
 				self._rowSelectionChanged();
 			}
 		}

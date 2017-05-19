@@ -6,6 +6,36 @@ var GroupComponent = function (group){
 	var obj = {
 		type:"GroupComponent", //type of element
 
+		getElement:function(){
+			return group.element;
+		},
+
+		getRows:function(){
+			var output = []
+
+			group.rows.forEach(function(row){
+				output.push(row.getComponent());
+			});
+
+			return output;
+		},
+
+		getVisibility:function(){
+			return group.visible;
+		},
+
+		show:function(){
+			group.show()
+		},
+
+		hide:function(){
+			group.hide();
+		},
+
+		toggle:function(){
+			group.toggleVisibility();
+		},
+
 		_getSelf:function(){
 			return group;
 		},
@@ -77,6 +107,8 @@ Group.prototype.hide = function(){
 	}else{
 		this.parent.updateGroupRows(true);
 	}
+
+	this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
 };
 
 Group.prototype.show = function(){
@@ -92,6 +124,8 @@ Group.prototype.show = function(){
 	}else{
 		this.parent.updateGroupRows(true);
 	}
+
+	this.parent.table.options.groupVisibilityChanged(this.getComponent(), true);
 };
 
 Group.prototype._visSet = function(){
@@ -215,13 +249,16 @@ GroupRows.prototype.initialize = function(){
 
 //return appropriate rows with group headers
 GroupRows.prototype.getRows = function(data){
-	var self = this;
+	var self = this,
+	oldGroups = self.groups,
+	groupComponents = [];
 
-	var oldGroups = self.groups;
 	self.groups = {};
 	self.groupList =[];
 
 	if(self.findGroupId){
+
+		self.table.options.dataGrouping();
 
 		data.forEach(function(row){
 
@@ -236,6 +273,14 @@ GroupRows.prototype.getRows = function(data){
 
 			self.groups[groupID].addRow(row);
 		});
+
+		if(self.table.options.dataGrouped){
+			self.groupList.forEach(function(group){
+				self.groupComponents.push(group.getComponent());
+			});
+
+			self.table.options.dataGrouped();
+		};
 
 		return self.updateGroupRows();
 

@@ -84,6 +84,7 @@ Ajax.prototype.sendRequest = function(callback){
 	var self = this;
 
 	if(self.url){
+
 		self._loadDefaultConfig();
 
 		self.config.url = self.url;
@@ -91,6 +92,8 @@ Ajax.prototype.sendRequest = function(callback){
 		if(self.params){
 			self.config.data = self.params;
 		}
+
+		self.table.options.ajaxRequesting(self.url, self.params, data)
 
 		self.showLoader();
 
@@ -109,7 +112,7 @@ Ajax.prototype.sendRequest = function(callback){
 		.fail(function(xhr, textStatus, errorThrown){
 			console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
 
-			self.table.options.dataLoadError(xhr, textStatus, errorThrown);
+			self.table.options.ajaxError(xhr, textStatus, errorThrown);
 			self.showError();
 
 			setTimeout(function(){
