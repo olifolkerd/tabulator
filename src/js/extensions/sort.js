@@ -80,21 +80,17 @@ Sort.prototype.setSort = function(sortList, dir){
 	sortList.forEach(function(item){
 		var column;
 
-		if(typeof item.column == "string"){
+		item.column = self.table.columnManager.findColumn(item.column);
 
-			column = self.table.columnManager.getColumnByField(item.column);
+		if(item.column){
+			item.column = item.column;
 
-			if(column){
-				item.column = column;
-				newSortList.push(item);
-				self.changed = true;
-			}else{
-				console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
-			}
-		}else{
 			newSortList.push(item);
 			self.changed = true;
+		}else{
+			console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
 		}
+
 	});
 
 	self.sortList = newSortList;
@@ -184,7 +180,7 @@ Sort.prototype._sortRow = function(a, b, column, dir){
 	a = el1.getData()[column.getField()];
 	b = el2.getData()[column.getField()];
 
-	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column, dir);
+	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir);
 };
 
 //format date for date comparison

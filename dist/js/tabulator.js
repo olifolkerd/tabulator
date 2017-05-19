@@ -1783,7 +1783,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
-    self.tabble.options.dataLoading(data);
+    self.table.options.dataLoading(data);
 
     self.rows = [];
 
@@ -1794,7 +1794,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.rows.push(row);
     });
 
-    self.tabble.options.dataLoaded(data);
+    self.table.options.dataLoaded(data);
 
     self.refreshActiveData(true);
   };
@@ -4769,26 +4769,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var column;
 
-      if (typeof item.column == "string") {
+      item.column = self.table.columnManager.findColumn(item.column);
 
-        column = self.table.columnManager.getColumnByField(item.column);
+      if (item.column) {
 
-        if (column) {
-
-          item.column = column;
-
-          newSortList.push(item);
-
-          self.changed = true;
-        } else {
-
-          console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
-        }
-      } else {
+        item.column = item.column;
 
         newSortList.push(item);
 
         self.changed = true;
+      } else {
+
+        console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
       }
     });
 
@@ -4913,7 +4905,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     b = el2.getData()[column.getField()];
 
-    return column.extensions.sort.sorter.call(self, a, b, el1, el2, column, dir);
+    return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir);
   };
 
   //format date for date comparison
