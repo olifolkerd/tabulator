@@ -157,7 +157,7 @@ RowManager.prototype.scrollToRow = function(row){
 RowManager.prototype.setData = function(data){
 	var self = this;
 
-	self.tabble.options.dataLoading(data);
+	self.table.options.dataLoading(data);
 
 	self.rows = [];
 
@@ -167,7 +167,7 @@ RowManager.prototype.setData = function(data){
 		self.rows.push(row);
 	});
 
-	self.tabble.options.dataLoaded(data);
+	self.table.options.dataLoaded(data);
 
 	self.refreshActiveData(true);
 };
