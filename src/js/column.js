@@ -92,7 +92,7 @@ var Column = function(def, parent){
 			this.attachColumn(newCol);
 		});
 
-		this.checkGroupVisibility();
+		this.checkColumnVisibility();
 	}else{
 		parent.registerColumnField(this);
 	}
@@ -470,7 +470,7 @@ Column.prototype.getDefinition = function(updateBranches){
 
 //////////////////// Actions ////////////////////
 
-Column.prototype.checkGroupVisibility = function(){
+Column.prototype.checkColumnVisibility = function(){
 	var visible = false;
 
 	this.columns.forEach(function(column){
@@ -481,7 +481,7 @@ Column.prototype.checkGroupVisibility = function(){
 
 	if(visible){
 		this.show()
-		this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
+		this.parent.table.options.columnVisibilityChanged(this.getComponent(), false);
 	}else{
 		this.hide();
 	}
@@ -497,7 +497,7 @@ Column.prototype.show = function(){
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
-			this.parent.checkGroupVisibility();
+			this.parent.checkColumnVisibility();
 		}
 
 		this.cells.forEach(function(cell){
@@ -521,7 +521,7 @@ Column.prototype.hide = function(){
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
-			this.parent.checkGroupVisibility();
+			this.parent.checkColumnVisibility();
 		}
 
 		this.cells.forEach(function(cell){

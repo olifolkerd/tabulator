@@ -779,7 +779,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.attachColumn(newCol);
       });
 
-      this.checkGroupVisibility();
+      this.checkColumnVisibility();
     } else {
 
       parent.registerColumnField(this);
@@ -1316,7 +1316,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////////// Actions ////////////////////
 
 
-  Column.prototype.checkGroupVisibility = function () {
+  Column.prototype.checkColumnVisibility = function () {
 
     var visible = false;
 
@@ -1332,7 +1332,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.show();
 
-      this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
+      this.parent.table.options.columnVisibilityChanged(this.getComponent(), false);
     } else {
 
       this.hide();
@@ -1354,7 +1354,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.parent.isGroup) {
 
-        this.parent.checkGroupVisibility();
+        this.parent.checkColumnVisibility();
       }
 
       this.cells.forEach(function (cell) {
@@ -1386,7 +1386,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.parent.isGroup) {
 
-        this.parent.checkGroupVisibility();
+        this.parent.checkColumnVisibility();
       }
 
       this.cells.forEach(function (cell) {
@@ -6880,7 +6880,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.config.data = self.params;
       }
 
-      self.table.options.ajaxRequesting(self.url, self.params, data);
+      self.table.options.ajaxRequesting(self.url, self.params);
 
       self.showLoader();
 
@@ -8040,6 +8040,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       type: "GroupComponent", //type of element
 
 
+      getKey: function getKey() {
+
+        return group.key;
+      },
+
       getElement: function getElement() {
 
         return group.element;
@@ -8096,9 +8101,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////////////////////////////////////////
 
 
-  var Group = function Group(parent, id, generator, visible) {
+  var Group = function Group(parent, key, generator, visible) {
 
-    this.id = id;
+    this.key = key;
 
     this.parent = parent;
 
@@ -8217,7 +8222,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         data.push(row.getData());
       });
 
-      this.visible = this.visible(this.id, this.getRowCount(), data);
+      this.visible = this.visible(this.key, this.getRowCount(), data);
     }
   };
 
@@ -8245,7 +8250,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.element.removeClass("tabulator-group-visible");
     }
 
-    this.element.empty().html(this.generator(this.id, this.getRowCount(), data)).prepend(this.arrowElement);
+    this.element.empty().html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
 
     this.addBindings();
 
@@ -8415,7 +8420,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.groupComponents.push(group.getComponent());
         });
 
-        self.table.options.dataGrouped();
+        self.table.options.dataGrouped(groupList);
       };
 
       return self.updateGroupRows();
