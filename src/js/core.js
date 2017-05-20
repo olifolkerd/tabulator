@@ -15,10 +15,6 @@
 			columnManager:null, // hold Column Manager
 			rowManager:null, //hold Row Manager
 
-			config:{ //config object for holding all table setup options
-
-			},
-
 	 		//setup options
 	 		options: {
 
@@ -171,92 +167,74 @@
 
 	 		//build tabulator element
 	 		_buildElement: function(){
-	 			var self = this,
-	 			element = this.element;
+	 			var element = this.element,
+	 			ext = this.extensions,
+	 			options = this.options;
 
-	 			self.options.tableBuilding();
-
-	 			self._configureTable();
+	 			options.tableBuilding();
 
 	 			element.addClass("tabulator")
 	 			.attr("role", "grid")
 	 			.empty();
 
 	 			//set localization
-	 			if(self.options.headerFilterPlaceholder !== false){
-	 				self.extensions.localize.setHeaderFilterPlaceholder(self.options.headerFilterPlaceholder);
+	 			if(options.headerFilterPlaceholder !== false){
+	 				ext.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
 	 			}
 
-	 			for(let locale in self.options.langs){
-	 				self.extensions.localize.installLang(locale, self.options.langs[locale]);
+	 			for(let locale in options.langs){
+	 				ext.localize.installLang(locale, options.langs[locale]);
 	 			}
 
-	 			self.extensions.localize.setLocale(self.options.locale);
+	 			ext.localize.setLocale(options.locale);
 
-	 			//build table elements
-	 			element.append(self.columnManager.getElement());
-	 			element.append(self.rowManager.getElement());
-
-	 			if(self.options.pagination && self.extExists("page", true)){
-	 				element.append(self.footerManager.getElement());
-	 			}
-
-
-	 			if(self.options.persistentLayout && self.extExists("persistentLayout", true)){
-	 				self.extensions.persistentLayout.initialize(self.options.persistentLayout, self.options.persistentLayoutID);
-	 				self.options.columns = self.extensions.persistentLayout.load(self.options.columns);
-	 			}
-
-	 			self.columnManager.setColumns(self.options.columns);
-
-	 			if(self.options.initialSort && self.extExists("sort", true)){
-	 				self.extensions.sort.setSort(self.options.initialSort);
-	 			}
-
-	 			if(self.options.pagination && self.extExists("page", true)){
-	 				self.extensions.page.initialize();
-	 			}
-
-	 			if(self.options.groupBy && self.extExists("groupRows", true)){
-	 				self.extensions.groupRows.initialize();
-	 			}
-
-	 			if(self.extExists("ajax")){
-	 				self.extensions.ajax.initialize();
-	 			}
-
-	 			self.options.tableBuilt();
-
-	 		},
-
-	 		//configure the table
-	 		_configureTable: function(){
-	 			var self = this;
-	 			var config = this.config;
-
-	 			config.options = this.options;
-
-	 			// //setup persistent layout storage if needed
-	 			// if(config.options.persistentLayout){
-	 			// 	//determine persistent layout storage type
-	 			// 	config.options.persistentLayout = config.options.persistentLayout !== true ?  config.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
-
-	 			// 	//set storage tag
-	 			// 	config.options.persistentLayoutID = "tabulator-" + (config.options.persistentLayoutID ? config.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
-	 			// }
-
-	 			if(typeof self.options.placeholder == "string"){
-	 				self.options.placeholder = $("<div class='tabulator-placeholder'><span>" + self.options.placeholder + "</span></div>");
+	 			//configure placeholder element
+	 			if(typeof options.placeholder == "string"){
+	 				options.placeholder = $("<div class='tabulator-placeholder'><span>" + options.placeholder + "</span></div>");
 	 			}
 
 	 			//set table height
-	 			if(config.options.height){
-	 				config.options.height = isNaN(config.options.height) ? config.options.height : config.options.height + "px";
-	 				self.element.css({"height": config.options.height});
+	 			if(options.height){
+	 				options.height = isNaN(options.height) ? options.height : options.height + "px";
+	 				this.element.css({"height": options.height});
 	 			}
+
+	 			//build table elements
+	 			element.append(this.columnManager.getElement());
+	 			element.append(this.rowManager.getElement());
+
+
+	 			if(options.pagination && this.extExists("page", true)){
+	 				element.append(this.footerManager.getElement());
+	 			}
+
+
+	 			if(options.persistentLayout && this.extExists("persistentLayout", true)){
+	 				ext.persistentLayout.initialize(options.persistentLayout, options.persistentLayoutID);
+	 				options.columns = ext.persistentLayout.load(options.columns);
+	 			}
+
+	 			this.columnManager.setColumns(options.columns);
+
+	 			if(options.initialSort && this.extExists("sort", true)){
+	 				ext.sort.setSort(options.initialSort);
+	 			}
+
+	 			if(options.pagination && this.extExists("page", true)){
+	 				ext.page.initialize();
+	 			}
+
+	 			if(options.groupBy && this.extExists("groupRows", true)){
+	 				ext.groupRows.initialize();
+	 			}
+
+	 			if(this.extExists("ajax")){
+	 				ext.ajax.initialize();
+	 			}
+
+	 			options.tableBuilt();
+
 	 		},
-
-
 
 	 		//set options
 	 		_setOption: function(option, value){
