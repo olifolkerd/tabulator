@@ -786,7 +786,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <p>This will clear all programatically set filters, if you wisht to clear all header filters as well pass an argument of <span class='param'>true</span> to this function.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("clearFilter", true);</pre>
 
-
+                    <h3>Clear Header Filters <span class="label label-danger">New</span></h3>
+                    <p>To remove just the header filters, leaving the programatic filters in place, use the <span class='param'>clearHeaderFilter</span> function. </p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clearHeaderFilter");</pre>
 
                     <a class="anchor" id="header-filters"></a>
                     <h2>Header Filtering <span class="label label-primary">Updated</span>
@@ -846,7 +848,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>Tabulator allows you to sort the data in your table in any way you want.</p>
 
-                    <p>By default all data is sorted as a string. If you wish to specify a different sorting method, you should include the <span class='param'>sorter</span> option in the column defintion object.</p>
+                    <p>By default Tabulator will attempt to guess which sorter should be applied to a column based of the data contained in the first row. It can determin sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
+
+                    <p>To specify a sepcific sorter to be used on a column use the <span class='param'>sorter</span> property in the columns definition object</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string"}</pre>
 
@@ -875,12 +879,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <h2>Header Sorting <span class="label label-danger">New</span></h2>
 
-                    <p>If you want a user to be able to sort a column by clicking on the column header, set the <span class='param'>headerSort</span> option to <span class='param'>true</span> in the column defintion array:</p>
+                    <p>By default all columns in a table are sortable by clicking on the column header, if you want to disable this behaviour, set the <span class='param'>headerSort</span> property to <span class='param'>false</span> in the column defintion array:</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string", headerSort:true}</pre>
-
-                    <p>This will cause a sort arrow to be displayed in the column.</p>
-
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:"string", headerSort:false} //disable header sorter</pre>
 
                     <a class="anchor" id="sort-load"></a>
                     <h2>Sort Data on Load <span class="label label-primary">Updated</span></h2>
@@ -917,6 +918,10 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 ]</pre>
 
                     <p>If the table is not currently sorted then the array will be empty.</p>
+
+                    <h2>Clear All Sorters <span class="label label-danger">New</span></h2>
+                    <p>To remove all sorting from the table, call the  <span class='param'>clearSort</span> function. </p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("clearSort");</pre>
 
                     <h2>Callbacks <span class="label label-primary">Updated</span></h2>
                     <p>A range of callbacks are avaialble for tracking progress of sorting. See the <a href="#callbacks-sort">Sorting Callbacks</a> section for more information.</p>
