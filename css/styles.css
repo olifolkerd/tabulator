@@ -253,16 +253,19 @@ select {
 .container button.view-source {
   margin-top: 20px;
 }
-.alert {
+.alert-danger {
   font-size: 16px;
   font-weight: bold;
 }
-.alert:first-child {
+.alert-danger:first-child {
   margin-top: 25px;
   margin-bottom: -10px;
 }
-.alert i {
+.alert-danger i {
   margin-right: 10px;
+}
+.extension-info {
+  padding: 5px 10px;
 }
 article {
   position: relative;
