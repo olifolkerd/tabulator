@@ -176,7 +176,7 @@
         {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
         {title:"Gender", field:"gender", sorter:"string", cellClick:function(e, val, cell, row){console.log("cell click")},},
         {title:"Height", field:"height", formatter:"star", align:"center", width:100},
-        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Favourite Color", field:"col", sorter:"string"},
         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
         {title:"Cheese Preference", field:"cheese", sorter:"boolean", align:"center", formatter:"tickCross"},
     ],
@@ -493,12 +493,9 @@ $("#example-table").tabulator({
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     fitColumns:true, //example option (sets column widths to fill table)
     columns:[ //set column definitions for imported table data
-        {title:"Name", sortable:true, editable:true},
-        {title:"Age", sortable:true, sorter:"number"},
-        {title:"Gender", sortable:true},
-        {title:"Height", sortable:true, sorter:"number"},
-        {title:"Favourite Color", sortable:true},
-        {title:"Date of Birth", sortable:true, sorter:"date"},
+        {title:"Age", sorter:"number"},
+        {title:"Height", sorter:"number"},
+        {title:"Date of Birth", sorter:"date"},
     ],
 });</pre>
 
@@ -852,7 +849,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>To specify a sepcific sorter to be used on a column use the <span class='param'>sorter</span> property in the columns definition object</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:"string"}</pre>
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:"string"}</pre>
 
                     <p>Tabulator comes with a number of preconfigured sorters including:</p>
                     <ul>
@@ -866,7 +863,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <h2>Custom Sorters <span class="label label-primary">Updated</span></h2>
                     <p>for advanced sorting can define a custom sorter function in the <span class='param'>sorter</span> option:</p>
-                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sortable:true, sorter:function(a, b, aData, bData, column, dir){
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:function(a, b, aData, bData, column, dir){
         //a, b - the two values being compared
         //aData, bData - the row objects for the values being compared (useful if you need to access additional fields in the row data for the sort)
         //column - the column component for the column being sorted
@@ -1647,11 +1644,11 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <pre class="prettyprint lang-js">//new column definition array
 var newColumns = [
-    {title:"Name", field:"name", sortable:true, sorter:"string", width:200, editable:true},
-    {title:"Age", field:"age", sortable:true, sorter:"number", align:"right", formatter:"progress"},
-    {title:"Height", field:"height", sortable:true, formatter:"star", align:"center", width:100},
-    {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-    {title:"Date Of Birth", field:"dob", sortable:true, sorter:"date", align:"center"},
+    {title:"Name", field:"name", sorter:"string", width:200},
+    {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
+    {title:"Height", field:"height", formatter:"star", align:"center", width:100},
+    {title:"Favourite Color", field:"col", sorter:"string"},
+    {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
 ],
 
 $("#example-table").tabulator("setColumns", newColumns , false) //completely overwrite existing columns with new columns definition array</pre>
