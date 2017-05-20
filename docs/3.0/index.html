@@ -2252,7 +2252,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <p>The <span class='param'>getElement</span> function returns the jQuery DOM element for the column.</p>
                     <pre class="prettyprint lang-js">var columnElement = column.getElement();</pre>
 
-                    <h3>Get Defition</h3>
+                    <h3>Get Definition</h3>
                     <p>The <span class='param'>getDefinition</span> function returns the column defintion object for the column.</p>
                     <pre class="prettyprint lang-js">var columnDefinition = column.getDefinition();</pre>
 
@@ -2263,6 +2263,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <h3>Get Cells</h3>
                     <p>The <span class='param'>getCells</span> function returns an array of <a href='#component-cell'>CellComponent</a> objects, one for each cell in the column.</p>
                     <pre class="prettyprint lang-js">var cells = column.getCells();</pre>
+
+                    <h3>Get Visibility</h3>
+                    <p>The <span class='param'>getVisibility</span> function returns a boolean to show if the column is visible, a value of <span class='param'>true</span> means it is visible.</p>
+                    <pre class="prettyprint lang-js">var visible = column.getVisibility();</pre>
 
                     <h3>Show Column</h3>
                     <p>The <span class='param'>show</span> function shows the column if it is hidden.</p>
