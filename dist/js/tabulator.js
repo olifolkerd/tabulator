@@ -977,7 +977,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set column sorter
 
 
-    if (typeof def.sorter != "undefined" && table.extExists("sort")) {
+    if (table.extExists("sort")) {
 
       table.extensions.sort.initializeColumn(self, self.contentElement);
     }
@@ -4674,55 +4674,57 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var self = this,
         sorter = false;
 
-    //set sorter on column
+    switch (_typeof(column.definition.sorter)) {
 
+      case "string":
 
-    if (typeof column.definition.sorter == "string") {
+        if (self.sorters[column.definition.sorter]) {
 
-      if (self.sorters[column.definition.sorter]) {
+          sorter = self.sorters[column.definition.sorter];
+        } else {
 
-        sorter = self.sorters[column.definition.sorter];
-      } else {
+          console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+        }
 
-        console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
-      }
-    } else {
+        break;
 
-      sorter = column.definition.sorter;
+      case "function":
+
+        sorter = column.definition.sorter;
+
+        break;
+
     }
 
-    if (sorter) {
+    column.extensions.sort = { sorter: sorter, dir: "none" };
 
-      column.extensions.sort = { sorter: sorter, dir: "none" };
+    if (column.definition.headerSort !== false) {
 
-      if (column.definition.headerSort !== false) {
+      column.element.addClass("tabulator-sortable");
 
-        column.element.addClass("tabulator-sortable");
-
-        //create sorter arrow
+      //create sorter arrow
 
 
-        content.append($("<div class='tabulator-arrow'></div>"));
+      content.append($("<div class='tabulator-arrow'></div>"));
 
-        //sort on click
+      //sort on click
 
 
-        column.element.on("click", function () {
+      column.element.on("click", function () {
 
-          if (column.extensions.sort) {
+        if (column.extensions.sort) {
 
-            if (column.extensions.sort.dir == "asc") {
+          if (column.extensions.sort.dir == "asc") {
 
-              self.setSort(column, "desc");
-            } else {
+            self.setSort(column, "desc");
+          } else {
 
-              self.setSort(column, "asc");
-            }
-
-            self.table.rowManager.refreshActiveData();
+            self.setSort(column, "asc");
           }
-        });
-      }
+
+          self.table.rowManager.refreshActiveData();
+        }
+      });
     }
   };
 
@@ -4778,7 +4780,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (item.column) {
 
-        item.column = item.column;
+        // item.column = item.column;
+
 
         newSortList.push(item);
 
@@ -4790,6 +4793,59 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     });
 
     self.sortList = newSortList;
+  };
+
+  //find appropriate sorter for column
+
+
+  Sort.prototype.findSorter = function (column) {
+
+    var row = this.table.rowManager.activeRows[0],
+        sorter = "string",
+        field;
+
+    if (row) {
+
+      row = row.getData();
+
+      field = column.getField();
+
+      if (field) {
+
+        switch (_typeof(row[field])) {
+
+          case "undefined":
+
+            sorter = "string";
+
+            break;
+
+          case "boolean":
+
+            sorter = "boolean";
+
+            break;
+
+          default:
+
+            if (!isNaN(row[field])) {
+
+              sorter = "number";
+            } else {
+
+              if (row[field].match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)) {
+
+                sorter = "alphanum";
+              }
+            }
+
+            break;
+
+        }
+      }
+    }
+
+    return this.sorters[sorter];
   };
 
   //work through sort list sorting data
@@ -4810,6 +4866,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     self.sortList.forEach(function (item, i) {
 
       if (item.column && item.column.extensions.sort) {
+
+        //if no sorter has been defined, take a guess
+
+
+        if (!item.column.extensions.sort.sorter) {
+
+          item.column.extensions.sort.sorter = self.findSorter(item.column);
+        }
 
         self._sortItem(item.column, item.dir, self.sortList, i);
       }

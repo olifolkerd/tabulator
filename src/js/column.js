@@ -233,7 +233,7 @@ Column.prototype._buildColumnHeader = function(){
 	sortable;
 
 	//set column sorter
-	if(typeof def.sorter != "undefined" && table.extExists("sort")){
+	if(table.extExists("sort")){
 		table.extensions.sort.initializeColumn(self, self.contentElement);
 	}
 
