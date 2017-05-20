@@ -919,24 +919,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //setup header click event bindings
 
 
-    if (typeof def.headerOnClick == "function") {
+    if (typeof def.headerClick == "function") {
 
       self.element.on("click", function (e) {
-        def.headerOnClick(e, self.getComponent());
+        def.headerClick(e, self.getComponent());
       });
     }
 
-    if (typeof def.headerOnDblClick == "function") {
+    if (typeof def.headerDblClick == "function") {
 
       self.element.on("dblclick", function (e) {
-        def.headerOnDblClick(e, self.getComponent());
+        def.headerDblClick(e, self.getComponent());
       });
     }
 
-    if (typeof def.headerOnContext == "function") {
+    if (typeof def.headerContext == "function") {
 
       self.element.on("contextmenu", function (e) {
-        def.headerOnContext(e, self.getComponent());
+        def.headerContext(e, self.getComponent());
       });
     }
 
@@ -8635,7 +8635,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //list of possible attributes
 
 
-      var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "onClick", "onDblClick", "onContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
+      var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "cellClick", "cellDblClick", "cellContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
 
       if (col) {
 

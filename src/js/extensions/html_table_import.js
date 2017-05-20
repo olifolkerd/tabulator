@@ -118,7 +118,7 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 		width, attributes;
 
 		//list of possible attributes
-		var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "onClick", "onDblClick", "onContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
+		var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "cellClick", "cellDblClick", "cellContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
 
 
 		if(col){

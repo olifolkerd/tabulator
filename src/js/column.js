@@ -71,9 +71,9 @@ var Column = function(def, parent){
 	this.extensions = {}; //hold extension variables;
 
 	this.cellEvents = {
-		onClick:false,
-		onDblClick:false,
-		onContext:false,
+		cellClick:false,
+		cellDblClick:false,
+		cellContext:false,
 	};
 
 	this.width = null; //column width
@@ -195,29 +195,29 @@ Column.prototype._buildHeader = function(){
 
 
 	//setup header click event bindings
-	if(typeof(def.headerOnClick) == "function"){
-		self.element.on("click", function(e){def.headerOnClick(e, self.getComponent())})
+	if(typeof(def.headerClick) == "function"){
+		self.element.on("click", function(e){def.headerClick(e, self.getComponent())})
 	}
 
-	if(typeof(def.headerOnDblClick) == "function"){
-		self.element.on("dblclick", function(e){def.headerOnDblClick(e, self.getComponent())});
+	if(typeof(def.headerDblClick) == "function"){
+		self.element.on("dblclick", function(e){def.headerDblClick(e, self.getComponent())});
 	}
 
-	if(typeof(def.headerOnContext) == "function"){
-		self.element.on("contextmenu", function(e){def.headerOnContext(e, self.getComponent())});
+	if(typeof(def.headerContext) == "function"){
+		self.element.on("contextmenu", function(e){def.headerContext(e, self.getComponent())});
 	}
 
 	//store column cell click event bindings
-	if(typeof(def.onClick) == "function"){
-		self.cellEvents.onClick = def.onClick;
+	if(typeof(def.cellClick) == "function"){
+		self.cellEvents.cellClick = def.cellClick;
 	}
 
-	if(typeof(def.onDblClick) == "function"){
-		self.cellEvents.onDblClick = def.onDblClick;
+	if(typeof(def.cellDblClick) == "function"){
+		self.cellEvents.cellDblClick = def.cellDblClick;
 	}
 
-	if(typeof(def.onContext) == "function"){
-		self.cellEvents.onContext = def.onContext;
+	if(typeof(def.cellContext) == "function"){
+		self.cellEvents.cellContext = def.cellContext;
 	}
 };
 

@@ -81,21 +81,21 @@ Cell.prototype._configureCell = function(){
 	}
 
 	//set event bindings
-	if (cellEvents.onClick){
+	if (cellEvents.cellClick){
 		self.element.on("click", function(e){
-			cellEvents.onClick(e, self.getComponent());
+			cellEvents.cellClick(e, self.getComponent());
 		});
 	}
 
-	if (cellEvents.onDblClick){
+	if (cellEvents.cellDblClick){
 		self.element.on("dblclick", function(e){
-			cellEvents.onDblClick(e, self.getComponent());
+			cellEvents.cellDblClick(e, self.getComponent());
 		});
 	}
 
-	if (cellEvents.onContext){
+	if (cellEvents.cellContext){
 		self.element.on("contextmenu", function(e){
-			cellEvents.onContext(e, self.getComponent());
+			cellEvents.cellContext(e, self.getComponent());
 		});
 	}
 
