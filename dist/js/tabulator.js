@@ -5407,6 +5407,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         break;
 
+      case "boolean":
+
+        if (column.definition.editor === true) {
+
+          if (typeof column.definition.formatter == "string") {
+
+            if (self.editors[column.definition.formatter]) {
+
+              config.editor = self.editors[column.definition.formatter];
+            } else {
+
+              config.editor = self.editors["input"];
+            }
+          } else {
+
+            console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
+          }
+        }
+
+        break;
+
     }
 
     if (config.editor) {
