@@ -174,7 +174,7 @@
     columns:[
         {title:"Name", field:"name", sorter:"string", width:200, editor:true},
         {title:"Age", field:"age", sorter:"number", align:"right", formatter:"progress"},
-        {title:"Gender", field:"gender", sorter:"string", onClick:function(e, val, cell, row){console.log("cell click")},},
+        {title:"Gender", field:"gender", sorter:"string", cellClick:function(e, val, cell, row){console.log("cell click")},},
         {title:"Height", field:"height", formatter:"star", align:"center", width:100},
         {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -215,17 +215,17 @@
 
                     <h3>Cell Events</h3>
                     <ul>
-                        <li><strong>onClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>onDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>onContext</strong> - callback for when user right clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellContext</strong> - callback for when user right clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                     </ul>
 
                     <h3>Column Headers</h3>
                     <ul>
                         <li><strong>headerSort <span class="label label-danger">New</span></strong> - user can sort by clicking on the header (see <a href="#sorting">Sorting Data</a> for more details)</li>
-                        <li><strong>headerOnClick</strong>  - callback for when user clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnDblClick</strong>  - callback for when user double clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnContext</strong>  - callback for when user right clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerClick</strong>  - callback for when user clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerDblClick</strong>  - callback for when user double clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerContext</strong>  - callback for when user right clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>tooltipHeader</strong> - sets the on hover tooltip for the column header (see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>editableTitle</strong> - allows the user to edit the header titles. (see <a href="#editable-column-title">Editable Column Titles</a> for more details)</li>
                         <li><strong>headerFilter</strong> - filtering of columns from elements in the header (see <a href="#header-filters">Header Filtering</a> for more details)</li>
@@ -269,9 +269,9 @@
                     <p>As well as the required <span class='param'>title</span> and <span class='param'>columns</span> options, the following options can also be set on a column group:</p>
 
                     <ul>
-                        <li><strong>headerOnClick</strong> - callback for when user clicks on the header for this column group (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnDblClick</strong> - callback for when user double clicks on the header for this column group (see <a href="#callbacks">Callbacks</a> for more details)</li>
-                        <li><strong>headerOnContext</strong> - callback for when user right clicks on the header for this column group (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerClick</strong> - callback for when user clicks on the header for this column group (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerDblClick</strong> - callback for when user double clicks on the header for this column group (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerContext</strong> - callback for when user right clicks on the header for this column group (see <a href="#callbacks">Callbacks</a> for more details)</li>
                     </ul>
 
                    <p class="note"><strong>Note:</strong> any of the click callbacks on the group header will also be triggered by clicking on any of the column headers in the group. To prevent this from happening put a matching binding on the column header and use the <span class='param'>e.stopPropagation()</span> function to prevent the group binding from being triggered.</p>
@@ -633,7 +633,7 @@ var printIcon = function(cell, formatterParams){ //plain text value
 };
 
 //column definition in the columns array
-{formatter:printIcon, width:40, align:"center", onClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},</pre>
+{formatter:printIcon, width:40, align:"center", cellClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},</pre>
 
                     <a class="anchor" id="row-formatter"></a>
                     <h2>Row Formatting <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#row-formatter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
@@ -2273,9 +2273,9 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <a class="anchor" id="component-cell"></a>
                     <h2>Cell Component</h2>
-                    <p>The cell component provides access to a specific cell. The example below shows how it is passed to the <span class='param'>onClick</span> callback for a cell.</p>
+                    <p>The cell component provides access to a specific cell. The example below shows how it is passed to the <span class='param'>cellClick</span> callback for a cell.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", onClick:function(e, cell){
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellClick:function(e, cell){
         alert("The cell has a value of:" + cell.getValue()); //display the cells value
     },
 }</pre>
@@ -2311,6 +2311,52 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <h3>Check Height</h3>
                     <p>If you are making manual adjustments to elements contained withing the cell, or the cell itself, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>checkHeight</span> function to check if the height of the cell has changed and normalize the row if it has.</p>
                     <pre class="prettyprint lang-js">cell.checkHeight();</pre>
+
+
+
+
+                    <a class="anchor" id="component-group"></a>
+                    <h2>Group Component</h2>
+                    <p>The group component provides access to a set of grouped rows. The example below shows how it is passed to the <span class='param'>groupVisibilityChanged</span> callback.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    groupVisibilityChanged:function(group, visible){
+        alert("The user has " (visible ? "opened" : "collapsed") +" group: " + group.getKey()); //display the groups unique key
+    }
+});</pre>
+
+                    <p>The component provides the following functions:</p>
+
+                    <h3>Get Element</h3>
+                    <p>The <span class='param'>getElement</span> function returns the jQuery DOM element for the gruop header.</p>
+                    <pre class="prettyprint lang-js">var groupElement = group.getElement();</pre>
+
+                    <h3>Get Key</h3>
+                    <p>The <span class='param'>getKey</span> function returns the unique key that is shared between all rows in this group.</p>
+                    <pre class="prettyprint lang-js">var key = group.getKey();</pre>
+
+                    <h3>Get Rows</h3>
+                    <p>The <span class='param'>getRows</span> function returns an array of <a href='#component-row'>RowComponent</a> objects, one for each row in the group.</p>
+                    <pre class="prettyprint lang-js">var rows = group.getRows();</pre>
+
+                    <h3>Get Visibility</h3>
+                    <p>The <span class='param'>getVisibility</span> function returns a boolean to show if the group is visible, a value of <span class='param'>true</span> means it is visible.</p>
+                    <pre class="prettyprint lang-js">var visible = group.getVisibility();</pre>
+
+                    <h3>Show Group</h3>
+                    <p>The <span class='param'>show</span> function shows the group if it is hidden.</p>
+                    <pre class="prettyprint lang-js">group.show();</pre>
+
+                    <h3>Hide Group</h3>
+                    <p>The <span class='param'>hide</span> function hides the group if it is visible.</p>
+                    <pre class="prettyprint lang-js">group.hide();</pre>
+
+                    <h3>Toggle Visibility</h3>
+                    <p>The <span class='param'>toggle</span> function toggles the visibility of the group, switching between hidden and visible.</p>
+                    <pre class="prettyprint lang-js">group.toggle();</pre>
+
+
+
 
                     <a class="anchor" id="component-lookup"></a>
                     <h2>Component Lookup</h2>
@@ -2612,7 +2658,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks &amp; Events <a class="example-link" href="../../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Callbacks &amp; Events <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
@@ -2635,58 +2681,60 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
+
                     <a class="anchor" id="callbacks-column"></a>
                     <h2>Column Callbacks</h2>
 
                     <h3>Column Header Click </h3>
-                    <p>The <span class='param'>headerOnClick</span> callback is triggered when a user left clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerClick <span class="label label-primary">Updated</span></span> callback is triggered when a user left clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerOnClick:function(e, header, field, columnDef){
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerClick:function(e, column){
         //e - the click event object
-        //header - the DOM element of the column header
-        //field - the field name of the column
-        //columnDef - the column definition object for the column
+        //column - column component
     },
 }</pre>
 
-                    <h3>Column Header Double Click </h3>
-                    <p>The <span class='param'>headerOnDblClick</span> callback is triggered when a user double clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <h3>Column Header Double Click <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>headerDblClick</span> callback is triggered when a user double clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerOnDblClick:function(e, header, field, columnDef){
-        //e - the couble click event object
-        //header - the DOM element of the column header
-        //field - the field name of the column
-        //columnDef - the column definition object for the column
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerDblClick:function(e, column){
+        //e - the click event object
+        //column - column component
     },
 }</pre>
 
-                    <h3>Column Header Right Click </h3>
-                    <p>The <span class='param'>headerOnContext</span> callback is triggered when a user right clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <h3>Column Header Right Click <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>headerContext</span> callback is triggered when a user right clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerOnContext:function(e, header, field, columnDef){
-        //e - the couble click event object
-        //header - the DOM element of the column header
-        //field - the field name of the column
-        //columnDef - the column definition object for the column
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerContext:function(e, column){
+        //e - the click event object
+        //column - column component
     },
 }</pre>
 
-                    <h3>Column Moved</h3>
-                    <p>The <span class='param'>colMoved</span> callback will be triggered when a column has been successfully moved, .</p>
+                    <h3>Column Moved <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>columnMoved</span> callback will be triggered when a column has been successfully moved, .</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    colMoved:function(field, columns){
-        //field- the filed name of the moved column
-        //columns- the updated columns config array
+    columnMoved:function(field, columns){
+        //column - column component of the moved column
+        //columns- array of columns in new order
     }
 });</pre>
 
-                    <h3>Column Title Changed</h3>
-                    <p>The <span class='param'>colTitleChanged</span> callback is triggered whenever a user edits a column title when the <span class='param'>editableTitle</span> parameter has been enabled in the column definition array.</p>
+                    <h3>Column Visibility Changed <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>columnVisibilityChanged</span> callback is triggered whenever a column changes between hidden and visible states.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    colTitleChanged:function(value, col, cols){
-        //value - the new column value
-        //col - the updated column definition object for the affected column
-        //cols - the updated column definition array for all columns in the table
+    columnVisibilityChanged:function(column, visible){
+        //column - column component
+        //visible - is column visible (true = visible, false = hidden)
+    },
+});</pre>
+
+                    <h3>Column Title Changed <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>columnTitleChanged</span> callback is triggered whenever a user edits a column title when the <span class='param'>editableTitle</span> parameter has been enabled in the column definition array.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columnTitleChanged:function(column){
+        //column - column component
     },
 });</pre>
 
@@ -2694,77 +2742,65 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <a class="anchor" id="callbacks-row"></a>
                     <h2>Row Callbacks</h2>
 
-                    <h3>Row Click</h3>
+                    <h3>Row Click <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowClick</span> callback is triggered when a user clicks on a row.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-        rowClick:function(e, id, data, row){
+        rowClick:function(e, row){
         //e - the click event object
-        //id - the id of the row
-        //data - the data for the row
-        //row - the DOM element of the row
+        //row - row component
     },
 });</pre>
 
-                    <h3>Row Double Click</h3>
+                    <h3>Row Double Click <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowDblClick</span> callback is triggered when a user double clicks on a row.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-        rowDblClick:function(e, id, data, row){
-        //e - the couble click event object
-        //id - the id of the row
-        //data - the data for the row
-        //row - the DOM element of the row
+        rowDblClick:function(e, row){
+        //e - the click event object
+        //row - row component
     },
 });</pre>
 
-                    <h3>Row Context Menu</h3>
+                    <h3>Row Context Menu <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowContext</span> callback is triggered when a user right clicks on a row.</p>
                     <p>If you want to prevent the browsers context menu being triggered in this event you will need to include the <span class='param'>preventDefault()</span> function in your callback.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowContext:function(e, id, data, row){
+    rowContext:function(e, row){
         //e - the click event object
-        //id - the id of the row
-        //data - the data for the row
-        //row - the DOM element of the row
+        //row - row component
 
         e.preventDefault(); // prevent the browsers default context menu form appearing.
     },
 });</pre>
 
-                    <h3>Row Added</h3>
+                    <h3>Row Added <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowAdded</span> callback is triggered when a row is added to the table by the <span class='param'>addRow</span> and <span class='param'>updateOrAddRow</span> functions.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowAdded:function(data, row){
-        //data - the data for the row
-        //row - DOM element for the row
+    rowAdded:function(row){
+        //row - row component
     },
 });</pre>
 
-                    <h3>Row Updated </h3>
+                    <h3>Row Updated <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowUpdated</span> callback is triggered when a row is updated by the <span class='param'>updateRow</span>, <span class='param'>updateOrAddRow</span>, <span class='param'>updateData</span> or <span class='param'>updateOrAddData</span>, functions.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowUpdated:function(index, data, row){
-        //index - the index for the updated row
-        //data - the updated data for the row
-        //row - DOM element for the updated row
+    rowUpdated:function(row){
+        //row - row component
     },
 });</pre>
 
-                    <h3>Row Deleted</h3>
+                    <h3>Row Deleted <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowDeleted</span> callback is triggered when a row is deleted from the table by the <span class='param'>deleteRow</span> function.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowDeleted:function(id){
-        //id - the id of the row
+    rowDeleted:function(row){
+        //row - row component
     },
 });</pre>
 
-                    <h3>Row Moved</h3>
+                    <h3>Row Moved <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>rowMoved</span> callback will be triggered when a row has been successfully moved.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    rowMoved:function(id, data, row, index){
-        //id - the id of the row
-        //data - the data for the row
-        //row - the DOM element of the row
-        //index - new position of row in table
+    rowMoved:function(row){
+        //row - row component
     }
 });</pre>
 
@@ -2774,56 +2810,75 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <a class="anchor" id="callbacks-cell"></a>
                     <h2>Cell Callbacks</h2>
 
-                    <h3>Cell Click</h3>
-                    <p>The <span class='param'>onClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <h3>Cell Click <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>cellClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", onClick:function(e, cell, value, data){
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellClick:function(e, cell){
         //e - the click event object
-        //cell - the DOM element of the cell
-        //value - the value of the cell
-        //data - the data for the row the cell is in
+        //cell - cell component
     },
 }</pre>
 
-                    <h3>Cell Double Click</h3>
-                    <p>The <span class='param'>onDblClick</span> callback is triggered when a user double clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <h3>Cell Double Click <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>cellDblClick</span> callback is triggered when a user double clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", onDblClick:function(e, cell, value, data){
-        //e - the couble click event object
-        //cell - the DOM element of the cell
-        //value - the value of the cell
-        //data - the data for the row the cell is in
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellDblClick:function(e, cell){
+        //e - the click event object
+        //cell - cell component
     },
 }</pre>
 
-                    <h3>Cell Right Click</h3>
-                    <p>The <span class='param'>onContext</span> callback is triggered when a user right clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <h3>Cell Right Click <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>cellContext</span> callback is triggered when a user right clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", onContext:function(e, cell, value, data){
-        //e - the couble click event object
-        //cell - the DOM element of the cell
-        //value - the value of the cell
-        //data - the data for the row the cell is in
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellContext:function(e, cell){
+        //e - the click event object
+        //cell - cell component
     },
 }</pre>
 
-                    <h3>Cell Edit</h3>
+                    <h3>Cell Editing <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellEditing</span> callback is triggered when a user starts editing a cell.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    cellEdited:function(cell){
+        //cell - cell component
+    },
+});</pre>
+
+                    <h3>Cell Edit Cancelled <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellEditCancelled</span> callback is triggered when a user aborts a cell edit and the <span class='param'>cancel</span> function is called.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    cellEditCancelled:function(cell){
+        //cell - cell component
+    },
+});</pre>
+
+                    <h3>Cell Edited <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>cellEdited</span> callback is triggered when data in an editable cell is changed.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    cellEdited:function(id, field, value, oldValue, data, cell, row){
-        //id - the id of the row
-        //field - field of the cell
-        //value - the new value for the cell
-        //oldValue - the old value for the cell
-        //data - the data for the row
-        //cell - the DOM element of the cell
-        //row - the DOM element of the row
+    cellEdited:function(cell){
+        //cell - cell component
     },
 });</pre>
 
                     <a class="anchor" id="callbacks-data"></a>
                     <h2>Data Callbacks</h2>
 
+                    <h3>Data Loading <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>dataLoading</span> callback is triggered whenever new data is loaded into the table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataLoading:function(data){
+        //data - the data loading into the table
+    },
+});</pre>
+
+                    <h3>Data Loaded <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>dataLoaded</span> callback is triggered when a new set of data is loaded into the table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataLoaded:function(data){
+        //data - all data loaded into the table
+    },
+});</pre>
 
                     <h3>Data Edited</h3>
                     <p>The <span class='param'>dataEdited</span> callback is triggered whenever the table data is changed by the user. Triggers for this include editing any cell in the table, adding a row and deleting a row.</p>
@@ -2838,30 +2893,12 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <a class="anchor" id="callbacks-ajax"></a>
                     <h2>Ajax Callbacks</h2>
 
-                    <h3>Data Loading</h3>
-                    <p>The <span class='param'>dataLoading</span> callback is triggered when the <span class='param'>setData</span> function is called.</p>
+                    <h3>Ajax Request <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>ajaxRequesting</span> callback is triggered when ever an ajax request is made.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataLoading:function(data, params){
-        //data - the data or url passed to the setData function
-        //params - the params object passed to the setData function
-    },
-});</pre>
-
-                    <h3>Data Loaded</h3>
-                    <p>The <span class='param'>dataLoaded</span> callback is triggered when a new set of data is loaded into the table.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataLoaded:function(data){
-        //data - all data loaded into the table
-    },
-});</pre>
-
-                    <h3>Data Loading Error</h3>
-                    <p>The <span class='param'>dataLoadError</span> callback is triggered when a there is an error AJAX loading data. The arguments are passed straight from the AJAX error function.</p>
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataLoadError:function(xhr, textStatus, errorThrown){
-        //xhr - the XHR object
-        //textStatus - error type
-        //errorThrown - text portion of the HTTP status
+    ajaxRequesting:function(url, params){
+        //url - the URL of the request
+        //params - the parameters passed with the request
     },
 });</pre>
 
@@ -2877,48 +2914,56 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
-                    <a class="anchor" id="callbacks-filter"></a>
-                    <h2>Filter Callbacks</h2>
-
-                    <h3>Data Filtering</h3>
-                    <p>The <span class='param'>dataFiltering</span> callback is triggered whenever a filter event occurs, before the filter happens.</p>
+                    <h3>Ajax Error <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>ajaxError</span> callback is triggered there is an error response to an ajax request.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataFiltering:function(field, type, value){
-        //field - the field being filtered
-        //type - the type of filter being used
-        //value - the value of the filter
+    ajaxError:function(xhr, textStatus, errorThrown){
+        //xhr - the XHR object
+        //textStatus - error type
+        //errorThrown - text portion of the HTTP status
     },
 });</pre>
 
-                    <h3>Data Filtered</h3>
+
+
+                    <a class="anchor" id="callbacks-filter"></a>
+                    <h2>Filter Callbacks</h2>
+
+                    <h3>Data Filtering <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>dataFiltering</span> callback is triggered whenever a filter event occurs, before the filter happens.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataFiltering:function(filters){
+        //filters - array of filters currently applied
+
+    },
+});</pre>
+
+                    <h3>Data Filtered <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>dataFiltered</span> callback is triggered after the table dataset is filtered.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataFiltered:function(data, field, type, value){
-        //data - the subset of the total table data that has passed the filter and is now visible
-        //field - the field being filtered
-        //type - the type of filter being used
-        //value - the value of the filter
+    dataFiltered:function(filters, rows){
+        //filters - array of filters currently applied
+        //rows - array of row components that pass the filters
     },
 });</pre>
 
                     <a class="anchor" id="callbacks-sort"></a>
                     <h2>Sorting Callbacks</h2>
 
-                    <h3>Data Sorting</h3>
-                    <p>The <span class='param'>dataSorting</span> callback is triggered whenever a sort event occurs, before sort happens.</p>
+                    <h3>Data Sorting <span class="label label-primary">Updated</span></h3>
+                    <p>The <span class='param'>dataSorting</span> callback is triggered whenever a sort event occurs, before sorting happens.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataSorting:function(sortList, dir){
-        //sortList - the field name or array of fields being sorted
-        //dir - the direction of the sort
+    dataSorting:function(sorters){
+        //sorters - an array of the sorters currently applied
     },
 });</pre>
 
-                    <h3>Data Sorted</h3>
+                    <h3>Data Sorted <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>dataSorted</span> callback is triggered after the table dataset is sorted.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    dataSorted:function(sortList, dir){
-        //sortList - the field name or array of fields being sorted
-        //dir - the direction of the sort
+    dataSorted:function(sorters, rows){
+        //sorters - array of the sorters currently applied
+        //rows - array of row components in their new order
     },
 });</pre>
 
@@ -2942,10 +2987,10 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
-                    <h3>Render Complete</h3>
+                    <h3>Render Complete <span class="label label-primary">Updated</span></h3>
                     <p>The <span class='param'>renderComplete</span> callback is triggered after the table has been rendered</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    renderComplete:function(sortList, dir){
+    renderComplete:function(){
     },
 });</pre>
 
@@ -2959,6 +3004,8 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
         //pageno - the number of the loaded page
     }
 });</pre>
+                    <a class="anchor" id="callbacks-localize"></a>
+                    <h2>Localization
 
                     <h3>Table Localized </h3>
                     <p>When a localization event has occured, the <span class='param'>localized</span> callback will triggered, passing the current locale code and language object:</p>
@@ -2972,19 +3019,63 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
 
 
-                <a class="anchor" id="callbacks-group"></a>
-                <h2>Group Callbacks</h2>
+                    <a class="anchor" id="callbacks-group"></a>
+                    <h2>Group Callbacks</h2>
 
-                <a class="anchor" id="callbacks-select"></a>
-                <h2>Selection Callbacks</h2>
-                <h3>Row Selection Changed</h3>
-                <p>Whenever the number of selected rows changes, through selection or deselection, the <span class='param'>rowSelectionChanged</span> event is triggered. This passes an array of the data objects for each row in the order they were selected as the first argument, and an array of jQuery elements for each of the rows in order of selection as the second argument.</p>
+                    <h3>Data Grouping <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>dataGrouping</span> callback is triggered whenever a data grouping event occurs, before grouping happens.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataGrouping:function(){
 
-                <pre class="prettyprint lang-js">$("#example-table").tabulator({
-rowSelectionChanged:function(data, rows){
-    //data - array of data objects for the selected rows in order of selection
-    //rows - array of jQuery elements for the selected rows in order of selection
-},
+    },
+});</pre>
+
+                    <h3>Data Grouped <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>dataGrouped</span> callback is triggered whenever a data grouping event occurs, after grouping happens.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    dataGrouped:function(groups){
+        //groups - array of group components
+    },
+});</pre>
+
+                    <h3>Group Visibility Changed <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>groupVisibilityChanged</span> callback is triggered whenever a group changes between hidden and visible states.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    groupVisibilityChanged:function(group, visible){
+        //group - group component
+        //visible - is group visible (true = visible, false = hidden)
+    },
+});</pre>
+
+                    <a class="anchor" id="callbacks-select"></a>
+                    <h2>Selection Callbacks</h2>
+
+                    <h3>Row Selected<span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>rowSelected</span> event is triggered when a row is selected, either by the user or programatically.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowSelected:function(row){
+        //row - row component for the selected row
+    },
+});</pre>
+
+                    <h3>Row Deelected<span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>rowDeselected</span> event is triggered when a row is deselected, either by the user or programatically.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowDeselected:function(row){
+        //row - row component for the deselected row
+    },
+});</pre>
+
+                    <h3>Row Selection Changed <span class="label label-primary">Updated</span></h3>
+                    <p>Whenever the number of selected rows changes, through selection or deselection, the <span class='param'>rowSelectionChanged</span> event is triggered. This passes an array of the data objects for each row in the order they were selected as the first argument, and an array of jQuery elements for each of the rows in order of selection as the second argument.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    rowSelectionChanged:function(data, rows){
+        //rows - array of row components for the selected rows in order of selection
+        //data - array of data objects for the selected rows in order of selection
+    },
 });</pre>
 
                 </article>
