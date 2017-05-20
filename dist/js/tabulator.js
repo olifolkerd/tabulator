@@ -7611,7 +7611,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Filter.prototype.filter = function (rowList) {
 
     var self = this,
-        activeRows = [];
+        activeRows = [],
+        activeRowComponents = [];
 
     if (self.filterList.length || Object.keys(self.headerFilters).length) {
 
@@ -7630,7 +7631,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.dataFiltered) {
 
-        self.table.options.dataFiltered(self.getFilter());
+        activeRows.forEach(function (row) {
+
+          activeRowComponents.push(row.getComponent());
+        });
+
+        self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
       }
 
       return activeRows;

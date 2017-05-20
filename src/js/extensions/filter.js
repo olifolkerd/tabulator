@@ -257,7 +257,8 @@ Filter.prototype.clearHeaderFilter = function(){
 //filter row array
 Filter.prototype.filter = function(rowList){
 	var self = this,
-	activeRows = [];
+	activeRows = [],
+	activeRowComponents = [];
 
 	if(self.filterList.length || Object.keys(self.headerFilters).length){
 
@@ -272,7 +273,12 @@ Filter.prototype.filter = function(rowList){
 		});
 
 		if(self.table.options.dataFiltered){
-			self.table.options.dataFiltered(self.getFilter());
+
+			activeRows.forEach(function(row){
+				activeRowComponents.push(row.getComponent());
+			});
+
+			self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
 		}
 
 		return activeRows;
