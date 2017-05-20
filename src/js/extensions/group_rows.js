@@ -6,6 +6,10 @@ var GroupComponent = function (group){
 	var obj = {
 		type:"GroupComponent", //type of element
 
+		getKey:function(){
+			return group.key;
+		},
+
 		getElement:function(){
 			return group.element;
 		},
@@ -48,9 +52,9 @@ var GroupComponent = function (group){
 //////////////// Group Functions /////////////////
 //////////////////////////////////////////////////
 
-var Group = function(parent, id, generator, visible){
+var Group = function(parent, key, generator, visible){
 
-	this.id = id;
+	this.key = key;
 	this.parent = parent;
 	this.type = "group"; //type of element
 	this.rows = [];
@@ -137,7 +141,7 @@ Group.prototype._visSet = function(){
 			data.push(row.getData());
 		});
 
-		this.visible = this.visible(this.id, this.getRowCount(), data);
+		this.visible = this.visible(this.key, this.getRowCount(), data);
 	}
 };
 
@@ -160,7 +164,7 @@ Group.prototype.getElement = function(){
 		this.element.removeClass("tabulator-group-visible");
 	}
 
-	this.element.empty().html(this.generator(this.id, this.getRowCount(), data)).prepend(this.arrowElement);
+	this.element.empty().html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
 
 	this.addBindings();
 
@@ -279,7 +283,7 @@ GroupRows.prototype.getRows = function(data){
 				self.groupComponents.push(group.getComponent());
 			});
 
-			self.table.options.dataGrouped();
+			self.table.options.dataGrouped(groupList);
 		};
 
 		return self.updateGroupRows();
