@@ -4222,6 +4222,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     },
 
+    getSelectedRows: function getSelectedRows() {
+
+      if (this.extExists("selectRow", true)) {
+
+        return this.extensions.selectRow.getSelectedRows();
+      }
+    },
+
+    getSelectedData: function getSelectedData() {
+
+      if (this.extExists("selectRow", true)) {
+
+        return this.extensions.selectRow.getSelectedData();
+      }
+    },
+
     //////////// Pagination Functions  ////////////
 
 

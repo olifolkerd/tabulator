@@ -626,6 +626,18 @@
 	 			}
 	 		},
 
+	 		getSelectedRows:function(){
+	 			if(this.extExists("selectRow", true)){
+	 				return this.extensions.selectRow.getSelectedRows();
+	 			}
+	 		},
+
+	 		getSelectedData:function(){
+	 			if(this.extExists("selectRow", true)){
+	 				return this.extensions.selectRow.getSelectedData();
+	 			}
+	 		},
+
 	 		//////////// Pagination Functions  ////////////
 
 	 		setMaxPage:function(max){
