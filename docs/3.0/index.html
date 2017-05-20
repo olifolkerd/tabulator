@@ -1582,11 +1582,19 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <h2>Get Selected Data</h2>
 
-                    <p>To get the data objects for the selected rows at any time you can use the <span class='param'>getSelectedData</span> function.</p>
+                    <p>To get the data objects for the selected rows you can use the <span class='param'>getSelectedData</span> function.</p>
 
                     <p>This will return an array of the selected rows data objects in the order in which they were selected.</p>
 
                     <pre class="prettyprint lang-js">var selectedData = $("#example-table").tabulator("getSelectedData"); //get array of currently selected data.</pre>
+
+                    <h2>Get Selected Row Components <span class="label label-danger">New</span></h2>
+
+                    <p>To get the <a href='#component-row'>RowComponent's</a> for the selected rows at any time you can use the <span class='param'>getSelectedRows</span> function.</p>
+
+                    <p>This will return an array of  <a href='#component-row'>RowComponent's</a> for the selected rows in the order in which they were selected.</p>
+
+                    <pre class="prettyprint lang-js">var selectedRows = $("#example-table").tabulator("getSelectedRows"); //get array of currently selected row components.</pre>
 
                     <h2>Callbacks <span class="label label-primary">Updated</span></h2>
                     <p>A range of callbacks are avaialble for row selection. See the <a href="#callbacks-select">Selection Callbacks</a> section for more information.</p>
