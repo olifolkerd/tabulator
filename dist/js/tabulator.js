@@ -678,6 +678,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return cells;
       },
 
+      getVisibility: function getVisibility() {
+
+        return column.visible;
+      },
+
       show: function show() {
 
         column.show();
@@ -748,11 +753,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.cellEvents = {
 
-      onClick: false,
+      cellClick: false,
 
-      onDblClick: false,
+      cellDblClick: false,
 
-      onContext: false
+      cellContext: false
 
     };
 
@@ -943,19 +948,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //store column cell click event bindings
 
 
-    if (typeof def.onClick == "function") {
+    if (typeof def.cellClick == "function") {
 
-      self.cellEvents.onClick = def.onClick;
+      self.cellEvents.cellClick = def.cellClick;
     }
 
-    if (typeof def.onDblClick == "function") {
+    if (typeof def.cellDblClick == "function") {
 
-      self.cellEvents.onDblClick = def.onDblClick;
+      self.cellEvents.cellDblClick = def.cellDblClick;
     }
 
-    if (typeof def.onContext == "function") {
+    if (typeof def.cellContext == "function") {
 
-      self.cellEvents.onContext = def.onContext;
+      self.cellEvents.cellContext = def.cellContext;
     }
   };
 
@@ -3051,27 +3056,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set event bindings
 
 
-    if (cellEvents.onClick) {
+    if (cellEvents.cellClick) {
 
       self.element.on("click", function (e) {
 
-        cellEvents.onClick(e, self.getComponent());
+        cellEvents.cellClick(e, self.getComponent());
       });
     }
 
-    if (cellEvents.onDblClick) {
+    if (cellEvents.cellDblClick) {
 
       self.element.on("dblclick", function (e) {
 
-        cellEvents.onDblClick(e, self.getComponent());
+        cellEvents.cellDblClick(e, self.getComponent());
       });
     }
 
-    if (cellEvents.onContext) {
+    if (cellEvents.cellContext) {
 
       self.element.on("contextmenu", function (e) {
 
-        cellEvents.onContext(e, self.getComponent());
+        cellEvents.cellContext(e, self.getComponent());
       });
     }
 

@@ -26,6 +26,10 @@ var ColumnComponent = function (column){
 			return cells;
 		},
 
+		getVisibility:function(){
+			return column.visible;
+		},
+
 		show:function(){
 			column.show();
 		},
