@@ -3318,6 +3318,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     rowManager: null, //hold Row Manager
 
 
+    footerManager: null, //holder Footer Manager
+
+
     //setup options
 
 

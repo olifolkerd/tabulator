@@ -14,6 +14,7 @@
 
 			columnManager:null, // hold Column Manager
 			rowManager:null, //hold Row Manager
+			footerManager:null, //holder Footer Manager
 
 	 		//setup options
 	 		options: {
