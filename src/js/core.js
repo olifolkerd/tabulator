@@ -242,6 +242,15 @@
 	 			console.error("Options Error - Tabulator does not allow options to be set after initialization unless there is a function defined for that purpose");
 	 		},
 
+	 		//deconstructor
+	 		_destroy: function(){
+	 			var element = this.element;
+
+	 			element.empty();
+
+	 			element.removeClass("tabulator");
+	 		},
+
 	 		////////////////// Data Handling //////////////////
 
 
@@ -691,6 +700,29 @@
 	 		extensions:{},
 	 		extensionBindings:{},
 
+	 		//extend extension
+	 		extendExtension:function(name, property, values){
+
+	 			if(this.extensionBindings[name]){
+	 				var source = this.extensionBindings[name].prototype[property];
+
+	 				if(source){
+	 					if(typeof values == "object"){
+	 						for(let key in values){
+	 							source[key] = values[key];
+	 						}
+	 					}else{
+	 						console.warn("Extension Error - Invalid value type, it must be an object");
+	 					}
+	 				}else{
+	 					console.warn("Extension Error - property does not exist:", property);
+	 				}
+	 			}else{
+	 				console.warn("Extension Error - extension does not exist:", name);
+	 			}
+
+	 		},
+
 	 		//add extension to tabulator
 	 		registerExtension:function(name, extension){
 	 			var self = this;
@@ -720,15 +752,6 @@
 	 			}
 	 		},
 
-
-	 		//deconstructor
-	 		_destroy: function(){
-	 			var element = this.element;
-
-	 			element.empty();
-
-	 			element.removeClass("tabulator");
-	 		},
 	 	};
 
 	 	/*=include extensions/localize.js */
