@@ -97,6 +97,11 @@ Sort.prototype.setSort = function(sortList, dir){
 	self.sortList = newSortList;
 };
 
+//clear sorters
+Sort.prototype.clear = function(){
+	this.setSort([]);
+},
+
 //find appropriate sorter for column
 Sort.prototype.findSorter = function(column){
 	var row = this.table.rowManager.activeRows[0],

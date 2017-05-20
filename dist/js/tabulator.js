@@ -4114,6 +4114,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     },
 
+    clearSort: function clearSort() {
+
+      if (this.extExists("sort", true)) {
+
+        this.extensions.sort.clear();
+
+        this.rowManager.refreshActiveData();
+      }
+    },
+
     ///////////////////// Filtering ////////////////////
 
 
@@ -4794,6 +4804,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.sortList = newSortList;
   };
+
+  //clear sorters
+
+
+  Sort.prototype.clear = function () {
+
+    this.setSort([]);
+  },
 
   //find appropriate sorter for column
 

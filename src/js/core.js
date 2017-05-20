@@ -556,6 +556,13 @@
 	 			}
 	 		},
 
+	 		clearSort:function(){
+	 			if(this.extExists("sort", true)){
+	 				this.extensions.sort.clear();
+	 				this.rowManager.refreshActiveData();
+	 			}
+	 		},
+
 
 	 		///////////////////// Filtering ////////////////////
 
