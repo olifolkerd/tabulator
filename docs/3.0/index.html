@@ -3866,7 +3866,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                         <h2>
                             Setup
-                                <div id="version-select">
+                                <div id="version-select" data-version="3.0">
                                 <div class="btn-group">
                                   <button type="button" class="btn btn-sm  btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Version 3.0 <span class="caret"></span>
@@ -3962,6 +3962,22 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
         $('body').scrollspy({
             target: '.docs-sidebar',
             offset: 40
+        });
+
+
+        //adjust links to point to correct version
+        $("[href]").each(function(){
+            var element = $(this),
+            href = element.attr("href"),
+            ver = $("#version-select").data("version");
+
+            if(href.indexOf("../../examples") === 0){
+                element.attr("href", href.replace("../../examples", "../../examples/" + ver))
+            }
+
+            if(href.indexOf("../../quickstart") === 0){
+                element.attr("href", href.replace("../../quickstart", "../../quickstart/" + ver))
+            }
         });
 
         //track social shares

@@ -1822,7 +1822,7 @@ $("#lang-default").click(function(){
         <div class="docs-sidenav">
             <h2>
                 Menu
-                    <div id="version-select">
+                    <div id="version-select" data-version="3.0">
                     <div class="btn-group">
                       <button type="button" class="btn btn-sm  btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Version 3.0 <span class="caret"></span>
@@ -1909,6 +1909,21 @@ $("#lang-default").click(function(){
     $('body').scrollspy({
         target: '.docs-sidebar',
         offset: 40
+    });
+
+    //adjust links to point to correct version
+    $("[href]").each(function(){
+        var element = $(this),
+        href = element.attr("href"),
+        ver = $("#version-select").data("version");
+
+        if(href.indexOf("../../docs") === 0){
+            element.attr("href", href.replace("../../docs", "../../docs/" + ver))
+        }
+
+        if(href.indexOf("../../quickstart") === 0){
+            element.attr("href", href.replace("../../quickstart", "../../quickstart/" + ver))
+        }
     });
 
     //trigger build on tabulator element if present
