@@ -49,11 +49,103 @@ footer {
 //side bar
 .docs-sidebar{
 
+	padding-top:10px;
+
 	height:calc(~"100% - 52px");
 	overflow-y: auto;
 
+	#version-select{
+		display: inline-block;
+		float: right;
+
+		font-size: 10px;
+
+		button{
+			display: block;
+
+			margin-right:5px;
+			margin-left:5px;
+			margin-top:-5px;
+			padding:2px 10px;
+
+			font-size: 13px;
+			vertical-align: middle;
+		}
+
+		ul.dropdown-menu {
+			max-width: 20px;
+			width:20px;
+			overflow: hidden;
+
+			li a{
+				font-weight: bold;
+			}
+		}
+	}
+
+
+	.docs-sidenav{
+		margin-top:10px;
+		margin-bottom:5px;
+		padding-bottom:10px;
+
+		border-bottom:1px solid @green;
+
+		font-size: 13px;
+		font-weight:normal;
+
+		h2{
+			margin-top:15px;
+			margin-bottom:5px;
+			padding-bottom:10px;
+
+			border-bottom:1px solid @green;
+
+			font-size: 18px;
+			font-weight: bold;
+
+			&:first-child{
+				margin-top:0;
+				padding-top:0;
+			}
+		}
+
+		ul{
+
+			li{
+
+				&.active{
+					border-left:3px solid @green;
+					font-weight: bold;
+
+					a{
+						padding-left:12px;
+						color: @green;
+					}
+				}
+
+				a{
+					padding:4px 15px;
+
+					// font-weight: bold;
+					color:#999;
+
+					&:hover{
+						color:@green;
+					}
+				}
+			}
+
+			.label{
+				margin-left:3px;
+			}
+		}
+	}
+
+
 	.share{
 		margin-left:5px;
+		margin-bottom:5px;
 
 		span{
 			vertical-align: middle;
@@ -69,38 +161,6 @@ footer {
 			&:hover{
 				color:#222;
 			}
-		}
-	}
-
-	.docs-sidenav{
-
-		margin-top:20px;
-
-		li{
-
-			&.active{
-				border-left:3px solid @green;
-
-				a{
-					padding-left:12px;
-					color: @green;
-				}
-			}
-
-			a{
-				padding:5px 15px;
-
-				font-weight: bold;
-				color:#999;
-
-				&:hover{
-					color:@green;
-				}
-			}
-		}
-
-		.label{
-			margin-left:3px;
 		}
 	}
 }
@@ -182,19 +242,19 @@ footer {
 
 
 		&::-webkit-input-placeholder {
-		   color:#6B8362;
+			color:#6B8362;
 		}
 
 		&:-moz-placeholder { /* Firefox 18- */
-		   color:#6B8362;
+			color:#6B8362;
 		}
 
 		&::-moz-placeholder {  /* Firefox 19+ */
-		   color:#6B8362;
+			color:#6B8362;
 		}
 
 		&:-ms-input-placeholder {
-		   color:#6B8362;
+			color:#6B8362;
 		}
 	}
 
@@ -302,35 +362,69 @@ button, select{
 	margin-right:20px;
 }
 
-button{
+.container{
+	button{
 
-	border:2px solid darken(@green, 20%);
-	border-radius: 5px;
+		border:2px solid darken(@green, 20%);
+		border-radius: 5px;
 
-	padding: 5px 10px;
+		padding: 5px 10px;
 
-	background: @green;
+		background: @green;
 
-	color: #fff;
-	font-weight: bold;
+		color: #fff;
+		font-weight: bold;
 
-	&:hover{
-		background:darken(@green, 20%);
-		border:2px solid  @green;
+		&:hover{
+			background:darken(@green, 20%);
+			border:2px solid  @green;
+		}
+
+		&.view-source{
+			margin-top: 20px;
+		}
+
 	}
-
-	&.view-source{
-		margin-top: 20px;
-	}
-
 }
 
+.alert-danger{
+	font-size: 16px;
+	font-weight: bold;
+
+	&:first-child{
+		margin-top:25px;
+		margin-bottom:-10px;
+	}
+
+	i{
+		margin-right:10px;
+	}
+}
+
+.alert{
+	&.download-now{
+		margin-top:30px;
+		margin-bottom:-10px;
+
+		padding:5px 10px;
+
+		font-weight:bold;
+	}
+}
+
+.extension-info{
+	padding:5px 10px;
+}
 
 article{
 
 	position: relative;
 
 	margin-top: 50px;
+
+	&:first-of-type{
+		margin-top:25px;
+	}
 
 
 	//// header styling ////
