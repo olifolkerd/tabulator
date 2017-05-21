@@ -32,13 +32,14 @@
     <link href="../../css/prettyprint.css" rel="stylesheet">
 
     <!-- Tabulator CSS -->
-    <link href="../../css/tabulator.css" rel="stylesheet">
-    <link href="../../css/themes/tabulator_autumn.css" rel="stylesheet">
-    <link href="../../css/themes/tabulator_midnight.css" rel="stylesheet">
-    <link href="../../css/themes/tabulator_modern.css" rel="stylesheet">
-    <link href="../../css/themes/tabulator_simple.css" rel="stylesheet">
-    <link href="../../css/themes/bootstrap/tabulator_bootstrap.css" rel="stylesheet">
-    <link href="../../css/themes/semantic-ui/tabulator_semantic-ui.css" rel="stylesheet">
+    <link href="../../css/3.0/tabulator_site.css" rel="stylesheet">
+    <link href="../../css/3.0/tabulator.css" rel="stylesheet">
+    <link href="../../css/3.0/tabulator_midnight.css" rel="stylesheet">
+    <link href="../../css/3.0/tabulator_modern.css" rel="stylesheet">
+    <link href="../../css/3.0/tabulator_simple.css" rel="stylesheet">
+    <link href="../../css/3.0/bootstrap/tabulator_bootstrap.css" rel="stylesheet">
+    <link href="../../css/3.0/semantic-ui/tabulator_semantic-ui.css" rel="stylesheet">
+>
 
     <link rel="icon"
     type="image/png"
@@ -80,6 +81,11 @@
             margin-bottom:20px;
 
             font-size: 60px;
+        }
+
+        .tabulator input, .tabulator select{
+            line-height: normal;
+            color: #222;
         }
 
         #example-table-rowformat table{
@@ -169,7 +175,7 @@
                         <h1>Simple Table</h1>
 
                         <p>In its simplest form, all you need to set in the options are the column titles and field names.</p>
-                        <p>By default columns are resizable (using edge of column header) and sortable (as strings).</p>
+                        <p>By default columns are resizable (using the edge of column) and sortable.</p>
 
                         <div class="example-table" id="example-table-simple">
                             <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
@@ -184,12 +190,12 @@
                             <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     columns:[
-        {title:"Name", field:"name", width:200},
+        {title:"Name", field:"name"},
         {title:"Progress", field:"progress", width:100, sorter:"number"},
-        {title:"Gender", field:"gender"},
+        {title:"Gender", field:"gender", width:100},
         {title:"Rating", field:"rating", width:80},
-        {title:"Favourite Color", field:"col"},
-        {title:"Date Of Birth", field:"dob"},
+        {title:"Favourite Color", field:"col", width:80},
+        {title:"Date Of Birth", field:"dob", minWidth:100},
         {title:"Driver", field:"car"},
     ],
 });</pre>
@@ -518,47 +524,47 @@
 
                     <h3>JavaScript</h3>
                     <pre class="prettyprint lang-js">//Create Gender
-var genderEditor = function(cell, value){
-//cell - JQuery object for current cell
-//value - the current value for current cell
+var genderEditor = function(cell, onRendered, success, cancel){
+    //cell - the cell component for the editable cell
+    //onRendered - function to call when the editor has been rendered
+    //success - function to call to pass the succesfully updated value to Tabulator
+    //cancel - function to call to abort the edit and return to a normal cell
 
-//create and style editor
-var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
-editor.css({
-    "padding":"3px",
-    "width":"100%",
-    "box-sizing":"border-box",
-})
+    //create and style editor
+    var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+    editor.css({
+        "padding":"3px",
+        "width":"100%",
+        "box-sizing":"border-box",
+    });
 
-//Set value of editor to the value of the cell
-.val(value);
+    //Set value of editor to the current value of the cell
+    editor.val(cell.getValue());
 
-//set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-if(cell.hasClass("tabulator-cell")){
-    setTimeout(function(){
-        editor.focus();
-    },100);
-}
+    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+    onRendered(function(){
+      input.focus();
+    });
 
-//when the value has been set, update the cell
-editor.on("change blur", function(e){
-    cell.trigger("editval", editor.val());
-});
+    //when the value has been set, trigger the cell to update
+    editor.on("change blur", function(e){
+        success(editor.val());
+    });
 
-//return the editor element
+    //return the editor element
     return editor;
-}
+};
 
 //Build Tabulator
 $("#example-table").tabulator({
     height:"311px",
     columns:[
-        {title:"Name", field:"name", width:150, editable:true},
-        {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
-        {title:"Gender", field:"gender", editable:true, editor:genderEditor},
-        {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
-        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-        {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
+        {title:"Name", field:"name", width:150, editor:"input"},
+        {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200, editor:true},
+        {title:"Gender", field:"gender", editor:genderEditor},
+        {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editor:true},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editor:"input"},
+        {title:"Driver", field:"car", align:"center", editor:true, formatter:"tickCross"},
     ],
     cellEdited:function(id,data,row){
         //This callback is called any time a cell is edidted
@@ -569,19 +575,21 @@ $("#example-table").tabulator({
 <a class="anchor" id="sorters"></a>
 <article>
     <h1>Sorters <a class="doc-link" href="../../docs?#sorting"><i class="fa fa-external-link"></i> Documentation</a></h1>
-    <p>Sorting is enabled by default, and can be toggled on or off by column using the <span class='param'>sortable</span> option.</p>
 
-    <p>By default all columns are sorted as text, different sort functions can be set using the <span class='param'>sorter</span> option
+    <p>By default Tabulator will attempt to guess which sorter should be applied to a column based on the data contained in the first row. It can determine sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
 
         <ul>
             <li><strong>string</strong> - sorts column as strings of characters</li>
             <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
             <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
             <li><strong>boolean</strong> - sorts column as booleans</li>
-            <li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span class='param'>dateFormat</span> option when you create your table. default format is "dd/mm/yyyy")</li>
+            <li><strong>date</strong> - sorts column as dates</li>
+            <li><strong>time</strong> - sorts column as times</li>
         </ul>
 
     </p>
+
+    <p>To specify a sorter to be used on a column use the <span class='param'>param</span> property in the columns definition object</p>
 
     <p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
 
@@ -642,8 +650,8 @@ $("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
-        {title:"Name", field:"name", sorter:"string", width:200},
-        {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", align:"right"},
         {title:"Gender", field:"gender", sorter:"string"},
         {title:"Rating", field:"rating",  align:"center", width:100},
         {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
@@ -702,7 +710,7 @@ $("#sort-trigger").click(function(){
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Generate print icon
-var printIcon = function(value, data, cell, row, options){ //plain text value
+var printIcon = function(cell, formatterParams){ //plain text value
     return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
 };
 
@@ -710,28 +718,29 @@ var printIcon = function(value, data, cell, row, options){ //plain text value
 $("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
-    rowFormatter:function(row, data){
-        if(data.col == "blue"){
-            row.css({"background-color":"#A6A6DF"});
+    rowFormatter:function(row){
+        if(row.getData().col == "blue"){
+            row.getElement().css({"background-color":"#A6A6DF"});
         }
     },
     columns:[
-        {formatter:"rownum", align:"center", width:40},
-        {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-        {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
-            if(value.indexOf("o") > 0){
-                return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
-            }else{
-                return value;
-            }
-        }},
-        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-        {title:"Gender", field:"gender"},
-        {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-        {title:"Favourite Color", field:"col" ,formatter:"color", width:100},
-        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-        {formatter:"buttonCross", width:30, align:"center"},
+    {formatter:"rownum", align:"center", width:40},
+    {formatter:printIcon, width:40, align:"center", cellClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},
+    {title:"Name", field:"name", width:200, formatter:function(cell, formatterParams){
+       var value = cell.getValue();
+        if(value.indexOf("o") > 0){
+            return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
+        }else{
+            return value;
+        }
+    }},
+    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+    {title:"Gender", field:"gender"},
+    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    {title:"Favourite Color", field:"col" ,formatter:"color", width:100},
+    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+    {formatter:"buttonCross", width:30, align:"center"}
     ],
 });</pre>
 </fieldset>
@@ -741,7 +750,7 @@ $("#example-table").tabulator({
     <h1>Row Formatter <a class="doc-link" href="../../docs?#row-formatter"><i class="fa fa-external-link"></i> Documentation</a></h1>
     <p>If you are looking for a non grid based format to your table then you can use a row formatter to create custom row layouts.</p>
     <p>You can use the <span class='param'>rowFormatter</span> callback to replace the contents of the row with any layout you like. In this example we will create a simple table in each row containg and image and some vertically centered text properties.</p>
-    <p>When replacing the entier contents of the row it is important to include only one column in your column definition array to ensure the table renders correctly. It is also advisable to enable <span class='param'>fitColumns</span> and disabled <span class='param'>colResizable</span> options.</p>
+    <p>When replacing the entier contents of the row it is important to include only one column in your column definition array to ensure the table renders correctly. It is also advisable to enable <span class='param'>fitColumns</span> and disabled <span class='param'>resizableColumns</span> options.</p>
     <div class="example-table" id="example-table-rowformat">
     <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
 </div>
@@ -783,28 +792,30 @@ var cheeseData = [
 $("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
-    colResizable:false,
+    resizableColumns:false,
     columns:[
         {title:"Cheese", field:"type", sorter:"string"},
     ],
     rowFormatter:function(row, data){
-        //get current width of row
-        var width = row.outerWidth();
+        var element = row.getElement(),
+        data = row.getData(),
+        width = element.outerWidth(),
+        table;
 
         //clear current row data
-        row.empty();
+        element.empty();
 
         //define a table layout structure and set width of row
-        var table = $("&lt;table style='width:" + (width - 18) + "px;'&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/table&gt;");
+        table = $("&lt;table style='width:" + (width - 18) + "px;'&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/table&gt;");
 
         //add image on left of row
-        $("tr", table).append("&lt;td&gt;&lt;img src='row_formatter/" + data.image + "'&gt;&lt;/td&gt;");
+        $("tr", table).append("&lt;td&gt;&lt;img src='../row_formatter/" + data.image + "'&gt;&lt;/td&gt;");
 
         //add row data on right hand side
-        $("tr", table).append("&lt;td&gt;&lt;div&gt;&lt;strong&gt;Type:&lt;/strong&gt; " + data.type + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Age:&lt;/strong&gt; " + data.age + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Rind:&lt;/strong&gt; " + data.rind + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Colour:&lt;/strong&gt; " + data.color + "&lt;/div>&lt;/td>");
+        $("tr", table).append("&lt;td&gt;&lt;div&gt;&lt;strong&gt;Type:&lt;/strong&gt; " + data.type + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Age:&lt;/strong&gt; " + data.age + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Rind:&lt;/strong&gt; " + data.rind + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Colour:&lt;/strong&gt; " + data.color + "&lt;/div&gt;&lt;/td&gt;");
 
         //append newly formatted contents to the row
-        row.append(table);
+        element.append(table);
     },
 })
 
@@ -836,31 +847,31 @@ $("#example-table").tabulator("setData", cheeseData);</pre>
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">//Formatter to generate line chart
-var lineFormatter = function(value, data, cell, row, options){
+var lineFormatter = function(cell, formatterParams){
     setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.sparkline(value, {width:"100%", type:"line"});
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"line", disableTooltips:true});
     }, 10);
 };
 
-//Formatter to generate bar chart
-var barFormatter = function(value, data, cell, row, options){
+//generate bar chart
+var barFormatter = function(cell, formatterParams){
     setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.sparkline(value, {width:"100%", type:"bar", barWidth:14});
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
     }, 10);
 };
 
-//Formatter to generate tristart chart
-var tristateFormatter = function(value, data, cell, row, options){
+//generate discrete chart
+var tristateFormatter = function(cell, formatterParams){
     setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14});
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
     }, 10);
 };
 
 
-//Formatter to generate box plot
-var boxFormatter = function(value, data, cell, row, options){
+//generate box plot
+var boxFormatter = function(cell, formatterParams){
     setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.sparkline(value, {width:"100%", type:"box"});
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"box", disableTooltips:true});
     }, 10);
 };
 
@@ -1075,13 +1086,13 @@ $("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
     columns:[
-        {title:"Name", field:"name", width:150, headerFilter:true},
+        {title:"Name", field:"name", width:150, headerFilter:"input"},
         {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
         {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
         {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
-        {title:"Favourite Color", field:"col", headerFilter:true},
-        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
-        {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
+        {title:"Favourite Color", field:"col", headerFilter:"input"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date",  headerFilter:"input"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross",  headerFilter:"input"},
     ],
 });</pre>
     </fieldset>
@@ -1112,7 +1123,9 @@ $("#example-table").tabulator({
     height:"292px",
     fitColumns:true,
     pagination:"local",
-    paginationSize:8,
+    paginationSize:6,
+    movableColumns:true,
+    movableColumns:true,
     columns:[
         {title:"Name", field:"name", width:200},
         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
@@ -1201,7 +1214,7 @@ $("#example-table").tabulator("setPage", 1);</pre>
 $("#example-table").tabulator({
     height:"311px",
     fitColumns:true,
-    ajaxURL:"data.php",
+    placeholder:"No Data Set",
     columns:[
         {title:"Name", field:"name", sorter:"string", width:200},
         {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
@@ -1215,7 +1228,7 @@ $("#example-table").tabulator({
 
 //trigger AJAX load on "Load Data via AJAX" button click
 $("#ajax-trigger").click(function(){
-    $("#example-table").tabulator("setData");
+    $("#example-table").tabulator("setData", "../data.php");
 });</pre>
     <h3>Server Side PHP</h3>
     <pre class="prettyprint lang-php">//build data array
@@ -1369,7 +1382,7 @@ $("#example-table").tabulator({
 
 //Add row on "Add Row" button click
 $("#add-row").click(function(){
-    $("#example-table").tabulator("addRow");
+    $("#example-table").tabulator("addRow", {});
 });
 
 //Delete row on "Delete Row" button click
@@ -1379,7 +1392,7 @@ $("#del-row").click(function(){
 
 //Clear table on "Empty the table" button click
 $("#clear").click(function(){
-    $("#example-table").tabulator("clear");
+    $("#example-table").tabulator("clearData");
 });
 
 //Reset table contents on "Reset the table" button click
@@ -1393,7 +1406,7 @@ $("#reset").click(function(){
     <h1>Movable Rows <a class="doc-link" href="../../docs?#movable"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
     <p>
-        Using the <span class='param'>movableRows</span> parameter you can allow the user to move rows around the table using the handle on the left-hand side of the row.
+        Using the <span class='param'>movableRows</span> property you can allow the user to move rows around the table by clicking and dragging.
     </p>
     <div class="example-table" id="example-table-movable-rows">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
@@ -1418,8 +1431,8 @@ $("#reset").click(function(){
         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
         {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
     ],
-    rowMoved:function(id,data,row,index){
-        alert("Row: " + data.name + " has been moved to position " + index)
+    rowMoved:function(row){
+        alert("Row: " + row.getData().name + " has been moved");
     }
 });</pre>
 </fieldset>
@@ -1439,6 +1452,7 @@ $("#reset").click(function(){
           <div class="col-lg-12 content " role="main">
           <button id="download-csv">Download CSV</button>
           <button id="download-json">Download JSON</button>
+          <button id="download-xlsx">Download XLSX</button>
           </div>
         </div>
       </div>
@@ -1477,6 +1491,11 @@ $("#download-csv").click(function(){
 //trigger download of data.json file
 $("#download-json").click(function(){
     $("#example-table").tabulator("download", "json", "data.json");
+});
+
+//trigger download of data.xlsx file
+$("#download-xlsx").click(function(){
+    $("#example-table-download").tabulator("download", "xlsx", "data.xlsx");
 });</pre>
     </fieldset>
 </article>
@@ -1593,7 +1612,7 @@ $("#lang-default").click(function(){
     <p>Tabulator features a range of callbacks to allow you to handle user interaction.</p>
 
     <ul>
-        <li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>onClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
+        <li><strong>Cell Click</strong> - The cell click callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the <span><strong>cellClick</strong></span> option in the columns data. (left click any cell in the gender column in this example)</li>
         <li><strong>Row Click</strong> - The row click callback is triggered when a user clicks on a row, it can be set globally, by setting the<span><strong>rowClick</strong></span>option when you create your Tabulator. (left click any row in this example)</li>
         <li><strong>Row Context Menu</strong> - The row context callback is triggered when a user right clicks on a row, it can be set globally, by setting the <span class='param'>rowContext</span> option when you create your Tabulator. (right click any row in this example)</li>
         <li><strong>Data Loaded</strong> - The data loaded callback is triggered when a new set of data is loaded into the table, it can be set globally, by setting the <span class='param'>dataLoaded</span> option when you create your</li>
@@ -1616,17 +1635,17 @@ $("#lang-default").click(function(){
     columns:[
         {title:"Name", field:"name", sorter:"string", width:150},
         {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-        {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+        {title:"Gender", field:"gender", width:100, sorter:"string", cellClick:function(e, cell){alert("cell clicked - " + cell.getValue())}},
         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
         {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
         {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
     ],
-    rowClick:function(e, id, data, row){
-        alert("Row " + id + " Clicked!!!!")
+    rowClick:function(e, row){
+        alert("Row " + row.getIndex() + " Clicked!!!!")
     },
-    rowContext:function(e, id, data, row){
-        alert("Row " + id + " Context Clicked!!!!")
+    rowContext:function(e, row){
+        alert("Row " + row.getIndex() + " Context Clicked!!!!")
     },
 });</pre>
 </fieldset>
@@ -1638,10 +1657,23 @@ $("#lang-default").click(function(){
 
     <p>A <span class='param'>LESS</span> file is also provided, containing a set of variables to make generating your own theme even easier. This can be found in <span class='param'>tabulator.less</span></p>
 
-    <p>Tabulator comes with a number of packaged themes in the <span class='param'>/themes</span> directory of the package. To use one of these simply include the matching css file instead of the default <span class='param'>tabulator.css</span></p>
+    <p>Tabulator comes with a number of packaged themes in the <span class='param'>/dist/css/</span> directory of the package. To use one of these simply include the matching css file instead of the default <span class='param'>tabulator.css</span></p>
+
+    <h2>Standard Theme</h2>
+    <p>The standard generic table theme. This can be found in <span class='param'>/dist/css/tabulator.min.css</span></p>
+    <div id="example-table-theme-standard" class="example-themes">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;link href="/dist/css/tabulator.min.css" rel="stylesheet"&gt;</pre>
+    </fieldset>
+
 
     <h2>Simple Theme</h2>
-    <p>A plain, simplistic layout showing only basic grid lines. This can be found in <span class='param'>/themes/tabulator_simple.css</span></p>
+    <p>A plain, simplistic layout showing only basic grid lines. This can be found in <span class='param'>/dist/css/tabulator_simple.min.css</span></p>
     <div id="example-table-theme-simple" class="example-themes">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1649,11 +1681,11 @@ $("#lang-default").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_simple.css" rel="stylesheet"&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;link href="/dist/css/tabulator_simple.min.css" rel="stylesheet"&gt;</pre>
     </fieldset>
 
     <h2>Midnight Theme</h2>
-    <p>A dark, stylish layout using simple shades of grey. This can be found in <span class='param'>/themes/tabulator_midnight.css</span></p>
+    <p>A dark, stylish layout using simple shades of grey. This can be found in <span class='param'>/dist/css/tabulator_midnight.min.css</span></p>
     <div id="example-table-theme-midnight" class="example-themes">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1661,11 +1693,11 @@ $("#lang-default").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_midnight.css" rel="stylesheet"&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;link href="/dist/css/tabulator_midnight.min.css" rel="stylesheet"&gt;</pre>
     </fieldset>
 
     <h2>Modern Theme</h2>
-    <p>A neat, stylish layout using one primary color. This color can be set in the <span class='param'>@primary</span> variable in the <span class='param'>/themes/tabulator_modern.less</span> file to alter the style to match your colour scheme. This can be found in <span class='param'>/themes/tabulator_modern.css</span></p>
+    <p>A neat, stylish layout using one primary color. This color can be set in the <span class='param'>@primary</span> variable in the <span class='param'>/dist/css/tabulator_modern.less</span> file to alter the style to match your colour scheme. This can be found in <span class='param'>/dist/css/tabulator_modern.min.css</span></p>
     <div id="example-table-theme-modern" class="example-themes">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1673,24 +1705,11 @@ $("#lang-default").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_modern.css" rel="stylesheet"&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;link href="/dist/css/tabulator_modern.min.css" rel="stylesheet"&gt;</pre>
     </fieldset>
-
-    <h2>Autumn Theme</h2>
-    <p>A colorful, bright layout using shades of orange and brown. This can be found in <span class='param'>/themes/tabulator_autumn.css</span></p>
-    <div id="example-table-theme-autumn" class="example-themes">
-        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-    </div>
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;link href="/themes/tabulator_autumn.css" rel="stylesheet"&gt;</pre>
-    </fieldset>
-
 
     <h2>Bootstrap Theme</h2>
-    <p>Match Tabulator to the standard Bootstrap theme <span class='param'>/themes/bootstrap/tabulator_bootstrap.css</span></p>
+    <p>Match Tabulator to the standard Bootstrap theme <span class='param'>/dist/css/bootstrap/tabulator_bootstrap.min.css</span></p>
     <div id="example-table-theme-bootstrap" class="example-themes">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1698,12 +1717,12 @@ $("#lang-default").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;link href="/themes/bootstrap/tabulator_bootstrap.css" rel="stylesheet"&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;link href="/dist/css/bootstrap/tabulator_bootstrap.min.css" rel="stylesheet"&gt;</pre>
     </fieldset>
 
 
     <h2>Semantic UI Theme</h2>
-    <p>Match Tabulator to the standard Semantic UI theme <span class='param'>/themes/semantic-ui/tabulator_semantic-ui.css</span></p>
+    <p>Match Tabulator to the standard Semantic UI theme <span class='param'>/dist/css/semantic-ui/tabulator_semantic-ui.min.css</span></p>
     <div id="example-table-theme-semantic-ui" class="example-themes">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1711,12 +1730,12 @@ $("#lang-default").click(function(){
     <fieldset class="source">
         <legend>Source Code</legend>
         <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;link href="/themes/semantic-ui/tabulator_semantic-ui.css" rel="stylesheet"&gt;</pre>
+        <pre class="prettyprint lang-html">&lt;link href="/dist/css/semantic-ui/tabulator_semantic-ui.min.css" rel="stylesheet"&gt;</pre>
     </fieldset>
 
 
     <h2>Manually Adjusted Theme</h2>
-    <p>You can override the defualt tabulator styling in document, or simply edit the provided <span class='param'>tabulator.css</span> file to make your own custom theme.</p>
+    <p>You can override the defualt tabulator styling in document, or simply edit the provided <span class='param'>tabulator.min.css</span> file to make your own custom theme.</p>
     <style>
         /*Theme the Tabulator element*/
         #example-table-theme{
@@ -1799,7 +1818,7 @@ $("#lang-default").click(function(){
     columns:[
         {title:"Name", field:"name", sorter:"string", width:150},
         {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-        {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+        {title:"Gender", field:"gender", width:100, sorter:"string", cellClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
         {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
         {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
         {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},
@@ -1835,7 +1854,7 @@ $("#lang-default").click(function(){
                 </div>
             </h2>
             <ul class="nav">
-                <li><a href="#simple">Simple Table</a></li>
+                <li class="active"><a href="#simple">Simple Table</a></li>
                 <li><a href="#fittodata">Fit To Data</a></li>
                 <li><a href="#fittowidth">Fit To Width</a></li>
                 <li><a href="#responsive-layout">Responsive Layout</a></li>
@@ -1899,9 +1918,11 @@ $("#lang-default").click(function(){
 <script src="../../js/bootstrap.min.js"></script>
 
 <!-- Tabulator -->
-<script src="../../js/tabulator.js?i=1"></script>
+<script src="../../js/3.0/tabulator.min.js?i=1"></script>
 <script src="../../js/sparkline.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+<script type="text/javascript" src="http://oss.sheetjs.com/js-xlsx/xlsx.full.min.js"></script>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/lang-css.js"></script>
 <script type="text/javascript">
@@ -1990,7 +2011,7 @@ $("#lang-default").click(function(){
 
      //sample data to be used in all tabulators
      var tabledata = [
-     {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
+     {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"14/04/1984", car:1, lucky_no:5},
      {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
      {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
      {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
@@ -2003,7 +2024,7 @@ $("#lang-default").click(function(){
      ];
 
      var tabledatabig = [
-     {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5},
+     {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"14/04/1984", car:1, lucky_no:5},
      {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10},
      {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12},
      {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18},
@@ -2031,12 +2052,12 @@ $("#lang-default").click(function(){
          $("#example-table-simple").tabulator({
              height:"311px",
              columns:[
-             {title:"Name", field:"name", width:200},
+             {title:"Name", field:"name"},
              {title:"Progress", field:"progress", width:100, sorter:"number"},
-             {title:"Gender", field:"gender"},
+             {title:"Gender", field:"gender", width:100},
              {title:"Rating", field:"rating", width:80},
-             {title:"Favourite Color", field:"col"},
-             {title:"Date Of Birth", field:"dob"},
+             {title:"Favourite Color", field:"col", width:80},
+             {title:"Date Of Birth", field:"dob", minWidth:100},
              {title:"Driver", field:"car"},
              ],
          });
@@ -2170,49 +2191,49 @@ $("#lang-default").click(function(){
 
      //Editable Example
      //custom editor
-     var genderEditor = function(cell, value){
-         //cell - JQuery object for current cell
-         //value - the current value for current cell
+     var genderEditor = function(cell, onRendered, success, cancel){
+        //cell - the cell component for the editable cell
+        //onRendered - function to call when the editor has been rendered
+        //success - function to call to pass the succesfully updated value to Tabulator
+        //cancel - function to call to abort the edit and return to a normal cell
 
-         //create and style editor
-         var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
-         editor.css({
-             "padding":"3px",
-             "width":"100%",
-             "box-sizing":"border-box",
-         })
+        //create and style editor
+        var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
+        editor.css({
+            "padding":"3px",
+            "width":"100%",
+            "box-sizing":"border-box",
+        });
 
-         //Set value of editor to the value of the cell
-         .val(value);
+        //Set value of editor to the current value of the cell
+        editor.val(cell.getValue());
 
-         //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-         if(cell.hasClass("tabulator-cell")){
-             setTimeout(function(){
-                 editor.focus();
-             },100);
-         }
+        //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+        onRendered(function(){
+          input.focus();
+        });
 
+        //when the value has been set, trigger the cell to update
+        editor.on("change blur", function(e){
+            success(editor.val());
+        });
 
-         //when the value has been set, update the cell
-         editor.on("change blur", function(e){
-             cell.trigger("editval", editor.val());
-         });
+        //return the editor element
+        return editor;
+    };
 
-         //return the editor element
-         return editor;
-     }
 
      $("#example-table-editable").closest("article").on("build", function(){
 
      $("#example-table-editable").tabulator({
          height:"311px",
          columns:[
-         {title:"Name", field:"name", width:150, editable:true},
-         {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200,  editable:true},
-         {title:"Gender", field:"gender", editable:true, editor:genderEditor},
-         {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editable:true},
-         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
-         {title:"Driver", field:"car", align:"center", editable:true, formatter:"tickCross"},
+         {title:"Name", field:"name", width:150, editor:"input"},
+         {title:"Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", width:200, editor:true},
+         {title:"Gender", field:"gender", editor:genderEditor},
+         {title:"Rating", field:"rating",  formatter:"star", align:"center", width:100, editor:true},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editor:"input"},
+         {title:"Driver", field:"car", align:"center", editor:true, formatter:"tickCross"},
          ],
          cellEdited:function(id,data,row){
 
@@ -2231,8 +2252,8 @@ $("#lang-default").click(function(){
          height:"311px",
          fitColumns:true,
          columns:[
-         {title:"Name", field:"name", sorter:"string", width:200},
-         {title:"Progress", field:"progress", sorter:"number", align:"right", sorter:"number"},
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", align:"right"},
          {title:"Gender", field:"gender", sorter:"string"},
          {title:"Rating", field:"rating",  align:"center", width:100},
          {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
@@ -2256,23 +2277,24 @@ $("#lang-default").click(function(){
 
      //Formatter Example
      //generate print icon
-     var printIcon = function(value, data, cell, row, options){ //plain text value
+     var printIcon = function(cell, formatterParams){ //plain text value
+
          return "<i class='fa fa-print'></i> "
      };
 
      $("#example-table-formatter").tabulator({
          height:"311px",
          fitColumns:true,
-         rowFormatter:function(row, data){
-
-             if(data.col == "blue"){
-                 row.css({"background-color":"#A6A6DF"});
+         rowFormatter:function(row){
+             if(row.getData().col == "blue"){
+                 row.getElement().css({"background-color":"#A6A6DF"});
              }
          },
          columns:[
          {formatter:"rownum", align:"center", width:40},
-         {formatter:printIcon, width:40, align:"center", onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)}},
-         {title:"Name", field:"name", width:200, formatter:function(value, data, cell, row, options){
+         {formatter:printIcon, width:40, align:"center", cellClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},
+         {title:"Name", field:"name", width:200, formatter:function(cell, formatterParams){
+            var value = cell.getValue();
              if(value.indexOf("o") > 0){
                  return "<span style='color:red; font-weight:bold;'>" + value + "</span>";
              }else{
@@ -2308,27 +2330,30 @@ $("#lang-default").click(function(){
      $("#example-table-rowformat").tabulator({
          height:"311px",
          fitColumns:true,
-         colResizable:false,
+         resizableColumns:false,
          columns:[
          {title:"Cheese", field:"type", sorter:"string"},
          ],
-         rowFormatter:function(row, data){
-             var width = row.outerWidth();
+         rowFormatter:function(row){
+            var element = row.getElement(),
+            data = row.getData(),
+            width = element.outerWidth(),
+            table;
 
-             //clear current row data
-             row.empty();
+            //clear current row data
+            element.empty();
 
-             //define a table layout structure and set width of row
-             var table = $("<table style='width:" + (width - 18) + "px;'><tr></tr></table>");
+            //define a table layout structure and set width of row
+            table = $("<table style='width:" + (width - 18) + "px;'><tr></tr></table>");
 
-             //add image on left of row
-             $("tr", table).append("<td><img src='row_formatter/" + data.image + "'></td>");
+            //add image on left of row
+            $("tr", table).append("<td><img src='../row_formatter/" + data.image + "'></td>");
 
-             //add row data on right hand side
-             $("tr", table).append("<td><div><strong>Type:</strong> " + data.type + "</div><div><strong>Age:</strong> " + data.age + "</div><div><strong>Rind:</strong> " + data.rind + "</div><div><strong>Colour:</strong> " + data.color + "</div></td>");
+            //add row data on right hand side
+            $("tr", table).append("<td><div><strong>Type:</strong> " + data.type + "</div><div><strong>Age:</strong> " + data.age + "</div><div><strong>Rind:</strong> " + data.rind + "</div><div><strong>Colour:</strong> " + data.color + "</div></td>");
 
-             //append newly formatted contents to the row
-             row.append(table);
+            //append newly formatted contents to the row
+            element.append(table);
          },
      })
 
@@ -2342,31 +2367,31 @@ $("#lang-default").click(function(){
      //Sparkline Example
 
      //generate line chart
-     var lineFormatter = function(value, data, cell, row, options){
+     var lineFormatter = function(cell, formatterParams){
          setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-             cell.sparkline(value, {width:"100%", type:"line", disableTooltips:true});
+             cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"line", disableTooltips:true});
          }, 10);
      };
 
      //generate bar chart
-     var barFormatter = function(value, data, cell, row, options){
+     var barFormatter = function(cell, formatterParams){
          setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-             cell.sparkline(value, {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
+             cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
          }, 10);
      };
 
      //generate discrete chart
-     var tristateFormatter = function(value, data, cell, row, options){
+     var tristateFormatter = function(cell, formatterParams){
          setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-             cell.sparkline(value, {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
+             cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
          }, 10);
      };
 
 
      //generate box plot
-     var boxFormatter = function(value, data, cell, row, options){
+     var boxFormatter = function(cell, formatterParams){
          setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-             cell.sparkline(value, {width:"100%", type:"box", disableTooltips:true});
+             cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"box", disableTooltips:true});
          }, 10);
      };
 
@@ -2485,13 +2510,13 @@ $("#lang-default").click(function(){
          height:"311px",
          fitColumns:true,
          columns:[
-         {title:"Name", field:"name", width:150, headerFilter:true},
+         {title:"Name", field:"name", width:150, headerFilter:"input"},
          {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
          {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
          {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
-         {title:"Favourite Color", field:"col", headerFilter:true},
-         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", headerFilter:true},
-         {title:"Driver", field:"car", align:"center", formatter:"tickCross", headerFilter:true},
+         {title:"Favourite Color", field:"col", headerFilter:"input"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date",  headerFilter:"input"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross",  headerFilter:"input"},
          ],
      });
 
@@ -2506,7 +2531,7 @@ $("#lang-default").click(function(){
          height:"292px",
          fitColumns:true,
          pagination:"local",
-         paginationSize:8,
+         paginationSize:6,
          columns:[
          {title:"Name", field:"name", width:200},
          {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
@@ -2531,6 +2556,7 @@ $("#lang-default").click(function(){
          height:"311px",
          movableCols:true,
          persistentLayout: true,
+         movableColumns:true,
          persistentLayoutID:"examplePerststance2",
          columns:[
          {title:"Name", field:"name", width:200},
@@ -2553,7 +2579,7 @@ $("#lang-default").click(function(){
      $("#example-table-ajax").tabulator({
          height:"311px",
          fitColumns:true,
-         ajaxURL:"data.json",
+         placeholder:"No Data Set",
          columns:[
          {title:"Name", field:"name", sorter:"string", width:200},
          {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
@@ -2566,7 +2592,7 @@ $("#lang-default").click(function(){
      });
 
      $("#ajax-trigger").click(function(){
-         $("#example-table-ajax").tabulator("setData");
+         $("#example-table-ajax").tabulator("setData", "../data.json");
      })
 
      });
@@ -2615,7 +2641,7 @@ $("#lang-default").click(function(){
 
      //Add/Del Rows Example
      $("#add-row").click(function(){
-         $("#example-table-adddel").tabulator("addRow");
+         $("#example-table-adddel").tabulator("addRow", {});
      })
 
      $("#del-row").click(function(){
@@ -2623,7 +2649,7 @@ $("#lang-default").click(function(){
      })
 
      $("#clear").click(function(){
-         $("#example-table-adddel").tabulator("clear");
+         $("#example-table-adddel").tabulator("clearData");
      })
 
      $("#reset").click(function(){
@@ -2662,6 +2688,10 @@ $("#lang-default").click(function(){
 
      $("#download-json").click(function(){
          $("#example-table-download").tabulator("download", "json", "data.json");
+     });
+
+     $("#download-xlsx").click(function(){
+         $("#example-table-download").tabulator("download", "xlsx", "data.xlsx");
      });
 
      $("#example-table-download").tabulator({
@@ -2778,7 +2808,7 @@ $("#lang-default").click(function(){
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
          rowMoved:function(id,data,row,index){
-             alert("Row: " + data.name + " has been moved to position " + index)
+             alert("Row: " + row.getData().name + " has been moved");
          },
      });
 
@@ -2796,17 +2826,17 @@ $("#lang-default").click(function(){
          columns:[
          {title:"Name", field:"name", sorter:"string", width:150},
          {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-         {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+         {title:"Gender", field:"gender", width:100, sorter:"string", cellClick:function(e, cell){alert("cell clicked - " + cell.getValue())}},
          {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
          {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
          {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
          ],
-         rowClick:function(e, id, data, row){
-             alert("Row " + id + " Clicked!!!!")
+         rowClick:function(e, row){
+             alert("Row " + row.getIndex() + " Clicked!!!!")
          },
-         rowContext:function(e, id, data, row){
-             alert("Row " + id + " Context Clicked!!!!")
+         rowContext:function(e, row){
+             alert("Row " + row.getIndex() + " Context Clicked!!!!")
          },
      });
 
@@ -2849,7 +2879,7 @@ $("#lang-default").click(function(){
          columns:[
          {title:"Name", field:"name", sorter:"string", width:150},
          {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-         {title:"Gender", field:"gender", width:100, sorter:"string", onClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
+         {title:"Gender", field:"gender", width:100, sorter:"string", cellClick:function(e, cell, val, data){alert("cell clicked - " + val)}},
          {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
          {title:"Favourite Color", field:"col", width:100, sorter:"string", sortable:false},
          {title:"Date Of Birth", field:"dob", width:100, sorter:"date", align:"center"},

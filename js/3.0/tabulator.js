@@ -65,13 +65,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   ColumnManager.prototype.scrollHorizontal = function (left) {
 
-    var self = this;
+    var hozAdjust = 0,
+        scrollWidth = this.element[0].scrollWidth - this.table.element.innerWidth();
 
-    var hozAdjust = 0;
-
-    var scrollWidth = self.element[0].scrollWidth - table.element.innerWidth();
-
-    self.element.scrollLeft(left);
+    this.element.scrollLeft(left);
 
     //adjust for vertical scrollbar moving table when present
 
@@ -80,16 +77,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       hozAdjust = left - scrollWidth;
 
-      self.element.css("margin-left", -hozAdjust);
+      this.element.css("margin-left", -hozAdjust);
     } else {
 
-      self.element.css("margin-left", 0);
+      this.element.css("margin-left", 0);
     }
 
     //keep frozen columns fixed in position
 
 
-    //self._calcFrozenColumnsPos(hozAdjust + 3);
+    //this._calcFrozenColumnsPos(hozAdjust + 3);
 
 
     this.scrollLeft = left;
@@ -721,6 +718,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   var Column = function Column(def, parent) {
 
+    var self = this;
+
     this.table = parent.table;
 
     this.definition = def; //column definition
@@ -777,14 +776,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.isGroup = true;
 
-      this.columns.forEach(function (def, i) {
+      def.columns.forEach(function (def, i) {
 
-        var newCol = new Column(def, this);
+        var newCol = new Column(def, self);
 
-        this.attachColumn(newCol);
+        self.attachColumn(newCol);
       });
 
-      this.checkColumnVisibility();
+      self.checkColumnVisibility();
     } else {
 
       parent.registerColumnField(this);
@@ -2907,7 +2906,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.rowFormatter) {
 
-        self.table.options.rowFormatter(row.getComponent());
+        self.table.options.rowFormatter(self.getComponent());
       }
 
       self.initialized = true;
@@ -6148,6 +6147,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         filterElement,
         editor,
         editorElement,
+        cellWrapper,
         typingTimer,
         tagType,
         attrType;
@@ -6229,7 +6229,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (editor) {
 
-        editorElement = editor.call(self, filterElement, null, null, function () {}, success, cancel);
+        cellWrapper = {
+
+          getValue: function getValue() {
+
+            return "";
+          },
+
+          getElement: function getElement() {
+
+            return filterElement;
+          }
+
+        };
+
+        editorElement = editor.call(self, cellWrapper, function () {}, success, cancel);
 
         //set Placeholder Text
 

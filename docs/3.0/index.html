@@ -413,7 +413,6 @@ $("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajax
                     <p>Only the first sorter will be sent if multiple sorters are set.</p>
 
 
-
                     <h3>Callbacks <span class="label label-primary">Updated</span></h3>
                     <p>A range of callbacks are avaialble for tracking progress of ajax data loading. See the <a href="#callbacks-ajax">Ajax Callbacks</a> section for more information.</p>
 
@@ -922,7 +921,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>Tabulator allows you to sort the data in your table in any way you want.</p>
 
-                    <p>By default Tabulator will attempt to guess which sorter should be applied to a column based of the data contained in the first row. It can determin sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
+                    <p>By default Tabulator will attempt to guess which sorter should be applied to a column based on the data contained in the first row. It can determine sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
 
                     <p>To specify a sorter to be used on a column use the <span class='param'>param</span> property in the columns definition object</p>
 
@@ -1072,7 +1071,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
         "padding":"3px",
         "width":"100%",
         "box-sizing":"border-box",
-    })
+    });
 
     //Set value of editor to the current value of the cell
     editor.val(cell.getValue());
@@ -1080,7 +1079,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
     onRendered(function(){
       input.focus();
-    });}
+    });
 
     //when the value has been set, trigger the cell to update
     editor.on("change blur", function(e){
