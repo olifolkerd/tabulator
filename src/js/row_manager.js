@@ -205,8 +205,9 @@ RowManager.prototype.deleteRow = function(row){
 };
 
 RowManager.prototype.addRow = function(data, pos, index){
-	var row = new Row(data, this);
-	var top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
+	var safeData = data || {},
+	row = new Row(safeData, this),
+	top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
 
 	if(index){
 		index = this.findRow(index);
