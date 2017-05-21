@@ -123,6 +123,106 @@
                 <div class="col-lg-12" role="main">
 
                     <article>
+                        <h1>Version 3.0 Beta Available!<span class="datestamp">21/05/2017</span></h1>
+                        <p>The beta version of tabulator 3.0 is now available to <a href="https://github.com/olifolkerd/tabulator/archive/3.0.zip">Download from GitHub</a>. And what a a treat is is going to be!</p>
+
+                        <p>I have been busy beavering away for the last month, compleatly rebuilding Tabulator from the ground up to make it faster, more feature packed, and more extensible than ever before.</p>
+
+                        <p>There are a lot of changes in 3.0 so here is a highlight of the updates, checkout the <a href="../docs/3.0">Documentation</a> for full details of all the changes.</p>
+
+                        <h2>Virtual DOM</h2>
+                        <p>Tabulator now uses a virtual DOM to render only the rows that are currently visible in the display. This allows the table to process 10,000's of rows with no performance overhead!</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#virtual-dom">Virtual DOM Documentation</a></p>
+
+                        <h2>Modular Structure</h2>
+                        <p>The Tabulator code base has now been split into core modules and extenisons to make it easier to maintain and much more extensible.</p>
+
+                        <p>The extension modules can be removed as needed to allow you to build your own version of Tabulator including only the extensions you will use.</p>
+
+                        <p>To make the process of creating your own custom build easier, Tabulator now uses the <a href="http://gulpjs.com/">Gulp</a> task runner.</p>
+
+                        <p>As a bonus, the new modular structure has exposed even more configuration options that you can customise to personalize your tables.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#extending">Extensions Documentation</a></p>
+
+                        <h2>Components</h2>
+                        <p>One of the biggest changes of this release is the introduction of the component.</p>
+
+                        <p>Version 2 struggled with many callbacks, each with their own set of arguments that constantly needed updating to match users needs. To simplify this, callbacks are now passed component objects that represent the cells, rows, columns and groups of the table.</p>
+
+                        <p>Each object has its own set of fuctions that you can call on it to access DOM elements, get parent components, set values and trigger actions.</p>
+
+                        <p>Any future functionality needed in callbacks will be added to the components, keeping the argument lists the same, making it easier to move from version to version.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#components">Components Documentation</a></p>
+
+
+                        <h2>SASS Stylesheets</h2>
+                        <p>Tabulator is now styled using SASS instead of LESS.</p>
+
+                        <h2>Minified Source Files</h2>
+                        <p>Minified JS and CSS files are now available in the <span class='param'>/dist/</span> folder.</p>
+
+                        <h2>Console Logging</h2>
+                        <p>To help developers out, Tabulator now produces a wide array of console warnings and errors when you try and make it do something it shouldn't.</p>
+
+                        <h2>New Callbacks</h2>
+                        <p>The callback system has been completely overhauled, with components passed into every callback. Existing callbacks have had functionality changes and loads of new callbacks have been created.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#callbacks">Callback Documentation</a></p>
+
+                        <h2>Naming Conventions</h2>
+                        <p>The naming of configuration options and callbacks in version 2 had become a bit eratic. To help make things more intuative a number of properties and functions have been renamed to follow a standard convention.</p>
+
+                        <p>Have a look through the documentation to familiarize yourself with the changes.</p>
+
+                        <h2>Remote Sorting and Filtering</h2>
+                        <p>The <span class='param'>ajaxFiltering</span> and <span class='param'>ajaxSorting</span> options now give you the choice of passing filter and sort parameters a remote server to let it do the fitlering and sorting instead of Tabulator.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#ajax">Ajax Documentation</a></p>
+
+
+                        <h2>Empty Table Placeholder</h2>
+                        <p>Empty tables can look a bit dull and confuse your users. There is now a <span class='param'>placeholder</span> option that lets you add placeholder text or elements to your table to show your users it is supposed to be empty.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#placeholder-empty">Placeholder Documentation</a></p>
+
+                        <h2>Excel Downloads</h2>
+                        <p>The long awaited ability to download table data as an <span class='param'>xlsx</span> file is now available.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#download">Download Documentation</a></p>
+
+                        <h2>Improved Sorters and Formatters</h2>
+
+                        <p>Tabulator will now automatically try and guess the appropriate sorter for a column based on its data, without you having to declare it in the column definition array.</p>
+
+                        <p>Sorters and formatters have all received a bit of a polish to make them eaiser to use, and faster. The updated <span class='param'>date</span> and <span class='param'>time</span> formatters use the <a href="https://momentjs.com/">moment.js</a> library to perform even more complex sorting functionality.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#sorting">Sorting Documentation</a> and <a href="../docs/3.0#formatting">Formatting Documentation</a></p>
+
+                        <h2>Multiple Filters</h2>
+                        <p>You can now apply multiple filters at the same time, as well as independently apply header filters and programmatic filters.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#filtering">Filter Documentation</a></p>
+
+                        <h2>New Editor Functionality</h2>
+                        <p>Editors have been completly overhauled, custom editors now have access to the <span class='param'>success</span>, <span class='param'>cancel</span> and <span class='param'>onRendered</span> functions, to make interaction with the table simpler than ever.</p>
+
+                        <p>The new <span class='param'>editable</span> column option allows you to use a callbck to check whether a cell should be editable.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#manipulating-data">Editors Documentation</a></p>
+
+                        <h2>Improved Column Resizing</h2>
+                        <p>Columns can now be resized from the edge of the column anywhere in the table, rather than just the table header.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#col-resize">Column Resizing Documentation</a></p>
+
+
+
+
+
+                    <article>
                         <h1>Version 2.12 Released<span class="datestamp">12/04/2017</span></h1>
                         <p>Its been a couple of months since the last update so we have a bumper release for you this month!</p>
 
