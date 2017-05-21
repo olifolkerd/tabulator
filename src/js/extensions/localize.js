@@ -21,7 +21,21 @@ Localize.prototype.setHeaderFilterColumnPlaceholder = function(column, placehold
 
 //setup a lang description object
 Localize.prototype.installLang = function(locale, lang){
-	this.langs[locale] = lang;
+	if(this.langs[locale]){
+		this._setLangProp(this.langs[locale], lang);
+	}else{
+		this.langs[locale] = lang;
+	}
+};
+
+Localize.prototype._setLangProp = function(lang, values){
+	for(let key in values){
+		if(lang[key] && typeof lang[key] == "object"){
+			this._setLangProp(lang[key], values[key])
+		}else{
+			lang[key] = values[key];
+		}
+	}
 };
 
 

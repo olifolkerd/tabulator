@@ -4435,7 +4435,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Localize.prototype.installLang = function (locale, lang) {
 
-    this.langs[locale] = lang;
+    if (this.langs[locale]) {
+
+      this._setLangProp(this.langs[locale], lang);
+    } else {
+
+      this.langs[locale] = lang;
+    }
+  };
+
+  Localize.prototype._setLangProp = function (lang, values) {
+
+    for (var key in values) {
+
+      if (lang[key] && _typeof(lang[key]) == "object") {
+
+        this._setLangProp(lang[key], values[key]);
+      } else {
+
+        lang[key] = values[key];
+      }
+    }
   };
 
   //set current locale
@@ -8127,7 +8147,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.table.extensions.localize.bind("pagination.first", function (value) {
 
-      self.firstBut.text(value);
+      self.firstBut.html(value);
     });
 
     self.table.extensions.localize.bind("pagination.first_title", function (value) {
@@ -8137,7 +8157,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.table.extensions.localize.bind("pagination.prev", function (value) {
 
-      self.prevBut.text(value);
+      self.prevBut.html(value);
     });
 
     self.table.extensions.localize.bind("pagination.prev_title", function (value) {
@@ -8147,7 +8167,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.table.extensions.localize.bind("pagination.next", function (value) {
 
-      self.nextBut.text(value);
+      self.nextBut.html(value);
     });
 
     self.table.extensions.localize.bind("pagination.next_title", function (value) {
@@ -8157,7 +8177,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.table.extensions.localize.bind("pagination.last", function (value) {
 
-      self.lastBut.text(value);
+      self.lastBut.html(value);
     });
 
     self.table.extensions.localize.bind("pagination.last_title", function (value) {

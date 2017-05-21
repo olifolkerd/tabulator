@@ -38,7 +38,7 @@ Page.prototype.initialize = function(){
 
 	//bind localizations
 	self.table.extensions.localize.bind("pagination.first", function(value){
-		self.firstBut.text(value);
+		self.firstBut.html(value);
 	});
 
 	self.table.extensions.localize.bind("pagination.first_title", function(value){
@@ -47,7 +47,7 @@ Page.prototype.initialize = function(){
 	});
 
 	self.table.extensions.localize.bind("pagination.prev", function(value){
-		self.prevBut.text(value);
+		self.prevBut.html(value);
 	});
 
 	self.table.extensions.localize.bind("pagination.prev_title", function(value){
@@ -56,7 +56,7 @@ Page.prototype.initialize = function(){
 	});
 
 	self.table.extensions.localize.bind("pagination.next", function(value){
-		self.nextBut.text(value);
+		self.nextBut.html(value);
 	});
 
 	self.table.extensions.localize.bind("pagination.next_title", function(value){
@@ -65,7 +65,7 @@ Page.prototype.initialize = function(){
 	});
 
 	self.table.extensions.localize.bind("pagination.last", function(value){
-		self.lastBut.text(value);
+		self.lastBut.html(value);
 	});
 
 	self.table.extensions.localize.bind("pagination.last_title", function(value){
