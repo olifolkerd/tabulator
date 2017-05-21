@@ -9,16 +9,7 @@ var Ajax = function(table){
 	this.msgElement = $("<div class='tabulator-loader-msg' role='alert'></div>"); //message element
 	this.loadingElement = false;
 	this.errorElement = false;
-
-	//default ajax config object
-	this.defaultConfig = {
-		url: "",
-		type: "GET",
-		async: true,
-		dataType:"json",
-		success: function (data){},
-	};
-}
+};
 
 //initialize setup options
 Ajax.prototype.initialize = function(){
@@ -31,16 +22,16 @@ Ajax.prototype.initialize = function(){
 	if(this.table.options.ajaxLoaderError){
 		this.errorElement = this.table.options.ajaxLoaderError;
 	}
-},
+};
 
 //set ajax params
 Ajax.prototype.setParams = function(params){
 	this.params = params;
-},
+};
 
 Ajax.prototype.getParams = function(){
 	return this.params || {};
-},
+};
 
 //load config object
 Ajax.prototype.setConfig = function(config){
@@ -53,7 +44,7 @@ Ajax.prototype.setConfig = function(config){
 			this.config[key] = config[key];
 		}
 	}
-},
+};
 
 //create config object from default
 Ajax.prototype._loadDefaultConfig = function(force){
@@ -67,17 +58,17 @@ Ajax.prototype._loadDefaultConfig = function(force){
 			self.config[key] = self.defaultConfig[key];
 		}
 	}
-},
+};
 
 //set request url
 Ajax.prototype.setUrl = function(url){
 	this.url = url;
-},
+};
 
 //get request url
 Ajax.prototype.getUrl = function(){
 	return this.url;
-},
+};
 
 //send ajax request
 Ajax.prototype.sendRequest = function(callback){
@@ -124,7 +115,7 @@ Ajax.prototype.sendRequest = function(callback){
 		console.warn("Ajax Load Error - No URL Set");
 		return false;
 	}
-},
+};
 
 Ajax.prototype.showLoader = function(){
 	this.loaderElement.detach();
@@ -140,7 +131,7 @@ Ajax.prototype.showLoader = function(){
 	}
 
 	this.table.element.append(this.loaderElement);
-},
+};
 
 Ajax.prototype.showError = function(){
 	this.loaderElement.detach();
@@ -156,10 +147,19 @@ Ajax.prototype.showError = function(){
 	}
 
 	this.table.element.append(this.loaderElement);
-},
+};
 
 Ajax.prototype.hideLoader = function(){
 	this.loaderElement.detach();
-},
+};
+
+//default ajax config object
+Ajax.prototype.defaultConfig = {
+	url: "",
+	type: "GET",
+	async: true,
+	dataType:"json",
+	success: function (data){}
+};
 
 Tabulator.registerExtension("ajax", Ajax);

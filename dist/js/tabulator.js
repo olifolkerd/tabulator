@@ -4799,23 +4799,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.loadingElement = false;
 
     this.errorElement = false;
-
-    //default ajax config object
-
-
-    this.defaultConfig = {
-
-      url: "",
-
-      type: "GET",
-
-      async: true,
-
-      dataType: "json",
-
-      success: function success(data) {}
-
-    };
   };
 
   //initialize setup options
@@ -4834,7 +4817,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.errorElement = this.table.options.ajaxLoaderError;
     }
-  },
+  };
 
   //set ajax params
 
@@ -4842,10 +4825,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Ajax.prototype.setParams = function (params) {
 
     this.params = params;
-  }, Ajax.prototype.getParams = function () {
+  };
+
+  Ajax.prototype.getParams = function () {
 
     return this.params || {};
-  },
+  };
 
   //load config object
 
@@ -4864,7 +4849,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.config[key] = config[key];
       }
     }
-  },
+  };
 
   //create config object from default
 
@@ -4885,7 +4870,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.config[key] = self.defaultConfig[key];
       }
     }
-  },
+  };
 
   //set request url
 
@@ -4893,7 +4878,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Ajax.prototype.setUrl = function (url) {
 
     this.url = url;
-  },
+  };
 
   //get request url
 
@@ -4901,7 +4886,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Ajax.prototype.getUrl = function () {
 
     return this.url;
-  },
+  };
 
   //send ajax request
 
@@ -4956,7 +4941,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       return false;
     }
-  }, Ajax.prototype.showLoader = function () {
+  };
+
+  Ajax.prototype.showLoader = function () {
 
     this.loaderElement.detach();
 
@@ -4971,7 +4958,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     this.table.element.append(this.loaderElement);
-  }, Ajax.prototype.showError = function () {
+  };
+
+  Ajax.prototype.showError = function () {
 
     this.loaderElement.detach();
 
@@ -4986,10 +4975,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     this.table.element.append(this.loaderElement);
-  }, Ajax.prototype.hideLoader = function () {
+  };
+
+  Ajax.prototype.hideLoader = function () {
 
     this.loaderElement.detach();
-  }, Tabulator.registerExtension("ajax", Ajax);
+  };
+
+  //default ajax config object
+
+
+  Ajax.prototype.defaultConfig = {
+
+    url: "",
+
+    type: "GET",
+
+    async: true,
+
+    dataType: "json",
+
+    success: function success(data) {}
+
+  };
+
+  Tabulator.registerExtension("ajax", Ajax);
 
   var Download = function Download(table) {
 
