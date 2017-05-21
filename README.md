@@ -1,6 +1,6 @@
 ![Tabluator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
 
-### Version 2.12 Out Now!
+### Version 3.0 Out Now!
 
 An easy to use interactive table generation plugin for JQuery UI
 
@@ -17,6 +17,7 @@ Simply include the library and the css in your JQuery UI project and you're away
 Tabulator is packed with useful  features including:
 
 - Fully CSS styleable
+- Virtual DOM
 - JSON, array or AJAX data loading
 - Column sorting
 - Column Freezing
@@ -36,18 +37,6 @@ Tabulator is packed with useful  features including:
 - Custom click and context Events
 - Callbacks at every stage of data processing and rendering
 
-Version 3.0 Comming Soon!
-================================
-Work has begun on the next big installment of Tabulator. I am doing a ground up rebuild of the core code to make it more modular, extensible and manageable. Version 3.0 will include the following features:
-- Virtual DOM to massively improve render efficiency
-- Modularised code to improve maintainablity and extension
-- Extension Modules, breaking down sorting, formatting, mutating data and more into optional modules so you only have to includethe code you want to use
-- Uniform Function and Callback naming to improve usability
-- Improved CSS structure
-- Uniform callback arguments
-- New folder structure
-- Webpack project build files
-- A load of new features and tweaks
 
 Setup
 ================================
@@ -55,8 +44,8 @@ Setting up tabulator could not be simpler.
 
 Include the library and the css
 ```html
-<link href="tabulator.css" rel="stylesheet">
-<script type="text/javascript" src="tabulator.js"></script>
+<link href="dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="dist/js/tabulator.min.js"></script>
 ```
 
 Create an element to hold the table
@@ -93,7 +82,6 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
-
 - Custom Row Templates
 - Aditional Editors and Formatters
 - Column Calculations
@@ -101,10 +89,5 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Print Styling
 - Drag Rows Between Tables
 - Keyboard Cell Navigation
-- Minified source files
-- Minified CSS and JS
-
-
-
 
 Get in touch if there are any features you feel Tabulator needs.
