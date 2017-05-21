@@ -198,7 +198,6 @@ RowManager.prototype.deleteRow = function(row){
 	this.setDisplayRows(this.displayRows);
 
 	if(this.table.options.pagination && this.table.extExists("page")){
-		console.log("refreshing")
 		this.refreshActiveData()
 	}else{
 		this.renderTable();
@@ -374,7 +373,6 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 
 	if(!this.displayRowsCount){
 		if(table.options.placeholder){
-console.log("empty");
 			self.getElement().append(table.options.placeholder);
 		}
 	}
@@ -473,7 +471,7 @@ RowManager.prototype._clearVirtualDom = function(){
 		this.table.options.placeholder.detach();
 	}
 
-	element.empty();
+	element.children().detach();
 
 	element.css({
 		"padding-top":"",
@@ -506,8 +504,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 	if(!position){
 		self._clearVirtualDom();
 	}else{
-
-		element.empty();
+		element.children().detach();
 
 		//check if position is too close to bottom of table
 		let heightOccpied = (self.displayRowsCount - position) * self.vDomRowHeight

@@ -32,7 +32,6 @@ Download.prototype.triggerDownload = function(data, mime, type, filename){
 	filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
 	if(navigator.msSaveOrOpenBlob){
-		console.log("filename", filename)
 		navigator.msSaveOrOpenBlob(blob, filename);
 	}else{
 		element.setAttribute('href', window.URL.createObjectURL(blob));

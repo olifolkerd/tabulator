@@ -1835,8 +1835,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (this.table.options.pagination && this.table.extExists("page")) {
 
-      console.log("refreshing");
-
       this.refreshActiveData();
     } else {
 
@@ -2063,8 +2061,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (table.options.placeholder) {
 
-        console.log("empty");
-
         self.getElement().append(table.options.placeholder);
       }
     }
@@ -2200,7 +2196,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.options.placeholder.detach();
     }
 
-    element.empty();
+    element.children().detach();
 
     element.css({
 
@@ -2249,7 +2245,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self._clearVirtualDom();
     } else {
 
-      element.empty();
+      element.children().detach();
 
       //check if position is too close to bottom of table
 
@@ -3849,7 +3845,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     getRow: function getRow(index) {
 
-      row = this.rowManager.findRow(index);
+      var row = this.rowManager.findRow(index);
 
       if (row) {
 
@@ -3865,9 +3861,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //delete row from table
 
 
-    deleteRow: function deleteRow(row) {
+    deleteRow: function deleteRow(index) {
 
-      row = this.rowManager.findRow(row);
+      var row = this.rowManager.findRow(index);
 
       if (row) {
 
@@ -3876,7 +3872,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return true;
       } else {
 
-        console.warn("Delete Error - No matching row found:", row);
+        console.warn("Delete Error - No matching row found:", index);
 
         return false;
       }
@@ -5055,8 +5051,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
     if (navigator.msSaveOrOpenBlob) {
-
-      console.log("filename", filename);
 
       navigator.msSaveOrOpenBlob(blob, filename);
     } else {
@@ -7190,7 +7184,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.element.removeClass("tabulator-group-visible");
     }
 
-    this.element.empty().html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
+    this.element.children().detach();
+
+    this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
 
     this.addBindings();
 

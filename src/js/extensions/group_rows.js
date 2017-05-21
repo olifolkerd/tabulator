@@ -164,7 +164,9 @@ Group.prototype.getElement = function(){
 		this.element.removeClass("tabulator-group-visible");
 	}
 
-	this.element.empty().html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
+	this.element.children().detach();
+
+	this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
 
 	this.addBindings();
 

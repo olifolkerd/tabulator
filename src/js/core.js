@@ -364,7 +364,7 @@
 
 	 		//get row object
 	 		getRow:function(index){
-	 			row = this.rowManager.findRow(index);
+	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				return row.getComponent();
@@ -376,7 +376,7 @@
 
 	 		//delete row from table
 	 		deleteRow:function(index){
-	 			row = this.rowManager.findRow(row);
+	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				row.delete();
