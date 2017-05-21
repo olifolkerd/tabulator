@@ -2886,11 +2886,19 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 }</pre>
 
                     <h3>Column Moved <span class="label label-primary">Updated</span></h3>
-                    <p>The <span class='param'>columnMoved</span> callback will be triggered when a column has been successfully moved, .</p>
+                    <p>The <span class='param'>columnMoved</span> callback will be triggered when a column has been successfully moved.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columnMoved:function(field, columns){
+    columnMoved:function(column, columns){
         //column - column component of the moved column
         //columns- array of columns in new order
+    }
+});</pre>
+
+                    <h3>Column Resized <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>columnResized</span> callback will be triggered when a column has been resized by the user.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columnResized:function(column){
+        //column - column component of the resized column
     }
 });</pre>
 
@@ -3061,7 +3069,19 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     },
 });</pre>
 
+                    <h3>HTML Importing <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>htmlImporting</span> callback is triggered when Tabulator starts importing data from an HTML table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    htmlImporting:function(){
+    },
+});</pre>
 
+                    <h3>HTML Imported <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>htmlImported</span> callback is triggered when Tabulator finishes importing data from an HTML table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    htmlImported:function(){
+    },
+});</pre>
 
                     <a class="anchor" id="callbacks-ajax"></a>
                     <h2>Ajax Callbacks</h2>
