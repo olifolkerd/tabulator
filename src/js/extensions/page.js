@@ -336,7 +336,6 @@ Page.prototype._getRemotePageAuto = function(){
 		}
 	}
 
-
 	//set filter data if defined
 	if(this.table.extExists("filter")){
 

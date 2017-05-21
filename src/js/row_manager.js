@@ -316,6 +316,80 @@ RowManager.prototype.getDataCount = function(active){
 	return active ? this.rows.length : this.activeRows.length;
 };
 
+RowManager.prototype._genRemoteRequest = function(){
+	var self = this,
+	table = self.table,
+	options = table.options,
+	params = {};
+
+	if(table.extExists("page")){
+		//set sort data if defined
+		if(options.ajaxSorting){
+
+			let sorters = self.table.extensions.sort.getSort();
+
+			if(sorters[0] && typeof sorters[0].column != "function"){
+				params[self.table.extensions.page.paginationDataSentNames.sort] = sorters[0].column.getField();
+				params[self.table.extensions.page.paginationDataSentNames.sort_dir] = sorters[0].dir;
+			}
+		}
+
+		//set filter data if defined
+		if(options.ajaxFiltering){
+
+			let filters = self.table.extensions.filter.getFilter();
+
+			if(filters[0] && typeof filters[0].field == "string"){
+				params[self.table.extensions.page.paginationDataSentNames.filter] = filters[0].field;
+				params[self.table.extensions.page.paginationDataSentNames.filter_type] = filters[0].type;
+				params[self.table.extensions.page.paginationDataSentNames.filter_value] = filters[0].value;
+			}
+		}
+
+
+		self.table.extensions.ajax.setParams(params, true);
+	}
+
+	table.extensions.ajax.sendRequest(function(data){
+		self.setData(data);
+	});
+};
+
+//choose the path ro refresh data after a filter update
+RowManager.prototype.filterRefresh = function(){
+	var table = this.table,
+	options = table.options;
+
+	if(options.ajaxFiltering){
+		if(options.pagination == "remote" && table.extExists("page")){
+			table.extensions.page.reset(true);
+			table.extensions.page.setPage(1);
+		}else{
+			//assume data is url, make ajax call to url to get data
+			this._genRemoteRequest();
+		}
+	}else{
+		this.refreshActiveData();
+	}
+};
+
+//choose the path ro refresh data after a sorter update
+RowManager.prototype.sorterRefresh = function(){
+	var options = this.table.options
+
+	if(options.ajaxSorting){
+		if(options.pagination == "remote" && table.extExists("page")){
+			table.extensions.page.reset(true);
+			table.extensions.page.setPage(1);
+		}else{
+			//assume data is url, make ajax call to url to get data
+			this._genRemoteRequest();
+		}
+	}else{
+		this.refreshActiveData();
+	}
+};
+
 //set active data set
 RowManager.prototype.refreshActiveData = function(dataChanged){
 	var self = this,

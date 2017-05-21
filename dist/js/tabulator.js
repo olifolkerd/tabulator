@@ -1978,6 +1978,111 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return active ? this.rows.length : this.activeRows.length;
   };
 
+  RowManager.prototype._genRemoteRequest = function () {
+
+    var self = this,
+        table = self.table,
+        options = table.options,
+        params = {};
+
+    if (table.extExists("page")) {
+
+      //set sort data if defined
+
+
+      if (options.ajaxSorting) {
+
+        var sorters = self.table.extensions.sort.getSort();
+
+        if (sorters[0] && typeof sorters[0].column != "function") {
+
+          params[self.table.extensions.page.paginationDataSentNames.sort] = sorters[0].column.getField();
+
+          params[self.table.extensions.page.paginationDataSentNames.sort_dir] = sorters[0].dir;
+        }
+      }
+
+      //set filter data if defined
+
+
+      if (options.ajaxFiltering) {
+
+        var filters = self.table.extensions.filter.getFilter();
+
+        if (filters[0] && typeof filters[0].field == "string") {
+
+          params[self.table.extensions.page.paginationDataSentNames.filter] = filters[0].field;
+
+          params[self.table.extensions.page.paginationDataSentNames.filter_type] = filters[0].type;
+
+          params[self.table.extensions.page.paginationDataSentNames.filter_value] = filters[0].value;
+        }
+      }
+
+      self.table.extensions.ajax.setParams(params, true);
+    }
+
+    table.extensions.ajax.sendRequest(function (data) {
+
+      self.setData(data);
+    });
+  };
+
+  //choose the path ro refresh data after a filter update
+
+
+  RowManager.prototype.filterRefresh = function () {
+
+    var table = this.table,
+        options = table.options;
+
+    if (options.ajaxFiltering) {
+
+      if (options.pagination == "remote" && table.extExists("page")) {
+
+        table.extensions.page.reset(true);
+
+        table.extensions.page.setPage(1);
+      } else {
+
+        //assume data is url, make ajax call to url to get data
+
+
+        this._genRemoteRequest();
+      }
+    } else {
+
+      this.refreshActiveData();
+    }
+  };
+
+  //choose the path ro refresh data after a sorter update
+
+
+  RowManager.prototype.sorterRefresh = function () {
+
+    var options = this.table.options;
+
+    if (options.ajaxSorting) {
+
+      if (options.pagination == "remote" && table.extExists("page")) {
+
+        table.extensions.page.reset(true);
+
+        table.extensions.page.setPage(1);
+      } else {
+
+        //assume data is url, make ajax call to url to get data
+
+
+        this._genRemoteRequest();
+      }
+    } else {
+
+      this.refreshActiveData();
+    }
+  };
+
   //set active data set
 
 
@@ -3436,6 +3541,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       ajaxLoaderError: false, //loader element
 
 
+      ajaxFiltering: false,
+
+      ajaxSorting: false,
+
       groupBy: false, //enable table grouping and set field to group by
 
 
@@ -4082,7 +4191,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.sort.setSort(sortList, dir);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.sorterRefresh();
       }
     },
 
@@ -4100,7 +4209,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.sort.clear();
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.sorterRefresh();
       }
     },
 
@@ -4116,7 +4225,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.setFilter(field, type, value);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4129,7 +4238,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.addFilter(field, type, value);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4153,7 +4262,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.removeFilter(field, type, value);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4166,7 +4275,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.clearFilter(all);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4179,7 +4288,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.clearHeaderFilter();
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4826,9 +4935,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //set ajax params
 
 
-  Ajax.prototype.setParams = function (params) {
+  Ajax.prototype.setParams = function (params, update) {
 
-    this.params = params;
+    if (update) {
+
+      this.params = this.params || {};
+
+      for (var key in params) {
+
+        this.params[key] = params[key];
+      }
+    } else {
+
+      this.params = params;
+    }
   };
 
   Ajax.prototype.getParams = function () {
@@ -4909,6 +5029,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.config.data = self.params;
       }
+
+      console.log("p", self.params);
 
       self.table.options.ajaxRequesting(self.url, self.params);
 
@@ -6026,7 +6148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.changed = true;
 
-      self.table.rowManager.refreshActiveData();
+      self.table.rowManager.filterRefresh();
     };
 
     //handle aborted edit
@@ -6322,7 +6444,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         activeRows = [],
         activeRowComponents = [];
 
-    if (self.filterList.length || Object.keys(self.headerFilters).length) {
+    if (!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)) {
 
       if (self.table.options.dataFiltering) {
 
@@ -9607,7 +9729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             self.setSort(column, "asc");
           }
 
-          self.table.rowManager.refreshActiveData();
+          self.table.rowManager.sorterRefresh();
         }
       });
     }
@@ -9637,7 +9759,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (item.column) {
 
-        sorters.push({ field: item.column.getField(), dir: item.dir });
+        sorters.push({ column: item.column.getComponent(), field: item.column.getField(), dir: item.dir });
       }
     });
 
@@ -9662,6 +9784,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var column;
 
       item.column = self.table.columnManager.findColumn(item.column);
+
+      console.log("item", item);
 
       if (item.column) {
 
@@ -9756,21 +9880,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.clearColumnHeaders();
 
-    self.sortList.forEach(function (item, i) {
+    if (!self.table.options.ajaxSorting) {
 
-      if (item.column && item.column.extensions.sort) {
+      self.sortList.forEach(function (item, i) {
 
-        //if no sorter has been defined, take a guess
+        if (item.column && item.column.extensions.sort) {
+
+          //if no sorter has been defined, take a guess
 
 
-        if (!item.column.extensions.sort.sorter) {
+          if (!item.column.extensions.sort.sorter) {
 
-          item.column.extensions.sort.sorter = self.findSorter(item.column);
+            item.column.extensions.sort.sorter = self.findSorter(item.column);
+          }
+
+          self._sortItem(item.column, item.dir, self.sortList, i);
         }
-
-        self._sortItem(item.column, item.dir, self.sortList, i);
-      }
-    });
+      });
+    }
 
     if (self.sortList.length) {
 

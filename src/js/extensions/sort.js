@@ -43,7 +43,7 @@ Sort.prototype.initializeColumn = function(column, content){
 					self.setSort(column, "asc");
 				}
 
-				self.table.rowManager.refreshActiveData();
+				self.table.rowManager.sorterRefresh();
 			}
 		});
 	}
@@ -63,7 +63,7 @@ Sort.prototype.getSort = function(){
 
 	self.sortList.forEach(function(item){
 		if(item.column){
-			sorters.push({field:item.column.getField(), dir:item.dir});
+			sorters.push({column:item.column.getComponent(), field:item.column.getField(), dir:item.dir});
 		}
 	});
 
@@ -83,6 +83,8 @@ Sort.prototype.setSort = function(sortList, dir){
 		var column;
 
 		item.column = self.table.columnManager.findColumn(item.column);
+
+		console.log("item", item)
 
 		if(item.column){
 			// item.column = item.column;
@@ -149,19 +151,21 @@ Sort.prototype.sort = function(){
 
 	self.clearColumnHeaders();
 
-	self.sortList.forEach(function(item, i){
+	if(!self.table.options.ajaxSorting){
 
+		self.sortList.forEach(function(item, i){
 
-		if(item.column && item.column.extensions.sort){
+			if(item.column && item.column.extensions.sort){
 
-			//if no sorter has been defined, take a guess
-			if(!item.column.extensions.sort.sorter){
-				item.column.extensions.sort.sorter = self.findSorter(item.column);
+				//if no sorter has been defined, take a guess
+				if(!item.column.extensions.sort.sorter){
+					item.column.extensions.sort.sorter = self.findSorter(item.column);
+				}
+
+				self._sortItem(item.column, item.dir, self.sortList, i);
 			}
-
-			self._sortItem(item.column, item.dir, self.sortList, i);
-		}
-	})
+		})
+	}
 
 	if(self.sortList.length){
 		lastSort = self.sortList[self.sortList.length-1];

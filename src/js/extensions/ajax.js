@@ -25,8 +25,16 @@ Ajax.prototype.initialize = function(){
 };
 
 //set ajax params
-Ajax.prototype.setParams = function(params){
-	this.params = params;
+Ajax.prototype.setParams = function(params, update){
+	if(update){
+		this.params = this.params || {};
+
+		for(let key in params){
+			this.params[key] = params[key];
+		}
+	}else{
+		this.params = params;
+	}
 };
 
 Ajax.prototype.getParams = function(){
@@ -83,6 +91,8 @@ Ajax.prototype.sendRequest = function(callback){
 		if(self.params){
 			self.config.data = self.params;
 		}
+
+		console.log("p", self.params)
 
 		self.table.options.ajaxRequesting(self.url, self.params)
 

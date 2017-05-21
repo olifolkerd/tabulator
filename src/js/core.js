@@ -70,6 +70,8 @@
 	 			ajaxLoader:true, //show loader
 	 			ajaxLoaderLoading:false, //loader element
 	 			ajaxLoaderError:false, //loader element
+	 			ajaxFiltering:false,
+	 			ajaxSorting:false,
 
 	 			groupBy:false, //enable table grouping and set field to group by
 				groupStartOpen:true, //starting state of group
@@ -91,7 +93,6 @@
 	 			rowDeleted:function(){},
 	 			rowMoved:function(){},
 	 			rowUpdated:function(){},
-
 
 	 			rowSelectionChanged:function(){},
 	 			rowSelected:function(){},
@@ -532,7 +533,7 @@
 	 		setSort:function(sortList, dir){
 	 			if(this.extExists("sort", true)){
 	 				this.extensions.sort.setSort(sortList, dir);
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.sorterRefresh();
 	 			}
 	 		},
 
@@ -545,7 +546,7 @@
 	 		clearSort:function(){
 	 			if(this.extExists("sort", true)){
 	 				this.extensions.sort.clear();
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.sorterRefresh();
 	 			}
 	 		},
 
@@ -556,7 +557,7 @@
 	 		setFilter:function(field, type, value){
 	 			if(this.extExists("filter", true)){
 	 				this.extensions.filter.setFilter(field, type, value);
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.filterRefresh();
 	 			}
 	 		},
 
@@ -564,7 +565,7 @@
 	 		addFilter:function(field, type, value){
 	 			if(this.extExists("filter", true)){
 	 				this.extensions.filter.addFilter(field, type, value);
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.filterRefresh();
 	 			}
 	 		},
 
@@ -579,7 +580,7 @@
 	 		removeFilter:function(field, type, value){
 	 			if(this.extExists("filter", true)){
 	 				this.extensions.filter.removeFilter(field, type, value);
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.filterRefresh();
 	 			}
 	 		},
 
@@ -587,7 +588,7 @@
 	 		clearFilter:function(all){
 	 			if(this.extExists("filter", true)){
 	 				this.extensions.filter.clearFilter(all);
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.filterRefresh();
 	 			}
 	 		},
 
@@ -595,7 +596,7 @@
 	 		clearHeaderFilter:function(){
 	 			if(this.extExists("filter", true)){
 	 				this.extensions.filter.clearHeaderFilter();
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.filterRefresh();
 	 			}
 	 		},
 

@@ -44,7 +44,7 @@ Filter.prototype.initializeColumn = function(column){
 
 		self.changed = true;
 
-		self.table.rowManager.refreshActiveData();
+		self.table.rowManager.filterRefresh();
 	};
 
 	//handle aborted edit
@@ -260,7 +260,7 @@ Filter.prototype.filter = function(rowList){
 	activeRows = [],
 	activeRowComponents = [];
 
-	if(self.filterList.length || Object.keys(self.headerFilters).length){
+	if(!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)){
 
 		if(self.table.options.dataFiltering){
 			self.table.options.dataFiltering(self.getFilter());
