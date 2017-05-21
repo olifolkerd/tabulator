@@ -45,7 +45,7 @@
   <link href="css/prettyprint.css" rel="stylesheet">
 
   <!-- Tabulator CSS -->
-  <link href="css/tabulator.css" rel="stylesheet">
+  <link href="css/3.0/tabulator_site.min.css" rel="stylesheet">
 
   <link rel="icon"
   type="image/png"
@@ -112,7 +112,8 @@
   <div class="container">
    <h1><img src="images/tabulator_white.png" alt="Tabulator"></h1>
    <h2>The easy to use, fully featured, interactive table jQuery plugin</h2>
-   <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download</a>
+   <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download 2.12</a>
+    <a id="download" class="btn btn-primary btn-large" style="margin-left:10px;" href="https://github.com/olifolkerd/tabulator/archive/3.0.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download 3.0 (Beta)</a>
    </p>
 
    <div class="share">
@@ -145,8 +146,8 @@
                       <i class="fa fa-asterisk"></i>
                     </td>
                     <td>
-                      <h2>Version 2.12 Out Now!</h2>
-                      <p>Bootstrap and Semantic UI Themes, Advanced Ajax Configuration, Advanced Row Manipulation, Improved Header Filters and more... <strong>Click to find out more!</strong></p>
+                      <h2>Version 3.0 Beta Out Today!</h2>
+                      <p>The long awaited Tabulator 3.0 is available for beta testing. This is a complete ground up rebuild Tabulator with a ton of new features. <strong>Checkout the news article to find out more!</strong></p>
                     </td>
                   </tr>
                 </table>
@@ -202,22 +203,23 @@
 
         <h3>JavaScript</h3>
         <pre class="prettyprint lang-js">$("#tabulator-example").tabulator({
-  height:"320px",
   fitColumns:true,
   tooltips:true,
-  pagination:true,
-  movableCols:true,
+  addRowPos:"top",
+  pagination:"local",
+  paginationSize:7,
+  movableColumns:true,
   sortBy:"name",
   sortDir:"asc",
   columns:[
-    {title:"Name", field:"name", sorter:"string", editable:true},
-    {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
-    {title:"Activity", field:"activity", width:160, formatter:lineFormatter},
-    {title:"Gender", field:"gender", width:90, sorter:"string", editable:true, editor:genderEditor},
-    {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
-    {title:"Favourite Color", field:"col", width:130, sorter:"string", sortable:false, editable:true},
+    {title:"Name", field:"name", editor:true},
+    {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
+    {title:"Activity", field:"activity", width:160, formatter:lineFormatter, headerSort:false},
+    {title:"Gender", field:"gender", width:90, editor:genderEditor},
+    {title:"Rating", field:"rating", formatter:"star", align:"center", width:100, editor:true},
+    {title:"Favourite Color", field:"col", width:130, editor:true},
     {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-    {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true}
+    {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editor:true},
   ],
 });</pre>
       </div>
@@ -522,11 +524,11 @@
 
 <!-- Bootstrap Core JavaScript -->
 <script src="js/bootstrap.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 
 <!-- Tabulator -->
-<script src="js/tabulator.js"></script>
+<script src="js/3.0/tabulator.min.js"></script>
 <script src="js/sparkline.js"></script>
 
 <script type="text/javascript">
@@ -543,7 +545,7 @@
 
 		//sample data to be used in all tabulators
 		var tabledata = [
-		{id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5, activity:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11, 10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
+		{id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"19/02/1984", car:1, lucky_no:5, activity:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11, 10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
 		{id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10, activity:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13, 1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
 		{id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12, activity:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3, 3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
 		{id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18, activity:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2, 1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
@@ -564,62 +566,62 @@
 		{id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986", activity:[10, 12, 14, 16, 13, 9, 7, 1, 2, 3, 4, 5, 4, 2, 5, 9, 8, 11, 10, 13]},
 		];
 
-		var genderEditor = function(cell, value){
-		    //cell - JQuery object for current cell
-		    //value - the current value for current cell
+		var genderEditor = function(cell, onRendered, success, cancel){
+        //cell - the cell component for the editable cell
+        //onRendered - function to call when the editor has been rendered
+        //success - function to call to pass the succesfully updated value to Tabulator
+        //cancel - function to call to abort the edit and return to a normal cell
 
-		    //create and style editor
-		    var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
-		    editor.css({
-          "border":"1px",
-          "background":"transparent",
-          "padding":"3px",
-          "width":"100%",
-          "box-sizing":"border-box",
-        })
-
-		    //Set value of editor to the value of the cell
-		    .val(value);
-
-		    //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-		    setTimeout(function(){
-          editor.focus();
-        },100)
-
-		    //when the value has been set, update the cell
-		    editor.on("change blur", function(e){
-          cell.trigger("editval", editor.val());
+        //create and style editor
+        var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+        editor.css({
+            "padding":"3px",
+            "width":"100%",
+            "box-sizing":"border-box",
         });
 
-		    //return the editor element
-		    return editor;
-      }
+        //Set value of editor to the current value of the cell
+        editor.val(cell.getValue());
+
+        //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+        onRendered(function(){
+          input.focus();
+        });
+
+        //when the value has been set, trigger the cell to update
+        editor.on("change blur", function(e){
+            success(editor.val());
+        });
+
+        //return the editor element
+        return editor;
+    };
 
     //generate line chart
-    var lineFormatter = function(value, data, cell, row, options){
+    var lineFormatter = function(cell, formatterParams){
         setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-          cell.sparkline(value, {width:"100%", type:"line", disableTooltips:true});
+          cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"line", disableTooltips:true});
         }, 10);
       };
 
       $("#tabulator-example").tabulator({
-       height:"320px",
        fitColumns:true,
        tooltips:true,
        addRowPos:"top",
-       pagination:true,
-       movableCols:true,
+       pagination:"local",
+       paginationSize:7,
+       movableColumns:true,
        sortBy:"name",
        sortDir:"asc",
        columns:[
-       {title:"Name", field:"name", sorter:"string", editable:true},
-       {title:"Task Progress", field:"progress", sorter:"number", align:"left", formatter:"progress", editable:true},
-       {title:"Activity", field:"activity", width:160, formatter:lineFormatter},
-       {title:"Gender", field:"gender", width:90, sorter:"string", editable:true, editor:genderEditor},
-       {title:"Rating", field:"rating", formatter:"star", align:"center", sorter:"number", width:100, editable:true},
-       {title:"Favourite Color", field:"col", width:130, sorter:"string", sortable:false, editable:true},
+       {title:"Name", field:"name", editor:true},
+       {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
+       {title:"Activity", field:"activity", width:160, formatter:lineFormatter, headerSort:false},
+       {title:"Gender", field:"gender", width:90, editor:genderEditor},
+       {title:"Rating", field:"rating", formatter:"star", align:"center", width:100, editor:true},
+       {title:"Favourite Color", field:"col", width:130, editor:true},
        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-       {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editable:true},
+       {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editor:true},
        ],
      });
 
