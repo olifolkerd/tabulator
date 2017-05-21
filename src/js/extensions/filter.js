@@ -14,7 +14,7 @@ var Filter = function(table){
 Filter.prototype.initializeColumn = function(column){
 	var self = this,
 	field = column.getField(),
-	filterElement, editor, editorElement, typingTimer, tagType, attrType;
+	filterElement, editor, editorElement, cellWrapper, typingTimer, tagType, attrType;
 
 	//handle successfull value change
 	function success(value){
@@ -52,6 +52,8 @@ Filter.prototype.initializeColumn = function(column){
 
 	if(field){
 
+
+
 		filterElement = $("<div class='tabulator-header-filter'></div>");
 
 		//set column editor
@@ -71,7 +73,17 @@ Filter.prototype.initializeColumn = function(column){
 
 		if(editor){
 
-			editorElement = editor.call(self, filterElement, null, null, function(){}, success, cancel);
+			cellWrapper = {
+				getValue:function(){
+					return "";
+				},
+				getElement:function(){
+					return filterElement;
+				}
+			};
+
+
+			editorElement = editor.call(self, cellWrapper, function(){}, success, cancel);
 
 			//set Placeholder Text
 			if(column.definition.field){

@@ -6147,6 +6147,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         filterElement,
         editor,
         editorElement,
+        cellWrapper,
         typingTimer,
         tagType,
         attrType;
@@ -6228,7 +6229,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (editor) {
 
-        editorElement = editor.call(self, filterElement, null, null, function () {}, success, cancel);
+        cellWrapper = {
+
+          getValue: function getValue() {
+
+            return "";
+          },
+
+          getElement: function getElement() {
+
+            return filterElement;
+          }
+
+        };
+
+        editorElement = editor.call(self, cellWrapper, function () {}, success, cancel);
 
         //set Placeholder Text
 
