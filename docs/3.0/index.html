@@ -205,7 +205,9 @@
                     <h3>Data Manipulation</h3>
                     <ul>
                         <li><strong>sorter</strong> - determines how to sort data in this column (see <a href="#sorting">Sorting Data</a> for more details)</li>
+                        <li><strong>sorterParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the sorter(see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
+                        <li><strong>formatterParams</strong> - additional parameters you can pass to the formatter(see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>editable <span class="label label-primary">Updated</span></strong> - callback to check if the cell is editable (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>mutator</strong> - function for manipulating column values as they are parsed into the table (see <a href="#mutators">Mutators</a> for more details)</li>
@@ -600,11 +602,13 @@ $("#example-table").tabulator({
                         <li><strong>textarea</strong> - shows text with carriage returns intact (great for multiline text)</li>
                         <li><strong>money</strong> - formats a number into currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
                         <ul>
-                            <li>optional <strong>formatterParams</strong></li>
+                            <li>optional <strong>formatterParams:</strong></li>
+                            <ul>
                             <li><strong>decimal</strong> - Symbol to represent the decimal point <i>(default ".")</i></li>
                             <li><strong>thousand</strong> - Symbol to represent the thousands seperator <i>(default ",")</i></li>
                             <li><strong>symbol</strong> - currency symbol <i>(no default)</i></li>
                             <li><strong>symbolAfter</strong> - position the symbol after the number <i>(default false)</i></li>
+                            </ul>
                         </ul>
                         <li><strong>email</strong> - renders data as an anchor with a mailto: link to the cell value</li>
                         <li><strong>image</strong> - created an img tag with the src attribute set to the cell value</li>
@@ -614,15 +618,19 @@ $("#example-table").tabulator({
                         <li><strong>color</strong> - sets the background colour of the cell to the value. Can be any valid CSS color eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
                         <li><strong>star</strong> - displays a graphical star rating based on integer values
                         <ul>
-                            <li>optional <strong>formatterParams</strong></li>
-                            <li><strong>stars</strong> - maximum number of stars to be displayed <i>(default 5)</i></li>
+                            <li>optional <strong>formatterParams:</strong></li>
+                            <ul>
+                                <li><strong>stars</strong> - maximum number of stars to be displayed <i>(default 5)</i></li>
+                            </ul>
                         </ul></li>
                         <li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width#
                         <ul>
-                            <li>optional <strong>formatterParams</strong></li>
-                            <li><strong>min</strong> - minimum value for progress bar <i>(default 0)</i></li>
-                            <li><strong>max</strong> - minimum value for progress bar <i>(default 100)</i></li>
-                            <li><strong>color</strong> - colour of progress bar <i>(default #2DC214)</i></li>
+                            <li>optional <strong>formatterParams:</strong></li>
+                            <ul>
+                                <li><strong>min</strong> - minimum value for progress bar <i>(default 0)</i></li>
+                                <li><strong>max</strong> - minimum value for progress bar <i>(default 100)</i></li>
+                                <li><strong>color</strong> - colour of progress bar <i>(default #2DC214)</i></li>
+                            </ul>
                         </ul>
                         </li>
                         <li><strong>buttonTick</strong> - displays a tick icon on eac row <i>(for use as a button)</i></li>
@@ -893,9 +901,11 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>By default Tabulator will attempt to guess which sorter should be applied to a column based of the data contained in the first row. It can determin sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
 
-                    <p>To specify a sepcific sorter to be used on a column use the <span class='param'>sorter</span> property in the columns definition object</p>
+                    <p>To specify a sorter to be used on a column use the <span class='param'>param</span> property in the columns definition object</p>
 
-                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:"string"}</pre>
+                    <p> You can pass an optional additional property with sorter, <span class='param'>sorterParams</span> that should contain an object with additional information for configuring the sorter.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:"date", sorterParams:{format:"DD/MM/YY"}}</pre>
 
                     <p>Tabulator comes with a number of preconfigured sorters including:</p>
                     <ul>
@@ -903,8 +913,30 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                         <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
                         <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
                         <li><strong>boolean</strong> - sorts column as booleans</li>
-                        <li><strong>date</strong> - sorts column as dates (for this you will need to set the date format using the <span class='param'>dateFormat</span> option when you create your table. default format is "dd/mm/yyyy")</li>
-                        <li><strong>time</strong> - sorts column as time (formatted as hh:mm)</li>
+                        <li><strong>date</strong> - sorts column as dates
+                            <ul>
+                                <li>You will need to include the <a href="https://momentjs.com/">moment.js</a> library to use this sorter</li>
+                                <li>optional <strong>sorterParams:</strong>
+                                    <ul>
+                                        <li>
+                                            <strong>format</strong> - the format of the date <i>(default: DD/MM/YYYY)</i>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><strong>time</strong> - sorts column as time (formatted as hh:mm)
+                            <ul>
+                                <li>You will need to include the <a href="https://momentjs.com/">moment.js</a> library to use this sorter</li>
+                                <li>optional <strong>sorterParams:</strong>
+                                    <ul>
+                                        <li>
+                                            <strong>format</strong> - the format of the time <i>(default: hh:mm)</i>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
 
                     <h2>Custom Sorters <span class="label label-primary">Updated</span></h2>
@@ -2531,9 +2563,6 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             </tr>
                             <tr>
                                 <td>tooltips</td><td>boolean/function</td><td>false</td><td>Function to generate tooltips for cells</td><td><a href="#tooltips"><button><i class="fa fa-search"></i> Explore</button></a></td>
-                            </tr>
-                            <tr>
-                                <td>dateFormat</td><td>string</td><td>dd/mm/yyyy</td><td>The date format that should be used when sorting date fields</td><td></td>
                             </tr>
                             <tr>
                                 <td>locale</td><td>string/boolean</td><td>false</td><td>set the current localization language </td><td><a href="#localization"><button><i class="fa fa-search"></i> Explore</button></a></td>
