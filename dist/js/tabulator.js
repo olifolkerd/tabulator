@@ -65,13 +65,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   ColumnManager.prototype.scrollHorizontal = function (left) {
 
-    var self = this;
+    var hozAdjust = 0,
+        scrollWidth = this.element[0].scrollWidth - this.table.element.innerWidth();
 
-    var hozAdjust = 0;
-
-    var scrollWidth = self.element[0].scrollWidth - table.element.innerWidth();
-
-    self.element.scrollLeft(left);
+    this.element.scrollLeft(left);
 
     //adjust for vertical scrollbar moving table when present
 
@@ -80,16 +77,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       hozAdjust = left - scrollWidth;
 
-      self.element.css("margin-left", -hozAdjust);
+      this.element.css("margin-left", -hozAdjust);
     } else {
 
-      self.element.css("margin-left", 0);
+      this.element.css("margin-left", 0);
     }
 
     //keep frozen columns fixed in position
 
 
-    //self._calcFrozenColumnsPos(hozAdjust + 3);
+    //this._calcFrozenColumnsPos(hozAdjust + 3);
 
 
     this.scrollLeft = left;
