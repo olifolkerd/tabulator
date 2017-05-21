@@ -85,7 +85,15 @@
 
 				placeholder:false,
 
-	 			//Callbacks from events
+				//table building callbacks
+				tableBuilding:function(){},
+				tableBuilt:function(){},
+
+				//render callbacks
+				renderStarted:function(){},
+				renderComplete:function(){},
+
+	 			//row callbacks
 	 			rowClick:false,
 	 			rowDblClick:false,
 	 			rowContext:false,
@@ -93,47 +101,53 @@
 	 			rowDeleted:function(){},
 	 			rowMoved:function(){},
 	 			rowUpdated:function(){},
-
 	 			rowSelectionChanged:function(){},
 	 			rowSelected:function(){},
 	 			rowDeselected:function(){},
 
+	 			//cell callbacks
 	 			cellEditing:function(){},
 	 			cellEdited:function(){},
 	 			cellEditCancelled:function(){},
 
+	 			//column callbacks
 	 			columnMoved:function(){},
+	 			columnResized:function(){},
 	 			columnTitleChanged:function(){},
 	 			columnVisibilityChanged:function(){},
 
+	 			//HTML iport callbacks
+	 			htmlImporting:function(){},
+	 			htmlImported:function(){},
+
+	 			//data callbacks
 	 			dataLoading:function(){},
 	 			dataLoaded:function(){},
-
 	 			dataEdited:function(){},
 
+	 			//ajax callbacks
 	 			ajaxRequesting:function(){},
 	 			ajaxResponse:false,
 	 			ajaxError:function(){},
 
+	 			//filtering callbacks
 	 			dataFiltering:false,
 	 			dataFiltered:false,
 
+	 			//sorting callbacks
 	 			dataSorting:function(){},
 	 			dataSorted:function(){},
 
+	 			//grouping callbacks
 	 			dataGrouping:function(){},
 	 			dataGrouped:false,
 	 			groupVisibilityChanged:function(){},
 
-	 			renderStarted:function(){},
-	 			renderComplete:function(){},
-
+	 			//pagination callbacks
 	 			pageLoaded:function(){},
 
+	 			//localization callbacks
 	 			localized:function(){},
-
-	 			tableBuilding:function(){},
-	 			tableBuilt:function(){},
 
 	 		},
 

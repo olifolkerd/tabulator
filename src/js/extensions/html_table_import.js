@@ -12,6 +12,7 @@ HtmlTableImport.prototype.parseTable = function(){
 	rows = $("tbody tr", element),
 	data = [];
 
+	self.table.options.htmlImporting();
 
 	//check for tablator inline options
 	self._extractOptions(element, options);
@@ -55,6 +56,8 @@ HtmlTableImport.prototype.parseTable = function(){
 	element.replaceWith(newElement);
 
 	options.data = data;
+
+	self.table.options.htmlImported();
 
 	newElement.tabulator(options);
 };

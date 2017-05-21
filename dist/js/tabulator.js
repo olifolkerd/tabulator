@@ -3564,7 +3564,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       placeholder: false,
 
-      //Callbacks from events
+      //table building callbacks
+
+
+      tableBuilding: function tableBuilding() {},
+
+      tableBuilt: function tableBuilt() {},
+
+      //render callbacks
+
+
+      renderStarted: function renderStarted() {},
+
+      renderComplete: function renderComplete() {},
+
+      //row callbacks
 
 
       rowClick: false,
@@ -3587,17 +3601,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rowDeselected: function rowDeselected() {},
 
+      //cell callbacks
+
+
       cellEditing: function cellEditing() {},
 
       cellEdited: function cellEdited() {},
 
       cellEditCancelled: function cellEditCancelled() {},
 
+      //column callbacks
+
+
       columnMoved: function columnMoved() {},
+
+      columnResized: function columnResized() {},
 
       columnTitleChanged: function columnTitleChanged() {},
 
       columnVisibilityChanged: function columnVisibilityChanged() {},
+
+      //HTML iport callbacks
+
+
+      htmlImporting: function htmlImporting() {},
+
+      htmlImported: function htmlImported() {},
+
+      //data callbacks
+
 
       dataLoading: function dataLoading() {},
 
@@ -3605,19 +3637,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       dataEdited: function dataEdited() {},
 
+      //ajax callbacks
+
+
       ajaxRequesting: function ajaxRequesting() {},
 
       ajaxResponse: false,
 
       ajaxError: function ajaxError() {},
 
+      //filtering callbacks
+
+
       dataFiltering: false,
 
       dataFiltered: false,
 
+      //sorting callbacks
+
+
       dataSorting: function dataSorting() {},
 
       dataSorted: function dataSorted() {},
+
+      //grouping callbacks
+
 
       dataGrouping: function dataGrouping() {},
 
@@ -3625,17 +3669,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       groupVisibilityChanged: function groupVisibilityChanged() {},
 
-      renderStarted: function renderStarted() {},
+      //pagination callbacks
 
-      renderComplete: function renderComplete() {},
 
       pageLoaded: function pageLoaded() {},
 
-      localized: function localized() {},
+      //localization callbacks
 
-      tableBuilding: function tableBuilding() {},
 
-      tableBuilt: function tableBuilt() {}
+      localized: function localized() {}
 
     },
 
@@ -7538,6 +7580,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         rows = $("tbody tr", element),
         data = [];
 
+    self.table.options.htmlImporting();
+
     //check for tablator inline options
 
 
@@ -7601,6 +7645,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     element.replaceWith(newElement);
 
     options.data = data;
+
+    self.table.options.htmlImported();
 
     newElement.tabulator(options);
   };
