@@ -721,6 +721,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   var Column = function Column(def, parent) {
 
+    var self = this;
+
     this.table = parent.table;
 
     this.definition = def; //column definition
@@ -777,14 +779,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.isGroup = true;
 
-      this.columns.forEach(function (def, i) {
+      def.columns.forEach(function (def, i) {
 
-        var newCol = new Column(def, this);
+        var newCol = new Column(def, self);
 
-        this.attachColumn(newCol);
+        self.attachColumn(newCol);
       });
 
-      this.checkColumnVisibility();
+      self.checkColumnVisibility();
     } else {
 
       parent.registerColumnField(this);

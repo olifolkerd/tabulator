@@ -59,7 +59,7 @@ var ColumnComponent = function (column){
 };
 
 var Column = function(def, parent){
-
+	var self = this;
 
 	this.table = parent.table;
 	this.definition = def; //column definition
@@ -85,18 +85,17 @@ var Column = function(def, parent){
 
 	this.visible = true; //default visible state
 
-
 	//initialize column
 	if(def.columns){
 
 		this.isGroup = true;
 
-		this.columns.forEach(function(def, i){
-			var newCol = new Column(def, this);
-			this.attachColumn(newCol);
+		def.columns.forEach(function(def, i){
+			var newCol = new Column(def, self);
+			self.attachColumn(newCol);
 		});
 
-		this.checkColumnVisibility();
+		self.checkColumnVisibility();
 	}else{
 		parent.registerColumnField(this);
 	}
