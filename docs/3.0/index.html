@@ -3470,7 +3470,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
     }
 });</pre>
 
-                    <p>Using an accessor defined in the extension is as simple as passing the name to the accessor property in the column definition object.</p>
+                    <p>You can use an accessor defined in the extension by passing the name to the accessor property in the column definition object.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     columns:[
@@ -3507,52 +3507,235 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <a class="anchor" id="extension-edit"></a>
                     <h3>Edit</h3>
-                    edit
+
+                    <p>The edit extension allows the user to change data in cells, header filters are also dependant on this extension.</p>
+
+                    <p>More information on these functions can be found in the <a href="#manipulating-data">Editing Data Documentation</a>.</p>
+
+                    <p>This can be extended to add custom editor functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("edit", "editors", {
+    uppercaseInput:function(cell, onRendered, success, cancel){
+
+        //create and style input
+        var input = $("&lt;input type='text'/&gt;");
+
+        input.css({
+            "padding":"4px",
+            "width":"100%",
+            "box-sizing":"border-box",
+        })
+        .val(cell.getValue().toUpperCase());
+
+        onRendered(function(){
+            input.focus();
+        });
+
+        //submit new value on blur
+        input.on("change blur", function(e){
+            success(input.val());
+        });
+
+        //submit new value on enter
+        input.on("keydown", function(e){
+            if(e.keyCode == 13){
+                success(input.val());
+            }
+        });
+
+        return input;
+    },
+});</pre>
+
+                    <p>You can use an editor defined in the extension by passing the name to the editor property in the column definition object.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"tax", title:"Tax (£)", editor:"uppercaseInput"},
+    ]
+});</pre>
                     <a class="anchor" id="extension-filter"></a>
                     <h3>Filter Data</h3>
-                    filter
+                    <p>The filter extension allows for filtering of the rows that appear in the table..</p>
+
+                    <p>More information on these functions can be found in the <a href="#filtering">Filter Documentation</a>.</p>
+
+                    <p>This can be extended to add custom filter functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("filter", "filters", {
+    "===":function(filterVal, rowVal){
+        return rowVal === filterVal ? true : false;
+    }
+});</pre>
+
+                    <p>You can now use this in any of the filter functions:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", "age", "===", 10);</pre>
+
                     <a class="anchor" id="extension-format"></a>
                     <h3>Format Data</h3>
-                    format
+                    <p>The format extension allows different display options for data in the table.</p>
+
+                    <p>More information on these functions can be found in the <a href="#formatting">Formatter Documentation</a>.</p>
+
+                    <p>This can be extended to add custom formatter functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("format", "formatters", {
+    file:function(cell, formatterParams){
+        return "&lt;img class='fileicon' src='/images/fileicons/" + cell.getValue() + ".png'&gt;&lt;/img&gt;";
+    },
+});</pre>
+
+                    <p>You can use a formatter defined in the extension by passing the name to the formatter property in the column definition object.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"Photo", title:"photo", formatter:"file"},
+    ],
+});</pre>
+
                     <a class="anchor" id="extension-frozenColumns"></a>
                     <h3>Frozen Columns</h3>
-                    frozenColumns
+                    <p>The frozen column extension allows columns to be held in place while the table is horizontally scrolled.</p>
+
+                    <p>More information on these functions can be found in the <a href="#frozen-col">Frozen Columns Documentation</a>.</p>
+
                     <a class="anchor" id="extension-groupRows"></a>
                     <h3>Group Rows</h3>
-                    groupRows
+                    <p>The group rows extension allows rows to be grouped togeather by a column value.</p>
+
+                    <p>More information on these functions can be found in the <a href="#grouping">Grouping Documentation</a>.</p>
+
                     <a class="anchor" id="extension-htmlTableImport"></a>
                     <h3>HTML Table Import</h3>
-                    htmlTableImport
+                    <p>The allows HTML tables to be converted to Tabulators.</p>
+
+                    <p>More information on these functions can be found in the <a href="#table-load">HTML Import Documentation</a>.</p>
+
                     <a class="anchor" id="extension-localize"></a>
                     <h3>Localization</h3>
-                    localize
+                    <p>The localization extension allows for changing the text of tabulator control elements to match the language on the computer viewing them.</p>
+
+                    <p>More information on these functions can be found in the <a href="#table-localization">Localization Documentation</a>.</p>
+
+                    <p>This can be extended to add custom language definitions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("localize", "langs", {
+    "en":{
+        "columns":{
+        },
+        "ajax":{
+            "loading":"Loading",
+            "error":"Error",
+        },
+        "pagination":{
+            "first":"First",
+            "first_title":"First Page",
+            "last":"Last",
+            "last_title":"Last Page",
+            "prev":"Prev",
+            "prev_title":"Prev Page",
+            "next":"Next",
+            "next_title":"Next Page",
+        },
+        "headerFilters":{
+            "default":"filter column...",
+            "columns":{}
+        }
+    },
+});</pre>
+
+                    <p>This will then be available to the locale auto-detect as well as the <span class='param'>setLocale</span> function.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setLocale", "en");</pre>
+
                     <a class="anchor" id="extension-moveColumn"></a>
                     <h3>Movable Columns</h3>
-                    moveColumn
+                    <p>The movable columns extension allows the user to drag and drop columns in any order they like.</p>
+
+                    <p>More information on these functions can be found in the <a href="#col-move">Movable Column Documentation</a>.</p>
+
                     <a class="anchor" id="extension-moveRow"></a>
                     <h3>Movable Rows</h3>
-                    moveRow
+                    <p>The movable rows extension allows the user to drag and drop rows in any order they like.</p>
+
+                    <p>More information on these functions can be found in the <a href="#movable">Movable Rows Documentation</a>.</p>
+
                     <a class="anchor" id="extension-mutator"></a>
                     <h3>Mutators</h3>
-                    mutator
+                    <p>The mutator extension allows for manipulation of data as it is entered into Tabulator.</p>
+
+                    <p>More information on these functions can be found in the <a href="#mutators">Mutators Documentation</a>.</p>
+
+                    <p>This can be extended to add custom mutator functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("mutator", "mutators", {
+    tooManyCars:function(value, type, data){
+        return value > 5;
+    },
+});</pre>
+
+                    <p>You can use a mutator defined in the extension by passing the name to the mutator property in the column definition object.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"tax", title:"Tax (£)", mutator:"tooManyCars"},
+    ],
+});</pre>
+
                     <a class="anchor" id="extension-page"></a>
                     <h3>Pagination</h3>
-                    page
+                    <p>The pagination extension allows rows to be split up into pages for navigation rather than using a vertical scroll bar.</p>
+
+                    <p>More information on these functions can be found in the <a href="#pagination">Pagination Documentation</a>.</p>
+
                     <a class="anchor" id="extension-persistentLayout"></a>
                     <h3>Persistent Layout</h3>
-                    persistentLayout
+                    <p>The persistent layout extension allows the layout of columns to be stored in local storage or cookies so that a users preferences can be remembered every time they reload the page.</p>
+
+                    <p>More information on these functions can be found in the <a href="#persistant-columns">Persistent Storage Documentation</a>.</p>
+
                     <a class="anchor" id="extension-resizeColumns"></a>
                     <h3>Resizable Columns</h3>
-                    resizeColumns
+                    <p>The resizable columns extension allows the user to resize columns by dragging on the edge of the columns.</p>
+
+                    <p>More information on these functions can be found in the <a href="#col-resize">Resizable Columns Documentation</a>.</p>
+
                     <a class="anchor" id="extension-responsiveLayout"></a>
                     <h3>Responsive Layout</h3>
-                    responsiveLayout
+                    <p>The responsive layout extension hides and shows columns to ensure that they do not excede the width of the table. Great for use on mobile devices.</p>
+
+                    <p>More information on these functions can be found in the <a href="#responsive-layout">Responsive Layout Documentation</a>.</p>
+
                     <a class="anchor" id="extension-selectRow"></a>
                     <h3>Selectable Rows</h3>
-                    selectRow
+                    <p>The selectable rows extension allows the user to select a number of rows to take action on them.</p>
+
+                    <p>More information on these functions can be found in the <a href="#selectable">Selectable Rows Documentation</a>.</p>
+
                     <a class="anchor" id="extension-sort"></a>
                     <h3>Sorting Data</h3>
-                    sort
+                    <p>The sorting extension allows for reordering of rows in the table based on a column value.</p>
+
+                    <p>More information on these functions can be found in the <a href="#sorting">Sorting Documentation</a>.</p>
+
+                    <p>This can be extended to add custom sorter functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("sort", "sorters", {
+    datetime:function(a, b){
+       a = moment(a, "DD/MM/YYYY hh:mm");
+       b = moment(b, "DD/MM/YYYY hh:mm");
+       return a - b;
+    },
+});</pre>
+
+                    <p>You can use a sorter defined in the extension by passing the name to the sorter property in the column definition object.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {field:"start", title:"Start Time", mutator:"datetime"},
+    ],
+});</pre>
 
 
                     <h2>Default Options <span class="label label-primary">Updated</span></h2>
@@ -3563,143 +3746,10 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <p>For example the below code will cause all Tabulators to have resizable columns by default.</p>
                     <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
     options: {
-        colResizable:true,
+        resizableColumns:true,
     },
 });</pre>
 
-                    <h2>Additional Sorters</h2>
-                    <p>If you use any custom sorters regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
-    sorters: {
-        //datetime sort using moment.js
-        datetime:function(a, b){
-            a = moment(a, "DD/MM/YYYY hh:mm");
-            b = moment(b, "DD/MM/YYYY hh:mm");
-            return a - b;
-        },
-    },
-});</pre>
-
-                    <p>Using a sorter defined in the extension is as simple as passing the name to the <span class='param'>sorter</span> parameter in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columns:[
-        {field:"name", title:"Name"},
-        {field:"start", title:"Start Time", sorter:"datetime"},
-    ],
-});</pre>
-
-                    <h2>Additional Formatters</h2>
-                    <p>If you use any custom formatters regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
-    formatters: {
-        //show file icon based on extension type
-        file:function(value, data, cell, row, options){ //plain text value
-            return "&lt;img class='fileicon' src='/images/fileicons/" + value + ".png'&gt;&lt;/img&gt;";
-        },
-    },
-});</pre>
-
-                    <p>Using a formatter defined in the extension is as simple as passing the name to the <span class='param'>formatter</span> parameter in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columns:[
-        {field:"ext", title:"Icon", formatter:"file"},
-        {field:"name", title:"File Name"},
-    ],
-});</pre>
-
-
-                    <h2>Additional Editors</h2>
-                    <p>If you use any custom editors regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
-    editors: {
-        //variant of input editor for handling currency
-        money:function(cell, value){
-            //create and style input
-            var input = $("&lt;input type='text'/&gt;");
-            input.css({
-                "padding":"4px",
-                "width":"100%",
-                "box-sizing":"border-box",
-                "text-align":"right",
-            })
-            .val(value);
-
-            if(cell.hasClass("tabulator-cell")){
-                setTimeout(function(){
-                    input.focus();
-                },100);
-            }
-
-            input.inputmask("currency");
-
-            //submit new value on blur
-            input.on("blur", function(e){
-                cell.trigger("editval", input.val());
-            });
-
-            //submit new value on enter
-            input.on("keydown", function(e){
-                if(e.keyCode == 13){
-                    cell.trigger("editval", input.val());
-                }
-            });
-
-            return input;
-        },
-    },
-});</pre>
-
-                    <p>Using a editor defined in the extension is as simple as passing the name to the <span class='param'>editor</span> parameter in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columns:[
-        {field:"item", title:"item"},
-        {field:"cost", title:"Cost", editor:"moeny"},
-    ],
-});</pre>
-
-<h2>Additional Mutators</h2>
-                    <p>If you use any mutators regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
-    mutators: {
-        tooManyCars:function(value, type, data){
-            return value > 5; //return the new value for the cell data.
-        },
-    },
-});</pre>
-
-                    <p>Using a mutator defined in the extension is as simple as passing the name to the <span class='param'>mutator</span> parameter in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columns:[
-        {field:"cars", title:"Cars", mutator:"tooManyCars"},
-    ],
-});</pre>
-
-<h2>Additional Accessors</h2>
-                    <p>If you use any accessors regularly, you can add them to the extension and then assign them using their name in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$.widget("ui.tabulator", $.ui.tabulator, {
-    accessors: {
-        roundDown:function(value, data){
-            return Math.floor(value); //return the new value for the cell data.
-        },
-    },
-});</pre>
-
-                    <p>Using a accessor defined in the extension is as simple as passing the name to the <span class='param'>accessor</span> parameter in the column definition array.</p>
-
-                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    columns:[
-        {field:"tax", title:"Tax (£)", accessor:"roundDown"},
-    ],
-});</pre>
                 </article>
 
 
