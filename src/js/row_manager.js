@@ -197,7 +197,12 @@ RowManager.prototype.deleteRow = function(row){
 
 	this.setDisplayRows(this.displayRows);
 
-	this.renderTable();
+	if(this.table.options.pagination && this.table.extExists("page")){
+		console.log("refreshing")
+		this.refreshActiveData()
+	}else{
+		this.renderTable();
+	}
 };
 
 RowManager.prototype.addRow = function(data, pos, index){
