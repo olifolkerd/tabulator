@@ -1843,9 +1843,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   RowManager.prototype.addRow = function (data, pos, index) {
 
-    var row = new Row(data, this);
-
-    var top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
+    var safeData = data || {},
+        row = new Row(safeData, this),
+        top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
 
     if (index) {
 
@@ -3710,7 +3710,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self._buildElement();
 
-        self.rowManager.setData(self.options.data);
+        //load initial data set
+
+
+        if (self.options.data.length) {
+
+          self.rowManager.setData(self.options.data);
+        } else {
+
+          if (self.options.ajaxURL && this.extExists("ajax")) {
+
+            self.extensions.ajax.sendRequest(function (data) {
+
+              self.rowManager.setData(data);
+            });
+          } else {
+
+            self.rowManager.setData(self.options.data);
+          }
+        }
       }
     },
 
@@ -4970,6 +4988,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (this.table.options.ajaxLoaderError) {
 
       this.errorElement = this.table.options.ajaxLoaderError;
+    }
+
+    if (this.table.options.ajaxParams) {
+
+      this.setParams(this.table.options.ajaxParams);
+    }
+
+    if (this.table.options.ajaxConfig) {
+
+      this.setConfig(this.table.options.ajaxConfig);
+    }
+
+    if (this.table.options.ajaxURL) {
+
+      this.setUrl(this.table.options.ajaxURL);
     }
   };
 
@@ -6252,13 +6285,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function (value) {
 
-            editorElement.attr("placeholder", typeof value !== "undefined" ? value : self.table.extensions.localize.getText("headerFilters.default"));
+            editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters.default"));
           });
         } else {
 
           self.table.extensions.localize.bind("headerFilters.default", function (value) {
 
-            editorElement.attr("placeholder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" ? self.column.definition.headerFilterPlaceholder : value);
+            editorElement.attr("placeholdder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
           });
         }
 
