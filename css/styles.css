@@ -264,6 +264,12 @@ select {
 .alert-danger i {
   margin-right: 10px;
 }
+.alert.download-now {
+  margin-top: 30px;
+  margin-bottom: -10px;
+  padding: 5px 10px;
+  font-weight: bold;
+}
 .extension-info {
   padding: 5px 10px;
 }
