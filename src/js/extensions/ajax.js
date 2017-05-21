@@ -22,6 +22,19 @@ Ajax.prototype.initialize = function(){
 	if(this.table.options.ajaxLoaderError){
 		this.errorElement = this.table.options.ajaxLoaderError;
 	}
+
+	if(this.table.options.ajaxParams){
+		this.setParams(this.table.options.ajaxParams);
+	}
+
+	if(this.table.options.ajaxConfig){
+		this.setConfig(this.table.options.ajaxConfig);
+	}
+
+	if(this.table.options.ajaxURL){
+		this.setUrl(this.table.options.ajaxURL);
+	}
+
 };
 
 //set ajax params

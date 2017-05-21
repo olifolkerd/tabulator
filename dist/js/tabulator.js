@@ -3710,7 +3710,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self._buildElement();
 
-        self.rowManager.setData(self.options.data);
+        //load initial data set
+
+
+        if (self.options.data.length) {
+
+          self.rowManager.setData(self.options.data);
+        } else {
+
+          if (self.options.ajaxURL && this.extExists("ajax")) {
+
+            self.extensions.ajax.sendRequest(function (data) {
+
+              self.rowManager.setData(data);
+            });
+          } else {
+
+            self.rowManager.setData(self.options.data);
+          }
+        }
       }
     },
 
@@ -4970,6 +4988,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (this.table.options.ajaxLoaderError) {
 
       this.errorElement = this.table.options.ajaxLoaderError;
+    }
+
+    if (this.table.options.ajaxParams) {
+
+      this.setParams(this.table.options.ajaxParams);
+    }
+
+    if (this.table.options.ajaxConfig) {
+
+      this.setConfig(this.table.options.ajaxConfig);
+    }
+
+    if (this.table.options.ajaxURL) {
+
+      this.setUrl(this.table.options.ajaxURL);
     }
   };
 
