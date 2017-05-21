@@ -666,6 +666,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return column.getField();
       },
 
+      getCells: function getCells() {
+
+        var cells = [];
+
+        column.cells.forEach(function (cell) {
+
+          cells.push(cell.getComponent());
+        });
+
+        return cells;
+      },
+
+      getVisibility: function getVisibility() {
+
+        return column.visible;
+      },
+
       show: function show() {
 
         column.show();
@@ -736,11 +753,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.cellEvents = {
 
-      onClick: false,
+      cellClick: false,
 
-      onDblClick: false,
+      cellDblClick: false,
 
-      onContext: false
+      cellContext: false
 
     };
 
@@ -767,7 +784,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.attachColumn(newCol);
       });
 
-      this.checkGroupVisibility();
+      this.checkColumnVisibility();
     } else {
 
       parent.registerColumnField(this);
@@ -857,7 +874,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof tooltip == "function") {
 
-          tooltip = tooltip(column);
+          tooltip = tooltip(column.getComponent());
         }
 
         self.element.attr("title", tooltip);
@@ -907,43 +924,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //setup header click event bindings
 
 
-    if (typeof def.headerOnClick == "function") {
+    if (typeof def.headerClick == "function") {
 
       self.element.on("click", function (e) {
-        def.headerOnClick(e, self.getComponent());
+        def.headerClick(e, self.getComponent());
       });
     }
 
-    if (typeof def.headerOnDblClick == "function") {
+    if (typeof def.headerDblClick == "function") {
 
       self.element.on("dblclick", function (e) {
-        def.headerOnDblClick(e, self.getComponent());
+        def.headerDblClick(e, self.getComponent());
       });
     }
 
-    if (typeof def.headerOnContext == "function") {
+    if (typeof def.headerContext == "function") {
 
       self.element.on("contextmenu", function (e) {
-        def.headerOnContext(e, self.getComponent());
+        def.headerContext(e, self.getComponent());
       });
     }
 
     //store column cell click event bindings
 
 
-    if (typeof def.onClick == "function") {
+    if (typeof def.cellClick == "function") {
 
-      self.cellEvents.onClick = def.onClick;
+      self.cellEvents.cellClick = def.cellClick;
     }
 
-    if (typeof def.onDblClick == "function") {
+    if (typeof def.cellDblClick == "function") {
 
-      self.cellEvents.onDblClick = def.onDblClick;
+      self.cellEvents.cellDblClick = def.cellDblClick;
     }
 
-    if (typeof def.onContext == "function") {
+    if (typeof def.cellContext == "function") {
 
-      self.cellEvents.onContext = def.onContext;
+      self.cellEvents.cellContext = def.cellContext;
     }
   };
 
@@ -960,7 +977,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set column sorter
 
 
-    if (typeof def.sorter != "undefined" && table.extExists("sort")) {
+    if (table.extExists("sort")) {
 
       table.extensions.sort.initializeColumn(self, self.contentElement);
     }
@@ -1304,7 +1321,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //////////////////// Actions ////////////////////
 
 
-  Column.prototype.checkGroupVisibility = function () {
+  Column.prototype.checkColumnVisibility = function () {
 
     var visible = false;
 
@@ -1319,6 +1336,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (visible) {
 
       this.show();
+
+      this.parent.table.options.columnVisibilityChanged(this.getComponent(), false);
     } else {
 
       this.hide();
@@ -1340,7 +1359,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.parent.isGroup) {
 
-        this.parent.checkGroupVisibility();
+        this.parent.checkColumnVisibility();
       }
 
       this.cells.forEach(function (cell) {
@@ -1352,6 +1371,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.extensions.persistentLayout.save();
       }
+
+      this.table.options.groupVisibilityChanged(this.getComponent(), true);
     }
   };
 
@@ -1370,7 +1391,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.parent.isGroup) {
 
-        this.parent.checkGroupVisibility();
+        this.parent.checkColumnVisibility();
       }
 
       this.cells.forEach(function (cell) {
@@ -1382,6 +1403,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.extensions.persistentLayout.save();
       }
+
+      this.table.options.groupVisibilityChanged(this.getComponent(), false);
     }
   };
 
@@ -1765,6 +1788,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
+    self.table.options.dataLoading(data);
+
     self.rows = [];
 
     data.forEach(function (def, i) {
@@ -1773,6 +1798,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.rows.push(row);
     });
+
+    self.table.options.dataLoaded(data);
 
     self.refreshActiveData(true);
   };
@@ -1806,7 +1833,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.setDisplayRows(this.displayRows);
 
-    this.renderTable();
+    if (this.table.options.pagination && this.table.extExists("page")) {
+
+      this.refreshActiveData();
+    } else {
+
+      this.renderTable();
+    }
   };
 
   RowManager.prototype.addRow = function (data, pos, index) {
@@ -1945,6 +1978,111 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return active ? this.rows.length : this.activeRows.length;
   };
 
+  RowManager.prototype._genRemoteRequest = function () {
+
+    var self = this,
+        table = self.table,
+        options = table.options,
+        params = {};
+
+    if (table.extExists("page")) {
+
+      //set sort data if defined
+
+
+      if (options.ajaxSorting) {
+
+        var sorters = self.table.extensions.sort.getSort();
+
+        if (sorters[0] && typeof sorters[0].column != "function") {
+
+          params[self.table.extensions.page.paginationDataSentNames.sort] = sorters[0].column.getField();
+
+          params[self.table.extensions.page.paginationDataSentNames.sort_dir] = sorters[0].dir;
+        }
+      }
+
+      //set filter data if defined
+
+
+      if (options.ajaxFiltering) {
+
+        var filters = self.table.extensions.filter.getFilter();
+
+        if (filters[0] && typeof filters[0].field == "string") {
+
+          params[self.table.extensions.page.paginationDataSentNames.filter] = filters[0].field;
+
+          params[self.table.extensions.page.paginationDataSentNames.filter_type] = filters[0].type;
+
+          params[self.table.extensions.page.paginationDataSentNames.filter_value] = filters[0].value;
+        }
+      }
+
+      self.table.extensions.ajax.setParams(params, true);
+    }
+
+    table.extensions.ajax.sendRequest(function (data) {
+
+      self.setData(data);
+    });
+  };
+
+  //choose the path ro refresh data after a filter update
+
+
+  RowManager.prototype.filterRefresh = function () {
+
+    var table = this.table,
+        options = table.options;
+
+    if (options.ajaxFiltering) {
+
+      if (options.pagination == "remote" && table.extExists("page")) {
+
+        table.extensions.page.reset(true);
+
+        table.extensions.page.setPage(1);
+      } else {
+
+        //assume data is url, make ajax call to url to get data
+
+
+        this._genRemoteRequest();
+      }
+    } else {
+
+      this.refreshActiveData();
+    }
+  };
+
+  //choose the path ro refresh data after a sorter update
+
+
+  RowManager.prototype.sorterRefresh = function () {
+
+    var options = this.table.options;
+
+    if (options.ajaxSorting) {
+
+      if (options.pagination == "remote" && table.extExists("page")) {
+
+        table.extensions.page.reset(true);
+
+        table.extensions.page.setPage(1);
+      } else {
+
+        //assume data is url, make ajax call to url to get data
+
+
+        this._genRemoteRequest();
+      }
+    } else {
+
+      this.refreshActiveData();
+    }
+  };
+
   //set active data set
 
 
@@ -2027,8 +2165,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (!this.displayRowsCount) {
 
       if (table.options.placeholder) {
-
-        console.log("empty");
 
         self.getElement().append(table.options.placeholder);
       }
@@ -2165,7 +2301,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.options.placeholder.detach();
     }
 
-    element.empty();
+    element.children().detach();
 
     element.css({
 
@@ -2214,7 +2350,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self._clearVirtualDom();
     } else {
 
-      element.empty();
+      element.children().detach();
 
       //check if position is too close to bottom of table
 
@@ -2590,6 +2726,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         return cells;
+      },
+
+      getCell: function getCell(column) {
+
+        var match = false,
+            column = row.table.columnManager.findColumn(column);
+
+        match = row.cells.find(function (cell) {
+
+          return cell.column === column;
+        });
+
+        return match;
       },
 
       getIndex: function getIndex() {
@@ -3016,27 +3165,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //set event bindings
 
 
-    if (cellEvents.onClick) {
+    if (cellEvents.cellClick) {
 
       self.element.on("click", function (e) {
 
-        cellEvents.onClick(e, self.getComponent());
+        cellEvents.cellClick(e, self.getComponent());
       });
     }
 
-    if (cellEvents.onDblClick) {
+    if (cellEvents.cellDblClick) {
 
       self.element.on("dblclick", function (e) {
 
-        cellEvents.onDblClick(e, self.getComponent());
+        cellEvents.cellDblClick(e, self.getComponent());
       });
     }
 
-    if (cellEvents.onContext) {
+    if (cellEvents.cellContext) {
 
       self.element.on("contextmenu", function (e) {
 
-        cellEvents.onContext(e, self.getComponent());
+        cellEvents.cellContext(e, self.getComponent());
       });
     }
 
@@ -3086,7 +3235,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         tooltip = self.value;
       } else if (typeof tooltip == "function") {
 
-        tooltip = tooltip(self.column.getField(), self.value, self.row.getData());
+        tooltip = tooltip(self.getComponent());
       }
 
       self.element.attr("title", tooltip);
@@ -3278,10 +3427,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     rowManager: null, //hold Row Manager
 
 
-    config: {//config object for holding all table setup options
+    footerManager: null, //holder Footer Manager
 
-
-    },
 
     //setup options
 
@@ -3304,9 +3451,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
       columns: [], //store for colum header info
-
-
-      dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
 
       data: [], //default starting data
@@ -3397,6 +3541,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       ajaxLoaderError: false, //loader element
 
 
+      ajaxFiltering: false,
+
+      ajaxSorting: false,
+
       groupBy: false, //enable table grouping and set field to group by
 
 
@@ -3416,7 +3564,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       placeholder: false,
 
-      //Callbacks from events
+      //table building callbacks
+
+
+      tableBuilding: function tableBuilding() {},
+
+      tableBuilt: function tableBuilt() {},
+
+      //render callbacks
+
+
+      renderStarted: function renderStarted() {},
+
+      renderComplete: function renderComplete() {},
+
+      //row callbacks
 
 
       rowClick: false,
@@ -3435,41 +3597,87 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rowSelectionChanged: function rowSelectionChanged() {},
 
+      rowSelected: function rowSelected() {},
+
+      rowDeselected: function rowDeselected() {},
+
+      //cell callbacks
+
+
+      cellEditing: function cellEditing() {},
+
       cellEdited: function cellEdited() {},
+
+      cellEditCancelled: function cellEditCancelled() {},
+
+      //column callbacks
+
 
       columnMoved: function columnMoved() {},
 
+      columnResized: function columnResized() {},
+
       columnTitleChanged: function columnTitleChanged() {},
+
+      columnVisibilityChanged: function columnVisibilityChanged() {},
+
+      //HTML iport callbacks
+
+
+      htmlImporting: function htmlImporting() {},
+
+      htmlImported: function htmlImported() {},
+
+      //data callbacks
+
 
       dataLoading: function dataLoading() {},
 
       dataLoaded: function dataLoaded() {},
 
-      dataLoadError: function dataLoadError() {},
-
       dataEdited: function dataEdited() {},
 
+      //ajax callbacks
+
+
+      ajaxRequesting: function ajaxRequesting() {},
+
       ajaxResponse: false,
+
+      ajaxError: function ajaxError() {},
+
+      //filtering callbacks
+
 
       dataFiltering: false,
 
       dataFiltered: false,
 
+      //sorting callbacks
+
+
       dataSorting: function dataSorting() {},
 
       dataSorted: function dataSorted() {},
 
-      renderStarted: function renderStarted() {},
+      //grouping callbacks
 
-      renderComplete: function renderComplete() {},
+
+      dataGrouping: function dataGrouping() {},
+
+      dataGrouped: false,
+
+      groupVisibilityChanged: function groupVisibilityChanged() {},
+
+      //pagination callbacks
+
 
       pageLoaded: function pageLoaded() {},
 
-      localized: function localized() {},
+      //localization callbacks
 
-      tableBuilding: function tableBuilding() {},
 
-      tableBuilt: function tableBuilt() {}
+      localized: function localized() {}
 
     },
 
@@ -3512,120 +3720,89 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     _buildElement: function _buildElement() {
 
-      var self = this,
-          element = this.element;
+      var element = this.element,
+          ext = this.extensions,
+          options = this.options;
 
-      self.options.tableBuilding();
-
-      self._configureTable();
+      options.tableBuilding();
 
       element.addClass("tabulator").attr("role", "grid").empty();
 
       //set localization
 
 
-      if (self.options.headerFilterPlaceholder !== false) {
+      if (options.headerFilterPlaceholder !== false) {
 
-        self.extensions.localize.setHeaderFilterPlaceholder(self.options.headerFilterPlaceholder);
+        ext.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
       }
 
-      for (var locale in self.options.langs) {
+      for (var locale in options.langs) {
 
-        self.extensions.localize.installLang(locale, self.options.langs[locale]);
+        ext.localize.installLang(locale, options.langs[locale]);
       }
 
-      self.extensions.localize.setLocale(self.options.locale);
+      ext.localize.setLocale(options.locale);
 
-      //build table elements
-
-
-      element.append(self.columnManager.getElement());
-
-      element.append(self.rowManager.getElement());
-
-      if (self.options.pagination && self.extExists("page", true)) {
-
-        element.append(self.footerManager.getElement());
-      }
-
-      if (self.options.persistentLayout && self.extExists("persistentLayout", true)) {
-
-        self.extensions.persistentLayout.initialize(self.options.persistentLayout, self.options.persistentLayoutID);
-
-        self.options.columns = self.extensions.persistentLayout.load(self.options.columns);
-      }
-
-      self.columnManager.setColumns(self.options.columns);
-
-      if (self.options.initialSort && self.extExists("sort", true)) {
-
-        self.extensions.sort.setSort(self.options.initialSort);
-      }
-
-      if (self.options.pagination && self.extExists("page", true)) {
-
-        self.extensions.page.initialize();
-      }
-
-      if (self.options.groupBy && self.extExists("groupRows", true)) {
-
-        self.extensions.groupRows.initialize();
-      }
-
-      if (self.extExists("ajax")) {
-
-        self.extensions.ajax.initialize();
-      }
-
-      self.options.tableBuilt();
-    },
-
-    //configure the table
+      //configure placeholder element
 
 
-    _configureTable: function _configureTable() {
+      if (typeof options.placeholder == "string") {
 
-      var self = this;
-
-      var config = this.config;
-
-      config.options = this.options;
-
-      // //setup persistent layout storage if needed
-
-
-      // if(config.options.persistentLayout){
-
-
-      // 	//determine persistent layout storage type
-
-
-      // 	config.options.persistentLayout = config.options.persistentLayout !== true ?  config.options.persistentLayout : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
-
-
-      // 	//set storage tag
-
-
-      // 	config.options.persistentLayoutID = "tabulator-" + (config.options.persistentLayoutID ? config.options.persistentLayoutID : self.element.attr("id") ? self.element.attr("id") : "");
-
-
-      // }
-
-
-      if (typeof self.options.placeholder == "string") {
-
-        self.options.placeholder = $("<div class='tabulator-placeholder'><span>" + self.options.placeholder + "</span></div>");
+        options.placeholder = $("<div class='tabulator-placeholder'><span>" + options.placeholder + "</span></div>");
       }
 
       //set table height
 
 
-      if (config.options.height) {
+      if (options.height) {
 
-        config.options.height = isNaN(config.options.height) ? config.options.height : config.options.height + "px";
+        options.height = isNaN(options.height) ? options.height : options.height + "px";
 
-        self.element.css({ "height": config.options.height });
+        this.element.css({ "height": options.height });
       }
+
+      //build table elements
+
+
+      element.append(this.columnManager.getElement());
+
+      element.append(this.rowManager.getElement());
+
+      if (options.pagination && this.extExists("page", true)) {
+
+        element.append(this.footerManager.getElement());
+      }
+
+      if (options.persistentLayout && this.extExists("persistentLayout", true)) {
+
+        ext.persistentLayout.initialize(options.persistentLayout, options.persistentLayoutID);
+
+        options.columns = ext.persistentLayout.load(options.columns);
+      }
+
+      this.columnManager.setColumns(options.columns);
+
+      if (options.initialSort && this.extExists("sort", true)) {
+
+        ext.sort.setSort(options.initialSort);
+      }
+
+      if (options.pagination && this.extExists("page", true)) {
+
+        ext.page.initialize();
+      }
+
+      if (options.groupBy && this.extExists("groupRows", true)) {
+
+        ext.groupRows.initialize();
+      }
+
+      if (this.extExists("ajax")) {
+
+        ext.ajax.initialize();
+      }
+
+      options.tableBuilt();
     },
 
     //set options
@@ -3634,6 +3811,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     _setOption: function _setOption(option, value) {
 
       console.error("Options Error - Tabulator does not allow options to be set after initialization unless there is a function defined for that purpose");
+    },
+
+    //deconstructor
+
+
+    _destroy: function _destroy() {
+
+      var element = this.element;
+
+      element.empty();
+
+      element.removeClass("tabulator");
     },
 
     ////////////////// Data Handling //////////////////
@@ -3646,7 +3835,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      self.options.dataLoading(data, params);
+      var self = this;
 
       if (typeof data === "string") {
 
@@ -3807,7 +3996,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     getRow: function getRow(index) {
 
-      row = this.rowManager.findRow(index);
+      var row = this.rowManager.findRow(index);
 
       if (row) {
 
@@ -3823,9 +4012,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //delete row from table
 
 
-    deleteRow: function deleteRow(row) {
+    deleteRow: function deleteRow(index) {
 
-      row = this.rowManager.findRow(row);
+      var row = this.rowManager.findRow(index);
 
       if (row) {
 
@@ -3834,7 +4023,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return true;
       } else {
 
-        console.warn("Delete Error - No matching row found:", row);
+        console.warn("Delete Error - No matching row found:", index);
 
         return false;
       }
@@ -4044,7 +4233,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.sort.setSort(sortList, dir);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.sorterRefresh();
       }
     },
 
@@ -4053,6 +4242,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.extExists("sort", true)) {
 
         return this.extensions.sort.getSort();
+      }
+    },
+
+    clearSort: function clearSort() {
+
+      if (this.extExists("sort", true)) {
+
+        this.extensions.sort.clear();
+
+        this.rowManager.sorterRefresh();
       }
     },
 
@@ -4068,7 +4267,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.setFilter(field, type, value);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4081,7 +4280,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.addFilter(field, type, value);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4105,7 +4304,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.removeFilter(field, type, value);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4118,7 +4317,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.clearFilter(all);
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4131,7 +4330,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.extensions.filter.clearHeaderFilter();
 
-        this.rowManager.refreshActiveData();
+        this.rowManager.filterRefresh();
       }
     },
 
@@ -4151,6 +4350,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.extExists("selectRow", true)) {
 
         this.extensions.selectRow.deselectRows(rows);
+      }
+    },
+
+    getSelectedRows: function getSelectedRows() {
+
+      if (this.extExists("selectRow", true)) {
+
+        return this.extensions.selectRow.getSelectedRows();
+      }
+    },
+
+    getSelectedData: function getSelectedData() {
+
+      if (this.extExists("selectRow", true)) {
+
+        return this.extensions.selectRow.getSelectedData();
       }
     },
 
@@ -4257,6 +4472,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     extensionBindings: {},
 
+    //extend extension
+
+
+    extendExtension: function extendExtension(name, property, values) {
+
+      if (this.extensionBindings[name]) {
+
+        var source = this.extensionBindings[name].prototype[property];
+
+        if (source) {
+
+          if ((typeof values === "undefined" ? "undefined" : _typeof(values)) == "object") {
+
+            for (var key in values) {
+
+              source[key] = values[key];
+            }
+          } else {
+
+            console.warn("Extension Error - Invalid value type, it must be an object");
+          }
+        } else {
+
+          console.warn("Extension Error - property does not exist:", property);
+        }
+      } else {
+
+        console.warn("Extension Error - extension does not exist:", name);
+      }
+    },
+
     //add extension to tabulator
 
 
@@ -4299,18 +4545,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         return false;
       }
-    },
-
-    //deconstructor
-
-
-    _destroy: function _destroy() {
-
-      var element = this.element;
-
-      element.empty();
-
-      element.removeClass("tabulator");
     }
 
   };
@@ -4356,7 +4590,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Localize.prototype.installLang = function (locale, lang) {
 
-    this.langs[locale] = lang;
+    if (this.langs[locale]) {
+
+      this._setLangProp(this.langs[locale], lang);
+    } else {
+
+      this.langs[locale] = lang;
+    }
+  };
+
+  Localize.prototype._setLangProp = function (lang, values) {
+
+    for (var key in values) {
+
+      if (lang[key] && _typeof(lang[key]) == "object") {
+
+        this._setLangProp(lang[key], values[key]);
+      } else {
+
+        lang[key] = values[key];
+      }
+    }
   };
 
   //set current locale
@@ -4596,717 +4850,572 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Tabulator.registerExtension("localize", Localize);
 
-  var Sort = function Sort(table) {
+  var Accessor = function Accessor(table) {
 
     this.table = table; //hold Tabulator object
 
-
-    this.sortList = []; //holder current sort
-
-
-    this.changed = false; //has the sort changed since last render
-
   };
 
-  //initialize column header for sorting
+  //initialize column accessor
 
 
-  Sort.prototype.initializeColumn = function (column, content) {
+  Accessor.prototype.initializeColumn = function (column) {
 
-    var self = this,
-        sorter = false;
+    var config = { accessor: false };
 
-    //set sorter on column
+    //set column accessor
 
 
-    if (typeof column.definition.sorter == "string") {
-
-      if (self.sorters[column.definition.sorter]) {
-
-        sorter = self.sorters[column.definition.sorter];
-      } else {
-
-        console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
-      }
-    } else {
-
-      sorter = column.definition.sorter;
-    }
-
-    if (sorter) {
-
-      column.extensions.sort = { sorter: sorter, dir: "none" };
-
-      if (column.definition.headerSort !== false) {
-
-        column.element.addClass("tabulator-sortable");
-
-        //create sorter arrow
-
-
-        content.append($("<div class='tabulator-arrow'></div>"));
-
-        //sort on click
-
-
-        column.element.on("click", function () {
-
-          if (column.extensions.sort) {
-
-            if (column.extensions.sort.dir == "asc") {
-
-              self.setSort(column, "desc");
-            } else {
-
-              self.setSort(column, "asc");
-            }
-
-            self.table.rowManager.refreshActiveData();
-          }
-        });
-      }
-    }
-  };
-
-  //check if the sorters have changed since last use
-
-
-  Sort.prototype.hasChanged = function () {
-
-    var changed = this.changed;
-
-    this.changed = false;
-
-    return changed;
-  };
-
-  //return current sorters
-
-
-  Sort.prototype.getSort = function () {
-
-    var self = this,
-        sorters = [];
-
-    self.sortList.forEach(function (item) {
-
-      if (item.column) {
-
-        sorters.push({ field: item.column.getField(), dir: item.dir });
-      }
-    });
-
-    return sorters;
-  };
-
-  //change sort list and trigger sort
-
-
-  Sort.prototype.setSort = function (sortList, dir) {
-
-    var self = this,
-        newSortList = [];
-
-    if (!Array.isArray(sortList)) {
-
-      sortList = [{ column: sortList, dir: dir }];
-    }
-
-    sortList.forEach(function (item) {
-
-      var column;
-
-      if (typeof item.column == "string") {
-
-        column = self.table.columnManager.getColumnByField(item.column);
-
-        if (column) {
-
-          item.column = column;
-
-          newSortList.push(item);
-
-          self.changed = true;
-        } else {
-
-          console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
-        }
-      } else {
-
-        newSortList.push(item);
-
-        self.changed = true;
-      }
-    });
-
-    self.sortList = newSortList;
-  };
-
-  //work through sort list sorting data
-
-
-  Sort.prototype.sort = function () {
-
-    var self = this,
-        lastSort;
-
-    if (self.table.options.dataSorting) {
-
-      self.table.options.dataSorting(self.getSort());
-    }
-
-    self.clearColumnHeaders();
-
-    self.sortList.forEach(function (item, i) {
-
-      if (item.column && item.column.extensions.sort) {
-
-        self._sortItem(item.column, item.dir, self.sortList, i);
-      }
-    });
-
-    if (self.sortList.length) {
-
-      lastSort = self.sortList[self.sortList.length - 1];
-
-      if (lastSort.column) {
-
-        self.setColumnHeader(lastSort.column, lastSort.dir);
-      }
-    }
-
-    if (self.table.options.dataSorted) {
-
-      self.table.options.dataSorted(self.getSort());
-    }
-  };
-
-  //clear sort arrows on columns
-
-
-  Sort.prototype.clearColumnHeaders = function () {
-
-    this.table.columnManager.getRealColumns().forEach(function (column) {
-
-      if (column.extensions.sort) {
-
-        column.extensions.sort.dir = "none";
-
-        column.element.attr("aria-sort", "none");
-      }
-    });
-  };
-
-  //set the column header sort direction
-
-
-  Sort.prototype.setColumnHeader = function (column, dir) {
-
-    this.clearColumnHeaders();
-
-    column.extensions.sort.dir = dir;
-
-    column.element.attr("aria-sort", dir);
-  };
-
-  //sort each item in sort list
-
-
-  Sort.prototype._sortItem = function (column, dir, sortList, i) {
-
-    var self = this;
-
-    var activeRows = self.table.rowManager.activeRows;
-
-    activeRows.sort(function (a, b) {
-
-      var result = self._sortRow(a, b, column, dir);
-
-      //if results match recurse through previous searchs to be sure
-
-
-      if (result == 0 && i) {
-
-        for (var j = i - 1; j >= 0; j--) {
-
-          result = self._sortRow(a, b, sortList[j].column, sortList[j].dir);
-
-          if (result != 0) {
-
-            break;
-          }
-        }
-      }
-
-      return result;
-    });
-  };
-
-  //process individual rows for a sort function on active data
-
-
-  Sort.prototype._sortRow = function (a, b, column, dir) {
-
-    var self = this;
-
-    //switch elements depending on search direction
-
-
-    var el1 = dir == "asc" ? a : b;
-
-    var el2 = dir == "asc" ? b : a;
-
-    a = el1.getData()[column.getField()];
-
-    b = el2.getData()[column.getField()];
-
-    return column.extensions.sort.sorter.call(self, a, b, el1, el2, column, dir);
-  };
-
-  //format date for date comparison
-
-
-  Sort.prototype._formatDate = function (dateString) {
-
-    var format = this.table.options.dateFormat;
-
-    var ypos = format.indexOf("yyyy");
-
-    var mpos = format.indexOf("mm");
-
-    var dpos = format.indexOf("dd");
-
-    if (dateString) {
-
-      var formattedString = dateString.substring(ypos, ypos + 4) + "-" + dateString.substring(mpos, mpos + 2) + "-" + dateString.substring(dpos, dpos + 2);
-
-      var newDate = Date.parse(formattedString);
-    } else {
-
-      var newDate = 0;
-    }
-
-    return isNaN(newDate) ? 0 : newDate;
-  };
-
-  //default data sorters
-
-
-  Sort.prototype.sorters = {
-
-    //sort numbers
-
-
-    number: function number(a, b) {
-
-      return parseFloat(String(a).replace(",", "")) - parseFloat(String(b).replace(",", ""));
-    },
-
-    //sort strings
-
-
-    string: function string(a, b) {
-
-      return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-    },
-
-    //sort date
-
-
-    date: function date(a, b) {
-
-      var self = this;
-
-      return self._formatDate(a) - self._formatDate(b);
-    },
-
-    //sort booleans
-
-
-    boolean: function boolean(a, b) {
-
-      var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
-
-      var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
-
-      return el1 - el2;
-    },
-
-    //sort alpha numeric strings
-
-
-    alphanum: function alphanum(as, bs) {
-
-      var a,
-          b,
-          a1,
-          b1,
-          i = 0,
-          L,
-          rx = /(\d+)|(\D+)/g,
-          rd = /\d/;
-
-      if (isFinite(as) && isFinite(bs)) return as - bs;
-
-      a = String(as).toLowerCase();
-
-      b = String(bs).toLowerCase();
-
-      if (a === b) return 0;
-
-      if (!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
-
-      a = a.match(rx);
-
-      b = b.match(rx);
-
-      L = a.length > b.length ? b.length : a.length;
-
-      while (i < L) {
-
-        a1 = a[i];
-
-        b1 = b[i++];
-
-        if (a1 !== b1) {
-
-          if (isFinite(a1) && isFinite(b1)) {
-
-            if (a1.charAt(0) === "0") a1 = "." + a1;
-
-            if (b1.charAt(0) === "0") b1 = "." + b1;
-
-            return a1 - b1;
-          } else return a1 > b1 ? 1 : -1;
-        }
-      }
-
-      return a.length > b.length;
-    },
-
-    //sort hh:mm formatted times
-
-
-    time: function time(a, b) {
-
-      a = a.split(":");
-
-      b = b.split(":");
-
-      a = a[0] * 60 + a[1];
-
-      b = b[0] * 60 + b[1];
-
-      return a > b;
-    }
-
-  };
-
-  Tabulator.registerExtension("sort", Sort);
-
-  var Format = function Format(table) {
-
-    this.table = table; //hold Tabulator object
-
-  };
-
-  //initialize column formatter
-
-
-  Format.prototype.initializeColumn = function (column) {
-
-    var self = this,
-        config = { params: column.definition.formatterParams || {} };
-
-    //set column formatter
-
-
-    switch (_typeof(column.definition.formatter)) {
+    switch (_typeof(column.definition.accessor)) {
 
       case "string":
 
-        if (self.formatters[column.definition.formatter]) {
+        if (self.accessors[column.definition.accessor]) {
 
-          config.formatter = self.formatters[column.definition.formatter];
+          config.accessor = self.accessors[column.definition.accessor];
         } else {
 
-          console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
-
-          config.formatter = self.formatters.plaintext;
+          console.warn("Accessor Error - No such accessor found, ignoring: ", column.definition.accessor);
         }
 
         break;
 
       case "function":
 
-        config.formatter = column.definition.formatter;
-
-        break;
-
-      default:
-
-        config.formatter = self.formatters.plaintext;
+        config.accessor = column.definition.accessor;
 
         break;
 
     }
 
-    column.extensions.format = config;
+    if (config.accessor) {
+
+      column.extensions.accessor = config;
+    }
+  },
+
+  //apply accessor to row
+
+
+  Accessor.prototype.transformRow = function (dataIn) {
+
+    var self = this;
+
+    //clone data object with deep copy to isolate internal data from returned result
+
+
+    var data = $.extend(true, {}, dataIn || {});
+
+    self.table.columnManager.traverse(function (column) {
+
+      var field;
+
+      if (column.extensions.accessor) {
+
+        field = column.getField();
+
+        if (typeof data[field] != "undefined") {
+
+          data[field] = column.extensions.accessor.accessor(data[field], data);
+        }
+      }
+    });
+
+    return data;
+  },
+
+  //default accessors
+
+
+  Accessor.prototype.accessors = {};
+
+  Tabulator.registerExtension("accessor", Accessor);
+
+  var Ajax = function Ajax(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.config = false; //hold config object for ajax request
+
+
+    this.url = ""; //request URL
+
+
+    this.params = false; //request parameters
+
+
+    this.loaderElement = $("<div class='tablulator-loader'></div>"); //loader message div
+
+
+    this.msgElement = $("<div class='tabulator-loader-msg' role='alert'></div>"); //message element
+
+
+    this.loadingElement = false;
+
+    this.errorElement = false;
   };
 
-  //return a formatted value for a cell
+  //initialize setup options
 
 
-  Format.prototype.formatValue = function (cell) {
+  Ajax.prototype.initialize = function () {
 
-    var value = cell.column.extensions.format.formatter.call(this, cell.getComponent(), cell.column.extensions.format.params);
+    this.loaderElement.append(this.msgElement);
 
-    return value;
+    if (this.table.options.ajaxLoaderLoading) {
+
+      this.loadingElement = this.table.options.ajaxLoaderLoading;
+    }
+
+    if (this.table.options.ajaxLoaderError) {
+
+      this.errorElement = this.table.options.ajaxLoaderError;
+    }
   };
 
-  //default data formatters
+  //set ajax params
 
 
-  Format.prototype.formatters = {
+  Ajax.prototype.setParams = function (params, update) {
 
-    //plain text value
+    if (update) {
+
+      this.params = this.params || {};
+
+      for (var key in params) {
+
+        this.params[key] = params[key];
+      }
+    } else {
+
+      this.params = params;
+    }
+  };
+
+  Ajax.prototype.getParams = function () {
+
+    return this.params || {};
+  };
+
+  //load config object
 
 
-    plaintext: function plaintext(cell, options, formatterParams) {
+  Ajax.prototype.setConfig = function (config) {
 
-      return cell.getValue();
-    },
+    this._loadDefaultConfig();
 
-    //multiline text area
+    if (typeof config == "string") {
+
+      this.config.type = config;
+    } else {
+
+      for (var key in config) {
+
+        this.config[key] = config[key];
+      }
+    }
+  };
+
+  //create config object from default
 
 
-    textarea: function textarea(cell, options, formatterParams) {
+  Ajax.prototype._loadDefaultConfig = function (force) {
 
-      cell.getElement().css({ "white-space": "pre-wrap" });
+    var self = this;
 
-      return cell.getValue();
-    },
+    if (!self.config || force) {
 
-    //currency formatting
+      self.config = {};
+
+      //load base config from defaults
 
 
-    money: function money(cell, options, formatterParams) {
+      for (var key in self.defaultConfig) {
 
-      var floatVal = parseFloat(cell.getValue());
+        self.config[key] = self.defaultConfig[key];
+      }
+    }
+  };
 
-      if (isNaN(floatVal)) {
+  //set request url
 
-        return value;
+
+  Ajax.prototype.setUrl = function (url) {
+
+    this.url = url;
+  };
+
+  //get request url
+
+
+  Ajax.prototype.getUrl = function () {
+
+    return this.url;
+  };
+
+  //send ajax request
+
+
+  Ajax.prototype.sendRequest = function (callback) {
+
+    var self = this;
+
+    if (self.url) {
+
+      self._loadDefaultConfig();
+
+      self.config.url = self.url;
+
+      if (self.params) {
+
+        self.config.data = self.params;
       }
 
-      var number = floatVal.toFixed(2);
+      console.log("p", self.params);
 
-      var number = number.split(".");
+      self.table.options.ajaxRequesting(self.url, self.params);
 
-      var integer = number[0];
+      self.showLoader();
 
-      var decimal = number.length > 1 ? "." + number[1] : "";
+      $.ajax(self.config).done(function (data) {
 
-      var rgx = /(\d+)(\d{3})/;
+        if (self.table.options.ajaxResponse) {
 
-      while (rgx.test(integer)) {
+          data = self.table.options.ajaxResponse(self.url, self.params, data);
+        }
 
-        integer = integer.replace(rgx, "$1" + "," + "$2");
-      }
+        self.table.options.dataLoaded(data);
 
-      return integer + decimal;
-    },
+        callback(data);
 
-    //clickable mailto link
+        self.hideLoader();
+      }).fail(function (xhr, textStatus, errorThrown) {
+
+        console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
+
+        self.table.options.ajaxError(xhr, textStatus, errorThrown);
+
+        self.showError();
+
+        setTimeout(function () {
+
+          self.hideLoader();
+        }, 3000);
+      });
+    } else {
+
+      console.warn("Ajax Load Error - No URL Set");
+
+      return false;
+    }
+  };
+
+  Ajax.prototype.showLoader = function () {
+
+    this.loaderElement.detach();
+
+    this.msgElement.empty().removeClass("tabulator-error").addClass("tabulator-loading");
+
+    if (this.loadingElement) {
+
+      this.msgElement.append(this.loadingElement);
+    } else {
+
+      this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
+    }
+
+    this.table.element.append(this.loaderElement);
+  };
+
+  Ajax.prototype.showError = function () {
+
+    this.loaderElement.detach();
+
+    this.msgElement.empty().removeClass("tabulator-loading").addClass("tabulator-error");
+
+    if (this.errorElement) {
+
+      this.msgElement.append(this.errorElement);
+    } else {
+
+      this.msgElement.append(this.table.extensions.localize.getText("ajax.error"));
+    }
+
+    this.table.element.append(this.loaderElement);
+  };
+
+  Ajax.prototype.hideLoader = function () {
+
+    this.loaderElement.detach();
+  };
+
+  //default ajax config object
 
 
-    email: function email(cell, options, formatterParams) {
+  Ajax.prototype.defaultConfig = {
 
-      var value = cell.getValue();
+    url: "",
 
-      return "<a href='mailto:" + value + "'>" + value + "</a>";
-    },
+    type: "GET",
 
-    //clickable anchor tag
+    async: true,
 
+    dataType: "json",
 
-    link: function link(cell, options, formatterParams) {
+    success: function success(data) {}
 
-      var value = cell.getValue();
+  };
 
-      return "<a href='" + value + "'>" + value + "</a>";
-    },
+  Tabulator.registerExtension("ajax", Ajax);
 
-    //image element
+  var Download = function Download(table) {
 
+    this.table = table; //hold Tabulator object
 
-    image: function image(cell, options, formatterParams) {
+  };
 
-      var value = cell.getValue();
-
-      return "<img url='" + value + "'/>";
-    },
-
-    //tick or empty cell
+  //trigger file download
 
 
-    tick: function tick(cell, options, formatterParams) {
+  Download.prototype.download = function (type, filename, options) {
 
-      var value = cell.getValue(),
-          element = cell.getElement();
+    var self = this,
+        downloadFunc = false;
 
-      var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+    function buildLink(data, mime) {
 
-      if (value === true || value === "true" || value === "True" || value === 1) {
+      self.triggerDownload(data, mime, type, filename);
+    }
 
-        element.attr("aria-checked", true);
+    if (typeof type == "function") {
 
-        return tick;
+      downloadFunc = type;
+    } else {
+
+      if (self.downloaders[type]) {
+
+        downloadFunc = self.downloaders[type];
       } else {
 
-        element.attr("aria-checked", false);
-
-        return "";
+        console.warn("Download Error - No such download type found: ", type);
       }
-    },
+    }
 
-    //tick or cross
+    if (downloadFunc) {
 
+      downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options, buildLink);
+    }
+  };
 
-    tickCross: function tickCross(cell, options, formatterParams) {
+  Download.prototype.triggerDownload = function (data, mime, type, filename) {
 
-      var value = cell.getValue(),
-          element = cell.getElement(),
-          tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>',
-          cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+    var element = document.createElement('a'),
+        blob = new Blob([data], { type: mime }),
+        filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-      if (value === true || value === "true" || value === "True" || value === 1) {
+    if (navigator.msSaveOrOpenBlob) {
 
-        element.attr("aria-checked", true);
+      navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
 
-        return tick;
-      } else {
+      element.setAttribute('href', window.URL.createObjectURL(blob));
 
-        element.attr("aria-checked", false);
-
-        return cross;
-      }
-    },
-
-    //star rating
+      //set file title
 
 
-    star: function star(cell, options, formatterParams) {
+      element.setAttribute('download', filename);
 
-      var value = cell.getValue(),
-          element = cell.getElement(),
-          maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
-          stars = $("<span style='vertical-align:middle;'></span>"),
-          starActive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>'),
-          starInactive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+      //trigger download
 
-      value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
-      for (var i = 1; i <= maxStars; i++) {
+      element.style.display = 'none';
 
-        var nextStar = i <= value ? starActive : starInactive;
+      document.body.appendChild(element);
 
-        stars.append(nextStar.clone());
-      }
+      element.click();
 
-      element.css({
+      //remove temporary link element
 
-        "white-space": "nowrap",
 
-        "overflow": "hidden",
+      document.body.removeChild(element);
+    }
+  };
 
-        "text-overflow": "ellipsis"
+  //downloaders
 
+
+  Download.prototype.downloaders = {
+
+    csv: function csv(columns, data, options, setFileContents) {
+
+      var titles = [],
+          fields = [],
+          delimiter = options && options.delimiter ? options.delimiter : ",",
+          fileContents;
+
+      //get field lists
+
+
+      columns.forEach(function (column) {
+
+        if (column.field) {
+
+          titles.push('"' + String(column.title).split('"').join('""') + '"');
+
+          fields.push(column.field);
+        }
       });
 
-      element.attr("aria-label", value);
-
-      return stars.html();
-    },
-
-    //progress bar
+      //generate header row
 
 
-    progress: function progress(cell, options, formatterParams) {
-      //progress bar
+      fileContents = [titles.join(delimiter)];
+
+      //generate each row of the table
 
 
-      var value = cell.getValue(),
-          element = cell.getElement(),
-          max = formatterParams && formatterParams.max ? formatterParams.max : 100,
-          min = formatterParams && formatterParams.min ? formatterParams.min : 0,
-          color = formatterParams && formatterParams.color ? formatterParams.color : "#2DC214",
-          percent;
+      data.forEach(function (row) {
 
-      //make sure value is in range
+        var rowData = [];
 
+        fields.forEach(function (field) {
 
-      value = parseFloat(value) <= max ? parseFloat(value) : max;
+          var value = _typeof(row[field]) == "object" ? JSON.stringify(row[field]) : row[field];
 
-      value = parseFloat(value) >= min ? parseFloat(value) : min;
-
-      //workout percentage
+          //escape uotation marks
 
 
-      percent = (max - min) / 100;
+          rowData.push('"' + String(value).split('"').join('""') + '"');
+        });
 
-      value = 100 - Math.round((value - min) / percent);
-
-      element.css({
-
-        "min-width": "30px",
-
-        "position": "relative"
-
+        fileContents.push(rowData.join(delimiter));
       });
 
-      element.attr("aria-label", value);
-
-      return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
+      setFileContents(fileContents.join("\n"), "text/csv");
     },
 
-    //background color
+    json: function json(columns, data, options, setFileContents) {
 
+      var fileContents = JSON.stringify(data, null, '\t');
 
-    color: function color(cell, options, formatterParams) {
-
-      cell.getElement().css({ "background-color": cell.getValue() });
-
-      return "";
+      setFileContents(fileContents, "application/json");
     },
 
-    //tick icon
+    xlsx: function xlsx(columns, data, options, setFileContents) {
+
+      var titles = [],
+          fields = [],
+          rows = [],
+          workbook = { SheetNames: ["Sheet1"], Sheets: {} },
+          worksheet,
+          output;
+
+      //convert rows to worksheet
 
 
-    buttonTick: function buttonTick(cell, options, formatterParams) {
+      function rowsToSheet() {
 
-      return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
-    },
+        var sheet = {};
 
-    //cross icon
+        var range = { s: { c: 0, r: 0 }, e: { c: fields.length, r: rows.length } };
+
+        rows.forEach(function (row, i) {
+
+          row.forEach(function (value, j) {
+
+            var cell = { v: typeof value == "undefined" ? "" : value };
+
+            if (cell != null) {
+
+              switch (_typeof(cell.v)) {
+
+                case "number":
+
+                  cell.t = 'n';
+
+                  break;
+
+                case "boolean":
+
+                  cell.t = 'b';
+
+                  break;
+
+                default:
+
+                  cell.t = 's';
+
+                  break;
+
+              }
+
+              sheet[XLSX.utils.encode_cell({ c: j, r: i })] = cell;
+            }
+          });
+        });
+
+        sheet['!ref'] = XLSX.utils.encode_range(range);
+
+        return sheet;
+      }
+
+      //convert workbook to binary array
 
 
-    buttonCross: function buttonCross(cell, options, formatterParams) {
+      function s2ab(s) {
 
-      return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
-    },
+        var buf = new ArrayBuffer(s.length);
 
-    //current row number
+        var view = new Uint8Array(buf);
+
+        for (var i = 0; i != s.length; ++i) {
+          view[i] = s.charCodeAt(i) & 0xFF;
+        }return buf;
+      }
+
+      //get field lists
 
 
-    rownum: function rownum(cell, options, formatterParams) {
+      columns.forEach(function (column) {
 
-      return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
+        if (column.field) {
+
+          titles.push(column.title);
+
+          fields.push(column.field);
+        }
+      });
+
+      rows.push(fields);
+
+      //generate each row of the table
+
+
+      data.forEach(function (row) {
+
+        var rowData = [];
+
+        fields.forEach(function (field) {
+
+          rowData.push(row[field]);
+        });
+
+        rows.push(rowData);
+      });
+
+      worksheet = rowsToSheet();
+
+      workbook.Sheets["Sheet1"] = worksheet;
+
+      output = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'binary' });
+
+      setFileContents(s2ab(output), "application/octet-stream");
     }
 
   };
 
-  Tabulator.registerExtension("format", Format);
+  Tabulator.registerExtension("download", Download);
 
   var Edit = function Edit(table) {
 
@@ -5342,6 +5451,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       case "function":
 
         config.editor = column.definition.editor;
+
+        break;
+
+      case "boolean":
+
+        if (column.definition.editor === true) {
+
+          if (typeof column.definition.formatter == "string") {
+
+            if (self.editors[column.definition.formatter]) {
+
+              config.editor = self.editors[column.definition.formatter];
+            } else {
+
+              config.editor = self.editors["input"];
+            }
+          } else {
+
+            console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
+          }
+        }
 
         break;
 
@@ -5386,6 +5516,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.clearEditor(cell);
 
       cell.setValue(cell.getValue());
+
+      self.table.options.cellEditCancelled(cell.getComponent());
     };
 
     element.attr("tabindex", 0);
@@ -5419,6 +5551,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         if (allowEdit) {
+
+          self.table.options.cellEditing(cell.getComponent());
 
           cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
 
@@ -5986,1203 +6120,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Tabulator.registerExtension("edit", Edit);
 
-  var Page = function Page(table) {
-
-    this.table = table; //hold Tabulator object
-
-
-    this.element = $("<span class='tabulator-paginator'></span>");
-
-    this.pagesElement = $("<span class='tabulator-pages'></span>");
-
-    this.firstBut = $("<button class='tabulator-page' data-page='first' role='button' aria-label='' title=''></button>");
-
-    this.prevBut = $("<button class='tabulator-page' data-page='prev' role='button' aria-label='' title=''></button>");
-
-    this.nextBut = $("<button class='tabulator-page' data-page='next' role='button' aria-label='' title=''></button>");
-
-    this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title=''></button>");
-
-    this.mode = "local";
-
-    this.size = 0;
-
-    this.page = 1;
-
-    this.max = 1;
-
-    this.paginator = false;
-  };
-
-  //setup pageination
-
-
-  Page.prototype.initialize = function () {
-
-    var self = this;
-
-    //update param names
-
-
-    for (var key in self.table.options.paginationDataSent) {
-
-      self.paginationDataSentNames[key] = self.table.options.paginationDataSent[key];
-    }
-
-    for (var _key in self.table.options.paginationDataReceived) {
-
-      self.paginationDataReceivedNames[_key] = self.table.options.paginationDataReceived[_key];
-    }
-
-    if (self.table.options.paginator) {
-
-      self.paginator = self.table.options.paginator;
-    }
-
-    //build pagination element
-
-
-    //bind localizations
-
-
-    self.table.extensions.localize.bind("pagination.first", function (value) {
-
-      self.firstBut.text(value);
-    });
-
-    self.table.extensions.localize.bind("pagination.first_title", function (value) {
-
-      self.firstBut.attr("aria-label", value).attr("title", value);
-    });
-
-    self.table.extensions.localize.bind("pagination.prev", function (value) {
-
-      self.prevBut.text(value);
-    });
-
-    self.table.extensions.localize.bind("pagination.prev_title", function (value) {
-
-      self.prevBut.attr("aria-label", value).attr("title", value);
-    });
-
-    self.table.extensions.localize.bind("pagination.next", function (value) {
-
-      self.nextBut.text(value);
-    });
-
-    self.table.extensions.localize.bind("pagination.next_title", function (value) {
-
-      self.nextBut.attr("aria-label", value).attr("title", value);
-    });
-
-    self.table.extensions.localize.bind("pagination.last", function (value) {
-
-      self.lastBut.text(value);
-    });
-
-    self.table.extensions.localize.bind("pagination.last_title", function (value) {
-
-      self.lastBut.attr("aria-label", value).attr("title", value);
-    });
-
-    //click bindings
-
-
-    self.firstBut.on("click", function () {
-
-      self.setPage(1);
-    });
-
-    self.prevBut.on("click", function () {
-
-      self.previousPage();
-    });
-
-    self.nextBut.on("click", function () {
-
-      self.nextPage();
-    });
-
-    self.lastBut.on("click", function () {
-
-      self.setPage(self.max);
-    });
-
-    if (self.table.options.paginationElement) {
-
-      self.element = self.table.options.paginationElement;
-    }
-
-    //append to DOM
-
-
-    self.element.append(self.firstBut);
-
-    self.element.append(self.prevBut);
-
-    self.element.append(self.pagesElement);
-
-    self.element.append(self.nextBut);
-
-    self.element.append(self.lastBut);
-
-    if (!self.table.options.paginationElement) {
-
-      self.table.footerManager.append(self.element);
-    }
-
-    //set default values
-
-
-    self.mode = self.table.options.pagination;
-
-    self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 26);
-  };
-
-  //calculate maximum page from number of rows
-
-
-  Page.prototype.setMaxRows = function (rowCount) {
-
-    if (!rowCount) {
-
-      this.max = 1;
-    } else {
-
-      this.max = Math.ceil(rowCount / this.size);
-    }
-
-    if (this.page > this.max) {
-
-      this.page = this.max;
-    }
-  };
-
-  //reset to first page without triggering action
-
-
-  Page.prototype.reset = function (force) {
-
-    if (this.mode == "local" || force) {
-
-      this.page = 1;
-    }
-
-    return true;
-  };
-
-  //set the maxmum page
-
-
-  Page.prototype.setMaxPage = function (max) {
-
-    this.max = max || 1;
-
-    if (this.page > this.max) {
-
-      this.page = this.max;
-
-      this.trigger();
-    }
-  };
-
-  //set current page number
-
-
-  Page.prototype.setPage = function (page) {
-
-    if (page > 0 && page <= this.max) {
-
-      this.page = page;
-
-      this.trigger();
-
-      return true;
-    } else {
-
-      console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
-
-      return false;
-    }
-  };
-
-  Page.prototype.setPageSize = function (size) {
-
-    if (size > 0) {
-
-      this.size = size;
-    }
-  };
-
-  //setup the pagination buttons
-
-
-  Page.prototype._setPageButtons = function () {
-
-    var self = this;
-
-    var min = this.page < this.max - 2 ? this.page - 2 : this.page - (4 - (this.max - this.page));
-
-    var max = this.page > 3 ? this.page + 2 : this.page + (5 - this.page);
-
-    self.pagesElement.empty();
-
-    if (self.page == 1) {
-
-      self.firstBut.prop("disabled", true);
-
-      self.prevBut.prop("disabled", true);
-    } else {
-
-      self.firstBut.prop("disabled", false);
-
-      self.prevBut.prop("disabled", false);
-    }
-
-    if (self.page == self.max) {
-
-      self.lastBut.prop("disabled", true);
-
-      self.nextBut.prop("disabled", true);
-    } else {
-
-      self.lastBut.prop("disabled", false);
-
-      self.nextBut.prop("disabled", false);
-    }
-
-    for (var i = min; i <= max; i++) {
-
-      if (i > 0 && i <= self.max) {
-
-        self.pagesElement.append(self._generatePageButton(i));
-      }
-    }
-  };
-
-  Page.prototype._generatePageButton = function (page) {
-
-    var self = this;
-
-    var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' arpagea-label='Show Page " + page + "'>" + page + "</button>");
-
-    button.on("click", function (e) {
-
-      self.setPage(page);
-    });
-
-    return button;
-  };
-
-  //previous page
-
-
-  Page.prototype.previousPage = function () {
-
-    if (this.page > 1) {
-
-      this.page--;
-
-      this.trigger();
-
-      return true;
-    } else {
-
-      console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-
-      return false;
-    }
-  };
-
-  //next page
-
-
-  Page.prototype.nextPage = function () {
-
-    if (this.page < this.max) {
-
-      this.page++;
-
-      this.trigger();
-
-      return true;
-    } else {
-
-      console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
-
-      return false;
-    }
-  };
-
-  //return current page number
-
-
-  Page.prototype.getPage = function () {
-
-    return this.page;
-  };
-
-  //return max page number
-
-
-  Page.prototype.getPageMax = function () {
-
-    return this.max;
-  };
-
-  Page.prototype.getMode = function () {
-
-    return this.mode;
-  };
-
-  //return appropriate rows for current page
-
-
-  Page.prototype.getRows = function (data) {
-
-    var output, start, end;
-
-    if (this.mode == "local") {
-
-      output = [];
-
-      start = this.size * (this.page - 1);
-
-      end = start + this.size;
-
-      this._setPageButtons();
-
-      for (var i = start; i < end; i++) {
-
-        if (data[i]) {
-
-          output.push(data[i]);
-        }
-      }
-
-      return output;
-    } else {
-
-      this._setPageButtons();
-
-      return data.slice(0);
-    }
-  };
-
-  Page.prototype.trigger = function () {
-
-    switch (this.mode) {
-
-      case "local":
-
-        this.table.rowManager.refreshActiveData();
-
-        break;
-
-      case "remote":
-
-        this._getRemotePage();
-
-        break;
-
-      default:
-
-        console.warn("Pagination Error - no such pagination mode:", this.mode);
-
-    }
-
-    this.table.options.pageLoaded(this.getPage());
-  };
-
-  Page.prototype._getRemotePage = function () {
-
-    if (this.table.extExists("ajax", true)) {
-
-      if (this.paginator) {
-
-        this._getRemotePagePaginator();
-      } else {
-
-        this._getRemotePageAudo();
-      }
-    }
-  };
-
-  Page.prototype._getRemotePagePaginator = function () {
-
-    var self = this,
-        ajax = self.table.extensions.ajax,
-        oldUrl = ajax.getUrl();
-
-    ajax.setUrl(self.paginator(ajax.getUrl(), self.page, self.size, ajax.getParams()));
-
-    ajax.sendRequest(function (data) {
-
-      self._parseRemoteData(data);
-    });
-
-    ajax.setUrl(oldUrl);
-  };
-
-  Page.prototype._getRemotePageAudo = function () {
-
-    var self = this,
-        oldParams,
-        pageParams;
-
-    //record old params and restore after request has been made
-
-
-    oldParams = $.extend(true, {}, self.table.extensions.ajax.getParams());
-
-    pageParams = self.table.extensions.ajax.getParams();
-
-    //configure request params
-
-
-    pageParams[this.paginationDataSentNames.page] = self.page;
-
-    //set page size if defined
-
-
-    if (this.size) {
-
-      pageParams[this.paginationDataSentNames.size] = this.size;
-    }
-
-    //set sort data if defined
-
-
-    if (this.table.extExists("sort")) {
-
-      var sorters = self.table.extensions.sort.getSort();
-
-      if (sorters[0] && typeof sorters[0].column != "function") {
-
-        pageParams[this.paginationDataSentNames.sort] = sorters[0].column.getField();
-
-        pageParams[this.paginationDataSentNames.sort_dir] = sorters[0].dir;
-      }
-    }
-
-    //set filter data if defined
-
-
-    if (this.table.extExists("filter")) {
-
-      var filters = self.table.extensions.filter.getFilter();
-
-      if (filters[0] && typeof filters[0].field == "string") {
-
-        pageParams[this.paginationDataSentNames.filter] = filters[0].field;
-
-        pageParams[this.paginationDataSentNames.filter_type] = filters[0].type;
-
-        pageParams[this.paginationDataSentNames.filter_value] = filters[0].value;
-      }
-    }
-
-    self.table.extensions.ajax.setParams(pageParams);
-
-    self.table.extensions.ajax.sendRequest(function (data) {
-
-      self._parseRemoteData(data);
-    });
-
-    self.table.extensions.ajax.setParams(oldParams);
-  };
-
-  Page.prototype._parseRemoteData = function (data) {
-
-    if (data[this.paginationDataReceivedNames.last_page]) {
-
-      if (data[this.paginationDataReceivedNames.data]) {
-
-        this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
-
-        this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
-      } else {
-
-        console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
-      }
-    } else {
-
-      console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
-    }
-  };
-
-  //set the paramter names for pagination requests
-
-
-  Page.prototype.paginationDataSentNames = {
-
-    "page": "page",
-
-    "size": "size",
-
-    "sort": "sort",
-
-    "sort_dir": "sort_dir",
-
-    "filter": "filter",
-
-    "filter_value": "filter_value",
-
-    "filter_type": "fitler_type"
-
-  };
-
-  //set the property names for pagination responses
-
-
-  Page.prototype.paginationDataReceivedNames = {
-
-    "current_page": "current_page",
-
-    "last_page": "last_page",
-
-    "data": "data"
-
-  };
-
-  Tabulator.registerExtension("page", Page);
-
-  var ResizeColumns = function ResizeColumns(table) {
-
-    this.table = table; //hold Tabulator object
-
-
-    this.startColumn = false;
-
-    this.startX = false;
-
-    this.startWidth = false;
-
-    this.handle = $("<div class='tabulator-col-resize-handle'></div>");
-
-    this.prevHandle = $("<div class='tabulator-col-resize-handle prev'></div>");
-  };
-
-  ResizeColumns.prototype.initializeColumn = function (column, element) {
-
-    var self = this,
-        handle = self.handle.clone(),
-        prevHandle = self.prevHandle.clone();
-
-    handle.on("click", function (e) {
-
-      e.stopPropagation();
-    });
-
-    prevHandle.on("click", function (e) {
-
-      e.stopPropagation();
-    });
-
-    handle.on("mousedown", function (e) {
-
-      var nearestColumn = column.getLastColumn();
-
-      if (nearestColumn) {
-
-        self.startColumn = column;
-
-        self._mouseDown(e, nearestColumn);
-      }
-    });
-
-    prevHandle.on("mousedown", function (e) {
-
-      var nearestColumn, colIndex, prevColumn;
-
-      nearestColumn = column.getFirstColumn();
-
-      if (nearestColumn) {
-
-        colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
-
-        prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
-
-        if (prevColumn) {
-
-          self.startColumn = column;
-
-          self._mouseDown(e, prevColumn);
-        }
-      }
-    });
-
-    element.append(handle).append(prevHandle);
-  };
-
-  ResizeColumns.prototype._mouseDown = function (e, column) {
-
-    var self = this;
-
-    self.table.element.addClass("tabulator-block-select");
-
-    function mouseMove(e) {
-
-      column.setWidth(self.startWidth + (e.screenX - self.startX));
-
-      column.checkCellHeights();
-    }
-
-    function mouseUp(e) {
-
-      //block editor from taking action while resizing is taking place
-
-
-      if (self.startColumn.extensions.edit) {
-
-        self.startColumn.extensions.edit.blocked = false;
-      }
-
-      $("body").off("mouseup", mouseMove);
-
-      $("body").off("mousemove", mouseMove);
-
-      self.table.element.removeClass("tabulator-block-select");
-
-      if (self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)) {
-
-        self.table.extensions.persistentLayout.save();
-      }
-    }
-
-    e.stopPropagation(); //prevent resize from interfereing with movable columns
-
-
-    //block editor from taking action while resizing is taking place
-
-
-    if (self.startColumn.extensions.edit) {
-
-      self.startColumn.extensions.edit.blocked = true;
-    }
-
-    self.startX = e.screenX;
-
-    self.startWidth = column.getWidth();
-
-    $("body").on("mousemove", mouseMove);
-
-    $("body").on("mouseup", mouseUp);
-  };
-
-  Tabulator.registerExtension("resizeColumns", ResizeColumns);
-
-  var Ajax = function Ajax(table) {
-
-    this.table = table; //hold Tabulator object
-
-
-    this.config = false; //hold config object for ajax request
-
-
-    this.url = ""; //request URL
-
-
-    this.params = false; //request parameters
-
-
-    this.loaderElement = $("<div class='tablulator-loader'></div>"); //loader message div
-
-
-    this.msgElement = $("<div class='tabulator-loader-msg' role='alert'></div>"); //message element
-
-
-    this.loadingElement = false;
-
-    this.errorElement = false;
-
-    //default ajax config object
-
-
-    this.defaultConfig = {
-
-      url: "",
-
-      type: "GET",
-
-      async: true,
-
-      dataType: "json",
-
-      success: function success(data) {}
-
-    };
-  };
-
-  //initialize setup options
-
-
-  Ajax.prototype.initialize = function () {
-
-    this.loaderElement.append(this.msgElement);
-
-    if (this.table.options.ajaxLoaderLoading) {
-
-      this.loadingElement = this.table.options.ajaxLoaderLoading;
-    }
-
-    if (this.table.options.ajaxLoaderError) {
-
-      this.errorElement = this.table.options.ajaxLoaderError;
-    }
-  },
-
-  //set ajax params
-
-
-  Ajax.prototype.setParams = function (params) {
-
-    this.params = params;
-  }, Ajax.prototype.getParams = function () {
-
-    return this.params || {};
-  },
-
-  //load config object
-
-
-  Ajax.prototype.setConfig = function (config) {
-
-    this._loadDefaultConfig();
-
-    if (typeof config == "string") {
-
-      this.config.type = config;
-    } else {
-
-      for (var key in config) {
-
-        this.config[key] = config[key];
-      }
-    }
-  },
-
-  //create config object from default
-
-
-  Ajax.prototype._loadDefaultConfig = function (force) {
-
-    var self = this;
-
-    if (!self.config || force) {
-
-      self.config = {};
-
-      //load base config from defaults
-
-
-      for (var key in self.defaultConfig) {
-
-        self.config[key] = self.defaultConfig[key];
-      }
-
-      self.config.error = function (xhr, textStatus, errorThrown) {
-
-        console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
-
-        self.table.options.dataLoadError(xhr, textStatus, errorThrown);
-
-        self.showError();
-
-        setTimeout(function () {
-
-          self.hideLoader();
-        }, 3000);
-      };
-    }
-  },
-
-  //set request url
-
-
-  Ajax.prototype.setUrl = function (url) {
-
-    this.url = url;
-  },
-
-  //get request url
-
-
-  Ajax.prototype.getUrl = function () {
-
-    return this.url;
-  },
-
-  //send ajax request
-
-
-  Ajax.prototype.sendRequest = function (callback) {
-
-    var self = this;
-
-    if (self.url) {
-
-      self._loadDefaultConfig();
-
-      self.config.url = self.url;
-
-      if (self.params) {
-
-        self.config.data = self.params;
-      }
-
-      self.config.success = function (data) {
-
-        if (self.table.options.ajaxResponse) {
-
-          data = self.table.options.ajaxResponse(self.url, self.params, data);
-        }
-
-        self.table.options.dataLoaded(data);
-
-        callback(data);
-
-        self.hideLoader();
-      };
-
-      self.showLoader();
-
-      $.ajax(self.config);
-    } else {
-
-      console.warn("Ajax Load Error - No URL Set");
-
-      return false;
-    }
-  }, Ajax.prototype.showLoader = function () {
-
-    this.loaderElement.detach();
-
-    this.msgElement.empty().removeClass("tabulator-error").addClass("tabulator-loading");
-
-    if (this.loadingElement) {
-
-      this.msgElement.append(this.loadingElement);
-    } else {
-
-      this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
-    }
-
-    this.table.element.append(this.loaderElement);
-  }, Ajax.prototype.showError = function () {
-
-    this.loaderElement.detach();
-
-    this.msgElement.empty().removeClass("tabulator-loading").addClass("tabulator-error");
-
-    if (this.errorElement) {
-
-      this.msgElement.append(this.errorElement);
-    } else {
-
-      this.msgElement.append(this.table.extensions.localize.getText("ajax.error"));
-    }
-
-    this.table.element.append(this.loaderElement);
-  }, Ajax.prototype.hideLoader = function () {
-
-    this.loaderElement.detach();
-  }, Tabulator.registerExtension("ajax", Ajax);
-
-  var SelectRow = function SelectRow(table) {
-
-    this.table = table; //hold Tabulator object
-
-
-    this.selecting = false; //flag selecting in progress
-
-
-    this.selectPrev = []; //hold previously selected element for drag drop selection
-
-
-    this.selectedRows = []; //hold selected rows
-
-  };
-
-  SelectRow.prototype.initializeRow = function (row) {
-
-    var self = this,
-        element = row.getElement();
-
-    // trigger end of row selection
-
-
-    var endSelect = function endSelect() {
-
-      setTimeout(function () {
-
-        self.selecting = false;
-      }, 50);
-
-      $("body").off("mouseup", endSelect);
-    };
-
-    row.extensions.select = { selected: false };
-
-    //set row selection class
-
-
-    if (self.table.options.selectableCheck(row.getComponent())) {
-
-      element.addClass("tabulator-selectable").removeClass("tabulator-unselectable");
-
-      if (self.table.options.selectable && self.table.options.selectable != "highlight") {
-
-        element.on("click", function (e) {
-
-          if (!self.selecting) {
-
-            self.toggleRow(row);
-          }
-        });
-
-        element.on("mousedown", function (e) {
-
-          if (e.shiftKey) {
-
-            self.selecting = true;
-
-            self.selectPrev = [];
-
-            $("body").on("mouseup", endSelect);
-
-            $("body").on("keyup", endSelect);
-
-            self.toggleRow(row);
-
-            return false;
-          }
-        });
-
-        element.on("mouseenter", function (e) {
-
-          if (self.selecting) {
-
-            self.toggleRow(row);
-
-            if (self.selectPrev[1] == row) {
-
-              self.toggleRow(self.selectPrev[0]);
-            }
-          }
-        });
-
-        element.on("mouseout", function (e) {
-
-          if (self.selecting) {
-
-            self.selectPrev.unshift(row);
-          }
-        });
-      }
-    } else {
-
-      row.getElement().addClass("tabulator-unselectable").removeClass("tabulator-selectable");
-    }
-  };
-
-  //toggle row selection
-
-
-  SelectRow.prototype.toggleRow = function (row) {
-
-    if (this.table.options.selectableCheck(row.getComponent())) {
-
-      if (row.extensions.select.selected) {
-
-        this._deselectRow(row);
-      } else {
-
-        this._selectRow(row);
-      }
-    }
-  };
-
-  //select a number of rows
-
-
-  SelectRow.prototype.selectRows = function (rows) {
-
-    var self = this;
-
-    if (typeof rows == "undefined") {
-
-      self.table.rowManager.rows.forEach(function (row) {
-
-        self._selectRow(row, true, true);
-      });
-
-      self._rowSelectionChanged();
-    } else {
-
-      if (Array.isArray(rows)) {
-
-        rows.forEach(function (row) {
-
-          self._selectRow(row, true);
-        });
-
-        self._rowSelectionChanged();
-      } else {
-
-        self._selectRow(rows);
-      }
-    }
-  };
-
-  //select an individual row
-
-
-  SelectRow.prototype._selectRow = function (rowInfo, silent, force) {
-
-    var self = this,
-        index;
-
-    //handle max row count
-
-
-    if (!isNaN(self.table.options.selectable) && self.table.options.selectable !== true && !force) {
-
-      if (self.selectedRows.length >= self.table.options.selectable) {
-
-        if (self.table.options.selectableRollingSelection) {
-
-          self._deselectRow(self.selectedRows[0], true);
-        } else {
-
-          return false;
-        }
-      }
-    }
-
-    var row = self.table.rowManager.findRow(rowInfo);
-
-    if (row) {
-
-      var self = this;
-
-      row.extensions.select.selected = true;
-
-      row.getElement().addClass("tabulator-selected");
-
-      self.selectedRows.push(row);
-
-      if (!silent) {
-
-        self._rowSelectionChanged();
-      }
-    } else {
-
-      console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
-    }
-  };
-
-  //deselect a number of rows
-
-
-  SelectRow.prototype.deselectRows = function (rows) {
-
-    var self = this;
-
-    if (typeof rows == "undefined") {
-
-      var rowCount = self.selectedRows.length;
-
-      for (var i = 0; i < rowCount; i++) {
-
-        self._deselectRow(self.selectedRows[0], true);
-      }
-
-      self._rowSelectionChanged();
-    } else {
-
-      if (Array.isArray(rows)) {
-
-        rows.forEach(function (row) {
-
-          self._deselectRow(row, true);
-        });
-
-        self._rowSelectionChanged();
-      } else {
-
-        self._deselectRow(rows);
-      }
-    }
-  };
-
-  //deselect an individual row
-
-
-  SelectRow.prototype._deselectRow = function (rowInfo, silent) {
-
-    var self = this,
-        index;
-
-    var row = self.table.rowManager.findRow(rowInfo);
-
-    if (row) {
-
-      index = self.selectedRows.findIndex(function (selectedRow) {
-
-        return selectedRow = row;
-      });
-
-      if (index > -1) {
-
-        row.extensions.select.selected = false;
-
-        row.getElement().removeClass("tabulator-selected");
-
-        self.selectedRows.splice(index, 1);
-
-        if (!silent) {
-
-          self._rowSelectionChanged();
-        }
-      }
-    } else {
-
-      console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
-    }
-  };
-
-  SelectRow.prototype.getSelectedData = function () {
-
-    var data = [];
-
-    this.selectedRows.forEach(function (row) {
-
-      data.push(row.getData());
-    });
-
-    return data;
-  };
-
-  SelectRow.prototype.getSelectedRows = function () {
-
-    var rows = [];
-
-    this.selectedRows.forEach(function (row) {
-
-      rows.push(row.getComponent());
-    });
-
-    return rows;
-  };
-
-  SelectRow.prototype._rowSelectionChanged = function () {
-
-    this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
-  };
-
-  Tabulator.registerExtension("selectRow", SelectRow);
-
   var Filter = function Filter(table) {
 
     this.table = table; //hold Tabulator object
@@ -7253,7 +6190,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.changed = true;
 
-      self.table.rowManager.refreshActiveData();
+      self.table.rowManager.filterRefresh();
     };
 
     //handle aborted edit
@@ -7546,9 +6483,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Filter.prototype.filter = function (rowList) {
 
     var self = this,
-        activeRows = [];
+        activeRows = [],
+        activeRowComponents = [];
 
-    if (self.filterList.length || Object.keys(self.headerFilters).length) {
+    if (!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)) {
 
       if (self.table.options.dataFiltering) {
 
@@ -7565,7 +6503,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.dataFiltered) {
 
-        self.table.options.dataFiltered(self.getFilter());
+        activeRows.forEach(function (row) {
+
+          activeRowComponents.push(row.getComponent());
+        });
+
+        self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
       }
 
       return activeRows;
@@ -7674,928 +6617,321 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Tabulator.registerExtension("filter", Filter);
 
-  var Accessor = function Accessor(table) {
+  var Format = function Format(table) {
 
     this.table = table; //hold Tabulator object
 
   };
 
-  //initialize column accessor
+  //initialize column formatter
 
 
-  Accessor.prototype.initializeColumn = function (column) {
+  Format.prototype.initializeColumn = function (column) {
 
-    var config = { accessor: false };
+    var self = this,
+        config = { params: column.definition.formatterParams || {} };
 
-    //set column accessor
+    //set column formatter
 
 
-    switch (_typeof(column.definition.accessor)) {
+    switch (_typeof(column.definition.formatter)) {
 
       case "string":
 
-        if (self.accessors[column.definition.accessor]) {
+        if (self.formatters[column.definition.formatter]) {
 
-          config.accessor = self.accessors[column.definition.accessor];
+          config.formatter = self.formatters[column.definition.formatter];
         } else {
 
-          console.warn("Accessor Error - No such accessor found, ignoring: ", column.definition.accessor);
+          console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
+
+          config.formatter = self.formatters.plaintext;
         }
 
         break;
 
       case "function":
 
-        config.accessor = column.definition.accessor;
+        config.formatter = column.definition.formatter;
+
+        break;
+
+      default:
+
+        config.formatter = self.formatters.plaintext;
 
         break;
 
     }
 
-    if (config.accessor) {
-
-      column.extensions.accessor = config;
-    }
-  },
-
-  //apply accessor to row
-
-
-  Accessor.prototype.transformRow = function (dataIn) {
-
-    var self = this;
-
-    //clone data object with deep copy to isolate internal data from returned result
-
-
-    var data = $.extend(true, {}, dataIn || {});
-
-    self.table.columnManager.traverse(function (column) {
-
-      var field;
-
-      if (column.extensions.accessor) {
-
-        field = column.getField();
-
-        if (typeof data[field] != "undefined") {
-
-          data[field] = column.extensions.accessor.accessor(data[field], data);
-        }
-      }
-    });
-
-    return data;
-  },
-
-  //default accessors
-
-
-  Accessor.prototype.accessors = {};
-
-  Tabulator.registerExtension("accessor", Accessor);
-
-  var Mutator = function Mutator(table) {
-
-    this.table = table; //hold Tabulator object
-
+    column.extensions.format = config;
   };
 
-  //initialize column mutator
+  //return a formatted value for a cell
 
 
-  Mutator.prototype.initializeColumn = function (column) {
+  Format.prototype.formatValue = function (cell) {
 
-    var config = { mutator: false, type: column.definition.mutateType };
-
-    //set column mutator
-
-
-    switch (_typeof(column.definition.mutator)) {
-
-      case "string":
-
-        if (self.mutators[column.definition.mutator]) {
-
-          config.mutator = self.mutators[column.definition.mutator];
-        } else {
-
-          console.warn("Mutator Error - No such mutator found, ignoring: ", column.definition.mutator);
-        }
-
-        break;
-
-      case "function":
-
-        config.mutator = column.definition.mutator;
-
-        break;
-
-    }
-
-    if (config.mutator) {
-
-      column.extensions.mutate = config;
-    }
-  };
-
-  //apply mutator to row
-
-
-  Mutator.prototype.transformRow = function (data) {
-
-    var self = this;
-
-    self.table.columnManager.traverse(function (column) {
-
-      var field;
-
-      if (column.extensions.mutate) {
-
-        field = column.getField();
-
-        if (typeof data[field] != "undefined" && column.extensions.mutate.type != "edit") {
-
-          data[field] = column.extensions.mutate.mutator(data[field], data, "data");
-        }
-      }
-    });
-
-    return data;
-  };
-
-  //apply mutator to new cell value
-
-
-  Mutator.prototype.transformCell = function (cell, value) {
-
-    return cell.column.extensions.mutate.mutator(value, cell.roww.getData(), "edit");
-  };
-
-  //default mutators
-
-
-  Mutator.prototype.mutators = {};
-
-  Tabulator.registerExtension("mutator", Mutator);
-
-  var Download = function Download(table) {
-
-    this.table = table; //hold Tabulator object
-
-  };
-
-  //trigger file download
-
-
-  Download.prototype.download = function (type, filename, options) {
-
-    var self = this,
-        downloadFunc = false,
-        href;
-
-    //create temporary link element to trigger download
-
-
-    var element = document.createElement('a');
-
-    if (typeof type == "function") {
-
-      downloadFunc = type;
-    } else {
-
-      if (self.downloaders[type]) {
-
-        downloadFunc = self.downloaders[type];
-      } else {
-
-        console.warn("Download Error - No such download type found: ", type);
-      }
-    }
-
-    if (downloadFunc) {
-
-      href = downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options);
-
-      element.setAttribute('href', href);
-
-      //set file title
-
-
-      element.setAttribute('download', filename || "Tabulator." + (typeof type === "function" ? "txt" : type));
-
-      //trigger download
-
-
-      element.style.display = 'none';
-
-      document.body.appendChild(element);
-
-      element.click();
-
-      //remove temporary link element
-
-
-      document.body.removeChild(element);
-    }
-  };
-
-  //downloaders
-
-
-  Download.prototype.downloaders = {
-
-    csv: function csv(columns, data, options) {
-
-      var delimiter = options && options.delimiter ? options.delimiter : ",";
-
-      //get field lists
-
-
-      var titles = [];
-
-      var fields = [];
-
-      columns.forEach(function (column) {
-
-        if (column.field) {
-
-          titles.push('"' + String(column.title).split('"').join('""') + '"');
-
-          fields.push(column.field);
-        }
-      });
-
-      //generate header row
-
-
-      var fileContents = [titles.join(delimiter)];
-
-      //generate each row of the table
-
-
-      data.forEach(function (row) {
-
-        var rowData = [];
-
-        fields.forEach(function (field) {
-
-          var value = _typeof(row[field]) == "object" ? JSON.stringify(row[field]) : row[field];
-
-          //escape uotation marks
-
-
-          rowData.push('"' + String(value).split('"').join('""') + '"');
-        });
-
-        fileContents.push(rowData.join(delimiter));
-      });
-
-      return 'data:text/csv;charset=utf-8,' + encodeURIComponent(fileContents.join("\n"));
-    },
-
-    json: function json(columns, data, options) {
-
-      var fileContents = JSON.stringify(data, null, '\t');
-
-      return 'data:application/json;charset=utf-8,' + encodeURIComponent(fileContents);
-    }
-
-  };
-
-  Tabulator.registerExtension("download", Download);
-
-  //public group object
-
-
-  var GroupComponent = function GroupComponent(group) {
-
-    var obj = {
-
-      type: "GroupComponent", //type of element
-
-
-      _getSelf: function _getSelf() {
-
-        return group;
-      }
-
-    };
-
-    return obj;
-  };
-
-  //////////////////////////////////////////////////
-
-
-  //////////////// Group Functions /////////////////
-
-
-  //////////////////////////////////////////////////
-
-
-  var Group = function Group(parent, id, generator, visible) {
-
-    this.id = id;
-
-    this.parent = parent;
-
-    this.type = "group"; //type of element
-
-
-    this.rows = [];
-
-    this.generator = generator;
-
-    this.element = $("<div class='tabulator-row tabulator-group' role='rowgroup'></div>");
-
-    this.arrowElement = $("<div class='tabulator-arrow'></div>");
-
-    this.height = 0;
-
-    this.outerHeight = 0;
-
-    this.initialized = false;
-
-    this.visible = visible;
-
-    this.addBindings();
-  };
-
-  Group.prototype.addBindings = function () {
-
-    var self = this;
-
-    self.element.on("click", function (e) {
-
-      e.stopPropagation();
-
-      e.stopImmediatePropagation();
-
-      self.toggleVisibility();
-    });
-  };
-
-  Group.prototype.addRow = function (row) {
-
-    this.rows.push(row);
-  };
-
-  Group.prototype.getRows = function () {
-
-    this._visSet();
-
-    return this.visible ? this.rows : [];
-  };
-
-  Group.prototype.getRowCount = function () {
-
-    return this.rows.length;
-  };
-
-  Group.prototype.toggleVisibility = function () {
-
-    if (this.visible) {
-
-      this.hide();
-    } else {
-
-      this.show();
-    }
-  };
-
-  Group.prototype.hide = function () {
-
-    this.visible = false;
-
-    if (this.parent.table.rowManager.getRenderMode() == "classic") {
-
-      this.rows.forEach(function (row) {
-
-        row.getElement().detach();
-      });
-    } else {
-
-      this.parent.updateGroupRows(true);
-    }
-  };
-
-  Group.prototype.show = function () {
-
-    var self = this;
-
-    self.visible = true;
-
-    if (this.parent.table.rowManager.getRenderMode() == "classic") {
-
-      self.rows.forEach(function (row) {
-
-        self.getElement().after(row.getElement());
-
-        row.initialize();
-      });
-    } else {
-
-      this.parent.updateGroupRows(true);
-    }
-  };
-
-  Group.prototype._visSet = function () {
-
-    var data = [];
-
-    if (typeof this.visible == "function") {
-
-      this.rows.forEach(function (row) {
-
-        data.push(row.getData());
-      });
-
-      this.visible = this.visible(this.id, this.getRowCount(), data);
-    }
-  };
-
-  ////////////// Standard Row Functions //////////////
-
-
-  Group.prototype.getElement = function () {
-
-    this.addBindingsd = false;
-
-    this._visSet();
-
-    var data = [];
-
-    this.rows.forEach(function (row) {
-
-      data.push(row.getData());
-    });
-
-    if (this.visible) {
-
-      this.element.addClass("tabulator-group-visible");
-    } else {
-
-      this.element.removeClass("tabulator-group-visible");
-    }
-
-    this.element.empty().html(this.generator(this.id, this.getRowCount(), data)).prepend(this.arrowElement);
-
-    this.addBindings();
-
-    return this.element;
-  };
-
-  //normalize the height of elements in the row
-
-
-  Group.prototype.normalizeHeight = function () {
-
-    this.setHeight(this.element.innerHeight());
-  };
-
-  Group.prototype.initialize = function (force) {
-
-    if (!this.initialized || force) {
-
-      this.normalizeHeight();
-
-      this.initialized = true;
-    }
-  };
-
-  Group.prototype.reinitialize = function () {
-
-    this.initialized = false;
-
-    this.height = 0;
-
-    if (this.element.is(":visible")) {
-
-      this.initialize(true);
-    }
-  };
-
-  Group.prototype.setHeight = function (height) {
-
-    if (this.height != height) {
-
-      this.height = height;
-
-      this.outerHeight = this.element.outerHeight();
-    }
-  };
-
-  //return rows outer height
-
-
-  Group.prototype.getHeight = function () {
-
-    return this.outerHeight;
-  };
-
-  //////////////// Object Generation /////////////////
-
-
-  Group.prototype.getComponent = function () {
-
-    return new GroupComponent(this);
-  };
-
-  //////////////////////////////////////////////////
-
-
-  ////////////// Group Row Extension ///////////////
-
-
-  //////////////////////////////////////////////////
-
-
-  var GroupRows = function GroupRows(table) {
-
-    this.table = table; //hold Tabulator object
-
-
-    this.findGroupId = false; //enable table grouping and set field to group by
-
-
-    this.startOpen = function () {
-      return false;
-    }; //starting state of group
-
-
-    this.headerGenerator = function (value, count, data) {
-      //header layout function
-
-
-      return value + "<span>(" + count + " " + (count === 1 ? "item" : "items") + ")</span>";
-    };
-
-    this.groupList = []; //ordered list of groups
-
-
-    this.groups = {}; //hold row groups
-
-  };
-
-  //initialize group configuration
-
-
-  GroupRows.prototype.initialize = function () {
-
-    var self = this;
-
-    if (typeof self.table.options.groupBy == "function") {
-
-      self.findGroupId = self.table.options.groupBy;
-    } else {
-
-      self.findGroupId = function (data) {
-
-        return data[self.table.options.groupBy];
-      };
-    }
-
-    if (self.table.options.groupStartOpen) {
-
-      self.startOpen = typeof self.table.options.groupStartOpen == "function" ? self.table.options.groupStartOpen : function () {
-        return true;
-      };
-    }
-
-    if (self.table.options.groupHeader) {
-
-      self.headerGenerator = self.table.options.groupHeader;
-    }
-  };
-
-  //return appropriate rows with group headers
-
-
-  GroupRows.prototype.getRows = function (data) {
-
-    var self = this;
-
-    var oldGroups = self.groups;
-
-    self.groups = {};
-
-    self.groupList = [];
-
-    if (self.findGroupId) {
-
-      data.forEach(function (row) {
-
-        var groupID = self.findGroupId(row.getData());
-
-        if (!self.groups[groupID]) {
-
-          var group = new Group(self, groupID, self.headerGenerator, oldGroups[groupID] ? oldGroups[groupID].visible : self.startOpen);
-
-          self.groups[groupID] = group;
-
-          self.groupList.push(group);
-        }
-
-        self.groups[groupID].addRow(row);
-      });
-
-      return self.updateGroupRows();
-    } else {
-
-      return data.slice(0);
-    }
-  };
-
-  GroupRows.prototype.updateGroupRows = function (force) {
-
-    var self = this,
-        output = [],
-        oldRowCount;
-
-    self.groupList.forEach(function (group) {
-
-      output.push(group);
-
-      group.getRows().forEach(function (row) {
-
-        output.push(row);
-      });
-    });
-
-    //force update of table display
-
-
-    if (force) {
-
-      oldRowCount = self.table.rowManager.displayRowsCount;
-
-      self.table.rowManager.setDisplayRows(output);
-
-      self.table.rowManager._virtualRenderFill(Math.floor(self.table.rowManager.element.scrollTop() / self.table.rowManager.element[0].scrollHeight * oldRowCount));
-    }
-
-    return output;
-  };
-
-  Tabulator.registerExtension("groupRows", GroupRows);
-
-  var HtmlTableImport = function HtmlTableImport(table) {
-
-    this.table = table; //hold Tabulator object
-
-  };
-
-  HtmlTableImport.prototype.parseTable = function () {
-
-    var self = this,
-        element = self.table.element,
-        options = self.table.options,
-        columns = options.columns,
-        headers = $("th", element),
-        hasIndex = false,
-        rows = $("tbody tr", element),
-        data = [];
-
-    //check for tablator inline options
-
-
-    self._extractOptions(element, options);
-
-    if (headers.length) {
-
-      self._extractHeaders(element);
-    } else {
-
-      self._generateBlankHeaders(element);
-    }
-
-    //iterate through table rows and build data set
-
-
-    rows.each(function (rowIndex) {
-
-      var item = {};
-
-      //create index if the dont exist in table
-
-
-      if (!hasIndex) {
-
-        item[options.index] = rowIndex;
-      }
-
-      //add row data to item
-
-
-      $("td", $(this)).each(function (colIndex) {
-
-        item[$(this).data("field")] = $(this).html();
-      });
-
-      data.push(item);
-    });
-
-    //create new element
-
-
-    var newElement = $("<div></div>");
-
-    //transfer attributes to new element
-
-
-    var attributes = element.prop("attributes");
-
-    // loop through attributes and apply them on div
-
-
-    $.each(attributes, function () {
-
-      newElement.attr(this.name, this.value);
-    });
-
-    // replace table with div element
-
-
-    element.replaceWith(newElement);
-
-    options.data = data;
-
-    newElement.tabulator(options);
-  };
-
-  //extract tabluator attribute options
-
-
-  HtmlTableImport.prototype._extractOptions = function (element, options) {
-
-    var self = this,
-        attributes = element[0].attributes;
-
-    for (var index in attributes) {
-
-      var attrib = attributes[index];
-
-      var name;
-
-      if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
-
-        name = attrib.name.replace("tabulator-", "");
-
-        for (var key in options) {
-
-          if (key.toLowerCase() == name) {
-
-            options[key] = self._attribValue(attrib.value);
-          }
-        }
-      }
-    }
-  };
-
-  //get value of attribute
-
-
-  HtmlTableImport.prototype._attribValue = function (value) {
-
-    if (value === "true") {
-
-      return true;
-    }
-
-    if (value === "false") {
-
-      return false;
-    }
+    var value = cell.column.extensions.format.formatter.call(this, cell.getComponent(), cell.column.extensions.format.params);
 
     return value;
   };
 
-  //find column if it has already been defined
+  //default data formatters
 
 
-  HtmlTableImport.prototype._findCol = function (title) {
+  Format.prototype.formatters = {
 
-    var self = this;
-
-    var match = self.table.options.columns.find(function (column) {
-
-      return column.title === title;
-    });
-
-    return match || false;
-  };
-
-  //extract column from headers
+    //plain text value
 
 
-  HtmlTableImport.prototype._extractHeaders = function (element) {
+    plaintext: function plaintext(cell, formatterParams) {
 
-    var self = this,
-        headers = $("th", element),
-        rows = $("tbody tr", element);
+      return cell.getValue();
+    },
 
-    headers.each(function (index) {
-
-      var header = $(this),
-          exists = false,
-          col = self._findCol(header.text()),
-          width,
-          attributes;
-
-      //list of possible attributes
+    //multiline text area
 
 
-      var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "onClick", "onDblClick", "onContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
+    textarea: function textarea(cell, formatterParams) {
 
-      if (col) {
+      cell.getElement().css({ "white-space": "pre-wrap" });
 
-        exists = true;
+      return cell.getValue();
+    },
+
+    //currency formatting
+
+
+    money: function money(cell, formatterParams) {
+
+      var floatVal = parseFloat(cell.getValue()),
+          number,
+          integer,
+          decimal,
+          rgx;
+
+      var decimalSym = formatterParams.decimal || ".";
+
+      var thousandSym = formatterParams.thousand || ",";
+
+      var symbol = formatterParams.symbol || "";
+
+      var after = !!formatterParams.symbolAfter;
+
+      if (isNaN(floatVal)) {
+
+        return cell.getValue();
+      }
+
+      number = floatVal.toFixed(2);
+
+      number = number.split(".");
+
+      integer = number[0];
+
+      decimal = number.length > 1 ? decimalSym + number[1] : "";
+
+      rgx = /(\d+)(\d{3})/;
+
+      while (rgx.test(integer)) {
+
+        integer = integer.replace(rgx, "$1" + thousandSym + "$2");
+      }
+
+      return after ? integer + decimal + symbol : symbol + integer + decimal;
+    },
+
+    //clickable mailto link
+
+
+    email: function email(cell, formatterParams) {
+
+      var value = cell.getValue();
+
+      return "<a href='mailto:" + value + "'>" + value + "</a>";
+    },
+
+    //clickable anchor tag
+
+
+    link: function link(cell, formatterParams) {
+
+      var value = cell.getValue();
+
+      return "<a href='" + value + "'>" + value + "</a>";
+    },
+
+    //image element
+
+
+    image: function image(cell, formatterParams) {
+
+      var value = cell.getValue();
+
+      return "<img url='" + value + "'/>";
+    },
+
+    //tick or empty cell
+
+
+    tick: function tick(cell, formatterParams) {
+
+      var value = cell.getValue(),
+          element = cell.getElement();
+
+      var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+
+      if (value === true || value === "true" || value === "True" || value === 1) {
+
+        element.attr("aria-checked", true);
+
+        return tick;
       } else {
 
-        col = { title: header.text() };
+        element.attr("aria-checked", false);
+
+        return "";
+      }
+    },
+
+    //tick or cross
+
+
+    tickCross: function tickCross(cell, formatterParams) {
+
+      var value = cell.getValue(),
+          element = cell.getElement(),
+          tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>',
+          cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+
+      if (value === true || value === "true" || value === "True" || value === 1) {
+
+        element.attr("aria-checked", true);
+
+        return tick;
+      } else {
+
+        element.attr("aria-checked", false);
+
+        return cross;
+      }
+    },
+
+    //star rating
+
+
+    star: function star(cell, formatterParams) {
+
+      var value = cell.getValue(),
+          element = cell.getElement(),
+          maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
+          stars = $("<span style='vertical-align:middle;'></span>"),
+          starActive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>'),
+          starInactive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+
+      value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+
+      for (var i = 1; i <= maxStars; i++) {
+
+        var nextStar = i <= value ? starActive : starInactive;
+
+        stars.append(nextStar.clone());
       }
 
-      if (!col.field) {
+      element.css({
 
-        col.field = header.text().toLowerCase().replace(" ", "_");
-      }
+        "white-space": "nowrap",
 
-      $("td:eq(" + index + ")", rows).data("field", col.field);
+        "overflow": "hidden",
 
-      width = header.attr("width");
+        "text-overflow": "ellipsis"
 
-      if (width && !col.width) {
+      });
 
-        col.width = width;
-      }
+      element.attr("aria-label", value);
 
-      if (col.field == self.table.options.index) {
+      return stars.html();
+    },
 
-        hasIndex = true;
-      }
-
-      //check for tablator inline options
+    //progress bar
 
 
-      attributes = header[0].attributes;
+    progress: function progress(cell, formatterParams) {
+      //progress bar
 
-      //check for tablator inline options
+
+      var value = cell.getValue(),
+          element = cell.getElement(),
+          max = formatterParams && formatterParams.max ? formatterParams.max : 100,
+          min = formatterParams && formatterParams.min ? formatterParams.min : 0,
+          color = formatterParams && formatterParams.color ? formatterParams.color : "#2DC214",
+          percent;
+
+      //make sure value is in range
 
 
-      for (var index in attributes) {
+      value = parseFloat(value) <= max ? parseFloat(value) : max;
 
-        var attrib = attributes[index],
-            name;
+      value = parseFloat(value) >= min ? parseFloat(value) : min;
 
-        if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+      //workout percentage
 
-          name = attrib.name.replace("tabulator-", "");
 
-          attribList.forEach(function (key) {
+      percent = (max - min) / 100;
 
-            if (key.toLowerCase() == name) {
+      value = 100 - Math.round((value - min) / percent);
 
-              col[key] = self._attribValue(attrib.value);
-            }
-          });
-        }
-      }
+      element.css({
 
-      if (!exists) {
+        "min-width": "30px",
 
-        self.table.options.columns.push(col);
-      }
-    });
+        "position": "relative"
+
+      });
+
+      element.attr("aria-label", value);
+
+      return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
+    },
+
+    //background color
+
+
+    color: function color(cell, formatterParams) {
+
+      cell.getElement().css({ "background-color": cell.getValue() });
+
+      return "";
+    },
+
+    //tick icon
+
+
+    buttonTick: function buttonTick(cell, formatterParams) {
+
+      return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
+    },
+
+    //cross icon
+
+
+    buttonCross: function buttonCross(cell, formatterParams) {
+
+      return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
+    },
+
+    //current row number
+
+
+    rownum: function rownum(cell, formatterParams) {
+
+      return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
+    }
+
   };
 
-  //generate blank headers
-
-
-  HtmlTableImport.prototype._generateBlankHeaders = function (element) {
-
-    var self = this;
-
-    var headers = $("tr:first td", element);
-
-    headers.each(function (index) {
-
-      var col = { title: "", field: "col" + index };
-
-      $("td:eq(" + index + ")", rows).data("field", col.field);
-
-      var width = $(this).attr("width");
-
-      if (width) {
-
-        col.width = width;
-      }
-
-      self.table.options.columns.push(col);
-    });
-  };
-
-  Tabulator.registerExtension("htmlTableImport", HtmlTableImport);
+  Tabulator.registerExtension("format", Format);
 
   var FrozenColumns = function FrozenColumns(table) {
 
@@ -8792,334 +7128,701 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Tabulator.registerExtension("frozenColumns", FrozenColumns);
 
-  var PersistentLayout = function PersistentLayout(table) {
+  //public group object
+
+
+  var GroupComponent = function GroupComponent(group) {
+
+    var obj = {
+
+      type: "GroupComponent", //type of element
+
+
+      getKey: function getKey() {
+
+        return group.key;
+      },
+
+      getElement: function getElement() {
+
+        return group.element;
+      },
+
+      getRows: function getRows() {
+
+        var output = [];
+
+        group.rows.forEach(function (row) {
+
+          output.push(row.getComponent());
+        });
+
+        return output;
+      },
+
+      getVisibility: function getVisibility() {
+
+        return group.visible;
+      },
+
+      show: function show() {
+
+        group.show();
+      },
+
+      hide: function hide() {
+
+        group.hide();
+      },
+
+      toggle: function toggle() {
+
+        group.toggleVisibility();
+      },
+
+      _getSelf: function _getSelf() {
+
+        return group;
+      }
+
+    };
+
+    return obj;
+  };
+
+  //////////////////////////////////////////////////
+
+
+  //////////////// Group Functions /////////////////
+
+
+  //////////////////////////////////////////////////
+
+
+  var Group = function Group(parent, key, generator, visible) {
+
+    this.key = key;
+
+    this.parent = parent;
+
+    this.type = "group"; //type of element
+
+
+    this.rows = [];
+
+    this.generator = generator;
+
+    this.element = $("<div class='tabulator-row tabulator-group' role='rowgroup'></div>");
+
+    this.arrowElement = $("<div class='tabulator-arrow'></div>");
+
+    this.height = 0;
+
+    this.outerHeight = 0;
+
+    this.initialized = false;
+
+    this.visible = visible;
+
+    this.addBindings();
+  };
+
+  Group.prototype.addBindings = function () {
+
+    var self = this;
+
+    self.element.on("click", function (e) {
+
+      e.stopPropagation();
+
+      e.stopImmediatePropagation();
+
+      self.toggleVisibility();
+    });
+  };
+
+  Group.prototype.addRow = function (row) {
+
+    this.rows.push(row);
+  };
+
+  Group.prototype.getRows = function () {
+
+    this._visSet();
+
+    return this.visible ? this.rows : [];
+  };
+
+  Group.prototype.getRowCount = function () {
+
+    return this.rows.length;
+  };
+
+  Group.prototype.toggleVisibility = function () {
+
+    if (this.visible) {
+
+      this.hide();
+    } else {
+
+      this.show();
+    }
+  };
+
+  Group.prototype.hide = function () {
+
+    this.visible = false;
+
+    if (this.parent.table.rowManager.getRenderMode() == "classic") {
+
+      this.rows.forEach(function (row) {
+
+        row.getElement().detach();
+      });
+    } else {
+
+      this.parent.updateGroupRows(true);
+    }
+
+    this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
+  };
+
+  Group.prototype.show = function () {
+
+    var self = this;
+
+    self.visible = true;
+
+    if (this.parent.table.rowManager.getRenderMode() == "classic") {
+
+      self.rows.forEach(function (row) {
+
+        self.getElement().after(row.getElement());
+
+        row.initialize();
+      });
+    } else {
+
+      this.parent.updateGroupRows(true);
+    }
+
+    this.parent.table.options.groupVisibilityChanged(this.getComponent(), true);
+  };
+
+  Group.prototype._visSet = function () {
+
+    var data = [];
+
+    if (typeof this.visible == "function") {
+
+      this.rows.forEach(function (row) {
+
+        data.push(row.getData());
+      });
+
+      this.visible = this.visible(this.key, this.getRowCount(), data);
+    }
+  };
+
+  ////////////// Standard Row Functions //////////////
+
+
+  Group.prototype.getElement = function () {
+
+    this.addBindingsd = false;
+
+    this._visSet();
+
+    var data = [];
+
+    this.rows.forEach(function (row) {
+
+      data.push(row.getData());
+    });
+
+    if (this.visible) {
+
+      this.element.addClass("tabulator-group-visible");
+    } else {
+
+      this.element.removeClass("tabulator-group-visible");
+    }
+
+    this.element.children().detach();
+
+    this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
+
+    this.addBindings();
+
+    return this.element;
+  };
+
+  //normalize the height of elements in the row
+
+
+  Group.prototype.normalizeHeight = function () {
+
+    this.setHeight(this.element.innerHeight());
+  };
+
+  Group.prototype.initialize = function (force) {
+
+    if (!this.initialized || force) {
+
+      this.normalizeHeight();
+
+      this.initialized = true;
+    }
+  };
+
+  Group.prototype.reinitialize = function () {
+
+    this.initialized = false;
+
+    this.height = 0;
+
+    if (this.element.is(":visible")) {
+
+      this.initialize(true);
+    }
+  };
+
+  Group.prototype.setHeight = function (height) {
+
+    if (this.height != height) {
+
+      this.height = height;
+
+      this.outerHeight = this.element.outerHeight();
+    }
+  };
+
+  //return rows outer height
+
+
+  Group.prototype.getHeight = function () {
+
+    return this.outerHeight;
+  };
+
+  //////////////// Object Generation /////////////////
+
+
+  Group.prototype.getComponent = function () {
+
+    return new GroupComponent(this);
+  };
+
+  //////////////////////////////////////////////////
+
+
+  ////////////// Group Row Extension ///////////////
+
+
+  //////////////////////////////////////////////////
+
+
+  var GroupRows = function GroupRows(table) {
 
     this.table = table; //hold Tabulator object
 
 
-    this.mode = "";
+    this.findGroupId = false; //enable table grouping and set field to group by
 
-    this.id = "";
 
-    this.persistProps = ["field", "width", "visible"];
+    this.startOpen = function () {
+      return false;
+    }; //starting state of group
+
+
+    this.headerGenerator = function (value, count, data) {
+      //header layout function
+
+
+      return value + "<span>(" + count + " " + (count === 1 ? "item" : "items") + ")</span>";
+    };
+
+    this.groupList = []; //ordered list of groups
+
+
+    this.groups = {}; //hold row groups
+
   };
 
-  //setup parameters
+  //initialize group configuration
 
 
-  PersistentLayout.prototype.initialize = function (mode, id) {
+  GroupRows.prototype.initialize = function () {
 
-    //determine persistent layout storage type
+    var self = this;
 
+    if (typeof self.table.options.groupBy == "function") {
 
-    this.mode = mode !== true ? mode : typeof window.localStorage !== 'undefined' ? "local" : "cookie";
+      self.findGroupId = self.table.options.groupBy;
+    } else {
 
-    //set storage tag
+      self.findGroupId = function (data) {
 
-
-    this.id = "tabulator-" + (id || this.table.element.attr("id") || "");
-  };
-
-  //load saved definitions
-
-
-  PersistentLayout.prototype.load = function (definition) {
-
-    var newDefinition = "";
-
-    switch (this.mode) {
-
-      case "local":
-
-        newDefinition = localStorage.getItem(this.id);
-
-        break;
-
-      case "cookie":
-
-        //find cookie
-
-
-        var cookie = document.cookie,
-            cookiePos = cookie.indexOf(this.id + "="),
-            end = void 0;
-
-        //if cookie exists, decode and load column data into tabulator
-
-
-        if (cookiePos > -1) {
-
-          cookie = cookie.substr(cookiePos);
-
-          end = cookie.indexOf(";");
-
-          if (end > -1) {
-
-            cookie = cookie.substr(0, end);
-          }
-
-          newDefinition = cookie.replace(this.id + "=", "");
-        }
-
-        break;
-
-      default:
-
-        console.warn("Persistance Load Error - invalid mode selected", this.mode);
-
+        return data[self.table.options.groupBy];
+      };
     }
 
-    if (newDefinition) {
+    if (self.table.options.groupStartOpen) {
 
-      newDefinition = JSON.parse(newDefinition);
-
-      definition = this._mergeDefinition(definition, newDefinition);
+      self.startOpen = typeof self.table.options.groupStartOpen == "function" ? self.table.options.groupStartOpen : function () {
+        return true;
+      };
     }
 
-    return definition;
+    if (self.table.options.groupHeader) {
+
+      self.headerGenerator = self.table.options.groupHeader;
+    }
   };
 
-  //merge old and new column defintions
+  //return appropriate rows with group headers
 
 
-  PersistentLayout.prototype._mergeDefinition = function (oldCols, newCols) {
+  GroupRows.prototype.getRows = function (data) {
 
     var self = this,
-        output = [];
+        oldGroups = self.groups,
+        groupComponents = [];
 
-    newCols.forEach(function (column, to) {
+    self.groups = {};
 
-      var from = self._findColumn(oldCols, column);
+    self.groupList = [];
 
-      if (from) {
+    if (self.findGroupId) {
 
-        from.width = column.width;
+      self.table.options.dataGrouping();
 
-        from.visible = column.visible;
+      data.forEach(function (row) {
 
-        if (from.columns) {
+        var groupID = self.findGroupId(row.getData());
 
-          from.columns = self._mergeDefinition(from.columns, column.columns);
+        if (!self.groups[groupID]) {
+
+          var group = new Group(self, groupID, self.headerGenerator, oldGroups[groupID] ? oldGroups[groupID].visible : self.startOpen);
+
+          self.groups[groupID] = group;
+
+          self.groupList.push(group);
         }
 
-        output.push(from);
-      }
+        self.groups[groupID].addRow(row);
+      });
+
+      if (self.table.options.dataGrouped) {
+
+        self.groupList.forEach(function (group) {
+
+          self.groupComponents.push(group.getComponent());
+        });
+
+        self.table.options.dataGrouped(groupList);
+      };
+
+      return self.updateGroupRows();
+    } else {
+
+      return data.slice(0);
+    }
+  };
+
+  GroupRows.prototype.updateGroupRows = function (force) {
+
+    var self = this,
+        output = [],
+        oldRowCount;
+
+    self.groupList.forEach(function (group) {
+
+      output.push(group);
+
+      group.getRows().forEach(function (row) {
+
+        output.push(row);
+      });
     });
+
+    //force update of table display
+
+
+    if (force) {
+
+      oldRowCount = self.table.rowManager.displayRowsCount;
+
+      self.table.rowManager.setDisplayRows(output);
+
+      self.table.rowManager._virtualRenderFill(Math.floor(self.table.rowManager.element.scrollTop() / self.table.rowManager.element[0].scrollHeight * oldRowCount));
+    }
 
     return output;
   };
 
-  //find matching columns
+  Tabulator.registerExtension("groupRows", GroupRows);
 
-
-  PersistentLayout.prototype._findColumn = function (columns, subject) {
-
-    var type = subject.columns ? "group" : subject.field ? "field" : "object";
-
-    return columns.find(function (col) {
-
-      switch (type) {
-
-        case "group":
-
-          return col.title === subject.title && col.columns.length === subject.columns.length;
-
-          break;
-
-        case "field":
-
-          return col.field === subject.field;
-
-          break;
-
-        case "object":
-
-          return col === subject;
-
-          break;
-
-      }
-    });
-  };
-
-  //save current definitions
-
-
-  PersistentLayout.prototype.save = function () {
-
-    var definition = this._parseColumns(this.table.columnManager.getColumns()),
-        data = JSON.stringify(definition);
-
-    switch (this.mode) {
-
-      case "local":
-
-        localStorage.setItem(this.id, data);
-
-        break;
-
-      case "cookie":
-
-        var expireDate = new Date();
-
-        expireDate.setDate(expireDate.getDate() + 10000);
-
-        //save cookie
-
-
-        document.cookie = this.id + "=" + data + "; expires=" + expireDate.toUTCString();
-
-        break;
-
-      default:
-
-        console.warn("Persistance Save Error - invalid mode selected", this.mode);
-
-    }
-  };
-
-  //build premission list
-
-
-  PersistentLayout.prototype._parseColumns = function (columns) {
-
-    var self = this,
-        definitions = [];
-
-    columns.forEach(function (column) {
-
-      var def = {};
-
-      if (column.isGroup) {
-
-        def.title = column.getDefinition().title;
-
-        def.columns = self._parseColumns(column.getColumns());
-      } else {
-
-        def.field = column.getField();
-
-        def.width = column.getWidth();
-
-        def.visible = column.visible;
-      }
-
-      definitions.push(def);
-    });
-
-    return definitions;
-  };
-
-  Tabulator.registerExtension("persistentLayout", PersistentLayout);
-
-  var ResponsiveLayout = function ResponsiveLayout(table) {
+  var HtmlTableImport = function HtmlTableImport(table) {
 
     this.table = table; //hold Tabulator object
 
-
-    this.columns = [];
-
-    this.index = 0;
   };
 
-  //generate resposivle columns list
-
-
-  ResponsiveLayout.prototype.initialize = function () {
-
-    var columns = [];
-
-    //detemine level of responsivity for each column
-
-
-    this.table.columnManager.columnsByIndex.forEach(function (column) {
-
-      var def = column.getDefinition();
-
-      column.extensions.responsive = { order: typeof def.responsive === "undefined" ? 1 : def.responsive };
-
-      if (column.extensions.responsive.order) {
-
-        columns.push(column);
-      }
-    });
-
-    //sort list by responsivity
-
-
-    columns = columns.reverse();
-
-    columns = columns.sort(function (a, b) {
-
-      return b.extensions.responsive.order - a.extensions.responsive.order;
-    });
-
-    this.columns = columns;
-  };
-
-  ResponsiveLayout.prototype.update = function () {
+  HtmlTableImport.prototype.parseTable = function () {
 
     var self = this,
-        working = true;
+        element = self.table.element,
+        options = self.table.options,
+        columns = options.columns,
+        headers = $("th", element),
+        hasIndex = false,
+        rows = $("tbody tr", element),
+        data = [];
 
-    while (working) {
+    self.table.options.htmlImporting();
 
-      var diff = self.table.columnManager.element.innerWidth() - self.table.columnManager.getWidth();
-
-      if (diff < 0) {
-
-        //table is too wide
-
-
-        var _column = self.columns[self.index];
-
-        if (_column) {
-
-          _column.hide();
-
-          self.index++;
-        } else {
-
-          working = false;
-        }
-      } else {
-
-        //table has spare space
+    //check for tablator inline options
 
 
-        var _column2 = self.columns[self.index - 1];
+    self._extractOptions(element, options);
 
-        if (_column2) {
+    if (headers.length) {
 
-          if (diff > 0) {
+      self._extractHeaders(element);
+    } else {
 
-            if (diff >= _column2.getWidth()) {
+      self._generateBlankHeaders(element);
+    }
 
-              _column2.show();
+    //iterate through table rows and build data set
 
-              self.index--;
-            } else {
 
-              working = false;
-            }
-          } else {
+    rows.each(function (rowIndex) {
 
-            working = false;
-          }
-        } else {
+      var item = {};
 
-          working = false;
-        }
+      //create index if the dont exist in table
+
+
+      if (!hasIndex) {
+
+        item[options.index] = rowIndex;
       }
 
-      if (!self.table.rowManager.activeRowsCount) {
+      //add row data to item
 
-        self.table.rowManager.renderEmptyScroll();
+
+      $("td", $(this)).each(function (colIndex) {
+
+        item[$(this).data("field")] = $(this).html();
+      });
+
+      data.push(item);
+    });
+
+    //create new element
+
+
+    var newElement = $("<div></div>");
+
+    //transfer attributes to new element
+
+
+    var attributes = element.prop("attributes");
+
+    // loop through attributes and apply them on div
+
+
+    $.each(attributes, function () {
+
+      newElement.attr(this.name, this.value);
+    });
+
+    // replace table with div element
+
+
+    element.replaceWith(newElement);
+
+    options.data = data;
+
+    self.table.options.htmlImported();
+
+    newElement.tabulator(options);
+  };
+
+  //extract tabluator attribute options
+
+
+  HtmlTableImport.prototype._extractOptions = function (element, options) {
+
+    var self = this,
+        attributes = element[0].attributes;
+
+    for (var index in attributes) {
+
+      var attrib = attributes[index];
+
+      var name;
+
+      if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+
+        name = attrib.name.replace("tabulator-", "");
+
+        for (var key in options) {
+
+          if (key.toLowerCase() == name) {
+
+            options[key] = self._attribValue(attrib.value);
+          }
+        }
       }
     }
   };
 
-  Tabulator.registerExtension("responsiveLayout", ResponsiveLayout);
+  //get value of attribute
+
+
+  HtmlTableImport.prototype._attribValue = function (value) {
+
+    if (value === "true") {
+
+      return true;
+    }
+
+    if (value === "false") {
+
+      return false;
+    }
+
+    return value;
+  };
+
+  //find column if it has already been defined
+
+
+  HtmlTableImport.prototype._findCol = function (title) {
+
+    var self = this;
+
+    var match = self.table.options.columns.find(function (column) {
+
+      return column.title === title;
+    });
+
+    return match || false;
+  };
+
+  //extract column from headers
+
+
+  HtmlTableImport.prototype._extractHeaders = function (element) {
+
+    var self = this,
+        headers = $("th", element),
+        rows = $("tbody tr", element);
+
+    headers.each(function (index) {
+
+      var header = $(this),
+          exists = false,
+          col = self._findCol(header.text()),
+          width,
+          attributes;
+
+      //list of possible attributes
+
+
+      var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "cellClick", "cellDblClick", "cellContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
+
+      if (col) {
+
+        exists = true;
+      } else {
+
+        col = { title: header.text() };
+      }
+
+      if (!col.field) {
+
+        col.field = header.text().toLowerCase().replace(" ", "_");
+      }
+
+      $("td:eq(" + index + ")", rows).data("field", col.field);
+
+      width = header.attr("width");
+
+      if (width && !col.width) {
+
+        col.width = width;
+      }
+
+      if (col.field == self.table.options.index) {
+
+        hasIndex = true;
+      }
+
+      //check for tablator inline options
+
+
+      attributes = header[0].attributes;
+
+      //check for tablator inline options
+
+
+      for (var index in attributes) {
+
+        var attrib = attributes[index],
+            name;
+
+        if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+
+          name = attrib.name.replace("tabulator-", "");
+
+          attribList.forEach(function (key) {
+
+            if (key.toLowerCase() == name) {
+
+              col[key] = self._attribValue(attrib.value);
+            }
+          });
+        }
+      }
+
+      if (!exists) {
+
+        self.table.options.columns.push(col);
+      }
+    });
+  };
+
+  //generate blank headers
+
+
+  HtmlTableImport.prototype._generateBlankHeaders = function (element) {
+
+    var self = this;
+
+    var headers = $("tr:first td", element);
+
+    headers.each(function (index) {
+
+      var col = { title: "", field: "col" + index };
+
+      $("td:eq(" + index + ")", rows).data("field", col.field);
+
+      var width = $(this).attr("width");
+
+      if (width) {
+
+        col.width = width;
+      }
+
+      self.table.options.columns.push(col);
+    });
+  };
+
+  Tabulator.registerExtension("htmlTableImport", HtmlTableImport);
 
   var MoveColumns = function MoveColumns(table) {
 
@@ -9604,6 +8307,1876 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   };
 
   Tabulator.registerExtension("moveRow", MoveRows);
+
+  var Mutator = function Mutator(table) {
+
+    this.table = table; //hold Tabulator object
+
+  };
+
+  //initialize column mutator
+
+
+  Mutator.prototype.initializeColumn = function (column) {
+
+    var config = { mutator: false, type: column.definition.mutateType };
+
+    //set column mutator
+
+
+    switch (_typeof(column.definition.mutator)) {
+
+      case "string":
+
+        if (self.mutators[column.definition.mutator]) {
+
+          config.mutator = self.mutators[column.definition.mutator];
+        } else {
+
+          console.warn("Mutator Error - No such mutator found, ignoring: ", column.definition.mutator);
+        }
+
+        break;
+
+      case "function":
+
+        config.mutator = column.definition.mutator;
+
+        break;
+
+    }
+
+    if (config.mutator) {
+
+      column.extensions.mutate = config;
+    }
+  };
+
+  //apply mutator to row
+
+
+  Mutator.prototype.transformRow = function (data) {
+
+    var self = this;
+
+    self.table.columnManager.traverse(function (column) {
+
+      var field;
+
+      if (column.extensions.mutate) {
+
+        field = column.getField();
+
+        if (typeof data[field] != "undefined" && column.extensions.mutate.type != "edit") {
+
+          data[field] = column.extensions.mutate.mutator(data[field], data, "data");
+        }
+      }
+    });
+
+    return data;
+  };
+
+  //apply mutator to new cell value
+
+
+  Mutator.prototype.transformCell = function (cell, value) {
+
+    return cell.column.extensions.mutate.mutator(value, cell.roww.getData(), "edit");
+  };
+
+  //default mutators
+
+
+  Mutator.prototype.mutators = {};
+
+  Tabulator.registerExtension("mutator", Mutator);
+
+  var Page = function Page(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.element = $("<span class='tabulator-paginator'></span>");
+
+    this.pagesElement = $("<span class='tabulator-pages'></span>");
+
+    this.firstBut = $("<button class='tabulator-page' data-page='first' role='button' aria-label='' title=''></button>");
+
+    this.prevBut = $("<button class='tabulator-page' data-page='prev' role='button' aria-label='' title=''></button>");
+
+    this.nextBut = $("<button class='tabulator-page' data-page='next' role='button' aria-label='' title=''></button>");
+
+    this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title=''></button>");
+
+    this.mode = "local";
+
+    this.size = 0;
+
+    this.page = 1;
+
+    this.max = 1;
+
+    this.paginator = false;
+  };
+
+  //setup pageination
+
+
+  Page.prototype.initialize = function () {
+
+    var self = this;
+
+    //update param names
+
+
+    for (var key in self.table.options.paginationDataSent) {
+
+      self.paginationDataSentNames[key] = self.table.options.paginationDataSent[key];
+    }
+
+    for (var _key in self.table.options.paginationDataReceived) {
+
+      self.paginationDataReceivedNames[_key] = self.table.options.paginationDataReceived[_key];
+    }
+
+    if (self.table.options.paginator) {
+
+      self.paginator = self.table.options.paginator;
+    }
+
+    //build pagination element
+
+
+    //bind localizations
+
+
+    self.table.extensions.localize.bind("pagination.first", function (value) {
+
+      self.firstBut.html(value);
+    });
+
+    self.table.extensions.localize.bind("pagination.first_title", function (value) {
+
+      self.firstBut.attr("aria-label", value).attr("title", value);
+    });
+
+    self.table.extensions.localize.bind("pagination.prev", function (value) {
+
+      self.prevBut.html(value);
+    });
+
+    self.table.extensions.localize.bind("pagination.prev_title", function (value) {
+
+      self.prevBut.attr("aria-label", value).attr("title", value);
+    });
+
+    self.table.extensions.localize.bind("pagination.next", function (value) {
+
+      self.nextBut.html(value);
+    });
+
+    self.table.extensions.localize.bind("pagination.next_title", function (value) {
+
+      self.nextBut.attr("aria-label", value).attr("title", value);
+    });
+
+    self.table.extensions.localize.bind("pagination.last", function (value) {
+
+      self.lastBut.html(value);
+    });
+
+    self.table.extensions.localize.bind("pagination.last_title", function (value) {
+
+      self.lastBut.attr("aria-label", value).attr("title", value);
+    });
+
+    //click bindings
+
+
+    self.firstBut.on("click", function () {
+
+      self.setPage(1);
+    });
+
+    self.prevBut.on("click", function () {
+
+      self.previousPage();
+    });
+
+    self.nextBut.on("click", function () {
+
+      self.nextPage();
+    });
+
+    self.lastBut.on("click", function () {
+
+      self.setPage(self.max);
+    });
+
+    if (self.table.options.paginationElement) {
+
+      self.element = self.table.options.paginationElement;
+    }
+
+    //append to DOM
+
+
+    self.element.append(self.firstBut);
+
+    self.element.append(self.prevBut);
+
+    self.element.append(self.pagesElement);
+
+    self.element.append(self.nextBut);
+
+    self.element.append(self.lastBut);
+
+    if (!self.table.options.paginationElement) {
+
+      self.table.footerManager.append(self.element);
+    }
+
+    //set default values
+
+
+    self.mode = self.table.options.pagination;
+
+    self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 26);
+  };
+
+  //calculate maximum page from number of rows
+
+
+  Page.prototype.setMaxRows = function (rowCount) {
+
+    if (!rowCount) {
+
+      this.max = 1;
+    } else {
+
+      this.max = Math.ceil(rowCount / this.size);
+    }
+
+    if (this.page > this.max) {
+
+      this.page = this.max;
+    }
+  };
+
+  //reset to first page without triggering action
+
+
+  Page.prototype.reset = function (force) {
+
+    if (this.mode == "local" || force) {
+
+      this.page = 1;
+    }
+
+    return true;
+  };
+
+  //set the maxmum page
+
+
+  Page.prototype.setMaxPage = function (max) {
+
+    this.max = max || 1;
+
+    if (this.page > this.max) {
+
+      this.page = this.max;
+
+      this.trigger();
+    }
+  };
+
+  //set current page number
+
+
+  Page.prototype.setPage = function (page) {
+
+    if (page > 0 && page <= this.max) {
+
+      this.page = page;
+
+      this.trigger();
+
+      return true;
+    } else {
+
+      console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
+
+      return false;
+    }
+  };
+
+  Page.prototype.setPageSize = function (size) {
+
+    if (size > 0) {
+
+      this.size = size;
+    }
+  };
+
+  //setup the pagination buttons
+
+
+  Page.prototype._setPageButtons = function () {
+
+    var self = this;
+
+    var min = this.page < this.max - 2 ? this.page - 2 : this.page - (4 - (this.max - this.page));
+
+    var max = this.page > 3 ? this.page + 2 : this.page + (5 - this.page);
+
+    self.pagesElement.empty();
+
+    if (self.page == 1) {
+
+      self.firstBut.prop("disabled", true);
+
+      self.prevBut.prop("disabled", true);
+    } else {
+
+      self.firstBut.prop("disabled", false);
+
+      self.prevBut.prop("disabled", false);
+    }
+
+    if (self.page == self.max) {
+
+      self.lastBut.prop("disabled", true);
+
+      self.nextBut.prop("disabled", true);
+    } else {
+
+      self.lastBut.prop("disabled", false);
+
+      self.nextBut.prop("disabled", false);
+    }
+
+    for (var i = min; i <= max; i++) {
+
+      if (i > 0 && i <= self.max) {
+
+        self.pagesElement.append(self._generatePageButton(i));
+      }
+    }
+  };
+
+  Page.prototype._generatePageButton = function (page) {
+
+    var self = this;
+
+    var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' arpagea-label='Show Page " + page + "'>" + page + "</button>");
+
+    button.on("click", function (e) {
+
+      self.setPage(page);
+    });
+
+    return button;
+  };
+
+  //previous page
+
+
+  Page.prototype.previousPage = function () {
+
+    if (this.page > 1) {
+
+      this.page--;
+
+      this.trigger();
+
+      return true;
+    } else {
+
+      console.warn("Pagination Error - Previous page would be less than page 1:", 0);
+
+      return false;
+    }
+  };
+
+  //next page
+
+
+  Page.prototype.nextPage = function () {
+
+    if (this.page < this.max) {
+
+      this.page++;
+
+      this.trigger();
+
+      return true;
+    } else {
+
+      console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+
+      return false;
+    }
+  };
+
+  //return current page number
+
+
+  Page.prototype.getPage = function () {
+
+    return this.page;
+  };
+
+  //return max page number
+
+
+  Page.prototype.getPageMax = function () {
+
+    return this.max;
+  };
+
+  Page.prototype.getMode = function () {
+
+    return this.mode;
+  };
+
+  //return appropriate rows for current page
+
+
+  Page.prototype.getRows = function (data) {
+
+    var output, start, end;
+
+    if (this.mode == "local") {
+
+      output = [];
+
+      start = this.size * (this.page - 1);
+
+      end = start + this.size;
+
+      this._setPageButtons();
+
+      for (var i = start; i < end; i++) {
+
+        if (data[i]) {
+
+          output.push(data[i]);
+        }
+      }
+
+      return output;
+    } else {
+
+      this._setPageButtons();
+
+      return data.slice(0);
+    }
+  };
+
+  Page.prototype.trigger = function () {
+
+    switch (this.mode) {
+
+      case "local":
+
+        this.table.rowManager.refreshActiveData();
+
+        this.table.options.pageLoaded(this.getPage());
+
+        break;
+
+      case "remote":
+
+        this._getRemotePage();
+
+        break;
+
+      default:
+
+        console.warn("Pagination Error - no such pagination mode:", this.mode);
+
+    }
+  };
+
+  Page.prototype._getRemotePage = function () {
+
+    if (this.table.extExists("ajax", true)) {
+
+      if (this.paginator) {
+
+        this._getRemotePagePaginator();
+      } else {
+
+        this._getRemotePageAuto();
+      }
+    }
+  };
+
+  Page.prototype._getRemotePagePaginator = function () {
+
+    var self = this,
+        ajax = self.table.extensions.ajax,
+        oldUrl = ajax.getUrl();
+
+    ajax.setUrl(self.paginator(ajax.getUrl(), self.page, self.size, ajax.getParams()));
+
+    ajax.sendRequest(function (data) {
+
+      self._parseRemoteData(data);
+    });
+
+    ajax.setUrl(oldUrl);
+  };
+
+  Page.prototype._getRemotePageAuto = function () {
+
+    var self = this,
+        oldParams,
+        pageParams;
+
+    //record old params and restore after request has been made
+
+
+    oldParams = $.extend(true, {}, self.table.extensions.ajax.getParams());
+
+    pageParams = self.table.extensions.ajax.getParams();
+
+    //configure request params
+
+
+    pageParams[this.paginationDataSentNames.page] = self.page;
+
+    //set page size if defined
+
+
+    if (this.size) {
+
+      pageParams[this.paginationDataSentNames.size] = this.size;
+    }
+
+    //set sort data if defined
+
+
+    if (this.table.extExists("sort")) {
+
+      var sorters = self.table.extensions.sort.getSort();
+
+      if (sorters[0] && typeof sorters[0].column != "function") {
+
+        pageParams[this.paginationDataSentNames.sort] = sorters[0].column.getField();
+
+        pageParams[this.paginationDataSentNames.sort_dir] = sorters[0].dir;
+      }
+    }
+
+    //set filter data if defined
+
+
+    if (this.table.extExists("filter")) {
+
+      var filters = self.table.extensions.filter.getFilter();
+
+      if (filters[0] && typeof filters[0].field == "string") {
+
+        pageParams[this.paginationDataSentNames.filter] = filters[0].field;
+
+        pageParams[this.paginationDataSentNames.filter_type] = filters[0].type;
+
+        pageParams[this.paginationDataSentNames.filter_value] = filters[0].value;
+      }
+    }
+
+    self.table.extensions.ajax.setParams(pageParams);
+
+    self.table.extensions.ajax.sendRequest(function (data) {
+
+      self._parseRemoteData(data);
+    });
+
+    self.table.extensions.ajax.setParams(oldParams);
+  };
+
+  Page.prototype._parseRemoteData = function (data) {
+
+    if (data[this.paginationDataReceivedNames.last_page]) {
+
+      if (data[this.paginationDataReceivedNames.data]) {
+
+        this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
+
+        this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+        this.table.options.pageLoaded(this.getPage());
+      } else {
+
+        console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
+      }
+    } else {
+
+      console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+    }
+  };
+
+  //set the paramter names for pagination requests
+
+
+  Page.prototype.paginationDataSentNames = {
+
+    "page": "page",
+
+    "size": "size",
+
+    "sort": "sort",
+
+    "sort_dir": "sort_dir",
+
+    "filter": "filter",
+
+    "filter_value": "filter_value",
+
+    "filter_type": "fitler_type"
+
+  };
+
+  //set the property names for pagination responses
+
+
+  Page.prototype.paginationDataReceivedNames = {
+
+    "current_page": "current_page",
+
+    "last_page": "last_page",
+
+    "data": "data"
+
+  };
+
+  Tabulator.registerExtension("page", Page);
+
+  var PersistentLayout = function PersistentLayout(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.mode = "";
+
+    this.id = "";
+
+    this.persistProps = ["field", "width", "visible"];
+  };
+
+  //setup parameters
+
+
+  PersistentLayout.prototype.initialize = function (mode, id) {
+
+    //determine persistent layout storage type
+
+
+    this.mode = mode !== true ? mode : typeof window.localStorage !== 'undefined' ? "local" : "cookie";
+
+    //set storage tag
+
+
+    this.id = "tabulator-" + (id || this.table.element.attr("id") || "");
+  };
+
+  //load saved definitions
+
+
+  PersistentLayout.prototype.load = function (definition) {
+
+    var newDefinition = "";
+
+    switch (this.mode) {
+
+      case "local":
+
+        newDefinition = localStorage.getItem(this.id);
+
+        break;
+
+      case "cookie":
+
+        //find cookie
+
+
+        var cookie = document.cookie,
+            cookiePos = cookie.indexOf(this.id + "="),
+            end = void 0;
+
+        //if cookie exists, decode and load column data into tabulator
+
+
+        if (cookiePos > -1) {
+
+          cookie = cookie.substr(cookiePos);
+
+          end = cookie.indexOf(";");
+
+          if (end > -1) {
+
+            cookie = cookie.substr(0, end);
+          }
+
+          newDefinition = cookie.replace(this.id + "=", "");
+        }
+
+        break;
+
+      default:
+
+        console.warn("Persistance Load Error - invalid mode selected", this.mode);
+
+    }
+
+    if (newDefinition) {
+
+      newDefinition = JSON.parse(newDefinition);
+
+      definition = this._mergeDefinition(definition, newDefinition);
+    }
+
+    return definition;
+  };
+
+  //merge old and new column defintions
+
+
+  PersistentLayout.prototype._mergeDefinition = function (oldCols, newCols) {
+
+    var self = this,
+        output = [];
+
+    newCols.forEach(function (column, to) {
+
+      var from = self._findColumn(oldCols, column);
+
+      if (from) {
+
+        from.width = column.width;
+
+        from.visible = column.visible;
+
+        if (from.columns) {
+
+          from.columns = self._mergeDefinition(from.columns, column.columns);
+        }
+
+        output.push(from);
+      }
+    });
+
+    return output;
+  };
+
+  //find matching columns
+
+
+  PersistentLayout.prototype._findColumn = function (columns, subject) {
+
+    var type = subject.columns ? "group" : subject.field ? "field" : "object";
+
+    return columns.find(function (col) {
+
+      switch (type) {
+
+        case "group":
+
+          return col.title === subject.title && col.columns.length === subject.columns.length;
+
+          break;
+
+        case "field":
+
+          return col.field === subject.field;
+
+          break;
+
+        case "object":
+
+          return col === subject;
+
+          break;
+
+      }
+    });
+  };
+
+  //save current definitions
+
+
+  PersistentLayout.prototype.save = function () {
+
+    var definition = this._parseColumns(this.table.columnManager.getColumns()),
+        data = JSON.stringify(definition);
+
+    switch (this.mode) {
+
+      case "local":
+
+        localStorage.setItem(this.id, data);
+
+        break;
+
+      case "cookie":
+
+        var expireDate = new Date();
+
+        expireDate.setDate(expireDate.getDate() + 10000);
+
+        //save cookie
+
+
+        document.cookie = this.id + "=" + data + "; expires=" + expireDate.toUTCString();
+
+        break;
+
+      default:
+
+        console.warn("Persistance Save Error - invalid mode selected", this.mode);
+
+    }
+  };
+
+  //build premission list
+
+
+  PersistentLayout.prototype._parseColumns = function (columns) {
+
+    var self = this,
+        definitions = [];
+
+    columns.forEach(function (column) {
+
+      var def = {};
+
+      if (column.isGroup) {
+
+        def.title = column.getDefinition().title;
+
+        def.columns = self._parseColumns(column.getColumns());
+      } else {
+
+        def.field = column.getField();
+
+        def.width = column.getWidth();
+
+        def.visible = column.visible;
+      }
+
+      definitions.push(def);
+    });
+
+    return definitions;
+  };
+
+  Tabulator.registerExtension("persistentLayout", PersistentLayout);
+
+  var ResizeColumns = function ResizeColumns(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.startColumn = false;
+
+    this.startX = false;
+
+    this.startWidth = false;
+
+    this.handle = $("<div class='tabulator-col-resize-handle'></div>");
+
+    this.prevHandle = $("<div class='tabulator-col-resize-handle prev'></div>");
+  };
+
+  ResizeColumns.prototype.initializeColumn = function (column, element) {
+
+    var self = this,
+        handle = self.handle.clone(),
+        prevHandle = self.prevHandle.clone();
+
+    handle.on("click", function (e) {
+
+      e.stopPropagation();
+    });
+
+    prevHandle.on("click", function (e) {
+
+      e.stopPropagation();
+    });
+
+    handle.on("mousedown", function (e) {
+
+      var nearestColumn = column.getLastColumn();
+
+      if (nearestColumn) {
+
+        self.startColumn = column;
+
+        self._mouseDown(e, nearestColumn);
+      }
+    });
+
+    prevHandle.on("mousedown", function (e) {
+
+      var nearestColumn, colIndex, prevColumn;
+
+      nearestColumn = column.getFirstColumn();
+
+      if (nearestColumn) {
+
+        colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
+
+        prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
+
+        if (prevColumn) {
+
+          self.startColumn = column;
+
+          self._mouseDown(e, prevColumn);
+        }
+      }
+    });
+
+    element.append(handle).append(prevHandle);
+  };
+
+  ResizeColumns.prototype._mouseDown = function (e, column) {
+
+    var self = this;
+
+    self.table.element.addClass("tabulator-block-select");
+
+    function mouseMove(e) {
+
+      column.setWidth(self.startWidth + (e.screenX - self.startX));
+
+      column.checkCellHeights();
+    }
+
+    function mouseUp(e) {
+
+      //block editor from taking action while resizing is taking place
+
+
+      if (self.startColumn.extensions.edit) {
+
+        self.startColumn.extensions.edit.blocked = false;
+      }
+
+      $("body").off("mouseup", mouseMove);
+
+      $("body").off("mousemove", mouseMove);
+
+      self.table.element.removeClass("tabulator-block-select");
+
+      if (self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)) {
+
+        self.table.extensions.persistentLayout.save();
+      }
+
+      self.table.options.columnResized(self.startColumn.getComponent());
+    }
+
+    e.stopPropagation(); //prevent resize from interfereing with movable columns
+
+
+    //block editor from taking action while resizing is taking place
+
+
+    if (self.startColumn.extensions.edit) {
+
+      self.startColumn.extensions.edit.blocked = true;
+    }
+
+    self.startX = e.screenX;
+
+    self.startWidth = column.getWidth();
+
+    $("body").on("mousemove", mouseMove);
+
+    $("body").on("mouseup", mouseUp);
+  };
+
+  Tabulator.registerExtension("resizeColumns", ResizeColumns);
+
+  var ResponsiveLayout = function ResponsiveLayout(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.columns = [];
+
+    this.index = 0;
+  };
+
+  //generate resposivle columns list
+
+
+  ResponsiveLayout.prototype.initialize = function () {
+
+    var columns = [];
+
+    //detemine level of responsivity for each column
+
+
+    this.table.columnManager.columnsByIndex.forEach(function (column) {
+
+      var def = column.getDefinition();
+
+      column.extensions.responsive = { order: typeof def.responsive === "undefined" ? 1 : def.responsive };
+
+      if (column.extensions.responsive.order) {
+
+        columns.push(column);
+      }
+    });
+
+    //sort list by responsivity
+
+
+    columns = columns.reverse();
+
+    columns = columns.sort(function (a, b) {
+
+      return b.extensions.responsive.order - a.extensions.responsive.order;
+    });
+
+    this.columns = columns;
+  };
+
+  ResponsiveLayout.prototype.update = function () {
+
+    var self = this,
+        working = true;
+
+    while (working) {
+
+      var diff = self.table.columnManager.element.innerWidth() - self.table.columnManager.getWidth();
+
+      if (diff < 0) {
+
+        //table is too wide
+
+
+        var _column = self.columns[self.index];
+
+        if (_column) {
+
+          _column.hide();
+
+          self.index++;
+        } else {
+
+          working = false;
+        }
+      } else {
+
+        //table has spare space
+
+
+        var _column2 = self.columns[self.index - 1];
+
+        if (_column2) {
+
+          if (diff > 0) {
+
+            if (diff >= _column2.getWidth()) {
+
+              _column2.show();
+
+              self.index--;
+            } else {
+
+              working = false;
+            }
+          } else {
+
+            working = false;
+          }
+        } else {
+
+          working = false;
+        }
+      }
+
+      if (!self.table.rowManager.activeRowsCount) {
+
+        self.table.rowManager.renderEmptyScroll();
+      }
+    }
+  };
+
+  Tabulator.registerExtension("responsiveLayout", ResponsiveLayout);
+
+  var SelectRow = function SelectRow(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.selecting = false; //flag selecting in progress
+
+
+    this.selectPrev = []; //hold previously selected element for drag drop selection
+
+
+    this.selectedRows = []; //hold selected rows
+
+  };
+
+  SelectRow.prototype.initializeRow = function (row) {
+
+    var self = this,
+        element = row.getElement();
+
+    // trigger end of row selection
+
+
+    var endSelect = function endSelect() {
+
+      setTimeout(function () {
+
+        self.selecting = false;
+      }, 50);
+
+      $("body").off("mouseup", endSelect);
+    };
+
+    row.extensions.select = { selected: false };
+
+    //set row selection class
+
+
+    if (self.table.options.selectableCheck(row.getComponent())) {
+
+      element.addClass("tabulator-selectable").removeClass("tabulator-unselectable");
+
+      if (self.table.options.selectable && self.table.options.selectable != "highlight") {
+
+        element.on("click", function (e) {
+
+          if (!self.selecting) {
+
+            self.toggleRow(row);
+          }
+        });
+
+        element.on("mousedown", function (e) {
+
+          if (e.shiftKey) {
+
+            self.selecting = true;
+
+            self.selectPrev = [];
+
+            $("body").on("mouseup", endSelect);
+
+            $("body").on("keyup", endSelect);
+
+            self.toggleRow(row);
+
+            return false;
+          }
+        });
+
+        element.on("mouseenter", function (e) {
+
+          if (self.selecting) {
+
+            self.toggleRow(row);
+
+            if (self.selectPrev[1] == row) {
+
+              self.toggleRow(self.selectPrev[0]);
+            }
+          }
+        });
+
+        element.on("mouseout", function (e) {
+
+          if (self.selecting) {
+
+            self.selectPrev.unshift(row);
+          }
+        });
+      }
+    } else {
+
+      row.getElement().addClass("tabulator-unselectable").removeClass("tabulator-selectable");
+    }
+  };
+
+  //toggle row selection
+
+
+  SelectRow.prototype.toggleRow = function (row) {
+
+    if (this.table.options.selectableCheck(row.getComponent())) {
+
+      if (row.extensions.select.selected) {
+
+        this._deselectRow(row);
+      } else {
+
+        this._selectRow(row);
+      }
+    }
+  };
+
+  //select a number of rows
+
+
+  SelectRow.prototype.selectRows = function (rows) {
+
+    var self = this;
+
+    if (typeof rows == "undefined") {
+
+      self.table.rowManager.rows.forEach(function (row) {
+
+        self._selectRow(row, true, true);
+      });
+
+      self._rowSelectionChanged();
+    } else {
+
+      if (Array.isArray(rows)) {
+
+        rows.forEach(function (row) {
+
+          self._selectRow(row, true);
+        });
+
+        self._rowSelectionChanged();
+      } else {
+
+        self._selectRow(rows);
+      }
+    }
+  };
+
+  //select an individual row
+
+
+  SelectRow.prototype._selectRow = function (rowInfo, silent, force) {
+
+    var self = this,
+        index;
+
+    //handle max row count
+
+
+    if (!isNaN(self.table.options.selectable) && self.table.options.selectable !== true && !force) {
+
+      if (self.selectedRows.length >= self.table.options.selectable) {
+
+        if (self.table.options.selectableRollingSelection) {
+
+          self._deselectRow(self.selectedRows[0], true);
+        } else {
+
+          return false;
+        }
+      }
+    }
+
+    var row = self.table.rowManager.findRow(rowInfo);
+
+    if (row) {
+
+      var self = this;
+
+      row.extensions.select.selected = true;
+
+      row.getElement().addClass("tabulator-selected");
+
+      self.selectedRows.push(row);
+
+      if (!silent) {
+
+        self.table.options.rowSelected(row.getComponent());
+
+        self._rowSelectionChanged();
+      }
+    } else {
+
+      console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
+    }
+  };
+
+  //deselect a number of rows
+
+
+  SelectRow.prototype.deselectRows = function (rows) {
+
+    var self = this;
+
+    if (typeof rows == "undefined") {
+
+      var rowCount = self.selectedRows.length;
+
+      for (var i = 0; i < rowCount; i++) {
+
+        self._deselectRow(self.selectedRows[0], true);
+      }
+
+      self._rowSelectionChanged();
+    } else {
+
+      if (Array.isArray(rows)) {
+
+        rows.forEach(function (row) {
+
+          self._deselectRow(row, true);
+        });
+
+        self._rowSelectionChanged();
+      } else {
+
+        self._deselectRow(rows);
+      }
+    }
+  };
+
+  //deselect an individual row
+
+
+  SelectRow.prototype._deselectRow = function (rowInfo, silent) {
+
+    var self = this,
+        index;
+
+    var row = self.table.rowManager.findRow(rowInfo);
+
+    if (row) {
+
+      index = self.selectedRows.findIndex(function (selectedRow) {
+
+        return selectedRow = row;
+      });
+
+      if (index > -1) {
+
+        row.extensions.select.selected = false;
+
+        row.getElement().removeClass("tabulator-selected");
+
+        self.selectedRows.splice(index, 1);
+
+        if (!silent) {
+
+          self.table.options.rowDeselected(row.getComponent());
+
+          self._rowSelectionChanged();
+        }
+      }
+    } else {
+
+      console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
+    }
+  };
+
+  SelectRow.prototype.getSelectedData = function () {
+
+    var data = [];
+
+    this.selectedRows.forEach(function (row) {
+
+      data.push(row.getData());
+    });
+
+    return data;
+  };
+
+  SelectRow.prototype.getSelectedRows = function () {
+
+    var rows = [];
+
+    this.selectedRows.forEach(function (row) {
+
+      rows.push(row.getComponent());
+    });
+
+    return rows;
+  };
+
+  SelectRow.prototype._rowSelectionChanged = function () {
+
+    this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
+  };
+
+  Tabulator.registerExtension("selectRow", SelectRow);
+
+  var Sort = function Sort(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.sortList = []; //holder current sort
+
+
+    this.changed = false; //has the sort changed since last render
+
+  };
+
+  //initialize column header for sorting
+
+
+  Sort.prototype.initializeColumn = function (column, content) {
+
+    var self = this,
+        sorter = false;
+
+    switch (_typeof(column.definition.sorter)) {
+
+      case "string":
+
+        if (self.sorters[column.definition.sorter]) {
+
+          sorter = self.sorters[column.definition.sorter];
+        } else {
+
+          console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+        }
+
+        break;
+
+      case "function":
+
+        sorter = column.definition.sorter;
+
+        break;
+
+    }
+
+    column.extensions.sort = { sorter: sorter, dir: "none", params: column.definition.sorterParams || {} };
+
+    if (column.definition.headerSort !== false) {
+
+      column.element.addClass("tabulator-sortable");
+
+      //create sorter arrow
+
+
+      content.append($("<div class='tabulator-arrow'></div>"));
+
+      //sort on click
+
+
+      column.element.on("click", function () {
+
+        if (column.extensions.sort) {
+
+          if (column.extensions.sort.dir == "asc") {
+
+            self.setSort(column, "desc");
+          } else {
+
+            self.setSort(column, "asc");
+          }
+
+          self.table.rowManager.sorterRefresh();
+        }
+      });
+    }
+  };
+
+  //check if the sorters have changed since last use
+
+
+  Sort.prototype.hasChanged = function () {
+
+    var changed = this.changed;
+
+    this.changed = false;
+
+    return changed;
+  };
+
+  //return current sorters
+
+
+  Sort.prototype.getSort = function () {
+
+    var self = this,
+        sorters = [];
+
+    self.sortList.forEach(function (item) {
+
+      if (item.column) {
+
+        sorters.push({ column: item.column.getComponent(), field: item.column.getField(), dir: item.dir });
+      }
+    });
+
+    return sorters;
+  };
+
+  //change sort list and trigger sort
+
+
+  Sort.prototype.setSort = function (sortList, dir) {
+
+    var self = this,
+        newSortList = [];
+
+    if (!Array.isArray(sortList)) {
+
+      sortList = [{ column: sortList, dir: dir }];
+    }
+
+    sortList.forEach(function (item) {
+
+      var column;
+
+      item.column = self.table.columnManager.findColumn(item.column);
+
+      console.log("item", item);
+
+      if (item.column) {
+
+        // item.column = item.column;
+
+
+        newSortList.push(item);
+
+        self.changed = true;
+      } else {
+
+        console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
+      }
+    });
+
+    self.sortList = newSortList;
+  };
+
+  //clear sorters
+
+
+  Sort.prototype.clear = function () {
+
+    this.setSort([]);
+  },
+
+  //find appropriate sorter for column
+
+
+  Sort.prototype.findSorter = function (column) {
+
+    var row = this.table.rowManager.activeRows[0],
+        sorter = "string",
+        field;
+
+    if (row) {
+
+      row = row.getData();
+
+      field = column.getField();
+
+      if (field) {
+
+        switch (_typeof(row[field])) {
+
+          case "undefined":
+
+            sorter = "string";
+
+            break;
+
+          case "boolean":
+
+            sorter = "boolean";
+
+            break;
+
+          default:
+
+            if (!isNaN(row[field])) {
+
+              sorter = "number";
+            } else {
+
+              if (row[field].match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)) {
+
+                sorter = "alphanum";
+              }
+            }
+
+            break;
+
+        }
+      }
+    }
+
+    return this.sorters[sorter];
+  };
+
+  //work through sort list sorting data
+
+
+  Sort.prototype.sort = function () {
+
+    var self = this,
+        lastSort;
+
+    if (self.table.options.dataSorting) {
+
+      self.table.options.dataSorting(self.getSort());
+    }
+
+    self.clearColumnHeaders();
+
+    if (!self.table.options.ajaxSorting) {
+
+      self.sortList.forEach(function (item, i) {
+
+        if (item.column && item.column.extensions.sort) {
+
+          //if no sorter has been defined, take a guess
+
+
+          if (!item.column.extensions.sort.sorter) {
+
+            item.column.extensions.sort.sorter = self.findSorter(item.column);
+          }
+
+          self._sortItem(item.column, item.dir, self.sortList, i);
+        }
+      });
+    }
+
+    if (self.sortList.length) {
+
+      lastSort = self.sortList[self.sortList.length - 1];
+
+      if (lastSort.column) {
+
+        self.setColumnHeader(lastSort.column, lastSort.dir);
+      }
+    }
+
+    if (self.table.options.dataSorted) {
+
+      self.table.options.dataSorted(self.getSort());
+    }
+  };
+
+  //clear sort arrows on columns
+
+
+  Sort.prototype.clearColumnHeaders = function () {
+
+    this.table.columnManager.getRealColumns().forEach(function (column) {
+
+      if (column.extensions.sort) {
+
+        column.extensions.sort.dir = "none";
+
+        column.element.attr("aria-sort", "none");
+      }
+    });
+  };
+
+  //set the column header sort direction
+
+
+  Sort.prototype.setColumnHeader = function (column, dir) {
+
+    this.clearColumnHeaders();
+
+    column.extensions.sort.dir = dir;
+
+    column.element.attr("aria-sort", dir);
+  };
+
+  //sort each item in sort list
+
+
+  Sort.prototype._sortItem = function (column, dir, sortList, i) {
+
+    var self = this;
+
+    var activeRows = self.table.rowManager.activeRows;
+
+    activeRows.sort(function (a, b) {
+
+      var result = self._sortRow(a, b, column, dir);
+
+      //if results match recurse through previous searchs to be sure
+
+
+      if (result == 0 && i) {
+
+        for (var j = i - 1; j >= 0; j--) {
+
+          result = self._sortRow(a, b, sortList[j].column, sortList[j].dir);
+
+          if (result != 0) {
+
+            break;
+          }
+        }
+      }
+
+      return result;
+    });
+  };
+
+  //process individual rows for a sort function on active data
+
+
+  Sort.prototype._sortRow = function (a, b, column, dir) {
+
+    var self = this;
+
+    //switch elements depending on search direction
+
+
+    var el1 = dir == "asc" ? a : b;
+
+    var el2 = dir == "asc" ? b : a;
+
+    a = el1.getData()[column.getField()];
+
+    b = el2.getData()[column.getField()];
+
+    return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
+  };
+
+  //default data sorters
+
+
+  Sort.prototype.sorters = {
+
+    //sort numbers
+
+
+    number: function number(a, b, aData, bData, column, dir, params) {
+
+      return parseFloat(String(a).replace(",", "")) - parseFloat(String(b).replace(",", ""));
+    },
+
+    //sort strings
+
+
+    string: function string(a, b, aData, bData, column, dir, params) {
+
+      return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+    },
+
+    //sort date
+
+
+    date: function date(a, b, aData, bData, column, dir, params) {
+
+      var self = this;
+
+      var format = params.format || "DD/MM/YYYY";
+
+      if (typeof moment != "undefined") {
+
+        a = moment(a, format);
+
+        b = moment(b, format);
+      } else {
+
+        console.error("Sort Error - 'date' sorter is dependant on moment.js");
+      }
+
+      return a - b;
+    },
+
+    //sort booleans
+
+
+    boolean: function boolean(a, b, aData, bData, column, dir, params) {
+
+      var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
+
+      var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
+
+      return el1 - el2;
+    },
+
+    //sort alpha numeric strings
+
+
+    alphanum: function alphanum(as, bs, aData, bData, column, dir, params) {
+
+      var a,
+          b,
+          a1,
+          b1,
+          i = 0,
+          L,
+          rx = /(\d+)|(\D+)/g,
+          rd = /\d/;
+
+      if (isFinite(as) && isFinite(bs)) return as - bs;
+
+      a = String(as).toLowerCase();
+
+      b = String(bs).toLowerCase();
+
+      if (a === b) return 0;
+
+      if (!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+
+      a = a.match(rx);
+
+      b = b.match(rx);
+
+      L = a.length > b.length ? b.length : a.length;
+
+      while (i < L) {
+
+        a1 = a[i];
+
+        b1 = b[i++];
+
+        if (a1 !== b1) {
+
+          if (isFinite(a1) && isFinite(b1)) {
+
+            if (a1.charAt(0) === "0") a1 = "." + a1;
+
+            if (b1.charAt(0) === "0") b1 = "." + b1;
+
+            return a1 - b1;
+          } else return a1 > b1 ? 1 : -1;
+        }
+      }
+
+      return a.length > b.length;
+    },
+
+    //sort hh:mm formatted times
+
+
+    time: function time(a, b, aData, bData, column, dir, params) {
+
+      var self = this;
+
+      var format = params.format || "hh:mm";
+
+      if (typeof moment != "undefined") {
+
+        a = moment(a, format);
+
+        b = moment(b, format);
+      } else {
+
+        console.error("Sort Error - 'date' sorter is dependant on moment.js");
+      }
+
+      return a - b;
+    }
+
+  };
+
+  Tabulator.registerExtension("sort", Sort);
 })();
 
 $.widget("ui.tabulator", Tabulator)();
