@@ -3344,9 +3344,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       columns: [], //store for colum header info
 
 
-      dateFormat: "dd/mm/yyyy", //date format to be used for sorting
-
-
       data: [], //default starting data
 
 
@@ -4720,7 +4717,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     }
 
-    column.extensions.sort = { sorter: sorter, dir: "none" };
+    column.extensions.sort = { sorter: sorter, dir: "none", params: column.definition.sorterParams || {} };
 
     if (column.definition.headerSort !== false) {
 
@@ -5006,33 +5003,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     b = el2.getData()[column.getField()];
 
-    return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir);
-  };
-
-  //format date for date comparison
-
-
-  Sort.prototype._formatDate = function (dateString) {
-
-    var format = this.table.options.dateFormat;
-
-    var ypos = format.indexOf("yyyy");
-
-    var mpos = format.indexOf("mm");
-
-    var dpos = format.indexOf("dd");
-
-    if (dateString) {
-
-      var formattedString = dateString.substring(ypos, ypos + 4) + "-" + dateString.substring(mpos, mpos + 2) + "-" + dateString.substring(dpos, dpos + 2);
-
-      var newDate = Date.parse(formattedString);
-    } else {
-
-      var newDate = 0;
-    }
-
-    return isNaN(newDate) ? 0 : newDate;
+    return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
   };
 
   //default data sorters
@@ -5043,7 +5014,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //sort numbers
 
 
-    number: function number(a, b) {
+    number: function number(a, b, aData, bData, column, dir, params) {
 
       return parseFloat(String(a).replace(",", "")) - parseFloat(String(b).replace(",", ""));
     },
@@ -5051,7 +5022,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //sort strings
 
 
-    string: function string(a, b) {
+    string: function string(a, b, aData, bData, column, dir, params) {
 
       return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
     },
@@ -5059,17 +5030,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //sort date
 
 
-    date: function date(a, b) {
+    date: function date(a, b, aData, bData, column, dir, params) {
 
       var self = this;
 
-      return self._formatDate(a) - self._formatDate(b);
+      var format = params.format || "DD/MM/YYYY";
+
+      if (typeof moment != "undefined") {
+
+        a = moment(a, format);
+
+        b = moment(b, format);
+      } else {
+
+        console.error("Sort Error - 'date' sorter is dependant on moment.js");
+      }
+
+      return a - b;
     },
 
     //sort booleans
 
 
-    boolean: function boolean(a, b) {
+    boolean: function boolean(a, b, aData, bData, column, dir, params) {
 
       var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
 
@@ -5081,7 +5064,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //sort alpha numeric strings
 
 
-    alphanum: function alphanum(as, bs) {
+    alphanum: function alphanum(as, bs, aData, bData, column, dir, params) {
 
       var a,
           b,
@@ -5133,17 +5116,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //sort hh:mm formatted times
 
 
-    time: function time(a, b) {
+    time: function time(a, b, aData, bData, column, dir, params) {
 
-      a = a.split(":");
+      var self = this;
 
-      b = b.split(":");
+      var format = params.format || "hh:mm";
 
-      a = a[0] * 60 + a[1];
+      if (typeof moment != "undefined") {
 
-      b = b[0] * 60 + b[1];
+        a = moment(a, format);
 
-      return a > b;
+        b = moment(b, format);
+      } else {
+
+        console.error("Sort Error - 'date' sorter is dependant on moment.js");
+      }
+
+      return a - b;
     }
 
   };

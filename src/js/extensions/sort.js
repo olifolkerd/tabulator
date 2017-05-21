@@ -25,7 +25,7 @@ Sort.prototype.initializeColumn = function(column, content){
 	}
 
 
-	column.extensions.sort = {sorter:sorter, dir:"none"};
+	column.extensions.sort = {sorter:sorter, dir:"none", params:column.definition.sorterParams || {}};
 
 	if(column.definition.headerSort !== false){
 
@@ -231,50 +231,40 @@ Sort.prototype._sortRow = function(a, b, column, dir){
 	a = el1.getData()[column.getField()];
 	b = el2.getData()[column.getField()];
 
-	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir);
+	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
 };
 
-//format date for date comparison
-Sort.prototype._formatDate = function(dateString){
-	var format = this.table.options.dateFormat;
-
-	var ypos = format.indexOf("yyyy");
-	var mpos = format.indexOf("mm");
-	var dpos = format.indexOf("dd");
-
-	if(dateString){
-		var formattedString = dateString.substring(ypos, ypos+4) + "-" + dateString.substring(mpos, mpos+2) + "-" + dateString.substring(dpos, dpos+2);
-
-		var newDate = Date.parse(formattedString);
-	}else{
-		var newDate = 0;
-	}
-
-	return isNaN(newDate) ? 0 : newDate;
-};
 
 //default data sorters
 Sort.prototype.sorters = {
 
 	//sort numbers
-	number:function(a, b){
+	number:function(a, b, aData, bData, column, dir, params){
 		return parseFloat(String(a).replace(",","")) - parseFloat(String(b).replace(",",""));
 	},
 
 	//sort strings
-	string:function(a, b){
+	string:function(a, b, aData, bData, column, dir, params){
 		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
 	},
 
 	//sort date
-	date:function(a, b){
+	date:function(a, b, aData, bData, column, dir, params){
 		var self = this;
+		var format = params.format || "DD/MM/YYYY";
 
-		return self._formatDate(a) - self._formatDate(b);
+		if(typeof moment != "undefined"){
+			a = moment(a, format);
+			b = moment(b, format);
+		}else{
+			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		}
+
+		return a - b;
 	},
 
 	//sort booleans
-	boolean:function(a, b){
+	boolean:function(a, b, aData, bData, column, dir, params){
 		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
 		var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
 
@@ -282,7 +272,7 @@ Sort.prototype.sorters = {
 	},
 
 	//sort alpha numeric strings
-	alphanum:function(as, bs){
+	alphanum:function(as, bs, aData, bData, column, dir, params){
 		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
 
 		if(isFinite(as) && isFinite(bs)) return as - bs;
@@ -309,13 +299,18 @@ Sort.prototype.sorters = {
 	},
 
 	//sort hh:mm formatted times
-	time:function(a, b){
-		a = a.split(":");
-		b = b.split(":");
+	time:function(a, b, aData, bData, column, dir, params){
+		var self = this;
+		var format = params.format || "hh:mm";
 
-		a = (a[0]*60) + a[1];
-		b = (b[0]*60) + b[1];
-		return a > b;
+		if(typeof moment != "undefined"){
+			a = moment(a, format);
+			b = moment(b, format);
+		}else{
+			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		}
+
+		return a - b;
 	},
 };
 

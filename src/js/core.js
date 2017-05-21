@@ -25,11 +25,9 @@
 	 			columnMinWidth:40, //minimum global width for a column
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
-
 	 			resizableColumns:true, //resizable columns
 
 	 			columns:[],//store for colum header info
-	 			dateFormat: "dd/mm/yyyy", //date format to be used for sorting
 
 	 			data:[], //default starting data
 
