@@ -3514,6 +3514,13 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <p>More information on these functions can be found in the <a href="#ajax">Ajax Documentation</a>.</p>
 
+                    <p>The default ajax configuration object can be extended to changed the default request behaviour. the example below will change the default request type to <span class='param'>POST</span> and the contentType header to <span class='param'>application/JSON</span>.</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("ajax", "defaultConfig", {
+    type:"POST",
+    contentType : "application/json; charset=utf-8"
+});</pre>
+
 
                     <a class="anchor" id="extension-download"></a>
                     <h3>Download</h3>
@@ -3717,6 +3724,18 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <p>The pagination extension allows rows to be split up into pages for navigation rather than using a vertical scroll bar.</p>
 
                     <p>More information on these functions can be found in the <a href="#pagination">Pagination Documentation</a>.</p>
+
+                    <p>Any of the default <span class='param'>paginationDataSent</span> options can be extended:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("page", "paginationDataSentNames", {
+    "page":"pageNo",
+});</pre>
+
+                    <p>Any of the default <span class='param'>paginationDataReceived</span> options can also be extended:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("page", "paginationDataReceivedNames", {
+    "last_page":"max_page",
+});</pre>
 
                     <a class="anchor" id="extension-persistentLayout"></a>
                     <h3>Persistent Layout</h3>
