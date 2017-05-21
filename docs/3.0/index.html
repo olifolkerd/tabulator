@@ -3225,7 +3225,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                 </article>
                 <a class="anchor" id="download"></a>
                 <article>
-                    <h1>Downloading Table Data  <a class="example-link" href="../../examples?#download"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Downloading Table Data <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#download"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -3240,8 +3240,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <ul>
                         <li><strong>csv</strong> - Comma seperated value file</li>
                         <li><strong>json</strong> - JSON formatted text file <i></i></li>
-                        <li><strong>xls</strong> - Excel File <i>(coming soon)</i></li>
-                        <li><strong>xlsx</strong> - Excel File <i>(coming soon)</i></li>
+                        <li><strong>xlsx</strong> - Excel File <span class="label label-danger">New</span><i> (Requires the <a href="http://sheetjs.com/">SheetJS Library</a>)</i></li>
                     </ul>
                     </p>
 
@@ -3254,14 +3253,15 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("download", "csv", "data.csv", {delimiter:"."}); //download a CSV file that uses a fullstop (.) delimiter</pre>
 
-                    <h2>Custom File Formatter</h2>
-                    <p>If you want to create a custom file type from the table data then you can pass a function to the type argument, instead of a string value. This function must return a data URI string for the file.</p>
+                    <h2>Custom File Formatter <span class="label label-primary">Updated</span></h2>
+                    <p>If you want to create a custom file type from the table data then you can pass a function to the type argument, instead of a string value. At the end of this function you must call the <span class='param'>setFileContents</span> function, passing the formatted data and the mime type.</p>
 
                     <pre class="prettyprint lang-js">//custom file formatter
-var fileFormatter = function(columns, data, options){
+var fileFormatter = function(columns, data, options, setFileContents){
     //columns - column definition array for table (with columns in current visible order);
     //data - currently displayed table data
     //options - the options object passed from the download function
+    //setFileContents - function to call to pass the formatted data to the downloader
 
     //create a list of all name fields
     var names = [];
@@ -3270,8 +3270,8 @@ var fileFormatter = function(columns, data, options){
         names.push(row.name);
     })
 
-    //return data URI formatted string
-    return 'data:text/plain;charset=utf-8,' + encodeURIComponent(names.join(", "));
+    //trigger file download, passing the formatted data and mime type
+    setFileContents(names.join(", "), "text/plain");
 }
 
 //trigger file download
@@ -3860,7 +3860,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#components">Component Objects <span class="label label-danger">New</span></a></li>
                             <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#download">Download Table Data </a></li>
+                            <li><a href="#download">Download Table Data <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#localization">Localization <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#accessibility">Accessibility</a></li>
                             <li><a href="#extending">Extensions <span class="label label-danger">New</span></a></li>
