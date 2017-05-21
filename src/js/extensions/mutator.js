@@ -49,7 +49,7 @@ Mutator.prototype.transformRow = function(data){
 
 //apply mutator to new cell value
 Mutator.prototype.transformCell = function(cell, value){
-	return cell.column.extensions.mutate.mutator(value, cell.roww.getData(), "edit")
+	return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit")
 };
 
 //default mutators
