@@ -5,11 +5,11 @@ var Download = function(table){
 //trigger file download
 Download.prototype.download = function(type, filename, options){
 	var self = this,
-	downloadFunc = false,
-	href;
+	downloadFunc = false;
 
-	//create temporary link element to trigger download
-	var element = document.createElement('a');
+	function buildLink(data, mime){
+		self.triggerDownload(data, mime, type, filename);
+	}
 
 	if(typeof type == "function"){
 		downloadFunc = type;
@@ -22,12 +22,23 @@ Download.prototype.download = function(type, filename, options){
 	}
 
 	if(downloadFunc){
-		href = downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options);
+		downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options, buildLink);
+	}
+};
 
-		element.setAttribute('href',href);
+Download.prototype.triggerDownload = function(data, mime, type, filename){
+	var element = document.createElement('a'),
+	blob = new Blob([data],{type:mime}),
+	filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
+
+	if(navigator.msSaveOrOpenBlob){
+		console.log("filename", filename)
+		navigator.msSaveOrOpenBlob(blob, filename);
+	}else{
+		element.setAttribute('href', window.URL.createObjectURL(blob));
 
 		//set file title
-		element.setAttribute('download', filename || "Tabulator." + (typeof type === "function" ? "txt" : type));
+		element.setAttribute('download', filename);
 
 		//trigger download
 		element.style.display = 'none';
@@ -37,13 +48,12 @@ Download.prototype.download = function(type, filename, options){
 		//remove temporary link element
 		document.body.removeChild(element);
 	}
-
 };
 
 
 //downloaders
 Download.prototype.downloaders = {
-	csv:function(columns, data, options){
+	csv:function(columns, data, options, setFileContents){
 		var titles = [],
 		fields = [],
 		delimiter = options && options.delimiter ? options.delimiter : ",",
@@ -74,15 +84,16 @@ Download.prototype.downloaders = {
 			fileContents.push(rowData.join(delimiter));
 		});
 
-		return 'data:text/csv;charset=utf-8,' + encodeURIComponent(fileContents.join("\n"));
+		setFileContents(fileContents.join("\n"), "text/csv");
 	},
 
-	json:function(columns, data, options){
+	json:function(columns, data, options, setFileContents){
 		var fileContents = JSON.stringify(data, null, '\t');
-		return 'data:application/json;charset=utf-8,' + encodeURIComponent(fileContents);
+
+		setFileContents(fileContents, "application/json");
 	},
 
-	xlsx:function(columns, data, options){
+	xlsx:function(columns, data, options, setFileContents){
 		var titles = [],
 		fields = [],
 		rows = [],
@@ -116,7 +127,7 @@ Download.prototype.downloaders = {
 				});
 			});
 
-			sheet['!ref'] = XLSX.utils.encode_range(range)
+			sheet['!ref'] = XLSX.utils.encode_range(range);
 
 			return sheet;
 		}
@@ -156,7 +167,7 @@ Download.prototype.downloaders = {
 
 		output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
 
-		return window.URL.createObjectURL(new Blob([s2ab(output)],{type:"application/octet-stream"}))
+		setFileContents(s2ab(output), "application/octet-stream");
 	}
 };
 

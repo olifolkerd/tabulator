@@ -5013,13 +5013,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Download.prototype.download = function (type, filename, options) {
 
     var self = this,
-        downloadFunc = false,
-        href;
+        downloadFunc = false;
 
-    //create temporary link element to trigger download
+    function buildLink(data, mime) {
 
-
-    var element = document.createElement('a');
+      self.triggerDownload(data, mime, type, filename);
+    }
 
     if (typeof type == "function") {
 
@@ -5037,14 +5036,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (downloadFunc) {
 
-      href = downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options);
+      downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options, buildLink);
+    }
+  };
 
-      element.setAttribute('href', href);
+  Download.prototype.triggerDownload = function (data, mime, type, filename) {
+
+    var element = document.createElement('a'),
+        blob = new Blob([data], { type: mime }),
+        filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
+
+    if (navigator.msSaveOrOpenBlob) {
+
+      console.log("filename", filename);
+
+      navigator.msSaveOrOpenBlob(blob, filename);
+    } else {
+
+      element.setAttribute('href', window.URL.createObjectURL(blob));
 
       //set file title
 
 
-      element.setAttribute('download', filename || "Tabulator." + (typeof type === "function" ? "txt" : type));
+      element.setAttribute('download', filename);
 
       //trigger download
 
@@ -5067,7 +5081,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Download.prototype.downloaders = {
 
-    csv: function csv(columns, data, options) {
+    csv: function csv(columns, data, options, setFileContents) {
 
       var titles = [],
           fields = [],
@@ -5112,17 +5126,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         fileContents.push(rowData.join(delimiter));
       });
 
-      return 'data:text/csv;charset=utf-8,' + encodeURIComponent(fileContents.join("\n"));
+      setFileContents(fileContents.join("\n"), "text/csv");
     },
 
-    json: function json(columns, data, options) {
+    json: function json(columns, data, options, setFileContents) {
 
       var fileContents = JSON.stringify(data, null, '\t');
 
-      return 'data:application/json;charset=utf-8,' + encodeURIComponent(fileContents);
+      setFileContents(fileContents, "application/json");
     },
 
-    xlsx: function xlsx(columns, data, options) {
+    xlsx: function xlsx(columns, data, options, setFileContents) {
 
       var titles = [],
           fields = [],
@@ -5230,7 +5244,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       output = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'binary' });
 
-      return window.URL.createObjectURL(new Blob([s2ab(output)], { type: "application/octet-stream" }));
+      setFileContents(s2ab(output), "application/octet-stream");
     }
 
   };
