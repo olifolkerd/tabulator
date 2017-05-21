@@ -6252,13 +6252,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function (value) {
 
-            editorElement.attr("placeholder", typeof value !== "undefined" ? value : self.table.extensions.localize.getText("headerFilters.default"));
+            editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters.default"));
           });
         } else {
 
           self.table.extensions.localize.bind("headerFilters.default", function (value) {
 
-            editorElement.attr("placeholder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" ? self.column.definition.headerFilterPlaceholder : value);
+            editorElement.attr("placeholdder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
           });
         }
 
