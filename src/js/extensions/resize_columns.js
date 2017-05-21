@@ -74,6 +74,8 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 		if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
 			self.table.extensions.persistentLayout.save();
 		}
+
+		self.table.options.columnResized(self.startColumn.getComponent())
 	}
 
 	e.stopPropagation(); //prevent resize from interfereing with movable columns

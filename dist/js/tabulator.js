@@ -9230,6 +9230,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.extensions.persistentLayout.save();
       }
+
+      self.table.options.columnResized(self.startColumn.getComponent());
     }
 
     e.stopPropagation(); //prevent resize from interfereing with movable columns
