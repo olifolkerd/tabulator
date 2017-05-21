@@ -375,14 +375,14 @@
 	 		},
 
 	 		//delete row from table
-	 		deleteRow:function(row){
+	 		deleteRow:function(index){
 	 			row = this.rowManager.findRow(row);
 
 	 			if(row){
 	 				row.delete();
 	 				return true;
 	 			}else{
-	 				console.warn("Delete Error - No matching row found:", row);
+	 				console.warn("Delete Error - No matching row found:", index);
 	 				return false;
 	 			}
 	 		},
