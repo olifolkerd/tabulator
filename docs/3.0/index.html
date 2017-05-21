@@ -390,6 +390,29 @@ $("#example-table").tabulator("setData","http://www.getmydata.com/now", {}, ajax
         return response.tableData; //return the tableData peroperty of a response json object
     },
 });</pre>
+                    <a class="anchor" id="ajax-filtering"></a>
+                    <h3>Ajax Filtering <span class="label label-danger">New</span></h3>
+                    <p>If you would prefer to filter your data server side rather than in Tabulator, you can use the <span class='param'>ajaxFiltering</span> option to send the filter data to the server instead of processing it client side</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxFiltering:true, //send filter data to the server instead of processing locally
+});</pre>
+
+                    <p>The paramters used to send the filter data are set in the <span class='param'>paginationDataSent</span> option, in the pagination extension.</p>
+
+                    <p>Only the first filter will be sent if multiple filters are set.</p>
+
+                    <a class="anchor" id="ajax-sorting"></a>
+                    <h3>Ajax Sorting <span class="label label-danger">New</span></h3>
+                    <p>If you would prefer to sort your data server side rather than in Tabulator, you can use the <span class='param'>ajaxSorting</span> option to send the sort data to the server instead of processing it client side</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    ajaxSorting:true, //send sort data to the server instead of processing locally
+});</pre>
+
+                    <p>The paramters used to send the sorter data are set in the <span class='param'>paginationDataSent</span> option, in the pagination extension.</p>
+
+                    <p>Only the first sorter will be sent if multiple sorters are set.</p>
+
+
 
                     <h3>Callbacks <span class="label label-primary">Updated</span></h3>
                     <p>A range of callbacks are avaialble for tracking progress of ajax data loading. See the <a href="#callbacks-ajax">Ajax Callbacks</a> section for more information.</p>
@@ -2680,6 +2703,12 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                             </tr>
                             <tr>
                                 <td>ajaxConfig</td><td>string/object</td><td>"GET"</td><td>The HTTP request type for Ajax requests or config object for the request</td><td><a href="#ajax"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>ajaxFiltering</td><td>boolean</td><td>false</td><td>Send filter config to server instead of processing locally</td><td><a href="#ajax-filtering"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>ajaxSorting</td><td>boolean</td><td>false</td><td>Send sorter config to server instead of processing locally</td><td><a href="#ajax-sorting"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>ajaxLoader</td><td>boolean</td><td>true</td><td>Show loader while data is loading</td><td></td>
