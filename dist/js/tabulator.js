@@ -2906,7 +2906,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.rowFormatter) {
 
-        self.table.options.rowFormatter(row.getComponent());
+        self.table.options.rowFormatter(self.getComponent());
       }
 
       self.initialized = true;

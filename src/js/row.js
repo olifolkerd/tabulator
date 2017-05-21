@@ -151,7 +151,7 @@ Row.prototype.initialize = function(force){
 		self.normalizeHeight();
 
 		if(self.table.options.rowFormatter){
-			self.table.options.rowFormatter(row.getComponent());
+			self.table.options.rowFormatter(self.getComponent());
 		}
 
 		self.initialized = true;
