@@ -9,9 +9,18 @@
  * Full Documentation & Demos can be found at: http://olifolkerd.github.io/tabulator/
  *
  */
-
- (function(){
-
+(function (factory) {
+	"use strict";
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	}
+	else if(typeof module !== 'undefined' && module.exports) {
+		module.exports = factory(require('jquery'));
+	}
+	else {
+		factory(jQuery);
+	}
+}(function ($, undefined) {
  	'use strict';
 
  	//polyfill for Array.find method
@@ -4687,4 +4696,4 @@
 
 });
 
-})();
+}));
