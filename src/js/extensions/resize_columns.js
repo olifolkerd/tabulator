@@ -56,7 +56,7 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 
 	function mouseMove(e){
 		column.setWidth(self.startWidth + (e.screenX - self.startX))
-		column.checkCellHeights();
+		// column.checkCellHeights();
 	}
 
 	function mouseUp(e){

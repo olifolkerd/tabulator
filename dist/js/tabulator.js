@@ -9330,7 +9330,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       column.setWidth(self.startWidth + (e.screenX - self.startX));
 
-      column.checkCellHeights();
+      // column.checkCellHeights();
+
     }
 
     function mouseUp(e) {
