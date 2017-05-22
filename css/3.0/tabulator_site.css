@@ -5,7 +5,7 @@
   font-size: 14px;
   text-align: left;
   overflow: hidden; }
-  .tabulator.tabulator-block-select {
+  .tabulator:not(.example-themes).tabulator-block-select {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
@@ -206,6 +206,8 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis; }
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:last-of-type {
+            border-right: none; }
           .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
             border: 1px solid #1D68CD;
             padding: 0; }
