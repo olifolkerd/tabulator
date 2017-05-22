@@ -174,15 +174,20 @@
 	 				self._buildElement();
 
 	 				//load initial data set
-	 				if(self.options.data.length){
-	 					self.rowManager.setData(self.options.data);
+	 				if(self.options.pagination && this.extExists("page")){
+	 					self.extensions.page.reset(true);
+	 					self.extensions.page.setPage(1);
 	 				}else{
-	 					if(self.options.ajaxURL && this.extExists("ajax")){
-	 						self.extensions.ajax.sendRequest(function(data){
-	 							self.rowManager.setData(data);
-	 						});
-	 					}else{
+	 					if(self.options.data.length){
 	 						self.rowManager.setData(self.options.data);
+	 					}else{
+	 						if(self.options.ajaxURL && this.extExists("ajax")){
+	 							self.extensions.ajax.sendRequest(function(data){
+	 								self.rowManager.setData(data);
+	 							});
+	 						}else{
+	 							self.rowManager.setData(self.options.data);
+	 						}
 	 					}
 	 				}
 
