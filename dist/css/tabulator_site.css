@@ -206,6 +206,8 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis; }
+          .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:last-of-type {
+            border-right: none; }
           .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
             border: 1px solid #1D68CD;
             padding: 0; }

@@ -380,6 +380,10 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 					overflow:hidden;
 					text-overflow:ellipsis;
 
+					&:last-of-type{
+						border-right: none;
+					}
+
 
 					&.tabulator-editing{
 						border:1px solid  $editBoxColor;
