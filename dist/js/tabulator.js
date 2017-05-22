@@ -5787,7 +5787,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       input.on("blur", function (e) {
 
-        success(input.val());
+        var value = input.val();
+
+        if (!isNaN(value)) {
+
+          value = Number(value);
+        }
+
+        success(value);
       });
 
       //submit new value on enter
@@ -5795,9 +5802,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       input.on("keydown", function (e) {
 
+        var value;
+
         if (e.keyCode == 13) {
 
-          success(input.val());
+          value = input.val();
+
+          if (!isNaN(value)) {
+
+            value = Number(value);
+          }
+
+          success(value);
         }
       });
 
