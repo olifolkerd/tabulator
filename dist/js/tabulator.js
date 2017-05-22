@@ -1791,16 +1791,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.rows = [];
 
-    data.forEach(function (def, i) {
+    if (Array.isArray(data)) {
 
-      var row = new Row(def, self);
+      data.forEach(function (def, i) {
 
-      self.rows.push(row);
-    });
+        var row = new Row(def, self);
 
-    self.table.options.dataLoaded(data);
+        self.rows.push(row);
+      });
 
-    self.refreshActiveData(true);
+      self.table.options.dataLoaded(data);
+
+      self.refreshActiveData(true);
+    } else {
+
+      console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data === "undefined" ? "undefined" : _typeof(data), "\nData:     ", data);
+    }
   };
 
   RowManager.prototype.deleteRow = function (row) {
