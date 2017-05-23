@@ -7926,7 +7926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.checkTimeout = false; //click check timeout holder
 
 
-    this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
+    this.checkPeriod = 250; //period to wait on mousedown to consider this a move and not a click
 
 
     this.moving = false; //currently moving column

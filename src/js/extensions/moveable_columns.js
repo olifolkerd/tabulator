@@ -3,7 +3,7 @@ var MoveColumns = function(table){
 	this.placeholderElement = $("<div class='tabulator-col tabulator-col-placeholder'></div>");
 	this.hoverElement = $(); //floating column header element
 	this.checkTimeout = false; //click check timeout holder
-	this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
+	this.checkPeriod = 250; //period to wait on mousedown to consider this a move and not a click
 	this.moving = false; //currently moving column
 	this.toCol = false; //destination column
 	this.toColAfter = false; //position of moving column relative to the desitnation column
