@@ -202,7 +202,7 @@
                     <ul>
                         <li><strong>align</strong> - sets the text alignment for this column (left|center|right)</li>
                         <li><strong>width</strong> - sets the width of this column, this can be set in pixels or as a percentage of total table width (if not set the system will determine the best)</li>
-                        <li><strong>minWidth</strong> - sets the minimum width of this column, this should be set in pixels (this takes priority over the global option of colMinWidth)</li>
+                        <li><strong>minWidth</strong> - sets the minimum width of this column, this should be set in pixels (this takes priority over the global option of columnMinWidth)</li>
                         <li><strong>frozen</strong> - freezes the column in place when scrolling (see <a href="#frozen-col">Frozen Columns</a> for more details)</li>
                         <li><strong>responsive</strong> - an integer to determine when the column should be hidden in responsive mode (see <a href="#responsive-layout">Responsive Layout</a> for more details)</li>
                         <li><strong>tooltip</strong> - sets the on hover tooltip for each cell in this column (see <a href="#formatting">Formatting Data</a> for more details)</li>
@@ -1313,11 +1313,11 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <h2>Minimum Column Width  </h2>
                     <p>It is possible to set a minimum column width to prevent resizing columns from becoming too small.</p>
 
-                    <p>This can be set globally, by setting the <span class='param'>colMinWidth</span> option to the column width when you create your Tabulator.</p>
+                    <p>This can be set globally, by setting the <span class='param'>columnMinWidth</span> option to the column width when you create your Tabulator.</p>
 
                     <p>This option can be overridden on a per column basis by setting the <span class='param'>minWidth</span> property on the column definition.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    colMinWidth:80, //Minimum column width in px (default = 40)
+    columnMinWidth:80, //Minimum column width in px (default = 40)
 });</pre>
 
                     <h2>Wrap Column Header Title Text</h2>
@@ -2632,7 +2632,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                                 <td>responsiveLayout</td><td>boolean</td><td>false</td><td>Automatically hide/show columns to fit the width of the Tabulator element</td><td><a href="#responsive-layout"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>colMinWidth</td><td>CSS width value</td><td>40px</td><td>Minimum width for a column</td><td><a href="#col-min-width"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>columnMinWidth</td><td>CSS width value</td><td>40px</td><td>Minimum width for a column</td><td><a href="#col-min-width"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>resizableColumns</td><td>boolean</td><td>true</td><td>Allow user to resize columns (via handles on the left and right edges of the column header)</td><td><a href="#col-resize"><button><i class="fa fa-search"></i> Explore</button></a></td>
