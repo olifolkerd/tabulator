@@ -617,7 +617,7 @@
        {title:"Name", field:"name", editor:true},
        {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
        {title:"Activity", field:"activity", width:160, formatter:lineFormatter, headerSort:false},
-       {title:"Gender", field:"gender", width:90, editor:genderEditor},
+       {title:"Gender", field:"gender", width:95, editor:genderEditor},
        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100, editor:true},
        {title:"Favourite Color", field:"col", width:130, editor:true},
        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
@@ -640,9 +640,9 @@
         $(this).toggleClass("col-hide");
 
         if($(this).hasClass("col-hide")){
-          $("#tabulator-example").tabulator("showCol","rating");
+          $("#tabulator-example").tabulator("showColumn","rating");
         }else{
-          $("#tabulator-example").tabulator("hideCol","rating");
+          $("#tabulator-example").tabulator("hideColumn","rating");
         }
       });
 
