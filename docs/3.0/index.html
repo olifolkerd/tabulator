@@ -219,7 +219,9 @@
                         <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>mutator</strong> - function for manipulating column values as they are parsed into the table (see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>mutateType </strong> - defines whether mutation should occur on data parsing, cell editing or both (see <a href="#mutators">Mutators</a> for more details)</li>
+                        <li><strong>mutatorParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the mutator(see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>accessor</strong> - function to alter column values before they are read out the table using the <span class='param'>getData</span> function (see <a href="#accessors">Accessors</a> for more details)</li>
+                        <li><strong>accessorParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the accessor(see <a href="#accessors">Accessors</a> for more details)</li>
                     </ul>
 
                     <h3>Cell Events</h3>
@@ -544,11 +546,11 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="get-set"></a>
                 <article>
-                    <h1>Mutators &amp; Accessors </h1>
+                    <h1>Mutators &amp; Accessors <span class="label label-primary">Updated</span></h1>
                     <p>Mutators (setters) and Accessors (getters) allow you to manipulate the table data as it enters and leaves your Tabulator, allowing you to convert values for use in your table and then change them again as they leave.</p>
 
                     <a class="anchor" id="mutators"></a>
-                    <h2>Mutators</h2>
+                    <h2>Mutators <span class="label label-primary">Updated</span></h2>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -559,12 +561,14 @@ $("#example-table").tabulator({
 
                     <p>You can set mutators on a per column basis using the <span class='param'>mutator</span> option in the column data.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutator:function(value, type, data){
+                    <p>You can pass an optional additional parameter with mutator, <span class='param'>mutatorParams</span> that should contain an object with additional information for configuring the mutator.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, type, data, mutatorParams){
         //value - original value of the cell
         //type - the type of mutation occuring (data|edit)
         //data - the data for the row
 
-        return value > 5; //return the new value for the cell data.
+        return value > mutatorParams.threshold; //return the new value for the cell data.
     },
 }</pre>
                     <h3>Mutation Type</h3>
@@ -589,15 +593,21 @@ $("#example-table").tabulator({
                     </p>
 
                     <a class="anchor" id="accessors"></a>
-                    <h2>Accessors</h2>
+                    <h2>Accessors <span class="label label-primary">Updated</span></h2>
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
                       Accessor functionality is provided by the <a href="#extension-accessor">accessor extension</a>
                     </div>
 
-                    <p>Accessors are used to alter data as it leaves the table through the <span class='param'>getData</span> function. For example if you wanted to make sure that any float values in a column were rounded down to integers before you retrieved the data, you could use an accessor.</p>
+                    <p>Accessors are used to alter data as it leaves the table through the <span class='param'>getData</span> function.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Tax Owed (£)", field:"tax", accessor:function(value, data){
+                    <p>You can set accessors on a per column basis using the <span class='param'>accessor</span> option in the column data.</p>
+
+                    <p>You can pass an optional additional parameter with accessor, <span class='param'>accessorParams</span> that should contain an object with additional information for configuring the accessor.</p>
+
+                    <p>The example below shows a usage case that ensures float values in a column are rounded down to integers before you retrieved the data.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Tax Owed (£)", field:"tax", accessorParams:{}, accessor:function(value, data, accessorParams){
         //value - original value of the cell
         //data - the data for the row
 
@@ -3892,7 +3902,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <h2>Data</h2>
                         <ul class="nav">
                             <li><a href="#set-data">Set Table Data <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#get-set">Mutators &amp; Accessors</a></li>
+                            <li><a href="#get-set">Mutators &amp; Accessors <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#formatting">Formatting <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#sorting">Sorting <span class="label label-primary">Updated</span></a></li>
