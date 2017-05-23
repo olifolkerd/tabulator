@@ -6288,6 +6288,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           break;
 
+        case "boolean":
+
+          if (column.extensions.edit && column.extensions.edit.editor) {
+
+            editor = column.extensions.edit.editor;
+          } else {
+
+            console.warn("Filter Error - Cannot auto detect editor element, none set");
+          }
+
+          break;
+
       }
 
       if (editor) {
@@ -6358,7 +6370,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //update number filtered columns on change
 
 
-        attrType = editorElement.attr("type").toLowerCase();
+        attrType = editorElement.attr("type") ? editorElement.attr("type").toLowerCase() : "";
 
         if (attrType == "number") {
 

@@ -52,8 +52,6 @@ Filter.prototype.initializeColumn = function(column){
 
 	if(field){
 
-
-
 		filterElement = $("<div class='tabulator-header-filter'></div>");
 
 		//set column editor
@@ -68,6 +66,14 @@ Filter.prototype.initializeColumn = function(column){
 
 			case "function":
 			editor = column.definition.editor;
+			break;
+
+			case "boolean":
+			if(column.extensions.edit && column.extensions.edit.editor){
+				editor = column.extensions.edit.editor;
+			}else{
+				console.warn("Filter Error - Cannot auto detect editor element, none set");
+			}
 			break;
 		}
 
@@ -117,7 +123,7 @@ Filter.prototype.initializeColumn = function(column){
 			});
 
 			//update number filtered columns on change
-			attrType = editorElement.attr("type").toLowerCase() ;
+			attrType = editorElement.attr("type") ? editorElement.attr("type").toLowerCase() : "" ;
 			if(attrType == "number"){
 				editorElement.on("change", function(e){
 					success($(this).val());
