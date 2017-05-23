@@ -1003,8 +1003,8 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     initialSort:[
-        {field:"age", dir:"asc"}, //sort by this first
-        {field:"height", dir:"desc"}, //then sort by this second
+        {column:"age", dir:"asc"}, //sort by this first
+        {column:"height", dir:"desc"}, //then sort by this second
     ]
 });</pre>
 
@@ -1016,19 +1016,19 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <p>If you wish to sort by multiple columns then you can pass an array of sorting objects to this function, the data will then be sorted in the order of the objects.</p>
 
                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setSort", [
-    {field:"age", dir:"asc"}, //sort by this first
-    {field:"height", dir:"desc"}, //then sort by this second
+    {column:"age", dir:"asc"}, //sort by this first
+    {column:"height", dir:"desc"}, //then sort by this second
 ]);</pre>
 
                     <h2>Get Current Sorters <span class="label label-primary">Updated</span></h2>
                     <p>If you need to retrieve the details of the currently sorted column at any point you can use the <span class='param'>getSort</span> function. </p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("getSort");</pre>
 
-                    <p>This will return an array of sort objects with two properties, <span class='param'>field</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
+                    <p>This will return an array of sort objects with two properties, <span class='param'>column</span> a string of the field name for the sorted column, and <span class='param'>dir</span> a string of either "asc" or "desc" indicating the direction of sort.</p>
 
                     <pre class="prettyprint lang-js">[
-    {field:"age", dir:"asc"},
-    {field:"height", dir:"desc"}
+    {column:"age", dir:"asc"},
+    {column:"height", dir:"desc"}
 ]</pre>
 
                     <p>If the table is not currently sorted then the array will be empty.</p>
