@@ -84,8 +84,6 @@ Sort.prototype.setSort = function(sortList, dir){
 
 		item.column = self.table.columnManager.findColumn(item.column);
 
-		console.log("item", item)
-
 		if(item.column){
 			// item.column = item.column;
 			newSortList.push(item);

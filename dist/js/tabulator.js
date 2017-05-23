@@ -9923,8 +9923,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       item.column = self.table.columnManager.findColumn(item.column);
 
-      console.log("item", item);
-
       if (item.column) {
 
         // item.column = item.column;
