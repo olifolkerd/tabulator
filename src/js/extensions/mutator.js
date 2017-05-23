@@ -5,7 +5,7 @@ var Mutator = function(table){
 //initialize column mutator
 Mutator.prototype.initializeColumn = function(column){
 
-	var config = {mutator:false, type:column.definition.mutateType};
+	var config = {mutator:false, type:column.definition.mutateType, params:column.definition.mutatorParams || {}};
 
 	//set column mutator
 	switch(typeof column.definition.mutator){
@@ -39,7 +39,7 @@ Mutator.prototype.transformRow = function(data){
 			field = column.getField();
 
 			if(typeof data[field] != "undefined" && column.extensions.mutate.type != "edit"){
-				data[field] = column.extensions.mutate.mutator(data[field], data, "data");
+				data[field] = column.extensions.mutate.mutator(data[field], data, "data", column.extensions.mutate.params);
 			}
 		}
 	});
@@ -49,7 +49,7 @@ Mutator.prototype.transformRow = function(data){
 
 //apply mutator to new cell value
 Mutator.prototype.transformCell = function(cell, value){
-	return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit")
+	return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params)
 };
 
 //default mutators

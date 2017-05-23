@@ -4892,7 +4892,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Accessor.prototype.initializeColumn = function (column) {
 
-    var config = { accessor: false };
+    var config = { accessor: false, params: column.definition.accessorParams || {} };
 
     //set column accessor
 
@@ -4947,7 +4947,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof data[field] != "undefined") {
 
-          data[field] = column.extensions.accessor.accessor(data[field], data);
+          data[field] = column.extensions.accessor.accessor(data[field], data, column.extensions.accessor.params);
         }
       }
     });
@@ -8396,7 +8396,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Mutator.prototype.initializeColumn = function (column) {
 
-    var config = { mutator: false, type: column.definition.mutateType };
+    var config = { mutator: false, type: column.definition.mutateType, params: column.definition.mutatorParams || {} };
 
     //set column mutator
 
@@ -8446,7 +8446,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof data[field] != "undefined" && column.extensions.mutate.type != "edit") {
 
-          data[field] = column.extensions.mutate.mutator(data[field], data, "data");
+          data[field] = column.extensions.mutate.mutator(data[field], data, "data", column.extensions.mutate.params);
         }
       }
     });
@@ -8459,7 +8459,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Mutator.prototype.transformCell = function (cell, value) {
 
-    return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit");
+    return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params);
   };
 
   //default mutators

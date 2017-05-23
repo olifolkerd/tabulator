@@ -6,7 +6,7 @@ var Accessor = function(table){
 //initialize column accessor
 Accessor.prototype.initializeColumn = function(column){
 
-	var config = {accessor:false};
+	var config = {accessor:false, params:column.definition.accessorParams || {}};
 
 	//set column accessor
 	switch(typeof column.definition.accessor){
@@ -42,7 +42,7 @@ Accessor.prototype.transformRow = function(dataIn){
 			field = column.getField();
 
 			if(typeof data[field] != "undefined"){
-				data[field] = column.extensions.accessor.accessor(data[field], data);
+				data[field] = column.extensions.accessor.accessor(data[field], data, column.extensions.accessor.params);
 			}
 		}
 	});
