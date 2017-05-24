@@ -560,7 +560,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.extensions.responsiveLayout.initialize();
     }
 
-    self.redraw();
+    this.redraw();
 
     this._verticalAlignHeaders();
 
@@ -608,7 +608,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.extensions.responsiveLayout.initialize();
     }
 
-    self.redraw();
+    this.redraw();
   };
 
   //redraw columns
@@ -1913,7 +1913,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.table.options.rowAdded(row.getComponent());
 
-    this.table.options.dataEdited(this.getData);
+    this.table.options.dataEdited(this.getData());
 
     this.renderTable();
 
@@ -6603,7 +6603,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return activeRows;
     } else {
 
-      return rowList;
+      return rowList.slice(0);
     }
   };
 

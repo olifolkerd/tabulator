@@ -393,7 +393,7 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 		this.table.extensions.responsiveLayout.initialize();
 	}
 
-	self.redraw();
+	this.redraw();
 
 	this._verticalAlignHeaders();
 
@@ -428,7 +428,7 @@ ColumnManager.prototype.deregisterColumn = function(column){
 		this.table.extensions.responsiveLayout.initialize();
 	}
 
-	self.redraw();
+	this.redraw();
 };
 
 //redraw columns
