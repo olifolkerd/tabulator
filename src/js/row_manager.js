@@ -261,7 +261,7 @@ RowManager.prototype.addRow = function(data, pos, index){
 
 	this.table.options.rowAdded(row.getComponent());
 
-	this.table.options.dataEdited(this.getData);
+	this.table.options.dataEdited(this.getData());
 
 	this.renderTable();
 
