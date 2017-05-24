@@ -560,7 +560,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.extensions.responsiveLayout.initialize();
     }
 
-    self.redraw();
+    this.redraw();
 
     this._verticalAlignHeaders();
 
@@ -608,7 +608,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.extensions.responsiveLayout.initialize();
     }
 
-    self.redraw();
+    this.redraw();
   };
 
   //redraw columns
@@ -1791,16 +1791,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.rows = [];
 
-    data.forEach(function (def, i) {
+    if (Array.isArray(data)) {
 
-      var row = new Row(def, self);
+      data.forEach(function (def, i) {
 
-      self.rows.push(row);
-    });
+        var row = new Row(def, self);
 
-    self.table.options.dataLoaded(data);
+        self.rows.push(row);
+      });
 
-    self.refreshActiveData(true);
+      self.table.options.dataLoaded(data);
+
+      self.refreshActiveData(true);
+    } else {
+
+      console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data === "undefined" ? "undefined" : _typeof(data), "\nData:     ", data);
+    }
   };
 
   RowManager.prototype.deleteRow = function (row) {
@@ -1907,7 +1913,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.table.options.rowAdded(row.getComponent());
 
-    this.table.options.dataEdited(this.getData);
+    this.table.options.dataEdited(this.getData());
 
     this.renderTable();
 
@@ -3713,20 +3719,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //load initial data set
 
 
-        if (self.options.data.length) {
+        if (self.options.pagination && this.extExists("page")) {
 
-          self.rowManager.setData(self.options.data);
+          self.extensions.page.reset(true);
+
+          self.extensions.page.setPage(1);
         } else {
 
-          if (self.options.ajaxURL && this.extExists("ajax")) {
-
-            self.extensions.ajax.sendRequest(function (data) {
-
-              self.rowManager.setData(data);
-            });
-          } else {
+          if (self.options.data.length) {
 
             self.rowManager.setData(self.options.data);
+          } else {
+
+            if (self.options.ajaxURL && this.extExists("ajax")) {
+
+              self.extensions.ajax.sendRequest(function (data) {
+
+                self.rowManager.setData(data);
+              });
+            } else {
+
+              self.rowManager.setData(self.options.data);
+            }
           }
         }
       }
@@ -4878,7 +4892,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Accessor.prototype.initializeColumn = function (column) {
 
-    var config = { accessor: false };
+    var config = { accessor: false, params: column.definition.accessorParams || {} };
 
     //set column accessor
 
@@ -4933,7 +4947,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof data[field] != "undefined") {
 
-          data[field] = column.extensions.accessor.accessor(data[field], data);
+          data[field] = column.extensions.accessor.accessor(data[field], data, column.extensions.accessor.params);
         }
       }
     });
@@ -5779,7 +5793,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       input.on("blur", function (e) {
 
-        success(input.val());
+        var value = input.val();
+
+        if (!isNaN(value)) {
+
+          value = Number(value);
+        }
+
+        success(value);
       });
 
       //submit new value on enter
@@ -5787,9 +5808,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       input.on("keydown", function (e) {
 
+        var value;
+
         if (e.keyCode == 13) {
 
-          success(input.val());
+          value = input.val();
+
+          if (!isNaN(value)) {
+
+            value = Number(value);
+          }
+
+          success(value);
         }
       });
 
@@ -6258,6 +6288,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           break;
 
+        case "boolean":
+
+          if (column.extensions.edit && column.extensions.edit.editor) {
+
+            editor = column.extensions.edit.editor;
+          } else {
+
+            console.warn("Filter Error - Cannot auto detect editor element, none set");
+          }
+
+          break;
+
       }
 
       if (editor) {
@@ -6328,7 +6370,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //update number filtered columns on change
 
 
-        attrType = editorElement.attr("type").toLowerCase();
+        attrType = editorElement.attr("type") ? editorElement.attr("type").toLowerCase() : "";
 
         if (attrType == "number") {
 
@@ -6561,7 +6603,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return activeRows;
     } else {
 
-      return rowList;
+      return rowList.slice(0);
     }
   };
 
@@ -7884,7 +7926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.checkTimeout = false; //click check timeout holder
 
 
-    this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
+    this.checkPeriod = 250; //period to wait on mousedown to consider this a move and not a click
 
 
     this.moving = false; //currently moving column
@@ -8366,7 +8408,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Mutator.prototype.initializeColumn = function (column) {
 
-    var config = { mutator: false, type: column.definition.mutateType };
+    var config = { mutator: false, type: column.definition.mutateType, params: column.definition.mutatorParams || {} };
 
     //set column mutator
 
@@ -8416,7 +8458,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof data[field] != "undefined" && column.extensions.mutate.type != "edit") {
 
-          data[field] = column.extensions.mutate.mutator(data[field], data, "data");
+          data[field] = column.extensions.mutate.mutator(data[field], data, "data", column.extensions.mutate.params);
         }
       }
     });
@@ -8429,7 +8471,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Mutator.prototype.transformCell = function (cell, value) {
 
-    return cell.column.extensions.mutate.mutator(value, cell.roww.getData(), "edit");
+    return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params);
   };
 
   //default mutators
@@ -9300,7 +9342,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       column.setWidth(self.startWidth + (e.screenX - self.startX));
 
-      column.checkCellHeights();
+      // column.checkCellHeights();
+
     }
 
     function mouseUp(e) {
@@ -9879,8 +9922,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var column;
 
       item.column = self.table.columnManager.findColumn(item.column);
-
-      console.log("item", item);
 
       if (item.column) {
 
