@@ -300,7 +300,7 @@ Filter.prototype.filter = function(rowList){
 
 		return activeRows;
 	}else{
-		return rowList;
+		return rowList.slice(0);
 	}
 };
 
