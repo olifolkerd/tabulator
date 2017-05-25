@@ -390,6 +390,347 @@
             </fieldset>
         </article>
 
+    <a class="anchor" id="formatters"></a>
+    <article>
+        <h1>Formatters <a class="doc-link" href="../../docs?#formatting"><i class="fa fa-external-link"></i> Documentation</a></h1>
+        <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
+
+        <p>you can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
+
+        <p>
+            Tabulator comes with a number of preconfigured formatters including:
+            <ul>
+                <li><strong>money</strong> - formats a number into a currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
+                <li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
+                <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
+                <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
+                <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
+                <li><strong>color</strong> - sets the background color of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
+                <li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
+                <li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
+                <li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
+                <li><strong>buttonCross</strong> - displays a cross icon on eac row (for use as a button)</li>
+                <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
+            </ul>
+        </p>
+
+        <p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
+
+        <p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+
+        <p>You can also set a row formatter using the <span class='param'>rowFormatter</span> option, this allows you to format the styling of the row as a whole</p>
+
+        <div class="example-table" id="example-table-formatter">
+            <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+        </div>
+
+        <button class="view-source">View Source</button>
+        <fieldset class="source">
+            <legend>Source Code</legend>
+            <h3>HTML</h3>
+            <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+            <h3>JavaScript</h3>
+            <pre class="prettyprint lang-js">//Generate print icon
+var printIcon = function(cell, formatterParams){ //plain text value
+    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
+};
+
+//Build Tabulator
+$("#example-table").tabulator({
+    height:"311px",
+    fitColumns:true,
+    rowFormatter:function(row){
+        if(row.getData().col == "blue"){
+            row.getElement().css({"background-color":"#A6A6DF"});
+        }
+    },
+    columns:[
+    {formatter:"rownum", align:"center", width:40},
+    {formatter:printIcon, width:40, align:"center", cellClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},
+    {title:"Name", field:"name", width:200, formatter:function(cell, formatterParams){
+       var value = cell.getValue();
+        if(value.indexOf("o") > 0){
+            return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
+        }else{
+            return value;
+        }
+    }},
+    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+    {title:"Gender", field:"gender"},
+    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
+    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    {title:"Favourite Color", field:"col" ,formatter:"color", width:100},
+    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+    {formatter:"buttonCross", width:30, align:"center"}
+    ],
+});</pre>
+        </fieldset>
+    </article>
+    <a class="anchor" id="row-formatter"></a>
+    <article>
+        <h1>Row Formatter <a class="doc-link" href="../../docs?#row-formatter"><i class="fa fa-external-link"></i> Documentation</a></h1>
+        <p>If you are looking for a non grid based format to your table then you can use a row formatter to create custom row layouts.</p>
+        <p>You can use the <span class='param'>rowFormatter</span> callback to replace the contents of the row with any layout you like. In this example we will create a simple table in each row containg and image and some vertically centered text properties.</p>
+        <p>When replacing the entier contents of the row it is important to include only one column in your column definition array to ensure the table renders correctly. It is also advisable to enable <span class='param'>fitColumns</span> and disabled <span class='param'>resizableColumns</span> options.</p>
+        <div class="example-table" id="example-table-rowformat">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
+        <button class="view-source">View Source</button>
+        <fieldset class="source">
+            <legend>Source Code</legend>
+            <h3>CSS</h3>
+            <pre class="prettyprint lang-css">/*Style row formatter contents*/
+#example-table .tabulator-row table{
+    vertical-align: middle;
+    border-collapse:collapse;
+}
+
+#example-table .tabulator-row table img{
+    border:2px solid #ccc;
+}
+
+#example-table .tabulator-row table tr td{
+     border:none;
+}
+
+#example-table .tabulator-row table tr td:first-of-type{
+    width:60px;
+}
+
+#example-table .tabulator-row table tr td div{
+    padding:5px;
+}</pre>
+            <h3>JavaScript</h3>
+            <pre class="prettyprint lang-js">//Define some test data
+var cheeseData = [
+    {id:1, type:"Brie", rind:"mould", age:"4 weeks", color:"white", image:"brie.jpg"},
+    {id:2, type:"Cheddar", rind:"none", age:"1 year", color:"yellow", image:"cheddar.jpg"},
+    {id:3, type:"Gouda", rind:"wax", age:"6 months", color:"cream", image:"gouda.jpg"},
+    {id:4, type:"Swiss", rind:"none", age:"9 months", color:"yellow", image:"swiss.jpg"},
+]
+
+//define Tabulator
+$("#example-table").tabulator({
+    height:"311px",
+    fitColumns:true,
+    resizableColumns:false,
+    columns:[
+        {title:"Cheese", field:"type", sorter:"string"},
+    ],
+    rowFormatter:function(row, data){
+        var element = row.getElement(),
+        data = row.getData(),
+        width = element.outerWidth(),
+        table;
+
+        //clear current row data
+        element.empty();
+
+        //define a table layout structure and set width of row
+        table = $("&lt;table style='width:" + (width - 18) + "px;'&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/table&gt;");
+
+        //add image on left of row
+        $("tr", table).append("&lt;td&gt;&lt;img src='../row_formatter/" + data.image + "'&gt;&lt;/td&gt;");
+
+        //add row data on right hand side
+        $("tr", table).append("&lt;td&gt;&lt;div&gt;&lt;strong&gt;Type:&lt;/strong&gt; " + data.type + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Age:&lt;/strong&gt; " + data.age + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Rind:&lt;/strong&gt; " + data.rind + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Colour:&lt;/strong&gt; " + data.color + "&lt;/div&gt;&lt;/td&gt;");
+
+        //append newly formatted contents to the row
+        element.append(table);
+    },
+})
+
+//Load Data
+$("#example-table").tabulator("setData", cheeseData);</pre>
+            </fieldset>
+        </article>
+        <a class="anchor" id="sparklines"></a>
+        <article>
+            <h1>Sparklines</h1>
+            <p>You can use external JavaScript libraries in any of your formatters. in this example we will use the popular sparklines.js library.</p>
+            <p>We will be passing an array of values into a field and then using a custom formatter to turn this array into a sparkline.</p>
+            <p>The Sparklines library can be downloaded from <a href="http://omnipotent.net/jquery.sparkline/#s-about" target="_blank">Git Hub.</a></p>
+
+            <div class="example-table" id="example-table-sparkline">
+                <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+            </div>
+
+            <button class="view-source">View Source</button>
+            <fieldset class="source">
+                <legend>Source Code</legend>
+
+                <h3>HTML</h3>
+                <pre class="prettyprint lang-html">&lt;!-- Include sparkline library --&gt;
+        &lt;script src="sparkline.js"&gt;&lt;/script&gt;
+
+        &lt;!-- Element to hold Tabulator --&gt;
+        &lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                <h3>JavaScript</h3>
+                <pre class="prettyprint lang-js">//Formatter to generate line chart
+var lineFormatter = function(cell, formatterParams){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"line", disableTooltips:true});
+    }, 10);
+};
+
+//generate bar chart
+var barFormatter = function(cell, formatterParams){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
+    }, 10);
+};
+
+//generate discrete chart
+var tristateFormatter = function(cell, formatterParams){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
+    }, 10);
+};
+
+
+//generate box plot
+var boxFormatter = function(cell, formatterParams){
+    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
+        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"box", disableTooltips:true});
+    }, 10);
+};
+
+//Sample Data with array values for graph fields
+var sparkData = [
+    {id:1, name:"Oli Bob", line:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], bar:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], tristate:[1, 20, -5, -3, 10, 13, 0, 15, 9, 11], box:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11]},
+    {id:2, name:"Mary May", line:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], bar:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], tristate:[-10, 12, 14, 16, 13, 9, 7, 0, 10, 13], box:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
+    {id:3, name:"Christine Lobowski", line:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], bar:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], tristate:[1, 2, 5, 0, 1, 16, 4, 2, 1, 3], box:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
+    {id:4, name:"Brendon Philips", line:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], bar:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], tristate:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], box:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
+    {id:5, name:"Margret Marmajuke", line:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], bar:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], tristate:[1, -3, 1, 3, -3, 1, -1, 3, 1, 3], box:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
+    {id:6, name:"Frank Harbours", line:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], bar:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], tristate:[20, 17, 15, 11, 16, -9, 12, 14, 20, 12], box:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
+    {id:7, name:"Jamie Newhart", line:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], bar:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], tristate:[11, 7, 6, -12, 1-13, 11, 10, 9, 6], box:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
+    {id:8, name:"Gemma Jane", line:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], bar:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], tristate:[4, 17, 11, -12, 0, 5, 12, -14, 18, 11], box:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
+    {id:9, name:"Emily Sykes", line:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], bar:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], tristate:[11, 15, 19, -20, 17, 16, 16, -5, 3, 2], box:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
+    {id:10, name:"James Newman", line:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], bar:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], tristate:[1, 2, 0, -4, -5, -4, 2, 5, 9, 8], box:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
+];
+
+
+//Table Constructor
+$("#example-table").tabulator({
+    height:"311px",
+    columns:[
+        {title:"Name", field:"name", width:190},
+        {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
+        {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
+        {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
+        {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
+    ],
+});</pre>
+            </fieldset>
+        </article>
+
+        <a class="anchor" id="persistance"></a>
+        <article>
+            <h1>Persistent Column Layout <a class="doc-link" href="../../docs?#persistant-columns"><i class="fa fa-external-link"></i> Documentation</a></h1>
+            <p>
+                Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
+            </p>
+            <p>
+                Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
+            </P>
+            <div class="example-table" id="example-table-colum-layout">
+                <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+            </div>
+
+            <button class="view-source">View Source</button>
+            <fieldset class="source">
+                <legend>Source Code</legend>
+                <h3>HTML</h3>
+                <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                <h3>JavaScript</h3>
+                <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    height:"311px",
+    movableCols:true,
+    persistentLayout: true,
+    persistentLayoutID:"examplePerststance",
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", width:100, sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", width:80},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+});</pre>
+            </fieldset>
+        </article>
+
+        <a class="anchor" id="ajax"></a>
+        <article>
+            <h1>AJAX Data Loading <a class="doc-link" href="../../docs?#ajax"><i class="fa fa-external-link"></i> Documentation</a></h1>
+            <p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
+
+            <p>If you always request the same URL for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
+
+            <p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
+
+            <div class="feature-box-legend">AJAX Controls</div>
+
+            <div class="feature-box">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-12 content " role="main">
+                  <button id="ajax-trigger">Load Data via AJAX</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="example-table" id="example-table-ajax">
+                <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+            </div>
+
+            <button class="view-source">View Source</button>
+            <fieldset class="source">
+                <legend>Source Code</legend>
+                <h3>HTML</h3>
+                <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                <h3>JavaScript</h3>
+                <pre class="prettyprint lang-js">//Build Tabulator
+$("#example-table").tabulator({
+    height:"311px",
+    fitColumns:true,
+    placeholder:"No Data Set",
+    columns:[
+        {title:"Name", field:"name", sorter:"string", width:200},
+        {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
+        {title:"Gender", field:"gender", sorter:"string"},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
+    ],
+});
+
+//trigger AJAX load on "Load Data via AJAX" button click
+$("#ajax-trigger").click(function(){
+    $("#example-table").tabulator("setData", "../data.php");
+});</pre>
+    <h3>Server Side PHP</h3>
+    <pre class="prettyprint lang-php">//build data array
+$data = [
+    [id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1],
+    [id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true],
+    [id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"],
+    [id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"],
+    [id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"],
+];
+
+//return JSON formatted data
+echo(json_encode($data));</pre>
+            </fieldset>
+        </article>
+
         <a class="anchor" id="table-load"></a>
         <article>
             <h1>Create from HTML Table Element <a class="doc-link" href="../../docs?#table-load"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -579,370 +920,6 @@ $("#example-table").tabulator({
 });</pre>
 </fieldset>
 </article>
-<a class="anchor" id="sorters"></a>
-<article>
-    <h1>Sorters <a class="doc-link" href="../../docs?#sorting"><i class="fa fa-external-link"></i> Documentation</a></h1>
-
-    <p>By default Tabulator will attempt to guess which sorter should be applied to a column based on the data contained in the first row. It can determine sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
-
-        <ul>
-            <li><strong>string</strong> - sorts column as strings of characters</li>
-            <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
-            <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
-            <li><strong>boolean</strong> - sorts column as booleans</li>
-            <li><strong>date</strong> - sorts column as dates</li>
-            <li><strong>time</strong> - sorts column as times</li>
-        </ul>
-
-    </p>
-
-    <p>To specify a sorter to be used on a column use the <span class='param'>param</span> property in the columns definition object</p>
-
-    <p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
-
-    <p>You can programmatically trigger a sort using the <span class='param'>sort</span> function.</p>
-
-    <p>
-
-    <div class="feature-box-legend">Programmatic Sort Parameters</div>
-
-    <div class="feature-box">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 content " role="main">
-
-          <span>
-           <label>Field: </label>
-           <select id="sort-field">
-              <option value="name" selected>Name</option>
-              <option value="progress">Progress</option>
-              <option value="gender">Gender</option>
-              <option value="rating">Rating</option>
-              <option value="col">Favourite Colour</option>
-              <option value="dob">Date Of Birth</option>
-              <option value="car">Driver</option>
-          </select>
-          </span>
-
-        <span>
-          <label>Direction:</label>
-          <select id="sort-direction">
-              <option value="asc" selected>asc</option>
-              <option value="desc">desc</option>
-          </select>
-        </span>
-
-
-          <button id="sort-trigger">Trigger Sort</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-</p>
-
-<div class="example-table" id="example-table-sorting">
-    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-</div>
-
-<button class="view-source">View Source</button>
-<fieldset class="source">
-    <legend>Source Code</legend>
-    <h3>HTML</h3>
-    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
-
-    <h3>JavaScript</h3>
-    <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table").tabulator({
-    height:"311px",
-    fitColumns:true,
-    columns:[
-        {title:"Name", field:"name", width:200},
-        {title:"Progress", field:"progress", align:"right"},
-        {title:"Gender", field:"gender", sorter:"string"},
-        {title:"Rating", field:"rating",  align:"center", width:100},
-        {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
-            return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
-        }},
-        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-        {title:"Driver", field:"car", align:"center", sorter:"boolean"},
-    ],
-});
-
-//Trigger sort when "Trigger Sort" button is clicked
-$("#sort-trigger").click(function(){
-    $("#example-table").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
-});</pre>
-</fieldset>
-</article>
-<a class="anchor" id="formatters"></a>
-<article>
-    <h1>Formatters <a class="doc-link" href="../../docs?#formatting"><i class="fa fa-external-link"></i> Documentation</a></h1>
-    <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
-
-    <p>you can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
-
-    <p>
-        Tabulator comes with a number of preconfigured formatters including:
-        <ul>
-            <li><strong>money</strong> - formats a number into a currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
-            <li><strong>email</strong> - renders data as an anchor with a mailto: link to the given value</li>
-            <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
-            <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
-            <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
-            <li><strong>color</strong> - sets the background color of the cell to the value. Can be any valid css colour eg. #ff0000, #f00, rgb(255,0,0), red, rgba(255,0,0,0), hsl(0, 100%, 50%)</li>
-            <li><strong>star</strong> - displays a graphical 0-5 star rating based on integer values from 0-5</li>
-            <li><strong>progress</strong> - displays a progress bar that fills the cell from left to right, using values 0-100 as a percentage of width</li>
-            <li><strong>buttonTick</strong> - displays a tick icon on eac row (for use as a button)</li>
-            <li><strong>buttonCross</strong> - displays a cross icon on eac row (for use as a button)</li>
-            <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
-        </ul>
-    </p>
-
-    <p>You can define a custom formatter function in the formatter option if you need more bespoke formatter functionality</p>
-
-    <p>You can create icon/button columns, by not specifying a field parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
-
-    <p>You can also set a row formatter using the <span class='param'>rowFormatter</span> option, this allows you to format the styling of the row as a whole</p>
-
-    <div class="example-table" id="example-table-formatter">
-    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-</div>
-
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
-
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">//Generate print icon
-var printIcon = function(cell, formatterParams){ //plain text value
-    return "&lt;i class='fa fa-print'&gt;&lt;/i&gt;";
-};
-
-//Build Tabulator
-$("#example-table").tabulator({
-    height:"311px",
-    fitColumns:true,
-    rowFormatter:function(row){
-        if(row.getData().col == "blue"){
-            row.getElement().css({"background-color":"#A6A6DF"});
-        }
-    },
-    columns:[
-    {formatter:"rownum", align:"center", width:40},
-    {formatter:printIcon, width:40, align:"center", cellClick:function(e, cell){alert("Printing row data for: " + cell.getRow().getData().name)}},
-    {title:"Name", field:"name", width:200, formatter:function(cell, formatterParams){
-       var value = cell.getValue();
-        if(value.indexOf("o") > 0){
-            return "&lt;span style='color:red; font-weight:bold;'&gt;" + value + "&lt;/span&gt;";
-        }else{
-            return value;
-        }
-    }},
-    {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-    {title:"Gender", field:"gender"},
-    {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
-    {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    {title:"Favourite Color", field:"col" ,formatter:"color", width:100},
-    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-    {formatter:"buttonCross", width:30, align:"center"}
-    ],
-});</pre>
-</fieldset>
-</article>
-<a class="anchor" id="row-formatter"></a>
-<article>
-    <h1>Row Formatter <a class="doc-link" href="../../docs?#row-formatter"><i class="fa fa-external-link"></i> Documentation</a></h1>
-    <p>If you are looking for a non grid based format to your table then you can use a row formatter to create custom row layouts.</p>
-    <p>You can use the <span class='param'>rowFormatter</span> callback to replace the contents of the row with any layout you like. In this example we will create a simple table in each row containg and image and some vertically centered text properties.</p>
-    <p>When replacing the entier contents of the row it is important to include only one column in your column definition array to ensure the table renders correctly. It is also advisable to enable <span class='param'>fitColumns</span> and disabled <span class='param'>resizableColumns</span> options.</p>
-    <div class="example-table" id="example-table-rowformat">
-    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-</div>
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>CSS</h3>
-        <pre class="prettyprint lang-css">/*Style row formatter contents*/
-#example-table .tabulator-row table{
-    vertical-align: middle;
-    border-collapse:collapse;
-}
-
-#example-table .tabulator-row table img{
-    border:2px solid #ccc;
-}
-
-#example-table .tabulator-row table tr td{
-     border:none;
-}
-
-#example-table .tabulator-row table tr td:first-of-type{
-    width:60px;
-}
-
-#example-table .tabulator-row table tr td div{
-    padding:5px;
-}</pre>
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">//Define some test data
-var cheeseData = [
-    {id:1, type:"Brie", rind:"mould", age:"4 weeks", color:"white", image:"brie.jpg"},
-    {id:2, type:"Cheddar", rind:"none", age:"1 year", color:"yellow", image:"cheddar.jpg"},
-    {id:3, type:"Gouda", rind:"wax", age:"6 months", color:"cream", image:"gouda.jpg"},
-    {id:4, type:"Swiss", rind:"none", age:"9 months", color:"yellow", image:"swiss.jpg"},
-]
-
-//define Tabulator
-$("#example-table").tabulator({
-    height:"311px",
-    fitColumns:true,
-    resizableColumns:false,
-    columns:[
-        {title:"Cheese", field:"type", sorter:"string"},
-    ],
-    rowFormatter:function(row, data){
-        var element = row.getElement(),
-        data = row.getData(),
-        width = element.outerWidth(),
-        table;
-
-        //clear current row data
-        element.empty();
-
-        //define a table layout structure and set width of row
-        table = $("&lt;table style='width:" + (width - 18) + "px;'&gt;&lt;tr&gt;&lt;/tr&gt;&lt;/table&gt;");
-
-        //add image on left of row
-        $("tr", table).append("&lt;td&gt;&lt;img src='../row_formatter/" + data.image + "'&gt;&lt;/td&gt;");
-
-        //add row data on right hand side
-        $("tr", table).append("&lt;td&gt;&lt;div&gt;&lt;strong&gt;Type:&lt;/strong&gt; " + data.type + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Age:&lt;/strong&gt; " + data.age + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Rind:&lt;/strong&gt; " + data.rind + "&lt;/div&gt;&lt;div&gt;&lt;strong&gt;Colour:&lt;/strong&gt; " + data.color + "&lt;/div&gt;&lt;/td&gt;");
-
-        //append newly formatted contents to the row
-        element.append(table);
-    },
-})
-
-//Load Data
-$("#example-table").tabulator("setData", cheeseData);</pre>
-    </fieldset>
-</article>
-<a class="anchor" id="sparklines"></a>
-<article>
-    <h1>Sparklines</h1>
-    <p>You can use external JavaScript libraries in any of your formatters. in this example we will use the popular sparklines.js library.</p>
-    <p>We will be passing an array of values into a field and then using a custom formatter to turn this array into a sparkline.</p>
-    <p>The Sparklines library can be downloaded from <a href="http://omnipotent.net/jquery.sparkline/#s-about" target="_blank">Git Hub.</a></p>
-
-    <div class="example-table" id="example-table-sparkline">
-        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-    </div>
-
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;!-- Include sparkline library --&gt;
-&lt;script src="sparkline.js"&gt;&lt;/script&gt;
-
-&lt;!-- Element to hold Tabulator --&gt;
-&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
-
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">//Formatter to generate line chart
-var lineFormatter = function(cell, formatterParams){
-    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"line", disableTooltips:true});
-    }, 10);
-};
-
-//generate bar chart
-var barFormatter = function(cell, formatterParams){
-    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"bar", barWidth:14, disableTooltips:true});
-    }, 10);
-};
-
-//generate discrete chart
-var tristateFormatter = function(cell, formatterParams){
-    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"tristate", barWidth:14, disableTooltips:true});
-    }, 10);
-};
-
-
-//generate box plot
-var boxFormatter = function(cell, formatterParams){
-    setTimeout(function(){ //give cell enough time to be added to the DOM before calling sparkline formatter
-        cell.getElement().sparkline(cell.getValue(), {width:"100%", type:"box", disableTooltips:true});
-    }, 10);
-};
-
-//Sample Data with array values for graph fields
-var sparkData = [
-    {id:1, name:"Oli Bob", line:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], bar:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11], tristate:[1, 20, -5, -3, 10, 13, 0, 15, 9, 11], box:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11]},
-    {id:2, name:"Mary May", line:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], bar:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13], tristate:[-10, 12, 14, 16, 13, 9, 7, 0, 10, 13], box:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
-    {id:3, name:"Christine Lobowski", line:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], bar:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3], tristate:[1, 2, 5, 0, 1, 16, 4, 2, 1, 3], box:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
-    {id:4, name:"Brendon Philips", line:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], bar:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], tristate:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2], box:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
-    {id:5, name:"Margret Marmajuke", line:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], bar:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3], tristate:[1, -3, 1, 3, -3, 1, -1, 3, 1, 3], box:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
-    {id:6, name:"Frank Harbours", line:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], bar:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12], tristate:[20, 17, 15, 11, 16, -9, 12, 14, 20, 12], box:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
-    {id:7, name:"Jamie Newhart", line:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], bar:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6], tristate:[11, 7, 6, -12, 1-13, 11, 10, 9, 6], box:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
-    {id:8, name:"Gemma Jane", line:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], bar:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11], tristate:[4, 17, 11, -12, 0, 5, 12, -14, 18, 11], box:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
-    {id:9, name:"Emily Sykes", line:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], bar:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2], tristate:[11, 15, 19, -20, 17, 16, 16, -5, 3, 2], box:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
-    {id:10, name:"James Newman", line:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], bar:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8], tristate:[1, 2, 0, -4, -5, -4, 2, 5, 9, 8], box:[1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
-];
-
-
-//Table Constructor
-$("#example-table").tabulator({
-    height:"311px",
-    columns:[
-        {title:"Name", field:"name", width:190},
-        {title:"Line Chart", field:"line", width:160, formatter:lineFormatter},
-        {title:"Bar Chart", field:"bar", width:160, formatter:barFormatter},
-        {title:"Tristate Chart", field:"tristate", width:160, formatter:tristateFormatter},
-        {title:"Box Plot", field:"box", width:160, formatter:boxFormatter},
-    ],
-});</pre>
-    </fieldset>
-</article>
-<a class="anchor" id="grouping"></a>
-<article>
-    <h1>Grouping Data <a class="doc-link" href="../../docs?#grouping"><i class="fa fa-external-link"></i> Documentation</a></h1>
-    <p>You can group rows together using the <span class='param'>groupBy</span> option. To group by a field, set this option to the name of the field.</p>
-    <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
-
-    <div class="example-table" id="example-table-grouping">
-        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-    </div>
-
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
-
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    height:"311px",
-    fitColumns:true,
-    groupBy:"gender",
-    columns:[
-        {title:"Name", field:"name", width:200},
-        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
-        {title:"Gender", field:"gender"},
-        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-        {title:"Favourite Color", field:"col"},
-        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
-});</pre>
-    </fieldset>
-</article>
 <a class="anchor" id="filter"></a>
 <article>
     <h1>Filter Data <a class="doc-link" href="../../docs?#filtering"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -1104,6 +1081,136 @@ $("#example-table").tabulator({
 });</pre>
     </fieldset>
 </article>
+<a class="anchor" id="sorters"></a>
+<article>
+    <h1>Sorters <a class="doc-link" href="../../docs?#sorting"><i class="fa fa-external-link"></i> Documentation</a></h1>
+
+    <p>By default Tabulator will attempt to guess which sorter should be applied to a column based on the data contained in the first row. It can determine sorters for strings, numbers, alphanumeric squences and booleans, anything else will be treated as a string.</p>
+
+        <ul>
+            <li><strong>string</strong> - sorts column as strings of characters</li>
+            <li><strong>number</strong> - sorts column as numbers (integer or float, will also handle numbers using "," seperators)</li>
+            <li><strong>alphanum</strong> - sorts column as alpha numeric code</li>
+            <li><strong>boolean</strong> - sorts column as booleans</li>
+            <li><strong>date</strong> - sorts column as dates</li>
+            <li><strong>time</strong> - sorts column as times</li>
+        </ul>
+
+    </p>
+
+    <p>To specify a sorter to be used on a column use the <span class='param'>param</span> property in the columns definition object</p>
+
+    <p>You can define a custom sorter functions in the sorter option if you need bespoke sorting functionality.</p>
+
+    <p>You can programmatically trigger a sort using the <span class='param'>sort</span> function.</p>
+
+    <p>
+
+    <div class="feature-box-legend">Programmatic Sort Parameters</div>
+
+    <div class="feature-box">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 content " role="main">
+
+          <span>
+           <label>Field: </label>
+           <select id="sort-field">
+              <option value="name" selected>Name</option>
+              <option value="progress">Progress</option>
+              <option value="gender">Gender</option>
+              <option value="rating">Rating</option>
+              <option value="col">Favourite Colour</option>
+              <option value="dob">Date Of Birth</option>
+              <option value="car">Driver</option>
+          </select>
+          </span>
+
+        <span>
+          <label>Direction:</label>
+          <select id="sort-direction">
+              <option value="asc" selected>asc</option>
+              <option value="desc">desc</option>
+          </select>
+        </span>
+
+
+          <button id="sort-trigger">Trigger Sort</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+</p>
+
+<div class="example-table" id="example-table-sorting">
+    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+</div>
+
+<button class="view-source">View Source</button>
+<fieldset class="source">
+    <legend>Source Code</legend>
+    <h3>HTML</h3>
+    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+    <h3>JavaScript</h3>
+    <pre class="prettyprint lang-js">//Build Tabulator
+$("#example-table").tabulator({
+    height:"311px",
+    fitColumns:true,
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", align:"right"},
+        {title:"Gender", field:"gender", sorter:"string"},
+        {title:"Rating", field:"rating",  align:"center", width:100},
+        {title:"Favourite Color", field:"col", sortable:false, sorter:function(a,b){
+            return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+        }},
+        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+        {title:"Driver", field:"car", align:"center", sorter:"boolean"},
+    ],
+});
+
+//Trigger sort when "Trigger Sort" button is clicked
+$("#sort-trigger").click(function(){
+    $("#example-table").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+});</pre>
+</fieldset>
+</article>
+<a class="anchor" id="grouping"></a>
+<article>
+    <h1>Grouping Data <a class="doc-link" href="../../docs?#grouping"><i class="fa fa-external-link"></i> Documentation</a></h1>
+    <p>You can group rows together using the <span class='param'>groupBy</span> option. To group by a field, set this option to the name of the field.</p>
+    <p>To group by more complex operations you should pass a function that returns a string that represents the group.</p>
+
+    <div class="example-table" id="example-table-grouping">
+        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+    </div>
+
+    <button class="view-source">View Source</button>
+    <fieldset class="source">
+        <legend>Source Code</legend>
+        <h3>HTML</h3>
+        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+        <h3>JavaScript</h3>
+        <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    height:"311px",
+    fitColumns:true,
+    groupBy:"gender",
+    columns:[
+        {title:"Name", field:"name", width:200},
+        {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
+    ],
+});</pre>
+    </fieldset>
+</article>
+
 <a class="anchor" id="pagination"></a>
 <article>
     <h1>Pagination <a class="doc-link" href="../../docs?#pagination"><i class="fa fa-external-link"></i> Documentation</a></h1>
@@ -1148,109 +1255,7 @@ $("#example-table").tabulator({
 $("#example-table").tabulator("setPage", 1);</pre>
     </fieldset>
 </article>
-<a class="anchor" id="persistance"></a>
-<article>
-    <h1>Persistent Column Layout <a class="doc-link" href="../../docs?#persistant-columns"><i class="fa fa-external-link"></i> Documentation</a></h1>
-    <p>
-        Tabulator can store the layout of columns in a cookie so that each time a user comes back to the page the table is laid out just as they left it.
-    </p>
-    <p>
-        Try resizing (drag the right edge of a column header) or rearranging (drag the middle of a column header) the columns of this table, then refresh the page. your new layout will persist.
-    </P>
-    <div class="example-table" id="example-table-colum-layout">
-        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-    </div>
 
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
-
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    height:"311px",
-    movableCols:true,
-    persistentLayout: true,
-    persistentLayoutID:"examplePerststance",
-    columns:[
-        {title:"Name", field:"name", width:200},
-        {title:"Progress", field:"progress", width:100, sorter:"number"},
-        {title:"Gender", field:"gender"},
-        {title:"Rating", field:"rating", width:80},
-        {title:"Favourite Color", field:"col"},
-        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-        {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
-    ],
-});</pre>
-    </fieldset>
-</article>
-<a class="anchor" id="ajax"></a>
-<article>
-    <h1>AJAX Data Loading <a class="doc-link" href="../../docs?#ajax"><i class="fa fa-external-link"></i> Documentation</a></h1>
-    <p>Data can be loaded into the table from a remote URL using a JSON formatted string.</p>
-
-    <p>If you always request the same URL for your data then you can set it in the <span class='param'>ajaxURL</span> option when you create your Tabulator</p>
-
-    <p>Click the button below to load sample data via AJAX (you will need PHP enabled on your webserver for this to work).</p>
-
-    <div class="feature-box-legend">AJAX Controls</div>
-
-    <div class="feature-box">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-12 content " role="main">
-          <button id="ajax-trigger">Load Data via AJAX</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="example-table" id="example-table-ajax">
-        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-    </div>
-
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
-
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">//Build Tabulator
-$("#example-table").tabulator({
-    height:"311px",
-    fitColumns:true,
-    placeholder:"No Data Set",
-    columns:[
-        {title:"Name", field:"name", sorter:"string", width:200},
-        {title:"Progress", field:"progress", sorter:"number", align:"right", formatter:"progress"},
-        {title:"Gender", field:"gender", sorter:"string"},
-        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100},
-        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
-        {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
-        {title:"Driver", field:"car", align:"center", formatter:"tickCross", sorter:"boolean"},
-    ],
-});
-
-//trigger AJAX load on "Load Data via AJAX" button click
-$("#ajax-trigger").click(function(){
-    $("#example-table").tabulator("setData", "../data.php");
-});</pre>
-    <h3>Server Side PHP</h3>
-    <pre class="prettyprint lang-php">//build data array
-$data = [
-    [id=>1, name=>"Billy Bob", age=>"12", gender=>"male", height=>1, col=>"red", dob=>"", cheese=>1],
-    [id=>2, name=>"Mary May", age=>"1", gender=>"female", height=>2, col=>"blue", dob=>"14/05/1982", cheese=>true],
-    [id=>3, name=>"Christine Lobowski", age=>"42", height=>0, col=>"green", dob=>"22/05/1982", cheese=>"true"],
-    [id=>4, name=>"Brendon Philips", age=>"125", gender=>"male", height=>1, col=>"orange", dob=>"01/08/1980"],
-    [id=>5, name=>"Margret Marmajuke", age=>"16", gender=>"female", height=>5, col=>"yellow", dob=>"31/01/1999"],
-];
-
-//return JSON formatted data
-echo(json_encode($data));</pre>
-    </fieldset>
-</article>
 
 <a class="anchor" id="selectable"></a>
 <article>
@@ -1847,7 +1852,7 @@ $("#lang-default").click(function(){
     <nav class="docs-sidebar hidden-print hidden-xs hidden-sm affix">
         <div class="docs-sidenav">
             <h2>
-                Menu
+                Layout
                     <div id="version-select" data-version="3.0">
                     <div class="btn-group">
                       <button type="button" class="btn btn-sm  btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -1860,6 +1865,7 @@ $("#lang-default").click(function(){
                     </div>
                 </div>
             </h2>
+
             <ul class="nav">
                 <li class="active"><a href="#simple">Simple Table</a></li>
                 <li><a href="#fittodata">Fit To Data</a></li>
@@ -1867,22 +1873,34 @@ $("#lang-default").click(function(){
                 <li><a href="#responsive-layout">Responsive Layout</a></li>
                 <li><a href="#column-groups">Column Groups</a></li>
                 <li><a href="#frozen-col">Frozen Columns</a></li>
-                <li><a href="#table-load">Create From Table Element</a></li>
-                <li><a href="#editable">Editable Data</a></li>
-                <li><a href="#sorters">Sorters</a></li>
                 <li><a href="#formatters">Formatters</a></li>
                 <li><a href="#row-formatter">Row Formatter</a></li>
                 <li><a href="#sparklines">Sparklines</a></li>
-                <li><a href="#grouping">Grouping Data</a></li>
-                <li><a href="#filter">Filter Data</a></li>
-                <li><a href="#filter-header">Filter Data In Column Header</a></li>
-                <li><a href="#pagination">Pagination</a></li>
                 <li><a href="#persistance">Persistent Column Layout</a></li>
-                <li><a href="#ajax">AJAX Data Loading</a></li>
+            </ul>
+
+            <h2>Data</h2>
+            <ul class="nav">
+               <li><a href="#ajax">AJAX Data Loading</a></li>
+               <li><a href="#table-load">Create From Table Element</a></li>
+               <li><a href="#editable">Editable Data</a></li>
+               <li><a href="#filter">Filter Data</a></li>
+               <li><a href="#filter-header">Filter Data In Column Header</a></li>
+               <li><a href="#sorters">Sorters</a></li>
+               <li><a href="#grouping">Grouping Data</a></li>
+               <li><a href="#pagination">Pagination</a></li>
+            </ul>
+
+            <h2>Interaction</h2>
+            <ul class="nav">
                 <li><a href="#selectable">Selectable Rows</a></li>
                 <li><a href="#adddel">Add / Delete Rows</a></li>
                 <li><a href="#movable">Movable Rows</a></li>
                 <li><a href="#download">Download Table Data</a></li>
+            </ul>
+
+            <h2>Advanced</h2>
+            <ul class="nav">
                 <li><a href="#localization">Localization</a></li>
                 <li><a href="#callbacks">Callbacks</a></li>
                 <li><a href="#theming">Theming</a></li>
