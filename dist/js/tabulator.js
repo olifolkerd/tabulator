@@ -1508,7 +1508,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
-    var maxWidth = 0;
+    var maxWidth = this.element.outerWidth() + 1;
 
     if (!self.width) {
 

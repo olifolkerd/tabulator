@@ -96,6 +96,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 				//hold title of column header
 				.tabulator-col-title{
+					box-sizing:border-box;
 					width: 100%;
 
 					white-space: nowrap;
@@ -187,7 +188,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			//styling child elements for sortable columns
 			&.tabulator-sortable{
 				.tabulator-col-title{
-					width:calc(100% - 25px);
+					padding-right:25px;
 				}
 
 				&:hover{

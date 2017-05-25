@@ -617,7 +617,7 @@ Column.prototype.generateCell = function(row){
 Column.prototype.fitToData = function(){
 	var self = this;
 
-	var maxWidth = 0;
+	var maxWidth = this.element.outerWidth() + 1;
 
 	if(!self.width){
 		self.cells.forEach(function(cell){

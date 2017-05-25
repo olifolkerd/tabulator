@@ -280,6 +280,7 @@
         position: relative;
         padding: 0.92857em 0.78571em; }
         .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+          box-sizing: border-box;
           width: 100%;
           white-space: nowrap;
           overflow: hidden;
@@ -326,7 +327,7 @@
         .tabulator .tabulator-header .tabulator-col .tabulator-header-filter svg {
           margin-top: 3px; }
       .tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
-        width: calc(100% - 25px); }
+        padding-right: 25px; }
       .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {
         cursor: pointer;
         background-color: #dae1e7; }
