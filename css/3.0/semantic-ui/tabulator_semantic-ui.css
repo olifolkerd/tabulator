@@ -364,6 +364,8 @@
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
+    #example-table-theme-semantic-ui .tabulator .tabulator-tableHolder:focus {
+      outline: none; }
     #example-table-theme-semantic-ui .tabulator-tableHolder .tabulator-placeholder {
       position: absolute;
       display: -ms-flexbox;
@@ -619,7 +621,7 @@
         border-color: rgba(255, 255, 255, 0.1) !important; }
     .tabulator.inverted .tabulator-footer {
       background: #FFFFFF; }
-  .tabulator.striped .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+  .tabulator.striped .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-even {
     background-color: rgba(0, 0, 0, 0.05) !important; }
   .tabulator.celled {
     border: 1px solid rgba(34, 36, 38, 0.15); }

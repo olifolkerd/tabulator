@@ -125,6 +125,8 @@
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
+    #example-table-theme-midnight .tabulator-tableHolder:focus {
+      outline: none; }
     #example-table-theme-midnight .tabulator-tableHolder .tabulator-placeholder {
       position: absolute;
       display: -ms-flexbox;
@@ -153,7 +155,7 @@
         box-sizing: border-box;
         min-height: 22px;
         background-color: #666; }
-        #example-table-theme-midnight .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+        #example-table-theme-midnight .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-even {
           background-color: #444; }
         #example-table-theme-midnight .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover {
           background-color: #999;

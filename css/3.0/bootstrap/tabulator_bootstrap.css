@@ -120,6 +120,8 @@
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
+    #example-table-theme-bootstrap .tabulator-tableHolder:focus {
+      outline: none; }
     #example-table-theme-bootstrap .tabulator-tableHolder .tabulator-placeholder {
       position: absolute;
       display: -ms-flexbox;
@@ -312,7 +314,7 @@
       #example-table-theme-bootstrap .tablulator-loader .tabulator-loader-msg.tabulator-error {
         border: 4px solid #D00;
         color: #590000; }
-  .tabulator.table-striped .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+  .tabulator.table-striped .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-even {
     background-color: #f9f9f9; }
   .tabulator.table-bordered {
     border: 1px solid #ddd; }
