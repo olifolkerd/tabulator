@@ -5775,17 +5775,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           max = $("div", element).data("max"),
           min = $("div", element).data("min"),
           percent = (max - min) / 100,
-          value = cell.getValue(),
-          bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>"),
-          handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
+          value = cell.getValue() || 0,
+          handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>"),
+          bar;
 
       var newVal = function newVal() {
 
-        var newval = percent * Math.round(bar.outerWidth() / (element.width() / 100)) + min;
+        var calcVal = percent * Math.round(bar.outerWidth() / (element.width() / 100)) + min;
 
-        success(newval);
+        success(calcVal);
 
-        element.attr("aria-valuenow", newval).attr("aria-label", value);
+        element.attr("aria-valuenow", calcVal).attr("aria-label", value);
       };
 
       //make sure value is in range
@@ -5800,7 +5800,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       value = 100 - Math.round((value - min) / percent);
 
-      element.css({
+      bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>"), element.css({
 
         padding: "0 4px"
 
@@ -6816,7 +6816,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //progress bar
 
 
-      var value = this.sanitizeHTML(cell.getValue()),
+      var value = this.sanitizeHTML(cell.getValue()) || 0,
           element = cell.getElement(),
           max = formatterParams && formatterParams.max ? formatterParams.max : 100,
           min = formatterParams && formatterParams.min ? formatterParams.min : 0,

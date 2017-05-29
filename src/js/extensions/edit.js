@@ -345,14 +345,14 @@ Edit.prototype.editors = {
 		max = $("div", element).data("max"),
 		min = $("div", element).data("min"),
 		percent = (max - min) / 100,
-		value = cell.getValue(),
-		bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>"),
-		handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>");
+		value = cell.getValue() || 0,
+		handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>"),
+		bar;
 
 		var newVal = function(){
-			var newval = (percent * Math.round(bar.outerWidth() / (element.width()/100))) + min;
-			success(newval);
-			element.attr("aria-valuenow", newval).attr("aria-label", value);
+			var calcVal = (percent * Math.round(bar.outerWidth() / (element.width()/100))) + min;
+			success(calcVal);
+			element.attr("aria-valuenow", calcVal).attr("aria-label", value);
 		}
 
 		//make sure value is in range
@@ -361,6 +361,8 @@ Edit.prototype.editors = {
 
 		//workout percentage
 		value = 100 - Math.round((value - min) / percent);
+
+		bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>"),
 
 		element.css({
 			padding:"0 4px",

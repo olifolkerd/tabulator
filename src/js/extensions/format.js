@@ -192,7 +192,7 @@ Format.prototype.formatters = {
 
 	//progress bar
 	progress:function(cell, formatterParams){ //progress bar
-		var value = this.sanitizeHTML(cell.getValue()),
+		var value = this.sanitizeHTML(cell.getValue()) || 0,
 		element = cell.getElement(),
 		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
 		min = formatterParams && formatterParams.min ? formatterParams.min : 0,
