@@ -1063,7 +1063,9 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>By default Tabulator will use an editor that matches the current formatter for that cell. if you wish to specify a specific editor, you can set them per column using the <span class='param'>editor</span> option in the column definition. Passing a value of <span class='param'>true</span> to this option will result in Tabulator applying the editor that best matches the columns formatter, if present.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Rating", field:"rating", editor:"star"}</pre>
+                    <p>You can pass an optional additional parameter with the editor, <span class='param'>editorParams</span> that should contain an object with additional information for configuring the editor.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Rating", field:"rating", editor:"star", editorParams:{start:4}}</pre>
 
                     <p>Tabulator comes with a number of preconfigured editors including:</p>
                     <ul>
@@ -1079,11 +1081,12 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>If you need a different type of editor, you can pass a custom editor function to the <span class='param'>editor</span> option. This function should take four parameters, a <a href='#component-cell'>CellComponent</a> for the cell being edited, a function to call when the cell has ben rendered, which can be used to set focus or tidy up the display after the element has become visible, a function to call to pass back the new value, when the user has successfully entered new data in the cell, and a function to call if the user aborts the edit. </p>
 
-                    <pre class="prettyprint lang-js">var selectEditor = function(cell, onRendered, success, cancel){
+                    <pre class="prettyprint lang-js">var selectEditor = function(cell, onRendered, success, cancel, editorParams){
     //cell - the cell component for the editable cell
     //onRendered - function to call when the editor has been rendered
     //success - function to call to pass the succesfully updated value to Tabulator
     //cancel - function to call to abort the edit and return to a normal cell
+    //editorParams - editorParams object set in column defintion
 
     //create and style editor
     var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
