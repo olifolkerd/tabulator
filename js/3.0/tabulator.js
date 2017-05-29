@@ -2173,13 +2173,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   RowManager.prototype._simpleRender = function () {
 
-    var element = this.tableElement;
+    var self = this,
+        element = this.tableElement;
 
-    this._clearVirtualDom();
+    self._clearVirtualDom();
 
-    if (this.displayRowsCount) {
+    if (self.displayRowsCount) {
 
-      this.displayRows.forEach(function (row) {
+      self.displayRows.forEach(function (row, index) {
+
+        self.styleRow(row, index);
 
         element.append(row.getElement());
 
@@ -2187,7 +2190,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
     } else {
 
-      this.renderEmptyScroll();
+      self.renderEmptyScroll();
     }
   };
 
