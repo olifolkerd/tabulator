@@ -105,8 +105,6 @@ Ajax.prototype.sendRequest = function(callback){
 			self.config.data = self.params;
 		}
 
-		console.log("p", self.params)
-
 		self.table.options.ajaxRequesting(self.url, self.params)
 
 		self.showLoader();
