@@ -1,16 +1,16 @@
-.tabulator:not(.example-themes)  {
+.tabulator:not(.example-themes) {
   position: relative;
   border-bottom: 5px solid #222;
   background-color: #fff;
   font-size: 14px;
   text-align: left;
   overflow: hidden; }
-  .tabulator:not(.example-themes) .tabulator-block-select {
+  .tabulator:not(.example-themes).tabulator-block-select {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none; }
-  .tabulator:not(.example-themes)  .tabulator-header {
+  .tabulator:not(.example-themes) .tabulator-header {
     position: relative;
     box-sizing: border-box;
     width: 100%;
@@ -24,30 +24,30 @@
     -khtml-user-select: none;
     -webkit-user-select: none;
     -o-user-select: none; }
-    .tabulator:not(.example-themes)  .tabulator-header .tabulator-col {
+    .tabulator:not(.example-themes) .tabulator-header .tabulator-col {
       display: inline-block; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-moving {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-moving {
         position: absolute;
         border: 1px solid #59B038;
         background: #090909;
         pointer-events: none; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-col-content {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-col-content {
         position: relative;
         padding: 8px; }
-        .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+        .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
           box-sizing: border-box;
           width: 100%;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           vertical-align: bottom; }
-          .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-title-editor {
+          .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-title-editor {
             box-sizing: border-box;
             width: 100%;
             border: 1px solid #999;
             padding: 1px;
             background: #fff; }
-        .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
+        .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
           display: inline-block;
           position: absolute;
           top: 14px;
@@ -57,73 +57,73 @@
           border-left: 6px solid transparent;
           border-right: 6px solid transparent;
           border-bottom: 6px solid #bbb; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
         position: relative;
         display: -ms-flexbox;
         display: flex;
         border-top: 1px solid #aaa;
         overflow: hidden; }
-        .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols .tabulator-col:last-child {
+        .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols .tabulator-col:last-child {
           margin-right: -1px; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col:first-child .tabulator-col-resize-handle.prev {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col:first-child .tabulator-col-resize-handle.prev {
         display: none; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.ui-sortable-helper {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.ui-sortable-helper {
         position: absolute;
         background-color: #222 !important;
         border: 1px solid #aaa; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-header-filter {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-header-filter {
         position: relative;
         box-sizing: border-box;
         margin-top: 2px;
         width: 100%;
         text-align: center; }
-        .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-header-filter textarea {
+        .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-header-filter textarea {
           height: auto !important; }
-        .tabulator:not(.example-themes)  .tabulator-header .tabulator-col .tabulator-header-filter svg {
+        .tabulator:not(.example-themes) .tabulator-header .tabulator-col .tabulator-header-filter svg {
           margin-top: 3px; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
         padding-right: 25px; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-sortable:hover {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-sortable:hover {
         cursor: pointer;
         background-color: #090909; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="none"] .tabulator-col-content .tabulator-arrow {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="none"] .tabulator-col-content .tabulator-arrow {
         border-top: none;
         border-bottom: 6px solid #bbb; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-arrow {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-arrow {
         border-top: none;
         border-bottom: 6px solid #59B038; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow {
         border-top: 6px solid #59B038;
         border-bottom: none; }
-    .tabulator:not(.example-themes)  .tabulator-header .tabulator-col-row-handle {
+    .tabulator:not(.example-themes) .tabulator-header .tabulator-col-row-handle {
       width: 30px;
       max-width: 30px;
       display: inline-block; }
-    .tabulator:not(.example-themes)  .tabulator-header .tabulator-col, .tabulator:not(.example-themes)  .tabulator-header .tabulator-col-row-handle {
+    .tabulator:not(.example-themes) .tabulator-header .tabulator-col, .tabulator:not(.example-themes) .tabulator-header .tabulator-col-row-handle {
       position: relative;
       box-sizing: border-box;
       border-right: 1px solid #aaa;
       text-align: left;
       vertical-align: bottom;
       overflow: hidden; }
-    .tabulator:not(.example-themes)  .tabulator-header .tabulator-frozen {
+    .tabulator:not(.example-themes) .tabulator-header .tabulator-frozen {
       display: inline-block;
       position: absolute;
       background-color: inherit;
       z-index: 10; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-frozen.tabulator-frozen-left {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-frozen.tabulator-frozen-left {
         border-right: 2px solid #aaa; }
-      .tabulator:not(.example-themes)  .tabulator-header .tabulator-frozen.tabulator-frozen-right {
+      .tabulator:not(.example-themes) .tabulator-header .tabulator-frozen.tabulator-frozen-right {
         border-left: 2px solid #aaa; }
-  .tabulator:not(.example-themes)  .tabulator-tableHolder {
+  .tabulator:not(.example-themes) .tabulator-tableHolder {
     position: relative;
     width: 100%;
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
-    .tabulator:not(.example-themes)  .tabulator-tableHolder:focus {
+    .tabulator:not(.example-themes) .tabulator-tableHolder:focus {
       outline: none; }
-    .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-placeholder {
+    .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-placeholder {
       position: absolute;
       display: -ms-flexbox;
       display: flex;
@@ -133,44 +133,44 @@
       left: 0;
       height: 100%;
       width: 100%; }
-      .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-placeholder span {
+      .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-placeholder span {
         display: inline-block;
         margin: 0 auto;
         color: #59B038;
         font-weight: bold;
         font-size: 20px; }
-    .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table {
+    .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table {
       position: relative;
       display: inline-block;
       background-color: #fff;
       white-space: nowrap;
       overflow: visible;
       color: #333; }
-      .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row {
+      .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row {
         position: relative;
         box-sizing: border-box;
         min-height: 22px;
         background-color: #fff; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row:nth-child(even) {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-even {
           background-color: #EFEFEF; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selectable:hover {
           background-color: #bbb;
           cursor: pointer; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected {
           background-color: #9ABCEA; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected:hover {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-selected:hover {
           background-color: #769BCC;
           cursor: pointer; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-moving {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-row-moving {
           border: 1px solid #000;
           background: #fff; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-moving {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-moving {
           position: absolute;
           border-top: 1px solid #aaa;
           border-bottom: 1px solid #aaa;
           pointer-events: none;
           z-index: 15; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
           display: inline-block;
           box-sizing: border-box;
           width: 30px;
@@ -182,24 +182,24 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle:hover {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle:hover {
             cursor: move;
             background-color: rgba(0, 0, 0, 0.1); }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle div {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle div {
             width: 80%;
             height: 3px;
             margin: 2px 10% 0 10%;
             background: #666; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen {
           display: inline-block;
           position: absolute;
           background-color: inherit;
           z-index: 10; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-left {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-left {
             border-right: 2px solid #aaa; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-right {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen.tabulator-frozen-right {
             border-left: 2px solid #aaa; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell {
           display: inline-block;
           position: relative;
           box-sizing: border-box;
@@ -209,17 +209,17 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:last-of-type {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:last-of-type {
             border-right: none; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing {
             border: 1px solid #1D68CD;
             padding: 0; }
-            .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing input, .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing select {
+            .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing input, .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-editing select {
               border: 1px;
               background: transparent; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
             display: none; }
-        .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group {
+        .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group {
           box-sizing: border-box;
           border-bottom: 1px solid #999;
           border-right: 1px solid #aaa;
@@ -228,17 +228,17 @@
           background: #ccc;
           font-weight: bold;
           min-width: 100%; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group:hover {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group:hover {
             cursor: pointer;
             background-color: rgba(0, 0, 0, 0.1); }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-visible .tabulator-arrow {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-visible .tabulator-arrow {
             margin-left: 5px;
             margin-right: 10px;
             border-left: 6px solid transparent;
             border-right: 6px solid transparent;
             border-top: 6px solid #59B038;
             border-bottom: 0; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group .tabulator-arrow {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group .tabulator-arrow {
             display: inline-block;
             width: 0;
             height: 0;
@@ -249,10 +249,10 @@
             border-right: 0;
             border-left: 6px solid #59B038;
             vertical-align: middle; }
-          .tabulator:not(.example-themes)  .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group span {
+          .tabulator:not(.example-themes) .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group span {
             margin-left: 10px;
             color: #d00; }
-  .tabulator:not(.example-themes)  .tabulator-footer {
+  .tabulator:not(.example-themes) .tabulator-footer {
     padding: 5px 10px;
     padding-top: 8px;
     border-top: 3px solid #59B038;
@@ -267,9 +267,9 @@
     -khtml-user-select: none;
     -webkit-user-select: none;
     -o-user-select: none; }
-    .tabulator:not(.example-themes)  .tabulator-footer .tabulator-pages {
+    .tabulator:not(.example-themes) .tabulator-footer .tabulator-pages {
       margin: 0 7px; }
-    .tabulator:not(.example-themes)  .tabulator-footer .tabulator-page {
+    .tabulator:not(.example-themes) .tabulator-footer .tabulator-page {
       display: inline-block;
       margin: 0 2px;
       padding: 2px 5px;
@@ -280,26 +280,26 @@
       font-family: inherit;
       font-weight: inherit;
       font-size: inherit; }
-      .tabulator:not(.example-themes)  .tabulator-footer .tabulator-page.active {
+      .tabulator:not(.example-themes) .tabulator-footer .tabulator-page.active {
         color: #59B038; }
-      .tabulator:not(.example-themes)  .tabulator-footer .tabulator-page:disabled {
+      .tabulator:not(.example-themes) .tabulator-footer .tabulator-page:disabled {
         opacity: .5; }
-      .tabulator:not(.example-themes)  .tabulator-footer .tabulator-page:not(.disabled):hover {
+      .tabulator:not(.example-themes) .tabulator-footer .tabulator-page:not(.disabled):hover {
         cursor: pointer;
         background: rgba(0, 0, 0, 0.2);
         color: #fff; }
-  .tabulator:not(.example-themes)  .tabulator-col-resize-handle {
+  .tabulator:not(.example-themes) .tabulator-col-resize-handle {
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
     width: 5px; }
-    .tabulator:not(.example-themes)  .tabulator-col-resize-handle.prev {
+    .tabulator:not(.example-themes) .tabulator-col-resize-handle.prev {
       left: 0;
       right: auto; }
-    .tabulator:not(.example-themes)  .tabulator-col-resize-handle:hover {
+    .tabulator:not(.example-themes) .tabulator-col-resize-handle:hover {
       cursor: ew-resize; }
-  .tabulator:not(.example-themes)  .tablulator-loader {
+  .tabulator:not(.example-themes) .tablulator-loader {
     position: absolute;
     display: -ms-flexbox;
     display: flex;
@@ -312,7 +312,7 @@
     width: 100%;
     background: rgba(0, 0, 0, 0.4);
     text-align: center; }
-    .tabulator:not(.example-themes)  .tablulator-loader .tabulator-loader-msg {
+    .tabulator:not(.example-themes) .tablulator-loader .tabulator-loader-msg {
       display: inline-block;
       margin: 0 auto;
       padding: 10px 20px;
@@ -320,9 +320,9 @@
       background: #fff;
       font-weight: bold;
       font-size: 16px; }
-      .tabulator:not(.example-themes)  .tablulator-loader .tabulator-loader-msg.tabulator-loading {
+      .tabulator:not(.example-themes) .tablulator-loader .tabulator-loader-msg.tabulator-loading {
         border: 4px solid #333;
         color: #000; }
-      .tabulator:not(.example-themes)  .tablulator-loader .tabulator-loader-msg.tabulator-error {
+      .tabulator:not(.example-themes) .tablulator-loader .tabulator-loader-msg.tabulator-error {
         border: 4px solid #D00;
         color: #590000; }
