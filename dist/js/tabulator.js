@@ -1032,7 +1032,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (def.cssClass) {
 
-      self.element.appendClass(def.cssClass);
+      self.element.addClass(def.cssClass);
     }
 
     //set min width if present
@@ -3165,6 +3165,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (field) {
 
       element.attr("tabulator-field", field);
+    }
+
+    if (self.column.definition.cssClass) {
+
+      element.addClass(self.column.definition.cssClass);
     }
 
     //set event bindings

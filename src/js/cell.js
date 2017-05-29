@@ -80,6 +80,10 @@ Cell.prototype._configureCell = function(){
 		element.attr("tabulator-field", field);
 	}
 
+	if(self.column.definition.cssClass){
+		element.addClass(self.column.definition.cssClass);
+	}
+
 	//set event bindings
 	if (cellEvents.cellClick){
 		self.element.on("click", function(e){

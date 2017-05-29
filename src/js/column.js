@@ -267,7 +267,7 @@ Column.prototype._buildColumnHeader = function(){
 
 	//asign additional css classes to column header
 	if(def.cssClass){
-		self.element.appendClass(def.cssClass);
+		self.element.addClass(def.cssClass);
 	}
 
 	//set min width if present
