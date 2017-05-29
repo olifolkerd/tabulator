@@ -217,6 +217,7 @@
                         <li><strong>formatterParams</strong> - additional parameters you can pass to the formatter(see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>editable <span class="label label-primary">Updated</span></strong> - callback to check if the cell is editable (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
+                        <li><strong>editorParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the editor (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>mutator</strong> - function for manipulating column values as they are parsed into the table (see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>mutateType </strong> - defines whether mutation should occur on data parsing, cell editing or both (see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>mutatorParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the mutator(see <a href="#mutators">Mutators</a> for more details)</li>
@@ -241,6 +242,7 @@
                         <li><strong>editableTitle</strong> - allows the user to edit the header titles. (see <a href="#editable-column-title">Editable Column Titles</a> for more details)</li>
                         <li><strong>headerFilter</strong> - filtering of columns from elements in the header (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>HeaderFilterPlaceholder <span class="label label-danger">New</span></strong> - placeholder text for the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>headerFilterParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                     </ul>
 
 
@@ -980,11 +982,12 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <h2>Custom Sorters <span class="label label-primary">Updated</span></h2>
                     <p>for advanced sorting can define a custom sorter function in the <span class='param'>sorter</span> option:</p>
-                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:function(a, b, aData, bData, column, dir){
+                   <pre class="prettyprint lang-js">{title:"Name", field:"name", sorter:function(a, b, aData, bData, column, dir, sorterParams){
         //a, b - the two values being compared
         //aData, bData - the row objects for the values being compared (useful if you need to access additional fields in the row data for the sort)
         //column - the column component for the column being sorted
         //dir - the direction of the sort ("asc" or "desc")
+        //sorterParams - sorterParams object from column definition array
 
         return a - b; //you must return the difference between the two values
     },
