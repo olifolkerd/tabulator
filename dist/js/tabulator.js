@@ -6587,30 +6587,41 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Format.prototype.sanitizeHTML = function (value) {
 
-    var entityMap = {
+    if (value) {
 
-      '&': '&amp;',
+      var entityMap = {
 
-      '<': '&lt;',
+        '&': '&amp;',
 
-      '>': '&gt;',
+        '<': '&lt;',
 
-      '"': '&quot;',
+        '>': '&gt;',
 
-      "'": '&#39;',
+        '"': '&quot;',
 
-      '/': '&#x2F;',
+        "'": '&#39;',
 
-      '`': '&#x60;',
+        '/': '&#x2F;',
 
-      '=': '&#x3D;'
+        '`': '&#x60;',
 
-    };
+        '=': '&#x3D;'
 
-    return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+      };
 
-      return entityMap[s];
-    });
+      return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+
+        return entityMap[s];
+      });
+    } else {
+
+      return value;
+    }
+  };
+
+  Format.prototype.emptyToSpace = function (value) {
+
+    return value === null ? "&nbsp" : value;
   };
 
   //default data formatters
@@ -6623,7 +6634,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     plaintext: function plaintext(cell, formatterParams) {
 
-      return this.sanitizeHTML(cell.getValue());
+      return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
     },
 
     //html text value
@@ -6641,7 +6652,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       cell.getElement().css({ "white-space": "pre-wrap" });
 
-      return this.sanitizeHTML(cell.getValue());
+      return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
     },
 
     //currency formatting
@@ -6665,7 +6676,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (isNaN(floatVal)) {
 
-        return this.sanitizeHTML(cell.getValue());
+        return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
       }
 
       number = floatVal.toFixed(2);
@@ -6693,7 +6704,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var value = this.sanitizeHTML(cell.getValue());
 
-      return "<a href='mailto:" + value + "'>" + value + "</a>";
+      return "<a href='mailto:" + value + "'>" + this.emptyToSpace(value) + "</a>";
     },
 
     //clickable anchor tag
@@ -6703,7 +6714,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var value = this.sanitizeHTML(cell.getValue());
 
-      return "<a href='" + value + "'>" + value + "</a>";
+      return "<a href='" + value + "'>" + this.emptyToSpace(value) + "</a>";
     },
 
     //image element

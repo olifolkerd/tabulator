@@ -39,27 +39,36 @@ Format.prototype.formatValue = function(cell){
 
 
 Format.prototype.sanitizeHTML = function(value){
-	var entityMap = {
-	  '&': '&amp;',
-	  '<': '&lt;',
-	  '>': '&gt;',
-	  '"': '&quot;',
-	  "'": '&#39;',
-	  '/': '&#x2F;',
-	  '`': '&#x60;',
-	  '=': '&#x3D;'
-	};
+	if(value){
+		var entityMap = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#39;',
+			'/': '&#x2F;',
+			'`': '&#x60;',
+			'=': '&#x3D;'
+		};
 
-	return String(value).replace(/[&<>"'`=\/]/g, function (s) {
-	  return entityMap[s];
-	});
+		return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+			return entityMap[s];
+		});
+	}else{
+		return value;
+	}
 };
+
+Format.prototype.emptyToSpace = function(value){
+	return value === null ? "&nbsp" : value;
+};
+
 
 //default data formatters
 Format.prototype.formatters = {
 	//plain text value
 	plaintext:function(cell, formatterParams){
-		return this.sanitizeHTML(cell.getValue());
+		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	},
 
 	//html text value
@@ -70,7 +79,7 @@ Format.prototype.formatters = {
 	//multiline text area
 	textarea:function(cell, formatterParams){
 		cell.getElement().css({"white-space":"pre-wrap"});
-		return this.sanitizeHTML(cell.getValue());
+		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	},
 
 	//currency formatting
@@ -84,7 +93,7 @@ Format.prototype.formatters = {
 		var after = !!formatterParams.symbolAfter;
 
 		if(isNaN(floatVal)){
-			return this.sanitizeHTML(cell.getValue());
+			return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 		}
 
 		number = floatVal.toFixed(2);
@@ -105,13 +114,13 @@ Format.prototype.formatters = {
 	//clickable mailto link
 	email:function(cell, formatterParams){
 		var value = this.sanitizeHTML(cell.getValue());
-		return "<a href='mailto:" + value + "'>" + value + "</a>";
+		return "<a href='mailto:" + value + "'>" + this.emptyToSpace(value) + "</a>";
 	},
 
 	//clickable anchor tag
 	link:function(cell, formatterParams){
 		var value = this.sanitizeHTML(cell.getValue());
-		return "<a href='" + value + "'>" + value + "</a>";
+		return "<a href='" + value + "'>" + this.emptyToSpace(value) + "</a>";
 	},
 
 	//image element
