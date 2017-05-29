@@ -223,6 +223,7 @@
           border-right: 1px solid #aaa;
           border-top: 1px solid #999;
           padding: 5px;
+          padding-left: 10px;
           background: #ccc;
           font-weight: bold;
           min-width: 100%; }
@@ -230,7 +231,6 @@
             cursor: pointer;
             background-color: rgba(0, 0, 0, 0.1); }
           .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-visible .tabulator-arrow {
-            margin-left: 5px;
             margin-right: 10px;
             border-left: 6px solid transparent;
             border-right: 6px solid transparent;
@@ -240,8 +240,7 @@
             display: inline-block;
             width: 0;
             height: 0;
-            margin-left: 8px;
-            margin-right: 13px;
+            margin-right: 16px;
             border-top: 6px solid transparent;
             border-bottom: 6px solid transparent;
             border-right: 0;

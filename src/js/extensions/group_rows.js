@@ -320,4 +320,10 @@ GroupRows.prototype.updateGroupRows = function(force){
 	return output;
 };
 
+GroupRows.prototype.scrollHeaders = function(left){
+	this.groupList.forEach(function(group){
+		group.arrowElement.css("margin-left", left);
+	});
+};
+
 Tabulator.registerExtension("groupRows", GroupRows);

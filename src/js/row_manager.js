@@ -69,6 +69,10 @@ RowManager.prototype._initialize = function(){
 		//handle horizontal scrolling
 		if(self.scrollLeft != left){
 			self.columnManager.scrollHorizontal(left);
+
+			if(self.table.options.groupBy){
+				self.table.extensions.groupRows.scrollHeaders(left);
+			}
 		}
 
 		self.scrollLeft = left;

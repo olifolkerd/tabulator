@@ -1762,6 +1762,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (self.scrollLeft != left) {
 
         self.columnManager.scrollHorizontal(left);
+
+        if (self.table.options.groupBy) {
+
+          self.table.extensions.groupRows.scrollHeaders(left);
+        }
       }
 
       self.scrollLeft = left;
@@ -7690,6 +7695,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     return output;
+  };
+
+  GroupRows.prototype.scrollHeaders = function (left) {
+
+    this.groupList.forEach(function (group) {
+
+      group.arrowElement.css("margin-left", left);
+    });
   };
 
   Tabulator.registerExtension("groupRows", GroupRows);
