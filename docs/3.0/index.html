@@ -643,6 +643,7 @@ $("#example-table").tabulator({
                     <ul>
                         <li><strong>plaintext</strong> - This is the default formatter for all cells, and simply displays the value of the cell as text.</li>
                         <li><strong>textarea</strong> - shows text with carriage returns intact (great for multiline text)</li>
+                        <li><strong>html</strong> -  displays un-sanitized html</li>
                         <li><strong>money</strong> - formats a number into currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
                         <ul>
                             <li>optional <strong>formatterParams:</strong></li>
@@ -680,6 +681,8 @@ $("#example-table").tabulator({
                         <li><strong>buttonCross</strong> - displays a cross icon on eac row <i>(for use as a button)</i></li>
                         <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
                     </ul>
+
+                    <p class="note"><strong>Note:</strong> To guard against code injection, any formatters that are meant to display text (plaintext, textarea, money, email, link) have the data sanitized first to escape any potentially harmful HTML or JavaScript from making into the table, this causes any such data to be displayed as its plain text alternative. If you want the HTML to be displayed correctly use the <span class='param'>html</span> formatter, but be aware if your data can be user edited this could allow for malicious script injection.</p>
 
                     <p class="note"><strong>Note:</strong> For a guide to adding your own formatters to this list, have a look at the <a href="#extending">Extending Tabulator</a> section.</p>
 
