@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
@@ -17,6 +17,168 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 (function () {
 
   'use strict';
+
+  // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
+
+
+  if (!Array.prototype.findIndex) {
+
+    Object.defineProperty(Array.prototype, 'findIndex', {
+
+      value: function value(predicate) {
+
+        // 1. Let O be ? ToObject(this value).
+
+
+        if (this == null) {
+
+          throw new TypeError('"this" is null or not defined');
+        }
+
+        var o = Object(this);
+
+        // 2. Let len be ? ToLength(? Get(O, "length")).
+
+
+        var len = o.length >>> 0;
+
+        // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+
+
+        if (typeof predicate !== 'function') {
+
+          throw new TypeError('predicate must be a function');
+        }
+
+        // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+
+
+        var thisArg = arguments[1];
+
+        // 5. Let k be 0.
+
+
+        var k = 0;
+
+        // 6. Repeat, while k < len
+
+
+        while (k < len) {
+
+          // a. Let Pk be ! ToString(k).
+
+
+          // b. Let kValue be ? Get(O, Pk).
+
+
+          // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+
+
+          // d. If testResult is true, return k.
+
+
+          var kValue = o[k];
+
+          if (predicate.call(thisArg, kValue, k, o)) {
+
+            return k;
+          }
+
+          // e. Increase k by 1.
+
+
+          k++;
+        }
+
+        // 7. Return -1.
+
+
+        return -1;
+      }
+
+    });
+  }
+
+  // https://tc39.github.io/ecma262/#sec-array.prototype.find
+
+
+  if (!Array.prototype.find) {
+
+    Object.defineProperty(Array.prototype, 'find', {
+
+      value: function value(predicate) {
+
+        // 1. Let O be ? ToObject(this value).
+
+
+        if (this == null) {
+
+          throw new TypeError('"this" is null or not defined');
+        }
+
+        var o = Object(this);
+
+        // 2. Let len be ? ToLength(? Get(O, "length")).
+
+
+        var len = o.length >>> 0;
+
+        // 3. If IsCallable(predicate) is false, throw a TypeError exception.
+
+
+        if (typeof predicate !== 'function') {
+
+          throw new TypeError('predicate must be a function');
+        }
+
+        // 4. If thisArg was supplied, let T be thisArg; else let T be undefined.
+
+
+        var thisArg = arguments[1];
+
+        // 5. Let k be 0.
+
+
+        var k = 0;
+
+        // 6. Repeat, while k < len
+
+
+        while (k < len) {
+
+          // a. Let Pk be ! ToString(k).
+
+
+          // b. Let kValue be ? Get(O, Pk).
+
+
+          // c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
+
+
+          // d. If testResult is true, return kValue.
+
+
+          var kValue = o[k];
+
+          if (predicate.call(thisArg, kValue, k, o)) {
+
+            return kValue;
+          }
+
+          // e. Increase k by 1.
+
+
+          k++;
+        }
+
+        // 7. Return undefined.
+
+
+        return undefined;
+      }
+
+    });
+  }
 
   var ColumnManager = function ColumnManager(table) {
 
@@ -231,7 +393,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
-    if ((typeof subject === "undefined" ? "undefined" : _typeof(subject)) == "object") {
+    if ((typeof subject === 'undefined' ? 'undefined' : _typeof(subject)) == "object") {
 
       if (subject instanceof Column) {
 
@@ -1635,7 +1797,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
-    if ((typeof subject === "undefined" ? "undefined" : _typeof(subject)) == "object") {
+    if ((typeof subject === 'undefined' ? 'undefined' : _typeof(subject)) == "object") {
 
       if (subject instanceof Row) {
 
@@ -1730,7 +1892,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.refreshActiveData(true);
     } else {
 
-      console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data === "undefined" ? "undefined" : _typeof(data), "\nData:     ", data);
+      console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data === 'undefined' ? 'undefined' : _typeof(data), "\nData:     ", data);
     }
   };
 
@@ -3301,7 +3463,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.table = table;
 
     this.element = $("<div class='tabulator-footer'></div>"); //containing element
-
   };
 
   FooterManager.prototype.getElement = function () {
@@ -4331,7 +4492,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (source) {
 
-          if ((typeof values === "undefined" ? "undefined" : _typeof(values)) == "object") {
+          if ((typeof values === 'undefined' ? 'undefined' : _typeof(values)) == "object") {
 
             for (var key in values) {
 

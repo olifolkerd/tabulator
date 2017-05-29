@@ -2,12 +2,13 @@
 
 	'use strict';
 
+	/*=include polyfills.js */
+
 	/*=include column_manager.js */
 	/*=include column.js */
 	/*=include row_manager.js */
 	/*=include row.js */
 	/*=include cell.js */
-
 	/*=include footer_manager.js */
 
 	window.Tabulator = {
