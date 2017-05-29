@@ -20,19 +20,29 @@ FrozenColumns.prototype.reset = function(){
 FrozenColumns.prototype.initializeColumn = function(column){
 	var config = {margin:0, edge:false};
 
-	if(column.definition.frozen && !column.parent.isGroup){
+	if(column.definition.frozen){
 
-		config.position = this.initializationMode;
+		if(!column.parent.isGroup){
 
-		if(this.initializationMode == "left"){
-			this.leftColumns.push(column);
+
+			if(!column.isGroup){
+				config.position = this.initializationMode;
+
+				if(this.initializationMode == "left"){
+					this.leftColumns.push(column);
+				}else{
+					this.rightColumns.unshift(column);
+				}
+
+				this.active = true;
+
+				column.extensions.frozen = config;
+			}else{
+				console.warn("Frozen Column Error - Column Groups cannot be frozen");
+			}
 		}else{
-			this.rightColumns.unshift(column);
+			console.warn("Frozen Column Error - Grouped columns cannot be frozen");
 		}
-
-		this.active = true;
-
-		column.extensions.frozen = config;
 
 	}else{
 		this.initializationMode = "right";
