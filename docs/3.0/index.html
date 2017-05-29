@@ -894,6 +894,13 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>You can also pass a custom editor function to this parameter in the same way as you would for column editor. For more information see the <a href="#manipulating-data">Manipulating Data</a> section.</p>
 
+
+                    <p>You can pass an optional additional parameter with the header filter, <span class='param'>headerFilterParams</span> that should contain an object with additional information for configuring the header filter element. This will be passed to the editor in the column header instead of the <span class='param'>editorParams</span> property.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerFilter:"input", headerFilterParams:{initial:"Steve Bobberson"}} //show headerFilter using "input" editor</pre>
+
+
+
                     <p class="note"><STRONG>Note:</STRONG> At present, the <span class='param'>progress</span> and <span class='param'>star</span> editors are not available as header filters.</p>
 
                     <h3>Header Filters and Programmatic Filters <span class="label label-danger">New</span></h3>
