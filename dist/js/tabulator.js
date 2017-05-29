@@ -7169,7 +7169,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var self = this;
 
-    self.element.on("click", function (e) {
+    self.arrowElement.on("click", function (e) {
 
       e.stopPropagation();
 
