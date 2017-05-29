@@ -121,6 +121,46 @@
             <div class="row">
 
                 <div class="col-lg-12" role="main">
+                    <article>
+                        <h1>Version 3.0 Updates and Stable Release Date!<span class="datestamp">29/05/2017</span></h1>
+
+                        <p>A big Thank You goes out to everyone that has provided feedback on the beta so far, it has been a massive help. Keep up the good work!</p>
+
+                        <p>Following on from the feedback the following tweaks have been made to the beta:</p>
+
+                        <h2>Column Widths</h2>
+                        <p>The default "fit to data" column width calculations now take column header titles into account so you dont end up with titles with ellipsis when the column data is small.</p>
+
+                        <h2>Additional Paramters</h2>
+                        <p>The <span class='param'>editorParams</span>, <span class='param'>headerFilterParams</span>, <span class='param'>mutatorParams</span> and <span class='param'>accessorParams</span> column definition properties have been added to allow you to pass additional data into editors, mutators and accessors, allowing for better code reuse and simple configuration.</p>
+
+                        <h2>Row Styling</h2>
+                        <p>Styling of rows in the virtual DOM has been fixed. Rows are now assigned a <span class='param'>tabulator-row-odd</span> or <span class='param'>tabulator-row-even</span> class based on their position in the table.</p>
+
+                        <h2>Data Sanitization</h2>
+                        <p>Text based formatters now sanitize data before it is added to the table to prevent HTML and JavaScript injection attacks. To display HTML direcly in the cell you can now use the new <span class='param'>html</span> formatter.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.0#formatting">Formatting Documentation</a></p>
+
+                        <h2>Improved Framework Compatibility</h2>
+                        <p>A new wrapper has been added around the jQuery widget binding to allow for better compatability with node.js and Joomla.</p>
+
+                        <h2>IE 11 Compatability</h2>
+                        <p>A number of polyfills have been included in the library to give IE 11 and other older browsers access to all of Tabulators functionality.</p>
+
+                        <h2>Virtual DOM Example</h2>
+                        <p>A new example table has been created to demonstrate the new virtual DOM with 1000 randomly generated rows.</p>
+
+                        <p>Have a play for yourself on the <a href="../examples/3.0#virtual-dom">Examples Page</a></p>
+
+                        <h2>General Bug Fixing</h2>
+                        <p>A number of regressions and differences with version 2.12 have been fixed.</p>
+
+                        <h2>Stable Release Date Set</h2>
+                        <p>As the issues for 3.0 beta start to dry up we are looking very close to a stable release! With this in mind I am giving one more week for user feedback, and setting the release date for the stable version of 3.0 to next weekend, <span class='param'>03/06/2017</span></p>
+
+                    </article>
+
 
                     <article>
                         <h1>Version 3.0 Beta Available!<span class="datestamp">21/05/2017</span></h1>
