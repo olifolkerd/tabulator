@@ -295,7 +295,7 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 				background-color: $rowBackgroundColor;
 
 
-				&:nth-child(even){
+				&.tabulator-row-even{
 					background-color: $rowAltBackgroundColor;
 				}
 
