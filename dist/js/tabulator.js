@@ -6779,6 +6779,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return value;
   };
 
+  Format.prototype.sanitizeHTML = function (value) {
+
+    var entityMap = {
+
+      '&': '&amp;',
+
+      '<': '&lt;',
+
+      '>': '&gt;',
+
+      '"': '&quot;',
+
+      "'": '&#39;',
+
+      '/': '&#x2F;',
+
+      '`': '&#x60;',
+
+      '=': '&#x3D;'
+
+    };
+
+    return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+
+      return entityMap[s];
+    });
+  };
+
   //default data formatters
 
 
@@ -6788,6 +6816,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
     plaintext: function plaintext(cell, formatterParams) {
+
+      return this.sanitizeHTML(cell.getValue());
+    },
+
+    //html text value
+
+
+    html: function html(cell, formatterParams) {
 
       return cell.getValue();
     },
@@ -6799,7 +6835,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       cell.getElement().css({ "white-space": "pre-wrap" });
 
-      return cell.getValue();
+      return this.sanitizeHTML(cell.getValue());
     },
 
     //currency formatting
@@ -6823,7 +6859,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (isNaN(floatVal)) {
 
-        return cell.getValue();
+        return this.sanitizeHTML(cell.getValue());
       }
 
       number = floatVal.toFixed(2);
@@ -6849,7 +6885,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     email: function email(cell, formatterParams) {
 
-      var value = cell.getValue();
+      var value = this.sanitizeHTML(cell.getValue());
 
       return "<a href='mailto:" + value + "'>" + value + "</a>";
     },
@@ -6859,7 +6895,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     link: function link(cell, formatterParams) {
 
-      var value = cell.getValue();
+      var value = this.sanitizeHTML(cell.getValue());
 
       return "<a href='" + value + "'>" + value + "</a>";
     },
@@ -6869,7 +6905,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     image: function image(cell, formatterParams) {
 
-      var value = cell.getValue();
+      var value = this.sanitizeHTML(cell.getValue());
 
       return "<img url='" + value + "'/>";
     },
@@ -6963,7 +6999,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //progress bar
 
 
-      var value = cell.getValue(),
+      var value = this.sanitizeHTML(cell.getValue()),
           element = cell.getElement(),
           max = formatterParams && formatterParams.max ? formatterParams.max : 100,
           min = formatterParams && formatterParams.min ? formatterParams.min : 0,
@@ -7002,7 +7038,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     color: function color(cell, formatterParams) {
 
-      cell.getElement().css({ "background-color": cell.getValue() });
+      cell.getElement().css({ "background-color": this.sanitizeHTML(cell.getValue()) });
 
       return "";
     },

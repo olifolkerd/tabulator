@@ -37,17 +37,40 @@ Format.prototype.formatValue = function(cell){
 	return value;
 };
 
+
+Format.prototype.sanitizeHTML = function(value){
+	var entityMap = {
+	  '&': '&amp;',
+	  '<': '&lt;',
+	  '>': '&gt;',
+	  '"': '&quot;',
+	  "'": '&#39;',
+	  '/': '&#x2F;',
+	  '`': '&#x60;',
+	  '=': '&#x3D;'
+	};
+
+	return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+	  return entityMap[s];
+	});
+};
+
 //default data formatters
 Format.prototype.formatters = {
 	//plain text value
 	plaintext:function(cell, formatterParams){
+		return this.sanitizeHTML(cell.getValue());
+	},
+
+	//html text value
+	html:function(cell, formatterParams){
 		return cell.getValue();
 	},
 
 	//multiline text area
 	textarea:function(cell, formatterParams){
 		cell.getElement().css({"white-space":"pre-wrap"});
-		return cell.getValue();
+		return this.sanitizeHTML(cell.getValue());
 	},
 
 	//currency formatting
@@ -61,7 +84,7 @@ Format.prototype.formatters = {
 		var after = !!formatterParams.symbolAfter;
 
 		if(isNaN(floatVal)){
-			return cell.getValue();
+			return this.sanitizeHTML(cell.getValue());
 		}
 
 		number = floatVal.toFixed(2);
@@ -81,19 +104,19 @@ Format.prototype.formatters = {
 
 	//clickable mailto link
 	email:function(cell, formatterParams){
-		var value = cell.getValue();
+		var value = this.sanitizeHTML(cell.getValue());
 		return "<a href='mailto:" + value + "'>" + value + "</a>";
 	},
 
 	//clickable anchor tag
 	link:function(cell, formatterParams){
-		var value = cell.getValue();
+		var value = this.sanitizeHTML(cell.getValue());
 		return "<a href='" + value + "'>" + value + "</a>";
 	},
 
 	//image element
 	image:function(cell, formatterParams){
-		var value = cell.getValue();
+		var value = this.sanitizeHTML(cell.getValue());
 		return "<img url='" + value + "'/>";
 	},
 
@@ -160,7 +183,7 @@ Format.prototype.formatters = {
 
 	//progress bar
 	progress:function(cell, formatterParams){ //progress bar
-		var value = cell.getValue(),
+		var value = this.sanitizeHTML(cell.getValue()),
 		element = cell.getElement(),
 		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
 		min = formatterParams && formatterParams.min ? formatterParams.min : 0,
@@ -187,7 +210,7 @@ Format.prototype.formatters = {
 
 	//background color
 	color:function(cell, formatterParams){
-		cell.getElement().css({"background-color":cell.getValue()});
+		cell.getElement().css({"background-color":this.sanitizeHTML(cell.getValue())});
 		return "";
 	},
 
