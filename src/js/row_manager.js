@@ -1,7 +1,7 @@
 var RowManager = function(table){
 
 	this.table = table;
-	this.element = $("<div class='tabulator-tableHolder'></div>"); //containing element
+	this.element = $("<div class='tabulator-tableHolder' tabindex='0'></div>"); //containing element
 	this.tableElement = $("<div class='tabulator-table'></div>"); //table element
 	this.columnManager = null; //hold column manager object
 	this.height = 0; //hold height of table element
@@ -569,6 +569,14 @@ RowManager.prototype._clearVirtualDom = function(){
 	this.vDomBottomPad = 0;
 };
 
+RowManager.prototype.styleRow = function(row, index){
+	if(index % 2){
+		row.element.addClass("tabulator-row-even").removeClass("tabulator-row-odd");
+	}else{
+		row.element.addClass("tabulator-row-odd").removeClass("tabulator-row-even");
+	}
+};
+
 //full virtual render
 RowManager.prototype._virtualRenderFill = function(position, forceMove){
 	var self = this,
@@ -609,8 +617,10 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		self.vDomBottom = position -1;
 
 		while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.displayRowsCount -1){
+			var index = self.vDomBottom + 1,
+			row = self.displayRows[index];
 
-			var row = self.displayRows[self.vDomBottom + 1]
+			self.styleRow(row, index);
 
 			element.append(row.getElement());
 			row.initialize();
@@ -692,13 +702,13 @@ RowManager.prototype._addTopRow = function(topDiff){
 	var table = this.tableElement;
 
 	if(this.vDomTop){
-
-		let topRow = this.displayRows[this.vDomTop -1];
-		let topRowHeight = topRow.getHeight() || this.vDomRowHeight;
+		let index = this.vDomTop -1,
+		topRow = this.displayRows[index],
+		topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
 		//hide top row if needed
 		if(topDiff >= topRowHeight){
-
+			this.styleRow(topRow, index);
 			table.prepend(topRow.getElement());
 			topRow.initialize();
 
@@ -751,13 +761,13 @@ RowManager.prototype._addBottomRow = function(bottomDiff){
 	var table = this.tableElement;
 
 	if(this.vDomBottom < this.displayRowsCount -1){
-
-		let bottomRow = this.displayRows[this.vDomBottom + 1];
-		let bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
+		let index = this.vDomBottom + 1,
+		bottomRow = this.displayRows[index],
+		bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
 		//hide bottom row if needed
 		if(bottomDiff >= bottomRowHeight){
-
+			this.styleRow(bottomRow, index);
 			table.append(bottomRow.getElement());
 			bottomRow.initialize();
 

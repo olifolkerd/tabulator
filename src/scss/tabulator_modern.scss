@@ -267,6 +267,10 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 		overflow:auto;
 		-webkit-overflow-scrolling: touch;
 
+		&:focus{
+			outline: none;
+		}
+
 		//default placeholder element
 		.tabulator-placeholder{
 			position: absolute;

@@ -1501,7 +1501,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.table = table;
 
-    this.element = $("<div class='tabulator-tableHolder'></div>"); //containing element
+    this.element = $("<div class='tabulator-tableHolder' tabindex='0'></div>"); //containing element
 
     this.tableElement = $("<div class='tabulator-table'></div>"); //table element
 
@@ -2246,6 +2246,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.vDomBottomPad = 0;
   };
 
+  RowManager.prototype.styleRow = function (row, index) {
+
+    if (index % 2) {
+
+      row.element.addClass("tabulator-row-even").removeClass("tabulator-row-odd");
+    } else {
+
+      row.element.addClass("tabulator-row-odd").removeClass("tabulator-row-even");
+    }
+  };
+
   //full virtual render
 
   RowManager.prototype._virtualRenderFill = function (position, forceMove) {
@@ -2296,7 +2307,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.displayRowsCount - 1) {
 
-        var row = self.displayRows[self.vDomBottom + 1];
+        var index = self.vDomBottom + 1,
+            row = self.displayRows[index];
+
+        self.styleRow(row, index);
 
         element.append(row.getElement());
 
@@ -2409,13 +2423,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (this.vDomTop) {
 
-      var topRow = this.displayRows[this.vDomTop - 1];
-
-      var topRowHeight = topRow.getHeight() || this.vDomRowHeight;
+      var index = this.vDomTop - 1,
+          topRow = this.displayRows[index],
+          topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
       //hide top row if needed
 
       if (topDiff >= topRowHeight) {
+
+        this.styleRow(topRow, index);
 
         table.prepend(topRow.getElement());
 
@@ -2479,13 +2495,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (this.vDomBottom < this.displayRowsCount - 1) {
 
-      var bottomRow = this.displayRows[this.vDomBottom + 1];
-
-      var bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
+      var index = this.vDomBottom + 1,
+          bottomRow = this.displayRows[index],
+          bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
       //hide bottom row if needed
 
       if (bottomDiff >= bottomRowHeight) {
+
+        this.styleRow(bottomRow, index);
 
         table.append(bottomRow.getElement());
 

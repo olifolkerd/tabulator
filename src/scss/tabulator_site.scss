@@ -252,6 +252,10 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 		overflow:auto;
 		-webkit-overflow-scrolling: touch;
 
+		&:focus{
+			outline: none;
+		}
+
 		//default placeholder element
 		.tabulator-placeholder{
 			position: absolute;

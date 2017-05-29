@@ -120,6 +120,8 @@
     white-space: nowrap;
     overflow: auto;
     -webkit-overflow-scrolling: touch; }
+    .tabulator .tabulator-tableHolder:focus {
+      outline: none; }
     .tabulator .tabulator-tableHolder .tabulator-placeholder {
       position: absolute;
       display: -ms-flexbox;
