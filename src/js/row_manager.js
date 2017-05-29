@@ -520,17 +520,19 @@ RowManager.prototype.getRenderMode = function(){
 
 //simple render on heightless table
 RowManager.prototype._simpleRender = function(){
-	var element = this.tableElement;
+	var self = this,
+	element = this.tableElement;
 
-	this._clearVirtualDom();
+	self._clearVirtualDom();
 
-	if(this.displayRowsCount){
-		this.displayRows.forEach(function(row){
+	if(self.displayRowsCount){
+		self.displayRows.forEach(function(row, index){
+			self.styleRow(row, index);
 			element.append(row.getElement());
 			row.initialize();
 		});
 	}else{
-		this.renderEmptyScroll();
+		self.renderEmptyScroll();
 	}
 };
 
