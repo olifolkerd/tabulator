@@ -6,7 +6,12 @@ var Edit = function(table){
 //initialize column editor
 Edit.prototype.initializeColumn = function(column){
 	var self = this,
-	config = {editor:false, blocked:false, check:column.definition.editable};
+	config = {
+		editor:false,
+		blocked:false,
+		check:column.definition.editable,
+		params:column.definition.editorParams || {}
+	};
 
 	//set column editor
 	switch(typeof column.definition.editor){
@@ -37,6 +42,7 @@ Edit.prototype.initializeColumn = function(column){
 		}
 		break;
 	}
+
 
 	if(config.editor){
 		column.extensions.edit = config;
@@ -94,7 +100,7 @@ Edit.prototype.bindEditor = function(cell){
 
 				self.table.options.cellEditing(cell.getComponent());
 
-				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
+				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel, cell.column.extensions.edit.params);
 
 				//if editor returned, add to DOM, if false, abort edit
 				if(cellEditor !== false){
@@ -127,7 +133,7 @@ Edit.prototype.bindEditor = function(cell){
 Edit.prototype.editors = {
 
 	//input element
-	input:function(cell, onRendered, success, cancel){
+	input:function(cell, onRendered, success, cancel, editorParams){
 
 		//create and style input
 		var input = $("<input type='text'/>");
@@ -159,7 +165,7 @@ Edit.prototype.editors = {
 	},
 
 	//resizable text area element
-	textarea:function(cell, onRendered, success, cancel){
+	textarea:function(cell, onRendered, success, cancel, editorParams){
 		var self = this,
 		value = cell.getValue(),
 		count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
@@ -207,7 +213,7 @@ Edit.prototype.editors = {
     },
 
     //input element with type of number
-    number:function(cell, onRendered, success, cancel){
+    number:function(cell, onRendered, success, cancel, editorParams){
     	var input = $("<input type='number'/>");
 
 		//create and style input
@@ -252,7 +258,7 @@ Edit.prototype.editors = {
 	},
 
 	//start rating
-	star:function(cell, onRendered, success, cancel){
+	star:function(cell, onRendered, success, cancel, editorParams){
 		var element = cell.getElement(),
 		value = cell.getValue(),
 		maxStars = $("svg", element).length || 5,
@@ -334,7 +340,7 @@ Edit.prototype.editors = {
 	},
 
 	//draggable progress bar
-	progress:function(cell, onRendered, success, cancel){
+	progress:function(cell, onRendered, success, cancel, editorParams){
 		var element = cell.getElement(),
 		max = $("div", element).data("max"),
 		min = $("div", element).data("min"),
@@ -417,7 +423,7 @@ Edit.prototype.editors = {
 	},
 
 	//checkbox
-	tickCross:function(cell, onRendered, success, cancel){
+	tickCross:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
 		input = $("<input type='checkbox'/>");
 
@@ -454,7 +460,7 @@ Edit.prototype.editors = {
 	},
 
 	//checkbox
-	tick:function(cell, onRendered, success, cancel){
+	tick:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
 		input = $("<input type='checkbox'/>");
 

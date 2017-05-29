@@ -88,8 +88,7 @@ Filter.prototype.initializeColumn = function(column){
 				}
 			};
 
-
-			editorElement = editor.call(self, cellWrapper, function(){}, success, cancel);
+			editorElement = editor.call(self, cellWrapper, function(){}, success, cancel, column.definition.headerFilterParams || {});
 			//set Placeholder Text
 			if(column.definition.field){
 				self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function(value){

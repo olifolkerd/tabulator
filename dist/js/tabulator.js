@@ -5123,8 +5123,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.config.data = self.params;
       }
 
-      console.log("p", self.params);
-
       self.table.options.ajaxRequesting(self.url, self.params);
 
       self.showLoader();
@@ -5480,7 +5478,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   Edit.prototype.initializeColumn = function (column) {
 
     var self = this,
-        config = { editor: false, blocked: false, check: column.definition.editable };
+        config = {
+
+      editor: false,
+
+      blocked: false,
+
+      check: column.definition.editable,
+
+      params: column.definition.editorParams || {}
+
+    };
 
     //set column editor
 
@@ -5605,7 +5613,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.table.options.cellEditing(cell.getComponent());
 
-          cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel);
+          cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel, cell.column.extensions.edit.params);
 
           //if editor returned, add to DOM, if false, abort edit
 
@@ -5655,7 +5663,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //input element
 
 
-    input: function input(cell, onRendered, success, cancel) {
+    input: function input(cell, onRendered, success, cancel, editorParams) {
 
       //create and style input
 
@@ -5702,7 +5710,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //resizable text area element
 
 
-    textarea: function textarea(cell, onRendered, success, cancel) {
+    textarea: function textarea(cell, onRendered, success, cancel, editorParams) {
 
       var self = this,
           value = cell.getValue(),
@@ -5771,7 +5779,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //input element with type of number
 
 
-    number: function number(cell, onRendered, success, cancel) {
+    number: function number(cell, onRendered, success, cancel, editorParams) {
 
       var input = $("<input type='number'/>");
 
@@ -5834,7 +5842,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //start rating
 
 
-    star: function star(cell, onRendered, success, cancel) {
+    star: function star(cell, onRendered, success, cancel, editorParams) {
 
       var element = cell.getElement(),
           value = cell.getValue(),
@@ -5955,7 +5963,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //draggable progress bar
 
 
-    progress: function progress(cell, onRendered, success, cancel) {
+    progress: function progress(cell, onRendered, success, cancel, editorParams) {
 
       var element = cell.getElement(),
           max = $("div", element).data("max"),
@@ -6078,7 +6086,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //checkbox
 
 
-    tickCross: function tickCross(cell, onRendered, success, cancel) {
+    tickCross: function tickCross(cell, onRendered, success, cancel, editorParams) {
 
       var value = cell.getValue(),
           input = $("<input type='checkbox'/>");
@@ -6132,7 +6140,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //checkbox
 
 
-    tick: function tick(cell, onRendered, success, cancel) {
+    tick: function tick(cell, onRendered, success, cancel, editorParams) {
 
       var value = cell.getValue(),
           input = $("<input type='checkbox'/>");
@@ -6323,7 +6331,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         };
 
-        editorElement = editor.call(self, cellWrapper, function () {}, success, cancel);
+        editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, column.definition.headerFilterParams || {});
 
         //set Placeholder Text
 
