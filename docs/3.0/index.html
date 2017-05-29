@@ -569,6 +569,7 @@ $("#example-table").tabulator({
         //value - original value of the cell
         //type - the type of mutation occuring (data|edit)
         //data - the data for the row
+        //mutatorParams - the mutatorParams object from the column definition
 
         return value > mutatorParams.threshold; //return the new value for the cell data.
     },
@@ -612,6 +613,7 @@ $("#example-table").tabulator({
                     <pre class="prettyprint lang-js">{title:"Tax Owed (£)", field:"tax", accessorParams:{}, accessor:function(value, data, accessorParams){
         //value - original value of the cell
         //data - the data for the row
+        //accessorParams - the accessorParams object passed from the column definition
 
         return Math.floor(value); //return the new value for the cell data.
     },
@@ -633,7 +635,7 @@ $("#example-table").tabulator({
 
                     <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
 
-                    <p>You can pass an optional additional parameter with formatter, <span class='param'>formatterParams</span> that should contain an object with additional information for configuring the formatter.</p>
+                    <p>You can pass an optional additional parameter with the formatter, <span class='param'>formatterParams</span> that should contain an object with additional information for configuring the formatter.</p>
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:"star", formatterParams:{stars:6}}</pre>
 
                     <p>Tabulator comes with a number of preconfigured formatters including:</p>
