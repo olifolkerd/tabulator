@@ -177,14 +177,15 @@
                         </div>
                     </a>
 
-                    <a class="anchor" id="simple"></a>
+                    <a class="anchor" id="virtual-dom"></a>
                     <article>
-                        <h1>Simple Table</h1>
+                        <h1>Virtual DOM</h1>
 
-                        <p>In its simplest form, all you need to set in the options are the column titles and field names.</p>
-                        <p>By default columns are resizable (using the edge of column) and sortable.</p>
+                        <p>As of version 3.0 tabulator renders its table using a Virtual DOM, this means that it only renders the rows you seen in the table (plus a few above and below the current view) and creates and destroys the rows as you scroll through the table.</p>
 
-                        <div class="example-table" id="example-table-simple">
+                        <p>The table below has 1000 rows loaded as they are needed as you scroll</p>
+
+                        <div class="example-table" id="example-table-virtual">
                             <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
                         </div>
                         <button class="view-source">View Source</button>
@@ -198,10 +199,10 @@
     height:"311px",
     columns:[
         {title:"Name", field:"name"},
-        {title:"Progress", field:"progress", width:100, sorter:"number"},
-        {title:"Gender", field:"gender", width:100},
-        {title:"Rating", field:"rating", width:80},
-        {title:"Favourite Color", field:"col", width:80},
+        {title:"Progress", field:"progress", sorter:"number"},
+        {title:"Gender", field:"gender"},
+        {title:"Rating", field:"rating"},
+        {title:"Favourite Color", field:"col"},
         {title:"Date Of Birth", field:"dob", minWidth:100},
         {title:"Driver", field:"car"},
     ],
@@ -1867,7 +1868,7 @@ $("#lang-default").click(function(){
             </h2>
 
             <ul class="nav">
-                <li class="active"><a href="#simple">Simple Table</a></li>
+                <li class="active"><a href="#virtual-dom">Virtual DOM</a></li>
                 <li><a href="#fittodata">Fit To Data</a></li>
                 <li><a href="#fittowidth">Fit To Width</a></li>
                 <li><a href="#responsive-layout">Responsive Layout</a></li>
@@ -1950,6 +1951,7 @@ $("#lang-default").click(function(){
 <script type="text/javascript" src="http://oss.sheetjs.com/js-xlsx/xlsx.full.min.js"></script>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/lang-css.js"></script>
+<script src="../../js/faker.js"></script>
 <script type="text/javascript">
 
     $('body').scrollspy({
@@ -2071,23 +2073,30 @@ $("#lang-default").click(function(){
      {id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986"},
      ];
 
-     $("#example-table-simple").closest("article").on("build", function(){
+     var tabledatahuge = [];
+
+     for(var i=1; i <= 1000; i++){
+        tabledatahuge.push({id:i, name:faker.name.findName(), progress:Math.floor(Math.random() * 100) + 1  , gender:faker.random.boolean() ? "male" : "female", rating:Math.floor(Math.random() * 5) + 1  , col:faker.commerce.color(), dob:moment(faker.date.past()).format("DD/MM/YYYY"), car:faker.random.boolean(), lucky_no:Math.floor(Math.random() * 20) + 1  })
+     }
+
+     $("#example-table-virtual").closest("article").on("build", function(){
 
          //Simple Example
-         $("#example-table-simple").tabulator({
+         $("#example-table-virtual").tabulator({
              height:"311px",
              columns:[
+             {title:"ID", field:"id"},
              {title:"Name", field:"name"},
-             {title:"Progress", field:"progress", width:100, sorter:"number"},
-             {title:"Gender", field:"gender", width:100},
-             {title:"Rating", field:"rating", width:80},
-             {title:"Favourite Color", field:"col", width:80},
+             {title:"Progress", field:"progress", sorter:"number"},
+             {title:"Gender", field:"gender"},
+             {title:"Rating", field:"rating"},
+             {title:"Favourite Color", field:"col"},
              {title:"Date Of Birth", field:"dob", minWidth:100},
              {title:"Driver", field:"car"},
              ],
          });
 
-         $("#example-table-simple").tabulator("setData", tabledata);
+         $("#example-table-virtual").tabulator("setData", tabledatahuge);
 
      });
 
