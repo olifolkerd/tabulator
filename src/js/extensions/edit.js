@@ -57,7 +57,8 @@ Edit.prototype.clearEditor = function(cell){
 //return a formatted value for a cell
 Edit.prototype.bindEditor = function(cell){
 	var self = this,
-	element = cell.getElement();
+	element = cell.getElement(),
+	mouseClick = false;
 
 	//handle successfull value change
 	function success(value){
@@ -80,10 +81,22 @@ Edit.prototype.bindEditor = function(cell){
 		}
 	});
 
+	element.on("mousedown", function(e){
+		mouseClick = true;
+	});
+
 	element.on("focus", function(e){
 		var rendered = function(){},
 		allowEdit = true,
 		cellEditor;
+
+		if(mouseClick){
+			mouseClick = false;
+
+			if(cell.column.cellEvents.cellClick){
+				cell.column.cellEvents.cellClick(e, cell.getComponent());
+			}
+		}
 
 		function onRendered(callback){
 			rendered = callback;
