@@ -914,6 +914,8 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <h3>Real Time Filtering</h3>
                     <p>If an input element is used as the filter element, then then the table will be filtered in real time as the user types in the input element. To prevent exessive redrawing of the table Tabulator will wait 300 miliseconds after the user has finished typing before tirggering the filter, this ensures that the table is not redrawn for every character typed by the user.</p>
 
+                    <p class="note"><strong>Note: </strong> If the input has a <span class='param'>type</span> attribute value of <span class='param'>text</span> it will be automatically changed to <span class='param'>search</span> to give the user the option to clear the input text.</p>
+
                     <h3>Filter Comparison Types</h3>
                     <p>The type of comparison function used on the filter value is dependent on the type of element used for the header filter. </p>
 
