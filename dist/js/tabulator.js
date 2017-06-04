@@ -6922,7 +6922,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var value = this.sanitizeHTML(cell.getValue());
 
-      return "<img url='" + value + "'/>";
+      return "<img src='" + value + "'/>";
     },
 
     //tick or empty cell

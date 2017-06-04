@@ -126,7 +126,7 @@ Format.prototype.formatters = {
 	//image element
 	image:function(cell, formatterParams){
 		var value = this.sanitizeHTML(cell.getValue());
-		return "<img url='" + value + "'/>";
+		return "<img src='" + value + "'/>";
 	},
 
 	//tick or empty cell
