@@ -6385,7 +6385,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         typingTimer = false;
 
-        editorElement.on("keyup", function (e) {
+        editorElement.on("keyup search", function (e) {
 
           var element = $(this);
 
@@ -6411,6 +6411,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             success($(this).val());
           });
+        }
+
+        //change text inputs to search inputs to allow for clearing of field
+
+
+        if (attrType == "text") {
+
+          console.log("search type");
+
+          editorElement.attr("type", "search");
         }
 
         //prevent input and select elements from propegating click to column sorters etc
