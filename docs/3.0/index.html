@@ -1177,12 +1177,10 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData", true); //return currently filtered data</pre>
 
                     <h3>Retreive Row Data <span class="label label-primary">Updated</span></h3>
-                    <p>The <span class='param'>getRowData</span> function will return the row data object for a single row. The first argument is the row you are looking for, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
+                    <p>To rereive the data of a specific row, you can retrieve the <a href='#component-row'>RowComponent</a> with the <span class='param'>getRow</span> function, then use the <span class='param'>getData</span> function on the component. The first argument is the row you are looking for, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
 
-                    <pre class="prettyprint lang-js">var rowData = $("#example-table").tabulator("getRowData", 1); //return data for row with index of 1</pre>
-
-                    <p>Alternatively, if you already have the <a href='#component-row'>RowComponent</a> row you can call the <span class='param'>getData</span> function directly on the component.</p>
-                    <pre class="prettyprint lang-js">var rowData = row.getData();</pre>
+                    <pre class="prettyprint lang-js">var row = $("#example-table").tabulator("getRow", 1); //return row compoenent with index of 1
+var rowData = row.getData();</pre>
 
                     <p class="note"><strong>Data Accessors</strong> <br> If you have defined any accessors on your columns, then these will be applied to the data before the data is returned from any of the above functions. (see <a href="#accessors">Accessors</a> for more details)</p>
 
@@ -1237,14 +1235,10 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("updateOrAddRow", 3, {id:3, name:"steve", gender:"male"});</pre>
 
                     <h3>Get Row Element <span class="label label-primary">Updated</span></h3>
-                    <p>You can use the <span class='param'>getRow</span> function to return the jQuery object for a specific row element. The first argument is the row you want to get, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
+                    <p>To rereive the jQuery element of a specific row, you can retrieve the <a href='#component-row'>RowComponent</a> with the <span class='param'>getRow</span> function, then use the <span class='param'>getElement</span> function on the component. The first argument is the row you are looking for, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
 
-                    <pre class="prettyprint lang-js">var rowElement = $("#example-table").tabulator("getRow", 4);</pre>
-
-                    <p>If a row with a matching index is not found, the function will return <span class='param'>false</span>.</p>
-
-                    <p>If you already have the <a href='#component-row'>RowComponent</a> for the row you wish to get the element of, you can call the <span class='param'>getElement</span> function directly on the component:</p>
-                    <pre class="prettyprint lang-js">var rowElement = row.getElement();</pre>
+                    <pre class="prettyprint lang-js">var row = $("#example-table").tabulator("getRow", 1); //return row compoenent with index of 1
+var rowElement = row.getElement();</pre>
 
                     <h3>Delete Row <span class="label label-primary">Updated</span></h3>
                     <p>You can delete any row in the table using the <span class='param'>deleteRow</span> function. The first argument is the row you want to delete, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
