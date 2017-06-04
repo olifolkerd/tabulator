@@ -207,6 +207,7 @@
                         <li><strong>responsive</strong> - an integer to determine when the column should be hidden in responsive mode (see <a href="#responsive-layout">Responsive Layout</a> for more details)</li>
                         <li><strong>tooltip</strong> - sets the on hover tooltip for each cell in this column (see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>cssClass</strong> - sets css classes on header and cells in this column. <i>(value should be a string containing space seperated class names)</i></li>
+                        <li><strong>rowHandle <span class="label label-danger">New</span></strong> - sets the column as a row handle, allowing it to be used to drag movable rows. (see <a href="#movable">Movable Rows</a> for more details)</li>
                     </ul>
 
                     <h3>Data Manipulation</h3>
@@ -655,7 +656,7 @@ $("#example-table").tabulator({
                             </ul>
                         </ul>
                         <li><strong>email</strong> - renders data as an anchor with a mailto: link to the cell value</li>
-                        <li><strong>image</strong> - created an img tag with the src attribute set to the cell value</li>
+                        <li><strong>image <span class="label label-danger">New</span></strong> - created an img tag with the src attribute set to the cell value</li>
                         <li><strong>link</strong> - renders data as an anchor with a link to the given value</li>
                         <li><strong>tick</strong> - displays a green tick if the value is (true|'true'|'True'|1) and an empty cell if not</li>
                         <li><strong>tickCross</strong> - displays a green tick if the value is (true|'true'|'True'|1) and a red cross if not</li>
@@ -679,7 +680,8 @@ $("#example-table").tabulator({
                         </li>
                         <li><strong>buttonTick</strong> - displays a tick icon on eac row <i>(for use as a button)</i></li>
                         <li><strong>buttonCross</strong> - displays a cross icon on eac row <i>(for use as a button)</i></li>
-                        <li><strong>rownum</strong> - shows an incrementing row number for each row.</li>
+                        <li><strong>rownum <span class="label label-primary">Updated</span> </strong> - shows an incrementing row number for each row.</li>
+                        <li><strong>handle <span class="label label-danger">New</span> </strong> - fills the cell with hamburger bars, to be used as a row handle</li>
                     </ul>
 
                     <p class="note"><strong>Note:</strong> To guard against code injection, any formatters that are meant to display text (plaintext, textarea, money, email, link) have the data sanitized first to escape any potentially harmful HTML or JavaScript from making into the table, this causes any such data to be displayed as its plain text alternative. If you want the HTML to be displayed correctly use the <span class='param'>html</span> formatter, but be aware if your data can be user edited this could allow for malicious script injection.</p>
@@ -1786,6 +1788,17 @@ var rowElement = row.getElement();</pre>
                     <p>This will allow users to drag rows around by clicking and dragging on any part of the row.</p>
 
                     <p class="note"><strong>Note:</strong> When grouping is enabled, rows can only be moved within their own group.</p>
+
+                    <h3>Row Handles <span class="label label-danger">New</span></h3>
+                    <p>If you would prefer the user only be able to move a column around by one particular cell, the you can set the <span class='param'>rowHandle</span> property to <span class='param'>true</span> in the column definition object for that column to restrict the trigger for row movment to that cell only.</p>
+
+                    <pre class="prettyprint lang-js">$('#example-table'),tabulator({
+    movableRows: true, //enable user movable rows
+    columns:[
+        {rowHandle:true, formatter:"handle", frozen:true, width:30, minWidth:30},
+        {title:"name", field:"name"} //normal column
+    ]
+})</pre>
 
 
 					<h3>Moving on Touch Devices</h3>

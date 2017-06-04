@@ -1417,9 +1417,9 @@ $("#reset").click(function(){
 <article>
     <h1>Movable Rows <a class="doc-link" href="../../docs?#movable"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
-    <p>
-        Using the <span class='param'>movableRows</span> property you can allow the user to move rows around the table by clicking and dragging.
-    </p>
+    <p>Using the <span class='param'>movableRows</span> property you can allow the user to move rows around the table by clicking and dragging.</p>
+
+    <p>By default this allows the user to drag anywhere on the row, in this example we use the <span class='param'>rowHandle</span> property in a column definition to create a row handle that can be used for dragging rows.</p>
     <div class="example-table" id="example-table-movable-rows">
         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
     </div>
@@ -1435,7 +1435,8 @@ $("#reset").click(function(){
     height:"311px",
     movableRows:true,
     columns:[
-        {title:"Name", field:"name", width:200},
+        {rowHandle:true, formatter:"handle", headerSort:false, frozen:true, width:30, minWidth:30},
+        {title:"Name", field:"name", width:150},
         {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
         {title:"Gender", field:"gender"},
         {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
@@ -2831,7 +2832,8 @@ $("#lang-default").click(function(){
          height:"311px",
          movableRows:true,
          columns:[
-         {title:"Name", field:"name", width:200},
+         {rowHandle:true, formatter:"handle", headerSort:false, frozen:true, width:30, minWidth:30},
+         {title:"Name", field:"name", width:150},
          {title:"Progress", field:"progress", formatter:"progress", sorter:"number"},
          {title:"Gender", field:"gender"},
          {title:"Rating", field:"rating", formatter:"star", formatterParams:{stars:6}, align:"center", width:120},
