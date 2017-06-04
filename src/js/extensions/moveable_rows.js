@@ -8,10 +8,15 @@ var MoveRows = function(table){
 	this.moving = false; //currently moving row
 	this.toRow = false; //destination row
 	this.toRowAfter = false; //position of moving row relative to the desitnation row
+	this.hasHandle = false; //row has handle instead of fully movable row
 	this.startY = 0; //starting position within header element
 
 	this.moveHover = this.moveHover.bind(this);
 	this.endMove = this.endMove.bind(this);
+};
+
+MoveRows.prototype.setHandle = function(handle){
+	this.hasHandle = handle;
 };
 
 MoveRows.prototype.initializeRow = function(row){
@@ -30,21 +35,40 @@ MoveRows.prototype.initializeRow = function(row){
 				self.moveRow(row, false);
 			}
 		}
-	}.bind(self)
+	}.bind(self);
 
-	row.getElement().on("mousedown", function(e){
+	if(!this.hasHandle){
+
+		row.getElement().on("mousedown", function(e){
+			self.checkTimeout = setTimeout(function(){
+				self.startMove(e, row);
+			}, self.checkPeriod);
+		});
+
+		row.getElement().on("mouseup", function(e){
+			if(self.checkTimeout){
+				clearTimeout(self.checkTimeout);
+			}
+		});
+	}
+
+	row.extensions.moveRow = config;
+};
+
+MoveRows.prototype.initializeCell = function(cell){
+	var self = this;
+
+	cell.getElement().on("mousedown", function(e){
 		self.checkTimeout = setTimeout(function(){
-			self.startMove(e, row);
-		}, self.checkPeriod)
+			self.startMove(e, cell.row);
+		}, self.checkPeriod);
 	});
 
-	row.getElement().on("mouseup", function(e){
+	cell.getElement().on("mouseup", function(e){
 		if(self.checkTimeout){
 			clearTimeout(self.checkTimeout);
 		}
 	});
-
-	row.extensions.moveRow = config;
 };
 
 MoveRows.prototype._bindMouseMove = function(){

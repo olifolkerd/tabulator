@@ -236,7 +236,13 @@ Format.prototype.formatters = {
 	//current row number
 	rownum:function(cell, formatterParams){
 		return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
-	}
+	},
+
+	//row handle
+	handle:function(cell, formatterParams){
+		cell.getElement().addClass("tabulator-row-handle");
+		return "<div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div>";
+	},
 };
 
 Tabulator.registerExtension("format", Format);

@@ -282,7 +282,7 @@ RowManager.prototype.moveRow = function(from, to, after){
 
 RowManager.prototype._moveRowInArray = function(rows, from, to, after){
 	var	fromIndex = rows.indexOf(from),
-	toIndex;
+	toIndex, start, end;
 
 	if (fromIndex > -1) {
 
@@ -300,6 +300,19 @@ RowManager.prototype._moveRowInArray = function(rows, from, to, after){
 
 		}else{
 			rows.splice(fromIndex, 0, from);
+		}
+	}
+
+	//restyle rows
+	if(rows === this.displayRows){
+
+		start = fromIndex < toIndex ? fromIndex : toIndex;
+		end = toIndex > fromIndex ? toIndex : fromIndex +1;
+
+		for(let i = start; i <= end; i++){
+			if(rows[i]){
+				this.styleRow(rows[i], i);
+			}
 		}
 	}
 };

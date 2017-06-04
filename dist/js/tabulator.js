@@ -940,6 +940,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       parent.registerColumnField(this);
     }
 
+    if (def.rowHandle && this.table.options.movableRows !== false && this.table.extExists("moveRow")) {
+
+      this.table.extensions.moveRow.setHandle(true);
+    }
+
     this._buildHeader();
   };
 
@@ -999,7 +1004,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //set header tooltips
 
-    var tooltip = self.definition.tooltipHeader || self.definition.tooltip === false ? self.definition.tooltipHeader : self.table.options.tooltipsHeader;
+    var tooltip = def.tooltipHeader || def.tooltip === false ? def.tooltipHeader : self.table.options.tooltipsHeader;
 
     if (tooltip) {
 
@@ -1009,11 +1014,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.table.extensions.localize.bind("columns." + def.field, function (value) {
 
-            self.element.attr("title", value || self.definition.title);
+            self.element.attr("title", value || def.title);
           });
         } else {
 
-          self.element.attr("title", self.definition.title);
+          self.element.attr("title", def.title);
         }
       } else {
 
@@ -2026,7 +2031,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
 
     var fromIndex = rows.indexOf(from),
-        toIndex;
+        toIndex,
+        start,
+        end;
 
     if (fromIndex > -1) {
 
@@ -2046,6 +2053,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       } else {
 
         rows.splice(fromIndex, 0, from);
+      }
+    }
+
+    //restyle rows
+
+    if (rows === this.displayRows) {
+
+      start = fromIndex < toIndex ? fromIndex : toIndex;
+
+      end = toIndex > fromIndex ? toIndex : fromIndex + 1;
+
+      for (var i = start; i <= end; i++) {
+
+        if (rows[i]) {
+
+          this.styleRow(rows[i], i);
+        }
       }
     }
   };
@@ -3262,6 +3286,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (self.column.extensions.edit) {
 
       self.table.extensions.edit.bindEditor(self);
+    }
+
+    if (self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.extExists("moveRow")) {
+
+      self.table.extensions.moveRow.initializeCell(self);
     }
 
     if (self.column.visible) {
@@ -7051,6 +7080,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     rownum: function rownum(cell, formatterParams) {
 
       return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
+    },
+
+    //row handle
+
+
+    handle: function handle(cell, formatterParams) {
+
+      cell.getElement().addClass("tabulator-row-handle");
+
+      return "<div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div>";
     }
 
   };
@@ -8265,12 +8304,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.toRowAfter = false; //position of moving row relative to the desitnation row
 
 
+    this.hasHandle = false; //row has handle instead of fully movable row
+
+
     this.startY = 0; //starting position within header element
 
 
     this.moveHover = this.moveHover.bind(this);
 
     this.endMove = this.endMove.bind(this);
+  };
+
+  MoveRows.prototype.setHandle = function (handle) {
+
+    this.hasHandle = handle;
   };
 
   MoveRows.prototype.initializeRow = function (row) {
@@ -8299,23 +8346,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     }.bind(self);
 
-    row.getElement().on("mousedown", function (e) {
+    if (!this.hasHandle) {
+
+      row.getElement().on("mousedown", function (e) {
+
+        self.checkTimeout = setTimeout(function () {
+
+          self.startMove(e, row);
+        }, self.checkPeriod);
+      });
+
+      row.getElement().on("mouseup", function (e) {
+
+        if (self.checkTimeout) {
+
+          clearTimeout(self.checkTimeout);
+        }
+      });
+    }
+
+    row.extensions.moveRow = config;
+  };
+
+  MoveRows.prototype.initializeCell = function (cell) {
+
+    var self = this;
+
+    cell.getElement().on("mousedown", function (e) {
 
       self.checkTimeout = setTimeout(function () {
 
-        self.startMove(e, row);
+        self.startMove(e, cell.row);
       }, self.checkPeriod);
     });
 
-    row.getElement().on("mouseup", function (e) {
+    cell.getElement().on("mouseup", function (e) {
 
       if (self.checkTimeout) {
 
         clearTimeout(self.checkTimeout);
       }
     });
-
-    row.extensions.moveRow = config;
   };
 
   MoveRows.prototype._bindMouseMove = function () {

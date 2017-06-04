@@ -25,7 +25,13 @@
     -webkit-user-select: none;
     -o-user-select: none; }
     .tabulator .tabulator-header .tabulator-col {
-      display: inline-block; }
+      display: inline-block;
+      position: relative;
+      box-sizing: border-box;
+      border-right: 1px solid #aaa;
+      text-align: left;
+      vertical-align: bottom;
+      overflow: hidden; }
       .tabulator .tabulator-header .tabulator-col.tabulator-moving {
         position: absolute;
         border: 1px solid #999;
@@ -95,17 +101,6 @@
       .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow {
         border-top: 6px solid #666;
         border-bottom: none; }
-    .tabulator .tabulator-header .tabulator-col-row-handle {
-      width: 30px;
-      max-width: 30px;
-      display: inline-block; }
-    .tabulator .tabulator-header .tabulator-col, .tabulator .tabulator-header .tabulator-col-row-handle {
-      position: relative;
-      box-sizing: border-box;
-      border-right: 1px solid #aaa;
-      text-align: left;
-      vertical-align: bottom;
-      overflow: hidden; }
     .tabulator .tabulator-header .tabulator-frozen {
       display: inline-block;
       position: absolute;
@@ -170,26 +165,6 @@
           border-bottom: 1px solid #aaa;
           pointer-events: none;
           z-index: 15; }
-        .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle {
-          display: inline-block;
-          box-sizing: border-box;
-          width: 30px;
-          max-width: 30px;
-          padding: 4px;
-          border-right: 1px solid #aaa;
-          text-align: center;
-          vertical-align: middle;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis; }
-          .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle:hover {
-            cursor: move;
-            background-color: rgba(0, 0, 0, 0.1); }
-          .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-row-handle div {
-            width: 80%;
-            height: 3px;
-            margin: 2px 10% 0 10%;
-            background: #666; }
         .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen {
           display: inline-block;
           position: absolute;
@@ -217,6 +192,11 @@
               background: transparent; }
           .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
             display: none; }
+          .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.tabulator-row-handle .tabulator-row-handle-bar {
+            width: 80%;
+            height: 3px;
+            margin: 2px 10% 0 10%;
+            background: #666; }
         .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group {
           box-sizing: border-box;
           border-bottom: 1px solid #999;

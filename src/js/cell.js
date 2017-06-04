@@ -107,6 +107,10 @@ Cell.prototype._configureCell = function(){
 		self.table.extensions.edit.bindEditor(self);
 	}
 
+	if(self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.extExists("moveRow")){
+		self.table.extensions.moveRow.initializeCell(self);
+	}
+
 	if(self.column.visible){
 		self.show();
 	}else{

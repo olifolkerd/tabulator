@@ -100,6 +100,10 @@ var Column = function(def, parent){
 		parent.registerColumnField(this);
 	}
 
+	if(def.rowHandle && this.table.options.movableRows !== false && this.table.extExists("moveRow")){
+		this.table.extensions.moveRow.setHandle(true);
+	}
+
 	this._buildHeader();
 };
 
@@ -145,16 +149,16 @@ Column.prototype._buildHeader = function(){
 	}
 
 	//set header tooltips
-	var tooltip = self.definition.tooltipHeader || self.definition.tooltip === false  ? self.definition.tooltipHeader : self.table.options.tooltipsHeader;
+	var tooltip = def.tooltipHeader || def.tooltip === false  ? def.tooltipHeader : self.table.options.tooltipsHeader;
 
 	if(tooltip){
 		if(tooltip === true){
 			if(def.field){
 				self.table.extensions.localize.bind("columns." + def.field, function(value){
-					self.element.attr("title", value || self.definition.title);
+					self.element.attr("title", value || def.title);
 				});
 			}else{
-				self.element.attr("title", self.definition.title);
+				self.element.attr("title", def.title);
 			}
 
 		}else{
