@@ -33,7 +33,7 @@ var gulp = require('gulp'),
     gulp.task('styles', function() {
       return gulp.src('src/scss/**/tabulator*.scss')
      	.pipe(sourcemaps.init())
-        .pipe(sass().on('error', sass.logError))
+        .pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
         .pipe(autoprefixer('last 4 version'))
         .pipe(gulp.dest('dist/css'))
         .pipe(rename({suffix: '.min'}))
