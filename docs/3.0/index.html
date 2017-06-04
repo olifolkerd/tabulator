@@ -1795,7 +1795,7 @@ var rowElement = row.getElement();</pre>
                     <pre class="prettyprint lang-js">$('#example-table'),tabulator({
     movableRows: true, //enable user movable rows
     columns:[
-        {rowHandle:true, formatter:"handle", frozen:true, width:30, minWidth:30},
+        {rowHandle:true, formatter:"handle", headerSort:false, frozen:true, width:30, minWidth:30},
         {title:"name", field:"name"} //normal column
     ]
 })</pre>
