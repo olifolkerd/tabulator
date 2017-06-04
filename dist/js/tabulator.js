@@ -4910,9 +4910,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       case "string":
 
-        if (self.accessors[column.definition.accessor]) {
+        if (this.accessors[column.definition.accessor]) {
 
-          config.accessor = self.accessors[column.definition.accessor];
+          config.accessor = this.accessors[column.definition.accessor];
         } else {
 
           console.warn("Accessor Error - No such accessor found, ignoring: ", column.definition.accessor);
@@ -8543,9 +8543,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       case "string":
 
-        if (self.mutators[column.definition.mutator]) {
+        if (this.mutators[column.definition.mutator]) {
 
-          config.mutator = self.mutators[column.definition.mutator];
+          config.mutator = this.mutators[column.definition.mutator];
         } else {
 
           console.warn("Mutator Error - No such mutator found, ignoring: ", column.definition.mutator);

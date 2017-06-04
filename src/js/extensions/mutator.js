@@ -10,8 +10,8 @@ Mutator.prototype.initializeColumn = function(column){
 	//set column mutator
 	switch(typeof column.definition.mutator){
 		case "string":
-		if(self.mutators[column.definition.mutator]){
-			config.mutator = self.mutators[column.definition.mutator]
+		if(this.mutators[column.definition.mutator]){
+			config.mutator = this.mutators[column.definition.mutator]
 		}else{
 			console.warn("Mutator Error - No such mutator found, ignoring: ", column.definition.mutator);
 		}

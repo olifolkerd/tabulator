@@ -11,8 +11,8 @@ Accessor.prototype.initializeColumn = function(column){
 	//set column accessor
 	switch(typeof column.definition.accessor){
 		case "string":
-		if(self.accessors[column.definition.accessor]){
-			config.accessor = self.accessors[column.definition.accessor]
+		if(this.accessors[column.definition.accessor]){
+			config.accessor = this.accessors[column.definition.accessor]
 		}else{
 			console.warn("Accessor Error - No such accessor found, ignoring: ", column.definition.accessor);
 		}
