@@ -7147,7 +7147,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.initializationMode = "left";
 
-    this.leftColums = [];
+    this.leftColumns = [];
 
     this.rightColumns = [];
 

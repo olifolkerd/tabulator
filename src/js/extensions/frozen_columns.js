@@ -11,7 +11,7 @@ var FrozenColumns = function(table){
 //reset initial state
 FrozenColumns.prototype.reset = function(){
 	this.initializationMode = "left";
-	this.leftColums = [];
+	this.leftColumns = [];
 	this.rightColumns = [];
 	this.active = false;
 };
