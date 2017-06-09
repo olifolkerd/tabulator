@@ -2088,7 +2088,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     rowFormatter:function(row, data){
         if(data.age < 18){
-            row.addClass("warning"); //mark rows with age less than 18 with a warning state;
+            row.getElement().addClass("warning"); //mark rows with age less than 18 with a warning state;
         }
     },
 });</pre>
