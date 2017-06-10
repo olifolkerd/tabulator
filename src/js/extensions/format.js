@@ -91,12 +91,13 @@ Format.prototype.formatters = {
 		var thousandSym = formatterParams.thousand || ",";
 		var symbol = formatterParams.symbol || "";
 		var after = !!formatterParams.symbolAfter;
+		var precision = typeof formatterParams.precision !== "undefined" ? formatterParams.precision : 2;
 
 		if(isNaN(floatVal)){
 			return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 		}
 
-		number = floatVal.toFixed(2);
+		number = precision !== false ? floatVal.toFixed(precision) : floatVal;
 		number = number.split(".");
 
 		integer = number[0];
