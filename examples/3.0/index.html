@@ -1160,7 +1160,7 @@ $("#example-table").tabulator({
 
 //Trigger sort when "Trigger Sort" button is clicked
 $("#sort-trigger").click(function(){
-    $("#example-table").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+    $("#example-table").tabulator("setSort", $("#sort-field").val(), $("#sort-direction").val());
 });</pre>
 </fieldset>
 </article>
@@ -2287,7 +2287,7 @@ $("#lang-default").click(function(){
      $("#example-table-sorting").tabulator("setData", tabledata);
 
      $("#sort-trigger").click(function(){
-         $("#example-table-sorting").tabulator("sort", $("#sort-field").val(), $("#sort-direction").val());
+         $("#example-table-sorting").tabulator("setSort", $("#sort-field").val(), $("#sort-direction").val());
      })
 
      });
