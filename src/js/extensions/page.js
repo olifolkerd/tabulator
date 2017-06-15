@@ -360,9 +360,16 @@ Page.prototype._getRemotePageAuto = function(){
 
 
 Page.prototype._parseRemoteData = function(data){
-	if(data[this.paginationDataReceivedNames.last_page]){
+	var m = -1;
+	if(typeof this.paginationDataReceivedNames.last_page === 'function'){
+		m = this.paginationDataReceivedNames.last_page(data, this.size);
+	}else if (data[this.paginationDataReceivedNames.last_page]) {
+		m = parseInt(data[this.paginationDataReceivedNames.last_page]);
+	}
+	
+	if(m != -1){
 		if(data[this.paginationDataReceivedNames.data]){
-			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
+			this.max = m;
 
 			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
 
