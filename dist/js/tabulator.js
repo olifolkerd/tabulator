@@ -2316,6 +2316,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.table.options.renderStarted();
 
+    self.element.scrollTop(0);
+
     if (!self.height || !self.table.options.virtualDom || self.table.options.pagination) {
 
       self.renderMode = "classic";
@@ -2815,6 +2817,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       row.reinitialize();
     });
+  };
+
+  //redraw table
+
+  RowManager.prototype.redraw = function (force) {
+
+    var pos = 0;
+
+    if (this.renderMode == "virtual") {
+
+      this.adjustTableSize();
+    }
+
+    if (!force) {
+
+      if (self.renderMode == "simple") {
+
+        this._simpleRender();
+      } else {
+
+        var pos = Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount);
+
+        this._virtualRenderFill(pos);
+      }
+    } else {
+
+      this.renderTable();
+    }
   };
 
   //public row object
@@ -4274,13 +4304,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.columnManager.redraw(force);
 
-      if (force) {
-
-        this.rowManager.renderTable();
-      } else {
-
-        this.rowManager.normalizeHeight();
-      }
+      this.rowManager.redraw(force);
     },
 
     ///////////////////// Sorting ////////////////////

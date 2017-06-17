@@ -551,12 +551,7 @@
 	 		//redraw list without updating data
 	 		redraw:function(force){
 	 			this.columnManager.redraw(force);
-
-	 			if(force){
-	 				this.rowManager.renderTable();
-	 			}else{
-	 				this.rowManager.normalizeHeight();
-	 			}
+	 			this.rowManager.redraw(force);
 	 		},
 
 	 		///////////////////// Sorting ////////////////////

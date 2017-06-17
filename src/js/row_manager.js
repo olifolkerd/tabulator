@@ -500,6 +500,8 @@ RowManager.prototype.renderTable = function(){
 
 	self.table.options.renderStarted();
 
+	self.element.scrollTop(0);
+
 	if(!self.height || !self.table.options.virtualDom || self.table.options.pagination){
 		self.renderMode = "classic";
 		self._simpleRender();
@@ -674,7 +676,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		});
 
 		if(forceMove){
-			this.scrollTop = self.vDomTopPad + (topPadHeight);
+			this.scrollTop = self.vDomTopPad + (topPadHeight)
 		}
 
 		this.vDomScrollPosTop = this.scrollTop;
@@ -876,4 +878,27 @@ RowManager.prototype.reinitialize = function(){
 	this.rows.forEach(function(row){
 		row.reinitialize();
 	});
+};
+
+
+//redraw table
+RowManager.prototype.redraw = function (force){
+	var pos = 0;
+
+	if(this.renderMode == "virtual"){
+		this.adjustTableSize();
+	}
+
+	if(!force){
+
+		if(self.renderMode == "simple"){
+			this._simpleRender();
+		}else{
+			var pos = Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount);
+			this._virtualRenderFill(pos);
+		}
+
+	}else{
+		this.renderTable();
+	}
 };
