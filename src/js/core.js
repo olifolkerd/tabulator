@@ -37,6 +37,8 @@
 
 	 			initialSort:false, //initial sorting criteria
 
+	 			footerElement:false, //hold footer element
+
 	 			index:"id", //filed for row index
 
 	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
@@ -236,7 +238,7 @@
 	 			element.append(this.rowManager.getElement());
 
 
-	 			if(options.pagination && this.extExists("page", true)){
+	 			if(options.pagination && this.extExists("page", true) || options.footerElement){
 	 				element.append(this.footerManager.getElement());
 	 			}
 
@@ -731,6 +733,23 @@
 	 			}
 	 		},
 
+
+	 		/////////////// History Management //////////////
+	 		undo:function(){
+	 			if(this.options.editHistory && this.extExists("history", true)){
+	 				this.extensions.history.undo();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		redo:function(){
+	 			if(this.options.editHistory && this.extExists("history", true)){
+	 				this.extensions.history.redo();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
 
 	 		/////////////// Download Management //////////////
 
