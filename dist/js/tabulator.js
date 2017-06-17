@@ -4307,6 +4307,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.rowManager.redraw(force);
     },
 
+    setHeight: function setHeight(height) {
+
+      this.options.height = isNaN(height) ? height : height + "px";
+
+      this.element.css({ "height": this.options.height });
+
+      this.rowManager.redraw();
+    },
+
     ///////////////////// Sorting ////////////////////
 
 

@@ -554,6 +554,12 @@
 	 			this.rowManager.redraw(force);
 	 		},
 
+	 		setHeight:function(height){
+	 			this.options.height = isNaN(height) ? height : height + "px";
+	 			this.element.css({"height": this.options.height});
+	 			this.rowManager.redraw();
+	 		},
+
 	 		///////////////////// Sorting ////////////////////
 
 	 		//trigger sort
