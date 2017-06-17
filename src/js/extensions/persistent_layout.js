@@ -52,14 +52,14 @@ PersistentLayout.prototype.load = function(definition){
 	if(newDefinition){
 		newDefinition = JSON.parse(newDefinition);
 
-		definition = this._mergeDefinition(definition, newDefinition);
+		definition = this.mergeDefinition(definition, newDefinition);
 	}
 
 	return definition;
 };
 
 //merge old and new column defintions
-PersistentLayout.prototype._mergeDefinition = function(oldCols, newCols){
+PersistentLayout.prototype.mergeDefinition = function(oldCols, newCols){
 	var self = this,
 	output = [];
 
@@ -73,7 +73,7 @@ PersistentLayout.prototype._mergeDefinition = function(oldCols, newCols){
 			from.visible = column.visible;
 
 			if(from.columns){
-				from.columns = self._mergeDefinition(from.columns, column.columns);
+				from.columns = self.mergeDefinition(from.columns, column.columns);
 			}
 
 			output.push(from);
@@ -107,7 +107,7 @@ PersistentLayout.prototype._findColumn = function(columns, subject){
 
 //save current definitions
 PersistentLayout.prototype.save = function(){
-	var definition = this._parseColumns(this.table.columnManager.getColumns()),
+	var definition = this.parseColumns(this.table.columnManager.getColumns()),
 	data = JSON.stringify(definition);
 
 	switch(this.mode){
@@ -129,7 +129,7 @@ PersistentLayout.prototype.save = function(){
 };
 
 //build premission list
-PersistentLayout.prototype._parseColumns = function(columns){
+PersistentLayout.prototype.parseColumns = function(columns){
 	var self = this,
 	definitions = [];
 
@@ -138,7 +138,7 @@ PersistentLayout.prototype._parseColumns = function(columns){
 
 		if(column.isGroup){
 			def.title = column.getDefinition().title;
-			def.columns = self._parseColumns(column.getColumns());
+			def.columns = self.parseColumns(column.getColumns());
 		}else{
 			def.field = column.getField();
 			def.width = column.getWidth();

@@ -477,6 +477,20 @@
 	 			return this.columnManager.getDefinitionTree();
 	 		},
 
+	 		getColumnLayout:function(){
+	 			if(this.extExists("persistentLayout", true)){
+	 				return this.extensions.persistentLayout.parseColumns(this.columnManager.getColumns());
+	 			}
+	 		},
+
+	 		setColumnLayout:function(layout){
+	 			if(this.extExists("persistentLayout", true)){
+	 				this.columnManager.setColumns(this.extensions.persistentLayout.mergeDefinition(this.options.columns, layout))
+	 				return true;
+	 			}
+	 			return false;
+	 		},
+
 	 		showColumn:function(field){
 	 			var column = this.columnManager.findColumn(field);
 

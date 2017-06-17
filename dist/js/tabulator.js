@@ -4253,6 +4253,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.columnManager.getDefinitionTree();
     },
 
+    getColumnLayout: function getColumnLayout() {
+
+      if (this.extExists("persistentLayout", true)) {
+
+        return this.extensions.persistentLayout.parseColumns(this.columnManager.getColumns());
+      }
+    },
+
+    setColumnLayout: function setColumnLayout(layout) {
+
+      if (this.extExists("persistentLayout", true)) {
+
+        this.columnManager.setColumns(this.extensions.persistentLayout.mergeDefinition(this.options.columns, layout));
+
+        return true;
+      }
+
+      return false;
+    },
+
     showColumn: function showColumn(field) {
 
       var column = this.columnManager.findColumn(field);
@@ -9385,7 +9405,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       newDefinition = JSON.parse(newDefinition);
 
-      definition = this._mergeDefinition(definition, newDefinition);
+      definition = this.mergeDefinition(definition, newDefinition);
     }
 
     return definition;
@@ -9394,7 +9414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //merge old and new column defintions
 
 
-  PersistentLayout.prototype._mergeDefinition = function (oldCols, newCols) {
+  PersistentLayout.prototype.mergeDefinition = function (oldCols, newCols) {
 
     var self = this,
         output = [];
@@ -9411,7 +9431,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (from.columns) {
 
-          from.columns = self._mergeDefinition(from.columns, column.columns);
+          from.columns = self.mergeDefinition(from.columns, column.columns);
         }
 
         output.push(from);
@@ -9459,7 +9479,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   PersistentLayout.prototype.save = function () {
 
-    var definition = this._parseColumns(this.table.columnManager.getColumns()),
+    var definition = this.parseColumns(this.table.columnManager.getColumns()),
         data = JSON.stringify(definition);
 
     switch (this.mode) {
@@ -9493,7 +9513,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   //build premission list
 
 
-  PersistentLayout.prototype._parseColumns = function (columns) {
+  PersistentLayout.prototype.parseColumns = function (columns) {
 
     var self = this,
         definitions = [];
@@ -9506,7 +9526,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         def.title = column.getDefinition().title;
 
-        def.columns = self._parseColumns(column.getColumns());
+        def.columns = self.parseColumns(column.getColumns());
       } else {
 
         def.field = column.getField();
