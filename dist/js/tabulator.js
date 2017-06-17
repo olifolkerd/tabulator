@@ -3584,6 +3584,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.table = table;
 
     this.element = $("<div class='tabulator-footer'></div>"); //containing element
+
+
+    this._initialize();
+  };
+
+  FooterManager.prototype._initialize = function (element) {
+
+    if (this.table.options.footerElement) {
+
+      this.element = this.table.options.footerElement;
+    }
   };
 
   FooterManager.prototype.getElement = function () {
@@ -3636,6 +3647,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
       initialSort: false, //initial sorting criteria
+
+
+      footerElement: false, //hold footer element
 
 
       index: "id", //filed for row index
@@ -3929,7 +3943,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       element.append(this.rowManager.getElement());
 
-      if (options.pagination && this.extExists("page", true)) {
+      if (options.pagination && this.extExists("page", true) || options.footerElement) {
 
         element.append(this.footerManager.getElement());
       }
