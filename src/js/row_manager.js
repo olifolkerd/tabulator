@@ -68,7 +68,6 @@ RowManager.prototype._initialize = function(){
 	self.element.scroll(function(){
 		var left = self.element.scrollLeft();
 
-
 		//handle horizontal scrolling
 		if(self.scrollLeft != left){
 			self.columnManager.scrollHorizontal(left);
@@ -901,4 +900,10 @@ RowManager.prototype.redraw = function (force){
 	}else{
 		this.renderTable();
 	}
+};
+
+RowManager.prototype.resetScroll = function(){
+	this.element.scrollLeft(0);
+	this.element.scrollTop(0);
+	this.element.scroll();
 };

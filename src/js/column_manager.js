@@ -58,6 +58,7 @@ ColumnManager.prototype.setColumns = function(cols, row){
 	self.columnsByIndex = [];
 	self.columnsByField = [];
 
+
 	//reset frozen columns
 	if(self.table.extExists("frozenColumns")){
 		self.table.extensions.frozenColumns.reset();
@@ -73,9 +74,11 @@ ColumnManager.prototype.setColumns = function(cols, row){
 		self.table.extensions.responsiveLayout.initialize();
 	}
 
-	self.redraw();
+	self.redraw(true);
 
 	self._verticalAlignHeaders();
+
+	self.table.rowManager.resetScroll();
 
 	self.table.rowManager.reinitialize();
 

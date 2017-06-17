@@ -294,9 +294,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.table.extensions.responsiveLayout.initialize();
     }
 
-    self.redraw();
+    self.redraw(true);
 
     self._verticalAlignHeaders();
+
+    self.table.rowManager.resetScroll();
 
     self.table.rowManager.reinitialize();
 
@@ -2845,6 +2847,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.renderTable();
     }
+  };
+
+  RowManager.prototype.resetScroll = function () {
+
+    this.element.scrollLeft(0);
+
+    this.element.scrollTop(0);
+
+    this.element.scroll();
   };
 
   //public row object
@@ -6514,8 +6525,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         if (attrType == "text") {
-
-          console.log("search type");
 
           editorElement.attr("type", "search");
         }
