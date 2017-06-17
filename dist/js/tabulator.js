@@ -1719,6 +1719,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
 
+    this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
+
+    this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
+
+
     this._initialize();
   };
 
@@ -2488,18 +2493,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //calculate initial pad
 
-      topPad = Math.min(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight), position);
+      topPad = Math.min(Math.max(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight), self.vDomWindowMinMarginRows), position);
 
       position -= topPad;
     }
 
     if (self.displayRowsCount) {
 
-      this.vDomTop = position;
+      self.vDomTop = position;
 
       self.vDomBottom = position - 1;
 
-      while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.displayRowsCount - 1) {
+      while ((rowsHeight <= self.height + self.vDomWindowBuffer || i < self.vDomWindowMinTotalRows) && self.vDomBottom < self.displayRowsCount - 1) {
 
         var index = self.vDomBottom + 1,
             row = self.displayRows[index];
@@ -2525,12 +2530,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!position) {
 
-        self.vDomRowHeight = self.displayRows[0].getHeight();
+        //adjust rowheight to match average of rendered elements
+
+        self.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
+
+        self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom - 1);
+
+        self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.element.innerHeight();
+      } else {
+
+        self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : self.vDomRowHeight * this.vDomTop + topPadHeight;
+
+        self.vDomBottomPad = Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
       }
-
-      self.vDomTopPad = self.vDomRowHeight * this.vDomTop;
-
-      self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom - 1);
 
       element.css({
 
@@ -2540,25 +2552,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       });
 
-      // this.vDomScrollPosTop = this.scrollTop;
-
-      // this.vDomScrollPosBottom = this.scrollTop;
-
+      console.log("force", position, self.vDomBottomPad);
 
       if (forceMove) {
 
-        this.scrollTop = self.vDomTopPad + topPad * self.vDomRowHeight;
+        this.scrollTop = self.vDomTopPad + topPadHeight;
+      }
 
-        this.vDomScrollPosTop = this.scrollTop;
+      this.vDomScrollPosTop = this.scrollTop;
 
-        this.vDomScrollPosBottom = this.scrollTop;
+      this.vDomScrollPosBottom = this.scrollTop;
+
+      if (forceMove) {
 
         holder.scrollTop(this.scrollTop);
-      } else {
-
-        this.vDomScrollPosTop = this.scrollTop;
-
-        this.vDomScrollPosBottom = this.scrollTop;
       }
     } else {
 
@@ -2574,9 +2581,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 
-    if (Math.abs(topDiff) > this.vDomWindowBuffer * 2 || Math.abs(bottomDiff) > this.vDomWindowBuffer) {
+    var margin = this.vDomWindowBuffer * 2;
+
+    // if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
+
+    if (-topDiff > margin || bottomDiff > margin) {
 
       //if big scroll redraw table;
+
+      // if(Math.abs(bottomDiff) > this.vDomWindowBuffer){
+
+      // 	console.log("fill", Math.abs(bottomDiff) , this.vDomWindowBuffer)
+
+      // }
+
 
       this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount));
     } else {
@@ -2592,7 +2610,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //scrolling up
 
-        this._addTopRow(topDiff * -1);
+        this._addTopRow(-topDiff);
       }
 
       //handle bottom rows
@@ -2606,7 +2624,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //scrolling up
 
-        this._removeBottomRow(bottomDiff * -1);
+        this._removeBottomRow(-bottomDiff);
       }
     }
   };
@@ -2635,7 +2653,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (this.vDomTopPad < 0) {
 
-          this.vDomTopPad == (this.vDomTop - 1) * this.vDomRowHeight;
+          this.vDomTopPad = (this.vDomTop - 1) * this.vDomRowHeight;
         }
 
         table.css("padding-top", this.vDomTopPad);
@@ -2705,9 +2723,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.vDomBottomPad -= bottomRowHeight;
 
-        if (this.vDomBottomPad < 0) {
+        // console.log("addRow", index, this.displayRowsCount-1, index == this.displayRowsCount -1)
 
-          this.vDomBottomPad == 0;
+
+        if (this.vDomBottomPad < 0 || index == this.displayRowsCount - 1) {
+
+          this.vDomBottomPad = 0;
         }
 
         table.css("padding-bottom", this.vDomBottomPad);
@@ -2748,6 +2769,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       table.css("padding-bottom", this.vDomBottomPad);
 
       this.vDomScrollPosBottom -= bottomRowHeight;
+
+      console.log("rem");
 
       this.vDomBottom--;
 
