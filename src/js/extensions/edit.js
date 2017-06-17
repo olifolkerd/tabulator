@@ -164,7 +164,11 @@ Edit.prototype.editors = {
 
 		//submit new value on blur
 		input.on("change blur", function(e){
-			success(input.val());
+			if(input.val() != cell.getValue()){
+				success(input.val());
+			}else{
+				cancel();
+			}
 		});
 
 		//submit new value on enter
@@ -203,10 +207,14 @@ Edit.prototype.editors = {
 
         //submit new value on blur
         input.on("change blur", function(e){
-        	success(input.val());
-        	setTimeout(function(){
-        		cell.getRow().normalizeHeight();
-        	},300)
+        	if(input.val() != cell.getValue()){
+        		success(input.val());
+        		setTimeout(function(){
+        			cell.getRow().normalizeHeight();
+        		},300)
+        	}else{
+        		cancel();
+        	}
         });
 
         input.on("keyup", function(){
@@ -249,7 +257,11 @@ Edit.prototype.editors = {
 				value = Number(value);
 			}
 
-			success(value);
+			if(value != cell.getValue()){
+				success(value);
+			}else{
+				cancel();
+			}
 		});
 
 		//submit new value on enter

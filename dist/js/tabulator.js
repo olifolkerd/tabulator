@@ -5719,7 +5719,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       input.on("change blur", function (e) {
 
-        success(input.val());
+        if (input.val() != cell.getValue()) {
+
+          success(input.val());
+        } else {
+
+          cancel();
+        }
       });
 
       //submit new value on enter
@@ -5778,12 +5784,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       input.on("change blur", function (e) {
 
-        success(input.val());
+        if (input.val() != cell.getValue()) {
 
-        setTimeout(function () {
+          success(input.val());
 
-          cell.getRow().normalizeHeight();
-        }, 300);
+          setTimeout(function () {
+
+            cell.getRow().normalizeHeight();
+          }, 300);
+        } else {
+
+          cancel();
+        }
       });
 
       input.on("keyup", function () {
@@ -5842,7 +5854,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           value = Number(value);
         }
 
-        success(value);
+        if (value != cell.getValue()) {
+
+          success(value);
+        } else {
+
+          cancel();
+        }
       });
 
       //submit new value on enter
