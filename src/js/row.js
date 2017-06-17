@@ -23,14 +23,7 @@ var RowComponent = function (row){
 		},
 
 		getCell:function(column){
-			var match = false,
-			column = row.table.columnManager.findColumn(column);
-
-			match = row.cells.find(function(cell){
-				return cell.column === column;
-			});
-
-			return match;
+			return row.getCell(column);
 		},
 
 		getIndex:function(){
@@ -222,15 +215,37 @@ Row.prototype.updateData = function(data){
 	//mutate incomming data if needed
 	if(self.table.extExists("mutator")){
 		data = self.table.extensions.mutator.transformRow(data);
-	}else{
-		data = data;
 	}
 
+	//set data
 	for (var attrname in data) {
 		self.data[attrname] = data[attrname];
 	}
 
-	self.reinitialize();
+	//update affected cells only
+	for (var attrname in data) {
+		let cell = this.getCell(attrname);
+
+		if(cell){
+			if(cell.getValue() != data[attrname]){
+				cell.setValue(data[attrname]);
+			}
+		}
+	}
+
+	//Partial reinitialization if visible
+	if(this.element.is(":visible")){
+		self.normalizeHeight();
+
+		if(self.table.options.rowFormatter){
+			self.table.options.rowFormatter(self.getComponent());
+		}
+	}else{
+		this.initialized = false;
+		this.height = 0;
+	}
+
+	//self.reinitialize();
 
 	self.table.options.rowUpdated(self.getComponent());
 };
@@ -247,6 +262,17 @@ Row.prototype.getData = function(transform){
 	}
 
 };
+
+Row.prototype.getCell = function(column){
+	var match = false,
+	column = this.table.columnManager.findColumn(column);
+
+	match = this.cells.find(function(cell){
+		return cell.column === column;
+	});
+
+	return match;
+},
 
 ///////////////////// Actions  /////////////////////
 
