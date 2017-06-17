@@ -131,7 +131,6 @@ Filter.prototype.initializeColumn = function(column){
 
 			//change text inputs to search inputs to allow for clearing of field
 			if(attrType == "text"){
-				console.log("search type")
 				editorElement.attr("type", "search");
 			}
 
