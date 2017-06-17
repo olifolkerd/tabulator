@@ -673,10 +673,8 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			"padding-bottom":self.vDomBottomPad,
 		});
 
-		console.log("force", position, self.vDomBottomPad)
-
 		if(forceMove){
-			this.scrollTop = self.vDomTopPad + (topPadHeight)
+			this.scrollTop = self.vDomTopPad + (topPadHeight);
 		}
 
 		this.vDomScrollPosTop = this.scrollTop;
@@ -700,10 +698,6 @@ RowManager.prototype.scrollVertical = function(){
 	// if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
 	if(-topDiff > margin || bottomDiff > margin){
 		//if big scroll redraw table;
-		// if(Math.abs(bottomDiff) > this.vDomWindowBuffer){
-		// 	console.log("fill", Math.abs(bottomDiff) , this.vDomWindowBuffer)
-		// }
-
 		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
 
@@ -803,8 +797,6 @@ RowManager.prototype._addBottomRow = function(bottomDiff){
 
 			this.vDomBottomPad -= bottomRowHeight;
 
-			// console.log("addRow", index, this.displayRowsCount-1, index == this.displayRowsCount -1)
-
 			if(this.vDomBottomPad < 0 || index == this.displayRowsCount -1){
 				this.vDomBottomPad = 0;
 			}
@@ -840,7 +832,6 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 
 		table.css("padding-bottom", this.vDomBottomPad);
 		this.vDomScrollPosBottom -= bottomRowHeight;
-		console.log("rem")
 		this.vDomBottom--;
 
 		bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
