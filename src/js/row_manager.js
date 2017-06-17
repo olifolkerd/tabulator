@@ -32,6 +32,9 @@ var RowManager = function(table){
 
 	this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
+	this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
+	this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
+
 
 	this._initialize();
 };
@@ -625,17 +628,17 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		}
 
 		//calculate initial pad
-		topPad = Math.min(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight), position);
+		topPad = Math.min(Math.max(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight),  self.vDomWindowMinMarginRows), position);
 		position -= topPad;
 	}
 
 	if(self.displayRowsCount){
 
-		this.vDomTop = position;
+		self.vDomTop = position;
 
 		self.vDomBottom = position -1;
 
-		while (rowsHeight <= self.height + self.vDomWindowBuffer && self.vDomBottom < self.displayRowsCount -1){
+		while ((rowsHeight <= self.height + self.vDomWindowBuffer || i < self.vDomWindowMinTotalRows) && self.vDomBottom < self.displayRowsCount -1){
 			var index = self.vDomBottom + 1,
 			row = self.displayRows[index];
 
@@ -655,32 +658,34 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		}
 
 		if(!position){
-			self.vDomRowHeight = self.displayRows[0].getHeight();
+			//adjust rowheight to match average of rendered elements
+			self.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
+			self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom -1);
+
+			self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.element.innerHeight();
+		}else{
+			self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : (self.vDomRowHeight * this.vDomTop) + topPadHeight;
+			self.vDomBottomPad = Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
 		}
 
-		self.vDomTopPad = self.vDomRowHeight * this.vDomTop;
-
-		self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom -1);
-
 		element.css({
-			"padding-top":self.vDomTopPad,
+			"padding-top": self.vDomTopPad,
 			"padding-bottom":self.vDomBottomPad,
 		});
 
-		// this.vDomScrollPosTop = this.scrollTop;
-		// this.vDomScrollPosBottom = this.scrollTop;
+		console.log("force", position, self.vDomBottomPad)
 
 		if(forceMove){
-			this.scrollTop = self.vDomTopPad + (topPad * self.vDomRowHeight)
-
-			this.vDomScrollPosTop = this.scrollTop;
-			this.vDomScrollPosBottom = this.scrollTop;
-
-			holder.scrollTop(this.scrollTop);
-		}else{
-			this.vDomScrollPosTop = this.scrollTop;
-			this.vDomScrollPosBottom = this.scrollTop;
+			this.scrollTop = self.vDomTopPad + (topPadHeight)
 		}
+
+		this.vDomScrollPosTop = this.scrollTop;
+		this.vDomScrollPosBottom = this.scrollTop;
+
+		if(forceMove){
+			holder.scrollTop(this.scrollTop);
+		}
+
 	}else{
 		this.renderEmptyScroll();
 	}
@@ -690,9 +695,15 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 RowManager.prototype.scrollVertical = function(){
 	var topDiff = this.scrollTop - this.vDomScrollPosTop;
 	var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
+	var margin = this.vDomWindowBuffer * 2;
 
-	if(Math.abs(topDiff) > this.vDomWindowBuffer * 2 || Math.abs(bottomDiff) > this.vDomWindowBuffer){
+	// if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
+	if(-topDiff > margin || bottomDiff > margin){
 		//if big scroll redraw table;
+		// if(Math.abs(bottomDiff) > this.vDomWindowBuffer){
+		// 	console.log("fill", Math.abs(bottomDiff) , this.vDomWindowBuffer)
+		// }
+
 		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
 
@@ -702,7 +713,7 @@ RowManager.prototype.scrollVertical = function(){
 			this._removeTopRow(topDiff);
 		}else{
 			//scrolling up
-			this._addTopRow(topDiff * -1)
+			this._addTopRow(-topDiff)
 		}
 
 		//handle bottom rows
@@ -711,7 +722,7 @@ RowManager.prototype.scrollVertical = function(){
 			this._addBottomRow(bottomDiff);
 		}else{
 			//scrolling up
-			this._removeBottomRow(bottomDiff * -1);
+			this._removeBottomRow(-bottomDiff);
 		}
 	}
 
@@ -734,7 +745,7 @@ RowManager.prototype._addTopRow = function(topDiff){
 			this.vDomTopPad -= topRowHeight;
 
 			if(this.vDomTopPad < 0){
-				this.vDomTopPad == (this.vDomTop -1) * this.vDomRowHeight;
+				this.vDomTopPad = (this.vDomTop -1) * this.vDomRowHeight;
 			}
 
 			table.css("padding-top", this.vDomTopPad);
@@ -792,8 +803,10 @@ RowManager.prototype._addBottomRow = function(bottomDiff){
 
 			this.vDomBottomPad -= bottomRowHeight;
 
-			if(this.vDomBottomPad < 0){
-				this.vDomBottomPad == 0;
+			// console.log("addRow", index, this.displayRowsCount-1, index == this.displayRowsCount -1)
+
+			if(this.vDomBottomPad < 0 || index == this.displayRowsCount -1){
+				this.vDomBottomPad = 0;
 			}
 
 			table.css("padding-bottom", this.vDomBottomPad);
@@ -827,6 +840,7 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 
 		table.css("padding-bottom", this.vDomBottomPad);
 		this.vDomScrollPosBottom -= bottomRowHeight;
+		console.log("rem")
 		this.vDomBottom--;
 
 		bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
