@@ -168,6 +168,7 @@ Edit.prototype.editors = {
 
 		onRendered(function(){
 			input.focus();
+			input.css("height","100%");
 		});
 
 		//submit new value on blur
@@ -211,6 +212,7 @@ Edit.prototype.editors = {
 
         onRendered(function(){
         	input.focus();
+        	input.css("height","100%");
         });
 
         //submit new value on blur
@@ -255,6 +257,7 @@ Edit.prototype.editors = {
 
 		onRendered(function(){
 			input.focus();
+			input.css("height","100%");
 		});
 
 		//submit new value on blur
