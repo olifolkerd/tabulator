@@ -41,6 +41,8 @@
 
 	 			index:"id", //filed for row index
 
+	 			keybindings:[], //array for keybindings
+
 	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 	 			selectable:"highlight", //highlight rows on hover
@@ -266,6 +268,10 @@
 
 	 			if(this.extExists("ajax")){
 	 				ext.ajax.initialize();
+	 			}
+
+	 			if(this.extExists("keybindings")){
+	 				ext.keybindings.initialize();
 	 			}
 
 	 			options.tableBuilt();

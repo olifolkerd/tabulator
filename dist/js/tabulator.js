@@ -3965,6 +3965,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       index: "id", //filed for row index
 
 
+      keybindings: [], //array for keybindings
+
+
       addRowPos: "bottom", //position to insert blank rows, top|bottom
 
 
@@ -4288,6 +4291,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.extExists("ajax")) {
 
         ext.ajax.initialize();
+      }
+
+      if (this.extExists("keybindings")) {
+
+        ext.keybindings.initialize();
       }
 
       options.tableBuilt();
@@ -8677,12 +8685,259 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.table = table; //hold Tabulator object
 
+
+    this.activeBindings = {};
+
+    this.watchKeys = {};
+
+    this.pressedKeys = [];
   };
 
-  //default accessors
+  Keybindings.prototype.initialize = function () {
+
+    var bindings = this.table.options.keybindings;
+
+    if (bindings !== false) {
+
+      if (bindings.length) {
+
+        for (var key in bindings) {
+
+          this.bindings[key] = bindings[key];
+        }
+      }
+
+      this.mapBindings();
+
+      this.bindEvents();
+    }
+  };
+
+  Keybindings.prototype.mapBindings = function () {
+    var _this = this;
+
+    var self = this;
+
+    var _loop2 = function _loop2(key) {
+
+      if (_this.actions[key]) {
+
+        var symbols = _this.bindings[key].toString();
+
+        var binding = {
+
+          action: _this.actions[key],
+
+          keys: [],
+
+          ctrl: false,
+
+          shift: false
+
+        };
+
+        symbols = symbols.toLowerCase().split(" ").join("").split("+");
+
+        symbols.forEach(function (symbol) {
+
+          switch (symbol) {
+
+            case "ctrl":
+
+              binding.ctrl = true;
+
+              break;
+
+            case "shift":
+
+              binding.shift = true;
+
+              break;
+
+            default:
+
+              symbol = parseInt(symbol);
+
+              binding.keys.push(symbol);
+
+              if (!self.watchKeys[symbol]) {
+
+                self.watchKeys[symbol] = [];
+              }
+
+              self.watchKeys[symbol].push(key);
+
+          }
+        });
+
+        _this.activeBindings[key] = binding;
+      } else {
+
+        console.warn("Key Binding Error - no such action:", key);
+      }
+    };
+
+    for (var key in this.bindings) {
+      _loop2(key);
+    }
+  };
+
+  Keybindings.prototype.bindEvents = function () {
+
+    var self = this;
+
+    this.table.element.on("keydown", function (e) {
+
+      var code = e.keyCode;
+
+      var bindings = self.watchKeys[code];
+
+      if (bindings) {
+
+        self.pressedKeys.push(code);
+
+        bindings.forEach(function (binding) {
+
+          self.checkBinding(e, self.activeBindings[binding]);
+        });
+      }
+    });
+
+    this.table.element.on("keyup", function (e) {
+
+      var code = e.keyCode;
+
+      var bindings = self.watchKeys[code];
+
+      if (bindings) {
+
+        var index = self.pressedKeys.indexOf(code);
+
+        if (index > -1) {
+
+          self.pressedKeys.splice(index, 1);
+        }
+      }
+    });
+  };
+
+  Keybindings.prototype.checkBinding = function (e, binding) {
+
+    var self = this,
+        match = true;
+
+    if (e.ctrlKey == binding.ctrl && e.shiftKey == binding.shift) {
+
+      binding.keys.forEach(function (key) {
+
+        var index = self.pressedKeys.indexOf(key);
+
+        if (index == -1) {
+
+          match = false;
+        }
+      });
+
+      if (match) {
+
+        binding.action.call(self, e);
+      }
+
+      return true;
+    }
+
+    return false;
+  };
+
+  //default bindings
 
 
-  Keybindings.prototype.actions = {};
+  Keybindings.prototype.bindings = {
+
+    navPrev: "shift + 9",
+
+    navNext: 9,
+
+    navUp: 38,
+
+    navDown: 40
+
+  };
+
+  //default actions
+
+
+  Keybindings.prototype.actions = {
+
+    navPrev: function navPrev(e) {
+
+      var cell = false;
+
+      if (this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          cell.nav().prev();
+        }
+      }
+    },
+
+    navNext: function navNext(e) {
+
+      var cell = false;
+
+      if (this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          cell.nav().next();
+        }
+      }
+    },
+
+    navUp: function navUp(e) {
+
+      var cell = false;
+
+      if (this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          cell.nav().up();
+        }
+      }
+    },
+
+    navDown: function navDown(e) {
+
+      var cell = false;
+
+      if (this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          cell.nav().down();
+        }
+      }
+    }
+
+  };
 
   Tabulator.registerExtension("keybindings", Keybindings);
 
