@@ -3757,7 +3757,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                 <a class="anchor" id="extending"></a>
                 <article>
-                    <h1>Extensions </h1>
+                    <h1>Extensions <span class="label label-primary">Updated</span></h1>
 
                     <p>Tabulator is built in a modular fashion with a core codebase providing basic table rendering functionality and a series of extensions that provide all of its wonderfull features.</p>
 
@@ -3810,7 +3810,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <p class="note"><strong>Note: </strong>if you use a property in your extension object that is already in use, the exising property will be overwritten.</p>
 
-                    <h2>Available Extensions </h2>
+                    <h2>Available Extensions <span class="label label-primary">Updated</span></h2>
 
                     <p>This section will take you through all of the available extensions and how to extend them further with your own custom functionality.</p>
 
@@ -3973,11 +3973,41 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <p>More information on these functions can be found in the <a href="#grouping">Grouping Documentation</a>.</p>
 
+                    <a class="anchor" id="extension-history"></a>
+                    <h3>History <span class="label label-danger">New</span></h3>
+                    <p>The history extension allows the Tabulator to track user interaction with table data, and makes the <span class='param'>undo</span> and <span class='param'>redo</span> function available.</p>
+
+                    <p>More information on these functions can be found in the <a href="#history">History Documentation</a>.</p>
+
                     <a class="anchor" id="extension-htmlTableImport"></a>
                     <h3>HTML Table Import</h3>
                     <p>The allows HTML tables to be converted to Tabulators.</p>
 
                     <p>More information on these functions can be found in the <a href="#table-load">HTML Import Documentation</a>.</p>
+
+                    <a class="anchor" id="extension-keybindings"></a>
+                    <h3>Key Bindings <span class="label label-danger">New</span></h3>
+                    <p>The key bindings extension allows user interaction with the table through keyboard shortcuts.</p>
+
+                    <p>More information on these functions can be found in the <a href="#keybindings">Key Bindings Documentation</a>.</p>
+
+                    <p>Any of the default <span class='param'>keybindings</span> options can be extended:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("keybindings", "bindings", {
+    navPrev:"shift + 9",
+});</pre>
+
+                    <p>The default list of keybinding actions and their functions can be extended:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("keybindings", "actions", {
+    "deleteSelectedRows":function(){ //delete selected rows
+        var rows = this.table.getSelectedRows();
+
+        rows.forEach(function(row){
+            row.delete();
+        });
+    },
+});</pre>
 
                     <a class="anchor" id="extension-localize"></a>
                     <h3>Localization</h3>
@@ -4196,7 +4226,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#download">Download Table Data </a></li>
                             <li><a href="#localization">Localization </a></li>
                             <li><a href="#accessibility">Accessibility</a></li>
-                            <li><a href="#extending">Extensions </a></li>
+                            <li><a href="#extending">Extensions <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#deprecated">Deprecated Functionality </a></li>
                         </ul>
 
