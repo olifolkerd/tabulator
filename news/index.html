@@ -123,6 +123,56 @@
                 <div class="col-lg-12" role="main">
 
                     <article>
+                        <h1>Version 3.1 Released<span class="datestamp">18/06/2017</span></h1>
+                        <p>Well its been a really busy month, with all the great feeback from 3.1 we have made a load of improvements to existing funcctionality and added a load of new features!</p>
+
+                        <h2>Virtual DOM Improvements</h2>
+                        <p>Additional tweaks have been made to the virtual DOM to make it more efficient, it also handles tables with wide variations in row height much better.</p>
+
+                        <p>The <span class='param'>setHeight</span> function has been added to help with changing the table height after initialization.</p>
+
+                        <p>The <span class='param'>redraw</span> function has been fixed so resizing tables can now be correctly redrawn.</p>
+
+                        <h2>Key Bindings</h2>
+                        <p>The new key bindings extension allows for direct interaction with Tabulator with the use of keyboard shortcuts.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.1#keybindings">Key Bindings Documentation</a></p>
+
+                        <h2>Interaction History</h2>
+                        <p>The new hisotry extension tracks user interaction with the table, recording cell edit, row add and row delete events. It allows the user to call <span class='param'>undo</span> and <span class='param'>redo</span> functions on the table to move back and forward through their history.</p>
+
+                        <p>This extension can also be linked to the key bindinds extension to allow users to use keyboard shortcuts to undo and redo edits.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.1#history">Interaction History Documentation</a></p>
+
+                        <h2>Cell Navigation</h2>
+                        <p>A range of new cell navigation functions have been added to allow users to navigate the focused editable cell around the table.</p>
+
+                        <p>These controls can be linked to the keybindings extension to allow users to navigate through the table using the keyboard.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.1#navigation">Navigation Documentation</a></p>
+
+                        <h2>Custom Footer Element</h2>
+                        <p>The <span class='param'>footerElement</span> option has been added to allow for customisation of the table footer element.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.1#footer-element">Table Footer Documentation</a></p>
+
+                        <h2>Column Layout Saving</h2>
+                        <p>The new <span class='param'>getColumnLayout</span> and <span class='param'>setColumnLayout</span> functions allow you to store and retreive custom column layout settings from anywhere you want.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.1#persistant-columns">Persistent Columns Documentation</a></p>
+
+                        <h2>General System Tweaks</h2>
+                        <p>A number of small tweaks have been made to the system including:</p>
+                        <ul>
+                            <li>The <span class='param'>updateRow</span> function now only tirggeres the updated cells to redraw, not the whole row</li>
+                            <li>The <span class='param'>setColumns</span> function now renderes correctly when called multiple times</li>
+                            <li>The <span class='param'>setValue</span> function on Cell Components now mutates the incomming data by default</li>
+                        </ul>
+
+                    </article>
+
+                    <article>
                         <h1>Version 3.0 Released<span class="datestamp">04/06/2017</span></h1>
 
                         <p>The much awaited Tabulator 3.0 is now officially released!, checkout the <a href="../docs">documentation</a> for more information.</p>
