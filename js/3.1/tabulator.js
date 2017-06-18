@@ -5064,7 +5064,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.options.history && this.extExists("history", true)) {
 
-        this.extensions.history.undo();
+        return this.extensions.history.undo();
       } else {
 
         return false;
@@ -5075,7 +5075,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.options.history && this.extExists("history", true)) {
 
-        this.extensions.history.redo();
+        return this.extensions.history.redo();
       } else {
 
         return false;
@@ -8459,7 +8459,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return true;
     } else {
 
-      console.warn("History Undo Error - No more history to undo");
+      console.warn("History Redo Error - No more history to redo");
 
       return false;
     }
