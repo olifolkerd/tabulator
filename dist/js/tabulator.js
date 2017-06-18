@@ -1895,6 +1895,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     self.rows = [];
 
+    if (this.table.options.history && this.table.extExists("history")) {
+
+      this.table.extensions.history.clear();
+    }
+
     if (Array.isArray(data)) {
 
       data.forEach(function (def, i) {

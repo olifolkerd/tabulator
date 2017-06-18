@@ -167,6 +167,10 @@ RowManager.prototype.setData = function(data){
 
 	self.rows = [];
 
+	if(this.table.options.history && this.table.extExists("history")){
+		this.table.extensions.history.clear();
+	}
+
 	if(Array.isArray(data)){
 
 		data.forEach(function(def, i){
