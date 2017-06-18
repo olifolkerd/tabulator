@@ -2354,26 +2354,31 @@ $("#lang-default").click(function(){
      var msgResetTimer = null;
 
      $("#history-undo").on("click", function(){
+        $("#history-msg").text("");
+
         if(!$("#example-table-history").tabulator("undo")){
             clearTimeout(msgResetTimer);
 
-            $("#history-msg").text("No edits left to undo");
+            $("#history-msg").text("No edits left to undo!");
 
             msgResetTimer = setTimeout(function(){
                 $("#history-msg").text("");
-            });
+            }, 2000);
         }
      });
 
      $("#history-redo").on("click", function(){
+
+        $("#history-msg").text("");
+
          if(!$("#example-table-history").tabulator("redo")){
              clearTimeout(msgResetTimer);
 
-             $("#history-msg").text("No more edits left to redo");
+             $("#history-msg").text("No more edits left to redo!");
 
              msgResetTimer = setTimeout(function(){
                  $("#history-msg").text("");
-             });
+             }, 2000);
          }
      });
 
