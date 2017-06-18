@@ -8860,7 +8860,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     navUp: 38,
 
-    navDown: 40
+    navDown: 40,
+
+    undo: "ctrl + 90",
+
+    redo: "ctrl + 89"
 
   };
 
@@ -8933,6 +8937,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           e.preventDefault();
 
           cell.nav().down();
+        }
+      }
+    },
+
+    undo: function undo(e) {
+
+      var cell = false;
+
+      if (this.table.options.history && this.table.extExists("history") && this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (!cell) {
+
+          e.preventDefault();
+
+          this.table.extensions.history.undo();
+        }
+      }
+    },
+
+    redo: function redo(e) {
+
+      var cell = false;
+
+      if (this.table.options.history && this.table.extExists("history") && this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (!cell) {
+
+          e.preventDefault();
+
+          this.table.extensions.history.redo();
         }
       }
     }

@@ -133,6 +133,8 @@ Keybindings.prototype.bindings = {
 	navNext:9,
 	navUp:38,
 	navDown:40,
+	undo:"ctrl + 90",
+	redo:"ctrl + 89",
 };
 
 
@@ -186,6 +188,32 @@ Keybindings.prototype.actions = {
 			if(cell){
 				e.preventDefault();
 				cell.nav().down();
+			}
+		}
+	},
+
+	undo:function(e){
+		var cell = false;
+		if(this.table.options.history && this.table.extExists("history") && this.table.extExists("edit")){
+
+			cell = this.table.extensions.edit.currentCell;
+
+			if(!cell){
+				e.preventDefault();
+				this.table.extensions.history.undo();
+			}
+		}
+	},
+
+	redo:function(e){
+		var cell = false;
+		if(this.table.options.history && this.table.extExists("history") && this.table.extExists("edit")){
+
+			cell = this.table.extensions.edit.currentCell;
+
+			if(!cell){
+				e.preventDefault();
+				this.table.extensions.history.redo();
 			}
 		}
 	},
