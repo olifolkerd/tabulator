@@ -1,6 +1,6 @@
 ![Tabluator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
 
-### Version 3.0 Out Now!
+### Version 3.1 Out Now!
 
 An easy to use interactive table generation plugin for JQuery UI
 
@@ -88,6 +88,5 @@ Tabulator is actively under development and I plan to have even more useful feat
 - Copy to Clipboard
 - Print Styling
 - Drag Rows Between Tables
-- Keyboard Cell Navigation
 
 Get in touch if there are any features you feel Tabulator needs.
