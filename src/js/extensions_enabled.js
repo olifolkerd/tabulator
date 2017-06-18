@@ -8,6 +8,7 @@
 /*=include extensions/group_rows.js */
 /*=include extensions/history.js */
 /*=include extensions/html_table_import.js */
+/*=include extensions/Keybindings.js */
 /*=include extensions/moveable_columns.js */
 /*=include extensions/moveable_rows.js */
 /*=include extensions/mutator.js */

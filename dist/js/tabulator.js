@@ -8673,6 +8673,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Tabulator.registerExtension("htmlTableImport", HtmlTableImport);
 
+  var Keybindings = function Keybindings(table) {
+
+    this.table = table; //hold Tabulator object
+
+  };
+
+  //default accessors
+
+
+  Keybindings.prototype.actions = {};
+
+  Tabulator.registerExtension("keybindings", Keybindings);
+
   var MoveColumns = function MoveColumns(table) {
 
     this.table = table; //hold Tabulator object
