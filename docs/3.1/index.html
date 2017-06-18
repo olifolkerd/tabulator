@@ -1062,7 +1062,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                 <a class="anchor" id="manipulating-data"></a>
                 <article>
-                    <h1>Editing &amp; Manipulating Data </h1>
+                    <h1>Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -1249,6 +1249,32 @@ var rowElement = row.getElement();</pre>
                     <p>If you already have the <a href='#component-row'>RowComponent</a> for the row you wish to delete, you can call the <span class='param'>delete</span> function directly on the component:</p>
                     <pre class="prettyprint lang-js">row.delete();</pre>
 
+                    <a class="anchor" id="hisotry"></a>
+                    <h2>Interaction History <span class="label label-danger">New</span></h2>
+                    <div class="alert alert-success extension-info" role="alert">
+                      <i class="fa fa-cubes"></i>
+                      History functionality is provided by the <a href="#extension-history">history extension</a>
+                    </div>
+                    <p>If you set the <span class='param'>history</span> option to <span class='param'>true</span>, Tabulator will keep track of all user interactions with table data including cell edits, row addition and deletion.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    history:true, //record table history
+});</pre>
+
+                    <h3>Undo Action</h3>
+                    <p>With history enabled you can use the <span class='param'>undo</span> function to automatically undo a user action, the more times you call the function, the further up the history log you go.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("undo");</pre>
+
+                    <p>If the <a href="#keybindings">keybindings extension</a> is installed, this action can also be triggered with the <span class='param'>ctrl + z</span> key combination.</p>
+
+                    <h3>Redo Action</h3>
+                    <p>With history enabled you can use the <span class='param'>redo</span> function to automatically redo user action that has been undone, the more times you call the function, the further up the history log you go. once a user interactes with the table then can no longer redo any further actions until an <span class='param'>undo</span> is performed</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("redo");</pre>
+
+                    <p>If the <a href="#keybindings">keybindings extension</a> is installed, this action can also be triggered with the <span class='param'>ctrl + y</span> key combination.</p>
+
                     <h2>Callbacks </h2>
                     <p>A range of callbacks are avaialble for tracking progress of data manipulation. See the <a href="#callbacks-data">Data Callbacks</a> section for more information.</p>
 
@@ -1418,7 +1444,7 @@ var rowElement = row.getElement();</pre>
                     <p>f you need to disable virtual rendering for any reason you can set the <span class='param'>virtualDom</span> option to <span class='param'>false</span> to force standard rendering.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    virtualDom:false, //disable virtual DOM rendering
+    virtualDom:false, //disable virtual DOM rendering<span class="label label-danger">New</span>
 });</pre>
 
                     <p class="note"><strong>Note:</strong> You must have the <span class='param'>height</span> option set to enable progressive rendering.</p>
@@ -3995,7 +4021,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#formatting">Formatting </a></li>
                             <li><a href="#filtering">Filtering </a></li>
                             <li><a href="#sorting">Sorting </a></li>
-                            <li><a href="#manipulating-data">Editing &amp; Manipulating Data </a></li>
+                            <li><a href="#manipulating-data">Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                         <h2>Layout</h2>
