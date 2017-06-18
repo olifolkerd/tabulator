@@ -55,7 +55,7 @@ History.prototype.redo = function(){
 
 		return true;
 	}else{
-		console.warn("History Undo Error - No more history to undo");
+		console.warn("History Redo Error - No more history to redo");
 		return false;
 	}
 };

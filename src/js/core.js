@@ -837,7 +837,7 @@
 	 		/////////////// History Management //////////////
 	 		undo:function(){
 	 			if(this.options.history && this.extExists("history", true)){
-	 				this.extensions.history.undo();
+	 				return this.extensions.history.undo();
 	 			}else{
 	 				return false;
 	 			}
@@ -845,7 +845,7 @@
 
 	 		redo:function(){
 	 			if(this.options.history && this.extExists("history", true)){
-	 				this.extensions.history.redo();
+	 				return this.extensions.history.redo();
 	 			}else{
 	 				return false;
 	 			}
