@@ -281,11 +281,11 @@ Filter.prototype.filter = function(rowList){
 	activeRows = [],
 	activeRowComponents = [];
 
-	if(!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)){
+	if(self.table.options.dataFiltering){
+		self.table.options.dataFiltering(self.getFilter());
+	}
 
-		if(self.table.options.dataFiltering){
-			self.table.options.dataFiltering(self.getFilter());
-		}
+	if(!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)){
 
 		rowList.forEach(function(row){
 			if(self.filterRow(row)){
@@ -293,19 +293,23 @@ Filter.prototype.filter = function(rowList){
 			}
 		});
 
-		if(self.table.options.dataFiltered){
+		activeRows;
 
-			activeRows.forEach(function(row){
-				activeRowComponents.push(row.getComponent());
-			});
-
-			self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
-		}
-
-		return activeRows;
 	}else{
-		return rowList.slice(0);
+		activeRows = rowList.slice(0);
 	}
+
+	if(self.table.options.dataFiltered){
+
+		activeRows.forEach(function(row){
+			activeRowComponents.push(row.getComponent());
+		});
+
+		self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
+	}
+
+	return activeRows;
+
 };
 
 //filter individual row

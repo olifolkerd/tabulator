@@ -6857,12 +6857,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         activeRows = [],
         activeRowComponents = [];
 
+    if (self.table.options.dataFiltering) {
+
+      self.table.options.dataFiltering(self.getFilter());
+    }
+
     if (!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)) {
-
-      if (self.table.options.dataFiltering) {
-
-        self.table.options.dataFiltering(self.getFilter());
-      }
 
       rowList.forEach(function (row) {
 
@@ -6872,21 +6872,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       });
 
-      if (self.table.options.dataFiltered) {
-
-        activeRows.forEach(function (row) {
-
-          activeRowComponents.push(row.getComponent());
-        });
-
-        self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
-      }
-
-      return activeRows;
+      activeRows;
     } else {
 
-      return rowList.slice(0);
+      activeRows = rowList.slice(0);
     }
+
+    if (self.table.options.dataFiltered) {
+
+      activeRows.forEach(function (row) {
+
+        activeRowComponents.push(row.getComponent());
+      });
+
+      self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
+    }
+
+    return activeRows;
   };
 
   //filter individual row
