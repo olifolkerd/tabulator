@@ -1214,12 +1214,12 @@ var rowData = row.getData();</pre>
 
                     <p class="note"><strong>Data Mutation</strong> <br> if you have defined any mutator functions in your column definition array, these will be applied to the new data before the row is added. (see <a href="#mutators">Mutators</a> for more details)</p>
 
-                    <h3>Update Row <span class="label label-primary">Updated</span></h3>
-                    <p>You can update any row in the table using the <span class='param'>updateRow</span> function. The first argument of this function should be the index of the row you want to update (the index field being defined by the <span class='param'>index</span> option in the tabulator constructor, which defaults to "id"), alternativly you could pass a jQuery object of the row itself. </p>
+                   <h3>Update Row <span class="label label-primary">Updated</span></h3>
+                   <p>You can update any row in the table using the <span class='param'>updateRow</span> function.
 
-                    <p>The second argument is the row you want to update, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
+                   <p>The first argument is the row you want to update, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
 
-                    <p>The third argument should be the updated data object for the row. As with the <span class='param'>updateData</span> function, this will not replace the exisiting row data object, it will only update any of the provided parameters.</p>
+                   <p>The second argument should be the updated data object for the row. As with the <span class='param'>updateData</span> function, this will not replace the exisiting row data object, it will only update any of the provided parameters.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("updateRow", 1, {id:1, name:"bob", gender:"male"});</pre>
 
