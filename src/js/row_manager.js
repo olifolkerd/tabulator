@@ -643,9 +643,11 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 	i = 0;
 
 	position = position || 0;
+	console.log("position", position)
 
 	if(!position){
 		self._clearVirtualDom();
+		console.log("clearing", self.vDomTopPad)
 	}else{
 		element.children().detach();
 
@@ -691,6 +693,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		}
 
 		if(!position){
+			this.vDomTopPad = 0;
 			//adjust rowheight to match average of rendered elements
 			self.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
 			self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom -1);
@@ -698,13 +701,15 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.element.innerHeight();
 		}else{
 			self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : (self.vDomRowHeight * this.vDomTop) + topPadHeight;
-			self.vDomBottomPad = Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
+			self.vDomBottomPad = self.vDomBottom == self.displayRowsCount-1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
 		}
 
 		element.css({
 			"padding-top": self.vDomTopPad,
 			"padding-bottom":self.vDomBottomPad,
 		});
+
+		console.log("pad", position, self.vDomTopPad, self.vDomRowHeight , this.vDomTop, topPadHeight)
 
 		if(forceMove){
 			this.scrollTop = self.vDomTopPad + (topPadHeight)
@@ -730,6 +735,7 @@ RowManager.prototype.scrollVertical = function(){
 
 	// if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
 		if(-topDiff > margin || bottomDiff > margin){
+			console.log("fill", Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 		//if big scroll redraw table;
 		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
@@ -739,6 +745,7 @@ RowManager.prototype.scrollVertical = function(){
 			//scrolling down
 			this._removeTopRow(topDiff);
 		}else{
+			console.log("top");
 			//scrolling up
 			this._addTopRow(-topDiff)
 		}
@@ -747,6 +754,7 @@ RowManager.prototype.scrollVertical = function(){
 		if(bottomDiff >= 0){
 			//scrolling down
 			this._addBottomRow(bottomDiff);
+			console.log("bottom");
 		}else{
 			//scrolling up
 			this._removeBottomRow(-bottomDiff);

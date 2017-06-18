@@ -2510,9 +2510,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     position = position || 0;
 
+    console.log("position", position);
+
     if (!position) {
 
       self._clearVirtualDom();
+
+      console.log("clearing", self.vDomTopPad);
     } else {
 
       element.children().detach();
@@ -2570,6 +2574,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!position) {
 
+        this.vDomTopPad = 0;
+
         //adjust rowheight to match average of rendered elements
 
         self.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
@@ -2581,7 +2587,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : self.vDomRowHeight * this.vDomTop + topPadHeight;
 
-        self.vDomBottomPad = Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
+        self.vDomBottomPad = self.vDomBottom == self.displayRowsCount - 1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
       }
 
       element.css({
@@ -2591,6 +2597,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         "padding-bottom": self.vDomBottomPad
 
       });
+
+      console.log("pad", position, self.vDomTopPad, self.vDomRowHeight, this.vDomTop, topPadHeight);
 
       if (forceMove) {
 
@@ -2625,6 +2633,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     if (-topDiff > margin || bottomDiff > margin) {
 
+      console.log("fill", Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount));
+
       //if big scroll redraw table;
 
       this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount));
@@ -2639,6 +2649,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this._removeTopRow(topDiff);
       } else {
 
+        console.log("top");
+
         //scrolling up
 
         this._addTopRow(-topDiff);
@@ -2651,6 +2663,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //scrolling down
 
         this._addBottomRow(bottomDiff);
+
+        console.log("bottom");
       } else {
 
         //scrolling up
