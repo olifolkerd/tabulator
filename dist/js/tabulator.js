@@ -9024,6 +9024,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     },
 
+    navLeft: function navLeft(e) {
+
+      var cell = false;
+
+      if (this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          cell.nav().left();
+        }
+      }
+    },
+
+    navRight: function navRight(e) {
+
+      var cell = false;
+
+      if (this.table.extExists("edit")) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          cell.nav().right();
+        }
+      }
+    },
+
     navUp: function navUp(e) {
 
       var cell = false;

@@ -166,6 +166,32 @@ Keybindings.prototype.actions = {
 		}
 	},
 
+	navLeft:function(e){
+		var cell = false;
+
+		if(this.table.extExists("edit")){
+			cell = this.table.extensions.edit.currentCell;
+
+			if(cell){
+				e.preventDefault();
+				cell.nav().left();
+			}
+		}
+	},
+
+	navRight:function(e){
+		var cell = false;
+
+		if(this.table.extExists("edit")){
+			cell = this.table.extensions.edit.currentCell;
+
+			if(cell){
+				e.preventDefault();
+				cell.nav().right();
+			}
+		}
+	},
+
 	navUp:function(e){
 		var cell = false;
 
