@@ -69,7 +69,7 @@ Edit.prototype.bindEditor = function(cell){
 	//handle aborted edit
 	function cancel(){
 		self.clearEditor(cell);
-		cell.setValue(cell.getValue());
+		cell.setValueActual(cell.getValue());
 		self.table.options.cellEditCancelled(cell.getComponent())
 	};
 
