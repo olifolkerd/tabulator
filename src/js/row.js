@@ -228,7 +228,7 @@ Row.prototype.updateData = function(data){
 
 		if(cell){
 			if(cell.getValue() != data[attrname]){
-				cell.setValue(data[attrname]);
+				cell.setValueProcessData(data[attrname]);
 			}
 		}
 	}
@@ -277,6 +277,22 @@ Row.prototype.getCell = function(column){
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function(){
+
+	var index = this.table.rowManager.getRowIndex(this);
+
+	this.deleteActual();
+
+	if(this.table.options.history && this.table.extExists("history")){
+		if(index){
+			index = this.table.rowManager.rows[index-1];
+		}
+
+		this.table.extensions.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
+	};
+};
+
+
+Row.prototype.deleteActual = function(){
 	this.table.rowManager.deleteRow(this);
 
 	var cellCount = this.cells.length;

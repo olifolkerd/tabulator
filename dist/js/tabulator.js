@@ -1953,6 +1953,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   RowManager.prototype.addRow = function (data, pos, index) {
 
+    var row = this.addRowActual(data, pos, index);
+
+    if (this.table.options.history && this.table.extExists("history")) {
+
+      this.table.extensions.history.action("rowAdd", row, { data: data, pos: pos, index: index });
+    };
+
+    return row;
+  };
+
+  RowManager.prototype.addRowActual = function (data, pos, index) {
+
     var safeData = data || {},
         row = new Row(safeData, this),
         top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
@@ -2084,6 +2096,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   RowManager.prototype.clearData = function () {
 
     this.setData([]);
+  };
+
+  RowManager.prototype.getRowIndex = function (row) {
+
+    var rowIndex;
+
+    row = this.findRow(row);
+
+    if (row) {
+
+      rowIndex = this.rows.indexOf(row);
+
+      if (rowIndex > -1) {
+
+        return rowIndex;
+      }
+    }
+
+    return false;
   };
 
   RowManager.prototype.getData = function (active) {
@@ -3156,7 +3187,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (_cell.getValue() != data[attrname]) {
 
-          _cell.setValue(data[attrname]);
+          _cell.setValueProcessData(data[attrname]);
         }
       }
     }
@@ -3218,6 +3249,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Row.prototype.delete = function () {
 
+    var index = this.table.rowManager.getRowIndex(this);
+
+    this.deleteActual();
+
+    if (this.table.options.history && this.table.extExists("history")) {
+
+      if (index) {
+
+        index = this.table.rowManager.rows[index - 1];
+      }
+
+      this.table.extensions.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
+    };
+  };
+
+  Row.prototype.deleteActual = function () {
+
     this.table.rowManager.deleteRow(this);
 
     var cellCount = this.cells.length;
@@ -3267,6 +3315,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       },
 
       setValue: function setValue(value, mutate) {
+
+        if (typeof mutate == "undefined") {
+
+          mutate = true;
+        }
 
         cell.setValue(value, mutate);
       },
@@ -3320,7 +3373,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this._configureCell();
 
-    this.setValue(this.row.data[this.column.getField()]);
+    this.setValueProcessData(this.row.data[this.column.getField()]);
   };
 
   Cell.prototype._configureCell = function () {
@@ -3451,16 +3504,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   Cell.prototype.setValue = function (value, mutate) {
 
-    var oldVal,
-        changed = false;
+    var changed = this.setValueProcessData(value, mutate);
+
+    if (changed) {
+
+      if (this.table.options.history && this.table.extExists("history")) {
+
+        this.table.extensions.history.action("cellEdit", this, { oldValue: this.oldValue, newValue: this.value });
+      };
+
+      this.table.options.cellEdited(this.getComponent());
+
+      this.table.options.dataEdited(this.table.rowManager.getData());
+    }
+  };
+
+  Cell.prototype.setValueProcessData = function (value, mutate) {
+
+    var changed = false;
 
     if (this.value != value) {
 
+      changed = true;
+
       if (mutate) {
-
-        changed = true;
-
-        oldVal = this.value;
 
         if (this.column.extensions.mutate && this.column.extensions.mutate.type !== "data") {
 
@@ -3468,12 +3535,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       }
 
-      this.oldValue = this.value;
-
-      this.value = value;
-
-      this.row.data[this.column.getField()] = value;
+      this.setValueActual(value);
     }
+
+    return changed;
+  };
+
+  Cell.prototype.setValueActual = function (value) {
+
+    this.oldValue = this.value;
+
+    this.value = value;
+
+    this.row.data[this.column.getField()] = value;
 
     this._generateContents();
 
@@ -3491,13 +3565,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (this.table.extExists("frozenColumns")) {
 
       this.table.extensions.frozenColumns.layoutElement(this.element, this.column);
-    }
-
-    if (changed) {
-
-      this.table.options.cellEdited(this.getComponent());
-
-      this.table.options.dataEdited(this.table.rowManager.getData());
     }
   };
 
@@ -3670,6 +3737,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
       headerFilterPlaceholder: false, //placeholder text to display in header filters
+
+
+      history: false, //enable edit history
 
 
       locale: false, //current system language
@@ -4614,6 +4684,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.options.pagination && this.extExists("page")) {
 
         this.extensions.page.getPageMax();
+      } else {
+
+        return false;
+      }
+    },
+
+    /////////////// History Management //////////////
+
+    undo: function undo() {
+
+      if (this.options.history && this.extExists("history", true)) {
+
+        this.extensions.history.undo();
+      } else {
+
+        return false;
+      }
+    },
+
+    redo: function redo() {
+
+      if (this.options.history && this.extExists("history", true)) {
+
+        this.extensions.history.redo();
       } else {
 
         return false;
@@ -7913,6 +8007,153 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   };
 
   Tabulator.registerExtension("groupRows", GroupRows);
+
+  var History = function History(table) {
+
+    this.table = table; //hold Tabulator object
+
+
+    this.history = [];
+
+    this.index = -1;
+  };
+
+  History.prototype.clear = function () {
+
+    this.history = [];
+
+    this.index = -1;
+  };
+
+  History.prototype.action = function (type, component, data) {
+
+    if (this.index > -1) {
+
+      this.history = this.history.slice(0, this.index + 1);
+    }
+
+    this.history.push({
+
+      type: type,
+
+      component: component,
+
+      data: data
+
+    });
+
+    this.index++;
+  };
+
+  History.prototype.undo = function () {
+
+    if (this.index > -1) {
+
+      var action = this.history[this.index];
+
+      this.undoers[action.type].call(this, action);
+
+      this.index--;
+
+      return true;
+    } else {
+
+      console.warn("History Undo Error - No more history to undo");
+
+      return false;
+    }
+  };
+
+  History.prototype.redo = function () {
+
+    if (this.history.length - 1 > this.index) {
+
+      this.index++;
+
+      var action = this.history[this.index];
+
+      this.redoers[action.type].call(this, action);
+
+      return true;
+    } else {
+
+      console.warn("History Undo Error - No more history to undo");
+
+      return false;
+    }
+  };
+
+  History.prototype.undoers = {
+
+    cellEdit: function cellEdit(action) {
+
+      action.component.setValueProcessData(action.data.oldValue);
+    },
+
+    rowAdd: function rowAdd(action) {
+
+      action.component.delete();
+    },
+
+    rowDelete: function rowDelete(action) {
+
+      var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
+
+      this._rebindRow(action.component, newRow);
+    }
+
+  };
+
+  History.prototype.redoers = {
+
+    cellEdit: function cellEdit(action) {
+
+      action.component.setValueProcessData(action.data.newValue);
+    },
+
+    rowAdd: function rowAdd(action) {
+
+      var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
+
+      this._rebindRow(action.component, newRow);
+    },
+
+    rowDelete: function rowDelete(action) {
+
+      action.component.delete();
+    }
+
+  };
+
+  //rebind rows to new element after deletion
+
+
+  History.prototype._rebindRow = function (oldRow, newRow) {
+
+    this.history.forEach(function (action) {
+
+      if (action.component instanceof Row) {
+
+        if (action.component === oldRow) {
+
+          action.component = newRow;
+        }
+      } else if (action.component instanceof Cell) {
+
+        if (action.component.row === oldRow) {
+
+          var field = action.component.column.getField();
+
+          if (field) {
+
+            action.component = newRow.getCell(field);
+          }
+        }
+      }
+    });
+  };
+
+  Tabulator.registerExtension("history", History);
 
   var HtmlTableImport = function HtmlTableImport(table) {
 

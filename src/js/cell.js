@@ -24,6 +24,10 @@ var CellComponent = function (cell){
 		},
 
 		setValue:function(value, mutate){
+			if(typeof mutate == "undefined"){
+				mutate = true;
+			}
+
 			cell.setValue(value, mutate);
 		},
 
@@ -63,7 +67,7 @@ Cell.prototype.generateElement = function(){
 
 	this._configureCell();
 
-	this.setValue(this.row.data[this.column.getField()]);
+	this.setValueProcessData(this.row.data[this.column.getField()]);
 };
 
 
@@ -165,25 +169,44 @@ Cell.prototype.getOldValue = function(){
 //////////////////// Actions ////////////////////
 
 Cell.prototype.setValue = function(value, mutate){
-	var oldVal,
-	changed = false;
+
+	var changed = this.setValueProcessData(value, mutate);
+
+	if(changed){
+		if(this.table.options.history && this.table.extExists("history")){
+			this.table.extensions.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
+		};
+
+		this.table.options.cellEdited(this.getComponent());
+		this.table.options.dataEdited(this.table.rowManager.getData());
+	}
+
+};
+
+Cell.prototype.setValueProcessData = function(value, mutate){
+	var changed = false;
 
 	if(this.value != value){
 
-		if(mutate){
-			changed = true;
-			oldVal = this.value;
+		changed = true;
 
+		if(mutate){
 			if(this.column.extensions.mutate && this.column.extensions.mutate.type !== "data"){
 				value = this.table.extensions.mutator.transformCell(cell, value);
 			}
 		}
 
-		this.oldValue = this.value;
-
-		this.value = value;
-		this.row.data[this.column.getField()] = value;
+		this.setValueActual(value)
 	}
+
+	return changed;
+}
+
+Cell.prototype.setValueActual = function(value){
+	this.oldValue = this.value;
+
+	this.value = value;
+	this.row.data[this.column.getField()] = value;
 
 	this._generateContents();
 	this._generateTooltip();
@@ -196,11 +219,6 @@ Cell.prototype.setValue = function(value, mutate){
 	//handle frozen cells
 	if(this.table.extExists("frozenColumns")){
 		this.table.extensions.frozenColumns.layoutElement(this.element, this.column);
-	}
-
-	if(changed){
-		this.table.options.cellEdited(this.getComponent());
-		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 };
 

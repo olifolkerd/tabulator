@@ -216,6 +216,18 @@ RowManager.prototype.deleteRow = function(row){
 };
 
 RowManager.prototype.addRow = function(data, pos, index){
+
+	var row = this.addRowActual(data, pos, index);
+
+	if(this.table.options.history && this.table.extExists("history")){
+		this.table.extensions.history.action("rowAdd", row, {data:data, pos:pos, index:index});
+	};
+
+	return row;
+};
+
+
+RowManager.prototype.addRowActual = function(data, pos, index){
 	var safeData = data || {},
 	row = new Row(safeData, this),
 	top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
@@ -321,6 +333,22 @@ RowManager.prototype._moveRowInArray = function(rows, from, to, after){
 
 RowManager.prototype.clearData = function(){
 	this.setData([]);
+};
+
+RowManager.prototype.getRowIndex = function(row){
+	var rowIndex;
+
+	row = this.findRow(row);
+
+	if(row){
+		rowIndex = this.rows.indexOf(row);
+
+		if(rowIndex > -1){
+			return rowIndex;
+		}
+	}
+
+	return false;
 };
 
 RowManager.prototype.getData = function(active){
@@ -697,7 +725,7 @@ RowManager.prototype.scrollVertical = function(){
 	var margin = this.vDomWindowBuffer * 2;
 
 	// if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
-	if(-topDiff > margin || bottomDiff > margin){
+		if(-topDiff > margin || bottomDiff > margin){
 		//if big scroll redraw table;
 		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{

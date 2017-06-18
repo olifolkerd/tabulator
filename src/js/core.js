@@ -50,6 +50,8 @@
 
 	 			headerFilterPlaceholder: false, //placeholder text to display in header filters
 
+	 			history:false, //enable edit history
+
 	 			locale:false, //current system language
 	 			langs:{},
 
@@ -736,7 +738,7 @@
 
 	 		/////////////// History Management //////////////
 	 		undo:function(){
-	 			if(this.options.editHistory && this.extExists("history", true)){
+	 			if(this.options.history && this.extExists("history", true)){
 	 				this.extensions.history.undo();
 	 			}else{
 	 				return false;
@@ -744,7 +746,7 @@
 	 		},
 
 	 		redo:function(){
-	 			if(this.options.editHistory && this.extExists("history", true)){
+	 			if(this.options.history && this.extExists("history", true)){
 	 				this.extensions.history.redo();
 	 			}else{
 	 				return false;
