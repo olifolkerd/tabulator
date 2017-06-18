@@ -1855,11 +1855,11 @@ var rowElement = row.getElement();</pre>
 
                 <a class="anchor" id="column-management"></a>
                 <article>
-                    <h1>Column Management </h1>
+                    <h1>Column Management <span class="label label-primary">Updated</span></h1>
 
 
-                    <h2>Set New Column Definitions</h2>
-                    <p>To update the current column definitions for a table use the <span class='param'>setColumns</span> function. this function takes two parameters. the first should be the new columns definition array. The second is a boolean value that determines the type of column update you wish to use. If you set this to <span class='param'>false</span>, the current column definition array will be completely overwritten. Set it to <span class='param'>true</span> and only the column layout information (width, order, visibility) will be overwritten, perfect for loading user layout preferences from an external store.</p>
+                    <h2>Set New Column Definitions <span class="label label-primary">Updated</span></h2>
+                    <p>To update the current column definitions for a table use the <span class='param'>setColumns</span> function. This function takes a column definition array as its only argument.</p>
 
                     <pre class="prettyprint lang-js">//new column definition array
 var newColumns = [
@@ -1870,7 +1870,7 @@ var newColumns = [
     {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
 ],
 
-$("#example-table").tabulator("setColumns", newColumns , false) //completely overwrite existing columns with new columns definition array</pre>
+$("#example-table").tabulator("setColumns", newColumns) //overwrite existing columns with new columns definition array</pre>
 
                     <h2>Add Column </h2>
                     <p>If you wish to add a single column to the table, you can do this using the <span class='param'>addColumn</span> function.</p>
@@ -1905,7 +1905,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
 
                     <a class="anchor" id="persistant-columns"></a>
-                    <h2>Persistent Column Layout <a class="example-link" href="../../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Persistent Column Layout <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -1938,6 +1938,15 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
     persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
                     <p class="note"><strong>Note:</strong> If you update the column definition array after the the layout has been stored you may have to change the storage id to clear out the old column layout information.</p>
+
+                    <h3>Get Column Layout Information <span class="label label-danger">New</span></h3>
+                    <p>If you want to handle column layout persistence manually, for example storing it in a database to use elsewhere, you can use the <span class='param'>getColumnLayout</span> function to retrieve a layout object for the current table.</p>
+                    <pre class="prettyprint lang-js">var columnLayout = $("#example-table").tabulator("getColumnLayout");</pre>
+
+                    <h3>Set Column Layout <span class="label label-danger">New</span></h3>
+                    <p>If you have previously used the <span class='param'>getColumnLayout</span> function to retreive a tables layout, you can use the <span class='param'>setColumnLayout</span> function to apply it to a table.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setColumnLayout", columnLayout);</pre>
+
 
                     <a class="anchor" id="editable-column-title"></a>
                     <h2>Editable Column Titles</h2>
@@ -2401,7 +2410,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
                 <a class="anchor" id="components"></a>
                 <article>
-                    <h1>Component Object </h1>
+                    <h1>Component Objects <span class="label label-primary">Updated</span></h1>
                     <p>Component objects allow you to interact directly with various parts of your tables. They are usually passed in the arguments of callbacks and expose a range of functions that can be called directly on the object.</p>
 
                     <a class="anchor" id="component-row"></a>
@@ -2508,7 +2517,7 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
 
 
                     <a class="anchor" id="component-cell"></a>
-                    <h2>Cell Component</h2>
+                    <h2>Cell Component <span class="label label-primary">Updated</span></h2>
                     <p>The cell component provides access to a specific cell. The example below shows how it is passed to the <span class='param'>cellClick</span> callback for a cell.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellClick:function(e, cell){
@@ -2540,14 +2549,32 @@ $("#example-table").tabulator("setColumns", newColumns , false) //completely ove
                         >
                     <pre class="prettyprint lang-js">var column = cell.getColumn();</pre>
 
-                    <h3>Set Value</h3>
-                    <p>You can change the value of the cell using the <span class='param'>setValue</span> function. The first parameter should be the new value for the cell, the second optional parameter will apply the column mutators to the value when set to <span class='param'>true</span>.</p>
+                    <h3>Set Value <span class="label label-primary">Updated</span></h3>
+                    <p>You can change the value of the cell using the <span class='param'>setValue</span> function. The first parameter should be the new value for the cell, the second optional parameter will apply the column mutators to the value when set to <span class='param'>true</span> <i>(default = true)</i>.</p>
                     <pre class="prettyprint lang-js">cell.setValue("Steve", true); //set the cell's value to "Steve" and apply the column mutators if present</pre>
 
                     <h3>Check Height</h3>
                     <p>If you are making manual adjustments to elements contained withing the cell, or the cell itself, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>checkHeight</span> function to check if the height of the cell has changed and normalize the row if it has.</p>
                     <pre class="prettyprint lang-js">cell.checkHeight();</pre>
 
+                    <h3>Edit <span class="label label-danger">New</span></h3>
+                    <p>You and programatically cause a cell to open its editor element using the <span class='param'>edit</span> function.</p>
+                    <pre class="prettyprint lang-js">cell.edit();</pre>
+
+                    <h3>Navigation <span class="label label-danger">New</span></h3>
+                    <p>When a cell is being edited it is possible to move the editor focus from the current cell to one if its neigbours. There are a number of functions that can be called on the <span class='param'>nav</span> function to move the focus in different directions.</p>
+
+                    <pre class="prettyprint lang-js">cell.nav().left(); //move focus left to next editable cell.</pre>
+
+                    <p>You can navigat any direction around the table using the following functions:</p>
+                    <ul>
+                        <li><strong>prev</strong> - next editable cell on the left, if none available move to the right most editable cell on the row above</li>
+                        <li><strong>next</strong> - next editable cell on the right, if none available move to left most editable cell on the row below</li>
+                        <li><strong>left</strong> - next editable cell on the left, return false if none left on row</li>
+                        <li><strong>right</strong> - next editable cell on the right, return false if none left on row</li>
+                        <li><strong>up</strong> - move to the same cell in the row above</li>
+                        <li><strong>down</strong> - move to the same cell in the row below</li>
+                    </ul>
 
 
 
@@ -3967,13 +3994,13 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#grouping">Grouping </a></li>
                             <li><a href="#selectable">Selectable Rows </a></li>
                             <li><a href="#movable">Movable Rows and Columns </a></li>
-                            <li><a href="#column-management">Column Management </a></li>
+                            <li><a href="#column-management">Column Management <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#css">CSS Classes &amp; Theming </a></li>
                         </ul>
 
                         <h2>Advanced</h2>
                         <ul class="nav">
-                            <li><a href="#components">Component Objects </a></li>
+                            <li><a href="#components">Component Objects <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#options">Setup Options </a></li>
                             <li><a href="#callbacks">Callbacks &amp; Events </a></li>
                             <li><a href="#download">Download Table Data </a></li>
