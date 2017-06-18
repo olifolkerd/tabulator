@@ -19,7 +19,7 @@ History.prototype.undo = function(){
 
 };
 
-history.prototype.redo = function(){
+History.prototype.redo = function(){
 
 };
 
