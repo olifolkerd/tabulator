@@ -906,6 +906,73 @@ $("#example-table").tabulator({
     },
 });</pre>
 </fieldset>
+            <a class="anchor" id="history"></a>
+            <article>
+                <h1>Interaction History <a class="doc-link" href="../../docs?#history"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                <p>
+                    By setting the <span class='param'>history</span> option to <span class='param'>true</span>, you can make the table track any user changes to the table.
+                </p>
+                <p>
+                    You can use the <span class='param'>undo</span> and <span class='param'>redo</span> functions to move through the users interaction history, undoing cell edits, row additions or deletions.
+                </p>
+                <p>
+                   As long as the table is in focus (but not being edited) you can also use the <span class='param'>ctrl + z</span> and <span class='param'>ctrl + y</span> keyboard shortcuts to undo and redo actions.
+                </p>
+
+                <p>The example below has an editable names column, try making some changes to soe of the names and then use the history functions to undo and redo the changes.</p>
+
+                <div class="feature-box-legend">AJAX Controls</div>
+
+                <div class="feature-box">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-lg-12 content " role="main">
+                      <button id="history-undo">Undo Edit</button>
+                      <button id="history-redo">Redo Edit</button>
+                      <span id="history-msg" style="margin-left:10px; font-weight:bold;"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="example-table" id="example-table-history">
+                    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                </div>
+
+                <button class="view-source">View Source</button>
+                <fieldset class="source">
+                    <legend>Source Code</legend>
+                    <h3>HTML</h3>
+                    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                    <h3>JavaScript</h3>
+                    <pre class="prettyprint lang-js">//Build Tabulator
+$("#example-table-history").tabulator({
+    height:"311px",
+    fitColumns:true,
+    history:true,
+    columns:[
+    {title:"Name", field:"name", width:200, editor:"input"},
+    {title:"Progress", field:"progress", align:"right"},
+    {title:"Gender", field:"gender"},
+    {title:"Rating", field:"rating",  align:"center", width:100},
+    {title:"Favourite Color", field:"col"},
+    {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+    {title:"Driver", field:"car", align:"center", sorter:"boolean"},
+    ],
+});
+
+//undo button
+$("#history-undo").on("click", function(){
+   $("#example-table-history").tabulator("undo");
+});
+
+//redo button
+$("#history-redo").on("click", function(){
+    $("#example-table-history").tabulator("redo");
+});
+</pre>
+</fieldset>
 </article>
 <a class="anchor" id="filter"></a>
 <article>
@@ -1873,6 +1940,7 @@ $("#lang-default").click(function(){
                <li><a href="#ajax">AJAX Data Loading</a></li>
                <li><a href="#table-load">Create From Table Element</a></li>
                <li><a href="#editable">Editable Data</a></li>
+               <li><a href="#history">Interaction History</a></li>
                <li><a href="#filter">Filter Data</a></li>
                <li><a href="#filter-header">Filter Data In Column Header</a></li>
                <li><a href="#sorters">Sorters</a></li>
@@ -2262,6 +2330,58 @@ $("#lang-default").click(function(){
      });
 
      $("#example-table-editable").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-history").closest("article").on("build", function(){
+
+     //history Examples
+     $("#example-table-history").tabulator({
+         height:"311px",
+         fitColumns:true,
+         history:true,
+         columns:[
+         {title:"Name", field:"name", width:200, editor:"input"},
+         {title:"Progress", field:"progress", align:"right"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating",  align:"center", width:100},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
+         {title:"Driver", field:"car", align:"center", sorter:"boolean"},
+         ],
+     });
+
+     var msgResetTimer = null;
+
+     $("#history-undo").on("click", function(){
+        if(!$("#example-table-history").tabulator("undo")){
+            clearTimeout(msgResetTimer);
+
+            $("#history-msg").text("No edits left to undo");
+
+            msgResetTimer = setTimeout(function(){
+                $("#history-msg").text("");
+            });
+        }
+     });
+
+     $("#history-redo").on("click", function(){
+         if(!$("#example-table-history").tabulator("redo")){
+             clearTimeout(msgResetTimer);
+
+             $("#history-msg").text("No more edits left to redo");
+
+             msgResetTimer = setTimeout(function(){
+                 $("#history-msg").text("");
+             });
+         }
+     });
+
+     $("#example-table-history").tabulator("setData", tabledata);
+
+     $("#sort-trigger").click(function(){
+         $("#example-table-history").tabulator("setSort", $("#sort-field").val(), $("#sort-direction").val());
+     })
 
      });
 
