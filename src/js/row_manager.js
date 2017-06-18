@@ -340,12 +340,43 @@ RowManager.prototype.clearData = function(){
 };
 
 RowManager.prototype.getRowIndex = function(row){
+	return this.findRowIndex(row, this.rows);
+};
+
+
+RowManager.prototype.getDisplayRowIndex = function(row){
+	return this.findRowIndex(row, this.displayRows);
+};
+
+RowManager.prototype.nextDisplayRow = function(row){
+	var index = this.getDisplayRowIndex(row),
+	nextRow = false;
+
+	if(index !== false && index < this.displayRowsCount -1){
+		nextRow = this.displayRows[index+1];
+	}
+
+	return nextRow;
+};
+
+RowManager.prototype.prevDisplayRow = function(row){
+	var index = this.getDisplayRowIndex(row),
+	prevRow = false;
+
+	if(index){
+		prevRow = this.displayRows[index-1];
+	}
+
+	return prevRow;
+};
+
+RowManager.prototype.findRowIndex = function(row, list){
 	var rowIndex;
 
 	row = this.findRow(row);
 
 	if(row){
-		rowIndex = this.rows.indexOf(row);
+		rowIndex = list.indexOf(row);
 
 		if(rowIndex > -1){
 			return rowIndex;
@@ -354,6 +385,7 @@ RowManager.prototype.getRowIndex = function(row){
 
 	return false;
 };
+
 
 RowManager.prototype.getData = function(active){
 	var self = this,
@@ -643,11 +675,9 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 	i = 0;
 
 	position = position || 0;
-	console.log("position", position)
 
 	if(!position){
 		self._clearVirtualDom();
-		console.log("clearing", self.vDomTopPad)
 	}else{
 		element.children().detach();
 
@@ -709,8 +739,6 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			"padding-bottom":self.vDomBottomPad,
 		});
 
-		console.log("pad", position, self.vDomTopPad, self.vDomRowHeight , this.vDomTop, topPadHeight)
-
 		if(forceMove){
 			this.scrollTop = self.vDomTopPad + (topPadHeight)
 		}
@@ -733,9 +761,8 @@ RowManager.prototype.scrollVertical = function(){
 	var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 	var margin = this.vDomWindowBuffer * 2;
 
-	// if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
-		if(-topDiff > margin || bottomDiff > margin){
-			console.log("fill", Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
+
+	if(-topDiff > margin || bottomDiff > margin){
 		//if big scroll redraw table;
 		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
@@ -745,7 +772,6 @@ RowManager.prototype.scrollVertical = function(){
 			//scrolling down
 			this._removeTopRow(topDiff);
 		}else{
-			console.log("top");
 			//scrolling up
 			this._addTopRow(-topDiff)
 		}
@@ -754,7 +780,6 @@ RowManager.prototype.scrollVertical = function(){
 		if(bottomDiff >= 0){
 			//scrolling down
 			this._addBottomRow(bottomDiff);
-			console.log("bottom");
 		}else{
 			//scrolling up
 			this._removeBottomRow(-bottomDiff);

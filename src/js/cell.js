@@ -31,6 +31,14 @@ var CellComponent = function (cell){
 			cell.setValue(value, mutate);
 		},
 
+		edit:function(){
+			cell.edit();
+		},
+
+		nav:function(){
+			return cell.nav();
+		},
+
 		checkHeight:function(){
 			cell.checkHeight();
 		},
@@ -269,10 +277,111 @@ Cell.prototype.hide = function(){
 	this.element.css("display","none");
 };
 
+Cell.prototype.edit = function(){
+	this.element.focus();
+};
+
 Cell.prototype.delete = function(){
 	this.element.detach();
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);
+};
+
+//////////////// Navigation /////////////////
+
+Cell.prototype.nav = function(){
+
+	var self = this,
+	nextCell = false,
+	index = this.row.getCellIndex(this);
+
+	return {
+		next:function(){
+
+			var nextCell = this.right(),
+			nextRow;
+
+			if(!nextCell){
+				nextRow = self.table.rowManager.nextDisplayRow(self.row);
+
+				if(nextRow){
+					nextCell = nextRow.findNextEditableCell(-1);
+
+					if(nextCell){
+						nextCell.edit();
+						return true;
+					}
+				}
+
+			}
+
+			return false;
+
+		},
+		prev:function(){
+			var nextCell = this.left(),
+			prevRow;
+
+			if(!nextCell){
+				prevRow = self.table.rowManager.prevDisplayRow(self.row);
+
+				if(prevRow){
+					nextCell = prevRow.findPrevEditableCell(prevRow.cells.length);
+
+					if(nextCell){
+						nextCell.edit();
+						return true;
+					}
+				}
+
+			}
+
+			return false;
+
+		},
+		left:function(){
+
+			nextCell = self.row.findPrevEditableCell(index);
+
+			if(nextCell){
+				nextCell.edit();
+				return true;
+			}else{
+				return false;
+			}
+
+		},
+		right:function(){
+			nextCell = self.row.findNextEditableCell(index);
+
+			if(nextCell){
+				nextCell.edit();
+				return true;
+			}else{
+				return false;
+			}
+		},
+		up:function(){
+			var nextRow = self.table.rowManager.prevDisplayRow(self.row);
+
+			if(nextRow){
+				nextRow.cells[index].edit();
+			}
+		},
+		down:function(){
+			var nextRow = self.table.rowManager.nextDisplayRow(self.row);
+
+			if(nextRow){
+				nextRow.cells[index].edit();
+			}
+		},
+
+	}
+
+};
+
+Cell.prototype.getIndex = function(){
+	this.row.getCellIndex(this);
 };
 
 //////////////// Object Generation /////////////////

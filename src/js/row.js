@@ -15,7 +15,7 @@ var RowComponent = function (row){
 		getCells:function(){
 			var cells = [];
 
-			row.cells.forEach(function(cell){
+			row.getCells().forEach(function(cell){
 				cells.push(cell.getComponent());
 			});
 
@@ -272,6 +272,68 @@ Row.prototype.getCell = function(column){
 	});
 
 	return match;
+},
+
+Row.prototype.getCellIndex = function(findCell){
+	return this.cells.findIndex(function(cell){
+		return cell === findCell;
+	});
+},
+
+
+Row.prototype.findNextEditableCell = function(index){
+
+	var nextCell = false;
+
+	if(index < this.cells.length-1){
+		for(var i = index+1; i < this.cells.length; i++){
+			let cell = this.cells[i];
+
+			if(cell.column.extensions.edit){
+				let allowEdit = true;
+
+				if(typeof cell.column.extensions.edit.check == "function"){
+					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+				}
+
+				if(allowEdit){
+					nextCell = cell;
+					break;
+				}
+			}
+		}
+	}
+
+	return nextCell;
+},
+
+Row.prototype.findPrevEditableCell = function(index){
+	var prevCell = false;
+
+	if(index > 0){
+		for(var i = index-1; i >= 0; i--){
+			let cell = this.cells[i],
+			allowEdit = true;
+
+			if(cell.column.extensions.edit){
+				if(typeof cell.column.extensions.edit.check == "function"){
+					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+				}
+
+				if(allowEdit){
+					prevCell = cell;
+					break;
+				}
+			}
+		}
+	}
+
+	return prevCell;
+},
+
+
+Row.prototype.getCells = function(){
+	return this.cells;
 },
 
 ///////////////////// Actions  /////////////////////

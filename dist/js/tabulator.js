@@ -2105,13 +2105,49 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   RowManager.prototype.getRowIndex = function (row) {
 
+    return this.findRowIndex(row, this.rows);
+  };
+
+  RowManager.prototype.getDisplayRowIndex = function (row) {
+
+    return this.findRowIndex(row, this.displayRows);
+  };
+
+  RowManager.prototype.nextDisplayRow = function (row) {
+
+    var index = this.getDisplayRowIndex(row),
+        nextRow = false;
+
+    if (index !== false && index < this.displayRowsCount - 1) {
+
+      nextRow = this.displayRows[index + 1];
+    }
+
+    return nextRow;
+  };
+
+  RowManager.prototype.prevDisplayRow = function (row) {
+
+    var index = this.getDisplayRowIndex(row),
+        prevRow = false;
+
+    if (index) {
+
+      prevRow = this.displayRows[index - 1];
+    }
+
+    return prevRow;
+  };
+
+  RowManager.prototype.findRowIndex = function (row, list) {
+
     var rowIndex;
 
     row = this.findRow(row);
 
     if (row) {
 
-      rowIndex = this.rows.indexOf(row);
+      rowIndex = list.indexOf(row);
 
       if (rowIndex > -1) {
 
@@ -2510,13 +2546,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     position = position || 0;
 
-    console.log("position", position);
-
     if (!position) {
 
       self._clearVirtualDom();
-
-      console.log("clearing", self.vDomTopPad);
     } else {
 
       element.children().detach();
@@ -2598,8 +2630,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       });
 
-      console.log("pad", position, self.vDomTopPad, self.vDomRowHeight, this.vDomTop, topPadHeight);
-
       if (forceMove) {
 
         this.scrollTop = self.vDomTopPad + topPadHeight;
@@ -2629,11 +2659,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var margin = this.vDomWindowBuffer * 2;
 
-    // if(Math.abs(topDiff) > this.vDomWindowBuffer * 2){
-
     if (-topDiff > margin || bottomDiff > margin) {
-
-      console.log("fill", Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount));
 
       //if big scroll redraw table;
 
@@ -2649,8 +2675,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this._removeTopRow(topDiff);
       } else {
 
-        console.log("top");
-
         //scrolling up
 
         this._addTopRow(-topDiff);
@@ -2663,8 +2687,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //scrolling down
 
         this._addBottomRow(bottomDiff);
-
-        console.log("bottom");
       } else {
 
         //scrolling up
@@ -2928,7 +2950,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cells = [];
 
-        row.cells.forEach(function (cell) {
+        row.getCells().forEach(function (cell) {
 
           cells.push(cell.getComponent());
         });
@@ -3261,6 +3283,74 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     });
 
     return match;
+  }, Row.prototype.getCellIndex = function (findCell) {
+
+    return this.cells.findIndex(function (cell) {
+
+      return cell === findCell;
+    });
+  }, Row.prototype.findNextEditableCell = function (index) {
+
+    var nextCell = false;
+
+    if (index < this.cells.length - 1) {
+
+      for (var i = index + 1; i < this.cells.length; i++) {
+
+        var _cell2 = this.cells[i];
+
+        if (_cell2.column.extensions.edit) {
+
+          var allowEdit = true;
+
+          if (typeof _cell2.column.extensions.edit.check == "function") {
+
+            allowEdit = _cell2.column.extensions.edit.check(_cell2.getComponent());
+          }
+
+          if (allowEdit) {
+
+            nextCell = _cell2;
+
+            break;
+          }
+        }
+      }
+    }
+
+    return nextCell;
+  }, Row.prototype.findPrevEditableCell = function (index) {
+
+    var prevCell = false;
+
+    if (index > 0) {
+
+      for (var i = index - 1; i >= 0; i--) {
+
+        var _cell3 = this.cells[i],
+            allowEdit = true;
+
+        if (_cell3.column.extensions.edit) {
+
+          if (typeof _cell3.column.extensions.edit.check == "function") {
+
+            allowEdit = _cell3.column.extensions.edit.check(_cell3.getComponent());
+          }
+
+          if (allowEdit) {
+
+            prevCell = _cell3;
+
+            break;
+          }
+        }
+      }
+    }
+
+    return prevCell;
+  }, Row.prototype.getCells = function () {
+
+    return this.cells;
   },
 
   ///////////////////// Actions  /////////////////////
@@ -3341,6 +3431,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         cell.setValue(value, mutate);
+      },
+
+      edit: function edit() {
+
+        cell.edit();
+      },
+
+      nav: function nav() {
+
+        return cell.nav();
       },
 
       checkHeight: function checkHeight() {
@@ -3649,6 +3749,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.element.css("display", "none");
   };
 
+  Cell.prototype.edit = function () {
+
+    this.element.focus();
+  };
+
   Cell.prototype.delete = function () {
 
     this.element.detach();
@@ -3656,6 +3761,125 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     this.column.deleteCell(this);
 
     this.row.deleteCell(this);
+  };
+
+  //////////////// Navigation /////////////////
+
+
+  Cell.prototype.nav = function () {
+
+    var self = this,
+        nextCell = false,
+        index = this.row.getCellIndex(this);
+
+    return {
+
+      next: function next() {
+
+        var nextCell = this.right(),
+            nextRow;
+
+        if (!nextCell) {
+
+          nextRow = self.table.rowManager.nextDisplayRow(self.row);
+
+          if (nextRow) {
+
+            nextCell = nextRow.findNextEditableCell(-1);
+
+            if (nextCell) {
+
+              nextCell.edit();
+
+              return true;
+            }
+          }
+        }
+
+        return false;
+      },
+
+      prev: function prev() {
+
+        var nextCell = this.left(),
+            prevRow;
+
+        if (!nextCell) {
+
+          prevRow = self.table.rowManager.prevDisplayRow(self.row);
+
+          if (prevRow) {
+
+            nextCell = prevRow.findPrevEditableCell(prevRow.cells.length);
+
+            if (nextCell) {
+
+              nextCell.edit();
+
+              return true;
+            }
+          }
+        }
+
+        return false;
+      },
+
+      left: function left() {
+
+        nextCell = self.row.findPrevEditableCell(index);
+
+        if (nextCell) {
+
+          nextCell.edit();
+
+          return true;
+        } else {
+
+          return false;
+        }
+      },
+
+      right: function right() {
+
+        nextCell = self.row.findNextEditableCell(index);
+
+        if (nextCell) {
+
+          nextCell.edit();
+
+          return true;
+        } else {
+
+          return false;
+        }
+      },
+
+      up: function up() {
+
+        var nextRow = self.table.rowManager.prevDisplayRow(self.row);
+
+        if (nextRow) {
+
+          nextRow.cells[index].edit();
+        }
+      },
+
+      down: function down() {
+
+        var nextRow = self.table.rowManager.nextDisplayRow(self.row);
+
+        if (nextRow) {
+
+          nextRow.cells[index].edit();
+        }
+      }
+
+    };
+  };
+
+  Cell.prototype.getIndex = function () {
+
+    this.row.getCellIndex(this);
   };
 
   //////////////// Object Generation /////////////////
@@ -5711,6 +5935,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     this.table = table; //hold Tabulator object
 
+
+    this.currentCell = false; //hold currently editing cell
+
   };
 
   //initialize column editor
@@ -5783,7 +6010,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
   };
 
+  Edit.prototype.getCurrentCell = function () {
+
+    return this.currentCell ? this.currentCell.getComponent() : false;
+  };
+
   Edit.prototype.clearEditor = function (cell) {
+
+    this.currentCell = false;
 
     cell.getElement().removeClass("tabulator-editing").empty();
 
@@ -5816,7 +6050,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.clearEditor(cell);
 
-      cell.setValue(cell.getValue());
+      cell.setValueActual(cell.getValue());
 
       self.table.options.cellEditCancelled(cell.getComponent());
     };
@@ -5841,6 +6075,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var rendered = function rendered() {},
           allowEdit = true,
           cellEditor;
+
+      self.currentCell = cell;
 
       if (mouseClick) {
 

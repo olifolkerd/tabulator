@@ -1,5 +1,6 @@
 var Edit = function(table){
 	this.table = table; //hold Tabulator object
+	this.currentCell = false; //hold currently editing cell
 };
 
 
@@ -49,7 +50,12 @@ Edit.prototype.initializeColumn = function(column){
 	}
 };
 
+Edit.prototype.getCurrentCell = function(){
+	return this.currentCell ? this.currentCell.getComponent() : false;
+};
+
 Edit.prototype.clearEditor = function(cell){
+	this.currentCell = false;
 	cell.getElement().removeClass("tabulator-editing").empty();
 	cell.row.getElement().removeClass("tabulator-row-editing");
 };
@@ -89,6 +95,8 @@ Edit.prototype.bindEditor = function(cell){
 		var rendered = function(){},
 		allowEdit = true,
 		cellEditor;
+
+		self.currentCell = cell;
 
 		if(mouseClick){
 			mouseClick = false;
