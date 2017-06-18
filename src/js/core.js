@@ -741,6 +741,98 @@
 	 			}
 	 		},
 
+	 		/////////////// Navigation Management //////////////
+
+	 		navigatePrev:function(){
+	 			var cell = false;
+
+	 			if(this.table.extExists("edit", true)){
+	 				cell = this.table.extensions.edit.currentCell;
+
+	 				if(cell){
+	 					e.preventDefault();
+	 					return cell.nav().prev();
+	 				}
+	 			}
+
+	 			return false;
+	 		},
+
+	 		navigateNext:function(){
+	 			var cell = false;
+
+	 			if(this.table.extExists("edit", true)){
+	 				cell = this.table.extensions.edit.currentCell;
+
+	 				if(cell){
+	 					e.preventDefault();
+	 					return cell.nav().next();
+	 				}
+	 			}
+
+	 			return false;
+	 		},
+
+	 		navigateLeft:function(){
+	 			var cell = false;
+
+	 			if(this.table.extExists("edit", true)){
+	 				cell = this.table.extensions.edit.currentCell;
+
+	 				if(cell){
+	 					e.preventDefault();
+	 					return cell.nav().left();
+	 				}
+	 			}
+
+	 			return false;
+	 		},
+
+	 		navigateRight:function(){
+	 			var cell = false;
+
+	 			if(this.table.extExists("edit", true)){
+	 				cell = this.table.extensions.edit.currentCell;
+
+	 				if(cell){
+	 					e.preventDefault();
+	 					return cell.nav().right();
+	 				}
+	 			}
+
+	 			return false;
+	 		},
+
+	 		navigateUp:function(){
+	 			var cell = false;
+
+	 			if(this.table.extExists("edit", true)){
+	 				cell = this.table.extensions.edit.currentCell;
+
+	 				if(cell){
+	 					e.preventDefault();
+	 					return cell.nav().up();
+	 				}
+	 			}
+
+	 			return false;
+	 		},
+
+	 		navigateDown:function(){
+	 			var cell = false;
+
+	 			if(this.table.extExists("edit", true)){
+	 				cell = this.table.extensions.edit.currentCell;
+
+	 				if(cell){
+	 					e.preventDefault();
+	 					return cell.nav().dpwn();
+	 				}
+	 			}
+
+	 			return false;
+	 		},
+
 
 	 		/////////////// History Management //////////////
 	 		undo:function(){

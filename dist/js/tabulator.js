@@ -4941,6 +4941,123 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     },
 
+    /////////////// Navigation Management //////////////
+
+
+    navigatePrev: function navigatePrev() {
+
+      var cell = false;
+
+      if (this.table.extExists("edit", true)) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          return cell.nav().prev();
+        }
+      }
+
+      return false;
+    },
+
+    navigateNext: function navigateNext() {
+
+      var cell = false;
+
+      if (this.table.extExists("edit", true)) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          return cell.nav().next();
+        }
+      }
+
+      return false;
+    },
+
+    navigateLeft: function navigateLeft() {
+
+      var cell = false;
+
+      if (this.table.extExists("edit", true)) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          return cell.nav().left();
+        }
+      }
+
+      return false;
+    },
+
+    navigateRight: function navigateRight() {
+
+      var cell = false;
+
+      if (this.table.extExists("edit", true)) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          return cell.nav().right();
+        }
+      }
+
+      return false;
+    },
+
+    navigateUp: function navigateUp() {
+
+      var cell = false;
+
+      if (this.table.extExists("edit", true)) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          return cell.nav().up();
+        }
+      }
+
+      return false;
+    },
+
+    navigateDown: function navigateDown() {
+
+      var cell = false;
+
+      if (this.table.extExists("edit", true)) {
+
+        cell = this.table.extensions.edit.currentCell;
+
+        if (cell) {
+
+          e.preventDefault();
+
+          return cell.nav().dpwn();
+        }
+      }
+
+      return false;
+    },
+
     /////////////// History Management //////////////
 
     undo: function undo() {
