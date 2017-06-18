@@ -1284,26 +1284,26 @@ var rowElement = row.getElement();</pre>
                     <p class="note"><strong>Note: </strong> Navigation commands will only focus on editable cells, that is cells with an <span class='param'>editor</span> and if present an <span class='param'>editable</span> function that returns true.</p>
 
                     <h3>Previous Cell</h3>
-                    <p>Use the <span class='param'>navigatePrev</span> function to shift focus to the next editable cell on the left, if none available move to the right most editable cell on the row above</p>
+                    <p>Use the <span class='param'>navigatePrev</span> function to shift focus to the next editable cell on the left, if none available move to the right most editable cell on the row above.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("navigatePrev");</pre>
 
                     <p>If the <a href="#keybindings">keybindings extension</a> is installed, this action can also be triggered with the <span class='param'>shift + tab</span> key combination.</p>
 
                     <h3>Next Cell</h3>
-                    <p>Use the <span class='param'>navigateNext</span> function to shift focus to the next editable cell on the right, if none available move to left most editable cell on the row below</p>
+                    <p>Use the <span class='param'>navigateNext</span> function to shift focus to the next editable cell on the right, if none available move to left most editable cell on the row below.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("navigateNext");</pre>
 
                     <p>If the <a href="#keybindings">keybindings extension</a> is installed, this action can also be triggered with the <span class='param'>tab</span> key combination.</p>
 
                     <h3>Left Cell</h3>
-                    <p>Use the <span class='param'>navigateLeft</span> function to shift focus to tnext editable cell on the left, return false if none available on row.</p>
+                    <p>Use the <span class='param'>navigateLeft</span> function to shift focus to next editable cell on the left, return false if none available on row.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("navigateLeft");</pre>
 
                     <h3>Right Cell</h3>
-                    <p>Use the <span class='param'>navigateRight</span> function to shift focus to tnext editable cell on the right, return false if none available on row.</p>
+                    <p>Use the <span class='param'>navigateRight</span> function to shift focus to next editable cell on the right, return false if none available on row.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("navigateRight");</pre>
 
@@ -3454,6 +3454,100 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 });</pre>
 
                 </article>
+
+                <a class="anchor" id="keybindings"></a>
+                <article>
+                    <h1>Key Bindings <span class="label label-danger">New</span></h1>
+
+                    <div class="alert alert-success extension-info" role="alert">
+                      <i class="fa fa-cubes"></i>
+                      Key binding functionality is provided by the <a href="#extension-keybindings">keybindings extension</a>
+                    </div>
+
+                    <p>If you give a table focus by clicking on it, you can then interact with the table using the a number of different keyboard short cuts.</p>
+
+                    <table>
+                        <thead>
+                            <th>Action</th>
+                            <th>Default Key Combination (keycode)</th>
+                            <th>Function</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>navPrev</td>
+                                <td>ctrl + tab ("ctrl + 9")</td>
+                                <td>Shift focus to the next editable cell on the left, if none available move to the right most editable cell on the row above</td>
+                            </tr>
+                            <tr>
+                                <td>navNext</td>
+                                <td>tab ("9")</td>
+                                <td>Shift focus to the next editable cell on the right, if none available move to left most editable cell on the row below</td>
+                            </tr>
+                            <tr>
+                                <td>navLeft</td>
+                                <td></td>
+                                <td>Shift focus to next editable cell on the left</td>
+                            </tr>
+                            <tr>
+                                <td>navRight</td>
+                                <td></td>
+                                <td>Shift focus to next editable cell on the right</td>
+                            </tr>
+                            <tr>
+                                <td>navUp</td>
+                                <td>up arrow ("38")</td>
+                                <td>Shift focus to the same cell in the row above</td>
+                            </tr>
+                            <tr>
+                                <td>navDown</td>
+                                <td>down arrow ("40")</td>
+                                <td>Shift focus to the same cell in the row below</td>
+                            </tr>
+                            <tr>
+                                <td>undo</td>
+                                <td>ctrl + z ("ctrl + 90")</td>
+                                <td>Undo last user eata edit</td>
+                            </tr>
+                            <tr>
+                                <td>redo</td>
+                                <td>ctrl + y ("ctrl + 89")</td>
+                                <td>Redo last user eata edit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Customize Key Bindings</h2>
+                    <p>If you would prefer to use different key combinations then that is no problem, you can use the <span class='param'>keybindings</span> option to change any of the above bindings.</p>
+
+                    <p>The <span class='param'>keybindings</span> option takes an object that should consist of properties with the name of the action you wish to bind and a value of the key code string.</p>
+
+                    <p>The key code should consist of the <a href="https://css-tricks.com/snippets/javascript/javascript-keycodes/">keycodes</a> for the keys to be pressed, seperated by the <span class='param'>+</span> symbol. The exceptions to this are <span class='param'>ctrl</span> and <span class='param'>shift</span> which should be used to check that the ctrl or shift keys are pressed as well.</p>
+
+                    <p>The example below shows how to change the key bindings for the redo function to user the <span class='param'>ctrl</span> and <span class='param'>r</span> keys:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    keybindings:{
+        "redo" : "ctrl + 82", //bind redo function to ctrl + r
+    },
+});</pre>
+
+                    <h2>Disable A Default Key Binding</h2>
+                    <p>To disable any of the default keybindings, pass a value of <span class='param'>false</span> to is property in the <span class='param'>keybindings</span> option:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    keybindings:{
+        "navUp" : false, //disable navUp keybinding
+    },
+});</pre>
+
+                    <h2>Disable All Key Bindings</h2>
+
+                    <p>To disable all key bindings set the <span class='param'>keybindings</span> option to <span class='param'>false</span></p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    keybindings:false, //disable all key bindings
+});</pre>
+                </article>
+
                 <a class="anchor" id="download"></a>
                 <article>
                     <h1>Downloading Table Data  <a class="example-link" href="../../examples?#download"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
@@ -4092,6 +4186,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#components">Component Objects <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#options">Setup Options </a></li>
                             <li><a href="#callbacks">Callbacks &amp; Events </a></li>
+                            <li><a href="#keybindings">Key Bindings <span class="label label-danger">New</span></a></li>
                             <li><a href="#download">Download Table Data </a></li>
                             <li><a href="#localization">Localization </a></li>
                             <li><a href="#accessibility">Accessibility</a></li>
