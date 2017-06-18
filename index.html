@@ -112,7 +112,7 @@
   <div class="container">
    <h1><img src="images/tabulator_white.png" alt="Tabulator"></h1>
    <h2>The easy to use, fully featured, interactive table jQuery plugin</h2>
-   <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download 3.0</a>
+   <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download 3.1</a>
    </p>
 
    <div class="share">
@@ -145,8 +145,8 @@
                       <i class="fa fa-asterisk"></i>
                     </td>
                     <td>
-                      <h2>Version 3.0 Out Now!</h2>
-                      <p>A Complete rebuild of Tabulator! Bursting with new features and upgrades! <strong>Checkout the news article to find out more!</strong></p>
+                      <h2>Version 3.1 Out Now!</h2>
+                      <p>Cell Navigation, Custom Key Bindings, Interaction History and much more! <strong>Checkout the news article to find out more!</strong></p>
                     </td>
                   </tr>
                 </table>
@@ -187,8 +187,12 @@
 
             <button name="add-row"><i class="fa fa-plus"></i> Add Row</button>
 
+            <button name="undo"><i class="fa fa-undo"></i> Undo Edit</button>
+
             <button name="hide-col" class="col-hide"><span class="show-rating"><i class="fa fa-eye"></i> Show Rating Column</span><span class="hide-rating"><i class="fa fa-eye-slash"></i> Hide Rating Column</span></button>
             </div>
+
+
           </div>
         </div>
       </div>
@@ -205,20 +209,21 @@
   fitColumns:true,
   tooltips:true,
   addRowPos:"top",
+  history:true,
   pagination:"local",
   paginationSize:7,
   movableColumns:true,
   sortBy:"name",
   sortDir:"asc",
   columns:[
-    {title:"Name", field:"name", editor:true},
+    {title:"Name", field:"name", editor:"input"},
     {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
     {title:"Activity", field:"activity", width:160, formatter:lineFormatter, headerSort:false},
     {title:"Gender", field:"gender", width:90, editor:genderEditor},
     {title:"Rating", field:"rating", formatter:"star", align:"center", width:100, editor:true},
-    {title:"Favourite Color", field:"col", width:130, editor:true},
+    {title:"Color", field:"col", width:130, editor:"input"},
     {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-    {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editor:true},
+    {title:"Car", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editor:true},
   ],
 });</pre>
       </div>
@@ -457,7 +462,7 @@
         <i class="fa fa-download"></i>
         <div class="caption">
           <h3>Download Data</h3>
-          <p>Download data directly from the table to a CSV File.</p>
+          <p>Download data directly from the table to a CSV or XLSX File.</p>
         </div>
       </div>
     </a>
@@ -476,12 +481,12 @@
   </div>
 
   <div class="col-md-3 col-sm-6 tile">
-    <a href="docs#persistant-columns">
+    <a href="docs#keybindings">
       <div class="frame">
-        <i class="fa fa-floppy-o"></i>
+        <i class="fa fa-keyboard-o"></i>
         <div class="caption">
-          <h3>Persistent Formatting</h3>
-          <p>Remember user layout preferences between visits</p>
+          <h3>Key Bindings</h3>
+          <p>Customisable keyboard shortcuts for table interaction</p>
         </div>
       </div>
     </a>
@@ -498,6 +503,49 @@
       </div>
     </a>
   </div>
+</div>
+<!-- /.row -->
+
+
+<div class="row text-center">
+
+  <div class="col-md-3 col-sm-6 tile">
+    <a href="docs#persistant-columns">
+      <div class="frame">
+        <i class="fa fa-floppy-o"></i>
+        <div class="caption">
+          <h3>Persistent Layout</h3>
+          <p>Remember user layout preferences between visits</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-3 col-sm-6 tile">
+    <a href="docs#history">
+      <div class="frame">
+        <i class="fa fa-history"></i>
+        <div class="caption">
+          <h3>History</h3>
+          <p>Record user interactions and Undo or Redo actions</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-md-3 col-sm-6 tile">
+    <a href="docs#navigation">
+      <div class="frame">
+        <i class="fa fa-compass"></i>
+        <div class="caption">
+          <h3>Navigation</h3>
+          <p>Navigate focus around the table with keyboard and functions</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+
 </div>
 <!-- /.row -->
 
@@ -527,7 +575,7 @@
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 
 <!-- Tabulator -->
-<script src="js/3.0/tabulator.min.js"></script>
+<script src="js/3.1/tabulator.min.js"></script>
 <script src="js/sparkline.js"></script>
 
 <script type="text/javascript">
@@ -572,9 +620,9 @@
         //cancel - function to call to abort the edit and return to a normal cell
 
         //create and style editor
-        var editor = $("&lt;select&gt;&lt;option value=''&gt;&lt;/option&gt;&lt;option value='male'&gt;male&lt;/option&gt;&lt;option value='female'&gt;female&lt;/option&gt;&lt;/select&gt;");
+        var editor = $("<select><option value=''></option><option value='male'>male</option><option value='female'>female</option></select>");
         editor.css({
-            "padding":"3px",
+            "padding":"5px",
             "width":"100%",
             "box-sizing":"border-box",
         });
@@ -584,7 +632,7 @@
 
         //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
         onRendered(function(){
-          input.focus();
+          editor.focus();
         });
 
         //when the value has been set, trigger the cell to update
@@ -607,20 +655,21 @@
        fitColumns:true,
        tooltips:true,
        addRowPos:"top",
+       history:true,
        pagination:"local",
        paginationSize:7,
        movableColumns:true,
        sortBy:"name",
        sortDir:"asc",
        columns:[
-       {title:"Name", field:"name", editor:true},
+       {title:"Name", field:"name", editor:"input"},
        {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
        {title:"Activity", field:"activity", width:160, formatter:lineFormatter, headerSort:false},
        {title:"Gender", field:"gender", width:95, editor:genderEditor},
        {title:"Rating", field:"rating", formatter:"star", align:"center", width:100, editor:true},
-       {title:"Favourite Color", field:"col", width:130, editor:true},
+       {title:"Color", field:"col", width:130, editor:"input"},
        {title:"Date Of Birth", field:"dob", width:130, sorter:"date", align:"center"},
-       {title:"Driver", field:"car", width:80,  align:"center", formatter:"tickCross", sorter:"boolean", editor:true},
+       {title:"Driver", field:"car", width:90,  align:"center", formatter:"tickCross", sorter:"boolean", editor:true},
        ],
      });
 
@@ -643,6 +692,10 @@
         }else{
           $("#tabulator-example").tabulator("hideColumn","rating");
         }
+      });
+
+      $("#tabulator-controls button[name=undo]").on("click", function(){
+        $("#tabulator-example").tabulator("undo")
       });
 
       $("#tabulator-controls  button[name=add-row]").on("click", function(){

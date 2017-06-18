@@ -147,7 +147,7 @@
   font-weight: bold;
 }
 #tabulator-controls input {
-  width: calc(100% - 560px);
+  width: calc(100% - 670px);
 }
 #tabulator-controls button {
   float: right;
