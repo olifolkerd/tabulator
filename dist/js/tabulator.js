@@ -7041,6 +7041,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (attrType == "text") {
 
           editorElement.attr("type", "search");
+
+          editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+
         }
 
         //prevent input and select elements from propegating click to column sorters etc
