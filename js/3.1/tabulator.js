@@ -3653,9 +3653,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           value = this.table.extensions.mutator.transformCell(cell, value);
         }
       }
-
-      this.setValueActual(value);
     }
+
+    this.setValueActual(value);
 
     return changed;
   };
