@@ -75,16 +75,6 @@ ColumnManager.prototype.setColumns = function(cols, row){
 	}
 
 	self.redraw(true);
-
-	self._verticalAlignHeaders();
-
-	self.table.rowManager.resetScroll();
-
-	self.table.rowManager.reinitialize();
-
-	if(self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)){
-		self.table.extensions.persistentLayout.save();
-	}
 };
 
 ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
@@ -436,6 +426,13 @@ ColumnManager.prototype.deregisterColumn = function(column){
 
 //redraw columns
 ColumnManager.prototype.redraw = function(force){
+
+	if(force){
+		this._verticalAlignHeaders();
+		this.table.rowManager.resetScroll();
+		this.table.rowManager.reinitialize();
+	}
+
 	if(this.table.options.fitColumns){
 		this.fitToTable();
 	}else{
@@ -451,4 +448,12 @@ ColumnManager.prototype.redraw = function(force){
 	if(this.table.extExists("frozenColumns")){
 		this.table.extensions.frozenColumns.layout();
 	}
+
+	if(force){
+		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
+			this.table.extensions.persistentLayout.save();
+		}
+	}
+
+
 };

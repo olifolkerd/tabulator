@@ -697,7 +697,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		position -= topPad;
 	}
 
-	if(self.displayRowsCount){
+	if(self.displayRowsCount && self.element.is(":visible")){
 
 		self.vDomTop = position;
 
