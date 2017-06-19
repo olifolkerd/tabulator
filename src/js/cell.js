@@ -203,9 +203,9 @@ Cell.prototype.setValueProcessData = function(value, mutate){
 				value = this.table.extensions.mutator.transformCell(cell, value);
 			}
 		}
-
-		this.setValueActual(value)
 	}
+
+	this.setValueActual(value);
 
 	return changed;
 }
