@@ -295,17 +295,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     }
 
     self.redraw(true);
-
-    self._verticalAlignHeaders();
-
-    self.table.rowManager.resetScroll();
-
-    self.table.rowManager.reinitialize();
-
-    if (self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)) {
-
-      self.table.extensions.persistentLayout.save();
-    }
   };
 
   ColumnManager.prototype._addColumn = function (definition, before, nextToColumn) {
@@ -780,6 +769,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   ColumnManager.prototype.redraw = function (force) {
 
+    if (force) {
+
+      this._verticalAlignHeaders();
+
+      this.table.rowManager.resetScroll();
+
+      this.table.rowManager.reinitialize();
+    }
+
     if (this.table.options.fitColumns) {
 
       this.fitToTable();
@@ -799,6 +797,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     if (this.table.extExists("frozenColumns")) {
 
       this.table.extensions.frozenColumns.layout();
+    }
+
+    if (force) {
+
+      if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
+
+        this.table.extensions.persistentLayout.save();
+      }
     }
   };
 
@@ -2574,7 +2580,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       position -= topPad;
     }
 
-    if (self.displayRowsCount) {
+    if (self.displayRowsCount && self.element.is(":visible")) {
 
       self.vDomTop = position;
 
@@ -7041,6 +7047,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (attrType == "text") {
 
           editorElement.attr("type", "search");
+
+          editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+
         }
 
         //prevent input and select elements from propegating click to column sorters etc
