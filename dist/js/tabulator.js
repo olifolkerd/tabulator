@@ -2262,7 +2262,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
   RowManager.prototype.sorterRefresh = function () {
 
-    var options = this.table.options;
+    var table = this.table,
+        options = this.table.options;
 
     if (options.ajaxSorting) {
 

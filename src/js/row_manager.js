@@ -464,7 +464,8 @@ RowManager.prototype.filterRefresh = function(){
 
 //choose the path ro refresh data after a sorter update
 RowManager.prototype.sorterRefresh = function(){
-	var options = this.table.options
+	var table = this.table,
+	options = this.table.options;
 
 	if(options.ajaxSorting){
 		if(options.pagination == "remote" && table.extExists("page")){
