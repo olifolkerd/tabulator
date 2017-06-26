@@ -1419,8 +1419,7 @@ var rowElement = row.getElement();</pre>
                     <h2>Wrap Column Header Title Text</h2>
                     <p>By default Tabulator will try and keep column header titles on one line, truncating the text with ellipsis  if it gets wider that the column.</p>
                     <p>If you would like to wrap the text instead then you will need to edit the CSS <span class='param'>white-space</span> value for the column headers and set it to <span class='param'>normal</span>.</p>
-                    <pre class="prettyprint lang-css">.tabulator .tabulator-header .tabulator-col,
-.tabulator .tabulator-header .tabulator-col-row-handle {
+                    <pre class="prettyprint lang-css">.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
     white-space: normal;
 }</pre>
 
