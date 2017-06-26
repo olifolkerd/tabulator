@@ -10,8 +10,6 @@
  *
  */
 
- /*=include core.js */
-
  (function (factory) {
  	"use strict";
  	if (typeof define === 'function' && define.amd) {
@@ -24,6 +22,8 @@
  		factory(jQuery);
  	}
  }(function ($, undefined) {
+
+ 	/*=include core.js */
 
  	$.widget("ui.tabulator", Tabulator)();
 
