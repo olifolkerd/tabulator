@@ -2979,7 +2979,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         getCell: function getCell(column) {
 
-          return row.getCell(column);
+          return row.getCell(column).getComponent();
         },
 
         getIndex: function getIndex() {

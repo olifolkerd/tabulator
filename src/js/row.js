@@ -23,7 +23,7 @@ var RowComponent = function (row){
 		},
 
 		getCell:function(column){
-			return row.getCell(column);
+			return row.getCell(column).getComponent();
 		},
 
 		getIndex:function(){
