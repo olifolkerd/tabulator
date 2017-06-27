@@ -200,7 +200,7 @@ Cell.prototype.setValueProcessData = function(value, mutate){
 
 		if(mutate){
 			if(this.column.extensions.mutate && this.column.extensions.mutate.type !== "data"){
-				value = this.table.extensions.mutator.transformCell(cell, value);
+				value = this.table.extensions.mutator.transformCell(this, value);
 			}
 		}
 	}

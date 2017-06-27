@@ -3241,13 +3241,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       for (var attrname in data) {
 
-        var _cell = this.getCell(attrname);
+        var cell = this.getCell(attrname);
 
-        if (_cell) {
+        if (cell) {
 
-          if (_cell.getValue() != data[attrname]) {
+          if (cell.getValue() != data[attrname]) {
 
-            _cell.setValueProcessData(data[attrname]);
+            cell.setValueProcessData(data[attrname]);
           }
         }
       }
@@ -3316,20 +3316,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         for (var i = index + 1; i < this.cells.length; i++) {
 
-          var _cell2 = this.cells[i];
+          var cell = this.cells[i];
 
-          if (_cell2.column.extensions.edit) {
+          if (cell.column.extensions.edit) {
 
             var allowEdit = true;
 
-            if (typeof _cell2.column.extensions.edit.check == "function") {
+            if (typeof cell.column.extensions.edit.check == "function") {
 
-              allowEdit = _cell2.column.extensions.edit.check(_cell2.getComponent());
+              allowEdit = cell.column.extensions.edit.check(cell.getComponent());
             }
 
             if (allowEdit) {
 
-              nextCell = _cell2;
+              nextCell = cell;
 
               break;
             }
@@ -3346,19 +3346,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         for (var i = index - 1; i >= 0; i--) {
 
-          var _cell3 = this.cells[i],
+          var cell = this.cells[i],
               allowEdit = true;
 
-          if (_cell3.column.extensions.edit) {
+          if (cell.column.extensions.edit) {
 
-            if (typeof _cell3.column.extensions.edit.check == "function") {
+            if (typeof cell.column.extensions.edit.check == "function") {
 
-              allowEdit = _cell3.column.extensions.edit.check(_cell3.getComponent());
+              allowEdit = cell.column.extensions.edit.check(cell.getComponent());
             }
 
             if (allowEdit) {
 
-              prevCell = _cell3;
+              prevCell = cell;
 
               break;
             }
@@ -3669,7 +3669,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.column.extensions.mutate && this.column.extensions.mutate.type !== "data") {
 
-            value = this.table.extensions.mutator.transformCell(cell, value);
+            value = this.table.extensions.mutator.transformCell(this, value);
           }
         }
       }
