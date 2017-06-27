@@ -3887,7 +3887,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <p>This can be extended to add custom editor functions to the default list:</p>
 
                     <pre class="prettyprint lang-js">Tabulator.extendExtension("edit", "editors", {
-    uppercaseInput:function(cell, onRendered, success, cancel){
+    uppercaseInput:function(cell, onRendered, success, cancel, editorParams){
 
         //create and style input
         var input = $("&lt;input type='text'/&gt;");
