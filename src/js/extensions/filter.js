@@ -65,7 +65,7 @@ Filter.prototype.initializeColumn = function(column){
 			break;
 
 			case "function":
-			editor = column.definition.editor;
+			editor = column.definition.headerFilter;
 			break;
 
 			case "boolean":

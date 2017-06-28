@@ -6958,7 +6958,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           case "function":
 
-            editor = column.definition.editor;
+            editor = column.definition.headerFilter;
 
             break;
 
