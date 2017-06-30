@@ -444,7 +444,7 @@ RowManager.prototype._genRemoteRequest = function(){
 	});
 };
 
-//choose the path ro refresh data after a filter update
+//choose the path to refresh data after a filter update
 RowManager.prototype.filterRefresh = function(){
 	var table = this.table,
 	options = table.options;
@@ -462,7 +462,7 @@ RowManager.prototype.filterRefresh = function(){
 	}
 };
 
-//choose the path ro refresh data after a sorter update
+//choose the path to refresh data after a sorter update
 RowManager.prototype.sorterRefresh = function(){
 	var table = this.table,
 	options = this.table.options;

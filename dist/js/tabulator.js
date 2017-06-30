@@ -2244,7 +2244,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
     };
 
-    //choose the path ro refresh data after a filter update
+    //choose the path to refresh data after a filter update
 
     RowManager.prototype.filterRefresh = function () {
 
@@ -2270,7 +2270,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    //choose the path ro refresh data after a sorter update
+    //choose the path to refresh data  after a sorter update
 
     RowManager.prototype.sorterRefresh = function () {
 
