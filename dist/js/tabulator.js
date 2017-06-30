@@ -11013,15 +11013,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     SelectRow.prototype._deselectRow = function (rowInfo, silent) {
 
       var self = this,
+          row = self.table.rowManager.findRow(rowInfo),
           index;
-
-      var row = self.table.rowManager.findRow(rowInfo);
 
       if (row) {
 
         index = self.selectedRows.findIndex(function (selectedRow) {
 
-          return selectedRow = row;
+          return selectedRow == row;
         });
 
         if (index > -1) {
