@@ -10779,8 +10779,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var diff = self.table.columnManager.element.innerWidth() - width;
 
-        console.log("updating", diff);
-
         if (diff < 0) {
 
           //table is too wide
