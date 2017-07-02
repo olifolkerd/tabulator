@@ -309,6 +309,10 @@ ColumnManager.prototype.fitToData = function(){
 	self.columnsByIndex.forEach(function(column){
 		column.fitToData();
 	});
+
+	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+		this.table.extensions.responsiveLayout.update();
+	}
 };
 
 //resize columns to fill the table element
@@ -321,6 +325,10 @@ ColumnManager.prototype.fitToTable = function(){
 	var flexColWidth = 0; //desired width of flexible columns
 	var flexColumns = []; //array of flexible width columns
 	var gapFill=0; //number of pixels to be added to final column to close and half pixel gaps
+
+	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+		this.table.extensions.responsiveLayout.update();
+	}
 
 	//adjust for vertical scrollbar if present
 	if(self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()){
@@ -358,7 +366,7 @@ ColumnManager.prototype.fitToTable = function(){
 	//calculate available space
 	flexWidth = totalWidth - fixedWidth;
 
-	//calculate correctl column size
+	//calculate correct column size
 	flexColWidth = Math.floor(flexWidth / flexColumns.length)
 
 	//calculate any sub pixel space that needs to be filed by the last column
@@ -375,6 +383,43 @@ ColumnManager.prototype.fitToTable = function(){
 		column.setWidth(width);
 	});
 
+};
+
+ColumnManager.prototype.getFlexBaseWidth = function(){
+	var self = this,
+	totalWidth = self.table.element.innerWidth(), //table element width
+	fixedWidth = 0;
+
+	//adjust for vertical scrollbar if present
+	if(self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()){
+		totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
+	}
+
+	this.columnsByIndex.forEach(function(column){
+		var width, minWidth, colWidth;
+
+		if(column.visible){
+
+			width = column.definition.width || 0;
+
+			minWidth = typeof column.minWidth == "undefined" ? self.table.options.columnMinWidth : parseInt(column.minWidth);
+
+			if(typeof(width) == "string"){
+				if(width.indexOf("%") > -1){
+					colWidth = (totWidth / 100) * parseInt(width) ;
+				}else{
+					colWidth = parseInt(width);
+				}
+			}else{
+				colWidth = width;
+			}
+
+			fixedWidth += colWidth > minWidth ? colWidth : minWidth;
+
+		}
+	});
+
+	return fixedWidth;
 };
 
 ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
@@ -438,10 +483,10 @@ ColumnManager.prototype.redraw = function(force){
 	}else{
 		if(force){
 			this.fitToData();
-		}
-
-		if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.responsiveLayout.update();
+		}else{
+			if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+				this.table.extensions.responsiveLayout.update();
+			}
 		}
 	}
 

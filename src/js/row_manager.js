@@ -587,10 +587,6 @@ RowManager.prototype.renderTable = function(){
 		}else{
 			self.renderEmptyScroll();
 		}
-
-		if(self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)){
-			self.table.extensions.responsiveLayout.update();
-		}
 	}
 
 	if(this.table.extExists("frozenColumns")){

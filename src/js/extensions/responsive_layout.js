@@ -33,10 +33,13 @@ ResponsiveLayout.prototype.update = function(){
 	var self = this,
 	working = true;
 
+
 	while(working){
 
-		let diff = self.table.columnManager.element.innerWidth() -  self.table.columnManager.getWidth();
+		let width = self.table.options.fitColumns ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
+		let diff = self.table.columnManager.element.innerWidth() - width;
+		console.log("updating", diff)
 		if(diff < 0){
 			//table is too wide
 			let column = self.columns[self.index];

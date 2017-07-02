@@ -615,6 +615,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         column.fitToData();
       });
+
+      if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+        this.table.extensions.responsiveLayout.update();
+      }
     };
 
     //resize columns to fill the table element
@@ -641,6 +646,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
 
+
+      if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+        this.table.extensions.responsiveLayout.update();
+      }
 
       //adjust for vertical scrollbar if present
 
@@ -689,7 +699,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       flexWidth = totalWidth - fixedWidth;
 
-      //calculate correctl column size
+      //calculate correct column size
 
 
       flexColWidth = Math.floor(flexWidth / flexColumns.length);
@@ -712,6 +722,54 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         column.setWidth(width);
       });
+    };
+
+    ColumnManager.prototype.getFlexBaseWidth = function () {
+
+      var self = this,
+          totalWidth = self.table.element.innerWidth(),
+          //table element width
+
+
+      fixedWidth = 0;
+
+      //adjust for vertical scrollbar if present
+
+
+      if (self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()) {
+
+        totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
+      }
+
+      this.columnsByIndex.forEach(function (column) {
+
+        var width, minWidth, colWidth;
+
+        if (column.visible) {
+
+          width = column.definition.width || 0;
+
+          minWidth = typeof column.minWidth == "undefined" ? self.table.options.columnMinWidth : parseInt(column.minWidth);
+
+          if (typeof width == "string") {
+
+            if (width.indexOf("%") > -1) {
+
+              colWidth = totWidth / 100 * parseInt(width);
+            } else {
+
+              colWidth = parseInt(width);
+            }
+          } else {
+
+            colWidth = width;
+          }
+
+          fixedWidth += colWidth > minWidth ? colWidth : minWidth;
+        }
+      });
+
+      return fixedWidth;
     };
 
     ColumnManager.prototype.addColumn = function (definition, before, nextToColumn) {
@@ -798,11 +856,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (force) {
 
           this.fitToData();
-        }
+        } else {
 
-        if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+          if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
 
-          this.table.extensions.responsiveLayout.update();
+            this.table.extensions.responsiveLayout.update();
+          }
         }
       }
 
@@ -2270,7 +2329,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    //choose the path to refresh data  after a sorter update
+    //choose the path to refresh data after a sorter update
 
     RowManager.prototype.sorterRefresh = function () {
 
@@ -2439,11 +2498,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         } else {
 
           self.renderEmptyScroll();
-        }
-
-        if (self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)) {
-
-          self.table.extensions.responsiveLayout.update();
         }
       }
 
@@ -10721,7 +10775,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       while (working) {
 
-        var diff = self.table.columnManager.element.innerWidth() - self.table.columnManager.getWidth();
+        var width = self.table.options.fitColumns ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
+
+        var diff = self.table.columnManager.element.innerWidth() - width;
+
+        console.log("updating", diff);
 
         if (diff < 0) {
 
