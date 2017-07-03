@@ -28,7 +28,7 @@ Tabulator is packed with useful  features including:
 - Adding/Deleting rows
 - Custom data formatting
 - Movable rows and columns
-- Persistant Column Layouts (cookie storage of user layout changes)
+- Persistant Column Layouts (storage of table layout changes between page loads)
 - Grouping Rows
 - Data filtering
 - Resizable columns
@@ -82,8 +82,11 @@ Coming Soon
 ================================
 Tabulator is actively under development and I plan to have even more useful features implemented soon, including:
 
+- Multi-level row grouping
+- multi dimentional data handling
+- Data Reactivity
 - Custom Row Templates
-- Aditional Editors and Formatters
+- Additional Editors and Formatters
 - Column Calculations
 - Copy to Clipboard
 - Print Styling
