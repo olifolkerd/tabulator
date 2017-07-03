@@ -563,7 +563,7 @@ $("#example-table").tabulator({
 
                     <p>Mutators are used to alter data as it is parsed into Tabulator. For example if you wanted to convert a numeric column into a boolean based on its value, before the data is used to build the table.</p>
 
-                    <p>You can set mutators on a per column basis using the <span class='param'>mutator</span> option in the column data.</p>
+                    <p>You can set mutators on a per column basis using the <span class='param'>mutator</span> option in the <a href="#define-column-headers">column definition object</a>.</p>
 
                     <p>You can pass an optional additional parameter with mutator, <span class='param'>mutatorParams</span> that should contain an object with additional information for configuring the mutator.</p>
 
@@ -606,7 +606,7 @@ $("#example-table").tabulator({
 
                     <p>Accessors are used to alter data as it leaves the table through the <span class='param'>getData</span> function.</p>
 
-                    <p>You can set accessors on a per column basis using the <span class='param'>accessor</span> option in the column data.</p>
+                    <p>You can set accessors on a per column basis using the <span class='param'>accessor</span> option in the <a href="#define-column-headers">column definition object</a>.</p>
 
                     <p>You can pass an optional additional parameter with accessor, <span class='param'>accessorParams</span> that should contain an object with additional information for configuring the accessor.</p>
 
@@ -635,7 +635,7 @@ $("#example-table").tabulator({
 
                     <p>Tabulator allows you to format your data in a wide variety of ways, so your tables can display information in a more graphical and clear layout.</p>
 
-                    <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the column data.</p>
+                    <p>You can set formatters on a per column basis using the <span class='param'>formatter</span> option in the <a href="#define-column-headers">column definition object</a>.</p>
 
                     <p>You can pass an optional additional parameter with the formatter, <span class='param'>formatterParams</span> that should contain an object with additional information for configuring the formatter.</p>
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:"star", formatterParams:{stars:6}}</pre>
@@ -709,7 +709,7 @@ $("#example-table").tabulator({
                     </p>
 
                     <h2>Icon/Button Columns </h2>
-                    <p>You can create icon/button columns, by not specifying the <span class='param'>field</span> parameter in the column data and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
+                    <p>You can create icon/button columns, by not specifying the <span class='param'>field</span> option in the <a href="#define-column-headers">column definition object</a> and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
 
                    <pre class="prettyprint lang-js">//custom formatter definition
 var printIcon = function(cell, formatterParams){ //plain text value
