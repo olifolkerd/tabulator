@@ -25,7 +25,7 @@
 
  	/*=include core.js */
 
- 	$.widget("ui.tabulator", Tabulator)();
+ 	$.widget("ui.tabulator", Tabulator);
 
  }));
 
