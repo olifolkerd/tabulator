@@ -11599,5 +11599,5 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Tabulator.registerExtension("sort", Sort);
   })();
 
-  $.widget("ui.tabulator", Tabulator)();
+  $.widget("ui.tabulator", Tabulator);
 });
