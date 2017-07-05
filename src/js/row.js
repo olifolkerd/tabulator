@@ -119,7 +119,8 @@ Row.prototype.normalizeHeight = function(force){
 		});
 	}
 
-	this.setHeight(this.element.innerHeight(), force)
+	// this.setHeight(this.element.innerHeight(), force)
+	this.setHeight(this.element[0].clientHeight, force)
 };
 
 //functions to setup on first render
@@ -171,7 +172,8 @@ Row.prototype.setHeight = function(height, force){
 			cell.setHeight(height);
 		});
 
-		self.outerHeight = this.element.outerHeight();
+		// self.outerHeight = this.element.outerHeight();
+		self.outerHeight = this.element[0].offsetHeight;
 	}
 };
 

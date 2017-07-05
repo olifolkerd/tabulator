@@ -3161,7 +3161,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
       }
 
-      this.setHeight(this.element.innerHeight(), force);
+      // this.setHeight(this.element.innerHeight(), force)
+
+      this.setHeight(this.element[0].clientHeight, force);
     };
 
     //functions to setup on first render
@@ -3224,7 +3226,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cell.setHeight(height);
         });
 
-        self.outerHeight = this.element.outerHeight();
+        // self.outerHeight = this.element.outerHeight();
+
+        self.outerHeight = this.element[0].offsetHeight;
       }
     };
 
@@ -3539,7 +3543,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.row = row;
 
-      this.element = $("<div class='tabulator-cell' role='gridcell'></div>");
+      // this.element = $("<div class='tabulator-cell' role='gridcell'></div>");
+
+      this.element = null;
 
       this.value = null;
 
@@ -3551,7 +3557,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.minWidth = null;
 
-      this.generateElement();
+      this.build();
     };
 
     //////////////// Setup Functions /////////////////
@@ -3559,13 +3565,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //generate element
 
-    Cell.prototype.generateElement = function () {
+    Cell.prototype.build = function () {
+
+      this.generateElement();
 
       this.setWidth(this.column.width);
 
       this._configureCell();
 
       this.setValueProcessData(this.row.data[this.column.getField()]);
+    };
+
+    Cell.prototype.generateElement = function () {
+
+      this.element = document.createElement('div');
+
+      this.element.className = "tabulator-cell";
+
+      this.element.setAttribute("role", "gridcell");
+
+      this.element = $(this.element);
     };
 
     Cell.prototype._configureCell = function () {
@@ -3764,7 +3783,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.width = width;
 
-      this.element.css("width", width || "");
+      // this.element.css("width", width || "");
+
+      this.element[0].style.width = width || "";
     };
 
     Cell.prototype.getWidth = function () {
@@ -3804,7 +3825,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.height = height;
 
-      this.element.css("height", height || "");
+      // this.element.css("height", height || "");
+
+      this.element[0].style.height = height || "";
     };
 
     Cell.prototype.getHeight = function () {
@@ -10606,28 +10629,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.startWidth = false;
 
-      this.handle = $("<div class='tabulator-col-resize-handle'></div>");
+      this.handle = null;
 
-      this.prevHandle = $("<div class='tabulator-col-resize-handle prev'></div>");
+      this.prevHandle = null;
     };
 
     ResizeColumns.prototype.initializeColumn = function (column, element) {
 
-      var self = this,
-          handle = self.handle.clone(),
-          prevHandle = self.prevHandle.clone();
+      var self = this;
 
-      handle.on("click", function (e) {
+      var handle = document.createElement('div');
+
+      handle.className = "tabulator-col-resize-handle";
+
+      var prevHandle = document.createElement('div');
+
+      prevHandle.className = "tabulator-col-resize-handle prev";
+
+      handle.addEventListener("click", function (e) {
 
         e.stopPropagation();
       });
 
-      prevHandle.on("click", function (e) {
-
-        e.stopPropagation();
-      });
-
-      handle.on("mousedown", function (e) {
+      handle.addEventListener("mousedown", function (e) {
 
         var nearestColumn = column.getLastColumn();
 
@@ -10639,7 +10663,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       });
 
-      prevHandle.on("mousedown", function (e) {
+      prevHandle.addEventListener("click", function (e) {
+
+        e.stopPropagation();
+      });
+
+      prevHandle.addEventListener("mousedown", function (e) {
 
         var nearestColumn, colIndex, prevColumn;
 
