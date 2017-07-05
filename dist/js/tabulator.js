@@ -2240,7 +2240,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           output = [];
 
-      var rows = active ? self.rows : self.activeRows;
+      var rows = active ? self.activeRows : self.rows;
 
       rows.forEach(function (row) {
 

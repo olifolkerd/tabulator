@@ -391,7 +391,7 @@ RowManager.prototype.getData = function(active){
 	var self = this,
 	output = [];
 
-	var rows = active ? self.rows : self.activeRows;
+	var rows = active ? self.activeRows : self.rows;
 
 	rows.forEach(function(row){
 		output.push(row.getData(true));
