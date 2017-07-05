@@ -1117,7 +1117,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.resizableColumns && self.table.extExists("resizeColumns")) {
 
-        self.table.extensions.resizeColumns.initializeColumn(self, self.element);
+        self.table.extensions.resizeColumns.initializeColumn("header", self, self.element);
       }
 
       //set resizable handles
@@ -3768,7 +3768,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.table.options.resizableColumns && this.table.extExists("resizeColumns")) {
 
-        this.table.extensions.resizeColumns.initializeColumn(this.column, this.element);
+        this.table.extensions.resizeColumns.initializeColumn("cell", this.column, this.element);
       }
 
       //handle frozen cells
@@ -10634,62 +10634,66 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.prevHandle = null;
     };
 
-    ResizeColumns.prototype.initializeColumn = function (column, element) {
+    ResizeColumns.prototype.initializeColumn = function (type, column, element) {
 
-      var self = this;
+      var self = this,
+          mode = this.table.options.resizableColumns;
 
-      var handle = document.createElement('div');
+      if (mode === true || mode == type) {
 
-      handle.className = "tabulator-col-resize-handle";
+        var handle = document.createElement('div');
 
-      var prevHandle = document.createElement('div');
+        handle.className = "tabulator-col-resize-handle";
 
-      prevHandle.className = "tabulator-col-resize-handle prev";
+        var prevHandle = document.createElement('div');
 
-      handle.addEventListener("click", function (e) {
+        prevHandle.className = "tabulator-col-resize-handle prev";
 
-        e.stopPropagation();
-      });
+        handle.addEventListener("click", function (e) {
 
-      handle.addEventListener("mousedown", function (e) {
+          e.stopPropagation();
+        });
 
-        var nearestColumn = column.getLastColumn();
+        handle.addEventListener("mousedown", function (e) {
 
-        if (nearestColumn) {
+          var nearestColumn = column.getLastColumn();
 
-          self.startColumn = column;
-
-          self._mouseDown(e, nearestColumn);
-        }
-      });
-
-      prevHandle.addEventListener("click", function (e) {
-
-        e.stopPropagation();
-      });
-
-      prevHandle.addEventListener("mousedown", function (e) {
-
-        var nearestColumn, colIndex, prevColumn;
-
-        nearestColumn = column.getFirstColumn();
-
-        if (nearestColumn) {
-
-          colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
-
-          prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
-
-          if (prevColumn) {
+          if (nearestColumn) {
 
             self.startColumn = column;
 
-            self._mouseDown(e, prevColumn);
+            self._mouseDown(e, nearestColumn);
           }
-        }
-      });
+        });
 
-      element.append(handle).append(prevHandle);
+        prevHandle.addEventListener("click", function (e) {
+
+          e.stopPropagation();
+        });
+
+        prevHandle.addEventListener("mousedown", function (e) {
+
+          var nearestColumn, colIndex, prevColumn;
+
+          nearestColumn = column.getFirstColumn();
+
+          if (nearestColumn) {
+
+            colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
+
+            prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
+
+            if (prevColumn) {
+
+              self.startColumn = column;
+
+              self._mouseDown(e, prevColumn);
+            }
+          }
+        });
+
+        element.append(handle).append(prevHandle);
+      }
     };
 
     ResizeColumns.prototype._mouseDown = function (e, column) {

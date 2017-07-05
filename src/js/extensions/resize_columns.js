@@ -7,52 +7,55 @@ var ResizeColumns = function(table){
 	this.prevHandle = null;
 };
 
-ResizeColumns.prototype.initializeColumn = function(column, element){
-	var self = this;
+ResizeColumns.prototype.initializeColumn = function(type, column, element){
+	var self = this,
+	mode = this.table.options.resizableColumns;
+
+	if(mode === true || mode == type){
+
+		var handle = document.createElement('div');
+		handle.className = "tabulator-col-resize-handle";
 
 
-	var handle = document.createElement('div');
-	handle.className = "tabulator-col-resize-handle";
+		var prevHandle = document.createElement('div');
+		prevHandle.className = "tabulator-col-resize-handle prev";
 
+		handle.addEventListener("click", function(e){
+			e.stopPropagation();
+		});
 
-	var prevHandle = document.createElement('div');
-	prevHandle.className = "tabulator-col-resize-handle prev";
+		handle.addEventListener("mousedown", function(e){
+			var nearestColumn = column.getLastColumn();
 
-	handle.addEventListener("click", function(e){
-		e.stopPropagation();
-	});
-
-	handle.addEventListener("mousedown", function(e){
-		var nearestColumn = column.getLastColumn();
-
-		if(nearestColumn){
-			self.startColumn = column;
-			self._mouseDown(e, nearestColumn);
-		}
-	});
-
-	prevHandle.addEventListener("click", function(e){
-		e.stopPropagation();
-	});
-
-	prevHandle.addEventListener("mousedown", function(e){
-		var nearestColumn, colIndex, prevColumn;
-
-		nearestColumn = column.getFirstColumn();
-
-		if(nearestColumn){
-			colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
-			prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
-
-			if(prevColumn){
+			if(nearestColumn){
 				self.startColumn = column;
-				self._mouseDown(e, prevColumn);
+				self._mouseDown(e, nearestColumn);
 			}
-		}
-	});
+		});
 
-	element.append(handle)
-	.append(prevHandle);
+		prevHandle.addEventListener("click", function(e){
+			e.stopPropagation();
+		});
+
+		prevHandle.addEventListener("mousedown", function(e){
+			var nearestColumn, colIndex, prevColumn;
+
+			nearestColumn = column.getFirstColumn();
+
+			if(nearestColumn){
+				colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
+				prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
+
+				if(prevColumn){
+					self.startColumn = column;
+					self._mouseDown(e, prevColumn);
+				}
+			}
+		});
+
+		element.append(handle)
+		.append(prevHandle);
+	}
 };
 
 ResizeColumns.prototype._mouseDown = function(e, column){

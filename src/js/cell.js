@@ -231,7 +231,7 @@ Cell.prototype.setValueActual = function(value){
 
 	//set resizable handles
 	if(this.table.options.resizableColumns && this.table.extExists("resizeColumns")){
-		this.table.extensions.resizeColumns.initializeColumn(this.column, this.element);
+		this.table.extensions.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
 	//handle frozen cells

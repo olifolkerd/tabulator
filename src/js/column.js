@@ -177,7 +177,7 @@ Column.prototype._buildHeader = function(){
 
 	//set resizable handles
 	if(self.table.options.resizableColumns && self.table.extExists("resizeColumns")){
-		self.table.extensions.resizeColumns.initializeColumn(self, self.element);
+		self.table.extensions.resizeColumns.initializeColumn("header", self, self.element);
 	}
 
 	//set resizable handles
