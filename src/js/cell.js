@@ -56,7 +56,8 @@ var Cell = function(column, row){
 	this.table = column.table;
 	this.column = column;
 	this.row = row;
-	this.element = $("<div class='tabulator-cell' role='gridcell'></div>");
+	// this.element = $("<div class='tabulator-cell' role='gridcell'></div>");
+	this.element = null;
 	this.value = null;
 	this.oldValue = null;
 
@@ -64,18 +65,27 @@ var Cell = function(column, row){
 	this.width = null;
 	this.minWidth = null;
 
-	this.generateElement();
+	this.build();
 };
 
 //////////////// Setup Functions /////////////////
 
 //generate element
-Cell.prototype.generateElement = function(){
+Cell.prototype.build = function(){
+	this.generateElement();
+
 	this.setWidth(this.column.width);
 
 	this._configureCell();
 
 	this.setValueProcessData(this.row.data[this.column.getField()]);
+};
+
+Cell.prototype.generateElement = function(){
+	this.element = document.createElement('div');
+	this.element.className = "tabulator-cell";
+	this.element.setAttribute("role", "gridcell");
+	this.element = $(this.element);
 };
 
 
@@ -232,7 +242,8 @@ Cell.prototype.setValueActual = function(value){
 
 Cell.prototype.setWidth = function(width){
 	this.width = width;
-	this.element.css("width", width || "");
+	// this.element.css("width", width || "");
+	this.element[0].style.width = width || "";
 };
 
 Cell.prototype.getWidth = function(){
@@ -262,7 +273,8 @@ Cell.prototype.checkHeight = function(){
 
 Cell.prototype.setHeight = function(height){
 	this.height = height;
-	this.element.css("height", height || "");
+	// this.element.css("height", height || "");
+	this.element[0].style.height = height || "";
 };
 
 Cell.prototype.getHeight = function(){
