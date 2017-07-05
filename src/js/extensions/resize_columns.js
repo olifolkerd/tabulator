@@ -3,24 +3,26 @@ var ResizeColumns = function(table){
 	this.startColumn = false;
 	this.startX = false;
 	this.startWidth = false;
-	this.handle = $("<div class='tabulator-col-resize-handle'></div>");
-	this.prevHandle = $("<div class='tabulator-col-resize-handle prev'></div>");
+	this.handle = null;
+	this.prevHandle = null;
 };
 
 ResizeColumns.prototype.initializeColumn = function(column, element){
-	var self = this,
-	handle = self.handle.clone(),
-	prevHandle = self.prevHandle.clone();
+	var self = this;
 
-	handle.on("click", function(e){
+
+	var handle = document.createElement('div');
+	handle.className = "tabulator-col-resize-handle";
+
+
+	var prevHandle = document.createElement('div');
+	prevHandle.className = "tabulator-col-resize-handle prev";
+
+	handle.addEventListener("click", function(e){
 		e.stopPropagation();
 	});
 
-	prevHandle.on("click", function(e){
-		e.stopPropagation();
-	});
-
-	handle.on("mousedown", function(e){
+	handle.addEventListener("mousedown", function(e){
 		var nearestColumn = column.getLastColumn();
 
 		if(nearestColumn){
@@ -29,7 +31,11 @@ ResizeColumns.prototype.initializeColumn = function(column, element){
 		}
 	});
 
-	prevHandle.on("mousedown", function(e){
+	prevHandle.addEventListener("click", function(e){
+		e.stopPropagation();
+	});
+
+	prevHandle.addEventListener("mousedown", function(e){
 		var nearestColumn, colIndex, prevColumn;
 
 		nearestColumn = column.getFirstColumn();
