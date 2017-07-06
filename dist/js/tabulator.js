@@ -2995,7 +2995,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.height = self.element.innerHeight();
 
-        self.vDomWindowBuffer = self.height;
+        self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
       }
     };
 

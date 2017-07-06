@@ -961,7 +961,7 @@ RowManager.prototype.adjustTableSize = function(){
 		});
 
 		self.height = self.element.innerHeight();
-		self.vDomWindowBuffer = self.height;
+		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
 	}
 };
 
