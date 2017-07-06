@@ -3282,10 +3282,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.height = height;
 
-        this.cells.forEach(function (cell) {
-
-          cell.setHeight(height);
-        });
+        this.setCellHeight();
 
         // this.outerHeight = this.element.outerHeight();
 
