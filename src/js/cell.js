@@ -78,7 +78,7 @@ Cell.prototype.build = function(){
 
 	this._configureCell();
 
-	this.setValueProcessData(this.row.data[this.column.getField()]);
+	this.setValueActual(this.row.data[this.column.getField()]);
 };
 
 Cell.prototype.generateElement = function(){
