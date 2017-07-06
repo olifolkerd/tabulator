@@ -35,7 +35,8 @@ var RowManager = function(table){
 	this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
 	this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
 
-
+	this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
+	this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 	this._initialize();
 };
 
@@ -611,7 +612,7 @@ RowManager.prototype._simpleRender = function(){
 		self.displayRows.forEach(function(row, index){
 			self.styleRow(row, index);
 			element.append(row.getElement());
-			row.initialize();
+			row.initialize(true);
 		});
 	}else{
 		self.renderEmptyScroll();
@@ -707,7 +708,9 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			self.styleRow(row, index);
 
 			element.append(row.getElement());
-			row.initialize();
+			if(!row.initialized){
+				row.initialize(true);
+			}
 
 			if(i < topPad){
 				topPadHeight += row.getHeight();
@@ -797,6 +800,9 @@ RowManager.prototype._addTopRow = function(topDiff){
 		if(topDiff >= topRowHeight){
 			this.styleRow(topRow, index);
 			table.prepend(topRow.getElement());
+			if(!topRow.initialized){
+				this.vDomTopNewRows.push(topRow);
+			}
 			topRow.initialize();
 
 			this.vDomTopPad -= topRowHeight;
@@ -814,6 +820,8 @@ RowManager.prototype._addTopRow = function(topDiff){
 
 		if(this.vDomTop && topDiff >= (this.displayRows[this.vDomTop -1].getHeight() || this.vDomRowHeight)){
 			this._addTopRow(topDiff);
+		}else{
+			this._quickNormalizeRowHeight(this.vDomTopNewRows);
 		}
 
 	}
@@ -856,6 +864,11 @@ RowManager.prototype._addBottomRow = function(bottomDiff){
 		if(bottomDiff >= bottomRowHeight){
 			this.styleRow(bottomRow, index);
 			table.append(bottomRow.getElement());
+
+			if(!bottomRow.initialized){
+				this.vDomBottomNewRows.push(bottomRow);
+			}
+
 			bottomRow.initialize();
 
 			this.vDomBottomPad -= bottomRowHeight;
@@ -873,8 +886,22 @@ RowManager.prototype._addBottomRow = function(bottomDiff){
 
 		if(this.vDomBottom < this.displayRowsCount -1 && bottomDiff >= (this.displayRows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
 			this._addBottomRow(bottomDiff);
+		}else{
+			this._quickNormalizeRowHeight(this.vDomBottomNewRows);
 		}
 	}
+};
+
+RowManager.prototype._quickNormalizeRowHeight = function(rows){
+	rows.forEach(function(row){
+		row.calcHeight();
+	});
+
+	rows.forEach(function(row){
+		row.setCellHeight();
+	});
+
+	rows.length = 0;
 };
 
 RowManager.prototype._removeBottomRow = function(bottomDiff){

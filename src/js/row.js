@@ -109,20 +109,6 @@ Row.prototype.generateElement = function(){
 };
 
 
-//normalize the height of elements in the row
-Row.prototype.normalizeHeight = function(force){
-
-	if(force){
-		//zero cell heights
-		this.cells.forEach(function(cell){
-			cell.setHeight();
-		});
-	}
-
-	// this.setHeight(this.element.innerHeight(), force)
-	this.setHeight(this.element[0].clientHeight, force)
-};
-
 //functions to setup on first render
 Row.prototype.initialize = function(force){
 	var self = this;
@@ -142,7 +128,9 @@ Row.prototype.initialize = function(force){
 			self.element.append(cell.getElement());
 		});
 
-		self.normalizeHeight();
+		if(force){
+			self.normalizeHeight();
+		}
 
 		if(self.table.options.rowFormatter){
 			self.table.options.rowFormatter(self.getComponent());
@@ -161,19 +149,44 @@ Row.prototype.reinitialize = function(){
 	}
 };
 
+Row.prototype.calcHeight = function(){
+	this.height = this.element[0].clientHeight;
+	this.outerHeight = this.element[0].offsetHeight;
+};
+
+Row.prototype.setCellHeight = function(){
+	var height = this.height;
+
+	this.cells.forEach(function(cell){
+		cell.setHeight(height);
+	});
+};
+
+//normalize the height of elements in the row
+Row.prototype.normalizeHeight = function(force){
+	if(force){
+		//zero cell heights
+		this.cells.forEach(function(cell){
+			cell.setHeight();
+		});
+	}
+
+	// this.setHeight(this.element.innerHeight(), force)
+	this.setHeight(this.element[0].clientHeight, force)
+};
+
+
 Row.prototype.setHeight = function(height, force){
-	var self = this;
+	if(this.height != height || force){
 
-	if(self.height != height || force){
+		this.height = height;
 
-		self.height = height;
-
-		self.cells.forEach(function(cell){
+		this.cells.forEach(function(cell){
 			cell.setHeight(height);
 		});
 
-		// self.outerHeight = this.element.outerHeight();
-		self.outerHeight = this.element[0].offsetHeight;
+		// this.outerHeight = this.element.outerHeight();
+		this.outerHeight = this.element[0].offsetHeight;
 	}
 };
 
