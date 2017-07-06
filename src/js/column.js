@@ -72,6 +72,7 @@ var Column = function(def, parent){
 	this.groupElement = $("<div class='tabulator-col-group-cols'></div>"); //column group holder element
 	this.isGroup = false;
 	this.tooltip = false; //hold column tooltip
+	this.hozAlign = ""; //horizontal text alignment
 
 	this.extensions = {}; //hold extension variables;
 
@@ -283,6 +284,9 @@ Column.prototype._buildColumnHeader = function(){
 
 	//set tooltip if present
 	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
+
+	//set orizontal text alignment
+	self.hozAlign = typeof(self.definition.align) == "undefined" ? "" : self.definition.align;
 };
 
 Column.prototype._buildColumnHeaderContent = function(){

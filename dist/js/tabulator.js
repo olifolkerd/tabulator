@@ -981,6 +981,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.tooltip = false; //hold column tooltip
 
+      this.hozAlign = ""; //horizontal text alignment
+
 
       this.extensions = {}; //hold extension variables;
 
@@ -1265,6 +1267,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //set tooltip if present
 
       self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
+
+      //set orizontal text alignment
+
+      self.hozAlign = typeof self.definition.align == "undefined" ? "" : self.definition.align;
     };
 
     Column.prototype._buildColumnHeaderContent = function () {
@@ -3668,7 +3674,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //set text alignment
 
-      element.css("text-align", typeof self.column.definition.align == "undefined" ? "" : self.column.definition.align);
+      element[0].style.textAlign = self.column.hozAlign;
 
       if (field) {
 
@@ -3868,7 +3874,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.minWidth = minWidth;
 
-      this.element.css("min-width", minWidth || "");
+      this.element[0].style.minWidth = minWidth || "";
     };
 
     Cell.prototype.checkHeight = function () {
@@ -3908,12 +3914,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Cell.prototype.show = function () {
 
-      this.element.css("display", "");
+      this.element[0].style.display = "";
     };
 
     Cell.prototype.hide = function () {
 
-      this.element.css("display", "none");
+      this.element[0].style.display = "none";
     };
 
     Cell.prototype.edit = function () {

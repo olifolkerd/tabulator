@@ -96,7 +96,7 @@ Cell.prototype._configureCell = function(){
 	field = this.column.getField();
 
 	//set text alignment
-	element.css("text-align", typeof(self.column.definition.align) == "undefined" ? "" : self.column.definition.align);
+	element[0].style.textAlign = self.column.hozAlign;
 
 	if(field){
 		element.attr("tabulator-field", field);
@@ -251,7 +251,7 @@ Cell.prototype.getWidth = function(){
 
 Cell.prototype.setMinWidth = function(minWidth){
 	this.minWidth = minWidth;
-	this.element.css("min-width", minWidth || "");
+	this.element[0].style.minWidth =  minWidth || "";
 };
 
 Cell.prototype.checkHeight = function(){
@@ -281,11 +281,11 @@ Cell.prototype.getHeight = function(){
 };
 
 Cell.prototype.show = function(){
-	this.element.css("display","");
+	this.element[0].style.display = "";
 };
 
 Cell.prototype.hide = function(){
-	this.element.css("display","none");
+	this.element[0].style.display = "none";
 };
 
 Cell.prototype.edit = function(){
