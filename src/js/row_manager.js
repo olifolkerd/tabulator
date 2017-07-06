@@ -87,7 +87,7 @@ RowManager.prototype._initialize = function(){
 	if(self.table.options.height && self.table.options.virtualDom){
 
 		self.element.scroll(function(){
-			var top = self.element.scrollTop();
+			var top = self.element[0].scrollTop;
 			var dir = self.scrollTop > top;
 
 			//handle verical scrolling
