@@ -165,15 +165,14 @@ Row.prototype.setHeight = function(height, force){
 	var self = this;
 
 	if(self.height != height || force){
+		// self.outerHeight = this.element.outerHeight();
+		self.outerHeight = this.element[0].offsetHeight;
 
 		self.height = height;
 
 		self.cells.forEach(function(cell){
 			cell.setHeight(height);
 		});
-
-		// self.outerHeight = this.element.outerHeight();
-		self.outerHeight = this.element[0].offsetHeight;
 	}
 };
 
