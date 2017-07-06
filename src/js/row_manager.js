@@ -69,7 +69,7 @@ RowManager.prototype._initialize = function(){
 
 	//scroll header along with table body
 	self.element.scroll(function(){
-		var left = self.element.scrollLeft();
+		var left = self.element[0].scrollLeft;
 
 		//handle horizontal scrolling
 		if(self.scrollLeft != left){

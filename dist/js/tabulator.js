@@ -1864,7 +1864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.scroll(function () {
 
-        var left = self.element.scrollLeft();
+        var left = self.element[0].scrollLeft;
 
         //handle horizontal scrolling
 
