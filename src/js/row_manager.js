@@ -731,7 +731,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			self.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
 			self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom -1);
 
-			self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.element.innerHeight();
+			self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.height;
 		}else{
 			self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : (self.vDomRowHeight * this.vDomTop) + topPadHeight;
 			self.vDomBottomPad = self.vDomBottom == self.displayRowsCount-1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
@@ -905,7 +905,7 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 	bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
 	//hide bottom row if needed
-	if(this.scrollTop + this.element.innerHeight() - this.vDomScrollPosBottom < this.vDomWindowBuffer){
+	if(this.scrollTop + this.height - this.vDomScrollPosBottom < this.vDomWindowBuffer){
 
 		bottomRow.element.detach();
 

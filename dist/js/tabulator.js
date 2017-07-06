@@ -2706,7 +2706,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom - 1);
 
-          self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.element.innerHeight();
+          self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.height;
         } else {
 
           self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : self.vDomRowHeight * this.vDomTop + topPadHeight;
@@ -2934,7 +2934,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //hide bottom row if needed
 
-      if (this.scrollTop + this.element.innerHeight() - this.vDomScrollPosBottom < this.vDomWindowBuffer) {
+      if (this.scrollTop + this.height - this.vDomScrollPosBottom < this.vDomWindowBuffer) {
 
         bottomRow.element.detach();
 
