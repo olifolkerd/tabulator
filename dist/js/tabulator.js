@@ -1873,13 +1873,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var top = self.element.scrollTop();
 
+          var dir = self.scrollTop > top;
+
           //handle verical scrolling
 
           if (self.scrollTop != top) {
 
             self.scrollTop = top;
 
-            self.scrollVertical();
+            self.scrollVertical(dir);
           } else {
 
             self.scrollTop = top;
@@ -2731,7 +2733,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //handle vertical scrolling
 
-    RowManager.prototype.scrollVertical = function () {
+    RowManager.prototype.scrollVertical = function (dir) {
 
       var topDiff = this.scrollTop - this.vDomScrollPosTop;
 
@@ -2746,32 +2748,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount));
       } else {
 
-        //handle top rows
+        // console.log("dir", dir);
 
-        if (topDiff >= 0) {
 
-          //scrolling down
-
-          this._removeTopRow(topDiff);
-        } else {
+        if (dir) {
 
           //scrolling up
 
-          this._addTopRow(-topDiff);
-        }
+          if (topDiff < 0) {
 
-        //handle bottom rows
+            this._addTopRow(-topDiff);
+          }
 
-        if (bottomDiff >= 0) {
+          if (topDiff < 0) {
+
+            this._removeBottomRow(-bottomDiff);
+          }
+        } else {
 
           //scrolling down
 
-          this._addBottomRow(bottomDiff);
-        } else {
+          if (topDiff >= 0) {
 
-          //scrolling up
+            this._removeTopRow(topDiff);
+          }
 
-          this._removeBottomRow(-bottomDiff);
+          if (bottomDiff >= 0) {
+
+            this._addBottomRow(bottomDiff);
+          }
         }
       }
     };
@@ -2930,7 +2935,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //hide bottom row if needed
 
-      if (this.scrollTop < this.element.innerHeight() - this.element[0].scrollHeight - this.vDomWindowBuffer) {
+      if (this.scrollTop + this.element.innerHeight() - this.vDomScrollPosBottom < this.vDomWindowBuffer) {
 
         bottomRow.element.detach();
 

@@ -86,11 +86,12 @@ RowManager.prototype._initialize = function(){
 
 		self.element.scroll(function(){
 			var top = self.element.scrollTop();
+			var dir = self.scrollTop > top;
 
 			//handle verical scrolling
 			if(self.scrollTop != top){
 				self.scrollTop = top;
-				self.scrollVertical();
+				self.scrollVertical(dir);
 			}else{
 				self.scrollTop = top;
 			}
@@ -756,7 +757,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 };
 
 //handle vertical scrolling
-RowManager.prototype.scrollVertical = function(){
+RowManager.prototype.scrollVertical = function(dir){
 	var topDiff = this.scrollTop - this.vDomScrollPosTop;
 	var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 	var margin = this.vDomWindowBuffer * 2;
@@ -767,22 +768,26 @@ RowManager.prototype.scrollVertical = function(){
 		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
 
-		//handle top rows
-		if(topDiff >= 0){
-			//scrolling down
-			this._removeTopRow(topDiff);
-		}else{
-			//scrolling up
-			this._addTopRow(-topDiff)
-		}
+		// console.log("dir", dir);
 
-		//handle bottom rows
-		if(bottomDiff >= 0){
-			//scrolling down
-			this._addBottomRow(bottomDiff);
-		}else{
+		if(dir){
 			//scrolling up
-			this._removeBottomRow(-bottomDiff);
+			if(topDiff < 0){
+				this._addTopRow(-topDiff)
+			}
+
+			if(topDiff < 0){
+				this._removeBottomRow(-bottomDiff);
+			}
+		}else{
+			//scrolling down
+			if(topDiff >= 0){
+				this._removeTopRow(topDiff);
+			}
+
+			if(bottomDiff >= 0){
+				this._addBottomRow(bottomDiff);
+			}
 		}
 	}
 
@@ -910,7 +915,7 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 	bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
 	//hide bottom row if needed
-	if(this.scrollTop < this.element.innerHeight() -this.element[0].scrollHeight - this.vDomWindowBuffer){
+	if(this.scrollTop + this.element.innerHeight() - this.vDomScrollPosBottom < this.vDomWindowBuffer){
 
 		bottomRow.element.detach();
 
