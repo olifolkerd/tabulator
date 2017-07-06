@@ -30,7 +30,7 @@ var RowManager = function(table){
 	this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
 	this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
 
-	this.vDomMaxRenderChain = 6; //the maximum number of dom elements that can be rendered in 1 go
+	this.vDomMaxRenderChain = 8; //the maximum number of dom elements that can be rendered in 1 go
 
 	this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
