@@ -1802,6 +1802,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
 
 
+      this.vDomMaxRenderChain = 6; //the maximum number of dom elements that can be rendered in 1 go
+
+
       this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
 
@@ -2789,6 +2792,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     RowManager.prototype._addTopRow = function (topDiff) {
+      var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
 
       var table = this.tableElement;
 
@@ -2829,9 +2834,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         topDiff = -(this.scrollTop - this.vDomScrollPosTop);
 
-        if (this.vDomTop && topDiff >= (this.displayRows[this.vDomTop - 1].getHeight() || this.vDomRowHeight)) {
+        if (i < this.vDomMaxRenderChain && this.vDomTop && topDiff >= (this.displayRows[this.vDomTop - 1].getHeight() || this.vDomRowHeight)) {
 
-          this._addTopRow(topDiff);
+          this._addTopRow(topDiff, i + 1);
         } else {
 
           this._quickNormalizeRowHeight(this.vDomTopNewRows);
@@ -2869,6 +2874,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     RowManager.prototype._addBottomRow = function (bottomDiff) {
+      var i = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
 
       var table = this.tableElement;
 
@@ -2909,9 +2916,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 
-        if (this.vDomBottom < this.displayRowsCount - 1 && bottomDiff >= (this.displayRows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)) {
+        if (i < this.vDomMaxRenderChain && this.vDomBottom < this.displayRowsCount - 1 && bottomDiff >= (this.displayRows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)) {
 
-          this._addBottomRow(bottomDiff);
+          this._addBottomRow(bottomDiff, i + 1);
         } else {
 
           this._quickNormalizeRowHeight(this.vDomBottomNewRows);
