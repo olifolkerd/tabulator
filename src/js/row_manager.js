@@ -897,18 +897,6 @@ RowManager.prototype._addBottomRow = function(bottomDiff){
 	}
 };
 
-RowManager.prototype._quickNormalizeRowHeight = function(rows){
-	rows.forEach(function(row){
-		row.calcHeight();
-	});
-
-	rows.forEach(function(row){
-		row.setCellHeight();
-	});
-
-	rows.length = 0;
-};
-
 RowManager.prototype._removeBottomRow = function(bottomDiff){
 	var table = this.tableElement,
 	bottomRow = this.displayRows[this.vDomBottom],
@@ -935,7 +923,18 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 			this._removeBottomRow(bottomDiff);
 		}
 	}
+};
 
+RowManager.prototype._quickNormalizeRowHeight = function(rows){
+	rows.forEach(function(row){
+		row.calcHeight();
+	});
+
+	rows.forEach(function(row){
+		row.setCellHeight();
+	});
+
+	rows.length = 0;
 };
 
 //normalize height of active rows

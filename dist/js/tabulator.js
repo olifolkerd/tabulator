@@ -2912,21 +2912,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    RowManager.prototype._quickNormalizeRowHeight = function (rows) {
-
-      rows.forEach(function (row) {
-
-        row.calcHeight();
-      });
-
-      rows.forEach(function (row) {
-
-        row.setCellHeight();
-      });
-
-      rows.length = 0;
-    };
-
     RowManager.prototype._removeBottomRow = function (bottomDiff) {
 
       var table = this.tableElement,
@@ -2959,6 +2944,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this._removeBottomRow(bottomDiff);
         }
       }
+    };
+
+    RowManager.prototype._quickNormalizeRowHeight = function (rows) {
+
+      rows.forEach(function (row) {
+
+        row.calcHeight();
+      });
+
+      rows.forEach(function (row) {
+
+        row.setCellHeight();
+      });
+
+      rows.length = 0;
     };
 
     //normalize height of active rows
