@@ -979,6 +979,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.isGroup = false;
 
+      this.tooltip = false; //hold column tooltip
+
+
       this.extensions = {}; //hold extension variables;
 
 
@@ -1258,6 +1261,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //set width if present
 
       self.setWidth(def.width);
+
+      //set tooltip if present
+
+      self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
     };
 
     Column.prototype._buildColumnHeaderContent = function () {
@@ -3732,7 +3739,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      var tooltip = self.column.definition.tooltip || self.column.definition.tooltip === false ? self.column.definition.tooltip : self.table.options.tooltips;
+      var tooltip = self.column.tooltip;
 
       if (tooltip) {
 

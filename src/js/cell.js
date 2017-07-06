@@ -155,7 +155,7 @@ Cell.prototype._generateContents = function(){
 Cell.prototype._generateTooltip = function(){
 	var self = this;
 
-	var tooltip = self.column.definition.tooltip || self.column.definition.tooltip === false ? self.column.definition.tooltip : self.table.options.tooltips;
+	var tooltip = self.column.tooltip;
 
 	if(tooltip){
 		if(tooltip === true){
