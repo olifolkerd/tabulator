@@ -2720,13 +2720,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.vDomBottomPad = self.vDomBottom == self.displayRowsCount - 1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
         }
 
-        element.css({
+        element[0].style.paddingTop = self.vDomTopPad;
 
-          "padding-top": self.vDomTopPad,
-
-          "padding-bottom": self.vDomBottomPad
-
-        });
+        element[0].style.paddingBottom = self.vDomBottomPad;
 
         if (forceMove) {
 
@@ -2761,7 +2757,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //if big scroll redraw table;
 
-        this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount));
+        this._virtualRenderFill(Math.floor(this.element[0].scrollTop / this.element[0].scrollHeight * this.displayRowsCount));
       } else {
 
         // console.log("dir", dir);
@@ -2831,7 +2827,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.vDomTopPad = (this.vDomTop - 1) * this.vDomRowHeight;
           }
 
-          table.css("padding-top", this.vDomTopPad);
+          table[0].style.paddingTop = this.vDomTopPad;
 
           this.vDomScrollPosTop -= topRowHeight;
 
@@ -2864,7 +2860,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.vDomTopPad += topRowHeight;
 
-        table.css("padding-top", this.vDomTopPad);
+        table[0].style.paddingTop = this.vDomTopPad;
 
         this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 
@@ -2913,7 +2909,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.vDomBottomPad = 0;
           }
 
-          table.css("padding-bottom", this.vDomBottomPad);
+          table[0].style.paddingBottom = this.vDomBottomPad;
 
           this.vDomScrollPosBottom += bottomRowHeight;
 
@@ -2951,7 +2947,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.vDomBottomPad == 0;
         }
 
-        table.css("padding-bottom", this.vDomBottomPad);
+        table[0].style.paddingBottom = this.vDomBottomPad;
 
         this.vDomScrollPosBottom -= bottomRowHeight;
 

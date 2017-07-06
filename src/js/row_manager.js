@@ -737,10 +737,8 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			self.vDomBottomPad = self.vDomBottom == self.displayRowsCount-1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
 		}
 
-		element.css({
-			"padding-top": self.vDomTopPad,
-			"padding-bottom":self.vDomBottomPad,
-		});
+		element[0].style.paddingTop = self.vDomTopPad
+		element[0].style.paddingBottom = self.vDomBottomPad;
 
 		if(forceMove){
 			this.scrollTop = self.vDomTopPad + (topPadHeight)
@@ -767,7 +765,7 @@ RowManager.prototype.scrollVertical = function(dir){
 
 	if(-topDiff > margin || bottomDiff > margin){
 		//if big scroll redraw table;
-		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount));
+		this._virtualRenderFill(Math.floor((this.element[0].scrollTop / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
 
 		// console.log("dir", dir);
@@ -818,7 +816,7 @@ RowManager.prototype._addTopRow = function(topDiff, i=0){
 				this.vDomTopPad = (this.vDomTop -1) * this.vDomRowHeight;
 			}
 
-			table.css("padding-top", this.vDomTopPad);
+			table[0].style.paddingTop = this.vDomTopPad;
 			this.vDomScrollPosTop -= topRowHeight;
 			this.vDomTop--;
 		}
@@ -846,7 +844,7 @@ RowManager.prototype._removeTopRow = function(topDiff){
 		topRow.element.detach();
 
 		this.vDomTopPad += topRowHeight;
-		table.css("padding-top", this.vDomTopPad);
+		table[0].style.paddingTop = this.vDomTopPad;
 		this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 		this.vDomTop++;
 
@@ -884,7 +882,7 @@ RowManager.prototype._addBottomRow = function(bottomDiff, i=0){
 				this.vDomBottomPad = 0;
 			}
 
-			table.css("padding-bottom", this.vDomBottomPad);
+			table[0].style.paddingBottom = this.vDomBottomPad;
 			this.vDomScrollPosBottom += bottomRowHeight;
 			this.vDomBottom++;
 		}
@@ -915,7 +913,7 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 			this.vDomBottomPad == 0;
 		}
 
-		table.css("padding-bottom", this.vDomBottomPad);
+		table[0].style.paddingBottom = this.vDomBottomPad;
 		this.vDomScrollPosBottom -= bottomRowHeight;
 		this.vDomBottom--;
 
