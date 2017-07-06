@@ -3716,10 +3716,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.table.extensions.moveRow.initializeCell(self);
       }
 
-      if (self.column.visible) {
+      //hide cell if not visible
 
-        self.show();
-      } else {
+      if (!self.column.visible) {
 
         self.hide();
       }

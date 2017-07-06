@@ -133,9 +133,8 @@ Cell.prototype._configureCell = function(){
 		self.table.extensions.moveRow.initializeCell(self);
 	}
 
-	if(self.column.visible){
-		self.show();
-	}else{
+	//hide cell if not visible
+	if(!self.column.visible){
 		self.hide();
 	}
 };
