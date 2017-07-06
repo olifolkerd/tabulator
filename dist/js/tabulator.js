@@ -3751,10 +3751,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           tooltip = tooltip(self.getComponent());
         }
 
-        self.element.attr("title", tooltip);
+        self.element[0].setAttribute("title", tooltip);
       } else {
 
-        self.element.attr("title", "");
+        self.element[0].setAttribute("title", "");
       }
     };
 
