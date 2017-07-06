@@ -7586,9 +7586,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Format.prototype.formatValue = function (cell) {
 
-      var value = cell.column.extensions.format.formatter.call(this, cell.getComponent(), cell.column.extensions.format.params);
-
-      return value;
+      return cell.column.extensions.format.formatter.call(this, cell.getComponent(), cell.column.extensions.format.params);
     };
 
     Format.prototype.sanitizeHTML = function (value) {
