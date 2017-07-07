@@ -537,7 +537,9 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 		}
 	}
 
-	self.renderTable();
+	if(self.element.is(":visible")){
+		self.renderTable();
+	}
 
 	if(!this.displayRowsCount){
 		if(table.options.placeholder){

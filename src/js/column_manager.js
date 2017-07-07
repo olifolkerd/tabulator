@@ -473,7 +473,9 @@ ColumnManager.prototype.deregisterColumn = function(column){
 ColumnManager.prototype.redraw = function(force){
 
 	if(force){
-		this._verticalAlignHeaders();
+		if(this.element.is(":visible")){
+			this._verticalAlignHeaders();
+		}
 		this.table.rowManager.resetScroll();
 		this.table.rowManager.reinitialize();
 	}

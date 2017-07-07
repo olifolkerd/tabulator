@@ -841,7 +841,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (force) {
 
-        this._verticalAlignHeaders();
+        if (this.element.is(":visible")) {
+
+          this._verticalAlignHeaders();
+        }
 
         this.table.rowManager.resetScroll();
 
@@ -2449,7 +2452,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       }
 
-      self.renderTable();
+      if (self.element.is(":visible")) {
+
+        self.renderTable();
+      }
 
       if (!this.displayRowsCount) {
 
