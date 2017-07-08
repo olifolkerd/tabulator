@@ -3932,7 +3932,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.height = height;
 
-      this.element[0].style.height = height || "" + "px";
+      this.element[0].style.height = (height || "") + "px";
     };
 
     Cell.prototype.getHeight = function () {

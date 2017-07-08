@@ -271,7 +271,7 @@ Cell.prototype.clearHeight = function(){
 
 Cell.prototype.setHeight = function(height){
 	this.height = height;
-	this.element[0].style.height = height || "" + "px";
+	this.element[0].style.height = (height || "") + "px";
 };
 
 Cell.prototype.getHeight = function(){
