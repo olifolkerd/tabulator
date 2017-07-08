@@ -16,7 +16,7 @@ Keybindings.prototype.initialize = function(){
 
 	if(bindings !== false){
 
-		for(let key in bindings){
+		for(let key in this.bindings){
 			mergedBindings[key] = this.bindings[key];
 		}
 

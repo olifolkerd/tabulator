@@ -9053,7 +9053,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (bindings !== false) {
 
-        for (var key in bindings) {
+        for (var key in this.bindings) {
 
           mergedBindings[key] = this.bindings[key];
         }
