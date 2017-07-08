@@ -9040,7 +9040,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (bindings !== false) {
 
-        if (bindings.length) {
+        if (Object.keys(bindings).length) {
 
           for (var key in bindings) {
 

@@ -12,7 +12,7 @@ Keybindings.prototype.initialize = function(){
 
 	if(bindings !== false){
 
-		if(bindings.length){
+		if(Object.keys(bindings).length){
 
 			for(let key in bindings){
 				this.bindings[key] = bindings[key];
