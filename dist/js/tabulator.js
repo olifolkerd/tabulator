@@ -3494,7 +3494,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (typeof cell.column.extensions.edit.check == "function") {
 
-              allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+              allowEdit = cell.column.extensions.edit.check(cell.getComponent()) && cell.getElement().is(":visible");
             }
 
             if (allowEdit) {
@@ -3523,7 +3523,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (typeof cell.column.extensions.edit.check == "function") {
 
-              allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+              allowEdit = cell.column.extensions.edit.check(cell.getComponent()) && cell.getElement().is(":visible");
             }
 
             if (allowEdit) {
