@@ -2726,9 +2726,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.vDomBottomPad = self.vDomBottom == self.displayRowsCount - 1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
         }
 
-        element[0].style.paddingTop = self.vDomTopPad;
+        element[0].style.paddingTop = self.vDomTopPad + "px";
 
-        element[0].style.paddingBottom = self.vDomBottomPad;
+        element[0].style.paddingBottom = self.vDomBottomPad + "px";
 
         if (forceMove) {
 
@@ -2833,7 +2833,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.vDomTopPad = (this.vDomTop - 1) * this.vDomRowHeight;
           }
 
-          table[0].style.paddingTop = this.vDomTopPad;
+          table[0].style.paddingTop = this.vDomTopPad + "px";
 
           this.vDomScrollPosTop -= topRowHeight;
 
@@ -2866,7 +2866,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.vDomTopPad += topRowHeight;
 
-        table[0].style.paddingTop = this.vDomTopPad;
+        table[0].style.paddingTop = this.vDomTopPad + "px";
 
         this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 
@@ -2915,7 +2915,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.vDomBottomPad = 0;
           }
 
-          table[0].style.paddingBottom = this.vDomBottomPad;
+          table[0].style.paddingBottom = this.vDomBottomPad + "px";
 
           this.vDomScrollPosBottom += bottomRowHeight;
 
@@ -2953,7 +2953,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.vDomBottomPad == 0;
         }
 
-        table[0].style.paddingBottom = this.vDomBottomPad;
+        table[0].style.paddingBottom = this.vDomBottomPad + "px";
 
         this.vDomScrollPosBottom -= bottomRowHeight;
 
@@ -3864,7 +3864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       // this.element.css("width", width || "");
 
-      this.element[0].style.width = width || "";
+      this.element[0].style.width = (width || "") + "px";
     };
 
     Cell.prototype.getWidth = function () {
@@ -3876,7 +3876,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.minWidth = minWidth;
 
-      this.element[0].style.minWidth = minWidth || "";
+      this.element[0].style.minWidth = (minWidth || "") + "px";
     };
 
     Cell.prototype.checkHeight = function () {
@@ -3906,7 +3906,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       // this.element.css("height", height || "");
 
-      this.element[0].style.height = height || "";
+      this.element[0].style.height = height || "" + "px";
     };
 
     Cell.prototype.getHeight = function () {

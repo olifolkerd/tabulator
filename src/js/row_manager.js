@@ -739,8 +739,8 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			self.vDomBottomPad = self.vDomBottom == self.displayRowsCount-1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
 		}
 
-		element[0].style.paddingTop = self.vDomTopPad
-		element[0].style.paddingBottom = self.vDomBottomPad;
+		element[0].style.paddingTop = self.vDomTopPad + "px";
+		element[0].style.paddingBottom = self.vDomBottomPad + "px";
 
 		if(forceMove){
 			this.scrollTop = self.vDomTopPad + (topPadHeight)
@@ -818,7 +818,7 @@ RowManager.prototype._addTopRow = function(topDiff, i=0){
 				this.vDomTopPad = (this.vDomTop -1) * this.vDomRowHeight;
 			}
 
-			table[0].style.paddingTop = this.vDomTopPad;
+			table[0].style.paddingTop = this.vDomTopPad + "px";
 			this.vDomScrollPosTop -= topRowHeight;
 			this.vDomTop--;
 		}
@@ -846,7 +846,7 @@ RowManager.prototype._removeTopRow = function(topDiff){
 		topRow.element.detach();
 
 		this.vDomTopPad += topRowHeight;
-		table[0].style.paddingTop = this.vDomTopPad;
+		table[0].style.paddingTop = this.vDomTopPad + "px";
 		this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 		this.vDomTop++;
 
@@ -884,7 +884,7 @@ RowManager.prototype._addBottomRow = function(bottomDiff, i=0){
 				this.vDomBottomPad = 0;
 			}
 
-			table[0].style.paddingBottom = this.vDomBottomPad;
+			table[0].style.paddingBottom = this.vDomBottomPad + "px";
 			this.vDomScrollPosBottom += bottomRowHeight;
 			this.vDomBottom++;
 		}
@@ -915,7 +915,7 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 			this.vDomBottomPad == 0;
 		}
 
-		table[0].style.paddingBottom = this.vDomBottomPad;
+		table[0].style.paddingBottom = this.vDomBottomPad + "px";
 		this.vDomScrollPosBottom -= bottomRowHeight;
 		this.vDomBottom--;
 
