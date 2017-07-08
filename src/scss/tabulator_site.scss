@@ -47,6 +47,12 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 	text-align: left;
 	overflow:hidden;
 
+	-webkit-transform: translatez(0);
+	-moz-transform: translatez(0);
+	-ms-transform: translatez(0);
+	-o-transform: translatez(0);
+	transform: translatez(0);
+
 	&.tabulator-block-select{
 		user-select: none;
 	}

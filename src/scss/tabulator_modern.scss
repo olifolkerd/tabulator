@@ -49,6 +49,12 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 	font-size:$textSize;
 	text-align: left;
 
+	-webkit-transform: translatez(0);
+	-moz-transform: translatez(0);
+	-ms-transform: translatez(0);
+	-o-transform: translatez(0);
+	transform: translatez(0);
+
 	&.tabulator-block-select{
 		user-select: none;
 	}

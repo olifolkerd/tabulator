@@ -234,6 +234,8 @@
   box-shadow: none;
   border-radius: 0.28571/pxrem;
   color: rgba(0, 0, 0, 0.87);
+  -ms-transform: translatez(0);
+  transform: translatez(0);
   /* Red */
   /* Orange */
   /* Yellow */

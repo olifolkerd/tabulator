@@ -51,6 +51,12 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	border-radius: $borderRadius;
 	color: $color;
 
+	-webkit-transform: translatez(0);
+	-moz-transform: translatez(0);
+	-ms-transform: translatez(0);
+	-o-transform: translatez(0);
+	transform: translatez(0);
+
 	&.tabulator-block-select{
 		user-select: none;
 	}

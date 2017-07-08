@@ -5,6 +5,8 @@
   overflow: hidden;
   font-size: 16px;
   text-align: left;
+  -ms-transform: translatez(0);
+  transform: translatez(0);
 }
 
 .tabulator.tabulator-block-select {

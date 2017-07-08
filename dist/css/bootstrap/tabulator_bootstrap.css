@@ -7,6 +7,8 @@
   width: 100%;
   max-width: 100%;
   margin-bottom: 20px;
+  -ms-transform: translatez(0);
+  transform: translatez(0);
 }
 
 .tabulator.tabulator-block-select {

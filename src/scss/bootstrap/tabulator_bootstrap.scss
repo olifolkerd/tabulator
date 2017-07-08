@@ -47,6 +47,12 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 	max-width: 100%;
 	margin-bottom: $line-height-computed;
 
+	-webkit-transform: translatez(0);
+	-moz-transform: translatez(0);
+	-ms-transform: translatez(0);
+	-o-transform: translatez(0);
+	transform: translatez(0);
+
 	&.tabulator-block-select{
 		user-select: none;
 	}
