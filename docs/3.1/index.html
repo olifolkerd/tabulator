@@ -567,10 +567,10 @@ $("#example-table").tabulator({
 
                     <p>You can pass an optional additional parameter with mutator, <span class='param'>mutatorParams</span> that should contain an object with additional information for configuring the mutator.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, type, data, mutatorParams){
+                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, data, type, mutatorParams){
         //value - original value of the cell
-        //type - the type of mutation occuring (data|edit)
         //data - the data for the row
+        //type - the type of mutation occuring (data|edit)
         //mutatorParams - the mutatorParams object from the column definition
 
         return value > mutatorParams.threshold; //return the new value for the cell data.
@@ -3830,7 +3830,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <p>This can be extended to add custom accessor functions to the default list:</p>
 
                     <pre class="prettyprint lang-js">Tabulator.extendExtension("accessor", "accessors", {
-    roundDown:function(value, data){
+    roundDown:function(value, data, accessorParams){
         return Math.floor(value); //return the new value for the cell data.
     }
 });</pre>
@@ -4072,7 +4072,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <p>This can be extended to add custom mutator functions to the default list:</p>
 
                     <pre class="prettyprint lang-js">Tabulator.extendExtension("mutator", "mutators", {
-    tooManyCars:function(value, type, data){
+    tooManyCars:function(value, data, type, mutatorParams){
         return value > 5;
     },
 });</pre>
