@@ -735,7 +735,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 
 			self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.height;
 		}else{
-			self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : (self.vDomRowHeight * this.vDomTop) + topPadHeight;
+			self.vDomTopPad = !forceMove ? self.scrollTop - topPadHeight : (self.vDomRowHeight * this.vDomTop) + topPadHeight;
 			self.vDomBottomPad = self.vDomBottom == self.displayRowsCount-1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
 		}
 
@@ -749,9 +749,11 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		this.vDomScrollPosTop = this.scrollTop;
 		this.vDomScrollPosBottom = this.scrollTop;
 
-		if(forceMove){
-			holder.scrollTop(this.scrollTop);
-		}
+		// if(forceMove){
+		// 	holder.scrollTop(this.scrollTop);
+		// }
+
+		holder.scrollTop(this.scrollTop);
 
 	}else{
 		this.renderEmptyScroll();

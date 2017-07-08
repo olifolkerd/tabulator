@@ -2721,7 +2721,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.height;
         } else {
 
-          self.vDomTopPad = !forceMove ? this.element.scrollTop() - topPadHeight : self.vDomRowHeight * this.vDomTop + topPadHeight;
+          self.vDomTopPad = !forceMove ? self.scrollTop - topPadHeight : self.vDomRowHeight * this.vDomTop + topPadHeight;
 
           self.vDomBottomPad = self.vDomBottom == self.displayRowsCount - 1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
         }
@@ -2739,10 +2739,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.vDomScrollPosBottom = this.scrollTop;
 
-        if (forceMove) {
+        // if(forceMove){
 
-          holder.scrollTop(this.scrollTop);
-        }
+        // 	holder.scrollTop(this.scrollTop);
+
+        // }
+
+
+        holder.scrollTop(this.scrollTop);
       } else {
 
         this.renderEmptyScroll();
