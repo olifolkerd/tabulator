@@ -6316,7 +6316,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (column.definition.editor === true) {
 
-            if (typeof column.definition.formatter == "string") {
+            if (typeof column.definition.formatter !== "function") {
 
               if (self.editors[column.definition.formatter]) {
 

@@ -29,9 +29,10 @@ Edit.prototype.initializeColumn = function(column){
 		break;
 
 		case "boolean":
+
 		if(column.definition.editor === true){
 
-			if(typeof column.definition.formatter == "string"){
+			if(typeof column.definition.formatter !== "function"){
 				if(self.editors[column.definition.formatter]){
 					config.editor = self.editors[column.definition.formatter];
 				}else{
