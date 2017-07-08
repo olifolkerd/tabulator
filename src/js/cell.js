@@ -19,6 +19,10 @@ var CellComponent = function (cell){
 			return cell.row.getComponent();
 		},
 
+		getData:function(){
+			return cell.row.getData();
+		},
+
 		getColumn:function(){
 			return cell.column.getComponent();
 		},
