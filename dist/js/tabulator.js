@@ -4000,6 +4000,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 return true;
               }
             }
+          } else {
+
+            return true;
           }
 
           return false;
@@ -4025,6 +4028,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 return true;
               }
             }
+          } else {
+
+            return true;
           }
 
           return false;

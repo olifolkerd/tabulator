@@ -325,7 +325,8 @@ Cell.prototype.nav = function(){
 						return true;
 					}
 				}
-
+			}else{
+				return true;
 			}
 
 			return false;
@@ -347,6 +348,8 @@ Cell.prototype.nav = function(){
 					}
 				}
 
+			}else{
+				return true;
 			}
 
 			return false;
