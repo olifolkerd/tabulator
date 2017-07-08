@@ -571,7 +571,9 @@ Column.prototype.setWidth = function(width){
 
 Column.prototype.checkCellHeights = function(){
 	this.cells.forEach(function(cell){
-		cell.checkHeight();
+		if(cell.row.heightInitialized){
+			cell.row.reinitializeHeight();
+		}
 	});
 };
 

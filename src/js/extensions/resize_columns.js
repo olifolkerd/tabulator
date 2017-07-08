@@ -9,7 +9,14 @@ var ResizeColumns = function(table){
 
 ResizeColumns.prototype.initializeColumn = function(type, column, element){
 	var self = this,
+	variableHeight =false,
 	mode = this.table.options.resizableColumns;
+
+	//set column resize mode
+	if(type === "header"){
+		variableHeight = column.definition.formatter == "textarea" || column.definition.variableHeight;
+		column.extensions.resize = {variableHeight:variableHeight};
+	}
 
 	if(mode === true || mode == type){
 
@@ -64,8 +71,11 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 	self.table.element.addClass("tabulator-block-select");
 
 	function mouseMove(e){
-		column.setWidth(self.startWidth + (e.screenX - self.startX))
-		// column.checkCellHeights();
+		column.setWidth(self.startWidth + (e.screenX - self.startX));
+
+		if(column.extensions.resize && column.extensions.resize.variableHeight){
+			column.checkCellHeights();
+		}
 	}
 
 	function mouseUp(e){

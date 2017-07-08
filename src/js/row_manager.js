@@ -715,6 +715,10 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 			element.append(row.getElement());
 			if(!row.initialized){
 				row.initialize(true);
+			}else{
+				if(!row.heightInitialized){
+					row.normalizeHeight(true);
+				}
 			}
 
 			if(i < topPad){
@@ -806,7 +810,7 @@ RowManager.prototype._addTopRow = function(topDiff, i=0){
 		if(topDiff >= topRowHeight){
 			this.styleRow(topRow, index);
 			table.prepend(topRow.getElement());
-			if(!topRow.initialized){
+			if(!topRow.initialized || !topRow.heightInitialized){
 				this.vDomTopNewRows.push(topRow);
 			}
 			topRow.initialize();
@@ -871,7 +875,7 @@ RowManager.prototype._addBottomRow = function(bottomDiff, i=0){
 			this.styleRow(bottomRow, index);
 			table.append(bottomRow.getElement());
 
-			if(!bottomRow.initialized){
+			if(!bottomRow.initialized || !bottomRow.heightInitialized){
 				this.vDomBottomNewRows.push(bottomRow);
 			}
 

@@ -274,9 +274,13 @@ Cell.prototype.checkHeight = function(){
 	}
 };
 
+Cell.prototype.clearHeight = function(){
+	this.element[0].style.height = "";
+};
+
+
 Cell.prototype.setHeight = function(height){
 	this.height = height;
-	// this.element.css("height", height || "");
 	this.element[0].style.height = height || "" + "px";
 };
 

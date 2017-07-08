@@ -1648,7 +1648,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.cells.forEach(function (cell) {
 
-        cell.checkHeight();
+        if (cell.row.heightInitialized) {
+
+          cell.row.reinitializeHeight();
+        }
       });
     };
 
@@ -2693,6 +2696,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (!row.initialized) {
 
             row.initialize(true);
+          } else {
+
+            if (!row.heightInitialized) {
+
+              row.normalizeHeight(true);
+            }
           }
 
           if (i < topPad) {
@@ -2820,7 +2829,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           table.prepend(topRow.getElement());
 
-          if (!topRow.initialized) {
+          if (!topRow.initialized || !topRow.heightInitialized) {
 
             this.vDomTopNewRows.push(topRow);
           }
@@ -2902,7 +2911,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           table.append(bottomRow.getElement());
 
-          if (!bottomRow.initialized) {
+          if (!bottomRow.initialized || !bottomRow.heightInitialized) {
 
             this.vDomBottomNewRows.push(bottomRow);
           }
@@ -3157,6 +3166,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.initialized = false; //element has been rendered
 
+      this.heightInitialized = false; //element has resized cells to fit
+
 
       this.setData(data);
 
@@ -3251,9 +3262,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    Row.prototype.reinitializeHeight = function () {
+
+      this.heightInitialized = false;
+
+      if (this.element.is(":visible")) {
+
+        this.normalizeHeight(true);
+      }
+    };
+
     Row.prototype.reinitialize = function () {
 
       this.initialized = false;
+
+      this.heightInitialized = false;
 
       this.height = 0;
 
@@ -3263,12 +3286,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    //get heights when doing bulk row style calcs in virtual DOM
+
     Row.prototype.calcHeight = function () {
 
       this.height = this.element[0].clientHeight;
 
       this.outerHeight = this.element[0].offsetHeight;
     };
+
+    //set of cells
 
     Row.prototype.setCellHeight = function () {
 
@@ -3278,6 +3305,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         cell.setHeight(height);
       });
+
+      this.heightInitialized = true;
     };
 
     //normalize the height of elements in the row
@@ -3286,18 +3315,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (force) {
 
-        //zero cell heights
+        // zero cell heights
 
         this.cells.forEach(function (cell) {
 
-          cell.setHeight();
+          cell.clearHeight();
         });
       }
 
-      // this.setHeight(this.element.innerHeight(), force)
+      this.calcHeight();
 
-      this.setHeight(this.element[0].clientHeight, force);
+      this.setCellHeight();
     };
+
+    //set height of rows
 
     Row.prototype.setHeight = function (height, force) {
 
@@ -3906,11 +3937,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    Cell.prototype.clearHeight = function () {
+
+      this.element[0].style.height = "";
+    };
+
     Cell.prototype.setHeight = function (height) {
 
       this.height = height;
-
-      // this.element.css("height", height || "");
 
       this.element[0].style.height = height || "" + "px";
     };
@@ -4363,32 +4397,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self._buildElement();
 
-          //load initial data set
+          //give the browser a chance to fully render the table then load first data set if present
 
-          if (self.options.pagination && this.extExists("page")) {
+          setTimeout(function () {
 
-            self.extensions.page.reset(true);
+            //load initial data set
 
-            self.extensions.page.setPage(1);
-          } else {
+            if (self.options.pagination && this.extExists("page")) {
 
-            if (self.options.data.length) {
+              self.extensions.page.reset(true);
 
-              self.rowManager.setData(self.options.data);
+              self.extensions.page.setPage(1);
             } else {
 
-              if (self.options.ajaxURL && this.extExists("ajax")) {
-
-                self.extensions.ajax.sendRequest(function (data) {
-
-                  self.rowManager.setData(data);
-                });
-              } else {
+              if (self.options.data.length) {
 
                 self.rowManager.setData(self.options.data);
+              } else {
+
+                if (self.options.ajaxURL && this.extExists("ajax")) {
+
+                  self.extensions.ajax.sendRequest(function (data) {
+
+                    self.rowManager.setData(data);
+                  });
+                } else {
+
+                  self.rowManager.setData(self.options.data);
+                }
               }
             }
-          }
+          }, 20);
         }
       },
 
@@ -10722,7 +10761,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     ResizeColumns.prototype.initializeColumn = function (type, column, element) {
 
       var self = this,
+          variableHeight = false,
           mode = this.table.options.resizableColumns;
+
+      //set column resize mode
+
+
+      if (type === "header") {
+
+        variableHeight = column.definition.formatter == "textarea" || column.definition.variableHeight;
+
+        column.extensions.resize = { variableHeight: variableHeight };
+      }
 
       if (mode === true || mode == type) {
 
@@ -10791,8 +10841,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         column.setWidth(self.startWidth + (e.screenX - self.startX));
 
-        // column.checkCellHeights();
+        if (column.extensions.resize && column.extensions.resize.variableHeight) {
 
+          column.checkCellHeights();
+        }
       }
 
       function mouseUp(e) {

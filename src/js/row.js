@@ -65,6 +65,7 @@ var Row = function(data, parent){
 	this.height = 0; //hold element height
 	this.outerHeight = 0; //holde lements outer height
 	this.initialized = false; //element has been rendered
+	this.heightInitialized = false; //element has resized cells to fit
 
 	this.setData(data);
 	this.generateElement();
@@ -140,8 +141,18 @@ Row.prototype.initialize = function(force){
 	}
 };
 
+Row.prototype.reinitializeHeight = function(){
+	this.heightInitialized = false;
+
+	if(this.element.is(":visible")){
+		this.normalizeHeight(true);
+	}
+};
+
+
 Row.prototype.reinitialize = function(){
 	this.initialized = false;
+	this.heightInitialized = false;
 	this.height = 0;
 
 	if(this.element.is(":visible")){
@@ -149,33 +160,39 @@ Row.prototype.reinitialize = function(){
 	}
 };
 
+//get heights when doing bulk row style calcs in virtual DOM
 Row.prototype.calcHeight = function(){
 	this.height = this.element[0].clientHeight;
 	this.outerHeight = this.element[0].offsetHeight;
 };
 
+//set of cells
 Row.prototype.setCellHeight = function(){
 	var height = this.height;
 
 	this.cells.forEach(function(cell){
 		cell.setHeight(height);
 	});
+
+	this.heightInitialized = true;
 };
 
 //normalize the height of elements in the row
 Row.prototype.normalizeHeight = function(force){
+
 	if(force){
-		//zero cell heights
+		// zero cell heights
 		this.cells.forEach(function(cell){
-			cell.setHeight();
+			cell.clearHeight();
 		});
 	}
 
-	// this.setHeight(this.element.innerHeight(), force)
-	this.setHeight(this.element[0].clientHeight, force)
+	this.calcHeight();
+
+	this.setCellHeight();
 };
 
-
+//set height of rows
 Row.prototype.setHeight = function(height, force){
 	if(this.height != height || force){
 
