@@ -769,9 +769,6 @@ RowManager.prototype.scrollVertical = function(dir){
 		//if big scroll redraw table;
 		this._virtualRenderFill(Math.floor((this.element[0].scrollTop / this.element[0].scrollHeight) * this.displayRowsCount));
 	}else{
-
-		// console.log("dir", dir);
-
 		if(dir){
 			//scrolling up
 			if(topDiff < 0){
