@@ -7156,7 +7156,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               editor = column.extensions.edit.editor;
             } else {
 
-              console.warn("Filter Error - Cannot auto detect editor element, none set");
+              if (column.definition.formatter && self.table.extensions.edit.editors[column.definition.formatter]) {
+
+                editor = self.table.extensions.edit.editors[column.definition.formatter];
+              } else {
+
+                editor = self.table.extensions.edit.editors["input"];
+              }
             }
 
             break;

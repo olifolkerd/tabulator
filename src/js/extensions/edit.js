@@ -45,7 +45,6 @@ Edit.prototype.initializeColumn = function(column){
 		break;
 	}
 
-
 	if(config.editor){
 		column.extensions.edit = config;
 	}
