@@ -9887,7 +9887,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           field = column.getField();
 
-          if (typeof data[field] != "undefined" && column.extensions.mutate.type != "edit") {
+          if (column.extensions.mutate.type != "edit") {
 
             data[field] = column.extensions.mutate.mutator(data[field], data, "data", column.extensions.mutate.params);
           }
