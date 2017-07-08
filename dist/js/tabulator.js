@@ -3920,21 +3920,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var height = this.element.css("height");
 
-      if (this.element.is(":visible") && height) {
-
-        this.element.css("height", "");
-
-        if (this.element.outerHeight() != parseInt(height)) {
-
-          this.row.normalizeHeight(true);
-        } else {
-
-          this.element.css("height", height);
-        }
-      } else {
-
-        this.row.reinitialize();
-      }
+      this.row.reinitializeHeight();
     };
 
     Cell.prototype.clearHeight = function () {
