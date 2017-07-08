@@ -9033,14 +9033,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table = table; //hold Tabulator object
 
 
+      this.activeBindings = null;
+
+      this.watchKeys = null;
+
+      this.pressedKeys = null;
+    };
+
+    Keybindings.prototype.initialize = function () {
+
       this.activeBindings = {};
 
       this.watchKeys = {};
 
       this.pressedKeys = [];
-    };
-
-    Keybindings.prototype.initialize = function () {
 
       var bindings = this.table.options.keybindings;
 

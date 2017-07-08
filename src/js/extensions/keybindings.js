@@ -1,13 +1,18 @@
 var Keybindings = function(table){
 	this.table = table; //hold Tabulator object
-	this.activeBindings = {};
-	this.watchKeys = {};
-
-	this.pressedKeys = [];
+	this.activeBindings = null;
+	this.watchKeys = null;
+	this.pressedKeys = null;
 };
 
 
 Keybindings.prototype.initialize = function(){
+
+	this.activeBindings = {};
+	this.watchKeys = {};
+
+	this.pressedKeys = [];
+
 	var bindings = this.table.options.keybindings;
 
 	if(bindings !== false){
