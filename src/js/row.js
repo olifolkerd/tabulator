@@ -46,6 +46,14 @@ var RowComponent = function (row){
 			row.normalizeHeight(true);
 		},
 
+		select:function(){
+			row.table.extensions.selectRow.selectRows(row);
+		},
+
+		deselect:function(){
+			row.table.extensions.selectRow.deselectRows(row);
+		},
+
 		_getSelf:function(){
 			return row;
 		},

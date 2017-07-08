@@ -3136,6 +3136,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           row.normalizeHeight(true);
         },
 
+        select: function select() {
+
+          row.table.extensions.selectRow.selectRows(row);
+        },
+
+        deselect: function deselect() {
+
+          row.table.extensions.selectRow.deselectRows(row);
+        },
+
         _getSelf: function _getSelf() {
 
           return row;
