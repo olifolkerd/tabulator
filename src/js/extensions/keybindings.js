@@ -7,36 +7,39 @@ var Keybindings = function(table){
 
 
 Keybindings.prototype.initialize = function(){
+	var bindings = this.table.options.keybindings,
+	mergedBindings = {};
 
 	this.activeBindings = {};
 	this.watchKeys = {};
-
 	this.pressedKeys = [];
 
-	var bindings = this.table.options.keybindings;
-
 	if(bindings !== false){
+
+		for(let key in bindings){
+			mergedBindings[key] = this.bindings[key];
+		}
 
 		if(Object.keys(bindings).length){
 
 			for(let key in bindings){
-				this.bindings[key] = bindings[key];
+				mergedBindings[key] = bindings[key];
 			}
 		}
 
-		this.mapBindings();
+		this.mapBindings(mergedBindings);
 		this.bindEvents();
 	}
 };
 
-Keybindings.prototype.mapBindings = function(){
+Keybindings.prototype.mapBindings = function(bindings){
 	var self = this;
 
-	for(let key in this.bindings){
+	for(let key in bindings){
 
 		if(this.actions[key]){
 
-			let symbols = this.bindings[key].toString();
+			let symbols = bindings[key].toString();
 			let binding = {
 				action: this.actions[key],
 				keys: [],

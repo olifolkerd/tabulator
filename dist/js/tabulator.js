@@ -9042,31 +9042,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Keybindings.prototype.initialize = function () {
 
+      var bindings = this.table.options.keybindings,
+          mergedBindings = {};
+
       this.activeBindings = {};
 
       this.watchKeys = {};
 
       this.pressedKeys = [];
 
-      var bindings = this.table.options.keybindings;
-
       if (bindings !== false) {
+
+        for (var key in bindings) {
+
+          mergedBindings[key] = this.bindings[key];
+        }
 
         if (Object.keys(bindings).length) {
 
-          for (var key in bindings) {
+          for (var _key in bindings) {
 
-            this.bindings[key] = bindings[key];
+            mergedBindings[_key] = bindings[_key];
           }
         }
 
-        this.mapBindings();
+        this.mapBindings(mergedBindings);
 
         this.bindEvents();
       }
     };
 
-    Keybindings.prototype.mapBindings = function () {
+    Keybindings.prototype.mapBindings = function (bindings) {
       var _this = this;
 
       var self = this;
@@ -9075,7 +9081,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (_this.actions[key]) {
 
-          var symbols = _this.bindings[key].toString();
+          var symbols = bindings[key].toString();
 
           var binding = {
 
@@ -9130,7 +9136,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       };
 
-      for (var key in this.bindings) {
+      for (var key in bindings) {
         _loop2(key);
       }
     };
@@ -10009,9 +10015,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.paginationDataSentNames[key] = self.table.options.paginationDataSent[key];
       }
 
-      for (var _key in self.table.options.paginationDataReceived) {
+      for (var _key2 in self.table.options.paginationDataReceived) {
 
-        self.paginationDataReceivedNames[_key] = self.table.options.paginationDataReceived[_key];
+        self.paginationDataReceivedNames[_key2] = self.table.options.paginationDataReceived[_key2];
       }
 
       if (self.table.options.paginator) {
