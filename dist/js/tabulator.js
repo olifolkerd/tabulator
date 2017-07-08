@@ -2044,13 +2044,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.rows.splice(allIndex, 1);
       }
 
-      this.table.options.rowDeleted(row.getComponent());
-
-      this.table.options.dataEdited(this.getData());
-
       this.setActiveRows(this.activeRows);
 
       this.setDisplayRows(this.displayRows);
+
+      this.table.options.rowDeleted(row.getComponent());
+
+      this.table.options.dataEdited(this.getData());
 
       if (this.table.options.pagination && this.table.extExists("page")) {
 
