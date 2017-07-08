@@ -228,7 +228,7 @@
   position: absolute;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
-  pointer-events: none;
+  pointer-events: none !important;
   z-index: 15;
 }
 

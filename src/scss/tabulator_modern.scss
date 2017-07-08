@@ -347,7 +347,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 					border-top:1px solid  $rowBorderColor;
 					border-bottom:1px solid  $rowBorderColor;
 
-					pointer-events: none;
+					pointer-events: none !important;
 					z-index:15;
 				}
 
