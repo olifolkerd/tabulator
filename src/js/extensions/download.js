@@ -153,7 +153,7 @@ Download.prototype.downloaders = {
 		data.forEach(function(row){
 			var rowData = [];
 
-			fields.forEach(function(field){
+			titles.forEach(function(field){
 				rowData.push(row[field]);
 			})
 

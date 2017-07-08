@@ -6210,7 +6210,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var rowData = [];
 
-          fields.forEach(function (field) {
+          titles.forEach(function (field) {
 
             rowData.push(row[field]);
           });
