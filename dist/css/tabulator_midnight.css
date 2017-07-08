@@ -181,6 +181,7 @@
 
 .tabulator .tabulator-tableHolder .tabulator-placeholder {
   position: absolute;
+  box-sizing: border-box;
   display: -ms-flexbox;
   display: flex;
   -ms-flex-align: center;
@@ -194,6 +195,7 @@
 .tabulator .tabulator-tableHolder .tabulator-placeholder span {
   display: inline-block;
   margin: 0 auto;
+  padding: 10px;
   color: #eee;
   font-weight: bold;
   font-size: 20px;

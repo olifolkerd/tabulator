@@ -10680,6 +10680,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           def.columns = self.parseColumns(column.getColumns());
         } else {
 
+          def.title = column.getDefinition().title;
+
           def.field = column.getField();
 
           def.width = column.getWidth();

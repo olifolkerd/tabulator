@@ -262,6 +262,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		//default placeholder element
 		.tabulator-placeholder{
 			position: absolute;
+			box-sizing:border-box;
 			display: flex;
 			align-items:center;
 
@@ -274,6 +275,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				display: inline-block;
 
 				margin:0 auto;
+				padding:10px;
 
 				color:#eee;
 				font-weight: bold;
