@@ -106,7 +106,7 @@ Download.prototype.downloaders = {
 
 			rows.forEach(function(row, i){
 				row.forEach(function(value, j){
-					var cell = {v: typeof value == "undefined" ? "" : value};
+					var cell = {v: typeof value == "undefined" || value === null ? "" : value};
 
 					if(cell != null){
 						switch(typeof cell.v){

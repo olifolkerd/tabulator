@@ -6138,7 +6138,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             row.forEach(function (value, j) {
 
-              var cell = { v: typeof value == "undefined" ? "" : value };
+              var cell = { v: typeof value == "undefined" || value === null ? "" : value };
 
               if (cell != null) {
 
