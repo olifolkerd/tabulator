@@ -180,26 +180,29 @@
 
 	 				self._buildElement();
 
-	 				//load initial data set
-	 				if(self.options.pagination && this.extExists("page")){
-	 					self.extensions.page.reset(true);
-	 					self.extensions.page.setPage(1);
-	 				}else{
-	 					if(self.options.data.length){
-	 						self.rowManager.setData(self.options.data);
+	 				//give the browser a chance to fully render the table then load first data set if present
+	 				setTimeout(function(){
+
+	 					//load initial data set
+	 					if(self.options.pagination && this.extExists("page")){
+	 						self.extensions.page.reset(true);
+	 						self.extensions.page.setPage(1);
 	 					}else{
-	 						if(self.options.ajaxURL && this.extExists("ajax")){
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
-	 						}else{
+	 						if(self.options.data.length){
 	 							self.rowManager.setData(self.options.data);
+	 						}else{
+	 							if(self.options.ajaxURL && this.extExists("ajax")){
+	 								self.extensions.ajax.sendRequest(function(data){
+	 									self.rowManager.setData(data);
+	 								});
+	 							}else{
+	 								self.rowManager.setData(self.options.data);
+	 							}
 	 						}
 	 					}
-	 				}
 
+	 				},20)
 	 			}
-
 	 		},
 
 
