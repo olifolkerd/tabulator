@@ -23,6 +23,10 @@ var CellComponent = function (cell){
 			return cell.row.getData();
 		},
 
+		getField:function(){
+			return cell.column.getField();
+		},
+
 		getColumn:function(){
 			return cell.column.getComponent();
 		},

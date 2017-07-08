@@ -3612,6 +3612,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           return cell.row.getData();
         },
 
+        getField: function getField() {
+
+          return cell.column.getField();
+        },
+
         getColumn: function getColumn() {
 
           return cell.column.getComponent();
