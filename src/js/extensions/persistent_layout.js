@@ -140,6 +140,7 @@ PersistentLayout.prototype.parseColumns = function(columns){
 			def.title = column.getDefinition().title;
 			def.columns = self.parseColumns(column.getColumns());
 		}else{
+			def.title = column.getDefinition().title;
 			def.field = column.getField();
 			def.width = column.getWidth();
 			def.visible = column.visible;
