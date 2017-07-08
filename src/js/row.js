@@ -319,11 +319,11 @@ Row.prototype.findNextEditableCell = function(index){
 		for(var i = index+1; i < this.cells.length; i++){
 			let cell = this.cells[i];
 
-			if(cell.column.extensions.edit){
+			if(cell.column.extensions.edit && cell.getElement().is(":visible")){
 				let allowEdit = true;
 
 				if(typeof cell.column.extensions.edit.check == "function"){
-					allowEdit = cell.column.extensions.edit.check(cell.getComponent()) && cell.getElement().is(":visible");
+					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
 				}
 
 				if(allowEdit){
@@ -345,9 +345,9 @@ Row.prototype.findPrevEditableCell = function(index){
 			let cell = this.cells[i],
 			allowEdit = true;
 
-			if(cell.column.extensions.edit){
+			if(cell.column.extensions.edit && cell.getElement().is(":visible")){
 				if(typeof cell.column.extensions.edit.check == "function"){
-					allowEdit = cell.column.extensions.edit.check(cell.getComponent()) && cell.getElement().is(":visible");
+					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
 				}
 
 				if(allowEdit){

@@ -3488,13 +3488,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var cell = this.cells[i];
 
-          if (cell.column.extensions.edit) {
+          if (cell.column.extensions.edit && cell.getElement().is(":visible")) {
 
             var allowEdit = true;
 
             if (typeof cell.column.extensions.edit.check == "function") {
 
-              allowEdit = cell.column.extensions.edit.check(cell.getComponent()) && cell.getElement().is(":visible");
+              allowEdit = cell.column.extensions.edit.check(cell.getComponent());
             }
 
             if (allowEdit) {
@@ -3519,11 +3519,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           var cell = this.cells[i],
               allowEdit = true;
 
-          if (cell.column.extensions.edit) {
+          if (cell.column.extensions.edit && cell.getElement().is(":visible")) {
 
             if (typeof cell.column.extensions.edit.check == "function") {
 
-              allowEdit = cell.column.extensions.edit.check(cell.getComponent()) && cell.getElement().is(":visible");
+              allowEdit = cell.column.extensions.edit.check(cell.getComponent());
             }
 
             if (allowEdit) {
