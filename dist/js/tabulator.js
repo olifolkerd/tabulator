@@ -6320,7 +6320,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
-        rows.push(fields);
+        rows.push(titles);
 
         //generate each row of the table
 
@@ -6329,7 +6329,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var rowData = [];
 
-          titles.forEach(function (field) {
+          fields.forEach(function (field) {
 
             rowData.push(row[field]);
           });

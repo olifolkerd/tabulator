@@ -147,13 +147,13 @@ Download.prototype.downloaders = {
 			}
 		});
 
-		rows.push(fields);
+		rows.push(titles);
 
 		//generate each row of the table
 		data.forEach(function(row){
 			var rowData = [];
 
-			titles.forEach(function(field){
+			fields.forEach(function(field){
 				rowData.push(row[field]);
 			})
 
