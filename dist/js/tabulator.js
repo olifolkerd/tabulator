@@ -1849,6 +1849,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 
+
+      this.vDomFill = false; //ignore scroll event after fill
+
+
       this._initialize();
     };
 
@@ -2782,6 +2786,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (forceMove) {
 
           this.scrollTop = self.vDomTopPad + topPadHeight;
+
+          this.vDomFill = true;
         }
 
         this.vDomScrollPosTop = this.scrollTop;
@@ -2812,40 +2818,46 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var margin = this.vDomWindowBuffer * 2;
 
-      if (-topDiff > margin || bottomDiff > margin) {
+      if (!this.vDomFill) {
 
-        //if big scroll redraw table;
+        if (-topDiff > margin || bottomDiff > margin) {
 
-        this._virtualRenderFill(Math.floor(this.element[0].scrollTop / this.element[0].scrollHeight * this.displayRowsCount));
-      } else {
+          //if big scroll redraw table;
 
-        if (dir) {
-
-          //scrolling up
-
-          if (topDiff < 0) {
-
-            this._addTopRow(-topDiff);
-          }
-
-          if (topDiff < 0) {
-
-            this._removeBottomRow(-bottomDiff);
-          }
+          this._virtualRenderFill(Math.floor(this.element[0].scrollTop / this.element[0].scrollHeight * this.displayRowsCount));
         } else {
 
-          //scrolling down
+          if (dir) {
 
-          if (topDiff >= 0) {
+            //scrolling up
 
-            this._removeTopRow(topDiff);
-          }
+            if (topDiff < 0) {
 
-          if (bottomDiff >= 0) {
+              this._addTopRow(-topDiff);
+            }
 
-            this._addBottomRow(bottomDiff);
+            if (topDiff < 0) {
+
+              this._removeBottomRow(-bottomDiff);
+            }
+          } else {
+
+            //scrolling down
+
+            if (topDiff >= 0) {
+
+              this._removeTopRow(topDiff);
+            }
+
+            if (bottomDiff >= 0) {
+
+              this._addBottomRow(bottomDiff);
+            }
           }
         }
+      } else {
+
+        this.vDomFill = false;
       }
     };
 
@@ -9313,6 +9325,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var bindings = self.watchKeys[code];
 
+        console.log("key", code);
+
         if (bindings) {
 
           self.pressedKeys.push(code);
@@ -9383,6 +9397,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       navDown: 40,
 
+      srollToEnd: 35,
+
+      srollToStart: 36,
+
       undo: "ctrl + 90",
 
       redo: "ctrl + 89"
@@ -9393,6 +9411,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
     Keybindings.prototype.actions = {
+
+      srollToStart: function srollToStart(e) {
+
+        var rowManager = this.table.rowManager;
+
+        e.preventDefault();
+
+        if (rowManager.activeRowsCount) {
+
+          rowManager.scrollToRow(rowManager.activeRows[0]);
+        }
+      },
+
+      srollToEnd: function srollToEnd(e) {
+
+        var rowManager = this.table.rowManager;
+
+        e.preventDefault();
+
+        if (rowManager.activeRowsCount) {
+
+          console.log(rowManager.activeRows.length - 1);
+
+          rowManager.scrollToRow(rowManager.activeRows[rowManager.activeRows.length - 1]);
+        }
+      },
 
       navPrev: function navPrev(e) {
 

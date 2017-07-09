@@ -39,6 +39,9 @@ var RowManager = function(table){
 
 	this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 	this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
+
+	this.vDomFill = false; //ignore scroll event after fill
+
 	this._initialize();
 };
 
@@ -763,7 +766,8 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		element[0].style.paddingBottom = self.vDomBottomPad + "px";
 
 		if(forceMove){
-			this.scrollTop = self.vDomTopPad + (topPadHeight)
+			this.scrollTop = self.vDomTopPad + (topPadHeight);
+			this.vDomFill = true;
 		}
 
 		this.vDomScrollPosTop = this.scrollTop;
@@ -786,30 +790,33 @@ RowManager.prototype.scrollVertical = function(dir){
 	var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 	var margin = this.vDomWindowBuffer * 2;
 
-
-	if(-topDiff > margin || bottomDiff > margin){
-		//if big scroll redraw table;
-		this._virtualRenderFill(Math.floor((this.element[0].scrollTop / this.element[0].scrollHeight) * this.displayRowsCount));
-	}else{
-		if(dir){
-			//scrolling up
-			if(topDiff < 0){
-				this._addTopRow(-topDiff)
-			}
-
-			if(topDiff < 0){
-				this._removeBottomRow(-bottomDiff);
-			}
+	if(!this.vDomFill){
+		if(-topDiff > margin || bottomDiff > margin){
+			//if big scroll redraw table;
+			this._virtualRenderFill(Math.floor((this.element[0].scrollTop / this.element[0].scrollHeight) * this.displayRowsCount));
 		}else{
-			//scrolling down
-			if(topDiff >= 0){
-				this._removeTopRow(topDiff);
-			}
+			if(dir){
+				//scrolling up
+				if(topDiff < 0){
+					this._addTopRow(-topDiff)
+				}
 
-			if(bottomDiff >= 0){
-				this._addBottomRow(bottomDiff);
+				if(topDiff < 0){
+					this._removeBottomRow(-bottomDiff);
+				}
+			}else{
+				//scrolling down
+				if(topDiff >= 0){
+					this._removeTopRow(topDiff);
+				}
+
+				if(bottomDiff >= 0){
+					this._addBottomRow(bottomDiff);
+				}
 			}
 		}
+	}else{
+		this.vDomFill = false;
 	}
 
 };

@@ -86,6 +86,8 @@ Keybindings.prototype.bindEvents = function(){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
 
+		console.log("key", code)
+
 		if(bindings){
 
 			self.pressedKeys.push(code);
@@ -141,6 +143,8 @@ Keybindings.prototype.bindings = {
 	navNext:9,
 	navUp:38,
 	navDown:40,
+	srollToEnd:35,
+	srollToStart:36,
 	undo:"ctrl + 90",
 	redo:"ctrl + 89",
 };
@@ -148,6 +152,25 @@ Keybindings.prototype.bindings = {
 
 //default actions
 Keybindings.prototype.actions = {
+	srollToStart:function(e){
+		var rowManager = this.table.rowManager;
+
+		e.preventDefault();
+
+		if(rowManager.activeRowsCount){
+			rowManager.scrollToRow(rowManager.activeRows[0]);
+		}
+	},
+	srollToEnd:function(e){
+		var rowManager = this.table.rowManager;
+
+		e.preventDefault();
+
+		if(rowManager.activeRowsCount){
+			console.log(rowManager.activeRows.length - 1)
+			rowManager.scrollToRow(rowManager.activeRows[rowManager.activeRows.length - 1]);
+		}
+	},
 	navPrev:function(e){
 		var cell = false;
 
