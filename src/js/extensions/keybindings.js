@@ -86,8 +86,6 @@ Keybindings.prototype.bindEvents = function(){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
 
-		console.log("key", code)
-
 		if(bindings){
 
 			self.pressedKeys.push(code);
@@ -143,8 +141,10 @@ Keybindings.prototype.bindings = {
 	navNext:9,
 	navUp:38,
 	navDown:40,
-	srollToEnd:35,
-	srollToStart:36,
+	scrollPageUp:33,
+	scrollPageDown:34,
+	scrollToStart:36,
+	scrollToEnd:35,
 	undo:"ctrl + 90",
 	redo:"ctrl + 89",
 };
@@ -152,24 +152,62 @@ Keybindings.prototype.bindings = {
 
 //default actions
 Keybindings.prototype.actions = {
-	srollToStart:function(e){
-		var rowManager = this.table.rowManager;
+	scrollPageUp:function(e){
+		var rowManager = this.table.rowManager,
+		newPos = rowManager.scrollTop - rowManager.height,
+		scrollMax = rowManager.element[0].scrollHeight;
 
 		e.preventDefault();
 
-		if(rowManager.activeRowsCount){
-			rowManager.scrollToRow(rowManager.activeRows[0]);
+		if(rowManager.displayRowsCount){
+			if(newPos >= 0){
+				rowManager.element.scrollTop(newPos);
+			}else{
+				rowManager.scrollToRow(rowManager.displayRows[0]);
+			}
 		}
+
+		this.table.element.focus();
 	},
-	srollToEnd:function(e){
+	scrollPageDown:function(e){
+		var rowManager = this.table.rowManager,
+		newPos = rowManager.scrollTop + rowManager.height,
+		scrollMax = rowManager.element[0].scrollHeight;
+
+		e.preventDefault();
+
+		if(rowManager.displayRowsCount){
+			if(newPos <= scrollMax){
+				rowManager.element.scrollTop(newPos);
+			}else{
+				rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+			}
+		}
+
+		this.table.element.focus();
+
+	},
+	scrollToStart:function(e){
 		var rowManager = this.table.rowManager;
 
 		e.preventDefault();
 
-		if(rowManager.activeRowsCount){
-			console.log(rowManager.activeRows.length - 1)
-			rowManager.scrollToRow(rowManager.activeRows[rowManager.activeRows.length - 1]);
+		if(rowManager.displayRowsCount){
+			rowManager.scrollToRow(rowManager.displayRows[0]);
 		}
+
+		this.table.element.focus();
+	},
+	scrollToEnd:function(e){
+		var rowManager = this.table.rowManager;
+
+		e.preventDefault();
+
+		if(rowManager.displayRowsCount){
+			rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+		}
+
+		this.table.element.focus();
 	},
 	navPrev:function(e){
 		var cell = false;

@@ -1850,9 +1850,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 
 
-      this.vDomFill = false; //ignore scroll event after fill
-
-
       this._initialize();
     };
 
@@ -2786,20 +2783,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (forceMove) {
 
           this.scrollTop = self.vDomTopPad + topPadHeight;
+        }
 
-          this.vDomFill = true;
+        this.scrollTop = Math.min(this.scrollTop, this.element[0].scrollHeight - this.height);
+
+        //adjust for horizontal scrollbar if present
+
+        if (this.element[0].scrollWidth > this.element[0].offsetWidt) {
+
+          this.scrollTop += this.element[0].offsetHeight - this.element[0].clientHeight;
         }
 
         this.vDomScrollPosTop = this.scrollTop;
 
         this.vDomScrollPosBottom = this.scrollTop;
-
-        // if(forceMove){
-
-        // 	holder.scrollTop(this.scrollTop);
-
-        // }
-
 
         holder.scrollTop(this.scrollTop);
       } else {
@@ -2818,46 +2815,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var margin = this.vDomWindowBuffer * 2;
 
-      if (!this.vDomFill) {
+      if (-topDiff > margin || bottomDiff > margin) {
 
-        if (-topDiff > margin || bottomDiff > margin) {
+        //if big scroll redraw table;
 
-          //if big scroll redraw table;
-
-          this._virtualRenderFill(Math.floor(this.element[0].scrollTop / this.element[0].scrollHeight * this.displayRowsCount));
-        } else {
-
-          if (dir) {
-
-            //scrolling up
-
-            if (topDiff < 0) {
-
-              this._addTopRow(-topDiff);
-            }
-
-            if (topDiff < 0) {
-
-              this._removeBottomRow(-bottomDiff);
-            }
-          } else {
-
-            //scrolling down
-
-            if (topDiff >= 0) {
-
-              this._removeTopRow(topDiff);
-            }
-
-            if (bottomDiff >= 0) {
-
-              this._addBottomRow(bottomDiff);
-            }
-          }
-        }
+        this._virtualRenderFill(Math.floor(this.element[0].scrollTop / this.element[0].scrollHeight * this.displayRowsCount));
       } else {
 
-        this.vDomFill = false;
+        if (dir) {
+
+          //scrolling up
+
+          if (topDiff < 0) {
+
+            this._addTopRow(-topDiff);
+          }
+
+          if (topDiff < 0) {
+
+            this._removeBottomRow(-bottomDiff);
+          }
+        } else {
+
+          //scrolling down
+
+          if (topDiff >= 0) {
+
+            this._removeTopRow(topDiff);
+          }
+
+          if (bottomDiff >= 0) {
+
+            this._addBottomRow(bottomDiff);
+          }
+        }
       }
     };
 
@@ -2923,25 +2914,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var table = this.tableElement,
           topRow = this.displayRows[this.vDomTop],
-          topRowHeight = topRow.getHeight();
+          topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
       //hide top row if needed
 
       if (this.scrollTop > this.vDomWindowBuffer) {
 
-        topRow.element.detach();
+        if (topDiff >= topRowHeight) {
 
-        this.vDomTopPad += topRowHeight;
+          topRow.element.detach();
 
-        table[0].style.paddingTop = this.vDomTopPad + "px";
+          this.vDomTopPad += topRowHeight;
 
-        this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
+          table[0].style.paddingTop = this.vDomTopPad + "px";
 
-        this.vDomTop++;
+          this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 
-        topDiff = this.scrollTop - this.vDomScrollPosTop;
+          this.vDomTop++;
 
-        if (topDiff >= (this.displayRows[this.vDomTop].getHeight() || this.vDomRowHeight)) {
+          topDiff = this.scrollTop - this.vDomScrollPosTop;
 
           this._removeTopRow(topDiff);
         }
@@ -3014,26 +3005,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //hide bottom row if needed
 
-      if (this.scrollTop + this.height - this.vDomScrollPosBottom < this.vDomWindowBuffer) {
+      if (this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer) {
 
-        bottomRow.element.detach();
+        if (bottomDiff >= bottomRowHeight) {
 
-        this.vDomBottomPad += bottomRowHeight;
+          bottomRow.element.detach();
 
-        if (this.vDomBottomPad < 0) {
+          this.vDomBottomPad += bottomRowHeight;
 
-          this.vDomBottomPad == 0;
-        }
+          if (this.vDomBottomPad < 0) {
 
-        table[0].style.paddingBottom = this.vDomBottomPad + "px";
+            this.vDomBottomPad == 0;
+          }
 
-        this.vDomScrollPosBottom -= bottomRowHeight;
+          table[0].style.paddingBottom = this.vDomBottomPad + "px";
 
-        this.vDomBottom--;
+          this.vDomScrollPosBottom -= bottomRowHeight;
 
-        bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
+          this.vDomBottom--;
 
-        if (bottomDiff >= (this.displayRows[this.vDomBottom].getHeight() || this.vDomRowHeight)) {
+          bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
 
           this._removeBottomRow(bottomDiff);
         }
@@ -9325,8 +9316,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var bindings = self.watchKeys[code];
 
-        console.log("key", code);
-
         if (bindings) {
 
           self.pressedKeys.push(code);
@@ -9397,9 +9386,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       navDown: 40,
 
-      srollToEnd: 35,
+      scrollPageUp: 33,
 
-      srollToStart: 36,
+      scrollPageDown: 34,
+
+      scrollToStart: 36,
+
+      scrollToEnd: 35,
 
       undo: "ctrl + 90",
 
@@ -9412,30 +9405,76 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Keybindings.prototype.actions = {
 
-      srollToStart: function srollToStart(e) {
+      scrollPageUp: function scrollPageUp(e) {
 
-        var rowManager = this.table.rowManager;
+        var rowManager = this.table.rowManager,
+            newPos = rowManager.scrollTop - rowManager.height,
+            scrollMax = rowManager.element[0].scrollHeight;
 
         e.preventDefault();
 
-        if (rowManager.activeRowsCount) {
+        if (rowManager.displayRowsCount) {
 
-          rowManager.scrollToRow(rowManager.activeRows[0]);
+          if (newPos >= 0) {
+
+            rowManager.element.scrollTop(newPos);
+          } else {
+
+            rowManager.scrollToRow(rowManager.displayRows[0]);
+          }
         }
+
+        this.table.element.focus();
       },
 
-      srollToEnd: function srollToEnd(e) {
+      scrollPageDown: function scrollPageDown(e) {
+
+        var rowManager = this.table.rowManager,
+            newPos = rowManager.scrollTop + rowManager.height,
+            scrollMax = rowManager.element[0].scrollHeight;
+
+        e.preventDefault();
+
+        if (rowManager.displayRowsCount) {
+
+          if (newPos <= scrollMax) {
+
+            rowManager.element.scrollTop(newPos);
+          } else {
+
+            rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+          }
+        }
+
+        this.table.element.focus();
+      },
+
+      scrollToStart: function scrollToStart(e) {
 
         var rowManager = this.table.rowManager;
 
         e.preventDefault();
 
-        if (rowManager.activeRowsCount) {
+        if (rowManager.displayRowsCount) {
 
-          console.log(rowManager.activeRows.length - 1);
-
-          rowManager.scrollToRow(rowManager.activeRows[rowManager.activeRows.length - 1]);
+          rowManager.scrollToRow(rowManager.displayRows[0]);
         }
+
+        this.table.element.focus();
+      },
+
+      scrollToEnd: function scrollToEnd(e) {
+
+        var rowManager = this.table.rowManager;
+
+        e.preventDefault();
+
+        if (rowManager.displayRowsCount) {
+
+          rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+        }
+
+        this.table.element.focus();
       },
 
       navPrev: function navPrev(e) {
