@@ -73,7 +73,7 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 	function mouseMove(e){
 		column.setWidth(self.startWidth + (e.screenX - self.startX));
 
-		if(column.extensions.resize && column.extensions.resize.variableHeight){
+		if(!self.table.browserSlow && column.extensions.resize && column.extensions.resize.variableHeight){
 			column.checkCellHeights();
 		}
 	}
@@ -83,6 +83,10 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 		//block editor from taking action while resizing is taking place
 		if(self.startColumn.extensions.edit){
 			self.startColumn.extensions.edit.blocked = false;
+		}
+
+		if(self.table.browserSlow && column.extensions.resize && column.extensions.resize.variableHeight){
+			column.checkCellHeights();
 		}
 
 		$("body").off("mouseup", mouseMove);

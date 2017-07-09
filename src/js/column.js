@@ -570,11 +570,26 @@ Column.prototype.setWidth = function(width){
 };
 
 Column.prototype.checkCellHeights = function(){
+	var rows = [];
+
 	this.cells.forEach(function(cell){
 		if(cell.row.heightInitialized){
-			cell.row.reinitializeHeight();
+			if(cell.row.element[0].offsetParent !== null){
+				rows.push(cell.row);
+				cell.row.clearCellHeight();
+			}else{
+				cell.row.heightInitialized = false;
+			}
 		}
 	});
+
+	rows.forEach(function(row){
+		row.calcHeight();
+	})
+
+	rows.forEach(function(row){
+		row.setCellHeight();
+	})
 };
 
 Column.prototype.getWidth = function(){

@@ -1646,12 +1646,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Column.prototype.checkCellHeights = function () {
 
+      var rows = [];
+
       this.cells.forEach(function (cell) {
 
         if (cell.row.heightInitialized) {
 
-          cell.row.reinitializeHeight();
+          if (cell.row.element[0].offsetParent !== null) {
+
+            rows.push(cell.row);
+
+            cell.row.clearCellHeight();
+          } else {
+
+            cell.row.heightInitialized = false;
+          }
         }
+      });
+
+      rows.forEach(function (row) {
+
+        row.calcHeight();
+      });
+
+      rows.forEach(function (row) {
+
+        row.setCellHeight();
       });
     };
 
@@ -3290,7 +3310,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.height = 0;
 
-      if (this.element.is(":visible")) {
+      if (this.element[0].offsetParent !== null) {
 
         this.initialize(true);
       }
@@ -3319,18 +3339,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.heightInitialized = true;
     };
 
+    Row.prototype.clearCellHeight = function () {
+
+      this.cells.forEach(function (cell) {
+
+        cell.clearHeight();
+      });
+    };
+
     //normalize the height of elements in the row
 
     Row.prototype.normalizeHeight = function (force) {
 
       if (force) {
 
-        // zero cell heights
-
-        this.cells.forEach(function (cell) {
-
-          cell.clearHeight();
-        });
+        this.clearCellHeight();
       }
 
       this.calcHeight();
@@ -4149,6 +4172,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       footerManager: null, //holder Footer Manager
 
+      browser: "", //hold current browser type
+
+      browserSlow: false, //handle reduced functionality for slower browsers
+
 
       //setup options
 
@@ -4450,6 +4477,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         element.addClass("tabulator").attr("role", "grid").empty();
 
+        this._detectBrowser();
+
         //set localization
 
         if (options.headerFilterPlaceholder !== false) {
@@ -4545,6 +4574,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         element.removeClass("tabulator");
       },
+
+      _detectBrowser: function _detectBrowser() {
+
+        var ua = navigator.userAgent;
+
+        if (ua.indexOf("Trident") > -1) {
+
+          this.brower = "ie";
+
+          this.browserSlow = true;
+        } else if (ua.indexOf("Edge") > -1) {
+
+          this.brower = "edge";
+
+          this.browserSlow = true;
+        } else {
+
+          this.brower = "other";
+
+          this.browserSlow = false;
+        }
+      },
+
 
       ////////////////// Data Handling //////////////////
 
@@ -10866,7 +10918,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         column.setWidth(self.startWidth + (e.screenX - self.startX));
 
-        if (column.extensions.resize && column.extensions.resize.variableHeight) {
+        if (!self.table.browserSlow && column.extensions.resize && column.extensions.resize.variableHeight) {
 
           column.checkCellHeights();
         }
@@ -10880,6 +10932,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (self.startColumn.extensions.edit) {
 
           self.startColumn.extensions.edit.blocked = false;
+        }
+
+        if (self.table.browserSlow && column.extensions.resize && column.extensions.resize.variableHeight) {
+
+          column.checkCellHeights();
         }
 
         $("body").off("mouseup", mouseMove);

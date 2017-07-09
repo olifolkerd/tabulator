@@ -163,7 +163,7 @@ Row.prototype.reinitialize = function(){
 	this.heightInitialized = false;
 	this.height = 0;
 
-	if(this.element.is(":visible")){
+	if(this.element[0].offsetParent !== null){
 		this.initialize(true);
 	}
 };
@@ -185,14 +185,17 @@ Row.prototype.setCellHeight = function(){
 	this.heightInitialized = true;
 };
 
+Row.prototype.clearCellHeight = function(){
+	this.cells.forEach(function(cell){
+		cell.clearHeight();
+	});
+}
+
 //normalize the height of elements in the row
 Row.prototype.normalizeHeight = function(force){
 
 	if(force){
-		// zero cell heights
-		this.cells.forEach(function(cell){
-			cell.clearHeight();
-		});
+		this.clearCellHeight();
 	}
 
 	this.calcHeight();
