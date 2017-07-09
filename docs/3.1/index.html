@@ -254,12 +254,12 @@
 
                     <p>To group columns, you need to add a column group object in the column definition array. You must give a column group a <span class='param'>title</span> and add the grouped column objects into the <span class='param'>columns</span> property of the group.</p>
 
-                    <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your column headers should be vertically aligned, this can take one of three string values: &quot;top&quot;, &quot;middle&quot;, &quot;bottom&quot;</p>
+                    <p>You can use the <span class='param'>columnVertAlign</span> option to set how the text in your column headers should be vertically aligned, this can take one of three string values: &quot;top&quot;, &quot;middle&quot;, &quot;bottom&quot;</p>
 
                     <p>You can nest column groups, so you can create column groups many levels deep.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table-column-grouping").tabulator({
-    colVertAlign:"bottom", //align header contents to bottom of cell
+    columnVertAlign:"bottom", //align header contents to bottom of cell
     columns:[
         {title:"Name", field:"name", width:160},
         {//create column group
@@ -2821,7 +2821,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                                 <td>tooltipsHeader</td><td>boolean/function</td><td>false</td><td>Function to generate tooltips for column headers</td><td><a href="#col-tooltips"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>colVertAlign</td><td>string</td><td>top</td><td>Vertical alignment for contents of column header (used in column grouping)</td><td><a href="#column-groups"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>columnVertAlign</td><td>string</td><td>top</td><td>Vertical alignment for contents of column header (used in column grouping)</td><td><a href="#column-groups"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>headerFilterPlaceholder</td><td>string</td><td>"filter column..."</td><td>The placeholder text to be set in any header filter input elements</td><td><a href="#header-filters"><button><i class="fa fa-search"></i> Explore</button></a></td>

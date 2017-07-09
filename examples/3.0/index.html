@@ -305,7 +305,7 @@
 
                     <p>By creating groups in the column definition array, you can create multi line headers with groups of columns.</p>
 
-                    <p>You can use the <span class='param'>colVertAlign</span> option to set how the text in your columns headers should be vertically aligned.</p>
+                    <p>You can use the <span class='param'>columnVertAlign</span> option to set how the text in your columns headers should be vertically aligned.</p>
 
                     <div class="example-table" id="example-table-column-grouping">
                         <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
@@ -319,7 +319,7 @@
 
                         <h3>JavaScript</h3>
                         <pre class="prettyprint lang-js">$("#example-table").tabulator({
-    colVertAlign:"bottom", //align header contents to bottom of cell
+    columnVertAlign:"bottom", //align header contents to bottom of cell
     columns:[
         {title:"Name", field:"name", width:160},
         {//create column group
@@ -2154,7 +2154,7 @@ $("#lang-default").click(function(){
      //Column Grouping Example
      $("#example-table-column-grouping").tabulator({
          height:"311px",
-         colVertAlign:"bottom", //align header contents to bottom of cell
+         columnVertAlign:"bottom", //align header contents to bottom of cell
          columns:[
          {title:"Name", field:"name", width:160},
          {//create column group
