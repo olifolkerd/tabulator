@@ -54,6 +54,10 @@ var RowComponent = function (row){
 			row.table.extensions.selectRow.deselectRows(row);
 		},
 
+		toggleSelect:function(){
+			row.table.extensions.selectRow.toggleRow(row);
+		},
+
 		_getSelf:function(){
 			return row;
 		},

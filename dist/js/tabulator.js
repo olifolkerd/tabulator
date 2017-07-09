@@ -3176,6 +3176,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           row.table.extensions.selectRow.deselectRows(row);
         },
 
+        toggleSelect: function toggleSelect() {
+
+          row.table.extensions.selectRow.toggleRow(row);
+        },
+
         _getSelf: function _getSelf() {
 
           return row;
@@ -5134,6 +5139,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (this.extExists("selectRow", true)) {
 
           this.extensions.selectRow.deselectRows(rows);
+        }
+      },
+
+      toggleSelectRow: function toggleSelectRow(row) {
+
+        if (this.extExists("selectRow", true)) {
+
+          this.extensions.selectRow.toggleRow(row);
         }
       },
 

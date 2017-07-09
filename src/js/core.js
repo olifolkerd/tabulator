@@ -696,6 +696,12 @@
 	 			}
 	 		},
 
+	 		toggleSelectRow:function(row){
+	 			if(this.extExists("selectRow", true)){
+	 				this.extensions.selectRow.toggleRow(row);
+	 			}
+	 		},
+
 	 		getSelectedRows:function(){
 	 			if(this.extExists("selectRow", true)){
 	 				return this.extensions.selectRow.getSelectedRows();
