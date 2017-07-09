@@ -6119,6 +6119,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table; //hold Tabulator object
 
+
+      this.columns = {}; //hold definitions
+
     };
 
     //trigger file download
@@ -6150,8 +6153,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (downloadFunc) {
 
-        downloadFunc(self.table.columnManager.getDefinitions(), self.table.rowManager.getData(true), options, buildLink);
+        downloadFunc(self.processDefinitions(), self.processData(), options, buildLink);
       }
+    };
+
+    Download.prototype.processDefinitions = function () {
+
+      var self = this,
+          definitions = self.table.columnManager.getDefinitions(),
+          processedDefinitions = [];
+
+      self.columns = {};
+
+      definitions.forEach(function (column) {
+
+        if (column.field) {
+
+          self.columns[column.field] = column;
+
+          if (column.download !== false) {
+
+            processedDefinitions.push(column);
+          }
+        }
+      });
+
+      return processedDefinitions;
+    };
+
+    Download.prototype.processData = function () {
+
+      var self = this,
+          data = self.table.rowManager.getData(true);
+
+      //add user data processing step;
+
+
+      return data;
     };
 
     Download.prototype.triggerDownload = function (data, mime, type, filename) {
