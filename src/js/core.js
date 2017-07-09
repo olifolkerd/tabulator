@@ -186,14 +186,14 @@
 	 				setTimeout(function(){
 
 	 					//load initial data set
-	 					if(self.options.pagination && this.extExists("page")){
+	 					if(self.options.pagination && self.extExists("page")){
 	 						self.extensions.page.reset(true);
 	 						self.extensions.page.setPage(1);
 	 					}else{
 	 						if(self.options.data.length){
 	 							self.rowManager.setData(self.options.data);
 	 						}else{
-	 							if(self.options.ajaxURL && this.extExists("ajax")){
+	 							if(self.options.ajaxURL && self.extExists("ajax")){
 	 								self.extensions.ajax.sendRequest(function(data){
 	 									self.rowManager.setData(data);
 	 								});

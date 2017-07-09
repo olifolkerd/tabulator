@@ -4472,7 +4472,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             //load initial data set
 
-            if (self.options.pagination && this.extExists("page")) {
+            if (self.options.pagination && self.extExists("page")) {
 
               self.extensions.page.reset(true);
 
@@ -4484,7 +4484,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 self.rowManager.setData(self.options.data);
               } else {
 
-                if (self.options.ajaxURL && this.extExists("ajax")) {
+                if (self.options.ajaxURL && self.extExists("ajax")) {
 
                   self.extensions.ajax.sendRequest(function (data) {
 
