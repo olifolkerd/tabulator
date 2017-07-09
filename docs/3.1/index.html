@@ -335,6 +335,28 @@
 ]
 
 $("#example-table").tabulator("setData", tableData);</pre>
+
+                    <h3>Set Initial Data Array</h3>
+                    <p>If you want your table to be created already containing data, then you can pass the array into the <span class='param'>data</span> option in the table constructor.</p>
+
+                    <pre class="prettyprint lang-js">var tableData = [
+    {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
+    {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
+]
+
+$("#example-table").tabulator({
+    data:tableData, //set initial table data
+    columns:[
+        {title:"Name", field:"name"},
+        {title:"Age", field:"age"},
+        {title:"Gender", field:"gender"},
+        {title:"Height", field:"height"},
+        {title:"Favourite Color", field:"col"},
+        {title:"Date Of Birth", field:"dob"},
+        {title:"Cheese Preference", field:"cheese"},
+    ],
+});</pre>
+
                     <a class="anchor" id="ajax"></a>
                     <h2>Set data using AJAX  <a class="example-link" href="../../examples?#ajax"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
