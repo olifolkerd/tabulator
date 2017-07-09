@@ -5,6 +5,11 @@ var SelectRow = function(table){
 	this.selectedRows = []; //hold selected rows
 };
 
+SelectRow.prototype.initialize = function(){
+	this.selectPrev = [];
+	this.selectedRows = [];
+};
+
 SelectRow.prototype.initializeRow = function(row){
 	var self = this,
 	element = row.getElement();

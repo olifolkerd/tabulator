@@ -4554,6 +4554,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           ext.keybindings.initialize();
         }
 
+        if (this.extExists("selectRow")) {
+
+          ext.selectRow.initialize();
+        }
+
         options.tableBuilt();
       },
 
@@ -11099,6 +11104,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.selectedRows = []; //hold selected rows
 
+    };
+
+    SelectRow.prototype.initialize = function () {
+
+      this.selectPrev = [];
+
+      this.selectedRows = [];
     };
 
     SelectRow.prototype.initializeRow = function (row) {

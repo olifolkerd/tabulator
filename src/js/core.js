@@ -281,6 +281,10 @@
 	 				ext.keybindings.initialize();
 	 			}
 
+	 			if(this.extExists("selectRow")){
+	 				ext.selectRow.initialize();
+	 			}
+
 	 			options.tableBuilt();
 
 	 		},
