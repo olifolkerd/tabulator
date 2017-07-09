@@ -3296,7 +3296,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.heightInitialized = false;
 
-      if (this.element.is(":visible")) {
+      if (this.element[0].offsetParent !== null) {
 
         this.normalizeHeight(true);
       }

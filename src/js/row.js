@@ -152,7 +152,7 @@ Row.prototype.initialize = function(force){
 Row.prototype.reinitializeHeight = function(){
 	this.heightInitialized = false;
 
-	if(this.element.is(":visible")){
+	if(this.element[0].offsetParent !== null){
 		this.normalizeHeight(true);
 	}
 };
