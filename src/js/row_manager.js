@@ -812,6 +812,10 @@ RowManager.prototype._addTopRow = function(topDiff, i=0){
 			table.prepend(topRow.getElement());
 			if(!topRow.initialized || !topRow.heightInitialized){
 				this.vDomTopNewRows.push(topRow);
+
+				if(!topRow.heightInitialized){
+					topRow.clearCellHeight();
+				}
 			}
 			topRow.initialize();
 
@@ -877,6 +881,10 @@ RowManager.prototype._addBottomRow = function(bottomDiff, i=0){
 
 			if(!bottomRow.initialized || !bottomRow.heightInitialized){
 				this.vDomBottomNewRows.push(bottomRow);
+
+				if(!bottomRow.heightInitialized){
+					bottomRow.clearCellHeight();
+				}
 			}
 
 			bottomRow.initialize();

@@ -2852,6 +2852,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (!topRow.initialized || !topRow.heightInitialized) {
 
             this.vDomTopNewRows.push(topRow);
+
+            if (!topRow.heightInitialized) {
+
+              topRow.clearCellHeight();
+            }
           }
 
           topRow.initialize();
@@ -2934,6 +2939,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (!bottomRow.initialized || !bottomRow.heightInitialized) {
 
             this.vDomBottomNewRows.push(bottomRow);
+
+            if (!bottomRow.heightInitialized) {
+
+              bottomRow.clearCellHeight();
+            }
           }
 
           bottomRow.initialize();
