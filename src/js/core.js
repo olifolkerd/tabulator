@@ -499,6 +499,10 @@
 	 			}
 	 		},
 
+	 		getRows:function(active){
+	 			return this.rowManager.getComponents(active);
+	 		},
+
 	 		/////////////// Column Functions  ///////////////
 
 	 		setColumns:function(definition){

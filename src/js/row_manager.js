@@ -404,6 +404,18 @@ RowManager.prototype.getData = function(active){
 	return output;
 };
 
+RowManager.prototype.getComponents = function(active){
+	var self = this,
+	output = [];
+
+	var rows = active ? self.activeRows : self.rows;
+
+	rows.forEach(function(row){
+		output.push(row.getComponent());
+	});
+
+	return output;
+}
 
 RowManager.prototype.getDataCount = function(active){
 	return active ? this.rows.length : this.activeRows.length;
