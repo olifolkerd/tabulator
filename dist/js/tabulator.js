@@ -2027,6 +2027,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (Array.isArray(data)) {
 
+        if (this.table.extExists("selectRow")) {
+
+          this.table.extensions.selectRow.clearSelectionData();
+        }
+
         data.forEach(function (def, i) {
 
           var row = new Row(def, self);
@@ -4586,7 +4591,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (this.extExists("selectRow")) {
 
-          ext.selectRow.initialize();
+          ext.selectRow.clearSelectionData();
         }
 
         options.tableBuilt();
@@ -11187,7 +11192,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     };
 
-    SelectRow.prototype.initialize = function () {
+    SelectRow.prototype.clearSelectionData = function () {
+
+      this.selecting = false;
 
       this.selectPrev = [];
 

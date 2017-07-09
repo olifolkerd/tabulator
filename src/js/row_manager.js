@@ -177,6 +177,10 @@ RowManager.prototype.setData = function(data){
 
 	if(Array.isArray(data)){
 
+		if(this.table.extExists("selectRow")){
+			this.table.extensions.selectRow.clearSelectionData();
+		}
+
 		data.forEach(function(def, i){
 			var row = new Row(def, self);
 

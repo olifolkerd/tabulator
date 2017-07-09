@@ -282,7 +282,7 @@
 	 			}
 
 	 			if(this.extExists("selectRow")){
-	 				ext.selectRow.initialize();
+	 				ext.selectRow.clearSelectionData();
 	 			}
 
 	 			options.tableBuilt();

@@ -5,7 +5,8 @@ var SelectRow = function(table){
 	this.selectedRows = []; //hold selected rows
 };
 
-SelectRow.prototype.initialize = function(){
+SelectRow.prototype.clearSelectionData = function(){
+	this.selecting = false;
 	this.selectPrev = [];
 	this.selectedRows = [];
 };
