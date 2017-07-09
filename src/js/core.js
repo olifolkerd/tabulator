@@ -16,6 +16,8 @@
 			columnManager:null, // hold Column Manager
 			rowManager:null, //hold Row Manager
 			footerManager:null, //holder Footer Manager
+			browser:"", //hold current browser type
+			browserSlow:false, //handle reduced functionality for slower browsers
 
 	 		//setup options
 	 		options: {
@@ -218,6 +220,8 @@
 	 			.attr("role", "grid")
 	 			.empty();
 
+	 			this._detectBrowser();
+
 	 			//set localization
 	 			if(options.headerFilterPlaceholder !== false){
 	 				ext.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
@@ -293,6 +297,21 @@
 	 			element.empty();
 
 	 			element.removeClass("tabulator");
+	 		},
+
+	 		_detectBrowser(){
+	 			var ua = navigator.userAgent;
+
+	 			if(ua.indexOf("Trident") > -1){
+	 				this.brower = "ie";
+	 				this.browserSlow = true;
+	 			}else if(ua.indexOf("Edge") > -1){
+	 				this.brower = "edge";
+	 				this.browserSlow = true;
+	 			}else{
+	 				this.brower = "other";
+	 				this.browserSlow = false;
+	 			}
 	 		},
 
 	 		////////////////// Data Handling //////////////////
