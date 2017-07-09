@@ -4468,35 +4468,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           //give the browser a chance to fully render the table then load first data set if present
 
-          setTimeout(function () {
+          // setTimeout(function(){
 
-            //load initial data set
 
-            if (self.options.pagination && self.extExists("page")) {
+          //load initial data set
 
-              self.extensions.page.reset(true);
+          this._loadInitialData();
 
-              self.extensions.page.setPage(1);
-            } else {
-
-              if (self.options.data.length) {
-
-                self.rowManager.setData(self.options.data);
-              } else {
-
-                if (self.options.ajaxURL && self.extExists("ajax")) {
-
-                  self.extensions.ajax.sendRequest(function (data) {
-
-                    self.rowManager.setData(data);
-                  });
-                } else {
-
-                  self.rowManager.setData(self.options.data);
-                }
-              }
-            }
-          }, 20);
+          // },20)
         }
       },
 
@@ -4595,6 +4574,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         options.tableBuilt();
+      },
+
+      _loadInitialData: function _loadInitialData() {
+
+        var self = this;
+
+        if (self.options.pagination && self.extExists("page")) {
+
+          self.extensions.page.reset(true);
+
+          self.extensions.page.setPage(1);
+        } else {
+
+          if (self.options.data.length) {
+
+            self.rowManager.setData(self.options.data);
+          } else {
+
+            if (self.options.ajaxURL && self.extExists("ajax")) {
+
+              self.extensions.ajax.sendRequest(function (data) {
+
+                self.rowManager.setData(data);
+              });
+            } else {
+
+              self.rowManager.setData(self.options.data);
+            }
+          }
+        }
       },
 
       //set options
