@@ -193,7 +193,8 @@ Edit.prototype.editors = {
 	//resizable text area element
 	textarea:function(cell, onRendered, success, cancel, editorParams){
 		var self = this,
-		value = cell.getValue(),
+		cellValue = cell.getValue(),
+		value = String(typeof cellValue == "null" || typeof cellValue == "undefined" ? "" : cellValue),
 		count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
 		input = $("<textarea></textarea>"),
 		scrollHeight = 0;

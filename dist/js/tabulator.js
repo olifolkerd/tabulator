@@ -6721,7 +6721,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       textarea: function textarea(cell, onRendered, success, cancel, editorParams) {
 
         var self = this,
-            value = cell.getValue(),
+            cellValue = cell.getValue(),
+            value = String(typeof cellValue == "null" || typeof cellValue == "undefined" ? "" : cellValue),
             count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
             input = $("<textarea></textarea>"),
             scrollHeight = 0;
