@@ -4869,7 +4869,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       updateRow: function updateRow(index, data) {
 
-        row = this.rowManager.findRow(index);
+        var row = this.rowManager.findRow(index);
 
         if (row) {
 
@@ -4888,7 +4888,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       scrollToRow: function scrollToRow(index) {
 
-        row = this.rowManager.findRow(index);
+        var row = this.rowManager.findRow(index);
 
         if (row) {
 

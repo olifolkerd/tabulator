@@ -481,7 +481,7 @@
 
 	 		//update row data
 	 		updateRow:function(index, data){
-	 			row = this.rowManager.findRow(index);
+	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				row.updateData(data);
@@ -494,7 +494,7 @@
 
 	 		//scroll to row in DOM
 	 		scrollToRow:function(index){
-	 			row = this.rowManager.findRow(index);
+	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				return this.rowManager.scrollToRow(row);
