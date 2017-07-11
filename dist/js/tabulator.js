@@ -9199,8 +9199,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table = table; //hold Tabulator object
 
 
-      this.activeBindings = null;
-
       this.watchKeys = null;
 
       this.pressedKeys = null;
@@ -9210,8 +9208,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var bindings = this.table.options.keybindings,
           mergedBindings = {};
-
-      this.activeBindings = {};
 
       this.watchKeys = {};
 
@@ -9247,55 +9243,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (_this.actions[key]) {
 
-          var symbols = bindings[key].toString();
+          if (bindings[key]) {
 
-          var binding = {
+            if (_typeof(bindings[key]) !== "object") {
 
-            action: _this.actions[key],
-
-            keys: [],
-
-            ctrl: false,
-
-            shift: false
-
-          };
-
-          symbols = symbols.toLowerCase().split(" ").join("").split("+");
-
-          symbols.forEach(function (symbol) {
-
-            switch (symbol) {
-
-              case "ctrl":
-
-                binding.ctrl = true;
-
-                break;
-
-              case "shift":
-
-                binding.shift = true;
-
-                break;
-
-              default:
-
-                symbol = parseInt(symbol);
-
-                binding.keys.push(symbol);
-
-                if (!self.watchKeys[symbol]) {
-
-                  self.watchKeys[symbol] = [];
-                }
-
-                self.watchKeys[symbol].push(key);
-
+              bindings[key] = [bindings[key]];
             }
-          });
 
-          _this.activeBindings[key] = binding;
+            bindings[key].forEach(function (binding) {
+
+              self.mapBinding(key, binding);
+            });
+          }
         } else {
 
           console.warn("Key Binding Error - no such action:", key);
@@ -9305,6 +9264,57 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       for (var key in bindings) {
         _loop2(key);
       }
+    };
+
+    Keybindings.prototype.mapBinding = function (action, symbolsList) {
+
+      var self = this;
+
+      var binding = {
+
+        action: this.actions[action],
+
+        keys: [],
+
+        ctrl: false,
+
+        shift: false
+
+      };
+
+      var symbols = symbolsList.toString().toLowerCase().split(" ").join("").split("+");
+
+      symbols.forEach(function (symbol) {
+
+        switch (symbol) {
+
+          case "ctrl":
+
+            binding.ctrl = true;
+
+            break;
+
+          case "shift":
+
+            binding.shift = true;
+
+            break;
+
+          default:
+
+            symbol = parseInt(symbol);
+
+            binding.keys.push(symbol);
+
+            if (!self.watchKeys[symbol]) {
+
+              self.watchKeys[symbol] = [];
+            }
+
+            self.watchKeys[symbol].push(binding);
+
+        }
+      });
     };
 
     Keybindings.prototype.bindEvents = function () {
@@ -9323,7 +9333,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           bindings.forEach(function (binding) {
 
-            self.checkBinding(e, self.activeBindings[binding]);
+            self.checkBinding(e, binding);
           });
         }
       });
@@ -9405,6 +9415,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
     Keybindings.prototype.actions = {
+
+      keyBlock: function keyBlock(e) {
+
+        e.stopPropagation();
+
+        e.preventDefault();
+      },
 
       scrollPageUp: function scrollPageUp(e) {
 

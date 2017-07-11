@@ -1,6 +1,5 @@
 var Keybindings = function(table){
 	this.table = table; //hold Tabulator object
-	this.activeBindings = null;
 	this.watchKeys = null;
 	this.pressedKeys = null;
 };
@@ -10,7 +9,6 @@ Keybindings.prototype.initialize = function(){
 	var bindings = this.table.options.keybindings,
 	mergedBindings = {};
 
-	this.activeBindings = {};
 	this.watchKeys = {};
 	this.pressedKeys = [];
 
@@ -39,44 +37,56 @@ Keybindings.prototype.mapBindings = function(bindings){
 
 		if(this.actions[key]){
 
-			let symbols = bindings[key].toString();
-			let binding = {
-				action: this.actions[key],
-				keys: [],
-				ctrl: false,
-				shift: false,
-			}
+			if(bindings[key]){
 
-			symbols = symbols.toLowerCase().split(" ").join("").split("+");
-
-			symbols.forEach(function(symbol){
-				switch(symbol){
-					case "ctrl":
-					binding.ctrl = true;
-					break;
-
-					case "shift":
-					binding.shift = true;
-					break;
-
-					default:
-					symbol = parseInt(symbol);
-					binding.keys.push(symbol);
-
-					if(!self.watchKeys[symbol]){
-						self.watchKeys[symbol] = [];
-					}
-
-					self.watchKeys[symbol].push(key);
+				if(typeof bindings[key] !== "object"){
+					bindings[key] = [bindings[key]];
 				}
-			});
 
-			this.activeBindings[key] = binding;
+				bindings[key].forEach(function(binding){
+					self.mapBinding(key, binding);
+				});
+			}
 
 		}else{
 			console.warn("Key Binding Error - no such action:", key);
 		}
 	}
+};
+
+Keybindings.prototype.mapBinding = function(action, symbolsList){
+	var self = this;
+
+	var binding = {
+		action: this.actions[action],
+		keys: [],
+		ctrl: false,
+		shift: false,
+	}
+
+	var symbols = symbolsList.toString().toLowerCase().split(" ").join("").split("+");
+
+	symbols.forEach(function(symbol){
+		switch(symbol){
+			case "ctrl":
+			binding.ctrl = true;
+			break;
+
+			case "shift":
+			binding.shift = true;
+			break;
+
+			default:
+			symbol = parseInt(symbol);
+			binding.keys.push(symbol);
+
+			if(!self.watchKeys[symbol]){
+				self.watchKeys[symbol] = [];
+			}
+
+			self.watchKeys[symbol].push(binding);
+		}
+	});
 };
 
 Keybindings.prototype.bindEvents = function(){
@@ -91,7 +101,7 @@ Keybindings.prototype.bindEvents = function(){
 			self.pressedKeys.push(code);
 
 			bindings.forEach(function(binding){
-				self.checkBinding(e, self.activeBindings[binding]);
+				self.checkBinding(e, binding);
 			});
 		}
 	});
@@ -152,6 +162,10 @@ Keybindings.prototype.bindings = {
 
 //default actions
 Keybindings.prototype.actions = {
+	keyBlock:function(e){
+		e.stopPropagation();
+		e.preventDefault();
+	},
 	scrollPageUp:function(e){
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop - rowManager.height,
