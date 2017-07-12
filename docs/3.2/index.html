@@ -2077,16 +2077,16 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
     persistentLayout:true, //Enable column layout persistence
 });</pre>
 
-                    <p>If you are planning on having multiple tables on the same page using column persistence then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the storage id.</p>
+                    <p>If you are planning on having multiple tables on the same page using column persistence then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the persistence id.</p>
 
                     <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
-                    <p>Alternatively if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>persistentLayoutID</span> to a unique storage id for that table.</p>
+                    <p>Alternatively if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>persistentLayoutID</span> to a unique persistence id for that table.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     persistentLayout:true, //Enable column layout persistence
     persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
-                    <p class="note"><strong>Note:</strong> If you update the column definition array after the the layout has been stored you may have to change the storage id to clear out the old column layout information.</p>
+                    <p class="note"><strong>Note:</strong> If you update the column definition array after the the column layout has been stored you may have to change the persistentLayoutID to clear out the old column layout information.</p>
 
                     <h3>Get Column Layout Information </h3>
                     <p>If you want to handle column layout persistence manually, for example storing it in a database to use elsewhere, you can use the <span class='param'>getColumnLayout</span> function to retrieve a layout object for the current table.</p>
