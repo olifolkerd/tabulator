@@ -127,11 +127,11 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 		if(col){
 			exists = true;
 		}else{
-			col = {title:header.text()};
+			col = {title:header.text().trim()};
 		}
 
 		if(!col.field) {
-			col.field = header.text().toLowerCase().replace(" ", "_");
+			col.field = header.text().trim().toLowerCase().replace(" ", "_");
 		}
 
 		$("td:eq(" + index + ")", rows).data("field", col.field)
