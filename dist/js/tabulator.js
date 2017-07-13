@@ -2833,7 +2833,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (topDiff < 0) {
 
-            this._removeBottomRow(-bottomDiff);
+            //hide bottom row if needed
+
+            if (this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer) {
+
+              this._removeBottomRow(-bottomDiff);
+            }
           }
         } else {
 
@@ -2841,7 +2846,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (topDiff >= 0) {
 
-            this._removeTopRow(topDiff);
+            //hide top row if needed
+
+            if (this.scrollTop > this.vDomWindowBuffer) {
+
+              this._removeTopRow(topDiff);
+            }
           }
 
           if (bottomDiff >= 0) {
@@ -2916,26 +2926,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           topRow = this.displayRows[this.vDomTop],
           topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
-      //hide top row if needed
+      if (topDiff >= topRowHeight) {
 
-      if (this.scrollTop > this.vDomWindowBuffer) {
+        topRow.element.detach();
 
-        if (topDiff >= topRowHeight) {
+        this.vDomTopPad += topRowHeight;
 
-          topRow.element.detach();
+        table[0].style.paddingTop = this.vDomTopPad + "px";
 
-          this.vDomTopPad += topRowHeight;
+        this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 
-          table[0].style.paddingTop = this.vDomTopPad + "px";
+        this.vDomTop++;
 
-          this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
+        topDiff = this.scrollTop - this.vDomScrollPosTop;
 
-          this.vDomTop++;
-
-          topDiff = this.scrollTop - this.vDomScrollPosTop;
-
-          this._removeTopRow(topDiff);
-        }
+        this._removeTopRow(topDiff);
       }
     };
 
@@ -3003,31 +3008,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           bottomRow = this.displayRows[this.vDomBottom],
           bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
-      //hide bottom row if needed
+      if (bottomDiff >= bottomRowHeight) {
 
-      if (this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer) {
+        bottomRow.element.detach();
 
-        if (bottomDiff >= bottomRowHeight) {
+        this.vDomBottomPad += bottomRowHeight;
 
-          bottomRow.element.detach();
+        if (this.vDomBottomPad < 0) {
 
-          this.vDomBottomPad += bottomRowHeight;
-
-          if (this.vDomBottomPad < 0) {
-
-            this.vDomBottomPad == 0;
-          }
-
-          table[0].style.paddingBottom = this.vDomBottomPad + "px";
-
-          this.vDomScrollPosBottom -= bottomRowHeight;
-
-          this.vDomBottom--;
-
-          bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
-
-          this._removeBottomRow(bottomDiff);
+          this.vDomBottomPad == 0;
         }
+
+        table[0].style.paddingBottom = this.vDomBottomPad + "px";
+
+        this.vDomScrollPosBottom -= bottomRowHeight;
+
+        this.vDomBottom--;
+
+        bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
+
+        this._removeBottomRow(bottomDiff);
       }
     };
 
