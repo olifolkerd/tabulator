@@ -9118,18 +9118,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           col.field = header.text().trim().toLowerCase().replace(" ", "_");
         }
 
-        $("td:eq(" + index + ")", rows).data("field", col.field);
-
         width = header.attr("width");
 
         if (width && !col.width) {
 
           col.width = width;
-        }
-
-        if (col.field == self.table.options.index) {
-
-          hasIndex = true;
         }
 
         //check for tablator inline options
@@ -9140,9 +9133,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //check for tablator inline options
 
 
-        for (var index in attributes) {
+        for (var i in attributes) {
 
-          var attrib = attributes[index],
+          var attrib = attributes[i],
               name;
 
           if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
@@ -9157,6 +9150,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               }
             });
           }
+        }
+
+        $("td:eq(" + index + ")", rows).data("field", col.field);
+
+        if (col.field == self.table.options.index) {
+
+          hasIndex = true;
         }
 
         if (!exists) {

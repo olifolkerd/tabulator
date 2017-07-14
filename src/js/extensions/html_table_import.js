@@ -134,24 +134,19 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 			col.field = header.text().trim().toLowerCase().replace(" ", "_");
 		}
 
-		$("td:eq(" + index + ")", rows).data("field", col.field)
-
 		width = header.attr("width");
 
 		if(width && !col.width)	{
 			col.width = width;
 		}
 
-		if(col.field == self.table.options.index){
-			hasIndex = true;
-		}
 
 		//check for tablator inline options
 		attributes = header[0].attributes;
 
 		//check for tablator inline options
-		for(var index in attributes){
-			var attrib = attributes[index],
+		for(var i in attributes){
+			var attrib = attributes[i],
 			name;
 
 			if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
@@ -164,6 +159,12 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 					}
 				});
 			}
+		}
+
+		$("td:eq(" + index + ")", rows).data("field", col.field);
+
+		if(col.field == self.table.options.index){
+			hasIndex = true;
 		}
 
 		if(!exists){
