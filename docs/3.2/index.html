@@ -234,6 +234,9 @@
                         <li><strong>cellClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>cellDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>cellContext</strong> - callback for when user right clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellTap <span class="label label-danger">New</span></strong> - callback for when user taps on a cell in this column, triggered in touch displays. (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellDblTap <span class="label label-danger">New</span></strong> - callback for when user double taps on a cell in this column, triggered in touch displays when a user taps the same cell twice in under 300ms. (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellTapHold <span class="label label-danger">New</span></strong> - callback for when user taps and holds on a cell in this column, triggered in touch displays when a user taps and holds the same cell for 1 second. (see <a href="#callbacks">Callbacks</a> for more details)</li>
                     </ul>
 
                     <h3>Column Headers</h3>
@@ -3168,7 +3171,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks &amp; Events <a class="example-link" href="../../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Callbacks &amp; Events <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
@@ -3196,7 +3199,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <h2>Column Callbacks</h2>
 
                     <h3>Column Header Click </h3>
-                    <p>The <span class='param'>headerClick </span> callback is triggered when a user left clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerClick </span> callback is triggered when a user left clicks on a column or group header, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerClick:function(e, column){
         //e - the click event object
@@ -3205,7 +3208,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Column Header Double Click </h3>
-                    <p>The <span class='param'>headerDblClick</span> callback is triggered when a user double clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerDblClick</span> callback is triggered when a user double clicks on a column or group header, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerDblClick:function(e, column){
         //e - the click event object
@@ -3214,7 +3217,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Column Header Right Click </h3>
-                    <p>The <span class='param'>headerContext</span> callback is triggered when a user right clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerContext</span> callback is triggered when a user right clicks on a column or group header, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerContext:function(e, column){
         //e - the click event object
@@ -3326,10 +3329,10 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="callbacks-cell"></a>
-                    <h2>Cell Callbacks</h2>
+                    <h2>Cell Callbacks <span class="label label-primary">Updated</span></h2>
 
                     <h3>Cell Click </h3>
-                    <p>The <span class='param'>cellClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>cellClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellClick:function(e, cell){
         //e - the click event object
@@ -3338,7 +3341,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Cell Double Click </h3>
-                    <p>The <span class='param'>cellDblClick</span> callback is triggered when a user double clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>cellDblClick</span> callback is triggered when a user double clicks on a cell, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellDblClick:function(e, cell){
         //e - the click event object
@@ -3347,10 +3350,37 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Cell Right Click </h3>
-                    <p>The <span class='param'>cellContext</span> callback is triggered when a user right clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>cellContext</span> callback is triggered when a user right clicks on a cell, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellContext:function(e, cell){
         //e - the click event object
+        //cell - cell component
+    },
+}</pre>
+
+                    <h3>Cell Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellTap</span> callback is triggered when a user taps on a cell in this column on a touch display, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellTap:function(e, cell){
+        //e - the tap event object
+        //cell - cell component
+    },
+}</pre>
+
+                    <h3>Cell Double Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellDblTap</span>  callback is triggered when a user taps on a cell in this column on a touch display twice in under 300ms, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellDblTap:function(e, cell){
+        //e - the tap event object
+        //cell - cell component
+    },
+}</pre>
+
+                    <h3>Cell Tap Hold <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellTapHold</span> callback is triggered when a user taps on a cell in this column on a touch display and holds their finger down for over 1 second, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellTapHold:function(e, cell){
+        //e - the tap event object
         //cell - cell component
     },
 }</pre>
@@ -4400,7 +4430,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <ul class="nav">
                             <li><a href="#components">Component Objects <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#callbacks">Callbacks &amp; Events </a></li>
+                            <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#keybindings">Key Bindings <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#download">Download Table Data <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#localization">Localization </a></li>
