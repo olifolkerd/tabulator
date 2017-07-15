@@ -87,6 +87,9 @@ var Column = function(def, parent){
 		cellClick:false,
 		cellDblClick:false,
 		cellContext:false,
+		cellTap:false,
+		cellDblTap:false,
+		cellTapHold:false
 	};
 
 	this.width = null; //column width
@@ -143,7 +146,8 @@ Column.prototype.reRegisterPosition = function(){
 //build header element
 Column.prototype._buildHeader = function(){
 	var self = this,
-	def = self.definition;
+	def = self.definition,
+	dblTap,	tapHold, tap;
 
 	self.element.empty();
 
@@ -223,6 +227,65 @@ Column.prototype._buildHeader = function(){
 		self.element.on("contextmenu", function(e){def.headerContext(e, self.getComponent())});
 	}
 
+	//setup header tap event bindings
+	if(typeof(def.headerTap) == "function"){
+		tap = false;
+
+		self.element.on("touchstart", function(e){
+			tap = true;
+		});
+
+		self.element.on("touchend", function(e){
+			if(tap){
+				def.headerTap(e, self.getComponent());
+			}
+
+			tap = false;
+		});
+	}
+
+	if(typeof(def.headerDblTap) == "function"){
+		dblTap = null;
+
+		self.element.on("touchend", function(e){
+
+			if(dblTap){
+				clearTimeout(dblTap);
+				dblTap = null;
+
+				def.headerDblTap(e, self.getComponent());
+			}else{
+
+				dblTap = setTimeout(function(){
+					clearTimeout(dblTap);
+					dblTap = null;
+				}, 300);
+			}
+
+		});
+	}
+
+	if(typeof(def.headerTapHold) == "function"){
+		tapHold = null;
+
+		self.element.on("touchstart", function(e){
+			clearTimeout(tapHold);
+
+			tapHold = setTimeout(function(){
+				clearTimeout(tapHold);
+				tapHold = null;
+				tap = false;
+				def.headerTapHold(e, self.getComponent());
+			}, 1000)
+
+		});
+
+		self.element.on("touchend", function(e){
+			clearTimeout(tapHold);
+			tapHold = null;
+		});
+	}
+
 	//store column cell click event bindings
 	if(typeof(def.cellClick) == "function"){
 		self.cellEvents.cellClick = def.cellClick;
@@ -234,6 +297,19 @@ Column.prototype._buildHeader = function(){
 
 	if(typeof(def.cellContext) == "function"){
 		self.cellEvents.cellContext = def.cellContext;
+	}
+
+	//setup column cell tap event bindings
+	if(typeof(def.cellTap) == "function"){
+		self.cellEvents.cellTap = def.cellTap;
+	}
+
+	if(typeof(def.cellDblTap) == "function"){
+		self.cellEvents.cellDblTap = def.cellDblTap;
+	}
+
+	if(typeof(def.cellTapHold) == "function"){
+		self.cellEvents.cellTapHold = def.cellTapHold;
 	}
 };
 
