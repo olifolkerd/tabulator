@@ -80,6 +80,9 @@ var Column = function(def, parent){
 		cellClick:false,
 		cellDblClick:false,
 		cellContext:false,
+		cellTap:false,
+		cellDblTap:false,
+		cellTapHold:false
 	};
 
 	this.width = null; //column width
@@ -227,6 +230,18 @@ Column.prototype._buildHeader = function(){
 
 	if(typeof(def.cellContext) == "function"){
 		self.cellEvents.cellContext = def.cellContext;
+	}
+
+	if(typeof(def.cellTap) == "function"){
+		self.cellEvents.cellTap = def.cellTap;
+	}
+
+	if(typeof(def.cellDblTap) == "function"){
+		self.cellEvents.cellDblTap = def.cellDblTap;
+	}
+
+	if(typeof(def.cellTapHold) == "function"){
+		self.cellEvents.cellTapHold = def.cellTapHold;
 	}
 };
 
