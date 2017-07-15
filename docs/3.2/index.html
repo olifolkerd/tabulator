@@ -249,6 +249,28 @@
                         <li><strong>headerFilterParams </strong> - additional parameters you can pass to the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                     </ul>
 
+                    <h2>Setting Fields In Nested Data <span class="label label-danger">New</span></h2>
+                    <p>Tabulator can handle linking columns to fields inside nested data objects. To do this you specify the route to your data using dot notation.</p>
+
+                    <p>For example here is a basic row data object with data nested inside a user object</p>
+
+                    <pre class="prettyprint lang-js">{
+    id:1,
+    user:{
+        name:"steve",
+        age:23
+    },
+    col:"red",
+    cheese:true
+},</pre>
+                    <p>If you wanted to make a column that showed the name field inside the user object you could set the <span class='param'>field</span> property of the column definition object to <span class='param'>user.name</span></p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {title:"Name", field:"user.name"},  //link column to name property of user object
+    ],
+});</pre>
+                    <p class="note"><strong>Note: </strong> This functionality is only available for nested objects and will not work with arrays.</p>
 
                     <a class="anchor" id="column-groups"></a>
                     <h2>Column Grouping <a class="example-link" href="../../examples?#column-groups"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
