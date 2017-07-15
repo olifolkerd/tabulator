@@ -996,13 +996,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         cellDblClick: false,
 
-        cellContext: false,
-
-        cellTap: false,
-
-        cellDblTap: false,
-
-        cellTapHold: false
+        cellContext: false
 
       };
 
@@ -1198,21 +1192,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (typeof def.cellContext == "function") {
 
         self.cellEvents.cellContext = def.cellContext;
-      }
-
-      if (typeof def.cellTap == "function") {
-
-        self.cellEvents.cellTap = def.cellTap;
-      }
-
-      if (typeof def.cellDblTap == "function") {
-
-        self.cellEvents.cellDblTap = def.cellDblTap;
-      }
-
-      if (typeof def.cellTapHold == "function") {
-
-        self.cellEvents.cellTapHold = def.cellTapHold;
       }
     };
 
@@ -3270,10 +3249,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Row.prototype.generateElement = function () {
 
-      var self = this,
-          dblTap,
-          tapHold,
-          tap;
+      var self = this;
 
       //set row selection characteristics
 
@@ -3312,79 +3288,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.element.on("contextmenu", function (e) {
 
           self.table.options.rowContext(e, self.getComponent());
-        });
-      }
-
-      if (self.table.options.rowTap) {
-
-        tap = false;
-
-        self.element.on("touchstart", function (e) {
-
-          tap = true;
-        });
-
-        self.element.on("touchend", function (e) {
-
-          if (tap) {
-
-            self.table.options.rowTap(e, self.getComponent());
-          }
-
-          tap = false;
-        });
-      }
-
-      if (self.table.options.rowDblTap) {
-
-        dblTap = null;
-
-        self.element.on("touchend", function (e) {
-
-          if (dblTap) {
-
-            clearTimeout(dblTap);
-
-            dblTap = null;
-
-            self.table.options.rowDblTap(e, self.getComponent());
-          } else {
-
-            dblTap = setTimeout(function () {
-
-              clearTimeout(dblTap);
-
-              dblTap = null;
-            }, 300);
-          }
-        });
-      }
-
-      if (self.table.options.rowTapHold) {
-
-        tapHold = null;
-
-        self.element.on("touchstart", function (e) {
-
-          clearTimeout(tapHold);
-
-          tapHold = setTimeout(function () {
-
-            clearTimeout(tapHold);
-
-            tapHold = null;
-
-            tap = false;
-
-            self.table.options.rowTapHold(e, self.getComponent());
-          }, 1000);
-        });
-
-        self.element.on("touchend", function (e) {
-
-          clearTimeout(tapHold);
-
-          tapHold = null;
         });
       }
     };
@@ -3882,10 +3785,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           cellEvents = self.column.cellEvents,
           element = self.element,
-          field = this.column.getField(),
-          dblTap,
-          tapHold,
-          tap;
+          field = this.column.getField();
 
       //set text alignment
 
@@ -3924,150 +3824,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.element.on("contextmenu", function (e) {
 
           cellEvents.cellContext(e, self.getComponent());
-        });
-      }
-
-      if (cellEvents.cellTap) {
-
-        tap = false;
-
-        self.element.on("touchstart", function (e) {
-
-          tap = true;
-        });
-
-        self.element.on("touchend", function (e) {
-
-          if (tap) {
-
-            cellEvents.cellTap(e, self.getComponent());
-          }
-
-          tap = false;
-        });
-      }
-
-      if (cellEvents.cellDblTap) {
-
-        dblTap = null;
-
-        self.element.on("touchend", function (e) {
-
-          if (dblTap) {
-
-            clearTimeout(dblTap);
-
-            dblTap = null;
-
-            cellEvents.cellDblTap(e, self.getComponent());
-          } else {
-
-            dblTap = setTimeout(function () {
-
-              clearTimeout(dblTap);
-
-              dblTap = null;
-            }, 300);
-          }
-        });
-      }
-
-      if (cellEvents.cellTapHold) {
-
-        tapHold = null;
-
-        self.element.on("touchstart", function (e) {
-
-          clearTimeout(tapHold);
-
-          tapHold = setTimeout(function () {
-
-            clearTimeout(tapHold);
-
-            tapHold = null;
-
-            tap = false;
-
-            cellEvents.cellTapHold(e, self.getComponent());
-          }, 1000);
-        });
-
-        self.element.on("touchend", function (e) {
-
-          clearTimeout(tapHold);
-
-          tapHold = null;
-        });
-      }
-
-      if (self.table.options.rowTap) {
-
-        tap = false;
-
-        self.element.on("touchstart", function (e) {
-
-          tap = true;
-        });
-
-        self.element.on("touchend", function (e) {
-
-          if (tap) {
-
-            self.table.options.rowTap(e, self.getComponent());
-          }
-
-          tap = false;
-        });
-      }
-
-      if (self.table.options.rowDblTap) {
-
-        dblTap = null;
-
-        self.element.on("touchend", function (e) {
-
-          if (dblTap) {
-
-            clearTimeout(dblTap);
-
-            dblTap = null;
-
-            self.table.options.rowDblTap(e, self.getComponent());
-          } else {
-
-            dblTap = setTimeout(function () {
-
-              clearTimeout(dblTap);
-
-              dblTap = null;
-            }, 300);
-          }
-        });
-      }
-
-      if (self.table.options.rowTapHold) {
-
-        tapHold = null;
-
-        self.element.on("touchstart", function (e) {
-
-          clearTimeout(tapHold);
-
-          tapHold = setTimeout(function () {
-
-            clearTimeout(tapHold);
-
-            tapHold = null;
-
-            self.table.options.rowTapHold(e, self.getComponent());
-          }, 1000);
-        });
-
-        self.element.on("touchend", function (e) {
-
-          clearTimeout(tapHold);
-
-          tapHold = null;
         });
       }
 

@@ -89,8 +89,7 @@ Row.prototype.getElement = function(){
 
 
 Row.prototype.generateElement = function(){
-	var self = this,
-	dblTap,	tapHold, tap;
+	var self = this;
 
 	//set row selection characteristics
 	if(self.table.options.selectable !== false && self.table.extExists("selectRow")){
@@ -119,68 +118,6 @@ Row.prototype.generateElement = function(){
 		self.element.on("contextmenu", function(e){
 			self.table.options.rowContext(e, self.getComponent());
 		})
-	}
-
-	if (self.table.options.rowTap){
-
-		tap = false;
-
-		self.element.on("touchstart", function(e){
-			tap = true;
-		});
-
-		self.element.on("touchend", function(e){
-			if(tap){
-				self.table.options.rowTap(e, self.getComponent());
-			}
-
-			tap = false;
-		});
-	}
-
-	if (self.table.options.rowDblTap){
-
-		dblTap = null;
-
-		self.element.on("touchend", function(e){
-
-			if(dblTap){
-				clearTimeout(dblTap);
-				dblTap = null;
-
-				self.table.options.rowDblTap(e, self.getComponent());
-			}else{
-
-				dblTap = setTimeout(function(){
-					clearTimeout(dblTap);
-					dblTap = null;
-				}, 300);
-			}
-
-		});
-	}
-
-
-	if (self.table.options.rowTapHold){
-
-		tapHold = null;
-
-		self.element.on("touchstart", function(e){
-			clearTimeout(tapHold);
-
-			tapHold = setTimeout(function(){
-				clearTimeout(tapHold);
-				tapHold = null;
-				tap = false;
-				self.table.options.rowTapHold(e, self.getComponent());
-			}, 1000)
-
-		});
-
-		self.element.on("touchend", function(e){
-			clearTimeout(tapHold);
-			tapHold = null;
-		});
 	}
 };
 
