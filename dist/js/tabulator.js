@@ -987,6 +987,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.hozAlign = ""; //horizontal text alignment
 
 
+      //multi dimentional filed handling
+
+      this.field = this.definition.field;
+
+      this.fieldStructure = this.definition.field ? this.definition.field.split(".") : [];
+
+      this.getFieldValue = this.fieldStructure.length ? this._getNesteData : this._getFlatData;
+
+      this.setFieldValue = this.fieldStructure.length ? this._setNesteData : this._setFlatData;
+
       this.extensions = {}; //hold extension variables;
 
 
@@ -1362,6 +1372,69 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.element.append(self.groupElement);
     };
 
+    //flat field lookup
+
+    Column.prototype._getFlatData = function (data) {
+
+      return data[this.field];
+    };
+
+    //nested field lookup
+
+    Column.prototype._getNesteData = function (data) {
+
+      var dataObj = data,
+          structure = this.fieldStructure,
+          length = structure.length,
+          output;
+
+      for (var i = 0; i < length; i++) {
+
+        dataObj = dataObj[structure[i]];
+
+        output = dataObj;
+
+        if (!dataObj) {
+
+          break;
+        }
+      }
+
+      return output;
+    };
+
+    //flat field set
+
+    Column.prototype._setFlatData = function (data, value) {
+
+      data[this.field] = value;
+    };
+
+    //nested field set
+
+    Column.prototype._setNesteData = function (data, value) {
+
+      var dataObj = data,
+          structure = this.fieldStructure,
+          length = structure.length;
+
+      for (var i = 0; i < length; i++) {
+
+        if (i == length - 1) {
+
+          dataObj[structure[i]] = value;
+        } else {
+
+          if (!dataObj[structure[i]]) {
+
+            dataObj[structure[i]] = {};
+          }
+
+          dataObj = dataObj[structure[i]];
+        }
+      }
+    };
+
     //attach column to this group
 
     Column.prototype.attachColumn = function (column) {
@@ -1445,7 +1518,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Column.prototype.getField = function () {
 
-      return this.definition.field;
+      return this.field;
     };
 
     //return the first column in a group
@@ -3766,7 +3839,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this._configureCell();
 
-      this.setValueActual(this.row.data[this.column.getField()]);
+      this.setValueActual(this.column.getFieldValue(this.row.data));
     };
 
     Cell.prototype.generateElement = function () {
@@ -3950,7 +4023,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.value = value;
 
-      this.row.data[this.column.getField()] = value;
+      this.column.setFieldValue(this.row.data, value);
 
       this._generateContents();
 
@@ -5886,7 +5959,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (typeof data[field] != "undefined") {
 
-            data[field] = column.extensions.accessor.accessor(data[field], data, column.extensions.accessor.params);
+            column.setFieldValue(data, column.extensions.accessor.accessor(column.getFieldValue(data), data, column.extensions.accessor.params));
           }
         }
       });
@@ -6157,7 +6230,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table = table; //hold Tabulator object
 
 
-      this.columns = {}; //hold definitions
+      this.fields = {}; //hold filed multi dimension arrays
 
     };
 
@@ -6190,7 +6263,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (downloadFunc) {
 
-        downloadFunc(self.processDefinitions(), self.processData(), options, buildLink);
+        downloadFunc.call(this, self.processDefinitions(), self.processData(), options, buildLink);
       }
     };
 
@@ -6200,13 +6273,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           definitions = self.table.columnManager.getDefinitions(),
           processedDefinitions = [];
 
-      self.columns = {};
+      self.fields = {};
 
       definitions.forEach(function (column) {
 
         if (column.field) {
 
-          self.columns[column.field] = column;
+          self.fields[column.field] = column.field.split(".");
 
           if (column.download !== false) {
 
@@ -6263,6 +6336,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    //nested field lookup
+
+
+    Download.prototype.getFieldValue = function (field, data) {
+
+      var dataObj = data,
+          structure = this.fields[field],
+          length = structure.length,
+          output;
+
+      for (var i = 0; i < length; i++) {
+
+        dataObj = dataObj[structure[i]];
+
+        output = dataObj;
+
+        if (!dataObj) {
+
+          break;
+        }
+      }
+
+      return output;
+    };
+
     //downloaders
 
 
@@ -6270,7 +6368,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       csv: function csv(columns, data, options, setFileContents) {
 
-        var titles = [],
+        var self = this,
+            titles = [],
             fields = [],
             delimiter = options && options.delimiter ? options.delimiter : ",",
             fileContents;
@@ -6302,7 +6401,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           fields.forEach(function (field) {
 
-            var value = _typeof(row[field]) == "object" ? JSON.stringify(row[field]) : row[field];
+            var value = self.getFieldValue(field, row);
+
+            switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+
+              case "object":
+
+                value = JSON.stringify(value);
+
+                break;
+
+              case "undefined":
+
+              case "null":
+
+                value = "";
+
+                break;
+
+              default:
+
+                value = value;
+
+            }
 
             //escape uotation marks
 
@@ -6325,7 +6446,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       xlsx: function xlsx(columns, data, options, setFileContents) {
 
-        var titles = [],
+        var self = this,
+            titles = [],
             fields = [],
             rows = [],
             workbook = { SheetNames: ["Sheet1"], Sheets: {} },
@@ -6419,7 +6541,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           fields.forEach(function (field) {
 
-            rowData.push(row[field]);
+            rowData.push(self.getFieldValue(field, row));
           });
 
           rows.push(rowData);
@@ -7269,7 +7391,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               filterFunc = function filterFunc(data) {
 
-                return String(data[field]).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+                return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
               };
 
               break;
@@ -7278,7 +7400,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               filterFunc = function filterFunc(data) {
 
-                return data[field] == value;
+                return column.getFieldValue(data) == value;
               };
 
           }
@@ -7367,7 +7489,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           //set Placeholder Text
 
 
-          if (column.definition.field) {
+          if (field) {
 
             self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function (value) {
 
@@ -7494,7 +7616,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Filter.prototype.addFilter = function (field, type, value) {
 
-      var self = this;
+      var self = this,
+          column;
 
       if (!Array.isArray(field)) {
 
@@ -7512,10 +7635,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (self.filters[filter.type]) {
 
-            filterFunc = function filterFunc(data) {
+            column = self.columnManager.getColumnByField(filter.field);
 
-              return self.filters[filter.type](filter.value, data[filter.field]);
-            };
+            if (column) {
+
+              filterFunc = function filterFunc(data) {
+
+                return self.filters[filter.type](filter.value, column.getFieldValue(data));
+              };
+            } else {
+
+              filterFunc = function filterFunc(data) {
+
+                return self.filters[filter.type](filter.value, data[filter.field]);
+              };
+            }
           } else {
 
             console.warn("Filter Error - No such filter type found, ignoring: ", filter.type);
@@ -8781,17 +8915,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       groupBy.forEach(function (group) {
 
-        var lookupFunc;
+        var lookupFunc, column;
 
         if (typeof group == "function") {
 
           lookupFunc = group;
         } else {
 
-          lookupFunc = function lookupFunc(data) {
+          column = self.columnManager.getColumnByField(group);
 
-            return data[group];
-          };
+          if (column) {
+
+            lookupFunc = function lookupFunc(data) {
+
+              return column.getFieldValue(data);
+            };
+          } else {
+
+            lookupFunc = function lookupFunc(data) {
+
+              return data[group];
+            };
+          }
         }
 
         self.groupIDLookups.push(lookupFunc);
@@ -10339,7 +10484,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (column.extensions.mutate.type != "edit") {
 
-            data[field] = column.extensions.mutate.mutator(data[field], data, "data", column.extensions.mutate.params);
+            column.setFieldValue(data, column.extensions.mutate.mutator(column.getFieldValue(data), data, "data", column.extensions.mutate.params));
           }
         }
       });
@@ -12047,9 +12192,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var el2 = dir == "asc" ? b : a;
 
-      a = el1.getData()[column.getField()];
+      a = column.getFieldValue(el1.getData());
 
-      b = el2.getData()[column.getField()];
+      b = column.getFieldValue(el2.getData());
 
       return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
     };

@@ -327,13 +327,21 @@ GroupRows.prototype.initialize = function(){
 	}
 
 	groupBy.forEach(function(group){
-		var lookupFunc;
+		var lookupFunc, column;
 
 		if(typeof group == "function"){
 			lookupFunc = group;
 		}else{
-			lookupFunc = function(data){
-				return data[group];
+			column = self.columnManager.getColumnByField(group);
+
+			if(column){
+				lookupFunc = function(data){
+					return column.getFieldValue(data);
+				}
+			}else{
+				lookupFunc = function(data){
+					return data[group];
+				}	
 			}
 		}
 

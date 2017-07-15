@@ -86,7 +86,7 @@ Cell.prototype.build = function(){
 
 	this._configureCell();
 
-	this.setValueActual(this.row.data[this.column.getField()]);
+	this.setValueActual(this.column.getFieldValue(this.row.data));
 };
 
 Cell.prototype.generateElement = function(){
@@ -231,7 +231,8 @@ Cell.prototype.setValueActual = function(value){
 	this.oldValue = this.value;
 
 	this.value = value;
-	this.row.data[this.column.getField()] = value;
+
+	this.column.setFieldValue(this.row.data, value);
 
 	this._generateContents();
 	this._generateTooltip();

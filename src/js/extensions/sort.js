@@ -230,8 +230,8 @@ Sort.prototype._sortRow = function(a, b, column, dir){
 	var el1 = dir == "asc" ? a : b;
 	var el2 = dir == "asc" ? b : a;
 
-	a = el1.getData()[column.getField()];
-	b = el2.getData()[column.getField()];
+	a = column.getFieldValue(el1.getData());
+	b = column.getFieldValue(el2.getData());
 
 	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
 };

@@ -74,6 +74,13 @@ var Column = function(def, parent){
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
 
+	//multi dimentional filed handling
+	this.field = this.definition.field;
+	this.fieldStructure = this.definition.field ? this.definition.field.split(".") : [];
+	this.getFieldValue = this.fieldStructure.length ? this._getNesteData : this._getFlatData;
+	this.setFieldValue = this.fieldStructure.length ? this._setNesteData : this._setFlatData;
+
+
 	this.extensions = {}; //hold extension variables;
 
 	this.cellEvents = {
@@ -360,6 +367,58 @@ Column.prototype._buildGroupHeader = function(){
 	self.element.append(self.groupElement);
 };
 
+//flat field lookup
+Column.prototype._getFlatData = function(data){
+	return data[this.field];
+};
+
+//nested field lookup
+Column.prototype._getNesteData = function(data){
+	var dataObj = data,
+	structure = this.fieldStructure,
+	length = structure.length,
+	output;
+
+	for(let i = 0; i < length; i++){
+
+		dataObj = dataObj[structure[i]];
+
+		output = dataObj;
+
+		if(!dataObj){
+			break;
+		}
+	}
+
+	return output;
+};
+
+//flat field set
+Column.prototype._setFlatData = function(data, value){
+	data[this.field] = value;
+};
+
+//nested field set
+Column.prototype._setNesteData = function(data, value){
+	var dataObj = data,
+	structure = this.fieldStructure,
+	length = structure.length;
+
+	for(let i = 0; i < length; i++){
+
+		if(i == length -1){
+			dataObj[structure[i]] = value;
+		}else{
+			if(!dataObj[structure[i]]){
+				dataObj[structure[i]] = {};
+			}
+
+			dataObj = dataObj[structure[i]];
+		}
+	}
+};
+
+
 //attach column to this group
 Column.prototype.attachColumn = function(column){
 	var self = this;
@@ -419,7 +478,7 @@ Column.prototype.getGroupElement = function(){
 
 //return field name
 Column.prototype.getField = function(){
-	return this.definition.field;
+	return this.field;
 };
 
 //return the first column in a group
