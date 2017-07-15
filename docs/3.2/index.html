@@ -1762,7 +1762,7 @@ var rowElement = row.getElement();</pre>
 
                 <a class="anchor" id="grouping"></a>
                 <article>
-                    <h1>Grouping Data <a class="example-link" href="../../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Grouping Data <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -1815,6 +1815,30 @@ var rowElement = row.getElement();</pre>
 
     return count > 3; //all groups with more than three rows start open, any with three or less start closed
 },</pre>
+
+                    <h2>Multi Level Grouping <span class="label label-danger">New</span></h2>
+
+                    <p>To set multiple levels of grouping, pass an array to the <span class='param'>groupBy</span> option. Each item in the array will be a sub-group of the previous item.</p>
+
+                    <pre class="prettyprint lang-js">groupBy:["gender", "color"], //group by gender then favourite color</pre>
+
+                    <p>To then set the default open state of each of these levels you can pass an array to the <span class='param'>groupStartOpen</span> option.</p>
+
+                    <pre class="prettyprint lang-js">groupStartOpen:[true, false], //start with gender groups open and color sub groups closed</pre>
+
+                    <p>You can also set a different header for each level of group, as above you pass an array to the <span class='param'>groupHeader</span> option.</p>
+
+                    <pre class="prettyprint lang-js">groupHeader:[
+    function(value, count, data){ //generate header contents for gender groups
+        return value + "&lt;span style='color:#d00; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
+    },
+    function(value, count, data){ //generate header contents for color groups
+        return value + "&lt;span style='color:#0dd; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
+    },
+],</pre>
+
+                    <p class="note"><strong>Note: </strong> You can have as many levels of subgroup as you like, but Tabulator only comes with styling built in for the first five levels of subgroup.</p>
+
                     <h2>Callbacks </h2>
                     <p>A range of callbacks are avaialble for grouping. See the <a href="#callbacks-group">Group Callbacks</a> section for more information.</p>
 
@@ -2754,7 +2778,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="component-group"></a>
-                    <h2>Group Component</h2>
+                    <h2>Group Component <span class="label label-primary">Updated</span></h2>
                     <p>The group component provides access to a set of grouped rows. The example below shows how it is passed to the <span class='param'>groupVisibilityChanged</span> callback.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -2776,6 +2800,16 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <h3>Get Rows</h3>
                     <p>The <span class='param'>getRows</span> function returns an array of <a href='#component-row'>RowComponent</a> objects, one for each row in the group.</p>
                     <pre class="prettyprint lang-js">var rows = group.getRows();</pre>
+
+                    <h3>Get Sub Groups <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>getSubGroups</span> function returns an array of <a href='#component-group'>GroupComponent</a> objects, one for each sub group of this group.</p>
+                    <pre class="prettyprint lang-js">var subGroups = group.getSubGroups();</pre>
+
+                    <h3>Get Parent Group <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>getParentGroup</span> function returns the <a href='#component-group'>GroupComponent</a> for the parent group of this group. if no parent exists, this function will return <span class='param'>false</span></p>
+                    <pre class="prettyprint lang-js">var parentGroup = group.getParentGroup();</pre>
+
+
 
                     <h3>Get Visibility</h3>
                     <p>The <span class='param'>getVisibility</span> function returns a boolean to show if the group is visible, a value of <span class='param'>true</span> means it is visible.</p>
@@ -2930,13 +2964,13 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                                 <td>rowFormatter</td><td>function/boolean</td><td>false</td><td>Function to alter layout of rows</td><td><a href="#row-formatter"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupBy</td><td>string/function</td><td>false</td><td>String/function to select field to group rows by</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupBy</td><td>string/function/array</td><td>false</td><td>String/function to select field to group rows by</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupHeader</td><td>function</td><td>(see documentation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupHeader</td><td>function/array</td><td>(see documentation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupStartOpen</td><td>boolean/function</td><td>true</td><td>Boolean/function to set the open/closed state of groups when they are first created</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupStartOpen</td><td>boolean/function/array</td><td>true</td><td>Boolean/function to set the open/closed state of groups when they are first created</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>addRowPos</td><td>string</td><td>"bottom"</td><td>The position in the table for new rows to be added, "bottom" or "top"</td><td><a href="#addrow"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -3507,7 +3541,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <p>The <span class='param'>dataGrouped</span> callback is triggered whenever a data grouping event occurs, after grouping happens.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     dataGrouped:function(groups){
-        //groups - array of group components
+        //groups - array of top level group components
     },
 });</pre>
 
@@ -4332,7 +4366,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <ul class="nav">
                             <li><a href="#layout">Table Layout <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#pagination">Pagination </a></li>
-                            <li><a href="#grouping">Grouping </a></li>
+                            <li><a href="#grouping">Grouping <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#selectable">Selectable Rows </a></li>
                             <li><a href="#movable">Movable Rows and Columns </a></li>
                             <li><a href="#column-management">Column Management </a></li>
