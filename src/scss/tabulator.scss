@@ -415,6 +415,36 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 					}
 
+					&.tabulator-group-level-1{
+						.tabulator-arrow{
+							margin-left:20px;
+						}
+					}
+
+					&.tabulator-group-level-2{
+						.tabulator-arrow{
+							margin-left:40px;
+						}
+					}
+
+					&.tabulator-group-level-3{
+						.tabulator-arrow{
+							margin-left:60px;
+						}
+					}
+
+					&.tabulator-group-level-4{
+						.tabulator-arrow{
+							margin-left:80px;
+						}
+					}
+
+					&.tabulator-group-level-5{
+						.tabulator-arrow{
+							margin-left:1000px;
+						}
+					}
+
 					//sorting arrow
 					.tabulator-arrow{
 						display: inline-block;

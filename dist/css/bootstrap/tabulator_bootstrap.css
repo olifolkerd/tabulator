@@ -308,6 +308,26 @@
   border-bottom: 0;
 }
 
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-level-1 .tabulator-arrow {
+  margin-left: 20px;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-level-2 .tabulator-arrow {
+  margin-left: 40px;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-level-3 .tabulator-arrow {
+  margin-left: 60px;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-level-4 .tabulator-arrow {
+  margin-left: 80px;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group.tabulator-group-level-5 .tabulator-arrow {
+  margin-left: 1000px;
+}
+
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-group .tabulator-arrow {
   display: inline-block;
   width: 0;

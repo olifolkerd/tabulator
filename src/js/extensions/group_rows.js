@@ -24,6 +24,20 @@ var GroupComponent = function (group){
 			return output;
 		},
 
+		getSubGroups:function(){
+			var output = [];
+
+			group.groupList.forEach(function(child){
+				output.push(child.getComponent());
+			});
+
+			return output;
+		},
+
+		getParentGroup:function(){
+			return group.parent ? group.parent.getComponent() : false;
+		},
+
 		getVisibility:function(){
 			return group.visible;
 		},
@@ -52,19 +66,27 @@ var GroupComponent = function (group){
 //////////////// Group Functions /////////////////
 //////////////////////////////////////////////////
 
-var Group = function(parent, key, generator, visible){
+var Group = function(groupManager, parent, level, key, generator, oldGroup){
 
-	this.key = key;
+	this.groupManager = groupManager;
 	this.parent = parent;
+	this.key = key;
+	this.level = level;
+	this.hasSubGroups = level < (groupManager.groupIDLookups.length - 1);
+	this.addRow = this.hasSubGroups ? this._addRowToGroup : this._addRow;
 	this.type = "group"; //type of element
+	this.old = oldGroup;
 	this.rows = [];
+	this.groups = [];
+	this.groupList = [];
 	this.generator = generator;
-	this.element = $("<div class='tabulator-row tabulator-group' role='rowgroup'></div>");
+	this.element = $("<div class='tabulator-row tabulator-group tabulator-group-level-" + level + "' role='rowgroup'></div>");
 	this.arrowElement = $("<div class='tabulator-arrow'></div>");
 	this.height = 0;
 	this.outerHeight = 0;
 	this.initialized = false;
-	this.visible = visible;
+
+	this.visible = oldGroup ? oldGroup.visible : (typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0]);
 
 	this.addBindings();
 };
@@ -79,8 +101,50 @@ Group.prototype.addBindings = function(){
 	});
 };
 
-Group.prototype.addRow = function(row){
+Group.prototype._addRowToGroup = function(row){
+
+	var level = this.level + 1;
+
+	if(this.hasSubGroups){
+		var groupID = this.groupManager.groupIDLookups[level](row.getData());
+
+		if(!this.groups[groupID]){
+			var group = new Group(this.groupManager, this, level, groupID, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
+
+			this.groups[groupID] = group;
+			this.groupList.push(group);
+		}
+
+		this.groups[groupID].addRow(row);
+	}
+
+};
+
+Group.prototype._addRow = function(row){
 	this.rows.push(row);
+};
+
+Group.prototype.getHeadersAndRows = function(){
+	var output = [];
+
+	output.push(this);
+
+	this._visSet();
+
+	if(this.visible){
+
+		if(this.groupList.length){
+			this.groupList.forEach(function(group){
+				output = output.concat(group.getHeadersAndRows());
+			});
+
+		}else{
+			output = output.concat(this.rows);
+		}
+
+	}
+
+	return output;
 };
 
 Group.prototype.getRows = function(){
@@ -90,7 +154,16 @@ Group.prototype.getRows = function(){
 };
 
 Group.prototype.getRowCount = function(){
-	return this.rows.length;
+	var count = 0;
+
+	if(this.groupList.length){
+		this.groupList.forEach(function(group){
+			count += group.getRowCount();
+		});
+	}else{
+		count = this.rows.length;
+	}
+	return count;
 };
 
 Group.prototype.toggleVisibility = function(){
@@ -104,15 +177,15 @@ Group.prototype.toggleVisibility = function(){
 Group.prototype.hide = function(){
 	this.visible = false;
 
-	if(this.parent.table.rowManager.getRenderMode() == "classic"){
+	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
 		this.rows.forEach(function(row){
 			row.getElement().detach();
 		});
 	}else{
-		this.parent.updateGroupRows(true);
+		this.groupManager.updateGroupRows(true);
 	}
 
-	this.parent.table.options.groupVisibilityChanged(this.getComponent(), false);
+	this.groupManager.table.options.groupVisibilityChanged(this.getComponent(), false);
 };
 
 Group.prototype.show = function(){
@@ -120,16 +193,16 @@ Group.prototype.show = function(){
 
 	self.visible = true;
 
-	if(this.parent.table.rowManager.getRenderMode() == "classic"){
+	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
 		self.rows.forEach(function(row){
 			self.getElement().after(row.getElement());
 			row.initialize();
 		});
 	}else{
-		this.parent.updateGroupRows(true);
+		this.groupManager.updateGroupRows(true);
 	}
 
-	this.parent.table.options.groupVisibilityChanged(this.getComponent(), true);
+	this.groupManager.table.options.groupVisibilityChanged(this.getComponent(), true);
 };
 
 Group.prototype._visSet = function(){
@@ -206,6 +279,15 @@ Group.prototype.getHeight = function(){
 	return this.outerHeight;
 };
 
+Group.prototype.reinitializeHeight = function(){
+};
+Group.prototype.calcHeight = function(){
+};
+Group.prototype.setCellHeight = function(){
+};
+Group.prototype.clearCellHeight = function(){
+}
+
 
 //////////////// Object Generation /////////////////
 Group.prototype.getComponent = function(){
@@ -220,11 +302,11 @@ var GroupRows = function(table){
 
 	this.table = table; //hold Tabulator object
 
-	this.findGroupId = false; //enable table grouping and set field to group by
-	this.startOpen = function(){return false;}; //starting state of group
-	this.headerGenerator = function(value, count, data){ //header layout function
+	this.groupIDLookups = false; //enable table grouping and set field to group by
+	this.startOpen = [function(){return false;}]; //starting state of group
+	this.headerGenerator = [function(value, count, data){ //header layout function
 		return value + "<span>(" + count + " " + ((count === 1) ? "item" : "items") + ")</span>";
-	};
+	}];
 
 	this.groupList = []; //ordered list of groups
 	this.groups = {}; //hold row groups
@@ -233,68 +315,103 @@ var GroupRows = function(table){
 
 //initialize group configuration
 GroupRows.prototype.initialize = function(){
-	var self = this;
+	var self = this,
+	groupBy = self.table.options.groupBy,
+	startOpen = self.table.options.groupStartOpen,
+	groupHeader = self.table.options.groupHeader;
 
-	if(typeof self.table.options.groupBy == "function"){
-		self.findGroupId = self.table.options.groupBy;
-	}else{
-		self.findGroupId = function(data){
-			return data[self.table.options.groupBy];
+	this.groupIDLookups = [];
+
+	if(!Array.isArray(groupBy)){
+		groupBy = [groupBy];
+	}
+
+	groupBy.forEach(function(group){
+		var lookupFunc;
+
+		if(typeof group == "function"){
+			lookupFunc = group;
+		}else{
+			lookupFunc = function(data){
+				return data[group];
+			}
 		}
+
+		self.groupIDLookups.push(lookupFunc);
+	});
+
+
+
+	if(startOpen){
+
+		if(!Array.isArray(startOpen)){
+			startOpen = [startOpen];
+		}
+
+		startOpen.forEach(function(level){
+			level = typeof level == "function" ? level : function(){return true;};
+		});
+
+		self.startOpen = startOpen;
 	}
 
-	if(self.table.options.groupStartOpen){
-		self.startOpen = typeof self.table.options.groupStartOpen == "function" ? self.table.options.groupStartOpen : function(){return true;};
-	}
-
-	if(self.table.options.groupHeader){
-		self.headerGenerator = self.table.options.groupHeader
+	if(groupHeader){
+		self.headerGenerator = Array.isArray(groupBy) ? groupHeader : [groupHeader];
 	}
 
 };
 
 //return appropriate rows with group headers
-GroupRows.prototype.getRows = function(data){
+GroupRows.prototype.getRows = function(rows){
 	var self = this,
-	oldGroups = self.groups,
 	groupComponents = [];
+
+	if(self.groupIDLookups.length){
+
+		self.table.options.dataGrouping();
+
+		this.generateGroups(rows);
+
+		if(self.table.options.dataGrouped){
+			self.groupList.forEach(function(group){
+				groupComponents.push(group.getComponent());
+			});
+
+			self.table.options.dataGrouped(groupComponents);
+		};
+
+		return this.updateGroupRows();
+
+	}else{
+		return rows.slice(0);
+	}
+
+};
+
+GroupRows.prototype.generateGroups = function(rows){
+	var self = this,
+	oldGroups = self.groups;
 
 	self.groups = {};
 	self.groupList =[];
 
-	if(self.findGroupId){
+	rows.forEach(function(row){
 
-		self.table.options.dataGrouping();
+		var groupID = self.groupIDLookups[0](row.getData());
 
-		data.forEach(function(row){
+		if(!self.groups[groupID]){
+			var group = new Group(self, false, 0, groupID, self.headerGenerator[0], oldGroups[groupID]);
 
-			var groupID = self.findGroupId(row.getData());
+			self.groups[groupID] = group;
+			self.groupList.push(group);
+		}
 
-			if(!self.groups[groupID]){
-				var group = new Group(self, groupID, self.headerGenerator, oldGroups[groupID] ? oldGroups[groupID].visible : self.startOpen);
+		self.groups[groupID].addRow(row);
+	});
 
-				self.groups[groupID] = group;
-				self.groupList.push(group);
-			}
 
-			self.groups[groupID].addRow(row);
-		});
+}
 
-		if(self.table.options.dataGrouped){
-			self.groupList.forEach(function(group){
-				self.groupComponents.push(group.getComponent());
-			});
-
-			self.table.options.dataGrouped(groupList);
-		};
-
-		return self.updateGroupRows();
-
-	}else{
-		return data.slice(0);
-	}
-
-};
 
 GroupRows.prototype.updateGroupRows = function(force){
 	var self = this,
@@ -302,11 +419,7 @@ GroupRows.prototype.updateGroupRows = function(force){
 	oldRowCount;
 
 	self.groupList.forEach(function(group){
-		output.push(group);
-
-		group.getRows().forEach(function(row){
-			output.push(row);
-		})
+		output = output.concat(group.getHeadersAndRows());
 	});
 
 	//force update of table display
