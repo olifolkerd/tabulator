@@ -304,10 +304,7 @@ var GroupRows = function(table){
 
 	this.groupIDLookups = false; //enable table grouping and set field to group by
 	this.startOpen = [function(){return false;}]; //starting state of group
-	this.headerGenerator = [function(value, count, data){ //header layout function
-		return value + "<span>(" + count + " " + ((count === 1) ? "item" : "items") + ")</span>";
-	}];
-
+	this.headerGenerator = [function(){}];
 	this.groupList = []; //ordered list of groups
 	this.groups = {}; //hold row groups
 };
@@ -319,6 +316,12 @@ GroupRows.prototype.initialize = function(){
 	groupBy = self.table.options.groupBy,
 	startOpen = self.table.options.groupStartOpen,
 	groupHeader = self.table.options.groupHeader;
+
+	self.table.extensions.localize.bind("groups.item", function(langValue, lang){
+		self.headerGenerator[0] = function(value, count, data){ //header layout function
+			return value + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
+		};
+	});
 
 	this.groupIDLookups = [];
 
@@ -332,7 +335,7 @@ GroupRows.prototype.initialize = function(){
 		if(typeof group == "function"){
 			lookupFunc = group;
 		}else{
-			column = self.columnManager.getColumnByField(group);
+			column = self.table.columnManager.getColumnByField(group);
 
 			if(column){
 				lookupFunc = function(data){
@@ -341,7 +344,7 @@ GroupRows.prototype.initialize = function(){
 			}else{
 				lookupFunc = function(data){
 					return data[group];
-				}	
+				}
 			}
 		}
 

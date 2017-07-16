@@ -5946,10 +5946,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     Localize.prototype.getText = function (path, value) {
 
-      var self = this,
-          path = value ? path + "." + value : path,
+      var path = value ? path + "." + value : path,
           pathArray = path.split("."),
-          text = this._getLangElement(pathArray, self.locale);
+          text = this._getLangElement(pathArray, this.locale);
 
       // if(text === false){
 
@@ -6005,7 +6004,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.bindings[path].push(callback);
 
-      callback(this.getText(path));
+      callback(this.getText(path), this.lang);
     };
 
     //itterate through bindings and trigger updates
@@ -6019,7 +6018,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         self.bindings[path].forEach(function (binding) {
 
-          binding(self.getText(path));
+          binding(self.getText(path), self.lang);
         });
       };
 
@@ -6035,6 +6034,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       "default": { //hold default locale text
 
+
+        "groups": {
+
+          "item": "item",
+
+          "items": "items"
+
+        },
 
         "columns": {},
 
@@ -9069,12 +9076,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }]; //starting state of group
 
 
-      this.headerGenerator = [function (value, count, data) {
-        //header layout function
-
-
-        return value + "<span>(" + count + " " + (count === 1 ? "item" : "items") + ")</span>";
-      }];
+      this.headerGenerator = [function () {}];
 
       this.groupList = []; //ordered list of groups
 
@@ -9093,6 +9095,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           startOpen = self.table.options.groupStartOpen,
           groupHeader = self.table.options.groupHeader;
 
+      self.table.extensions.localize.bind("groups.item", function (langValue, lang) {
+
+        self.headerGenerator[0] = function (value, count, data) {
+          //header layout function
+
+
+          return value + "<span>(" + count + " " + (count === 1 ? langValue : lang.groups.items) + ")</span>";
+        };
+      });
+
       this.groupIDLookups = [];
 
       if (!Array.isArray(groupBy)) {
@@ -9109,7 +9121,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           lookupFunc = group;
         } else {
 
-          column = self.columnManager.getColumnByField(group);
+          column = self.table.columnManager.getColumnByField(group);
 
           if (column) {
 
