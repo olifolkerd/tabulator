@@ -1868,6 +1868,34 @@ var rowElement = row.getElement();</pre>
 
                     <p class="note"><strong>Note: </strong> You can have as many levels of subgroup as you like, but Tabulator only comes with styling built in for the first five levels of subgroup.</p>
 
+
+                    <h2>Changing Group Setup <span class="label label-danger">New</span></h2>
+
+                    <p>If you want to alter the structure of the groups after the table has been created there are a number of functions available.</p>
+
+                    <h3>Change the GroupBy Fields</h3>
+                    <p>You can use the <span class='param'>setGroupBy</span> function to change the fields that rows are grouped by. This function has one argument and takes the same values as passed to the <span class='param'>groupBy</span> setup option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setGroupBy", "gender");</pre>
+
+                    <h3>Change the Start Open States</h3>
+                    <p>You can use the <span class='param'>setGroupStartOpen</span> function to change the default open state of groups. This function has one argument and takes the same values as passed to the <span class='param'>groupStartOpen</span> setup option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setGroupStartOpen", true);</pre>
+
+                    <h3>Change the Header Formatter</h3>
+                    <p>You can use the <span class='param'>setGroupHeader</span> function to change the header generation function for each group. This function has one argument and takes the same values as passed to the <span class='param'>groupHeader</span> setup option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setGroupHeader", function(value, count, data){
+    //value - the value all members of this group share
+    //count - the number of rows in this group
+    //data - an arrya of all the row data objects in this group
+
+    return count > 3; //all groups with more than three rows start open, any with three or less start closed
+});</pre>
+
+                    <p class="note"><strong>Note: </strong> If you use the <span class='param'>setGroupStartOpen</span> or <span class='param'>setGroupHeader</span> before you have set any groups on the table, the table will not update until the <span class='param'>setGroupBy</span> function is called.</p>
+
                     <h2>Callbacks </h2>
                     <p>A range of callbacks are avaialble for grouping. See the <a href="#callbacks-group">Group Callbacks</a> section for more information.</p>
 
