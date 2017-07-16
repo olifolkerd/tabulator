@@ -3878,7 +3878,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                 <a class="anchor" id="localization"></a>
                 <article>
-                    <h1>Localization <a class="example-link" href="../../examples?#localization"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Localization <span class="label label-primary">Updated</span> <a class="example-link" href="../../examples?#localization"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -3905,6 +3905,10 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
             "ajax":{
                 "loading":"Loading", //ajax loader text
                 "error":"Error", //ajax error text
+            },
+            "groups":{ //copy for the auto generated item count in group header
+                "item":"item", //the singluar for item
+                "items":"items", //the plural for items
             },
             "pagination":{
                 "first":"First", //text for the first page button
@@ -4490,7 +4494,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#keybindings">Key Bindings <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#download">Download Table Data <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#localization">Localization </a></li>
+                            <li><a href="#localization">Localization <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#accessibility">Accessibility</a></li>
                             <li><a href="#extending">Extensions </a></li>
                             <li><a href="#deprecated">Deprecated Functionality </a></li>
