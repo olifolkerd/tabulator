@@ -124,19 +124,8 @@ Group.prototype._addRow = function(row){
 	this.rows.push(row);
 };
 
-Group.prototype.getData = function(row){
-	var data = [];
-
-	this.rows.forEach(function(row){
-		data.push(row.getData());
-	});
-
-	return data;
-};
-
 Group.prototype.getHeadersAndRows = function(){
-	var output = [],
-	data = [];
+	var output = [];
 
 	output.push(this);
 
@@ -151,9 +140,7 @@ Group.prototype.getHeadersAndRows = function(){
 
 		}else{
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
-				data = this.getData();
-
-				output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(data));
+				output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
 			}
 
 			output = output.concat(this.rows);
@@ -161,11 +148,7 @@ Group.prototype.getHeadersAndRows = function(){
 			console.log(this.groupManager.table.extensions.columnCalcs.hasBottomCalcs)
 
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
-				if(!data.length && this.rows.length){
-					data = this.getData();
-				}
-
-				output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(data));
+				output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
 			}
 		}
 

@@ -6521,6 +6521,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.genColumn = false;
 
+      this.topElement = $("<div class='tabulator-calcs-holder'></div>");
+
+      this.botElement = $("<div class='tabulator-calcs-holder'></div>");
+
       this.initialize();
     };
 
@@ -6614,13 +6618,60 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
 
+    // if(!self.table.options.groupBy && self.table.extExists("columnCalcs") && self.table.extensions.columnCalcs.hasBottomCalcs()){
+
+
+    // 	self.element.append(self.table.extensions.columnCalcs.getTopElement());
+
+
+    // }
+
+
+    ColumnCalcs.prototype.getTopElement = function (data) {
+
+      // this.updateTopElement();
+
+
+      return this.topElement;
+    };
+
+    ColumnCalcs.prototype.getBottomElement = function (data) {
+
+      // this.updateBottomElement();
+
+
+      return this.botElement;
+    };
+
+    ColumnCalcs.prototype.updateTopElement = function (data) {
+
+      this.topElement.empty();
+
+      var row = this.generateRow("top", []);
+
+      this.topElement.append(row.getElement());
+
+      row.initialize(true);
+    };
+
+    ColumnCalcs.prototype.updateBottomElement = function (data) {
+
+      this.botElement.empty();
+
+      var row = this.generateRow("bottom", []);
+
+      this.botElement.append(row.getElement());
+
+      row.initialize(true);
+    };
+
     //generate top stats row
 
 
     ColumnCalcs.prototype.generateTopRow = function (data) {
 
       return this.generateRow("top", data);
-    },
+    };
 
     //generate bottom stats row
 
@@ -6628,7 +6679,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     ColumnCalcs.prototype.generateBottomRow = function (data) {
 
       return this.generateRow("bottom", data);
-    },
+    };
 
     //generate stats row
 
@@ -6636,8 +6687,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     ColumnCalcs.prototype.generateRow = function (pos, data) {
 
       var self = this,
-          rowData = this.generateRowData(pos, data),
-          row = new Row(rowData, this);
+          rowData = [],
+          row = false;
+
+      data.forEach(function (row) {
+
+        rowData.push(row.getData());
+      });
+
+      rowData = this.generateRowData(pos, rowData);
+
+      row = new Row(rowData, this);
 
       row.getElement().addClass("tabulator-calcs").addClass("tabulator-calcs-" + pos);
 
@@ -9220,22 +9280,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.rows.push(row);
     };
 
-    Group.prototype.getData = function (row) {
-
-      var data = [];
-
-      this.rows.forEach(function (row) {
-
-        data.push(row.getData());
-      });
-
-      return data;
-    };
-
     Group.prototype.getHeadersAndRows = function () {
 
-      var output = [],
-          data = [];
+      var output = [];
 
       output.push(this);
 
@@ -9253,9 +9300,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()) {
 
-            data = this.getData();
-
-            output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(data));
+            output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
           }
 
           output = output.concat(this.rows);
@@ -9264,12 +9309,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
 
-            if (!data.length && this.rows.length) {
-
-              data = this.getData();
-            }
-
-            output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(data));
+            output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
           }
         }
       }

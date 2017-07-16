@@ -3,6 +3,8 @@ var ColumnCalcs = function(table){
 	this.topCalcs = [];
 	this.botCalcs = [];
 	this.genColumn = false;
+	this.topElement = $("<div class='tabulator-calcs-holder'></div>");
+	this.botElement = $("<div class='tabulator-calcs-holder'></div>");
 
 	this.initialize();
 };
@@ -71,20 +73,59 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 
 },
 
+// if(!self.table.options.groupBy && self.table.extExists("columnCalcs") && self.table.extensions.columnCalcs.hasBottomCalcs()){
+// 	self.element.append(self.table.extensions.columnCalcs.getTopElement());
+// }
+
+ColumnCalcs.prototype.getTopElement = function(data){
+	// this.updateTopElement();
+	return this.topElement;
+};
+
+ColumnCalcs.prototype.getBottomElement = function(data){
+	// this.updateBottomElement();
+	return this.botElement;
+};
+
+ColumnCalcs.prototype.updateTopElement = function (data){
+	this.topElement.empty();
+
+	var row = this.generateRow("top", []);
+	this.topElement.append(row.getElement());
+	row.initialize(true);
+};
+
+
+ColumnCalcs.prototype.updateBottomElement = function (data){
+	this.botElement.empty();
+
+	var row = this.generateRow("bottom", []);
+	this.botElement.append(row.getElement());
+	row.initialize(true);
+};
+
+
 //generate top stats row
 ColumnCalcs.prototype.generateTopRow = function(data){
 	return this.generateRow("top", data);
-},
-
+};
 //generate bottom stats row
 ColumnCalcs.prototype.generateBottomRow = function(data){
 	return this.generateRow("bottom", data);
-},
+};
 
 //generate stats row
 ColumnCalcs.prototype.generateRow = function(pos, data){
 	var self = this,
-	rowData = this.generateRowData(pos, data),
+	rowData = [],
+	row = false;
+
+	data.forEach(function(row){
+		rowData.push(row.getData());
+	});
+
+	rowData = this.generateRowData(pos, rowData);
+
 	row = new Row(rowData, this);
 
 	row.getElement().addClass("tabulator-calcs").addClass("tabulator-calcs-" + pos);
