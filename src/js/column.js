@@ -75,10 +75,12 @@ var Column = function(def, parent){
 	this.hozAlign = ""; //horizontal text alignment
 
 	//multi dimentional filed handling
-	this.field = this.definition.field;
-	this.fieldStructure = this.definition.field ? this.definition.field.split(".") : [];
-	this.getFieldValue = this.fieldStructure.length ? this._getNesteData : this._getFlatData;
-	this.setFieldValue = this.fieldStructure.length ? this._setNesteData : this._setFlatData;
+	this.field ="";
+	this.fieldStructure = "";
+	this.getFieldValue = "";
+	this.setFieldValue = "";
+
+	this.setField(this.definition.field);
 
 
 	this.extensions = {}; //hold extension variables;
@@ -121,6 +123,12 @@ var Column = function(def, parent){
 
 
 //////////////// Setup Functions /////////////////
+Column.prototype.setField = function(field){
+	this.field = field;
+	this.fieldStructure = field ? field.split(".") : [];
+	this.getFieldValue = this.fieldStructure.length ? this._getNesteData : this._getFlatData;
+	this.setFieldValue = this.fieldStructure.length ? this._setNesteData : this._setFlatData;
+};
 
 //register column position with column manager
 Column.prototype.registerColumnPosition = function(column){
@@ -211,6 +219,11 @@ Column.prototype._buildHeader = function(){
 	//set movable column
 	if(self.table.options.movableColumns && !self.isGroup && self.table.extExists("moveColumn")){
 		self.table.extensions.moveColumn.initializeColumn(self);
+	}
+
+	//set calcs column
+	if((def.topCalc || def.bottomCalc) && self.table.extExists("columnCalcs")){
+		self.table.extensions.columnCalcs.initializeColumn(self);
 	}
 
 

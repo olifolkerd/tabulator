@@ -243,6 +243,19 @@
   z-index: 15;
 }
 
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
+  font-weight: bold;
+  background: #373737 !important;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
+  border-bottom: 2px solid #888;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
+  border-top: 2px solid #888;
+}
+
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-frozen {
   display: inline-block;
   position: absolute;

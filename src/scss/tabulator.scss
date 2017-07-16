@@ -325,6 +325,19 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 					z-index:15;
 				}
 
+				&.tabulator-calcs{
+					font-weight: bold;
+					background:darken($rowAltBackgroundColor, 5%) !important;
+
+					&.tabulator-calcs-top{
+						border-bottom:2px solid $rowBorderColor;
+					}
+
+					&.tabulator-calcs-bottom{
+						border-top:2px solid $rowBorderColor;
+					}
+				}
+
 				.tabulator-frozen{
 					display: inline-block;
 					position: absolute;

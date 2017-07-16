@@ -266,6 +266,10 @@
 	 				ext.ajax.initialize();
 	 			}
 
+	 			if(this.extExists("columnCalcs")){
+	 				ext.columnCalcs.initialize();
+	 			}
+
 	 			if(this.extExists("keybindings")){
 	 				ext.keybindings.initialize();
 	 			}

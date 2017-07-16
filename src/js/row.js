@@ -71,6 +71,7 @@ var Row = function(data, parent){
 	this.table = parent.table;
 	this.parent = parent;
 	this.data = {};
+	this.type = "row"; //type of element
 	this.element = $("<div class='tabulator-row' role='row'></div>");
 	this.extensions = {}; //hold extension variables;
 	this.cells = [];
@@ -184,6 +185,9 @@ Row.prototype.generateElement = function(){
 	}
 };
 
+Row.prototype.generateCells = function(){
+	this.cells = this.table.columnManager.generateCells(this);
+}
 
 //functions to setup on first render
 Row.prototype.initialize = function(force){
@@ -198,7 +202,7 @@ Row.prototype.initialize = function(force){
 			this.table.extensions.frozenColumns.layoutRow(this);
 		}
 
-		self.cells = this.parent.columnManager.generateCells(self);
+		this.generateCells();
 
 		self.cells.forEach(function(cell){
 			self.element.append(cell.getElement());
