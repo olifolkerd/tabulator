@@ -2,6 +2,8 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 /*
  * This file is part of the Tabulator package.
  *
@@ -32,6 +34,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
 
+
+    var _options;
 
     if (!Array.prototype.findIndex) {
 
@@ -547,7 +551,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this._moveColumnInArray(this.columns, from, to, after);
 
-      this._moveColumnInArray(this.columnsByIndex, from, to, after);
+      this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
       this.table.options.columnMoved(from.getComponent());
 
@@ -557,7 +561,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    ColumnManager.prototype._moveColumnInArray = function (columns, from, to, after) {
+    ColumnManager.prototype._moveColumnInArray = function (columns, from, to, after, updateRows) {
 
       var fromIndex = columns.indexOf(from),
           toIndex;
@@ -572,14 +576,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (after) {
 
-            columns.splice(toIndex + 1, 0, from);
-          } else {
-
-            columns.splice(toIndex, 0, from);
+            toIndex = toIndex + 1;
           }
         } else {
 
-          columns.splice(fromIndex, 0, from);
+          toIndex = fromIndex;
+        }
+
+        columns.splice(toIndex, 0, from);
+
+        if (updateRows) {
+
+          this.table.rowManager.rows.forEach(function (row) {
+
+            if (row.cells.length) {
+
+              var cell = row.cells.splice(fromIndex, 1)[0];
+
+              row.cells.splice(toIndex, 0, cell);
+            }
+          });
         }
       }
     };
@@ -4543,7 +4559,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //setup options
 
-      options: {
+      options: (_options = {
 
         height: false, //height of tabulator
 
@@ -4680,91 +4696,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         rowDblClick: false,
 
-        rowContext: false,
+        rowContext: false
 
-        rowAdded: function rowAdded() {},
-
-        rowDeleted: function rowDeleted() {},
-
-        rowMoved: function rowMoved() {},
-
-        rowUpdated: function rowUpdated() {},
-
-        rowSelectionChanged: function rowSelectionChanged() {},
-
-        rowSelected: function rowSelected() {},
-
-        rowDeselected: function rowDeselected() {},
-
-        //cell callbacks
-
-        cellEditing: function cellEditing() {},
-
-        cellEdited: function cellEdited() {},
-
-        cellEditCancelled: function cellEditCancelled() {},
-
-        //column callbacks
-
-        columnMoved: function columnMoved() {},
-
-        columnResized: function columnResized() {},
-
-        columnTitleChanged: function columnTitleChanged() {},
-
-        columnVisibilityChanged: function columnVisibilityChanged() {},
-
-        //HTML iport callbacks
-
-        htmlImporting: function htmlImporting() {},
-
-        htmlImported: function htmlImported() {},
-
-        //data callbacks
-
-        dataLoading: function dataLoading() {},
-
-        dataLoaded: function dataLoaded() {},
-
-        dataEdited: function dataEdited() {},
-
-        //ajax callbacks
-
-        ajaxRequesting: function ajaxRequesting() {},
-
-        ajaxResponse: false,
-
-        ajaxError: function ajaxError() {},
-
-        //filtering callbacks
-
-        dataFiltering: false,
-
-        dataFiltered: false,
-
-        //sorting callbacks
-
-        dataSorting: function dataSorting() {},
-
-        dataSorted: function dataSorted() {},
-
-        //grouping callbacks
-
-        dataGrouping: function dataGrouping() {},
-
-        dataGrouped: false,
-
-        groupVisibilityChanged: function groupVisibilityChanged() {},
-
-        //pagination callbacks
-
-        pageLoaded: function pageLoaded() {},
-
-        //localization callbacks
-
-        localized: function localized() {}
-
-      },
+      }, _defineProperty(_options, 'rowContext', false), _defineProperty(_options, 'rowTap', false), _defineProperty(_options, 'rowDblTap', false), _defineProperty(_options, 'rowTapHold', false), _defineProperty(_options, 'rowAdded', function rowAdded() {}), _defineProperty(_options, 'rowDeleted', function rowDeleted() {}), _defineProperty(_options, 'rowMoved', function rowMoved() {}), _defineProperty(_options, 'rowUpdated', function rowUpdated() {}), _defineProperty(_options, 'rowSelectionChanged', function rowSelectionChanged() {}), _defineProperty(_options, 'rowSelected', function rowSelected() {}), _defineProperty(_options, 'rowDeselected', function rowDeselected() {}), _defineProperty(_options, 'cellEditing', function cellEditing() {}), _defineProperty(_options, 'cellEdited', function cellEdited() {}), _defineProperty(_options, 'cellEditCancelled', function cellEditCancelled() {}), _defineProperty(_options, 'columnMoved', function columnMoved() {}), _defineProperty(_options, 'columnResized', function columnResized() {}), _defineProperty(_options, 'columnTitleChanged', function columnTitleChanged() {}), _defineProperty(_options, 'columnVisibilityChanged', function columnVisibilityChanged() {}), _defineProperty(_options, 'htmlImporting', function htmlImporting() {}), _defineProperty(_options, 'htmlImported', function htmlImported() {}), _defineProperty(_options, 'dataLoading', function dataLoading() {}), _defineProperty(_options, 'dataLoaded', function dataLoaded() {}), _defineProperty(_options, 'dataEdited', function dataEdited() {}), _defineProperty(_options, 'ajaxRequesting', function ajaxRequesting() {}), _defineProperty(_options, 'ajaxResponse', false), _defineProperty(_options, 'ajaxError', function ajaxError() {}), _defineProperty(_options, 'dataFiltering', false), _defineProperty(_options, 'dataFiltered', false), _defineProperty(_options, 'dataSorting', function dataSorting() {}), _defineProperty(_options, 'dataSorted', function dataSorted() {}), _defineProperty(_options, 'dataGrouping', function dataGrouping() {}), _defineProperty(_options, 'dataGrouped', false), _defineProperty(_options, 'groupVisibilityChanged', function groupVisibilityChanged() {}), _defineProperty(_options, 'pageLoaded', function pageLoaded() {}), _defineProperty(_options, 'localized', function localized() {}), _options),
 
       //constructor
 

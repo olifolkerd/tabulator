@@ -253,7 +253,7 @@ ColumnManager.prototype.getWidth = function(){
 ColumnManager.prototype.moveColumn = function(from, to, after){
 
 	this._moveColumnInArray(this.columns, from, to, after);
-	this._moveColumnInArray(this.columnsByIndex, from, to, after);
+	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
 	this.table.options.columnMoved(from.getComponent());
 
@@ -262,7 +262,7 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	}
 };
 
-ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after){
+ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, updateRows){
 	var	fromIndex = columns.indexOf(from),
 	toIndex;
 
@@ -275,13 +275,23 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after){
 		if (toIndex > -1) {
 
 			if(after){
-				columns.splice(toIndex+1, 0, from);
-			}else{
-				columns.splice(toIndex, 0, from);
+				toIndex = toIndex+1;
 			}
 
 		}else{
-			columns.splice(fromIndex, 0, from);
+			toIndex = fromIndex;
+		}
+
+		columns.splice(toIndex, 0, from);
+
+		if(updateRows){
+
+			this.table.rowManager.rows.forEach(function(row){
+				if(row.cells.length){
+					var cell = row.cells.splice(fromIndex, 1)[0];
+					row.cells.splice(toIndex, 0, cell);
+				}
+			});
 		}
 	}
 };
