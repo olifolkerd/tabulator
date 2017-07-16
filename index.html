@@ -213,8 +213,9 @@
   pagination:"local",
   paginationSize:7,
   movableColumns:true,
-  sortBy:"name",
-  sortDir:"asc",
+  initialSort:[
+    {column:"name", dir:"asc"},
+  ],
   columns:[
     {title:"Name", field:"name", editor:"input"},
     {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
@@ -660,8 +661,9 @@
        pagination:"local",
        paginationSize:7,
        movableColumns:true,
-       sortBy:"name",
-       sortDir:"asc",
+       initialSort:[
+         {column:"name", dir:"asc"},
+       ],
        columns:[
        {title:"Name", field:"name", editor:"input"},
        {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
