@@ -220,6 +220,24 @@ footer {
   font-size: 3em;
   margin-right: 20px;
 }
+table.community-table tbody tr {
+  background: #fff !important;
+}
+table.community-table tbody tr td {
+  border: none;
+}
+table.community-table tbody tr td.community-icon {
+  padding: 5px 10px;
+  color: #59B038;
+  font-size: 30px;
+  text-align: center;
+}
+table.community-table table.community-table {
+  margin-top: 8px;
+}
+table.community-table table.community-table tbody tr td.community-icon {
+  font-size: 20px;
+}
 h1 .label,
 h2 .label,
 h3 .label {
