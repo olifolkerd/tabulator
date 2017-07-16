@@ -786,6 +786,48 @@
 	 			}
 	 		},
 
+	 		///////////////// Grouping Functions ///////////////
+
+	 		setGroupBy:function(groups){
+	 			if(this.extExists("groupRows", true)){
+	 				this.options.groupBy = groups;
+	 				this.extensions.groupRows.initialize();
+	 				this.rowManager.refreshActiveData();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		setGroupStartOpen:function(values){
+	 			if(this.extExists("groupRows", true)){
+	 				this.options.groupStartOpen = values;
+	 				this.extensions.groupRows.initialize();
+	 				if(this.options.groupBy){
+
+	 					this.rowManager.refreshActiveData();
+	 				}else{
+	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
+	 				}
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		setGroupHeader:function(values){
+	 			if(this.extExists("groupRows", true)){
+	 				this.options.groupHeader = values;
+	 				this.extensions.groupRows.initialize();
+	 				if(this.options.groupBy){
+	 					this.rowManager.refreshActiveData();
+	 				}else{
+	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
+	 				}
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+
 	 		/////////////// Navigation Management //////////////
 
 	 		navigatePrev:function(){

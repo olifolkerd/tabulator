@@ -5545,6 +5545,66 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       },
 
+      ///////////////// Grouping Functions ///////////////
+
+
+      setGroupBy: function setGroupBy(groups) {
+
+        if (this.extExists("groupRows", true)) {
+
+          this.options.groupBy = groups;
+
+          this.extensions.groupRows.initialize();
+
+          this.rowManager.refreshActiveData();
+        } else {
+
+          return false;
+        }
+      },
+
+      setGroupStartOpen: function setGroupStartOpen(values) {
+
+        if (this.extExists("groupRows", true)) {
+
+          this.options.groupStartOpen = values;
+
+          this.extensions.groupRows.initialize();
+
+          if (this.options.groupBy) {
+
+            this.rowManager.refreshActiveData();
+          } else {
+
+            console.warn("Grouping Update - cant refresh view, no groups have been set");
+          }
+        } else {
+
+          return false;
+        }
+      },
+
+      setGroupHeader: function setGroupHeader(values) {
+
+        if (this.extExists("groupRows", true)) {
+
+          this.options.groupHeader = values;
+
+          this.extensions.groupRows.initialize();
+
+          if (this.options.groupBy) {
+
+            this.rowManager.refreshActiveData();
+          } else {
+
+            console.warn("Grouping Update - cant refresh view, no groups have been set");
+          }
+        } else {
+
+          return false;
+        }
+      },
+
       /////////////// Navigation Management //////////////
 
 
@@ -9076,7 +9136,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }]; //starting state of group
 
 
-      this.headerGenerator = [function () {}];
+      this.headerGenerator = [function () {
+        return "";
+      }];
 
       this.groupList = []; //ordered list of groups
 
@@ -9094,6 +9156,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           groupBy = self.table.options.groupBy,
           startOpen = self.table.options.groupStartOpen,
           groupHeader = self.table.options.groupHeader;
+
+      self.headerGenerator = [function () {
+        return "";
+      }];
+
+      this.startOpen = [function () {
+        return false;
+      }]; //starting state of group
+
 
       self.table.extensions.localize.bind("groups.item", function (langValue, lang) {
 
@@ -9160,7 +9231,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (groupHeader) {
 
-        self.headerGenerator = Array.isArray(groupBy) ? groupHeader : [groupHeader];
+        self.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
       }
     };
 

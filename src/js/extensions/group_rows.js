@@ -304,7 +304,7 @@ var GroupRows = function(table){
 
 	this.groupIDLookups = false; //enable table grouping and set field to group by
 	this.startOpen = [function(){return false;}]; //starting state of group
-	this.headerGenerator = [function(){}];
+	this.headerGenerator = [function(){return "";}];
 	this.groupList = []; //ordered list of groups
 	this.groups = {}; //hold row groups
 };
@@ -316,6 +316,9 @@ GroupRows.prototype.initialize = function(){
 	groupBy = self.table.options.groupBy,
 	startOpen = self.table.options.groupStartOpen,
 	groupHeader = self.table.options.groupHeader;
+
+	self.headerGenerator = [function(){return "";}];
+	this.startOpen = [function(){return false;}]; //starting state of group
 
 	self.table.extensions.localize.bind("groups.item", function(langValue, lang){
 		self.headerGenerator[0] = function(value, count, data){ //header layout function
@@ -367,7 +370,7 @@ GroupRows.prototype.initialize = function(){
 	}
 
 	if(groupHeader){
-		self.headerGenerator = Array.isArray(groupBy) ? groupHeader : [groupHeader];
+		self.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 	}
 
 };
