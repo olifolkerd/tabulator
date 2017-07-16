@@ -287,6 +287,10 @@
 	 			if(self.options.pagination && self.extExists("page")){
 	 				self.extensions.page.reset(true);
 	 				self.extensions.page.setPage(1);
+
+	 				if(self.options.pagination == "local"){
+	 					self.rowManager.setData(self.options.data);
+	 				}
 	 			}else{
 	 				if(self.options.data.length){
 	 					self.rowManager.setData(self.options.data);

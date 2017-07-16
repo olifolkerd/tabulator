@@ -4879,6 +4879,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           self.extensions.page.reset(true);
 
           self.extensions.page.setPage(1);
+
+          if (self.options.pagination == "local") {
+
+            self.rowManager.setData(self.options.data);
+          }
         } else {
 
           if (self.options.data.length) {
