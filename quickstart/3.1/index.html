@@ -153,16 +153,16 @@
                     <p style="margin-top:30px;"><strong>2.</strong> Turn element into a Tabulator</p>
                     <pre class="prettyprint lang-js">//create Tabulator on DOM element with id "example-table"
 $("#example-table").tabulator({
-    height:"320px", // set height of table (optional)
+    height:320, // set height of table (optional)
     fitColumns:true, //fit columns to width of table (optional)
     columns:[ //Define Table Columns
-        {title:"Name", field:"name", sorter:"string", width:150},
-        {title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
-        {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+        {title:"Name", field:"name", width:150},
+        {title:"Age", field:"age", align:"left", formatter:"progress"},
+        {title:"Favourite Color", field:"col"},
         {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
     ],
-    rowClick:function(e, id, data, row){ //trigger an alert message when the row is clicked
-        alert("Row " + id + " Clicked!!!!");
+    rowClick:function(e, row){ //trigger an alert message when the row is clicked
+        alert("Row " + row.getData().id + " Clicked!!!!");
     },
 });</pre>
 
@@ -288,16 +288,16 @@ $("#example-table").tabulator("setData", tabledata);</pre>
         ];
 
         $("#example-table").tabulator({
-            height:"320px", // set height of table (optional)
+            height:320, // set height of table (optional)
             fitColumns:true, //fit columns to width of table (optional)
             columns:[ //Define Table Columns
-                {title:"Name", field:"name", sorter:"string", width:150},
-                {title:"Age", field:"age", sorter:"number", align:"left", formatter:"progress"},
-                {title:"Favourite Color", field:"col", sorter:"string", sortable:false},
+                {title:"Name", field:"name", width:150},
+                {title:"Age", field:"age", align:"left", formatter:"progress"},
+                {title:"Favourite Color", field:"col"},
                 {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
             ],
-            rowClick:function(e, id, data, row){ //trigger an alert message when the row is clicked
-                alert("Row " + id + " Clicked!!!!");
+            rowClick:function(e, row){ //trigger an alert message when the row is clicked
+                alert("Row " + row.getData().id + " Clicked!!!!");
             },
         });
 
