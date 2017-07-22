@@ -259,6 +259,7 @@
                         <li><strong>HeaderFilterPlaceholder </strong> - placeholder text for the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>headerFilterParams </strong> - additional parameters you can pass to the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>headerFilterFunc <span class="label label-danger">New</span></strong> - the filter function that should be used by the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>headerFilterFuncParams <span class="label label-danger">New</span></strong> - additional parameters object passed to the headerFilterFunc function (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                     </ul>
 
                     <a class="anchor" id="field-nesting"></a>
@@ -905,15 +906,17 @@ var printIcon = function(cell, formatterParams){ //plain text value
                     <p>Filters will remain in effect until they are cleared, including during <span class='param'>setData</span> calls.</p>
 
                     <h2>Custom Filter Functions</h2>
-                    <p>If you want to perform a more complicated filter then you can pass a callback function to the setFilter Method</p>
-                    <pre class="prettyprint lang-js">function customFilter(data){
+                    <p>If you want to perform a more complicated filter then you can pass a callback function to the setFilter method, you can also pass an optional second argument, an object with paramters to be passed to the filter function.</p>
+                    <pre class="prettyprint lang-js">function customFilter(data, filterParams){
     //data - the data for the row being filtered
-    return data.name == "bob" && data.height < 3; //must return a boolean, true if it passes the filter.
+    //filterParams - params object passed to the filter
+
+    return data.name == "bob" && data.height < filterParams.height; //must return a boolean, true if it passes the filter.
 }
 
-$("#example-table").tabulator("setFilter", customFilter);</pre>
+$("#example-table").tabulator("setFilter", customFilter, {height:3});</pre>
 
-                    <h2>Additional Filter Functions</h2>
+                    <h2>Additional Filter Functions <span class="label label-primary">Updated</span></h2>
 
                     <p>There are a number of additional filter functions that can be called to customise your filtering experience</p>
 
@@ -992,9 +995,28 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p>For all other element types (select boxes, check boxes, input elements of type number) an <span class='param'>"="</span> filter type is used.</p>
 
-                    <p>If you want to specify the type of filter used you can pass it to the <span class='param'>headerFilterFunc</span> option in the column definition object. This will take any of the standard filters outlined above or any custom filter function:</p>
+                    <p>If you want to specify the type of filter used you can pass it to the <span class='param'>headerFilterFunc</span> option in the column definition object. This will take any of the standard filters outlined above or a custom function:</p>
 
                     <pre class="prettyprint lang-js">{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:"<="} //show only rows with an age less than or equal the entered value</pre>
+
+                    <p>When using a custom filter function for a header filter, the arguments passed to the function will be slightly different from a normal custom filter function</p>
+
+                    <pre class="prettyprint lang-js">function customHeaderFilter(headerValue, rowValue, rowData, filterParams){
+    //headerValue - the value of the header filter element
+    //rowValue - the value of the column in this row
+    //rowData - the data for the row being filtered
+    //filterParams - params object passed to the headerFilterFuncParams property
+
+    return rowData.name == filterParams.name && rowValue < headerValue; //must return a boolean, true if it passes the filter.
+}
+
+//column defintion object in table constructor
+{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:customHeaderFilter, headerFilterFuncParams:{name:"bob"}}</pre>
+
+                    <p>As the above example demostrates it is possible to pass additional paramters to the custom filter function by passing an object to the <span class='param'>headerFilterFuncParams</span> option in the column definition.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:customHeaderFilter, headerFilterFuncParams:{name:"bob"}}</pre>
+
 
                     <h3>Placeholder Text </h3>
 
