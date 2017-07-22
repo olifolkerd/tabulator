@@ -22,18 +22,37 @@ Filter.prototype.initializeColumn = function(column){
 		filterFunc;
 
 		if(value){
-
-			switch(filterType){
-				case "partial":
-				filterFunc = function(data){
-
-					return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+			switch(typeof column.definition.headerFilterFunc){
+				case "string":
+				if(self.filters[column.definition.headerFilterFunc]){
+					filterFunc = function(data){
+						return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
+					}
+				}else{
+					console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
 				}
 				break;
 
-				default:
+				case "function":
 				filterFunc = function(data){
-					return column.getFieldValue(data) == value;
+					return column.definition.headerFilterFunc(value, column.getFieldValue(data));
+				}
+				break;
+			}
+
+			if(!filterFunc){
+
+				switch(filterType){
+					case "partial":
+					filterFunc = function(data){
+						return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+					}
+					break;
+
+					default:
+					filterFunc = function(data){
+						return column.getFieldValue(data) == value;
+					}
 				}
 			}
 
@@ -61,7 +80,7 @@ Filter.prototype.initializeColumn = function(column){
 			if(self.table.extensions.edit.editors[column.definition.headerFilter]){
 				editor = self.table.extensions.edit.editors[column.definition.headerFilter];
 			}else{
-				console.warn("Filter Error - Build header filter, No such editor found: ", column.definition.editor);
+				console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
 			}
 			break;
 
