@@ -562,12 +562,6 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 		self.renderTable();
 	}
 
-	if(!this.displayRowsCount){
-		if(table.options.placeholder){
-			self.getElement().append(table.options.placeholder);
-		}
-	}
-
 	if(table.extExists("columnCalcs")){
 		table.extensions.columnCalcs.recalc(this.displayRows);
 	}
@@ -620,8 +614,15 @@ RowManager.prototype.renderTable = function(){
 		}
 	}
 
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layout();
+	if(self.table.extExists("frozenColumns")){
+		self.table.extensions.frozenColumns.layout();
+	}
+
+
+	if(!self.displayRowsCount){
+		if(self.table.options.placeholder){
+			self.getElement().append(self.table.options.placeholder);
+		}
 	}
 
 	self.table.options.renderComplete();
@@ -1030,6 +1031,12 @@ RowManager.prototype.redraw = function (force){
 		}else{
 			var pos = Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount);
 			this._virtualRenderFill(pos);
+		}
+
+		if(!this.displayRowsCount){
+			if(this.table.options.placeholder){
+				this.getElement().append(this.table.options.placeholder);
+			}
 		}
 
 	}else{

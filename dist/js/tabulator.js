@@ -2751,14 +2751,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         self.renderTable();
       }
 
-      if (!this.displayRowsCount) {
-
-        if (table.options.placeholder) {
-
-          self.getElement().append(table.options.placeholder);
-        }
-      }
-
       if (table.extExists("columnCalcs")) {
 
         table.extensions.columnCalcs.recalc(this.displayRows);
@@ -2828,9 +2820,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       }
 
-      if (this.table.extExists("frozenColumns")) {
+      if (self.table.extExists("frozenColumns")) {
 
-        this.table.extensions.frozenColumns.layout();
+        self.table.extensions.frozenColumns.layout();
+      }
+
+      if (!self.displayRowsCount) {
+
+        if (self.table.options.placeholder) {
+
+          self.getElement().append(self.table.options.placeholder);
+        }
       }
 
       self.table.options.renderComplete();
@@ -3370,6 +3370,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           var pos = Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount);
 
           this._virtualRenderFill(pos);
+        }
+
+        if (!this.displayRowsCount) {
+
+          if (this.table.options.placeholder) {
+
+            this.getElement().append(this.table.options.placeholder);
+          }
         }
       } else {
 
