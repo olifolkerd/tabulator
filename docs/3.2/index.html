@@ -610,11 +610,11 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="get-set"></a>
                 <article>
-                    <h1>Mutators &amp; Accessors </h1>
+                    <h1>Mutators &amp; Accessors <span class="label label-primary">Updated</span></h1>
                     <p>Mutators (setters) and Accessors (getters) allow you to manipulate the table data as it enters and leaves your Tabulator, allowing you to convert values for use in your table and then change them again as they leave.</p>
 
                     <a class="anchor" id="mutators"></a>
-                    <h2>Mutators </h2>
+                    <h2>Mutators <span class="label label-primary">Updated</span></h2>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -627,15 +627,17 @@ $("#example-table").tabulator({
 
                     <p>You can pass an optional additional parameter with mutator, <span class='param'>mutatorParams</span> that should contain an object with additional information for configuring the mutator.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, data, type, mutatorParams){
+                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, data, type, mutatorParams, cell){
         //value - original value of the cell
         //data - the data for the row
         //type - the type of mutation occuring (data|edit)
         //mutatorParams - the mutatorParams object from the column definition
+        //cell - when the "type" argument is "edit", this contains the cell component for the edited cell, otherwise it is undefined
 
         return value > mutatorParams.threshold; //return the new value for the cell data.
     },
 }</pre>
+
                     <h3>Mutation Type</h3>
                     <p>
                         By default mutators are applied to data when it is parsed into the table with the <span class='param'>setData</span> function and when a user edits a cell. If you only want your mutators to be applied in one of these cases, you can use the <span class='param'>mutateType</span> option to specify when you want your mutator to be used.
@@ -4631,7 +4633,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         <h2>Data</h2>
                         <ul class="nav">
                             <li><a href="#set-data">Set Table Data </a></li>
-                            <li><a href="#get-set">Mutators &amp; Accessors </a></li>
+                            <li><a href="#get-set">Mutators &amp; Accessors <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#formatting">Formatting <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#sorting">Sorting </a></li>
