@@ -526,7 +526,7 @@ Column.prototype.verticalAlign = function(alignment){
 	if(this.parent.isGroup){
 		this.element.css("height", this.parent.getGroupElement().innerHeight())
 	}else{
-		this.element.css("height", this.parent.getElement().innerHeight())
+		this.element.css("height", this.parent.getHeadersElement().innerHeight())
 	}
 
 	//vertically align cell contents

@@ -729,6 +729,23 @@
   color: #590000;
 }
 
+.tabulator .tablulator-loader .tabulator-calcs-holder {
+  box-sizing: border-box;
+  width: 100%;
+  background: white !important;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.tabulator .tablulator-loader .tabulator-calcs-holder .tabulator-row {
+  background: white !important;
+}
+
+.tabulator .tablulator-loader .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
+  display: none;
+}
+
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.positive, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.positive {
   box-shadow: 0px 0px 0px #A3C293 inset;
   background: #FCFFF5 !important;

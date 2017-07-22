@@ -238,6 +238,26 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 				border-left:2px solid $rowBorderColor;
 			}
 		}
+
+		.tabulator-calcs-holder{
+			box-sizing:border-box;
+			width:100%;
+
+			background:lighten($headerBackgroundColor, 5%) !important;
+
+			.tabulator-row{
+				background:lighten($headerBackgroundColor, 5%) !important;
+
+				.tabulator-col-resize-handle{
+					display: none;
+				}
+			}
+
+			border-top:1px solid $rowBorderColor;
+			border-bottom:1px solid $headerBorderColor;
+
+			overflow: hidden;
+		}
 	}
 
 	//scrolling element to hold table

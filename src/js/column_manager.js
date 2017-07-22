@@ -1,11 +1,14 @@
 var ColumnManager = function(table){
 	this.table = table; //hold parent table
+	this.headersElement = $("<div class='tabulator-headers'></div>");
 	this.element = $("<div class='tabulator-header'></div>"); //containing element
 	this.rowManager = null; //hold row manager object
 	this.columns = []; // column definition object
 	this.columnsByIndex = []; //columns by index
 	this.columnsByField = []; //columns by field
 	this.scrollLeft = 0;
+
+	this.element.prepend(this.headersElement);
 };
 
 
@@ -19,6 +22,11 @@ ColumnManager.prototype.setRowManager = function(manager){
 //return containing element
 ColumnManager.prototype.getElement = function(){
 	return this.element;
+};
+
+//return header containing element
+ColumnManager.prototype.getHeadersElement = function(){
+	return this.headersElement;
 };
 
 //scroll horizontally to match table body
@@ -52,7 +60,7 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 ColumnManager.prototype.setColumns = function(cols, row){
 	var self = this;
 
-	self.element.empty();
+	self.headersElement.empty();
 
 	self.columns = [];
 	self.columnsByIndex = [];
@@ -96,10 +104,10 @@ ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
 	}else{
 		if(before){
 			this.columns.unshift(column);
-			this.element.prepend(column.getElement());
+			this.headersElement.prepend(column.getElement());
 		}else{
 			this.columns.push(column);
-			this.element.append(column.getElement());
+			this.headersElement.append(column.getElement());
 		}
 	}
 };

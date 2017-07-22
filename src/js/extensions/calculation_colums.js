@@ -87,7 +87,8 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 
 ColumnCalcs.prototype.initializeTopRow = function(){
 	if(!this.topInitialized){
-		// this.table.FooterManager
+		this.table.columnManager.element.append(this.topElement);
+		this.topInitialized = true;
 	}
 };
 
@@ -116,7 +117,11 @@ ColumnCalcs.prototype.recalc = function(rows){
 		data = this.rowsToData(rows);
 
 		if(this.topInitialized){
-			this.generateRow("top", this.rowsToData(rows))
+			row = this.generateRow("top", this.rowsToData(rows))
+			this.topRow = row;
+			this.topElement.empty();
+			this.topElement.append(row.getElement());
+			row.initialize(true);
 		}
 
 		if(this.botInitialized){

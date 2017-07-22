@@ -201,6 +201,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.table = table; //hold parent table
 
 
+      this.headersElement = $("<div class='tabulator-headers'></div>");
+
       this.element = $("<div class='tabulator-header'></div>"); //containing element
 
 
@@ -217,6 +219,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
       this.scrollLeft = 0;
+
+      this.element.prepend(this.headersElement);
     };
 
     ////////////// Setup Functions /////////////////
@@ -236,6 +240,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     ColumnManager.prototype.getElement = function () {
 
       return this.element;
+    };
+
+    //return header containing element
+
+
+    ColumnManager.prototype.getHeadersElement = function () {
+
+      return this.headersElement;
     };
 
     //scroll horizontally to match table body
@@ -282,7 +294,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var self = this;
 
-      self.element.empty();
+      self.headersElement.empty();
 
       self.columns = [];
 
@@ -340,12 +352,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           this.columns.unshift(column);
 
-          this.element.prepend(column.getElement());
+          this.headersElement.prepend(column.getElement());
         } else {
 
           this.columns.push(column);
 
-          this.element.append(column.getElement());
+          this.headersElement.append(column.getElement());
         }
       }
     };
@@ -1597,7 +1609,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.element.css("height", this.parent.getGroupElement().innerHeight());
       } else {
 
-        this.element.css("height", this.parent.getElement().innerHeight());
+        this.element.css("height", this.parent.getHeadersElement().innerHeight());
       }
 
       //vertically align cell contents
@@ -6678,9 +6690,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (!this.topInitialized) {
 
-        // this.table.FooterManager
+        this.table.columnManager.element.append(this.topElement);
 
-
+        this.topInitialized = true;
       }
     };
 
@@ -6715,7 +6727,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (this.topInitialized) {
 
-          this.generateRow("top", this.rowsToData(rows));
+          row = this.generateRow("top", this.rowsToData(rows));
+
+          this.topRow = row;
+
+          this.topElement.empty();
+
+          this.topElement.append(row.getElement());
+
+          row.initialize(true);
         }
 
         if (this.botInitialized) {

@@ -166,6 +166,23 @@
   border-left: 2px solid #fff;
 }
 
+.tabulator .tabulator-header .tabulator-calcs-holder {
+  box-sizing: border-box;
+  width: 100%;
+  background: white !important;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  overflow: hidden;
+}
+
+.tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row {
+  background: white !important;
+}
+
+.tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
+  display: none;
+}
+
 .tabulator .tabulator-tableHolder {
   position: relative;
   width: 100%;
