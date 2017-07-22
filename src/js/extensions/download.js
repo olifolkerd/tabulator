@@ -53,6 +53,9 @@ Download.prototype.processData = function(){
 	data = self.table.rowManager.getData(true);
 
 	//add user data processing step;
+	if(typeof self.table.options.downloadDataMutator == "function"){
+		data = self.table.options.downloadDataMutator(data);
+	}
 
 	return data;
 };

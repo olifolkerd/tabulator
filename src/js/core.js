@@ -45,6 +45,8 @@
 
 	 			keybindings:[], //array for keybindings
 
+	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
+
 	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 	 			selectable:"highlight", //highlight rows on hover

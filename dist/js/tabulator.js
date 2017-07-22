@@ -4673,6 +4673,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         keybindings: [], //array for keybindings
 
 
+        downloadDataMutator: false, //function to manipulate table data before it is downloaded
+
+
         addRowPos: "bottom", //position to insert blank rows, top|bottom
 
 
@@ -7110,6 +7113,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       //add user data processing step;
 
+
+      if (typeof self.table.options.downloadDataMutator == "function") {
+
+        data = self.table.options.downloadDataMutator(data);
+      }
 
       return data;
     };
