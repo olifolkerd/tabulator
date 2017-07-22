@@ -11453,7 +11453,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     Mutator.prototype.transformCell = function (cell, value) {
 
-      return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params);
+      return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params, cell.getComponent());
     };
 
     //default mutators
