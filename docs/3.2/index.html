@@ -3056,6 +3056,9 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                             <tr>
                                 <td>langs</td><td>object</td><td>(see documentation)</td><td>hold localization templates </td><td><a href="#localization"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
+                            <tr>
+                                <td>downloadDataMutator</td><td>function</td><td>false</td><td>callback function to mutate table data before download</td><td><a href="#download"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -3993,6 +3996,23 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
     columns:[
         {title:"Hidden Column", field:"secret", download:false} //hide data in download
     ]
+});</pre>
+
+                    <h2>Mutate Data Before Download <span class="label label-danger">New</span></h2>
+                    <p>If you want to make any changes to the table data before it is parsed into the download file you can pass a mutator function to the <span class='param'>downloadDataMutator</span> option in the table definition.</p>
+
+                    <p>In the example below we map the numerical age column into a string of <span class='param'>"adult"</span> or <span class='param'>"child"</span> based on the age value</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    downloadDataMutator:function(data){
+        //data - active table data array
+
+        data.forEach(function(row){
+            row.age = row.age >= 18 ? "adult" : "child";
+        });
+
+        return data;
+    }
 });</pre>
                 </article>
 
