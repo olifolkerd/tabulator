@@ -1162,6 +1162,11 @@ $("#example-table").tabulator("setFilter", customFilter, {height:3});</pre>
                 <article>
                     <h1>Column Calculations <span class="label label-danger">New</span></h1>
 
+                    <div class="alert alert-success extension-info" role="alert">
+                      <i class="fa fa-cubes"></i>
+                      Column calculation functionality is provided by the <a href="#extension-colcalc">column calculation extension</a>
+                    </div>
+
                     <p>Column calculations can be useed to add a row of calcualted values to the top or bottom of your table to display infmation such as the sum of a columns data.</p>
 
                     <p>There are two options that can be set in a column definition object to define a calculation, the <span class='param'>topCalc</span> option defines a calculation for the top of the column, and the <span class='param'>bottomCalc</span> defines a calculation for the bottom of the column. You can define, either, both or neither of the options.</p>
@@ -1196,7 +1201,7 @@ var adultCalc = function(values, data, calcParams){
 
     var count = 0;
 
-    value.forEach(function(value){
+    values.forEach(function(value){
         if(value > 18){
             count ++;
         }
@@ -4286,9 +4291,36 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
 
+                    <a class="anchor" id="extension-colcalc"></a>
+                    <h3>Column Calculation <small>(included in tabulator.js by default)</small></h3>
+                    <p>The column calculation extension allows for automatic column calculation rows to be generated in the header and footer of the table.</p>
+
+                    <p>More information on these functions can be found in the <a href="#calculations">Column Calculations Documentation</a>.</p>
+
+                    <p>This can be extended to add custom calculation functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("columnCalcs", "calculations", {
+    "adult":function(values, data, calcParams){
+        //values - array of column values
+        //data - all table data
+        //calcParams - params passed from the column defintion object
+
+        var count = 0;
+
+        values.forEach(function(value){
+            if(value > 18){
+                count ++;
+            }
+        });
+
+        return calc;
+    }
+});</pre>
+
+
                     <a class="anchor" id="extension-download"></a>
                     <h3>Download <small>(included in tabulator.js by default)</small></h3>
-                    <p>The extension allows for downloading data from the table into a file.</p>
+                    <p>The download extension allows for downloading data from the table into a file.</p>
 
                     <p>More information on these functions can be found in the <a href="#download">Download Documentation</a>.</p>
 
