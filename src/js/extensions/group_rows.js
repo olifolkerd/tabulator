@@ -145,8 +145,6 @@ Group.prototype.getHeadersAndRows = function(){
 
 			output = output.concat(this.rows);
 
-			console.log(this.groupManager.table.extensions.columnCalcs.hasBottomCalcs)
-
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
 				output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
 			}
