@@ -2263,7 +2263,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
     persistentLayout:true, //Enable column layout persistence
     persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
-                    <p class="note"><strong>Note:</strong> If you update the column definition array after the the column layout has been stored you may have to change the persistentLayoutID to clear out the old column layout information.</p>
+                    <p class="note"><strong>Note:</strong> If you update the column definition array after the the column layout has been stored you will have to change the persistentLayoutID or delete your cookies/local storage to clear out the old column layout information, otherwise you may get errors when your table renders.</p>
 
                     <h3>Get Column Layout Information </h3>
                     <p>If you want to handle column layout persistence manually, for example storing it in a database to use elsewhere, you can use the <span class='param'>getColumnLayout</span> function to retrieve a layout object for the current table.</p>
