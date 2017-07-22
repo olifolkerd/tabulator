@@ -864,7 +864,7 @@ var printIcon = function(cell, formatterParams){ //plain text value
 
                 <a class="anchor" id="filtering"></a>
                 <article>
-                    <h1>Filtering Data <a class="example-link" href="../../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Filtering Data <span class="label label-primary">Updated</span><a class="example-link" href="../../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -978,12 +978,17 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p class="note"><strong>Note: </strong> If the input has a <span class='param'>type</span> attribute value of <span class='param'>text</span> it will be automatically changed to <span class='param'>search</span> to give the user the option to clear the input text.</p>
 
-                    <h3>Filter Comparison Types</h3>
-                    <p>The type of comparison function used on the filter value is dependent on the type of element used for the header filter. </p>
 
-                    <p>Standard input elements use a case insensitive comparison where even a partial match counts as successful, this allows for the matches to be displayed as the user types.</p>
+                    <h3>Filter Comparison Types <span class="label label-primary">Updated</span></h3>
+                    <p>By default Tabulator will try and match the comparison type to the type of element used for the header filter. </p>
 
-                    <p>For all other element types (select boxes, check boxes, input elements of type number) an exact match is needed for the comparison to be successful.</p>
+                    <p>Standard input elements will use the <span class='param'>"like"</span> filter, this allows for the matches to be displayed as the user types.</p>
+
+                    <p>For all other element types (select boxes, check boxes, input elements of type number) an <span class='param'>"="</span> filter type is used.</p>
+
+                    <p>If you want to specify the type of filter used you can pass it to the <span class='param'>headerFilterFunc</span> option in the column definition object. This will take any of the standard filters outlined above or any custom filter function:</p>
+
+                    <pre class="prettyprint lang-js">{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:"<="} //show only rows with an age less than or equal the entered value</pre>
 
                     <h3>Placeholder Text </h3>
 
@@ -4499,7 +4504,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#set-data">Set Table Data </a></li>
                             <li><a href="#get-set">Mutators &amp; Accessors </a></li>
                             <li><a href="#formatting">Formatting <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#filtering">Filtering </a></li>
+                            <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#sorting">Sorting </a></li>
                             <li><a href="#manipulating-data">Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></a></li>
                         </ul>
