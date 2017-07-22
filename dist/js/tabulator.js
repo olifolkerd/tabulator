@@ -2112,6 +2112,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             self.table.extensions.groupRows.scrollHeaders(left);
           }
+
+          if (self.table.extExists("columnCalcs")) {
+
+            self.table.extensions.columnCalcs.scrollHorizontal(left);
+          }
         }
 
         self.scrollLeft = left;
@@ -2716,6 +2721,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           self.getElement().append(table.options.placeholder);
         }
+      }
+
+      if (table.extExists("columnCalcs")) {
+
+        table.extensions.columnCalcs.recalc(this.displayRows);
       }
     };
 
@@ -4544,6 +4554,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.table = table;
 
+      this.active = false;
+
       this.element = $("<div class='tabulator-footer'></div>"); //containing element
 
 
@@ -4565,9 +4577,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     FooterManager.prototype.append = function (element) {
 
+      this.activate();
+
       this.element.append(element);
 
       this.table.rowManager.adjustTableSize();
+    };
+
+    FooterManager.prototype.prepend = function (element) {
+
+      this.activate();
+
+      this.element.prepend(element);
+
+      this.table.rowManager.adjustTableSize();
+    };
+
+    FooterManager.prototype.activate = function () {
+
+      if (!this.active) {
+
+        this.active = true;
+
+        this.table.element.append(this.getElement());
+      }
     };
 
     window.Tabulator = {
@@ -4818,9 +4851,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         element.append(this.rowManager.getElement());
 
-        if (options.pagination && this.extExists("page", true) || options.footerElement) {
+        if (options.footerElement) {
 
-          element.append(this.footerManager.getElement());
+          this.footerManager.activate();
         }
 
         if (options.persistentLayout && this.extExists("persistentLayout", true)) {
@@ -6530,6 +6563,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.botElement = $("<div class='tabulator-calcs-holder'></div>");
 
+      this.topRow = false;
+
+      this.botRow = false;
+
+      this.topInitialized = false;
+
+      this.botInitialized = false;
+
       this.initialize();
     };
 
@@ -6587,6 +6628,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           column.extensions.columnCalcs = config;
 
           this.topCalcs.push(column);
+
+          if (!this.table.options.groupBy) {
+
+            this.initializeTopRow();
+          }
         }
       }
 
@@ -6619,9 +6665,75 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           column.extensions.columnCalcs = config;
 
           this.botCalcs.push(column);
+
+          if (!this.table.options.groupBy) {
+
+            this.initializeBottomRow();
+          }
         }
       }
-    },
+    };
+
+    ColumnCalcs.prototype.initializeTopRow = function () {
+
+      if (!this.topInitialized) {
+
+        // this.table.FooterManager
+
+
+      }
+    };
+
+    ColumnCalcs.prototype.initializeBottomRow = function () {
+
+      if (!this.botInitialized) {
+
+        this.table.footerManager.prepend(this.botElement);
+
+        this.botInitialized = true;
+      }
+    };
+
+    ColumnCalcs.prototype.scrollHorizontal = function (left) {
+
+      var hozAdjust = 0,
+          scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.innerWidth();
+
+      if (this.botInitialized) {
+
+        this.botRow.getElement().css("margin-left", -left);
+      }
+    };
+
+    ColumnCalcs.prototype.recalc = function (rows) {
+
+      var data, row;
+
+      if (this.topInitialized || this.botInitialized) {
+
+        data = this.rowsToData(rows);
+
+        if (this.topInitialized) {
+
+          this.generateRow("top", this.rowsToData(rows));
+        }
+
+        if (this.botInitialized) {
+
+          row = this.generateRow("bottom", this.rowsToData(rows));
+
+          this.botRow = row;
+
+          this.botElement.empty();
+
+          this.botElement.append(row.getElement());
+
+          row.initialize(true);
+        }
+
+        this.table.rowManager.adjustTableSize();
+      }
+    };
 
     // if(!self.table.options.groupBy && self.table.extExists("columnCalcs") && self.table.extensions.columnCalcs.hasBottomCalcs()){
 
@@ -6632,58 +6744,92 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     // }
 
 
-    ColumnCalcs.prototype.getTopElement = function (data) {
-
-      // this.updateTopElement();
+    // ColumnCalcs.prototype.getTopElement = function(data){
 
 
-      return this.topElement;
-    };
-
-    ColumnCalcs.prototype.getBottomElement = function (data) {
-
-      // this.updateBottomElement();
+    // 	// this.updateTopElement();
 
 
-      return this.botElement;
-    };
+    // 	return this.topElement;
 
-    ColumnCalcs.prototype.updateTopElement = function (data) {
 
-      this.topElement.empty();
+    // };
 
-      var row = this.generateRow("top", []);
 
-      this.topElement.append(row.getElement());
+    // ColumnCalcs.prototype.getBottomElement = function(data){
 
-      row.initialize(true);
-    };
 
-    ColumnCalcs.prototype.updateBottomElement = function (data) {
+    // 	// this.updateBottomElement();
 
-      this.botElement.empty();
 
-      var row = this.generateRow("bottom", []);
+    // 	return this.botElement;
 
-      this.botElement.append(row.getElement());
 
-      row.initialize(true);
-    };
+    // };
+
+
+    // ColumnCalcs.prototype.updateTopElement = function (data){
+
+
+    // 	this.topElement.empty();
+
+
+    // 	var row = this.generateRow("top", []);
+
+
+    // 	this.topElement.append(row.getElement());
+
+
+    // 	row.initialize(true);
+
+
+    // };
+
+
+    // ColumnCalcs.prototype.updateBottomElement = function (data){
+
+
+    // 	this.botElement.empty();
+
+
+    // 	var row = this.generateRow("bottom", []);
+
+
+    // 	this.botElement.append(row.getElement());
+
+
+    // 	row.initialize(true);
+
+
+    // };
+
 
     //generate top stats row
 
 
-    ColumnCalcs.prototype.generateTopRow = function (data) {
+    ColumnCalcs.prototype.generateTopRow = function (rows) {
 
-      return this.generateRow("top", data);
+      return this.generateRow("top", this.rowsToData(rows));
     };
 
     //generate bottom stats row
 
 
-    ColumnCalcs.prototype.generateBottomRow = function (data) {
+    ColumnCalcs.prototype.generateBottomRow = function (rows) {
 
-      return this.generateRow("bottom", data);
+      return this.generateRow("bottom", this.rowsToData(rows));
+    };
+
+    ColumnCalcs.prototype.rowsToData = function (rows) {
+
+      var data = [];
+
+      rows.forEach(function (row) {
+
+        data.push(row.getData());
+      });
+
+      return data;
     };
 
     //generate stats row
@@ -6692,15 +6838,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     ColumnCalcs.prototype.generateRow = function (pos, data) {
 
       var self = this,
-          rowData = [],
+          rowData = this.generateRowData(pos, data),
           row = false;
-
-      data.forEach(function (row) {
-
-        rowData.push(row.getData());
-      });
-
-      rowData = this.generateRowData(pos, rowData);
 
       row = new Row(rowData, this);
 
@@ -9309,8 +9448,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
 
           output = output.concat(this.rows);
-
-          console.log(this.groupManager.table.extensions.columnCalcs.hasBottomCalcs);
 
           if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
 

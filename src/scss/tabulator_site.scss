@@ -284,6 +284,21 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 			white-space: nowrap;
 			overflow:visible;
 			color:$rowTextColor;
+
+			.tabulator-row{
+				&.tabulator-calcs{
+					font-weight: bold;
+					background:darken($rowAltBackgroundColor, 5%) !important;
+
+					&.tabulator-calcs-top{
+						border-bottom:2px solid $rowBorderColor;
+					}
+
+					&.tabulator-calcs-bottom{
+						border-top:2px solid $rowBorderColor;
+					}
+				}
+			}
 		}
 	}
 
@@ -326,19 +341,6 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 
 			pointer-events: none !important;
 			z-index:15;
-		}
-
-		&.tabulator-calcs{
-			font-weight: bold;
-			background:darken($rowAltBackgroundColor, 5%) !important;
-
-			&.tabulator-calcs-top{
-				border-bottom:2px solid $rowBorderColor;
-			}
-
-			&.tabulator-calcs-bottom{
-				border-top:2px solid $rowBorderColor;
-			}
 		}
 
 		.tabulator-frozen{
@@ -500,6 +502,34 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
+
+		.tabulator-calcs-holder{
+			box-sizing:border-box;
+			width:calc("100% + 20px");
+			margin:-5px -10px 5px -10px;
+
+			text-align: left;
+
+			background:lighten($footerBackgroundColor, 5%) !important;
+
+			.tabulator-row{
+				background:lighten($footerBackgroundColor, 5%) !important;
+
+				.tabulator-col-resize-handle{
+					display: none;
+				}
+			}
+
+			border-bottom:1px solid $rowBorderColor;
+			border-top:1px solid $rowBorderColor;
+
+			overflow: hidden;
+
+			&:only-child{
+				margin-bottom:-5px;
+				border-bottom:none;
+			}
+		}
 
 		//pagination container element
 		.tabulator-pages{

@@ -209,6 +209,19 @@
   color: #333;
 }
 
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
+  font-weight: bold;
+  background: #f2f2f2 !important;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
+  border-bottom: 2px solid #fff;
+}
+
+.tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
+  border-top: 2px solid #fff;
+}
+
 .tabulator .tabulator-row {
   position: relative;
   box-sizing: border-box;
@@ -250,19 +263,6 @@
   border-bottom: 1px solid #fff;
   pointer-events: none !important;
   z-index: 15;
-}
-
-.tabulator .tabulator-row.tabulator-calcs {
-  font-weight: bold;
-  background: #f2f2f2 !important;
-}
-
-.tabulator .tabulator-row.tabulator-calcs.tabulator-calcs-top {
-  border-bottom: 2px solid #fff;
-}
-
-.tabulator .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
-  border-top: 2px solid #fff;
 }
 
 .tabulator .tabulator-row .tabulator-frozen {
@@ -409,6 +409,30 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
   -o-user-select: none;
+}
+
+.tabulator .tabulator-footer .tabulator-calcs-holder {
+  box-sizing: border-box;
+  width: calc("100% + 20px");
+  margin: -5px -10px 5px -10px;
+  text-align: left;
+  background: white !important;
+  border-bottom: 1px solid #fff;
+  border-top: 1px solid #fff;
+  overflow: hidden;
+}
+
+.tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {
+  background: white !important;
+}
+
+.tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
+  display: none;
+}
+
+.tabulator .tabulator-footer .tabulator-calcs-holder:only-child {
+  margin-bottom: -5px;
+  border-bottom: none;
 }
 
 .tabulator .tabulator-footer .tabulator-pages {

@@ -79,6 +79,10 @@ RowManager.prototype._initialize = function(){
 			if(self.table.options.groupBy){
 				self.table.extensions.groupRows.scrollHeaders(left);
 			}
+
+			if(self.table.extExists("columnCalcs")){
+				self.table.extensions.columnCalcs.scrollHorizontal(left);
+			}
 		}
 
 		self.scrollLeft = left;
@@ -562,6 +566,10 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 		if(table.options.placeholder){
 			self.getElement().append(table.options.placeholder);
 		}
+	}
+
+	if(table.extExists("columnCalcs")){
+		table.extensions.columnCalcs.recalc(this.displayRows);
 	}
 };
 

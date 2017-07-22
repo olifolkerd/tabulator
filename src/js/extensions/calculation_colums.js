@@ -5,6 +5,8 @@ var ColumnCalcs = function(table){
 	this.genColumn = false;
 	this.topElement = $("<div class='tabulator-calcs-holder'></div>");
 	this.botElement = $("<div class='tabulator-calcs-holder'></div>");
+	this.topRow = false;
+	this.botRow = false;
 	this.topInitialized = false;
 	this.botInitialized = false;
 
@@ -81,20 +83,53 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 		}
 	}
 
-},
+};
 
 ColumnCalcs.prototype.initializeTopRow = function(){
 	if(!this.topInitialized){
 		// this.table.FooterManager
 	}
-},
+};
 
 ColumnCalcs.prototype.initializeBottomRow = function(){
 	if(!this.botInitialized){
 		this.table.footerManager.prepend(this.botElement);
 		this.botInitialized = true;
 	}
-},
+};
+
+
+ColumnCalcs.prototype.scrollHorizontal = function(left){
+	var hozAdjust = 0,
+	scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.innerWidth();
+
+	if(this.botInitialized){
+		this.botRow.getElement().css("margin-left", -left);
+	}
+};
+
+
+ColumnCalcs.prototype.recalc = function(rows){
+	var data, row;
+
+	if(this.topInitialized || this.botInitialized){
+		data = this.rowsToData(rows);
+
+		if(this.topInitialized){
+			this.generateRow("top", this.rowsToData(rows))
+		}
+
+		if(this.botInitialized){
+			row = this.generateRow("bottom", this.rowsToData(rows))
+			this.botRow = row;
+			this.botElement.empty();
+			this.botElement.append(row.getElement());
+			row.initialize(true);
+		}
+
+		this.table.rowManager.adjustTableSize();
+	}
+};
 
 // if(!self.table.options.groupBy && self.table.extExists("columnCalcs") && self.table.extensions.columnCalcs.hasBottomCalcs()){
 // 	self.element.append(self.table.extensions.columnCalcs.getTopElement());
@@ -129,25 +164,30 @@ ColumnCalcs.prototype.initializeBottomRow = function(){
 
 
 //generate top stats row
-ColumnCalcs.prototype.generateTopRow = function(data){
-	return this.generateRow("top", data);
+ColumnCalcs.prototype.generateTopRow = function(rows){
+	return this.generateRow("top", this.rowsToData(rows));
 };
 //generate bottom stats row
-ColumnCalcs.prototype.generateBottomRow = function(data){
-	return this.generateRow("bottom", data);
+ColumnCalcs.prototype.generateBottomRow = function(rows){
+	return this.generateRow("bottom", this.rowsToData(rows));
 };
+
+ColumnCalcs.prototype.rowsToData = function(rows){
+	var data = [];
+
+	rows.forEach(function(row){
+		data.push(row.getData());
+	});
+
+	return data;
+};
+
 
 //generate stats row
 ColumnCalcs.prototype.generateRow = function(pos, data){
 	var self = this,
-	rowData = [],
+	rowData = this.generateRowData(pos, data),
 	row = false;
-
-	data.forEach(function(row){
-		rowData.push(row.getData());
-	});
-
-	rowData = this.generateRowData(pos, rowData);
 
 	row = new Row(rowData, this);
 

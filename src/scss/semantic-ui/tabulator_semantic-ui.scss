@@ -297,7 +297,20 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			overflow:visible;
 			color:$rowTextColor;
 
+			.tabulator-row{
+				&.tabulator-calcs{
+					font-weight: bold;
+					background:darken($background, 5%) !important;
 
+					&.tabulator-calcs-top{
+						border-bottom:2px solid $rowBorderColor;
+					}
+
+					&.tabulator-calcs-bottom{
+						border-top:2px solid $rowBorderColor;
+					}
+				}
+			}
 		}
 	}
 
@@ -333,19 +346,6 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 			pointer-events: none !important;
 			z-index:15;
-		}
-
-		&.tabulator-calcs{
-			font-weight: bold;
-			background:darken($background, 5%) !important;
-
-			&.tabulator-calcs-top{
-				border-bottom:2px solid $rowBorderColor;
-			}
-
-			&.tabulator-calcs-bottom{
-				border-top:2px solid $rowBorderColor;
-			}
 		}
 
 		.tabulator-frozen{
@@ -533,6 +533,34 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		-khtml-user-select: none;
 		-webkit-user-select: none;
 		-o-user-select: none;
+
+		.tabulator-calcs-holder{
+			box-sizing:border-box;
+			width:calc("100% + 20px");
+			margin:-$footerVerticalPadding -$footerHorizontalPadding $footerVerticalPadding -$footerHorizontalPadding;
+
+			text-align: left;
+
+			background:lighten($footerBackground, 5%) !important;
+
+			.tabulator-row{
+				background:lighten($footerBackground, 5%) !important;
+
+				.tabulator-col-resize-handle{
+					display: none;
+				}
+			}
+
+			border-bottom:1px solid $rowBorderColor;
+			border-top:1px solid $rowBorderColor;
+
+			overflow: hidden;
+
+			&:only-child{
+				margin-bottom:-$footerVerticalPadding;
+				border-bottom:none;
+			}
+		}
 
 		//pagination container element
 		.tabulator-pages{
