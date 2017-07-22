@@ -202,6 +202,7 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 
 			//set field name of mock column
 			self.genColumn.setField(column.getField());
+			self.genColumn.hozAlign = column.hozAlign;
 
 			//generate cell and assign to correct column
 			var cell = new Cell(self.genColumn, row);

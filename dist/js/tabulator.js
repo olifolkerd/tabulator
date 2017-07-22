@@ -6858,6 +6858,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           self.genColumn.setField(column.getField());
 
+          self.genColumn.hozAlign = column.hozAlign;
+
           //generate cell and assign to correct column
 
 
