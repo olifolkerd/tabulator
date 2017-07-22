@@ -4310,6 +4310,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.table.options.dataEdited(this.table.rowManager.getData());
       }
+
+      if (this.table.extExists("columnCalcs")) {
+
+        this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+      }
     };
 
     Cell.prototype.setValueProcessData = function (value, mutate) {
