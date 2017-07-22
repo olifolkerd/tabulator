@@ -227,6 +227,11 @@
                         <li><strong>accessor</strong> - function to alter column values before they are read out the table using the <span class='param'>getData</span> function (see <a href="#accessors">Accessors</a> for more details)</li>
                         <li><strong>accessorParams </strong> - additional parameters you can pass to the accessor(see <a href="#accessors">Accessors</a> for more details)</li>
                         <li><strong>download <span class="label label-danger">New</span></strong> - show or hide column in downloaded data (see <a href="#download">Downloading Table Data</a> for more details)</li>
+
+                        <li><strong>topCalc <span class="label label-danger">New</span></strong> - the column calculation to be displayed at the top of this column(see <a href="#calculations">Column Calculations</a> for more details)</li>
+                        <li><strong>bottomCalc <span class="label label-danger">New</span></strong> - the column calculation to be displayed at the bottom of this column(see <a href="#calculations">Column Calculations</a> for more details)</li>
+                        <li><strong>topCalcParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the topCalc calculation function(see <a href="#calculations">Column Calculations</a> for more details)</li>
+                        <li><strong>bottomCalcParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the bottomCalc calculation function(see <a href="#calculations">Column Calculations</a> for more details)</li>
                     </ul>
 
                     <h3>Cell Events</h3>
@@ -253,6 +258,7 @@
                         <li><strong>headerFilter</strong> - filtering of columns from elements in the header (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>HeaderFilterPlaceholder </strong> - placeholder text for the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>headerFilterParams </strong> - additional parameters you can pass to the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>headerFilterFunc <span class="label label-danger">New</span></strong> - the filter function that should be used by the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                     </ul>
 
                     <a class="anchor" id="field-nesting"></a>
@@ -1128,6 +1134,62 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                 </article>
 
+                <a class="anchor" id="calculations"></a>
+                <article>
+                    <h1>Column Calculations <span class="label label-danger">New</span></h1>
+
+                    <p>Column calculations can be useed to add a row of calcualted values to the top or bottom of your table to display infmation such as the sum of a columns data.</p>
+
+                    <p>There are two options that can be set in a column definition object to define a calculation, the <span class='param'>topCalc</span> option defines a calculation for the top of the column, and the <span class='param'>bottomCalc</span> defines a calculation for the bottom of the column. You can define, either, both or neither of the options.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Rating", field:"rating", topCalc:"avg"} //show average rating</pre>
+
+                    <p>Tabulator comes with a number of preconfigured calculations including:</p>
+                    <ul>
+                        <li><strong>avg</strong> - the average value of the column</li>
+                        <li><strong>max</strong> - the maximum value in the column</li>
+                        <li><strong>min</strong> - the minimum value in the column</li>
+                        <li><strong>sum</strong> - a sum of all values in the column</li>
+                        <li><strong>count</strong> - a count of all non empty cells in the column</li>
+                    </ul>
+
+                    <p>You can pass an optional additional parameter with the each calculation option, <span class='param'>topCalcParams</span> and <span class='param'>bottomCalcParams</span> that should contain an object with additional information for configuring the calculation function.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Rating", field:"rating", topCalc:customCalcFunction, topCalcParams:{age:18}}</pre>
+
+                    <p class="note"><strong>Note: </strong> If a calculation is defined on any column the calculations rows will be shown, any column without a calculations will show as an empty cell in the calculation row</p>
+
+                    <p class="note"><strong>Note: </strong> At the moment all calculations are formatted as plain text, formatters for column calculations will be comming soon.</p>
+
+                    <h2>Custom Calculation Function</h2>
+                    <p>If you want to perform your own calculations on a column then you can pass a custom calculation function to either of the <span class='param'>topCalc</span> or <span class='param'>bottomCalc</span> options.</p>
+
+                    <pre class="prettyprint lang-js">//count number of users over 18
+var adultCalc = function(values, data, calcParams){
+    //values - array of column values
+    //data - all table data
+    //calcParams - params passed from the column defintion object
+
+    var count = 0;
+
+    value.forEach(function(value){
+        if(value > 18){
+            count ++;
+        }
+    });
+
+    return calc;
+}
+
+ //in your column definition for the column
+ {title:"Age", field:"age", topCalc:adultCalc},
+  </pre>
+
+                <h2>Calculations For Grouped Data</h2>
+                <p>When you are using the <span class='param'>groupBy</span> option with your table, the calculation rows will be displayed differently. Instead of being displayed at the top and bottom of the table, they will be displayed inside each group, at the top and bottom of that group, showing the calculations for that group.</p>
+
+                </article>
+
                 <a class="anchor" id="manipulating-data"></a>
                 <article>
                     <h1>Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></h1>
@@ -1196,6 +1258,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     return editor;
 };
 
+//in your column definition for the column
 {title:"Gender", field:"gender", editor:selectEditor}}</pre>
                     <h3>Optional Editing </h3>
 
@@ -1210,6 +1273,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     return data.age > 18; // only allow the name cell to be edited if the age is over 18
 }
 
+//in your column definition for the column
 {title:"Name", field:"name", editor:"string", editable:editCheck}}</pre>
 
                     <p class="note"><strong>Data Mutation</strong> <br>if you have defined any mutator functions in your column definition array, these will be applied to your edited value as it is being parsed into the table. (see <a href="#mutators">Mutators</a> for more details)</p>
@@ -2419,7 +2483,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                         </tbody>
                     </table>
 
-                    <h3>Headers &amp; Columns </h3>
+                    <h3>Headers &amp; Columns <span class="label label-primary">Updated</span></h3>
                     <table>
                         <thead>
                             <th width="200">Class</th>
@@ -2427,7 +2491,13 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                         </thead>
                         <tbody>
                             <tr>
-                                <td>tabulator-header</td><td>Column header row</td>
+                                <td>tabulator-header</td><td>Table header element</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-headers</td><td>Hold all column headers inside table header</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs-holder</td><td>Hold column calculations row, appears in both header and footer</td>
                             </tr>
                             <tr>
                                 <td>tabulator-col</td><td>Column header (in header row)</td>
@@ -2508,6 +2578,15 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                             </tr>
                             <tr>
                                 <td>tabulator-group-level-<span class='param'>X</span></td><td>Applied to .tabulator-group to denote its level in multi level grouping, the <span class='param'>X</span> is replaced with the number of that grouping level</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs</td><td>A row that contains column calculations instead of data</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs-top</td><td>A column calculations row at the top of a group</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs-bottom</td><td>A column calculations row at the bottom of a group</td>
                             </tr>
                         </tbody>
                     </table>
@@ -4515,6 +4594,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                             <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#sorting">Sorting </a></li>
                             <li><a href="#manipulating-data">Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#calculations">Column Calculations <span class="label label-danger">New</span></a></li>
                         </ul>
 
                         <h2>Layout</h2>
