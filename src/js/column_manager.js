@@ -517,8 +517,14 @@ ColumnManager.prototype.redraw = function(force){
 		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
 			this.table.extensions.persistentLayout.save();
 		}
+
+		if(this.table.extExists("columnCalcs")){
+			this.table.extensions.columnCalcs.redraw();
+		}
 	}
 
 	this.table.footerManager.redraw();
+
+
 
 };

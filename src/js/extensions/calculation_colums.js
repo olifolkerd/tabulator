@@ -259,6 +259,16 @@ ColumnCalcs.prototype.hasBottomCalcs = function(){
 	return	!!(this.botCalcs.length);
 },
 
+//handle table redraw
+ColumnCalcs.prototype.redraw = function(){
+	if(this.topRow){
+		this.topRow.normalizeHeight(true);
+	}
+	if(this.botRow){
+		this.botRow.normalizeHeight(true);
+	}
+};
+
 //default calculations
 ColumnCalcs.prototype.calculations = {
 	"avg":function(values, data, calcData){

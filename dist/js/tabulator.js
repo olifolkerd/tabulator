@@ -907,6 +907,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           this.table.extensions.persistentLayout.save();
         }
+
+        if (this.table.extExists("columnCalcs")) {
+
+          this.table.extensions.columnCalcs.redraw();
+        }
       }
 
       this.table.footerManager.redraw();
@@ -6985,6 +6990,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       return !!this.botCalcs.length;
     },
+
+    //handle table redraw
+
+
+    ColumnCalcs.prototype.redraw = function () {
+
+      if (this.topRow) {
+
+        this.topRow.normalizeHeight(true);
+      }
+
+      if (this.botRow) {
+
+        this.botRow.normalizeHeight(true);
+      }
+    };
 
     //default calculations
 
