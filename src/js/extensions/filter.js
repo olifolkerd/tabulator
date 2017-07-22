@@ -35,7 +35,7 @@ Filter.prototype.initializeColumn = function(column){
 
 				case "function":
 				filterFunc = function(data){
-					return column.definition.headerFilterFunc(data, value, column.definition.headerFilterFuncParams || {});
+					return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
 				}
 				break;
 			}
