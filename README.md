@@ -16,10 +16,7 @@ Simply include the library and the css in your JQuery UI project and you're away
 
 Tabulator is packed with useful features including:
 
-***
 ![Tabluator Features](https://raw.githubusercontent.com/olifolkerd/tabulator/docs/3.2/images/feature_share.png)
-***
-
 
 Setup
 ================================
