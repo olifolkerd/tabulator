@@ -1857,8 +1857,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.widthFixed = true;
 
-      console.log(width);
-
       this.setWidthActual(width);
     };
 

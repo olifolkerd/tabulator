@@ -703,8 +703,6 @@ Column.prototype.hide = function(){
 
 Column.prototype.setWidth = function(width){
 	this.widthFixed = true;
-
-	console.log(width)
 	this.setWidthActual(width);
 };
 
