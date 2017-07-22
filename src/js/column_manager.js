@@ -520,5 +520,6 @@ ColumnManager.prototype.redraw = function(force){
 		}
 	}
 
+	this.table.footerManager.redraw();
 
 };

@@ -908,6 +908,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.table.extensions.persistentLayout.save();
         }
       }
+
+      this.table.footerManager.redraw();
     };
 
     //public column object
@@ -4575,6 +4577,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.element = $("<div class='tabulator-footer'></div>"); //containing element
 
+      this.links = [];
 
       this._initialize();
     };
@@ -4592,25 +4595,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return this.element;
     };
 
-    FooterManager.prototype.append = function (element) {
+    FooterManager.prototype.append = function (element, parent) {
 
-      this.activate();
+      this.activate(parent);
 
       this.element.append(element);
 
       this.table.rowManager.adjustTableSize();
     };
 
-    FooterManager.prototype.prepend = function (element) {
+    FooterManager.prototype.prepend = function (element, parent) {
 
-      this.activate();
+      this.activate(parent);
 
       this.element.prepend(element);
 
       this.table.rowManager.adjustTableSize();
     };
 
-    FooterManager.prototype.activate = function () {
+    FooterManager.prototype.activate = function (parent) {
 
       if (!this.active) {
 
@@ -4618,6 +4621,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.table.element.append(this.getElement());
       }
+
+      if (parent) {
+
+        this.links.push(parent);
+      }
+    };
+
+    FooterManager.prototype.redraw = function () {
+
+      this.links.forEach(function (link) {
+
+        link.footerRedraw();
+      });
     };
 
     window.Tabulator = {
@@ -11539,7 +11555,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (!self.table.options.paginationElement) {
 
-        self.table.footerManager.append(self.element);
+        self.table.footerManager.append(self.element, self);
       }
 
       //set default values
@@ -11669,6 +11685,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           self.pagesElement.append(self._generatePageButton(i));
         }
       }
+
+      this.footerRedraw();
     };
 
     Page.prototype._generatePageButton = function (page) {
@@ -11921,6 +11939,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       } else {
 
         console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+      }
+    };
+
+    //handle the footer element being redrawn
+
+
+    Page.prototype.footerRedraw = function () {
+
+      var footer = this.table.footerManager.element;
+
+      if (footer.innerWidth() - footer[0].scrollWidth < 0) {
+
+        this.pagesElement.hide();
+      } else {
+
+        this.pagesElement.show();
+
+        if (footer.innerWidth() - footer[0].scrollWidth < 0) {
+
+          this.pagesElement.hide();
+        }
       }
     };
 

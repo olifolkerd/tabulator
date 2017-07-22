@@ -102,7 +102,7 @@ Page.prototype.initialize = function(){
 	self.element.append(self.lastBut);
 
 	if(!self.table.options.paginationElement){
-		self.table.footerManager.append(self.element);
+		self.table.footerManager.append(self.element, self);
 	}
 
 
@@ -191,6 +191,8 @@ Page.prototype._setPageButtons = function(){
 			self.pagesElement.append(self._generatePageButton(i));
 		}
 	}
+
+	this.footerRedraw();
 };
 
 Page.prototype._generatePageButton = function(page){
@@ -372,6 +374,21 @@ Page.prototype._parseRemoteData = function(data){
 		}
 	}else{
 		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+	}
+};
+
+//handle the footer element being redrawn
+Page.prototype.footerRedraw = function(){
+	var footer = this.table.footerManager.element;
+
+	if((footer.innerWidth() - footer[0].scrollWidth) < 0){
+		this.pagesElement.hide();
+	}else{
+		this.pagesElement.show();
+
+		if((footer.innerWidth() - footer[0].scrollWidth) < 0){
+			this.pagesElement.hide();
+		}
 	}
 };
 
