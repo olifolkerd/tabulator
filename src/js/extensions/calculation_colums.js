@@ -5,6 +5,8 @@ var ColumnCalcs = function(table){
 	this.genColumn = false;
 	this.topElement = $("<div class='tabulator-calcs-holder'></div>");
 	this.botElement = $("<div class='tabulator-calcs-holder'></div>");
+	this.topInitialized = false;
+	this.botInitialized = false;
 
 	this.initialize();
 };
@@ -45,6 +47,10 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 		if(config.topCalc){
 			column.extensions.columnCalcs = config;
 			this.topCalcs.push(column);
+
+			if(!this.table.options.groupBy){
+				this.initializeTopRow();
+			}
 		}
 
 	}
@@ -68,41 +74,58 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 		if(config.botCalc){
 			column.extensions.columnCalcs = config;
 			this.botCalcs.push(column);
+
+			if(!this.table.options.groupBy){
+				this.initializeBottomRow();
+			}
 		}
 	}
 
+},
+
+ColumnCalcs.prototype.initializeTopRow = function(){
+	if(!this.topInitialized){
+		// this.table.FooterManager
+	}
+},
+
+ColumnCalcs.prototype.initializeBottomRow = function(){
+	if(!this.botInitialized){
+		this.table.footerManager.prepend(this.botElement);
+		this.botInitialized = true;
+	}
 },
 
 // if(!self.table.options.groupBy && self.table.extExists("columnCalcs") && self.table.extensions.columnCalcs.hasBottomCalcs()){
 // 	self.element.append(self.table.extensions.columnCalcs.getTopElement());
 // }
 
-ColumnCalcs.prototype.getTopElement = function(data){
-	// this.updateTopElement();
-	return this.topElement;
-};
+// ColumnCalcs.prototype.getTopElement = function(data){
+// 	// this.updateTopElement();
+// 	return this.topElement;
+// };
 
-ColumnCalcs.prototype.getBottomElement = function(data){
-	// this.updateBottomElement();
-	return this.botElement;
-};
+// ColumnCalcs.prototype.getBottomElement = function(data){
+// 	// this.updateBottomElement();
+// 	return this.botElement;
+// };
 
-ColumnCalcs.prototype.updateTopElement = function (data){
-	this.topElement.empty();
+// ColumnCalcs.prototype.updateTopElement = function (data){
+// 	this.topElement.empty();
 
-	var row = this.generateRow("top", []);
-	this.topElement.append(row.getElement());
-	row.initialize(true);
-};
+// 	var row = this.generateRow("top", []);
+// 	this.topElement.append(row.getElement());
+// 	row.initialize(true);
+// };
 
 
-ColumnCalcs.prototype.updateBottomElement = function (data){
-	this.botElement.empty();
+// ColumnCalcs.prototype.updateBottomElement = function (data){
+// 	this.botElement.empty();
 
-	var row = this.generateRow("bottom", []);
-	this.botElement.append(row.getElement());
-	row.initialize(true);
-};
+// 	var row = this.generateRow("bottom", []);
+// 	this.botElement.append(row.getElement());
+// 	row.initialize(true);
+// };
 
 
 //generate top stats row
