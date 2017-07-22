@@ -8242,7 +8242,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
               filterFunc = function filterFunc(data) {
 
-                return column.definition.headerFilterFunc(value, column.getFieldValue(data));
+                return column.definition.headerFilterFunc(data, value);
               };
 
               break;
