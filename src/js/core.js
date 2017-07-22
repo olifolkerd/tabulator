@@ -238,8 +238,8 @@
 	 			element.append(this.rowManager.getElement());
 
 
-	 			if(options.pagination && this.extExists("page", true) || options.footerElement){
-	 				element.append(this.footerManager.getElement());
+	 			if(options.footerElement){
+	 				this.footerManager.activate();
 	 			}
 
 
