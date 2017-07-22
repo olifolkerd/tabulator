@@ -96,6 +96,7 @@ var Column = function(def, parent){
 
 	this.width = null; //column width
 	this.minWidth = null; //column minimum width
+	this.widthFixed = false; //user has specified a width for this column
 
 	this.visible = true; //default visible state
 
@@ -376,7 +377,9 @@ Column.prototype._buildColumnHeader = function(){
 	self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
 
 	//set width if present
-	self.setWidth(def.width);
+	if(typeof def.width !== "undefined"){
+		self.setWidth(def.width);
+	}
 
 	//set tooltip if present
 	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
@@ -699,6 +702,13 @@ Column.prototype.hide = function(){
 };
 
 Column.prototype.setWidth = function(width){
+	this.widthFixed = true;
+
+	console.log(width)
+	this.setWidthActual(width);
+};
+
+Column.prototype.setWidthActual = function(width){
 	width = Math.max(this.minWidth, width);
 
 	this.width = width;
@@ -716,6 +726,7 @@ Column.prototype.setWidth = function(width){
 		this.table.extensions.frozenColumns.layout();
 	}
 };
+
 
 Column.prototype.checkCellHeights = function(){
 	var rows = [];
@@ -793,9 +804,13 @@ Column.prototype.generateCell = function(row){
 Column.prototype.fitToData = function(){
 	var self = this;
 
+	if(!this.widthFixed){
+		this.element.css("width", "")
+	}
+
 	var maxWidth = this.element.outerWidth() + 1;
 
-	if(!self.width){
+	if(!self.width || !this.widthFixed){
 		self.cells.forEach(function(cell){
 			var width = cell.getWidth();
 
@@ -805,7 +820,7 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			self.setWidth(maxWidth);
+			self.setWidthActual(maxWidth);
 		}
 
 	}

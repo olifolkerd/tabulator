@@ -1052,6 +1052,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.minWidth = null; //column minimum width
 
+      this.widthFixed = false; //user has specified a width for this column
+
 
       this.visible = true; //default visible state
 
@@ -1425,7 +1427,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       //set width if present
 
-      self.setWidth(def.width);
+      if (typeof def.width !== "undefined") {
+
+        self.setWidth(def.width);
+      }
 
       //set tooltip if present
 
@@ -1845,6 +1850,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     Column.prototype.setWidth = function (width) {
 
+      this.widthFixed = true;
+
+      console.log(width);
+
+      this.setWidthActual(width);
+    };
+
+    Column.prototype.setWidthActual = function (width) {
+
       width = Math.max(this.minWidth, width);
 
       this.width = width;
@@ -1964,9 +1978,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var self = this;
 
+      if (!this.widthFixed) {
+
+        this.element.css("width", "");
+      }
+
       var maxWidth = this.element.outerWidth() + 1;
 
-      if (!self.width) {
+      if (!self.width || !this.widthFixed) {
 
         self.cells.forEach(function (cell) {
 
@@ -1980,7 +1999,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (maxWidth) {
 
-          self.setWidth(maxWidth);
+          self.setWidthActual(maxWidth);
         }
       }
     };

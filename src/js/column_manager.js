@@ -489,7 +489,6 @@ ColumnManager.prototype.deregisterColumn = function(column){
 
 //redraw columns
 ColumnManager.prototype.redraw = function(force){
-
 	if(force){
 		if(this.element.is(":visible")){
 			this._verticalAlignHeaders();
