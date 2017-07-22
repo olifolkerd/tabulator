@@ -8242,7 +8242,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
               filterFunc = function filterFunc(data) {
 
-                return column.definition.headerFilterFunc(data, value);
+                return column.definition.headerFilterFunc(data, value, column.definition.headerFilterFuncParams || {});
               };
 
               break;
@@ -8497,7 +8497,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (typeof filter.field == "function") {
 
-          filterFunc = filter.field;
+          filterFunc = function filterFunc(data) {
+
+            return filter.field(data, filter.type || {}); // pass params to custom filter function
+
+          };
         } else {
 
           if (self.filters[filter.type]) {

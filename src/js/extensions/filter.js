@@ -35,7 +35,7 @@ Filter.prototype.initializeColumn = function(column){
 
 				case "function":
 				filterFunc = function(data){
-					return column.definition.headerFilterFunc(data, value);
+					return column.definition.headerFilterFunc(data, value, column.definition.headerFilterFuncParams || {});
 				}
 				break;
 			}
@@ -215,7 +215,9 @@ Filter.prototype.addFilter = function(field, type, value){
 		var filterFunc = false;
 
 		if(typeof filter.field == "function"){
-			filterFunc = filter.field;
+			filterFunc = function(data){
+				return filter.field(data, filter.type || {})// pass params to custom filter function
+			}
 		}else{
 			if(self.filters[filter.type]){
 
