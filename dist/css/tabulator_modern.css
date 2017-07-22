@@ -40,6 +40,7 @@
   position: relative;
   box-sizing: border-box;
   border-right: 2px solid #fff;
+  background-color: #fff;
   text-align: left;
   vertical-align: bottom;
   overflow: hidden;
@@ -153,7 +154,6 @@
 .tabulator .tabulator-header .tabulator-frozen {
   display: inline-block;
   position: absolute;
-  background-color: inherit;
   z-index: 10;
 }
 
@@ -168,7 +168,7 @@
 
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
-  width: 100%;
+  min-width: 200%;
   background: white !important;
   border-top: 1px solid #fff;
   border-bottom: 1px solid #fff;

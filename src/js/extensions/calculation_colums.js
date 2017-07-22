@@ -133,6 +133,11 @@ ColumnCalcs.prototype.recalc = function(rows){
 		}
 
 		this.table.rowManager.adjustTableSize();
+
+		//set resizable handles
+		if(this.table.extExists("frozenColumns")){
+			this.table.extensions.frozenColumns.layout();
+		}
 	}
 };
 

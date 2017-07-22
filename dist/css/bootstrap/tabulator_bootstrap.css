@@ -37,6 +37,7 @@
   display: inline-block;
   position: relative;
   box-sizing: border-box;
+  background-color: #fff;
   text-align: left;
   vertical-align: bottom;
   overflow: hidden;
@@ -148,7 +149,6 @@
 .tabulator .tabulator-header .tabulator-frozen {
   display: inline-block;
   position: absolute;
-  background-color: inherit;
   z-index: 10;
 }
 

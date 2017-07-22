@@ -6752,6 +6752,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.table.rowManager.adjustTableSize();
+
+        //set resizable handles
+
+
+        if (this.table.extExists("frozenColumns")) {
+
+          this.table.extensions.frozenColumns.layout();
+        }
       }
     };
 
@@ -9157,16 +9165,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         self.leftMargin = self._calcSpace(self.leftColumns, self.leftColumns.length);
 
-        self.table.columnManager.element.css("padding-left", self.leftMargin);
+        self.table.columnManager.headersElement.css("margin-left", self.leftMargin);
 
         self.rightMargin = self._calcSpace(self.rightColumns, self.rightColumns.length);
 
         self.table.columnManager.element.css("padding-right", self.rightMargin);
 
-        self.table.rowManager.getRows().forEach(function (row) {
+        self.table.rowManager.activeRows.forEach(function (row) {
 
           self.layoutRow(row);
         });
+
+        if (self.table.extExists("columnCalcs")) {
+
+          if (self.table.extensions.columnCalcs.topInitialized && self.table.extensions.columnCalcs.topRow) {
+
+            self.layoutRow(self.table.extensions.columnCalcs.topRow);
+          }
+
+          if (self.table.extensions.columnCalcs.botInitialized && self.table.extensions.columnCalcs.botRow) {
+
+            self.layoutRow(self.table.extensions.columnCalcs.botRow);
+          }
+        }
 
         //calculate left columns
 

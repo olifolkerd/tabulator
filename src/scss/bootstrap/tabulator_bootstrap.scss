@@ -81,6 +81,7 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 			display:inline-block;
 			position:relative;
 			box-sizing:border-box;
+			background-color: $headerBackgroundColor;
 			text-align:left;
 			vertical-align: bottom;
 			overflow: hidden;
@@ -225,7 +226,7 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 			display: inline-block;
 			position: absolute;
 
-			background-color: inherit;
+			// background-color: inherit;
 
 			z-index: 10;
 

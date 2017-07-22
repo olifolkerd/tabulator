@@ -90,6 +90,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			position:relative;
 			box-sizing:border-box;
 			border-right:2px solid $headerBorderColor;
+			background-color: $headerBackgroundColor;
 			text-align:left;
 			vertical-align: bottom;
 			overflow: hidden;
@@ -237,7 +238,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			display: inline-block;
 			position: absolute;
 
-			background-color: inherit;
+			// background-color: inherit;
 
 			z-index: 10;
 
@@ -254,7 +255,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			width:100%;
+			min-width:200%;
 
 			background:lighten($headerBackgroundColor, 5%) !important;
 
