@@ -221,7 +221,7 @@ Filter.prototype.addFilter = function(field, type, value){
 		}else{
 			if(self.filters[filter.type]){
 
-				column = self.columnManager.getColumnByField(filter.field);
+				column = self.table.columnManager.getColumnByField(filter.field);
 
 				if(column){
 					filterFunc = function(data){
