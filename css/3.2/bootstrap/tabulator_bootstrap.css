@@ -9,6 +9,7 @@
   margin-bottom: 20px;
   -ms-transform: translatez(0);
   transform: translatez(0);
+  border-bottom:none !important;
 }
 
 #example-table-theme-bootstrap .tabulator-block-select {
