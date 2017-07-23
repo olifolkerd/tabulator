@@ -283,7 +283,7 @@ ColumnCalcs.prototype.calculations = {
 			output = precision !== false ? output.toFixed(precision) : output;
 		}
 
-		return output.toString();
+		return parseFloat(output).toString();
 	},
 	"max":function(values, data, calcParams){
 		var output = null;
