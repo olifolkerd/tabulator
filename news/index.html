@@ -127,7 +127,7 @@
                         <p>Its been a busy month in the world of Tabulator, following tons of great user feedback I am happy to announce the release of Tabulator 3.2</p>
 
                         <h2>Virtual DOM Render Speed Dramatically Improved</h2>
-                        <p>The render speed of the virtual DOM has been dramatically improved, allowing for a great experience even on older browsers like IE 11. Fallback modes have also been introduced to replace some of the graphically intensive opperations with simpler alternatives on less capbable browsers.</p>
+                        <p>The render speed of the virtual DOM has been dramatically improved, allowing for a great experience even on older browsers like IE 11. Fallback modes have also been introduced to replace some of the graphically intensive operations with simpler alternatives on less capable browsers.</p>
 
                         <p>The <span class='param'>virtualDomBuffer</span> option has been added to allow more control over the efficiency of the renderer.</p>
 
@@ -137,7 +137,7 @@
 
                         <p>You can now bind columns to fields inside object by passing the nested field name to the column definition object using dot notation.</p>
 
-                        <p>For more information checkout the <a href="../docs/3.2#field-nesting">Column Defintion Documentation</a></p>
+                        <p>For more information checkout the <a href="../docs/3.2#field-nesting">Column Definition Documentation</a></p>
 
 
                         <h2>Column Calculations</h2>
@@ -179,7 +179,7 @@
                         <p>The <span class='param'>getRows</span> function has been added to allow retrieval of all table row components.</p>
 
                         <h2>Download Data Updates</h2>
-                        <p>You can now hide columns in downloaded data by setting the <span class='param'>download</span> property to <span class='param'>false</span> in a columns defintion array.</p>
+                        <p>You can now hide columns in downloaded data by setting the <span class='param'>download</span> property to <span class='param'>false</span> in a columns definition array.</p>
 
                         <p>The <span class='param'>downloadDataMutator</span> table option allows you to mutated data before it is parsed into the download file.</p>
 
@@ -204,22 +204,20 @@
                         <p>The <span class='param'>resizableColumns</span> option now accepts the values of <span class='param'>header</span> and <span class='param'>cell</span> to give more choice on how a user can resize columns.</p>
 
                         <h2>Variable Height Formatters</h2>
-                        <p>The <span class='param'>textarea</span> formatter will now automatically adjust the hight of a row as its column is resized to ensure that no text is hidden by overflowing the cell. To enable this behaviour on other formatters you can now use the <span class='param'>variableHieght</span> property in column definition object.</p>
+                        <p>The <span class='param'>textarea</span> formatter will now automatically adjust the height of a row as its column is resized to ensure that no text is hidden by overflowing the cell. To enable this behaviour on other formatters you can now use the <span class='param'>variableHieght</span> property in column definition object.</p>
 
                         <p>For more information checkout the <a href="../docs/3.2#define-column-headers">Column Definition Documentation</a></p>
 
                         <h2>General System Tweaks</h2>
                         <p>A number of small tweaks have been made to the system including:</p>
                         <ul>
-                            <li>The pagination element will now act responsivly, hiding the page number selector when the table is too narrow to display it</li>
+                            <li>The pagination element will now act responsively, hiding the page number selector when the table is too narrow to display it</li>
                             <li>The fit columns to data display mode now correctly resizes columns when data is set</li>
                             <li>The redraw function has been improved to give a better look after redrawing a previously hidden table</li>
                             <li>Fixed placeholder element rendering on table redraw</li>
                             <li>Initial data is now correctly loaded into table in <span class='param'>local</span> pagination mode</li>
                             <li>Cell navigation functions now work correctly after column reorder</li>
                         </ul>
-
-
                     </article>
 
                     <article>
