@@ -22,17 +22,37 @@ Filter.prototype.initializeColumn = function(column){
 		filterFunc;
 
 		if(value){
-
-			switch(filterType){
-				case "partial":
-				filterFunc = function(data){
-					return String(data[field]).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+			switch(typeof column.definition.headerFilterFunc){
+				case "string":
+				if(self.filters[column.definition.headerFilterFunc]){
+					filterFunc = function(data){
+						return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
+					}
+				}else{
+					console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
 				}
 				break;
 
-				default:
+				case "function":
 				filterFunc = function(data){
-					return data[field] == value;
+					return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
+				}
+				break;
+			}
+
+			if(!filterFunc){
+
+				switch(filterType){
+					case "partial":
+					filterFunc = function(data){
+						return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+					}
+					break;
+
+					default:
+					filterFunc = function(data){
+						return column.getFieldValue(data) == value;
+					}
 				}
 			}
 
@@ -60,7 +80,7 @@ Filter.prototype.initializeColumn = function(column){
 			if(self.table.extensions.edit.editors[column.definition.headerFilter]){
 				editor = self.table.extensions.edit.editors[column.definition.headerFilter];
 			}else{
-				console.warn("Filter Error - Build header filter, No such editor found: ", column.definition.editor);
+				console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
 			}
 			break;
 
@@ -93,8 +113,9 @@ Filter.prototype.initializeColumn = function(column){
 			};
 
 			editorElement = editor.call(self, cellWrapper, function(){}, success, cancel, column.definition.headerFilterParams || {});
+
 			//set Placeholder Text
-			if(column.definition.field){
+			if(field){
 				self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function(value){
 					editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters.default"));
 				});
@@ -182,7 +203,8 @@ Filter.prototype.setFilter = function(field, type, value){
 
 //add filter to array
 Filter.prototype.addFilter = function(field, type, value){
-	var self = this;
+	var self = this,
+	column;
 
 	if(!Array.isArray(field)){
 		field = [{field:field, type:type, value:value}];
@@ -193,12 +215,25 @@ Filter.prototype.addFilter = function(field, type, value){
 		var filterFunc = false;
 
 		if(typeof filter.field == "function"){
-			filterFunc = filter.field;
+			filterFunc = function(data){
+				return filter.field(data, filter.type || {})// pass params to custom filter function
+			}
 		}else{
 			if(self.filters[filter.type]){
-				filterFunc = function(data){
-					return self.filters[filter.type](filter.value, data[filter.field]);
+
+				column = self.columnManager.getColumnByField(filter.field);
+
+				if(column){
+					filterFunc = function(data){
+						return self.filters[filter.type](filter.value, column.getFieldValue(data));
+					}
+				}else{
+					filterFunc = function(data){
+						return self.filters[filter.type](filter.value, data[filter.field]);
+					}
 				}
+
+
 			}else{
 				console.warn("Filter Error - No such filter type found, ignoring: ", filter.type);
 			}

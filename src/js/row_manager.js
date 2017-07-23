@@ -79,6 +79,10 @@ RowManager.prototype._initialize = function(){
 			if(self.table.options.groupBy){
 				self.table.extensions.groupRows.scrollHeaders(left);
 			}
+
+			if(self.table.extExists("columnCalcs")){
+				self.table.extensions.columnCalcs.scrollHorizontal(left);
+			}
 		}
 
 		self.scrollLeft = left;
@@ -558,10 +562,8 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 		self.renderTable();
 	}
 
-	if(!this.displayRowsCount){
-		if(table.options.placeholder){
-			self.getElement().append(table.options.placeholder);
-		}
+	if(table.extExists("columnCalcs")){
+		table.extensions.columnCalcs.recalc(this.displayRows);
 	}
 };
 
@@ -612,8 +614,15 @@ RowManager.prototype.renderTable = function(){
 		}
 	}
 
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layout();
+	if(self.table.extExists("frozenColumns")){
+		self.table.extensions.frozenColumns.layout();
+	}
+
+
+	if(!self.displayRowsCount){
+		if(self.table.options.placeholder){
+			self.getElement().append(self.table.options.placeholder);
+		}
 	}
 
 	self.table.options.renderComplete();
@@ -802,12 +811,20 @@ RowManager.prototype.scrollVertical = function(dir){
 			}
 
 			if(topDiff < 0){
-				this._removeBottomRow(-bottomDiff);
+
+				//hide bottom row if needed
+				if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
+					this._removeBottomRow(-bottomDiff);
+				}
 			}
 		}else{
 			//scrolling down
 			if(topDiff >= 0){
-				this._removeTopRow(topDiff);
+
+				//hide top row if needed
+				if(this.scrollTop > this.vDomWindowBuffer){
+					this._removeTopRow(topDiff);
+				}
 			}
 
 			if(bottomDiff >= 0){
@@ -866,22 +883,18 @@ RowManager.prototype._removeTopRow = function(topDiff){
 	topRow = this.displayRows[this.vDomTop],
 	topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
-	//hide top row if needed
-	if(this.scrollTop > this.vDomWindowBuffer){
+	if(topDiff >= topRowHeight){
 
-		if(topDiff >= topRowHeight){
+		topRow.element.detach();
 
-			topRow.element.detach();
+		this.vDomTopPad += topRowHeight;
+		table[0].style.paddingTop = this.vDomTopPad + "px";
+		this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
+		this.vDomTop++;
 
-			this.vDomTopPad += topRowHeight;
-			table[0].style.paddingTop = this.vDomTopPad + "px";
-			this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
-			this.vDomTop++;
+		topDiff = this.scrollTop - this.vDomScrollPosTop;
 
-			topDiff = this.scrollTop - this.vDomScrollPosTop;
-
-			this._removeTopRow(topDiff);
-		}
+		this._removeTopRow(topDiff);
 	}
 
 };
@@ -935,27 +948,23 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 	bottomRow = this.displayRows[this.vDomBottom],
 	bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
-	//hide bottom row if needed
-	if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
+	if(bottomDiff >= bottomRowHeight){
 
-		if(bottomDiff >= bottomRowHeight){
+		bottomRow.element.detach();
 
-			bottomRow.element.detach();
+		this.vDomBottomPad += bottomRowHeight;
 
-			this.vDomBottomPad += bottomRowHeight;
-
-			if(this.vDomBottomPad < 0){
-				this.vDomBottomPad == 0;
-			}
-
-			table[0].style.paddingBottom = this.vDomBottomPad + "px";
-			this.vDomScrollPosBottom -= bottomRowHeight;
-			this.vDomBottom--;
-
-			bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
-
-			this._removeBottomRow(bottomDiff);
+		if(this.vDomBottomPad < 0){
+			this.vDomBottomPad == 0;
 		}
+
+		table[0].style.paddingBottom = this.vDomBottomPad + "px";
+		this.vDomScrollPosBottom -= bottomRowHeight;
+		this.vDomBottom--;
+
+		bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
+
+		this._removeBottomRow(bottomDiff);
 	}
 };
 
@@ -1022,6 +1031,12 @@ RowManager.prototype.redraw = function (force){
 		}else{
 			var pos = Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount);
 			this._virtualRenderFill(pos);
+		}
+
+		if(!this.displayRowsCount){
+			if(this.table.options.placeholder){
+				this.getElement().append(this.table.options.placeholder);
+			}
 		}
 
 	}else{

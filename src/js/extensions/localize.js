@@ -108,10 +108,9 @@ Localize.prototype.getLang = function(locale){
 
 //get text for current locale
 Localize.prototype.getText = function(path, value){
-	var self = this,
-	path = value ? path + "." + value : path,
+	var path = value ? path + "." + value : path,
 	pathArray = path.split("."),
-	text = this._getLangElement(pathArray, self.locale);
+	text = this._getLangElement(pathArray, this.locale);
 
 	// if(text === false){
 	// 	console.warn("Localization Error - Matching localized text not found for given path: ", path);
@@ -150,7 +149,7 @@ Localize.prototype.bind = function(path, callback){
 
 	this.bindings[path].push(callback);
 
-	callback(this.getText(path));
+	callback(this.getText(path), this.lang);
 };
 
 //itterate through bindings and trigger updates
@@ -159,7 +158,7 @@ Localize.prototype._executeBindings = function(){
 
 	for(let path in self.bindings){
 		self.bindings[path].forEach(function(binding){
-			binding(self.getText(path));
+			binding(self.getText(path), self.lang);
 		});
 	}
 };
@@ -167,6 +166,10 @@ Localize.prototype._executeBindings = function(){
 //Localized text listings
 Localize.prototype.langs = {
 	"default":{ //hold default locale text
+		"groups":{
+			"item":"item",
+			"items":"items",
+		},
 		"columns":{
 		},
 		"ajax":{

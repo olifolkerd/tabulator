@@ -1,6 +1,6 @@
 var Download = function(table){
 	this.table = table; //hold Tabulator object
-	this.columns = {}; //hold definitions
+	this.fields = {}; //hold filed multi dimension arrays
 };
 
 //trigger file download
@@ -23,7 +23,7 @@ Download.prototype.download = function(type, filename, options){
 	}
 
 	if(downloadFunc){
-		downloadFunc(self.processDefinitions(), self.processData() , options, buildLink);
+		downloadFunc.call(this, self.processDefinitions(), self.processData() , options, buildLink);
 	}
 };
 
@@ -33,12 +33,11 @@ Download.prototype.processDefinitions = function(){
 	definitions = self.table.columnManager.getDefinitions(),
 	processedDefinitions = [];
 
-	self.columns = {}
-
+	self.fields = {};
 
 	definitions.forEach(function(column){
 		if(column.field){
-			self.columns[column.field] = column;
+			self.fields[column.field] = column.field.split(".");
 
 			if(column.download !== false){
 				processedDefinitions.push(column);
@@ -54,6 +53,9 @@ Download.prototype.processData = function(){
 	data = self.table.rowManager.getData(true);
 
 	//add user data processing step;
+	if(typeof self.table.options.downloadDataMutator == "function"){
+		data = self.table.options.downloadDataMutator(data);
+	}
 
 	return data;
 };
@@ -81,11 +83,33 @@ Download.prototype.triggerDownload = function(data, mime, type, filename){
 	}
 };
 
+//nested field lookup
+Download.prototype.getFieldValue = function(field, data){
+	var dataObj = data,
+	structure = this.fields[field],
+	length = structure.length,
+	output;
+
+	for(let i = 0; i < length; i++){
+
+		dataObj = dataObj[structure[i]];
+
+		output = dataObj;
+
+		if(!dataObj){
+			break;
+		}
+	}
+
+	return output;
+};
+
 
 //downloaders
 Download.prototype.downloaders = {
 	csv:function(columns, data, options, setFileContents){
-		var titles = [],
+		var self = this,
+		titles = [],
 		fields = [],
 		delimiter = options && options.delimiter ? options.delimiter : ",",
 		fileContents;
@@ -106,7 +130,21 @@ Download.prototype.downloaders = {
 			var rowData = [];
 
 			fields.forEach(function(field){
-				var value = typeof row[field] == "object" ? JSON.stringify(row[field]) : row[field];
+				var value = self.getFieldValue(field, row);
+
+				switch(typeof value){
+					case "object":
+					value = JSON.stringify(value);
+					break;
+
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = value;
+				}
 
 				//escape uotation marks
 				rowData.push('"' + String(value).split('"').join('""') + '"');
@@ -125,7 +163,8 @@ Download.prototype.downloaders = {
 	},
 
 	xlsx:function(columns, data, options, setFileContents){
-		var titles = [],
+		var self = this,
+		titles = [],
 		fields = [],
 		rows = [],
 		workbook = { SheetNames:["Sheet1"], Sheets:{} },
@@ -143,13 +182,13 @@ Download.prototype.downloaders = {
 					if(cell != null){
 						switch(typeof cell.v){
 							case "number":
-								cell.t = 'n';
+							cell.t = 'n';
 							break;
 							case "boolean":
-								cell.t = 'b';
+							cell.t = 'b';
 							break;
 							default:
-								cell.t = 's';
+							cell.t = 's';
 							break;
 						}
 
@@ -168,7 +207,7 @@ Download.prototype.downloaders = {
 			var buf = new ArrayBuffer(s.length);
 			var view = new Uint8Array(buf);
 			for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-			return buf;
+				return buf;
 		}
 
 		//get field lists
@@ -186,8 +225,8 @@ Download.prototype.downloaders = {
 			var rowData = [];
 
 			fields.forEach(function(field){
-				rowData.push(row[field]);
-			})
+				rowData.push(self.getFieldValue(field, row));
+			});
 
 			rows.push(rowData);
 		});

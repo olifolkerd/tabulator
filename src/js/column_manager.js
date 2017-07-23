@@ -1,11 +1,14 @@
 var ColumnManager = function(table){
 	this.table = table; //hold parent table
+	this.headersElement = $("<div class='tabulator-headers'></div>");
 	this.element = $("<div class='tabulator-header'></div>"); //containing element
 	this.rowManager = null; //hold row manager object
 	this.columns = []; // column definition object
 	this.columnsByIndex = []; //columns by index
 	this.columnsByField = []; //columns by field
 	this.scrollLeft = 0;
+
+	this.element.prepend(this.headersElement);
 };
 
 
@@ -19,6 +22,11 @@ ColumnManager.prototype.setRowManager = function(manager){
 //return containing element
 ColumnManager.prototype.getElement = function(){
 	return this.element;
+};
+
+//return header containing element
+ColumnManager.prototype.getHeadersElement = function(){
+	return this.headersElement;
 };
 
 //scroll horizontally to match table body
@@ -52,7 +60,7 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 ColumnManager.prototype.setColumns = function(cols, row){
 	var self = this;
 
-	self.element.empty();
+	self.headersElement.empty();
 
 	self.columns = [];
 	self.columnsByIndex = [];
@@ -96,10 +104,10 @@ ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
 	}else{
 		if(before){
 			this.columns.unshift(column);
-			this.element.prepend(column.getElement());
+			this.headersElement.prepend(column.getElement());
 		}else{
 			this.columns.push(column);
-			this.element.append(column.getElement());
+			this.headersElement.append(column.getElement());
 		}
 	}
 };
@@ -253,7 +261,7 @@ ColumnManager.prototype.getWidth = function(){
 ColumnManager.prototype.moveColumn = function(from, to, after){
 
 	this._moveColumnInArray(this.columns, from, to, after);
-	this._moveColumnInArray(this.columnsByIndex, from, to, after);
+	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
 	this.table.options.columnMoved(from.getComponent());
 
@@ -262,7 +270,7 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	}
 };
 
-ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after){
+ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, updateRows){
 	var	fromIndex = columns.indexOf(from),
 	toIndex;
 
@@ -275,13 +283,23 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after){
 		if (toIndex > -1) {
 
 			if(after){
-				columns.splice(toIndex+1, 0, from);
-			}else{
-				columns.splice(toIndex, 0, from);
+				toIndex = toIndex+1;
 			}
 
 		}else{
-			columns.splice(fromIndex, 0, from);
+			toIndex = fromIndex;
+		}
+
+		columns.splice(toIndex, 0, from);
+
+		if(updateRows){
+
+			this.table.rowManager.rows.forEach(function(row){
+				if(row.cells.length){
+					var cell = row.cells.splice(fromIndex, 1)[0];
+					row.cells.splice(toIndex, 0, cell);
+				}
+			});
 		}
 	}
 };
@@ -471,7 +489,6 @@ ColumnManager.prototype.deregisterColumn = function(column){
 
 //redraw columns
 ColumnManager.prototype.redraw = function(force){
-
 	if(force){
 		if(this.element.is(":visible")){
 			this._verticalAlignHeaders();
@@ -500,7 +517,14 @@ ColumnManager.prototype.redraw = function(force){
 		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
 			this.table.extensions.persistentLayout.save();
 		}
+
+		if(this.table.extExists("columnCalcs")){
+			this.table.extensions.columnCalcs.redraw();
+		}
 	}
+
+	this.table.footerManager.redraw();
+
 
 
 };

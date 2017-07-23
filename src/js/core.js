@@ -45,6 +45,8 @@
 
 	 			keybindings:[], //array for keybindings
 
+	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
+
 	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 	 			selectable:"highlight", //highlight rows on hover
@@ -106,6 +108,10 @@
 	 			rowClick:false,
 	 			rowDblClick:false,
 	 			rowContext:false,
+	 			rowContext:false,
+	 			rowTap:false,
+	 			rowDblTap:false,
+	 			rowTapHold:false,
 	 			rowAdded:function(){},
 	 			rowDeleted:function(){},
 	 			rowMoved:function(){},
@@ -234,8 +240,8 @@
 	 			element.append(this.rowManager.getElement());
 
 
-	 			if(options.pagination && this.extExists("page", true) || options.footerElement){
-	 				element.append(this.footerManager.getElement());
+	 			if(options.footerElement){
+	 				this.footerManager.activate();
 	 			}
 
 
@@ -262,6 +268,10 @@
 	 				ext.ajax.initialize();
 	 			}
 
+	 			if(this.extExists("columnCalcs")){
+	 				ext.columnCalcs.initialize();
+	 			}
+
 	 			if(this.extExists("keybindings")){
 	 				ext.keybindings.initialize();
 	 			}
@@ -279,6 +289,10 @@
 	 			if(self.options.pagination && self.extExists("page")){
 	 				self.extensions.page.reset(true);
 	 				self.extensions.page.setPage(1);
+
+	 				if(self.options.pagination == "local"){
+	 					self.rowManager.setData(self.options.data);
+	 				}
 	 			}else{
 	 				if(self.options.data.length){
 	 					self.rowManager.setData(self.options.data);
@@ -481,7 +495,7 @@
 
 	 		//update row data
 	 		updateRow:function(index, data){
-	 			row = this.rowManager.findRow(index);
+	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				row.updateData(data);
@@ -494,7 +508,7 @@
 
 	 		//scroll to row in DOM
 	 		scrollToRow:function(index){
-	 			row = this.rowManager.findRow(index);
+	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
 	 				return this.rowManager.scrollToRow(row);
@@ -781,6 +795,48 @@
 	 				return false;
 	 			}
 	 		},
+
+	 		///////////////// Grouping Functions ///////////////
+
+	 		setGroupBy:function(groups){
+	 			if(this.extExists("groupRows", true)){
+	 				this.options.groupBy = groups;
+	 				this.extensions.groupRows.initialize();
+	 				this.rowManager.refreshActiveData();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		setGroupStartOpen:function(values){
+	 			if(this.extExists("groupRows", true)){
+	 				this.options.groupStartOpen = values;
+	 				this.extensions.groupRows.initialize();
+	 				if(this.options.groupBy){
+
+	 					this.rowManager.refreshActiveData();
+	 				}else{
+	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
+	 				}
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		setGroupHeader:function(values){
+	 			if(this.extExists("groupRows", true)){
+	 				this.options.groupHeader = values;
+	 				this.extensions.groupRows.initialize();
+	 				if(this.options.groupBy){
+	 					this.rowManager.refreshActiveData();
+	 				}else{
+	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
+	 				}
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
 
 	 		/////////////// Navigation Management //////////////
 

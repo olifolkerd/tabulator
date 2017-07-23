@@ -39,7 +39,7 @@ Mutator.prototype.transformRow = function(data){
 			field = column.getField();
 
 			if(column.extensions.mutate.type != "edit"){
-				data[field] = column.extensions.mutate.mutator(data[field], data, "data", column.extensions.mutate.params);
+				column.setFieldValue(data, column.extensions.mutate.mutator(column.getFieldValue(data), data, "data", column.extensions.mutate.params));
 			}
 		}
 	});
@@ -49,7 +49,7 @@ Mutator.prototype.transformRow = function(data){
 
 //apply mutator to new cell value
 Mutator.prototype.transformCell = function(cell, value){
-	return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params)
+	return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params, cell.getComponent())
 };
 
 //default mutators

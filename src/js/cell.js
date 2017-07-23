@@ -86,7 +86,7 @@ Cell.prototype.build = function(){
 
 	this._configureCell();
 
-	this.setValueActual(this.row.data[this.column.getField()]);
+	this.setValueActual(this.column.getFieldValue(this.row.data));
 };
 
 Cell.prototype.generateElement = function(){
@@ -101,7 +101,8 @@ Cell.prototype._configureCell = function(){
 	var self = this,
 	cellEvents = self.column.cellEvents,
 	element = self.element,
-	field = this.column.getField();
+	field = this.column.getField(),
+	dblTap,	tapHold, tap;
 
 	//set text alignment
 	element[0].style.textAlign = self.column.hozAlign;
@@ -130,6 +131,64 @@ Cell.prototype._configureCell = function(){
 	if (cellEvents.cellContext){
 		self.element.on("contextmenu", function(e){
 			cellEvents.cellContext(e, self.getComponent());
+		});
+	}
+
+	if (cellEvents.cellTap){
+		tap = false;
+
+		self.element.on("touchstart", function(e){
+			tap = true;
+		});
+
+		self.element.on("touchend", function(e){
+			if(tap){
+				cellEvents.cellTap(e, self.getComponent());
+			}
+
+			tap = false;
+		});
+	}
+
+	if (cellEvents.cellDblTap){
+		dblTap = null;
+
+		self.element.on("touchend", function(e){
+
+			if(dblTap){
+				clearTimeout(dblTap);
+				dblTap = null;
+
+				cellEvents.cellDblTap(e, self.getComponent());
+			}else{
+
+				dblTap = setTimeout(function(){
+					clearTimeout(dblTap);
+					dblTap = null;
+				}, 300);
+			}
+
+		});
+	}
+
+	if (cellEvents.cellTapHold){
+		tapHold = null;
+
+		self.element.on("touchstart", function(e){
+			clearTimeout(tapHold);
+
+			tapHold = setTimeout(function(){
+				clearTimeout(tapHold);
+				tapHold = null;
+				tap = false;
+				cellEvents.cellTapHold(e, self.getComponent());
+			}, 1000)
+
+		});
+
+		self.element.on("touchend", function(e){
+			clearTimeout(tapHold);
+			tapHold = null;
 		});
 	}
 
@@ -206,6 +265,10 @@ Cell.prototype.setValue = function(value, mutate){
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 
+	if(this.table.extExists("columnCalcs")){
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+	}
+
 };
 
 Cell.prototype.setValueProcessData = function(value, mutate){
@@ -231,7 +294,8 @@ Cell.prototype.setValueActual = function(value){
 	this.oldValue = this.value;
 
 	this.value = value;
-	this.row.data[this.column.getField()] = value;
+
+	this.column.setFieldValue(this.row.data, value);
 
 	this._generateContents();
 	this._generateTooltip();

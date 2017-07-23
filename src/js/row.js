@@ -71,6 +71,7 @@ var Row = function(data, parent){
 	this.table = parent.table;
 	this.parent = parent;
 	this.data = {};
+	this.type = "row"; //type of element
 	this.element = $("<div class='tabulator-row' role='row'></div>");
 	this.extensions = {}; //hold extension variables;
 	this.cells = [];
@@ -89,7 +90,8 @@ Row.prototype.getElement = function(){
 
 
 Row.prototype.generateElement = function(){
-	var self = this;
+	var self = this,
+	dblTap,	tapHold, tap;
 
 	//set row selection characteristics
 	if(self.table.options.selectable !== false && self.table.extExists("selectRow")){
@@ -119,8 +121,73 @@ Row.prototype.generateElement = function(){
 			self.table.options.rowContext(e, self.getComponent());
 		})
 	}
+
+	if (self.table.options.rowTap){
+
+		tap = false;
+
+		self.element.on("touchstart", function(e){
+			tap = true;
+		});
+
+		self.element.on("touchend", function(e){
+			if(tap){
+				self.table.options.rowTap(e, self.getComponent());
+			}
+
+			tap = false;
+		});
+	}
+
+	if (self.table.options.rowDblTap){
+
+		dblTap = null;
+
+		self.element.on("touchend", function(e){
+
+			if(dblTap){
+				clearTimeout(dblTap);
+				dblTap = null;
+
+				self.table.options.rowDblTap(e, self.getComponent());
+			}else{
+
+				dblTap = setTimeout(function(){
+					clearTimeout(dblTap);
+					dblTap = null;
+				}, 300);
+			}
+
+		});
+	}
+
+
+	if (self.table.options.rowTapHold){
+
+		tapHold = null;
+
+		self.element.on("touchstart", function(e){
+			clearTimeout(tapHold);
+
+			tapHold = setTimeout(function(){
+				clearTimeout(tapHold);
+				tapHold = null;
+				tap = false;
+				self.table.options.rowTapHold(e, self.getComponent());
+			}, 1000)
+
+		});
+
+		self.element.on("touchend", function(e){
+			clearTimeout(tapHold);
+			tapHold = null;
+		});
+	}
 };
 
+Row.prototype.generateCells = function(){
+	this.cells = this.table.columnManager.generateCells(this);
+}
 
 //functions to setup on first render
 Row.prototype.initialize = function(force){
@@ -135,7 +202,7 @@ Row.prototype.initialize = function(force){
 			this.table.extensions.frozenColumns.layoutRow(this);
 		}
 
-		self.cells = this.parent.columnManager.generateCells(self);
+		this.generateCells();
 
 		self.cells.forEach(function(cell){
 			self.element.append(cell.getElement());

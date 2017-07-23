@@ -74,16 +74,29 @@ var Column = function(def, parent){
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
 
+	//multi dimentional filed handling
+	this.field ="";
+	this.fieldStructure = "";
+	this.getFieldValue = "";
+	this.setFieldValue = "";
+
+	this.setField(this.definition.field);
+
+
 	this.extensions = {}; //hold extension variables;
 
 	this.cellEvents = {
 		cellClick:false,
 		cellDblClick:false,
 		cellContext:false,
+		cellTap:false,
+		cellDblTap:false,
+		cellTapHold:false
 	};
 
 	this.width = null; //column width
 	this.minWidth = null; //column minimum width
+	this.widthFixed = false; //user has specified a width for this column
 
 	this.visible = true; //default visible state
 
@@ -111,6 +124,12 @@ var Column = function(def, parent){
 
 
 //////////////// Setup Functions /////////////////
+Column.prototype.setField = function(field){
+	this.field = field;
+	this.fieldStructure = field ? field.split(".") : [];
+	this.getFieldValue = this.fieldStructure.length ? this._getNesteData : this._getFlatData;
+	this.setFieldValue = this.fieldStructure.length ? this._setNesteData : this._setFlatData;
+};
 
 //register column position with column manager
 Column.prototype.registerColumnPosition = function(column){
@@ -136,7 +155,8 @@ Column.prototype.reRegisterPosition = function(){
 //build header element
 Column.prototype._buildHeader = function(){
 	var self = this,
-	def = self.definition;
+	def = self.definition,
+	dblTap,	tapHold, tap;
 
 	self.element.empty();
 
@@ -202,6 +222,11 @@ Column.prototype._buildHeader = function(){
 		self.table.extensions.moveColumn.initializeColumn(self);
 	}
 
+	//set calcs column
+	if((def.topCalc || def.bottomCalc) && self.table.extExists("columnCalcs")){
+		self.table.extensions.columnCalcs.initializeColumn(self);
+	}
+
 
 	//setup header click event bindings
 	if(typeof(def.headerClick) == "function"){
@@ -216,6 +241,65 @@ Column.prototype._buildHeader = function(){
 		self.element.on("contextmenu", function(e){def.headerContext(e, self.getComponent())});
 	}
 
+	//setup header tap event bindings
+	if(typeof(def.headerTap) == "function"){
+		tap = false;
+
+		self.element.on("touchstart", function(e){
+			tap = true;
+		});
+
+		self.element.on("touchend", function(e){
+			if(tap){
+				def.headerTap(e, self.getComponent());
+			}
+
+			tap = false;
+		});
+	}
+
+	if(typeof(def.headerDblTap) == "function"){
+		dblTap = null;
+
+		self.element.on("touchend", function(e){
+
+			if(dblTap){
+				clearTimeout(dblTap);
+				dblTap = null;
+
+				def.headerDblTap(e, self.getComponent());
+			}else{
+
+				dblTap = setTimeout(function(){
+					clearTimeout(dblTap);
+					dblTap = null;
+				}, 300);
+			}
+
+		});
+	}
+
+	if(typeof(def.headerTapHold) == "function"){
+		tapHold = null;
+
+		self.element.on("touchstart", function(e){
+			clearTimeout(tapHold);
+
+			tapHold = setTimeout(function(){
+				clearTimeout(tapHold);
+				tapHold = null;
+				tap = false;
+				def.headerTapHold(e, self.getComponent());
+			}, 1000)
+
+		});
+
+		self.element.on("touchend", function(e){
+			clearTimeout(tapHold);
+			tapHold = null;
+		});
+	}
+
 	//store column cell click event bindings
 	if(typeof(def.cellClick) == "function"){
 		self.cellEvents.cellClick = def.cellClick;
@@ -227,6 +311,19 @@ Column.prototype._buildHeader = function(){
 
 	if(typeof(def.cellContext) == "function"){
 		self.cellEvents.cellContext = def.cellContext;
+	}
+
+	//setup column cell tap event bindings
+	if(typeof(def.cellTap) == "function"){
+		self.cellEvents.cellTap = def.cellTap;
+	}
+
+	if(typeof(def.cellDblTap) == "function"){
+		self.cellEvents.cellDblTap = def.cellDblTap;
+	}
+
+	if(typeof(def.cellTapHold) == "function"){
+		self.cellEvents.cellTapHold = def.cellTapHold;
 	}
 };
 
@@ -280,7 +377,9 @@ Column.prototype._buildColumnHeader = function(){
 	self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
 
 	//set width if present
-	self.setWidth(def.width);
+	if(typeof def.width !== "undefined"){
+		self.setWidth(def.width);
+	}
 
 	//set tooltip if present
 	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
@@ -360,6 +459,58 @@ Column.prototype._buildGroupHeader = function(){
 	self.element.append(self.groupElement);
 };
 
+//flat field lookup
+Column.prototype._getFlatData = function(data){
+	return data[this.field];
+};
+
+//nested field lookup
+Column.prototype._getNesteData = function(data){
+	var dataObj = data,
+	structure = this.fieldStructure,
+	length = structure.length,
+	output;
+
+	for(let i = 0; i < length; i++){
+
+		dataObj = dataObj[structure[i]];
+
+		output = dataObj;
+
+		if(!dataObj){
+			break;
+		}
+	}
+
+	return output;
+};
+
+//flat field set
+Column.prototype._setFlatData = function(data, value){
+	data[this.field] = value;
+};
+
+//nested field set
+Column.prototype._setNesteData = function(data, value){
+	var dataObj = data,
+	structure = this.fieldStructure,
+	length = structure.length;
+
+	for(let i = 0; i < length; i++){
+
+		if(i == length -1){
+			dataObj[structure[i]] = value;
+		}else{
+			if(!dataObj[structure[i]]){
+				dataObj[structure[i]] = {};
+			}
+
+			dataObj = dataObj[structure[i]];
+		}
+	}
+};
+
+
 //attach column to this group
 Column.prototype.attachColumn = function(column){
 	var self = this;
@@ -378,7 +529,7 @@ Column.prototype.verticalAlign = function(alignment){
 	if(this.parent.isGroup){
 		this.element.css("height", this.parent.getGroupElement().innerHeight())
 	}else{
-		this.element.css("height", this.parent.getElement().innerHeight())
+		this.element.css("height", this.parent.getHeadersElement().innerHeight())
 	}
 
 	//vertically align cell contents
@@ -419,7 +570,7 @@ Column.prototype.getGroupElement = function(){
 
 //return field name
 Column.prototype.getField = function(){
-	return this.definition.field;
+	return this.field;
 };
 
 //return the first column in a group
@@ -551,6 +702,11 @@ Column.prototype.hide = function(){
 };
 
 Column.prototype.setWidth = function(width){
+	this.widthFixed = true;
+	this.setWidthActual(width);
+};
+
+Column.prototype.setWidthActual = function(width){
 	width = Math.max(this.minWidth, width);
 
 	this.width = width;
@@ -568,6 +724,7 @@ Column.prototype.setWidth = function(width){
 		this.table.extensions.frozenColumns.layout();
 	}
 };
+
 
 Column.prototype.checkCellHeights = function(){
 	var rows = [];
@@ -645,9 +802,13 @@ Column.prototype.generateCell = function(row){
 Column.prototype.fitToData = function(){
 	var self = this;
 
+	if(!this.widthFixed){
+		this.element.css("width", "")
+	}
+
 	var maxWidth = this.element.outerWidth() + 1;
 
-	if(!self.width){
+	if(!self.width || !this.widthFixed){
 		self.cells.forEach(function(cell){
 			var width = cell.getWidth();
 
@@ -657,7 +818,7 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			self.setWidth(maxWidth);
+			self.setWidthActual(maxWidth);
 		}
 
 	}
