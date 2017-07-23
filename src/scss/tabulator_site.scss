@@ -244,10 +244,10 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 			box-sizing:border-box;
 			min-width:200%;
 
-			background:lighten($headerBackgroundColor, 5%) !important;
+			background:lighten($headerBackgroundColor, 10%) !important;
 
 			.tabulator-row{
-				background:lighten($headerBackgroundColor, 5%) !important;
+				background:lighten($headerBackgroundColor, 10%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
@@ -255,7 +255,7 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 			}
 
 			border-top:1px solid $rowBorderColor;
-			border-bottom:1px solid $headerBorderColor;
+			// border-bottom:1px solid $headerBorderColor;
 
 			overflow: hidden;
 		}
@@ -309,15 +309,8 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 			.tabulator-row{
 				&.tabulator-calcs{
 					font-weight: bold;
-					background:darken($rowAltBackgroundColor, 5%) !important;
-
-					&.tabulator-calcs-top{
-						border-bottom:2px solid $rowBorderColor;
-					}
-
-					&.tabulator-calcs-bottom{
-						border-top:2px solid $rowBorderColor;
-					}
+					background:lighten($headerBackgroundColor, 15%) !important;
+					color:$headerTextColor;
 				}
 			}
 		}
@@ -431,19 +424,20 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 		//row grouping element
 		&.tabulator-group{
 			box-sizing:border-box;
-			border-bottom:1px solid #999;
 			border-right:1px solid $rowBorderColor;
-			border-top:1px solid #999;
+			border-top:1px solid #000;
+			border-bottom:2px solid $headerSeperatorColor;
 			padding:5px;
 			padding-left:10px;
-			background:#ccc;
+			background:$headerBackgroundColor;
+			color:$headerTextColor;
 			font-weight:bold;
 
 			min-width: 100%;
 
 			&:hover{
 				cursor:pointer;
-				background-color:rgba(0,0,0,.1);
+				background-color:darken($headerBackgroundColor, 10%);
 			}
 
 			&.tabulator-group-visible{
@@ -501,7 +495,7 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 
 			span{
 				margin-left:10px;
-				color:#d00;
+				color:$headerSeperatorColor;
 			}
 		}
 
@@ -527,22 +521,23 @@ $footerSeperatorColor:#59B038; //footer bottom seperator color
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
 			width:calc("100% + 20px");
-			margin:-5px -10px 5px -10px;
+			margin:-8px -10px 8px -10px;
 
 			text-align: left;
 
-			background:lighten($footerBackgroundColor, 5%) !important;
+			background:lighten($footerBackgroundColor, 10%) !important;
 
 			.tabulator-row{
-				background:lighten($footerBackgroundColor, 5%) !important;
+				background:lighten($footerBackgroundColor, 10%) !important;
+				color:$headerTextColor !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
 				}
 			}
 
+			// border-top:1px solid $rowBorderColor;
 			border-bottom:1px solid $rowBorderColor;
-			border-top:1px solid $rowBorderColor;
 
 			overflow: hidden;
 

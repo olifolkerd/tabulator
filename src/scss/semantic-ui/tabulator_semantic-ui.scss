@@ -558,13 +558,14 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
 			width:calc("100% + 20px");
-			margin:-$footerVerticalPadding -$footerHorizontalPadding $footerVerticalPadding -$footerHorizontalPadding;
+			margin:(-$footerVerticalPadding) (-$footerHorizontalPadding) $footerVerticalPadding (-$footerHorizontalPadding);
 
 			text-align: left;
 
 			background:lighten($footerBackground, 5%) !important;
 
 			.tabulator-row{
+				font-weight: bold;
 				background:lighten($footerBackground, 5%) !important;
 
 				.tabulator-col-resize-handle{

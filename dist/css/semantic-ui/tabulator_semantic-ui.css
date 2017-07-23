@@ -659,7 +659,7 @@
 .tabulator .tabulator-footer .tabulator-calcs-holder {
   box-sizing: border-box;
   width: calc("100% + 20px");
-  margin: -1.57143em 0em;
+  margin: -0.78571em -0.78571em 0.78571em -0.78571em;
   text-align: left;
   background: white !important;
   border-bottom: 1px solid #ddd;
@@ -668,6 +668,7 @@
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {
+  font-weight: bold;
   background: white !important;
 }
 

@@ -243,10 +243,10 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			box-sizing:border-box;
 			min-width:200%;
 
-			background:lighten($headerBackgroundColor, 5%) !important;
+			background:darken($headerBackgroundColor, 5%) !important;
 
 			.tabulator-row{
-				background:lighten($headerBackgroundColor, 5%) !important;
+				background:darken($headerBackgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
@@ -254,7 +254,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			}
 
 			border-top:1px solid $rowBorderColor;
-			border-bottom:1px solid $headerBorderColor;
+			border-bottom:1px solid $headerSeperatorColor;
 
 			overflow: hidden;
 		}
@@ -547,17 +547,17 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 			text-align: left;
 
-			background:lighten($footerBackgroundColor, 5%) !important;
+			background:darken($footerBackgroundColor, 5%) !important;
 
 			.tabulator-row{
-				background:lighten($footerBackgroundColor, 5%) !important;
+				background:darken($footerBackgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
 				}
 			}
 
-			border-bottom:1px solid $rowBorderColor;
+			border-bottom:1px solid $footerBackgroundColor;
 			border-top:1px solid $rowBorderColor;
 
 			overflow: hidden;

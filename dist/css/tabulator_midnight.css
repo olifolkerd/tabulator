@@ -170,14 +170,14 @@
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
   min-width: 200%;
-  background: #404040 !important;
+  background: #1a1a1a !important;
   border-top: 1px solid #888;
   border-bottom: 1px solid #aaa;
   overflow: hidden;
 }
 
 .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row {
-  background: #404040 !important;
+  background: #1a1a1a !important;
 }
 
 .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
@@ -422,14 +422,15 @@
   width: calc("100% + 20px");
   margin: -5px -10px 5px -10px;
   text-align: left;
-  background: #404040 !important;
+  background: #262626 !important;
   border-bottom: 1px solid #888;
   border-top: 1px solid #888;
   overflow: hidden;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {
-  background: #404040 !important;
+  background: #262626 !important;
+  color: #fff;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {

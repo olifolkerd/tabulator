@@ -169,6 +169,7 @@
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
   min-width: 200%;
+  border-top: 2px solid #3759D7 !important;
   background: white !important;
   border-top: 1px solid #fff;
   border-bottom: 1px solid #fff;
@@ -176,11 +177,16 @@
 }
 
 .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row {
+  padding-left: 0 !important;
   background: white !important;
 }
 
 .tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
   display: none;
+}
+
+.tabulator .tabulator-header .tabulator-calcs-holder .tabulator-row .tabulator-cell {
+  background: none;
 }
 
 .tabulator .tabulator-tableHolder {
@@ -232,11 +238,11 @@
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
-  border-bottom: 2px solid #fff;
+  border-bottom: 2px solid #3759D7;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-bottom {
-  border-top: 2px solid #fff;
+  border-top: 2px solid #3759D7;
 }
 
 .tabulator .tabulator-row {
@@ -245,7 +251,7 @@
   box-sizing: border-box;
   min-height: 24px;
   background-color: #3759D7;
-  padding-left: 10px;
+  padding-left: 10px !important;
   margin-bottom: 2px;
 }
 
@@ -417,7 +423,7 @@
   border-top: 1px solid #999;
   background-color: #fff;
   text-align: right;
-  color: #555;
+  color: #3759D7;
   font-weight: bold;
   white-space: nowrap;
   -ms-user-select: none;
@@ -434,6 +440,8 @@
   margin: -5px -10px 5px -10px;
   text-align: left;
   background: white !important;
+  border-top: 3px solid #3759D7 !important;
+  border-bottom: 2px solid #3759D7 !important;
   border-bottom: 1px solid #fff;
   border-top: 1px solid #fff;
   overflow: hidden;
@@ -447,9 +455,14 @@
   display: none;
 }
 
+.tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row .tabulator-cell {
+  background: none;
+}
+
 .tabulator .tabulator-footer .tabulator-calcs-holder:only-child {
   margin-bottom: -5px;
   border-bottom: none;
+  border-bottom: none !important;
 }
 
 .tabulator .tabulator-footer .tabulator-pages {
@@ -463,7 +476,7 @@
   border-radius: 3px;
   padding: 2px 5px;
   background: rgba(255, 255, 255, 0.2);
-  color: #555;
+  color: #3759D7;
   font-family: inherit;
   font-weight: inherit;
   font-size: inherit;

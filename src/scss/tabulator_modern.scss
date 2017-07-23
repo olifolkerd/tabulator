@@ -31,7 +31,7 @@ $editBoxColor:#1D68CD; //border color for edit boxes
 
 //footer themeing
 $footerBackgroundColor:#fff; //border to tablulator
-$footerTextColor:#555; //footer text colour
+$footerTextColor:$primary; //footer text colour
 $footerBorderColor:#aaa; //footer border color
 $footerSeperatorColor:#999; //footer bottom seperator color
 
@@ -257,13 +257,21 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			box-sizing:border-box;
 			min-width:200%;
 
+			border-top:2px solid $headerSeperatorColor !important;
+
 			background:lighten($headerBackgroundColor, 5%) !important;
 
 			.tabulator-row{
+				padding-left: 0 !important;
+
 				background:lighten($headerBackgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
+				}
+
+				.tabulator-cell{
+					background:none;
 				}
 			}
 
@@ -325,11 +333,11 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 					background:darken($rowAltBackgroundColor, 5%) !important;
 
 					&.tabulator-calcs-top{
-						border-bottom:2px solid $rowBorderColor;
+						border-bottom:2px solid $headerSeperatorColor;
 					}
 
 					&.tabulator-calcs-bottom{
-						border-top:2px solid $rowBorderColor;
+						border-top:2px solid $headerSeperatorColor;
 					}
 				}
 			}
@@ -346,7 +354,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 		background-color: $handleColor;
 
-		padding-left: $handleWidth;
+		padding-left: $handleWidth !important;
 
 		margin-bottom: 2px;
 
@@ -575,11 +583,18 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 			background:lighten($footerBackgroundColor, 5%) !important;
 
+			border-top:3px solid $headerSeperatorColor !important;
+			border-bottom:2px solid $headerSeperatorColor !important;
+
 			.tabulator-row{
 				background:lighten($footerBackgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
+				}
+
+				.tabulator-cell{
+					background:none;
 				}
 			}
 
@@ -591,6 +606,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 			&:only-child{
 				margin-bottom:-5px;
 				border-bottom:none;
+				border-bottom:none !important;
 			}
 		}
 
