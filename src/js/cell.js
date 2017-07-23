@@ -314,7 +314,7 @@ Cell.prototype.setValueActual = function(value){
 Cell.prototype.setWidth = function(width){
 	this.width = width;
 	// this.element.css("width", width || "");
-	this.element[0].style.width = (width || "") + "px";
+	this.element[0].style.width = (width ? width + "px" : "");
 };
 
 Cell.prototype.getWidth = function(){
@@ -323,7 +323,7 @@ Cell.prototype.getWidth = function(){
 
 Cell.prototype.setMinWidth = function(minWidth){
 	this.minWidth = minWidth;
-	this.element[0].style.minWidth =  (minWidth || "") + "px";
+	this.element[0].style.minWidth =  (minWidth ? minWidth + "px" : "");
 };
 
 Cell.prototype.checkHeight = function(){
@@ -339,7 +339,7 @@ Cell.prototype.clearHeight = function(){
 
 Cell.prototype.setHeight = function(height){
 	this.height = height;
-	this.element[0].style.height = (height || "") + "px";
+	this.element[0].style.height = (height ? height + "px" : "");
 };
 
 Cell.prototype.getHeight = function(){

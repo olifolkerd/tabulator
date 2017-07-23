@@ -325,7 +325,7 @@ ColumnManager.prototype.fitToData = function(){
 	var self = this;
 
 	self.columnsByIndex.forEach(function(column){
-		column.fitToData();
+		column.reinitializeWidth();
 	});
 
 	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){

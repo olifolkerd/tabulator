@@ -376,10 +376,7 @@ Column.prototype._buildColumnHeader = function(){
 	//set min width if present
 	self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
 
-	//set width if present
-	if(typeof def.width !== "undefined"){
-		self.setWidth(def.width);
-	}
+	self.reinitializeWidth();
 
 	//set tooltip if present
 	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
@@ -798,12 +795,28 @@ Column.prototype.generateCell = function(row){
 	return cell;
 };
 
+Column.prototype.reinitializeWidth = function(){
+
+	this.widthFixed = false;
+
+	//set width if present
+	if(typeof this.definition.width !== "undefined"){
+		this.setWidth(this.definition.width);
+	}
+
+	this.fitToData();
+}
+
 //set column width to maximum cell width
 Column.prototype.fitToData = function(){
 	var self = this;
 
 	if(!this.widthFixed){
 		this.element.css("width", "")
+
+		self.cells.forEach(function(cell){
+			cell.setWidth("");
+		});
 	}
 
 	var maxWidth = this.element.outerWidth() + 1;

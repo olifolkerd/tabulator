@@ -641,7 +641,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       self.columnsByIndex.forEach(function (column) {
 
-        column.fitToData();
+        column.reinitializeWidth();
       });
 
       if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
@@ -1430,12 +1430,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
 
-      //set width if present
-
-      if (typeof def.width !== "undefined") {
-
-        self.setWidth(def.width);
-      }
+      self.reinitializeWidth();
 
       //set tooltip if present
 
@@ -1975,6 +1970,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return cell;
     };
 
+    Column.prototype.reinitializeWidth = function () {
+
+      this.widthFixed = false;
+
+      //set width if present
+
+      if (typeof this.definition.width !== "undefined") {
+
+        this.setWidth(this.definition.width);
+      }
+
+      this.fitToData();
+    };
+
     //set column width to maximum cell width
 
     Column.prototype.fitToData = function () {
@@ -1984,6 +1993,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (!this.widthFixed) {
 
         this.element.css("width", "");
+
+        self.cells.forEach(function (cell) {
+
+          cell.setWidth("");
+        });
       }
 
       var maxWidth = this.element.outerWidth() + 1;
@@ -4404,7 +4418,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       // this.element.css("width", width || "");
 
-      this.element[0].style.width = (width || "") + "px";
+      this.element[0].style.width = width ? width + "px" : "";
     };
 
     Cell.prototype.getWidth = function () {
@@ -4416,7 +4430,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.minWidth = minWidth;
 
-      this.element[0].style.minWidth = (minWidth || "") + "px";
+      this.element[0].style.minWidth = minWidth ? minWidth + "px" : "";
     };
 
     Cell.prototype.checkHeight = function () {
@@ -4435,7 +4449,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.height = height;
 
-      this.element[0].style.height = (height || "") + "px";
+      this.element[0].style.height = height ? height + "px" : "";
     };
 
     Cell.prototype.getHeight = function () {
