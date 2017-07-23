@@ -8564,7 +8564,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           if (self.filters[filter.type]) {
 
-            column = self.columnManager.getColumnByField(filter.field);
+            column = self.table.columnManager.getColumnByField(filter.field);
 
             if (column) {
 
