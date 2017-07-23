@@ -7047,7 +7047,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           output = precision !== false ? output.toFixed(precision) : output;
         }
 
-        return output.toString();
+        return parseFloat(output).toString();
       },
 
       "max": function max(values, data, calcParams) {
