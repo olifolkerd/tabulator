@@ -6921,9 +6921,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var self = this,
           rowData = this.generateRowData(pos, data),
-          row = false;
-
-      row = new Row(rowData, this);
+          row = new Row(rowData, this);
 
       row.getElement().addClass("tabulator-calcs").addClass("tabulator-calcs-" + pos);
 
@@ -6982,7 +6980,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             values.push(column.getFieldValue(item));
           });
 
-          rowData[column.getField()] = column.extensions.columnCalcs[type](values, data, column.extensions.columnCalcs[type + "Params"]);
+          column.setFieldValue(rowData, column.extensions.columnCalcs[type](values, data, column.extensions.columnCalcs[type + "Params"]));
         }
       });
 

@@ -76,7 +76,10 @@
 		var row =
 		{
 			"reg":faker.name.findName(),
+			"person":{
+
 			"user_name":faker.name.findName(),
+			},
 			"job_link":faker.name.findName(),
 			"destination":cols[faker.random.number() % 4],
 			"mileage":faker.name.findName(),
@@ -415,7 +418,7 @@
 
 			  	}},
 			  	{title: "Reg", field: "reg", width:80, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
-			  	{title: "User", field: "user_name", width:150, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
+			  	{title: "User", field: "person.user_name", width:150, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
 			  	{title: "Job", field: "job_link", width:200, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
 			  	{title: "Destination", field: "destination", width:200, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
 			  	{title: "Mileage", field: "mileage", width:80, sorter:"number", sortable: true, bottomCalc:"count", topCalc:"count"},

@@ -197,8 +197,6 @@ ColumnCalcs.prototype.rowsToData = function(rows){
 ColumnCalcs.prototype.generateRow = function(pos, data){
 	var self = this,
 	rowData = this.generateRowData(pos, data),
-	row = false;
-
 	row = new Row(rowData, this);
 
 	row.getElement().addClass("tabulator-calcs").addClass("tabulator-calcs-" + pos);
@@ -244,7 +242,7 @@ ColumnCalcs.prototype.generateRowData = function(pos, data){
 				values.push(column.getFieldValue(item));
 			});
 
-			rowData[column.getField()] = column.extensions.columnCalcs[type](values, data, column.extensions.columnCalcs[type + "Params"]);
+			column.setFieldValue(rowData, column.extensions.columnCalcs[type](values, data, column.extensions.columnCalcs[type + "Params"]));
 		}
 	});
 
