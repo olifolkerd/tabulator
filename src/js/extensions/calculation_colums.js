@@ -269,20 +269,23 @@ ColumnCalcs.prototype.redraw = function(){
 
 //default calculations
 ColumnCalcs.prototype.calculations = {
-	"avg":function(values, data, calcData){
-		var output = 0;
+	"avg":function(values, data, calcParams){
+		var output = 0,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : 2
 
 		if(values.length){
 			output = values.reduce(function(sum, value){
 				return sum + value;
 			});
 
-			output = output / value.length;
+			output = output / values.length;
+
+			output = precision !== false ? output.toFixed(precision) : output;
 		}
 
-		return output;
+		return output.toString();
 	},
-	"max":function(values, data, calcData){
+	"max":function(values, data, calcParams){
 		var output = null;
 
 		values.forEach(function(value){
@@ -293,7 +296,7 @@ ColumnCalcs.prototype.calculations = {
 
 		return output !== null ? output : "";
 	},
-	"min":function(values, data, calcData){
+	"min":function(values, data, calcParams){
 		var output = null;
 
 		values.forEach(function(value){
@@ -304,7 +307,7 @@ ColumnCalcs.prototype.calculations = {
 
 		return output !== null ? output : "";
 	},
-	"sum":function(values, data, calcData){
+	"sum":function(values, data, calcParams){
 		var output = 0;
 
 		if(values.length){
@@ -315,7 +318,7 @@ ColumnCalcs.prototype.calculations = {
 
 		return output;
 	},
-	"count":function(values, data, calcData){
+	"count":function(values, data, calcParams){
 		var output = 0;
 
 		if(values.length){
