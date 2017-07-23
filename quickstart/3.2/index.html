@@ -101,6 +101,7 @@
         <div class="row">
 
             <div class="col-md-9 col-xs-12 content" role="main">
+
                 <a class="anchor" id="setup"></a>
                 <article>
                     <h1>Quick Start Guide</h1>
@@ -114,8 +115,8 @@
 
                     <p>Include the Tabulator library and style sheet</p>
 
-                    <pre class="prettyprint lang-html">&lt;link href="tabulator.css" rel="stylesheet"&gt;
-&lt;script type="text/javascript" src="tabulator.js"&gt;&lt;/script&gt;</pre>
+                    <pre class="prettyprint lang-html">&lt;link href="dist/css/tabulator.min.css" rel="stylesheet"&gt;
+&lt;script type="text/javascript" src="dist/js/tabulator.min.js"&gt;&lt;/script&gt;</pre>
 
                     <p>Create an element to hold the table</p>
                     <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
@@ -132,11 +133,13 @@
                     <h3>NPM Installation</h3>
                     <p>To get Tabulator via the NPM package manager, open a terminal in your project directory and run the following commmand:</p>
                     <pre class="prettyprint lang-bsh">npm install jquery.tabulator --save</pre>
+                    Then to add the library to your project, you will need to require it after the jquery-ui library:
+                    <pre class="prettyprint lang-js">require('jquery.tabulator');</pre>
 
                     <h3>CDNJS</h3>
                     <p>To access Tabulator directly from the CDNJS CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:</p>
-                    <pre class="prettyprint lang-html">&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.12.0/tabulator.min.css" rel="stylesheet"&gt;
-&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/2.12.0/tabulator.min.js"&gt;&lt;/script&gt;</pre>
+                    <pre class="prettyprint lang-html">&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.2.0/css/tabulator.min.css" rel="stylesheet"&gt;
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.2.0/js/tabulator.min.js"&gt;&lt;/script&gt;</pre>
 
                     <p>Check out more of the great libraries available to use direclty from CDNJS at <a href="https://cdnjs.com/">https://cdnjs.com/</a></p>
 
@@ -190,10 +193,10 @@ $("#example-table").tabulator("setData", tabledata);</pre>
                     <div class="docs-sidenav">
                         <h2>
                             Menu
-                            <div id="version-select">
+                                <div id="version-select">
                                 <div class="btn-group">
                                   <button type="button" class="btn btn-sm  btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Version 2.12 <span class="caret"></span>
+                                    Version 3.2 <span class="caret"></span>
                                   </button>
                                   <ul class="dropdown-menu dropdown-menu-right">
                                     <li><a href="../3.2">3.2</a></li>
