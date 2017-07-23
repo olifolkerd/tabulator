@@ -672,7 +672,7 @@ $("#example-table").tabulator({
             movableColumns:true,
             columns:[
                 {title:"Name", field:"name", width:200},
-                {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg"},
+                {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg", bottomCalcParams:{precision:3}},
                 {title:"Gender", field:"gender"},
                 {title:"Rating", field:"rating", width:80, bottomCalc:"avg"},
                 {title:"Favourite Color", field:"col"},
@@ -2759,7 +2759,7 @@ $("#lang-default").click(function(){
          movableColumns:true,
          columns:[
          {title:"Name", field:"name", width:200},
-         {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg"},
+         {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg", bottomCalcParams:{precision:3}},
          {title:"Gender", field:"gender"},
          {title:"Rating", field:"rating", width:80, bottomCalc:"avg"},
          {title:"Favourite Color", field:"col"},
