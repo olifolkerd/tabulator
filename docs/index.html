@@ -1176,6 +1176,12 @@ $("#example-table").tabulator("setFilter", customFilter, {height:3});</pre>
                     <p>Tabulator comes with a number of preconfigured calculations including:</p>
                     <ul>
                         <li><strong>avg</strong> - the average value of the column</li>
+                        <ul>
+                            <li>optional <strong>topCalcParams/bottomCalcParams:</strong></li>
+                            <ul>
+                                <li><strong>precision</strong> - the number of decimals to display (default is 2), setting this falue to <span class='param'>false</span> will display however many decimals are provided with the number</li>
+                            </ul>
+                        </ul>
                         <li><strong>max</strong> - the maximum value in the column</li>
                         <li><strong>min</strong> - the minimum value in the column</li>
                         <li><strong>sum</strong> - a sum of all values in the column</li>
@@ -4649,10 +4655,10 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                                     Version 3.2 <span class="caret"></span>
                                   </button>
                                   <ul class="dropdown-menu  dropdown-menu-right">
-                                    <li><a href="../3.2">3.2</a></li>
-                                    <li><a href="../3.1">3.1</a></li>
-                                    <li><a href="../3.0">3.0</a></li>
-                                    <li><a href="../2.12">2.12</a></li>
+                                    <li><a href="3.2">3.2</a></li>
+                                    <li><a href="3.1">3.1</a></li>
+                                    <li><a href="3.0">3.0</a></li>
+                                    <li><a href="2.12">2.12</a></li>
                                   </ul>
                                 </div>
                             </div>
