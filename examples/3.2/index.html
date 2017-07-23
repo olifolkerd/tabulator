@@ -918,7 +918,7 @@ $("#example-table").tabulator({
 
                 <p>The example below has an editable names column, try making some changes to soe of the names and then use the history functions to undo and redo the changes.</p>
 
-                <div class="feature-box-legend">AJAX Controls</div>
+                <div class="feature-box-legend">History Controls</div>
 
                 <div class="feature-box">
                   <div class="container">
@@ -950,8 +950,8 @@ $("#example-table-history").tabulator({
     history:true,
     columns:[
     {title:"Name", field:"name", width:200, editor:"input"},
-    {title:"Progress", field:"progress", align:"right"},
-    {title:"Gender", field:"gender"},
+    {title:"Progress", field:"progress", align:"right", editor:"input"},
+    {title:"Gender", field:"gender", editor:"input"},
     {title:"Rating", field:"rating",  align:"center", width:100},
     {title:"Favourite Color", field:"col"},
     {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -2340,8 +2340,8 @@ $("#lang-default").click(function(){
          history:true,
          columns:[
          {title:"Name", field:"name", width:200, editor:"input"},
-         {title:"Progress", field:"progress", align:"right"},
-         {title:"Gender", field:"gender"},
+         {title:"Progress", field:"progress", align:"right", editor:"input"},
+         {title:"Gender", field:"gender", editor:"input"},
          {title:"Rating", field:"rating",  align:"center", width:100},
          {title:"Favourite Color", field:"col"},
          {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
