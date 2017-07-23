@@ -32,13 +32,13 @@
     <link href="../css/prettyprint.css" rel="stylesheet">
 
     <!-- Tabulator CSS -->
-    <link href="../css/3.1/tabulator_site.css" rel="stylesheet">
-    <link href="../css/3.1/tabulator.css" rel="stylesheet">
-    <link href="../css/3.1/tabulator_midnight.css" rel="stylesheet">
-    <link href="../css/3.1/tabulator_modern.css" rel="stylesheet">
-    <link href="../css/3.1/tabulator_simple.css" rel="stylesheet">
-    <link href="../css/3.1/bootstrap/tabulator_bootstrap.css" rel="stylesheet">
-    <link href="../css/3.1/semantic-ui/tabulator_semantic-ui.css" rel="stylesheet">
+    <link href="../css/3.2/tabulator_site.css" rel="stylesheet">
+    <link href="../css/3.2/tabulator.css" rel="stylesheet">
+    <link href="../css/3.2/tabulator_midnight.css" rel="stylesheet">
+    <link href="../css/3.2/tabulator_modern.css" rel="stylesheet">
+    <link href="../css/3.2/tabulator_simple.css" rel="stylesheet">
+    <link href="../css/3.2/bootstrap/tabulator_bootstrap.css" rel="stylesheet">
+    <link href="../css/3.2/semantic-ui/tabulator_semantic-ui.css" rel="stylesheet">
 
 
     <link rel="icon" type="image/png" href="../images/tabulator_favicon_simple.png">
@@ -213,10 +213,10 @@
                             <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
     columns:[
-        {title:"Name", field:"name", width:200},
-        {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+        {title:"Name", field:"name"},
+        {title:"Progress", field:"progress", align:"right", sorter:"number"},
         {title:"Gender", field:"gender"},
-        {title:"Rating", field:"rating", align:"center", width:80},
+        {title:"Rating", field:"rating", align:"center"},
         {title:"Favourite Color", field:"col"},
         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
         {title:"Driver", field:"car", align:"center"},
@@ -632,7 +632,6 @@ $("#example-table").tabulator({
                 <h3>JavaScript</h3>
                 <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
-    movableCols:true,
     persistentLayout: true,
     persistentLayoutID:"examplePerststance",
     columns:[
@@ -647,6 +646,42 @@ $("#example-table").tabulator({
 });</pre>
             </fieldset>
         </article>
+
+                <a class="anchor" id="calculations"></a>
+                <article>
+                    <h1>Column Calculations <a class="doc-link" href="../docs?#calculations"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                    <p>
+                        Column calculations can be useed to add a row of calcualted values to the top or bottom of your table to display infmation such as the sum of a columns data.
+                    </p>
+                    <p>
+                        There are two options that can be set in a column definition object to define a calculation, the <span class='param'>topCalc</span> option defines a calculation for the top of the column, and the <span class='param'>bottomCalc</span> defines a calculation for the bottom of the column. You can define, either, both or neither of the options.
+                    </P>
+                    <div class="example-table" id="example-table-colum-calculations">
+                        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                    </div>
+
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                        <h3>JavaScript</h3>
+                        <pre class="prettyprint lang-js">$("#example-table").tabulator({
+            height:"311px",
+            movableColumns:true,
+            columns:[
+                {title:"Name", field:"name", width:200},
+                {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg", bottomCalcParams:{precision:3}},
+                {title:"Gender", field:"gender"},
+                {title:"Rating", field:"rating", width:80, bottomCalc:"avg"},
+                {title:"Favourite Color", field:"col"},
+                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+                {title:"Driver", field:"car", align:"center", formatter:"tickCross", topCalc:"count"},
+            ],
+        });</pre>
+                    </fieldset>
+                </article>
 
         <a class="anchor" id="ajax"></a>
         <article>
@@ -918,7 +953,7 @@ $("#example-table").tabulator({
 
                 <p>The example below has an editable names column, try making some changes to soe of the names and then use the history functions to undo and redo the changes.</p>
 
-                <div class="feature-box-legend">AJAX Controls</div>
+                <div class="feature-box-legend">History Controls</div>
 
                 <div class="feature-box">
                   <div class="container">
@@ -950,8 +985,8 @@ $("#example-table-history").tabulator({
     history:true,
     columns:[
     {title:"Name", field:"name", width:200, editor:"input"},
-    {title:"Progress", field:"progress", align:"right"},
-    {title:"Gender", field:"gender"},
+    {title:"Progress", field:"progress", align:"right", editor:"input"},
+    {title:"Gender", field:"gender", editor:"input"},
     {title:"Rating", field:"rating",  align:"center", width:100},
     {title:"Favourite Color", field:"col"},
     {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -1124,7 +1159,7 @@ $("#example-table").tabulator({
         {title:"Name", field:"name", width:150, headerFilter:"input"},
         {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
         {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
-        {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+        {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">="},
         {title:"Favourite Color", field:"col", headerFilter:"input"},
         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date",  headerFilter:"input"},
         {title:"Driver", field:"car", align:"center", formatter:"tickCross",  headerFilter:"input"},
@@ -1312,17 +1347,17 @@ $("#example-table").tabulator("setPage", 1);</pre>
 <article>
     <h1>Selectable Rows <a class="doc-link" href="../docs#selectable"><i class="fa fa-external-link"></i> Documentation</a></h1>
 
-    <p>Using the <span class='param'>selectable</span> option, you can allow users to select rows in the table via a number of different routes:
-    <ul>
-    <li>
-        Clicking on a row, to toggle its state.
-    </li>
-    <li>
-        Holding down the shift key and click dragging over a number of rows to toggle the state of all rows the cursor passes over.
-    </li>
-    <li>
-        Programmatically with the <span class='param'>selectRow</span> and <span class='param'>deselectRow</span> functions.
-    </li>
+	<p>Using the <span class='param'>selectable</span> option, you can allow users to select rows in the table via a number of different routes:
+	<ul>
+	<li>
+		Clicking on a row, to toggle its state.
+	</li>
+	<li>
+		Holding down the shift key and click dragging over a number of rows to toggle the state of all rows the cursor passes over.
+	</li>
+	<li>
+		Programmatically with the <span class='param'>selectRow</span> and <span class='param'>deselectRow</span> functions.
+	</li>
 </ul></p>
 
     <div class="feature-box-legend">Selection Controls</div>
@@ -1342,33 +1377,33 @@ $("#example-table").tabulator("setPage", 1);</pre>
       </div>
     </div>
 
-    <div class="example-table" id="example-table-selectable">
-        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
-    </div>
+	<div class="example-table" id="example-table-selectable">
+	    <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+	</div>
 
-    <button class="view-source">View Source</button>
-    <fieldset class="source">
-        <legend>Source Code</legend>
-        <h3>HTML</h3>
-        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+	<button class="view-source">View Source</button>
+	<fieldset class="source">
+	    <legend>Source Code</legend>
+	    <h3>HTML</h3>
+	    <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
-        <h3>JavaScript</h3>
-        <pre class="prettyprint lang-js">//Build Tabulator
+	    <h3>JavaScript</h3>
+	    <pre class="prettyprint lang-js">//Build Tabulator
 $("#example-table").tabulator({
     height:"311px",
     selectable:true, //make rows selectable
     columns:[
-        {title:"Name", field:"name", width:200},
-        {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
-        {title:"Gender", field:"gender", width:100},
-        {title:"Rating", field:"rating", align:"center", width:80},
-        {title:"Favourite Color", field:"col"},
-        {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-        {title:"Driver", field:"car", align:"center", width:100},
+	    {title:"Name", field:"name", width:200},
+	    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+	    {title:"Gender", field:"gender", width:100},
+	    {title:"Rating", field:"rating", align:"center", width:80},
+	    {title:"Favourite Color", field:"col"},
+	    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+	    {title:"Driver", field:"car", align:"center", width:100},
     ],
     rowSelectionChanged:function(data, rows){
         //update selected row counter on selection change
-        $("#select-stats span").text(data.length);
+    	$("#select-stats span").text(data.length);
     },
 });
 
@@ -1392,7 +1427,7 @@ $("#deselect-all").click(function(){
     $("#example-table").tabulator("deselectRow");
 });</pre>
 
-    </fieldset>
+	</fieldset>
 
 </article>
 <a class="anchor" id="adddel"></a>
@@ -1535,7 +1570,6 @@ $("#reset").click(function(){
         <pre class="prettyprint lang-js">//Build Tabulator
 $("#example-table").tabulator({
     height:"311px",
-    movableCols:true,
     columns:[
         {title:"Name", field:"name", width:200},
         {title:"Progress", field:"progress", width:100, sorter:"number"},
@@ -1905,15 +1939,16 @@ $("#lang-default").click(function(){
         <div class="docs-sidenav">
             <h2>
                 Layout
-                    <div id="version-select" data-version="3.1">
+                    <div id="version-select" data-version="3.2">
                     <div class="btn-group">
                       <button type="button" class="btn btn-sm  btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Version 3.1 <span class="caret"></span>
+                        Version 3.2 <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="3.1">3.1</a></li>
-                        <li><a href="3.0">3.0</a></li>
-                        <li><a href="2.12">2.12</a></li>
+                        <li><a href="../3.2">3.2</a></li>
+                        <li><a href="../3.1">3.1</a></li>
+                        <li><a href="../3.0">3.0</a></li>
+                        <li><a href="../2.12">2.12</a></li>
                       </ul>
                     </div>
                 </div>
@@ -1930,6 +1965,7 @@ $("#lang-default").click(function(){
                 <li><a href="#row-formatter">Row Formatter</a></li>
                 <li><a href="#sparklines">Sparklines</a></li>
                 <li><a href="#persistance">Persistent Column Layout</a></li>
+                <li><a href="#calculations">Column Calculations</a></li>
             </ul>
 
             <h2>Data</h2>
@@ -1997,7 +2033,7 @@ $("#lang-default").click(function(){
 <script src="../js/bootstrap.min.js"></script>
 
 <!-- Tabulator -->
-<script src="../js/3.1/tabulator.min.js?i=2"></script>
+<script src="../js/3.2/tabulator.min.js?i=1"></script>
 <script src="../js/sparkline.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
@@ -2158,10 +2194,10 @@ $("#lang-default").click(function(){
      $("#example-table-fittodata").tabulator({
          height:"311px",
          columns:[
-         {title:"Name", field:"name", width:200},
-         {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+         {title:"Name", field:"name"},
+         {title:"Progress", field:"progress", align:"right", sorter:"number"},
          {title:"Gender", field:"gender"},
-         {title:"Rating", field:"rating", align:"center", width:80},
+         {title:"Rating", field:"rating", align:"center"},
          {title:"Favourite Color", field:"col"},
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center"},
@@ -2339,8 +2375,8 @@ $("#lang-default").click(function(){
          history:true,
          columns:[
          {title:"Name", field:"name", width:200, editor:"input"},
-         {title:"Progress", field:"progress", align:"right"},
-         {title:"Gender", field:"gender"},
+         {title:"Progress", field:"progress", align:"right", editor:"input"},
+         {title:"Gender", field:"gender", editor:"input"},
          {title:"Rating", field:"rating",  align:"center", width:100},
          {title:"Favourite Color", field:"col"},
          {title:"Date Of Birth", field:"dob", sorter:"date", align:"center"},
@@ -2655,7 +2691,7 @@ $("#lang-default").click(function(){
          {title:"Name", field:"name", width:150, headerFilter:"input"},
          {title:"Progress", field:"progress", formatter:"progress", sorter:"number", headerFilter:"number"},
          {title:"Gender", field:"gender", editor:genderEditor, headerFilter:true},
-         {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number"},
+         {title:"Rating", field:"rating", editor:"star", align:"center", width:100, headerFilter:"number", headerFilterPlaceholder:"at least...", headerFilterFunc:">="},
          {title:"Favourite Color", field:"col", headerFilter:"input"},
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date",  headerFilter:"input"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross",  headerFilter:"input"},
@@ -2696,7 +2732,7 @@ $("#lang-default").click(function(){
      //Persistant Columns Example
      $("#example-table-colum-layout").tabulator({
          height:"311px",
-         movableCols:true,
+
          persistentLayout: true,
          movableColumns:true,
          persistentLayoutID:"examplePerststance2",
@@ -2712,6 +2748,27 @@ $("#lang-default").click(function(){
      });
 
      $("#example-table-colum-layout").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-colum-calculations").closest("article").on("build", function(){
+
+     //Persistant Columns Example
+     $("#example-table-colum-calculations").tabulator({
+         height:"311px",
+         movableColumns:true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg", bottomCalcParams:{precision:3}},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", width:80, bottomCalc:"avg"},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross", topCalc:"count"},
+         ],
+     });
+
+     $("#example-table-colum-calculations").tabulator("setData", tabledata);
 
      });
 
@@ -2734,7 +2791,7 @@ $("#lang-default").click(function(){
      });
 
      $("#ajax-trigger").click(function(){
-         $("#example-table-ajax").tabulator("setData", "../data.json");
+         $("#example-table-ajax").tabulator("setData", "data.json");
      })
 
      });
@@ -2743,40 +2800,40 @@ $("#lang-default").click(function(){
      //Selectable rows example
      $("#example-table-selectable").closest("article").on("build", function(){
 
-        $("#select-row").click(function(){
-            $("#example-table-selectable").tabulator("selectRow", 1);
-        })
+     	$("#select-row").click(function(){
+     	    $("#example-table-selectable").tabulator("selectRow", 1);
+     	})
 
-        $("#deselect-row").click(function(){
-            $("#example-table-selectable").tabulator("deselectRow", 1);
-        })
+     	$("#deselect-row").click(function(){
+     	    $("#example-table-selectable").tabulator("deselectRow", 1);
+     	})
 
-        $("#select-all").click(function(){
-            $("#example-table-selectable").tabulator("selectRow");
-        })
+     	$("#select-all").click(function(){
+     	    $("#example-table-selectable").tabulator("selectRow");
+     	})
 
-        $("#deselect-all").click(function(){
-            $("#example-table-selectable").tabulator("deselectRow");
-        })
+     	$("#deselect-all").click(function(){
+     	    $("#example-table-selectable").tabulator("deselectRow");
+     	})
 
-        $("#example-table-selectable").tabulator({
-            height:"311px",
-            selectable:true,
-            columns:[
-            {title:"Name", field:"name", width:200},
-            {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
-            {title:"Gender", field:"gender", width:100},
-            {title:"Rating", field:"rating", align:"center", width:80},
-            {title:"Favourite Color", field:"col"},
-            {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
-            {title:"Driver", field:"car", align:"center", width:100},
-            ],
-            rowSelectionChanged:function(data, rows){
-                $("#select-stats span").text(data.length);
-            },
-        });
+     	$("#example-table-selectable").tabulator({
+     	    height:"311px",
+     	    selectable:true,
+     	    columns:[
+     	    {title:"Name", field:"name", width:200},
+     	    {title:"Progress", field:"progress", width:100, align:"right", sorter:"number"},
+     	    {title:"Gender", field:"gender", width:100},
+     	    {title:"Rating", field:"rating", align:"center", width:80},
+     	    {title:"Favourite Color", field:"col"},
+     	    {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+     	    {title:"Driver", field:"car", align:"center", width:100},
+     	    ],
+     	    rowSelectionChanged:function(data, rows){
+     	    	$("#select-stats span").text(data.length);
+     	    },
+     	});
 
-        $("#example-table-selectable").tabulator("setData", tabledata);
+     	$("#example-table-selectable").tabulator("setData", tabledata);
      });
 
      $("#example-table-adddel").closest("article").on("build", function(){
@@ -2838,7 +2895,7 @@ $("#lang-default").click(function(){
 
      $("#example-table-download").tabulator({
          height:"311px",
-         movableCols:true,
+
          columns:[
          {title:"Name", field:"name", width:200},
          {title:"Progress", field:"progress", width:100, sorter:"number"},
