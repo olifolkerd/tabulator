@@ -112,7 +112,7 @@
   <div class="container">
    <h1><img src="images/tabulator_white.png" alt="Tabulator"></h1>
    <h2>The easy to use, fully featured, interactive table jQuery plugin</h2>
-   <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download 3.1</a>
+   <p><a id="download" class="btn btn-primary btn-large" href="https://github.com/olifolkerd/tabulator/archive/master.zip"><span class='glyphicon glyphicon-cloud-download'></span> Download 3.2</a>
    </p>
 
    <div class="share">
@@ -145,8 +145,8 @@
                       <i class="fa fa-asterisk"></i>
                     </td>
                     <td>
-                      <h2>Version 3.1 Out Now!</h2>
-                      <p>Cell Navigation, Custom Key Bindings, Interaction History and much more! <strong>Checkout the news article to find out more!</strong></p>
+                      <h2>Version 3.2 Out Now!</h2>
+                      <p>Column Calculations, Multi-level Grouping, Touch Events, Nested Data Field Definitions, Header Filter Functions, Scroll Keybindings and much more! <strong>Checkout the news article to find out more!</strong></p>
                     </td>
                   </tr>
                 </table>
@@ -213,8 +213,9 @@
   pagination:"local",
   paginationSize:7,
   movableColumns:true,
-  sortBy:"name",
-  sortDir:"asc",
+  initialSort:[
+    {column:"name", dir:"asc"},
+  ],
   columns:[
     {title:"Name", field:"name", editor:"input"},
     {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},
@@ -545,6 +546,18 @@
     </a>
   </div>
 
+  <div class="col-md-3 col-sm-6 tile">
+    <a href="docs#calculations">
+      <div class="frame">
+        <i class="fa fa-calculator"></i>
+        <div class="caption">
+          <h3>Column Calculations</h3>
+          <p>Calculate max, min, avg, &amp; sum values from column data</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
 
 </div>
 <!-- /.row -->
@@ -575,7 +588,7 @@
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 
 <!-- Tabulator -->
-<script src="js/3.1/tabulator.min.js"></script>
+<script src="js/3.2/tabulator.min.js"></script>
 <script src="js/sparkline.js"></script>
 
 <script type="text/javascript">
@@ -660,8 +673,9 @@
        pagination:"local",
        paginationSize:7,
        movableColumns:true,
-       sortBy:"name",
-       sortDir:"asc",
+       initialSort:[
+         {column:"name", dir:"asc"},
+       ],
        columns:[
        {title:"Name", field:"name", editor:"input"},
        {title:"Task Progress", field:"progress", align:"left", formatter:"progress", editor:true},

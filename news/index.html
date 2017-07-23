@@ -123,6 +123,106 @@
                 <div class="col-lg-12" role="main">
 
                     <article>
+                        <h1>Version 3.2 Released<span class="datestamp">23/07/2017</span></h1>
+                        <p>Its been a busy month in the world of Tabulator, following tons of great user feedback I am happy to announce the release of Tabulator 3.2</p>
+
+                        <h2>Virtual DOM Render Speed Dramatically Improved</h2>
+                        <p>The render speed of the virtual DOM has been dramatically improved, allowing for a great experience even on older browsers like IE 11. Fallback modes have also been introduced to replace some of the graphically intensive opperations with simpler alternatives on less capbable browsers.</p>
+
+                        <p>The <span class='param'>virtualDomBuffer</span> option has been added to allow more control over the efficiency of the renderer.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#virtual-dom">Virtual DOM Documentation</a></p>
+
+                        <h2>Column Field Binding to Nested Objects</h2>
+
+                        <p>You can now bind columns to fields inside object by passing the nested field name to the column definition object using dot notation.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#field-nesting">Column Defintion Documentation</a></p>
+
+
+                        <h2>Column Calculations</h2>
+
+                        <p>It is now possible to add calculation rows to the top and bottom of your tables, providing a range of calculations on the column data, including, <span class='param'>max</span>, <span class='param'>min</span>, <span class='param'>average</span>, <span class='param'>sum</span> and <span class='param'>count</span>.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#calculations">Calculations Documentation</a></p>
+
+                        <h2>Multi Level Grouping</h2>
+
+                        <p>You can now create groups inside groups when grouping rows, allowing you to nest row groups as many times as you want.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#grouping">Grouping Data Documentation</a></p>
+
+
+                        <h2>Touch Events</h2>
+                        <p>Touch events have been added on cells, rows and headers to allow you to act on <span class='param'>tap</span>, <span class='param'>double tap</span> and <span class='param'>tap hold</span> events.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#callbacks">Callbacks Documentation</a></p>
+
+                        <h2>Header Filter Functions</h2>
+                        <p>You can now set custom filter functions on header filter elements instead of just the default like and equals filters.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#header-filters">Header Filters Documentation</a></p>
+
+                        <h2>Scroll Key Bindings</h2>
+
+                        <p>New key bindings have been added to allow control of <span class='param'>page up</span>, <span class='param'>page down</span>, <span class='param'>home</span> and <span class='param'>end</span> scroll events.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#keybindings">Keybindings Documentation</a></p>
+
+
+                        <h2>Mutator Cell Components</h2>
+                        <p>When <span class='param'>edit</span> type mutators are called, the cell component for the edited cell is now passed to the mutator.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#mutators">Mutators Documentation</a></p>
+
+                        <h2>Get Rows Function</h2>
+                        <p>The <span class='param'>getRows</span> function has been added to allow retrieval of all table row components.</p>
+
+                        <h2>Download Data Updates</h2>
+                        <p>You can now hide columns in downloaded data by setting the <span class='param'>download</span> property to <span class='param'>false</span> in a columns defintion array.</p>
+
+                        <p>The <span class='param'>downloadDataMutator</span> table option allows you to mutated data before it is parsed into the download file.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#download">Download Documentation</a></p>
+
+
+                        <h2>Localization Updates</h2>
+                        <p>The <span class='param'>item</span> and <span class='param'>items</span> text in group headers is now localizable.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#localization">Localization Documentation</a></p>
+
+                        <h2>New Component Object Functions</h2>
+                        <p>The <span class='param'>select</span>, <span class='param'>deselect</span> and <span class='param'>toggleSelect</span> functions have been added to the row component</p>
+
+                        <p>The <span class='param'>getData</span> and <span class='param'>getField</span> functions have been added to the cell component as shortcuts so you dont have to call <span class='param'>getRow</span> or <span class='param'>getColumn</span> first.</p>
+
+                        <p>The <span class='param'>getSubGroups</span> and <span class='param'>getParentGroup</span> functions have been added to the group component.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#components">Component Objects Documentation</a></p>
+
+                        <h2>Resizable Column Updates</h2>
+                        <p>The <span class='param'>resizableColumns</span> option now accepts the values of <span class='param'>header</span> and <span class='param'>cell</span> to give more choice on how a user can resize columns.</p>
+
+                        <h2>Variable Height Formatters</h2>
+                        <p>The <span class='param'>textarea</span> formatter will now automatically adjust the hight of a row as its column is resized to ensure that no text is hidden by overflowing the cell. To enable this behaviour on other formatters you can now use the <span class='param'>variableHieght</span> property in column definition object.</p>
+
+                        <p>For more information checkout the <a href="../docs/3.2#define-column-headers">Column Definition Documentation</a></p>
+
+                        <h2>General System Tweaks</h2>
+                        <p>A number of small tweaks have been made to the system including:</p>
+                        <ul>
+                            <li>The pagination element will now act responsivly, hiding the page number selector when the table is too narrow to display it</li>
+                            <li>The fit columns to data display mode now correctly resizes columns when data is set</li>
+                            <li>The redraw function has been improved to give a better look after redrawing a previously hidden table</li>
+                            <li>Fixed placeholder element rendering on table redraw</li>
+                            <li>Initial data is now correctly loaded into table in <span class='param'>local</span> pagination mode</li>
+                            <li>Cell navigation functions now work correctly after column reorder</li>
+                        </ul>
+
+
+                    </article>
+
+                    <article>
                         <h1>Version 3.1 Released<span class="datestamp">18/06/2017</span></h1>
                         <p>Well its been a really busy month, with all the great feeback from the 3.0 release I have made a load of improvements to existing funcctionality and added a load of new features!</p>
 

@@ -149,8 +149,8 @@
                     <h3>CDNJS</h3>
                     <p>To access Tabulator directly from the CDNJS CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:</p>
 
-                    <pre class="prettyprint lang-html">&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.1.5/css/tabulator.min.css" rel="stylesheet"&gt;
-&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.1.5/js/tabulator.min.js"&gt;&lt;/script&gt;</pre>
+                    <pre class="prettyprint lang-html">&lt;link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.2/css/tabulator.min.css" rel="stylesheet"&gt;
+&lt;script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.2/js/tabulator.min.js"&gt;&lt;/script&gt;</pre>
 
                     <p>Check out more of the great libraries available to use direclty from CDNJS at <a href="https://cdnjs.com/">https://cdnjs.com/</a><
 
@@ -174,7 +174,7 @@
                 </article>
                 <a class="anchor" id="define-column-headers"></a>
                 <article>
-                    <h1>Define Column Headers </h1>
+                    <h1>Define Columns <span class="label label-primary">Updated</span></h1>
 
                     <p>Column headers are defined as an array of JSON objects passed into the columns option when you create your tabulator</p>
 
@@ -217,6 +217,7 @@
                         <li><strong>sorterParams </strong> - additional parameters you can pass to the sorter(see <a href="#sorting">Sorting Data</a> for more details)</li>
                         <li><strong>formatter</strong> - set how you would like the data to be formatted (see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>formatterParams</strong> - additional parameters you can pass to the formatter(see <a href="#formatting">Formatting Data</a> for more details)</li>
+                        <li><strong>variableHieght <span class="label label-danger">New</span></strong> -alter the row height to fit the contents of the cell instead of hiding overflow</li>
                         <li><strong>editable </strong> - callback to check if the cell is editable (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>editor</strong> - set the editor to be used when editing the data. (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
                         <li><strong>editorParams </strong> - additional parameters you can pass to the editor (see <a href="#manipulating-data">Manipulating Data</a> for more details)</li>
@@ -225,6 +226,12 @@
                         <li><strong>mutatorParams </strong> - additional parameters you can pass to the mutator(see <a href="#mutators">Mutators</a> for more details)</li>
                         <li><strong>accessor</strong> - function to alter column values before they are read out the table using the <span class='param'>getData</span> function (see <a href="#accessors">Accessors</a> for more details)</li>
                         <li><strong>accessorParams </strong> - additional parameters you can pass to the accessor(see <a href="#accessors">Accessors</a> for more details)</li>
+                        <li><strong>download <span class="label label-danger">New</span></strong> - show or hide column in downloaded data (see <a href="#download">Downloading Table Data</a> for more details)</li>
+
+                        <li><strong>topCalc <span class="label label-danger">New</span></strong> - the column calculation to be displayed at the top of this column(see <a href="#calculations">Column Calculations</a> for more details)</li>
+                        <li><strong>bottomCalc <span class="label label-danger">New</span></strong> - the column calculation to be displayed at the bottom of this column(see <a href="#calculations">Column Calculations</a> for more details)</li>
+                        <li><strong>topCalcParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the topCalc calculation function(see <a href="#calculations">Column Calculations</a> for more details)</li>
+                        <li><strong>bottomCalcParams <span class="label label-danger">New</span></strong> - additional parameters you can pass to the bottomCalc calculation function(see <a href="#calculations">Column Calculations</a> for more details)</li>
                     </ul>
 
                     <h3>Cell Events</h3>
@@ -232,6 +239,9 @@
                         <li><strong>cellClick</strong> - callback for when user clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>cellDblClick</strong> - callback for when user double clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>cellContext</strong> - callback for when user right clicks on a cell in this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellTap <span class="label label-danger">New</span></strong> - callback for when user taps on a cell in this column, triggered in touch displays. (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellDblTap <span class="label label-danger">New</span></strong> - callback for when user double taps on a cell in this column, triggered in touch displays when a user taps the same cell twice in under 300ms. (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>cellTapHold <span class="label label-danger">New</span></strong> - callback for when user taps and holds on a cell in this column, triggered in touch displays when a user taps and holds the same cell for 1 second. (see <a href="#callbacks">Callbacks</a> for more details)</li>
                     </ul>
 
                     <h3>Column Headers</h3>
@@ -240,13 +250,41 @@
                         <li><strong>headerClick</strong>  - callback for when user clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>headerDblClick</strong>  - callback for when user double clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>headerContext</strong>  - callback for when user right clicks on the header for this column (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerTap <span class="label label-danger">New</span></strong> - callback for when user taps on a header for this column, triggered in touch displays. (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerDblTap <span class="label label-danger">New</span></strong> - callback for when user double taps on a header for this column, triggered in touch displays when a user taps the same header twice in under 300ms. (see <a href="#callbacks">Callbacks</a> for more details)</li>
+                        <li><strong>headerTapHold <span class="label label-danger">New</span></strong> - callback for when user taps and holds on a header for this column, triggered in touch displays when a user taps and holds the same header for 1 second. (see <a href="#callbacks">Callbacks</a> for more details)</li>
                         <li><strong>tooltipHeader</strong> - sets the on hover tooltip for the column header (see <a href="#formatting">Formatting Data</a> for more details)</li>
                         <li><strong>editableTitle</strong> - allows the user to edit the header titles. (see <a href="#editable-column-title">Editable Column Titles</a> for more details)</li>
                         <li><strong>headerFilter</strong> - filtering of columns from elements in the header (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>HeaderFilterPlaceholder </strong> - placeholder text for the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                         <li><strong>headerFilterParams </strong> - additional parameters you can pass to the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>headerFilterFunc <span class="label label-danger">New</span></strong> - the filter function that should be used by the header filter (see <a href="#header-filters">Header Filtering</a> for more details)</li>
+                        <li><strong>headerFilterFuncParams <span class="label label-danger">New</span></strong> - additional parameters object passed to the headerFilterFunc function (see <a href="#header-filters">Header Filtering</a> for more details)</li>
                     </ul>
 
+                    <a class="anchor" id="field-nesting"></a>
+                    <h2>Setting Fields In Nested Data <span class="label label-danger">New</span></h2>
+                    <p>Tabulator can handle linking columns to fields inside nested data objects. To do this you specify the route to your data using dot notation.</p>
+
+                    <p>For example here is a basic row data object with data nested inside a user object</p>
+
+                    <pre class="prettyprint lang-js">{
+    id:1,
+    user:{
+        name:"steve",
+        age:23
+    },
+    col:"red",
+    cheese:true
+},</pre>
+                    <p>If you wanted to make a column that showed the name field inside the user object you could set the <span class='param'>field</span> property of the column definition object to <span class='param'>user.name</span></p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {title:"Name", field:"user.name"},  //link column to name property of user object
+    ],
+});</pre>
+                    <p class="note"><strong>Note: </strong> This functionality is only available for nested objects and will not work with arrays.</p>
 
                     <a class="anchor" id="column-groups"></a>
                     <h2>Column Grouping <a class="example-link" href="../examples?#column-groups"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
@@ -572,11 +610,11 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="get-set"></a>
                 <article>
-                    <h1>Mutators &amp; Accessors </h1>
+                    <h1>Mutators &amp; Accessors <span class="label label-primary">Updated</span></h1>
                     <p>Mutators (setters) and Accessors (getters) allow you to manipulate the table data as it enters and leaves your Tabulator, allowing you to convert values for use in your table and then change them again as they leave.</p>
 
                     <a class="anchor" id="mutators"></a>
-                    <h2>Mutators </h2>
+                    <h2>Mutators <span class="label label-primary">Updated</span></h2>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -589,15 +627,17 @@ $("#example-table").tabulator({
 
                     <p>You can pass an optional additional parameter with mutator, <span class='param'>mutatorParams</span> that should contain an object with additional information for configuring the mutator.</p>
 
-                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, data, type, mutatorParams){
+                    <pre class="prettyprint lang-js">{title:"Has Too Many Cars", field:"cars", mutatorParams:{threshold:5}, mutator:function(value, data, type, mutatorParams, cell){
         //value - original value of the cell
         //data - the data for the row
         //type - the type of mutation occuring (data|edit)
         //mutatorParams - the mutatorParams object from the column definition
+        //cell - when the "type" argument is "edit", this contains the cell component for the edited cell, otherwise it is undefined
 
         return value > mutatorParams.threshold; //return the new value for the cell data.
     },
 }</pre>
+
                     <h3>Mutation Type</h3>
                     <p>
                         By default mutators are applied to data when it is parsed into the table with the <span class='param'>setData</span> function and when a user edits a cell. If you only want your mutators to be applied in one of these cases, you can use the <span class='param'>mutateType</span> option to specify when you want your mutator to be used.
@@ -628,7 +668,7 @@ $("#example-table").tabulator({
 
                     <p>Accessors are used to alter data as it leaves the table through the <span class='param'>getData</span> function.</p>
 
-                    <p>You can set accessors on a per column basis using the <span class='param'>accessor</span> option in the <a href="#define-column-headers">column definition object</a>.</p>
+                    <p>You can set accessors on a per column basis using the <span class='param'>accessor</span> option in the column definition object.</p>
 
                     <p>You can pass an optional additional parameter with accessor, <span class='param'>accessorParams</span> that should contain an object with additional information for configuring the accessor.</p>
 
@@ -648,7 +688,7 @@ $("#example-table").tabulator({
 
                 <a class="anchor" id="formatting"></a>
                 <article>
-                    <h1>Formatting Data <a class="example-link" href="../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Formatting Data <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#formatters"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -666,7 +706,7 @@ $("#example-table").tabulator({
 
                     <ul>
                         <li><strong>plaintext</strong> - This is the default formatter for all cells, and simply displays the value of the cell as text.</li>
-                        <li><strong>textarea</strong> - shows text with carriage returns intact (great for multiline text)</li>
+                        <li><strong>textarea</strong> - shows text with carriage returns intact (great for multiline text), this formatter will also adjust the height of rows to fit the cells contents when columns are resized</li>
                         <li><strong>html</strong>  -  displays un-sanitized html</li>
                         <li><strong>money</strong>  - formats a number into currency notation (eg. 1234567.8901 -> 1,234,567.89)</li>
                         <ul>
@@ -729,6 +769,13 @@ $("#example-table").tabulator({
                         <strong>Formatters vs Mutators</strong><br>
                         An important difference between a formatter and a mutator is that a formatter will only alter how data is displayed in cells but will not affect the data itself, while a mutator will alter the data contained in the table, which will then be visible in the data retrieved using the <span class='param'>getData</span> function. (see <a href="#mutators">Mutators</a> for more details)
                     </p>
+
+                    <h2>Variable Height Formatters <span class="label label-danger">New</span></h2>
+                    <p>By default formatters will keep their contents within the height of the current row, hiding any overflow. The only exception to this is the <span class='param'>textarea</span> formatter which will automatically vary its height when the column is resized so its contents does not overflow.</p>
+
+                    <p>If you would like this functionally to appear in another type of formatter you can set the <span class='param'>variableHieght</span> property to <span class='param'>true</span> in the column definition and it will will behave in a similar way to the textarea formatter:</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", formatter:myCustomFormatter, variableHeight:true}</pre>
 
                     <h2>Icon/Button Columns </h2>
                     <p>You can create icon/button columns, by not specifying the <span class='param'>field</span> option in the <a href="#define-column-headers">column definition object</a> and creating a custom formatter for the column contents. In the example below we have created a print button on the left of each row.</p>
@@ -826,7 +873,7 @@ var printIcon = function(cell, formatterParams){ //plain text value
 
                 <a class="anchor" id="filtering"></a>
                 <article>
-                    <h1>Filtering Data <a class="example-link" href="../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Filtering Data <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#filter"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -861,15 +908,17 @@ var printIcon = function(cell, formatterParams){ //plain text value
                     <p>Filters will remain in effect until they are cleared, including during <span class='param'>setData</span> calls.</p>
 
                     <h2>Custom Filter Functions</h2>
-                    <p>If you want to perform a more complicated filter then you can pass a callback function to the setFilter Method</p>
-                    <pre class="prettyprint lang-js">function customFilter(data){
+                    <p>If you want to perform a more complicated filter then you can pass a callback function to the setFilter method, you can also pass an optional second argument, an object with paramters to be passed to the filter function.</p>
+                    <pre class="prettyprint lang-js">function customFilter(data, filterParams){
     //data - the data for the row being filtered
-    return data.name == "bob" && data.height < 3; //must return a boolean, true if it passes the filter.
+    //filterParams - params object passed to the filter
+
+    return data.name == "bob" && data.height < filterParams.height; //must return a boolean, true if it passes the filter.
 }
 
-$("#example-table").tabulator("setFilter", customFilter);</pre>
+$("#example-table").tabulator("setFilter", customFilter, {height:3});</pre>
 
-                    <h2>Additional Filter Functions</h2>
+                    <h2>Additional Filter Functions <span class="label label-primary">Updated</span></h2>
 
                     <p>There are a number of additional filter functions that can be called to customise your filtering experience</p>
 
@@ -883,7 +932,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
 
                     <h3>Get Current Filters </h3>
-                    <p>You can retreive an array of the current filters using the <span class='param'>getFilter</span> function:</p>
+                    <p>You can retrieve an array of the current filters using the <span class='param'>getFilter</span> function:</p>
                     <pre class="prettyprint lang-js">var filters = $("#example-table").tabulator("getFilter");</pre>
                     <p>This will return an array of filter objects</p>
                     <pre class="prettyprint lang-js">[
@@ -940,12 +989,36 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                     <p class="note"><strong>Note: </strong> If the input has a <span class='param'>type</span> attribute value of <span class='param'>text</span> it will be automatically changed to <span class='param'>search</span> to give the user the option to clear the input text.</p>
 
-                    <h3>Filter Comparison Types</h3>
-                    <p>The type of comparison function used on the filter value is dependent on the type of element used for the header filter. </p>
 
-                    <p>Standard input elements use a case insensitive comparison where even a partial match counts as successful, this allows for the matches to be displayed as the user types.</p>
+                    <h3>Filter Comparison Types <span class="label label-primary">Updated</span></h3>
+                    <p>By default Tabulator will try and match the comparison type to the type of element used for the header filter. </p>
 
-                    <p>For all other element types (select boxes, check boxes, input elements of type number) an exact match is needed for the comparison to be successful.</p>
+                    <p>Standard input elements will use the <span class='param'>"like"</span> filter, this allows for the matches to be displayed as the user types.</p>
+
+                    <p>For all other element types (select boxes, check boxes, input elements of type number) an <span class='param'>"="</span> filter type is used.</p>
+
+                    <p>If you want to specify the type of filter used you can pass it to the <span class='param'>headerFilterFunc</span> option in the column definition object. This will take any of the standard filters outlined above or a custom function:</p>
+
+                    <pre class="prettyprint lang-js">{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:"<="} //show only rows with an age less than or equal the entered value</pre>
+
+                    <p>When using a custom filter function for a header filter, the arguments passed to the function will be slightly different from a normal custom filter function</p>
+
+                    <pre class="prettyprint lang-js">function customHeaderFilter(headerValue, rowValue, rowData, filterParams){
+    //headerValue - the value of the header filter element
+    //rowValue - the value of the column in this row
+    //rowData - the data for the row being filtered
+    //filterParams - params object passed to the headerFilterFuncParams property
+
+    return rowData.name == filterParams.name && rowValue < headerValue; //must return a boolean, true if it passes the filter.
+}
+
+//column defintion object in table constructor
+{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:customHeaderFilter, headerFilterFuncParams:{name:"bob"}}</pre>
+
+                    <p>As the above example demostrates it is possible to pass additional paramters to the custom filter function by passing an object to the <span class='param'>headerFilterFuncParams</span> option in the column definition.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Age", field:"age", headerFilter:"input", headerFilterPlaceholder:"Max Age", headerFilterFunc:customHeaderFilter, headerFilterFuncParams:{name:"bob"}}</pre>
+
 
                     <h3>Placeholder Text </h3>
 
@@ -1085,6 +1158,73 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
 
                 </article>
 
+                <a class="anchor" id="calculations"></a>
+                <article>
+                    <h1>Column Calculations <span class="label label-danger">New</span> <a class="example-link" href="../examples?#calculations"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+
+                    <div class="alert alert-success extension-info" role="alert">
+                      <i class="fa fa-cubes"></i>
+                      Column calculation functionality is provided by the <a href="#extension-colcalc">column calculation extension</a>
+                    </div>
+
+                    <p>Column calculations can be useed to add a row of calcualted values to the top or bottom of your table to display infmation such as the sum of a columns data.</p>
+
+                    <p>There are two options that can be set in a column definition object to define a calculation, the <span class='param'>topCalc</span> option defines a calculation for the top of the column, and the <span class='param'>bottomCalc</span> defines a calculation for the bottom of the column. You can define, either, both or neither of the options.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Rating", field:"rating", topCalc:"avg"} //show average rating</pre>
+
+                    <p>Tabulator comes with a number of preconfigured calculations including:</p>
+                    <ul>
+                        <li><strong>avg</strong> - the average value of the column</li>
+                        <ul>
+                            <li>optional <strong>topCalcParams/bottomCalcParams:</strong></li>
+                            <ul>
+                                <li><strong>precision</strong> - the number of decimals to display (default is 2), setting this falue to <span class='param'>false</span> will display however many decimals are provided with the number</li>
+                            </ul>
+                        </ul>
+                        <li><strong>max</strong> - the maximum value in the column</li>
+                        <li><strong>min</strong> - the minimum value in the column</li>
+                        <li><strong>sum</strong> - a sum of all values in the column</li>
+                        <li><strong>count</strong> - a count of all non empty cells in the column</li>
+                    </ul>
+
+                    <p>You can pass an optional additional parameter with the each calculation option, <span class='param'>topCalcParams</span> and <span class='param'>bottomCalcParams</span> that should contain an object with additional information for configuring the calculation function.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Rating", field:"rating", topCalc:customCalcFunction, topCalcParams:{age:18}}</pre>
+
+                    <p class="note"><strong>Note: </strong> If a calculation is defined on any column the calculations rows will be shown, any column without a calculations will show as an empty cell in the calculation row</p>
+
+                    <p class="note"><strong>Note: </strong> At the moment all calculations are formatted as plain text, formatters for column calculations will be comming soon.</p>
+
+                    <h2>Custom Calculation Function</h2>
+                    <p>If you want to perform your own calculations on a column then you can pass a custom calculation function to either of the <span class='param'>topCalc</span> or <span class='param'>bottomCalc</span> options.</p>
+
+                    <pre class="prettyprint lang-js">//count number of users over 18
+var adultCalc = function(values, data, calcParams){
+    //values - array of column values
+    //data - all table data
+    //calcParams - params passed from the column defintion object
+
+    var count = 0;
+
+    values.forEach(function(value){
+        if(value > 18){
+            count ++;
+        }
+    });
+
+    return calc;
+}
+
+ //in your column definition for the column
+ {title:"Age", field:"age", topCalc:adultCalc},
+  </pre>
+
+                <h2>Calculations For Grouped Data</h2>
+                <p>When you are using the <span class='param'>groupBy</span> option with your table, the calculation rows will be displayed differently. Instead of being displayed at the top and bottom of the table, they will be displayed inside each group, at the top and bottom of that group, showing the calculations for that group.</p>
+
+                </article>
+
                 <a class="anchor" id="manipulating-data"></a>
                 <article>
                     <h1>Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></h1>
@@ -1097,7 +1237,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
                     <p>Tabulator allows you to manipulate the data in the table in a number of different ways</p>
 
                     <h2>Editable Data <a class="example-link" href="../examples?#editable"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
-                    <p>Columns of the table can be set as editable using the <span class='param'>editor</span> parameter in the column definition. (see <a href="#define-column-headers">Define Column Headers</a> for more details).</p>
+                    <p>Columns of the table can be set as editable using the <span class='param'>editor</span> parameter in the column definition. (see <a href="#define-column-headers">Define Columns</a> for more details).</p>
 
                     <p>When a user clicks on an editable column the will be able to edit the value for that cell.</p>
 
@@ -1153,6 +1293,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     return editor;
 };
 
+//in your column definition for the column
 {title:"Gender", field:"gender", editor:selectEditor}}</pre>
                     <h3>Optional Editing </h3>
 
@@ -1167,6 +1308,7 @@ $("#example-table").tabulator("setFilter", customFilter);</pre>
     return data.age > 18; // only allow the name cell to be edited if the age is over 18
 }
 
+//in your column definition for the column
 {title:"Name", field:"name", editor:"string", editable:editCheck}}</pre>
 
                     <p class="note"><strong>Data Mutation</strong> <br>if you have defined any mutator functions in your column definition array, these will be applied to your edited value as it is being parsed into the table. (see <a href="#mutators">Mutators</a> for more details)</p>
@@ -1194,9 +1336,9 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
 
 
-                    <h2>Retreiving Data </h2>
-                    <h3>Retreive All Data</h3>
-                    <p>You can retreive the data stored in the table using the <span class='param'>getData</span> function.</p>
+                    <h2>Retreiving Data <span class="label label-primary">Updated</span></h2>
+                    <h3>Retrieve All Data</h3>
+                    <p>You can retrieve the data stored in the table using the <span class='param'>getData</span> function.</p>
                     <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData");</pre>
                     <p>This will return an array containing the data objects for each row in the table.</p>
 
@@ -1204,14 +1346,23 @@ $("#example-table").tabulator("updateData", [{id:1, name:"bob"}]); //update data
 
                     <pre class="prettyprint lang-js">var data = $("#example-table").tabulator("getData", true); //return currently filtered data</pre>
 
-                    <h3>Retreive Row Data </h3>
-                    <p>To rereive the data of a specific row, you can retrieve the <a href='#component-row'>RowComponent</a> with the <span class='param'>getRow</span> function, then use the <span class='param'>getData</span> function on the component. The first argument is the row you are looking for, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
+                    <h3>Retrieve Row Data </h3>
+                    <p>To rereive the data of a specific row, you can retrieve the <a href='#component-row'>Row Component</a> with the <span class='param'>getRow</span> function, then use the <span class='param'>getData</span> function on the component. The first argument is the row you are looking for, it will take any of the standard <a href='#component-lookup'>row component looukup</a> options.</p>
 
                     <pre class="prettyprint lang-js">var row = $("#example-table").tabulator("getRow", 1); //return row compoenent with index of 1
 var rowData = row.getData();</pre>
 
                     <p class="note"><strong>Data Accessors</strong> <br> If you have defined any accessors on your columns, then these will be applied to the data before the data is returned from any of the above functions. (see <a href="#accessors">Accessors</a> for more details)</p>
 
+                    <h3>Retrieving Row Components<span class="label label-danger">New</span></h3>
+                    <p>You can retrieve all the row components in the table using the <span class='param'>getRows</span> function.</p>
+
+                    <pre class="prettyprint lang-js">var rows = $("#example-table").tabulator("getRows");</pre>
+                    <p>This will return an array containing the <a href='#component-row'>Row Component</a> for each row in the table.</p>
+
+                    <p>By default <span class='param'>getRows</span> will return an array containing all the <a href='#component-row'>Row Component's</a> held in the Tabulator. If you only want to access the currently filtered/sorted elements, you can pass a value of <span class='param'>true</span> to the first argument of the function.</p>
+
+                    <pre class="prettyprint lang-js">var rows = $("#example-table").tabulator("getRows", true); //return currently filtered data</pre>
 
                     <h2>Emptying the Table </h2>
                     <p>You can remove all data from the table using the <span class='param'>clearData</span> function:</p>
@@ -1275,7 +1426,7 @@ var rowElement = row.getElement();</pre>
                     <pre class="prettyprint lang-js">row.delete();</pre>
 
                     <a class="anchor" id="history"></a>
-                    <h2>Interaction History <span class="label label-danger">New</span> <a class="example-link" href="../examples?#history"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Interaction History  <a class="example-link" href="../examples?#history"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
                       History functionality is provided by the <a href="#extension-history">history extension</a>
@@ -1301,7 +1452,7 @@ var rowElement = row.getElement();</pre>
                     <p>If the <a href="#keybindings">keybindings extension</a> is installed, this action can also be triggered with the <span class='param'>ctrl + y</span> key combination.</p>
 
                     <a class="anchor" id="navigation"></a>
-                    <h2>Navigation <span class="label label-danger">New</span></h2>
+                    <h2>Navigation </h2>
 
                     <p>When a cell is being edited it is possible to move the editor focus from the current cell to one if its neighbours. There are a number of functions that can be called to move the focus in different directions.</p>
 
@@ -1411,9 +1562,7 @@ var rowElement = row.getElement();</pre>
         {title:"Date of Birth", field:"dob" }, // hidden fourth
     ],
 });</pre>
-
                     <p class="note"><strong>Note:</strong> If you are using the <span class='param'>fitColumns</span> feature, you will need to set a <span class='param'>minWidth</span> property on the columns you want to respond responsively to ensure they are hidden when necessary, otherwise Tabulator will keep on reducing the width of the columns instead.</p>
-
 
                     <a class="anchor" id="col-resize"></a>
                     <h2>Resizable Columns </h2>
@@ -1425,7 +1574,15 @@ var rowElement = row.getElement();</pre>
 
                     <p>By default it is possible to manually resize columns by dragging the borders of the column in both the column headers and the cells of the column.<p>
 
-                    <p>To disable this option globally set the <span class='param'>resizableColumns</span> option to false when you create your Tabulator.</p>
+                    <p>If you want to alter this behaviour you can use the <span class='param'>resizableColumns</span> to choose where the resize handles are available. It supports four possible options:</p>
+
+                    <ul>
+                        <li><strong>true</strong> - enable column resizing from both cells and headers</li>
+                        <li><strong>"header"</strong> - enable column resizing from headers only</li>
+                        <li><strong>"cell"</strong> - enable column resizing from cells only</li>
+                        <li><strong>false</strong> - disable column resizing</li>
+                    </ul>
+
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     resizableColumns:false, // this option takes a boolean value (default = true)
 });</pre>
@@ -1489,7 +1646,7 @@ var rowElement = row.getElement();</pre>
 
                     <a class="anchor" id="progressive-render"></a>
                     <a class="anchor" id="virtual-dom"></a>
-                    <h2>Virtual DOM <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#virtual-dom"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Virtual DOM  <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#virtual-dom"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <p>As of version 3.0 tabulator renders its table using a Virtual DOM, this means that it only renders the rows you seen in the table (plus a few above and below the current view) and creates and destroys the rows as you scroll through the table. If no height is set the table will revert to the standard DOM mode and try and render all rows at once, which will have a performance impact on tables with a large number of rows.</p>
 
@@ -1503,8 +1660,18 @@ var rowElement = row.getElement();</pre>
 
                     <p class="note"><strong>Note: </strong>It is not possible to externally add event bindings to elements in the table because they are created and destoryed by Tabulator as needed. The good news is there are callbacks and options to register almsost every binding through the setup options.</p>
 
+                    <a class="anchor" id="virtual-dom-buffer"></a>
+                    <h3>Render Buffer <span class="label label-danger">New</span></h3>
+                    <p>The virtual DOM renders a number of rows above and below the visible rows to ensure a smooth scrolling experience. This buffer will be set at the current of the height of table so there is always and additional tables height worth of rows above and beyond the view.</p>
 
-                    <h3>Changing Table Height <span class="label label-danger">New</span></h3>
+                    <p>In some situations, where you have a full screen table with a large number of columns, this can result in slow rendering performance in older browsers. In these situations it is possible to manually set the height of the buffer in pixels using the <span class='param'>virtualDomBuffer</span> option. By setting this to a smaller number than the height you can reduce the number of rows that are rendered and increase the performance on older browsers.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    virtualDomBuffer:300, //set virtual DOM buffer to 300px
+});</pre>
+
+
+                    <h3>Changing Table Height </h3>
                     <p>If you want to manually change the height of the table at any time, you can use the <span class='param'>setHeight</span> function, which will also redraw the virtual DOM if necessary.</p>
 
 
@@ -1535,7 +1702,7 @@ var rowElement = row.getElement();</pre>
     placeholder:"No Data Available", //display message to user on empty table
 });</pre>
                     <a class="anchor" id="footer-element"></a>
-                    <h2>Table Footer <span class="label label-danger">New</span></h2>
+                    <h2>Table Footer </h2>
                     <p>The footer element that the tables uses for holding pagination elements etc, is automatically generated by Tabulator.</p>
 
                     <p>If you want to use your own element for any reason, for example you want to add aditional elements to the footer, then you can use the <span class='param'>footerElement</span> option to pass a jquery selector for the footer element into the table.</p>
@@ -1728,7 +1895,7 @@ var rowElement = row.getElement();</pre>
 
                 <a class="anchor" id="grouping"></a>
                 <article>
-                    <h1>Grouping Data <a class="example-link" href="../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Grouping Data <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#grouping"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -1781,6 +1948,63 @@ var rowElement = row.getElement();</pre>
 
     return count > 3; //all groups with more than three rows start open, any with three or less start closed
 },</pre>
+
+                    <h2>Multi Level Grouping <span class="label label-danger">New</span></h2>
+
+                    <p>To set multiple levels of grouping, pass an array to the <span class='param'>groupBy</span> option. Each item in the array will be a sub-group of the previous item.</p>
+
+                    <pre class="prettyprint lang-js">groupBy:["gender", "color"], //group by gender then favourite color</pre>
+
+                    <p>To then set the default open state of each of these levels you can pass an array to the <span class='param'>groupStartOpen</span> option.</p>
+
+                    <pre class="prettyprint lang-js">groupStartOpen:[true, false], //start with gender groups open and color sub groups closed</pre>
+
+                    <p>You can also set a different header for each level of group, as above you pass an array to the <span class='param'>groupHeader</span> option.</p>
+
+                    <pre class="prettyprint lang-js">groupHeader:[
+    function(value, count, data){ //generate header contents for gender groups
+        return value + "&lt;span style='color:#d00; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
+    },
+    function(value, count, data){ //generate header contents for color groups
+        return value + "&lt;span style='color:#0dd; margin-left:10px;'&gt;(" + count + " item)&lt;/span&gt;";
+    },
+],</pre>
+
+                    <h3>Sub Group Styling</h3>
+                    <p>Each group header element is assigned a class based on its level in the grouping list. This allows you to differentiate between different gouping levels by styling thier classes. By default each level's headers are indented more than the last.</p>
+
+                    <p>For example, all group headers in the first grouping level will be assigned the class <span class='param'>tabulator-group-level-1</span></p>
+
+                    <p class="note"><strong>Note: </strong> You can have as many levels of subgroup as you like, but Tabulator only comes with indent styling built in for the first five levels of subgroup.</p>
+
+
+                    <h2>Changing Group Setup <span class="label label-danger">New</span></h2>
+
+                    <p>If you want to alter the structure of the groups after the table has been created there are a number of functions available.</p>
+
+                    <h3>Change the GroupBy Fields</h3>
+                    <p>You can use the <span class='param'>setGroupBy</span> function to change the fields that rows are grouped by. This function has one argument and takes the same values as passed to the <span class='param'>groupBy</span> setup option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setGroupBy", "gender");</pre>
+
+                    <h3>Change the Start Open States</h3>
+                    <p>You can use the <span class='param'>setGroupStartOpen</span> function to change the default open state of groups. This function has one argument and takes the same values as passed to the <span class='param'>groupStartOpen</span> setup option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setGroupStartOpen", true);</pre>
+
+                    <h3>Change the Header Formatter</h3>
+                    <p>You can use the <span class='param'>setGroupHeader</span> function to change the header generation function for each group. This function has one argument and takes the same values as passed to the <span class='param'>groupHeader</span> setup option.</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator("setGroupHeader", function(value, count, data){
+    //value - the value all members of this group share
+    //count - the number of rows in this group
+    //data - an arrya of all the row data objects in this group
+
+    return count > 3; //all groups with more than three rows start open, any with three or less start closed
+});</pre>
+
+                    <p class="note"><strong>Note: </strong> If you use the <span class='param'>setGroupStartOpen</span> or <span class='param'>setGroupHeader</span> before you have set any groups on the table, the table will not update until the <span class='param'>setGroupBy</span> function is called.</p>
+
                     <h2>Callbacks </h2>
                     <p>A range of callbacks are avaialble for grouping. See the <a href="#callbacks-group">Group Callbacks</a> section for more information.</p>
 
@@ -1970,10 +2194,10 @@ var rowElement = row.getElement();</pre>
 
                 <a class="anchor" id="column-management"></a>
                 <article>
-                    <h1>Column Management <span class="label label-primary">Updated</span></h1>
+                    <h1>Column Management </h1>
 
 
-                    <h2>Set New Column Definitions <span class="label label-primary">Updated</span></h2>
+                    <h2>Set New Column Definitions </h2>
                     <p>To update the current column definitions for a table use the <span class='param'>setColumns</span> function. This function takes a column definition array as its only argument.</p>
 
                     <pre class="prettyprint lang-js">//new column definition array
@@ -2020,7 +2244,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="persistant-columns"></a>
-                    <h2>Persistent Column Layout <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
+                    <h2>Persistent Column Layout  <a class="example-link" href="../examples?#persistance"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h2>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -2043,23 +2267,23 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
     persistentLayout:true, //Enable column layout persistence
 });</pre>
 
-                    <p>If you are planning on having multiple tables on the same page using column persistence then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the storage id.</p>
+                    <p>If you are planning on having multiple tables on the same page using column persistence then Tabulator needs a way to uniquely identify each table. There are two ways to do this either set the <span class='param'>id</span> attribute on the element that will hold the Tabulator, Tabulator will automatically use this id as a reference for the persistence id.</p>
 
                     <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
-                    <p>Alternatively if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>persistentLayoutID</span> to a unique storage id for that table.</p>
+                    <p>Alternatively if you do not want to give an id to the table holding element you can set the tabulator options parameter <span class='param'>persistentLayoutID</span> to a unique persistence id for that table.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     persistentLayout:true, //Enable column layout persistence
     persistentLayoutID:"example1", //id string, can only be numbers, letters, hyphens and underscores.
 });</pre>
-                    <p class="note"><strong>Note:</strong> If you update the column definition array after the the layout has been stored you may have to change the storage id to clear out the old column layout information.</p>
+                    <p class="note"><strong>Note:</strong> If you update the column definition array after the the column layout has been stored you will have to change the persistentLayoutID or delete your cookies/local storage to clear out the old column layout information, otherwise you may get errors when your table renders.</p>
 
-                    <h3>Get Column Layout Information <span class="label label-danger">New</span></h3>
+                    <h3>Get Column Layout Information </h3>
                     <p>If you want to handle column layout persistence manually, for example storing it in a database to use elsewhere, you can use the <span class='param'>getColumnLayout</span> function to retrieve a layout object for the current table.</p>
                     <pre class="prettyprint lang-js">var columnLayout = $("#example-table").tabulator("getColumnLayout");</pre>
 
-                    <h3>Set Column Layout <span class="label label-danger">New</span></h3>
-                    <p>If you have previously used the <span class='param'>getColumnLayout</span> function to retreive a tables layout, you can use the <span class='param'>setColumnLayout</span> function to apply it to a table.</p>
+                    <h3>Set Column Layout </h3>
+                    <p>If you have previously used the <span class='param'>getColumnLayout</span> function to retrieve a tables layout, you can use the <span class='param'>setColumnLayout</span> function to apply it to a table.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setColumnLayout", columnLayout);</pre>
 
 
@@ -2126,7 +2350,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
                 <a class="anchor" id="css"></a>
                 <article>
-                    <h1>CSS Classes &amp; Theming <a class="example-link" href="../examples?#theming"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>CSS Classes &amp; Theming <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#theming"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>As of version 2.1 all Tabulator elements are styled using a range CSS classes to make it easier for you to manipulate the look, feel and function of the table.</p>
 
@@ -2246,7 +2470,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <p>For full details on the Semantic UI table layout, checkout the <a href="https://semantic-ui.com/collections/table.html" target="_blank">Semantic UI Website</a>.</p>
 
 
-                    <h2>CSS Classes </h2>
+                    <h2>CSS Classes <span class="label label-primary">Updated</span></h2>
 
                     <p>All elements of Tabulator have classes set to make theming your tables as easy as possible.</p>
 
@@ -2294,7 +2518,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                         </tbody>
                     </table>
 
-                    <h3>Headers &amp; Columns </h3>
+                    <h3>Headers &amp; Columns <span class="label label-primary">Updated</span></h3>
                     <table>
                         <thead>
                             <th width="200">Class</th>
@@ -2302,7 +2526,13 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                         </thead>
                         <tbody>
                             <tr>
-                                <td>tabulator-header</td><td>Column header row</td>
+                                <td>tabulator-header</td><td>Table header element</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-headers</td><td>Hold all column headers inside table header</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs-holder</td><td>Hold column calculations row, appears in both header and footer</td>
                             </tr>
                             <tr>
                                 <td>tabulator-col</td><td>Column header (in header row)</td>
@@ -2344,7 +2574,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     </table>
 
 
-                    <h3>Rows </h3>
+                    <h3>Rows <span class="label label-primary">Updated</span></h3>
                     <table>
                         <thead>
                             <th width="200">Class</th>
@@ -2380,6 +2610,18 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                             </tr>
                             <tr>
                                 <td>tabulator-group-visible</td><td>Applied to .tabulator-group when the group is visible</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-group-level-<span class='param'>X</span></td><td>Applied to .tabulator-group to denote its level in multi level grouping, the <span class='param'>X</span> is replaced with the number of that grouping level</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs</td><td>A row that contains column calculations instead of data</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs-top</td><td>A column calculations row at the top of a group</td>
+                            </tr>
+                            <tr>
+                                <td>tabulator-calcs-bottom</td><td>A column calculations row at the bottom of a group</td>
                             </tr>
                         </tbody>
                     </table>
@@ -2529,7 +2771,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <p>Component objects allow you to interact directly with various parts of your tables. They are usually passed in the arguments of callbacks and expose a range of functions that can be called directly on the object.</p>
 
                     <a class="anchor" id="component-row"></a>
-                    <h2>Row Component</h2>
+                    <h2>Row Component <span class="label label-primary">Updated</span></h2>
                     <p>The row component provides access to a specific row. The example below shows how it is passed to the <span class='param'>rowFormatter</span> callback:</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -2575,6 +2817,20 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <h3>Update</h3>
                     <p>You can update the data in the row using the <span class='param'>update</span> function. You should pass an object to the function containing any fields you wish to update. This object will not replace the row data, only the fields included in the object will be updated.</p>
                     <pre class="prettyprint lang-js">row.update({"name":"steve"}); //update the row data for field "name"</pre>
+
+                    <h3>Select <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>select</span> function will select the current row.</p>
+                    <pre class="prettyprint lang-js">row.select();</pre>
+
+                    <h3>Deselect <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>deselect</span> function will deselect the current row.</p>
+                    <pre class="prettyprint lang-js">row.deselect();</pre>
+
+
+                    <h3>Toggle Selection <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>toggleSelect</span> function will toggle the selected state the current row.</p>
+                    <pre class="prettyprint lang-js">row.toggleSelect();</pre>
+
 
                     <h3>Normalize Height</h3>
                     <p>If you are making manual adjustments to elements conained within the row, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>normalizeHeight</span> function to do this.</p>
@@ -2664,7 +2920,19 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                         >
                     <pre class="prettyprint lang-js">var column = cell.getColumn();</pre>
 
-                    <h3>Set Value <span class="label label-primary">Updated</span></h3>
+
+                    <h3>Get Data <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>getData</span> function returns the data for the row that contains the cell.</p
+                        >
+                    <pre class="prettyprint lang-js">var data = cell.getData();</pre>
+
+
+                    <h3>Get Field <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>getField</span> function returns the field name for the column that contains the cell.</p
+                        >
+                    <pre class="prettyprint lang-js">var field = cell.getField();</pre>
+
+                    <h3>Set Value </h3>
                     <p>You can change the value of the cell using the <span class='param'>setValue</span> function. The first parameter should be the new value for the cell, the second optional parameter will apply the column mutators to the value when set to <span class='param'>true</span> <i>(default = true)</i>.</p>
                     <pre class="prettyprint lang-js">cell.setValue("Steve", true); //set the cell's value to "Steve" and apply the column mutators if present</pre>
 
@@ -2672,11 +2940,11 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <p>If you are making manual adjustments to elements contained withing the cell, or the cell itself, it may sometimes be necessary to recalculate the height of all the cells in the row to make sure they remain aligned. Call the <span class='param'>checkHeight</span> function to check if the height of the cell has changed and normalize the row if it has.</p>
                     <pre class="prettyprint lang-js">cell.checkHeight();</pre>
 
-                    <h3>Edit <span class="label label-danger">New</span></h3>
+                    <h3>Edit </h3>
                     <p>You and programatically cause a cell to open its editor element using the <span class='param'>edit</span> function.</p>
                     <pre class="prettyprint lang-js">cell.edit();</pre>
 
-                    <h3>Navigation <span class="label label-danger">New</span></h3>
+                    <h3>Navigation </h3>
                     <p>When a cell is being edited it is possible to move the editor focus from the current cell to one if its neighbours. There are a number of functions that can be called on the <span class='param'>nav</span> function to move the focus in different directions.</p>
 
                     <pre class="prettyprint lang-js">cell.nav().left(); //move focus left to next editable cell.</pre>
@@ -2694,7 +2962,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="component-group"></a>
-                    <h2>Group Component</h2>
+                    <h2>Group Component <span class="label label-primary">Updated</span></h2>
                     <p>The group component provides access to a set of grouped rows. The example below shows how it is passed to the <span class='param'>groupVisibilityChanged</span> callback.</p>
 
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
@@ -2716,6 +2984,16 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <h3>Get Rows</h3>
                     <p>The <span class='param'>getRows</span> function returns an array of <a href='#component-row'>RowComponent</a> objects, one for each row in the group.</p>
                     <pre class="prettyprint lang-js">var rows = group.getRows();</pre>
+
+                    <h3>Get Sub Groups <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>getSubGroups</span> function returns an array of <a href='#component-group'>GroupComponent</a> objects, one for each sub group of this group.</p>
+                    <pre class="prettyprint lang-js">var subGroups = group.getSubGroups();</pre>
+
+                    <h3>Get Parent Group <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>getParentGroup</span> function returns the <a href='#component-group'>GroupComponent</a> for the parent group of this group. if no parent exists, this function will return <span class='param'>false</span></p>
+                    <pre class="prettyprint lang-js">var parentGroup = group.getParentGroup();</pre>
+
+
 
                     <h3>Get Visibility</h3>
                     <p>The <span class='param'>getVisibility</span> function returns a boolean to show if the group is visible, a value of <span class='param'>true</span> means it is visible.</p>
@@ -2772,7 +3050,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 });</pre>
 
 
-                    <h2>General Table Configuration <span class="label label-primary">Updated</span></h2>
+                    <h2>General Table Configuration </h2>
 
                     <table>
                         <thead>
@@ -2788,6 +3066,9 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                             </tr>
                             <tr>
                                 <td>virtualDom</td><td>boolean</td><td>true</td><td>Enable rendering using the Virtual DOM engine</td><td><a href="#virtual-dom"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>virtualDomBuffer</td><td>integer</td><td>false</td><td>Manually set the size of the virtual DOM buffer</td><td><a href="#virtual-dom-buffer"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>placeholder</td><td>string or element</td><td>""</td><td>placeholder element to display on empty table</td><td><a href="#placeholder-empty"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -2809,6 +3090,9 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                             </tr>
                             <tr>
                                 <td>langs</td><td>object</td><td>(see documentation)</td><td>hold localization templates </td><td><a href="#localization"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                            </tr>
+                            <tr>
+                                <td>downloadDataMutator</td><td>function</td><td>false</td><td>callback function to mutate table data before download</td><td><a href="#download"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -2867,13 +3151,13 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                                 <td>rowFormatter</td><td>function/boolean</td><td>false</td><td>Function to alter layout of rows</td><td><a href="#row-formatter"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupBy</td><td>string/function</td><td>false</td><td>String/function to select field to group rows by</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupBy</td><td>string/function/array</td><td>false</td><td>String/function to select field to group rows by</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupHeader</td><td>function</td><td>(see documentation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupHeader</td><td>function/array</td><td>(see documentation)</td><td>function to layout group header row</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
-                                <td>groupStartOpen</td><td>boolean/function</td><td>true</td><td>Boolean/function to set the open/closed state of groups when they are first created</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
+                                <td>groupStartOpen</td><td>boolean/function/array</td><td>true</td><td>Boolean/function to set the open/closed state of groups when they are first created</td><td><a href="#grouping"><button><i class="fa fa-search"></i> Explore</button></a></td>
                             </tr>
                             <tr>
                                 <td>addRowPos</td><td>string</td><td>"bottom"</td><td>The position in the table for new rows to be added, "bottom" or "top"</td><td><a href="#addrow"><button><i class="fa fa-search"></i> Explore</button></a></td>
@@ -3048,7 +3332,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
                 <a class="anchor" id="callbacks"></a>
                 <article>
-                    <h1>Callbacks &amp; Events <a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Callbacks &amp; Events <span class="label label-primary">Updated</span><a class="example-link" href="../examples?#callbacks"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <p>Tabulator features a range of callbacks to allow you to handle user interaction and system events.</p>
 
@@ -3073,10 +3357,10 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="callbacks-column"></a>
-                    <h2>Column Callbacks</h2>
+                    <h2>Column Callbacks <span class="label label-primary">Updated</span></h2>
 
                     <h3>Column Header Click </h3>
-                    <p>The <span class='param'>headerClick </span> callback is triggered when a user left clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerClick </span> callback is triggered when a user left clicks on a column or group header, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerClick:function(e, column){
         //e - the click event object
@@ -3085,7 +3369,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Column Header Double Click </h3>
-                    <p>The <span class='param'>headerDblClick</span> callback is triggered when a user double clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerDblClick</span> callback is triggered when a user double clicks on a column or group header, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerDblClick:function(e, column){
         //e - the click event object
@@ -3094,10 +3378,37 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Column Header Right Click </h3>
-                    <p>The <span class='param'>headerContext</span> callback is triggered when a user right clicks on a column or group header, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>headerContext</span> callback is triggered when a user right clicks on a column or group header, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", headerContext:function(e, column){
         //e - the click event object
+        //column - column component
+    },
+}</pre>
+
+                    <h3>Column Header Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>headerTap</span> callback is triggered when a user taps on the column header on a touch display, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerTap:function(e, column){
+        //e - the tap event object
+        //column - column component
+    },
+}</pre>
+
+                    <h3>Column Header Double Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>headerDblTap</span>  callback is triggered when a user taps on the column header on a touch display twice in under 300ms, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerDblTap:function(e, column){
+        //e - the tap event object
+        //column - column component
+    },
+}</pre>
+
+                    <h3>Column Header Tap Hold <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>headerTapHold</span> callback is triggered when a user taps on the column header on a touch display and holds their finger down for over 1 second, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", headerTapHold:function(e, column){
+        //e - the tap event object
         //column - column component
     },
 }</pre>
@@ -3138,7 +3449,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="callbacks-row"></a>
-                    <h2>Row Callbacks</h2>
+                    <h2>Row Callbacks <span class="label label-primary">Updated</span></h2>
 
                     <h3>Row Click </h3>
                     <p>The <span class='param'>rowClick</span> callback is triggered when a user clicks on a row.</p>
@@ -3167,6 +3478,33 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
         //row - row component
 
         e.preventDefault(); // prevent the browsers default context menu form appearing.
+    },
+});</pre>
+
+                    <h3>Row Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>rowTap</span> callback is triggered when a user taps on a row on a touch display.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+        rowTap:function(e, row){
+        //e - the tap event object
+        //row - row component
+    },
+});</pre>
+
+                    <h3>Row Double Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>rowDblTap</span> callback is triggered when a user taps on a row on a touch display twice in under 300ms.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+        rowDblTap:function(e, row){
+        //e - the tap event object
+        //row - row component
+    },
+});</pre>
+
+                    <h3>Row Tap Hold <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>rowTapHold</span> callback is triggered when a user taps on a row on a touch display and holds their finger down for over 1 second.</p>
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+        rowTapHold:function(e, row){
+        //e - the tap event object
+        //row - row component
     },
 });</pre>
 
@@ -3206,10 +3544,10 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
 
                     <a class="anchor" id="callbacks-cell"></a>
-                    <h2>Cell Callbacks</h2>
+                    <h2>Cell Callbacks <span class="label label-primary">Updated</span></h2>
 
                     <h3>Cell Click </h3>
-                    <p>The <span class='param'>cellClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>cellClick</span> callback is triggered when a user left clicks on a cell, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellClick:function(e, cell){
         //e - the click event object
@@ -3218,7 +3556,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Cell Double Click </h3>
-                    <p>The <span class='param'>cellDblClick</span> callback is triggered when a user double clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>cellDblClick</span> callback is triggered when a user double clicks on a cell, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellDblClick:function(e, cell){
         //e - the click event object
@@ -3227,10 +3565,37 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 }</pre>
 
                     <h3>Cell Right Click </h3>
-                    <p>The <span class='param'>cellContext</span> callback is triggered when a user right clicks on a cell, it can be set on a per column basis using the option in the columns data.</p>
+                    <p>The <span class='param'>cellContext</span> callback is triggered when a user right clicks on a cell, it can be set on a per column basis using the option in the columns definition object.</p>
 
                     <pre class="prettyprint lang-js">{title:"Name", field:"name", cellContext:function(e, cell){
         //e - the click event object
+        //cell - cell component
+    },
+}</pre>
+
+                    <h3>Cell Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellTap</span> callback is triggered when a user taps on a cell in this column on a touch display, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellTap:function(e, cell){
+        //e - the tap event object
+        //cell - cell component
+    },
+}</pre>
+
+                    <h3>Cell Double Tap <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellDblTap</span>  callback is triggered when a user taps on a cell in this column on a touch display twice in under 300ms, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellDblTap:function(e, cell){
+        //e - the tap event object
+        //cell - cell component
+    },
+}</pre>
+
+                    <h3>Cell Tap Hold <span class="label label-danger">New</span></h3>
+                    <p>The <span class='param'>cellTapHold</span> callback is triggered when a user taps on a cell in this column on a touch display and holds their finger down for over 1 second, it can be set on a per column basis using the option in the columns definition object.</p>
+
+                    <pre class="prettyprint lang-js">{title:"Name", field:"name", cellTapHold:function(e, cell){
+        //e - the tap event object
         //cell - cell component
     },
 }</pre>
@@ -3444,7 +3809,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                     <p>The <span class='param'>dataGrouped</span> callback is triggered whenever a data grouping event occurs, after grouping happens.</p>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator({
     dataGrouped:function(groups){
-        //groups - array of group components
+        //groups - array of top level group components
     },
 });</pre>
 
@@ -3492,7 +3857,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
                 <a class="anchor" id="keybindings"></a>
                 <article>
-                    <h1>Key Bindings <span class="label label-danger">New</span></h1>
+                    <h1>Key Bindings <span class="label label-primary">Updated</span></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -3548,6 +3913,26 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
                                 <td>ctrl + y ("ctrl + 89")</td>
                                 <td>Redo last user eata edit</td>
                             </tr>
+                            <tr>
+                                <td>scrollPageUp</td>
+                                <td>Page Up ("33")</td>
+                                <td>scroll page up by table height</td>
+                            </tr>
+                            <tr>
+                                <td>scrollPageDown</td>
+                                <td>Page Down ("34")</td>
+                                <td>scroll page down by table height</td>
+                            </tr>
+                            <tr>
+                                <td>scrollToStart</td>
+                                <td>Home ("36")</td>
+                                <td>scroll to first row</td>
+                            </tr>
+                            <tr>
+                                <td>scrollToEnd</td>
+                                <td>End ("35")</td>
+                                <td>scroll to last row</td>
+                            </tr>
                         </tbody>
                     </table>
 
@@ -3585,7 +3970,7 @@ $("#example-table").tabulator("setColumns", newColumns) //overwrite existing col
 
                 <a class="anchor" id="download"></a>
                 <article>
-                    <h1>Downloading Table Data  <a class="example-link" href="../examples?#download"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Download Table Data <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#download"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -3638,11 +4023,37 @@ var fileFormatter = function(columns, data, options, setFileContents){
 $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <p class="note"><strong>Note:</strong> You can find out more about data URI's <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs" target="_blank">Here</a>.</p>
+
+                    <h2>Hide Column In Download <span class="label label-danger">New</span></h2>
+                    <p>If you dont want to show a particular column in the downloaded data you can set the <span class='param'>download</span> property in its column definition object to <span class='param'>false</span>:</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    columns:[
+        {title:"Hidden Column", field:"secret", download:false} //hide data in download
+    ]
+});</pre>
+
+                    <h2>Mutate Data Before Download <span class="label label-danger">New</span></h2>
+                    <p>If you want to make any changes to the table data before it is parsed into the download file you can pass a mutator function to the <span class='param'>downloadDataMutator</span> option in the table definition.</p>
+
+                    <p>In the example below we map the numerical age column into a string of <span class='param'>"adult"</span> or <span class='param'>"child"</span> based on the age value</p>
+
+                    <pre class="prettyprint lang-js">$("#example-table").tabulator({
+    downloadDataMutator:function(data){
+        //data - active table data array
+
+        data.forEach(function(row){
+            row.age = row.age >= 18 ? "adult" : "child";
+        });
+
+        return data;
+    }
+});</pre>
                 </article>
 
                 <a class="anchor" id="localization"></a>
                 <article>
-                    <h1>Localization <a class="example-link" href="../examples?#localization"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
+                    <h1>Localization <span class="label label-primary">Updated</span> <a class="example-link" href="../examples?#localization"> <button><i class="fa fa-hand-pointer-o"></i> Try Interactive Demo</button></a></h1>
 
                     <div class="alert alert-success extension-info" role="alert">
                       <i class="fa fa-cubes"></i>
@@ -3669,6 +4080,10 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
             "ajax":{
                 "loading":"Loading", //ajax loader text
                 "error":"Error", //ajax error text
+            },
+            "groups":{ //copy for the auto generated item count in group header
+                "item":"item", //the singluar for item
+                "items":"items", //the plural for items
             },
             "pagination":{
                 "first":"First", //text for the first page button
@@ -3786,7 +4201,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                 <a class="anchor" id="extending"></a>
                 <article>
-                    <h1>Extensions <span class="label label-primary">Updated</span></h1>
+                    <h1>Extensions </h1>
 
                     <p>Tabulator is built in a modular fashion with a core codebase providing basic table rendering functionality and a series of extensions that provide all of its wonderfull features.</p>
 
@@ -3839,14 +4254,14 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                     <p class="note"><strong>Note: </strong>if you use a property in your extension object that is already in use, the exising property will be overwritten.</p>
 
-                    <h2>Available Extensions <span class="label label-primary">Updated</span></h2>
+                    <h2>Available Extensions </h2>
 
                     <p>This section will take you through all of the available extensions and how to extend them further with your own custom functionality.</p>
 
                     <p>As mentioned above, Tabulator comes with all extensions installed by default.</p>
 
                     <a class="anchor" id="extension-accessor"></a>
-                    <h3>Accessors</h3>
+                    <h3>Accessors <small>(included in tabulator.js by default)</small></h3>
                     <p>The accessor extension allows for manipulation of data as it is retrieved from Tabulator.</p>
 
                     <p>More information on these functions can be found in the <a href="#accessors">Accessors Documentation</a>.</p>
@@ -3868,7 +4283,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
                     <a class="anchor" id="extension-ajax"></a>
-                    <h3>Ajax Requests</h3>
+                    <h3>Ajax Requests <small>(included in tabulator.js by default)</small></h3>
 
                     <p>The ajax extension allows for loading data from remote sources using ajax requests.</p>
 
@@ -3882,9 +4297,36 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
 
+                    <a class="anchor" id="extension-colcalc"></a>
+                    <h3>Column Calculation <small>(included in tabulator.js by default)</small></h3>
+                    <p>The column calculation extension allows for automatic column calculation rows to be generated in the header and footer of the table.</p>
+
+                    <p>More information on these functions can be found in the <a href="#calculations">Column Calculations Documentation</a>.</p>
+
+                    <p>This can be extended to add custom calculation functions to the default list:</p>
+
+                    <pre class="prettyprint lang-js">Tabulator.extendExtension("columnCalcs", "calculations", {
+    "adult":function(values, data, calcParams){
+        //values - array of column values
+        //data - all table data
+        //calcParams - params passed from the column defintion object
+
+        var count = 0;
+
+        values.forEach(function(value){
+            if(value > 18){
+                count ++;
+            }
+        });
+
+        return calc;
+    }
+});</pre>
+
+
                     <a class="anchor" id="extension-download"></a>
-                    <h3>Download</h3>
-                    <p>The extension allows for downloading data from the table into a file.</p>
+                    <h3>Download <small>(included in tabulator.js by default)</small></h3>
+                    <p>The download extension allows for downloading data from the table into a file.</p>
 
                     <p>More information on these functions can be found in the <a href="#download">Download Documentation</a>.</p>
 
@@ -3902,7 +4344,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("download", "string", "data.txt");</pre>
 
                     <a class="anchor" id="extension-edit"></a>
-                    <h3>Edit</h3>
+                    <h3>Edit <small>(included in tabulator.js by default)</small></h3>
 
                     <p>The edit extension allows the user to change data in cells, header filters are also dependant on this extension.</p>
 
@@ -3951,7 +4393,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
     ]
 });</pre>
                     <a class="anchor" id="extension-filter"></a>
-                    <h3>Filter Data</h3>
+                    <h3>Filter Data <small>(included in tabulator.js by default)</small></h3>
                     <p>The filter extension allows for filtering of the rows that appear in the table..</p>
 
                     <p>More information on these functions can be found in the <a href="#filtering">Filter Documentation</a>.</p>
@@ -3969,7 +4411,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setFilter", "age", "===", 10);</pre>
 
                     <a class="anchor" id="extension-format"></a>
-                    <h3>Format Data</h3>
+                    <h3>Format Data <small>(included in tabulator.js by default)</small></h3>
                     <p>The format extension allows different display options for data in the table.</p>
 
                     <p>More information on these functions can be found in the <a href="#formatting">Formatter Documentation</a>.</p>
@@ -3991,31 +4433,31 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
                     <a class="anchor" id="extension-frozenColumns"></a>
-                    <h3>Frozen Columns</h3>
+                    <h3>Frozen Columns <small>(included in tabulator.js by default)</small></h3>
                     <p>The frozen column extension allows columns to be held in place while the table is horizontally scrolled.</p>
 
                     <p>More information on these functions can be found in the <a href="#frozen-col">Frozen Columns Documentation</a>.</p>
 
                     <a class="anchor" id="extension-groupRows"></a>
-                    <h3>Group Rows</h3>
+                    <h3>Group Rows <small>(included in tabulator.js by default)</small></h3>
                     <p>The group rows extension allows rows to be grouped togeather by a column value.</p>
 
                     <p>More information on these functions can be found in the <a href="#grouping">Grouping Documentation</a>.</p>
 
                     <a class="anchor" id="extension-history"></a>
-                    <h3>History <span class="label label-danger">New</span></h3>
+                    <h3>History  <small>(included in tabulator.js by default)</small></h3>
                     <p>The history extension allows the Tabulator to track user interaction with table data, and makes the <span class='param'>undo</span> and <span class='param'>redo</span> function available.</p>
 
                     <p>More information on these functions can be found in the <a href="#history">History Documentation</a>.</p>
 
                     <a class="anchor" id="extension-htmlTableImport"></a>
-                    <h3>HTML Table Import</h3>
+                    <h3>HTML Table Import <small>(included in tabulator.js by default)</small></h3>
                     <p>The allows HTML tables to be converted to Tabulators.</p>
 
                     <p>More information on these functions can be found in the <a href="#table-load">HTML Import Documentation</a>.</p>
 
                     <a class="anchor" id="extension-keybindings"></a>
-                    <h3>Key Bindings <span class="label label-danger">New</span></h3>
+                    <h3>Key Bindings  <small>(included in tabulator.js by default)</small></h3>
                     <p>The key bindings extension allows user interaction with the table through keyboard shortcuts.</p>
 
                     <p>More information on these functions can be found in the <a href="#keybindings">Key Bindings Documentation</a>.</p>
@@ -4039,7 +4481,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
                     <a class="anchor" id="extension-localize"></a>
-                    <h3>Localization</h3>
+                    <h3>Localization <small>(included in tabulator.js by default. Mandatory extension - cannot be removed)</small></h3>
                     <p>The localization extension allows for changing the text of tabulator control elements to match the language on the computer viewing them.</p>
 
                     <p>More information on these functions can be found in the <a href="#table-localization">Localization Documentation</a>.</p>
@@ -4076,19 +4518,19 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                     <pre class="prettyprint lang-js">$("#example-table").tabulator("setLocale", "en");</pre>
 
                     <a class="anchor" id="extension-moveColumn"></a>
-                    <h3>Movable Columns</h3>
+                    <h3>Movable Columns <small>(included in tabulator.js by default)</small></h3>
                     <p>The movable columns extension allows the user to drag and drop columns in any order they like.</p>
 
                     <p>More information on these functions can be found in the <a href="#col-move">Movable Column Documentation</a>.</p>
 
                     <a class="anchor" id="extension-moveRow"></a>
-                    <h3>Movable Rows</h3>
+                    <h3>Movable Rows <small>(included in tabulator.js by default)</small></h3>
                     <p>The movable rows extension allows the user to drag and drop rows in any order they like.</p>
 
                     <p>More information on these functions can be found in the <a href="#movable">Movable Rows Documentation</a>.</p>
 
                     <a class="anchor" id="extension-mutator"></a>
-                    <h3>Mutators</h3>
+                    <h3>Mutators <small>(included in tabulator.js by default)</small></h3>
                     <p>The mutator extension allows for manipulation of data as it is entered into Tabulator.</p>
 
                     <p>More information on these functions can be found in the <a href="#mutators">Mutators Documentation</a>.</p>
@@ -4110,7 +4552,7 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
                     <a class="anchor" id="extension-page"></a>
-                    <h3>Pagination</h3>
+                    <h3>Pagination <small>(included in tabulator.js by default)</small></h3>
                     <p>The pagination extension allows rows to be split up into pages for navigation rather than using a vertical scroll bar.</p>
 
                     <p>More information on these functions can be found in the <a href="#pagination">Pagination Documentation</a>.</p>
@@ -4128,31 +4570,31 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 });</pre>
 
                     <a class="anchor" id="extension-persistentLayout"></a>
-                    <h3>Persistent Layout</h3>
+                    <h3>Persistent Layout <small>(included in tabulator.js by default)</small></h3>
                     <p>The persistent layout extension allows the layout of columns to be stored in local storage or cookies so that a users preferences can be remembered every time they reload the page.</p>
 
                     <p>More information on these functions can be found in the <a href="#persistant-columns">Persistent Storage Documentation</a>.</p>
 
                     <a class="anchor" id="extension-resizeColumns"></a>
-                    <h3>Resizable Columns</h3>
+                    <h3>Resizable Columns <small>(included in tabulator.js by default)</small></h3>
                     <p>The resizable columns extension allows the user to resize columns by dragging on the edge of the columns.</p>
 
                     <p>More information on these functions can be found in the <a href="#col-resize">Resizable Columns Documentation</a>.</p>
 
                     <a class="anchor" id="extension-responsiveLayout"></a>
-                    <h3>Responsive Layout</h3>
+                    <h3>Responsive Layout <small>(included in tabulator.js by default)</small></h3>
                     <p>The responsive layout extension hides and shows columns to ensure that they do not excede the width of the table. Great for use on mobile devices.</p>
 
                     <p>More information on these functions can be found in the <a href="#responsive-layout">Responsive Layout Documentation</a>.</p>
 
                     <a class="anchor" id="extension-selectRow"></a>
-                    <h3>Selectable Rows</h3>
+                    <h3>Selectable Rows <small>(included in tabulator.js by default)</small></h3>
                     <p>The selectable rows extension allows the user to select a number of rows to take action on them.</p>
 
                     <p>More information on these functions can be found in the <a href="#selectable">Selectable Rows Documentation</a>.</p>
 
                     <a class="anchor" id="extension-sort"></a>
-                    <h3>Sorting Data</h3>
+                    <h3>Sorting Data <small>(included in tabulator.js by default)</small></h3>
                     <p>The sorting extension allows for reordering of rows in the table based on a column value.</p>
 
                     <p>More information on these functions can be found in the <a href="#sorting">Sorting Documentation</a>.</p>
@@ -4207,12 +4649,13 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
 
                         <h2>
                             Setup
-                                <div id="version-select" data-version="3.1">
+                                <div id="version-select" data-version="3.2">
                                 <div class="btn-group">
                                   <button type="button" class="btn btn-sm  btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Version 3.1 <span class="caret"></span>
+                                    Version 3.2 <span class="caret"></span>
                                   </button>
                                   <ul class="dropdown-menu  dropdown-menu-right">
+                                    <li><a href="3.2">3.2</a></li>
                                     <li><a href="3.1">3.1</a></li>
                                     <li><a href="3.0">3.0</a></li>
                                     <li><a href="2.12">2.12</a></li>
@@ -4222,40 +4665,41 @@ $("#example-table").tabulator("download", fileFormatter, "test.txt");</pre>
                         </h2>
                         <ul class="nav">
                             <li><a href="#setup">Setup </a></li>
-                            <li><a href="#define-column-headers">Define Column Headers </a></li>
+                            <li><a href="#define-column-headers">Define Columns <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                         <h2>Data</h2>
                         <ul class="nav">
                             <li><a href="#set-data">Set Table Data </a></li>
-                            <li><a href="#get-set">Mutators &amp; Accessors </a></li>
-                            <li><a href="#formatting">Formatting </a></li>
-                            <li><a href="#filtering">Filtering </a></li>
+                            <li><a href="#get-set">Mutators &amp; Accessors <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#formatting">Formatting <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#filtering">Filtering <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#sorting">Sorting </a></li>
                             <li><a href="#manipulating-data">Editing &amp; Manipulating Data <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#calculations">Column Calculations <span class="label label-danger">New</span></a></li>
                         </ul>
 
                         <h2>Layout</h2>
                         <ul class="nav">
                             <li><a href="#layout">Table Layout <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#pagination">Pagination </a></li>
-                            <li><a href="#grouping">Grouping </a></li>
+                            <li><a href="#grouping">Grouping <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#selectable">Selectable Rows </a></li>
                             <li><a href="#movable">Movable Rows and Columns </a></li>
-                            <li><a href="#column-management">Column Management <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#css">CSS Classes &amp; Theming </a></li>
+                            <li><a href="#column-management">Column Management </a></li>
+                            <li><a href="#css">CSS Classes &amp; Theming <span class="label label-primary">Updated</span></a></li>
                         </ul>
 
                         <h2>Advanced</h2>
                         <ul class="nav">
                             <li><a href="#components">Component Objects <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#options">Setup Options <span class="label label-primary">Updated</span></a></li>
-                            <li><a href="#callbacks">Callbacks &amp; Events </a></li>
-                            <li><a href="#keybindings">Key Bindings <span class="label label-danger">New</span></a></li>
-                            <li><a href="#download">Download Table Data </a></li>
-                            <li><a href="#localization">Localization </a></li>
+                            <li><a href="#callbacks">Callbacks &amp; Events <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#keybindings">Key Bindings <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#download">Download Table Data <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#localization">Localization <span class="label label-primary">Updated</span></a></li>
                             <li><a href="#accessibility">Accessibility</a></li>
-                            <li><a href="#extending">Extensions <span class="label label-primary">Updated</span></a></li>
+                            <li><a href="#extending">Extensions </a></li>
                             <li><a href="#deprecated">Deprecated Functionality </a></li>
                         </ul>
 
