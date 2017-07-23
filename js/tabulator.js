@@ -7030,9 +7030,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     ColumnCalcs.prototype.calculations = {
 
-      "avg": function avg(values, data, calcData) {
+      "avg": function avg(values, data, calcParams) {
 
-        var output = 0;
+        var output = 0,
+            precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : 2;
 
         if (values.length) {
 
@@ -7041,13 +7042,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             return sum + value;
           });
 
-          output = output / value.length;
+          output = output / values.length;
+
+          output = precision !== false ? output.toFixed(precision) : output;
         }
 
-        return output;
+        return output.toString();
       },
 
-      "max": function max(values, data, calcData) {
+      "max": function max(values, data, calcParams) {
 
         var output = null;
 
@@ -7062,7 +7065,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return output !== null ? output : "";
       },
 
-      "min": function min(values, data, calcData) {
+      "min": function min(values, data, calcParams) {
 
         var output = null;
 
@@ -7077,7 +7080,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return output !== null ? output : "";
       },
 
-      "sum": function sum(values, data, calcData) {
+      "sum": function sum(values, data, calcParams) {
 
         var output = 0;
 
@@ -7092,7 +7095,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return output;
       },
 
-      "count": function count(values, data, calcData) {
+      "count": function count(values, data, calcParams) {
 
         var output = 0;
 
