@@ -632,7 +632,6 @@ $("#example-table").tabulator({
                 <h3>JavaScript</h3>
                 <pre class="prettyprint lang-js">$("#example-table").tabulator({
     height:"311px",
-    movableCols:true,
     persistentLayout: true,
     persistentLayoutID:"examplePerststance",
     columns:[
@@ -647,6 +646,42 @@ $("#example-table").tabulator({
 });</pre>
             </fieldset>
         </article>
+
+                <a class="anchor" id="calculations"></a>
+                <article>
+                    <h1>Column Calculations <a class="doc-link" href="../../docs?#calculations"><i class="fa fa-external-link"></i> Documentation</a></h1>
+                    <p>
+                        Column calculations can be useed to add a row of calcualted values to the top or bottom of your table to display infmation such as the sum of a columns data.
+                    </p>
+                    <p>
+                        There are two options that can be set in a column definition object to define a calculation, the <span class='param'>topCalc</span> option defines a calculation for the top of the column, and the <span class='param'>bottomCalc</span> defines a calculation for the bottom of the column. You can define, either, both or neither of the options.
+                    </P>
+                    <div class="example-table" id="example-table-colum-calculations">
+                        <div class="loader"><i class="fa fa-spinner fa-pulse fa-fw"></i><div>Loading Example...</div></div>
+                    </div>
+
+                    <button class="view-source">View Source</button>
+                    <fieldset class="source">
+                        <legend>Source Code</legend>
+                        <h3>HTML</h3>
+                        <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
+
+                        <h3>JavaScript</h3>
+                        <pre class="prettyprint lang-js">$("#example-table").tabulator({
+            height:"311px",
+            movableColumns:true,
+            columns:[
+                {title:"Name", field:"name", width:200},
+                {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg"},
+                {title:"Gender", field:"gender"},
+                {title:"Rating", field:"rating", width:80, bottomCalc:"avg"},
+                {title:"Favourite Color", field:"col"},
+                {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+                {title:"Driver", field:"car", align:"center", formatter:"tickCross", topCalc:"count"},
+            ],
+        });</pre>
+                    </fieldset>
+                </article>
 
         <a class="anchor" id="ajax"></a>
         <article>
@@ -1535,7 +1570,6 @@ $("#reset").click(function(){
         <pre class="prettyprint lang-js">//Build Tabulator
 $("#example-table").tabulator({
     height:"311px",
-    movableCols:true,
     columns:[
         {title:"Name", field:"name", width:200},
         {title:"Progress", field:"progress", width:100, sorter:"number"},
@@ -1931,6 +1965,7 @@ $("#lang-default").click(function(){
                 <li><a href="#row-formatter">Row Formatter</a></li>
                 <li><a href="#sparklines">Sparklines</a></li>
                 <li><a href="#persistance">Persistent Column Layout</a></li>
+                <li><a href="#calculations">Column Calculations</a></li>
             </ul>
 
             <h2>Data</h2>
@@ -2697,7 +2732,7 @@ $("#lang-default").click(function(){
      //Persistant Columns Example
      $("#example-table-colum-layout").tabulator({
          height:"311px",
-         movableCols:true,
+
          persistentLayout: true,
          movableColumns:true,
          persistentLayoutID:"examplePerststance2",
@@ -2713,6 +2748,27 @@ $("#lang-default").click(function(){
      });
 
      $("#example-table-colum-layout").tabulator("setData", tabledata);
+
+     });
+
+     $("#example-table-colum-calculations").closest("article").on("build", function(){
+
+     //Persistant Columns Example
+     $("#example-table-colum-calculations").tabulator({
+         height:"311px",
+         movableColumns:true,
+         columns:[
+         {title:"Name", field:"name", width:200},
+         {title:"Progress", field:"progress", width:100, sorter:"number", bottomCalc:"avg"},
+         {title:"Gender", field:"gender"},
+         {title:"Rating", field:"rating", width:80, bottomCalc:"avg"},
+         {title:"Favourite Color", field:"col"},
+         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
+         {title:"Driver", field:"car", align:"center", formatter:"tickCross", topCalc:"count"},
+         ],
+     });
+
+     $("#example-table-colum-calculations").tabulator("setData", tabledata);
 
      });
 
@@ -2839,7 +2895,7 @@ $("#lang-default").click(function(){
 
      $("#example-table-download").tabulator({
          height:"311px",
-         movableCols:true,
+
          columns:[
          {title:"Name", field:"name", width:200},
          {title:"Progress", field:"progress", width:100, sorter:"number"},
