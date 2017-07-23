@@ -2000,7 +2000,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       }
 
-      var maxWidth = this.element.outerWidth() + 1;
+      var maxWidth = this.element.outerWidth();
 
       if (!self.width || !this.widthFixed) {
 
@@ -2016,7 +2016,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (maxWidth) {
 
-          self.setWidthActual(maxWidth);
+          self.setWidthActual(maxWidth + 1);
         }
       }
     };

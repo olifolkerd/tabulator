@@ -819,7 +819,7 @@ Column.prototype.fitToData = function(){
 		});
 	}
 
-	var maxWidth = this.element.outerWidth() + 1;
+	var maxWidth = this.element.outerWidth();
 
 	if(!self.width || !this.widthFixed){
 		self.cells.forEach(function(cell){
@@ -831,7 +831,7 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			self.setWidthActual(maxWidth);
+			self.setWidthActual(maxWidth + 1);
 		}
 
 	}
