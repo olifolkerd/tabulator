@@ -31,7 +31,7 @@
     <link href="../css/prettyprint.css" rel="stylesheet">
 
     <!-- Tabulator CSS -->
-    <link href="../../css/3.1/tabulator_site.min.css" rel="stylesheet">
+    <link href="../css/3.2/tabulator_site.min.css" rel="stylesheet">
 
     <link rel="icon"
       type="image/png"
@@ -144,16 +144,16 @@
                     <p>Check out more of the great libraries available to use direclty from CDNJS at <a href="https://cdnjs.com/">https://cdnjs.com/</a></p>
 
                     <a class="anchor" id="basic-example"></a>
-                    <h1>Basic Example</h1>
-                    <p>Below is a basic example of a functioning Tabulator setup.</p>
+                    <h1>Basic Table Setup</h1>
+                    <p>Below is a 4 step guide to building your first Tabulator table.</p>
 
-                    <p style="margin-top:20px;"><strong>1.</strong> Create your DOM element</p>
+                    <p style="margin-top:20px;"><span class="step-num">1</span> Create your DOM element</p>
                     <pre class="prettyprint lang-html">&lt;div id="example-table"&gt;&lt;/div&gt;</pre>
 
-                    <p style="margin-top:30px;"><strong>2.</strong> Turn element into a Tabulator</p>
+                    <p style="margin-top:30px;"><span class="step-num">2</span> Turn element into a Tabulator by passing a constructor object to the tabulator jQuery widget</p>
                     <pre class="prettyprint lang-js">//create Tabulator on DOM element with id "example-table"
 $("#example-table").tabulator({
-    height:320, // set height of table (optional)
+    height:205, // set height of table
     fitColumns:true, //fit columns to width of table (optional)
     columns:[ //Define Table Columns
         {title:"Name", field:"name", width:150},
@@ -166,7 +166,7 @@ $("#example-table").tabulator({
     },
 });</pre>
 
-                    <p style="margin-top:30px;"><strong>3.</strong> Load data into your Tabulator</p>
+                    <p style="margin-top:30px;"><span class="step-num">3</span> Load data into your Tabulator</p>
 
                     <pre class="prettyprint lang-js">//define some sample data
 var tabledata = [
@@ -180,7 +180,7 @@ var tabledata = [
 //load sample data into the table
 $("#example-table").tabulator("setData", tabledata);</pre>
 
-                    <p style="margin-top:30px;"><strong>4. SMILE</strong> - You are all setup and ready to go!</p>
+                    <p style="margin-top:30px;"><span class="step-num">4 </span> <strong style="#59B038">SMILE</strong> - You are all setup and ready to go!</p>
 
                     <div id="example-table"></div>
 
@@ -248,7 +248,7 @@ $("#example-table").tabulator("setData", tabledata);</pre>
     <script src="../js/bootstrap.min.js"></script>
 
     <!-- Tabulator -->
-    <script src="../../js/3.1/tabulator.min.js"></script>
+    <script src="../js/3.2/tabulator.min.js"></script>
 
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?style=desert"></script>
 
@@ -289,7 +289,7 @@ $("#example-table").tabulator("setData", tabledata);</pre>
         ];
 
         $("#example-table").tabulator({
-            height:320, // set height of table (optional)
+            height:205, // set height of table (optional)
             fitColumns:true, //fit columns to width of table (optional)
             columns:[ //Define Table Columns
                 {title:"Name", field:"name", width:150},
