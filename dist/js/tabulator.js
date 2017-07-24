@@ -13015,7 +13015,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var row = this.table.rowManager.activeRows[0],
           sorter = "string",
-          field;
+          field,
+          value;
 
       if (row) {
 
@@ -13025,7 +13026,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (field) {
 
-          switch (_typeof(row[field])) {
+          value = column.getFieldValue(row);
+
+          switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 
             case "undefined":
 
@@ -13041,12 +13044,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             default:
 
-              if (!isNaN(row[field]) && row[field] !== "") {
+              if (!isNaN(value) && value !== "") {
 
                 sorter = "number";
               } else {
 
-                if (row[field].match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)) {
+                if (value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)) {
 
                   sorter = "alphanum";
                 }

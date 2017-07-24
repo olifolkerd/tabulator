@@ -106,7 +106,7 @@ Sort.prototype.clear = function(){
 Sort.prototype.findSorter = function(column){
 	var row = this.table.rowManager.activeRows[0],
 	sorter = "string",
-	field;
+	field, value;
 
 	if(row){
 		row = row.getData();
@@ -114,7 +114,9 @@ Sort.prototype.findSorter = function(column){
 
 		if(field){
 
-			switch(typeof row[field]){
+			value = column.getFieldValue(row);
+
+			switch(typeof value){
 				case "undefined":
 				sorter = "string";
 				break;
@@ -124,17 +126,16 @@ Sort.prototype.findSorter = function(column){
 				break;
 
 				default:
-				if(!isNaN(row[field]) && row[field] !== ""){
+				if(!isNaN(value) && value !== ""){
 					sorter = "number";
 				}else{
-					if(row[field].match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+					if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
 						sorter = "alphanum";
 					}
 				}
 				break;
 			}
 		}
-
 	}
 
 	return this.sorters[sorter];
