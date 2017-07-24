@@ -1098,7 +1098,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.fieldStructure = field ? field.split(".") : [];
 
-      this.getFieldValue = this.fieldStructure.length > 1 ? this._getNesteData : this._getFlatData;
+      this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
 
       this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
     };
@@ -1536,7 +1536,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     //nested field lookup
 
-    Column.prototype._getNesteData = function (data) {
+    Column.prototype._getNestedData = function (data) {
 
       var dataObj = data,
           structure = this.fieldStructure,
