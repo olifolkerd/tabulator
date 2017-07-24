@@ -2688,8 +2688,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.refreshActiveData();
       }
 
-      console.log("left", this.scrollLeft);
-
       this.element.scrollLeft(left);
     };
 
@@ -11271,7 +11269,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       self.table.rowManager.displayRows.forEach(function (row) {
 
-        if (row.extensions.moveRow.mousemove) {
+        if (row.type === "row" && row.extensions.moveRow.mousemove) {
 
           row.element.on("mousemove", row.extensions.moveRow.mousemove);
         }
@@ -11284,7 +11282,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       self.table.rowManager.displayRows.forEach(function (row) {
 
-        if (row.extensions.moveRow.mousemove) {
+        if (row.type === "row" && row.extensions.moveRow.mousemove) {
 
           row.element.off("mousemove", row.extensions.moveRow.mousemove);
         }

@@ -75,7 +75,7 @@ MoveRows.prototype._bindMouseMove = function(){
 	var self = this;
 
 	self.table.rowManager.displayRows.forEach(function(row){
-		if(row.extensions.moveRow.mousemove){
+		if(row.type === "row" && row.extensions.moveRow.mousemove){
 			row.element.on("mousemove", row.extensions.moveRow.mousemove);
 		}
 	});
@@ -85,7 +85,7 @@ MoveRows.prototype._unbindMouseMove = function(){
 	var self = this;
 
 	self.table.rowManager.displayRows.forEach(function(row){
-		if(row.extensions.moveRow.mousemove){
+		if(row.type === "row" && row.extensions.moveRow.mousemove){
 			row.element.off("mousemove", row.extensions.moveRow.mousemove);
 		}
 	});
