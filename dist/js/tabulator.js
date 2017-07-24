@@ -12981,12 +12981,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         var column;
 
-        item.column = self.table.columnManager.findColumn(item.column);
+        column = self.table.columnManager.findColumn(item.column);
 
-        if (item.column) {
+        if (column) {
 
-          // item.column = item.column;
-
+          item.column = column;
 
           newSortList.push(item);
 

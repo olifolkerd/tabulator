@@ -82,10 +82,10 @@ Sort.prototype.setSort = function(sortList, dir){
 	sortList.forEach(function(item){
 		var column;
 
-		item.column = self.table.columnManager.findColumn(item.column);
+		column = self.table.columnManager.findColumn(item.column);
 
-		if(item.column){
-			// item.column = item.column;
+		if(column){
+			item.column = column;
 			newSortList.push(item);
 			self.changed = true;
 		}else{
