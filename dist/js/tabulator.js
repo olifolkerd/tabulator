@@ -2667,7 +2667,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     RowManager.prototype.sorterRefresh = function () {
 
       var table = this.table,
-          options = this.table.options;
+          options = this.table.options,
+          left = this.scrollLeft;
 
       if (options.ajaxSorting) {
 
@@ -2686,6 +2687,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.refreshActiveData();
       }
+
+      console.log("left", this.scrollLeft);
+
+      this.element.scrollLeft(left);
     };
 
     //set active data set

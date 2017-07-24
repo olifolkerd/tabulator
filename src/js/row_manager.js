@@ -490,7 +490,8 @@ RowManager.prototype.filterRefresh = function(){
 //choose the path to refresh data after a sorter update
 RowManager.prototype.sorterRefresh = function(){
 	var table = this.table,
-	options = this.table.options;
+	options = this.table.options,
+	left = this.scrollLeft;
 
 	if(options.ajaxSorting){
 		if(options.pagination == "remote" && table.extExists("page")){
@@ -503,6 +504,8 @@ RowManager.prototype.sorterRefresh = function(){
 	}else{
 		this.refreshActiveData();
 	}
+
+	this.element.scrollLeft(left);
 };
 
 //set active data set
@@ -513,7 +516,6 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 	if(table.options.selectable && !table.options.selectablePersistence && table.extExists("selectRow")){
 		table.extensions.selectRow.deselectRows();
 	}
-
 
 	//filter data
 	if(table.extExists("filter")){
