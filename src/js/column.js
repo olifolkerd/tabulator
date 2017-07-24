@@ -127,8 +127,8 @@ var Column = function(def, parent){
 Column.prototype.setField = function(field){
 	this.field = field;
 	this.fieldStructure = field ? field.split(".") : [];
-	this.getFieldValue = this.fieldStructure.length ? this._getNesteData : this._getFlatData;
-	this.setFieldValue = this.fieldStructure.length ? this._setNesteData : this._setFlatData;
+	this.getFieldValue = this.fieldStructure.length > 1 ? this._getNesteData : this._getFlatData;
+	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
 };
 
 //register column position with column manager
