@@ -124,7 +124,7 @@ Sort.prototype.findSorter = function(column){
 				break;
 
 				default:
-				if(!isNaN(row[field])){
+				if(!isNaN(row[field]) && row[field] !== ""){
 					sorter = "number";
 				}else{
 					if(row[field].match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
@@ -134,6 +134,7 @@ Sort.prototype.findSorter = function(column){
 				break;
 			}
 		}
+
 	}
 
 	return this.sorters[sorter];
@@ -232,6 +233,9 @@ Sort.prototype._sortRow = function(a, b, column, dir){
 
 	a = column.getFieldValue(el1.getData());
 	b = column.getFieldValue(el2.getData());
+
+	a = typeof a !== "undefined" ? a : "";
+	b = typeof b !== "undefined" ? b : "";
 
 	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
 };
