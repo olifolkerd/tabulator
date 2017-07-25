@@ -333,7 +333,7 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 		border-bottom:1px solid $rowBorderColor;
 
 		&.tabulator-selectable:hover{
-			background-color:$rowHoverBackground;
+			background-color:$rowHoverBackground !important;
 			cursor: pointer;
 		}
 
@@ -640,13 +640,9 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 	//Bootstrap theming classes
 
 	&.table-striped{
-		.tabulator-tableHolder{
-			.tabulator-table{
-				.tabulator-row{
-					&:nth-child(even){
-						background-color: $rowAltBackgroundColor;
-					}
-				}
+		.tabulator-row{
+			&:nth-child(even){
+				background-color: $rowAltBackgroundColor;
 			}
 		}
 	}
