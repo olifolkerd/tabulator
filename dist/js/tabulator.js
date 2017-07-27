@@ -12048,7 +12048,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       "filter_value": "filter_value",
 
-      "filter_type": "fitler_type"
+      "filter_type": "filter_type"
 
     };
 
