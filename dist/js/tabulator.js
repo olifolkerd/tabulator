@@ -688,8 +688,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
       }
 
-      console.log("FIT TO TABLE ----");
-
       self.columnsByIndex.forEach(function (column) {
 
         var width, minWidth, colWidth;
@@ -707,8 +705,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               if (width.indexOf("%") > -1) {
 
                 colWidth = totalWidth / 100 * parseInt(width);
-
-                console.log("width", colWidth);
               } else {
 
                 colWidth = parseInt(width);
@@ -773,8 +769,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
       }
 
-      console.log("FLEX BASE --------");
-
       this.columnsByIndex.forEach(function (column) {
 
         var width, minWidth, colWidth;
@@ -790,8 +784,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             if (width.indexOf("%") > -1) {
 
               colWidth = totalWidth / 100 * parseInt(width);
-
-              console.log("width", colWidth);
             } else {
 
               colWidth = parseInt(width);
@@ -1864,6 +1856,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
 
     Column.prototype.setWidthActual = function (width) {
+
+      if (isNaN(width)) {
+
+        width = Math.floor(this.table.element.innerWidth() / 100 * parseInt(width));
+      }
 
       width = Math.max(this.minWidth, width);
 
