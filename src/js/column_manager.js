@@ -365,7 +365,7 @@ ColumnManager.prototype.fitToTable = function(){
 
 				if(typeof(width) == "string"){
 					if(width.indexOf("%") > -1){
-						colWidth = (totWidth / 100) * parseInt(width) ;
+						colWidth = (totalWidth / 100) * parseInt(width) ;
 					}else{
 						colWidth = parseInt(width);
 					}
@@ -424,7 +424,7 @@ ColumnManager.prototype.getFlexBaseWidth = function(){
 
 			if(typeof(width) == "string"){
 				if(width.indexOf("%") > -1){
-					colWidth = (totWidth / 100) * parseInt(width) ;
+					colWidth = (totalWidth / 100) * parseInt(width) ;
 				}else{
 					colWidth = parseInt(width);
 				}

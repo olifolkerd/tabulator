@@ -688,6 +688,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
       }
 
+      console.log("FIT TO TABLE ----");
+
       self.columnsByIndex.forEach(function (column) {
 
         var width, minWidth, colWidth;
@@ -704,7 +706,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
               if (width.indexOf("%") > -1) {
 
-                colWidth = totWidth / 100 * parseInt(width);
+                colWidth = totalWidth / 100 * parseInt(width);
+
+                console.log("width", colWidth);
               } else {
 
                 colWidth = parseInt(width);
@@ -769,6 +773,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
       }
 
+      console.log("FLEX BASE --------");
+
       this.columnsByIndex.forEach(function (column) {
 
         var width, minWidth, colWidth;
@@ -783,7 +789,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             if (width.indexOf("%") > -1) {
 
-              colWidth = totWidth / 100 * parseInt(width);
+              colWidth = totalWidth / 100 * parseInt(width);
+
+              console.log("width", colWidth);
             } else {
 
               colWidth = parseInt(width);
