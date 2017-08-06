@@ -449,6 +449,10 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 		this.table.extensions.responsiveLayout.initialize();
 	}
 
+	if(this.table.extExists("columnCalcs")){
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+	}
+
 	this.redraw();
 
 	this._verticalAlignHeaders();
