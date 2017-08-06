@@ -360,6 +360,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.headersElement.append(column.getElement());
         }
       }
+
+      return column;
     };
 
     ColumnManager.prototype.registerColumnField = function (col) {
@@ -802,7 +804,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     ColumnManager.prototype.addColumn = function (definition, before, nextToColumn) {
 
-      this._addColumn(definition, before, nextToColumn);
+      var column = this._addColumn(definition, before, nextToColumn);
 
       this._reIndexColumns();
 
@@ -817,6 +819,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.redraw();
+
+      if (!this.table.options.fitColumns) {
+
+        column.reinitializeWidth();
+      }
 
       this._verticalAlignHeaders();
 
@@ -1999,6 +2006,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     Column.prototype.fitToData = function () {
 
       var self = this;
+
+      console.trace();
 
       if (!this.widthFixed) {
 

@@ -110,6 +110,8 @@ ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
 			this.headersElement.append(column.getElement());
 		}
 	}
+
+	return column;
 };
 
 ColumnManager.prototype.registerColumnField = function(col){
@@ -441,7 +443,7 @@ ColumnManager.prototype.getFlexBaseWidth = function(){
 };
 
 ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
-	this._addColumn(definition, before, nextToColumn);
+	var column = this._addColumn(definition, before, nextToColumn);
 
 	this._reIndexColumns();
 
@@ -454,6 +456,10 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 	}
 
 	this.redraw();
+
+	if(!this.table.options.fitColumns){
+		column.reinitializeWidth();
+	}
 
 	this._verticalAlignHeaders();
 
