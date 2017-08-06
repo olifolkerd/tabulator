@@ -523,6 +523,10 @@ ColumnManager.prototype.redraw = function(force){
 		this.table.extensions.frozenColumns.layout();
 	}
 
+	if(this.table.extExists("columnCalcs")){
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+	}
+
 	if(force){
 		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
 			this.table.extensions.persistentLayout.save();

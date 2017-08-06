@@ -250,6 +250,10 @@
 	 				options.columns = ext.persistentLayout.load(options.columns);
 	 			}
 
+	 			if(this.extExists("columnCalcs")){
+	 				ext.columnCalcs.initialize();
+	 			}
+
 	 			this.columnManager.setColumns(options.columns);
 
 	 			if(options.initialSort && this.extExists("sort", true)){
@@ -266,10 +270,6 @@
 
 	 			if(this.extExists("ajax")){
 	 				ext.ajax.initialize();
-	 			}
-
-	 			if(this.extExists("columnCalcs")){
-	 				ext.columnCalcs.initialize();
 	 			}
 
 	 			if(this.extExists("keybindings")){

@@ -913,6 +913,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.table.extensions.frozenColumns.layout();
       }
 
+      if (this.table.extExists("columnCalcs")) {
+
+        this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+      }
+
       if (force) {
 
         if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
@@ -2006,8 +2011,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     Column.prototype.fitToData = function () {
 
       var self = this;
-
-      console.trace();
 
       if (!this.widthFixed) {
 
@@ -4965,6 +4968,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           options.columns = ext.persistentLayout.load(options.columns);
         }
 
+        if (this.extExists("columnCalcs")) {
+
+          ext.columnCalcs.initialize();
+        }
+
         this.columnManager.setColumns(options.columns);
 
         if (options.initialSort && this.extExists("sort", true)) {
@@ -4985,11 +4993,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (this.extExists("ajax")) {
 
           ext.ajax.initialize();
-        }
-
-        if (this.extExists("columnCalcs")) {
-
-          ext.columnCalcs.initialize();
         }
 
         if (this.extExists("keybindings")) {

@@ -816,9 +816,6 @@ Column.prototype.reinitializeWidth = function(){
 Column.prototype.fitToData = function(){
 	var self = this;
 
-
-	console.trace();
-
 	if(!this.widthFixed){
 		this.element.css("width", "")
 
