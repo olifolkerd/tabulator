@@ -195,6 +195,8 @@ Row.prototype.initialize = function(force){
 
 	if(!self.initialized || force){
 
+		self.deleteCells();
+
 		self.element.empty();
 
 		//handle frozen cells
@@ -469,12 +471,19 @@ Row.prototype.delete = function(){
 Row.prototype.deleteActual = function(){
 	this.table.rowManager.deleteRow(this);
 
+	this.deleteCells();
+};
+
+
+Row.prototype.deleteCells = function(){
 	var cellCount = this.cells.length;
 
 	for(let i = 0; i < cellCount; i++){
 		this.cells[0].delete();
 	}
 };
+
+
 
 //////////////// Object Generation /////////////////
 Row.prototype.getComponent = function(){

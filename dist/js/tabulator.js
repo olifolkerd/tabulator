@@ -3685,6 +3685,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (!self.initialized || force) {
 
+        self.deleteCells();
+
         self.element.empty();
 
         //handle frozen cells
@@ -4021,6 +4023,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     Row.prototype.deleteActual = function () {
 
       this.table.rowManager.deleteRow(this);
+
+      this.deleteCells();
+    };
+
+    Row.prototype.deleteCells = function () {
 
       var cellCount = this.cells.length;
 
