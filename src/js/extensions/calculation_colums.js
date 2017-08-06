@@ -176,18 +176,20 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 
 		self.table.columnManager.columnsByIndex.forEach(function(column){
 
-			//set field name of mock column
-			self.genColumn.setField(column.getField());
-			self.genColumn.hozAlign = column.hozAlign;
+			if(column.visible){
+				//set field name of mock column
+				self.genColumn.setField(column.getField());
+				self.genColumn.hozAlign = column.hozAlign;
 
-			//generate cell and assign to correct column
-			var cell = new Cell(self.genColumn, row);
-			cell.column = column;
+				//generate cell and assign to correct column
+				var cell = new Cell(self.genColumn, row);
+				cell.column = column;
 
-			cell.setWidth(column.getWidth());
+				cell.setWidth(column.getWidth());
 
-			column.cells.push(cell);
-			cells.push(cell);
+				column.cells.push(cell);
+				cells.push(cell);
+			}
 		});
 
 		this.cells = cells;

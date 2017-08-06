@@ -6886,25 +6886,28 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         self.table.columnManager.columnsByIndex.forEach(function (column) {
 
-          //set field name of mock column
+          if (column.visible) {
+
+            //set field name of mock column
 
 
-          self.genColumn.setField(column.getField());
+            self.genColumn.setField(column.getField());
 
-          self.genColumn.hozAlign = column.hozAlign;
+            self.genColumn.hozAlign = column.hozAlign;
 
-          //generate cell and assign to correct column
+            //generate cell and assign to correct column
 
 
-          var cell = new Cell(self.genColumn, row);
+            var cell = new Cell(self.genColumn, row);
 
-          cell.column = column;
+            cell.column = column;
 
-          cell.setWidth(column.getWidth());
+            cell.setWidth(column.getWidth());
 
-          column.cells.push(cell);
+            column.cells.push(cell);
 
-          cells.push(cell);
+            cells.push(cell);
+          }
         });
 
         this.cells = cells;
