@@ -1825,9 +1825,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           cell.show();
         });
 
-        if (this.table.options.persistentLayout && self.table.extExists("persistentLayout", true)) {
+        if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
 
-          self.table.extensions.persistentLayout.save();
+          this.table.extensions.persistentLayout.save();
         }
 
         this.table.options.groupVisibilityChanged(this.getComponent(), true);
@@ -1856,9 +1856,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           cell.hide();
         });
 
-        if (this.table.options.persistentLayout && self.table.extExists("persistentLayout", true)) {
+        if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
 
-          self.table.extensions.persistentLayout.save();
+          this.table.extensions.persistentLayout.save();
         }
 
         this.table.options.groupVisibilityChanged(this.getComponent(), false);
