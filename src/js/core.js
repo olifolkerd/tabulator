@@ -782,7 +782,7 @@
 
 	 		getPage:function(){
 	 			if(this.options.pagination && this.extExists("page")){
-	 				this.extensions.page.getPage();
+	 				return this.extensions.page.getPage();
 	 			}else{
 	 				return false;
 	 			}
@@ -790,7 +790,7 @@
 
 	 		getPageMax:function(){
 	 			if(this.options.pagination && this.extExists("page")){
-	 				this.extensions.page.getPageMax();
+	 				return this.extensions.page.getPageMax();
 	 			}else{
 	 				return false;
 	 			}
