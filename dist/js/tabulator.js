@@ -1806,6 +1806,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     //show column
 
     Column.prototype.show = function () {
+      
+      var self = this;
 
       if (!this.visible) {
 
@@ -1837,6 +1839,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     //hide column
 
     Column.prototype.hide = function () {
+      
+      var self = this;
 
       if (this.visible) {
 
