@@ -3007,7 +3007,7 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date"},
          {title:"Driver", field:"car", align:"center", formatter:"tickCross"},
          ],
-         rowMoved:function(id,data,row,index){
+         rowMoved:function(row){
              alert("Row: " + row.getData().name + " has been moved");
          },
      });
