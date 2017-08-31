@@ -898,7 +898,7 @@ $("#example-table").tabulator({
         {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editor:"input"},
         {title:"Driver", field:"car", align:"center", editor:true, formatter:"tickCross"},
     ],
-    cellEdited:function(id,data,row){
+    cellEdited:function(cell){
         //This callback is called any time a cell is edidted
     },
 });</pre>
@@ -2322,7 +2322,7 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editor:"input"},
          {title:"Driver", field:"car", align:"center", editor:true, formatter:"tickCross"},
          ],
-         cellEdited:function(id,data,row){
+         cellEdited:function(cell){
 
          },
      });
@@ -2812,7 +2812,7 @@ $("#lang-default").click(function(){
          {title:"Date Of Birth", field:"dob", align:"center", sorter:"date", editable:true},
          {title:"Driver", field:"car", align:"center", editable:true},
          ],
-         cellEdited:function(id,data,row,index){
+         cellEdited:function(cell){
 
          },
      });
