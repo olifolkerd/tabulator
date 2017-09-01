@@ -911,6 +911,7 @@ var genderEditor = function(cell, onRendered, success, cancel){
     //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
     onRendered(function(){
       editor.focus();
+      editor.css("height","100%");
     });
 
     //when the value has been set, trigger the cell to update
@@ -2333,6 +2334,7 @@ $("#lang-default").click(function(){
         //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
         onRendered(function(){
           editor.focus();
+          editor.css("height","100%");
         });
 
         //when the value has been set, trigger the cell to update
