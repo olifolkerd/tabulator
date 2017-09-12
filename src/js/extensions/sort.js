@@ -176,7 +176,7 @@ Sort.prototype.sort = function(){
 	}
 
 	if(self.table.options.dataSorted){
-		self.table.options.dataSorted(self.getSort());
+		self.table.options.dataSorted(self.getSort(), self.table.rowManager.getComponents(true));
 	}
 
 };
