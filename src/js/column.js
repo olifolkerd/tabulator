@@ -185,7 +185,7 @@ Column.prototype._buildHeader = function(){
 
 		}else{
 			if(typeof(tooltip) == "function"){
-				tooltip = tooltip(column.getComponent());
+				tooltip = tooltip(self.getComponent());
 			}
 
 			self.element.attr("title", tooltip);
