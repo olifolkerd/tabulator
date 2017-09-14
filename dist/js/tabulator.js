@@ -1196,7 +1196,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           if (typeof tooltip == "function") {
 
-            tooltip = tooltip(column.getComponent());
+            tooltip = tooltip(self.getComponent());
           }
 
           self.element.attr("title", tooltip);
@@ -12484,11 +12484,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           //table is too wide
 
 
-          var _column = self.columns[self.index];
+          var column = self.columns[self.index];
 
-          if (_column) {
+          if (column) {
 
-            _column.hide();
+            column.hide();
 
             self.index++;
           } else {
@@ -12500,15 +12500,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           //table has spare space
 
 
-          var _column2 = self.columns[self.index - 1];
+          var _column = self.columns[self.index - 1];
 
-          if (_column2) {
+          if (_column) {
 
             if (diff > 0) {
 
-              if (diff >= _column2.getWidth()) {
+              if (diff >= _column.getWidth()) {
 
-                _column2.show();
+                _column.show();
 
                 self.index--;
               } else {
@@ -13090,7 +13090,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       if (self.table.options.dataSorted) {
 
-        self.table.options.dataSorted(self.getSort());
+        self.table.options.dataSorted(self.getSort(), self.table.rowManager.getComponents(true));
       }
     };
 
