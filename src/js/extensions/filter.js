@@ -107,6 +107,9 @@ Filter.prototype.initializeColumn = function(column){
 				getValue:function(){
 					return "";
 				},
+				getField:function(){
+					return column.definition.field;
+				},
 				getElement:function(){
 					return filterElement;
 				}
