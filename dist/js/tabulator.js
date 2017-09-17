@@ -8386,6 +8386,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               return "";
             },
 
+            getField: function getField() {
+
+              return column.definition.field;
+            },
+
             getElement: function getElement() {
 
               return filterElement;
