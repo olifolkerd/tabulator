@@ -1982,47 +1982,47 @@ $("#lang-default").click(function(){
         triggerBuild(element.nextAll("article:first"));
     });
 
-    //track source views
-    $(".view-source").on("click", function(){
-        $(this).next(".source").slideToggle();
+    // //track source views
+    // $(".view-source").on("click", function(){
+    //     $(this).next(".source").slideToggle();
 
-        ga('send', 'event', {
-            eventCategory: 'View Source',
-            eventAction: 'click',
-            eventLabel: $(this).closest("article").prev(".anchor").attr("id"),
-            transport: 'beacon'
-        })
-    });
+    //     ga('send', 'event', {
+    //         eventCategory: 'View Source',
+    //         eventAction: 'click',
+    //         eventLabel: $(this).closest("article").prev(".anchor").attr("id"),
+    //         transport: 'beacon'
+    //     })
+    // });
 
-    //track social shares
-    $(".share a").on("click", function(){
-        ga('send', 'event', {
-            eventCategory: 'Social Share',
-            eventAction: 'click',
-            eventLabel: $(this).data("type"),
-            transport: 'beacon'
-        })
-    });
+    // //track social shares
+    // $(".share a").on("click", function(){
+    //     ga('send', 'event', {
+    //         eventCategory: 'Social Share',
+    //         eventAction: 'click',
+    //         eventLabel: $(this).data("type"),
+    //         transport: 'beacon'
+    //     })
+    // });
 
-    //track documentation lookups
-    $(".doc-link").on("click", function(){
-        ga('send', 'event', {
-            eventCategory: 'Documentation Lookup',
-            eventAction: 'click',
-            eventLabel: $(this).attr("href").split("#")[1],
-            transport: 'beacon'
-        })
-    });
+    // //track documentation lookups
+    // $(".doc-link").on("click", function(){
+    //     ga('send', 'event', {
+    //         eventCategory: 'Documentation Lookup',
+    //         eventAction: 'click',
+    //         eventLabel: $(this).attr("href").split("#")[1],
+    //         transport: 'beacon'
+    //     })
+    // });
 
-    //track sidebar navigation
-    $(".docs-sidenav li a").on("click", function(){
-        ga('send', 'event', {
-            eventCategory: 'Sidebar Nav - Examples',
-            eventAction: 'click',
-            eventLabel: $(this).attr("href").split("#")[1],
-            transport: 'beacon'
-        });
-    });
+    // //track sidebar navigation
+    // $(".docs-sidenav li a").on("click", function(){
+    //     ga('send', 'event', {
+    //         eventCategory: 'Sidebar Nav - Examples',
+    //         eventAction: 'click',
+    //         eventLabel: $(this).attr("href").split("#")[1],
+    //         transport: 'beacon'
+    //     });
+    // });
 
 
 
@@ -2938,24 +2938,24 @@ $("#lang-default").click(function(){
      });
 
 
-     //google analytics tracking code
-     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+     // //google analytics tracking code
+     // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     //     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     //     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     // })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-     ga('create', 'UA-77206751-1', 'auto');
-     ga('send', 'pageview');
+     // ga('create', 'UA-77206751-1', 'auto');
+     // ga('send', 'pageview');
 
 
-     $("#github-link").click(function(){
-         ga('send', 'event', {
-             eventCategory: 'Github Link',
-             eventAction: 'click',
-             eventLabel: 'Github Link',
-             transport: 'beacon'
-         })
-     });
+     // $("#github-link").click(function(){
+     //     ga('send', 'event', {
+     //         eventCategory: 'Github Link',
+     //         eventAction: 'click',
+     //         eventLabel: 'Github Link',
+     //         transport: 'beacon'
+     //     })
+     // });
 
     </script>
 
