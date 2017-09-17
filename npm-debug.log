@@ -1,0 +1,27 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\Users\\Oliver\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'run',
+1 verbose cli   'watch' ]
+2 info using npm@3.6.0
+3 info using node@v6.11.0
+4 verbose stack Error: missing script: watch
+4 verbose stack     at run (C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\lib\run-script.js:147:19)
+4 verbose stack     at C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\lib\run-script.js:57:5
+4 verbose stack     at C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\node_modules\read-package-json\read-json.js:345:5
+4 verbose stack     at checkBinReferences_ (C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\node_modules\read-package-json\read-json.js:309:45)
+4 verbose stack     at final (C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\node_modules\read-package-json\read-json.js:343:3)
+4 verbose stack     at then (C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\node_modules\read-package-json\read-json.js:113:5)
+4 verbose stack     at C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\node_modules\read-package-json\read-json.js:232:12
+4 verbose stack     at C:\Users\Oliver\AppData\Roaming\npm\node_modules\npm\node_modules\graceful-fs\graceful-fs.js:76:16
+4 verbose stack     at tryToString (fs.js:456:3)
+4 verbose stack     at FSReqWrap.readFileAfterClose [as oncomplete] (fs.js:443:12)
+5 verbose cwd E:\Projects\Personal\Tabulator
+6 error Windows_NT 10.0.15063
+7 error argv "C:\\Program Files\\nodejs\\node.exe" "C:\\Users\\Oliver\\AppData\\Roaming\\npm\\node_modules\\npm\\bin\\npm-cli.js" "run" "watch"
+8 error node v6.11.0
+9 error npm  v3.6.0
+10 error missing script: watch
+11 error If you need help, you may report this error at:
+11 error     <https://github.com/npm/npm/issues>
+12 verbose exit [ 1, true ]
