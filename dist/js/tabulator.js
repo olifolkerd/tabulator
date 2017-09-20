@@ -4,6 +4,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+/* Tabulator v3.3.0 (c) Oliver Folkerd */
+
 /*
  * This file is part of the Tabulator package.
  *
@@ -13,7 +15,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * file that was distributed with this source code.
  *
  * Full Documentation & Demos can be found at: http://olifolkerd.github.io/tabulator/
- *
  */
 
 (function (factory) {

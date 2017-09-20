@@ -15,7 +15,11 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     babel = require('gulp-babel'),
     plumber = require('gulp-plumber'),
-    gutil = require('gulp-util');
+    gutil = require('gulp-util'),
+    insert = require('gulp-insert');
+
+    var version_no = "3.3.0",
+    version = "/* Tabulator v" + version_no + " (c) Oliver Folkerd */\n";
 
     var gulp_src = gulp.src;
     gulp.src = function() {
@@ -33,11 +37,13 @@ var gulp = require('gulp'),
     gulp.task('styles', function() {
       return gulp.src('src/scss/**/tabulator*.scss')
      	.pipe(sourcemaps.init())
+        .pipe(insert.prepend(version + "\n"))
         .pipe(sass({outputStyle: 'expanded'}).on('error', sass.logError))
         .pipe(autoprefixer('last 4 version'))
         .pipe(gulp.dest('dist/css'))
         .pipe(rename({suffix: '.min'}))
         .pipe(cssnano())
+        .pipe(insert.prepend(version))
         .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/css'))
         //.pipe(notify({ message: 'Styles task complete' }));
@@ -47,6 +53,7 @@ var gulp = require('gulp'),
     gulp.task('scripts', function() {
      	//return gulp.src('src/js/**/*.js')
       	return gulp.src('src/js/jquery_wrapper.js')
+        .pipe(insert.prepend(version + "\n"))
       	//.pipe(sourcemaps.init())
       	.pipe(include())
         //.pipe(jshint())
@@ -64,6 +71,7 @@ var gulp = require('gulp'),
         .pipe(gulp.dest('dist/js'))
         .pipe(rename({suffix: '.min'}))
         .pipe(uglify())
+        .pipe(insert.prepend(version))
        // .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist/js'))
         //.pipe(notify({ message: 'Scripts task complete' }));
