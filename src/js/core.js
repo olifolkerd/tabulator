@@ -414,6 +414,12 @@
 	 			return this.rowManager.getDataCount(active);
 	 		},
 
+	 		//get table html
+	 		getHtml:function(active){
+	 			return this.rowManager.getHtml(active);
+	 		},
+
+
 	 		//update table data
 	 		updateData:function(data){
 	 			var self = this;

@@ -413,6 +413,50 @@ RowManager.prototype.getData = function(active){
 	return output;
 };
 
+RowManager.prototype.getHtml = function(active){
+		var data = this.getData(active),
+		columns = this.table.columnManager.getComponents(),
+		header = "",
+		body = "",
+		table = "";
+
+		//build header row
+		columns.forEach(function(column){
+			var def = column.getDefinition();
+
+			if(column.getVisibility()){
+				header += `<th>${def.title}</th>`;
+			}
+		})
+
+
+		//build body rows
+		data.forEach(function(rowData){
+			var row = "";
+
+			columns.forEach(function(column){
+				var value = typeof rowData[column.getField()] === "undefined" ? "" : rowData[column.getField()] ;
+
+				if(column.getVisibility()){
+					row += `<td>${value}</td>`;
+				}
+			});
+
+			body += `<tr>${row}</tr>`;
+		});
+
+
+		//build table
+		table = `<table>
+			<thead>
+	    		<tr>${header}</tr>
+			</thead>
+			<tbody>${body}</tbody>
+		</table>`;
+
+		return table;
+};
+
 RowManager.prototype.getComponents = function(active){
 	var self = this,
 	output = [];

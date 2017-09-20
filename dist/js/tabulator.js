@@ -2590,6 +2590,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return output;
     };
 
+    RowManager.prototype.getHtml = function (active) {
+
+      var data = this.getData(active),
+          columns = this.table.columnManager.getComponents(),
+          header = "",
+          body = "",
+          table = "";
+
+      //build header row
+
+      columns.forEach(function (column) {
+
+        var def = column.getDefinition();
+
+        if (column.getVisibility()) {
+
+          header += '<th>' + def.title + '</th>';
+        }
+      });
+
+      //build body rows
+
+      data.forEach(function (rowData) {
+
+        var row = "";
+
+        columns.forEach(function (column) {
+
+          var value = typeof rowData[column.getField()] === "undefined" ? "" : rowData[column.getField()];
+
+          if (column.getVisibility()) {
+
+            row += '<td>' + value + '</td>';
+          }
+        });
+
+        body += '<tr>' + row + '</tr>';
+      });
+
+      //build table
+
+      table = '<table>\n\n \t\t\t\t\t<thead>\n\n \t\t\t    \t\t<tr>' + header + '</tr>\n\n \t\t\t\t\t</thead>\n\n \t\t\t\t\t<tbody>' + body + '</tbody>\n\n \t\t\t\t</table>';
+
+      return table;
+    };
+
     RowManager.prototype.getComponents = function (active) {
 
       var self = this,
@@ -5195,6 +5241,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       getDataCount: function getDataCount(active) {
 
         return this.rowManager.getDataCount(active);
+      },
+
+      //get table html
+
+      getHtml: function getHtml(active) {
+
+        return this.rowManager.getHtml(active);
       },
 
       //update table data
