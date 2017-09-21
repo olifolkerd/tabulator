@@ -15,6 +15,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
  * file that was distributed with this source code.
  *
  * Full Documentation & Demos can be found at: http://olifolkerd.github.io/tabulator/
+ *
  */
 
 (function (factory) {
@@ -821,7 +822,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.redraw();
 
-      if (!this.table.options.fitColumns) {
+      if (this.table.options.layout != "fitColumns") {
 
         column.reinitializeWidth();
       }
@@ -892,7 +893,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.table.rowManager.reinitialize();
       }
 
-      if (this.table.options.fitColumns) {
+      if (this.table.options.layout == "fitColumns") {
 
         this.fitToTable();
       } else {
@@ -2893,7 +2894,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           self.firstRender = false;
 
-          if (self.table.options.fitColumns) {
+          if (self.table.options.layout == "fitColumns") {
 
             self.columnManager.fitToTable();
           } else {
@@ -4779,7 +4780,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         height: false, //height of tabulator
 
 
-        fitColumns: false, //fit colums to width of screen;
+        layout: "fitData", ///layout type "fitColumns" | "fitData"
+
+        fitColumns: false, //DEPRICATED - fit colums to width of screen;
+
 
         columnMinWidth: 40, //minimum global width for a column
 
@@ -4918,12 +4922,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       }, _defineProperty(_options, 'rowContext', false), _defineProperty(_options, 'rowTap', false), _defineProperty(_options, 'rowDblTap', false), _defineProperty(_options, 'rowTapHold', false), _defineProperty(_options, 'rowAdded', function rowAdded() {}), _defineProperty(_options, 'rowDeleted', function rowDeleted() {}), _defineProperty(_options, 'rowMoved', function rowMoved() {}), _defineProperty(_options, 'rowUpdated', function rowUpdated() {}), _defineProperty(_options, 'rowSelectionChanged', function rowSelectionChanged() {}), _defineProperty(_options, 'rowSelected', function rowSelected() {}), _defineProperty(_options, 'rowDeselected', function rowDeselected() {}), _defineProperty(_options, 'cellEditing', function cellEditing() {}), _defineProperty(_options, 'cellEdited', function cellEdited() {}), _defineProperty(_options, 'cellEditCancelled', function cellEditCancelled() {}), _defineProperty(_options, 'columnMoved', function columnMoved() {}), _defineProperty(_options, 'columnResized', function columnResized() {}), _defineProperty(_options, 'columnTitleChanged', function columnTitleChanged() {}), _defineProperty(_options, 'columnVisibilityChanged', function columnVisibilityChanged() {}), _defineProperty(_options, 'htmlImporting', function htmlImporting() {}), _defineProperty(_options, 'htmlImported', function htmlImported() {}), _defineProperty(_options, 'dataLoading', function dataLoading() {}), _defineProperty(_options, 'dataLoaded', function dataLoaded() {}), _defineProperty(_options, 'dataEdited', function dataEdited() {}), _defineProperty(_options, 'ajaxRequesting', function ajaxRequesting() {}), _defineProperty(_options, 'ajaxResponse', false), _defineProperty(_options, 'ajaxError', function ajaxError() {}), _defineProperty(_options, 'dataFiltering', false), _defineProperty(_options, 'dataFiltered', false), _defineProperty(_options, 'dataSorting', function dataSorting() {}), _defineProperty(_options, 'dataSorted', function dataSorted() {}), _defineProperty(_options, 'dataGrouping', function dataGrouping() {}), _defineProperty(_options, 'dataGrouped', false), _defineProperty(_options, 'groupVisibilityChanged', function groupVisibilityChanged() {}), _defineProperty(_options, 'pageLoaded', function pageLoaded() {}), _defineProperty(_options, 'localized', function localized() {}), _options),
 
+      //convert depricated functionality to new functions
+
+      _mapDepricatedFunctionality: function _mapDepricatedFunctionality() {
+
+        if (this.options.fitColumns) {
+
+          this.options.layout = "fitColumns";
+        }
+      },
+
       //constructor
 
       _create: function _create() {
 
         var self = this,
             element = this.element;
+
+        self._mapDepricatedFunctionality();
 
         self.bindExtensions();
 
@@ -12534,7 +12550,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       while (working) {
 
-        var width = self.table.options.fitColumns ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
+        var width = self.table.options.layout == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
         var diff = self.table.columnManager.element.innerWidth() - width;
 

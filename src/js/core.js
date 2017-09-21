@@ -24,7 +24,9 @@
 
 	 			height:false, //height of tabulator
 
-	 			fitColumns:false, //fit colums to width of screen;
+	 			layout:"fitData", ///layout type "fitColumns" | "fitData"
+	 			fitColumns:false, //DEPRICATED - fit colums to width of screen;
+
 	 			columnMinWidth:40, //minimum global width for a column
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
@@ -166,10 +168,20 @@
 
 	 		},
 
+	 		//convert depricated functionality to new functions
+	 		_mapDepricatedFunctionality:function(){
+
+	 			if(this.options.fitColumns){
+	 				this.options.layout = "fitColumns";
+	 			}
+	 		},
+
 	 		//constructor
 	 		_create: function(){
 	 			var self = this,
 	 			element = this.element;
+
+	 			self._mapDepricatedFunctionality();
 
 	 			self.bindExtensions();
 

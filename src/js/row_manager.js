@@ -649,7 +649,7 @@ RowManager.prototype.renderTable = function(){
 
 		if(self.displayRowsCount){
 			self.firstRender = false;
-			if(self.table.options.fitColumns){
+			if(self.table.options.layout == "fitColumns"){
 				self.columnManager.fitToTable();
 			}else{
 				self.columnManager.fitToData();

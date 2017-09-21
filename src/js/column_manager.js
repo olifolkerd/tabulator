@@ -457,7 +457,7 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 
 	this.redraw();
 
-	if(!this.table.options.fitColumns){
+	if(this.table.options.layout != "fitColumns"){
 		column.reinitializeWidth();
 	}
 
@@ -507,7 +507,7 @@ ColumnManager.prototype.redraw = function(force){
 		this.table.rowManager.reinitialize();
 	}
 
-	if(this.table.options.fitColumns){
+	if(this.table.options.layout == "fitColumns"){
 		this.fitToTable();
 	}else{
 		if(force){
