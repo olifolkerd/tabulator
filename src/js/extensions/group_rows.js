@@ -385,21 +385,14 @@ GroupRows.prototype.initialize = function(){
 
 //return appropriate rows with group headers
 GroupRows.prototype.getRows = function(rows){
-	var self = this,
-	groupComponents = [];
+	if(this.groupIDLookups.length){
 
-	if(self.groupIDLookups.length){
-
-		self.table.options.dataGrouping();
+		this.table.options.dataGrouping();
 
 		this.generateGroups(rows);
 
-		if(self.table.options.dataGrouped){
-			self.groupList.forEach(function(group){
-				groupComponents.push(group.getComponent());
-			});
-
-			self.table.options.dataGrouped(groupComponents);
+		if(this.table.options.dataGrouped){
+			this.table.options.dataGrouped(this.getGroups());
 		};
 
 		return this.updateGroupRows();
@@ -408,6 +401,18 @@ GroupRows.prototype.getRows = function(rows){
 		return rows.slice(0);
 	}
 
+};
+
+GroupRows.prototype.getGroups = function(){
+	var groupComponents = [];
+
+	if(this.table.options.dataGrouped){
+		this.groupList.forEach(function(group){
+			groupComponents.push(group.getComponent());
+		});
+	}
+
+	return groupComponents;
 };
 
 GroupRows.prototype.generateGroups = function(rows){

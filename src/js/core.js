@@ -855,6 +855,14 @@
 	 			}
 	 		},
 
+	 		getGroups:function(values){
+	 			if(this.extExists("groupRows", true)){
+	 				return this.extensions.groupRows.getGroups();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
 
 	 		/////////////// Navigation Management //////////////
 

@@ -5856,6 +5856,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       },
 
+      getGroups: function getGroups(values) {
+
+        if (this.extExists("groupRows", true)) {
+
+          return this.extensions.groupRows.getGroups();
+        } else {
+
+          return false;
+        }
+      },
+
       /////////////// Navigation Management //////////////
 
 
@@ -9997,23 +10008,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     GroupRows.prototype.getRows = function (rows) {
 
-      var self = this,
-          groupComponents = [];
+      if (this.groupIDLookups.length) {
 
-      if (self.groupIDLookups.length) {
-
-        self.table.options.dataGrouping();
+        this.table.options.dataGrouping();
 
         this.generateGroups(rows);
 
-        if (self.table.options.dataGrouped) {
+        if (this.table.options.dataGrouped) {
 
-          self.groupList.forEach(function (group) {
-
-            groupComponents.push(group.getComponent());
-          });
-
-          self.table.options.dataGrouped(groupComponents);
+          this.table.options.dataGrouped(this.getGroups());
         };
 
         return this.updateGroupRows();
@@ -10021,6 +10024,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         return rows.slice(0);
       }
+    };
+
+    GroupRows.prototype.getGroups = function () {
+
+      var groupComponents = [];
+
+      if (this.table.options.dataGrouped) {
+
+        this.groupList.forEach(function (group) {
+
+          groupComponents.push(group.getComponent());
+        });
+      }
+
+      return groupComponents;
     };
 
     GroupRows.prototype.generateGroups = function (rows) {
