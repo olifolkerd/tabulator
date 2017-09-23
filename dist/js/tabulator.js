@@ -13023,28 +13023,50 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      if (typeof rows == "undefined") {
+      switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 
-        self.table.rowManager.rows.forEach(function (row) {
+        case "undefined":
 
-          self._selectRow(row, true, true);
-        });
+          self.table.rowManager.rows.forEach(function (row) {
 
-        self._rowSelectionChanged();
-      } else {
-
-        if (Array.isArray(rows)) {
-
-          rows.forEach(function (row) {
-
-            self._selectRow(row, true);
+            self._selectRow(row, true, true);
           });
 
           self._rowSelectionChanged();
-        } else {
 
-          self._selectRow(rows);
-        }
+          break;
+
+        case "boolean":
+
+          if (rows === true) {
+
+            self.table.rowManager.activeRows.forEach(function (row) {
+
+              self._selectRow(row, true, true);
+            });
+
+            self._rowSelectionChanged();
+          }
+
+          break;
+
+        default:
+
+          if (Array.isArray(rows)) {
+
+            rows.forEach(function (row) {
+
+              self._selectRow(row, true);
+            });
+
+            self._rowSelectionChanged();
+          } else {
+
+            self._selectRow(rows);
+          }
+
+          break;
+
       }
     };
 
