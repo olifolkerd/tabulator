@@ -2,8 +2,6 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /* Tabulator v3.3.0 (c) Oliver Folkerd */
 
 /*
@@ -36,8 +34,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     // https://tc39.github.io/ecma262/#sec-array.prototype.findIndex
 
-
-    var _options;
 
     if (!Array.prototype.findIndex) {
 
@@ -4649,7 +4645,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       //setup options
 
-      options: (_options = {
+      options: {
 
         height: false, //height of tabulator
 
@@ -4792,9 +4788,109 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         rowDblClick: false,
 
-        rowContext: false
+        rowContext: false,
 
-      }, _defineProperty(_options, 'rowContext', false), _defineProperty(_options, 'rowTap', false), _defineProperty(_options, 'rowDblTap', false), _defineProperty(_options, 'rowTapHold', false), _defineProperty(_options, 'rowAdded', function rowAdded() {}), _defineProperty(_options, 'rowDeleted', function rowDeleted() {}), _defineProperty(_options, 'rowMoved', function rowMoved() {}), _defineProperty(_options, 'rowUpdated', function rowUpdated() {}), _defineProperty(_options, 'rowSelectionChanged', function rowSelectionChanged() {}), _defineProperty(_options, 'rowSelected', function rowSelected() {}), _defineProperty(_options, 'rowDeselected', function rowDeselected() {}), _defineProperty(_options, 'cellEditing', function cellEditing() {}), _defineProperty(_options, 'cellEdited', function cellEdited() {}), _defineProperty(_options, 'cellEditCancelled', function cellEditCancelled() {}), _defineProperty(_options, 'columnMoved', function columnMoved() {}), _defineProperty(_options, 'columnResized', function columnResized() {}), _defineProperty(_options, 'columnTitleChanged', function columnTitleChanged() {}), _defineProperty(_options, 'columnVisibilityChanged', function columnVisibilityChanged() {}), _defineProperty(_options, 'htmlImporting', function htmlImporting() {}), _defineProperty(_options, 'htmlImported', function htmlImported() {}), _defineProperty(_options, 'dataLoading', function dataLoading() {}), _defineProperty(_options, 'dataLoaded', function dataLoaded() {}), _defineProperty(_options, 'dataEdited', function dataEdited() {}), _defineProperty(_options, 'ajaxRequesting', function ajaxRequesting() {}), _defineProperty(_options, 'ajaxResponse', false), _defineProperty(_options, 'ajaxError', function ajaxError() {}), _defineProperty(_options, 'dataFiltering', false), _defineProperty(_options, 'dataFiltered', false), _defineProperty(_options, 'dataSorting', function dataSorting() {}), _defineProperty(_options, 'dataSorted', function dataSorted() {}), _defineProperty(_options, 'dataGrouping', function dataGrouping() {}), _defineProperty(_options, 'dataGrouped', false), _defineProperty(_options, 'groupVisibilityChanged', function groupVisibilityChanged() {}), _defineProperty(_options, 'pageLoaded', function pageLoaded() {}), _defineProperty(_options, 'localized', function localized() {}), _options),
+        rowTap: false,
+
+        rowDblTap: false,
+
+        rowTapHold: false,
+
+        rowAdded: function rowAdded() {},
+
+        rowDeleted: function rowDeleted() {},
+
+        rowMoved: function rowMoved() {},
+
+        rowUpdated: function rowUpdated() {},
+
+        rowSelectionChanged: function rowSelectionChanged() {},
+
+        rowSelected: function rowSelected() {},
+
+        rowDeselected: function rowDeselected() {},
+
+        //cell callbacks
+
+        cellEditing: function cellEditing() {},
+
+        cellEdited: function cellEdited() {},
+
+        cellEditCancelled: function cellEditCancelled() {},
+
+        //column callbacks
+
+        columnMoved: function columnMoved() {},
+
+        columnResized: function columnResized() {},
+
+        columnTitleChanged: function columnTitleChanged() {},
+
+        columnVisibilityChanged: function columnVisibilityChanged() {},
+
+        //HTML iport callbacks
+
+        htmlImporting: function htmlImporting() {},
+
+        htmlImported: function htmlImported() {},
+
+        //data callbacks
+
+        dataLoading: function dataLoading() {},
+
+        dataLoaded: function dataLoaded() {},
+
+        dataEdited: function dataEdited() {},
+
+        //ajax callbacks
+
+        ajaxRequesting: function ajaxRequesting() {},
+
+        ajaxResponse: false,
+
+        ajaxError: function ajaxError() {},
+
+        //filtering callbacks
+
+        dataFiltering: false,
+
+        dataFiltered: false,
+
+        //sorting callbacks
+
+        dataSorting: function dataSorting() {},
+
+        dataSorted: function dataSorted() {},
+
+        //grouping callbacks
+
+        dataGrouping: function dataGrouping() {},
+
+        dataGrouped: false,
+
+        groupVisibilityChanged: function groupVisibilityChanged() {},
+
+        groupClick: false,
+
+        groupDblClick: false,
+
+        groupContext: false,
+
+        groupTap: false,
+
+        groupDblTap: false,
+
+        groupTapHold: false,
+
+        //pagination callbacks
+
+        pageLoaded: function pageLoaded() {},
+
+        //localization callbacks
+
+        localized: function localized() {}
+
+      },
 
       //convert depricated functionality to new functions
 
@@ -9660,7 +9756,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     Group.prototype.addBindings = function () {
 
-      var self = this;
+      var self = this,
+          dblTap,
+          tapHold,
+          tap;
 
       self.arrowElement.on("click", function (e) {
 
@@ -9670,6 +9769,106 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         self.toggleVisibility();
       });
+
+      //handle group click events
+
+
+      if (self.groupManager.table.options.groupClick) {
+
+        self.element.on("click", function (e) {
+
+          self.groupManager.table.options.groupClick(e, self.getComponent());
+        });
+      }
+
+      if (self.groupManager.table.options.groupDblClick) {
+
+        self.element.on("dblclick", function (e) {
+
+          self.groupManager.table.options.groupDblClick(e, self.getComponent());
+        });
+      }
+
+      if (self.groupManager.table.options.groupContext) {
+
+        self.element.on("contextmenu", function (e) {
+
+          self.groupManager.table.options.groupContext(e, self.getComponent());
+        });
+      }
+
+      if (self.groupManager.table.options.groupTap) {
+
+        tap = false;
+
+        self.element.on("touchstart", function (e) {
+
+          tap = true;
+        });
+
+        self.element.on("touchend", function (e) {
+
+          if (tap) {
+
+            self.groupManager.table.options.groupTap(e, self.getComponent());
+          }
+
+          tap = false;
+        });
+      }
+
+      if (self.groupManager.table.options.groupDblTap) {
+
+        dblTap = null;
+
+        self.element.on("touchend", function (e) {
+
+          if (dblTap) {
+
+            clearTimeout(dblTap);
+
+            dblTap = null;
+
+            self.groupManager.table.options.groupDblTap(e, self.getComponent());
+          } else {
+
+            dblTap = setTimeout(function () {
+
+              clearTimeout(dblTap);
+
+              dblTap = null;
+            }, 300);
+          }
+        });
+      }
+
+      if (self.groupManager.table.options.groupTapHold) {
+
+        tapHold = null;
+
+        self.element.on("touchstart", function (e) {
+
+          clearTimeout(tapHold);
+
+          tapHold = setTimeout(function () {
+
+            clearTimeout(tapHold);
+
+            tapHold = null;
+
+            tap = false;
+
+            self.groupManager.table.options.groupTapHold(e, self.getComponent());
+          }, 1000);
+        });
+
+        self.element.on("touchend", function (e) {
+
+          clearTimeout(tapHold);
+
+          tapHold = null;
+        });
+      }
     };
 
     Group.prototype._addRowToGroup = function (row) {
@@ -9852,7 +10051,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
 
-      this.addBindings();
+      // this.addBindings();
+
 
       return this.element;
     };

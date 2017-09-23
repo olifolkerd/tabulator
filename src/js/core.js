@@ -110,7 +110,6 @@
 	 			rowClick:false,
 	 			rowDblClick:false,
 	 			rowContext:false,
-	 			rowContext:false,
 	 			rowTap:false,
 	 			rowDblTap:false,
 	 			rowTapHold:false,
@@ -159,6 +158,12 @@
 	 			dataGrouping:function(){},
 	 			dataGrouped:false,
 	 			groupVisibilityChanged:function(){},
+	 			groupClick:false,
+	 			groupDblClick:false,
+	 			groupContext:false,
+	 			groupTap:false,
+	 			groupDblTap:false,
+	 			groupTapHold:false,
 
 	 			//pagination callbacks
 	 			pageLoaded:function(){},

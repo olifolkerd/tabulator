@@ -92,13 +92,96 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 };
 
 Group.prototype.addBindings = function(){
-	var self = this;
+	var self = this,
+	dblTap,	tapHold, tap;
 
 	self.arrowElement.on("click", function(e){
 		e.stopPropagation();
 		e.stopImmediatePropagation();
 		self.toggleVisibility();
 	});
+
+	//handle group click events
+	if (self.groupManager.table.options.groupClick){
+		self.element.on("click", function(e){
+			self.groupManager.table.options.groupClick(e, self.getComponent());
+		})
+	}
+
+	if (self.groupManager.table.options.groupDblClick){
+		self.element.on("dblclick", function(e){
+			self.groupManager.table.options.groupDblClick(e, self.getComponent());
+		})
+	}
+
+	if (self.groupManager.table.options.groupContext){
+		self.element.on("contextmenu", function(e){
+			self.groupManager.table.options.groupContext(e, self.getComponent());
+		})
+	}
+
+	if (self.groupManager.table.options.groupTap){
+
+		tap = false;
+
+		self.element.on("touchstart", function(e){
+			tap = true;
+		});
+
+		self.element.on("touchend", function(e){
+			if(tap){
+				self.groupManager.table.options.groupTap(e, self.getComponent());
+			}
+
+			tap = false;
+		});
+	}
+
+	if (self.groupManager.table.options.groupDblTap){
+
+		dblTap = null;
+
+		self.element.on("touchend", function(e){
+
+			if(dblTap){
+				clearTimeout(dblTap);
+				dblTap = null;
+
+				self.groupManager.table.options.groupDblTap(e, self.getComponent());
+			}else{
+
+				dblTap = setTimeout(function(){
+					clearTimeout(dblTap);
+					dblTap = null;
+				}, 300);
+			}
+
+		});
+	}
+
+
+	if (self.groupManager.table.options.groupTapHold){
+
+		tapHold = null;
+
+		self.element.on("touchstart", function(e){
+			clearTimeout(tapHold);
+
+			tapHold = setTimeout(function(){
+				clearTimeout(tapHold);
+				tapHold = null;
+				tap = false;
+				self.groupManager.table.options.groupTapHold(e, self.getComponent());
+			}, 1000)
+
+		});
+
+		self.element.on("touchend", function(e){
+			clearTimeout(tapHold);
+			tapHold = null;
+		});
+	}
+
 };
 
 Group.prototype._addRowToGroup = function(row){
@@ -249,7 +332,7 @@ Group.prototype.getElement = function(){
 
 	this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
 
-	this.addBindings();
+	// this.addBindings();
 
 	return this.element;
 };
