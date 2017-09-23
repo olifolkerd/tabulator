@@ -10046,7 +10046,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           data.push(row.getData());
         });
 
-        this.visible = this.visible(this.key, this.getRowCount(), data);
+        this.visible = this.visible(this.key, this.getRowCount(), data, this.getRowCount());
       }
     };
 
@@ -10076,7 +10076,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.element.children().detach();
 
-      this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
+      this.element.html(this.generator(this.key, this.getRowCount(), data, this.getComponent())).prepend(this.arrowElement);
 
       // this.addBindings();
 

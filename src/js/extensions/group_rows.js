@@ -321,7 +321,7 @@ Group.prototype._visSet = function(){
 			data.push(row.getData());
 		});
 
-		this.visible = this.visible(this.key, this.getRowCount(), data);
+		this.visible = this.visible(this.key, this.getRowCount(), data, this.getRowCount());
 	}
 };
 
@@ -346,7 +346,7 @@ Group.prototype.getElement = function(){
 
 	this.element.children().detach();
 
-	this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
+	this.element.html(this.generator(this.key, this.getRowCount(), data, this.getComponent())).prepend(this.arrowElement);
 
 	// this.addBindings();
 
