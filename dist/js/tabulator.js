@@ -636,126 +636,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     //////////////// Column Management /////////////////
 
 
-    //resize columns to fit data in cells
-
-
-    ColumnManager.prototype.fitToData = function () {
-
-      var self = this;
-
-      self.columnsByIndex.forEach(function (column) {
-
-        column.reinitializeWidth();
-      });
-
-      if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
-
-        this.table.extensions.responsiveLayout.update();
-      }
-    };
-
-    //resize columns to fill the table element
-
-
-    ColumnManager.prototype.fitToTable = function () {
-
-      var self = this;
-
-      var totalWidth = self.table.element.innerWidth(); //table element width
-
-
-      var fixedWidth = 0; //total width of columns with a defined width
-
-
-      var flexWidth = 0; //total width available to flexible columns
-
-
-      var flexColWidth = 0; //desired width of flexible columns
-
-
-      var flexColumns = []; //array of flexible width columns
-
-
-      var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
-
-
-      if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
-
-        this.table.extensions.responsiveLayout.update();
-      }
-
-      //adjust for vertical scrollbar if present
-
-
-      if (self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()) {
-
-        totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
-      }
-
-      self.columnsByIndex.forEach(function (column) {
-
-        var width, minWidth, colWidth;
-
-        if (column.visible) {
-
-          width = column.definition.width;
-
-          if (width) {
-
-            minWidth = parseInt(column.minWidth);
-
-            if (typeof width == "string") {
-
-              if (width.indexOf("%") > -1) {
-
-                colWidth = totalWidth / 100 * parseInt(width);
-              } else {
-
-                colWidth = parseInt(width);
-              }
-            } else {
-
-              colWidth = width;
-            }
-
-            fixedWidth += colWidth > minWidth ? colWidth : minWidth;
-          } else {
-
-            flexColumns.push(column);
-          }
-        }
-      });
-
-      //calculate available space
-
-
-      flexWidth = totalWidth - fixedWidth;
-
-      //calculate correct column size
-
-
-      flexColWidth = Math.floor(flexWidth / flexColumns.length);
-
-      //calculate any sub pixel space that needs to be filed by the last column
-
-
-      gapFill = totalWidth - fixedWidth - flexColWidth * flexColumns.length;
-
-      gapFill = gapFill > 0 ? gapFill : 0;
-
-      flexColumns.forEach(function (column, i) {
-
-        var width = flexColWidth >= column.minWidth ? flexColWidth : column.minWidth;
-
-        if (i == flexColumns.length - 1 && gapFill) {
-
-          width += gapFill;
-        }
-
-        column.setWidth(width);
-      });
-    };
-
     ColumnManager.prototype.getFlexBaseWidth = function () {
 
       var self = this,
@@ -822,7 +702,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.redraw();
 
-      if (this.table.options.layout != "fitColumns") {
+      if (this.table.extensions.layout.getMode() != "fitColumns") {
 
         column.reinitializeWidth();
       }
@@ -893,14 +773,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.table.rowManager.reinitialize();
       }
 
-      if (this.table.options.layout == "fitColumns") {
+      if (this.table.extensions.layout.getMode() == "fitColumns") {
 
-        this.fitToTable();
+        this.table.extensions.layout.layout();
       } else {
 
         if (force) {
 
-          this.fitToData();
+          this.table.extensions.layout.layout();
         } else {
 
           if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
@@ -2894,13 +2774,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           self.firstRender = false;
 
-          if (self.table.options.layout == "fitColumns") {
-
-            self.columnManager.fitToTable();
-          } else {
-
-            self.columnManager.fitToData();
-          }
+          self.table.extensions.layout.layout();
         } else {
 
           self.renderEmptyScroll();
@@ -4929,6 +4803,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (this.options.fitColumns) {
 
           this.options.layout = "fitColumns";
+
+          console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
         }
       },
 
@@ -4989,6 +4865,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         element.addClass("tabulator").attr("role", "grid").empty();
 
         this._detectBrowser();
+
+        if (this.extExists("layout", true)) {
+
+          ext.layout.initialize(options.layout);
+        }
 
         //set localization
 
@@ -6101,23 +5982,181 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     };
 
+    var Layout = function Layout(table) {
+
+      this.table = table;
+
+      this.mode = null;
+    };
+
+    //initialize layout system
+
+
+    Layout.prototype.initialize = function (layout) {
+
+      if (this.modes[layout]) {
+
+        this.mode = layout;
+      } else {
+
+        console.warn("Layout Error - invalid mode set, defaulting to 'fitData' : " + layout);
+
+        this.mode = 'fitData';
+      }
+    };
+
+    Layout.prototype.getMode = function () {
+
+      return this.mode;
+    };
+
+    //trigger table layout
+
+
+    Layout.prototype.layout = function () {
+
+      this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+    };
+
+    //layout render functions
+
+
+    Layout.prototype.modes = {
+
+      //resize columns to fit data the contain
+
+
+      "fitData": function fitData(columns) {
+
+        columns.forEach(function (column) {
+
+          column.reinitializeWidth();
+        });
+
+        if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+          this.table.extensions.responsiveLayout.update();
+        }
+      },
+
+      //resize columns to fit
+
+
+      "fitColumns": function fitColumns(columns) {
+
+        var self = this;
+
+        var totalWidth = self.table.element.innerWidth(); //table element width
+
+
+        var fixedWidth = 0; //total width of columns with a defined width
+
+
+        var flexWidth = 0; //total width available to flexible columns
+
+
+        var flexColWidth = 0; //desired width of flexible columns
+
+
+        var flexColumns = []; //array of flexible width columns
+
+
+        var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
+
+
+        if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+          this.table.extensions.responsiveLayout.update();
+        }
+
+        //adjust for vertical scrollbar if present
+
+
+        if (this.table.rowManager.element[0].scrollHeight > this.table.rowManager.element.innerHeight()) {
+
+          totalWidth -= this.table.rowManager.element[0].offsetWidth - this.table.rowManager.element[0].clientWidth;
+        }
+
+        columns.forEach(function (column) {
+
+          var width, minWidth, colWidth;
+
+          if (column.visible) {
+
+            width = column.definition.width;
+
+            if (width) {
+
+              minWidth = parseInt(column.minWidth);
+
+              if (typeof width == "string") {
+
+                if (width.indexOf("%") > -1) {
+
+                  colWidth = totalWidth / 100 * parseInt(width);
+                } else {
+
+                  colWidth = parseInt(width);
+                }
+              } else {
+
+                colWidth = width;
+              }
+
+              fixedWidth += colWidth > minWidth ? colWidth : minWidth;
+            } else {
+
+              flexColumns.push(column);
+            }
+          }
+        });
+
+        //calculate available space
+
+
+        flexWidth = totalWidth - fixedWidth;
+
+        //calculate correct column size
+
+
+        flexColWidth = Math.floor(flexWidth / flexColumns.length);
+
+        //calculate any sub pixel space that needs to be filed by the last column
+
+
+        gapFill = totalWidth - fixedWidth - flexColWidth * flexColumns.length;
+
+        gapFill = gapFill > 0 ? gapFill : 0;
+
+        flexColumns.forEach(function (column, i) {
+
+          var width = flexColWidth >= column.minWidth ? flexColWidth : column.minWidth;
+
+          if (i == flexColumns.length - 1 && gapFill) {
+
+            width += gapFill;
+          }
+
+          column.setWidth(width);
+        });
+      }
+
+    };
+
+    Tabulator.registerExtension("layout", Layout);
+
     var Localize = function Localize(table) {
 
       this.table = table; //hold Tabulator object
 
-
       this.locale = "default"; //current locale
-
 
       this.lang = false; //current language
 
-
       this.bindings = {}; //update events to call when locale is changed
-
     };
 
     //set header placehoder
-
 
     Localize.prototype.setHeaderFilterPlaceholder = function (placeholder) {
 
@@ -6125,7 +6164,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
 
     //set header filter placeholder by column
-
 
     Localize.prototype.setHeaderFilterColumnPlaceholder = function (column, placeholder) {
 
@@ -6138,7 +6176,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
 
     //setup a lang description object
-
 
     Localize.prototype.installLang = function (locale, lang) {
 
@@ -6167,7 +6204,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     //set current locale
 
-
     Localize.prototype.setLocale = function (desiredLocale) {
 
       var self = this;
@@ -6175,7 +6211,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       desiredLocale = desiredLocale || "default";
 
       //fill in any matching languge values
-
 
       function traverseLang(trans, path) {
 
@@ -6198,11 +6233,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       //determing correct locale to load
 
-
       if (desiredLocale === true && navigator.language) {
 
         //get local from system
-
 
         desiredLocale = navigator.language.toLowerCase();
       }
@@ -6210,7 +6243,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (desiredLocale) {
 
         //if locale is not set, check for matching top level locale else use default
-
 
         if (!self.langs[desiredLocale]) {
 
@@ -6234,7 +6266,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       //load default lang template
 
-
       self.lang = $.extend(true, {}, self.langs.default);
 
       if (desiredLocale != "default") {
@@ -6249,7 +6280,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     //get current locale
 
-
     Localize.prototype.getLocale = function (locale) {
 
       return self.locale;
@@ -6257,14 +6287,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     //get lang object for given local or current if none provided
 
-
     Localize.prototype.getLang = function (locale) {
 
       return locale ? this.langs[locale] : this.lang;
     };
 
     //get text for current locale
-
 
     Localize.prototype.getText = function (path, value) {
 
@@ -6274,9 +6302,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       // if(text === false){
 
-
       // 	console.warn("Localization Error - Matching localized text not found for given path: ", path);
-
 
       // }
 
@@ -6285,7 +6311,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
 
     //traverse langs object and find localized copy
-
 
     Localize.prototype._getLangElement = function (path, locale) {
 
@@ -6316,7 +6341,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     //set update binding
 
-
     Localize.prototype.bind = function (path, callback) {
 
       if (!this.bindings[path]) {
@@ -6330,7 +6354,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
 
     //itterate through bindings and trigger updates
-
 
     Localize.prototype._executeBindings = function () {
 
@@ -6351,11 +6374,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     //Localized text listings
 
-
     Localize.prototype.langs = {
 
       "default": { //hold default locale text
-
 
         "groups": {
 
@@ -12568,7 +12589,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       while (working) {
 
-        var width = self.table.options.layout == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
+        var width = self.table.extensions.layout.getMode() == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
         var diff = self.table.columnManager.element.innerWidth() - width;
 

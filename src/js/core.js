@@ -173,6 +173,7 @@
 
 	 			if(this.options.fitColumns){
 	 				this.options.layout = "fitColumns";
+	 				console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 	 			}
 	 		},
 
@@ -224,6 +225,10 @@
 	 			.empty();
 
 	 			this._detectBrowser();
+
+	 			if(this.extExists("layout", true)){
+	 				ext.layout.initialize(options.layout);
+	 			}
 
 	 			//set localization
 	 			if(options.headerFilterPlaceholder !== false){
@@ -1042,6 +1047,7 @@
 
 	 	};
 
+	 	/*=include extensions/layout.js */
 	 	/*=include extensions/localize.js */
 
 	 	/*=include extensions_enabled.js */
