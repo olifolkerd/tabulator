@@ -237,7 +237,18 @@ Group.prototype.getHeadersAndRows = function(){
 				output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
 			}
 		}
+	}else{
+		if(this.groupManager.table.options.groupClosedShowCalcs){
+			if(this.groupManager.table.extExists("columnCalcs")){
+				if(this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
+					output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+				}
 
+				if(this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
+					output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+				}
+			}
+		}
 	}
 
 	return output;

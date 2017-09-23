@@ -4866,6 +4866,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         groupToggleElement: "arrow",
 
+        groupClosedShowCalcs: false,
+
         dataGrouping: function dataGrouping() {},
 
         dataGrouped: false,
@@ -9933,6 +9935,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
 
             output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+          }
+        }
+      } else {
+
+        if (this.groupManager.table.options.groupClosedShowCalcs) {
+
+          if (this.groupManager.table.extExists("columnCalcs")) {
+
+            if (this.groupManager.table.extensions.columnCalcs.hasTopCalcs()) {
+
+              output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+            }
+
+            if (this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
+
+              output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+            }
           }
         }
       }

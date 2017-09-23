@@ -156,6 +156,7 @@
 
 	 			//grouping callbacks
 	 			groupToggleElement:"arrow",
+	 			groupClosedShowCalcs:false,
 	 			dataGrouping:function(){},
 	 			dataGrouped:false,
 	 			groupVisibilityChanged:function(){},
