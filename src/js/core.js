@@ -155,6 +155,7 @@
 	 			dataSorted:function(){},
 
 	 			//grouping callbacks
+	 			groupToggleElement:"arrow",
 	 			dataGrouping:function(){},
 	 			dataGrouped:false,
 	 			groupVisibilityChanged:function(){},

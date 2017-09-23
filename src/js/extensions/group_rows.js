@@ -93,13 +93,18 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 
 Group.prototype.addBindings = function(){
 	var self = this,
-	dblTap,	tapHold, tap;
+	dblTap,	tapHold, tap, toggleElement;
 
-	self.arrowElement.on("click", function(e){
-		e.stopPropagation();
-		e.stopImmediatePropagation();
-		self.toggleVisibility();
-	});
+	if(self.groupManager.table.options.groupToggleElement){
+		toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
+
+		toggleElement.on("click", function(e){
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			self.toggleVisibility();
+		});
+	}
+
 
 	//handle group click events
 	if (self.groupManager.table.options.groupClick){

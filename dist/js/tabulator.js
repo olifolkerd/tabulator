@@ -4864,6 +4864,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //grouping callbacks
 
+        groupToggleElement: "arrow",
+
         dataGrouping: function dataGrouping() {},
 
         dataGrouped: false,
@@ -9759,16 +9761,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           dblTap,
           tapHold,
-          tap;
+          tap,
+          toggleElement;
 
-      self.arrowElement.on("click", function (e) {
+      if (self.groupManager.table.options.groupToggleElement) {
 
-        e.stopPropagation();
+        toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
 
-        e.stopImmediatePropagation();
+        toggleElement.on("click", function (e) {
 
-        self.toggleVisibility();
-      });
+          e.stopPropagation();
+
+          e.stopImmediatePropagation();
+
+          self.toggleVisibility();
+        });
+      }
 
       //handle group click events
 
