@@ -252,6 +252,10 @@
   /* Black */
 }
 
+.tabulator[tabulator-layout="fitDataFill"] .tabulator-tableHolder .tabulator-table {
+  min-width: 100%;
+}
+
 .tabulator.tabulator-block-select {
   -webkit-user-select: none;
      -moz-user-select: none;

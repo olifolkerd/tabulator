@@ -6003,6 +6003,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.mode = 'fitData';
       }
+
+      this.table.element.attr("tabulator-layout", this.mode);
     };
 
     Layout.prototype.getMode = function () {
@@ -6027,6 +6029,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
       "fitData": function fitData(columns) {
+
+        columns.forEach(function (column) {
+
+          column.reinitializeWidth();
+        });
+
+        if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+          this.table.extensions.responsiveLayout.update();
+        }
+      },
+
+      //resize columns to fit data the contain
+
+
+      "fitDataFill": function fitDataFill(columns) {
 
         columns.forEach(function (column) {
 

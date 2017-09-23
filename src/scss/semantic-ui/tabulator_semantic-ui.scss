@@ -57,6 +57,14 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	-o-transform: translatez(0);
 	transform: translatez(0);
 
+	&[tabulator-layout="fitDataFill"]{
+		.tabulator-tableHolder{
+			.tabulator-table{
+				min-width:100%;
+			}
+		}
+	}
+
 	&.tabulator-block-select{
 		user-select: none;
 	}
