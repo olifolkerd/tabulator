@@ -329,25 +329,19 @@ Page.prototype._getRemotePageAuto = function(){
 
 	//set sort data if defined
 	if(this.table.extExists("sort")){
-
 		let sorters = self.table.extensions.sort.getSort();
 
-		if(sorters[0] && typeof sorters[0].column != "function"){
-			pageParams[this.paginationDataSentNames.sort] = sorters[0].column.getField();
-			pageParams[this.paginationDataSentNames.sort_dir] = sorters[0].dir;
-		}
+		sorters.forEach(function(item){
+			delete item.column;
+		});
+
+		pageParams[this.paginationDataSentNames.sort] = sorters;
 	}
 
 	//set filter data if defined
 	if(this.table.extExists("filter")){
-
-		let filters = self.table.extensions.filter.getFilter();
-
-		if(filters[0] && typeof filters[0].field == "string"){
-			pageParams[this.paginationDataSentNames.filter] = filters[0].field;
-			pageParams[this.paginationDataSentNames.filter_type] = filters[0].type;
-			pageParams[this.paginationDataSentNames.filter_value] = filters[0].value;
-		}
+		let filters = self.table.extensions.filter.getFilters(true, true);
+		pageParams[this.paginationDataSentNames.filters] = filters;
 	}
 
 	self.table.extensions.ajax.setParams(pageParams);
@@ -396,11 +390,11 @@ Page.prototype.footerRedraw = function(){
 Page.prototype.paginationDataSentNames = {
 	"page":"page",
 	"size":"size",
-	"sort":"sort",
-	"sort_dir":"sort_dir",
-	"filter":"filter",
-	"filter_value":"filter_value",
-	"filter_type":"filter_type",
+	"sorters":"sorters",
+	// "sort_dir":"sort_dir",
+	"filters":"filters",
+	// "filter_value":"filter_value",
+	// "filter_type":"filter_type",
 };
 
 //set the property names for pagination responses

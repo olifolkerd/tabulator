@@ -414,11 +414,11 @@ RowManager.prototype.getData = function(active){
 };
 
 RowManager.prototype.getHtml = function(active){
-		var data = this.getData(active),
-		columns = this.table.columnManager.getComponents(),
-		header = "",
-		body = "",
-		table = "";
+	var data = this.getData(active),
+	columns = this.table.columnManager.getComponents(),
+	header = "",
+	body = "",
+	table = "";
 
 		//build header row
 		columns.forEach(function(column){
@@ -448,60 +448,57 @@ RowManager.prototype.getHtml = function(active){
 
 		//build table
 		table = `<table>
-			<thead>
-	    		<tr>${header}</tr>
-			</thead>
-			<tbody>${body}</tbody>
+		<thead>
+		<tr>${header}</tr>
+		</thead>
+		<tbody>${body}</tbody>
 		</table>`;
 
 		return table;
-};
+	};
 
-RowManager.prototype.getComponents = function(active){
-	var self = this,
-	output = [];
+	RowManager.prototype.getComponents = function(active){
+		var self = this,
+		output = [];
 
-	var rows = active ? self.activeRows : self.rows;
+		var rows = active ? self.activeRows : self.rows;
 
-	rows.forEach(function(row){
-		output.push(row.getComponent());
-	});
+		rows.forEach(function(row){
+			output.push(row.getComponent());
+		});
 
-	return output;
-}
+		return output;
+	}
 
-RowManager.prototype.getDataCount = function(active){
-	return active ? this.rows.length : this.activeRows.length;
-};
+	RowManager.prototype.getDataCount = function(active){
+		return active ? this.rows.length : this.activeRows.length;
+	};
 
-RowManager.prototype._genRemoteRequest = function(){
-	var self = this,
-	table = self.table,
-	options = table.options,
-	params = {};
+	RowManager.prototype._genRemoteRequest = function(){
+		var self = this,
+		table = self.table,
+		options = table.options,
+		params = {};
 
-	if(table.extExists("page")){
+		console.log("requesting")
+
+		if(table.extExists("page")){
 		//set sort data if defined
 		if(options.ajaxSorting){
-
 			let sorters = self.table.extensions.sort.getSort();
 
-			if(sorters[0] && typeof sorters[0].column != "function"){
-				params[self.table.extensions.page.paginationDataSentNames.sort] = sorters[0].column.getField();
-				params[self.table.extensions.page.paginationDataSentNames.sort_dir] = sorters[0].dir;
-			}
+			sorters.forEach(function(item){
+				delete item.column;
+			});
+
+			params[self.table.extensions.page.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
 		if(options.ajaxFiltering){
+			let filters = self.table.extensions.filter.getFilters(true, true);
 
-			let filters = self.table.extensions.filter.getFilter();
-
-			if(filters[0] && typeof filters[0].field == "string"){
-				params[self.table.extensions.page.paginationDataSentNames.filter] = filters[0].field;
-				params[self.table.extensions.page.paginationDataSentNames.filter_type] = filters[0].type;
-				params[self.table.extensions.page.paginationDataSentNames.filter_value] = filters[0].value;
-			}
+			params[self.table.extensions.page.paginationDataSentNames.filters] = filters;
 		}
 
 

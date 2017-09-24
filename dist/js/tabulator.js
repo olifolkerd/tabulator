@@ -2538,7 +2538,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //build table
 
-      table = '<table>\n\n \t\t\t\t\t<thead>\n\n \t\t\t    \t\t<tr>' + header + '</tr>\n\n \t\t\t\t\t</thead>\n\n \t\t\t\t\t<tbody>' + body + '</tbody>\n\n \t\t\t\t</table>';
+      table = '<table>\n\n \t\t\t\t<thead>\n\n \t\t\t\t<tr>' + header + '</tr>\n\n \t\t\t\t</thead>\n\n \t\t\t\t<tbody>' + body + '</tbody>\n\n \t\t\t\t</table>';
 
       return table;
     };
@@ -2570,6 +2570,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           options = table.options,
           params = {};
 
+      console.log("requesting");
+
       if (table.extExists("page")) {
 
         //set sort data if defined
@@ -2578,28 +2580,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var sorters = self.table.extensions.sort.getSort();
 
-          if (sorters[0] && typeof sorters[0].column != "function") {
+          sorters.forEach(function (item) {
 
-            params[self.table.extensions.page.paginationDataSentNames.sort] = sorters[0].column.getField();
+            delete item.column;
+          });
 
-            params[self.table.extensions.page.paginationDataSentNames.sort_dir] = sorters[0].dir;
-          }
+          params[self.table.extensions.page.paginationDataSentNames.sorters] = sorters;
         }
 
         //set filter data if defined
 
         if (options.ajaxFiltering) {
 
-          var filters = self.table.extensions.filter.getFilter();
+          var filters = self.table.extensions.filter.getFilters(true, true);
 
-          if (filters[0] && typeof filters[0].field == "string") {
-
-            params[self.table.extensions.page.paginationDataSentNames.filter] = filters[0].field;
-
-            params[self.table.extensions.page.paginationDataSentNames.filter_type] = filters[0].type;
-
-            params[self.table.extensions.page.paginationDataSentNames.filter_value] = filters[0].value;
-          }
+          params[self.table.extensions.page.paginationDataSentNames.filters] = filters;
         }
 
         self.table.extensions.ajax.setParams(params, true);
@@ -8881,7 +8876,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //get all filters
 
 
-    Filter.prototype.getFilters = function (all) {
+    Filter.prototype.getFilters = function (all, ajax) {
 
       var self = this,
           output = [];
@@ -8895,6 +8890,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         output.push({ field: filter.field, type: filter.type, value: filter.value });
       });
+
+      if (ajax) {
+
+        output.forEach(function (item) {
+
+          if (typeof item.type == "function") {
+
+            item.type = "function";
+          }
+        });
+      }
 
       return output;
     };
@@ -8998,7 +9004,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.options.dataFiltering) {
 
-        self.table.options.dataFiltering(self.getFilter());
+        self.table.options.dataFiltering(self.getFilters());
       }
 
       if (!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)) {
@@ -9024,7 +9030,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           activeRowComponents.push(row.getComponent());
         });
 
-        self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
+        self.table.options.dataFiltered(self.getFilters(), activeRowComponents);
       }
 
       return activeRows;
@@ -12425,12 +12431,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var sorters = self.table.extensions.sort.getSort();
 
-        if (sorters[0] && typeof sorters[0].column != "function") {
-
-          pageParams[this.paginationDataSentNames.sort] = sorters[0].column.getField();
-
-          pageParams[this.paginationDataSentNames.sort_dir] = sorters[0].dir;
-        }
+        pageParams[this.paginationDataSentNames.sort] = sorters;
       }
 
       //set filter data if defined
@@ -12438,16 +12439,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.table.extExists("filter")) {
 
-        var filters = self.table.extensions.filter.getFilter();
+        var filters = self.table.extensions.filter.getFilters(true, true);
 
-        if (filters[0] && typeof filters[0].field == "string") {
-
-          pageParams[this.paginationDataSentNames.filter] = filters[0].field;
-
-          pageParams[this.paginationDataSentNames.filter_type] = filters[0].type;
-
-          pageParams[this.paginationDataSentNames.filter_value] = filters[0].value;
-        }
+        pageParams[this.paginationDataSentNames.filters] = filters;
       }
 
       self.table.extensions.ajax.setParams(pageParams);
@@ -12511,15 +12505,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       "size": "size",
 
-      "sort": "sort",
+      "sorters": "sorters",
 
-      "sort_dir": "sort_dir",
+      // "sort_dir":"sort_dir",
 
-      "filter": "filter",
 
-      "filter_value": "filter_value",
-
-      "filter_type": "filter_type"
+      "filters": "filters"
 
     };
 

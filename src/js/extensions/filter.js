@@ -259,7 +259,7 @@ Filter.prototype.addFilter = function(field, type, value){
 };
 
 //get all filters
-Filter.prototype.getFilters = function(all){
+Filter.prototype.getFilters = function(all, ajax){
 	var self = this,
 	output = [];
 
@@ -271,6 +271,13 @@ Filter.prototype.getFilters = function(all){
 		output.push({field:filter.field, type:filter.type, value:filter.value});
 	});
 
+	if(ajax){
+		output.forEach(function(item){
+			if(typeof item.type == "function"){
+				item.type = "function";
+			}
+		})
+	}
 
 	return output;
 };
@@ -348,7 +355,7 @@ Filter.prototype.filter = function(rowList){
 	activeRowComponents = [];
 
 	if(self.table.options.dataFiltering){
-		self.table.options.dataFiltering(self.getFilter());
+		self.table.options.dataFiltering(self.getFilters());
 	}
 
 	if(!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)){
@@ -371,7 +378,7 @@ Filter.prototype.filter = function(rowList){
 			activeRowComponents.push(row.getComponent());
 		});
 
-		self.table.options.dataFiltered(self.getFilter(), activeRowComponents);
+		self.table.options.dataFiltered(self.getFilters(), activeRowComponents);
 	}
 
 	return activeRows;
