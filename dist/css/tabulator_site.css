@@ -25,7 +25,7 @@
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  border-bottom: 3px solid #59B038;
+  border-bottom: 3px solid #3FB449;
   background-color: #222;
   color: #fff;
   font-weight: bold;
@@ -50,7 +50,7 @@
 
 .tabulator .tabulator-header .tabulator-col.tabulator-moving {
   position: absolute;
-  border: 1px solid #59B038;
+  border: 1px solid #3FB449;
   background: #090909;
   pointer-events: none;
 }
@@ -143,11 +143,11 @@
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-arrow {
   border-top: none;
-  border-bottom: 6px solid #59B038;
+  border-bottom: 6px solid #3FB449;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow {
-  border-top: 6px solid #59B038;
+  border-top: 6px solid #3FB449;
   border-bottom: none;
 }
 
@@ -210,7 +210,7 @@
   display: inline-block;
   margin: 0 auto;
   padding: 10px;
-  color: #59B038;
+  color: #3FB449;
   font-weight: bold;
   font-size: 20px;
 }
@@ -334,7 +334,7 @@
   box-sizing: border-box;
   border-right: 1px solid #aaa;
   border-top: 1px solid #000;
-  border-bottom: 2px solid #59B038;
+  border-bottom: 2px solid #3FB449;
   padding: 5px;
   padding-left: 10px;
   background: #222;
@@ -352,7 +352,7 @@
   margin-right: 10px;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 6px solid #59B038;
+  border-top: 6px solid #3FB449;
   border-bottom: 0;
 }
 
@@ -384,19 +384,19 @@
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
   border-right: 0;
-  border-left: 6px solid #59B038;
+  border-left: 6px solid #3FB449;
   vertical-align: middle;
 }
 
 .tabulator .tabulator-row.tabulator-group span {
   margin-left: 10px;
-  color: #59B038;
+  color: #3FB449;
 }
 
 .tabulator .tabulator-footer {
   padding: 5px 10px;
   padding-top: 8px;
-  border-top: 3px solid #59B038;
+  border-top: 3px solid #3FB449;
   background-color: #222;
   text-align: right;
   color: #222;
@@ -452,7 +452,7 @@
 }
 
 .tabulator .tabulator-footer .tabulator-page.active {
-  color: #59B038;
+  color: #3FB449;
 }
 
 .tabulator .tabulator-footer .tabulator-page:disabled {
