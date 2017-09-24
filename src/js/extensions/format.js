@@ -61,6 +61,38 @@ Format.prototype.emptyToSpace = function(value){
 	return value === null ? "&nbsp" : value;
 };
 
+//format element witout setup
+Format.prototype.quickFormat = function(el, value, formatter, params){
+	var formatter;
+
+	switch(typeof formatter){
+		case "string":
+		if(this.formatters[formatter]){
+			formatter = this.formatters[formatter]
+		}else{
+			console.warn("Formatter Error - No such formatter found: ", formatter);
+			formatter = this.formatters.plaintext;
+		}
+		break;
+
+		case "function":
+		formatter = formatter;
+		break;
+
+		default:
+		formatter = this.formatters.plaintext;
+		break;
+	}
+
+	return formatter.call(this, {
+		getValue:function(){
+			return value;
+		},
+		getElement:function(){
+			return el;
+		}
+	}, params || {});
+};
 
 //default data formatters
 Format.prototype.formatters = {

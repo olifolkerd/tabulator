@@ -1411,53 +1411,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
-      var formatter;
+      var contents;
 
       if (this.definition.titleFormatter && this.table.extExists("format")) {
 
-        switch (_typeof(this.definition.titleFormatter)) {
-
-          case "string":
-
-            if (this.table.extensions.format.formatters[this.definition.titleFormatter]) {
-
-              formatter = this.table.extensions.format.formatters[this.definition.titleFormatter];
-            } else {
-
-              console.warn("Formatter Error - No such formatter found: ", this.definition.titleFormatter);
-
-              formatter = this.table.extensions.format.formatters.plaintext;
-            }
-
-            break;
-
-          case "function":
-
-            formatter = this.definition.titleFormatter;
-
-            break;
-
-          default:
-
-            formatter = this.table.extensions.format.formatters.plaintext;
-
-            break;
-
-        }
-
-        var contents = formatter.call(this.table.extensions.format, {
-
-          getValue: function getValue() {
-
-            return title;
-          },
-
-          getElement: function getElement() {
-
-            return el;
-          }
-
-        }, this.definition.titleFormatterParams || {});
+        contents = this.table.extensions.format.quickFormat(el, title, this.definition.titleFormatter, this.definition.titleFormatterParams);
 
         el.append(contents);
       } else {
@@ -9187,6 +9145,58 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Format.prototype.emptyToSpace = function (value) {
 
       return value === null ? "&nbsp" : value;
+    };
+
+    //format element witout setup
+
+
+    Format.prototype.quickFormat = function (el, value, formatter, params) {
+
+      var formatter;
+
+      switch (typeof formatter === 'undefined' ? 'undefined' : _typeof(formatter)) {
+
+        case "string":
+
+          if (this.formatters[formatter]) {
+
+            formatter = this.formatters[formatter];
+          } else {
+
+            console.warn("Formatter Error - No such formatter found: ", formatter);
+
+            formatter = this.formatters.plaintext;
+          }
+
+          break;
+
+        case "function":
+
+          formatter = formatter;
+
+          break;
+
+        default:
+
+          formatter = this.formatters.plaintext;
+
+          break;
+
+      }
+
+      return formatter.call(this, {
+
+        getValue: function getValue() {
+
+          return value;
+        },
+
+        getElement: function getElement() {
+
+          return el;
+        }
+
+      }, params || {});
     };
 
     //default data formatters
