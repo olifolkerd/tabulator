@@ -19,12 +19,14 @@ Filter.prototype.initializeColumn = function(column){
 	//handle successfull value change
 	function success(value){
 		var filterType = tagType == "input" && attrType == "text" ? "partial" : "match",
+		type = "",
 		filterFunc;
 
 		if(value){
 			switch(typeof column.definition.headerFilterFunc){
 				case "string":
 				if(self.filters[column.definition.headerFilterFunc]){
+					type = column.definition.headerFilterFunc;
 					filterFunc = function(data){
 						return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
 					}
@@ -37,6 +39,8 @@ Filter.prototype.initializeColumn = function(column){
 				filterFunc = function(data){
 					return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
 				}
+
+				type = filterFunc;
 				break;
 			}
 
@@ -47,16 +51,18 @@ Filter.prototype.initializeColumn = function(column){
 					filterFunc = function(data){
 						return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
 					}
+					type = "like";
 					break;
 
 					default:
 					filterFunc = function(data){
 						return column.getFieldValue(data) == value;
 					}
+					type = "=";
 				}
 			}
 
-			self.headerFilters[field] = {value:value, func:filterFunc};
+			self.headerFilters[field] = {value:value, func:filterFunc, type:type};
 
 		}else{
 			delete self.headerFilters[field];
@@ -253,13 +259,30 @@ Filter.prototype.addFilter = function(field, type, value){
 };
 
 //get all filters
-Filter.prototype.getFilter = function(){
+Filter.prototype.getFilters = function(all){
 	var self = this,
 	output = [];
+
+	if(all){
+		output = self.getHeaderFilters();
+	}
 
 	self.filterList.forEach(function(filter){
 		output.push({field:filter.field, type:filter.type, value:filter.value});
 	});
+
+
+	return output;
+};
+
+//get all filters
+Filter.prototype.getHeaderFilters = function(){
+	var self = this,
+	output = [];
+
+	for(var key in this.headerFilters){
+		output.push({field:key, type:this.headerFilters[key].type, value:this.headerFilters[key].value});
+	}
 
 	return output;
 };

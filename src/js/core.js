@@ -706,11 +706,25 @@
 	 		},
 
 	 		//get all filters
-	 		getFilter:function(){
+	 		getFilter:function(all){
+	 			console.warn("The%c getFilter%c function has been depricated and will be removed in version 4.0, use %c getFilters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			this.getFilters(all);
+	 		},
+
+	 		getFilters:function(all){
 	 			if(this.extExists("filter", true)){
-	 				return this.extensions.filter.getFilter();
+	 				return this.extensions.filter.getFilters(all);
 	 			}
 	 		},
+
+	 		getHeaderFilters:function(){
+	 			if(this.extExists("filter", true)){
+	 				return this.extensions.filter.getHeaderFilters();
+	 			}
+	 		},
+
+
+
 
 	 		//remove filter from array
 	 		removeFilter:function(field, type, value){

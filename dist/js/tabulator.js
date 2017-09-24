@@ -5638,11 +5638,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //get all filters
 
-      getFilter: function getFilter() {
+      getFilter: function getFilter(all) {
+
+        console.warn("The%c getFilter%c function has been depricated and will be removed in version 4.0, use %c getFilters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+
+        this.getFilters(all);
+      },
+
+      getFilters: function getFilters(all) {
 
         if (this.extExists("filter", true)) {
 
-          return this.extensions.filter.getFilter();
+          return this.extensions.filter.getFilters(all);
+        }
+      },
+
+      getHeaderFilters: function getHeaderFilters() {
+
+        if (this.extExists("filter", true)) {
+
+          return this.extensions.filter.getHeaderFilters();
         }
       },
 
@@ -8528,6 +8543,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       function success(value) {
 
         var filterType = tagType == "input" && attrType == "text" ? "partial" : "match",
+            type = "",
             filterFunc;
 
         if (value) {
@@ -8537,6 +8553,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             case "string":
 
               if (self.filters[column.definition.headerFilterFunc]) {
+
+                type = column.definition.headerFilterFunc;
 
                 filterFunc = function filterFunc(data) {
 
@@ -8556,6 +8574,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
               };
 
+              type = filterFunc;
+
               break;
 
           }
@@ -8571,6 +8591,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                   return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
                 };
 
+                type = "like";
+
                 break;
 
               default:
@@ -8580,10 +8602,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                   return column.getFieldValue(data) == value;
                 };
 
+                type = "=";
+
             }
           }
 
-          self.headerFilters[field] = { value: value, func: filterFunc };
+          self.headerFilters[field] = { value: value, func: filterFunc, type: type };
         } else {
 
           delete self.headerFilters[field];
@@ -8857,15 +8881,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //get all filters
 
 
-    Filter.prototype.getFilter = function () {
+    Filter.prototype.getFilters = function (all) {
 
       var self = this,
           output = [];
+
+      if (all) {
+
+        output = self.getHeaderFilters();
+      }
 
       self.filterList.forEach(function (filter) {
 
         output.push({ field: filter.field, type: filter.type, value: filter.value });
       });
+
+      return output;
+    };
+
+    //get all filters
+
+
+    Filter.prototype.getHeaderFilters = function () {
+
+      var self = this,
+          output = [];
+
+      for (var key in this.headerFilters) {
+
+        output.push({ field: key, type: this.headerFilters[key].type, value: this.headerFilters[key].value });
+      }
 
       return output;
     };
