@@ -552,6 +552,16 @@
   background: transparent;
 }
 
+.tabulator .tabulator-row .tabulator-cell.tabulator-validation-fail {
+  border: 1px solid #dd0000;
+}
+
+.tabulator .tabulator-row .tabulator-cell.tabulator-validation-fail input, .tabulator .tabulator-row .tabulator-cell.tabulator-validation-fail select {
+  border: 1px;
+  background: transparent;
+  color: #dd0000;
+}
+
 .tabulator .tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
   display: none;
 }
@@ -777,7 +787,7 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.error, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.error {
   box-shadow: 0px 0px 0px #E0B4B4 inset;
   background: #FFF6F6 !important;
-  color: #9F3A38 !important;
+  color: #dd0000 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.error:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.error:hover {

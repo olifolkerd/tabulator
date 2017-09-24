@@ -173,6 +173,9 @@
 	 			//localization callbacks
 	 			localized:function(){},
 
+	 			//validation has failed
+	 			validationFailed:function(){},
+
 	 		},
 
 	 		//convert depricated functionality to new functions

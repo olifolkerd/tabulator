@@ -309,6 +309,16 @@
   background: transparent;
 }
 
+.tabulator .tabulator-row .tabulator-cell.tabulator-validation-fail {
+  border: 1px solid #dd0000;
+}
+
+.tabulator .tabulator-row .tabulator-cell.tabulator-validation-fail input, .tabulator .tabulator-row .tabulator-cell.tabulator-validation-fail select {
+  border: 1px;
+  background: transparent;
+  color: #dd0000;
+}
+
 .tabulator .tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
   display: none;
 }

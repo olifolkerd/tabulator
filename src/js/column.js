@@ -349,6 +349,12 @@ Column.prototype._buildColumnHeader = function(){
 		table.extensions.edit.initializeColumn(self);
 	}
 
+	//set colum validator
+	if(typeof def.validator != "undefined" && table.extExists("validate")){
+		table.extensions.validate.initializeColumn(self);
+	}
+
+
 	//set column mutator
 	if(typeof def.mutator != "undefined" && table.extExists("mutator")){
 		table.extensions.mutator.initializeColumn(self);

@@ -19,3 +19,4 @@
 /*=include extensions/responsive_layout.js */
 /*=include extensions/select_row.js */
 /*=include extensions/sort.js */
+/*=include extensions/validate.js */

@@ -28,6 +28,7 @@ $rowSelectedBackground: #9ABCEA; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC;//row background color when selected and hovered
 
 $editBoxColor:#1D68CD; //border color for edit boxes
+$errorColor:#dd0000; //error indication
 
 //footer themeing
 $footerBackgroundColor:#fff; //border to tablulator
@@ -444,6 +445,16 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 				input, select{
 					border:1px;
 					background:transparent;
+				}
+			}
+
+			&.tabulator-validation-fail{
+				border:1px solid $errorColor;
+				input, select{
+					border:1px;
+					background:transparent;
+
+					color: $errorColor;
 				}
 			}
 

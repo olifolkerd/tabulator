@@ -56,6 +56,7 @@ Edit.prototype.getCurrentCell = function(){
 
 Edit.prototype.clearEditor = function(cell){
 	this.currentCell = false;
+	cell.getElement().removeClass("tabulator-validation-fail");
 	cell.getElement().removeClass("tabulator-editing").empty();
 	cell.row.getElement().removeClass("tabulator-row-editing");
 };
@@ -63,13 +64,26 @@ Edit.prototype.clearEditor = function(cell){
 //return a formatted value for a cell
 Edit.prototype.bindEditor = function(cell){
 	var self = this,
+	rendered = function(){},
 	element = cell.getElement(),
 	mouseClick = false;
 
 	//handle successfull value change
 	function success(value){
-		self.clearEditor(cell);
-		cell.setValue(value, true);
+		var valid = true;
+
+		if(cell.column.extensions.validate && self.table.extExists("validate")){
+			valid = self.table.extensions.validate.validate(cell.column.extensions.validate, cell.getComponent(), value);
+		}
+
+		if(valid === true){
+			self.clearEditor(cell);
+			cell.setValue(value, true);
+		}else{
+			cell.getElement().addClass("tabulator-validation-fail");
+			rendered();
+			self.table.options.validationFailed(cell.getComponent(), value, valid);
+		}
 	};
 
 	//handle aborted edit
@@ -92,8 +106,7 @@ Edit.prototype.bindEditor = function(cell){
 	});
 
 	element.on("focus", function(e){
-		var rendered = function(){},
-		allowEdit = true,
+		var allowEdit = true,
 		cellEditor;
 
 		self.currentCell = cell;
@@ -185,6 +198,10 @@ Edit.prototype.editors = {
 			if(e.keyCode == 13){
 				success(input.val());
 			}
+
+			if(e.keyCode == 27){
+				cancel();
+			}
 		});
 
 		return input;
@@ -241,6 +258,12 @@ Edit.prototype.editors = {
         	}
         });
 
+        input.on("keydown", function(e){
+        	if(e.keyCode == 27){
+        		cancel();
+        	}
+        });
+
         return input;
     },
 
@@ -288,6 +311,10 @@ Edit.prototype.editors = {
 				}
 
 				success(value);
+			}
+
+			if(e.keyCode == 27){
+				cancel();
 			}
 		});
 
@@ -368,6 +395,10 @@ Edit.prototype.editors = {
 
 				case 13: //enter
 				success($(".tabulator-star-active", stars).length);
+				break;
+
+				case 27: //escape
+				cancel();
 				break;
 
 			}
@@ -451,6 +482,10 @@ Edit.prototype.editors = {
 				newVal();
 				break;
 
+				case 27: //escape
+				cancel();
+				break;
+
 			}
 		});
 
@@ -493,6 +528,9 @@ Edit.prototype.editors = {
 			if(e.keyCode == 13){
 				success(input.is(":checked"));
 			}
+			if(e.keyCode == 27){
+				cancel();
+			}
 		});
 
 		return input;
@@ -529,6 +567,9 @@ Edit.prototype.editors = {
 		input.on("keydown", function(e){
 			if(e.keyCode == 13){
 				success(input.is(":checked"));
+			}
+			if(e.keyCode == 27){
+				cancel();
 			}
 		});
 
