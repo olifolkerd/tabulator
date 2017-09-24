@@ -444,10 +444,21 @@ Column.prototype._buildColumnHeaderTitle = function(){
 };
 
 Column.prototype._formatColumnHeaderTitle = function(el, title){
-	var contents;
+	var formatter, contents;
 
 	if(this.definition.titleFormatter && this.table.extExists("format")){
-		contents = this.table.extensions.format.quickFormat(el, title, this.definition.titleFormatter, this.definition.titleFormatterParams);
+
+		formatter = this.table.extensions.format.getFormatter(this.definition.titleFormatter);
+
+		contents = formatter.call(this.table.extensions.format, {
+			getValue:function(){
+				return title;
+			},
+			getElement:function(){
+				return el;
+			}
+		}, this.definition.titleFormatterParams || {});
+
 		el.append(contents);
 	}else{
 		el.html(title);

@@ -61,8 +61,8 @@ Format.prototype.emptyToSpace = function(value){
 	return value === null ? "&nbsp" : value;
 };
 
-//format element witout setup
-Format.prototype.quickFormat = function(el, value, formatter, params){
+//get formatter for cell
+Format.prototype.getFormatter = function(formatter){
 	var formatter;
 
 	switch(typeof formatter){
@@ -84,14 +84,8 @@ Format.prototype.quickFormat = function(el, value, formatter, params){
 		break;
 	}
 
-	return formatter.call(this, {
-		getValue:function(){
-			return value;
-		},
-		getElement:function(){
-			return el;
-		}
-	}, params || {});
+	return formatter;
+
 };
 
 //default data formatters

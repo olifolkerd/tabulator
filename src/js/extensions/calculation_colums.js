@@ -181,6 +181,19 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 				self.genColumn.setField(column.getField());
 				self.genColumn.hozAlign = column.hozAlign;
 
+				if(column.definition[pos + "CalcFormatter"] && self.table.extExists("format")){
+
+					self.genColumn.extensions.format = {
+						formatter: self.table.extensions.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+						params: column.definition[pos + "CalcFormatterParams"]
+					}
+				}else{
+					self.genColumn.extensions.format = {
+						formatter: self.table.extensions.format.getFormatter("plaintext"),
+						params:{}
+					}
+				}
+
 				//generate cell and assign to correct column
 				var cell = new Cell(self.genColumn, row);
 				cell.column = column;

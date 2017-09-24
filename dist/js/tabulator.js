@@ -1411,11 +1411,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
-      var contents;
+      var formatter, contents;
 
       if (this.definition.titleFormatter && this.table.extExists("format")) {
 
-        contents = this.table.extensions.format.quickFormat(el, title, this.definition.titleFormatter, this.definition.titleFormatterParams);
+        formatter = this.table.extensions.format.getFormatter(this.definition.titleFormatter);
+
+        contents = formatter.call(this.table.extensions.format, {
+
+          getValue: function getValue() {
+
+            return title;
+          },
+
+          getElement: function getElement() {
+
+            return el;
+          }
+
+        }, this.definition.titleFormatterParams || {});
 
         el.append(contents);
       } else {
@@ -7154,6 +7168,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             self.genColumn.hozAlign = column.hozAlign;
 
+            if (column.definition[pos + "CalcFormatter"] && self.table.extExists("format")) {
+
+              self.genColumn.extensions.format = {
+
+                formatter: self.table.extensions.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+
+                params: column.definition[pos + "CalcFormatterParams"]
+
+              };
+            } else {
+
+              self.genColumn.extensions.format = {
+
+                formatter: self.table.extensions.format.getFormatter("plaintext"),
+
+                params: {}
+
+              };
+            }
+
             //generate cell and assign to correct column
 
 
@@ -9147,10 +9181,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return value === null ? "&nbsp" : value;
     };
 
-    //format element witout setup
+    //get formatter for cell
 
 
-    Format.prototype.quickFormat = function (el, value, formatter, params) {
+    Format.prototype.getFormatter = function (formatter) {
 
       var formatter;
 
@@ -9184,19 +9218,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       }
 
-      return formatter.call(this, {
-
-        getValue: function getValue() {
-
-          return value;
-        },
-
-        getElement: function getElement() {
-
-          return el;
-        }
-
-      }, params || {});
+      return formatter;
     };
 
     //default data formatters
