@@ -1398,15 +1398,72 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           table.extensions.localize.bind("columns." + def.field, function (text) {
 
-            titleHolderElement.html(text || def.title || "&nbsp");
+            self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp");
           });
         } else {
 
-          titleHolderElement.html(def.title || "&nbsp");
+          self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp");
         }
       }
 
       return titleHolderElement;
+    };
+
+    Column.prototype._formatColumnHeaderTitle = function (el, title) {
+
+      var formatter;
+
+      if (this.definition.titleFormatter && this.table.extExists("format")) {
+
+        switch (_typeof(this.definition.titleFormatter)) {
+
+          case "string":
+
+            if (this.table.extensions.format.formatters[this.definition.titleFormatter]) {
+
+              formatter = this.table.extensions.format.formatters[this.definition.titleFormatter];
+            } else {
+
+              console.warn("Formatter Error - No such formatter found: ", this.definition.titleFormatter);
+
+              formatter = this.table.extensions.format.formatters.plaintext;
+            }
+
+            break;
+
+          case "function":
+
+            formatter = this.definition.titleFormatter;
+
+            break;
+
+          default:
+
+            formatter = this.table.extensions.format.formatters.plaintext;
+
+            break;
+
+        }
+
+        var contents = formatter.call(this.table.extensions.format, {
+
+          getValue: function getValue() {
+
+            return title;
+          },
+
+          getElement: function getElement() {
+
+            return el;
+          }
+
+        }, this.definition.titleFormatterParams || {});
+
+        el.append(contents);
+      } else {
+
+        el.html(title);
+      }
     };
 
     //build header element for column group
