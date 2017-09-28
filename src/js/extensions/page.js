@@ -251,7 +251,7 @@ Page.prototype.getRows = function(data){
 	if(this.mode == "local"){
 		output = [];
 		start = this.size * (this.page - 1);
-		end = start + this.size;
+		end = start + parseInt(this.size);
 
 		this._setPageButtons();
 
