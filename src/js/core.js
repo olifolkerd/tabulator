@@ -686,6 +686,13 @@
 
 	 		getSort:function(){
 	 			if(this.extExists("sort", true)){
+	 				console.warn("The%c getSort%c function has been depricated and will be removed in version 4.0, use %c getSorters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 				return this.getSorters();
+	 			}
+	 		},
+
+	 		getSorters:function(){
+	 			if(this.extExists("sort", true)){
 	 				return this.extensions.sort.getSort();
 	 			}
 	 		},
