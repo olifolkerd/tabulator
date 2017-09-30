@@ -442,7 +442,7 @@ Filter.prototype.filters ={
 
 	//contains the string
 	"like":function(filterVal, rowVal){
-		if(filterVal === null){
+		if(filterVal === null || typeof filterVal === "undefined"){
 			return rowVal === filterVal ? true : false;
 		}else{
 			return rowVal.toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;

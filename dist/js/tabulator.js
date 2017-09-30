@@ -9281,7 +9281,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       "like": function like(filterVal, rowVal) {
 
-        if (filterVal === null) {
+        if (filterVal === null || typeof filterVal === "undefined") {
 
           return rowVal === filterVal ? true : false;
         } else {
