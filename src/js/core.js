@@ -464,6 +464,14 @@
 	 			}
 	 		},
 
+	 		addData:function(data, pos, index){
+	 			if(data){
+	 				this.rowManager.addRows(data, pos, index);
+	 			}else{
+	 				console.warn("Update Error - No data provided");
+	 			}
+	 		},
+
 	 		//update table data
 	 		updateOrAddData:function(data){
 	 			var self = this;
@@ -510,13 +518,7 @@
 
 	 		//add row to table
 	 		addRow:function(data, pos, index){
-	 			console.warn("The%c addRow%c function has been depricated and will be removed in version 4.0, use %c addRows%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	 			return this.addRows(data, pos, index);
-	 		},
-
-	 		//add rows to table
-	 		addRows:function(data, pos, index){
-	 			return this.rowManager.addRows(data, pos, index);
+	 			return this.rowManager.addRow(data, pos, index);
 	 		},
 
 	 		//update a row if it exitsts otherwise create it

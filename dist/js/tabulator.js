@@ -2306,12 +2306,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           rows = [];
 
+      pos = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
+
       if (!Array.isArray(data)) {
 
         data = [data];
       }
 
-      if (!pos) {
+      if (typeof index == "undefined" && pos || typeof index !== "undefined" && !pos) {
 
         data.reverse();
       }
@@ -5333,6 +5335,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       },
 
+      addData: function addData(data, pos, index) {
+
+        if (data) {
+
+          this.rowManager.addRows(data, pos, index);
+        } else {
+
+          console.warn("Update Error - No data provided");
+        }
+      },
+
       //update table data
 
       updateOrAddData: function updateOrAddData(data) {
@@ -5399,16 +5412,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       addRow: function addRow(data, pos, index) {
 
-        console.warn("The%c addRow%c function has been depricated and will be removed in version 4.0, use %c addRows%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-
-        return this.addRows(data, pos, index);
-      },
-
-      //add rows to table
-
-      addRows: function addRows(data, pos, index) {
-
-        return this.rowManager.addRows(data, pos, index);
+        return this.rowManager.addRow(data, pos, index);
       },
 
       //update a row if it exitsts otherwise create it

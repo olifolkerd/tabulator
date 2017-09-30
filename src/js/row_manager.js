@@ -248,11 +248,14 @@ RowManager.prototype.addRows = function(data, pos, index){
 	var self = this,
 	rows = [];
 
+	pos = this.findAddRowPos(pos);
+
+
 	if(!Array.isArray(data)){
 		data = [data];
 	}
 
-	if(!pos){
+	if((typeof index == "undefined" && pos) || (typeof index !== "undefined" && !pos)){
 		data.reverse();
 	}
 
@@ -262,16 +265,12 @@ RowManager.prototype.addRows = function(data, pos, index){
 	});
 
 	return rows;
-}
+};
 
+RowManager.prorotype.findAddRowPos(pos){
 
-RowManager.prototype.addRowActual = function(data, pos, index){
-	var safeData = data || {},
-	row = new Row(safeData, this),
-	top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
-
-	if(index){
-		index = this.findRow(index);
+	if(typeof pos === "undefined"){
+		pos = this.table.options.addRowPos;
 	}
 
 	if(top === "top"){
@@ -280,6 +279,19 @@ RowManager.prototype.addRowActual = function(data, pos, index){
 
 	if(top === "bottom"){
 		top = false;
+	}
+
+	return pos;
+};
+
+
+RowManager.prototype.addRowActual = function(data, pos, index){
+	var safeData = data || {},
+	row = new Row(safeData, this),
+	top = this.findAddRowPos(pos);
+
+	if(index){
+		index = this.findRow(index);
 	}
 
 	if(index){
