@@ -105,32 +105,33 @@ Ajax.prototype.sendRequest = function(callback){
 			self.config.data = self.params;
 		}
 
-		self.table.options.ajaxRequesting(self.url, self.params)
+		if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
 
-		self.showLoader();
+			self.showLoader();
 
-		$.ajax(self.config)
-		.done(function(data){
-			if(self.table.options.ajaxResponse){
-				data = self.table.options.ajaxResponse(self.url, self.params, data);
-			}
+			$.ajax(self.config)
+			.done(function(data){
+				if(self.table.options.ajaxResponse){
+					data = self.table.options.ajaxResponse(self.url, self.params, data);
+				}
 
-			self.table.options.dataLoaded(data);
+				self.table.options.dataLoaded(data);
 
-			callback(data);
+				callback(data);
 
-			self.hideLoader();
-		})
-		.fail(function(xhr, textStatus, errorThrown){
-			console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
-
-			self.table.options.ajaxError(xhr, textStatus, errorThrown);
-			self.showError();
-
-			setTimeout(function(){
 				self.hideLoader();
-			}, 3000);
-		});
+			})
+			.fail(function(xhr, textStatus, errorThrown){
+				console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
+
+				self.table.options.ajaxError(xhr, textStatus, errorThrown);
+				self.showError();
+
+				setTimeout(function(){
+					self.hideLoader();
+				}, 3000);
+			});
+		}
 
 	}else{
 		console.warn("Ajax Load Error - No URL Set");
