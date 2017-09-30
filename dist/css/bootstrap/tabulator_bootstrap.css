@@ -1,7 +1,7 @@
 /* Tabulator v3.3.0 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
-  background-color: transparent;
+  background-color: #fff;
   overflow: hidden;
   font-size: 14px;
   text-align: left;
@@ -219,7 +219,7 @@
 .tabulator .tabulator-tableHolder .tabulator-table {
   position: relative;
   display: inline-block;
-  background-color: transparent;
+  background-color: #fff;
   white-space: nowrap;
   overflow: visible;
 }
@@ -241,7 +241,7 @@
   position: relative;
   box-sizing: border-box;
   min-height: 30px;
-  background-color: transparent;
+  background-color: #fff;
   border-bottom: 1px solid #ddd;
 }
 
@@ -437,14 +437,14 @@
   width: calc("100% + 20px");
   margin: -5px -10px 5px -10px;
   text-align: left;
-  background: rgba(13, 13, 13, 0) !important;
+  background: white !important;
   border-bottom: 1px solid #ddd;
   border-top: 1px solid #ddd;
   overflow: hidden;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {
-  background: rgba(13, 13, 13, 0) !important;
+  background: white !important;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
