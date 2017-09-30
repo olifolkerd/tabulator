@@ -13529,16 +13529,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //sort on click
 
 
-        column.element.on("click", function () {
+        column.element.on("click", function (e) {
+
+          var dir = "",
+              sorters = [],
+              match = false;
 
           if (column.extensions.sort) {
 
-            if (column.extensions.sort.dir == "asc") {
+            dir = column.extensions.sort.dir == "asc" ? "desc" : "asc";
 
-              self.setSort(column, "desc");
+            if (e.shiftKey || e.ctrlKey) {
+
+              sorters = self.getSort();
+
+              match = sorters.findIndex(function (sorter) {
+
+                return sorter.field === column.getField();
+              });
+
+              if (match > -1) {
+
+                sorters[match].dir = sorters[match].dir == "asc" ? "desc" : "asc";
+
+                if (match != sorters.length - 1) {
+
+                  sorters.push(sorters.splice(match, 1)[0]);
+                }
+              } else {
+
+                sorters.push({ column: column, dir: dir });
+              }
+
+              //add to existing sort
+
+
+              self.setSort(sorters);
             } else {
 
-              self.setSort(column, "asc");
+              //sort by column only
+
+
+              self.setSort(column, dir);
             }
 
             self.table.rowManager.sorterRefresh();
@@ -13708,17 +13740,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             self._sortItem(item.column, item.dir, self.sortList, i);
           }
+
+          self.setColumnHeader(item.column, item.dir);
         });
-      }
-
-      if (self.sortList.length) {
-
-        lastSort = self.sortList[self.sortList.length - 1];
-
-        if (lastSort.column) {
-
-          self.setColumnHeader(lastSort.column, lastSort.dir);
-        }
       }
 
       if (self.table.options.dataSorted) {
@@ -13747,8 +13771,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
     Sort.prototype.setColumnHeader = function (column, dir) {
-
-      this.clearColumnHeaders();
 
       column.extensions.sort.dir = dir;
 

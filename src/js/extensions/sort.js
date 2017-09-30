@@ -35,12 +35,37 @@ Sort.prototype.initializeColumn = function(column, content){
 		content.append($("<div class='tabulator-arrow'></div>"));
 
 		//sort on click
-		column.element.on("click", function(){
+		column.element.on("click", function(e){
+			var dir = "",
+			sorters=[],
+			match = false;
+
 			if(column.extensions.sort){
-				if(column.extensions.sort.dir == "asc"){
-					self.setSort(column, "desc");
+				dir = column.extensions.sort.dir == "asc" ? "desc" : "asc";
+
+				if(e.shiftKey || e.ctrlKey){
+					sorters = self.getSort();
+
+
+					match = sorters.findIndex(function(sorter){
+						return sorter.field === column.getField();
+					});
+
+					if(match > -1){
+						sorters[match].dir = sorters[match].dir == "asc" ? "desc" : "asc";
+
+						if(match != sorters.length -1){
+							sorters.push(sorters.splice(match, 1)[0]);
+						}
+					}else{
+						sorters.push({column:column, dir:dir});
+					}
+
+					//add to existing sort
+					self.setSort(sorters);
 				}else{
-					self.setSort(column, "asc");
+					//sort by column only
+					self.setSort(column, dir);
 				}
 
 				self.table.rowManager.sorterRefresh();
@@ -164,15 +189,9 @@ Sort.prototype.sort = function(){
 
 				self._sortItem(item.column, item.dir, self.sortList, i);
 			}
+
+			self.setColumnHeader(item.column, item.dir);
 		})
-	}
-
-	if(self.sortList.length){
-		lastSort = self.sortList[self.sortList.length-1];
-
-		if(lastSort.column){
-			self.setColumnHeader(lastSort.column, lastSort.dir);
-		}
 	}
 
 	if(self.table.options.dataSorted){
@@ -193,8 +212,6 @@ Sort.prototype.clearColumnHeaders = function(){
 
 //set the column header sort direction
 Sort.prototype.setColumnHeader = function(column, dir){
-	this.clearColumnHeaders();
-
 	column.extensions.sort.dir = dir;
 	column.element.attr("aria-sort", dir);
 };
