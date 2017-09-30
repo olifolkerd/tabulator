@@ -5347,6 +5347,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return this.rowManager.getHtml(active);
       },
 
+      //retrieve Ajax URL
+
+      getAjaxUrl: function getAjaxUrl() {
+
+        if (this.extExists("ajax", true)) {
+
+          return this.extensions.ajax.getUrl();
+        }
+      },
+
       //update table data
 
       updateData: function updateData(data) {

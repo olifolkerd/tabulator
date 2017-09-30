@@ -446,6 +446,13 @@
 	 			return this.rowManager.getHtml(active);
 	 		},
 
+	 		//retrieve Ajax URL
+	 		getAjaxUrl:function(){
+	 			if(this.extExists("ajax", true)){
+	 				return this.extensions.ajax.getUrl();
+	 			}
+	 		},
+
 
 	 		//update table data
 	 		updateData:function(data){
