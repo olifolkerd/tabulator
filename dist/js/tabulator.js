@@ -3079,6 +3079,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.vDomScrollPosBottom = this.scrollTop;
 
         holder.scrollTop(this.scrollTop);
+
+        if (self.table.options.groupBy) {
+
+          if (self.table.extensions.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.extensions.groupRows.countGroups()) {
+
+            self.tableElement.css({
+
+              "min-width": self.table.columnManager.getWidth()
+
+            });
+          }
+        }
       } else {
 
         this.renderEmptyScroll();
@@ -10567,6 +10579,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
 
       return groupComponents;
+    };
+
+    GroupRows.prototype.countGroups = function () {
+
+      return this.groupList.length;
     };
 
     GroupRows.prototype.generateGroups = function (rows) {

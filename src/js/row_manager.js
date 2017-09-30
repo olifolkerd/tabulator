@@ -674,7 +674,6 @@ RowManager.prototype.renderTable = function(){
 	}
 
 	if(self.firstRender){
-
 		if(self.displayRowsCount){
 			self.firstRender = false;
 			self.table.extensions.layout.layout();
@@ -856,6 +855,15 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove){
 		this.vDomScrollPosBottom = this.scrollTop;
 
 		holder.scrollTop(this.scrollTop);
+
+		if(self.table.options.groupBy){
+			if(self.table.extensions.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.extensions.groupRows.countGroups()){
+
+				self.tableElement.css({
+					"min-width":self.table.columnManager.getWidth(),
+				});
+			}
+		}
 
 	}else{
 		this.renderEmptyScroll();

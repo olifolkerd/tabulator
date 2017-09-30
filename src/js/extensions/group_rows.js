@@ -514,6 +514,11 @@ GroupRows.prototype.getGroups = function(){
 	return groupComponents;
 };
 
+
+GroupRows.prototype.countGroups = function(){
+	return this.groupList.length;
+};
+
 GroupRows.prototype.generateGroups = function(rows){
 	var self = this,
 	oldGroups = self.groups;
