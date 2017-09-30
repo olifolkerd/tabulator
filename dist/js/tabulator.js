@@ -2306,7 +2306,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           rows = [];
 
-      pos = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
+      pos = this.findAddRowPos(pos);
 
       if (!Array.isArray(data)) {
 
@@ -2328,25 +2328,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return rows;
     };
 
+    RowManager.prototype.findAddRowPos = function (pos) {
+
+      if (typeof pos === "undefined") {
+
+        pos = this.table.options.addRowPos;
+      }
+
+      if (pos === "pos") {
+
+        pos = true;
+      }
+
+      if (pos === "bottom") {
+
+        pos = false;
+      }
+
+      return pos;
+    };
+
     RowManager.prototype.addRowActual = function (data, pos, index) {
 
       var safeData = data || {},
           row = new Row(safeData, this),
-          top = typeof pos == "undefined" ? this.table.options.addRowPos : pos;
+          top = this.findAddRowPos(pos);
 
       if (index) {
 
         index = this.findRow(index);
-      }
-
-      if (top === "top") {
-
-        top = true;
-      }
-
-      if (top === "bottom") {
-
-        top = false;
       }
 
       if (index) {
@@ -2605,8 +2615,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           table = self.table,
           options = table.options,
           params = {};
-
-      console.log("requesting");
 
       if (table.extExists("page")) {
 

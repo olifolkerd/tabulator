@@ -267,18 +267,18 @@ RowManager.prototype.addRows = function(data, pos, index){
 	return rows;
 };
 
-RowManager.prorotype.findAddRowPos(pos){
+RowManager.prototype.findAddRowPos = function(pos){
 
 	if(typeof pos === "undefined"){
 		pos = this.table.options.addRowPos;
 	}
 
-	if(top === "top"){
-		top = true;
+	if(pos === "pos"){
+		pos = true;
 	}
 
-	if(top === "bottom"){
-		top = false;
+	if(pos === "bottom"){
+		pos = false;
 	}
 
 	return pos;
