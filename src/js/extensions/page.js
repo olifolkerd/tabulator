@@ -161,6 +161,7 @@ Page.prototype.setPageSize = function(size){
 	}
 };
 
+
 //setup the pagination buttons
 Page.prototype._setPageButtons = function(){
 	var self = this;
@@ -238,6 +239,10 @@ Page.prototype.getPage = function(){
 //return max page number
 Page.prototype.getPageMax = function(){
 	return this.max;
+};
+
+Page.prototype.getPageSize = function(size){;
+	return this.size;
 };
 
 Page.prototype.getMode = function(){

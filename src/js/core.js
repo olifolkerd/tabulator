@@ -833,6 +833,12 @@
 	 			}
 	 		},
 
+	 		getPageSize:function(){
+	 			if(this.options.pagination && this.extExists("page", true)){
+	 				return this.extensions.page.getPageSize();
+	 			}
+	 		},
+
 	 		previousPage:function(){
 	 			if(this.options.pagination && this.extExists("page")){
 	 				this.extensions.page.previousPage();

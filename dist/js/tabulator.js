@@ -5884,6 +5884,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       },
 
+      getPageSize: function getPageSize() {
+
+        if (this.options.pagination && this.extExists("page", true)) {
+
+          return this.extensions.page.getPageSize();
+        }
+      },
+
       previousPage: function previousPage() {
 
         if (this.options.pagination && this.extExists("page")) {
@@ -12497,6 +12505,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Page.prototype.getPageMax = function () {
 
       return this.max;
+    };
+
+    Page.prototype.getPageSize = function (size) {
+      ;
+
+      return this.size;
     };
 
     Page.prototype.getMode = function () {
