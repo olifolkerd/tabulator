@@ -9675,7 +9675,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         cell.getElement().addClass("tabulator-row-handle");
 
-        return "<div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div>";
+        return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
       }
 
     };
