@@ -513,8 +513,6 @@ RowManager.prototype.getHtml = function(active){
 		options = table.options,
 		params = {};
 
-		console.log("requesting")
-
 		if(table.extExists("page")){
 		//set sort data if defined
 		if(options.ajaxSorting){
