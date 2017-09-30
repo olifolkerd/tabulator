@@ -62,6 +62,17 @@ $footerSeperatorColor:#3FB449; //footer bottom seperator color
 		}
 	}
 
+	&[tabulator-layout="fitColumns"]{
+		.tabulator-row{
+			.tabulator-cell{
+				&:last-of-type{
+					border-right: none;
+				}
+			}
+		}
+	}
+
+
 	&.tabulator-block-select{
 		user-select: none;
 	}
@@ -394,10 +405,6 @@ $footerSeperatorColor:#3FB449; //footer bottom seperator color
 			white-space:nowrap;
 			overflow:hidden;
 			text-overflow:ellipsis;
-
-			&:last-of-type{
-				border-right: none;
-			}
 
 
 			&.tabulator-editing{
