@@ -982,10 +982,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.table.extensions.moveRow.setHandle(true);
       }
 
+      this._mapDepricatedFunctionality();
+
       this._buildHeader();
     };
 
     //////////////// Setup Functions /////////////////
+
+    Column.prototype._mapDepricatedFunctionality = function (field) {
+
+      if (this.definition.tooltipHeader) {
+
+        console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltio%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+
+        if (typeof this.definition.headerTooltip == "undefined") {
+
+          this.definition.headerTooltip = this.definition.tooltipHeader;
+        }
+      }
+    };
 
     Column.prototype.setField = function (field) {
 
@@ -1054,7 +1069,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //set header tooltips
 
-      var tooltip = def.tooltipHeader || def.tooltip === false ? def.tooltipHeader : self.table.options.tooltipsHeader;
+      var tooltip = def.headerTooltip || def.tooltip === false ? def.headerTooltip : self.table.options.tooltipsHeader;
 
       if (tooltip) {
 
