@@ -39,6 +39,10 @@ var CellComponent = function (cell){
 			cell.setValue(value, mutate);
 		},
 
+		restoreOldValue(){
+			cell.setValueActual(cell.getOldValue());
+		},
+
 		edit:function(){
 			cell.edit();
 		},

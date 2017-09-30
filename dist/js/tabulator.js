@@ -4108,6 +4108,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cell.setValue(value, mutate);
         },
 
+        restoreOldValue: function restoreOldValue() {
+
+          cell.setValueActual(cell.getOldValue());
+        },
+
+
         edit: function edit() {
 
           cell.edit();
