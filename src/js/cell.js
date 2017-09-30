@@ -12,7 +12,7 @@ var CellComponent = function (cell){
 		},
 
 		getElement:function(){
-			return cell.getElement();
+			return $(cell.getElement());
 		},
 
 		getRow:function(){

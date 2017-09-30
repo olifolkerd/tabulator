@@ -4075,7 +4075,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         getElement: function getElement() {
 
-          return cell.getElement();
+          return $(cell.getElement());
         },
 
         getRow: function getRow() {
