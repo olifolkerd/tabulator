@@ -2299,6 +2299,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return row;
     };
 
+    //add multiple rows
+
+    RowManager.prototype.addRows = function (data, pos, index) {
+
+      var self = this,
+          rows = [];
+
+      if (!Array.isArray(data)) {
+
+        data = [data];
+      }
+
+      if (!pos) {
+
+        data.reverse();
+      }
+
+      data.forEach(function (item) {
+
+        var row = self.addRow(item, pos, index);
+
+        rows.push(row.getComponent());
+      });
+
+      return rows;
+    };
+
     RowManager.prototype.addRowActual = function (data, pos, index) {
 
       var safeData = data || {},
@@ -5372,7 +5399,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       addRow: function addRow(data, pos, index) {
 
-        return this.rowManager.addRow(data, pos, index).getComponent();
+        console.warn("The%c addRow%c function has been depricated and will be removed in version 4.0, use %c addRows%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+
+        return this.addRows(data, pos, index);
+      },
+
+      //add rows to table
+
+      addRows: function addRows(data, pos, index) {
+
+        return this.rowManager.addRows(data, pos, index);
       },
 
       //update a row if it exitsts otherwise create it

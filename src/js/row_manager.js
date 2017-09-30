@@ -243,6 +243,27 @@ RowManager.prototype.addRow = function(data, pos, index){
 	return row;
 };
 
+//add multiple rows
+RowManager.prototype.addRows = function(data, pos, index){
+	var self = this,
+	rows = [];
+
+	if(!Array.isArray(data)){
+		data = [data];
+	}
+
+	if(!pos){
+		data.reverse();
+	}
+
+	data.forEach(function(item){
+		var row = self.addRow(item, pos, index);
+		rows.push(row.getComponent());
+	});
+
+	return rows;
+}
+
 
 RowManager.prototype.addRowActual = function(data, pos, index){
 	var safeData = data || {},
