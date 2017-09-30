@@ -40,10 +40,22 @@ Download.prototype.processDefinitions = function(){
 			self.fields[column.field] = column.field.split(".");
 
 			if(column.download !== false){
-				processedDefinitions.push(column);
+				//isolate definiton from defintion object
+				var def = {};
+
+				for(var key in column){
+					def[key] = column[key];
+				}
+
+				if(typeof column.downloadTitle != "undefined"){
+					def.title = column.downloadTitle;
+				}
+
+				processedDefinitions.push(def);
 			}
 		}
-	})
+	});
+
 
 	return  processedDefinitions;
 };
