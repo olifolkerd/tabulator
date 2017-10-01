@@ -816,76 +816,72 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var ColumnComponent = function ColumnComponent(column) {
 
-      var obj = {
+      this.column = column;
 
-        type: "ColumnComponent", //type of element
+      this.type = "ColumnComponent";
+    };
 
-        getElement: function getElement() {
+    ColumnComponent.prototype.getElement = function () {
 
-          return column.getElement();
-        },
+      return this.column.getElement();
+    };
 
-        getDefinition: function getDefinition() {
+    ColumnComponent.prototype.getDefinition = function () {
 
-          return column.getDefinition();
-        },
+      return this.column.getDefinition();
+    };
 
-        getField: function getField() {
+    ColumnComponent.prototype.getField = function () {
 
-          return column.getField();
-        },
+      return this.column.getField();
+    };
 
-        getCells: function getCells() {
+    ColumnComponent.prototype.getCells = function () {
 
-          var cells = [];
+      var cells = [];
 
-          column.cells.forEach(function (cell) {
+      this.column.cells.forEach(function (cell) {
 
-            cells.push(cell.getComponent());
-          });
+        cells.push(cell.getComponent());
+      });
 
-          return cells;
-        },
+      return cells;
+    };
 
-        getVisibility: function getVisibility() {
+    ColumnComponent.prototype.getVisibility = function () {
 
-          return column.visible;
-        },
+      return this.column.visible;
+    };
 
-        show: function show() {
+    ColumnComponent.prototype.show = function () {
 
-          column.show();
-        },
+      this.column.show();
+    };
 
-        hide: function hide() {
+    ColumnComponent.prototype.hide = function () {
 
-          column.hide();
-        },
+      this.column.hide();
+    };
 
-        toggle: function toggle() {
+    ColumnComponent.prototype.toggle = function () {
 
-          if (column.visible) {
+      if (this.column.visible) {
 
-            column.hide();
-          } else {
+        this.column.hide();
+      } else {
 
-            column.show();
-          }
-        },
+        this.column.show();
+      }
+    };
 
-        delete: function _delete() {
+    ColumnComponent.prototype.delete = function () {
 
-          column.delete();
-        },
+      this.column.delete();
+    };
 
-        _getSelf: function _getSelf() {
+    ColumnComponent.prototype._getSelf = function () {
 
-          return column;
-        }
-
-      };
-
-      return obj;
+      return this.column;
     };
 
     var Column = function Column(def, parent) {
@@ -2162,6 +2158,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           //subject is row element
 
           return subject;
+        } else if (subject instanceof RowComponent) {
+
+          //subject is public row component
+
+          return subject._getSelf() || false;
         } else if (subject instanceof jQuery) {
 
           //subject is a jquery element of the row
@@ -2172,11 +2173,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           });
 
           return match || false;
-        } else {
-
-          //subject is public row object
-
-          return subject._getSelf() || false;
         }
       } else {
 
@@ -3450,83 +3446,79 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var RowComponent = function RowComponent(row) {
 
-      var obj = {
+      this.row = row;
+    };
 
-        getData: function getData() {
+    RowComponent.prototype.getData = function () {
 
-          return row.getData(true);
-        },
+      return this.row.getData(true);
+    };
 
-        getElement: function getElement() {
+    RowComponent.prototype.getElement = function () {
 
-          return row.getElement();
-        },
+      return this.row.getElement();
+    };
 
-        getCells: function getCells() {
+    RowComponent.prototype.getCells = function () {
 
-          var cells = [];
+      var cells = [];
 
-          row.getCells().forEach(function (cell) {
+      this.row.getCells().forEach(function (cell) {
 
-            cells.push(cell.getComponent());
-          });
+        cells.push(cell.getComponent());
+      });
 
-          return cells;
-        },
+      return cells;
+    };
 
-        getCell: function getCell(column) {
+    RowComponent.prototype.getCell = function (column) {
 
-          return row.getCell(column).getComponent();
-        },
+      return this.row.getCell(column).getComponent();
+    };
 
-        getIndex: function getIndex() {
+    RowComponent.prototype.getIndex = function () {
 
-          return row.getData(true)[row.table.options.index];
-        },
+      return this.row.getData(true)[this.row.table.options.index];
+    };
 
-        delete: function _delete() {
+    RowComponent.prototype.delete = function () {
 
-          row.delete();
-        },
+      this.row.delete();
+    };
 
-        scrollTo: function scrollTo() {
+    RowComponent.prototype.scrollTo = function () {
 
-          row.table.rowManager.scrollToRow(row);
-        },
+      this.row.table.rowManager.scrollToRow(this.row);
+    };
 
-        update: function update(data) {
+    RowComponent.prototype.update = function (data) {
 
-          row.updateData(data);
-        },
+      this.row.updateData(data);
+    };
 
-        normalizeHeight: function normalizeHeight() {
+    RowComponent.prototype.normalizeHeight = function () {
 
-          row.normalizeHeight(true);
-        },
+      this.row.normalizeHeight(true);
+    };
 
-        select: function select() {
+    RowComponent.prototype.select = function () {
 
-          row.table.extensions.selectRow.selectRows(row);
-        },
+      this.row.table.extensions.selectthis.Row.selectRows(this.row);
+    };
 
-        deselect: function deselect() {
+    RowComponent.prototype.deselect = function () {
 
-          row.table.extensions.selectRow.deselectRows(row);
-        },
+      this.row.table.extensions.selectthis.Row.deselectRows(this.row);
+    };
 
-        toggleSelect: function toggleSelect() {
+    RowComponent.prototype.toggleSelect = function () {
 
-          row.table.extensions.selectRow.toggleRow(row);
-        },
+      this.row.table.extensions.selectthis.Row.toggleRow(this.row);
+    };
 
-        _getSelf: function _getSelf() {
+    RowComponent.prototype._getSelf = function () {
 
-          return row;
-        }
-
-      };
-
-      return obj;
+      return this.row;
     };
 
     var Row = function Row(data, parent) {
@@ -4061,82 +4053,77 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var CellComponent = function CellComponent(cell) {
 
-      var obj = {
+      this.cell = cell;
+    };
 
-        getValue: function getValue() {
+    CellComponent.prototype.getValue = function () {
 
-          return cell.getValue();
-        },
+      return this.cell.getValue();
+    };
 
-        getOldValue: function getOldValue() {
+    CellComponent.prototype.getOldValue = function () {
 
-          return cell.getOldValue();
-        },
+      return this.cell.getOldValue();
+    };
 
-        getElement: function getElement() {
+    CellComponent.prototype.getElement = function () {
 
-          return $(cell.getElement());
-        },
+      return $(this.cell.getElement());
+    };
 
-        getRow: function getRow() {
+    CellComponent.prototype.getRow = function () {
 
-          return cell.row.getComponent();
-        },
+      return this.cell.row.getComponent();
+    };
 
-        getData: function getData() {
+    CellComponent.prototype.getData = function () {
 
-          return cell.row.getData();
-        },
+      return this.cell.row.getData();
+    };
 
-        getField: function getField() {
+    CellComponent.prototype.getField = function () {
 
-          return cell.column.getField();
-        },
+      return this.cell.column.getField();
+    };
 
-        getColumn: function getColumn() {
+    CellComponent.prototype.getColumn = function () {
 
-          return cell.column.getComponent();
-        },
+      return this.cell.column.getComponent();
+    };
 
-        setValue: function setValue(value, mutate) {
+    CellComponent.prototype.setValue = function (value, mutate) {
 
-          if (typeof mutate == "undefined") {
+      if (typeof mutate == "undefined") {
 
-            mutate = true;
-          }
+        mutate = true;
+      }
 
-          cell.setValue(value, mutate);
-        },
+      this.cell.setValue(value, mutate);
+    };
 
-        restoreOldValue: function restoreOldValue() {
+    CellComponent.prototype.restoreOldValue = function () {
 
-          cell.setValueActual(cell.getOldValue());
-        },
+      this.cell.setValueActual(this.cell.getOldValue());
+    };
 
+    CellComponent.prototype.edit = function () {
 
-        edit: function edit() {
+      this.cell.edit();
+    };
 
-          cell.edit();
-        },
+    CellComponent.prototype.nav = function () {
 
-        nav: function nav() {
+      return this.cell.nav();
+    };
 
-          return cell.nav();
-        },
+    CellComponent.prototype.checkHeight = function () {
 
-        checkHeight: function checkHeight() {
+      this.cell.checkHeight();
+    };
 
-          cell.checkHeight();
-        },
+    CellComponent.prototype._getSelf = function () {
 
-        _getSelf: function _getSelf() {
-
-          return cell;
-        }
-
-      };
-
-      return obj;
+      return this.cell;
     };
 
     var Cell = function Cell(column, row) {
@@ -10014,78 +10001,73 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     var GroupComponent = function GroupComponent(group) {
 
-      var obj = {
+      this.group = group;
 
-        type: "GroupComponent", //type of element
+      this.type = "GroupComponent";
+    };
 
+    GroupComponent.prototype.getKey = function () {
 
-        getKey: function getKey() {
+      return this.group.key;
+    };
 
-          return group.key;
-        },
+    GroupComponent.prototype.getElement = function () {
 
-        getElement: function getElement() {
+      return this.group.element;
+    };
 
-          return group.element;
-        },
+    GroupComponent.prototype.getRows = function () {
 
-        getRows: function getRows() {
+      var output = [];
 
-          var output = [];
+      this.group.rows.forEach(function (row) {
 
-          group.rows.forEach(function (row) {
+        output.push(row.getComponent());
+      });
 
-            output.push(row.getComponent());
-          });
+      return output;
+    };
 
-          return output;
-        },
+    GroupComponent.prototype.getSubGroups = function () {
 
-        getSubGroups: function getSubGroups() {
+      var output = [];
 
-          var output = [];
+      this.group.groupList.forEach(function (child) {
 
-          group.groupList.forEach(function (child) {
+        output.push(child.getComponent());
+      });
 
-            output.push(child.getComponent());
-          });
+      return output;
+    };
 
-          return output;
-        },
+    GroupComponent.prototype.getParentGroup = function () {
 
-        getParentGroup: function getParentGroup() {
+      return this.group.parent ? this.group.parent.getComponent() : false;
+    };
 
-          return group.parent ? group.parent.getComponent() : false;
-        },
+    GroupComponent.prototype.getVisibility = function () {
 
-        getVisibility: function getVisibility() {
+      return this.group.visible;
+    };
 
-          return group.visible;
-        },
+    GroupComponent.prototype.show = function () {
 
-        show: function show() {
+      this.group.show();
+    };
 
-          group.show();
-        },
+    GroupComponent.prototype.hide = function () {
 
-        hide: function hide() {
+      this.group.hide();
+    };
 
-          group.hide();
-        },
+    GroupComponent.prototype.toggle = function () {
 
-        toggle: function toggle() {
+      this.group.toggleVisibility();
+    };
 
-          group.toggleVisibility();
-        },
+    GroupComponent.prototype._getSelf = function () {
 
-        _getSelf: function _getSelf() {
-
-          return group;
-        }
-
-      };
-
-      return obj;
+      return this.group;
     };
 
     //////////////////////////////////////////////////

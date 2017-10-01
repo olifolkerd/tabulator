@@ -1,62 +1,60 @@
 
 //public column object
 var ColumnComponent = function (column){
-
-	var obj = {
-		type:"ColumnComponent", //type of element
-		getElement:function(){
-			return column.getElement();
-		},
-
-		getDefinition:function(){
-			return column.getDefinition();
-		},
-
-		getField:function(){
-			return column.getField();
-		},
-
-		getCells:function(){
-			var cells = [];
-
-			column.cells.forEach(function(cell){
-				cells.push(cell.getComponent());
-			});
-
-			return cells;
-		},
-
-		getVisibility:function(){
-			return column.visible;
-		},
-
-		show:function(){
-			column.show();
-		},
-
-		hide:function(){
-			column.hide();
-		},
-
-		toggle:function(){
-			if(column.visible){
-				column.hide();
-			}else{
-				column.show();
-			}
-		},
-
-		delete:function(){
-			column.delete();
-		},
-
-		_getSelf:function(){
-			return column;
-		},
-	}
-
-	return obj;
+	this.column = column;
+	this.type = "ColumnComponent";
 };
+
+ColumnComponent.prototype.getElement = function(){
+	return this.column.getElement();
+};
+
+ColumnComponent.prototype.getDefinition = function(){
+	return this.column.getDefinition();
+};
+
+ColumnComponent.prototype.getField = function(){
+	return this.column.getField();
+};
+
+ColumnComponent.prototype.getCells = function(){
+	var cells = [];
+
+	this.column.cells.forEach(function(cell){
+		cells.push(cell.getComponent());
+	});
+
+	return cells;
+};
+
+ColumnComponent.prototype.getVisibility = function(){
+	return this.column.visible;
+};
+
+ColumnComponent.prototype.show = function(){
+	this.column.show();
+};
+
+ColumnComponent.prototype.hide = function(){
+	this.column.hide();
+};
+
+ColumnComponent.prototype.toggle = function(){
+	if(this.column.visible){
+		this.column.hide();
+	}else{
+		this.column.show();
+	}
+};
+
+ColumnComponent.prototype.delete = function(){
+	this.column.delete();
+};
+
+ColumnComponent.prototype._getSelf = function(){
+	return this.column;
+};
+
 
 var Column = function(def, parent){
 	var self = this;

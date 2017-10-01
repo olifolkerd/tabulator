@@ -2,65 +2,61 @@
 
 //public group object
 var GroupComponent = function (group){
-
-	var obj = {
-		type:"GroupComponent", //type of element
-
-		getKey:function(){
-			return group.key;
-		},
-
-		getElement:function(){
-			return group.element;
-		},
-
-		getRows:function(){
-			var output = []
-
-			group.rows.forEach(function(row){
-				output.push(row.getComponent());
-			});
-
-			return output;
-		},
-
-		getSubGroups:function(){
-			var output = [];
-
-			group.groupList.forEach(function(child){
-				output.push(child.getComponent());
-			});
-
-			return output;
-		},
-
-		getParentGroup:function(){
-			return group.parent ? group.parent.getComponent() : false;
-		},
-
-		getVisibility:function(){
-			return group.visible;
-		},
-
-		show:function(){
-			group.show()
-		},
-
-		hide:function(){
-			group.hide();
-		},
-
-		toggle:function(){
-			group.toggleVisibility();
-		},
-
-		_getSelf:function(){
-			return group;
-		},
-	}
-
-	return obj;
+	this.group = group;
+	this.type = "GroupComponent";
 }
+
+GroupComponent.prototype.getKey = function(){
+	return this.group.key;
+};
+
+GroupComponent.prototype.getElement = function(){
+	return this.group.element;
+};
+
+GroupComponent.prototype.getRows = function(){
+	var output = []
+
+	this.group.rows.forEach(function(row){
+		output.push(row.getComponent());
+	});
+
+	return output;
+};
+
+GroupComponent.prototype.getSubGroups = function(){
+	var output = [];
+
+	this.group.groupList.forEach(function(child){
+		output.push(child.getComponent());
+	});
+
+	return output;
+};
+
+GroupComponent.prototype.getParentGroup = function(){
+	return this.group.parent ? this.group.parent.getComponent() : false;
+};
+
+GroupComponent.prototype.getVisibility = function(){
+	return this.group.visible;
+};
+
+GroupComponent.prototype.show = function(){
+	this.group.show()
+};
+
+GroupComponent.prototype.hide = function(){
+	this.group.hide();
+};
+
+GroupComponent.prototype.toggle = function(){
+	this.group.toggleVisibility();
+};
+
+GroupComponent.prototype._getSelf = function(){
+	return this.group;
+};
 
 //////////////////////////////////////////////////
 //////////////// Group Functions /////////////////

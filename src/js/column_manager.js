@@ -157,6 +157,9 @@ ColumnManager.prototype.findColumn = function(subject){
 		if(subject instanceof Column){
 			//subject is column element
 			return subject;
+		}else if(subject instanceof ColumnComponent){
+			//subject is public column component
+			return subject._getSelf() || false;
 		}else if(subject instanceof jQuery){
 			//subject is a jquery element of the column header
 			let match = self.columns.find(function(column){
@@ -164,9 +167,6 @@ ColumnManager.prototype.findColumn = function(subject){
 			});
 
 			return match || false;
-		}else{
-			//subject is public column object
-			return subject._getSelf() || false;
 		}
 
 	}else{
