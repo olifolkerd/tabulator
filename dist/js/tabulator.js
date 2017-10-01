@@ -420,6 +420,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
           return subject;
+        } else if (subject instanceof ColumnComponent) {
+
+          //subject is public column component
+
+
+          return subject._getSelf() || false;
         } else if (subject instanceof jQuery) {
 
           //subject is a jquery element of the column header
@@ -431,12 +437,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           });
 
           return match || false;
-        } else {
-
-          //subject is public column object
-
-
-          return subject._getSelf() || false;
         }
       } else {
 
@@ -14336,7 +14336,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           parameters = parameters.split("|");
         }
 
-        return parameters.indexOf(value) > -1;
+        return value === "" || parameters.indexOf(value) > -1;
       },
 
       //must match provided regex

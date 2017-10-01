@@ -139,7 +139,7 @@ Validate.prototype.validators = {
 			parameters = parameters.split("|");
 		}
 
-		return parameters.indexOf(value) > -1;
+		return value === "" || parameters.indexOf(value) > -1;
 	},
 
 	//must match provided regex
