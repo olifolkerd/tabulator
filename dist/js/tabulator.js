@@ -12612,7 +12612,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         start = this.size * (this.page - 1);
 
-        end = start + this.size;
+        end = start + parseInt(this.size);
 
         this._setPageButtons();
 
