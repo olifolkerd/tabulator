@@ -26,6 +26,7 @@ $rowSelectedBackground: #9ABCEA; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC;//row background color when selected and hovered
 
 $editBoxColor:#1D68CD; //border color for edit boxes
+$errorColor:#dd0000; //error indication
 
 //footer themeing
 $footerBackgroundColor:#e6e6e6; //border to tablulator
@@ -52,6 +53,14 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	-ms-transform: translatez(0);
 	-o-transform: translatez(0);
 	transform: translatez(0);
+
+	&[tabulator-layout="fitDataFill"]{
+		.tabulator-tableHolder{
+			.tabulator-table{
+				min-width:100%;
+			}
+		}
+	}
 
 	&.tabulator-block-select{
 		user-select: none;
@@ -406,6 +415,16 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				}
 			}
 
+			&.tabulator-validation-fail{
+				border:1px solid $errorColor;
+				input, select{
+					border:1px;
+					background:transparent;
+
+					color: $errorColor;
+				}
+			}
+
 			//hide left resize handle on first column
 			&:first-child{
 				.tabulator-col-resize-handle.prev{
@@ -416,12 +435,20 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			//movable row handle
 			&.tabulator-row-handle{
 
-				//Hamburger element
-				.tabulator-row-handle-bar{
+				display: inline-flex;
+				align-items:center;
+
+				//handle holder
+				.tabulator-row-handle-box{
 					width:80%;
-					height:3px;
-					margin:2px 10% 0 10%;
-					background:#666;
+
+					//Hamburger element
+					.tabulator-row-handle-bar{
+						width:100%;
+						height:3px;
+						margin:2px 10% 0 10%;
+						background:#666;
+					}
 				}
 			}
 		}

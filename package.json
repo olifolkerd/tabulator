@@ -47,6 +47,7 @@
     "gulp-cssnano": "^2.1.2",
     "gulp-imagemin": "^3.2.0",
     "gulp-include": "^2.3.1",
+    "gulp-insert": "^0.5.0",
     "gulp-jshint": "^2.0.4",
     "gulp-livereload": "^3.8.1",
     "gulp-notify": "^3.0.0",

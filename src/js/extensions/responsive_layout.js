@@ -35,7 +35,7 @@ ResponsiveLayout.prototype.update = function(){
 
 	while(working){
 
-		let width = self.table.options.fitColumns ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
+		let width = self.table.extensions.layout.getMode() == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
 		let diff = self.table.columnManager.element.innerWidth() - width;
 

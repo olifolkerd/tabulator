@@ -1,69 +1,65 @@
 
 //public row object
 var RowComponent = function (row){
+	this.row = row;
+};
 
-	var obj = {
+RowComponent.prototype.getData = function(){
+	return this.row.getData(true);
+};
 
-		getData:function(){
-			return row.getData(true);
-		},
+RowComponent.prototype.getElement = function(){
+	return this.row.getElement();
+};
 
-		getElement:function(){
-			return row.getElement();
-		},
+RowComponent.prototype.getCells = function(){
+	var cells = [];
 
-		getCells:function(){
-			var cells = [];
+	this.row.getCells().forEach(function(cell){
+		cells.push(cell.getComponent());
+	});
 
-			row.getCells().forEach(function(cell){
-				cells.push(cell.getComponent());
-			});
+	return cells;
+};
 
-			return cells;
-		},
+RowComponent.prototype.getCell = function(column){
+	return this.row.getCell(column).getComponent();
+};
 
-		getCell:function(column){
-			return row.getCell(column).getComponent();
-		},
+RowComponent.prototype.getIndex = function(){
+	return this.row.getData(true)[this.row.table.options.index];
+};
 
-		getIndex:function(){
-			return row.getData(true)[row.table.options.index];
-		},
+RowComponent.prototype.delete = function(){
+	this.row.delete();
+};
 
-		delete:function(){
-			row.delete();
-		},
+RowComponent.prototype.scrollTo = function(){
+	this.row.table.rowManager.scrollToRow(this.row);
+};
 
-		scrollTo:function(){
-			row.table.rowManager.scrollToRow(row);
-		},
+RowComponent.prototype.update = function(data){
+	this.row.updateData(data);
+};
 
-		update:function(data){
-			row.updateData(data);
-		},
+RowComponent.prototype.normalizeHeight = function(){
+	this.row.normalizeHeight(true);
+};
 
-		normalizeHeight:function(){
-			row.normalizeHeight(true);
-		},
+RowComponent.prototype.select = function(){
+	this.row.table.extensions.selectthis.Row.selectRows(this.row);
+};
 
-		select:function(){
-			row.table.extensions.selectRow.selectRows(row);
-		},
+RowComponent.prototype.deselect = function(){
+	this.row.table.extensions.selectthis.Row.deselectRows(this.row);
+};
 
-		deselect:function(){
-			row.table.extensions.selectRow.deselectRows(row);
-		},
+RowComponent.prototype.toggleSelect = function(){
+	this.row.table.extensions.selectthis.Row.toggleRow(this.row);
+};
 
-		toggleSelect:function(){
-			row.table.extensions.selectRow.toggleRow(row);
-		},
-
-		_getSelf:function(){
-			return row;
-		},
-	}
-
-	return obj;
+RowComponent.prototype._getSelf = function(){
+	return this.row;
 };
 
 

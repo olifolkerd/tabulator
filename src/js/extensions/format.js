@@ -61,6 +61,32 @@ Format.prototype.emptyToSpace = function(value){
 	return value === null ? "&nbsp" : value;
 };
 
+//get formatter for cell
+Format.prototype.getFormatter = function(formatter){
+	var formatter;
+
+	switch(typeof formatter){
+		case "string":
+		if(this.formatters[formatter]){
+			formatter = this.formatters[formatter]
+		}else{
+			console.warn("Formatter Error - No such formatter found: ", formatter);
+			formatter = this.formatters.plaintext;
+		}
+		break;
+
+		case "function":
+		formatter = formatter;
+		break;
+
+		default:
+		formatter = this.formatters.plaintext;
+		break;
+	}
+
+	return formatter;
+
+};
 
 //default data formatters
 Format.prototype.formatters = {
@@ -240,7 +266,7 @@ Format.prototype.formatters = {
 	//row handle
 	handle:function(cell, formatterParams){
 		cell.getElement().addClass("tabulator-row-handle");
-		return "<div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div>";
+		return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 	},
 };
 

@@ -2,65 +2,61 @@
 
 //public group object
 var GroupComponent = function (group){
-
-	var obj = {
-		type:"GroupComponent", //type of element
-
-		getKey:function(){
-			return group.key;
-		},
-
-		getElement:function(){
-			return group.element;
-		},
-
-		getRows:function(){
-			var output = []
-
-			group.rows.forEach(function(row){
-				output.push(row.getComponent());
-			});
-
-			return output;
-		},
-
-		getSubGroups:function(){
-			var output = [];
-
-			group.groupList.forEach(function(child){
-				output.push(child.getComponent());
-			});
-
-			return output;
-		},
-
-		getParentGroup:function(){
-			return group.parent ? group.parent.getComponent() : false;
-		},
-
-		getVisibility:function(){
-			return group.visible;
-		},
-
-		show:function(){
-			group.show()
-		},
-
-		hide:function(){
-			group.hide();
-		},
-
-		toggle:function(){
-			group.toggleVisibility();
-		},
-
-		_getSelf:function(){
-			return group;
-		},
-	}
-
-	return obj;
+	this.group = group;
+	this.type = "GroupComponent";
 }
+
+GroupComponent.prototype.getKey = function(){
+	return this.group.key;
+};
+
+GroupComponent.prototype.getElement = function(){
+	return this.group.element;
+};
+
+GroupComponent.prototype.getRows = function(){
+	var output = []
+
+	this.group.rows.forEach(function(row){
+		output.push(row.getComponent());
+	});
+
+	return output;
+};
+
+GroupComponent.prototype.getSubGroups = function(){
+	var output = [];
+
+	this.group.groupList.forEach(function(child){
+		output.push(child.getComponent());
+	});
+
+	return output;
+};
+
+GroupComponent.prototype.getParentGroup = function(){
+	return this.group.parent ? this.group.parent.getComponent() : false;
+};
+
+GroupComponent.prototype.getVisibility = function(){
+	return this.group.visible;
+};
+
+GroupComponent.prototype.show = function(){
+	this.group.show()
+};
+
+GroupComponent.prototype.hide = function(){
+	this.group.hide();
+};
+
+GroupComponent.prototype.toggle = function(){
+	this.group.toggleVisibility();
+};
+
+GroupComponent.prototype._getSelf = function(){
+	return this.group;
+};
 
 //////////////////////////////////////////////////
 //////////////// Group Functions /////////////////
@@ -85,6 +81,7 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 	this.height = 0;
 	this.outerHeight = 0;
 	this.initialized = false;
+	this.calcs = {};
 
 	this.visible = oldGroup ? oldGroup.visible : (typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0]);
 
@@ -92,13 +89,101 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 };
 
 Group.prototype.addBindings = function(){
-	var self = this;
+	var self = this,
+	dblTap,	tapHold, tap, toggleElement;
 
-	self.arrowElement.on("click", function(e){
-		e.stopPropagation();
-		e.stopImmediatePropagation();
-		self.toggleVisibility();
-	});
+	if(self.groupManager.table.options.groupToggleElement){
+		toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
+
+		toggleElement.on("click", function(e){
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			self.toggleVisibility();
+		});
+	}
+
+
+	//handle group click events
+	if (self.groupManager.table.options.groupClick){
+		self.element.on("click", function(e){
+			self.groupManager.table.options.groupClick(e, self.getComponent());
+		})
+	}
+
+	if (self.groupManager.table.options.groupDblClick){
+		self.element.on("dblclick", function(e){
+			self.groupManager.table.options.groupDblClick(e, self.getComponent());
+		})
+	}
+
+	if (self.groupManager.table.options.groupContext){
+		self.element.on("contextmenu", function(e){
+			self.groupManager.table.options.groupContext(e, self.getComponent());
+		})
+	}
+
+	if (self.groupManager.table.options.groupTap){
+
+		tap = false;
+
+		self.element.on("touchstart", function(e){
+			tap = true;
+		});
+
+		self.element.on("touchend", function(e){
+			if(tap){
+				self.groupManager.table.options.groupTap(e, self.getComponent());
+			}
+
+			tap = false;
+		});
+	}
+
+	if (self.groupManager.table.options.groupDblTap){
+
+		dblTap = null;
+
+		self.element.on("touchend", function(e){
+
+			if(dblTap){
+				clearTimeout(dblTap);
+				dblTap = null;
+
+				self.groupManager.table.options.groupDblTap(e, self.getComponent());
+			}else{
+
+				dblTap = setTimeout(function(){
+					clearTimeout(dblTap);
+					dblTap = null;
+				}, 300);
+			}
+
+		});
+	}
+
+
+	if (self.groupManager.table.options.groupTapHold){
+
+		tapHold = null;
+
+		self.element.on("touchstart", function(e){
+			clearTimeout(tapHold);
+
+			tapHold = setTimeout(function(){
+				clearTimeout(tapHold);
+				tapHold = null;
+				tap = false;
+				self.groupManager.table.options.groupTapHold(e, self.getComponent());
+			}, 1000)
+
+		});
+
+		self.element.on("touchend", function(e){
+			clearTimeout(tapHold);
+			tapHold = null;
+		});
+	}
+
 };
 
 Group.prototype._addRowToGroup = function(row){
@@ -140,16 +225,31 @@ Group.prototype.getHeadersAndRows = function(){
 
 		}else{
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
-				output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+				this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows);
+				output.push(this.calcs.top);
 			}
 
 			output = output.concat(this.rows);
 
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
-				output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+				this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
+				output.push(this.calcs.bottom);
 			}
 		}
+	}else{
+		if(this.groupManager.table.options.groupClosedShowCalcs){
+			if(this.groupManager.table.extExists("columnCalcs")){
+				if(this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
+					this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows)
+					output.push(this.calcs.top);
+				}
 
+				if(this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
+					this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
+					output.push(this.calcs.bottom);
+				}
+			}
+		}
 	}
 
 	return output;
@@ -222,8 +322,29 @@ Group.prototype._visSet = function(){
 			data.push(row.getData());
 		});
 
-		this.visible = this.visible(this.key, this.getRowCount(), data);
+		this.visible = this.visible(this.key, this.getRowCount(), data, this.getRowCount());
 	}
+};
+
+Group.prototype.getRowGroup = function(row){
+	var match = false;
+	if(this.groupList.length){
+		this.groupList.forEach(function(group){
+			var result = group.getRowGroup(row);
+
+			if(result){
+				match = result;
+			}
+		});
+	}else{
+		if(this.rows.find(function(item){
+			return item === row;
+		})){
+			match = this;
+		}
+	}
+
+	return match;
 };
 
 ////////////// Standard Row Functions //////////////
@@ -247,9 +368,9 @@ Group.prototype.getElement = function(){
 
 	this.element.children().detach();
 
-	this.element.html(this.generator(this.key, this.getRowCount(), data)).prepend(this.arrowElement);
+	this.element.html(this.generator(this.key, this.getRowCount(), data, this.getComponent())).prepend(this.arrowElement);
 
-	this.addBindings();
+	// this.addBindings();
 
 	return this.element;
 };
@@ -385,21 +506,14 @@ GroupRows.prototype.initialize = function(){
 
 //return appropriate rows with group headers
 GroupRows.prototype.getRows = function(rows){
-	var self = this,
-	groupComponents = [];
+	if(this.groupIDLookups.length){
 
-	if(self.groupIDLookups.length){
-
-		self.table.options.dataGrouping();
+		this.table.options.dataGrouping();
 
 		this.generateGroups(rows);
 
-		if(self.table.options.dataGrouped){
-			self.groupList.forEach(function(group){
-				groupComponents.push(group.getComponent());
-			});
-
-			self.table.options.dataGrouped(groupComponents);
+		if(this.table.options.dataGrouped){
+			this.table.options.dataGrouped(this.getGroups());
 		};
 
 		return this.updateGroupRows();
@@ -408,6 +522,36 @@ GroupRows.prototype.getRows = function(rows){
 		return rows.slice(0);
 	}
 
+};
+
+GroupRows.prototype.getGroups = function(){
+	var groupComponents = [];
+
+	if(this.table.options.dataGrouped){
+		this.groupList.forEach(function(group){
+			groupComponents.push(group.getComponent());
+		});
+	}
+
+	return groupComponents;
+};
+
+GroupRows.prototype.getRowGroup = function(row){
+	var match = false;
+
+	this.groupList.forEach(function(group){
+		var result = group.getRowGroup(row);
+
+		if(result){
+			match = result;
+		}
+	});
+
+	return match;
+};
+
+GroupRows.prototype.countGroups = function(){
+	return this.groupList.length;
 };
 
 GroupRows.prototype.generateGroups = function(rows){

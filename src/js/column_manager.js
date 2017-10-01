@@ -157,6 +157,9 @@ ColumnManager.prototype.findColumn = function(subject){
 		if(subject instanceof Column){
 			//subject is column element
 			return subject;
+		}else if(subject instanceof ColumnComponent){
+			//subject is public column component
+			return subject._getSelf() || false;
 		}else if(subject instanceof jQuery){
 			//subject is a jquery element of the column header
 			let match = self.columns.find(function(column){
@@ -164,9 +167,6 @@ ColumnManager.prototype.findColumn = function(subject){
 			});
 
 			return match || false;
-		}else{
-			//subject is public column object
-			return subject._getSelf() || false;
 		}
 
 	}else{
@@ -322,88 +322,6 @@ ColumnManager.prototype.generateCells = function(row){
 
 //////////////// Column Management /////////////////
 
-//resize columns to fit data in cells
-ColumnManager.prototype.fitToData = function(){
-	var self = this;
-
-	self.columnsByIndex.forEach(function(column){
-		column.reinitializeWidth();
-	});
-
-	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-		this.table.extensions.responsiveLayout.update();
-	}
-};
-
-//resize columns to fill the table element
-ColumnManager.prototype.fitToTable = function(){
-	var self = this;
-
-	var totalWidth = self.table.element.innerWidth(); //table element width
-	var fixedWidth = 0; //total width of columns with a defined width
-	var flexWidth = 0; //total width available to flexible columns
-	var flexColWidth = 0; //desired width of flexible columns
-	var flexColumns = []; //array of flexible width columns
-	var gapFill=0; //number of pixels to be added to final column to close and half pixel gaps
-
-	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-		this.table.extensions.responsiveLayout.update();
-	}
-
-	//adjust for vertical scrollbar if present
-	if(self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()){
-		totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
-	}
-
-	self.columnsByIndex.forEach(function(column){
-		var width, minWidth, colWidth;
-
-		if(column.visible){
-
-			width = column.definition.width;
-
-			if(width){
-				minWidth =  parseInt(column.minWidth);
-
-				if(typeof(width) == "string"){
-					if(width.indexOf("%") > -1){
-						colWidth = (totalWidth / 100) * parseInt(width) ;
-					}else{
-						colWidth = parseInt(width);
-					}
-				}else{
-					colWidth = width;
-				}
-
-				fixedWidth += colWidth > minWidth ? colWidth : minWidth;
-
-			}else{
-				flexColumns.push(column);
-			}
-		}
-	});
-
-	//calculate available space
-	flexWidth = totalWidth - fixedWidth;
-
-	//calculate correct column size
-	flexColWidth = Math.floor(flexWidth / flexColumns.length)
-
-	//calculate any sub pixel space that needs to be filed by the last column
-	gapFill = totalWidth - fixedWidth - (flexColWidth * flexColumns.length);
-	gapFill = gapFill > 0 ? gapFill : 0;
-
-	flexColumns.forEach(function(column, i){
-		var width = flexColWidth >= column.minWidth ? flexColWidth : column.minWidth;
-
-		if(i == flexColumns.length -1 && gapFill){
-			width += gapFill;
-		}
-
-		column.setWidth(width);
-	});
-
-};
 
 ColumnManager.prototype.getFlexBaseWidth = function(){
 	var self = this,
@@ -457,7 +375,7 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 
 	this.redraw();
 
-	if(!this.table.options.fitColumns){
+	if(this.table.extensions.layout.getMode() != "fitColumns"){
 		column.reinitializeWidth();
 	}
 
@@ -507,11 +425,11 @@ ColumnManager.prototype.redraw = function(force){
 		this.table.rowManager.reinitialize();
 	}
 
-	if(this.table.options.fitColumns){
-		this.fitToTable();
+	if(this.table.extensions.layout.getMode() == "fitColumns"){
+		this.table.extensions.layout.layout();
 	}else{
 		if(force){
-			this.fitToData();
+			this.table.extensions.layout.layout();
 		}else{
 			if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
 				this.table.extensions.responsiveLayout.update();

@@ -1,62 +1,60 @@
 
 //public column object
 var ColumnComponent = function (column){
-
-	var obj = {
-		type:"ColumnComponent", //type of element
-		getElement:function(){
-			return column.getElement();
-		},
-
-		getDefinition:function(){
-			return column.getDefinition();
-		},
-
-		getField:function(){
-			return column.getField();
-		},
-
-		getCells:function(){
-			var cells = [];
-
-			column.cells.forEach(function(cell){
-				cells.push(cell.getComponent());
-			});
-
-			return cells;
-		},
-
-		getVisibility:function(){
-			return column.visible;
-		},
-
-		show:function(){
-			column.show();
-		},
-
-		hide:function(){
-			column.hide();
-		},
-
-		toggle:function(){
-			if(column.visible){
-				column.hide();
-			}else{
-				column.show();
-			}
-		},
-
-		delete:function(){
-			column.delete();
-		},
-
-		_getSelf:function(){
-			return column;
-		},
-	}
-
-	return obj;
+	this.column = column;
+	this.type = "ColumnComponent";
 };
+
+ColumnComponent.prototype.getElement = function(){
+	return this.column.getElement();
+};
+
+ColumnComponent.prototype.getDefinition = function(){
+	return this.column.getDefinition();
+};
+
+ColumnComponent.prototype.getField = function(){
+	return this.column.getField();
+};
+
+ColumnComponent.prototype.getCells = function(){
+	var cells = [];
+
+	this.column.cells.forEach(function(cell){
+		cells.push(cell.getComponent());
+	});
+
+	return cells;
+};
+
+ColumnComponent.prototype.getVisibility = function(){
+	return this.column.visible;
+};
+
+ColumnComponent.prototype.show = function(){
+	this.column.show();
+};
+
+ColumnComponent.prototype.hide = function(){
+	this.column.hide();
+};
+
+ColumnComponent.prototype.toggle = function(){
+	if(this.column.visible){
+		this.column.hide();
+	}else{
+		this.column.show();
+	}
+};
+
+ColumnComponent.prototype.delete = function(){
+	this.column.delete();
+};
+
+ColumnComponent.prototype._getSelf = function(){
+	return this.column;
+};
+
 
 var Column = function(def, parent){
 	var self = this;
@@ -119,11 +117,23 @@ var Column = function(def, parent){
 		this.table.extensions.moveRow.setHandle(true);
 	}
 
+	this._mapDepricatedFunctionality()
+
 	this._buildHeader();
 };
 
 
 //////////////// Setup Functions /////////////////
+Column.prototype._mapDepricatedFunctionality = function(field){
+	if(this.definition.tooltipHeader){
+		console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltio%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+
+		if(typeof this.definition.headerTooltip == "undefined"){
+			this.definition.headerTooltip = this.definition.tooltipHeader;
+		}
+	}
+};
+
 Column.prototype.setField = function(field){
 	this.field = field;
 	this.fieldStructure = field ? field.split(".") : [];
@@ -171,7 +181,7 @@ Column.prototype._buildHeader = function(){
 	}
 
 	//set header tooltips
-	var tooltip = def.tooltipHeader || def.tooltip === false  ? def.tooltipHeader : self.table.options.tooltipsHeader;
+	var tooltip = def.headerTooltip || def.tooltip === false  ? def.headerTooltip : self.table.options.tooltipsHeader;
 
 	if(tooltip){
 		if(tooltip === true){
@@ -349,6 +359,12 @@ Column.prototype._buildColumnHeader = function(){
 		table.extensions.edit.initializeColumn(self);
 	}
 
+	//set colum validator
+	if(typeof def.validator != "undefined" && table.extExists("validate")){
+		table.extensions.validate.initializeColumn(self);
+	}
+
+
 	//set column mutator
 	if(typeof def.mutator != "undefined" && table.extExists("mutator")){
 		table.extensions.mutator.initializeColumn(self);
@@ -433,15 +449,38 @@ Column.prototype._buildColumnHeaderTitle = function(){
 	}else{
 		if(def.field){
 			table.extensions.localize.bind("columns." + def.field, function(text){
-				titleHolderElement.html(text || (def.title || "&nbsp"));
+				self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp"));
 			});
 		}else{
-			titleHolderElement.html(def.title || "&nbsp");
+			self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp");
 		}
 	}
 
 	return titleHolderElement;
 };
+
+Column.prototype._formatColumnHeaderTitle = function(el, title){
+	var formatter, contents;
+
+	if(this.definition.titleFormatter && this.table.extExists("format")){
+
+		formatter = this.table.extensions.format.getFormatter(this.definition.titleFormatter);
+
+		contents = formatter.call(this.table.extensions.format, {
+			getValue:function(){
+				return title;
+			},
+			getElement:function(){
+				return el;
+			}
+		}, this.definition.titleFormatterParams || {});
+
+		el.append(contents);
+	}else{
+		el.html(title);
+	}
+};
+
 
 //build header element for column group
 Column.prototype._buildGroupHeader = function(){

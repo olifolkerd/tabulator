@@ -1,63 +1,66 @@
 
 //public row object
 var CellComponent = function (cell){
+	this.cell = cell;
+};
 
-	var obj = {
-		getValue:function(){
-			return cell.getValue();
-		},
+CellComponent.prototype.getValue = function(){
+	return this.cell.getValue();
+};
 
-		getOldValue:function(){
-			return cell.getOldValue();
-		},
+CellComponent.prototype.getOldValue = function(){
+	return this.cell.getOldValue();
+};
 
-		getElement:function(){
-			return cell.getElement();
-		},
+CellComponent.prototype.getElement = function(){
+	return $(this.cell.getElement());
+};
 
-		getRow:function(){
-			return cell.row.getComponent();
-		},
+CellComponent.prototype.getRow = function(){
+	return this.cell.row.getComponent();
+};
 
-		getData:function(){
-			return cell.row.getData();
-		},
+CellComponent.prototype.getData = function(){
+	return this.cell.row.getData();
+};
 
-		getField:function(){
-			return cell.column.getField();
-		},
+CellComponent.prototype.getField = function(){
+	return this.cell.column.getField();
+};
 
-		getColumn:function(){
-			return cell.column.getComponent();
-		},
+CellComponent.prototype.getColumn = function(){
+	return this.cell.column.getComponent();
+};
 
-		setValue:function(value, mutate){
-			if(typeof mutate == "undefined"){
-				mutate = true;
-			}
-
-			cell.setValue(value, mutate);
-		},
-
-		edit:function(){
-			cell.edit();
-		},
-
-		nav:function(){
-			return cell.nav();
-		},
-
-		checkHeight:function(){
-			cell.checkHeight();
-		},
-
-		_getSelf:function(){
-			return cell;
-		},
+CellComponent.prototype.setValue = function(value, mutate){
+	if(typeof mutate == "undefined"){
+		mutate = true;
 	}
 
-	return obj;
+	this.cell.setValue(value, mutate);
 };
+
+CellComponent.prototype.restoreOldValue = function(){
+	this.cell.setValueActual(this.cell.getOldValue());
+};
+
+CellComponent.prototype.edit = function(){
+	this.cell.edit();
+};
+
+CellComponent.prototype.nav = function(){
+	return this.cell.nav();
+};
+
+CellComponent.prototype.checkHeight = function(){
+	this.cell.checkHeight();
+};
+
+CellComponent.prototype._getSelf = function(){
+	return this.cell;
+};
+
+
 
 var Cell = function(column, row){
 
@@ -266,7 +269,13 @@ Cell.prototype.setValue = function(value, mutate){
 	}
 
 	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		if(this.column.definition.topCalc || this.column.definition.bottomCalc){
+			if(this.table.options.groupBy && this.table.extExists("groupRows")){
+				this.table.extensions.columnCalcs.recalcRowGroup(this.row);
+			}else{
+				this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+			}
+		}
 	}
 
 };

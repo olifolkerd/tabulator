@@ -24,7 +24,9 @@
 
 	 			height:false, //height of tabulator
 
-	 			fitColumns:false, //fit colums to width of screen;
+	 			layout:"fitData", ///layout type "fitColumns" | "fitData"
+	 			fitColumns:false, //DEPRICATED - fit colums to width of screen;
+
 	 			columnMinWidth:40, //minimum global width for a column
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
@@ -108,7 +110,6 @@
 	 			rowClick:false,
 	 			rowDblClick:false,
 	 			rowContext:false,
-	 			rowContext:false,
 	 			rowTap:false,
 	 			rowDblTap:false,
 	 			rowTapHold:false,
@@ -154,9 +155,17 @@
 	 			dataSorted:function(){},
 
 	 			//grouping callbacks
+	 			groupToggleElement:"arrow",
+	 			groupClosedShowCalcs:false,
 	 			dataGrouping:function(){},
 	 			dataGrouped:false,
 	 			groupVisibilityChanged:function(){},
+	 			groupClick:false,
+	 			groupDblClick:false,
+	 			groupContext:false,
+	 			groupTap:false,
+	 			groupDblTap:false,
+	 			groupTapHold:false,
 
 	 			//pagination callbacks
 	 			pageLoaded:function(){},
@@ -164,12 +173,26 @@
 	 			//localization callbacks
 	 			localized:function(){},
 
+	 			//validation has failed
+	 			validationFailed:function(){},
+
+	 		},
+
+	 		//convert depricated functionality to new functions
+	 		_mapDepricatedFunctionality:function(){
+
+	 			if(this.options.fitColumns){
+	 				this.options.layout = "fitColumns";
+	 				console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
 	 		},
 
 	 		//constructor
 	 		_create: function(){
 	 			var self = this,
 	 			element = this.element;
+
+	 			self._mapDepricatedFunctionality();
 
 	 			self.bindExtensions();
 
@@ -212,6 +235,10 @@
 	 			.empty();
 
 	 			this._detectBrowser();
+
+	 			if(this.extExists("layout", true)){
+	 				ext.layout.initialize(options.layout);
+	 			}
 
 	 			//set localization
 	 			if(options.headerFilterPlaceholder !== false){
@@ -414,6 +441,19 @@
 	 			return this.rowManager.getDataCount(active);
 	 		},
 
+	 		//get table html
+	 		getHtml:function(active){
+	 			return this.rowManager.getHtml(active);
+	 		},
+
+	 		//retrieve Ajax URL
+	 		getAjaxUrl:function(){
+	 			if(this.extExists("ajax", true)){
+	 				return this.extensions.ajax.getUrl();
+	 			}
+	 		},
+
+
 	 		//update table data
 	 		updateData:function(data){
 	 			var self = this;
@@ -426,6 +466,14 @@
 	 						row.updateData(item);
 	 					}
 	 				})
+	 			}else{
+	 				console.warn("Update Error - No data provided");
+	 			}
+	 		},
+
+	 		addData:function(data, pos, index){
+	 			if(data){
+	 				this.rowManager.addRows(data, pos, index);
 	 			}else{
 	 				console.warn("Update Error - No data provided");
 	 			}
@@ -477,7 +525,7 @@
 
 	 		//add row to table
 	 		addRow:function(data, pos, index){
-	 			return this.rowManager.addRow(data, pos, index).getComponent();
+	 			return this.rowManager.addRow(data, pos, index);
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
@@ -645,6 +693,13 @@
 
 	 		getSort:function(){
 	 			if(this.extExists("sort", true)){
+	 				console.warn("The%c getSort%c function has been depricated and will be removed in version 4.0, use %c getSorters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 				return this.getSorters();
+	 			}
+	 		},
+
+	 		getSorters:function(){
+	 			if(this.extExists("sort", true)){
 	 				return this.extensions.sort.getSort();
 	 			}
 	 		},
@@ -676,11 +731,25 @@
 	 		},
 
 	 		//get all filters
-	 		getFilter:function(){
+	 		getFilter:function(all){
+	 			console.warn("The%c getFilter%c function has been depricated and will be removed in version 4.0, use %c getFilters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			this.getFilters(all);
+	 		},
+
+	 		getFilters:function(all){
 	 			if(this.extExists("filter", true)){
-	 				return this.extensions.filter.getFilter();
+	 				return this.extensions.filter.getFilters(all);
 	 			}
 	 		},
+
+	 		getHeaderFilters:function(){
+	 			if(this.extExists("filter", true)){
+	 				return this.extensions.filter.getHeaderFilters();
+	 			}
+	 		},
+
+
+
 
 	 		//remove filter from array
 	 		removeFilter:function(field, type, value){
@@ -764,6 +833,12 @@
 	 			}
 	 		},
 
+	 		getPageSize:function(){
+	 			if(this.options.pagination && this.extExists("page", true)){
+	 				return this.extensions.page.getPageSize();
+	 			}
+	 		},
+
 	 		previousPage:function(){
 	 			if(this.options.pagination && this.extExists("page")){
 	 				this.extensions.page.previousPage();
@@ -832,6 +907,14 @@
 	 				}else{
 	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
 	 				}
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
+	 		getGroups:function(values){
+	 			if(this.extExists("groupRows", true)){
+	 				return this.extensions.groupRows.getGroups();
 	 			}else{
 	 				return false;
 	 			}
@@ -1016,6 +1099,7 @@
 
 	 	};
 
+	 	/*=include extensions/layout.js */
 	 	/*=include extensions/localize.js */
 
 	 	/*=include extensions_enabled.js */
