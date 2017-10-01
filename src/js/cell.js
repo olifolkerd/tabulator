@@ -270,7 +270,13 @@ Cell.prototype.setValue = function(value, mutate){
 	}
 
 	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		if(this.column.definition.topCalc || this.column.definition.bottomCalc){
+			if(this.table.options.groupBy && this.table.extExists("groupRows")){
+				this.table.extensions.columnCalcs.recalcRowGroup(this.row);
+			}else{
+				this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+			}
+		}
 	}
 
 };

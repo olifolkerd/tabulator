@@ -4410,7 +4410,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.table.extExists("columnCalcs")) {
 
-        this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+        if (this.column.definition.topCalc || this.column.definition.bottomCalc) {
+
+          if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+            this.table.extensions.columnCalcs.recalcRowGroup(this.row);
+          } else {
+
+            this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+          }
+        }
       }
     };
 
@@ -7243,6 +7252,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    ColumnCalcs.prototype.recalcRowGroup = function (row) {
+
+      var data, rowData;
+
+      var group = this.table.extensions.groupRows.getRowGroup(row);
+
+      if (group.calcs.bottom) {
+
+        data = this.rowsToData(group.rows);
+
+        rowData = this.generateRowData("bottom", data);
+
+        group.calcs.bottom.updateData(rowData);
+      }
+
+      if (group.calcs.top) {
+
+        data = this.rowsToData(group.rows);
+
+        rowData = this.generateRowData("top", data);
+
+        group.calcs.top.updateData(rowData);
+      }
+    };
+
     //generate top stats row
 
 
@@ -7405,6 +7439,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           output = values.reduce(function (sum, value) {
 
+            value = Number(value);
+
             return sum + value;
           });
 
@@ -7422,6 +7458,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         values.forEach(function (value) {
 
+          value = Number(value);
+
           if (value > output || output === null) {
 
             output = value;
@@ -7436,6 +7474,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var output = null;
 
         values.forEach(function (value) {
+
+          value = Number(value);
 
           if (value < output || output === null) {
 
@@ -7453,6 +7493,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (values.length) {
 
           values.forEach(function (value) {
+
+            value = Number(value);
 
             output += !isNaN(value) ? Number(value) : 0;
           });
@@ -10092,6 +10134,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.initialized = false;
 
+      this.calcs = {};
+
       this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
 
       this.addBindings();
@@ -10266,14 +10310,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()) {
 
-            output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+            this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows);
+
+            output.push(this.calcs.top);
           }
 
           output = output.concat(this.rows);
 
           if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
 
-            output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+            this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
+
+            output.push(this.calcs.bottom);
           }
         }
       } else {
@@ -10284,12 +10332,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (this.groupManager.table.extensions.columnCalcs.hasTopCalcs()) {
 
-              output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+              this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows);
+
+              output.push(this.calcs.top);
             }
 
             if (this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
 
-              output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+              this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
+
+              output.push(this.calcs.bottom);
             }
           }
         }
@@ -10387,6 +10439,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.visible = this.visible(this.key, this.getRowCount(), data, this.getRowCount());
       }
+    };
+
+    Group.prototype.getRowGroup = function (row) {
+
+      var match = false;
+
+      if (this.groupList.length) {
+
+        this.groupList.forEach(function (group) {
+
+          var result = group.getRowGroup(row);
+
+          if (result) {
+
+            match = result;
+          }
+        });
+      } else {
+
+        if (this.rows.find(function (item) {
+
+          return item === row;
+        })) {
+
+          match = this;
+        }
+      }
+
+      return match;
     };
 
     ////////////// Standard Row Functions //////////////
@@ -10644,6 +10725,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
 
       return groupComponents;
+    };
+
+    GroupRows.prototype.getRowGroup = function (row) {
+
+      var match = false;
+
+      this.groupList.forEach(function (group) {
+
+        var result = group.getRowGroup(row);
+
+        if (result) {
+
+          match = result;
+        }
+      });
+
+      return match;
     };
 
     GroupRows.prototype.countGroups = function () {

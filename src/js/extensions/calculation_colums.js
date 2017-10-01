@@ -141,6 +141,26 @@ ColumnCalcs.prototype.recalc = function(rows){
 	}
 };
 
+ColumnCalcs.prototype.recalcRowGroup = function(row){
+	var data, rowData;
+
+	var group = this.table.extensions.groupRows.getRowGroup(row);
+
+	if(group.calcs.bottom){
+		data = this.rowsToData(group.rows);
+		rowData = this.generateRowData("bottom", data);
+
+		group.calcs.bottom.updateData(rowData);
+	}
+
+	if(group.calcs.top){
+		data = this.rowsToData(group.rows);
+		rowData = this.generateRowData("top", data);
+
+		group.calcs.top.updateData(rowData);
+	}
+};
+
 
 //generate top stats row
 ColumnCalcs.prototype.generateTopRow = function(rows){
@@ -258,6 +278,7 @@ ColumnCalcs.prototype.calculations = {
 
 		if(values.length){
 			output = values.reduce(function(sum, value){
+				value = Number(value);
 				return sum + value;
 			});
 
@@ -272,6 +293,9 @@ ColumnCalcs.prototype.calculations = {
 		var output = null;
 
 		values.forEach(function(value){
+
+			value = Number(value);
+
 			if(value > output || output === null){
 				output = value;
 			}
@@ -283,6 +307,9 @@ ColumnCalcs.prototype.calculations = {
 		var output = null;
 
 		values.forEach(function(value){
+
+			value = Number(value);
+
 			if(value < output || output === null){
 				output = value;
 			}
@@ -295,6 +322,8 @@ ColumnCalcs.prototype.calculations = {
 
 		if(values.length){
 			values.forEach(function(value){
+				value = Number(value);
+
 				output += !isNaN(value) ? Number(value) : 0;
 			});
 		}

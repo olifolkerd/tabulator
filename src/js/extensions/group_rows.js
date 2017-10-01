@@ -85,6 +85,7 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 	this.height = 0;
 	this.outerHeight = 0;
 	this.initialized = false;
+	this.calcs = {};
 
 	this.visible = oldGroup ? oldGroup.visible : (typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0]);
 
@@ -228,24 +229,28 @@ Group.prototype.getHeadersAndRows = function(){
 
 		}else{
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
-				output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+				this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows);
+				output.push(this.calcs.top);
 			}
 
 			output = output.concat(this.rows);
 
 			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
-				output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+				this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
+				output.push(this.calcs.bottom);
 			}
 		}
 	}else{
 		if(this.groupManager.table.options.groupClosedShowCalcs){
 			if(this.groupManager.table.extExists("columnCalcs")){
 				if(this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
-					output.push(this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows));
+					this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows)
+					output.push(this.calcs.top);
 				}
 
 				if(this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
-					output.push(this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows));
+					this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
+					output.push(this.calcs.bottom);
 				}
 			}
 		}
@@ -323,6 +328,27 @@ Group.prototype._visSet = function(){
 
 		this.visible = this.visible(this.key, this.getRowCount(), data, this.getRowCount());
 	}
+};
+
+Group.prototype.getRowGroup = function(row){
+	var match = false;
+	if(this.groupList.length){
+		this.groupList.forEach(function(group){
+			var result = group.getRowGroup(row);
+
+			if(result){
+				match = result;
+			}
+		});
+	}else{
+		if(this.rows.find(function(item){
+			return item === row;
+		})){
+			match = this;
+		}
+	}
+
+	return match;
 };
 
 ////////////// Standard Row Functions //////////////
@@ -514,6 +540,19 @@ GroupRows.prototype.getGroups = function(){
 	return groupComponents;
 };
 
+GroupRows.prototype.getRowGroup = function(row){
+	var match = false;
+
+	this.groupList.forEach(function(group){
+		var result = group.getRowGroup(row);
+
+		if(result){
+			match = result;
+		}
+	});
+
+	return match;
+};
 
 GroupRows.prototype.countGroups = function(){
 	return this.groupList.length;
