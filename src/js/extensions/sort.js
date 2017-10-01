@@ -255,7 +255,7 @@ Sort.prototype._sortRow = function(a, b, column, dir){
 	a = typeof a !== "undefined" ? a : "";
 	b = typeof b !== "undefined" ? b : "";
 
-	return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
+	return column.extensions.sort.sorter.call(self, a, b, el1.getComponent(), el2.getComponent(), column.getComponent(), dir, column.extensions.sort.params);
 };
 
 
@@ -263,17 +263,17 @@ Sort.prototype._sortRow = function(a, b, column, dir){
 Sort.prototype.sorters = {
 
 	//sort numbers
-	number:function(a, b, aData, bData, column, dir, params){
+	number:function(a, b, aRow, bRow, column, dir, params){
 		return parseFloat(String(a).replace(",","")) - parseFloat(String(b).replace(",",""));
 	},
 
 	//sort strings
-	string:function(a, b, aData, bData, column, dir, params){
+	string:function(a, b, aRow, bRow, column, dir, params){
 		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
 	},
 
 	//sort date
-	date:function(a, b, aData, bData, column, dir, params){
+	date:function(a, b, aRow, bRow, column, dir, params){
 		var self = this;
 		var format = params.format || "DD/MM/YYYY";
 
@@ -288,7 +288,7 @@ Sort.prototype.sorters = {
 	},
 
 	//sort booleans
-	boolean:function(a, b, aData, bData, column, dir, params){
+	boolean:function(a, b, aRow, bRow, column, dir, params){
 		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
 		var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
 
@@ -296,7 +296,7 @@ Sort.prototype.sorters = {
 	},
 
 	//sort alpha numeric strings
-	alphanum:function(as, bs, aData, bData, column, dir, params){
+	alphanum:function(as, bs, aRow, bRow, column, dir, params){
 		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
 
 		if(isFinite(as) && isFinite(bs)) return as - bs;
@@ -323,7 +323,7 @@ Sort.prototype.sorters = {
 	},
 
 	//sort hh:mm formatted times
-	time:function(a, b, aData, bData, column, dir, params){
+	time:function(a, b, aRow, bRow, column, dir, params){
 		var self = this;
 		var format = params.format || "hh:mm";
 

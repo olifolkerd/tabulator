@@ -14018,7 +14018,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       b = typeof b !== "undefined" ? b : "";
 
-      return column.extensions.sort.sorter.call(self, a, b, el1, el2, column.getComponent(), dir, column.extensions.sort.params);
+      return column.extensions.sort.sorter.call(self, a, b, el1.getComponent(), el2.getComponent(), column.getComponent(), dir, column.extensions.sort.params);
     };
 
     //default data sorters
@@ -14029,7 +14029,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort numbers
 
 
-      number: function number(a, b, aData, bData, column, dir, params) {
+      number: function number(a, b, aRow, bRow, column, dir, params) {
 
         return parseFloat(String(a).replace(",", "")) - parseFloat(String(b).replace(",", ""));
       },
@@ -14037,7 +14037,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort strings
 
 
-      string: function string(a, b, aData, bData, column, dir, params) {
+      string: function string(a, b, aRow, bRow, column, dir, params) {
 
         return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
       },
@@ -14045,7 +14045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort date
 
 
-      date: function date(a, b, aData, bData, column, dir, params) {
+      date: function date(a, b, aRow, bRow, column, dir, params) {
 
         var self = this;
 
@@ -14067,7 +14067,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort booleans
 
 
-      boolean: function boolean(a, b, aData, bData, column, dir, params) {
+      boolean: function boolean(a, b, aRow, bRow, column, dir, params) {
 
         var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
 
@@ -14079,7 +14079,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort alpha numeric strings
 
 
-      alphanum: function alphanum(as, bs, aData, bData, column, dir, params) {
+      alphanum: function alphanum(as, bs, aRow, bRow, column, dir, params) {
 
         var a,
             b,
@@ -14131,7 +14131,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort hh:mm formatted times
 
 
-      time: function time(a, b, aData, bData, column, dir, params) {
+      time: function time(a, b, aRow, bRow, column, dir, params) {
 
         var self = this;
 
