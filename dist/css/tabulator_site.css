@@ -328,6 +328,10 @@
   display: inline-flex;
   -ms-flex-align: center;
       align-items: center;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -o-user-select: none;
 }
 
 .tabulator .tabulator-row .tabulator-cell.tabulator-row-handle .tabulator-row-handle-box {

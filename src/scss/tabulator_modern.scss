@@ -471,6 +471,11 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 				display: inline-flex;
 				align-items:center;
 
+				-moz-user-select: none;
+				-khtml-user-select: none;
+				-webkit-user-select: none;
+				-o-user-select: none;
+
 				//handle holder
 				.tabulator-row-handle-box{
 					width:80%;

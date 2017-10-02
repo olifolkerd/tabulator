@@ -440,6 +440,11 @@ $footerSeperatorColor:#3FB449; //footer bottom seperator color
 				display: inline-flex;
 				align-items:center;
 
+				-moz-user-select: none;
+				-khtml-user-select: none;
+				-webkit-user-select: none;
+				-o-user-select: none;
+
 				//handle holder
 				.tabulator-row-handle-box{
 					width:80%;
