@@ -10374,6 +10374,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.groupManager.table.rowManager.getRenderMode() == "classic") {
 
+        this.element.removeClass("tabulator-group-visible");
+
         this.rows.forEach(function (row) {
 
           row.getElement().detach();
@@ -10393,6 +10395,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.visible = true;
 
       if (this.groupManager.table.rowManager.getRenderMode() == "classic") {
+
+        this.element.addClass("tabulator-group-visible");
 
         self.rows.forEach(function (row) {
 

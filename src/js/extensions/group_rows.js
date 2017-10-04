@@ -286,6 +286,9 @@ Group.prototype.hide = function(){
 	this.visible = false;
 
 	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
+
+		this.element.removeClass("tabulator-group-visible");
+
 		this.rows.forEach(function(row){
 			row.getElement().detach();
 		});
@@ -302,6 +305,9 @@ Group.prototype.show = function(){
 	self.visible = true;
 
 	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
+
+		this.element.addClass("tabulator-group-visible");
+
 		self.rows.forEach(function(row){
 			self.getElement().after(row.getElement());
 			row.initialize();
