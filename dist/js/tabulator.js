@@ -3503,17 +3503,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowComponent.prototype.select = function () {
 
-      this.row.table.extensions.selectthis.Row.selectRows(this.row);
+      this.row.selectRows(this.row);
     };
 
     RowComponent.prototype.deselect = function () {
 
-      this.row.table.extensions.selectthis.Row.deselectRows(this.row);
+      this.row.deselectRows(this.row);
     };
 
     RowComponent.prototype.toggleSelect = function () {
 
-      this.row.table.extensions.selectthis.Row.toggleRow(this.row);
+      this.row.toggleRow(this.row);
     };
 
     RowComponent.prototype._getSelf = function () {
