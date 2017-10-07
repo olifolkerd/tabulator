@@ -4704,6 +4704,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.rowManager.adjustTableSize();
     };
 
+    FooterManager.prototype.remove = function (element) {
+
+      element.remove();
+
+      this.deactivate();
+    };
+
+    FooterManager.prototype.deactivate = function (force) {
+
+      if (this.element.is(":empty") || force) {
+
+        this.element.remove();
+
+        this.active = false;
+      }
+
+      // this.table.rowManager.adjustTableSize();
+    };
+
     FooterManager.prototype.activate = function (parent) {
 
       if (!this.active) {
@@ -4711,6 +4730,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.active = true;
 
         this.table.element.append(this.getElement());
+
+        this.table.element.show();
       }
 
       if (parent) {
@@ -7159,6 +7180,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             this.initializeBottomRow();
           }
         }
+      }
+    };
+
+    ColumnCalcs.prototype.removeCalcs = function () {
+
+      var changed = false;
+
+      if (this.topInitialized) {
+
+        this.topInitialized = false;
+
+        this.topElement.remove();
+
+        changed = true;
+      }
+
+      if (this.botInitialized) {
+
+        this.botInitialized = false;
+
+        this.table.footerManager.remove(this.botElement);
+
+        changed = true;
+      }
+
+      if (changed) {
+
+        this.table.columnManager.redraw(true);
+
+        this.table.rowManager.redraw(true);
       }
     };
 
@@ -10118,6 +10169,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.calcs = {};
 
+      this.initialized = false;
+
       this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
 
       this.addBindings();
@@ -10618,6 +10671,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.groupIDLookups = [];
 
+      if (Array.isArray(groupBy) || groupBy) {
+
+        if (this.table.extExists("columnCalcs")) {
+
+          this.table.extensions.columnCalcs.removeCalcs();
+        }
+      } else {
+
+        if (this.table.extExists("columnCalcs")) {
+
+          var cols = this.table.columnManager.getRealColumns();
+
+          cols.forEach(function (col) {
+
+            if (col.definition.topCalc) {
+
+              self.table.extensions.columnCalcs.initializeTopRow();
+            }
+
+            if (col.definition.bottomCalc) {
+
+              self.table.extensions.columnCalcs.initializeBottomRow();
+            }
+          });
+        }
+      }
+
       if (!Array.isArray(groupBy)) {
 
         groupBy = [groupBy];
@@ -10673,6 +10753,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
       }
+
+      this.initialized = true;
     };
 
     //return appropriate rows with group headers

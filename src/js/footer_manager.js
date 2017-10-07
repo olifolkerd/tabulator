@@ -32,10 +32,25 @@ FooterManager.prototype.prepend = function(element, parent){
 	this.table.rowManager.adjustTableSize();
 };
 
+FooterManager.prototype.remove = function(element){
+	element.remove();
+	this.deactivate();
+};
+
+FooterManager.prototype.deactivate = function(force){
+	if(this.element.is(":empty") || force){
+		this.element.remove();
+		this.active = false;
+	}
+
+	// this.table.rowManager.adjustTableSize();
+}
+
 FooterManager.prototype.activate = function(parent){
 	if(!this.active){
 		this.active = true;
 		this.table.element.append(this.getElement());
+		this.table.element.show();
 	}
 
 	if(parent){

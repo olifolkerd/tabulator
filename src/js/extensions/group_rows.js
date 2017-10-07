@@ -82,6 +82,7 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 	this.outerHeight = 0;
 	this.initialized = false;
 	this.calcs = {};
+	this.initialized = false;
 
 	this.visible = oldGroup ? oldGroup.visible : (typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0]);
 
@@ -463,6 +464,30 @@ GroupRows.prototype.initialize = function(){
 
 	this.groupIDLookups = [];
 
+
+	if(Array.isArray(groupBy) || groupBy){
+		if(this.table.extExists("columnCalcs")){
+			this.table.extensions.columnCalcs.removeCalcs();
+		}
+	}else{
+		if(this.table.extExists("columnCalcs")){
+
+			var cols = this.table.columnManager.getRealColumns();
+
+			cols.forEach(function(col){
+				if(col.definition.topCalc){
+					self.table.extensions.columnCalcs.initializeTopRow();
+				}
+
+				if(col.definition.bottomCalc){
+					self.table.extensions.columnCalcs.initializeBottomRow();
+				}
+			})
+		}
+	}
+
+
+
 	if(!Array.isArray(groupBy)){
 		groupBy = [groupBy];
 	}
@@ -507,6 +532,8 @@ GroupRows.prototype.initialize = function(){
 	if(groupHeader){
 		self.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 	}
+
+	this.initialized = true;
 
 };
 

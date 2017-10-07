@@ -85,6 +85,27 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 
 };
 
+ColumnCalcs.prototype.removeCalcs = function(){
+	var changed = false;
+
+	if(this.topInitialized){
+		this.topInitialized = false;
+		this.topElement.remove();
+		changed = true;
+	}
+
+	if(this.botInitialized){
+		this.botInitialized = false;
+		this.table.footerManager.remove(this.botElement);
+		changed = true;
+	}
+
+	if(changed){
+		this.table.columnManager.redraw(true);
+		this.table.rowManager.redraw(true);
+	}
+};
+
 ColumnCalcs.prototype.initializeTopRow = function(){
 	if(!this.topInitialized){
 		this.table.columnManager.element.append(this.topElement);
