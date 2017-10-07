@@ -6349,9 +6349,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var flexWidth = 0; //total width available to flexible columns
 
 
-        var flexMinWidth = 0; //total minwidth of flexible columns
-
-
         var flexColWidth = 0; //desired width of flexible columns
 
 
@@ -6444,8 +6441,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               fixedWidth += colWidth > minWidth ? colWidth : minWidth;
             } else {
-
-              flexMinWidth += minWidth;
 
               flexColumns.push(column);
             }

@@ -57,7 +57,6 @@ Layout.prototype.modes = {
 		var totalWidth = self.table.element.innerWidth(); //table element width
 		var fixedWidth = 0; //total width of columns with a defined width
 		var flexWidth = 0; //total width available to flexible columns
-		var flexMinWidth = 0; //total minwidth of flexible columns
 		var flexColWidth = 0; //desired width of flexible columns
 		var flexColumns = []; //array of flexible width columns
 		var gapFill=0; //number of pixels to be added to final column to close and half pixel gaps
@@ -127,9 +126,6 @@ Layout.prototype.modes = {
 					fixedWidth += colWidth > minWidth ? colWidth : minWidth;
 
 				}else{
-
-					flexMinWidth += minWidth;
-
 					flexColumns.push(column);
 				}
 			}
