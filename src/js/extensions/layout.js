@@ -67,6 +67,7 @@ Layout.prototype.modes = {
 			var oversizeCols = [],
 			oversizeSpace = 0,
 			remainingSpace = 0,
+			gap = 0,
 			undersizeCols = [];
 
 			columns.forEach(function(column, i){
@@ -83,14 +84,21 @@ Layout.prototype.modes = {
 					column.setWidth(column.minWidth);
 				});
 
-				remainingSpace = freeSpace - oversizeSpace
+				remainingSpace = freeSpace - oversizeSpace;
 
-				scaleColumns(undersizeCols, remainingSpace, Math.floor(remainingSpace/undersizeCols.length));
+				gap = remainingSpace - (Math.floor(remainingSpace/undersizeCols.length) * undersizeCols.length);
+
+				gap += scaleColumns(undersizeCols, remainingSpace, Math.floor(remainingSpace/undersizeCols.length));
 			}else{
+
+				gap = freeSpace - (Math.floor(freeSpace/undersizeCols.length) * undersizeCols.length);
+
 				undersizeCols.forEach(function(column){
 					column.setWidth(colWidth);
 				});
 			}
+
+			return gap;
 
 		}
 
@@ -137,12 +145,8 @@ Layout.prototype.modes = {
 		//calculate correct column size
 		flexColWidth = Math.floor(flexWidth / flexColumns.length)
 
-		//calculate any sub pixel space that needs to be filed by the last column
-		gapFill = totalWidth - fixedWidth - (flexColWidth * flexColumns.length);
-		gapFill = gapFill > 0 ? gapFill : 0;
-
-
-		scaleColumns(flexColumns, flexWidth, flexColWidth);
+		//generate column widths
+		var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth);
 
 		//increase width of last column to account for rounding errors
 		if(flexColumns.length){

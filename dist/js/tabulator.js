@@ -6366,6 +6366,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           var oversizeCols = [],
               oversizeSpace = 0,
               remainingSpace = 0,
+              gap = 0,
               undersizeCols = [];
 
           columns.forEach(function (column, i) {
@@ -6390,14 +6391,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             remainingSpace = freeSpace - oversizeSpace;
 
-            scaleColumns(undersizeCols, remainingSpace, Math.floor(remainingSpace / undersizeCols.length));
+            gap = remainingSpace - Math.floor(remainingSpace / undersizeCols.length) * undersizeCols.length;
+
+            gap += scaleColumns(undersizeCols, remainingSpace, Math.floor(remainingSpace / undersizeCols.length));
           } else {
+
+            gap = freeSpace - Math.floor(freeSpace / undersizeCols.length) * undersizeCols.length;
 
             undersizeCols.forEach(function (column) {
 
               column.setWidth(colWidth);
             });
           }
+
+          return gap;
         }
 
         if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
@@ -6457,14 +6464,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         flexColWidth = Math.floor(flexWidth / flexColumns.length);
 
-        //calculate any sub pixel space that needs to be filed by the last column
+        //generate column widths
 
 
-        gapFill = totalWidth - fixedWidth - flexColWidth * flexColumns.length;
-
-        gapFill = gapFill > 0 ? gapFill : 0;
-
-        scaleColumns(flexColumns, flexWidth, flexColWidth);
+        var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth);
 
         //increase width of last column to account for rounding errors
 
