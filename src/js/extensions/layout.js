@@ -101,7 +101,6 @@ Layout.prototype.modes = {
 			}
 
 			return gap;
-
 		}
 
 		if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
