@@ -67,6 +67,7 @@ Layout.prototype.modes = {
 			var oversizeCols = [],
 			oversizeSpace = 0,
 			remainingSpace = 0,
+			nextColWidth = 0,
 			gap = 0,
 			undersizeCols = [];
 
@@ -86,12 +87,13 @@ Layout.prototype.modes = {
 
 				remainingSpace = freeSpace - oversizeSpace;
 
-				gap = remainingSpace - (Math.floor(remainingSpace/undersizeCols.length) * undersizeCols.length);
+				nextColWidth = undersizeCols.length ? Math.floor(remainingSpace/undersizeCols.length) : remainingSpace;
 
-				gap += scaleColumns(undersizeCols, remainingSpace, Math.floor(remainingSpace/undersizeCols.length));
+				gap = remainingSpace - (nextColWidth * undersizeCols.length);
+
+				gap += scaleColumns(undersizeCols, remainingSpace, nextColWidth);
 			}else{
-
-				gap = freeSpace - (Math.floor(freeSpace/undersizeCols.length) * undersizeCols.length);
+				gap = undersizeCols.length ? freeSpace - (Math.floor(freeSpace/undersizeCols.length) * undersizeCols.length) : freeSpace;
 
 				undersizeCols.forEach(function(column){
 					column.setWidth(colWidth);
