@@ -340,7 +340,7 @@ Page.prototype._getRemotePageAuto = function(){
 			delete item.column;
 		});
 
-		pageParams[this.paginationDataSentNames.sort] = sorters;
+		pageParams[this.paginationDataSentNames.sorters] = sorters;
 	}
 
 	//set filter data if defined

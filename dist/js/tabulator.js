@@ -12850,7 +12850,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           delete item.column;
         });
 
-        pageParams[this.paginationDataSentNames.sort] = sorters;
+        pageParams[this.paginationDataSentNames.sorters] = sorters;
       }
 
       //set filter data if defined
