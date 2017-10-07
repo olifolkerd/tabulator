@@ -6349,6 +6349,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var flexWidth = 0; //total width available to flexible columns
 
 
+        var flexMinWidth = 0; //total minwidth of flexible columns
+
+
         var flexColWidth = 0; //desired width of flexible columns
 
 
@@ -6357,6 +6360,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
 
+
+        //ensure columns resize to take up the correct amount of space
+
+
+        function scaleColumns(columns, freeSpace, colWidth) {
+
+          var oversizeCols = [],
+              oversizeSpace = 0,
+              remainingSpace = 0,
+              undersizeCols = [];
+
+          columns.forEach(function (column, i) {
+
+            if (column.minWidth >= colWidth) {
+
+              oversizeCols.push(column);
+            } else {
+
+              undersizeCols.push(column);
+            }
+          });
+
+          if (oversizeCols.length) {
+
+            oversizeCols.forEach(function (column) {
+
+              oversizeSpace += column.minWidth;
+
+              column.setWidth(column.minWidth);
+            });
+
+            remainingSpace = freeSpace - oversizeSpace;
+
+            scaleColumns(undersizeCols, remainingSpace, Math.floor(remainingSpace / undersizeCols.length));
+          } else {
+
+            undersizeCols.forEach(function (column) {
+
+              column.setWidth(colWidth);
+            });
+          }
+        }
 
         if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
 
@@ -6379,9 +6424,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             width = column.definition.width;
 
-            if (width) {
+            minWidth = parseInt(column.minWidth);
 
-              minWidth = parseInt(column.minWidth);
+            if (width) {
 
               if (typeof width == "string") {
 
@@ -6399,6 +6444,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               fixedWidth += colWidth > minWidth ? colWidth : minWidth;
             } else {
+
+              flexMinWidth += minWidth;
 
               flexColumns.push(column);
             }
@@ -6422,17 +6469,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         gapFill = gapFill > 0 ? gapFill : 0;
 
-        flexColumns.forEach(function (column, i) {
+        scaleColumns(flexColumns, flexWidth, flexColWidth);
 
-          var width = flexColWidth >= column.minWidth ? flexColWidth : column.minWidth;
+        //increase width of last column to account for rounding errors
 
-          if (i == flexColumns.length - 1 && gapFill) {
 
-            width += gapFill;
-          }
+        if (flexColumns.length) {
 
-          column.setWidth(width);
-        });
+          flexColumns[flexColumns.length - 1].setWidth(flexColumns[flexColumns.length - 1].getWidth() + gapFill);
+        }
       }
 
     };
