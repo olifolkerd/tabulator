@@ -51,14 +51,18 @@ ResponsiveLayout.prototype.update = function(){
 			}
 
 		}else{
+
 			//table has spare space
 			let column = self.columns[self.index -1];
 
 			if(column){
 				if(diff > 0){
-
 					if(diff >= column.getWidth()){
 						column.show();
+
+						//set column width to prevent calculation loops on uninitialized columns
+						column.setWidth(column.getWidth());
+
 						self.index --;
 					}else{
 						working = false;

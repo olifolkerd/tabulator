@@ -13416,6 +13416,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
                 _column.show();
 
+                //set column width to prevent calculation loops on uninitialized columns
+
+
+                _column.setWidth(_column.getWidth());
+
                 self.index--;
               } else {
 
