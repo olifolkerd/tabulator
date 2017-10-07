@@ -101,8 +101,7 @@ ColumnCalcs.prototype.removeCalcs = function(){
 	}
 
 	if(changed){
-		this.table.columnManager.redraw(true);
-		this.table.rowManager.redraw(true);
+		this.table.rowManager.adjustTableSize();
 	}
 };
 

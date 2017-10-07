@@ -7207,9 +7207,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (changed) {
 
-        this.table.columnManager.redraw(true);
-
-        this.table.rowManager.redraw(true);
+        this.table.rowManager.adjustTableSize();
       }
     };
 
