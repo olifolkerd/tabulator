@@ -192,6 +192,10 @@ Sort.prototype.sort = function(){
 
 			self.setColumnHeader(item.column, item.dir);
 		})
+	}else{
+		self.sortList.forEach(function(item, i){
+			self.setColumnHeader(item.column, item.dir);
+		});
 	}
 
 	if(self.table.options.dataSorted){

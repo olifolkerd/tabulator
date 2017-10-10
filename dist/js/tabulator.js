@@ -14046,6 +14046,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.setColumnHeader(item.column, item.dir);
         });
+      } else {
+
+        self.sortList.forEach(function (item, i) {
+
+          self.setColumnHeader(item.column, item.dir);
+        });
       }
 
       if (self.table.options.dataSorted) {
