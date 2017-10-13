@@ -8143,16 +8143,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.currentCell = cell;
 
-        if (mouseClick) {
-
-          mouseClick = false;
-
-          if (cell.column.cellEvents.cellClick) {
-
-            cell.column.cellEvents.cellClick(e, cell.getComponent());
-          }
-        }
-
         function onRendered(callback) {
 
           rendered = callback;
@@ -8168,6 +8158,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
 
           if (allowEdit) {
+
+            if (mouseClick) {
+
+              mouseClick = false;
+
+              if (cell.column.cellEvents.cellClick) {
+
+                cell.column.cellEvents.cellClick(e, cell.getComponent());
+              }
+            }
 
             self.table.options.cellEditing(cell.getComponent());
 
