@@ -2666,7 +2666,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     RowManager.prototype.filterRefresh = function () {
 
       var table = this.table,
-          options = table.options;
+          options = table.options,
+          left = this.scrollLeft;
 
       if (options.ajaxFiltering) {
 
@@ -2685,6 +2686,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.refreshActiveData();
       }
+
+      this.element.scrollLeft(left);
     };
 
     //choose the path to refresh data after a sorter update

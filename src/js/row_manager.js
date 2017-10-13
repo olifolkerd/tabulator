@@ -544,7 +544,8 @@ RowManager.prototype.getHtml = function(active){
 //choose the path to refresh data after a filter update
 RowManager.prototype.filterRefresh = function(){
 	var table = this.table,
-	options = table.options;
+	options = table.options,
+	left = this.scrollLeft;
 
 	if(options.ajaxFiltering){
 		if(options.pagination == "remote" && table.extExists("page")){
@@ -557,6 +558,8 @@ RowManager.prototype.filterRefresh = function(){
 	}else{
 		this.refreshActiveData();
 	}
+
+	this.element.scrollLeft(left);
 };
 
 //choose the path to refresh data after a sorter update
