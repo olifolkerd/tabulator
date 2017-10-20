@@ -14,6 +14,7 @@ var Page = function(table){
 	this.page = 1;
 	this.max = 1;
 	this.paginator = false;
+	this.dataReceiver = false;
 };
 
 //setup pageination
@@ -31,6 +32,10 @@ Page.prototype.initialize = function(){
 
 	if(self.table.options.paginator){
 		self.paginator = self.table.options.paginator;
+	}
+
+	if(self.table.options.dataReceiver){
+		self.dataReceiver = self.table.options.dataReceiver;
 	}
 
 
@@ -361,6 +366,9 @@ Page.prototype._getRemotePageAuto = function(){
 
 
 Page.prototype._parseRemoteData = function(data){
+	if(this.dataReceiver){
+		data = this.dataReceiver(data);
+	}
 	if(data[this.paginationDataReceivedNames.last_page]){
 		if(data[this.paginationDataReceivedNames.data]){
 			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
