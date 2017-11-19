@@ -77,16 +77,29 @@
   background: #fff;
 }
 
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow,
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow:before {
+	display: inline-block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+}
+
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
-  display: inline-block;
-  position: absolute;
-  top: 9px;
-  right: 8px;
-  width: 0;
-  height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-bottom: 6px solid #bbb;
+	top: 9px;
+	right: 8px;
+	border-bottom: 6px solid #ddd;
+	border-top: none;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow:before {
+	content: '';
+	top: 8px;
+	right: -6px;
+	border-top: 6px solid #ddd;
+	border-bottom: none;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
@@ -137,18 +150,27 @@
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="none"] .tabulator-col-content .tabulator-arrow {
-  border-top: none;
-  border-bottom: 6px solid #bbb;
+	border-bottom: 6px solid #ddd;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="none"] .tabulator-col-content .tabulator-arrow:before {
+	border-top: 6px solid #ddd;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-arrow {
-  border-top: none;
-  border-bottom: 6px solid #666;
+	border-bottom: 6px solid #bbb;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="asc"] .tabulator-col-content .tabulator-arrow:before {
+	border-top: 6px solid #eee;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow:before {
+	border-top: 6px solid #bbb;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow {
-  border-top: 6px solid #666;
-  border-bottom: none;
+	border-bottom: 6px solid #eee;
 }
 
 .tabulator .tabulator-header .tabulator-frozen {
