@@ -174,12 +174,6 @@
 }
 
 .tabulator .tabulator-header .tabulator-frozen {
-	display: inline-block;
-	position: absolute;
-	z-index: 10;
-}
-
-.tabulator .tabulator-header .tabulator-frozen {
   display: inline-block;
   position: absolute;
   z-index: 10;
