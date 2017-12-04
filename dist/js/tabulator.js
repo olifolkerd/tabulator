@@ -8399,9 +8399,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         onRendered(function () {
 
-          input.focus();
-
           input.css("height", "100%");
+
+          setTimeout(function () {
+
+            input.focus();
+          }, 10);
         });
 
         //submit new value on blur

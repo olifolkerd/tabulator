@@ -280,8 +280,10 @@ Edit.prototype.editors = {
 		.val(cell.getValue());
 
 		onRendered(function(){
-			input.focus();
 			input.css("height","100%");
+			setTimeout(function(){
+				input.focus();
+			}, 10);
 		});
 
 		//submit new value on blur
