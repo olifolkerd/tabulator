@@ -4951,7 +4951,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //column callbacks
 
-        columnMoved: function columnMoved() {},
+        columnMoved: false,
 
         columnResized: function columnResized() {},
 
@@ -9326,7 +9326,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         element.val("");
       });
 
-      self.changed = true;
+      this.changed = true;
     };
 
     //filter row array

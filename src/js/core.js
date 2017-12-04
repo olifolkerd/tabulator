@@ -127,7 +127,7 @@
 	 			cellEditCancelled:function(){},
 
 	 			//column callbacks
-	 			columnMoved:function(){},
+	 			columnMoved:false,
 	 			columnResized:function(){},
 	 			columnTitleChanged:function(){},
 	 			columnVisibilityChanged:function(){},

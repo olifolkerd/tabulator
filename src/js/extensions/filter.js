@@ -345,7 +345,7 @@ Filter.prototype.clearHeaderFilter = function(){
 		element.val("");
 	});
 
-	self.changed = true;
+	this.changed = true;
 };
 
 //filter row array
