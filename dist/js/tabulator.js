@@ -2581,7 +2581,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (column.getVisibility()) {
 
-          header += '<th>' + def.title + '</th>';
+          header += '<th>' + (def.title || "") + '</th>';
         }
       });
 

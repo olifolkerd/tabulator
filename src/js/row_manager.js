@@ -458,7 +458,7 @@ RowManager.prototype.getHtml = function(active){
 			var def = column.getDefinition();
 
 			if(column.getVisibility()){
-				header += `<th>${def.title}</th>`;
+				header += `<th>${(def.title || "")}</th>`;
 			}
 		})
 
