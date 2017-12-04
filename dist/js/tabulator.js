@@ -1739,7 +1739,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.visible = true;
 
-        this.element.show();
+        this.element.css({
+
+          "display": ""
+
+        });
 
         this.table.columnManager._verticalAlignHeaders();
 
@@ -1770,7 +1774,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.visible = false;
 
-        this.element.hide();
+        this.element.css({
+
+          "display": "none"
+
+        });
 
         this.table.columnManager._verticalAlignHeaders();
 

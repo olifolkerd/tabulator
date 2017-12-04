@@ -694,7 +694,9 @@ Column.prototype.show = function(){
 	if(!this.visible){
 		this.visible = true;
 
-		this.element.show();
+		this.element.css({
+			"display":"",
+		});
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
@@ -718,7 +720,9 @@ Column.prototype.hide = function(){
 	if(this.visible){
 		this.visible = false;
 
-		this.element.hide();
+		this.element.css({
+			"display":"none",
+		});
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
