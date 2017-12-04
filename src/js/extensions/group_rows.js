@@ -238,7 +238,7 @@ Group.prototype.getHeadersAndRows = function(){
 			}
 		}
 	}else{
-		if(this.groupManager.table.options.groupClosedShowCalcs){
+		if(!this.groupList.length && this.groupManager.table.options.groupClosedShowCalcs){
 			if(this.groupManager.table.extExists("columnCalcs")){
 				if(this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
 					this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows)

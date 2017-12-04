@@ -10429,7 +10429,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       } else {
 
-        if (this.groupManager.table.options.groupClosedShowCalcs) {
+        if (!this.groupList.length && this.groupManager.table.options.groupClosedShowCalcs) {
 
           if (this.groupManager.table.extExists("columnCalcs")) {
 
