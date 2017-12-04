@@ -2690,7 +2690,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.refreshActiveData();
       }
 
-      this.element.scrollLeft(left);
+      this.scrollHorizontal(left);
     };
 
     //choose the path to refresh data after a sorter update
@@ -2718,6 +2718,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.refreshActiveData();
       }
+
+      this.scrollHorizontal(left);
+    };
+
+    RowManager.prototype.scrollHorizontal = function (left) {
+
+      this.scrollLeft = left;
 
       this.element.scrollLeft(left);
     };

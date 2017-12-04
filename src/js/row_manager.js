@@ -559,7 +559,7 @@ RowManager.prototype.filterRefresh = function(){
 		this.refreshActiveData();
 	}
 
-	this.element.scrollLeft(left);
+	this.scrollHorizontal(left);
 };
 
 //choose the path to refresh data after a sorter update
@@ -580,6 +580,11 @@ RowManager.prototype.sorterRefresh = function(){
 		this.refreshActiveData();
 	}
 
+	this.scrollHorizontal(left);
+};
+
+RowManager.prototype.scrollHorizontal = function(left){
+	this.scrollLeft = left;
 	this.element.scrollLeft(left);
 };
 
