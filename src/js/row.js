@@ -47,15 +47,15 @@ RowComponent.prototype.normalizeHeight = function(){
 };
 
 RowComponent.prototype.select = function(){
-	this.row.selectRows(this.row);
+	this.row.table.extensions.selectRow.selectRows(this.row);
 };
 
 RowComponent.prototype.deselect = function(){
-	this.row.deselectRows(this.row);
+	this.row.table.extensions.selectRow.deselectRows(this.row);
 };
 
 RowComponent.prototype.toggleSelect = function(){
-	this.row.toggleRow(this.row);
+	this.row.table.extensions.selectRow.toggleRow(this.row);
 };
 
 RowComponent.prototype._getSelf = function(){
