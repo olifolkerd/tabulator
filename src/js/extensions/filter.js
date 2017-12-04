@@ -212,14 +212,15 @@ Filter.prototype.setFilter = function(field, type, value){
 
 //add filter to array
 Filter.prototype.addFilter = function(field, type, value){
-	var self = this,
-	column;
+	var self = this;
 
 	if(!Array.isArray(field)){
 		field = [{field:field, type:type, value:value}];
 	}
 
 	field.forEach(function(filter){
+
+		var column;
 
 		var filterFunc = false;
 
@@ -228,6 +229,7 @@ Filter.prototype.addFilter = function(field, type, value){
 				return filter.field(data, filter.type || {})// pass params to custom filter function
 			}
 		}else{
+
 			if(self.filters[filter.type]){
 
 				column = self.table.columnManager.getColumnByField(filter.field);
@@ -396,6 +398,7 @@ Filter.prototype.filterRow = function(row){
 			match = false;
 		}
 	});
+
 
 	for(var field in self.headerFilters){
 		if(!self.headerFilters[field].func(data)){

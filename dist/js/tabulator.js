@@ -9165,8 +9165,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Filter.prototype.addFilter = function (field, type, value) {
 
-      var self = this,
-          column;
+      var self = this;
 
       if (!Array.isArray(field)) {
 
@@ -9174,6 +9173,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
 
       field.forEach(function (filter) {
+
+        var column;
 
         var filterFunc = false;
 
