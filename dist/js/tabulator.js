@@ -11099,6 +11099,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table; //hold Tabulator object
 
+
+      this.hasIndex = false;
     };
 
     HtmlTableImport.prototype.parseTable = function () {
@@ -11108,9 +11110,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           options = self.table.options,
           columns = options.columns,
           headers = $("th", element),
-          hasIndex = false,
           rows = $("tbody tr", element),
           data = [];
+
+      self.hasIndex = false;
 
       self.table.options.htmlImporting();
 
@@ -11137,7 +11140,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //create index if the dont exist in table
 
 
-        if (!hasIndex) {
+        if (!self.hasIndex) {
 
           item[options.index] = rowIndex;
         }
@@ -11318,7 +11321,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (col.field == self.table.options.index) {
 
-          hasIndex = true;
+          self.hasIndex = true;
         }
 
         if (!exists) {
