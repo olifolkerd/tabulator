@@ -8884,7 +8884,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       function success(value) {
 
-        var filterType = tagType == "input" && attrType == "text" ? "partial" : "match",
+        var filterType = tagType == "input" && attrType == "text" || tagType == "textarea" ? "partial" : "match",
             type = "",
             filterFunc;
 
@@ -9029,6 +9029,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             getElement: function getElement() {
 
               return filterElement;
+            },
+
+            getRow: function getRow() {
+
+              return {
+
+                normalizeHeight: function normalizeHeight() {}
+
+              };
             }
 
           };
@@ -9111,7 +9120,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           tagType = editorElement.prop("tagName").toLowerCase();
 
-          if (tagType == "input" || tagType == "select") {
+          if (tagType == "input" || tagType == "select" || tagType == "textarea") {
 
             editorElement.on("mousedown", function (e) {
 

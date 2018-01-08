@@ -18,7 +18,7 @@ Filter.prototype.initializeColumn = function(column){
 
 	//handle successfull value change
 	function success(value){
-		var filterType = tagType == "input" && attrType == "text" ? "partial" : "match",
+		var filterType = (tagType == "input" && attrType == "text") || tagType == "textarea" ? "partial" : "match",
 		type = "",
 		filterFunc;
 
@@ -45,7 +45,6 @@ Filter.prototype.initializeColumn = function(column){
 			}
 
 			if(!filterFunc){
-
 				switch(filterType){
 					case "partial":
 					filterFunc = function(data){
@@ -118,6 +117,13 @@ Filter.prototype.initializeColumn = function(column){
 				},
 				getElement:function(){
 					return filterElement;
+				},
+				getRow:function(){
+					return {
+						normalizeHeight:function(){
+
+						}
+					};
 				}
 			};
 
@@ -171,7 +177,7 @@ Filter.prototype.initializeColumn = function(column){
 
 			//prevent input and select elements from propegating click to column sorters etc
 			tagType = editorElement.prop("tagName").toLowerCase()
-			if(tagType == "input" || tagType == "select"){
+			if(tagType == "input" || tagType == "select" || tagType == "textarea"){
 				editorElement.on("mousedown",function(e){
 					e.stopPropagation();
 				});
