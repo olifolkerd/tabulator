@@ -5058,6 +5058,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var self = this,
             element = this.element;
 
+        self._clearObjectPointers();
+
         self._mapDepricatedFunctionality();
 
         self.bindExtensions();
@@ -5093,6 +5095,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           // },20)
         }
+      },
+
+      //clear pointers to objects in default config object
+
+
+      _clearObjectPointers: function _clearObjectPointers() {
+
+        this.options.columns = this.options.columns.splice(0);
+
+        this.options.data = this.options.data.splice(0);
+
+        this.options.keybindings = this.options.keybindings.splice(0);
       },
 
       //build tabulator element
