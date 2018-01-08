@@ -5261,17 +5261,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (ua.indexOf("Trident") > -1) {
 
-          this.brower = "ie";
+          this.browser = "ie";
 
           this.browserSlow = true;
         } else if (ua.indexOf("Edge") > -1) {
 
-          this.brower = "edge";
+          this.browser = "edge";
 
           this.browserSlow = true;
         } else {
 
-          this.brower = "other";
+          this.browser = "other";
 
           this.browserSlow = false;
         }
