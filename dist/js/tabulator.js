@@ -5105,8 +5105,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.options.columns = this.options.columns.splice(0);
 
         this.options.data = this.options.data.splice(0);
-
-        this.options.keybindings = this.options.keybindings.splice(0);
       },
 
       //build tabulator element
