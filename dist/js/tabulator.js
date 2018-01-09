@@ -14246,6 +14246,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return a - b;
       },
 
+      //sort datetime
+
+
+      datetime: function datetime(a, b, aRow, bRow, column, dir, params) {
+
+        var self = this;
+
+        var format = params.format || "DD/MM/YYYY hh:mm";
+
+        if (typeof moment != "undefined") {
+
+          a = moment(a, format);
+
+          b = moment(b, format);
+        } else {
+
+          console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
+        }
+
+        return a - b;
+      },
+
       //sort booleans
 
 

@@ -291,6 +291,21 @@ Sort.prototype.sorters = {
 		return a - b;
 	},
 
+	//sort datetime
+	datetime:function(a, b, aRow, bRow, column, dir, params){
+		var self = this;
+		var format = params.format || "DD/MM/YYYY hh:mm";
+
+		if(typeof moment != "undefined"){
+			a = moment(a, format);
+			b = moment(b, format);
+		}else{
+			console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
+		}
+
+		return a - b;
+	},
+
 	//sort booleans
 	boolean:function(a, b, aRow, bRow, column, dir, params){
 		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
