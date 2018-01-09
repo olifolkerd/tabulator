@@ -36,6 +36,8 @@ History.prototype.undo = function(){
 
 		this.index--;
 
+		this.table.options.historyUndo(action.type, action.component, action.data);
+
 		return true;
 	}else{
 		console.warn("History Undo Error - No more history to undo");
@@ -52,6 +54,8 @@ History.prototype.redo = function(){
 		let action = this.history[this.index];
 
 		this.redoers[action.type].call(this, action);
+
+		this.table.options.historyRedo(action.type, action.component, action.data);
 
 		return true;
 	}else{

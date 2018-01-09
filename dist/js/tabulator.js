@@ -5035,7 +5035,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //validation has failed
 
-        validationFailed: function validationFailed() {}
+        validationFailed: function validationFailed() {},
+
+        //history callbacks
+
+        historyUndo: function historyUndo() {},
+
+        historyRedo: function historyRedo() {}
 
       },
 
@@ -11016,6 +11022,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.index--;
 
+        this.table.options.historyUndo(action.type, action.component, action.data);
+
         return true;
       } else {
 
@@ -11034,6 +11042,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var action = this.history[this.index];
 
         this.redoers[action.type].call(this, action);
+
+        this.table.options.historyRedo(action.type, action.component, action.data);
 
         return true;
       } else {

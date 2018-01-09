@@ -176,6 +176,10 @@
 	 			//validation has failed
 	 			validationFailed:function(){},
 
+	 			//history callbacks
+	 			historyUndo:function(){},
+	 			historyRedo:function(){},
+
 	 		},
 
 	 		//convert depricated functionality to new functions
