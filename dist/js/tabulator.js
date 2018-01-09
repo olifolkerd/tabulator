@@ -14283,6 +14283,67 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //sort if element contains any data
 
 
+      array: function array(a, b, aRow, bRow, column, dir, params) {
+
+        var el1 = 0;
+
+        var el2 = 0;
+
+        var type = params.type || "length";
+
+        function calc(value) {
+
+          switch (type) {
+
+            case "length":
+
+              return value.length;
+
+              break;
+
+            case "sum":
+
+              return value.reduce(function (c, d) {
+
+                return c + d;
+              });
+
+              break;
+
+            case "max":
+
+              return Math.max.apply(null, value);
+
+              break;
+
+            case "min":
+
+              return Math.min.apply(null, value);
+
+              break;
+
+            case "avg":
+
+              return value.reduce(function (c, d) {
+
+                return c + d;
+              }) / value.length;
+
+              break;
+
+          }
+        }
+
+        el1 = a ? calc(a) : 0;
+
+        el2 = b ? cblc(b) : 0;
+
+        return el1 - el2;
+      },
+
+      //sort if element contains any data
+
+
       exists: function exists(a, b, aRow, bRow, column, dir, params) {
 
         var el1 = typeof a == "undefined" ? 0 : 1;
