@@ -314,6 +314,14 @@ Sort.prototype.sorters = {
 		return el1 - el2;
 	},
 
+	//sort if element contains any data
+	exists:function(a, b, aRow, bRow, column, dir, params){
+		var el1 = typeof a == "undefined" ? 0 : 1;
+		var el2 = typeof b == "undefined" ? 0 : 1;
+
+		return el1 - el2;
+	},
+
 	//sort alpha numeric strings
 	alphanum:function(as, bs, aRow, bRow, column, dir, params){
 		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
