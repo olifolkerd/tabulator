@@ -1,5 +1,6 @@
 var HtmlTableImport = function(table){
 	this.table = table; //hold Tabulator object
+	this.hasIndex = false;
 };
 
 HtmlTableImport.prototype.parseTable = function(){
@@ -8,9 +9,10 @@ HtmlTableImport.prototype.parseTable = function(){
 	options = self.table.options,
 	columns = options.columns,
 	headers = $("th", element),
-	hasIndex = false,
 	rows = $("tbody tr", element),
 	data = [];
+
+	self.hasIndex = false;
 
 	self.table.options.htmlImporting();
 
@@ -29,7 +31,7 @@ HtmlTableImport.prototype.parseTable = function(){
 		var item = {};
 
 		//create index if the dont exist in table
-		if(!hasIndex){
+		if(!self.hasIndex){
 			item[options.index] = rowIndex;
 		}
 
@@ -164,7 +166,7 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 		$("td:eq(" + index + ")", rows).data("field", col.field);
 
 		if(col.field == self.table.options.index){
-			hasIndex = true;
+			self.hasIndex = true;
 		}
 
 		if(!exists){

@@ -5058,6 +5058,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var self = this,
             element = this.element;
 
+        self._clearObjectPointers();
+
         self._mapDepricatedFunctionality();
 
         self.bindExtensions();
@@ -5093,6 +5095,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           // },20)
         }
+      },
+
+      //clear pointers to objects in default config object
+
+
+      _clearObjectPointers: function _clearObjectPointers() {
+
+        this.options.columns = this.options.columns.splice(0);
+
+        this.options.data = this.options.data.splice(0);
       },
 
       //build tabulator element
@@ -5261,17 +5273,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (ua.indexOf("Trident") > -1) {
 
-          this.brower = "ie";
+          this.browser = "ie";
 
           this.browserSlow = true;
         } else if (ua.indexOf("Edge") > -1) {
 
-          this.brower = "edge";
+          this.browser = "edge";
 
           this.browserSlow = true;
         } else {
 
-          this.brower = "other";
+          this.browser = "other";
 
           this.browserSlow = false;
         }
@@ -8884,7 +8896,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       function success(value) {
 
-        var filterType = tagType == "input" && attrType == "text" ? "partial" : "match",
+        var filterType = tagType == "input" && attrType == "text" || tagType == "textarea" ? "partial" : "match",
             type = "",
             filterFunc;
 
@@ -9029,6 +9041,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             getElement: function getElement() {
 
               return filterElement;
+            },
+
+            getRow: function getRow() {
+
+              return {
+
+                normalizeHeight: function normalizeHeight() {}
+
+              };
             }
 
           };
@@ -9111,7 +9132,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           tagType = editorElement.prop("tagName").toLowerCase();
 
-          if (tagType == "input" || tagType == "select") {
+          if (tagType == "input" || tagType == "select" || tagType == "textarea") {
 
             editorElement.on("mousedown", function (e) {
 
@@ -11099,6 +11120,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table; //hold Tabulator object
 
+
+      this.hasIndex = false;
     };
 
     HtmlTableImport.prototype.parseTable = function () {
@@ -11108,9 +11131,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           options = self.table.options,
           columns = options.columns,
           headers = $("th", element),
-          hasIndex = false,
           rows = $("tbody tr", element),
           data = [];
+
+      self.hasIndex = false;
 
       self.table.options.htmlImporting();
 
@@ -11137,7 +11161,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //create index if the dont exist in table
 
 
-        if (!hasIndex) {
+        if (!self.hasIndex) {
 
           item[options.index] = rowIndex;
         }
@@ -11318,7 +11342,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (col.field == self.table.options.index) {
 
-          hasIndex = true;
+          self.hasIndex = true;
         }
 
         if (!exists) {

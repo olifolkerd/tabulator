@@ -192,6 +192,8 @@
 	 			var self = this,
 	 			element = this.element;
 
+	 			self._clearObjectPointers();
+
 	 			self._mapDepricatedFunctionality();
 
 	 			self.bindExtensions();
@@ -219,6 +221,13 @@
 
 	 				// },20)
 	 			}
+	 		},
+
+	 		//clear pointers to objects in default config object
+
+	 		_clearObjectPointers: function(){
+	 			this.options.columns = this.options.columns.splice(0);
+	 			this.options.data = this.options.data.splice(0);
 	 		},
 
 
@@ -353,13 +362,13 @@
 	 			var ua = navigator.userAgent;
 
 	 			if(ua.indexOf("Trident") > -1){
-	 				this.brower = "ie";
+	 				this.browser = "ie";
 	 				this.browserSlow = true;
 	 			}else if(ua.indexOf("Edge") > -1){
-	 				this.brower = "edge";
+	 				this.browser = "edge";
 	 				this.browserSlow = true;
 	 			}else{
-	 				this.brower = "other";
+	 				this.browser = "other";
 	 				this.browserSlow = false;
 	 			}
 	 		},
