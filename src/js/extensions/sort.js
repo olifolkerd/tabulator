@@ -294,7 +294,7 @@ Sort.prototype.sorters = {
 	//sort datetime
 	datetime:function(a, b, aRow, bRow, column, dir, params){
 		var self = this;
-		var format = params.format || "DD/MM/YYYY hh:mm";
+		var format = params.format || "DD/MM/YYYY hh:mm:ss";
 
 		if(typeof moment != "undefined"){
 			a = moment(a, format);

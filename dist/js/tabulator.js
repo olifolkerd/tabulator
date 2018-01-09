@@ -14253,7 +14253,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var self = this;
 
-        var format = params.format || "DD/MM/YYYY hh:mm";
+        var format = params.format || "DD/MM/YYYY hh:mm:ss";
 
         if (typeof moment != "undefined") {
 
