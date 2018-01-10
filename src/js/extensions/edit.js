@@ -269,6 +269,10 @@ Edit.prototype.editors = {
 
     //input element with type of number
     number:function(cell, onRendered, success, cancel, editorParams){
+
+    	var max = typeof editorParams.max != "undefined" ? "max='" + editorParams.max + "'" : "";
+    	var min = typeof editorParams.min != "undefined" ? "min='" + editorParams.min + "'" : "";
+    	var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
     	var input = $("<input type='number'/>");
 
 		//create and style input
