@@ -56,6 +56,7 @@ To access Tabulator directly from the CDNJS CDN servers, include the following t
 ```html
 <link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.3.3/css/tabulator.min.css" rel="stylesheet">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/3.3.3/js/tabulator.min.js"></script>
+```
 
 Coming Soon
 ================================
