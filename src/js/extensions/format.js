@@ -186,6 +186,15 @@ Format.prototype.formatters = {
 		}
 	},
 
+	//select
+	select: function (cell, formatterParams) {
+		if (!formatterParams.hasOwnProperty(cell.getValue())) {
+			console.warn('Missing display value for '+ cell.getValue());
+			return cell.getValue();
+		}
+		return formatterParams[cell.getValue()];
+	},
+
 	//star rating
 	star:function(cell, formatterParams){
 		var value = cell.getValue(),
