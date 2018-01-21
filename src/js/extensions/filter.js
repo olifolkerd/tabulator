@@ -16,6 +16,7 @@ Filter.prototype.initializeColumn = function(column){
 	field = column.getField(),
 	filterElement, editor, editorElement, cellWrapper, typingTimer, tagType, attrType;
 
+
 	//handle successfull value change
 	function success(value){
 		var filterType = (tagType == "input" && attrType == "text") || tagType == "textarea" ? "partial" : "match",
@@ -71,6 +72,10 @@ Filter.prototype.initializeColumn = function(column){
 
 		self.table.rowManager.filterRefresh();
 	};
+
+	column.extensions.filter = {
+		success:success,
+	}
 
 	//handle aborted edit
 	function cancel(){};
@@ -161,6 +166,8 @@ Filter.prototype.initializeColumn = function(column){
 				},300);
 			});
 
+			column.extensions.filter.headerElement = editorElement;
+
 			//update number filtered columns on change
 			attrType = editorElement.attr("type") ? editorElement.attr("type").toLowerCase() : "" ;
 			if(attrType == "number"){
@@ -193,6 +200,18 @@ Filter.prototype.initializeColumn = function(column){
 		console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
 	}
 
+};
+
+//programatically set value of header filter
+Filter.prototype.setHeaderFilterValue = function(column, value){
+	if (column){
+		if(column.extensions.filter && column.extensions.filter.headerElement){
+			column.extensions.filter.headerElement.val(value);
+			column.extensions.filter.success(value);
+		}else{
+			console.warn("Column Filter Error - No header filter set on column:", column.getField());
+		}
+	}
 };
 
 //check if the filters has changed since last use

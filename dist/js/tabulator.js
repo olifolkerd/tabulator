@@ -5816,6 +5816,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       },
 
+      setHeaderFilterValue: function setHeaderFilterValue(field, value) {
+
+        if (this.extExists("filter", true)) {
+
+          var column = this.columnManager.findColumn(field);
+
+          if (column) {
+
+            this.extensions.filter.setHeaderFilterValue(column, value);
+          } else {
+
+            console.warn("Column Hide Error - No matching column found:", field);
+
+            return false;
+          }
+        }
+      },
+
       getHeaderFilters: function getHeaderFilters() {
 
         if (this.extExists("filter", true)) {
@@ -8984,6 +9002,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.table.rowManager.filterRefresh();
       };
 
+      column.extensions.filter = {
+
+        success: success
+
+      };
+
       //handle aborted edit
 
 
@@ -9115,6 +9139,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             }, 300);
           });
 
+          column.extensions.filter.headerElement = editorElement;
+
           //update number filtered columns on change
 
 
@@ -9161,6 +9187,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       } else {
 
         console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
+      }
+    };
+
+    //programatically set value of header filter
+
+
+    Filter.prototype.setHeaderFilterValue = function (column, value) {
+
+      if (column) {
+
+        if (column.extensions.filter && column.extensions.filter.headerElement) {
+
+          column.extensions.filter.headerElement.val(value);
+
+          column.extensions.filter.success(value);
+        } else {
+
+          console.warn("Column Filter Error - No header filter set on column:", column.getField());
+        }
       }
     };
 

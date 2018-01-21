@@ -755,6 +755,20 @@
 	 			}
 	 		},
 
+
+	 		setHeaderFilterValue:function(field, value){
+	 			if(this.extExists("filter", true)){
+	 				var column = this.columnManager.findColumn(field);
+
+	 				if(column){
+	 					this.extensions.filter.setHeaderFilterValue(column, value);
+	 				}else{
+	 					console.warn("Column Hide Error - No matching column found:", field);
+	 					return false;
+	 				}
+	 			}
+	 		},
+
 	 		getHeaderFilters:function(){
 	 			if(this.extExists("filter", true)){
 	 				return this.extensions.filter.getHeaderFilters();
