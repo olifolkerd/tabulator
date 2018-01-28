@@ -9800,7 +9800,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var value = this.sanitizeHTML(cell.getValue());
 
-        return "<img src='" + value + "'/>";
+        var el = $("<img src='" + value + "'/>");
+
+        el.on("load", function () {
+
+          cell.getRow().normalizeHeight();
+        });
+
+        return el;
       },
 
       //tick or empty cell
