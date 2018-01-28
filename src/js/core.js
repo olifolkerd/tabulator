@@ -472,6 +472,10 @@
 	 		updateData:function(data){
 	 			var self = this;
 
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			if(data){
 	 				data.forEach(function(item){
 	 					var row = self.rowManager.findRow(item[self.options.index]);
@@ -486,6 +490,11 @@
 	 		},
 
 	 		addData:function(data, pos, index){
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			if(data){
 	 				this.rowManager.addRows(data, pos, index);
 	 			}else{
@@ -496,6 +505,10 @@
 	 		//update table data
 	 		updateOrAddData:function(data){
 	 			var self = this;
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
 
 	 			if(data){
 	 				data.forEach(function(item){
@@ -539,12 +552,21 @@
 
 	 		//add row to table
 	 		addRow:function(data, pos, index){
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			return this.rowManager.addRow(data, pos, index);
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
 	 		updateOrAddRow:function(index, data){
 	 			var row = this.rowManager.findRow(index);
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
 
 	 			if(row){
 	 				row.updateData(data);
@@ -558,6 +580,10 @@
 	 		//update row data
 	 		updateRow:function(index, data){
 	 			var row = this.rowManager.findRow(index);
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
 
 	 			if(row){
 	 				row.updateData(data);

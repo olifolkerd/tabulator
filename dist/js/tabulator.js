@@ -3895,6 +3895,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
+      if (typeof data === "string") {
+
+        data = JSON.parse(data);
+      }
+
       //mutate incomming data if needed
 
       if (self.table.extExists("mutator")) {
@@ -5443,6 +5448,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var self = this;
 
+        if (typeof data === "string") {
+
+          data = JSON.parse(data);
+        }
+
         if (data) {
 
           data.forEach(function (item) {
@@ -5462,6 +5472,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       addData: function addData(data, pos, index) {
 
+        if (typeof data === "string") {
+
+          data = JSON.parse(data);
+        }
+
         if (data) {
 
           this.rowManager.addRows(data, pos, index);
@@ -5476,6 +5491,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       updateOrAddData: function updateOrAddData(data) {
 
         var self = this;
+
+        if (typeof data === "string") {
+
+          data = JSON.parse(data);
+        }
 
         if (data) {
 
@@ -5537,6 +5557,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       addRow: function addRow(data, pos, index) {
 
+        if (typeof data === "string") {
+
+          data = JSON.parse(data);
+        }
+
         return this.rowManager.addRow(data, pos, index);
       },
 
@@ -5545,6 +5570,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       updateOrAddRow: function updateOrAddRow(index, data) {
 
         var row = this.rowManager.findRow(index);
+
+        if (typeof data === "string") {
+
+          data = JSON.parse(data);
+        }
 
         if (row) {
 
@@ -5562,6 +5592,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       updateRow: function updateRow(index, data) {
 
         var row = this.rowManager.findRow(index);
+
+        if (typeof data === "string") {
+
+          data = JSON.parse(data);
+        }
 
         if (row) {
 

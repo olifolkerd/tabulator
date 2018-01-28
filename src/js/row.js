@@ -326,6 +326,10 @@ Row.prototype.setData = function(data){
 Row.prototype.updateData = function(data){
 	var self = this;
 
+	if(typeof data === "string"){
+		data = JSON.parse(data);
+	}
+
 	//mutate incomming data if needed
 	if(self.table.extExists("mutator")){
 		data = self.table.extensions.mutator.transformRow(data);
