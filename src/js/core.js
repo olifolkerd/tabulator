@@ -449,6 +449,7 @@
 	 			return this.rowManager.getData(active);
 	 		},
 
+
 	 		//get table data array count
 	 		getDataCount:function(active){
 	 			return this.rowManager.getDataCount(active);
@@ -581,6 +582,18 @@
 
 	 		getRows:function(active){
 	 			return this.rowManager.getComponents(active);
+	 		},
+
+	 		//get position of row in table
+	 		getRowPosition:function(index, active){
+	 			var row = this.rowManager.findRow(index);
+
+	 			if(row){
+	 				return this.rowManager.getRowPosition(row, active);
+	 			}else{
+	 				console.warn("Position Error - No matching row found:", index);
+	 				return false;
+	 			}
 	 		},
 
 	 		/////////////// Column Functions  ///////////////

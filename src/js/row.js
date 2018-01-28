@@ -30,6 +30,10 @@ RowComponent.prototype.getIndex = function(){
 	return this.row.getData(true)[this.row.table.options.index];
 };
 
+RowComponent.prototype.getPosition = function(active){
+	return this.row.table.rowManager.getRowPosition(this.row, active);
+};
+
 RowComponent.prototype.delete = function(){
 	this.row.delete();
 };

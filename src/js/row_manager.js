@@ -55,6 +55,16 @@ RowManager.prototype.getTableElement = function(){
 	return this.tableElement;
 };
 
+//return position of row in table
+RowManager.prototype.getRowPosition = function(row, active){
+	if(active){
+		return this.activeRows.indexOf(row);
+	}else{
+		return this.rows.indexOf(row);
+	}
+};
+
+
 //link to column manager
 RowManager.prototype.setColumnManager = function(manager){
 	this.columnManager = manager;

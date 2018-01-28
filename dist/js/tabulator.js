@@ -2087,6 +2087,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.tableElement;
     };
 
+    //return position of row in table
+
+    RowManager.prototype.getRowPosition = function (row, active) {
+
+      if (active) {
+
+        return this.activeRows.indexOf(row);
+      } else {
+
+        return this.rows.indexOf(row);
+      }
+    };
+
     //link to column manager
 
     RowManager.prototype.setColumnManager = function (manager) {
@@ -3500,6 +3513,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     RowComponent.prototype.getIndex = function () {
 
       return this.row.getData(true)[this.row.table.options.index];
+    };
+
+    RowComponent.prototype.getPosition = function (active) {
+
+      return this.row.table.rowManager.getRowPosition(this.row, active);
     };
 
     RowComponent.prototype.delete = function () {
@@ -5578,6 +5596,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       getRows: function getRows(active) {
 
         return this.rowManager.getComponents(active);
+      },
+
+      //get position of row in table
+
+      getRowPosition: function getRowPosition(index, active) {
+
+        var row = this.rowManager.findRow(index);
+
+        if (row) {
+
+          return this.rowManager.getRowPosition(row, active);
+        } else {
+
+          console.warn("Position Error - No matching row found:", index);
+
+          return false;
+        }
       },
 
       /////////////// Column Functions  ///////////////
