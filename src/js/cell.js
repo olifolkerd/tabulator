@@ -264,7 +264,12 @@ Cell.prototype.setValue = function(value, mutate){
 			this.table.extensions.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
 		};
 
+		if(this.column.definition.cellEdited){
+			this.column.definition.cellEdited(this.getComponent());
+		}
+
 		this.table.options.cellEdited(this.getComponent());
+
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 
