@@ -15180,13 +15180,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cellData = cell.getData();
 
+        var column = cell.getColumn()._getSelf();
+
         this.table.rowManager.rows.forEach(function (row) {
 
           var data = row.getData();
 
           if (data !== cellData) {
 
-            if (value == data[cell.getField()]) {
+            if (value == column.getFieldValue(data)) {
 
               unique = false;
             }
