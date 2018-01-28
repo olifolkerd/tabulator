@@ -155,6 +155,14 @@ RowManager.prototype.findRow = function(subject){
 	return false;
 };
 
+RowManager.prototype.getRowFromPosition = function(position, active){
+	if(active){
+		return this.activeRows[position];
+	}else{
+		return this.rows[position];
+	}
+}
+
 RowManager.prototype.scrollToRow = function(row){
 	var rowIndex;
 

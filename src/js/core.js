@@ -543,6 +543,18 @@
 	 			}
 	 		},
 
+	 		//get row object
+	 		getRowFromPosition:function(position, active){
+	 			var row = this.rowManager.getRowFromPosition(position, active);
+
+	 			if(row){
+	 				return row.getComponent();
+	 			}else{
+	 				console.warn("Find Error - No matching row found:", position);
+	 				return false;
+	 			}
+	 		},
+
 	 		//delete row from table
 	 		deleteRow:function(index){
 	 			var row = this.rowManager.findRow(index);

@@ -2216,6 +2216,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return false;
     };
 
+    RowManager.prototype.getRowFromPosition = function (position, active) {
+
+      if (active) {
+
+        return this.activeRows[position];
+      } else {
+
+        return this.rows[position];
+      }
+    };
+
     RowManager.prototype.scrollToRow = function (row) {
 
       var rowIndex;
@@ -5573,6 +5584,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         } else {
 
           console.warn("Find Error - No matching row found:", index);
+
+          return false;
+        }
+      },
+
+      //get row object
+
+      getRowFromPosition: function getRowFromPosition(position, active) {
+
+        var row = this.rowManager.getRowFromPosition(position, active);
+
+        if (row) {
+
+          return row.getComponent();
+        } else {
+
+          console.warn("Find Error - No matching row found:", position);
 
           return false;
         }
