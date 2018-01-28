@@ -66,6 +66,20 @@ RowComponent.prototype._getSelf = function(){
 	return this.row;
 };
 
+RowComponent.prototype.freeze = function(){
+	if(this.row.table.extExists("frozenRows", true)){
+		this.row.table.extensions.frozenRows.freezeRow(this.row);
+	}
+};
+
+RowComponent.prototype.unfreeze = function(){
+	if(this.row.table.extExists("frozenRows", true)){
+		this.row.table.extensions.frozenRows.unfreezeRow(this.row);
+	}
+};
+
+
+
 
 var Row = function(data, parent){
 	this.table = parent.table;

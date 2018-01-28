@@ -298,6 +298,10 @@
 
 	 			this.columnManager.setColumns(options.columns);
 
+	 			if(this.extExists("frozenRows")){
+	 				this.extensions.frozenRows.initialize();
+	 			}
+
 	 			if(options.initialSort && this.extExists("sort", true)){
 	 				ext.sort.setSort(options.initialSort);
 	 			}

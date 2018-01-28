@@ -11,7 +11,6 @@ var ColumnManager = function(table){
 	this.element.prepend(this.headersElement);
 };
 
-
 ////////////// Setup Functions /////////////////
 
 //link to row manager

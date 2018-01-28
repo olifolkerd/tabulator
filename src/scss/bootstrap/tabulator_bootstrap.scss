@@ -267,6 +267,14 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 
 			overflow: hidden;
 		}
+
+		.tabulator-frozen-rows-holder{
+			min-width:200%;
+
+			&:empty{
+				display: none;
+			}
+		}
 	}
 
 

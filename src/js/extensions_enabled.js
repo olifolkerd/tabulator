@@ -6,6 +6,7 @@
 /*=include extensions/filter.js */
 /*=include extensions/format.js */
 /*=include extensions/frozen_columns.js */
+/*=include extensions/frozen_rows.js */
 /*=include extensions/group_rows.js */
 /*=include extensions/history.js */
 /*=include extensions/html_table_import.js */

@@ -2844,6 +2844,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.displayRows = displayRows;
 
+      if (this.table.extExists("frozenRows")) {
+
+        this.table.extensions.frozenRows.filterFrozenRows();
+      }
+
       this.displayRowsCount = this.displayRows.length;
     };
 
@@ -3558,6 +3563,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     RowComponent.prototype._getSelf = function () {
 
       return this.row;
+    };
+
+    RowComponent.prototype.freeze = function () {
+
+      if (this.row.table.extExists("frozenRows", true)) {
+
+        this.row.table.extensions.frozenRows.freezeRow(this.row);
+      }
+    };
+
+    RowComponent.prototype.unfreeze = function () {
+
+      if (this.row.table.extExists("frozenRows", true)) {
+
+        this.row.table.extensions.frozenRows.unfreezeRow(this.row);
+      }
     };
 
     var Row = function Row(data, parent) {
@@ -5227,6 +5248,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         this.columnManager.setColumns(options.columns);
+
+        if (this.extExists("frozenRows")) {
+
+          this.extensions.frozenRows.initialize();
+        }
 
         if (options.initialSort && this.extExists("sort", true)) {
 
@@ -7406,7 +7432,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!this.topInitialized) {
 
-        this.table.columnManager.element.append(this.topElement);
+        this.table.columnManager.headersElement.after(this.topElement);
 
         this.topInitialized = true;
       }
@@ -10396,6 +10422,93 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     Tabulator.registerExtension("frozenColumns", FrozenColumns);
+
+    var FrozenRows = function FrozenRows(table) {
+
+      this.table = table; //hold Tabulator object
+
+
+      this.topElement = $("<div class='tabulator-frozen-rows-holder'></div>");
+
+      this.rows = [];
+    };
+
+    FrozenRows.prototype.initialize = function () {
+
+      this.rows = [];
+
+      this.table.columnManager.element.append(this.topElement);
+    };
+
+    FrozenRows.prototype.filterFrozenRows = function () {
+
+      var self = this,
+          frozen = [];
+
+      self.table.rowManager.displayRows.forEach(function (row, i) {
+
+        if (row.extensions.frozen == true) {
+
+          frozen.unshift(i);
+        }
+      });
+
+      frozen.forEach(function (index) {
+
+        self.table.rowManager.displayRows.splice(index, 1);
+      });
+    };
+
+    FrozenRows.prototype.freezeRow = function (row) {
+
+      row.extensions.frozen = true;
+
+      this.topElement.append(row.getElement());
+
+      this.table.rowManager.adjustTableSize();
+
+      this.table.rowManager.refreshActiveData();
+
+      this.rows.push(row);
+
+      this.styleRows();
+    };
+
+    FrozenRows.prototype.unfreezeRow = function (row) {
+
+      var index = this.rows.indexOf(row);
+
+      row.extensions.frozen = false;
+
+      row.getElement().detach();
+
+      this.table.rowManager.adjustTableSize();
+
+      this.table.rowManager.refreshActiveData();
+
+      this.rows.splice(index, 1);
+
+      if (this.rows.length) {
+
+        this.styleRows();
+      }
+    };
+
+    FrozenRows.prototype.styleRows = function (row) {
+
+      var self = this;
+
+      console.log("r", this.rows.length);
+
+      this.rows.forEach(function (row, i) {
+
+        console.log("sr", i);
+
+        self.table.rowManager.styleRow(row, i);
+      });
+    };
+
+    Tabulator.registerExtension("frozenRows", FrozenRows);
 
     //public group object
 

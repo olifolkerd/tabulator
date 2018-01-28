@@ -666,6 +666,11 @@ RowManager.prototype.setActiveRows = function(activeRows){
 
 RowManager.prototype.setDisplayRows = function(displayRows){
 	this.displayRows = displayRows;
+
+	if(this.table.extExists("frozenRows")){
+		this.table.extensions.frozenRows.filterFrozenRows();
+	}
+
 	this.displayRowsCount = this.displayRows.length;
 };
 

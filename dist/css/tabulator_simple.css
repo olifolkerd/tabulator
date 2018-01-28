@@ -181,6 +181,14 @@
   display: none;
 }
 
+.tabulator .tabulator-header .tabulator-frozen-rows-holder {
+  min-width: 200%;
+}
+
+.tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {
+  display: none;
+}
+
 .tabulator .tabulator-tableHolder {
   position: relative;
   width: 100%;

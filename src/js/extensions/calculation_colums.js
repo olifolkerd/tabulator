@@ -107,7 +107,7 @@ ColumnCalcs.prototype.removeCalcs = function(){
 
 ColumnCalcs.prototype.initializeTopRow = function(){
 	if(!this.topInitialized){
-		this.table.columnManager.element.append(this.topElement);
+		this.table.columnManager.headersElement.after(this.topElement);
 		this.topInitialized = true;
 	}
 };

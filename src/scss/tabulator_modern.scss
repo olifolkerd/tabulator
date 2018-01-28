@@ -289,6 +289,14 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 			overflow: hidden;
 		}
+
+		.tabulator-frozen-rows-holder{
+			min-width:200%;
+
+			&:empty{
+				display: none;
+			}
+		}
 	}
 
 	//scrolling element to hold table
