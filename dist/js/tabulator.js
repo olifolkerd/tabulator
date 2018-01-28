@@ -10489,36 +10489,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     FrozenRows.prototype.freezeRow = function (row) {
 
-      row.extensions.frozen = true;
+      if (!row.extensions.frozen) {
 
-      this.topElement.append(row.getElement());
+        row.extensions.frozen = true;
 
-      this.table.rowManager.adjustTableSize();
+        this.topElement.append(row.getElement());
 
-      this.table.rowManager.refreshActiveData();
+        this.table.rowManager.adjustTableSize();
 
-      this.rows.push(row);
+        this.table.rowManager.refreshActiveData();
 
-      this.styleRows();
+        this.rows.push(row);
+
+        this.styleRows();
+      } else {
+
+        console.warn("Freeze Error - Row is already frozen");
+      }
     };
 
     FrozenRows.prototype.unfreezeRow = function (row) {
 
       var index = this.rows.indexOf(row);
 
-      row.extensions.frozen = false;
+      if (row.extensions.frozen) {
 
-      row.getElement().detach();
+        row.extensions.frozen = false;
 
-      this.table.rowManager.adjustTableSize();
+        row.getElement().detach();
 
-      this.table.rowManager.refreshActiveData();
+        this.table.rowManager.adjustTableSize();
 
-      this.rows.splice(index, 1);
+        this.table.rowManager.refreshActiveData();
 
-      if (this.rows.length) {
+        this.rows.splice(index, 1);
 
-        this.styleRows();
+        if (this.rows.length) {
+
+          this.styleRows();
+        }
+      } else {
+
+        console.warn("Freeze Error - Row is already unfrozen");
       }
     };
 

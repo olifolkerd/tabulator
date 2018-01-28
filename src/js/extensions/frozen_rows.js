@@ -25,28 +25,38 @@ FrozenRows.prototype.filterFrozenRows = function(){
 };
 
 FrozenRows.prototype.freezeRow = function(row){
-	row.extensions.frozen = true;
-	this.topElement.append(row.getElement());
-	this.table.rowManager.adjustTableSize();
-	this.table.rowManager.refreshActiveData();
+	if(!row.extensions.frozen){
+		row.extensions.frozen = true;
+		this.topElement.append(row.getElement());
+		this.table.rowManager.adjustTableSize();
+		this.table.rowManager.refreshActiveData();
 
-	this.rows.push(row);
+		this.rows.push(row);
 
-	this.styleRows();
+		this.styleRows();
+	}else{
+		console.warn("Freeze Error - Row is already frozen");
+	}
 };
 
 FrozenRows.prototype.unfreezeRow = function(row){
 	var index = this.rows.indexOf(row);
 
-	row.extensions.frozen = false;
-	row.getElement().detach();
-	this.table.rowManager.adjustTableSize();
-	this.table.rowManager.refreshActiveData();
+	if(row.extensions.frozen){
 
-	this.rows.splice(index, 1);
+		row.extensions.frozen = false;
+		row.getElement().detach();
+		this.table.rowManager.adjustTableSize();
+		this.table.rowManager.refreshActiveData();
 
-	if(this.rows.length){
-		this.styleRows();
+		this.rows.splice(index, 1);
+
+		if(this.rows.length){
+			this.styleRows();
+		}
+
+	}else{
+		console.warn("Freeze Error - Row is already unfrozen");
 	}
 };
 
