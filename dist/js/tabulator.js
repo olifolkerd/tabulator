@@ -8502,7 +8502,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
 
-        var input = $("<input type='number'/>");
+        var input = $("<input type='number' " + max + " " + min + " " + step + "/>");
 
         //create and style input
 

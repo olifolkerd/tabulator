@@ -273,7 +273,7 @@ Edit.prototype.editors = {
     	var max = typeof editorParams.max != "undefined" ? "max='" + editorParams.max + "'" : "";
     	var min = typeof editorParams.min != "undefined" ? "min='" + editorParams.min + "'" : "";
     	var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
-    	var input = $("<input type='number'/>");
+    	var input = $("<input type='number' " + max + " " + min + " " + step + "/>");
 
 		//create and style input
 		input.css({
