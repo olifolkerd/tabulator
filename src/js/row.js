@@ -218,6 +218,11 @@ Row.prototype.initialize = function(force){
 			self.table.options.rowFormatter(self.getComponent());
 		}
 
+		//set resizable handles
+		if(self.table.options.resizableRows && self.table.extExists("resizeRows")){
+			self.table.extensions.resizeRows.initializeRow(self);
+		}
+
 		self.initialized = true;
 	}
 };
@@ -272,6 +277,12 @@ Row.prototype.normalizeHeight = function(force){
 	}
 
 	this.calcHeight();
+
+	this.setCellHeight();
+};
+
+Row.prototype.setHeight = function(height){
+	this.height = height;
 
 	this.setCellHeight();
 };

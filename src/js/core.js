@@ -31,6 +31,7 @@
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
 	 			resizableColumns:true, //resizable columns
+	 			resizableRows:true, //resizable rows
 
 	 			columns:[],//store for colum header info
 
@@ -120,6 +121,7 @@
 	 			rowSelectionChanged:function(){},
 	 			rowSelected:function(){},
 	 			rowDeselected:function(){},
+	 			rowResized:function(){},
 
 	 			//cell callbacks
 	 			cellEditing:function(){},

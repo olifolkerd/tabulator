@@ -16,6 +16,7 @@
 /*=include extensions/page.js */
 /*=include extensions/persistent_layout.js */
 /*=include extensions/resize_columns.js */
+/*=include extensions/resize_rows.js */
 /*=include extensions/responsive_layout.js */
 /*=include extensions/select_row.js */
 /*=include extensions/sort.js */

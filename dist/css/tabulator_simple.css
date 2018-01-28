@@ -271,6 +271,23 @@
   z-index: 15;
 }
 
+.tabulator .tabulator-row .tabulator-row-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+}
+
+.tabulator .tabulator-row .tabulator-row-resize-handle.prev {
+  top: 0;
+  bottom: auto;
+}
+
+.tabulator .tabulator-row .tabulator-row-resize-handle:hover {
+  cursor: ns-resize;
+}
+
 .tabulator .tabulator-row .tabulator-frozen {
   display: inline-block;
   position: absolute;

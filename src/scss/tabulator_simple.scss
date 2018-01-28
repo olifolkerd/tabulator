@@ -372,6 +372,24 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			z-index:15;
 		}
 
+		//row resize handles
+		.tabulator-row-resize-handle{
+			position:absolute;
+			right:0;
+			bottom:0;
+			left:0;
+			height:5px;
+
+			&.prev{
+				top:0;
+				bottom:auto;
+			}
+
+			&:hover{
+				cursor:ns-resize;
+			}
+		}
+
 		.tabulator-frozen{
 			display: inline-block;
 			position: absolute;
