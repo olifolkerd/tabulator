@@ -9970,9 +9970,63 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       link: function link(cell, formatterParams) {
 
-        var value = this.sanitizeHTML(cell.getValue());
+        var value = this.sanitizeHTML(cell.getValue()),
+            label = this.emptyToSpace(value),
+            data;
 
-        return "<a href='" + value + "'>" + this.emptyToSpace(value) + "</a>";
+        if (formatterParams.labelField) {
+
+          data = cell.getData();
+
+          label = data[formatterParams.labelField];
+        }
+
+        if (formatterParams.label) {
+
+          switch (_typeof(formatterParams.label)) {
+
+            case "string":
+
+              label = formatterParams.label;
+
+              break;
+
+            case "function":
+
+              label = formatterParams.label(cell);
+
+              break;
+
+          }
+        }
+
+        if (formatterParams.urlField) {
+
+          data = cell.getData();
+
+          value = data[formatterParams.urlField];
+        }
+
+        if (formatterParams.url) {
+
+          switch (_typeof(formatterParams.url)) {
+
+            case "string":
+
+              value = formatterParams.url;
+
+              break;
+
+            case "function":
+
+              value = formatterParams.url(cell);
+
+              break;
+
+          }
+        }
+
+        return "<a href='" + value + "'>" + label + "</a>";
       },
 
       //image element

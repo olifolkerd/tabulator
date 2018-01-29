@@ -144,8 +144,45 @@ Format.prototype.formatters = {
 
 	//clickable anchor tag
 	link:function(cell, formatterParams){
-		var value = this.sanitizeHTML(cell.getValue());
-		return "<a href='" + value + "'>" + this.emptyToSpace(value) + "</a>";
+		var value = this.sanitizeHTML(cell.getValue()),
+		label = this.emptyToSpace(value),
+		data;
+
+		if(formatterParams.labelField){
+			data = cell.getData();
+			label = data[formatterParams.labelField];
+		}
+
+		if(formatterParams.label){
+			switch(typeof formatterParams.label){
+				case "string":
+				label = formatterParams.label;
+				break;
+
+				case "function":
+				label = formatterParams.label(cell);
+				break;
+			}
+		}
+
+		if(formatterParams.urlField){
+			data = cell.getData();
+			value = data[formatterParams.urlField];
+		}
+
+		if(formatterParams.url){
+			switch(typeof formatterParams.url){
+				case "string":
+				value = formatterParams.url;
+				break;
+
+				case "function":
+				value = formatterParams.url(cell);
+				break;
+			}
+		}
+
+		return "<a href='" + value + "'>" + label + "</a>";
 	},
 
 	//image element
