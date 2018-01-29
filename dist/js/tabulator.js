@@ -1269,6 +1269,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.cellEvents.cellTapHold = def.cellTapHold;
       }
+
+      //setup column cell edit callbacks
+
+      if (typeof def.cellEdited == "function") {
+
+        self.cellEvents.cellEdited = def.cellEdited;
+      }
+
+      if (typeof def.cellEditing == "function") {
+
+        self.cellEvents.cellEditing = def.cellEditing;
+      }
+
+      if (typeof def.cellEditCancelled == "function") {
+
+        self.cellEvents.cellEditCancelled = def.cellEditCancelled;
+      }
     };
 
     //build header element for header
@@ -4471,7 +4488,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Cell.prototype.setValue = function (value, mutate) {
 
-      var changed = this.setValueProcessData(value, mutate);
+      var changed = this.setValueProcessData(value, mutate),
+          component;
 
       if (changed) {
 
@@ -4480,12 +4498,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.table.extensions.history.action("cellEdit", this, { oldValue: this.oldValue, newValue: this.value });
         };
 
-        if (this.column.definition.cellEdited) {
+        component = this.getComponent();
 
-          this.column.definition.cellEdited(this.getComponent());
+        if (this.column.cellEvents.cellEdited) {
+
+          this.column.cellEvents.cellEdited(component);
         }
 
-        this.table.options.cellEdited(this.getComponent());
+        this.table.options.cellEdited(component);
 
         this.table.options.dataEdited(this.table.rowManager.getData());
       }
@@ -8318,11 +8338,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       function cancel() {
 
+        var component = cell.getComponent();
+
         self.clearEditor(cell);
 
         cell.setValueActual(cell.getValue());
 
-        self.table.options.cellEditCancelled(cell.getComponent());
+        if (cell.column.cellEvents.cellEditCancelled) {
+
+          cell.column.cellEvents.cellEditCancelled(component);
+        }
+
+        self.table.options.cellEditCancelled(component);
       };
 
       element.attr("tabindex", 0);
@@ -8343,7 +8370,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       element.on("focus", function (e) {
 
         var allowEdit = true,
-            cellEditor;
+            cellEditor,
+            component;
 
         self.currentCell = cell;
 
@@ -8363,19 +8391,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (allowEdit) {
 
+            component = cell.getComponent();
+
             if (mouseClick) {
 
               mouseClick = false;
 
               if (cell.column.cellEvents.cellClick) {
 
-                cell.column.cellEvents.cellClick(e, cell.getComponent());
+                cell.column.cellEvents.cellClick(component);
               }
             }
 
-            self.table.options.cellEditing(cell.getComponent());
+            if (cell.column.cellEvents.cellEditing) {
 
-            cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel, cell.column.extensions.edit.params);
+              cell.column.cellEvents.cellEditing(component);
+            }
+
+            self.table.options.cellEditing(component);
+
+            cellEditor = cell.column.extensions.edit.editor.call(self, component, onRendered, success, cancel, cell.column.extensions.edit.params);
 
             //if editor returned, add to DOM, if false, abort edit
 

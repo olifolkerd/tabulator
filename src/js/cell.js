@@ -257,18 +257,21 @@ Cell.prototype.getOldValue = function(){
 
 Cell.prototype.setValue = function(value, mutate){
 
-	var changed = this.setValueProcessData(value, mutate);
+	var changed = this.setValueProcessData(value, mutate),
+	component;
 
 	if(changed){
 		if(this.table.options.history && this.table.extExists("history")){
 			this.table.extensions.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
 		};
 
-		if(this.column.definition.cellEdited){
-			this.column.definition.cellEdited(this.getComponent());
+		component = this.getComponent();
+
+		if(this.column.cellEvents.cellEdited){
+			this.column.cellEvents.cellEdited(component);
 		}
 
-		this.table.options.cellEdited(this.getComponent());
+		this.table.options.cellEdited(component);
 
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}

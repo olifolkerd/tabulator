@@ -335,6 +335,19 @@ Column.prototype._buildHeader = function(){
 	if(typeof(def.cellTapHold) == "function"){
 		self.cellEvents.cellTapHold = def.cellTapHold;
 	}
+
+	//setup column cell edit callbacks
+	if(typeof(def.cellEdited) == "function"){
+		self.cellEvents.cellEdited = def.cellEdited;
+	}
+
+	if(typeof(def.cellEditing) == "function"){
+		self.cellEvents.cellEditing = def.cellEditing;
+	}
+
+	if(typeof(def.cellEditCancelled) == "function"){
+		self.cellEvents.cellEditCancelled = def.cellEditCancelled;
+	}
 };
 
 //build header element for header

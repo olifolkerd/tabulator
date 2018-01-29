@@ -88,9 +88,16 @@ Edit.prototype.bindEditor = function(cell){
 
 	//handle aborted edit
 	function cancel(){
+		var component = cell.getComponent();
+
 		self.clearEditor(cell);
 		cell.setValueActual(cell.getValue());
-		self.table.options.cellEditCancelled(cell.getComponent())
+
+		if(cell.column.cellEvents.cellEditCancelled){
+			cell.column.cellEvents.cellEditCancelled(component);
+		}
+
+		self.table.options.cellEditCancelled(component);
 	};
 
 	element.attr("tabindex", 0);
@@ -107,7 +114,7 @@ Edit.prototype.bindEditor = function(cell){
 
 	element.on("focus", function(e){
 		var allowEdit = true,
-		cellEditor;
+		cellEditor, component;
 
 		self.currentCell = cell;
 
@@ -124,17 +131,23 @@ Edit.prototype.bindEditor = function(cell){
 
 			if(allowEdit){
 
+				component = cell.getComponent();
+
 				if(mouseClick){
 					mouseClick = false;
 
 					if(cell.column.cellEvents.cellClick){
-						cell.column.cellEvents.cellClick(e, cell.getComponent());
+						cell.column.cellEvents.cellClick(component);
 					}
 				}
 
-				self.table.options.cellEditing(cell.getComponent());
+				if(cell.column.cellEvents.cellEditing){
+					cell.column.cellEvents.cellEditing(component);
+				}
 
-				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel, cell.column.extensions.edit.params);
+				self.table.options.cellEditing(component);
+
+				cellEditor = cell.column.extensions.edit.editor.call(self, component, onRendered, success, cancel, cell.column.extensions.edit.params);
 
 				//if editor returned, add to DOM, if false, abort edit
 				if(cellEditor !== false){
