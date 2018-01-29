@@ -337,18 +337,54 @@ Column.prototype._buildHeader = function(){
 	}
 };
 
+//3.5 AA Checks whether the required extension exists before attempting to add an option
+Column.prototype._dropdownEnabledCheck = function(table, column, option,itemClass, itemText, itemIcon) {
+	
+	if(table.extExists("column_drop_down") && column.definition.headerControls){
+		table.extensions.column_drop_down.addMenuItem(column, option, itemClass, itemText, itemIcon);
+	}
+}
+
 //build header element for header
 Column.prototype._buildColumnHeader = function(){
 	var self = this,
 	def = self.definition,
 	table = self.table,
 	sortable;
-
+	
+	//3.5 AA set the column dropdown
+	if(table.extExists("column_drop_down") && typeof def.headerControls != "undefined"){
+		table.extensions.column_drop_down.initializeColumn(self, self.contentElement);
+	}		
+	
 	//set column sorter
 	if(table.extExists("sort")){
 		table.extensions.sort.initializeColumn(self, self.contentElement);
+		
+		if(typeof def.sortControl != "undefined") // 3.5 AA Check if the column sort control should show
+		{	
+			self._dropdownEnabledCheck(self.table, self , "sort", "tabulator-sortable" , "Sort", "");
+		}
 	}
-
+		
+	//3.5 AA Check if the column grouping control should show
+	if(table.extExists("groupRows") && typeof def.groupControl != "undefined")
+	{
+		self._dropdownEnabledCheck(self.table, self , "group", "tabulator-group" , "Group/Un-Group", "");
+	}
+	
+	//3.5 AA Check if the column freezing control should show
+	if(table.extExists("frozenColumns") && typeof def.freezeControl != "undefined")
+	{
+		self._dropdownEnabledCheck(self.table, self , "freezeColumn", "tabulator-freeze" , "Freeze/Un-Freeze", "");
+	}
+	
+	//3.5 AA Check if the column visibility control should show
+	if(typeof def.visibilityControl != "undefined")
+	{
+		self._dropdownEnabledCheck(self.table, self , "hideColumn", "tabulator-hide" , "Hide/Show", "");
+	}
+	
 	//set column formatter
 	if(table.extExists("format")){
 		table.extensions.format.initializeColumn(self);
@@ -694,9 +730,7 @@ Column.prototype.show = function(){
 	if(!this.visible){
 		this.visible = true;
 
-		this.element.css({
-			"display":"",
-		});
+		this.element.show();
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
@@ -720,9 +754,7 @@ Column.prototype.hide = function(){
 	if(this.visible){
 		this.visible = false;
 
-		this.element.css({
-			"display":"none",
-		});
+		this.element.hide();
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){

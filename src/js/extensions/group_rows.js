@@ -1,5 +1,3 @@
-
-
 //public group object
 var GroupComponent = function (group){
 	this.group = group;
@@ -238,7 +236,7 @@ Group.prototype.getHeadersAndRows = function(){
 			}
 		}
 	}else{
-		if(!this.groupList.length && this.groupManager.table.options.groupClosedShowCalcs){
+		if(this.groupManager.table.options.groupClosedShowCalcs){
 			if(this.groupManager.table.extExists("columnCalcs")){
 				if(this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
 					this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows)
@@ -447,12 +445,17 @@ var GroupRows = function(table){
 
 
 //initialize group configuration
-GroupRows.prototype.initialize = function(){
+GroupRows.prototype.initialize = function(field){
 	var self = this,
 	groupBy = self.table.options.groupBy,
 	startOpen = self.table.options.groupStartOpen,
 	groupHeader = self.table.options.groupHeader;
 
+	if(field !== undefined) //3.4 AA for cases when the column to allow grouping for is to be defined as an argument and not as an option only
+	{
+		groupBy = field;
+	}
+	
 	self.headerGenerator = [function(){return "";}];
 	this.startOpen = [function(){return false;}]; //starting state of group
 
@@ -536,6 +539,7 @@ GroupRows.prototype.initialize = function(){
 	this.initialized = true;
 
 };
+
 
 //return appropriate rows with group headers
 GroupRows.prototype.getRows = function(rows){

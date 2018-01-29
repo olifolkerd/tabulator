@@ -458,7 +458,7 @@ RowManager.prototype.getHtml = function(active){
 			var def = column.getDefinition();
 
 			if(column.getVisibility()){
-				header += `<th>${(def.title || "")}</th>`;
+				header += `<th>${def.title}</th>`;
 			}
 		})
 
@@ -559,7 +559,7 @@ RowManager.prototype.filterRefresh = function(){
 		this.refreshActiveData();
 	}
 
-	this.scrollHorizontal(left);
+	this.element.scrollLeft(left);
 };
 
 //choose the path to refresh data after a sorter update
@@ -580,11 +580,6 @@ RowManager.prototype.sorterRefresh = function(){
 		this.refreshActiveData();
 	}
 
-	this.scrollHorizontal(left);
-};
-
-RowManager.prototype.scrollHorizontal = function(left){
-	this.scrollLeft = left;
 	this.element.scrollLeft(left);
 };
 

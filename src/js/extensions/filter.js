@@ -17,52 +17,49 @@ Filter.prototype.initializeColumn = function(column){
 	filterElement, editor, editorElement, cellWrapper, typingTimer, tagType, attrType;
 
 	//handle successfull value change
-	function success(value){
-		var filterType = (tagType == "input" && attrType == "text") || tagType == "textarea" ? "partial" : "match",
-		type = "",
-		filterFunc;
+	function success(filterValue){
+		var filterType = tagType == "input" && attrType == "text" ? "partial" : "match",
+		type = "",		
+		filterFunc,
+		filterValues = [];
 
-		if(value){
+		if(filterValue){
+			
+			filterValues = filterValue.split(";");
+			
 			switch(typeof column.definition.headerFilterFunc){
 				case "string":
-				if(self.filters[column.definition.headerFilterFunc]){
-					type = column.definition.headerFilterFunc;
-					filterFunc = function(data){
-						return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
+					if(self.filters[column.definition.headerFilterFunc]){
+						type = column.definition.headerFilterFunc;
+						filterFunc = self._getFilterFunc("string", filterValues, column);
+
+					}else{
+						console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
 					}
-				}else{
-					console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
-				}
 				break;
 
 				case "function":
-				filterFunc = function(data){
-					return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
-				}
-
-				type = filterFunc;
+					filterFunc = self._getFilterFunc("function", filterValues, column);
+					type = filterFunc;
 				break;
 			}
 
-			if(!filterFunc){
+			//if(!filterFunc){
+
 				switch(filterType){
 					case "partial":
-					filterFunc = function(data){
-						return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
-					}
-					type = "like";
+						filterFunc = self._getFilterFunc("partial", filterValues, column);
+						type = "like";
 					break;
 
 					default:
-					filterFunc = function(data){
-						return column.getFieldValue(data) == value;
-					}
-					type = "=";
+						filterFunc = self._getFilterFunc("", filterValues, column);
+						type = "=";
 				}
-			}
-
-			self.headerFilters[field] = {value:value, func:filterFunc, type:type};
-
+			//}
+								
+			self.headerFilters[field] = {value:filterValues, func:filterFunc, type:type};
+			
 		}else{
 			delete self.headerFilters[field];
 		}
@@ -117,13 +114,6 @@ Filter.prototype.initializeColumn = function(column){
 				},
 				getElement:function(){
 					return filterElement;
-				},
-				getRow:function(){
-					return {
-						normalizeHeight:function(){
-
-						}
-					};
 				}
 			};
 
@@ -177,7 +167,7 @@ Filter.prototype.initializeColumn = function(column){
 
 			//prevent input and select elements from propegating click to column sorters etc
 			tagType = editorElement.prop("tagName").toLowerCase()
-			if(tagType == "input" || tagType == "select" || tagType == "textarea"){
+			if(tagType == "input" || tagType == "select"){
 				editorElement.on("mousedown",function(e){
 					e.stopPropagation();
 				});
@@ -194,6 +184,68 @@ Filter.prototype.initializeColumn = function(column){
 	}
 
 };
+
+//Returns the appropiate function to use based on the type. Modified to suit the handling of filtering by multiple values
+Filter.prototype._getFilterFunc = function(type, filterValues, column){
+	
+	var func;
+	
+	switch(type){
+		case "string":
+			func = function (data){
+				var match = false;
+				filterValues.forEach(function (value){
+					if(self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data))){
+						return match = true;
+					}				
+				});
+				
+				return match;
+			};
+		break;
+		
+		case "function":
+			func = function (data){
+				var match = false;
+				filterValues.forEach(function (value){
+					if(column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {})){
+						return match = true;
+					}				
+				});
+				
+				return match;
+			};
+		break;
+		
+		case "partial":
+			func = function (data){
+				var match = false;
+				filterValues.forEach(function (value){
+					if(String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1){
+						return match = true;
+					}				
+				});
+				return match;
+			};
+		break;
+		
+		default:
+			func = function (data){
+				var match = false;
+				filterValues.forEach(function (value){
+					if(column.getFieldValue(data) == value){
+						return match = true;
+					}				
+				});
+				
+				return match;
+			};
+	}		
+	
+	
+	return func;
+};
+
 
 //check if the filters has changed since last use
 Filter.prototype.hasChanged = function(){
@@ -218,15 +270,14 @@ Filter.prototype.setFilter = function(field, type, value){
 
 //add filter to array
 Filter.prototype.addFilter = function(field, type, value){
-	var self = this;
+	var self = this,
+	column;
 
 	if(!Array.isArray(field)){
 		field = [{field:field, type:type, value:value}];
 	}
 
 	field.forEach(function(filter){
-
-		var column;
 
 		var filterFunc = false;
 
@@ -235,7 +286,6 @@ Filter.prototype.addFilter = function(field, type, value){
 				return filter.field(data, filter.type || {})// pass params to custom filter function
 			}
 		}else{
-
 			if(self.filters[filter.type]){
 
 				column = self.table.columnManager.getColumnByField(filter.field);
@@ -353,7 +403,7 @@ Filter.prototype.clearHeaderFilter = function(){
 		element.val("");
 	});
 
-	this.changed = true;
+	self.changed = true;
 };
 
 //filter row array
@@ -404,7 +454,6 @@ Filter.prototype.filterRow = function(row){
 			match = false;
 		}
 	});
-
 
 	for(var field in self.headerFilters){
 		if(!self.headerFilters[field].func(data)){

@@ -20,3 +20,4 @@
 /*=include extensions/select_row.js */
 /*=include extensions/sort.js */
 /*=include extensions/validate.js */
+/*=include extensions/column_drop_down.js */
