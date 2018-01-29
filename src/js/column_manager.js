@@ -265,9 +265,7 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	this._moveColumnInArray(this.columns, from, to, after);
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
-	if(this.table.options.columnMoved){
-		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
-	}
+	this.table.options.columnMoved(from.getComponent());
 
 	if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
 		this.table.extensions.persistentLayout.save();

@@ -127,7 +127,7 @@
 	 			cellEditCancelled:function(){},
 
 	 			//column callbacks
-	 			columnMoved:false,
+	 			columnMoved:function(){},
 	 			columnResized:function(){},
 	 			columnTitleChanged:function(){},
 	 			columnVisibilityChanged:function(){},
@@ -192,8 +192,6 @@
 	 			var self = this,
 	 			element = this.element;
 
-	 			self._clearObjectPointers();
-
 	 			self._mapDepricatedFunctionality();
 
 	 			self.bindExtensions();
@@ -221,13 +219,6 @@
 
 	 				// },20)
 	 			}
-	 		},
-
-	 		//clear pointers to objects in default config object
-
-	 		_clearObjectPointers: function(){
-	 			this.options.columns = this.options.columns.splice(0);
-	 			this.options.data = this.options.data.splice(0);
 	 		},
 
 
@@ -302,7 +293,7 @@
 
 	 			if(options.groupBy && this.extExists("groupRows", true)){
 	 				ext.groupRows.initialize();
-	 			}
+				}
 
 	 			if(this.extExists("ajax")){
 	 				ext.ajax.initialize();
@@ -362,13 +353,13 @@
 	 			var ua = navigator.userAgent;
 
 	 			if(ua.indexOf("Trident") > -1){
-	 				this.browser = "ie";
+	 				this.brower = "ie";
 	 				this.browserSlow = true;
 	 			}else if(ua.indexOf("Edge") > -1){
-	 				this.browser = "edge";
+	 				this.brower = "edge";
 	 				this.browserSlow = true;
 	 			}else{
-	 				this.browser = "other";
+	 				this.brower = "other";
 	 				this.browserSlow = false;
 	 			}
 	 		},

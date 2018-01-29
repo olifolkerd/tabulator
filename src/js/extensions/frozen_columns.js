@@ -147,6 +147,7 @@ FrozenColumns.prototype.layoutElement = function(element, column){
 	}
 };
 
+
 FrozenColumns.prototype._calcSpace = function(columns, index){
 	var width = 0;
 

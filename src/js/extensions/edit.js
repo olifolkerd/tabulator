@@ -280,10 +280,8 @@ Edit.prototype.editors = {
 		.val(cell.getValue());
 
 		onRendered(function(){
+			input.focus();
 			input.css("height","100%");
-			setTimeout(function(){
-				input.focus();
-			}, 10);
 		});
 
 		//submit new value on blur
@@ -321,40 +319,6 @@ Edit.prototype.editors = {
 		});
 
 		return input;
-	},
-	
-	//select
-	select: function (cell, onRendered, success, cancel, editorParams) {
-		//create and style select
-		var select = $("<select/>");
-
-		$.each(editorParams, function (value, option) {
-			select.append($("<option>").attr('value', value).text(option));
-		});
-
-		select.val(cell.getValue()).css({
-			"padding": "0px",
-			"width": "100%",
-			"height": "100%",
-			"box-sizing": "border-box"
-		});
-
-		onRendered(function () {
-			select.focus().click();
-		});
-
-		//submit new value on blur
-		select.on("change blur", function (e) {
-			success(select.val());
-		});
-
-		//submit new value on enter
-		select.on("keydown", function (e) {
-			if (e.keyCode === 13) {
-				success(select.val());
-			}
-		});
-		return select;
 	},
 
 	//start rating
