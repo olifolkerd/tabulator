@@ -732,10 +732,12 @@
 	 		},
 
 	 		//add filter to array
-	 		addFilter:function(field, type, value){
+	 		addFilter:function(field, type, value, triggerRefresh = true){
 	 			if(this.extExists("filter", true)){
 	 				this.extensions.filter.addFilter(field, type, value);
-	 				this.rowManager.filterRefresh();
+					if(triggerRefresh) {
+					 	this.rowManager.filterRefresh();
+					}
 	 			}
 	 		},
 
@@ -761,10 +763,12 @@
 
 
 	 		//remove filter from array
-	 		removeFilter:function(field, type, value){
+	 		removeFilter:function(field, type, value, triggerRefresh = true){
 	 			if(this.extExists("filter", true)){
-	 				this.extensions.filter.removeFilter(field, type, value);
-	 				this.rowManager.filterRefresh();
+					 this.extensions.filter.removeFilter(field, type, value);
+					 if(triggerRefresh) {
+					 	this.rowManager.filterRefresh();
+					 }
 	 			}
 	 		},
 
