@@ -855,12 +855,12 @@ Column.prototype.generateCell = function(row){
 	return cell;
 };
 
-Column.prototype.reinitializeWidth = function(){
+Column.prototype.reinitializeWidth = function(force){
 
 	this.widthFixed = false;
 
 	//set width if present
-	if(typeof this.definition.width !== "undefined"){
+	if(typeof this.definition.width !== "undefined" && !force){
 		this.setWidth(this.definition.width);
 	}
 

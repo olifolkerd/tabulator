@@ -40,6 +40,21 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 			}
 		});
 
+		handle.addEventListener("mousedown", function(e){
+			var nearestColumn = column.getLastColumn();
+
+			if(nearestColumn){
+				self.startColumn = column;
+				self._mouseDown(e, nearestColumn);
+			}
+		});
+
+		//reszie column on  double click
+		handle.addEventListener("dblclick", function(e){
+			column.reinitializeWidth(true);
+		});
+
+
 		prevHandle.addEventListener("click", function(e){
 			e.stopPropagation();
 		});
@@ -56,6 +71,22 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 				if(prevColumn){
 					self.startColumn = column;
 					self._mouseDown(e, prevColumn);
+				}
+			}
+		});
+
+		//resize column on double click
+		prevHandle.addEventListener("dblclick", function(e){
+			var nearestColumn, colIndex, prevColumn;
+
+			nearestColumn = column.getFirstColumn();
+
+			if(nearestColumn){
+				colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
+				prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
+
+				if(prevColumn){
+					prevColumn.reinitializeWidth(true);
 				}
 			}
 		});

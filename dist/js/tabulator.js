@@ -1945,13 +1945,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return cell;
     };
 
-    Column.prototype.reinitializeWidth = function () {
+    Column.prototype.reinitializeWidth = function (force) {
 
       this.widthFixed = false;
 
       //set width if present
 
-      if (typeof this.definition.width !== "undefined") {
+      if (typeof this.definition.width !== "undefined" && !force) {
 
         this.setWidth(this.definition.width);
       }
@@ -13827,6 +13827,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
+        handle.addEventListener("mousedown", function (e) {
+
+          var nearestColumn = column.getLastColumn();
+
+          if (nearestColumn) {
+
+            self.startColumn = column;
+
+            self._mouseDown(e, nearestColumn);
+          }
+        });
+
+        //reszie column on  double click
+
+
+        handle.addEventListener("dblclick", function (e) {
+
+          column.reinitializeWidth(true);
+        });
+
         prevHandle.addEventListener("click", function (e) {
 
           e.stopPropagation();
@@ -13849,6 +13869,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               self.startColumn = column;
 
               self._mouseDown(e, prevColumn);
+            }
+          }
+        });
+
+        //resize column on double click
+
+
+        prevHandle.addEventListener("dblclick", function (e) {
+
+          var nearestColumn, colIndex, prevColumn;
+
+          nearestColumn = column.getFirstColumn();
+
+          if (nearestColumn) {
+
+            colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
+
+            prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
+
+            if (prevColumn) {
+
+              prevColumn.reinitializeWidth(true);
             }
           }
         });
