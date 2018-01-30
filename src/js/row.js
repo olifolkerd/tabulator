@@ -485,6 +485,8 @@ Row.prototype.delete = function(){
 
 	var index = this.table.rowManager.getRowIndex(this);
 
+	this.table.extensions.selectRow._deselectRow(this.row, true);
+
 	this.deleteActual();
 
 	if(this.table.options.history && this.table.extExists("history")){

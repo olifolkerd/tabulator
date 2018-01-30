@@ -4119,6 +4119,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var index = this.table.rowManager.getRowIndex(this);
 
+      this.table.extensions.selectRow._deselectRow(this.row, true);
+
       this.deleteActual();
 
       if (this.table.options.history && this.table.extExists("history")) {
@@ -14424,7 +14426,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       } else {
 
-        console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
+        if (!silent) {
+
+          console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
+        }
       }
     };
 
@@ -14495,7 +14500,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       } else {
 
-        console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
+        if (!silent) {
+
+          console.warn("Deselection Error - No such row found, ignoring selection:" + rowInfo);
+        }
       }
     };
 

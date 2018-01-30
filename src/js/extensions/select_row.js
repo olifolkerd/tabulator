@@ -155,7 +155,9 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			self._rowSelectionChanged();
 		}
 	}else{
-		console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo)
+		if(!silent){
+			console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo);
+		}
 	}
 };
 
@@ -210,7 +212,9 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			}
 		}
 	}else{
-		console.warn("Selection Error - No such row found, ignoring selection:" + rowInfo)
+		if(!silent){
+			console.warn("Deselection Error - No such row found, ignoring selection:" + rowInfo);
+		}
 	}
 };
 
