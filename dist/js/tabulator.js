@@ -3609,6 +3609,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    RowComponent.prototype.reformat = function () {
+
+      return this.row.reinitialize();
+    };
+
     var Row = function Row(data, parent) {
 
       this.table = parent.table;

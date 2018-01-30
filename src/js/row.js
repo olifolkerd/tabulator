@@ -78,6 +78,10 @@ RowComponent.prototype.unfreeze = function(){
 	}
 };
 
+RowComponent.prototype.reformat = function(){
+	return this.row.reinitialize();
+};
+
 
 
 
