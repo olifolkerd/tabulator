@@ -203,6 +203,15 @@ Filter.prototype.initializeColumn = function(column){
 };
 
 //programatically set value of header filter
+Filter.prototype.setHeaderFilterFocus = function(column){
+	if(column.extensions.filter && column.extensions.filter.headerElement){
+		column.extensions.filter.headerElement.focus();
+	}else{
+		console.warn("Column Filter Focus Error - No header filter set on column:", column.getField());
+	}
+};
+
+//programatically set value of header filter
 Filter.prototype.setHeaderFilterValue = function(column, value){
 	if (column){
 		if(column.extensions.filter && column.extensions.filter.headerElement){

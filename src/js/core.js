@@ -812,6 +812,19 @@
 	 			}
 	 		},
 
+	 		setHeaderFilterFocus:function(field){
+	 			if(this.extExists("filter", true)){
+	 				var column = this.columnManager.findColumn(field);
+
+	 				if(column){
+	 					this.extensions.filter.setHeaderFilterFocus(column);
+	 				}else{
+	 					console.warn("Column Filter Focus Error - No matching column found:", field);
+	 					return false;
+	 				}
+	 			}
+	 		},
+
 
 	 		setHeaderFilterValue:function(field, value){
 	 			if(this.extExists("filter", true)){
@@ -820,7 +833,7 @@
 	 				if(column){
 	 					this.extensions.filter.setHeaderFilterValue(column, value);
 	 				}else{
-	 					console.warn("Column Hide Error - No matching column found:", field);
+	 					console.warn("Column Filter Error - No matching column found:", field);
 	 					return false;
 	 				}
 	 			}
@@ -831,8 +844,6 @@
 	 				return this.extensions.filter.getHeaderFilters();
 	 			}
 	 		},
-
-
 
 
 	 		//remove filter from array
