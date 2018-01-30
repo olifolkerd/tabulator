@@ -9776,6 +9776,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           return rowVal.toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
         }
+      },
+
+      //in array
+
+
+      "in": function _in(filterVal, rowVal) {
+
+        if (Array.isArray(filterVal)) {
+
+          return filterVal.indexOf(rowVal) > -1;
+        } else {
+
+          console.log("Filter Error - filter value is not an array:", filterVal);
+
+          return false;
+        }
       }
 
     };
