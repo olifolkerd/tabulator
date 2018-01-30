@@ -2388,6 +2388,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         rows.push(row.getComponent());
       });
 
+      //recalc column calculations if present
+
+      if (this.table.extExists("columnCalcs")) {
+
+        this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+      }
+
       return rows;
     };
 
@@ -4124,7 +4131,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var index = this.table.rowManager.getRowIndex(this);
 
-      this.table.extensions.selectRow._deselectRow(this.row, true);
+      //deselect row if it is selected
+
+      if (this.table.extExists("selectRow")) {
+
+        this.table.extensions.selectRow._deselectRow(this.row, true);
+      }
 
       this.deleteActual();
 
@@ -4137,6 +4149,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.extensions.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
       };
+
+      //recalc column calculations if present
+
+      if (this.table.extExists("columnCalcs")) {
+
+        if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+          this.table.extensions.columnCalcs.recalcRowGroup(this);
+        } else {
+
+          this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+        }
+      }
     };
 
     Row.prototype.deleteActual = function () {
@@ -5661,12 +5686,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       addRow: function addRow(data, pos, index) {
 
+        var row;
+
         if (typeof data === "string") {
 
           data = JSON.parse(data);
         }
 
-        return this.rowManager.addRow(data, pos, index);
+        row = this.rowManager.addRow(data, pos, index);
+
+        //recalc column calculations if present
+
+        if (this.extExists("columnCalcs")) {
+
+          this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+        }
+
+        return row;
       },
 
       //update a row if it exitsts otherwise create it
@@ -5686,6 +5722,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         } else {
 
           row = this.rowManager.addRow(data);
+
+          //recalc column calculations if present
+
+          if (this.extExists("columnCalcs")) {
+
+            this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+          }
         }
 
         return row.getComponent();

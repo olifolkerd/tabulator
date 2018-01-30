@@ -489,7 +489,10 @@ Row.prototype.delete = function(){
 
 	var index = this.table.rowManager.getRowIndex(this);
 
-	this.table.extensions.selectRow._deselectRow(this.row, true);
+	//deselect row if it is selected
+	if(this.table.extExists("selectRow")){
+		this.table.extensions.selectRow._deselectRow(this.row, true);
+	}
 
 	this.deleteActual();
 
@@ -500,6 +503,15 @@ Row.prototype.delete = function(){
 
 		this.table.extensions.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 	};
+
+	//recalc column calculations if present
+	if(this.table.extExists("columnCalcs")){
+		if(this.table.options.groupBy && this.table.extExists("groupRows")){
+			this.table.extensions.columnCalcs.recalcRowGroup(this);
+		}else{
+			this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		}
+	}
 };
 
 

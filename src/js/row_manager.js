@@ -282,6 +282,11 @@ RowManager.prototype.addRows = function(data, pos, index){
 		rows.push(row.getComponent());
 	});
 
+	//recalc column calculations if present
+	if(this.table.extExists("columnCalcs")){
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+	}
+
 	return rows;
 };
 

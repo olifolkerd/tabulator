@@ -571,11 +571,20 @@
 	 		//add row to table
 	 		addRow:function(data, pos, index){
 
+	 			var row;
+
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
 	 			}
 
-	 			return this.rowManager.addRow(data, pos, index);
+	 			row = this.rowManager.addRow(data, pos, index);
+
+	 			//recalc column calculations if present
+	 			if(this.extExists("columnCalcs")){
+	 				this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 			}
+
+	 			return row;
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
@@ -590,6 +599,11 @@
 	 				row.updateData(data);
 	 			}else{
 	 				row = this.rowManager.addRow(data);
+
+	 				//recalc column calculations if present
+	 				if(this.extExists("columnCalcs")){
+	 					this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 				}
 	 			}
 
 	 			return row.getComponent();
