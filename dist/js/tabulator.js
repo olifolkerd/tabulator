@@ -14338,7 +14338,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.table.rowManager.rows.forEach(function (row) {
 
-            self._selectRow(row, true, true);
+            self._selectRow(row, false, true);
           });
 
           self._rowSelectionChanged();
@@ -14351,7 +14351,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             self.table.rowManager.activeRows.forEach(function (row) {
 
-              self._selectRow(row, true, true);
+              self._selectRow(row, false, true);
             });
 
             self._rowSelectionChanged();
@@ -14365,7 +14365,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             rows.forEach(function (row) {
 
-              self._selectRow(row, true);
+              self._selectRow(row);
             });
 
             self._rowSelectionChanged();
@@ -14396,7 +14396,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (self.table.options.selectableRollingSelection) {
 
-            self._deselectRow(self.selectedRows[0], true);
+            self._deselectRow(self.selectedRows[0]);
           } else {
 
             return false;
@@ -14451,7 +14451,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           rows.forEach(function (row) {
 
-            self._deselectRow(row, true);
+            self._deselectRow(row);
           });
 
           self._rowSelectionChanged();
