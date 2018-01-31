@@ -10069,6 +10069,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       link: function link(cell, formatterParams) {
 
         var value = this.sanitizeHTML(cell.getValue()),
+            urlPrefix = formatterParams.urlPrefix || "",
             label = this.emptyToSpace(value),
             data;
 
@@ -10124,7 +10125,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         }
 
-        return "<a href='" + value + "'>" + label + "</a>";
+        return "<a href='" + urlPrefix + value + "'>" + label + "</a>";
       },
 
       //image element
@@ -15008,7 +15009,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       string: function string(a, b, aRow, bRow, column, dir, params) {
 
-        return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+        var locale;
+
+        switch (_typeof(params.locale)) {
+
+          case "boolean":
+
+            if (params.locale) {
+
+              local = this.table.extensions.localize.getLocale();
+            }
+
+            break;
+
+          case "string":
+
+            locale = params.locale;
+
+            break;
+
+        }
+
+        return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
       },
 
       //sort date

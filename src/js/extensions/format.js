@@ -145,6 +145,7 @@ Format.prototype.formatters = {
 	//clickable anchor tag
 	link:function(cell, formatterParams){
 		var value = this.sanitizeHTML(cell.getValue()),
+		urlPrefix = formatterParams.urlPrefix || "",
 		label = this.emptyToSpace(value),
 		data;
 
@@ -182,7 +183,7 @@ Format.prototype.formatters = {
 			}
 		}
 
-		return "<a href='" + value + "'>" + label + "</a>";
+		return "<a href='" + urlPrefix + value + "'>" + label + "</a>";
 	},
 
 	//image element
