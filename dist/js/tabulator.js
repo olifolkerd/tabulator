@@ -14980,7 +14980,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       number: function number(a, b, aRow, bRow, column, dir, params) {
 
-        return parseFloat(String(a).replace(",", "")) - parseFloat(String(b).replace(",", ""));
+        var a = parseFloat(String(a).replace(",", ""));
+
+        var b = parseFloat(String(b).replace(",", ""));
+
+        if (isNaN(a)) {
+
+          return -1;
+
+          if (isNaN(b)) {
+
+            return 0;
+          }
+        } else if (isNaN(b)) {
+
+          return 1;
+        }
+
+        return a - b;
       },
 
       //sort strings
