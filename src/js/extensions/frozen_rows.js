@@ -62,9 +62,8 @@ FrozenRows.prototype.unfreezeRow = function(row){
 
 FrozenRows.prototype.styleRows = function(row){
 	var self = this;
-	console.log("r", this.rows.length);
+
 	this.rows.forEach(function(row, i){
-		console.log("sr", i)
 		self.table.rowManager.styleRow(row, i)
 	});
 }

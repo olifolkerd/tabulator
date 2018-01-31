@@ -491,7 +491,7 @@ Filter.prototype.filters ={
 		if(Array.isArray(filterVal)){
 			return filterVal.indexOf(rowVal) > -1;
 		}else{
-			console.log("Filter Error - filter value is not an array:", filterVal);
+			console.warn("Filter Error - filter value is not an array:", filterVal);
 			return false;
 		}
 	},
