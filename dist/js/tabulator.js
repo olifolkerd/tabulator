@@ -15005,6 +15005,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           a = moment(a, format);
 
           b = moment(b, format);
+
+          if (!a.isValid()) {
+
+            a = -1000000000000000;
+          }
+
+          if (!b.isValid()) {
+
+            b = -1000000000000000;
+          }
+        } else {
+
+          console.error("Sort Error - 'date' sorter is dependant on moment.js");
+        }
+
+        return a - b;
+      },
+
+      //sort hh:mm formatted times
+
+
+      time: function time(a, b, aRow, bRow, column, dir, params) {
+
+        var self = this;
+
+        var format = params.format || "hh:mm";
+
+        if (typeof moment != "undefined") {
+
+          a = moment(a, format);
+
+          b = moment(b, format);
+
+          if (!a.isValid()) {
+
+            a = -1000000000000000;
+          }
+
+          if (!b.isValid()) {
+
+            b = -1000000000000000;
+          }
         } else {
 
           console.error("Sort Error - 'date' sorter is dependant on moment.js");
@@ -15027,6 +15069,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           a = moment(a, format);
 
           b = moment(b, format);
+
+          if (!a.isValid()) {
+
+            a = -1000000000000000;
+          }
+
+          if (!b.isValid()) {
+
+            b = -1000000000000000;
+          }
         } else {
 
           console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
@@ -15170,28 +15222,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         return a.length > b.length;
-      },
-
-      //sort hh:mm formatted times
-
-
-      time: function time(a, b, aRow, bRow, column, dir, params) {
-
-        var self = this;
-
-        var format = params.format || "hh:mm";
-
-        if (typeof moment != "undefined") {
-
-          a = moment(a, format);
-
-          b = moment(b, format);
-        } else {
-
-          console.error("Sort Error - 'date' sorter is dependant on moment.js");
-        }
-
-        return a - b;
       }
 
     };
