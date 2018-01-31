@@ -288,7 +288,7 @@ Sort.prototype.sorters = {
 	string:function(a, b, aRow, bRow, column, dir, params){
 		var locale;
 
-		switch(tyepof params.locale){
+		switch(typeof params.locale){
 			case "boolean":
 			if(params.locale){
 				local = this.table.extensions.localize.getLocale();
