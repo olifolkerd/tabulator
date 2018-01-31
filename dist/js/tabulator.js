@@ -8756,6 +8756,91 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return input;
       },
 
+      //input element with type of number
+
+
+      range: function range(cell, onRendered, success, cancel, editorParams) {
+
+        var max = "max='" + (typeof editorParams.max != "undefined" ? editorParams.max : 10) + "'";
+
+        var min = "min='" + (typeof editorParams.min != "undefined" ? editorParams.min : 0) + "'";
+
+        var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
+
+        var input = $("<input type='range' " + max + " " + min + " " + step + "/>");
+
+        //create and style input
+
+
+        input.css({
+
+          "padding": "4px",
+
+          "width": "100%",
+
+          "box-sizing": "border-box"
+
+        }).val(cell.getValue());
+
+        onRendered(function () {
+
+          input.css("height", "100%");
+
+          setTimeout(function () {
+
+            input.focus();
+          }, 10);
+        });
+
+        //submit new value on blur
+
+
+        input.on("blur", function (e) {
+
+          var value = input.val();
+
+          if (!isNaN(value)) {
+
+            value = Number(value);
+          }
+
+          if (value != cell.getValue()) {
+
+            success(value);
+          } else {
+
+            cancel();
+          }
+        });
+
+        //submit new value on enter
+
+
+        input.on("keydown", function (e) {
+
+          var value;
+
+          if (e.keyCode == 13) {
+
+            value = input.val();
+
+            if (!isNaN(value)) {
+
+              value = Number(value);
+            }
+
+            success(value);
+          }
+
+          if (e.keyCode == 27) {
+
+            cancel();
+          }
+        });
+
+        return input;
+      },
+
       //start rating
 
 
@@ -9831,7 +9916,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           return filterVal.indexOf(rowVal) > -1;
         } else {
 
-          console.log("Filter Error - filter value is not an array:", filterVal);
+          console.warn("Filter Error - filter value is not an array:", filterVal);
 
           return false;
         }
@@ -10731,11 +10816,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      console.log("r", this.rows.length);
-
       this.rows.forEach(function (row, i) {
-
-        console.log("sr", i);
 
         self.table.rowManager.styleRow(row, i);
       });
