@@ -14984,6 +14984,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var b = parseFloat(String(b).replace(",", ""));
 
+        //handle non numeric values
+
+
         if (isNaN(a)) {
 
           return -1;
@@ -15127,6 +15130,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var type = params.type || "length";
 
+        //handle non array values
+
+
+        if (!Array.isArray(a)) {
+
+          return -1;
+
+          if (!Array.isArray(b)) {
+
+            return 0;
+          }
+        } else if (!Array.isArray(b)) {
+
+          return 1;
+        }
+
         function calc(value) {
 
           switch (type) {
@@ -15172,7 +15191,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         el1 = a ? calc(a) : 0;
 
-        el2 = b ? cblc(b) : 0;
+        el2 = b ? calc(b) : 0;
 
         return el1 - el2;
       },
