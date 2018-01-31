@@ -286,7 +286,20 @@ Sort.prototype.sorters = {
 
 	//sort strings
 	string:function(a, b, aRow, bRow, column, dir, params){
-		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+		var locale;
+
+		switch(tyepof params.locale){
+			case "boolean":
+			if(params.locale){
+				local = this.table.extensions.localize.getLocale();
+			}
+			break;
+			case "string":
+			locale = params.locale;
+			break;
+		}
+
+		return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
 	},
 
 	//sort date
