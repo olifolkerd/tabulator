@@ -10388,16 +10388,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //select
 
 
-      select: function select(cell, formatterParams) {
+      lookup: function lookup(cell, formatterParams) {
 
-        if (!formatterParams.hasOwnProperty(cell.getValue())) {
+        var value = cell.getValue();
 
-          console.warn('Missing display value for ' + cell.getValue());
+        if (typeof formatterParams[value] === "undefined") {
 
-          return cell.getValue();
+          console.warn('Missing display value for ' + value);
+
+          return value;
         }
 
-        return formatterParams[cell.getValue()];
+        return formatterParams[value];
       },
 
       //star rating
