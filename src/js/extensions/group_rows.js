@@ -561,11 +561,9 @@ GroupRows.prototype.getRows = function(rows){
 GroupRows.prototype.getGroups = function(){
 	var groupComponents = [];
 
-	if(this.table.options.dataGrouped){
-		this.groupList.forEach(function(group){
-			groupComponents.push(group.getComponent());
-		});
-	}
+	this.groupList.forEach(function(group){
+		groupComponents.push(group.getComponent());
+	});
 
 	return groupComponents;
 };

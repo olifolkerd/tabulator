@@ -11733,13 +11733,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var groupComponents = [];
 
-      if (this.table.options.dataGrouped) {
+      this.groupList.forEach(function (group) {
 
-        this.groupList.forEach(function (group) {
-
-          groupComponents.push(group.getComponent());
-        });
-      }
+        groupComponents.push(group.getComponent());
+      });
 
       return groupComponents;
     };
