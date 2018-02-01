@@ -83,6 +83,7 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 	this.initialized = false;
 	this.calcs = {};
 	this.initialized = false;
+	this.extensions = {};
 
 	this.visible = oldGroup ? oldGroup.visible : (typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0]);
 
