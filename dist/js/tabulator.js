@@ -4250,6 +4250,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.cell.edit();
     };
 
+    CellComponent.prototype.cancelEdit = function () {
+
+      this.cell.cancelEdit();
+    };
+
     CellComponent.prototype.nav = function () {
 
       return this.cell.nav();
@@ -4664,6 +4669,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Cell.prototype.edit = function () {
 
       this.element.focus();
+    };
+
+    Cell.prototype.cancelEdit = function () {
+
+      if (this.table.extExists("edit")) {
+
+        var editing = this.table.extensions.edit.getCurrentCell();
+
+        if (editing && editing._getSelf() === this) {
+
+          this.table.extensions.edit.cancelEdit();
+        } else {
+
+          console.warn("Cancel Editor Error - This cell is not currently being edited ");
+        }
+      }
     };
 
     Cell.prototype.delete = function () {
@@ -8353,7 +8374,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.currentCell ? this.currentCell.getComponent() : false;
     };
 
-    Edit.prototype.clearEditor = function (cell) {
+    Edit.prototype.clearEditor = function () {
+
+      var cell = this.currentCell;
 
       this.currentCell = false;
 
@@ -8362,6 +8385,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       cell.getElement().removeClass("tabulator-editing").empty();
 
       cell.row.getElement().removeClass("tabulator-row-editing");
+    };
+
+    Edit.prototype.cancelEdit = function () {
+
+      if (this.currentCell) {
+
+        var cell = this.currentCell;
+
+        var component = this.currentCell.getComponent();
+
+        this.clearEditor();
+
+        cell.setValueActual(cell.getValue());
+
+        if (cell.column.cellEvents.cellEditCancelled) {
+
+          cell.column.cellEvents.cellEditCancelled(component);
+        }
+
+        this.table.options.cellEditCancelled(component);
+      }
     };
 
     //return a formatted value for a cell
@@ -8388,7 +8432,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (valid === true) {
 
-          self.clearEditor(cell);
+          self.clearEditor();
 
           cell.setValue(value, true);
         } else {
@@ -8408,7 +8452,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var component = cell.getComponent();
 
-        self.clearEditor(cell);
+        self.clearEditor();
 
         cell.setValueActual(cell.getValue());
 

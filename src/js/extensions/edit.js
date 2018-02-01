@@ -54,11 +54,30 @@ Edit.prototype.getCurrentCell = function(){
 	return this.currentCell ? this.currentCell.getComponent() : false;
 };
 
-Edit.prototype.clearEditor = function(cell){
+Edit.prototype.clearEditor = function(){
+	var cell = this.currentCell;
+
 	this.currentCell = false;
 	cell.getElement().removeClass("tabulator-validation-fail");
 	cell.getElement().removeClass("tabulator-editing").empty();
 	cell.row.getElement().removeClass("tabulator-row-editing");
+};
+
+Edit.prototype.cancelEdit = function(){
+
+	if(this.currentCell){
+		var cell = this.currentCell;
+		var component = this.currentCell.getComponent();
+
+		this.clearEditor();
+		cell.setValueActual(cell.getValue());
+
+		if(cell.column.cellEvents.cellEditCancelled){
+			cell.column.cellEvents.cellEditCancelled(component);
+		}
+
+		this.table.options.cellEditCancelled(component);
+	}
 };
 
 //return a formatted value for a cell
@@ -77,7 +96,7 @@ Edit.prototype.bindEditor = function(cell){
 		}
 
 		if(valid === true){
-			self.clearEditor(cell);
+			self.clearEditor();
 			cell.setValue(value, true);
 		}else{
 			cell.getElement().addClass("tabulator-validation-fail");
@@ -90,7 +109,7 @@ Edit.prototype.bindEditor = function(cell){
 	function cancel(){
 		var component = cell.getComponent();
 
-		self.clearEditor(cell);
+		self.clearEditor();
 		cell.setValueActual(cell.getValue());
 
 		if(cell.column.cellEvents.cellEditCancelled){

@@ -48,6 +48,11 @@ CellComponent.prototype.edit = function(){
 	this.cell.edit();
 };
 
+CellComponent.prototype.cancelEdit = function(){
+	this.cell.cancelEdit();
+};
+
+
 CellComponent.prototype.nav = function(){
 	return this.cell.nav();
 };
@@ -374,6 +379,21 @@ Cell.prototype.hide = function(){
 Cell.prototype.edit = function(){
 	this.element.focus();
 };
+
+Cell.prototype.cancelEdit = function(){
+	if(this.table.extExists("edit")){
+		var editing = this.table.extensions.edit.getCurrentCell();
+
+		if(editing && editing._getSelf() === this){
+			this.table.extensions.edit.cancelEdit();
+		}else{
+			console.warn("Cancel Editor Error - This cell is not currently being edited ");
+		}
+	}
+};
+
+
+
 
 Cell.prototype.delete = function(){
 	this.element.detach();
