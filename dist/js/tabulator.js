@@ -7849,7 +7849,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       "max": function max(values, data, calcParams) {
 
-        var output = null;
+        var output = null,
+            precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
         values.forEach(function (value) {
 
@@ -7861,12 +7862,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
-        return output !== null ? output : "";
+        return output !== null ? precision !== false ? output.toFixed(precision) : output : "";
       },
 
       "min": function min(values, data, calcParams) {
 
-        var output = null;
+        var output = null,
+            precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
         values.forEach(function (value) {
 
@@ -7878,12 +7880,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
-        return output !== null ? output : "";
+        return output !== null ? precision !== false ? output.toFixed(precision) : output : "";
       },
 
       "sum": function sum(values, data, calcParams) {
 
-        var output = 0;
+        var output = 0,
+            precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
         if (values.length) {
 
@@ -7895,7 +7898,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           });
         }
 
-        return output;
+        return precision !== false ? output.toFixed(precision) : output;
       },
 
       "concat": function concat(values, data, calcParams) {

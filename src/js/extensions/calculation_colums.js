@@ -310,7 +310,8 @@ ColumnCalcs.prototype.calculations = {
 		return parseFloat(output).toString();
 	},
 	"max":function(values, data, calcParams){
-		var output = null;
+		var output = null,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
 		values.forEach(function(value){
 
@@ -321,10 +322,11 @@ ColumnCalcs.prototype.calculations = {
 			}
 		});
 
-		return output !== null ? output : "";
+		return output !== null ? (precision !== false ? output.toFixed(precision) : output) : "";
 	},
 	"min":function(values, data, calcParams){
-		var output = null;
+		var output = null,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
 		values.forEach(function(value){
 
@@ -335,10 +337,11 @@ ColumnCalcs.prototype.calculations = {
 			}
 		});
 
-		return output !== null ? output : "";
+		return output !== null ? (precision !== false ? output.toFixed(precision) : output) : "";
 	},
 	"sum":function(values, data, calcParams){
-		var output = 0;
+		var output = 0,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
 		if(values.length){
 			values.forEach(function(value){
@@ -348,7 +351,7 @@ ColumnCalcs.prototype.calculations = {
 			});
 		}
 
-		return output;
+		return precision !== false ? output.toFixed(precision) : output;
 	},
 	"concat":function(values, data, calcParams){
 		var output = 0;
