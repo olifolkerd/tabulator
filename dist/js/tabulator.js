@@ -8849,12 +8849,55 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //create and style select
 
 
-        var select = $("<select/>");
+        var select = $("<select><select/>");
 
-        $.each(editorParams, function (value, option) {
+        var isArray = Array.isArray(editorParams);
 
-          select.append($("<option>").attr('value', value).text(option));
-        });
+        function optionAppend(element, label, value, disabled) {
+
+          var option = $("<option></option>").attr("value", value).text(label);
+
+          if (disabled) {
+
+            option.prop("disabled", true);
+          }
+
+          element.append(option);
+        }
+
+        function processOption(element, option) {
+
+          var groupEl;
+
+          if (option.options) {
+
+            groupEl = $("<optgroup></optgroup>").attr("label", option.label);
+
+            option.options.forEach(function (item) {
+
+              processOption(groupEl, item);
+            });
+
+            element.append(groupEl);
+          } else {
+
+            optionAppend(element, typeof option.label == "undefined" ? option.value : option.label, typeof option.value == "undefined" ? option.label : option.value, option.disabled);
+          }
+        }
+
+        if (!isArray && (typeof editorParams === 'undefined' ? 'undefined' : _typeof(editorParams)) === "object") {
+
+          for (var key in editorParams) {
+
+            optionAppend(select, editorParams[key], key);
+          }
+        } else if (isArray) {
+
+          editorParams.forEach(function (item) {
+
+            processOption(select, item);
+          });
+        }
 
         select.val(cell.getValue()).css({
 
