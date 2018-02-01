@@ -8853,6 +8853,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var isArray = Array.isArray(editorParams);
 
+        if (typeof editorParams == "function") {
+
+          editorParams = editorParams(cell);
+
+          isArray = Array.isArray(editorParams);
+        }
+
         function optionAppend(element, label, value, disabled) {
 
           var option = $("<option></option>").attr("value", value).text(label);
