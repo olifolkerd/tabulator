@@ -10004,6 +10004,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (self.formatters[column.definition.formatter]) {
 
             config.formatter = self.formatters[column.definition.formatter];
+
+            if (column.definition.formatter === "email") {
+
+              console.warn("The%c email%c formatter has been depricated and will be removed in version 4.0, use the %clink %cformatter with %cformatterParams:{urlPrefix:'mailto:'} %cinstead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+            }
           } else {
 
             console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
