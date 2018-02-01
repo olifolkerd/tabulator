@@ -4,10 +4,10 @@ var Page = function(table){
 
 	this.element = $("<span class='tabulator-paginator'></span>");
 	this.pagesElement = $("<span class='tabulator-pages'></span>");
-	this.firstBut = $("<button class='tabulator-page' data-page='first' role='button' aria-label='' title=''></button>");
-	this.prevBut = $("<button class='tabulator-page' data-page='prev' role='button' aria-label='' title=''></button>");
-	this.nextBut = $("<button class='tabulator-page' data-page='next' role='button' aria-label='' title=''></button>");
-	this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title=''></button>");
+	this.firstBut = $("<button class='tabulator-page' data-page='first' role='button' aria-label='' title='' type='button'></button>");
+	this.prevBut = $("<button class='tabulator-page' data-page='prev' role='button' aria-label='' title='' type='button'></button>");
+	this.nextBut = $("<button class='tabulator-page' data-page='next' role='button' aria-label='' title='' type='button'></button>");
+	this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title='' type='button'></button>");
 
 	this.mode = "local";
 	this.size = 0;
