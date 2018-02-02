@@ -197,10 +197,12 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 
 			return true;
 		}else{
+			this.mouseClick = false;
 			element.blur();
 			return false;
 		}
 	}else{
+		this.mouseClick = false;
 		element.blur();
 		return false;
 	}

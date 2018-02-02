@@ -8580,11 +8580,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           return true;
         } else {
 
+          this.mouseClick = false;
+
           element.blur();
 
           return false;
         }
       } else {
+
+        this.mouseClick = false;
 
         element.blur();
 
