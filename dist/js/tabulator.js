@@ -4245,14 +4245,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.cell.setValueActual(this.cell.getOldValue());
     };
 
-    CellComponent.prototype.edit = function () {
+    CellComponent.prototype.edit = function (force) {
 
-      this.cell.edit();
+      return this.cell.edit(force);
     };
 
     CellComponent.prototype.cancelEdit = function () {
 
-      this.cell.cancelEdit();
+      this.cell.cancelEdit(force);
     };
 
     CellComponent.prototype.nav = function () {
@@ -4666,14 +4666,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.element[0].style.display = "none";
     };
 
-    Cell.prototype.edit = function () {
+    Cell.prototype.edit = function (force) {
 
-      this.element.focus();
+      if (this.table.extExists("edit", true)) {
+
+        return this.table.extensions.edit.edit(this, false, force);
+      }
     };
 
     Cell.prototype.cancelEdit = function () {
 
-      if (this.table.extExists("edit")) {
+      if (this.table.extExists("edit", true)) {
 
         var editing = this.table.extensions.edit.getCurrentCell();
 
@@ -8300,6 +8303,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.currentCell = false; //hold currently editing cell
 
+
+      this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
+
     };
 
     //initialize column editor
@@ -8417,9 +8423,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Edit.prototype.bindEditor = function (cell) {
 
       var self = this,
+          element = cell.getElement();
+
+      element.attr("tabindex", 0);
+
+      element.on("click", function (e) {
+
+        if (!$(this).hasClass("tabulator-editing")) {
+
+          $(this).focus();
+        }
+      });
+
+      element.on("mousedown", function (e) {
+
+        self.mouseClick = true;
+      });
+
+      element.on("focus", function (e) {
+
+        self.edit(cell, e);
+      });
+    };
+
+    Edit.prototype.edit = function (cell, e, forceEdit) {
+
+      var self = this,
+          allowEdit = true,
           rendered = function rendered() {},
           element = cell.getElement(),
-          mouseClick = false;
+          cellEditor,
+          component;
 
       //handle successfull value change
 
@@ -8453,118 +8487,109 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       function cancel() {
 
-        var component = cell.getComponent();
-
-        self.clearEditor();
-
-        cell.setValueActual(cell.getValue());
-
-        if (cell.column.cellEvents.cellEditCancelled) {
-
-          cell.column.cellEvents.cellEditCancelled(component);
-        }
-
-        self.table.options.cellEditCancelled(component);
+        self.cancelEdit();
       };
 
-      element.attr("tabindex", 0);
+      function onRendered(callback) {
 
-      element.on("click", function (e) {
+        rendered = callback;
+      }
 
-        if (!$(this).hasClass("tabulator-editing")) {
+      if (!cell.column.extensions.edit.blocked) {
 
-          $(this).focus();
-        }
-      });
-
-      element.on("mousedown", function (e) {
-
-        mouseClick = true;
-      });
-
-      element.on("focus", function (e) {
-
-        var allowEdit = true,
-            cellEditor,
-            component;
-
-        self.currentCell = cell;
-
-        function onRendered(callback) {
-
-          rendered = callback;
-        }
-
-        if (!cell.column.extensions.edit.blocked) {
+        if (e) {
 
           e.stopPropagation();
+        }
 
-          if (typeof cell.column.extensions.edit.check == "function") {
+        switch (_typeof(cell.column.extensions.edit.check)) {
+
+          case "function":
 
             allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+
+            break;
+
+          case "boolean":
+
+            allowEdit = cell.column.extensions.edit.check;
+
+            break;
+
+        }
+
+        if (allowEdit || forceEdit) {
+
+          self.cancelEdit();
+
+          self.currentCell = cell;
+
+          component = cell.getComponent();
+
+          if (this.mouseClick) {
+
+            this.mouseClick = false;
+
+            if (cell.column.cellEvents.cellClick) {
+
+              cell.column.cellEvents.cellClick(component);
+            }
           }
 
-          if (allowEdit) {
+          if (cell.column.cellEvents.cellEditing) {
 
-            component = cell.getComponent();
+            cell.column.cellEvents.cellEditing(component);
+          }
 
-            if (mouseClick) {
+          self.table.options.cellEditing(component);
 
-              mouseClick = false;
+          cellEditor = cell.column.extensions.edit.editor.call(self, component, onRendered, success, cancel, cell.column.extensions.edit.params);
 
-              if (cell.column.cellEvents.cellClick) {
-
-                cell.column.cellEvents.cellClick(component);
-              }
-            }
-
-            if (cell.column.cellEvents.cellEditing) {
-
-              cell.column.cellEvents.cellEditing(component);
-            }
-
-            self.table.options.cellEditing(component);
-
-            cellEditor = cell.column.extensions.edit.editor.call(self, component, onRendered, success, cancel, cell.column.extensions.edit.params);
-
-            //if editor returned, add to DOM, if false, abort edit
+          //if editor returned, add to DOM, if false, abort edit
 
 
-            if (cellEditor !== false) {
+          if (cellEditor !== false) {
 
-              element.addClass("tabulator-editing");
+            element.addClass("tabulator-editing");
 
-              cell.row.getElement().addClass("tabulator-row-editing");
+            cell.row.getElement().addClass("tabulator-row-editing");
 
-              element.empty();
+            element.empty();
 
-              element.append(cellEditor);
+            element.append(cellEditor);
 
-              //trigger onRendered Callback
-
-
-              rendered();
-
-              //prevent editing from triggering rowClick event
+            //trigger onRendered Callback
 
 
-              element.children().click(function (e) {
+            rendered();
 
-                e.stopPropagation();
-              });
-            } else {
+            //prevent editing from triggering rowClick event
 
-              element.blur();
-            }
+
+            element.children().click(function (e) {
+
+              e.stopPropagation();
+            });
           } else {
 
             element.blur();
+
+            return false;
           }
+
+          return true;
         } else {
 
           element.blur();
+
+          return false;
         }
-      });
+      } else {
+
+        element.blur();
+
+        return false;
+      }
     };
 
     //default data editors

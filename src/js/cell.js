@@ -44,12 +44,12 @@ CellComponent.prototype.restoreOldValue = function(){
 	this.cell.setValueActual(this.cell.getOldValue());
 };
 
-CellComponent.prototype.edit = function(){
-	this.cell.edit();
+CellComponent.prototype.edit = function(force){
+	return this.cell.edit(force);
 };
 
 CellComponent.prototype.cancelEdit = function(){
-	this.cell.cancelEdit();
+	this.cell.cancelEdit(force);
 };
 
 
@@ -376,12 +376,14 @@ Cell.prototype.hide = function(){
 	this.element[0].style.display = "none";
 };
 
-Cell.prototype.edit = function(){
-	this.element.focus();
+Cell.prototype.edit = function(force){
+	if(this.table.extExists("edit", true)){
+		return this.table.extensions.edit.edit(this, false, force);
+	}
 };
 
 Cell.prototype.cancelEdit = function(){
-	if(this.table.extExists("edit")){
+	if(this.table.extExists("edit", true)){
 		var editing = this.table.extensions.edit.getCurrentCell();
 
 		if(editing && editing._getSelf() === this){
