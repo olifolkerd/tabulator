@@ -115,22 +115,22 @@ Validate.prototype.validators = {
 
 	//maximum value
 	max:function(cell, value, parameters){
-		return parseFloat(value) <= parameters;
+		return !this.required(value) || parseFloat(value) <= parameters;
 	},
 
 	//minimum value
 	min:function(cell, value, parameters){
-		return parseFloat(value) >= parameters;
+		return !this.required(value) || parseFloat(value) >= parameters;
 	},
 
 	//minimum string length
 	minLength:function(cell, value, parameters){
-		return String(value).length >= parameters;
+		return !this.required(value) || String(value).length >= parameters;
 	},
 
 	//maximum string length
 	maxLength:function(cell, value, parameters){
-		return String(value).length <= parameters;
+		return !this.required(value) || String(value).length <= parameters;
 	},
 
 	//in provided value list
