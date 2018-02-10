@@ -32,6 +32,7 @@
 
 	 			resizableColumns:true, //resizable columns
 	 			resizableRows:true, //resizable rows
+	 			autoResize:true, //auto resize table
 
 	 			columns:[],//store for colum header info
 
@@ -324,6 +325,10 @@
 
 	 			if(this.extExists("selectRow")){
 	 				ext.selectRow.clearSelectionData();
+	 			}
+
+	 			if(options.autoResize && this.extExists("resizeTable")){
+	 				ext.resizeTable.initialize();
 	 			}
 
 	 			options.tableBuilt();

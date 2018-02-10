@@ -4973,6 +4973,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         resizableRows: true, //resizable rows
 
+        autoResize: true, //auto resize table
+
 
         columns: [], //store for colum header info
 
@@ -5394,6 +5396,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (this.extExists("selectRow")) {
 
           ext.selectRow.clearSelectionData();
+        }
+
+        if (options.autoResize && this.extExists("resizeTable")) {
+
+          ext.resizeTable.initialize();
         }
 
         options.tableBuilt();
@@ -14459,6 +14466,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     Tabulator.registerExtension("resizeRows", ResizeRows);
+
+    var ResizeTable = function ResizeTable(table) {
+
+      this.table = table; //hold Tabulator object
+
+    };
+
+    ResizeTable.prototype.initialize = function (row) {
+
+      var table = this.table,
+          observer;
+
+      if (typeof ResizeObserver !== "undefined") {
+
+        observer = new ResizeObserver(function (entry) {
+
+          table.redraw();
+        });
+
+        observer.observe(table.element[0]);
+      } else {
+
+        $(window).resize(function () {
+
+          $(".tabulator").tabulator("redraw");
+        });
+      }
+    };
+
+    Tabulator.registerExtension("resizeTable", ResizeTable);
 
     var ResponsiveLayout = function ResponsiveLayout(table) {
 
