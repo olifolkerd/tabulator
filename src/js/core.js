@@ -742,6 +742,19 @@
 	 			}
 	 		},
 
+	 		//scroll to column in DOM
+	 		scrollToColumn:function(field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			if(column){
+	 				return this.columnManager.scrollToColumn(column);
+	 			}else{
+	 				console.warn("Scroll Error - No matching column found:", field);
+	 				return false;
+	 			}
+	 		},
+
+
 
 	 		//////////// Localization Functions  ////////////
 	 		setLocale:function(locale){

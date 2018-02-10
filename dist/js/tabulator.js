@@ -615,6 +615,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    ColumnManager.prototype.scrollToColumn = function (column) {
+
+      var left;
+
+      if (column.visible) {
+
+        left = column.element.position().left + column.element.innerWidth() - this.headersElement.innerWidth();
+
+        this.table.rowManager.scrollHorizontal(left);
+
+        this.scrollHorizontal(left);
+      } else {
+
+        console.warn("Scroll Error - Column not visible");
+      }
+    };
+
     //////////////// Cell Management /////////////////
 
 
@@ -5968,6 +5985,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         } else {
 
           console.warn("Column Delete Error - No matching column found:", field);
+
+          return false;
+        }
+      },
+
+      //scroll to column in DOM
+
+      scrollToColumn: function scrollToColumn(field) {
+
+        var column = this.columnManager.findColumn(field);
+
+        if (column) {
+
+          return this.columnManager.scrollToColumn(column);
+        } else {
+
+          console.warn("Scroll Error - No matching column found:", field);
 
           return false;
         }

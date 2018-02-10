@@ -83,6 +83,11 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		-webkit-user-select: none;
 		-o-user-select: none;
 
+		//holder for column headers
+		.tabulator-headers{
+			position:relative;
+		}
+
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;

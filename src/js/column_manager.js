@@ -307,6 +307,19 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, 
 	}
 };
 
+ColumnManager.prototype.scrollToColumn = function(column){
+	var left;
+
+	if(column.visible){
+		left = column.element.position().left + column.element.innerWidth() - this.headersElement.innerWidth();
+		
+		this.table.rowManager.scrollHorizontal(left);
+		this.scrollHorizontal(left);
+	}else{
+		console.warn("Scroll Error - Column not visible");
+	}
+};
+
 //////////////// Cell Management /////////////////
 
 ColumnManager.prototype.generateCells = function(row){

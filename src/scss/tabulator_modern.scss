@@ -93,6 +93,11 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 		font-size: 1.1em;
 
+		//holder for column headers
+		.tabulator-headers{
+			position:relative;
+		}
+
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;
