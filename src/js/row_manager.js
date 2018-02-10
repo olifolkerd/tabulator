@@ -369,12 +369,24 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 };
 
 RowManager.prototype.moveRow = function(from, to, after){
-	this._moveRowInArray(this.rows, from, to, after);
-	this._moveRowInArray(this.activeRows, from, to, after);
-	this._moveRowInArray(this.displayRows, from, to, after);
+
+	if(this.table.options.history && this.table.extExists("history")){
+		console.log("moved", from, {pos:this.getRowPosition(from), to:to, after:after})
+		this.table.extensions.history.action("rowMoved", from, {pos:this.getRowPosition(from), to:to, after:after});
+	};
+
+	this.moveRowActual(from, to, after);
 
 	this.table.options.rowMoved(from.getComponent());
 };
+
+
+RowManager.prototype.moveRowActual = function(from, to, after){
+	this._moveRowInArray(this.rows, from, to, after);
+	this._moveRowInArray(this.activeRows, from, to, after);
+	this._moveRowInArray(this.displayRows, from, to, after);
+};
+
 
 RowManager.prototype._moveRowInArray = function(rows, from, to, after){
 	var	fromIndex = rows.indexOf(from),

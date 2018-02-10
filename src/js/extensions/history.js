@@ -28,6 +28,8 @@ History.prototype.undo = function(){
 
 	if(this.index > -1){
 
+		// console.log("HISTORY", this.history.length);
+
 		let action = this.history[this.index];
 
 		this.undoers[action.type].call(this, action);
@@ -77,6 +79,11 @@ History.prototype.undoers = {
 
 		this._rebindRow(action.component, newRow);
 	},
+
+	rowMoved: function(action){
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
+		this.table.rowManager.redraw();
+	},
 };
 
 
@@ -93,6 +100,11 @@ History.prototype.redoers = {
 
 	rowDelete:function(action){
 		action.component.delete();
+	},
+
+	rowMoved: function(action){
+		this.table.rowManager.moveRowActual(action.component, action.data.to, action.data.after);
+		this.table.rowManager.redraw();
 	},
 };
 

@@ -2499,13 +2499,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowManager.prototype.moveRow = function (from, to, after) {
 
+      if (this.table.options.history && this.table.extExists("history")) {
+
+        console.log("moved", from, { pos: this.getRowPosition(from), to: to, after: after });
+
+        this.table.extensions.history.action("rowMoved", from, { pos: this.getRowPosition(from), to: to, after: after });
+      };
+
+      this.moveRowActual(from, to, after);
+
+      this.table.options.rowMoved(from.getComponent());
+    };
+
+    RowManager.prototype.moveRowActual = function (from, to, after) {
+
       this._moveRowInArray(this.rows, from, to, after);
 
       this._moveRowInArray(this.activeRows, from, to, after);
 
       this._moveRowInArray(this.displayRows, from, to, after);
-
-      this.table.options.rowMoved(from.getComponent());
     };
 
     RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
@@ -11983,10 +11995,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     History.prototype.action = function (type, component, data) {
 
-      if (this.index > -1) {
-
-        this.history = this.history.slice(0, this.index + 1);
-      }
+      this.history = this.history.slice(0, this.index + 1);
 
       this.history.push({
 
@@ -12004,6 +12013,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     History.prototype.undo = function () {
 
       if (this.index > -1) {
+
+        // console.log("HISTORY", this.history.length);
+
 
         var action = this.history[this.index];
 
@@ -12060,6 +12072,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
 
         this._rebindRow(action.component, newRow);
+      },
+
+      rowMoved: function rowMoved(action) {
+
+        this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
+
+        this.table.rowManager.redraw();
       }
 
     };
@@ -12081,6 +12100,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       rowDelete: function rowDelete(action) {
 
         action.component.delete();
+      },
+
+      rowMoved: function rowMoved(action) {
+
+        this.table.rowManager.moveRowActual(action.component, action.data.to, action.data.after);
+
+        this.table.rowManager.redraw();
       }
 
     };
