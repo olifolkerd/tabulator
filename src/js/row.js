@@ -530,6 +530,12 @@ Row.prototype.deleteCells = function(){
 	}
 };
 
+Row.prototype.wipe = function(){
+	this.deleteCells();
+	this.element.empty();
+	this.element.remove();
+}
+
 
 
 //////////////// Object Generation /////////////////

@@ -192,6 +192,10 @@ RowManager.prototype.setData = function(data){
 
 	self.table.options.dataLoading(data);
 
+	self.rows.forEach(function(row){
+		row.wipe();
+	});
+
 	self.rows = [];
 
 	if(this.table.options.history && this.table.extExists("history")){

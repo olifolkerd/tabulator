@@ -2282,6 +2282,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.table.options.dataLoading(data);
 
+      self.rows.forEach(function (row) {
+
+        row.wipe();
+      });
+
       self.rows = [];
 
       if (this.table.options.history && this.table.extExists("history")) {
@@ -4185,6 +4190,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.cells[0].delete();
       }
+    };
+
+    Row.prototype.wipe = function () {
+
+      this.deleteCells();
+
+      this.element.empty();
+
+      this.element.remove();
     };
 
     //////////////// Object Generation /////////////////
