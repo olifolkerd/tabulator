@@ -1573,12 +1573,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Column.prototype.verticalAlign = function (alignment) {
 
-      if (this.parent.isGroup) {
+      //calculate height of column header and group holder element
 
-        this.element.css("height", this.parent.getGroupElement().innerHeight());
-      } else {
+      var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
 
-        this.element.css("height", this.parent.getHeadersElement().innerHeight());
+      this.element.css("height", parentHeight);
+
+      if (this.isGroup) {
+
+        this.groupElement.css("min-height", parentHeight - this.contentElement.outerHeight());
       }
 
       //vertically align cell contents
@@ -1607,6 +1610,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.element.css("padding-top", "");
 
       this.element.css("height", "");
+
+      this.element.css("min-height", "");
 
       this.columns.forEach(function (column) {
 
@@ -3452,15 +3457,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      var otherHeigt = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+      var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
 
       self.element.css({
 
-        "min-height": "calc(100% - " + otherHeigt + "px)",
+        "min-height": "calc(100% - " + otherHeight + "px)",
 
-        "height": "calc(100% - " + otherHeigt + "px)",
+        "height": "calc(100% - " + otherHeight + "px)",
 
-        "max-height": "calc(100% - " + otherHeigt + "px)"
+        "max-height": "calc(100% - " + otherHeight + "px)"
 
       });
 

@@ -575,10 +575,13 @@ Column.prototype.attachColumn = function(column){
 //vertically align header in column
 Column.prototype.verticalAlign = function(alignment){
 
-	if(this.parent.isGroup){
-		this.element.css("height", this.parent.getGroupElement().innerHeight())
-	}else{
-		this.element.css("height", this.parent.getHeadersElement().innerHeight())
+	//calculate height of column header and group holder element
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
+
+	this.element.css("height", parentHeight);
+
+	if(this.isGroup){
+		this.groupElement.css("min-height", parentHeight - this.contentElement.outerHeight());
 	}
 
 	//vertically align cell contents
@@ -599,6 +602,7 @@ Column.prototype.verticalAlign = function(alignment){
 Column.prototype.clearVerticalAlign = function(){
 	this.element.css("padding-top","");
 	this.element.css("height","");
+	this.element.css("min-height","");
 
 	this.columns.forEach(function(column){
 		column.clearVerticalAlign();
