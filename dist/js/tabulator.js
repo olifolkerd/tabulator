@@ -3539,7 +3539,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowManager.prototype.redraw = function (force) {
 
-      var pos = 0;
+      var pos = 0,
+          left = this.scrollLeft;
 
       if (this.renderMode == "virtual") {
 
@@ -3556,6 +3557,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           var pos = Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * this.displayRowsCount);
 
           this._virtualRenderFill(pos);
+
+          this.scrollHorizontal(left);
         }
 
         if (!this.displayRowsCount) {

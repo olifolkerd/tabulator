@@ -1151,7 +1151,8 @@ RowManager.prototype.reinitialize = function(){
 
 //redraw table
 RowManager.prototype.redraw = function (force){
-	var pos = 0;
+	var pos = 0,
+	left = this.scrollLeft;
 
 	if(this.renderMode == "virtual"){
 		this.adjustTableSize();
@@ -1164,6 +1165,8 @@ RowManager.prototype.redraw = function (force){
 		}else{
 			var pos = Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount);
 			this._virtualRenderFill(pos);
+
+			this.scrollHorizontal(left);
 		}
 
 		if(!this.displayRowsCount){
