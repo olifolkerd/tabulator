@@ -904,6 +904,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.column;
     };
 
+    ColumnComponent.prototype.scrollTo = function () {
+
+      this.column.table.columManager.scrollToColumn(this.column);
+    };
+
     var Column = function Column(def, parent) {
 
       var self = this;
