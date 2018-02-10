@@ -1983,7 +1983,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.setWidth(this.definition.width);
       }
 
+      //hide header filters to prevent them altering column width
+
+      if (this.table.extExists("filter")) {
+
+        this.table.extensions.filter.hideHeaderFilterElements();
+      }
+
       this.fitToData();
+
+      //show header filters again after layout is complete
+
+      if (this.table.extExists("filter")) {
+
+        this.table.extensions.filter.showHeaderFilterElements();
+      }
     };
 
     //set column width to maximum cell width
@@ -2522,8 +2536,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     RowManager.prototype.moveRow = function (from, to, after) {
 
       if (this.table.options.history && this.table.extExists("history")) {
-
-        console.log("moved", from, { pos: this.getRowPosition(from), to: to, after: after });
 
         this.table.extensions.history.action("rowMoved", from, { pos: this.getRowPosition(from), to: to, after: after });
       };
@@ -9870,6 +9882,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    //hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
+
+
+    Filter.prototype.hideHeaderFilterElements = function () {
+
+      this.headerFilterElements.forEach(function (element) {
+
+        element.hide();
+      });
+    };
+
+    //show all header filter elements (used to ensure correct column widths in "fitData" layout mode)
+
+
+    Filter.prototype.showHeaderFilterElements = function () {
+
+      this.headerFilterElements.forEach(function (element) {
+
+        element.show();
+      });
+    };
+
     //programatically set value of header filter
 
 
@@ -12059,9 +12093,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     History.prototype.undo = function () {
 
       if (this.index > -1) {
-
-        // console.log("HISTORY", this.history.length);
-
 
         var action = this.history[this.index];
 

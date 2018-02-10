@@ -202,6 +202,21 @@ Filter.prototype.initializeColumn = function(column){
 
 };
 
+//hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
+Filter.prototype.hideHeaderFilterElements = function(){
+	this.headerFilterElements.forEach(function(element){
+		element.hide();
+	});
+};
+
+//show all header filter elements (used to ensure correct column widths in "fitData" layout mode)
+Filter.prototype.showHeaderFilterElements = function(){
+	this.headerFilterElements.forEach(function(element){
+		element.show();
+	});
+};
+
+
 //programatically set value of header filter
 Filter.prototype.setHeaderFilterFocus = function(column){
 	if(column.extensions.filter && column.extensions.filter.headerElement){

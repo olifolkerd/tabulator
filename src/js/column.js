@@ -872,7 +872,17 @@ Column.prototype.reinitializeWidth = function(force){
 		this.setWidth(this.definition.width);
 	}
 
+	//hide header filters to prevent them altering column width
+	if(this.table.extExists("filter")){
+		this.table.extensions.filter.hideHeaderFilterElements();
+	}
+
 	this.fitToData();
+
+	//show header filters again after layout is complete
+	if(this.table.extExists("filter")){
+		this.table.extensions.filter.showHeaderFilterElements();
+	}
 }
 
 //set column width to maximum cell width
