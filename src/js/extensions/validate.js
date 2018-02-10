@@ -87,70 +87,76 @@ Validate.prototype.validate = function(validators, cell, value){
 	return valid.length ? valid : true;
 };
 
-
+Validate.isEmptyOrValidate = function(callback) {
+	return function(cell, value, parameters){
+		// If it isn't empty then validate
+		return typeof value !== "undefined" || value === null || value === ""
+			|| callback(cell, value, parameters);
+	};
+};
 Validate.prototype.validators = {
 
 	//is integer
-	integer:function(cell, value, parameters){
+	integer: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		value = Number(value);
 		return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
-	},
+	}),
 
 	//is float
-	float:function(cell, value, parameters){
+	float: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		value = Number(value);
 		return typeof value === 'number' && isFinite(value) && value % 1 !== 0;;
-	},
+	}),
 
 	//must be a number
-	numeric:function(cell, value, parameters){
+	numeric: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		return !isNaN(value);
-	},
+	}),
 
 	//must be a string
-	string:function(cell, value, parameters){
+	string: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		return isNaN(value);
-	},
+	}),
 
 
 	//maximum value
-	max:function(cell, value, parameters){
-		return !this.required(value) || parseFloat(value) <= parameters;
-	},
+	max: Validate.isEmptyOrValidate(function(cell, value, parameters){
+		return parseFloat(value) <= parameters;
+	}),
 
 	//minimum value
-	min:function(cell, value, parameters){
-		return !this.required(value) || parseFloat(value) >= parameters;
-	},
+	min: Validate.isEmptyOrValidate(function(cell, value, parameters){
+		return parseFloat(value) >= parameters;
+	}),
 
 	//minimum string length
-	minLength:function(cell, value, parameters){
-		return !this.required(value) || String(value).length >= parameters;
-	},
+	minLength: Validate.isEmptyOrValidate(function(cell, value, parameters){
+		return String(value).length >= parameters;
+	}),
 
 	//maximum string length
-	maxLength:function(cell, value, parameters){
-		return !this.required(value) || String(value).length <= parameters;
-	},
+	maxLength: Validate.isEmptyOrValidate(function(cell, value, parameters){
+		return String(value).length <= parameters;
+	}),
 
 	//in provided value list
-	in:function(cell, value, parameters){
+	in: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		if(typeof parameters == "string"){
 			parameters = parameters.split("|");
 		}
 
 		return value === "" || parameters.indexOf(value) > -1;
-	},
+	}),
 
 	//must match provided regex
-	regex:function(cell, value, parameters){
+	regex: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		var reg = new RegExp(parameters);
 
 		return reg.test(value);
-	},
+	}),
 
 	//value must be unique in this column
-	unique:function(cell, value, parameters){
+	unique: Validate.isEmptyOrValidate(function(cell, value, parameters){
 		var unique = true;
 
 		var cellData = cell.getData();
@@ -166,11 +172,11 @@ Validate.prototype.validators = {
 		});
 
 		return unique;
-	},
+	}),
 
 	//must have a value
 	required:function(cell, value, parameters){
-		return value !== "" & value !== null && typeof value != "undefined";
+		return value !== "" & value !== null && typeof value !== "undefined";
 	},
 };
 
