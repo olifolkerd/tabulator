@@ -41,10 +41,6 @@
   -o-user-select: none;
 }
 
-.tabulator .tabulator-header .tabulator-headers {
-  position: relative;
-}
-
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
   position: relative;

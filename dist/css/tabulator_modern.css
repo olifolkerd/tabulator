@@ -40,10 +40,6 @@
   font-size: 1.1em;
 }
 
-.tabulator .tabulator-header .tabulator-headers {
-  position: relative;
-}
-
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
   position: relative;

@@ -621,7 +621,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (column.visible) {
 
-        left = column.element.position().left + column.element.innerWidth() - this.headersElement.innerWidth();
+        left = column.element.position().left + this.element.scrollLeft() + column.element.innerWidth() - this.headersElement.innerWidth();
 
         this.table.rowManager.scrollHorizontal(left);
 

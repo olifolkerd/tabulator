@@ -311,8 +311,8 @@ ColumnManager.prototype.scrollToColumn = function(column){
 	var left;
 
 	if(column.visible){
-		left = column.element.position().left + column.element.innerWidth() - this.headersElement.innerWidth();
-		
+		left = column.element.position().left + this.element.scrollLeft() + column.element.innerWidth() - this.headersElement.innerWidth();
+
 		this.table.rowManager.scrollHorizontal(left);
 		this.scrollHorizontal(left);
 	}else{
