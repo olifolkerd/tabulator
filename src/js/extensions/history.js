@@ -27,9 +27,6 @@ History.prototype.action = function(type, component, data){
 History.prototype.undo = function(){
 
 	if(this.index > -1){
-
-		// console.log("HISTORY", this.history.length);
-
 		let action = this.history[this.index];
 
 		this.undoers[action.type].call(this, action);

@@ -371,7 +371,6 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 RowManager.prototype.moveRow = function(from, to, after){
 
 	if(this.table.options.history && this.table.extExists("history")){
-		console.log("moved", from, {pos:this.getRowPosition(from), to:to, after:after})
 		this.table.extensions.history.action("rowMoved", from, {pos:this.getRowPosition(from), to:to, after:after});
 	};
 
