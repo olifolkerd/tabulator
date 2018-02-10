@@ -686,6 +686,9 @@ RowManager.prototype.refreshActiveData = function(dataChanged){
 
 	if(self.element.is(":visible")){
 		self.renderTable();
+		if(table.options.layoutColumnsOnNewData){
+			self.table.columnManager.redraw(true);
+		}
 	}
 
 	if(table.extExists("columnCalcs")){

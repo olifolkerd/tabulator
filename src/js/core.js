@@ -25,6 +25,7 @@
 	 			height:false, //height of tabulator
 
 	 			layout:"fitData", ///layout type "fitColumns" | "fitData"
+	 			layoutColumnsOnNewData:false, //update column widths on setData
 	 			fitColumns:false, //DEPRICATED - fit colums to width of screen;
 
 	 			columnMinWidth:40, //minimum global width for a column

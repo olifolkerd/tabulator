@@ -2910,6 +2910,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (self.element.is(":visible")) {
 
         self.renderTable();
+
+        if (table.options.layoutColumnsOnNewData) {
+
+          self.table.columnManager.redraw(true);
+        }
       }
 
       if (table.extExists("columnCalcs")) {
@@ -4996,6 +5001,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         layout: "fitData", ///layout type "fitColumns" | "fitData"
+
+        layoutColumnsOnNewData: false, //update column widths on setData
 
         fitColumns: false, //DEPRICATED - fit colums to width of screen;
 
