@@ -140,19 +140,24 @@ Ajax.prototype.sendRequest = function(callback){
 };
 
 Ajax.prototype.showLoader = function(){
-	this.loaderElement.detach();
+	var shouldLoad = typeof this.table.options.ajaxLoader === "function" ? this.table.options.ajaxLoader() : this.table.options.ajaxLoader;
 
-	this.msgElement.empty()
-	.removeClass("tabulator-error")
-	.addClass("tabulator-loading")
+	if(shouldLoad){
 
-	if(this.loadingElement){
-		this.msgElement.append(this.loadingElement);
-	}else{
-		this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
+		this.loaderElement.detach();
+
+		this.msgElement.empty()
+		.removeClass("tabulator-error")
+		.addClass("tabulator-loading")
+
+		if(this.loadingElement){
+			this.msgElement.append(this.loadingElement);
+		}else{
+			this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
+		}
+
+		this.table.element.append(this.loaderElement);
 	}
-
-	this.table.element.append(this.loaderElement);
 };
 
 Ajax.prototype.showError = function(){
