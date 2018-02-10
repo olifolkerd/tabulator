@@ -1035,6 +1035,15 @@
 	 		},
 
 
+	 		///////////////// Column Calculation Functions ///////////////
+	 		getCalcResults:function(){
+	 			if(this.extExists("columnCalcs", true)){
+	 				return this.extensions.columnCalcs.getResults();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
+
 	 		/////////////// Navigation Management //////////////
 
 	 		navigatePrev:function(){

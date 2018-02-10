@@ -6369,6 +6369,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       },
 
+      ///////////////// Column Calculation Functions ///////////////
+
+      getCalcResults: function getCalcResults() {
+
+        if (this.extExists("columnCalcs", true)) {
+
+          return this.extensions.columnCalcs.getResults();
+        } else {
+
+          return false;
+        }
+      },
+
       /////////////// Navigation Management //////////////
 
 
@@ -7855,6 +7868,66 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.botRow.normalizeHeight(true);
       }
+    };
+
+    //return the calculated
+
+
+    ColumnCalcs.prototype.getResults = function () {
+
+      var self = this,
+          results = {},
+          groups;
+
+      if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+        groups = this.table.extensions.groupRows.getGroups();
+
+        groups.forEach(function (group) {
+
+          results[group.getKey()] = self.getGroupResults(group);
+        });
+      } else {
+
+        results = {
+
+          top: this.topRow ? this.topRow.getData() : {},
+
+          bottom: this.botRow ? this.botRow.getData() : {}
+
+        };
+      }
+
+      return results;
+    };
+
+    //get results from a group
+
+
+    ColumnCalcs.prototype.getGroupResults = function (group) {
+
+      var self = this,
+          groupObj = group._getSelf(),
+          subGroups = group.getSubGroups(),
+          subGroupResults = {},
+          results = {};
+
+      subGroups.forEach(function (subgroup) {
+
+        subGroupResults[subgroup.getKey()] = self.getGroupResults(subgroup);
+      });
+
+      results = {
+
+        top: groupObj.calcs.top ? groupObj.calcs.top.getData() : {},
+
+        bottom: groupObj.calcs.bottom ? groupObj.calcs.bottom.getData() : {},
+
+        groups: subGroupResults
+
+      };
+
+      return results;
     };
 
     //default calculations
