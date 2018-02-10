@@ -87,76 +87,102 @@ Validate.prototype.validate = function(validators, cell, value){
 	return valid.length ? valid : true;
 };
 
-Validate.isEmptyOrValidate = function(callback) {
-	return function(cell, value, parameters){
-		// If it isn't empty then validate
-		return typeof value !== "undefined" || value === null || value === ""
-			|| callback(cell, value, parameters);
-	};
-};
 Validate.prototype.validators = {
 
 	//is integer
-	integer: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	integer: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		value = Number(value);
 		return typeof value === 'number' && isFinite(value) && Math.floor(value) === value;
-	}),
+	},
 
 	//is float
-	float: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	float: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		value = Number(value);
 		return typeof value === 'number' && isFinite(value) && value % 1 !== 0;;
-	}),
+	},
 
 	//must be a number
-	numeric: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	numeric: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		return !isNaN(value);
-	}),
+	},
 
 	//must be a string
-	string: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	string: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		return isNaN(value);
-	}),
+	},
 
 
 	//maximum value
-	max: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	max: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		return parseFloat(value) <= parameters;
-	}),
+	},
 
 	//minimum value
-	min: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	min: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		return parseFloat(value) >= parameters;
-	}),
+	},
 
 	//minimum string length
-	minLength: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	minLength: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		return String(value).length >= parameters;
-	}),
+	},
 
 	//maximum string length
-	maxLength: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	maxLength: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		return String(value).length <= parameters;
-	}),
+	},
 
 	//in provided value list
-	in: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	in: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		if(typeof parameters == "string"){
 			parameters = parameters.split("|");
 		}
 
 		return value === "" || parameters.indexOf(value) > -1;
-	}),
+	},
 
 	//must match provided regex
-	regex: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	regex: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		var reg = new RegExp(parameters);
 
 		return reg.test(value);
-	}),
+	},
 
 	//value must be unique in this column
-	unique: Validate.isEmptyOrValidate(function(cell, value, parameters){
+	unique: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
 		var unique = true;
 
 		var cellData = cell.getData();
@@ -172,7 +198,7 @@ Validate.prototype.validators = {
 		});
 
 		return unique;
-	}),
+	},
 
 	//must have a value
 	required:function(cell, value, parameters){
