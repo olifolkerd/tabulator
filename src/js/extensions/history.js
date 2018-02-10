@@ -13,9 +13,7 @@ History.prototype.clear = function(){
 
 History.prototype.action = function(type, component, data){
 
-	if(this.index > -1){
-		this.history = this.history.slice(0, this.index + 1);
-	}
+	this.history = this.history.slice(0, this.index + 1);
 
 	this.history.push({
 		type:type,
