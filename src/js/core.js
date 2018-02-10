@@ -523,7 +523,7 @@
 	 					if(row){
 	 						row.updateData(item);
 	 					}else{
-	 						self.rowManager.addRow(item);
+	 						self.rowManager.addRows(item);
 	 					}
 	 				})
 	 			}else{
@@ -577,7 +577,7 @@
 	 				data = JSON.parse(data);
 	 			}
 
-	 			row = this.rowManager.addRow(data, pos, index);
+	 			row = this.rowManager.addRows(data, pos, index)[0];
 
 	 			//recalc column calculations if present
 	 			if(this.extExists("columnCalcs")){
@@ -598,7 +598,7 @@
 	 			if(row){
 	 				row.updateData(data);
 	 			}else{
-	 				row = this.rowManager.addRow(data);
+	 				row = this.rowManager.addRows(data)[0];
 
 	 				//recalc column calculations if present
 	 				if(this.extExists("columnCalcs")){

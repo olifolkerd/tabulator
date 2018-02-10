@@ -2350,9 +2350,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    RowManager.prototype.addRow = function (data, pos, index) {
+    RowManager.prototype.addRow = function (data, pos, index, blockRedraw) {
 
-      var row = this.addRowActual(data, pos, index);
+      var row = this.addRowActual(data, pos, index, blockRedraw);
 
       if (this.table.options.history && this.table.extExists("history")) {
 
@@ -2367,6 +2367,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     RowManager.prototype.addRows = function (data, pos, index) {
 
       var self = this,
+          length = 0,
           rows = [];
 
       pos = this.findAddRowPos(pos);
@@ -2376,14 +2377,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         data = [data];
       }
 
+      length = data.length - 1;
+
       if (typeof index == "undefined" && pos || typeof index !== "undefined" && !pos) {
 
         data.reverse();
       }
 
-      data.forEach(function (item) {
+      data.forEach(function (item, i) {
 
-        var row = self.addRow(item, pos, index);
+        var row = self.addRow(item, pos, index, i !== length);
 
         rows.push(row.getComponent());
       });
@@ -2418,7 +2421,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return pos;
     };
 
-    RowManager.prototype.addRowActual = function (data, pos, index) {
+    RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
       var safeData = data || {},
           row = new Row(safeData, this),
@@ -2476,7 +2479,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table.options.dataEdited(this.getData());
 
-      this.renderTable();
+      if (!blockRedraw) {
+
+        this.renderTable();
+      }
 
       return row;
     };
@@ -5644,7 +5650,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               row.updateData(item);
             } else {
 
-              self.rowManager.addRow(item);
+              self.rowManager.addRows(item);
             }
           });
         } else {
@@ -5717,7 +5723,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           data = JSON.parse(data);
         }
 
-        row = this.rowManager.addRow(data, pos, index);
+        row = this.rowManager.addRows(data, pos, index)[0];
 
         //recalc column calculations if present
 
@@ -5745,7 +5751,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           row.updateData(data);
         } else {
 
-          row = this.rowManager.addRow(data);
+          row = this.rowManager.addRows(data)[0];
 
           //recalc column calculations if present
 

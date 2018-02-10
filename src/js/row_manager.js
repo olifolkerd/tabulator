@@ -250,9 +250,9 @@ RowManager.prototype.deleteRow = function(row){
 	}
 };
 
-RowManager.prototype.addRow = function(data, pos, index){
+RowManager.prototype.addRow = function(data, pos, index, blockRedraw){
 
-	var row = this.addRowActual(data, pos, index);
+	var row = this.addRowActual(data, pos, index, blockRedraw);
 
 	if(this.table.options.history && this.table.extExists("history")){
 		this.table.extensions.history.action("rowAdd", row, {data:data, pos:pos, index:index});
@@ -264,6 +264,7 @@ RowManager.prototype.addRow = function(data, pos, index){
 //add multiple rows
 RowManager.prototype.addRows = function(data, pos, index){
 	var self = this,
+	length = 0,
 	rows = [];
 
 	pos = this.findAddRowPos(pos);
@@ -273,12 +274,14 @@ RowManager.prototype.addRows = function(data, pos, index){
 		data = [data];
 	}
 
+	length = data.length - 1;
+
 	if((typeof index == "undefined" && pos) || (typeof index !== "undefined" && !pos)){
 		data.reverse();
 	}
 
-	data.forEach(function(item){
-		var row = self.addRow(item, pos, index);
+	data.forEach(function(item, i){
+		var row = self.addRow(item, pos, index, i !== length);
 		rows.push(row.getComponent());
 	});
 
@@ -308,7 +311,7 @@ RowManager.prototype.findAddRowPos = function(pos){
 };
 
 
-RowManager.prototype.addRowActual = function(data, pos, index){
+RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	var safeData = data || {},
 	row = new Row(safeData, this),
 	top = this.findAddRowPos(pos);
@@ -354,7 +357,9 @@ RowManager.prototype.addRowActual = function(data, pos, index){
 
 	this.table.options.dataEdited(this.getData());
 
-	this.renderTable();
+	if(!blockRedraw){
+		this.renderTable();
+	}
 
 	return row;
 };
