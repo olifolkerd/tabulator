@@ -2162,7 +2162,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //handle virtual dom scrolling
 
-      if (self.table.options.height && self.table.options.virtualDom) {
+      if (self.table.options.virtualDom) {
 
         self.element.scroll(function () {
 
@@ -3452,24 +3452,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      if (self.table.options.height) {
+      var otherHeigt = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
 
-        var otherHeigt = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+      self.element.css({
 
-        self.element.css({
+        "min-height": "calc(100% - " + otherHeigt + "px)",
 
-          "min-height": "calc(100% - " + otherHeigt + "px)",
+        "height": "calc(100% - " + otherHeigt + "px)",
 
-          "height": "calc(100% - " + otherHeigt + "px)",
+        "max-height": "calc(100% - " + otherHeigt + "px)"
 
-          "max-height": "calc(100% - " + otherHeigt + "px)"
+      });
 
-        });
+      self.height = self.element.innerHeight();
 
-        self.height = self.element.innerHeight();
-
-        self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
-      }
+      self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
     };
 
     //renitialize all rows

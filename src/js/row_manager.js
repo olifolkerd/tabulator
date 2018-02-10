@@ -99,7 +99,7 @@ RowManager.prototype._initialize = function(){
 	});
 
 	//handle virtual dom scrolling
-	if(self.table.options.height && self.table.options.virtualDom){
+	if(self.table.options.virtualDom){
 
 		self.element.scroll(function(){
 			var top = self.element[0].scrollTop;
@@ -1115,19 +1115,16 @@ RowManager.prototype.normalizeHeight = function(){
 RowManager.prototype.adjustTableSize = function(){
 	var self = this;
 
-	if(self.table.options.height){
+	let otherHeigt = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
 
-		let otherHeigt = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+	self.element.css({
+		"min-height":"calc(100% - " + otherHeigt + "px)",
+		"height":"calc(100% - " + otherHeigt + "px)",
+		"max-height":"calc(100% - " + otherHeigt + "px)",
+	});
 
-		self.element.css({
-			"min-height":"calc(100% - " + otherHeigt + "px)",
-			"height":"calc(100% - " + otherHeigt + "px)",
-			"max-height":"calc(100% - " + otherHeigt + "px)",
-		});
-
-		self.height = self.element.innerHeight();
-		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
-	}
+	self.height = self.element.innerHeight();
+	self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
 };
 
 //renitialize all rows
