@@ -11434,20 +11434,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           tap,
           toggleElement;
 
-      if (self.groupManager.table.options.groupToggleElement) {
-
-        toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
-
-        toggleElement.on("click", function (e) {
-
-          e.stopPropagation();
-
-          e.stopImmediatePropagation();
-
-          self.toggleVisibility();
-        });
-      }
-
       //handle group click events
 
 
@@ -11545,6 +11531,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           clearTimeout(tapHold);
 
           tapHold = null;
+        });
+      }
+
+      if (self.groupManager.table.options.groupToggleElement) {
+
+        toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
+
+        toggleElement.on("click", function (e) {
+
+          e.stopPropagation();
+
+          e.stopImmediatePropagation();
+
+          self.toggleVisibility();
         });
       }
     };

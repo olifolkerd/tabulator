@@ -94,16 +94,6 @@ Group.prototype.addBindings = function(){
 	var self = this,
 	dblTap,	tapHold, tap, toggleElement;
 
-	if(self.groupManager.table.options.groupToggleElement){
-		toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
-
-		toggleElement.on("click", function(e){
-			e.stopPropagation();
-			e.stopImmediatePropagation();
-			self.toggleVisibility();
-		});
-	}
-
 
 	//handle group click events
 	if (self.groupManager.table.options.groupClick){
@@ -183,6 +173,18 @@ Group.prototype.addBindings = function(){
 		self.element.on("touchend", function(e){
 			clearTimeout(tapHold);
 			tapHold = null;
+		});
+	}
+
+
+
+	if(self.groupManager.table.options.groupToggleElement){
+		toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
+
+		toggleElement.on("click", function(e){
+			e.stopPropagation();
+			e.stopImmediatePropagation();
+			self.toggleVisibility();
 		});
 	}
 
