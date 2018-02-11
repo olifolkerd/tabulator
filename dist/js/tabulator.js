@@ -4217,6 +4217,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.table.extensions.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
       };
 
+      //remove from group
+
+      if (this.extensions.group) {
+
+        this.extensions.group.removeRow(this);
+      }
+
       //recalc column calculations if present
 
       if (this.table.extExists("columnCalcs")) {
@@ -7828,22 +7835,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var group = this.table.extensions.groupRows.getRowGroup(row);
 
-      if (group.calcs.bottom) {
+      if (group.calcs) {
 
-        data = this.rowsToData(group.rows);
+        if (group.calcs.bottom) {
 
-        rowData = this.generateRowData("bottom", data);
+          data = this.rowsToData(group.rows);
 
-        group.calcs.bottom.updateData(rowData);
-      }
+          rowData = this.generateRowData("bottom", data);
 
-      if (group.calcs.top) {
+          group.calcs.bottom.updateData(rowData);
+        }
 
-        data = this.rowsToData(group.rows);
+        if (group.calcs.top) {
 
-        rowData = this.generateRowData("top", data);
+          data = this.rowsToData(group.rows);
 
-        group.calcs.top.updateData(rowData);
+          rowData = this.generateRowData("top", data);
+
+          group.calcs.top.updateData(rowData);
+        }
       }
     };
 
@@ -11407,7 +11417,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.element = $("<div class='tabulator-row tabulator-group tabulator-group-level-" + level + "' role='rowgroup'></div>");
 
-      this.arrowElement = $("<div class='tabulator-arrow'></div>");
+      this.elementContents = $(""), this.arrowElement = $("<div class='tabulator-arrow'></div>");
 
       this.height = 0;
 
@@ -11573,6 +11583,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Group.prototype._addRow = function (row) {
 
       this.rows.push(row);
+
+      row.extensions.group = this;
+    };
+
+    Group.prototype.removeRow = function (row) {
+
+      var index = this.rows.indexOf(row);
+
+      if (index > -1) {
+
+        this.rows.splice(index, 1);
+      }
+
+      this.generateGroupHeaderContents();
     };
 
     Group.prototype.getHeadersAndRows = function () {
@@ -11759,6 +11783,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return match;
     };
 
+    Group.prototype.generateGroupHeaderContents = function () {
+
+      var data = [];
+
+      this.rows.forEach(function (row) {
+
+        data.push(row.getData());
+      });
+
+      this.elementContents = this.generator(this.key, this.getRowCount(), data, this.getComponent());
+
+      this.element.empty().append(this.elementContents).prepend(this.arrowElement);
+    };
+
     ////////////// Standard Row Functions //////////////
 
 
@@ -11767,13 +11805,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.addBindingsd = false;
 
       this._visSet();
-
-      var data = [];
-
-      this.rows.forEach(function (row) {
-
-        data.push(row.getData());
-      });
 
       if (this.visible) {
 
@@ -11785,7 +11816,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.element.children().detach();
 
-      this.element.html(this.generator(this.key, this.getRowCount(), data, this.getComponent())).prepend(this.arrowElement);
+      this.generateGroupHeaderContents();
 
       // this.addBindings();
 

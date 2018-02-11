@@ -504,6 +504,11 @@ Row.prototype.delete = function(){
 		this.table.extensions.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 	};
 
+	//remove from group
+	if(this.extensions.group){
+		this.extensions.group.removeRow(this);
+	}
+
 	//recalc column calculations if present
 	if(this.table.extExists("columnCalcs")){
 		if(this.table.options.groupBy && this.table.extExists("groupRows")){

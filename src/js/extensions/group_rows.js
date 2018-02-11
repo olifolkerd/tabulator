@@ -77,6 +77,7 @@ var Group = function(groupManager, parent, level, key, generator, oldGroup){
 	this.groupList = [];
 	this.generator = generator;
 	this.element = $("<div class='tabulator-row tabulator-group tabulator-group-level-" + level + "' role='rowgroup'></div>");
+	this.elementContents = $(""),
 	this.arrowElement = $("<div class='tabulator-arrow'></div>");
 	this.height = 0;
 	this.outerHeight = 0;
@@ -211,6 +212,17 @@ Group.prototype._addRowToGroup = function(row){
 
 Group.prototype._addRow = function(row){
 	this.rows.push(row);
+	row.extensions.group = this;
+};
+
+Group.prototype.removeRow = function(row){
+	var index = this.rows.indexOf(row);
+
+	if(index > -1){
+		this.rows.splice(index, 1)
+	}
+
+	this.generateGroupHeaderContents();
 };
 
 Group.prototype.getHeadersAndRows = function(){
@@ -357,6 +369,18 @@ Group.prototype.getRowGroup = function(row){
 	return match;
 };
 
+Group.prototype.generateGroupHeaderContents = function(){
+	var data = [];
+
+	this.rows.forEach(function(row){
+		data.push(row.getData());
+	});
+
+	this.elementContents = this.generator(this.key, this.getRowCount(), data, this.getComponent());
+
+	this.element.empty().append(this.elementContents).prepend(this.arrowElement);
+}
+
 ////////////// Standard Row Functions //////////////
 
 Group.prototype.getElement = function(){
@@ -364,11 +388,6 @@ Group.prototype.getElement = function(){
 
 	this._visSet();
 
-	var data = [];
-
-	this.rows.forEach(function(row){
-		data.push(row.getData());
-	});
 
 	if(this.visible){
 		this.element.addClass("tabulator-group-visible");
@@ -378,7 +397,7 @@ Group.prototype.getElement = function(){
 
 	this.element.children().detach();
 
-	this.element.html(this.generator(this.key, this.getRowCount(), data, this.getComponent())).prepend(this.arrowElement);
+	this.generateGroupHeaderContents();
 
 	// this.addBindings();
 
