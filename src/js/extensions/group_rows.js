@@ -231,13 +231,21 @@ Group.prototype.insertRow = function(row, to, after){
 			this.rows.splice(toIndex, 0, row);
 		}
 	}else{
-		this.rows.unshift(row);
+		if(after){
+			this.rows.push(row);
+		}else{
+			this.rows.unshift(row);
+		}
 	}
 
 	row.extensions.group = this;
 
 	this.generateGroupHeaderContents();
 };
+
+Group.prototype.getRowIndex = function(row){
+
+}
 
 //update row data to match grouping contraints
 Group.prototype.conformRowData = function(data){
@@ -664,20 +672,26 @@ GroupRows.prototype.generateGroups = function(rows){
 	self.groupList =[];
 
 	rows.forEach(function(row){
-
-		var groupID = self.groupIDLookups[0].func(row.getData());
-
-		if(!self.groups[groupID]){
-			var group = new Group(self, false, 0, groupID, self.groupIDLookups[0].field, self.headerGenerator[0], oldGroups[groupID]);
-
-			self.groups[groupID] = group;
-			self.groupList.push(group);
-		}
-
-		self.groups[groupID].addRow(row);
+		self.assignRowToGroup(row, oldGroups);
 	});
 
+}
 
+GroupRows.prototype.assignRowToGroup = function(row, oldGroups){
+	var groupID = this.groupIDLookups[0].func(row.getData()),
+	oldGroups = oldGroups || [],
+	newGroupNeeded = !this.groups[groupID];
+
+	if(newGroupNeeded){
+		var group = new Group(this, false, 0, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupID]);
+
+		this.groups[groupID] = group;
+		this.groupList.push(group);
+	}
+
+	this.groups[groupID].addRow(row);
+
+	return !newGroupNeeded;
 }
 
 
@@ -695,7 +709,7 @@ GroupRows.prototype.updateGroupRows = function(force){
 		oldRowCount = self.table.rowManager.displayRowsCount;
 
 		self.table.rowManager.setDisplayRows(output);
-		self.table.rowManager._virtualRenderFill(Math.floor((self.table.rowManager.element.scrollTop() / self.table.rowManager.element[0].scrollHeight) * oldRowCount));
+		self.table.rowManager.adjustTableRender(output.length - oldRowCount);
 	}
 
 	return output;

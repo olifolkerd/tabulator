@@ -2432,10 +2432,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       data.forEach(function (item, i) {
 
-        var row = self.addRow(item, pos, index, i !== length);
+        var row = self.addRow(item, pos, index, true);
 
         rows.push(row.getComponent());
       });
+
+      if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+        this.table.extensions.groupRows.updateGroupRows(true);
+      } else {
+
+        this.adjustTableRender(data.length);
+      }
 
       //recalc column calculations if present
 
@@ -2469,14 +2477,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
-      var safeData = data || {},
-          row = new Row(safeData, this),
+      var row = new Row(data || {}, this),
           top = this.findAddRowPos(pos);
 
       if (index) {
 
         index = this.findRow(index);
       }
+
+      if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+        this.table.extensions.groupRows.assignRowToGroup(row);
+
+        var groupRows = row.getGroup().rows;
+
+        if (groupRows.length > 1) {
+
+          if (!index || index && groupRows.indexOf(index) == -1) {
+
+            if (top) {
+
+              if (groupRows[0] !== row) {
+
+                index = groupRows[0];
+
+                this._moveRowInArray(row.getGroup().rows, row, index, top);
+              }
+            } else {
+
+              if (groupRows[groupRows.length - 1] !== row) {
+
+                index = groupRows[groupRows.length - 1];
+
+                this._moveRowInArray(row.getGroup().rows, row, index, top);
+              }
+            }
+          } else {
+
+            this._moveRowInArray(row.getGroup().rows, row, index, top);
+          }
+        }
+      };
 
       if (index) {
 
@@ -2527,7 +2568,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!blockRedraw) {
 
-        this.renderTable();
+        this.adjustTableRender(1);
       }
 
       return row;
@@ -2539,8 +2580,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.extensions.history.action("rowMoved", from, { pos: this.getRowPosition(from), to: to, after: after });
       };
-
-      console.log("to", to, after);
 
       this.moveRowActual(from, to, after);
 
@@ -2578,45 +2617,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
 
-      var fromIndex = rows.indexOf(from),
-          toIndex,
-          start,
-          end;
+      var fromIndex, toIndex, start, end;
 
-      if (fromIndex > -1) {
+      if (from !== to) {
 
-        rows.splice(fromIndex, 1);
+        fromIndex = rows.indexOf(from);
 
-        toIndex = rows.indexOf(to);
+        if (fromIndex > -1) {
 
-        if (toIndex > -1) {
+          rows.splice(fromIndex, 1);
 
-          if (after) {
+          toIndex = rows.indexOf(to);
 
-            rows.splice(toIndex + 1, 0, from);
+          if (toIndex > -1) {
+
+            if (after) {
+
+              rows.splice(toIndex + 1, 0, from);
+            } else {
+
+              rows.splice(toIndex, 0, from);
+            }
           } else {
 
-            rows.splice(toIndex, 0, from);
+            rows.splice(fromIndex, 0, from);
           }
-        } else {
-
-          rows.splice(fromIndex, 0, from);
         }
-      }
 
-      //restyle rows
+        //restyle rows
 
-      if (rows === this.displayRows) {
+        if (rows === this.displayRows) {
 
-        start = fromIndex < toIndex ? fromIndex : toIndex;
+          start = fromIndex < toIndex ? fromIndex : toIndex;
 
-        end = toIndex > fromIndex ? toIndex : fromIndex + 1;
+          end = toIndex > fromIndex ? toIndex : fromIndex + 1;
 
-        for (var i = start; i <= end; i++) {
+          for (var i = start; i <= end; i++) {
 
-          if (rows[i]) {
+            if (rows[i]) {
 
-            this.styleRow(rows[i], i);
+              this.styleRow(rows[i], i);
+            }
           }
         }
       }
@@ -2985,6 +3026,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     ///////////////// Table Rendering /////////////////
 
+
+    //trigger rerender of table in current position
+
+    RowManager.prototype.adjustTableRender = function (rowCount) {
+
+      if (this.getRenderMode() == "virtual") {
+
+        if (typeof rowCount === "undefined") {
+
+          rowCount = this.displayRowsCount;
+        } else {
+
+          rowCount = this.displayRowsCount - rowCount;
+        }
+
+        this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * rowCount));
+      } else {
+
+        this.renderTable();
+      }
+    };
 
     RowManager.prototype.renderTable = function () {
 
@@ -11640,13 +11702,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       } else {
 
-        this.rows.unshift(row);
+        if (after) {
+
+          this.rows.push(row);
+        } else {
+
+          this.rows.unshift(row);
+        }
       }
 
       row.extensions.group = this;
 
       this.generateGroupHeaderContents();
     };
+
+    Group.prototype.getRowIndex = function (row) {};
 
     //update row data to match grouping contraints
 
@@ -12199,19 +12269,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rows.forEach(function (row) {
 
-        var groupID = self.groupIDLookups[0].func(row.getData());
-
-        if (!self.groups[groupID]) {
-
-          var group = new Group(self, false, 0, groupID, self.groupIDLookups[0].field, self.headerGenerator[0], oldGroups[groupID]);
-
-          self.groups[groupID] = group;
-
-          self.groupList.push(group);
-        }
-
-        self.groups[groupID].addRow(row);
+        self.assignRowToGroup(row, oldGroups);
       });
+    };
+
+    GroupRows.prototype.assignRowToGroup = function (row, oldGroups) {
+
+      var groupID = this.groupIDLookups[0].func(row.getData()),
+          oldGroups = oldGroups || [],
+          newGroupNeeded = !this.groups[groupID];
+
+      if (newGroupNeeded) {
+
+        var group = new Group(this, false, 0, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupID]);
+
+        this.groups[groupID] = group;
+
+        this.groupList.push(group);
+      }
+
+      this.groups[groupID].addRow(row);
+
+      return !newGroupNeeded;
     };
 
     GroupRows.prototype.updateGroupRows = function (force) {
@@ -12234,7 +12313,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.rowManager.setDisplayRows(output);
 
-        self.table.rowManager._virtualRenderFill(Math.floor(self.table.rowManager.element.scrollTop() / self.table.rowManager.element[0].scrollHeight * oldRowCount));
+        self.table.rowManager.adjustTableRender(output.length - oldRowCount);
       }
 
       return output;

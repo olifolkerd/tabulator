@@ -285,9 +285,15 @@ RowManager.prototype.addRows = function(data, pos, index){
 	}
 
 	data.forEach(function(item, i){
-		var row = self.addRow(item, pos, index, i !== length);
+		var row = self.addRow(item, pos, index, true);
 		rows.push(row.getComponent());
 	});
+
+	if(this.table.options.groupBy && this.table.extExists("groupRows")){
+		this.table.extensions.groupRows.updateGroupRows(true);
+	}else{
+		this.adjustTableRender(data.length);
+	}
 
 	//recalc column calculations if present
 	if(this.table.extExists("columnCalcs")){
@@ -316,13 +322,37 @@ RowManager.prototype.findAddRowPos = function(pos){
 
 
 RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
-	var safeData = data || {},
-	row = new Row(safeData, this),
+	var row = new Row(data || {}, this),
 	top = this.findAddRowPos(pos);
 
 	if(index){
 		index = this.findRow(index);
 	}
+
+	if(this.table.options.groupBy && this.table.extExists("groupRows")){
+		this.table.extensions.groupRows.assignRowToGroup(row);
+
+		var groupRows = row.getGroup().rows;
+
+		if(groupRows.length > 1){
+
+			if(!index || (index && groupRows.indexOf(index) == -1)){
+				if(top){
+					if(groupRows[0] !== row){
+						index = groupRows[0];
+						this._moveRowInArray(row.getGroup().rows, row, index, top);
+					}
+				}else{
+					if(groupRows[groupRows.length -1] !== row){
+						index = groupRows[groupRows.length -1];
+						this._moveRowInArray(row.getGroup().rows, row, index, top);
+					}
+				}
+			}else{
+				this._moveRowInArray(row.getGroup().rows, row, index, top);
+			}
+		}
+	};
 
 	if(index){
 		let allIndex = this.rows.indexOf(index),
@@ -362,19 +392,16 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	this.table.options.dataEdited(this.getData());
 
 	if(!blockRedraw){
-		this.renderTable();
+		this.adjustTableRender(1);
 	}
 
 	return row;
 };
 
 RowManager.prototype.moveRow = function(from, to, after){
-
 	if(this.table.options.history && this.table.extExists("history")){
 		this.table.extensions.history.action("rowMoved", from, {pos:this.getRowPosition(from), to:to, after:after});
 	};
-
-	console.log("to", to, after)
 
 	this.moveRowActual(from, to, after);
 
@@ -383,8 +410,6 @@ RowManager.prototype.moveRow = function(from, to, after){
 
 
 RowManager.prototype.moveRowActual = function(from, to, after){
-
-
 	this._moveRowInArray(this.rows, from, to, after);
 	this._moveRowInArray(this.activeRows, from, to, after);
 	this._moveRowInArray(this.displayRows, from, to, after);
@@ -407,37 +432,41 @@ RowManager.prototype.moveRowActual = function(from, to, after){
 
 
 RowManager.prototype._moveRowInArray = function(rows, from, to, after){
-	var	fromIndex = rows.indexOf(from),
-	toIndex, start, end;
+	var	fromIndex, toIndex, start, end;
 
-	if (fromIndex > -1) {
+	if(from !== to){
 
-		rows.splice(fromIndex, 1);
+		fromIndex = rows.indexOf(from);
 
-		toIndex = rows.indexOf(to);
+		if (fromIndex > -1) {
 
-		if (toIndex > -1) {
+			rows.splice(fromIndex, 1);
 
-			if(after){
-				rows.splice(toIndex+1, 0, from);
+			toIndex = rows.indexOf(to);
+
+			if (toIndex > -1) {
+
+				if(after){
+					rows.splice(toIndex+1, 0, from);
+				}else{
+					rows.splice(toIndex, 0, from);
+				}
+
 			}else{
-				rows.splice(toIndex, 0, from);
+				rows.splice(fromIndex, 0, from);
 			}
-
-		}else{
-			rows.splice(fromIndex, 0, from);
 		}
-	}
 
-	//restyle rows
-	if(rows === this.displayRows){
+		//restyle rows
+		if(rows === this.displayRows){
 
-		start = fromIndex < toIndex ? fromIndex : toIndex;
-		end = toIndex > fromIndex ? toIndex : fromIndex +1;
+			start = fromIndex < toIndex ? fromIndex : toIndex;
+			end = toIndex > fromIndex ? toIndex : fromIndex +1;
 
-		for(let i = start; i <= end; i++){
-			if(rows[i]){
-				this.styleRow(rows[i], i);
+			for(let i = start; i <= end; i++){
+				if(rows[i]){
+					this.styleRow(rows[i], i);
+				}
 			}
 		}
 	}
@@ -735,6 +764,22 @@ RowManager.prototype.getRows = function(){
 };
 
 ///////////////// Table Rendering /////////////////
+
+//trigger rerender of table in current position
+RowManager.prototype.adjustTableRender = function(rowCount){
+	if(this.getRenderMode() == "virtual"){
+
+		if(typeof rowCount === "undefined"){
+			rowCount = this.displayRowsCount;
+		}else{
+			rowCount = this.displayRowsCount - rowCount;
+		}
+
+		this._virtualRenderFill(Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * rowCount));
+	}else{
+		this.renderTable();
+	}
+};
 
 RowManager.prototype.renderTable = function(){
 	var self = this;
