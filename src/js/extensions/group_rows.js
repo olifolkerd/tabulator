@@ -741,10 +741,8 @@ GroupRows.prototype.updateGroupRows = function(force){
 
 	//force update of table display
 	if(force){
-		oldRowCount = self.table.rowManager.displayRowsCount;
-
 		self.table.rowManager.setDisplayRows(output);
-		self.table.rowManager.adjustTableRender(output.length - oldRowCount);
+		self.table.rowManager.reRenderInPosition();
 	}
 
 	return output;
