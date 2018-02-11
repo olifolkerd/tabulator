@@ -242,7 +242,7 @@ Group.prototype.insertRow = function(row, to, after){
 
 	this.generateGroupHeaderContents();
 
-	if(this.table.extExists("columnCalcs")){
+	if(this.groupManager.table.extExists("columnCalcs")){
 		this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
 	}
 };
@@ -286,7 +286,7 @@ Group.prototype.removeRow = function(row){
 		this.groupManager.updateGroupRows(true);
 	}else{
 		this.generateGroupHeaderContents();
-		if(this.table.extExists("columnCalcs")){
+		if(this.groupManager.table.extExists("columnCalcs")){
 			this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
 		}
 	}

@@ -11745,7 +11745,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.generateGroupHeaderContents();
 
-      if (this.table.extExists("columnCalcs")) {
+      if (this.groupManager.table.extExists("columnCalcs")) {
 
         this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
       }
@@ -11798,7 +11798,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.generateGroupHeaderContents();
 
-        if (this.table.extExists("columnCalcs")) {
+        if (this.groupManager.table.extExists("columnCalcs")) {
 
           this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
         }
