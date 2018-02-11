@@ -534,7 +534,7 @@ GroupRows.prototype.initialize = function(){
 
 	self.table.extensions.localize.bind("groups.item", function(langValue, lang){
 		self.headerGenerator[0] = function(value, count, data){ //header layout function
-			return value + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
+			return (typeof value === "undefined" ? "" : value) + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
 		};
 	});
 

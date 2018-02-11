@@ -12103,7 +12103,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           //header layout function
 
 
-          return value + "<span>(" + count + " " + (count === 1 ? langValue : lang.groups.items) + ")</span>";
+          return (typeof value === "undefined" ? "" : value) + "<span>(" + count + " " + (count === 1 ? langValue : lang.groups.items) + ")</span>";
         };
       });
 
