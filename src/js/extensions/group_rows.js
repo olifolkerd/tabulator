@@ -241,6 +241,10 @@ Group.prototype.insertRow = function(row, to, after){
 	row.extensions.group = this;
 
 	this.generateGroupHeaderContents();
+
+	if(this.table.extExists("columnCalcs")){
+		this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
+	}
 };
 
 Group.prototype.getRowIndex = function(row){
@@ -282,6 +286,9 @@ Group.prototype.removeRow = function(row){
 		this.groupManager.updateGroupRows(true);
 	}else{
 		this.generateGroupHeaderContents();
+		if(this.table.extExists("columnCalcs")){
+			this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
+		}
 	}
 };
 

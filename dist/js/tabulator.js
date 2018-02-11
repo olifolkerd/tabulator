@@ -7931,28 +7931,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     ColumnCalcs.prototype.recalcRowGroup = function (row) {
 
+      this.recalcGroup(this.table.extensions.groupRows.getRowGroup(row));
+    };
+
+    ColumnCalcs.prototype.recalcGroup = function (group) {
+
       var data, rowData;
 
-      var group = this.table.extensions.groupRows.getRowGroup(row);
+      if (group) {
 
-      if (group.calcs) {
+        if (group.calcs) {
 
-        if (group.calcs.bottom) {
+          if (group.calcs.bottom) {
 
-          data = this.rowsToData(group.rows);
+            data = this.rowsToData(group.rows);
 
-          rowData = this.generateRowData("bottom", data);
+            rowData = this.generateRowData("bottom", data);
 
-          group.calcs.bottom.updateData(rowData);
-        }
+            group.calcs.bottom.updateData(rowData);
+          }
 
-        if (group.calcs.top) {
+          if (group.calcs.top) {
 
-          data = this.rowsToData(group.rows);
+            data = this.rowsToData(group.rows);
 
-          rowData = this.generateRowData("top", data);
+            rowData = this.generateRowData("top", data);
 
-          group.calcs.top.updateData(rowData);
+            group.calcs.top.updateData(rowData);
+          }
         }
       }
     };
@@ -11720,6 +11726,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       row.extensions.group = this;
 
       this.generateGroupHeaderContents();
+
+      if (this.table.extExists("columnCalcs")) {
+
+        this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
+      }
     };
 
     Group.prototype.getRowIndex = function (row) {};
@@ -11768,6 +11779,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       } else {
 
         this.generateGroupHeaderContents();
+
+        if (this.table.extExists("columnCalcs")) {
+
+          this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
+        }
       }
     };
 

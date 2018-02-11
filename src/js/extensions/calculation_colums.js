@@ -162,26 +162,30 @@ ColumnCalcs.prototype.recalc = function(rows){
 };
 
 ColumnCalcs.prototype.recalcRowGroup = function(row){
+	this.recalcGroup(this.table.extensions.groupRows.getRowGroup(row));
+};
+
+ColumnCalcs.prototype.recalcGroup = function(group){
 	var data, rowData;
+	if(group){
+		if(group.calcs){
+			if(group.calcs.bottom){
+				data = this.rowsToData(group.rows);
+				rowData = this.generateRowData("bottom", data);
 
-	var group = this.table.extensions.groupRows.getRowGroup(row);
+				group.calcs.bottom.updateData(rowData);
+			}
 
-	if(group.calcs){
-		if(group.calcs.bottom){
-			data = this.rowsToData(group.rows);
-			rowData = this.generateRowData("bottom", data);
+			if(group.calcs.top){
+				data = this.rowsToData(group.rows);
+				rowData = this.generateRowData("top", data);
 
-			group.calcs.bottom.updateData(rowData);
-		}
-
-		if(group.calcs.top){
-			data = this.rowsToData(group.rows);
-			rowData = this.generateRowData("top", data);
-
-			group.calcs.top.updateData(rowData);
+				group.calcs.top.updateData(rowData);
+			}
 		}
 	}
 };
+
 
 
 //generate top stats row
