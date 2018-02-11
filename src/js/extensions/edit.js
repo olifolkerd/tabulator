@@ -480,12 +480,12 @@ Edit.prototype.editors = {
 			});
 		}
 
-		select.val(cell.getValue()).css({
-			"padding": "0px",
-			"width": "100%",
-			"height": "100%",
-			"box-sizing": "border-box"
-		});
+		select.css({
+			"padding":"4px",
+			"width":"100%",
+			"box-sizing":"border-box",
+			"font-family":"",
+		}).val(cell.getValue())
 
 		onRendered(function () {
 			select.focus().click();

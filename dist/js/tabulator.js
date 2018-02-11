@@ -9348,17 +9348,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           });
         }
 
-        select.val(cell.getValue()).css({
+        select.css({
 
-          "padding": "0px",
+          "padding": "4px",
 
           "width": "100%",
 
-          "height": "100%",
+          "box-sizing": "border-box",
 
-          "box-sizing": "border-box"
+          "font-family": ""
 
-        });
+        }).val(cell.getValue());
 
         onRendered(function () {
 
