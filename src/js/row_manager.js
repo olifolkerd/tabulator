@@ -374,6 +374,8 @@ RowManager.prototype.moveRow = function(from, to, after){
 		this.table.extensions.history.action("rowMoved", from, {pos:this.getRowPosition(from), to:to, after:after});
 	};
 
+	console.log("to", to, after)
+
 	this.moveRowActual(from, to, after);
 
 	this.table.options.rowMoved(from.getComponent());
@@ -381,9 +383,26 @@ RowManager.prototype.moveRow = function(from, to, after){
 
 
 RowManager.prototype.moveRowActual = function(from, to, after){
+
+
 	this._moveRowInArray(this.rows, from, to, after);
 	this._moveRowInArray(this.activeRows, from, to, after);
 	this._moveRowInArray(this.displayRows, from, to, after);
+
+	if(this.table.options.groupBy && this.table.extExists("groupRows")){
+		var toGroup = to.getGroup();
+		var fromGroup = from.getGroup();
+
+		if(toGroup === fromGroup){
+			this._moveRowInArray(toGroup.rows, from, to, after);
+		}else{
+			if(fromGroup){
+				fromGroup.removeRow(from);
+			}
+
+			toGroup.insertRow(from, to, after);
+		}
+	}
 };
 
 

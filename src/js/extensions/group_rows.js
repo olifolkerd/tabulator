@@ -62,12 +62,13 @@ GroupComponent.prototype._getSelf = function(){
 //////////////// Group Functions /////////////////
 //////////////////////////////////////////////////
 
-var Group = function(groupManager, parent, level, key, generator, oldGroup){
+var Group = function(groupManager, parent, level, key, field, generator, oldGroup){
 
 	this.groupManager = groupManager;
 	this.parent = parent;
 	this.key = key;
 	this.level = level;
+	this.field = field;
 	this.hasSubGroups = level < (groupManager.groupIDLookups.length - 1);
 	this.addRow = this.hasSubGroups ? this._addRowToGroup : this._addRow;
 	this.type = "group"; //type of element
@@ -196,10 +197,10 @@ Group.prototype._addRowToGroup = function(row){
 	var level = this.level + 1;
 
 	if(this.hasSubGroups){
-		var groupID = this.groupManager.groupIDLookups[level](row.getData());
+		var groupID = this.groupManager.groupIDLookups[level].func(row.getData());
 
 		if(!this.groups[groupID]){
-			var group = new Group(this.groupManager, this, level, groupID, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
+			var group = new Group(this.groupManager, this, level, groupID,  this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
 
 			this.groups[groupID] = group;
 			this.groupList.push(group);
@@ -214,6 +215,47 @@ Group.prototype._addRow = function(row){
 	this.rows.push(row);
 	row.extensions.group = this;
 };
+
+Group.prototype.insertRow = function(row, to, after){
+
+	var data = this.conformRowData({});
+
+	row.updateData(data);
+
+	var toIndex = this.rows.indexOf(to);
+
+	if(toIndex > -1){
+		if(after){
+			this.rows.splice(toIndex+1, 0, row);
+		}else{
+			this.rows.splice(toIndex, 0, row);
+		}
+	}else{
+		this.rows.unshift(row);
+	}
+
+	row.extensions.group = this;
+
+	this.generateGroupHeaderContents();
+};
+
+//update row data to match grouping contraints
+Group.prototype.conformRowData = function(data){
+
+	if(this.field){
+		data[this.field] = this.key;
+	}else{
+		console.warn("Data Conforming Error - Cannot conform row data to match new group as groupBy is a function")
+	}
+
+	if(this.parent){
+		data = this.parent.conformRowData(data);
+	}
+
+	return data;
+};
+
+
 
 Group.prototype.removeRow = function(row){
 	var index = this.rows.indexOf(row);
@@ -437,6 +479,10 @@ Group.prototype.getHeight = function(){
 	return this.outerHeight;
 };
 
+Group.prototype.getGroup = function(){
+	return this;
+}
+
 Group.prototype.reinitializeHeight = function(){
 };
 Group.prototype.calcHeight = function(){
@@ -533,7 +579,10 @@ GroupRows.prototype.initialize = function(){
 			}
 		}
 
-		self.groupIDLookups.push(lookupFunc);
+		self.groupIDLookups.push({
+			field: typeof group === "function" ? false : group,
+			func:lookupFunc,
+		});
 	});
 
 
@@ -616,10 +665,10 @@ GroupRows.prototype.generateGroups = function(rows){
 
 	rows.forEach(function(row){
 
-		var groupID = self.groupIDLookups[0](row.getData());
+		var groupID = self.groupIDLookups[0].func(row.getData());
 
 		if(!self.groups[groupID]){
-			var group = new Group(self, false, 0, groupID, self.headerGenerator[0], oldGroups[groupID]);
+			var group = new Group(self, false, 0, groupID, self.groupIDLookups[0].field, self.headerGenerator[0], oldGroups[groupID]);
 
 			self.groups[groupID] = group;
 			self.groupList.push(group);

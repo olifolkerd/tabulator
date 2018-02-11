@@ -82,6 +82,10 @@ RowComponent.prototype.reformat = function(){
 	return this.row.reinitialize();
 };
 
+RowComponent.prototype.getGroup = function(){
+	return this.row.getGroup().getComponent();
+};
+
 
 
 
@@ -541,6 +545,10 @@ Row.prototype.wipe = function(){
 	this.element.remove();
 }
 
+
+Row.prototype.getGroup = function(){
+	return this.extensions.group || false;
+}
 
 
 //////////////// Object Generation /////////////////

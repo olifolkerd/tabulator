@@ -2540,6 +2540,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.table.extensions.history.action("rowMoved", from, { pos: this.getRowPosition(from), to: to, after: after });
       };
 
+      console.log("to", to, after);
+
       this.moveRowActual(from, to, after);
 
       this.table.options.rowMoved(from.getComponent());
@@ -2552,6 +2554,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this._moveRowInArray(this.activeRows, from, to, after);
 
       this._moveRowInArray(this.displayRows, from, to, after);
+
+      if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+        var toGroup = to.getGroup();
+
+        var fromGroup = from.getGroup();
+
+        if (toGroup === fromGroup) {
+
+          this._moveRowInArray(toGroup.rows, from, to, after);
+        } else {
+
+          if (fromGroup) {
+
+            fromGroup.removeRow(from);
+          }
+
+          toGroup.insertRow(from, to, after);
+        }
+      }
     };
 
     RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
@@ -3688,6 +3710,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.row.reinitialize();
     };
 
+    RowComponent.prototype.getGroup = function () {
+
+      return this.row.getGroup().getComponent();
+    };
+
     var Row = function Row(data, parent) {
 
       this.table = parent.table;
@@ -4262,6 +4289,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.element.empty();
 
       this.element.remove();
+    };
+
+    Row.prototype.getGroup = function () {
+
+      return this.extensions.group || false;
     };
 
     //////////////// Object Generation /////////////////
@@ -11388,7 +11420,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //////////////////////////////////////////////////
 
 
-    var Group = function Group(groupManager, parent, level, key, generator, oldGroup) {
+    var Group = function Group(groupManager, parent, level, key, field, generator, oldGroup) {
 
       this.groupManager = groupManager;
 
@@ -11397,6 +11429,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.key = key;
 
       this.level = level;
+
+      this.field = field;
 
       this.hasSubGroups = level < groupManager.groupIDLookups.length - 1;
 
@@ -11565,11 +11599,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.hasSubGroups) {
 
-        var groupID = this.groupManager.groupIDLookups[level](row.getData());
+        var groupID = this.groupManager.groupIDLookups[level].func(row.getData());
 
         if (!this.groups[groupID]) {
 
-          var group = new Group(this.groupManager, this, level, groupID, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
+          var group = new Group(this.groupManager, this, level, groupID, this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
 
           this.groups[groupID] = group;
 
@@ -11585,6 +11619,54 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.rows.push(row);
 
       row.extensions.group = this;
+    };
+
+    Group.prototype.insertRow = function (row, to, after) {
+
+      var data = this.conformRowData({});
+
+      row.updateData(data);
+
+      var toIndex = this.rows.indexOf(to);
+
+      if (toIndex > -1) {
+
+        if (after) {
+
+          this.rows.splice(toIndex + 1, 0, row);
+        } else {
+
+          this.rows.splice(toIndex, 0, row);
+        }
+      } else {
+
+        this.rows.unshift(row);
+      }
+
+      row.extensions.group = this;
+
+      this.generateGroupHeaderContents();
+    };
+
+    //update row data to match grouping contraints
+
+
+    Group.prototype.conformRowData = function (data) {
+
+      if (this.field) {
+
+        data[this.field] = this.key;
+      } else {
+
+        console.warn("Data Conforming Error - Cannot conform row data to match new group as groupBy is a function");
+      }
+
+      if (this.parent) {
+
+        data = this.parent.conformRowData(data);
+      }
+
+      return data;
     };
 
     Group.prototype.removeRow = function (row) {
@@ -11872,6 +11954,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.outerHeight;
     };
 
+    Group.prototype.getGroup = function () {
+
+      return this;
+    };
+
     Group.prototype.reinitializeHeight = function () {};
 
     Group.prototype.calcHeight = function () {};
@@ -12010,7 +12097,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         }
 
-        self.groupIDLookups.push(lookupFunc);
+        self.groupIDLookups.push({
+
+          field: typeof group === "function" ? false : group,
+
+          func: lookupFunc
+
+        });
       });
 
       if (startOpen) {
@@ -12106,11 +12199,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rows.forEach(function (row) {
 
-        var groupID = self.groupIDLookups[0](row.getData());
+        var groupID = self.groupIDLookups[0].func(row.getData());
 
         if (!self.groups[groupID]) {
 
-          var group = new Group(self, false, 0, groupID, self.headerGenerator[0], oldGroups[groupID]);
+          var group = new Group(self, false, 0, groupID, self.groupIDLookups[0].field, self.headerGenerator[0], oldGroups[groupID]);
 
           self.groups[groupID] = group;
 
