@@ -272,8 +272,36 @@ Group.prototype.removeRow = function(row){
 		this.rows.splice(index, 1)
 	}
 
-	this.generateGroupHeaderContents();
+	if(!this.rows.length){
+		if(this.parent){
+			this.parent.removeGroup(this);
+		}else{
+			this.groupManager.removeGroup(this);
+		}
+
+		this.groupManager.updateGroupRows(true);
+	}else{
+		this.generateGroupHeaderContents();
+	}
 };
+
+Group.prototype.removeGroup = function(group){
+	var index;
+
+	if(this.groups[group.key]){
+		delete this.groups[group.key];
+
+		index = this.groupList.indexOf(group);
+
+		if(index > -1){
+			this.groupList.splice(index, 1)
+		}
+
+		if(!this.groupList.length){
+			this.parent.removeGroup();
+		}
+	}
+}
 
 Group.prototype.getHeadersAndRows = function(){
 	var output = [];
@@ -720,5 +748,19 @@ GroupRows.prototype.scrollHeaders = function(left){
 		group.arrowElement.css("margin-left", left);
 	});
 };
+
+GroupRows.prototype.removeGroup = function(group){
+	var index;
+
+	if(this.groups[group.key]){
+		delete this.groups[group.key];
+
+		index = this.groupList.indexOf(group);
+
+		if(index > -1){
+			this.groupList.splice(index, 1)
+		}
+	}
+}
 
 Tabulator.registerExtension("groupRows", GroupRows);

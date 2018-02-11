@@ -250,7 +250,11 @@ RowManager.prototype.deleteRow = function(row){
 	if(this.table.options.pagination && this.table.extExists("page")){
 		this.refreshActiveData()
 	}else{
-		this.renderTable();
+		if(this.table.options.groupBy && this.table.extExists("groupRows")){
+			this.table.extensions.groupRows.updateGroupRows(true);
+		}else{
+			this.adjustTableRender(-1);
+		}
 	}
 };
 

@@ -2392,7 +2392,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.refreshActiveData();
       } else {
 
-        this.renderTable();
+        if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+
+          this.table.extensions.groupRows.updateGroupRows(true);
+        } else {
+
+          this.adjustTableRender(-1);
+        }
       }
     };
 
@@ -11748,7 +11754,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.rows.splice(index, 1);
       }
 
-      this.generateGroupHeaderContents();
+      if (!this.rows.length) {
+
+        if (this.parent) {
+
+          this.parent.removeGroup(this);
+        } else {
+
+          this.groupManager.removeGroup(this);
+        }
+
+        this.groupManager.updateGroupRows(true);
+      } else {
+
+        this.generateGroupHeaderContents();
+      }
+    };
+
+    Group.prototype.removeGroup = function (group) {
+
+      var index;
+
+      if (this.groups[group.key]) {
+
+        delete this.groups[group.key];
+
+        index = this.groupList.indexOf(group);
+
+        if (index > -1) {
+
+          this.groupList.splice(index, 1);
+        }
+
+        if (!this.groupList.length) {
+
+          this.parent.removeGroup();
+        }
+      }
     };
 
     Group.prototype.getHeadersAndRows = function () {
@@ -12325,6 +12367,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         group.arrowElement.css("margin-left", left);
       });
+    };
+
+    GroupRows.prototype.removeGroup = function (group) {
+
+      var index;
+
+      if (this.groups[group.key]) {
+
+        delete this.groups[group.key];
+
+        index = this.groupList.indexOf(group);
+
+        if (index > -1) {
+
+          this.groupList.splice(index, 1);
+        }
+      }
     };
 
     Tabulator.registerExtension("groupRows", GroupRows);
