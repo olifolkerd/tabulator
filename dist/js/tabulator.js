@@ -3041,13 +3041,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (typeof rowCount === "undefined") {
 
-          rowCount = this.displayRowsCount;
+          rowCount = this.displayRowsCount - 1;
         } else {
 
-          rowCount = this.displayRowsCount - rowCount;
+          rowCount = this.displayRowsCount - rowCount - 1;
         }
 
-        this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * rowCount));
+        this._virtualRenderFill(Math.floor(this.element.scrollTop() / this.element[0].scrollHeight * rowCount), true);
       } else {
 
         this.renderTable();
@@ -3293,7 +3293,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.height;
         } else {
 
-          self.vDomTopPad = !forceMove ? self.scrollTop - topPadHeight : self.vDomRowHeight * this.vDomTop + topPadHeight;
+          self.vDomTopPad = !forceMove ? self.scrollTop - topPadHeight : self.vDomRowHeight * this.vDomTop;
 
           self.vDomBottomPad = self.vDomBottom == self.displayRowsCount - 1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
         }
@@ -3432,7 +3432,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.vDomTopPad < 0) {
 
-            this.vDomTopPad = (this.vDomTop - 1) * this.vDomRowHeight;
+            this.vDomTopPad = index * this.vDomRowHeight;
+          }
+
+          if (!index) {
+
+            this.vDomTopPad = 0;
           }
 
           table[0].style.paddingTop = this.vDomTopPad + "px";
