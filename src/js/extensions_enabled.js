@@ -6,6 +6,7 @@
 /*=include extensions/filter.js */
 /*=include extensions/format.js */
 /*=include extensions/frozen_columns.js */
+/*=include extensions/frozen_rows.js */
 /*=include extensions/group_rows.js */
 /*=include extensions/history.js */
 /*=include extensions/html_table_import.js */
@@ -14,8 +15,10 @@
 /*=include extensions/moveable_rows.js */
 /*=include extensions/mutator.js */
 /*=include extensions/page.js */
-/*=include extensions/persistent_layout.js */
+/*=include extensions/persistence.js */
 /*=include extensions/resize_columns.js */
+/*=include extensions/resize_rows.js */
+/*=include extensions/resize_table.js */
 /*=include extensions/responsive_layout.js */
 /*=include extensions/select_row.js */
 /*=include extensions/sort.js */

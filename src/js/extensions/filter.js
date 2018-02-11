@@ -16,6 +16,7 @@ Filter.prototype.initializeColumn = function(column){
 	field = column.getField(),
 	filterElement, editor, editorElement, cellWrapper, typingTimer, tagType, attrType;
 
+
 	//handle successfull value change
 	function success(value){
 		var filterType = (tagType == "input" && attrType == "text") || tagType == "textarea" ? "partial" : "match",
@@ -71,6 +72,10 @@ Filter.prototype.initializeColumn = function(column){
 
 		self.table.rowManager.filterRefresh();
 	};
+
+	column.extensions.filter = {
+		success:success,
+	}
 
 	//handle aborted edit
 	function cancel(){};
@@ -161,6 +166,8 @@ Filter.prototype.initializeColumn = function(column){
 				},300);
 			});
 
+			column.extensions.filter.headerElement = editorElement;
+
 			//update number filtered columns on change
 			attrType = editorElement.attr("type") ? editorElement.attr("type").toLowerCase() : "" ;
 			if(attrType == "number"){
@@ -193,6 +200,42 @@ Filter.prototype.initializeColumn = function(column){
 		console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
 	}
 
+};
+
+//hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
+Filter.prototype.hideHeaderFilterElements = function(){
+	this.headerFilterElements.forEach(function(element){
+		element.hide();
+	});
+};
+
+//show all header filter elements (used to ensure correct column widths in "fitData" layout mode)
+Filter.prototype.showHeaderFilterElements = function(){
+	this.headerFilterElements.forEach(function(element){
+		element.show();
+	});
+};
+
+
+//programatically set value of header filter
+Filter.prototype.setHeaderFilterFocus = function(column){
+	if(column.extensions.filter && column.extensions.filter.headerElement){
+		column.extensions.filter.headerElement.focus();
+	}else{
+		console.warn("Column Filter Focus Error - No header filter set on column:", column.getField());
+	}
+};
+
+//programatically set value of header filter
+Filter.prototype.setHeaderFilterValue = function(column, value){
+	if (column){
+		if(column.extensions.filter && column.extensions.filter.headerElement){
+			column.extensions.filter.headerElement.val(value);
+			column.extensions.filter.success(value);
+		}else{
+			console.warn("Column Filter Error - No header filter set on column:", column.getField());
+		}
+	}
 };
 
 //check if the filters has changed since last use
@@ -264,6 +307,10 @@ Filter.prototype.addFilter = function(field, type, value){
 		}
 	});
 
+	if(this.table.options.persistentFilter && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("filter");
+	}
+
 };
 
 //get all filters
@@ -332,6 +379,10 @@ Filter.prototype.removeFilter = function(field, type, value){
 
 	});
 
+	if(this.table.options.persistentFilter && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("filter");
+	}
+
 };
 
 //clear filters
@@ -343,6 +394,10 @@ Filter.prototype.clearFilter = function(all){
 	}
 
 	this.changed = true;
+
+	if(this.table.options.persistentFilter && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("filter");
+	}
 };
 
 //clear header filters
@@ -455,6 +510,16 @@ Filter.prototype.filters ={
 			return rowVal === filterVal ? true : false;
 		}else{
 			return rowVal.toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
+		}
+	},
+
+	//in array
+	"in":function(filterVal, rowVal){
+		if(Array.isArray(filterVal)){
+			return filterVal.indexOf(rowVal) > -1;
+		}else{
+			console.warn("Filter Error - filter value is not an array:", filterVal);
+			return false;
 		}
 	},
 };

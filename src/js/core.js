@@ -25,12 +25,15 @@
 	 			height:false, //height of tabulator
 
 	 			layout:"fitData", ///layout type "fitColumns" | "fitData"
+	 			layoutColumnsOnNewData:false, //update column widths on setData
 	 			fitColumns:false, //DEPRICATED - fit colums to width of screen;
 
 	 			columnMinWidth:40, //minimum global width for a column
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
 	 			resizableColumns:true, //resizable columns
+	 			resizableRows:true, //resizable rows
+	 			autoResize:true, //auto resize table
 
 	 			columns:[],//store for colum header info
 
@@ -65,8 +68,12 @@
 
 	 			virtualDom:true, //enable DOM virtualization
 
-	 			persistentLayout:false, //store cookie with column _styles
-	 			persistentLayoutID:"", //id for stored cookie
+	 			persistentLayout:false, //store column layout in memory
+	 			persistentSort:false, //store sorting in memory
+	 			persistentFilter:false, //store filters in memory
+	 			persistenceID:"", //key for persistent storage
+	 			persistenceMode:true, //mode for storing persistence information
+	 			persistentLayoutID:"",//DEPRICATED - key for persistent storage;
 
 	 			responsiveLayout:false, //responsive layout flags
 
@@ -120,6 +127,7 @@
 	 			rowSelectionChanged:function(){},
 	 			rowSelected:function(){},
 	 			rowDeselected:function(){},
+	 			rowResized:function(){},
 
 	 			//cell callbacks
 	 			cellEditing:function(){},
@@ -176,6 +184,10 @@
 	 			//validation has failed
 	 			validationFailed:function(){},
 
+	 			//history callbacks
+	 			historyUndo:function(){},
+	 			historyRedo:function(){},
+
 	 		},
 
 	 		//convert depricated functionality to new functions
@@ -185,6 +197,21 @@
 	 				this.options.layout = "fitColumns";
 	 				console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 	 			}
+
+	 			if(this.options.persistentLayoutID){
+	 				this.options.persistenceID = this.options.persistentLayoutID;
+	 				console.warn("The%c persistentLayoutID%c option has been depricated and will be removed in version 4.0, use %c persistenceID%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
+
+	 			if(this.options.persistentLayout === "cookie" || this.options.persistentLayout === "local"){
+	 				this.options.persistenceMode = this.options.persistentLayout;
+	 				this.options.persistentLayout = true;
+	 				console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
+
+
+
+
 	 		},
 
 	 		//constructor
@@ -281,9 +308,12 @@
 	 			}
 
 
-	 			if(options.persistentLayout && this.extExists("persistentLayout", true)){
-	 				ext.persistentLayout.initialize(options.persistentLayout, options.persistentLayoutID);
-	 				options.columns = ext.persistentLayout.load(options.columns);
+	 			if( (options.persistentLayout || options.persistentSort || options.persistentFilter) && this.extExists("persistence", true)){
+	 				ext.persistence.initialize(options.persistenceMode, options.persistenceID);
+	 			}
+
+	 			if(options.persistentLayout && this.extExists("persistence", true)){
+	 				options.columns = ext.persistence.load("columns", options.columns) ;
 	 			}
 
 	 			if(this.extExists("columnCalcs")){
@@ -292,8 +322,32 @@
 
 	 			this.columnManager.setColumns(options.columns);
 
-	 			if(options.initialSort && this.extExists("sort", true)){
-	 				ext.sort.setSort(options.initialSort);
+	 			if(this.extExists("frozenRows")){
+	 				this.extensions.frozenRows.initialize();
+	 			}
+
+	 			if((options.persistentSort || options.initialSort) && this.extExists("sort", true)){
+	 				var sorters = [];
+
+	 				if(options.persistentSort && this.extExists("persistence", true)){
+	 					sorters = ext.persistence.load("sort");
+
+	 					if(sorters === false && options.initialSort){
+	 						sorters = options.initialSort;
+	 					}
+	 				}else if(options.initialSort){
+	 					sorters = options.initialSort;
+	 				}
+
+	 				ext.sort.setSort(sorters);
+	 			}
+
+	 			if(options.persistentFilter && this.extExists("persistence", true)){
+	 				var filters = ext.persistence.load("filter");
+
+	 				if(filters !== false){
+	 					this.setFilter(filters);
+	 				}
 	 			}
 
 	 			if(options.pagination && this.extExists("page", true)){
@@ -314,6 +368,10 @@
 
 	 			if(this.extExists("selectRow")){
 	 				ext.selectRow.clearSelectionData();
+	 			}
+
+	 			if(options.autoResize && this.extExists("resizeTable")){
+	 				ext.resizeTable.initialize();
 	 			}
 
 	 			options.tableBuilt();
@@ -445,6 +503,7 @@
 	 			return this.rowManager.getData(active);
 	 		},
 
+
 	 		//get table data array count
 	 		getDataCount:function(active){
 	 			return this.rowManager.getDataCount(active);
@@ -467,6 +526,10 @@
 	 		updateData:function(data){
 	 			var self = this;
 
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			if(data){
 	 				data.forEach(function(item){
 	 					var row = self.rowManager.findRow(item[self.options.index]);
@@ -481,6 +544,11 @@
 	 		},
 
 	 		addData:function(data, pos, index){
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			if(data){
 	 				this.rowManager.addRows(data, pos, index);
 	 			}else{
@@ -492,6 +560,10 @@
 	 		updateOrAddData:function(data){
 	 			var self = this;
 
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			if(data){
 	 				data.forEach(function(item){
 	 					var row = self.rowManager.findRow(item[self.options.index]);
@@ -499,7 +571,7 @@
 	 					if(row){
 	 						row.updateData(item);
 	 					}else{
-	 						self.rowManager.addRow(item);
+	 						self.rowManager.addRows(item);
 	 					}
 	 				})
 	 			}else{
@@ -519,6 +591,18 @@
 	 			}
 	 		},
 
+	 		//get row object
+	 		getRowFromPosition:function(position, active){
+	 			var row = this.rowManager.getRowFromPosition(position, active);
+
+	 			if(row){
+	 				return row.getComponent();
+	 			}else{
+	 				console.warn("Find Error - No matching row found:", position);
+	 				return false;
+	 			}
+	 		},
+
 	 		//delete row from table
 	 		deleteRow:function(index){
 	 			var row = this.rowManager.findRow(index);
@@ -534,17 +618,40 @@
 
 	 		//add row to table
 	 		addRow:function(data, pos, index){
-	 			return this.rowManager.addRow(data, pos, index);
+
+	 			var row;
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
+	 			row = this.rowManager.addRows(data, pos, index)[0];
+
+	 			//recalc column calculations if present
+	 			if(this.extExists("columnCalcs")){
+	 				this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 			}
+
+	 			return row;
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
 	 		updateOrAddRow:function(index, data){
 	 			var row = this.rowManager.findRow(index);
 
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
+
 	 			if(row){
 	 				row.updateData(data);
 	 			}else{
-	 				row = this.rowManager.addRow(data);
+	 				row = this.rowManager.addRows(data)[0];
+
+	 				//recalc column calculations if present
+	 				if(this.extExists("columnCalcs")){
+	 					this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 				}
 	 			}
 
 	 			return row.getComponent();
@@ -553,6 +660,10 @@
 	 		//update row data
 	 		updateRow:function(index, data){
 	 			var row = this.rowManager.findRow(index);
+
+	 			if(typeof data === "string"){
+	 				data = JSON.parse(data);
+	 			}
 
 	 			if(row){
 	 				row.updateData(data);
@@ -579,6 +690,18 @@
 	 			return this.rowManager.getComponents(active);
 	 		},
 
+	 		//get position of row in table
+	 		getRowPosition:function(index, active){
+	 			var row = this.rowManager.findRow(index);
+
+	 			if(row){
+	 				return this.rowManager.getRowPosition(row, active);
+	 			}else{
+	 				console.warn("Position Error - No matching row found:", index);
+	 				return false;
+	 			}
+	 		},
+
 	 		/////////////// Column Functions  ///////////////
 
 	 		setColumns:function(definition){
@@ -594,14 +717,14 @@
 	 		},
 
 	 		getColumnLayout:function(){
-	 			if(this.extExists("persistentLayout", true)){
-	 				return this.extensions.persistentLayout.parseColumns(this.columnManager.getColumns());
+	 			if(this.extExists("persistence", true)){
+	 				return this.extensions.persistence.parseColumns(this.columnManager.getColumns());
 	 			}
 	 		},
 
 	 		setColumnLayout:function(layout){
-	 			if(this.extExists("persistentLayout", true)){
-	 				this.columnManager.setColumns(this.extensions.persistentLayout.mergeDefinition(this.options.columns, layout))
+	 			if(this.extExists("persistence", true)){
+	 				this.columnManager.setColumns(this.extensions.persistence.mergeDefinition(this.options.columns, layout))
 	 				return true;
 	 			}
 	 			return false;
@@ -661,6 +784,19 @@
 	 				return false;
 	 			}
 	 		},
+
+	 		//scroll to column in DOM
+	 		scrollToColumn:function(field){
+	 			var column = this.columnManager.findColumn(field);
+
+	 			if(column){
+	 				return this.columnManager.scrollToColumn(column);
+	 			}else{
+	 				console.warn("Scroll Error - No matching column found:", field);
+	 				return false;
+	 			}
+	 		},
+
 
 
 	 		//////////// Localization Functions  ////////////
@@ -751,13 +887,38 @@
 	 			}
 	 		},
 
+	 		setHeaderFilterFocus:function(field){
+	 			if(this.extExists("filter", true)){
+	 				var column = this.columnManager.findColumn(field);
+
+	 				if(column){
+	 					this.extensions.filter.setHeaderFilterFocus(column);
+	 				}else{
+	 					console.warn("Column Filter Focus Error - No matching column found:", field);
+	 					return false;
+	 				}
+	 			}
+	 		},
+
+
+	 		setHeaderFilterValue:function(field, value){
+	 			if(this.extExists("filter", true)){
+	 				var column = this.columnManager.findColumn(field);
+
+	 				if(column){
+	 					this.extensions.filter.setHeaderFilterValue(column, value);
+	 				}else{
+	 					console.warn("Column Filter Error - No matching column found:", field);
+	 					return false;
+	 				}
+	 			}
+	 		},
+
 	 		getHeaderFilters:function(){
 	 			if(this.extExists("filter", true)){
 	 				return this.extensions.filter.getHeaderFilters();
 	 			}
 	 		},
-
-
 
 
 	 		//remove filter from array
@@ -929,6 +1090,15 @@
 	 			}
 	 		},
 
+
+	 		///////////////// Column Calculation Functions ///////////////
+	 		getCalcResults:function(){
+	 			if(this.extExists("columnCalcs", true)){
+	 				return this.extensions.columnCalcs.getResults();
+	 			}else{
+	 				return false;
+	 			}
+	 		},
 
 	 		/////////////// Navigation Management //////////////
 

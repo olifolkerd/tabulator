@@ -289,6 +289,14 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 			overflow: hidden;
 		}
+
+		.tabulator-frozen-rows-holder{
+			min-width:200%;
+
+			&:empty{
+				display: none;
+			}
+		}
 	}
 
 	//scrolling element to hold table
@@ -404,6 +412,24 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 			pointer-events: none !important;
 			z-index:15;
+		}
+
+		//row resize handles
+		.tabulator-row-resize-handle{
+			position:absolute;
+			right:0;
+			bottom:0;
+			left:0;
+			height:5px;
+
+			&.prev{
+				top:0;
+				bottom:auto;
+			}
+
+			&:hover{
+				cursor:ns-resize;
+			}
 		}
 
 		.tabulator-frozen{

@@ -11,7 +11,6 @@ var ColumnManager = function(table){
 	this.element.prepend(this.headersElement);
 };
 
-
 ////////////// Setup Functions /////////////////
 
 //link to row manager
@@ -269,8 +268,8 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
 	}
 
-	if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
-		this.table.extensions.persistentLayout.save();
+	if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("columns");
 	}
 };
 
@@ -305,6 +304,19 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, 
 				}
 			});
 		}
+	}
+};
+
+ColumnManager.prototype.scrollToColumn = function(column){
+	var left;
+
+	if(column.visible){
+		left = column.element.position().left + this.element.scrollLeft() + column.element.innerWidth() - this.headersElement.innerWidth();
+
+		this.table.rowManager.scrollHorizontal(left);
+		this.scrollHorizontal(left);
+	}else{
+		console.warn("Scroll Error - Column not visible");
 	}
 };
 
@@ -448,8 +460,8 @@ ColumnManager.prototype.redraw = function(force){
 	}
 
 	if(force){
-		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
-			this.table.extensions.persistentLayout.save();
+		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+			this.table.extensions.persistence.save("columns");
 		}
 
 		if(this.table.extExists("columnCalcs")){

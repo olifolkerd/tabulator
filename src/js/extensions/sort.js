@@ -120,6 +120,10 @@ Sort.prototype.setSort = function(sortList, dir){
 	});
 
 	self.sortList = newSortList;
+
+	if(this.table.options.persistentSort && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("sort");
+	}
 };
 
 //clear sorters
@@ -268,12 +272,38 @@ Sort.prototype.sorters = {
 
 	//sort numbers
 	number:function(a, b, aRow, bRow, column, dir, params){
-		return parseFloat(String(a).replace(",","")) - parseFloat(String(b).replace(",",""));
+		var a = parseFloat(String(a).replace(",",""));
+		var b = parseFloat(String(b).replace(",",""));
+
+		//handle non numeric values
+		if(isNaN(a)){
+			return -1;
+			if(isNaN(b)){
+				return 0;
+			}
+		}else if(isNaN(b)){
+			return 1;
+		}
+
+		return a - b;
 	},
 
 	//sort strings
 	string:function(a, b, aRow, bRow, column, dir, params){
-		return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+		var locale;
+
+		switch(typeof params.locale){
+			case "boolean":
+			if(params.locale){
+				local = this.table.extensions.localize.getLocale();
+			}
+			break;
+			case "string":
+			locale = params.locale;
+			break;
+		}
+
+		return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
 	},
 
 	//sort date
@@ -284,8 +314,62 @@ Sort.prototype.sorters = {
 		if(typeof moment != "undefined"){
 			a = moment(a, format);
 			b = moment(b, format);
+
+			if(!a.isValid()){
+				a = -1000000000000000;
+			}
+
+			if(!b.isValid()){
+				b = -1000000000000000;
+			}
 		}else{
 			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		}
+
+		return a - b;
+	},
+
+	//sort hh:mm formatted times
+	time:function(a, b, aRow, bRow, column, dir, params){
+		var self = this;
+		var format = params.format || "hh:mm";
+
+		if(typeof moment != "undefined"){
+			a = moment(a, format);
+			b = moment(b, format);
+
+			if(!a.isValid()){
+				a = -1000000000000000;
+			}
+
+			if(!b.isValid()){
+				b = -1000000000000000;
+			}
+		}else{
+			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		}
+
+		return a - b;
+	},
+
+	//sort datetime
+	datetime:function(a, b, aRow, bRow, column, dir, params){
+		var self = this;
+		var format = params.format || "DD/MM/YYYY hh:mm:ss";
+
+		if(typeof moment != "undefined"){
+			a = moment(a, format);
+			b = moment(b, format);
+
+			if(!a.isValid()){
+				a = -1000000000000000;
+			}
+
+			if(!b.isValid()){
+				b = -1000000000000000;
+			}
+		}else{
+			console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
 		}
 
 		return a - b;
@@ -295,6 +379,67 @@ Sort.prototype.sorters = {
 	boolean:function(a, b, aRow, bRow, column, dir, params){
 		var el1 = a === true || a === "true" || a === "True" || a === 1 ? 1 : 0;
 		var el2 = b === true || b === "true" || b === "True" || b === 1 ? 1 : 0;
+
+		return el1 - el2;
+	},
+
+	//sort if element contains any data
+	array:function(a, b, aRow, bRow, column, dir, params){
+		var el1 = 0;
+		var el2 = 0;
+
+		var type = params.type || "length";
+
+		//handle non array values
+		if(!Array.isArray(a)){
+			return -1;
+			if(!Array.isArray(b)){
+				return 0;
+			}
+		}else if(!Array.isArray(b)){
+			return 1;
+		}
+
+		function calc(value){
+
+			switch(type){
+				case "length":
+				return value.length;
+				break;
+
+				case "sum":
+				return value.reduce(function(c, d){
+					return c + d;
+				});
+				break;
+
+				case "max":
+				return Math.max.apply(null, value) ;
+				break;
+
+				case "min":
+				return Math.min.apply(null, value) ;
+				break;
+
+				case "avg":
+				return value.reduce(function(c, d){
+					return c + d;
+				}) / value.length;
+				break;
+			}
+		}
+
+		el1 = a ? calc(a) : 0;
+		el2 = b ? calc(b) : 0;
+
+		return el1 - el2;
+	},
+
+
+	//sort if element contains any data
+	exists:function(a, b, aRow, bRow, column, dir, params){
+		var el1 = typeof a == "undefined" ? 0 : 1;
+		var el2 = typeof b == "undefined" ? 0 : 1;
 
 		return el1 - el2;
 	},
@@ -324,21 +469,6 @@ Sort.prototype.sorters = {
 			}
 		}
 		return a.length > b.length;
-	},
-
-	//sort hh:mm formatted times
-	time:function(a, b, aRow, bRow, column, dir, params){
-		var self = this;
-		var format = params.format || "hh:mm";
-
-		if(typeof moment != "undefined"){
-			a = moment(a, format);
-			b = moment(b, format);
-		}else{
-			console.error("Sort Error - 'date' sorter is dependant on moment.js");
-		}
-
-		return a - b;
 	},
 };
 

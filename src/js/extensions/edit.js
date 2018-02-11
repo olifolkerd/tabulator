@@ -1,6 +1,7 @@
 var Edit = function(table){
 	this.table = table; //hold Tabulator object
 	this.currentCell = false; //hold currently editing cell
+	this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
 };
 
 
@@ -54,44 +55,36 @@ Edit.prototype.getCurrentCell = function(){
 	return this.currentCell ? this.currentCell.getComponent() : false;
 };
 
-Edit.prototype.clearEditor = function(cell){
+Edit.prototype.clearEditor = function(){
+	var cell = this.currentCell;
+
 	this.currentCell = false;
 	cell.getElement().removeClass("tabulator-validation-fail");
 	cell.getElement().removeClass("tabulator-editing").empty();
 	cell.row.getElement().removeClass("tabulator-row-editing");
 };
 
+Edit.prototype.cancelEdit = function(){
+
+	if(this.currentCell){
+		var cell = this.currentCell;
+		var component = this.currentCell.getComponent();
+
+		this.clearEditor();
+		cell.setValueActual(cell.getValue());
+
+		if(cell.column.cellEvents.cellEditCancelled){
+			cell.column.cellEvents.cellEditCancelled(component);
+		}
+
+		this.table.options.cellEditCancelled(component);
+	}
+};
+
 //return a formatted value for a cell
 Edit.prototype.bindEditor = function(cell){
 	var self = this,
-	rendered = function(){},
-	element = cell.getElement(),
-	mouseClick = false;
-
-	//handle successfull value change
-	function success(value){
-		var valid = true;
-
-		if(cell.column.extensions.validate && self.table.extExists("validate")){
-			valid = self.table.extensions.validate.validate(cell.column.extensions.validate, cell.getComponent(), value);
-		}
-
-		if(valid === true){
-			self.clearEditor(cell);
-			cell.setValue(value, true);
-		}else{
-			cell.getElement().addClass("tabulator-validation-fail");
-			rendered();
-			self.table.options.validationFailed(cell.getComponent(), value, valid);
-		}
-	};
-
-	//handle aborted edit
-	function cancel(){
-		self.clearEditor(cell);
-		cell.setValueActual(cell.getValue());
-		self.table.options.cellEditCancelled(cell.getComponent())
-	};
+	element = cell.getElement();
 
 	element.attr("tabindex", 0);
 
@@ -102,66 +95,118 @@ Edit.prototype.bindEditor = function(cell){
 	});
 
 	element.on("mousedown", function(e){
-		mouseClick = true;
+		self.mouseClick = true;
 	});
 
 	element.on("focus", function(e){
-		var allowEdit = true,
-		cellEditor;
-
-		self.currentCell = cell;
-
-		function onRendered(callback){
-			rendered = callback;
-		}
-
-		if(!cell.column.extensions.edit.blocked){
-			e.stopPropagation();
-
-			if(typeof cell.column.extensions.edit.check == "function"){
-				allowEdit = cell.column.extensions.edit.check(cell.getComponent());
-			}
-
-			if(allowEdit){
-
-				if(mouseClick){
-					mouseClick = false;
-
-					if(cell.column.cellEvents.cellClick){
-						cell.column.cellEvents.cellClick(e, cell.getComponent());
-					}
-				}
-
-				self.table.options.cellEditing(cell.getComponent());
-
-				cellEditor = cell.column.extensions.edit.editor.call(self, cell.getComponent(), onRendered, success, cancel, cell.column.extensions.edit.params);
-
-				//if editor returned, add to DOM, if false, abort edit
-				if(cellEditor !== false){
-					element.addClass("tabulator-editing");
-					cell.row.getElement().addClass("tabulator-row-editing");
-					element.empty();
-					element.append(cellEditor);
-
-					//trigger onRendered Callback
-					rendered();
-
-					//prevent editing from triggering rowClick event
-					element.children().click(function(e){
-						e.stopPropagation();
-					})
-				}else{
-					element.blur();
-				}
-			}else{
-				element.blur();
-			}
-		}else{
-			element.blur();
-		}
-
+		self.edit(cell, e);
 	});
 };
+
+Edit.prototype.edit = function(cell, e, forceEdit){
+	var self = this,
+	allowEdit = true,
+	rendered = function(){},
+	element = cell.getElement(),
+	cellEditor, component;
+
+	//handle successfull value change
+	function success(value){
+		var valid = true;
+
+		if(cell.column.extensions.validate && self.table.extExists("validate")){
+			valid = self.table.extensions.validate.validate(cell.column.extensions.validate, cell.getComponent(), value);
+		}
+
+		if(valid === true){
+			self.clearEditor();
+			cell.setValue(value, true);
+		}else{
+			cell.getElement().addClass("tabulator-validation-fail");
+			rendered();
+			self.table.options.validationFailed(cell.getComponent(), value, valid);
+		}
+	};
+
+	//handle aborted edit
+	function cancel(){
+		self.cancelEdit()
+	};
+
+	function onRendered(callback){
+		rendered = callback;
+	}
+
+	if(!cell.column.extensions.edit.blocked){
+		if(e){
+			e.stopPropagation();
+		}
+
+		switch(typeof cell.column.extensions.edit.check){
+			case "function":
+			allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+			break;
+
+			case "boolean":
+			allowEdit = cell.column.extensions.edit.check;
+			break;
+		}
+
+		if(allowEdit || forceEdit){
+
+			self.cancelEdit();
+
+			self.currentCell = cell;
+
+			component = cell.getComponent();
+
+			if(this.mouseClick){
+				this.mouseClick = false;
+
+				if(cell.column.cellEvents.cellClick){
+					cell.column.cellEvents.cellClick(component);
+				}
+			}
+
+			if(cell.column.cellEvents.cellEditing){
+				cell.column.cellEvents.cellEditing(component);
+			}
+
+			self.table.options.cellEditing(component);
+
+			cellEditor = cell.column.extensions.edit.editor.call(self, component, onRendered, success, cancel, cell.column.extensions.edit.params);
+
+			//if editor returned, add to DOM, if false, abort edit
+			if(cellEditor !== false){
+				element.addClass("tabulator-editing");
+				cell.row.getElement().addClass("tabulator-row-editing");
+				element.empty();
+				element.append(cellEditor);
+
+				//trigger onRendered Callback
+				rendered();
+
+				//prevent editing from triggering rowClick event
+				element.children().click(function(e){
+					e.stopPropagation();
+				})
+			}else{
+				element.blur();
+				return false;
+			}
+
+			return true;
+		}else{
+			this.mouseClick = false;
+			element.blur();
+			return false;
+		}
+	}else{
+		this.mouseClick = false;
+		element.blur();
+		return false;
+	}
+}
 
 //default data editors
 Edit.prototype.editors = {
@@ -269,7 +314,11 @@ Edit.prototype.editors = {
 
     //input element with type of number
     number:function(cell, onRendered, success, cancel, editorParams){
-    	var input = $("<input type='number'/>");
+
+    	var max = typeof editorParams.max != "undefined" ? "max='" + editorParams.max + "'" : "";
+    	var min = typeof editorParams.min != "undefined" ? "min='" + editorParams.min + "'" : "";
+    	var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
+    	var input = $("<input type='number' " + max + " " + min + " " + step + "/>");
 
 		//create and style input
 		input.css({
@@ -322,22 +371,121 @@ Edit.prototype.editors = {
 
 		return input;
 	},
-	
+
+    //input element with type of number
+    range:function(cell, onRendered, success, cancel, editorParams){
+
+    	var max =  "max='" + (typeof editorParams.max != "undefined" ? editorParams.max : 10) + "'" ;
+    	var min =  "min='" + (typeof editorParams.min != "undefined" ? editorParams.min : 0) + "'" ;
+    	var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
+    	var input = $("<input type='range' " + max + " " + min + " " + step + "/>");
+
+		//create and style input
+		input.css({
+			"padding":"4px",
+			"width":"100%",
+			"box-sizing":"border-box",
+		})
+		.val(cell.getValue());
+
+		onRendered(function(){
+			input.css("height","100%");
+			setTimeout(function(){
+				input.focus();
+			}, 10);
+		});
+
+		//submit new value on blur
+		input.on("blur", function(e){
+			var value = input.val();
+
+			if(!isNaN(value)){
+				value = Number(value);
+			}
+
+			if(value != cell.getValue()){
+				success(value);
+			}else{
+				cancel();
+			}
+		});
+
+		//submit new value on enter
+		input.on("keydown", function(e){
+			var value;
+
+			if(e.keyCode == 13){
+				value = input.val();
+
+				if(!isNaN(value)){
+					value = Number(value);
+				}
+
+				success(value);
+			}
+
+			if(e.keyCode == 27){
+				cancel();
+			}
+		});
+
+		return input;
+	},
+
 	//select
 	select: function (cell, onRendered, success, cancel, editorParams) {
 		//create and style select
-		var select = $("<select/>");
+		var select = $("<select><select/>");
+		var isArray = Array.isArray(editorParams);
 
-		$.each(editorParams, function (value, option) {
-			select.append($("<option>").attr('value', value).text(option));
-		});
+		if(typeof editorParams == "function"){
+			editorParams = editorParams(cell);
+			isArray = Array.isArray(editorParams);
+		}
 
-		select.val(cell.getValue()).css({
-			"padding": "0px",
-			"width": "100%",
-			"height": "100%",
-			"box-sizing": "border-box"
-		});
+		function optionAppend(element, label, value, disabled){
+
+			var option = $("<option></option>").attr("value", value).text(label);
+
+			if(disabled){
+				option.prop("disabled", true);
+			}
+
+			element.append(option);
+		}
+
+		function processOption(element, option){
+			var groupEl;
+
+			if(option.options){
+				groupEl = $("<optgroup></optgroup>").attr("label", option.label);
+
+				option.options.forEach(function(item){
+					processOption(groupEl, item);
+				});
+
+				element.append(groupEl);
+			}else{
+				optionAppend(element, typeof option.label == "undefined" ? option.value : option.label,  typeof option.value == "undefined" ? option.label : option.value, option.disabled);
+			}
+		}
+
+		if(!isArray && typeof editorParams === "object"){
+			for(var key in editorParams){
+				optionAppend(select, editorParams[key], key)
+			}
+		}else if (isArray){
+			editorParams.forEach(function(item){
+				processOption(select, item);
+			});
+		}
+
+		select.css({
+			"padding":"4px",
+			"width":"100%",
+			"box-sizing":"border-box",
+			"font-family":"",
+		}).val(cell.getValue())
 
 		onRendered(function () {
 			select.focus().click();

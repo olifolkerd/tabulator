@@ -107,7 +107,7 @@ ColumnCalcs.prototype.removeCalcs = function(){
 
 ColumnCalcs.prototype.initializeTopRow = function(){
 	if(!this.topInitialized){
-		this.table.columnManager.element.append(this.topElement);
+		this.table.columnManager.headersElement.after(this.topElement);
 		this.topInitialized = true;
 	}
 };
@@ -162,24 +162,30 @@ ColumnCalcs.prototype.recalc = function(rows){
 };
 
 ColumnCalcs.prototype.recalcRowGroup = function(row){
+	this.recalcGroup(this.table.extensions.groupRows.getRowGroup(row));
+};
+
+ColumnCalcs.prototype.recalcGroup = function(group){
 	var data, rowData;
+	if(group){
+		if(group.calcs){
+			if(group.calcs.bottom){
+				data = this.rowsToData(group.rows);
+				rowData = this.generateRowData("bottom", data);
 
-	var group = this.table.extensions.groupRows.getRowGroup(row);
+				group.calcs.bottom.updateData(rowData);
+			}
 
-	if(group.calcs.bottom){
-		data = this.rowsToData(group.rows);
-		rowData = this.generateRowData("bottom", data);
+			if(group.calcs.top){
+				data = this.rowsToData(group.rows);
+				rowData = this.generateRowData("top", data);
 
-		group.calcs.bottom.updateData(rowData);
-	}
-
-	if(group.calcs.top){
-		data = this.rowsToData(group.rows);
-		rowData = this.generateRowData("top", data);
-
-		group.calcs.top.updateData(rowData);
+				group.calcs.top.updateData(rowData);
+			}
+		}
 	}
 };
+
 
 
 //generate top stats row
@@ -290,6 +296,50 @@ ColumnCalcs.prototype.redraw = function(){
 	}
 };
 
+//return the calculated
+ColumnCalcs.prototype.getResults = function(){
+	var self = this,
+	results = {},
+	groups;
+
+	if(this.table.options.groupBy && this.table.extExists("groupRows")){
+		groups = this.table.extensions.groupRows.getGroups();
+
+		groups.forEach(function(group){
+			results[group.getKey()] = self.getGroupResults(group);
+		});
+	}else{
+		results = {
+			top: this.topRow ? this.topRow.getData() : {},
+			bottom: this.botRow ? this.botRow.getData() : {},
+		}
+	}
+
+	return results;
+}
+
+//get results from a group
+ColumnCalcs.prototype.getGroupResults = function(group){
+	var self = this,
+	groupObj = group._getSelf(),
+	subGroups = group.getSubGroups(),
+	subGroupResults = {},
+	results = {};
+
+	subGroups.forEach(function(subgroup){
+		subGroupResults[subgroup.getKey()] = self.getGroupResults(subgroup);
+	});
+
+	results = {
+		top: groupObj.calcs.top ? groupObj.calcs.top.getData() : {},
+		bottom: groupObj.calcs.bottom ? groupObj.calcs.bottom.getData() : {},
+		groups: subGroupResults,
+	}
+
+	return results;
+}
+
+
 //default calculations
 ColumnCalcs.prototype.calculations = {
 	"avg":function(values, data, calcParams){
@@ -310,7 +360,8 @@ ColumnCalcs.prototype.calculations = {
 		return parseFloat(output).toString();
 	},
 	"max":function(values, data, calcParams){
-		var output = null;
+		var output = null,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
 		values.forEach(function(value){
 
@@ -321,10 +372,11 @@ ColumnCalcs.prototype.calculations = {
 			}
 		});
 
-		return output !== null ? output : "";
+		return output !== null ? (precision !== false ? output.toFixed(precision) : output) : "";
 	},
 	"min":function(values, data, calcParams){
-		var output = null;
+		var output = null,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
 		values.forEach(function(value){
 
@@ -335,10 +387,11 @@ ColumnCalcs.prototype.calculations = {
 			}
 		});
 
-		return output !== null ? output : "";
+		return output !== null ? (precision !== false ? output.toFixed(precision) : output) : "";
 	},
 	"sum":function(values, data, calcParams){
-		var output = 0;
+		var output = 0,
+		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
 
 		if(values.length){
 			values.forEach(function(value){
@@ -348,7 +401,7 @@ ColumnCalcs.prototype.calculations = {
 			});
 		}
 
-		return output;
+		return precision !== false ? output.toFixed(precision) : output;
 	},
 	"concat":function(values, data, calcParams){
 		var output = 0;

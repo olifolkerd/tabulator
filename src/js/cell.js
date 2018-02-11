@@ -44,9 +44,14 @@ CellComponent.prototype.restoreOldValue = function(){
 	this.cell.setValueActual(this.cell.getOldValue());
 };
 
-CellComponent.prototype.edit = function(){
-	this.cell.edit();
+CellComponent.prototype.edit = function(force){
+	return this.cell.edit(force);
 };
+
+CellComponent.prototype.cancelEdit = function(){
+	this.cell.cancelEdit(force);
+};
+
 
 CellComponent.prototype.nav = function(){
 	return this.cell.nav();
@@ -257,14 +262,22 @@ Cell.prototype.getOldValue = function(){
 
 Cell.prototype.setValue = function(value, mutate){
 
-	var changed = this.setValueProcessData(value, mutate);
+	var changed = this.setValueProcessData(value, mutate),
+	component;
 
 	if(changed){
 		if(this.table.options.history && this.table.extExists("history")){
 			this.table.extensions.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
 		};
 
-		this.table.options.cellEdited(this.getComponent());
+		component = this.getComponent();
+
+		if(this.column.cellEvents.cellEdited){
+			this.column.cellEvents.cellEdited(component);
+		}
+
+		this.table.options.cellEdited(component);
+
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 
@@ -363,9 +376,26 @@ Cell.prototype.hide = function(){
 	this.element[0].style.display = "none";
 };
 
-Cell.prototype.edit = function(){
-	this.element.focus();
+Cell.prototype.edit = function(force){
+	if(this.table.extExists("edit", true)){
+		return this.table.extensions.edit.edit(this, false, force);
+	}
 };
+
+Cell.prototype.cancelEdit = function(){
+	if(this.table.extExists("edit", true)){
+		var editing = this.table.extensions.edit.getCurrentCell();
+
+		if(editing && editing._getSelf() === this){
+			this.table.extensions.edit.cancelEdit();
+		}else{
+			console.warn("Cancel Editor Error - This cell is not currently being edited ");
+		}
+	}
+};
+
+
+
 
 Cell.prototype.delete = function(){
 	this.element.detach();

@@ -55,6 +55,10 @@ ColumnComponent.prototype._getSelf = function(){
 	return this.column;
 };
 
+ColumnComponent.prototype.scrollTo = function(){
+	this.column.table.columManager.scrollToColumn(this.column);
+};
+
 
 var Column = function(def, parent){
 	var self = this;
@@ -335,6 +339,19 @@ Column.prototype._buildHeader = function(){
 	if(typeof(def.cellTapHold) == "function"){
 		self.cellEvents.cellTapHold = def.cellTapHold;
 	}
+
+	//setup column cell edit callbacks
+	if(typeof(def.cellEdited) == "function"){
+		self.cellEvents.cellEdited = def.cellEdited;
+	}
+
+	if(typeof(def.cellEditing) == "function"){
+		self.cellEvents.cellEditing = def.cellEditing;
+	}
+
+	if(typeof(def.cellEditCancelled) == "function"){
+		self.cellEvents.cellEditCancelled = def.cellEditCancelled;
+	}
 };
 
 //build header element for header
@@ -562,10 +579,13 @@ Column.prototype.attachColumn = function(column){
 //vertically align header in column
 Column.prototype.verticalAlign = function(alignment){
 
-	if(this.parent.isGroup){
-		this.element.css("height", this.parent.getGroupElement().innerHeight())
-	}else{
-		this.element.css("height", this.parent.getHeadersElement().innerHeight())
+	//calculate height of column header and group holder element
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
+
+	this.element.css("height", parentHeight);
+
+	if(this.isGroup){
+		this.groupElement.css("min-height", parentHeight - this.contentElement.outerHeight());
 	}
 
 	//vertically align cell contents
@@ -586,6 +606,7 @@ Column.prototype.verticalAlign = function(alignment){
 Column.prototype.clearVerticalAlign = function(){
 	this.element.css("padding-top","");
 	this.element.css("height","");
+	this.element.css("min-height","");
 
 	this.columns.forEach(function(column){
 		column.clearVerticalAlign();
@@ -707,8 +728,8 @@ Column.prototype.show = function(){
 			cell.show();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
-			this.table.extensions.persistentLayout.save();
+		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+			this.table.extensions.persistence.save("columns");
 		}
 
 		this.table.options.groupVisibilityChanged(this.getComponent(), true);
@@ -733,8 +754,8 @@ Column.prototype.hide = function(){
 			cell.hide();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
-			this.table.extensions.persistentLayout.save();
+		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+			this.table.extensions.persistence.save("columns");
 		}
 
 		this.table.options.groupVisibilityChanged(this.getComponent(), false);
@@ -842,16 +863,26 @@ Column.prototype.generateCell = function(row){
 	return cell;
 };
 
-Column.prototype.reinitializeWidth = function(){
+Column.prototype.reinitializeWidth = function(force){
 
 	this.widthFixed = false;
 
 	//set width if present
-	if(typeof this.definition.width !== "undefined"){
+	if(typeof this.definition.width !== "undefined" && !force){
 		this.setWidth(this.definition.width);
 	}
 
+	//hide header filters to prevent them altering column width
+	if(this.table.extExists("filter")){
+		this.table.extensions.filter.hideHeaderFilterElements();
+	}
+
 	this.fitToData();
+
+	//show header filters again after layout is complete
+	if(this.table.extExists("filter")){
+		this.table.extensions.filter.showHeaderFilterElements();
+	}
 }
 
 //set column width to maximum cell width

@@ -12,6 +12,10 @@ Format.prototype.initializeColumn = function(column){
 		case "string":
 		if(self.formatters[column.definition.formatter]){
 			config.formatter = self.formatters[column.definition.formatter]
+
+			if(column.definition.formatter === "email"){
+				console.warn("The%c email%c formatter has been depricated and will be removed in version 4.0, use the %clink %cformatter with %cformatterParams:{urlPrefix:'mailto:'} %cinstead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+			}
 		}else{
 			console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
 			config.formatter = self.formatters.plaintext;
@@ -144,14 +148,59 @@ Format.prototype.formatters = {
 
 	//clickable anchor tag
 	link:function(cell, formatterParams){
-		var value = this.sanitizeHTML(cell.getValue());
-		return "<a href='" + value + "'>" + this.emptyToSpace(value) + "</a>";
+		var value = this.sanitizeHTML(cell.getValue()),
+		urlPrefix = formatterParams.urlPrefix || "",
+		label = this.emptyToSpace(value),
+		data;
+
+		if(formatterParams.labelField){
+			data = cell.getData();
+			label = data[formatterParams.labelField];
+		}
+
+		if(formatterParams.label){
+			switch(typeof formatterParams.label){
+				case "string":
+				label = formatterParams.label;
+				break;
+
+				case "function":
+				label = formatterParams.label(cell);
+				break;
+			}
+		}
+
+		if(formatterParams.urlField){
+			data = cell.getData();
+			value = data[formatterParams.urlField];
+		}
+
+		if(formatterParams.url){
+			switch(typeof formatterParams.url){
+				case "string":
+				value = formatterParams.url;
+				break;
+
+				case "function":
+				value = formatterParams.url(cell);
+				break;
+			}
+		}
+
+		return "<a href='" + urlPrefix + value + "'>" + label + "</a>";
 	},
 
 	//image element
 	image:function(cell, formatterParams){
 		var value = this.sanitizeHTML(cell.getValue());
-		return "<img src='" + value + "'/>";
+
+		var el = $("<img src='" + value + "'/>");
+
+		el.on("load", function(){
+			cell.getRow().normalizeHeight();
+		});
+
+		return el;
 	},
 
 	//tick or empty cell
@@ -187,12 +236,15 @@ Format.prototype.formatters = {
 	},
 
 	//select
-	select: function (cell, formatterParams) {
-		if (!formatterParams.hasOwnProperty(cell.getValue())) {
-			console.warn('Missing display value for '+ cell.getValue());
-			return cell.getValue();
+	lookup: function (cell, formatterParams) {
+		var value = cell.getValue();
+
+		if (typeof formatterParams[value] === "undefined") {
+			console.warn('Missing display value for ' + value);
+			return value;
 		}
-		return formatterParams[cell.getValue()];
+
+		return formatterParams[value];
 	},
 
 	//star rating
@@ -230,25 +282,81 @@ Format.prototype.formatters = {
 		element = cell.getElement(),
 		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
 		min = formatterParams && formatterParams.min ? formatterParams.min : 0,
-		color = formatterParams && formatterParams.color ? formatterParams.color : "#2DC214",
-		percent;
+		percent, percentValue, color, legend, legendColor;
 
 		//make sure value is in range
-		value = parseFloat(value) <= max ? parseFloat(value) : max;
-		value = parseFloat(value) >= min ? parseFloat(value) : min;
+		percentValue = parseFloat(value) <= max ? parseFloat(value) : max;
+		percentValue = parseFloat(percentValue) >= min ? parseFloat(percentValue) : min;
 
 		//workout percentage
 		percent = (max - min) / 100;
-		value = 100 - Math.round((value - min) / percent);
+		percentValue = 100 - Math.round((percentValue - min) / percent);
+
+		//set bar color
+		switch(typeof formatterParams.color){
+			case "string":
+			color = formatterParams.color;
+			break;
+			case "function":
+			color = formatterParams.color(value);
+			break;
+			case "object":
+			if(Array.isArray(formatterParams.color)){
+				var unit = 100 / formatterParams.color.length;
+				var index = Math.floor(percentValue / unit);
+
+				index = Math.min(index, formatterParams.color.length - 1);
+				color = formatterParams.color[formatterParams.color.length - 1 - index];
+				break;
+			}
+			default:
+			color = "#2DC214";
+		}
+
+		//generate legend
+		switch(typeof formatterParams.legend){
+			case "string":
+			legend = formatterParams.legend;
+			break;
+			case "function":
+			legend = formatterParams.legend(value);
+			break;
+			case "boolean":
+			legend = value;
+			break;
+			default:
+			legend = false;
+		}
+
+		//set legend color
+		switch(typeof formatterParams.legendColor){
+			case "string":
+			legendColor = formatterParams.legendColor;
+			break;
+			case "function":
+			legendColor = formatterParams.legendColor(value);
+			break;
+			case "object":
+			if(Array.isArray(formatterParams.legendColor)){
+				var unit = 100 / formatterParams.legendColor.length;
+				var index = Math.floor(percentValue / unit);
+
+				index = Math.min(index, formatterParams.legendColor.length - 1);
+				legendColor = formatterParams.legendColor[formatterParams.legendColor.length - 1 - index];
+				break;
+			}
+			default:
+			legendColor = "#000";
+		}
 
 		element.css({
 			"min-width":"30px",
 			"position":"relative",
 		});
 
-		element.attr("aria-label", value);
+		element.attr("aria-label", percentValue);
 
-		return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>";
+		return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + percentValue + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:center; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
 	},
 
 	//background color
