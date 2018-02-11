@@ -552,7 +552,7 @@ RowManager.prototype.getHtml = function(active){
 		columns.forEach(function(column){
 			var def = column.getDefinition();
 
-			if(column.getVisibility()){
+			if(column.getVisibility() && !def.hideInHtml){
 				header += `<th>${(def.title || "")}</th>`;
 			}
 		})

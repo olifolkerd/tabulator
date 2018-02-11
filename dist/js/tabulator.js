@@ -2758,7 +2758,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var def = column.getDefinition();
 
-        if (column.getVisibility()) {
+        if (column.getVisibility() && !def.hideInHtml) {
 
           header += '<th>' + (def.title || "") + '</th>';
         }
