@@ -166,18 +166,20 @@ ColumnCalcs.prototype.recalcRowGroup = function(row){
 
 	var group = this.table.extensions.groupRows.getRowGroup(row);
 
-	if(group.calcs.bottom){
-		data = this.rowsToData(group.rows);
-		rowData = this.generateRowData("bottom", data);
+	if(group.calcs){
+		if(group.calcs.bottom){
+			data = this.rowsToData(group.rows);
+			rowData = this.generateRowData("bottom", data);
 
-		group.calcs.bottom.updateData(rowData);
-	}
+			group.calcs.bottom.updateData(rowData);
+		}
 
-	if(group.calcs.top){
-		data = this.rowsToData(group.rows);
-		rowData = this.generateRowData("top", data);
+		if(group.calcs.top){
+			data = this.rowsToData(group.rows);
+			rowData = this.generateRowData("top", data);
 
-		group.calcs.top.updateData(rowData);
+			group.calcs.top.updateData(rowData);
+		}
 	}
 };
 
