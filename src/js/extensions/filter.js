@@ -307,6 +307,10 @@ Filter.prototype.addFilter = function(field, type, value){
 		}
 	});
 
+	if(this.table.options.persistentFilter && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("filter");
+	}
+
 };
 
 //get all filters
@@ -375,6 +379,10 @@ Filter.prototype.removeFilter = function(field, type, value){
 
 	});
 
+	if(this.table.options.persistentFilter && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("filter");
+	}
+
 };
 
 //clear filters
@@ -386,6 +394,10 @@ Filter.prototype.clearFilter = function(all){
 	}
 
 	this.changed = true;
+
+	if(this.table.options.persistentFilter && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("filter");
+	}
 };
 
 //clear header filters

@@ -68,8 +68,12 @@
 
 	 			virtualDom:true, //enable DOM virtualization
 
-	 			persistentLayout:false, //store cookie with column _styles
-	 			persistentLayoutID:"", //id for stored cookie
+	 			persistentLayout:false, //store column layout in memory
+	 			persistentSort:false, //store sorting in memory
+	 			persistentFilter:false, //store filters in memory
+	 			persistenceID:"", //key for persistent storage
+	 			persistenceMode:true, //mode for storing persistence information
+	 			persistentLayoutID:"",//DEPRICATED - key for persistent storage;
 
 	 			responsiveLayout:false, //responsive layout flags
 
@@ -193,6 +197,21 @@
 	 				this.options.layout = "fitColumns";
 	 				console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 	 			}
+
+	 			if(this.options.persistentLayoutID){
+	 				this.options.persistenceID = this.options.persistentLayoutID;
+	 				console.warn("The%c persistentLayoutID%c option has been depricated and will be removed in version 4.0, use %c persistenceID%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
+
+	 			if(this.options.persistentLayout === "cookie" || this.options.persistentLayout === "local"){
+	 				this.options.persistenceMode = this.options.persistentLayout;
+	 				this.options.persistentLayout = true;
+	 				console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
+
+
+
+
 	 		},
 
 	 		//constructor
@@ -289,9 +308,12 @@
 	 			}
 
 
-	 			if(options.persistentLayout && this.extExists("persistentLayout", true)){
-	 				ext.persistentLayout.initialize(options.persistentLayout, options.persistentLayoutID);
-	 				options.columns = ext.persistentLayout.load(options.columns);
+	 			if( (options.persistentLayout || options.persistentSort || options.persistentFilter) && this.extExists("persistence", true)){
+	 				ext.persistence.initialize(options.persistenceMode, options.persistenceID);
+	 			}
+
+	 			if(options.persistentLayout && this.extExists("persistence", true)){
+	 				options.columns = ext.persistence.load("columns", options.columns) ;
 	 			}
 
 	 			if(this.extExists("columnCalcs")){
@@ -304,8 +326,28 @@
 	 				this.extensions.frozenRows.initialize();
 	 			}
 
-	 			if(options.initialSort && this.extExists("sort", true)){
-	 				ext.sort.setSort(options.initialSort);
+	 			if((options.persistentSort || options.initialSort) && this.extExists("sort", true)){
+	 				var sorters = [];
+
+	 				if(options.persistentSort && this.extExists("persistence", true)){
+	 					sorters = ext.persistence.load("sort");
+
+	 					if(sorters === false && options.initialSort){
+	 						sorters = options.initialSort;
+	 					}
+	 				}else if(options.initialSort){
+	 					sorters = options.initialSort;
+	 				}
+
+	 				ext.sort.setSort(sorters);
+	 			}
+
+	 			if(options.persistentFilter && this.extExists("persistence", true)){
+	 				var filters = ext.persistence.load("filter");
+
+	 				if(filters !== false){
+	 					this.setFilter(filters);
+	 				}
 	 			}
 
 	 			if(options.pagination && this.extExists("page", true)){
@@ -675,14 +717,14 @@
 	 		},
 
 	 		getColumnLayout:function(){
-	 			if(this.extExists("persistentLayout", true)){
-	 				return this.extensions.persistentLayout.parseColumns(this.columnManager.getColumns());
+	 			if(this.extExists("persistence", true)){
+	 				return this.extensions.persistence.parseColumns(this.columnManager.getColumns());
 	 			}
 	 		},
 
 	 		setColumnLayout:function(layout){
-	 			if(this.extExists("persistentLayout", true)){
-	 				this.columnManager.setColumns(this.extensions.persistentLayout.mergeDefinition(this.options.columns, layout))
+	 			if(this.extExists("persistence", true)){
+	 				this.columnManager.setColumns(this.extensions.persistence.mergeDefinition(this.options.columns, layout))
 	 				return true;
 	 			}
 	 			return false;

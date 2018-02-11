@@ -728,8 +728,8 @@ Column.prototype.show = function(){
 			cell.show();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
-			this.table.extensions.persistentLayout.save();
+		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+			this.table.extensions.persistence.save("columns");
 		}
 
 		this.table.options.groupVisibilityChanged(this.getComponent(), true);
@@ -754,8 +754,8 @@ Column.prototype.hide = function(){
 			cell.hide();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)){
-			this.table.extensions.persistentLayout.save();
+		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+			this.table.extensions.persistence.save("columns");
 		}
 
 		this.table.options.groupVisibilityChanged(this.getComponent(), false);

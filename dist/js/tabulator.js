@@ -570,9 +570,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
       }
 
-      if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
+      if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
 
-        this.table.extensions.persistentLayout.save();
+        this.table.extensions.persistence.save("columns");
       }
     };
 
@@ -818,9 +818,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (force) {
 
-        if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
+        if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
 
-          this.table.extensions.persistentLayout.save();
+          this.table.extensions.persistence.save("columns");
         }
 
         if (this.table.extExists("columnCalcs")) {
@@ -1801,9 +1801,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cell.show();
         });
 
-        if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
+        if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
 
-          this.table.extensions.persistentLayout.save();
+          this.table.extensions.persistence.save("columns");
         }
 
         this.table.options.groupVisibilityChanged(this.getComponent(), true);
@@ -1836,9 +1836,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cell.hide();
         });
 
-        if (this.table.options.persistentLayout && this.table.extExists("persistentLayout", true)) {
+        if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
 
-          this.table.extensions.persistentLayout.save();
+          this.table.extensions.persistence.save("columns");
         }
 
         this.table.options.groupVisibilityChanged(this.getComponent(), false);
@@ -5087,9 +5087,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         virtualDom: true, //enable DOM virtualization
 
 
-        persistentLayout: false, //store cookie with column _styles
+        persistentLayout: false, //store column layout in memory
 
-        persistentLayoutID: "", //id for stored cookie
+        persistentSort: false, //store sorting in memory
+
+        persistentFilter: false, //store filters in memory
+
+        persistenceID: "", //key for persistent storage
+
+        persistenceMode: true, //mode for storing persistence information
+
+        persistentLayoutID: "", //DEPRICATED - key for persistent storage;
 
 
         responsiveLayout: false, //responsive layout flags
@@ -5289,6 +5297,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
         }
+
+        if (this.options.persistentLayoutID) {
+
+          this.options.persistenceID = this.options.persistentLayoutID;
+
+          console.warn("The%c persistentLayoutID%c option has been depricated and will be removed in version 4.0, use %c persistenceID%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+        }
+
+        if (this.options.persistentLayout === "cookie" || this.options.persistentLayout === "local") {
+
+          this.options.persistenceMode = this.options.persistentLayout;
+
+          this.options.persistentLayout = true;
+
+          console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+        }
       },
 
       //constructor
@@ -5407,11 +5431,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.footerManager.activate();
         }
 
-        if (options.persistentLayout && this.extExists("persistentLayout", true)) {
+        if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.extExists("persistence", true)) {
 
-          ext.persistentLayout.initialize(options.persistentLayout, options.persistentLayoutID);
+          ext.persistence.initialize(options.persistenceMode, options.persistenceID);
+        }
 
-          options.columns = ext.persistentLayout.load(options.columns);
+        if (options.persistentLayout && this.extExists("persistence", true)) {
+
+          options.columns = ext.persistence.load("columns", options.columns);
         }
 
         if (this.extExists("columnCalcs")) {
@@ -5426,9 +5453,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.extensions.frozenRows.initialize();
         }
 
-        if (options.initialSort && this.extExists("sort", true)) {
+        if ((options.persistentSort || options.initialSort) && this.extExists("sort", true)) {
 
-          ext.sort.setSort(options.initialSort);
+          var sorters = [];
+
+          if (options.persistentSort && this.extExists("persistence", true)) {
+
+            sorters = ext.persistence.load("sort");
+
+            if (sorters === false && options.initialSort) {
+
+              sorters = options.initialSort;
+            }
+          } else if (options.initialSort) {
+
+            sorters = options.initialSort;
+          }
+
+          ext.sort.setSort(sorters);
+        }
+
+        if (options.persistentFilter && this.extExists("persistence", true)) {
+
+          var filters = ext.persistence.load("filter");
+
+          if (filters !== false) {
+
+            this.setFilter(filters);
+          }
         }
 
         if (options.pagination && this.extExists("page", true)) {
@@ -5926,17 +5978,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       getColumnLayout: function getColumnLayout() {
 
-        if (this.extExists("persistentLayout", true)) {
+        if (this.extExists("persistence", true)) {
 
-          return this.extensions.persistentLayout.parseColumns(this.columnManager.getColumns());
+          return this.extensions.persistence.parseColumns(this.columnManager.getColumns());
         }
       },
 
       setColumnLayout: function setColumnLayout(layout) {
 
-        if (this.extExists("persistentLayout", true)) {
+        if (this.extExists("persistence", true)) {
 
-          this.columnManager.setColumns(this.extensions.persistentLayout.mergeDefinition(this.options.columns, layout));
+          this.columnManager.setColumns(this.extensions.persistence.mergeDefinition(this.options.columns, layout));
 
           return true;
         }
@@ -10028,6 +10080,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.changed = true;
         }
       });
+
+      if (this.table.options.persistentFilter && this.table.extExists("persistence", true)) {
+
+        this.table.extensions.persistence.save("filter");
+      }
     };
 
     //get all filters
@@ -10118,6 +10175,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           console.warn("Filter Error - No matching filter type found, ignoring: ", filter.type);
         }
       });
+
+      if (this.table.options.persistentFilter && this.table.extExists("persistence", true)) {
+
+        this.table.extensions.persistence.save("filter");
+      }
     };
 
     //clear filters
@@ -10133,6 +10195,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
 
       this.changed = true;
+
+      if (this.table.options.persistentFilter && this.table.extExists("persistence", true)) {
+
+        this.table.extensions.persistence.save("filter");
+      }
     };
 
     //clear header filters
@@ -14108,7 +14175,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Tabulator.registerExtension("page", Page);
 
-    var PersistentLayout = function PersistentLayout(table) {
+    var Persistence = function Persistence(table) {
 
       this.table = table; //hold Tabulator object
 
@@ -14123,7 +14190,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //setup parameters
 
 
-    PersistentLayout.prototype.initialize = function (mode, id) {
+    Persistence.prototype.initialize = function (mode, id) {
 
       //determine persistent layout storage type
 
@@ -14139,15 +14206,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //load saved definitions
 
 
-    PersistentLayout.prototype.load = function (definition) {
+    Persistence.prototype.load = function (type, current) {
 
-      var newDefinition = "";
+      var data = this.retreiveData(type);
+
+      if (current) {
+
+        data = data ? this.mergeDefinition(current, data) : current;
+      }
+
+      return data;
+    };
+
+    //retreive data from memory
+
+
+    Persistence.prototype.retreiveData = function (type) {
+
+      var data = "",
+          id = this.id + (type === "columns" ? "" : "-" + type);
 
       switch (this.mode) {
 
         case "local":
 
-          newDefinition = localStorage.getItem(this.id);
+          data = localStorage.getItem(id);
 
           break;
 
@@ -14157,7 +14240,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
           var cookie = document.cookie,
-              cookiePos = cookie.indexOf(this.id + "="),
+              cookiePos = cookie.indexOf(id + "="),
               end = void 0;
 
           //if cookie exists, decode and load column data into tabulator
@@ -14174,7 +14257,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               cookie = cookie.substr(0, end);
             }
 
-            newDefinition = cookie.replace(this.id + "=", "");
+            data = cookie.replace(id + "=", "");
           }
 
           break;
@@ -14185,23 +14268,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       }
 
-      if (newDefinition) {
-
-        newDefinition = JSON.parse(newDefinition);
-
-        definition = this.mergeDefinition(definition, newDefinition);
-      }
-
-      return definition;
+      return data ? JSON.parse(data) : false;
     };
 
     //merge old and new column defintions
 
 
-    PersistentLayout.prototype.mergeDefinition = function (oldCols, newCols) {
+    Persistence.prototype.mergeDefinition = function (oldCols, newCols) {
 
       var self = this,
           output = [];
+
+      // oldCols = oldCols || [];
+
+
+      newCols = newCols || [];
 
       newCols.forEach(function (column, to) {
 
@@ -14228,7 +14309,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //find matching columns
 
 
-    PersistentLayout.prototype._findColumn = function (columns, subject) {
+    Persistence.prototype._findColumn = function (columns, subject) {
 
       var type = subject.columns ? "group" : subject.field ? "field" : "object";
 
@@ -14258,19 +14339,67 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
     };
 
-    //save current definitions
+    //save data
 
 
-    PersistentLayout.prototype.save = function () {
+    Persistence.prototype.save = function (type) {
 
-      var definition = this.parseColumns(this.table.columnManager.getColumns()),
-          data = JSON.stringify(definition);
+      var data = {};
+
+      switch (type) {
+
+        case "columns":
+
+          data = this.parseColumns(this.table.columnManager.getColumns());
+
+          break;
+
+        case "filter":
+
+          data = this.table.extensions.filter.getFilters();
+
+          break;
+
+        case "sort":
+
+          data = this.validateSorters(this.table.extensions.sort.getSort());
+
+          break;
+
+      }
+
+      var id = this.id + (type === "columns" ? "" : "-" + type);
+
+      this.saveData(id, data);
+    };
+
+    //ensure sorters contain no function data
+
+
+    Persistence.prototype.validateSorters = function (data) {
+
+      data.forEach(function (item) {
+
+        item.column = item.field;
+
+        delete item.field;
+      });
+
+      return data;
+    };
+
+    //save data to chosed medium
+
+
+    Persistence.prototype.saveData = function (id, data) {
+
+      data = JSON.stringify(data);
 
       switch (this.mode) {
 
         case "local":
 
-          localStorage.setItem(this.id, data);
+          localStorage.setItem(id, data);
 
           break;
 
@@ -14283,7 +14412,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           //save cookie
 
 
-          document.cookie = this.id + "=" + data + "; expires=" + expireDate.toUTCString();
+          document.cookie = id + "=" + data + "; expires=" + expireDate.toUTCString();
 
           break;
 
@@ -14297,7 +14426,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //build premission list
 
 
-    PersistentLayout.prototype.parseColumns = function (columns) {
+    Persistence.prototype.parseColumns = function (columns) {
 
       var self = this,
           definitions = [];
@@ -14328,7 +14457,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return definitions;
     };
 
-    Tabulator.registerExtension("persistentLayout", PersistentLayout);
+    Tabulator.registerExtension("persistence", Persistence);
 
     var ResizeColumns = function ResizeColumns(table) {
 
@@ -14498,9 +14627,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.element.removeClass("tabulator-block-select");
 
-        if (self.table.options.persistentLayout && self.table.extExists("persistentLayout", true)) {
+        if (self.table.options.persistentLayout && self.table.extExists("persistence", true)) {
 
-          self.table.extensions.persistentLayout.save();
+          self.table.extensions.persistence.save("columns");
         }
 
         self.table.options.columnResized(self.startColumn.getComponent());
@@ -15298,6 +15427,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
 
       self.sortList = newSortList;
+
+      if (this.table.options.persistentSort && this.table.extExists("persistence", true)) {
+
+        this.table.extensions.persistence.save("sort");
+      }
     };
 
     //clear sorters

@@ -120,6 +120,10 @@ Sort.prototype.setSort = function(sortList, dir){
 	});
 
 	self.sortList = newSortList;
+
+	if(this.table.options.persistentSort && this.table.extExists("persistence", true)){
+		this.table.extensions.persistence.save("sort");
+	}
 };
 
 //clear sorters

@@ -1,4 +1,4 @@
-var PersistentLayout = function(table){
+var Persistence = function(table){
 	this.table = table; //hold Tabulator object
 	this.mode = "";
 	this.id = "";
@@ -6,7 +6,7 @@ var PersistentLayout = function(table){
 };
 
 //setup parameters
-PersistentLayout.prototype.initialize = function(mode, id){
+Persistence.prototype.initialize = function(mode, id){
 	//determine persistent layout storage type
 	this.mode = mode !== true ?  mode : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
 
@@ -15,20 +15,32 @@ PersistentLayout.prototype.initialize = function(mode, id){
 };
 
 //load saved definitions
-PersistentLayout.prototype.load = function(definition){
+Persistence.prototype.load = function(type, current){
 
-	var newDefinition = "";
+	var data = this.retreiveData(type);
+
+	if(current){
+		data = data ? this.mergeDefinition(current, data) : current;
+	}
+
+	return data;
+};
+
+//retreive data from memory
+Persistence.prototype.retreiveData = function(type){
+	var data = "",
+	id = this.id + (type === "columns" ? "" : "-" + type);
 
 	switch(this.mode){
 		case "local":
-		newDefinition = localStorage.getItem(this.id);
+		data = localStorage.getItem(id);
 		break;
 
 		case "cookie":
 
 		//find cookie
 		let cookie = document.cookie,
-		cookiePos = cookie.indexOf(this.id + "="),
+		cookiePos = cookie.indexOf(id + "="),
 		end;
 
 		//if cookie exists, decode and load column data into tabulator
@@ -41,7 +53,7 @@ PersistentLayout.prototype.load = function(definition){
 				cookie = cookie.substr(0, end);
 			}
 
-			newDefinition = cookie.replace(this.id + "=", "");
+			data = cookie.replace(id + "=", "");
 		}
 		break;
 
@@ -49,19 +61,16 @@ PersistentLayout.prototype.load = function(definition){
 		console.warn("Persistance Load Error - invalid mode selected", this.mode);
 	}
 
-	if(newDefinition){
-		newDefinition = JSON.parse(newDefinition);
-
-		definition = this.mergeDefinition(definition, newDefinition);
-	}
-
-	return definition;
-};
+	return data ? JSON.parse(data) : false;
+}
 
 //merge old and new column defintions
-PersistentLayout.prototype.mergeDefinition = function(oldCols, newCols){
+Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 	var self = this,
 	output = [];
+
+	// oldCols = oldCols || [];
+	newCols = newCols || [];
 
 	newCols.forEach(function(column, to){
 
@@ -85,7 +94,7 @@ PersistentLayout.prototype.mergeDefinition = function(oldCols, newCols){
 };
 
 //find matching columns
-PersistentLayout.prototype._findColumn = function(columns, subject){
+Persistence.prototype._findColumn = function(columns, subject){
 	var type = subject.columns ? "group" : (subject.field ? "field" : "object");
 
 	return columns.find(function(col){
@@ -105,14 +114,48 @@ PersistentLayout.prototype._findColumn = function(columns, subject){
 	})
 };
 
-//save current definitions
-PersistentLayout.prototype.save = function(){
-	var definition = this.parseColumns(this.table.columnManager.getColumns()),
-	data = JSON.stringify(definition);
+//save data
+Persistence.prototype.save = function(type){
+	var data = {};
+
+
+	switch(type){
+		case "columns":
+		data = this.parseColumns(this.table.columnManager.getColumns())
+		break;
+
+		case "filter":
+		data = this.table.extensions.filter.getFilters();
+		break;
+
+		case "sort":
+		data = this.validateSorters(this.table.extensions.sort.getSort());
+		break;
+	}
+
+	var id = this.id + (type === "columns" ? "" : "-" + type);
+
+	this.saveData(id, data);
+};
+
+//ensure sorters contain no function data
+Persistence.prototype.validateSorters = function(data){
+	data.forEach(function(item){
+		item.column = item.field;
+		delete item.field;
+	});
+
+	return data;
+};
+
+//save data to chosed medium
+Persistence.prototype.saveData = function(id, data){
+
+	data = JSON.stringify(data);
 
 	switch(this.mode){
 		case "local":
-		localStorage.setItem(this.id, data);
+		localStorage.setItem(id, data);
 		break;
 
 		case "cookie":
@@ -120,16 +163,16 @@ PersistentLayout.prototype.save = function(){
 		expireDate.setDate(expireDate.getDate() + 10000);
 
 		//save cookie
-		document.cookie = this.id + "=" + data + "; expires=" + expireDate.toUTCString();
+		document.cookie = id + "=" + data + "; expires=" + expireDate.toUTCString();
 		break;
 
 		default:
 		console.warn("Persistance Save Error - invalid mode selected", this.mode);
 	}
-};
+}
 
 //build premission list
-PersistentLayout.prototype.parseColumns = function(columns){
+Persistence.prototype.parseColumns = function(columns){
 	var self = this,
 	definitions = [];
 
@@ -152,4 +195,4 @@ PersistentLayout.prototype.parseColumns = function(columns){
 	return definitions;
 };
 
-Tabulator.registerExtension("persistentLayout", PersistentLayout);
+Tabulator.registerExtension("persistence", Persistence);
