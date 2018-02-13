@@ -3226,6 +3226,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       position = position || 0;
 
+      offset = offset || 0;
+
       if (!position) {
 
         self._clearVirtualDom();

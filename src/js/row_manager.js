@@ -910,6 +910,8 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 
 	position = position || 0;
 
+	offset = offset || 0;
+
 	if(!position){
 		self._clearVirtualDom();
 	}else{
