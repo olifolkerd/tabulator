@@ -770,7 +770,7 @@ RowManager.prototype.getRows = function(){
 ///////////////// Table Rendering /////////////////
 
 //trigger rerender of table in current position
-RowManager.prototype.reRenderInPosition = function(rowCount){
+RowManager.prototype.reRenderInPosition = function(){
 	if(this.getRenderMode() == "virtual"){
 
 		var scrollTop = this.element.scrollTop();
@@ -1245,9 +1245,7 @@ RowManager.prototype.redraw = function (force){
 		if(self.renderMode == "simple"){
 			this._simpleRender();
 		}else{
-			var pos = Math.floor((this.element.scrollTop() / this.element[0].scrollHeight) * this.displayRowsCount);
-			this._virtualRenderFill(pos);
-
+			this.reRenderInPosition();
 			this.scrollHorizontal(left);
 		}
 
