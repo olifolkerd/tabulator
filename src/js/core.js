@@ -385,7 +385,17 @@
 	 				self.extensions.page.setPage(1);
 
 	 				if(self.options.pagination == "local"){
-	 					self.rowManager.setData(self.options.data);
+	 					if(self.options.data.length){
+	 						self.rowManager.setData(self.options.data);
+	 					}else{
+	 						if(self.options.ajaxURL && self.extExists("ajax")){
+	 							self.extensions.ajax.sendRequest(function(data){
+	 								self.rowManager.setData(data);
+	 							});
+	 						}else{
+	 							self.rowManager.setData(self.options.data);
+	 						}
+	 					}
 	 				}
 	 			}else{
 	 				if(self.options.data.length){
