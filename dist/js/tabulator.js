@@ -2584,7 +2584,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.table.options.history && this.table.extExists("history")) {
 
-        this.table.extensions.history.action("rowMoved", from, { pos: this.getRowPosition(from), to: to, after: after });
+        this.table.extensions.history.action("rowMove", from, { pos: this.getRowPosition(from), to: to, after: after });
       };
 
       this.moveRowActual(from, to, after);
@@ -12530,7 +12530,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this._rebindRow(action.component, newRow);
       },
 
-      rowMoved: function rowMoved(action) {
+      rowMove: function rowMove(action) {
 
         this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
 
@@ -12558,9 +12558,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         action.component.delete();
       },
 
-      rowMoved: function rowMoved(action) {
+      rowMove: function rowMove(action) {
 
-        this.table.rowManager.moveRowActual(action.component, action.data.to, action.data.after);
+        this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
 
         this.table.rowManager.redraw();
       }

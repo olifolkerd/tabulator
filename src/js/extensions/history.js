@@ -77,7 +77,7 @@ History.prototype.undoers = {
 		this._rebindRow(action.component, newRow);
 	},
 
-	rowMoved: function(action){
+	rowMove: function(action){
 		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
 		this.table.rowManager.redraw();
 	},
@@ -99,8 +99,8 @@ History.prototype.redoers = {
 		action.component.delete();
 	},
 
-	rowMoved: function(action){
-		this.table.rowManager.moveRowActual(action.component, action.data.to, action.data.after);
+	rowMove: function(action){
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
 		this.table.rowManager.redraw();
 	},
 };
