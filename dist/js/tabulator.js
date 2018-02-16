@@ -1381,6 +1381,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.element.addClass(def.cssClass);
       }
 
+      if (def.field) {
+
+        this.element.attr("tabulator-field", def.field);
+      }
+
       //set min width if present
 
       self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : def.minWidth);
