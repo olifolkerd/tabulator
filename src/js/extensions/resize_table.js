@@ -6,7 +6,7 @@ ResizeTable.prototype.initialize = function(row){
 	var table = this.table,
 	observer;
 
-	if(typeof ResizeObserver !== "undefined"){
+	if(typeof ResizeObserver !== "undefined" && this.table.rowManager.getRenderMode() === "virtual"){
 		observer = new ResizeObserver(function(entry){
 			table.redraw();
 		});
