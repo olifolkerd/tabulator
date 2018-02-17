@@ -2128,9 +2128,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 
       this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
-
-
-      this._initialize();
     };
 
     //////////////// Setup Functions /////////////////
@@ -2170,9 +2167,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.columnManager = manager;
     };
 
-    RowManager.prototype._initialize = function () {
+    RowManager.prototype.initialize = function () {
 
       var self = this;
+
+      self.setRenderMode();
 
       //initialize manager
 
@@ -2208,7 +2207,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //handle virtual dom scrolling
 
-      if (self.table.options.virtualDom) {
+      if (this.renderMode === "virtual") {
 
         self.element.scroll(function () {
 
@@ -3072,6 +3071,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    RowManager.prototype.setRenderMode = function () {
+
+      if ((this.table.element.innerHeight() || this.table.options.height) && this.table.options.virtualDom && !this.table.options.pagination) {
+
+        this.renderMode = "virtual";
+      } else {
+
+        this.renderMode = "classic";
+      }
+
+      console.log("mode", this.renderMode);
+    };
+
+    RowManager.prototype.getRenderMode = function () {
+
+      return this.renderMode;
+    };
+
     RowManager.prototype.renderTable = function () {
 
       var self = this;
@@ -3080,16 +3097,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.scrollTop(0);
 
-      if (!self.height || !self.table.options.virtualDom || self.table.options.pagination) {
+      switch (self.renderMode) {
 
-        self.renderMode = "classic";
+        case "classic":
 
-        self._simpleRender();
-      } else {
+          self._simpleRender();
 
-        self.renderMode = "virtual";
+          break;
 
-        self._virtualRenderFill();
+        case "virtual":
+
+          self._virtualRenderFill();
+
+          break;
+
       }
 
       if (self.firstRender) {
@@ -3119,11 +3140,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
 
       self.table.options.renderComplete();
-    };
-
-    RowManager.prototype.getRenderMode = function () {
-
-      return this.renderMode;
     };
 
     //simple render on heightless table
@@ -3623,21 +3639,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+      if (this.renderMode === "virtual") {
 
-      self.element.css({
+        var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
 
-        "min-height": "calc(100% - " + otherHeight + "px)",
+        self.element.css({
 
-        "height": "calc(100% - " + otherHeight + "px)",
+          "min-height": "calc(100% - " + otherHeight + "px)",
 
-        "max-height": "calc(100% - " + otherHeight + "px)"
+          "height": "calc(100% - " + otherHeight + "px)",
 
-      });
+          "max-height": "calc(100% - " + otherHeight + "px)"
 
-      self.height = self.element.innerHeight();
+        });
 
-      self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
+        self.height = self.element.innerHeight();
+
+        self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
+      }
     };
 
     //renitialize all rows
@@ -3657,10 +3676,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var pos = 0,
           left = this.scrollLeft;
 
-      if (this.renderMode == "virtual") {
-
-        this.adjustTableSize();
-      }
+      this.adjustTableSize();
 
       if (!force) {
 
@@ -5512,6 +5528,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         options.tableBuilding();
 
         element.addClass("tabulator").attr("role", "grid").empty();
+
+        this.rowManager.initialize();
 
         this._detectBrowser();
 
@@ -15102,7 +15120,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var table = this.table,
           observer;
 
-      if (typeof ResizeObserver !== "undefined") {
+      if (typeof ResizeObserver !== "undefined" && this.table.rowManager.getRenderMode() === "virtual") {
 
         observer = new ResizeObserver(function (entry) {
 

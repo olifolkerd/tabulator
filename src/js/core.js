@@ -270,6 +270,8 @@
 	 			.attr("role", "grid")
 	 			.empty();
 
+	 			this.rowManager.initialize();
+
 	 			this._detectBrowser();
 
 	 			if(this.extExists("layout", true)){

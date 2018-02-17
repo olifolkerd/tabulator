@@ -39,8 +39,6 @@ var RowManager = function(table){
 
 	this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 	this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
-
-	this._initialize();
 };
 
 //////////////// Setup Functions /////////////////
@@ -70,8 +68,10 @@ RowManager.prototype.setColumnManager = function(manager){
 	this.columnManager = manager;
 };
 
-RowManager.prototype._initialize = function(){
+RowManager.prototype.initialize = function(){
 	var self = this;
+
+	self.setRenderMode();
 
 	//initialize manager
 	self.element.append(self.tableElement);
@@ -99,7 +99,7 @@ RowManager.prototype._initialize = function(){
 	});
 
 	//handle virtual dom scrolling
-	if(self.table.options.virtualDom){
+	if(this.renderMode === "virtual"){
 
 		self.element.scroll(function(){
 			var top = self.element[0].scrollTop;
@@ -115,7 +115,6 @@ RowManager.prototype._initialize = function(){
 
 		});
 	}
-
 };
 
 
@@ -795,6 +794,20 @@ RowManager.prototype.reRenderInPosition = function(){
 	}
 };
 
+RowManager.prototype.setRenderMode = function(){
+	if((this.table.element.innerHeight() || this.table.options.height) && this.table.options.virtualDom && !this.table.options.pagination){
+		this.renderMode = "virtual";
+	}else{
+		this.renderMode = "classic";
+	}
+	console.log("mode",this.renderMode)
+}
+
+
+RowManager.prototype.getRenderMode = function(){
+	return this.renderMode;
+};
+
 RowManager.prototype.renderTable = function(){
 	var self = this;
 
@@ -802,12 +815,14 @@ RowManager.prototype.renderTable = function(){
 
 	self.element.scrollTop(0);
 
-	if(!self.height || !self.table.options.virtualDom || self.table.options.pagination){
-		self.renderMode = "classic";
+	switch(self.renderMode){
+		case "classic":
 		self._simpleRender();
-	}else{
-		self.renderMode = "virtual";
+		break;
+
+		case "virtual":
 		self._virtualRenderFill();
+		break;
 	}
 
 	if(self.firstRender){
@@ -831,10 +846,6 @@ RowManager.prototype.renderTable = function(){
 	}
 
 	self.table.options.renderComplete();
-};
-
-RowManager.prototype.getRenderMode = function(){
-	return this.renderMode;
 };
 
 //simple render on heightless table
@@ -1213,16 +1224,19 @@ RowManager.prototype.normalizeHeight = function(){
 RowManager.prototype.adjustTableSize = function(){
 	var self = this;
 
-	let otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+	if(this.renderMode === "virtual"){
 
-	self.element.css({
-		"min-height":"calc(100% - " + otherHeight + "px)",
-		"height":"calc(100% - " + otherHeight + "px)",
-		"max-height":"calc(100% - " + otherHeight + "px)",
-	});
+		let otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
 
-	self.height = self.element.innerHeight();
-	self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
+		self.element.css({
+			"min-height":"calc(100% - " + otherHeight + "px)",
+			"height":"calc(100% - " + otherHeight + "px)",
+			"max-height":"calc(100% - " + otherHeight + "px)",
+		});
+
+		self.height = self.element.innerHeight();
+		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
+	}
 };
 
 //renitialize all rows
@@ -1238,9 +1252,7 @@ RowManager.prototype.redraw = function (force){
 	var pos = 0,
 	left = this.scrollLeft;
 
-	if(this.renderMode == "virtual"){
-		this.adjustTableSize();
-	}
+	this.adjustTableSize();
 
 	if(!force){
 
