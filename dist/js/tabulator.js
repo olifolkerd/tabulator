@@ -1014,7 +1014,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.definition.tooltipHeader) {
 
-        console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltio%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+        console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltip%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 
         if (typeof this.definition.headerTooltip == "undefined") {
 
@@ -1064,29 +1064,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    //build header element
-
-    Column.prototype._buildHeader = function () {
+    Column.prototype.setTooltip = function () {
 
       var self = this,
-          def = self.definition,
-          dblTap,
-          tapHold,
-          tap;
-
-      self.element.empty();
-
-      self.contentElement = self._buildColumnHeaderContent();
-
-      self.element.append(self.contentElement);
-
-      if (self.isGroup) {
-
-        self._buildGroupHeader();
-      } else {
-
-        self._buildColumnHeader();
-      }
+          def = self.definition;
 
       //set header tooltips
 
@@ -1119,6 +1100,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.element.attr("title", "");
       }
+    };
+
+    //build header element
+
+    Column.prototype._buildHeader = function () {
+
+      var self = this,
+          def = self.definition,
+          dblTap,
+          tapHold,
+          tap;
+
+      self.element.empty();
+
+      self.contentElement = self._buildColumnHeaderContent();
+
+      self.element.append(self.contentElement);
+
+      if (self.isGroup) {
+
+        self._buildGroupHeader();
+      } else {
+
+        self._buildColumnHeader();
+      }
+
+      self.setTooltip();
 
       //set resizable handles
 
@@ -1159,6 +1167,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.extensions.columnCalcs.initializeColumn(self);
       }
+
+      //update header tooltip on mouse enter
+
+      self.element.on("mouseenter", function (e) {
+
+        self.setTooltip();
+      });
 
       //setup header click event bindings
 

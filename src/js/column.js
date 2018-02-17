@@ -130,7 +130,7 @@ var Column = function(def, parent){
 //////////////// Setup Functions /////////////////
 Column.prototype._mapDepricatedFunctionality = function(field){
 	if(this.definition.tooltipHeader){
-		console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltio%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+		console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltip%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 
 		if(typeof this.definition.headerTooltip == "undefined"){
 			this.definition.headerTooltip = this.definition.tooltipHeader;
@@ -166,23 +166,9 @@ Column.prototype.reRegisterPosition = function(){
 	}
 };
 
-//build header element
-Column.prototype._buildHeader = function(){
+Column.prototype.setTooltip = function(){
 	var self = this,
-	def = self.definition,
-	dblTap,	tapHold, tap;
-
-	self.element.empty();
-
-	self.contentElement = self._buildColumnHeaderContent();
-
-	self.element.append(self.contentElement);
-
-	if(self.isGroup){
-		self._buildGroupHeader();
-	}else{
-		self._buildColumnHeader();
-	}
+	def = self.definition;
 
 	//set header tooltips
 	var tooltip = def.headerTooltip || def.tooltip === false  ? def.headerTooltip : self.table.options.tooltipsHeader;
@@ -208,8 +194,27 @@ Column.prototype._buildHeader = function(){
 	}else{
 		self.element.attr("title", "");
 	}
+}
 
+//build header element
+Column.prototype._buildHeader = function(){
+	var self = this,
+	def = self.definition,
+	dblTap,	tapHold, tap;
 
+	self.element.empty();
+
+	self.contentElement = self._buildColumnHeaderContent();
+
+	self.element.append(self.contentElement);
+
+	if(self.isGroup){
+		self._buildGroupHeader();
+	}else{
+		self._buildColumnHeader();
+	}
+
+	self.setTooltip();
 
 	//set resizable handles
 	if(self.table.options.resizableColumns && self.table.extExists("resizeColumns")){
@@ -241,6 +246,11 @@ Column.prototype._buildHeader = function(){
 		self.table.extensions.columnCalcs.initializeColumn(self);
 	}
 
+
+	//update header tooltip on mouse enter
+	self.element.on("mouseenter", function(e){
+		self.setTooltip();
+	});
 
 	//setup header click event bindings
 	if(typeof(def.headerClick) == "function"){
