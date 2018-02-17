@@ -277,10 +277,7 @@ Sort.prototype.sorters = {
 
 		//handle non numeric values
 		if(isNaN(a)){
-			return -1;
-			if(isNaN(b)){
-				return 0;
-			}
+			return isNaN(b) ? 0 : -1;
 		}else if(isNaN(b)){
 			return 1;
 		}
@@ -392,10 +389,7 @@ Sort.prototype.sorters = {
 
 		//handle non array values
 		if(!Array.isArray(a)){
-			return -1;
-			if(!Array.isArray(b)){
-				return 0;
-			}
+			return !Array.isArray(b) ? 0 : -1;
 		}else if(!Array.isArray(b)){
 			return 1;
 		}
