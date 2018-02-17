@@ -3080,8 +3080,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.renderMode = "classic";
       }
-
-      console.log("mode", this.renderMode);
     };
 
     RowManager.prototype.getRenderMode = function () {

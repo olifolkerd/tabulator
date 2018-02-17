@@ -800,7 +800,6 @@ RowManager.prototype.setRenderMode = function(){
 	}else{
 		this.renderMode = "classic";
 	}
-	console.log("mode",this.renderMode)
 }
 
 
