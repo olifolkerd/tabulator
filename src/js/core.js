@@ -270,6 +270,12 @@
 	 			.attr("role", "grid")
 	 			.empty();
 
+	 			//set table height
+	 			if(options.height){
+	 				options.height = isNaN(options.height) ? options.height : options.height + "px";
+	 				this.element.css({"height": options.height});
+	 			}
+
 	 			this.rowManager.initialize();
 
 	 			this._detectBrowser();
@@ -292,12 +298,6 @@
 	 			//configure placeholder element
 	 			if(typeof options.placeholder == "string"){
 	 				options.placeholder = $("<div class='tabulator-placeholder'><span>" + options.placeholder + "</span></div>");
-	 			}
-
-	 			//set table height
-	 			if(options.height){
-	 				options.height = isNaN(options.height) ? options.height : options.height + "px";
-	 				this.element.css({"height": options.height});
 	 			}
 
 	 			//build table elements
