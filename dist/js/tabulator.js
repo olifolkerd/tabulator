@@ -8857,7 +8857,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.mouseClick = true;
       });
 
-      element.on("focus", function (e) {
+      element.on("focus", function (e, force) {
 
         self.edit(cell, e);
       });
@@ -8871,6 +8871,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           element = cell.getElement(),
           cellEditor,
           component;
+
+      //if currently editing another cell trigger blur to trigger save and validate actions
+
+
+      if (this.currentCell) {
+
+        cell.getElement().focus();
+
+        return;
+      }
 
       //handle successfull value change
 
@@ -9049,6 +9059,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         input.on("change blur", function (e) {
+
+          console.log("blur", input.val(), cell.getValue());
 
           if (input.val() != cell.getValue()) {
 

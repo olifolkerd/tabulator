@@ -98,7 +98,7 @@ Edit.prototype.bindEditor = function(cell){
 		self.mouseClick = true;
 	});
 
-	element.on("focus", function(e){
+	element.on("focus", function(e, force){
 		self.edit(cell, e);
 	});
 };
@@ -109,6 +109,12 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	rendered = function(){},
 	element = cell.getElement(),
 	cellEditor, component;
+
+	//if currently editing another cell trigger blur to trigger save and validate actions
+	if(this.currentCell){
+		cell.getElement().focus();
+		return;
+	}
 
 	//handle successfull value change
 	function success(value){
@@ -231,6 +237,7 @@ Edit.prototype.editors = {
 
 		//submit new value on blur
 		input.on("change blur", function(e){
+			console.log("blur", input.val(), cell.getValue())
 			if(input.val() != cell.getValue()){
 				success(input.val());
 			}else{
