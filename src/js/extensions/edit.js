@@ -237,7 +237,6 @@ Edit.prototype.editors = {
 
 		//submit new value on blur
 		input.on("change blur", function(e){
-			console.log("blur", input.val(), cell.getValue())
 			if(input.val() != cell.getValue()){
 				success(input.val());
 			}else{
