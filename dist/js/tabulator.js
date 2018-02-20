@@ -2,7 +2,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v3.4.2 (c) Oliver Folkerd */
+/* Tabulator v3.4.3 (c) Oliver Folkerd */
 
 /*
  * This file is part of the Tabulator package.
@@ -9059,8 +9059,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         input.on("change blur", function (e) {
-
-          console.log("blur", input.val(), cell.getValue());
 
           if (input.val() != cell.getValue()) {
 
