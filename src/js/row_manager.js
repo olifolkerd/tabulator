@@ -289,7 +289,7 @@ RowManager.prototype.addRows = function(data, pos, index){
 
 	data.forEach(function(item, i){
 		var row = self.addRow(item, pos, index, true);
-		rows.push(row.getComponent());
+		rows.push(row);
 	});
 
 	if(this.table.options.groupBy && this.table.extExists("groupRows")){

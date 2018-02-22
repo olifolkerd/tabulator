@@ -2459,7 +2459,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var row = self.addRow(item, pos, index, true);
 
-        rows.push(row.getComponent());
+        rows.push(row);
       });
 
       if (this.table.options.groupBy && this.table.extExists("groupRows")) {
@@ -6039,7 +6039,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
         }
 
-        return row;
+        return row.getComponent();
       },
 
       //update a row if it exitsts otherwise create it

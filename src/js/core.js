@@ -644,7 +644,7 @@
 	 				this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
 	 			}
 
-	 			return row;
+	 			return row.getComponent();
 	 		},
 
 	 		//update a row if it exitsts otherwise create it
@@ -665,7 +665,6 @@
 	 					this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
 	 				}
 	 			}
-
 	 			return row.getComponent();
 	 		},
 
