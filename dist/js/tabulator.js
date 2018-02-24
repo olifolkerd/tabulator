@@ -10993,7 +10993,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             percentValue,
             color,
             legend,
-            legendColor;
+            legendColor,
+            top,
+            left,
+            right,
+            bottom;
 
         //make sure value is in range
 
@@ -11007,7 +11011,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         percent = (max - min) / 100;
 
-        percentValue = 100 - Math.round((percentValue - min) / percent);
+        percentValue = Math.round((percentValue - min) / percent);
 
         //set bar color
 
@@ -11036,7 +11040,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               index = Math.min(index, formatterParams.color.length - 1);
 
-              color = formatterParams.color[formatterParams.color.length - 1 - index];
+              index = Math.max(index, 0);
+
+              color = formatterParams.color[index];
 
               break;
             }
@@ -11103,7 +11109,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               index = Math.min(index, formatterParams.legendColor.length - 1);
 
-              legendColor = formatterParams.legendColor[formatterParams.legendColor.length - 1 - index];
+              index = Math.max(index, 0);
+
+              legendColor = formatterParams.legendColor[index];
 
               break;
             }
@@ -11124,7 +11132,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         element.attr("aria-label", percentValue);
 
-        return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + percentValue + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:center; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
+        return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:4px;'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:center; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
       },
 
       //background color

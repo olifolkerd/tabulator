@@ -282,7 +282,7 @@ Format.prototype.formatters = {
 		element = cell.getElement(),
 		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
 		min = formatterParams && formatterParams.min ? formatterParams.min : 0,
-		percent, percentValue, color, legend, legendColor;
+		percent, percentValue, color, legend, legendColor, top, left, right, bottom;
 
 		//make sure value is in range
 		percentValue = parseFloat(value) <= max ? parseFloat(value) : max;
@@ -290,7 +290,7 @@ Format.prototype.formatters = {
 
 		//workout percentage
 		percent = (max - min) / 100;
-		percentValue = 100 - Math.round((percentValue - min) / percent);
+		percentValue = Math.round((percentValue - min) / percent);
 
 		//set bar color
 		switch(typeof formatterParams.color){
@@ -306,7 +306,8 @@ Format.prototype.formatters = {
 				var index = Math.floor(percentValue / unit);
 
 				index = Math.min(index, formatterParams.color.length - 1);
-				color = formatterParams.color[formatterParams.color.length - 1 - index];
+				index = Math.max(index, 0);
+				color = formatterParams.color[index];
 				break;
 			}
 			default:
@@ -342,7 +343,8 @@ Format.prototype.formatters = {
 				var index = Math.floor(percentValue / unit);
 
 				index = Math.min(index, formatterParams.legendColor.length - 1);
-				legendColor = formatterParams.legendColor[formatterParams.legendColor.length - 1 - index];
+				index = Math.max(index, 0);
+				legendColor = formatterParams.legendColor[index];
 				break;
 			}
 			default:
@@ -356,7 +358,7 @@ Format.prototype.formatters = {
 
 		element.attr("aria-label", percentValue);
 
-		return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + percentValue + "%; margin-right:4px; background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:center; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
+		return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:4px;'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;' data-max='" + max + "' data-min='" + min + "'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:center; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
 	},
 
 	//background color
