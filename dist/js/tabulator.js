@@ -2306,9 +2306,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowManager.prototype.scrollToRow = function (row) {
 
-      var rowIndex;
-
-      rowIndex = this.displayRows.indexOf(row);
+      var rowIndex = this.displayRows.indexOf(row);
 
       if (rowIndex > -1) {
 
@@ -3271,11 +3269,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         //check if position is too close to bottom of table
 
-        var heightOccpied = (self.displayRowsCount - position) * self.vDomRowHeight;
+        var heightOccpied = (self.displayRowsCount - position + 1) * self.vDomRowHeight;
 
         if (heightOccpied < self.height) {
 
-          position -= Math.ceil((self.height - heightOccpied) / self.displayRowsCount);
+          position -= Math.ceil((self.height - heightOccpied) / self.vDomRowHeight);
 
           if (position < 0) {
 

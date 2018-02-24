@@ -163,12 +163,9 @@ RowManager.prototype.getRowFromPosition = function(position, active){
 }
 
 RowManager.prototype.scrollToRow = function(row){
-	var rowIndex;
-
-	rowIndex = this.displayRows.indexOf(row);
+	var rowIndex = this.displayRows.indexOf(row);
 
 	if(rowIndex > -1){
-
 		switch(this.renderMode){
 			case"classic":
 			this.element.scrollTop(row.element.offset().top - this.element.offset().top + this.element.scrollTop());
@@ -177,7 +174,6 @@ RowManager.prototype.scrollToRow = function(row){
 			this._virtualRenderFill(rowIndex, true);
 			break;
 		}
-
 	}else{
 		console.warn("Scroll Error - Row not visible");
 	}
@@ -928,10 +924,10 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 		element.children().detach();
 
 		//check if position is too close to bottom of table
-		let heightOccpied = (self.displayRowsCount - position) * self.vDomRowHeight
+		let heightOccpied = (self.displayRowsCount - position + 1) * self.vDomRowHeight
 
 		if(heightOccpied < self.height){
-			position -= Math.ceil((self.height - heightOccpied) / self.displayRowsCount);
+			position -= Math.ceil((self.height - heightOccpied) / self.vDomRowHeight);
 
 			if(position < 0){
 				position = 0;
@@ -942,6 +938,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 		topPad = Math.min(Math.max(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight),  self.vDomWindowMinMarginRows), position);
 		position -= topPad;
 	}
+
 
 	if(self.displayRowsCount && self.element.is(":visible")){
 
