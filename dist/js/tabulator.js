@@ -7170,8 +7170,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.lang.headerFilters.columns[column] = placeholder;
       }
-
-      console.log("lang", this.lang.headerFilters.columns);
     };
 
     //setup a lang description object

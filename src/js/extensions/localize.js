@@ -14,12 +14,9 @@ Localize.prototype.setHeaderFilterPlaceholder = function(placeholder){
 Localize.prototype.setHeaderFilterColumnPlaceholder = function(column, placeholder){
 	this.langs.default.headerFilters.columns[column] = placeholder;
 
-
 	if(this.lang && !this.lang.headerFilters.columns[column]){
 		this.lang.headerFilters.columns[column] = placeholder;
 	}
-
-	console.log("lang", this.lang.headerFilters.columns)
 };
 
 //setup a lang description object
