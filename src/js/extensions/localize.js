@@ -14,9 +14,12 @@ Localize.prototype.setHeaderFilterPlaceholder = function(placeholder){
 Localize.prototype.setHeaderFilterColumnPlaceholder = function(column, placeholder){
 	this.langs.default.headerFilters.columns[column] = placeholder;
 
+
 	if(this.lang && !this.lang.headerFilters.columns[column]){
 		this.lang.headerFilters.columns[column] = placeholder;
 	}
+
+	console.log("lang", this.lang.headerFilters.columns)
 };
 
 //setup a lang description object
@@ -108,8 +111,8 @@ Localize.prototype.getLang = function(locale){
 
 //get text for current locale
 Localize.prototype.getText = function(path, value){
-	var path = value ? path + "." + value : path,
-	pathArray = path.split("."),
+	var path = value ? path + "|" + value : path,
+	pathArray = path.split("|"),
 	text = this._getLangElement(pathArray, this.locale);
 
 	// if(text === false){

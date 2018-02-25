@@ -37,38 +37,38 @@ Page.prototype.initialize = function(){
 	//build pagination element
 
 	//bind localizations
-	self.table.extensions.localize.bind("pagination.first", function(value){
+	self.table.extensions.localize.bind("pagination|first", function(value){
 		self.firstBut.html(value);
 	});
 
-	self.table.extensions.localize.bind("pagination.first_title", function(value){
+	self.table.extensions.localize.bind("pagination|first_title", function(value){
 		self.firstBut.attr("aria-label", value)
 		.attr("title", value);
 	});
 
-	self.table.extensions.localize.bind("pagination.prev", function(value){
+	self.table.extensions.localize.bind("pagination|prev", function(value){
 		self.prevBut.html(value);
 	});
 
-	self.table.extensions.localize.bind("pagination.prev_title", function(value){
+	self.table.extensions.localize.bind("pagination|prev_title", function(value){
 		self.prevBut.attr("aria-label", value)
 		.attr("title", value);
 	});
 
-	self.table.extensions.localize.bind("pagination.next", function(value){
+	self.table.extensions.localize.bind("pagination|next", function(value){
 		self.nextBut.html(value);
 	});
 
-	self.table.extensions.localize.bind("pagination.next_title", function(value){
+	self.table.extensions.localize.bind("pagination|next_title", function(value){
 		self.nextBut.attr("aria-label", value)
 		.attr("title", value);
 	});
 
-	self.table.extensions.localize.bind("pagination.last", function(value){
+	self.table.extensions.localize.bind("pagination|last", function(value){
 		self.lastBut.html(value);
 	});
 
-	self.table.extensions.localize.bind("pagination.last_title", function(value){
+	self.table.extensions.localize.bind("pagination|last_title", function(value){
 		self.lastBut.attr("aria-label", value)
 		.attr("title", value);
 	});

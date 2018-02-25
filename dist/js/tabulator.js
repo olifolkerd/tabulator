@@ -1079,7 +1079,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (def.field) {
 
-            self.table.extensions.localize.bind("columns." + def.field, function (value) {
+            self.table.extensions.localize.bind("columns|" + def.field, function (value) {
 
               self.element.attr("title", value || def.title);
             });
@@ -1464,7 +1464,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (def.field) {
 
-          table.extensions.localize.bind("columns." + def.field, function (text) {
+          table.extensions.localize.bind("columns|" + def.field, function (text) {
 
             titleElement.val(text || def.title || "&nbsp");
           });
@@ -1476,7 +1476,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (def.field) {
 
-          table.extensions.localize.bind("columns." + def.field, function (text) {
+          table.extensions.localize.bind("columns|" + def.field, function (text) {
 
             self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp");
           });
@@ -7170,6 +7170,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.lang.headerFilters.columns[column] = placeholder;
       }
+
+      console.log("lang", this.lang.headerFilters.columns);
     };
 
     //setup a lang description object
@@ -7293,8 +7295,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Localize.prototype.getText = function (path, value) {
 
-      var path = value ? path + "." + value : path,
-          pathArray = path.split("."),
+      var path = value ? path + "|" + value : path,
+          pathArray = path.split("|"),
           text = this._getLangElement(pathArray, this.locale);
 
       // if(text === false){
@@ -10037,13 +10039,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (field) {
 
-            self.table.extensions.localize.bind("headerFilters.columns." + column.definition.field, function (value) {
+            self.table.extensions.localize.bind("headerFilters|columns|" + column.definition.field, function (value) {
 
               editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters.default"));
             });
           } else {
 
-            self.table.extensions.localize.bind("headerFilters.default", function (value) {
+            self.table.extensions.localize.bind("headerFilters|default", function (value) {
 
               editorElement.attr("placeholdder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
             });
@@ -12240,7 +12242,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }]; //starting state of group
 
 
-      self.table.extensions.localize.bind("groups.item", function (langValue, lang) {
+      self.table.extensions.localize.bind("groups|item", function (langValue, lang) {
 
         self.headerGenerator[0] = function (value, count, data) {
           //header layout function
@@ -14013,42 +14015,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //bind localizations
 
 
-      self.table.extensions.localize.bind("pagination.first", function (value) {
+      self.table.extensions.localize.bind("pagination|first", function (value) {
 
         self.firstBut.html(value);
       });
 
-      self.table.extensions.localize.bind("pagination.first_title", function (value) {
+      self.table.extensions.localize.bind("pagination|first_title", function (value) {
 
         self.firstBut.attr("aria-label", value).attr("title", value);
       });
 
-      self.table.extensions.localize.bind("pagination.prev", function (value) {
+      self.table.extensions.localize.bind("pagination|prev", function (value) {
 
         self.prevBut.html(value);
       });
 
-      self.table.extensions.localize.bind("pagination.prev_title", function (value) {
+      self.table.extensions.localize.bind("pagination|prev_title", function (value) {
 
         self.prevBut.attr("aria-label", value).attr("title", value);
       });
 
-      self.table.extensions.localize.bind("pagination.next", function (value) {
+      self.table.extensions.localize.bind("pagination|next", function (value) {
 
         self.nextBut.html(value);
       });
 
-      self.table.extensions.localize.bind("pagination.next_title", function (value) {
+      self.table.extensions.localize.bind("pagination|next_title", function (value) {
 
         self.nextBut.attr("aria-label", value).attr("title", value);
       });
 
-      self.table.extensions.localize.bind("pagination.last", function (value) {
+      self.table.extensions.localize.bind("pagination|last", function (value) {
 
         self.lastBut.html(value);
       });
 
-      self.table.extensions.localize.bind("pagination.last_title", function (value) {
+      self.table.extensions.localize.bind("pagination|last_title", function (value) {
 
         self.lastBut.attr("aria-label", value).attr("title", value);
       });

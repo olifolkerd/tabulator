@@ -176,7 +176,7 @@ Column.prototype.setTooltip = function(){
 	if(tooltip){
 		if(tooltip === true){
 			if(def.field){
-				self.table.extensions.localize.bind("columns." + def.field, function(value){
+				self.table.extensions.localize.bind("columns|" + def.field, function(value){
 					self.element.attr("title", value || def.title);
 				});
 			}else{
@@ -470,7 +470,7 @@ Column.prototype._buildColumnHeaderTitle = function(){
 		titleHolderElement.append(titleElement);
 
 		if(def.field){
-			table.extensions.localize.bind("columns." + def.field, function(text){
+			table.extensions.localize.bind("columns|" + def.field, function(text){
 				titleElement.val(text || (def.title || "&nbsp"));
 			});
 		}else{
@@ -479,7 +479,7 @@ Column.prototype._buildColumnHeaderTitle = function(){
 
 	}else{
 		if(def.field){
-			table.extensions.localize.bind("columns." + def.field, function(text){
+			table.extensions.localize.bind("columns|" + def.field, function(text){
 				self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp"));
 			});
 		}else{
