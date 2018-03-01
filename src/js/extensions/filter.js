@@ -137,7 +137,7 @@ Filter.prototype.initializeColumn = function(column){
 			//set Placeholder Text
 			if(field){
 				self.table.extensions.localize.bind("headerFilters|columns|" + column.definition.field, function(value){
-					editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters.default"));
+					editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters|default"));
 				});
 			}else{
 				self.table.extensions.localize.bind("headerFilters|default", function(value){

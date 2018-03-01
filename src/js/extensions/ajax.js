@@ -153,7 +153,7 @@ Ajax.prototype.showLoader = function(){
 		if(this.loadingElement){
 			this.msgElement.append(this.loadingElement);
 		}else{
-			this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
+			this.msgElement.append(this.table.extensions.localize.getText("ajax|loading"));
 		}
 
 		this.table.element.append(this.loaderElement);
@@ -170,7 +170,7 @@ Ajax.prototype.showError = function(){
 	if(this.errorElement){
 		this.msgElement.append(this.errorElement);
 	}else{
-		this.msgElement.append(this.table.extensions.localize.getText("ajax.error"));
+		this.msgElement.append(this.table.extensions.localize.getText("ajax|error"));
 	}
 
 	this.table.element.append(this.loaderElement);

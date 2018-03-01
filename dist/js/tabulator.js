@@ -7723,7 +7723,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.msgElement.append(this.loadingElement);
         } else {
 
-          this.msgElement.append(this.table.extensions.localize.getText("ajax.loading"));
+          this.msgElement.append(this.table.extensions.localize.getText("ajax|loading"));
         }
 
         this.table.element.append(this.loaderElement);
@@ -7741,7 +7741,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.msgElement.append(this.errorElement);
       } else {
 
-        this.msgElement.append(this.table.extensions.localize.getText("ajax.error"));
+        this.msgElement.append(this.table.extensions.localize.getText("ajax|error"));
       }
 
       this.table.element.append(this.loaderElement);
@@ -10045,7 +10045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             self.table.extensions.localize.bind("headerFilters|columns|" + column.definition.field, function (value) {
 
-              editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters.default"));
+              editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.extensions.localize.getText("headerFilters|default"));
             });
           } else {
 
