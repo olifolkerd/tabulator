@@ -405,9 +405,9 @@ Column.prototype._buildColumnHeader = function(){
 	//set column visibility
 	if(typeof def.visible != "undefined"){
 		if(def.visible){
-			self.show();
+			self.show(true);
 		}else{
-			self.hide();
+			self.hide(true);
 		}
 	}
 
@@ -725,7 +725,7 @@ Column.prototype.checkColumnVisibility = function(){
 };
 
 //show column
-Column.prototype.show = function(){
+Column.prototype.show = function(silent){
 	if(!this.visible){
 		this.visible = true;
 
@@ -746,12 +746,14 @@ Column.prototype.show = function(){
 			this.table.extensions.persistence.save("columns");
 		}
 
-		this.table.options.groupVisibilityChanged(this.getComponent(), true);
+		if(!silent){
+			this.table.options.columnVisibilityChanged(this.getComponent(), true);
+		}
 	}
 };
 
 //hide column
-Column.prototype.hide = function(){
+Column.prototype.hide = function(silent){
 	if(this.visible){
 		this.visible = false;
 
@@ -772,7 +774,9 @@ Column.prototype.hide = function(){
 			this.table.extensions.persistence.save("columns");
 		}
 
-		this.table.options.groupVisibilityChanged(this.getComponent(), false);
+		if(!silent){
+			this.table.options.columnVisibilityChanged(this.getComponent(), false);
+		}
 	}
 };
 

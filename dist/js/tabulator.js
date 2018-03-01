@@ -1382,10 +1382,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (def.visible) {
 
-          self.show();
+          self.show(true);
         } else {
 
-          self.hide();
+          self.hide(true);
         }
       }
 
@@ -1797,7 +1797,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //show column
 
-    Column.prototype.show = function () {
+    Column.prototype.show = function (silent) {
 
       if (!this.visible) {
 
@@ -1826,13 +1826,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.table.extensions.persistence.save("columns");
         }
 
-        this.table.options.groupVisibilityChanged(this.getComponent(), true);
+        if (!silent) {
+
+          this.table.options.columnVisibilityChanged(this.getComponent(), true);
+        }
       }
     };
 
     //hide column
 
-    Column.prototype.hide = function () {
+    Column.prototype.hide = function (silent) {
 
       if (this.visible) {
 
@@ -1861,7 +1864,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.table.extensions.persistence.save("columns");
         }
 
-        this.table.options.groupVisibilityChanged(this.getComponent(), false);
+        if (!silent) {
+
+          this.table.options.columnVisibilityChanged(this.getComponent(), false);
+        }
       }
     };
 
