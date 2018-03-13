@@ -11451,6 +11451,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.topElement.append(row.getElement());
 
+        row.initialize();
+
+        row.normalizeHeight();
+
         this.table.rowManager.adjustTableSize();
 
         this.table.rowManager.refreshActiveData();

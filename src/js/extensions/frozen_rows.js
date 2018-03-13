@@ -28,6 +28,8 @@ FrozenRows.prototype.freezeRow = function(row){
 	if(!row.extensions.frozen){
 		row.extensions.frozen = true;
 		this.topElement.append(row.getElement());
+		row.initialize();
+		row.normalizeHeight();
 		this.table.rowManager.adjustTableSize();
 		this.table.rowManager.refreshActiveData();
 
