@@ -272,17 +272,31 @@ Sort.prototype.sorters = {
 
 	//sort numbers
 	number:function(a, b, aRow, bRow, column, dir, params){
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
+
 		var a = parseFloat(String(a).replace(",",""));
 		var b = parseFloat(String(b).replace(",",""));
 
+
 		//handle non numeric values
 		if(isNaN(a)){
-			return isNaN(b) ? 0 : -1;
+			emptyAlign =  isNaN(b) ? 0 : -1;
 		}else if(isNaN(b)){
-			return 1;
+			emptyAlign =  1;
+		}else{
+			//compare valid values
+			return a - b;
 		}
 
-		return a - b;
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
+
+
 	},
 
 	//sort strings
@@ -307,66 +321,96 @@ Sort.prototype.sorters = {
 	date:function(a, b, aRow, bRow, column, dir, params){
 		var self = this;
 		var format = params.format || "DD/MM/YYYY";
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
 
 		if(typeof moment != "undefined"){
 			a = moment(a, format);
 			b = moment(b, format);
 
 			if(!a.isValid()){
-				return !b.isValid() ? 0 : -1;
+				emptyAlign = !b.isValid() ? 0 : -1;
 			}else if(!b.isValid()){
-				return 1;
+				emptyAlign =  1;
+			}else{
+				//compare valid values
+				return a - b;
 			}
+
+			//fix empty values in position
+			if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+				emptyAlign *= -1;
+			}
+
+			return emptyAlign;
 
 		}else{
 			console.error("Sort Error - 'date' sorter is dependant on moment.js");
 		}
-
-		return a - b;
 	},
 
 	//sort hh:mm formatted times
 	time:function(a, b, aRow, bRow, column, dir, params){
 		var self = this;
 		var format = params.format || "hh:mm";
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
 
 		if(typeof moment != "undefined"){
 			a = moment(a, format);
 			b = moment(b, format);
 
 			if(!a.isValid()){
-				return !b.isValid() ? 0 : -1;
+				emptyAlign = !b.isValid() ? 0 : -1;
 			}else if(!b.isValid()){
-				return 1;
+				emptyAlign =  1;
+			}else{
+				//compare valid values
+				return a - b;
 			}
+
+			//fix empty values in position
+			if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+				emptyAlign *= -1;
+			}
+
+			return emptyAlign;
 
 		}else{
 			console.error("Sort Error - 'date' sorter is dependant on moment.js");
 		}
-
-		return a - b;
 	},
 
 	//sort datetime
 	datetime:function(a, b, aRow, bRow, column, dir, params){
 		var self = this;
 		var format = params.format || "DD/MM/YYYY hh:mm:ss";
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
 
 		if(typeof moment != "undefined"){
 			a = moment(a, format);
 			b = moment(b, format);
 
 			if(!a.isValid()){
-				return !b.isValid() ? 0 : -1;
+				emptyAlign = !b.isValid() ? 0 : -1;
 			}else if(!b.isValid()){
-				return 1;
+				emptyAlign =  1;
+			}else{
+				//compare valid values
+				return a - b;
 			}
 
-		}else{
-			console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
-		}
+			//fix empty values in position
+			if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+				emptyAlign *= -1;
+			}
 
-		return a - b;
+			return emptyAlign;
+
+		}else{
+			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		}
 	},
 
 	//sort booleans
