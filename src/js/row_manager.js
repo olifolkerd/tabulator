@@ -204,9 +204,12 @@ RowManager.prototype.setData = function(data){
 		}
 
 		data.forEach(function(def, i){
-			var row = new Row(def, self);
-
-			self.rows.push(row);
+			if(def && typeof def === "object"){
+				var row = new Row(def, self);
+				self.rows.push(row);
+			}else{
+				console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but receved:", def);
+			}
 		});
 
 		self.table.options.dataLoaded(data);
