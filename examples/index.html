@@ -1,0 +1,477 @@
+<html>
+<head>
+	<title>Tabulator - Live Demo</title>
+
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../dist/css/tabulator.css">
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js"></script>
+	<script type="text/javascript" src="../dist/js/tabulator.js"></script>
+</head>
+<body>
+
+	<style type="text/css">
+		body{
+			padding:20px 40px;
+			font-family: 'Montserrat', sans-serif !important;
+		}
+
+		header{
+			font-weight: bold;
+			font-size: 30px;
+		}
+
+		header span{
+			vertical-align: middle;
+			font-size: .5em;
+			color: #999;
+		}
+
+		header span a{
+			font-size: .9em;
+		}
+
+		section:first-of-type header{
+			font-size: 50px;
+		}
+
+		section{
+			margin-bottom:30px;
+		}
+
+		ul>li{
+			margin-bottom:2px;
+		}
+
+		button, select{
+			margin-right:20px;
+		}
+
+		input{
+			font-family: 'Montserrat', sans-serif !important;
+
+		}
+
+		.tabulator{
+			height:90%;
+		}
+
+		#example-table-demo{
+			margin-bottom:20px;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+	//sample data to be used in all tabulators
+	var tabledata = [];
+
+	var cols = ["red", "green", "blue", "orange"]
+
+	for (var i = 0 ; i < 100; i++){
+		var row =
+		{
+			"reg":faker.name.findName(),
+			"user_name":{name:faker.name.findName()},
+			"job_link":faker.name.findName(),
+			"destination":cols[faker.random.number() % 4],
+			"mileage":faker.name.findName(),
+			"clean_outside":faker.random.boolean(),
+			"rubbish":faker.random.boolean(),
+			"clean_inside":faker.random.boolean(),
+			"windscreen":faker.random.boolean(),
+			"sat_nav":faker.random.boolean(),
+			"fuel_card":faker.random.boolean(),
+			"tyre_pressure":faker.random.boolean(),
+			"washer_fluid":faker.random.boolean(),
+			"oil":faker.random.boolean(),
+			"lights":faker.random.boolean(),
+		}
+
+		row.id = i;
+
+		tabledata.push(row);
+	}
+
+
+	//sample data to be used in all tabulators
+	// var tabledata = [
+	// {id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"", car:1, lucky_no:5, activity:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11, 10, 12, 14, 16, 13, 9, 7, 11, 10, 13]},
+	// {id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true, lucky_no:10, activity:[10, 12, 14, 16, 13, 9, 7, 11, 10, 13, 1, 2, 5, 4, 1, 16, 4, 2, 1, 3]},
+	// {id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true", lucky_no:12, activity:[1, 2, 5, 4, 1, 16, 4, 2, 1, 3, 3, 7, 9, 1, 4, 8, 2, 6, 4, 2]},
+	// {id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980", lucky_no:18, activity:[3, 7, 9, 1, 4, 8, 2, 6, 4, 2, 1, 3, 1, 3, 3, 1, 1, 3, 1, 3]},
+	// {id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999", lucky_no:33, activity:[1, 3, 1, 3, 3, 1, 1, 3, 1, 3, 20, 17, 15, 11, 16, 9, 12, 14, 20, 12]},
+	// {id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1, lucky_no:2, activity:[20, 17, 15, 11, 16, 9, 12, 14, 20, 12, 11, 7, 6, 12, 14, 13, 11, 10, 9, 6]},
+	// {id:7, name:"Jamie Newhart", progress:23, gender:"male", rating:3, col:"green", dob:"14/05/1985", car:true, lucky_no:63, activity:[11, 7, 6, 12, 14, 13, 11, 10, 9, 6, 4, 17, 11, 12, 0, 5, 12, 14, 18, 11]},
+	// {id:8, name:"Gemma Jane", progress:60, gender:"female", rating:0, col:"red", dob:"22/05/1982", car:"true", lucky_no:72, activity:[4, 17, 11, 12, 0, 5, 12, 14, 18, 11, 11, 15, 19, 20, 17, 16, 16, 5, 3, 2]},
+	// {id:9, name:"Emily Sykes", progress:42, gender:"female", rating:1, col:"maroon", dob:"11/11/1970", lucky_no:44, activity:[11, 15, 19, 20, 17, 16, 16, 5, 3, 2, 1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
+	// {id:10, name:"James Newman", progress:73, gender:"male", rating:5, col:"red", dob:"22/03/1998", lucky_no:9, activity:[1, 20, 5, 3, 10, 13, 17, 15, 9, 11, 1, 2, 3, 4, 5, 4, 2, 5, 9, 8]},
+	// {id:11, name:"Martin Barryman", progress:20, gender:"male", rating:5, col:"violet", dob:"04/04/2001", activity:[1, 2, 3, 4, 5, 4, 11, 7, 6, 12, 14, 13, 11, 10, 9, 6, 2, 5, 9, 8]},
+	// {id:12, name:"Jenny Green", progress:56, gender:"female", rating:4, col:"indigo", dob:"12/11/1998", car:true, activity:[11, 15, 19, 20, 17, 15, 11, 16, 9, 12, 14, 20, 12, 20, 17, 16, 16, 5, 3, 2]},
+	// {id:13, name:"Alan Francis", progress:90, gender:"male", rating:3, col:"blue", dob:"07/08/1972", car:true, activity:[4, 17, 11, 7, 6, 12, 14, 13, 11, 10, 9, 6, 11, 12, 0, 5, 12, 14, 18, 11]},
+	// {id:14, name:"John Phillips", progress:80, gender:"male", rating:1, col:"green", dob:"24/09/1950", car:true, activity:[11, 7, 6, 12, 14, 1, 20, 5, 3, 10, 13, 17, 15, 9, 1, 13, 11, 10, 9, 6]},
+	// {id:15, name:"Ed White", progress:70, gender:"male", rating:0, col:"yellow", dob:"19/06/1976", activity:[20, 17, 15, 11, 16, 9, 4, 17, 11, 12, 0, 5, 12, 14, 18, 11, 12, 14, 20, 12]},
+	// {id:16, name:"Paul Branderson", progress:60, gender:"male", rating:5, col:"orange", dob:"01/01/1982", activity:[1, 3, 1, 3, 3, 1, 11, 15, 19, 20, 17, 16, 16, 5, 3, 2, 1, 3, 1, 3]},
+	// {id:18, name:"Emma Netwon", progress:40, gender:"female", rating:4, col:"brown", dob:"07/10/1963", car:true, activity:[3, 7, 9, 1, 4, 8, 3, 7, 9, 1, 4, 8, 2, 6, 4, 2, 2, 6, 4, 2]},
+	// {id:19, name:"Hannah Farnsworth", progress:30, gender:"female", rating:1, col:"pink", dob:"11/02/1991", activity:[1, 2, 5, 4, 1, 16, 10, 12, 14, 16, 13, 9, 7, 11, 10, 13, 4, 2, 1, 3]},
+	// {id:20, name:"Victoria Bath", progress:20, gender:"female", rating:2, col:"purple", dob:"22/03/1986", activity:[10, 12, 14, 16, 13, 9, 7, 1, 2, 3, 4, 5, 4, 2, 5, 9, 8, 11, 10, 13]},
+	// ];
+
+
+</script>
+
+<style type="text/css">
+	#example-table{
+		/*height:400px;*/
+	}
+</style>
+
+<section>
+	<header>Tabulator</header>
+	<button id="action">action</button>
+	<!-- <div style=" display: none !important;"> -->
+	<div id="example-table" style=""></div>
+	<!-- </div> -->
+	<script type="text/javascript">
+
+	// 	$(window).on("resize", function(){
+	// 	// console.log("redraw")
+	// 	$(".tabulator").tabulator("redraw");
+	// });
+
+
+		var printIcon = function(value, data, cell, row, options){ //plain text value
+			return "<i class='fa fa-print' style='vertical-align:middle; padding:2px 0;'></i> "
+		};
+
+
+			// $("#example-table-demo").tabulator({
+			// 	height:"320px",
+
+			// 	columns:[
+			// 	// {formatter:printIcon, width:40, align:"center",onClick:function(e, cell, val, data){alert("Printing row data for: " + data.name)} },
+			// 	{title:"Name", field:"name", sorter:"string", width:300, tooltipHeader:"Custom Header Tooltip",},
+
+			// 	{title:"Age", field:"age", sorter:"number", align:"left", width:300},
+			// 	{title:"Gender", field:"gender", width:300, sorter:"string", onClick:function(e, val, cell, data){console.log("cell click - " + val, cell)}},
+
+			// 	{title:"Height", field:"height", align:"center", sorter:"number", width:200},
+			// 	{title:"Favourite Color", field:"col", sorter:"string", sortable:false, width:200},
+
+
+			// 	{title:"Date Of Birth", field:"dob", sorter:"date", align:"center", width:200},
+			// 	{title:"id", field:"id", sorter:"number"},
+			// 	],
+			// });
+
+			//custom aditional degaults to the tabulator package
+
+
+
+			Tabulator.extendExtension("sort", "sorters", {
+				datetime:function(a, b){
+					a = moment(a, "DD/MM/YYYY hh:mm");
+					b = moment(b, "DD/MM/YYYY hh:mm");
+					return a - b;
+				},
+			});
+
+
+			Tabulator.extendExtension("format", "formatters", {
+				file:function(cell, formatterParams){
+					var value = cell.getValue();
+					return value ? "<img class='fileicon' src='/images/fileicons/" + value + ".png' style='height:15px; vertical-align:middle;'></img>" : "";
+				},
+
+			    //clickable anchor tag
+			    link:function(cell, formatterParams){
+			    	var value = this.sanitizeHTML(cell.getValue());
+			    	return "<a href='" + value + "' style='text-decoration:none; color:#c3262e;' target='blank'>" + this.emptyToSpace(value) + "</a>";
+			    },
+
+			    //tick formatted cell
+			    buttonTick:function(cell, formatterParams){
+			    	return "<i class='fa fa-check' style='color:#3D9322; font-size:1.2em;'></i>";
+			    },
+
+			    //cross formatted cell
+			    buttonCross:function(cell, formatterParams){
+			    	return "<i class='fa fa-times' style='color:#C00; font-size:1.2em;'></i>";
+			    },
+
+			    //link lookup list
+			    linklookup:function(cell, formatterParams){
+			    	var data = cell.getRow().getData();
+			    	var value = Links.get(data.link_id, data.link_type).search_title
+
+			    	// cell.data("value", Links.get(data.link_id, data.link_type).search_title);
+			    	data.link_title = value;
+			    	// row.data("data", data);
+
+			    	return value;
+			    },
+
+			    podraft:function(cell, formatterParams){
+			    	var value = cell.getValue();
+
+			    	if(value.toString().indexOf("D") === 0){
+			    		return "<i class='fa fa-pencil'  style='margin-right:5px; color:#548CFF;'></i>" + value;
+			    	}
+
+			    	return value;
+			    },
+
+			    anytick:function(cell, formatterParams){
+			    	var tick = '<i class="fa fa-check" style="color:#2DC214; font-weight:bold; font-size:1.2em;"></i>';
+
+			    	if(cell.getValue()){
+			    		return tick;
+			    	}
+			    },
+
+			    anytickCross:function(cell, formatterParams){
+			    	var tick = '<i class="fa fa-check" style="color:#2DC214; font-weight:bold; font-size:1.2em;"></i>';
+			    	var cross = "<i class='fa fa-times' style='color:#C00; font-weight:bold; font-size:1.2em;'></i>";
+
+			    	return cell.getValue() ? tick : cross;
+			    },
+
+			    //format icons for po status
+			    postatus:function(cell, formatterParams){
+			    	var data = cell.getRow().getData();
+			    	var queried = data.queried ? "<i class='fa fa-question' style='margin-right:5px; color: #F39316;'></i>" : "";
+			    	var confidential = data.confidential ? "<i class='fa fa-user-secret' style='margin-right:5px; color:#382A8D;'></i>" : "";
+
+			    	return queried + confidential + cell.getValue();
+			    },
+
+			    postatuscol:function(cell, formatterParams){
+			    	var value = cell.getValue();
+			    	var col = "#000";
+
+			    	switch(value.toLowerCase()){
+			    		case "draft":
+			    		col = "#2918A7";
+			    		break;
+
+			    		case "submitted":
+			    		col = "#DB7700";
+			    		break;
+
+			    		case "approved":
+			    		col = "#0F8000";
+			    		break;
+
+			    		case "logged":
+			    		col = "#5C1482";
+			    		break;
+
+			    		case "closed":
+			    		col = "#000";
+			    		break;
+
+			    		case "cancelled":
+			    		col = "#000";
+			    		break;
+
+			    		case "rejected":
+			    		col = "#910E0E";
+			    		break;
+			    	}
+
+			    	return "<div style='display:inline-block; height:10px; width:10px; margin-left:5px; margin-right:10px; background:" + col + ";'></div>" + value;
+			    },
+			});
+
+			Tabulator.extendExtension("edit", "editors", {
+				date:function(cell, onRendered, success, cancel, editorParams){
+
+					//create and style input
+					var input = $("<input type='text'/>");
+
+					input.datepicker({
+						changeMonth: true,
+						changeYear: true,
+						dateFormat: "dd/mm/yy",
+					});
+					input.css({
+						"border":"1px",
+						"background":"transparent",
+						"padding":"4px",
+						"width":"100%",
+						"box-sizing":"border-box",
+					})
+					.val(cell.getValue());
+
+
+					onRendered(function(){
+						input.focus();
+					});
+
+					var inputBlur = function(e){
+						if(e.target != input[0]){
+							if( $(e.target).closest(".ui-datepicker").length == 0){
+								$(document).off("mousedown", inputBlur);
+								success(input.val());
+							}
+						}
+					}
+
+					$(document).on("mousedown", inputBlur);
+
+					//submit new value on blur
+					input.on("change", function(e){
+						$(document).off("mousedown", inputBlur);
+						success(input.val());
+					});
+
+					input.on("click", function(e){e.stopPropagation()});
+
+					//submit new value on enter
+					input.on("keydown", function(e){
+						if(e.keyCode == 13){
+							$(document).off("mousedown", inputBlur);
+							success(input.val());
+						}
+					});
+
+					return input;
+
+				},
+				money:function(cell, onRendered, success, cancel, editorParams){
+					//create and style input
+					var input = $("<input type='text'/>");
+					input.css({
+						"padding":"4px",
+						"width":"100%",
+						"box-sizing":"border-box",
+						"text-align":"right",
+					})
+					.val(cell.getValue());
+
+					onRendered(function(){
+						input.focus();
+					})
+
+					input.inputmask("currency");
+
+					//submit new value on blur
+					input.on("blur", function(e){
+						success(input.val());
+					});
+
+					//submit new value on enter
+					input.on("keydown", function(e){
+						if(e.keyCode == 13){
+							success(input.val());
+						}
+					});
+
+					return input;
+				},
+			});
+
+
+			$.widget("ui.tabulator", $.ui.tabulator, {
+				options: {
+					addRowPos:"top",
+
+					movableRowHandle:"<div style='margin:0 15%; width:70%; height:2px; background:#777; margin-top:3px;'></div><div style='margin:0 15%; width:70%; height:2px; background:#777; margin-top:3px;'></div><div style='margin:0 15%; width:70%; height:2px; background:#777; margin-top:3px;'></div>", //handle for movable rows
+
+					loader:"<div style='display:inline-block; box-shadow: 0 0 7px 0 rgba(0,0,0,.8); border:4px solid #aaa; border-radius:10px; background:#fff; font-weight:bold; font-size:22px; color:#000; padding:10px 20px;'><div>Loading Data</div><div style='text-align:center;  font-size:2em; margin-top:5px;'><i class='fa fa-spinner fa-pulse' style='color:#d00;'</i></div></div>", //loader element
+					loaderError:"<div style='display:inline-block; box-shadow: 0 0 5px 0 rgba(0,0,0,.6); border:4px solid #b00; border-radius:10px; background:#fff; font-weight:bold; font-size:22px; color:#b00; padding:10px 20px;'>Error Loading Data</div>", //loader element
+				},
+			});
+
+
+			//signout
+			$("#example-table").tabulator({
+				height:"50%",
+				sortBy:"date",
+				sortDir:"desc",
+				// responsiveLayout:true,
+			  	// pagination:"local",
+			  	// paginationSize:5,
+			  	// dataLoaded:function(data){
+
+
+
+			  	//    var firstRow = $("#example-table").tabulator("getRows")[0];
+
+			  	//    console.log("rows", firstRow)
+			  	//    // setTimeout(function(){
+			  	//    if(firstRow){
+			  	//        console.log("froxen", firstRow);
+			  	//        firstRow.freeze();
+			  	//    }
+
+			  	//    // }, 2000);
+
+			  	// },
+			  	// placeholder:"NO ITEMS HERE",
+			  	// groupBy:"destination",
+			  	// pagination:"local", //enable local pagination.
+			  	// ajaxURL:"ajax_sim.php",
+			  	data:tabledata,
+
+			  	columns:[
+			  	{title: "Datestamp", field: "date", width:110, sorter:"datetime", sortable: true},
+			  	{title: "Type", field: "type", width:70, sortable: true, formatter:function(cell, formatterParams){
+			  		var value = cell.getValue();
+			  		var icon = ""
+
+			  		switch(value){
+			  			case "out":
+			  			icon="<i class='fa fa-fw fa-sign-out' style='color:#c00'></i> ";
+			  			break;
+
+			  			case "in":
+			  			icon="<i class='fa fa-fw fa-sign-in' style='color:#08AF00'></i> ";
+			  			break;
+
+			  			case "transfer":
+			  			icon="<i class='fa fa-fw fa-exchange' style='color:#3539D1'></i> ";
+			  			break;
+			  		}
+
+			  		return icon + value;
+
+			  	}},
+			  	{title: "Reg", field: "reg", width:150, headerFilter:true, headerFilterPlaceholder:"steve", sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
+			  	{title: "User", field: "user_name", visible:false, headerFilter:true, headerFilterPlaceholder:"bob", width:150, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
+			  	{title: "Job", field: "job_link", width:200, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
+			  	{title: "Destination", field: "destination", width:200, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count", headerTooltip:function(column){
+			  		return "steve-" + column.getCells().length;
+			  	}},
+			  	{title: "Mileage", field: "mileage", width:80, sorter:"number", sortable: true, bottomCalc:"count", topCalc:"count"},
+			  	{title: "Clean Outside", field: "clean_outside", width:90, width:90, sortable: true, sorter:"boolean", formatter:"anytickCross", align:"center", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Rubbish", field: "rubbish", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Clear Inside", field: "clean_inside", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Windscreen", field: "windscreen", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Sat Nav", field: "sat_nav", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Fuel Card", field: "fuel_card", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Tyre Pressure", field: "tyre_pressure", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Washer Fluid", field: "washer_fluid", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Oli", field: "oil", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title: "Lights", field: "lights", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
+			  	{title:"id", field:"id", align:"left", width:200},
+			  	],
+			  	columnVisibilityChanged:function(column, visible){
+			  	       //column - column component
+			  	       //visible - is column visible (true = visible, false = hidden)
+			  	       console.log("vis", column.getField(), visible);
+			  	   },
+			  });
+
+			$("#action").click(function(){
+				$("#example-table").tabulator("toggleColumn", "reg")
+			})
+
+			</script>
+		</section>
+	</body>
+	</html>
