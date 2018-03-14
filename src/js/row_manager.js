@@ -793,6 +793,8 @@ RowManager.prototype.reRenderInPosition = function(){
 				if(topOffset === false || Math.abs(diff) < topOffset){
 					topOffset = diff;
 					topRow = i;
+				}else{
+					break;
 				}
 			}
 		}

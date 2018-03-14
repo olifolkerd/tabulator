@@ -3097,6 +3097,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               topOffset = diff;
 
               topRow = i;
+            } else {
+
+              break;
             }
           }
         }
