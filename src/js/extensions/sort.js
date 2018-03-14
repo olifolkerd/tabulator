@@ -313,12 +313,11 @@ Sort.prototype.sorters = {
 			b = moment(b, format);
 
 			if(!a.isValid()){
-				a = -1000000000000000;
+				return !b.isValid() ? 0 : -1;
+			}else if(!b.isValid()){
+				return 1;
 			}
 
-			if(!b.isValid()){
-				b = -1000000000000000;
-			}
 		}else{
 			console.error("Sort Error - 'date' sorter is dependant on moment.js");
 		}
@@ -336,12 +335,11 @@ Sort.prototype.sorters = {
 			b = moment(b, format);
 
 			if(!a.isValid()){
-				a = -1000000000000000;
+				return !b.isValid() ? 0 : -1;
+			}else if(!b.isValid()){
+				return 1;
 			}
 
-			if(!b.isValid()){
-				b = -1000000000000000;
-			}
 		}else{
 			console.error("Sort Error - 'date' sorter is dependant on moment.js");
 		}
@@ -359,12 +357,11 @@ Sort.prototype.sorters = {
 			b = moment(b, format);
 
 			if(!a.isValid()){
-				a = -1000000000000000;
+				return !b.isValid() ? 0 : -1;
+			}else if(!b.isValid()){
+				return 1;
 			}
 
-			if(!b.isValid()){
-				b = -1000000000000000;
-			}
 		}else{
 			console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
 		}

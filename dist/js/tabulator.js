@@ -16128,12 +16128,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (!a.isValid()) {
 
-            a = -1000000000000000;
-          }
+            return !b.isValid() ? 0 : -1;
+          } else if (!b.isValid()) {
 
-          if (!b.isValid()) {
-
-            b = -1000000000000000;
+            return 1;
           }
         } else {
 
@@ -16160,12 +16158,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (!a.isValid()) {
 
-            a = -1000000000000000;
-          }
+            return !b.isValid() ? 0 : -1;
+          } else if (!b.isValid()) {
 
-          if (!b.isValid()) {
-
-            b = -1000000000000000;
+            return 1;
           }
         } else {
 
@@ -16192,12 +16188,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (!a.isValid()) {
 
-            a = -1000000000000000;
-          }
+            return !b.isValid() ? 0 : -1;
+          } else if (!b.isValid()) {
 
-          if (!b.isValid()) {
-
-            b = -1000000000000000;
+            return 1;
           }
         } else {
 
