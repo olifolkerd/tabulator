@@ -77,22 +77,35 @@ Download.prototype.triggerDownload = function(data, mime, type, filename){
 	blob = new Blob([data],{type:mime}),
 	filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-	if(navigator.msSaveOrOpenBlob){
-		navigator.msSaveOrOpenBlob(blob, filename);
-	}else{
-		element.setAttribute('href', window.URL.createObjectURL(blob));
+	blob = this.table.options.downloadReady(data, blob);
 
-		//set file title
-		element.setAttribute('download', filename);
+	console.log("blob", blob)
 
-		//trigger download
-		element.style.display = 'none';
-		document.body.appendChild(element);
-		element.click();
+	if(blob){
 
-		//remove temporary link element
-		document.body.removeChild(element);
+		if(navigator.msSaveOrOpenBlob){
+			navigator.msSaveOrOpenBlob(blob, filename);
+		}else{
+			element.setAttribute('href', window.URL.createObjectURL(blob));
+
+			//set file title
+			element.setAttribute('download', filename);
+
+			//trigger download
+			element.style.display = 'none';
+			document.body.appendChild(element);
+			element.click();
+
+			//remove temporary link element
+			document.body.removeChild(element);
+		}
+
+
+		if(this.table.options.downloadComplete){
+			this.table.options.downloadComplete();
+		}
 	}
+
 };
 
 //nested field lookup

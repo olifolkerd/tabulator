@@ -51,6 +51,8 @@
 	 			keybindings:[], //array for keybindings
 
 	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
+	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data
+	 			downloadComplete:false, //function to manipulate download data
 
 	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
 

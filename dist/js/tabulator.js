@@ -5242,6 +5242,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         downloadDataMutator: false, //function to manipulate table data before it is downloaded
 
+        downloadReady: function downloadReady(data, blob) {
+          return blob;
+        }, //function to manipulate download data
+
+        downloadComplete: false, //function to manipulate download data
+
 
         addRowPos: "bottom", //position to insert blank rows, top|bottom
 
@@ -8485,31 +8491,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           blob = new Blob([data], { type: mime }),
           filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-      if (navigator.msSaveOrOpenBlob) {
+      blob = this.table.options.downloadReady(data, blob);
 
-        navigator.msSaveOrOpenBlob(blob, filename);
-      } else {
+      console.log("blob", blob);
 
-        element.setAttribute('href', window.URL.createObjectURL(blob));
+      if (blob) {
 
-        //set file title
+        if (navigator.msSaveOrOpenBlob) {
 
+          navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
 
-        element.setAttribute('download', filename);
+          element.setAttribute('href', window.URL.createObjectURL(blob));
 
-        //trigger download
-
-
-        element.style.display = 'none';
-
-        document.body.appendChild(element);
-
-        element.click();
-
-        //remove temporary link element
+          //set file title
 
 
-        document.body.removeChild(element);
+          element.setAttribute('download', filename);
+
+          //trigger download
+
+
+          element.style.display = 'none';
+
+          document.body.appendChild(element);
+
+          element.click();
+
+          //remove temporary link element
+
+
+          document.body.removeChild(element);
+        }
+
+        if (this.table.options.downloadComplete) {
+
+          this.table.options.downloadComplete();
+        }
       }
     };
 
