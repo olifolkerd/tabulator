@@ -2,7 +2,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v3.4.5 (c) Oliver Folkerd */
+/* Tabulator v3.5.0 (c) Oliver Folkerd */
 
 /*
  * This file is part of the Tabulator package.
@@ -2367,9 +2367,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         data.forEach(function (def, i) {
 
-          var row = new Row(def, self);
+          if (def && (typeof def === 'undefined' ? 'undefined' : _typeof(def)) === "object") {
 
-          self.rows.push(row);
+            var row = new Row(def, self);
+
+            self.rows.push(row);
+          } else {
+
+            console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but receved:", def);
+          }
         });
 
         self.table.options.dataLoaded(data);
