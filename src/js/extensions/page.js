@@ -276,9 +276,15 @@ Page.prototype.getRows = function(data){
 };
 
 Page.prototype.trigger = function(){
+	var left;
+
 	switch(this.mode){
 		case "local":
+		left = this.table.rowManager.scrollLeft;
+
 		this.table.rowManager.refreshActiveData();
+		this.table.rowManager.scrollHorizontal(left);
+
 		this.table.options.pageLoaded(this.getPage());
 		break;
 
@@ -361,11 +367,17 @@ Page.prototype._getRemotePageAuto = function(){
 
 
 Page.prototype._parseRemoteData = function(data){
+	var left;
+
 	if(data[this.paginationDataReceivedNames.last_page]){
 		if(data[this.paginationDataReceivedNames.data]){
 			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
+			left = this.table.rowManager.scrollLeft;
+
 			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+			this.table.rowManager.scrollHorizontal(left);
 
 			this.table.options.pageLoaded(this.getPage());
 		}else{

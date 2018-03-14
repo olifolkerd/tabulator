@@ -676,6 +676,14 @@ RowManager.prototype.sorterRefresh = function(){
 RowManager.prototype.scrollHorizontal = function(left){
 	this.scrollLeft = left;
 	this.element.scrollLeft(left);
+
+	if(this.table.options.groupBy){
+		this.table.extensions.groupRows.scrollHeaders(left);
+	}
+
+	if(this.table.extExists("columnCalcs")){
+		this.table.extensions.columnCalcs.scrollHorizontal(left);
+	}
 };
 
 //set active data set
@@ -772,6 +780,8 @@ RowManager.prototype.reRenderInPosition = function(){
 		var topRow = false;
 		var topOffset = false;
 
+		var left = this.scrollLeft;
+
 		for(var i = this.vDomTop; i <= this.vDomBottom; i++){
 
 			if(this.displayRows[i]){
@@ -785,6 +795,8 @@ RowManager.prototype.reRenderInPosition = function(){
 		}
 
 		this._virtualRenderFill((topRow === false ? this.displayRows.length - 1 : topRow), true, topOffset || 0);
+
+		this.scrollHorizontal(left);
 	}else{
 		this.renderTable();
 	}

@@ -2937,6 +2937,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.scrollLeft = left;
 
       this.element.scrollLeft(left);
+
+      if (this.table.options.groupBy) {
+
+        this.table.extensions.groupRows.scrollHeaders(left);
+      }
+
+      if (this.table.extExists("columnCalcs")) {
+
+        this.table.extensions.columnCalcs.scrollHorizontal(left);
+      }
     };
 
     //set active data set
@@ -3068,6 +3078,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var topOffset = false;
 
+        var left = this.scrollLeft;
+
         for (var i = this.vDomTop; i <= this.vDomBottom; i++) {
 
           if (this.displayRows[i]) {
@@ -3084,6 +3096,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         this._virtualRenderFill(topRow === false ? this.displayRows.length - 1 : topRow, true, topOffset || 0);
+
+        this.scrollHorizontal(left);
       } else {
 
         this.renderTable();
@@ -14357,11 +14371,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Page.prototype.trigger = function () {
 
+      var left;
+
       switch (this.mode) {
 
         case "local":
 
+          left = this.table.rowManager.scrollLeft;
+
           this.table.rowManager.refreshActiveData();
+
+          this.table.rowManager.scrollHorizontal(left);
 
           this.table.options.pageLoaded(this.getPage());
 
@@ -14473,13 +14493,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Page.prototype._parseRemoteData = function (data) {
 
+      var left;
+
       if (data[this.paginationDataReceivedNames.last_page]) {
 
         if (data[this.paginationDataReceivedNames.data]) {
 
           this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
+          left = this.table.rowManager.scrollLeft;
+
           this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+          this.table.rowManager.scrollHorizontal(left);
 
           this.table.options.pageLoaded(this.getPage());
         } else {
