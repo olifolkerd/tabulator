@@ -16105,28 +16105,57 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       string: function string(a, b, aRow, bRow, column, dir, params) {
 
+        var alignEmptyValues = params.alignEmptyValues;
+
+        var emptyAlign = 0;
+
         var locale;
 
-        switch (_typeof(params.locale)) {
+        //handle empty values
 
-          case "boolean":
 
-            if (params.locale) {
+        if (!a) {
 
-              local = this.table.extensions.localize.getLocale();
-            }
+          emptyAlign = !b ? 0 : -1;
+        } else if (!b) {
 
-            break;
+          emptyAlign = 1;
+        } else {
 
-          case "string":
+          //compare valid values
 
-            locale = params.locale;
 
-            break;
+          switch (_typeof(params.locale)) {
 
+            case "boolean":
+
+              if (params.locale) {
+
+                locale = this.table.extensions.localize.getLocale();
+              }
+
+              break;
+
+            case "string":
+
+              locale = params.locale;
+
+              break;
+
+          }
+
+          return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
         }
 
-        return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
+        //fix empty values in position
+
+
+        if (alignEmptyValues === "top" && dir === "desc" || alignEmptyValues === "bottom" && dir === "asc") {
+
+          emptyAlign *= -1;
+        }
+
+        return emptyAlign;
       },
 
       //sort date
@@ -16296,16 +16325,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var type = params.type || "length";
 
-        //handle non array values
+        var alignEmptyValues = params.alignEmptyValues;
 
-
-        if (!Array.isArray(a)) {
-
-          return !Array.isArray(b) ? 0 : -1;
-        } else if (!Array.isArray(b)) {
-
-          return 1;
-        }
+        var emptyAlign = 0;
 
         function calc(value) {
 
@@ -16350,11 +16372,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         }
 
-        el1 = a ? calc(a) : 0;
+        //handle non array values
 
-        el2 = b ? calc(b) : 0;
 
-        return el1 - el2;
+        if (!Array.isArray(a)) {
+
+          alignEmptyValues = !Array.isArray(b) ? 0 : -1;
+        } else if (!Array.isArray(b)) {
+
+          alignEmptyValues = 1;
+        } else {
+
+          //compare valid values
+
+
+          el1 = a ? calc(a) : 0;
+
+          el2 = b ? calc(b) : 0;
+
+          return el1 - el2;
+        }
+
+        //fix empty values in position
+
+
+        if (alignEmptyValues === "top" && dir === "desc" || alignEmptyValues === "bottom" && dir === "asc") {
+
+          emptyAlign *= -1;
+        }
+
+        return emptyAlign;
       },
 
       //sort if element contains any data
@@ -16383,42 +16430,68 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             rx = /(\d+)|(\D+)/g,
             rd = /\d/;
 
-        if (isFinite(as) && isFinite(bs)) return as - bs;
+        var alignEmptyValues = params.alignEmptyValues;
 
-        a = String(as).toLowerCase();
+        var emptyAlign = 0;
 
-        b = String(bs).toLowerCase();
+        //handle empty values
 
-        if (a === b) return 0;
 
-        if (!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+        if (!as && as !== 0) {
 
-        a = a.match(rx);
+          emptyAlign = !bs && bs !== 0 ? 0 : -1;
+        } else if (!bs && bs !== 0) {
 
-        b = b.match(rx);
+          emptyAlign = 1;
+        } else {
 
-        L = a.length > b.length ? b.length : a.length;
+          if (isFinite(as) && isFinite(bs)) return as - bs;
 
-        while (i < L) {
+          a = String(as).toLowerCase();
 
-          a1 = a[i];
+          b = String(bs).toLowerCase();
 
-          b1 = b[i++];
+          if (a === b) return 0;
 
-          if (a1 !== b1) {
+          if (!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
 
-            if (isFinite(a1) && isFinite(b1)) {
+          a = a.match(rx);
 
-              if (a1.charAt(0) === "0") a1 = "." + a1;
+          b = b.match(rx);
 
-              if (b1.charAt(0) === "0") b1 = "." + b1;
+          L = a.length > b.length ? b.length : a.length;
 
-              return a1 - b1;
-            } else return a1 > b1 ? 1 : -1;
+          while (i < L) {
+
+            a1 = a[i];
+
+            b1 = b[i++];
+
+            if (a1 !== b1) {
+
+              if (isFinite(a1) && isFinite(b1)) {
+
+                if (a1.charAt(0) === "0") a1 = "." + a1;
+
+                if (b1.charAt(0) === "0") b1 = "." + b1;
+
+                return a1 - b1;
+              } else return a1 > b1 ? 1 : -1;
+            }
           }
+
+          return a.length > b.length;
         }
 
-        return a.length > b.length;
+        //fix empty values in position
+
+
+        if (alignEmptyValues === "top" && dir === "desc" || alignEmptyValues === "bottom" && dir === "asc") {
+
+          emptyAlign *= -1;
+        }
+
+        return emptyAlign;
       }
 
     };

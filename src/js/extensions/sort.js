@@ -278,7 +278,6 @@ Sort.prototype.sorters = {
 		var a = parseFloat(String(a).replace(",",""));
 		var b = parseFloat(String(b).replace(",",""));
 
-
 		//handle non numeric values
 		if(isNaN(a)){
 			emptyAlign =  isNaN(b) ? 0 : -1;
@@ -295,26 +294,41 @@ Sort.prototype.sorters = {
 		}
 
 		return emptyAlign;
-
-
 	},
 
 	//sort strings
 	string:function(a, b, aRow, bRow, column, dir, params){
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
 		var locale;
 
-		switch(typeof params.locale){
-			case "boolean":
-			if(params.locale){
-				local = this.table.extensions.localize.getLocale();
+		//handle empty values
+		if(!a){
+			emptyAlign =  !b ? 0 : -1;
+		}else if(!b){
+			emptyAlign =  1;
+		}else{
+			//compare valid values
+			switch(typeof params.locale){
+				case "boolean":
+				if(params.locale){
+					locale = this.table.extensions.localize.getLocale();
+				}
+				break;
+				case "string":
+				locale = params.locale;
+				break;
 			}
-			break;
-			case "string":
-			locale = params.locale;
-			break;
+
+			return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
 		}
 
-		return String(a).toLowerCase().localeCompare(String(b).toLowerCase(), locale);
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
 	},
 
 	//sort date
@@ -425,15 +439,9 @@ Sort.prototype.sorters = {
 	array:function(a, b, aRow, bRow, column, dir, params){
 		var el1 = 0;
 		var el2 = 0;
-
 		var type = params.type || "length";
-
-		//handle non array values
-		if(!Array.isArray(a)){
-			return !Array.isArray(b) ? 0 : -1;
-		}else if(!Array.isArray(b)){
-			return 1;
-		}
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
 
 		function calc(value){
 
@@ -464,10 +472,26 @@ Sort.prototype.sorters = {
 			}
 		}
 
-		el1 = a ? calc(a) : 0;
-		el2 = b ? calc(b) : 0;
+		//handle non array values
+		if(!Array.isArray(a)){
+			alignEmptyValues = !Array.isArray(b) ? 0 : -1;
+		}else if(!Array.isArray(b)){
+			alignEmptyValues = 1;
+		}else{
 
-		return el1 - el2;
+			//compare valid values
+			el1 = a ? calc(a) : 0;
+			el2 = b ? calc(b) : 0;
+
+			return el1 - el2;
+		}
+
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
 	},
 
 
@@ -482,28 +506,46 @@ Sort.prototype.sorters = {
 	//sort alpha numeric strings
 	alphanum:function(as, bs, aRow, bRow, column, dir, params){
 		var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
+		var alignEmptyValues = params.alignEmptyValues;
+		var emptyAlign = 0;
 
-		if(isFinite(as) && isFinite(bs)) return as - bs;
-		a = String(as).toLowerCase();
-		b = String(bs).toLowerCase();
-		if(a === b) return 0;
-		if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
-		a = a.match(rx);
-		b = b.match(rx);
-		L = a.length > b.length ? b.length : a.length;
-		while(i < L){
-			a1= a[i];
-			b1= b[i++];
-			if(a1 !== b1){
-				if(isFinite(a1) && isFinite(b1)){
-					if(a1.charAt(0) === "0") a1 = "." + a1;
-					if(b1.charAt(0) === "0") b1 = "." + b1;
-					return a1 - b1;
+		//handle empty values
+		if(!as && as!== 0){
+			emptyAlign =  !bs && bs!== 0 ? 0 : -1;
+		}else if(!bs && bs!== 0){
+			emptyAlign =  1;
+		}else{
+
+			if(isFinite(as) && isFinite(bs)) return as - bs;
+			a = String(as).toLowerCase();
+			b = String(bs).toLowerCase();
+			if(a === b) return 0;
+			if(!(rd.test(a) && rd.test(b))) return a > b ? 1 : -1;
+			a = a.match(rx);
+			b = b.match(rx);
+			L = a.length > b.length ? b.length : a.length;
+			while(i < L){
+				a1= a[i];
+				b1= b[i++];
+				if(a1 !== b1){
+					if(isFinite(a1) && isFinite(b1)){
+						if(a1.charAt(0) === "0") a1 = "." + a1;
+						if(b1.charAt(0) === "0") b1 = "." + b1;
+						return a1 - b1;
+					}
+					else return a1 > b1 ? 1 : -1;
 				}
-				else return a1 > b1 ? 1 : -1;
 			}
+
+			return a.length > b.length;
 		}
-		return a.length > b.length;
+
+		//fix empty values in position
+		if((alignEmptyValues === "top" && dir === "desc") || (alignEmptyValues === "bottom" && dir === "asc")){
+			emptyAlign *= -1;
+		}
+
+		return emptyAlign;
 	},
 };
 
