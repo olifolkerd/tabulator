@@ -27,7 +27,7 @@ Sort.prototype.initializeColumn = function(column, content){
 	column.extensions.sort = {
 		sorter:sorter, dir:"none",
 		params:column.definition.sorterParams || {},
-		startingDir:column.definition.sorterStartingDir || "asc",
+		startingDir:column.definition.headerSortStartingDir || "asc",
 	};
 
 	if(column.definition.headerSort !== false){

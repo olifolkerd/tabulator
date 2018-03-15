@@ -15729,7 +15729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         params: column.definition.sorterParams || {},
 
-        startingDir: column.definition.sorterStartingDir || "asc"
+        startingDir: column.definition.headerSortStartingDir || "asc"
 
       };
 
