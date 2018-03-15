@@ -24,8 +24,11 @@ Sort.prototype.initializeColumn = function(column, content){
 		break;
 	}
 
-
-	column.extensions.sort = {sorter:sorter, dir:"none", params:column.definition.sorterParams || {}};
+	column.extensions.sort = {
+		sorter:sorter, dir:"none",
+		params:column.definition.sorterParams || {},
+		startingDir:column.definition.sorterStartingDir || "asc",
+	};
 
 	if(column.definition.headerSort !== false){
 
@@ -41,7 +44,7 @@ Sort.prototype.initializeColumn = function(column, content){
 			match = false;
 
 			if(column.extensions.sort){
-				dir = column.extensions.sort.dir == "asc" ? "desc" : "asc";
+				dir = column.extensions.sort.dir == "asc" ? "desc" : (column.extensions.sort.dir == "desc" ? "asc" : column.extensions.sort.startingDir);
 
 				if(e.shiftKey || e.ctrlKey){
 					sorters = self.getSort();
