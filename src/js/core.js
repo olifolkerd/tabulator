@@ -426,8 +426,26 @@
 	 		_destroy: function(){
 	 			var element = this.element;
 
-	 			element.empty();
+	 			//clear row data
+	 			this.rowManager.rows.forEach(function(row){
+	 				row.wipe();
+	 			});
 
+	 			this.rowManager.rows = [];
+	 			this.rowManager.activeRows = [];
+	 			this.rowManager.displayRows = [];
+
+	 			//clear event bindings
+	 			if(this.options.autoResize && this.extExists("resizeTable")){
+	 				this.extensions.resizeTable.clearBindings();
+	 			}
+
+	 			if(this.extExists("keybindings")){
+	 				this.extensions.keybindings.clearBindings();
+	 			}
+
+	 			//clear DOM
+	 			element.empty();
 	 			element.removeClass("tabulator");
 	 		},
 

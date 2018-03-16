@@ -2,6 +2,8 @@ var Keybindings = function(table){
 	this.table = table; //hold Tabulator object
 	this.watchKeys = null;
 	this.pressedKeys = null;
+	this.keyupBinding = false;
+	this.keydownBinding = false;
 };
 
 
@@ -92,7 +94,8 @@ Keybindings.prototype.mapBinding = function(action, symbolsList){
 Keybindings.prototype.bindEvents = function(){
 	var self = this;
 
-	this.table.element.on("keydown", function(e){
+
+	this.keyupBinding = function(e){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
 
@@ -104,9 +107,9 @@ Keybindings.prototype.bindEvents = function(){
 				self.checkBinding(e, binding);
 			});
 		}
-	});
+	}
 
-	this.table.element.on("keyup", function(e){
+	this.keydownBinding = function(e){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
 
@@ -118,7 +121,23 @@ Keybindings.prototype.bindEvents = function(){
 				self.pressedKeys.splice(index, 1);
 			}
 		}
-	});
+	}
+
+
+
+	this.table.element.on("keydown", this.keyupBinding);
+
+	this.table.element.on("keyup", this.keydownBinding);
+};
+
+Keybindings.prototype.clearBindings = function(){
+	if(this.keyupBinding){
+		this.table.element.off("keydown", this.keyupBinding);
+	}
+
+	if(this.keydownBinding){
+		this.table.element.off("keyup", this.keydownBinding);
+	}
 };
 
 

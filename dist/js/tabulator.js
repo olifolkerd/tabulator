@@ -5795,6 +5795,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var element = this.element;
 
+        //clear row data
+
+        this.rowManager.rows.forEach(function (row) {
+
+          row.wipe();
+        });
+
+        this.rowManager.rows = [];
+
+        this.rowManager.activeRows = [];
+
+        this.rowManager.displayRows = [];
+
+        //clear event bindings
+
+        if (this.options.autoResize && this.extExists("resizeTable")) {
+
+          this.extensions.resizeTable.clearBindings();
+        }
+
+        if (this.extExists("keybindings")) {
+
+          this.extensions.keybindings.clearBindings();
+        }
+
+        //clear DOM
+
         element.empty();
 
         element.removeClass("tabulator");
@@ -8517,8 +8544,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
       blob = this.table.options.downloadReady(data, blob);
-
-      console.log("blob", blob);
 
       if (blob) {
 
@@ -12994,6 +13019,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.watchKeys = null;
 
       this.pressedKeys = null;
+
+      this.keyupBinding = false;
+
+      this.keydownBinding = false;
     };
 
     Keybindings.prototype.initialize = function () {
@@ -13113,7 +13142,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      this.table.element.on("keydown", function (e) {
+      this.keyupBinding = function (e) {
 
         var code = e.keyCode;
 
@@ -13128,9 +13157,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             self.checkBinding(e, binding);
           });
         }
-      });
+      };
 
-      this.table.element.on("keyup", function (e) {
+      this.keydownBinding = function (e) {
 
         var code = e.keyCode;
 
@@ -13145,7 +13174,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             self.pressedKeys.splice(index, 1);
           }
         }
-      });
+      };
+
+      this.table.element.on("keydown", this.keyupBinding);
+
+      this.table.element.on("keyup", this.keydownBinding);
+    };
+
+    Keybindings.prototype.clearBindings = function () {
+
+      if (this.keyupBinding) {
+
+        this.table.element.off("keydown", this.keyupBinding);
+      }
+
+      if (this.keydownBinding) {
+
+        this.table.element.off("keyup", this.keydownBinding);
+      }
     };
 
     Keybindings.prototype.checkBinding = function (e, binding) {
@@ -15227,6 +15273,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table; //hold Tabulator object
 
+
+      this.binding = false;
+
+      this.observer = false;
     };
 
     ResizeTable.prototype.initialize = function (row) {
@@ -15234,20 +15284,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var table = this.table,
           observer;
 
-      if (typeof ResizeObserver !== "undefined" && this.table.rowManager.getRenderMode() === "virtual") {
+      if (typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual") {
 
-        observer = new ResizeObserver(function (entry) {
+        this.observer = new ResizeObserver(function (entry) {
 
           table.redraw();
         });
 
-        observer.observe(table.element[0]);
+        this.observer.observe(table.element[0]);
       } else {
 
-        $(window).resize(function () {
+        this.binding = function () {
 
           $(".tabulator").tabulator("redraw");
-        });
+        };
+
+        $(window).resize(this.binding);
+      }
+    };
+
+    ResizeTable.prototype.clearBindings = function (row) {
+
+      if (this.binding) {
+
+        $(window).off("resize", this.binding);
+      }
+
+      if (this.observer) {
+
+        this.observer.unobserve(this.table.element[0]);
       }
     };
 
