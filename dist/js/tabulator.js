@@ -4639,6 +4639,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
       }
 
+      if (this.table.options.tooltipGenerationMode === "hover") {
+
+        //update tooltip on mouse enter
+
+        self.element.on("mouseenter", function (e) {
+
+          self._generateTooltip();
+        });
+      }
+
       if (cellEvents.cellTap) {
 
         tap = false;
@@ -5239,6 +5249,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         tooltips: false, //Tool tip value
 
         tooltipsHeader: false, //Tool tip for headers
+
+        tooltipGenerationMode: "load", //when to generate tooltips
 
 
         initialSort: false, //initial sorting criteria

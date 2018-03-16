@@ -41,6 +41,7 @@
 
 	 			tooltips: false, //Tool tip value
 	 			tooltipsHeader: false, //Tool tip for headers
+	 			tooltipGenerationMode:"load", //when to generate tooltips
 
 	 			initialSort:false, //initial sorting criteria
 

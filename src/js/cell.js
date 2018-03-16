@@ -142,6 +142,13 @@ Cell.prototype._configureCell = function(){
 		});
 	}
 
+	if (this.table.options.tooltipGenerationMode === "hover"){
+		//update tooltip on mouse enter
+		self.element.on("mouseenter", function(e){
+			self._generateTooltip();
+		});
+	}
+
 	if (cellEvents.cellTap){
 		tap = false;
 
