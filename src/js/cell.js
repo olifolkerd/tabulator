@@ -236,6 +236,10 @@ Cell.prototype._generateTooltip = function(){
 			tooltip = self.value;
 		}else if(typeof(tooltip) == "function"){
 			tooltip = tooltip(self.getComponent());
+
+			if(tooltip === false){
+				tooltip = "";
+			}
 		}
 
 		self.element[0].setAttribute("title", tooltip);

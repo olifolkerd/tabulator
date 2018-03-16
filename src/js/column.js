@@ -186,6 +186,10 @@ Column.prototype.setTooltip = function(){
 		}else{
 			if(typeof(tooltip) == "function"){
 				tooltip = tooltip(self.getComponent());
+
+				if(tooltip === false){
+					tooltip = "";
+				}
 			}
 
 			self.element.attr("title", tooltip);

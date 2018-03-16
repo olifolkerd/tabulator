@@ -1092,6 +1092,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (typeof tooltip == "function") {
 
             tooltip = tooltip(self.getComponent());
+
+            if (tooltip === false) {
+
+              tooltip = "";
+            }
           }
 
           self.element.attr("title", tooltip);
@@ -4756,6 +4761,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         } else if (typeof tooltip == "function") {
 
           tooltip = tooltip(self.getComponent());
+
+          if (tooltip === false) {
+
+            tooltip = "";
+          }
         }
 
         self.element[0].setAttribute("title", tooltip);
