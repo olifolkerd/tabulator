@@ -79,8 +79,6 @@ Download.prototype.triggerDownload = function(data, mime, type, filename){
 
 	blob = this.table.options.downloadReady(data, blob);
 
-	console.log("blob", blob)
-
 	if(blob){
 
 		if(navigator.msSaveOrOpenBlob){
