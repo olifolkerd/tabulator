@@ -99,7 +99,14 @@ Edit.prototype.bindEditor = function(cell){
 	});
 
 	element.on("focus", function(e, force){
-		self.edit(cell, e);
+		var actualCell =
+			self.currentCell && self.currentCell.column.field !== cell.column.field
+				? self.currentCell
+				: cell;
+
+		self.currentCell = false;
+
+		self.edit(actualCell, e);
 	});
 };
 
