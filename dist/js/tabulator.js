@@ -8877,7 +8877,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       element.on("focus", function (e, force) {
 
-        self.edit(cell, e);
+        var actualCell = self.currentCell && self.currentCell.column.field !== cell.column.field ? self.currentCell : cell;
+
+        self.currentCell = false;
+
+        self.edit(actualCell, e);
       });
     };
 
@@ -9966,12 +9970,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         success: success
 
-      };
-
-      //handle aborted edit
+        //handle aborted edit
 
 
-      function cancel() {};
+      };function cancel() {};
 
       if (field) {
 
@@ -14554,6 +14556,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
       "filters": "filters"
+
+      // "filter_value":"filter_value",
+
+
+      // "filter_type":"filter_type",
+
 
     };
 
