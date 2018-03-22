@@ -5543,9 +5543,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       _clearObjectPointers: function _clearObjectPointers() {
 
-        this.options.columns = this.options.columns.splice(0);
+        this.options.columns = this.options.columns.slice(0);
 
-        this.options.data = this.options.data.splice(0);
+        this.options.data = this.options.data.slice(0);
       },
 
       //build tabulator element
