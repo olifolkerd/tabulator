@@ -253,8 +253,8 @@
 	 		//clear pointers to objects in default config object
 
 	 		_clearObjectPointers: function(){
-	 			this.options.columns = this.options.columns.splice(0);
-	 			this.options.data = this.options.data.splice(0);
+	 			this.options.columns = this.options.columns.slice(0);
+	 			this.options.data = this.options.data.slice(0);
 	 		},
 
 
