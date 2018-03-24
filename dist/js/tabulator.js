@@ -4923,7 +4923,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.table.extExists("edit", true)) {
 
-        return this.table.extensions.edit.edit(this, false, force);
+        return this.table.extensions.edit.editCell(this, false, force);
       }
     };
 
@@ -8741,6 +8741,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
 
+
+      this.recursionBlock = false; //prevent focus recursion
+
     };
 
     //initialize column editor
@@ -8822,13 +8825,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var cell = this.currentCell;
 
-      this.currentCell = false;
+      if (cell) {
 
-      cell.getElement().removeClass("tabulator-validation-fail");
+        this.currentCell = false;
 
-      cell.getElement().removeClass("tabulator-editing").empty();
+        cell.getElement().removeClass("tabulator-validation-fail");
 
-      cell.row.getElement().removeClass("tabulator-row-editing");
+        cell.getElement().removeClass("tabulator-editing").empty();
+
+        cell.row.getElement().removeClass("tabulator-row-editing");
+      }
     };
 
     Edit.prototype.cancelEdit = function () {
@@ -8875,10 +8881,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         self.mouseClick = true;
       });
 
-      element.on("focus", function (e, force) {
+      element.on("focus", function (e) {
 
-        self.edit(cell, e);
+        if (!self.recursionBlock) {
+
+          self.edit(cell, e, false);
+        }
       });
+    };
+
+    Edit.prototype.focusCellNoEvent = function (cell) {
+
+      this.recursionBlock = true;
+
+      cell.getElement().focus();
+
+      this.recursionBlock = false;
+    };
+
+    Edit.prototype.editCell = function (cell, forceEdit) {
+
+      this.focusCellNoEvent(cell);
+
+      this.edit(cell, false, forceEdit);
     };
 
     Edit.prototype.edit = function (cell, e, forceEdit) {
@@ -8890,12 +8915,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cellEditor,
           component;
 
-      //if currently editing another cell trigger blur to trigger save and validate actions
+      //prevent editing if another cell is refuling to leave focus (eg. validation fail)
 
 
       if (this.currentCell) {
-
-        cell.getElement().focus();
 
         return;
       }
@@ -8921,6 +8944,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           cell.getElement().addClass("tabulator-validation-fail");
 
+          self.focusCellNoEvent(cell);
+
           rendered();
 
           self.table.options.validationFailed(cell.getComponent(), value, valid);
@@ -8931,6 +8956,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
       function cancel() {
+
+        console.log("can");
 
         self.cancelEdit();
       };

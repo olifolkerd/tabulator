@@ -378,7 +378,7 @@ Cell.prototype.hide = function(){
 
 Cell.prototype.edit = function(force){
 	if(this.table.extExists("edit", true)){
-		return this.table.extensions.edit.edit(this, false, force);
+		return this.table.extensions.edit.editCell(this, false, force);
 	}
 };
 

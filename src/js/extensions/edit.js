@@ -2,6 +2,7 @@ var Edit = function(table){
 	this.table = table; //hold Tabulator object
 	this.currentCell = false; //hold currently editing cell
 	this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
+	this.recursionBlock = false; //prevent focus recursion
 };
 
 
@@ -58,10 +59,12 @@ Edit.prototype.getCurrentCell = function(){
 Edit.prototype.clearEditor = function(){
 	var cell = this.currentCell;
 
-	this.currentCell = false;
-	cell.getElement().removeClass("tabulator-validation-fail");
-	cell.getElement().removeClass("tabulator-editing").empty();
-	cell.row.getElement().removeClass("tabulator-row-editing");
+	if(cell){
+		this.currentCell = false;
+		cell.getElement().removeClass("tabulator-validation-fail");
+		cell.getElement().removeClass("tabulator-editing").empty();
+		cell.row.getElement().removeClass("tabulator-row-editing");
+	}
 };
 
 Edit.prototype.cancelEdit = function(){
@@ -98,10 +101,23 @@ Edit.prototype.bindEditor = function(cell){
 		self.mouseClick = true;
 	});
 
-	element.on("focus", function(e, force){
-		self.edit(cell, e);
+	element.on("focus", function(e){
+		if(!self.recursionBlock){
+			self.edit(cell, e, false);
+		}
 	});
 };
+
+Edit.prototype.focusCellNoEvent = function(cell){
+	this.recursionBlock = true;
+	cell.getElement().focus();
+	this.recursionBlock = false;
+}
+
+Edit.prototype.editCell = function(cell, forceEdit){
+	this.focusCellNoEvent(cell);
+	this.edit(cell, false, forceEdit);
+}
 
 Edit.prototype.edit = function(cell, e, forceEdit){
 	var self = this,
@@ -110,9 +126,8 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	element = cell.getElement(),
 	cellEditor, component;
 
-	//if currently editing another cell trigger blur to trigger save and validate actions
+	//prevent editing if another cell is refuling to leave focus (eg. validation fail)
 	if(this.currentCell){
-		cell.getElement().focus();
 		return;
 	}
 
@@ -129,6 +144,7 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 			cell.setValue(value, true);
 		}else{
 			cell.getElement().addClass("tabulator-validation-fail");
+			self.focusCellNoEvent(cell);
 			rendered();
 			self.table.options.validationFailed(cell.getComponent(), value, valid);
 		}
@@ -136,6 +152,7 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 
 	//handle aborted edit
 	function cancel(){
+		console.log("can")
 		self.cancelEdit()
 	};
 

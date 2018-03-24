@@ -389,83 +389,25 @@
 
 
 			//signout
-			$("#example-table").tabulator({
-				height:"50%",
-				sortBy:"date",
-				sortDir:"desc",
-				// responsiveLayout:true,
-			  	// pagination:"local",
-			  	// paginationSize:5,
-			  	// dataLoaded:function(data){
-
-
-
-			  	//    var firstRow = $("#example-table").tabulator("getRows")[0];
-
-			  	//    console.log("rows", firstRow)
-			  	//    // setTimeout(function(){
-			  	//    if(firstRow){
-			  	//        console.log("froxen", firstRow);
-			  	//        firstRow.freeze();
-			  	//    }
-
-			  	//    // }, 2000);
-
-			  	// },
-			  	// placeholder:"NO ITEMS HERE",
-			  	// groupBy:"destination",
-			  	// pagination:"local", //enable local pagination.
-			  	// ajaxURL:"ajax_sim.php",
-			  	data:tabledata,
-
-			  	columns:[
-			  	{title: "Datestamp", field: "date", width:110, sorter:"datetime", sortable: true},
-			  	{title: "Type", field: "type", width:70, sortable: true, formatter:function(cell, formatterParams){
-			  		var value = cell.getValue();
-			  		var icon = ""
-
-			  		switch(value){
-			  			case "out":
-			  			icon="<i class='fa fa-fw fa-sign-out' style='color:#c00'></i> ";
-			  			break;
-
-			  			case "in":
-			  			icon="<i class='fa fa-fw fa-sign-in' style='color:#08AF00'></i> ";
-			  			break;
-
-			  			case "transfer":
-			  			icon="<i class='fa fa-fw fa-exchange' style='color:#3539D1'></i> ";
-			  			break;
-			  		}
-
-			  		return icon + value;
-
-			  	}},
-			  	{title: "Reg", field: "reg", width:150, headerFilter:true, headerFilterPlaceholder:"steve", sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
-			  	{title: "User", field: "user_name", visible:false, headerFilter:true, headerFilterPlaceholder:"bob", width:150, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
-			  	{title: "Job", field: "job_link", width:200, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count"},
-			  	{title: "Destination", field: "destination", width:200, sorter:"alphanum", sortable: true, bottomCalc:"count", topCalc:"count", headerTooltip:function(column){
-			  		return "steve-" + column.getCells().length;
-			  	}},
-			  	{title: "Mileage", field: "mileage", width:80, sorter:"number", sortable: true, bottomCalc:"count", topCalc:"count"},
-			  	{title: "Clean Outside", field: "clean_outside", width:90, width:90, sortable: true, sorter:"boolean", formatter:"anytickCross", align:"center", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Rubbish", field: "rubbish", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Clear Inside", field: "clean_inside", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Windscreen", field: "windscreen", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Sat Nav", field: "sat_nav", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Fuel Card", field: "fuel_card", width:90, width:90, sortable: true, sorter:"boolean", align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Tyre Pressure", field: "tyre_pressure", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Washer Fluid", field: "washer_fluid", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Oli", field: "oil", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title: "Lights", field: "lights", width:90, width:90, sortable: true, sorter:"boolean" , align:"center", formatter:"anytickCross", bottomCalc:"count", topCalc:"count"},
-			  	{title:"id", field:"id", align:"left", width:200},
-			  	],
-			  	columnVisibilityChanged:function(column, visible){
-			  	       //column - column component
-			  	       //visible - is column visible (true = visible, false = hidden)
-			  	       console.log("vis", column.getField(), visible);
-			  	   },
-			  });
+			$('#example-table').tabulator({
+			    columns: [
+			        {
+			            field: 'column_1',
+			            title: 'Column 1',
+			            editor: true,
+			            validator: ['required'],
+			        },
+			        {
+			            field: 'column_2',
+			            title: 'Column 2',
+			            editor: true,
+			            validator: ['string', 'minLength:5', 'maxLength:12'],
+			        },
+			    ],
+			  data: [{
+			    id: 1,
+			  }],
+			});
 
 			$("#action").click(function(){
 				$("#example-table").tabulator("toggleColumn", "reg")
