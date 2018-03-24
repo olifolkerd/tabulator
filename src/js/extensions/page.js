@@ -14,6 +14,8 @@ var Page = function(table){
 	this.page = 1;
 	this.max = 1;
 	this.paginator = false;
+
+	this.displayIndex = 0; //index in display pipeline
 };
 
 //setup pageination
@@ -105,11 +107,19 @@ Page.prototype.initialize = function(){
 		self.table.footerManager.append(self.element, self);
 	}
 
-
 	//set default values
 	self.mode = self.table.options.pagination;
-	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 26);
+	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 24);
 };
+
+Page.prototype.setDisplayIndex = function(index){
+	this.displayIndex = index;
+}
+
+Page.prototype.getDisplayIndex = function(){
+	return this.displayIndex;
+}
+
 
 //calculate maximum page from number of rows
 Page.prototype.setMaxRows = function(rowCount){
@@ -282,7 +292,7 @@ Page.prototype.trigger = function(){
 		case "local":
 		left = this.table.rowManager.scrollLeft;
 
-		this.table.rowManager.refreshActiveData();
+		this.table.rowManager.refreshActiveData("page");
 		this.table.rowManager.scrollHorizontal(left);
 
 		this.table.options.pageLoaded(this.getPage());

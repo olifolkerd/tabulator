@@ -384,7 +384,7 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 	}
 
 	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	this.redraw();
@@ -456,7 +456,7 @@ ColumnManager.prototype.redraw = function(force){
 	}
 
 	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	if(force){

@@ -16,7 +16,7 @@ ResizeTable.prototype.initialize = function(row){
 		this.observer.observe(table.element[0]);
 	}else{
 		this.binding = function(){
-			$(".tabulator").tabulator("redraw");
+			this.table.element.tabulator("redraw");
 		}
 
 		$(window).resize(this.binding);

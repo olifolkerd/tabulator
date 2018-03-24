@@ -13,14 +13,14 @@ FrozenRows.prototype.filterFrozenRows = function(){
 	var self = this,
 	frozen = [];
 
-	self.table.rowManager.displayRows.forEach(function(row, i){
+	self.table.rowManager.activeRows.forEach(function(row, i){
 		if(row.extensions.frozen == true){
 			frozen.unshift(i);
 		}
 	})
 
 	frozen.forEach(function(index){
-		self.table.rowManager.displayRows.splice(index, 1);
+		self.table.rowManager.activeRows.splice(index, 1);
 	});
 };
 
@@ -31,7 +31,7 @@ FrozenRows.prototype.freezeRow = function(row){
 		row.initialize();
 		row.normalizeHeight();
 		this.table.rowManager.adjustTableSize();
-		this.table.rowManager.refreshActiveData();
+		this.table.rowManager.refreshActiveData("display");
 
 		this.rows.push(row);
 
@@ -49,7 +49,7 @@ FrozenRows.prototype.unfreezeRow = function(row){
 		row.extensions.frozen = false;
 		row.getElement().detach();
 		this.table.rowManager.adjustTableSize();
-		this.table.rowManager.refreshActiveData();
+		this.table.rowManager.refreshActiveData("display");
 
 		this.rows.splice(index, 1);
 

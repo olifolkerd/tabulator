@@ -243,13 +243,8 @@
 
 	 				self._buildElement();
 
-	 				//give the browser a chance to fully render the table then load first data set if present
-	 				// setTimeout(function(){
-
-	 					//load initial data set
-	 					this._loadInitialData();
-
-	 				// },20)
+	 				//load initial data set
+	 				this._loadInitialData();
 	 			}
 	 		},
 
@@ -387,7 +382,7 @@
 
 	 			if(self.options.pagination && self.extExists("page")){
 	 				self.extensions.page.reset(true);
-	 				self.extensions.page.setPage(1);
+	 				// self.extensions.page.setPage(1);
 
 	 				if(self.options.pagination == "local"){
 	 					if(self.options.data.length){
@@ -662,7 +657,7 @@
 
 	 			//recalc column calculations if present
 	 			if(this.extExists("columnCalcs")){
-	 				this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 				this.extensions.columnCalcs.recalc(this.rowManager.activeRows);
 	 			}
 
 	 			return row.getComponent();
@@ -683,7 +678,7 @@
 
 	 				//recalc column calculations if present
 	 				if(this.extExists("columnCalcs")){
-	 					this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 					this.extensions.columnCalcs.recalc(this.rowManager.activeRows);
 	 				}
 	 			}
 	 			return row.getComponent();
@@ -1079,7 +1074,7 @@
 	 			if(this.extExists("groupRows", true)){
 	 				this.options.groupBy = groups;
 	 				this.extensions.groupRows.initialize();
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.refreshActiveData("display");
 	 			}else{
 	 				return false;
 	 			}
@@ -1090,8 +1085,7 @@
 	 				this.options.groupStartOpen = values;
 	 				this.extensions.groupRows.initialize();
 	 				if(this.options.groupBy){
-
-	 					this.rowManager.refreshActiveData();
+	 					this.rowManager.refreshActiveData("group");
 	 				}else{
 	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
 	 				}
@@ -1105,7 +1099,7 @@
 	 				this.options.groupHeader = values;
 	 				this.extensions.groupRows.initialize();
 	 				if(this.options.groupBy){
-	 					this.rowManager.refreshActiveData();
+	 					this.rowManager.refreshActiveData("group");
 	 				}else{
 	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
 	 				}

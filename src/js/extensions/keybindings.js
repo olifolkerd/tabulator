@@ -196,7 +196,7 @@ Keybindings.prototype.actions = {
 			if(newPos >= 0){
 				rowManager.element.scrollTop(newPos);
 			}else{
-				rowManager.scrollToRow(rowManager.displayRows[0]);
+				rowManager.scrollToRow(rowManager.getDisplayRows()[0]);
 			}
 		}
 
@@ -213,7 +213,7 @@ Keybindings.prototype.actions = {
 			if(newPos <= scrollMax){
 				rowManager.element.scrollTop(newPos);
 			}else{
-				rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+				rowManager.scrollToRow(rowManager.getDisplayRows()[rowManager.displayRowsCount - 1]);
 			}
 		}
 
@@ -226,7 +226,7 @@ Keybindings.prototype.actions = {
 		e.preventDefault();
 
 		if(rowManager.displayRowsCount){
-			rowManager.scrollToRow(rowManager.displayRows[0]);
+			rowManager.scrollToRow(rowManager.getDisplayRows()[0]);
 		}
 
 		this.table.element.focus();
@@ -237,7 +237,7 @@ Keybindings.prototype.actions = {
 		e.preventDefault();
 
 		if(rowManager.displayRowsCount){
-			rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+			rowManager.scrollToRow(rowManager.getDisplayRows()[rowManager.displayRowsCount - 1]);
 		}
 
 		this.table.element.focus();
