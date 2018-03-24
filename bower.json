@@ -1,7 +1,7 @@
 {
   "name": "tabulator",
   "main": "dist/js/tabulator.js",
-  "version": "3.4.5",
+  "version": "3.4.6",
   "description": "Interactive table generation plugin for jQuery UI",
   "keywords": [
     "table",
