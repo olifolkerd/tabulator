@@ -152,7 +152,6 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 
 	//handle aborted edit
 	function cancel(){
-		console.log("can")
 		self.cancelEdit()
 	};
 
