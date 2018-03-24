@@ -744,6 +744,27 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 		case "display":
 		this.resetDisplayRows();
 
+		case "freeze":
+		if(!skipStage){
+			if(this.table.extExists("frozenRows")){
+				if(table.extensions.frozenRows.isFrozen()){
+					if(!table.extensions.frozenRows.getDisplayIndex()){
+						table.extensions.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
+					}
+
+					displayIndex = table.extensions.frozenRows.getDisplayIndex();
+
+					displayIndex = self.setDisplayRows(table.extensions.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+					if(displayIndex !== true){
+						table.extensions.frozenRows.setDisplayIndex(displayIndex);
+					}
+				}
+			}
+		}else{
+			skipStage = false;
+		}
+
 		case "group":
 		if(!skipStage){
 			if(table.options.groupBy && table.extExists("groupRows")){
@@ -826,6 +847,10 @@ RowManager.prototype.resetDisplayRows = function(){
 
 	this.displayRowsCount = this.displayRows[0].length;
 
+	if(this.table.extExists("frozenRows")){
+		this.table.extensions.frozenRows.setDisplayIndex(0);
+	}
+
 	if(this.table.options.groupBy && this.table.extExists("groupRows")){
 		this.table.extensions.groupRows.setDisplayIndex(0);
 	}
@@ -852,10 +877,6 @@ RowManager.prototype.setDisplayRows = function(displayRows, index){
 		this.displayRows.push(displayRows);
 		output = index = this.displayRows.length -1;
 	}
-
-	// if(this.table.extExists("frozenRows")){
-	// 	this.table.extensions.frozenRows.filterFrozenRows();
-	// }
 
 	if(index == this.displayRows.length -1){
 		this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;

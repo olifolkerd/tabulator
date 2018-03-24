@@ -3031,6 +3031,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.resetDisplayRows();
 
+        case "freeze":
+
+          if (!skipStage) {
+
+            if (this.table.extExists("frozenRows")) {
+
+              if (table.extensions.frozenRows.isFrozen()) {
+
+                if (!table.extensions.frozenRows.getDisplayIndex()) {
+
+                  table.extensions.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
+                }
+
+                displayIndex = table.extensions.frozenRows.getDisplayIndex();
+
+                displayIndex = self.setDisplayRows(table.extensions.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+                if (displayIndex !== true) {
+
+                  table.extensions.frozenRows.setDisplayIndex(displayIndex);
+                }
+              }
+            }
+          } else {
+
+            skipStage = false;
+          }
+
         case "group":
 
           if (!skipStage) {
@@ -3135,6 +3163,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.displayRowsCount = this.displayRows[0].length;
 
+      if (this.table.extExists("frozenRows")) {
+
+        this.table.extensions.frozenRows.setDisplayIndex(0);
+      }
+
       if (this.table.options.groupBy && this.table.extExists("groupRows")) {
 
         this.table.extensions.groupRows.setDisplayIndex(0);
@@ -3168,13 +3201,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         output = index = this.displayRows.length - 1;
       }
-
-      // if(this.table.extExists("frozenRows")){
-
-      // 	this.table.extensions.frozenRows.filterFrozenRows();
-
-      // }
-
 
       if (index == this.displayRows.length - 1) {
 
@@ -11690,6 +11716,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.topElement = $("<div class='tabulator-frozen-rows-holder'></div>");
 
       this.rows = [];
+
+      this.displayIndex = 0; //index in display pipeline
+
     };
 
     FrozenRows.prototype.initialize = function () {
@@ -11699,23 +11728,41 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table.columnManager.element.append(this.topElement);
     };
 
-    FrozenRows.prototype.filterFrozenRows = function () {
+    FrozenRows.prototype.setDisplayIndex = function (index) {
+
+      this.displayIndex = index;
+    };
+
+    FrozenRows.prototype.getDisplayIndex = function () {
+
+      return this.displayIndex;
+    };
+
+    FrozenRows.prototype.isFrozen = function () {
+
+      return !!this.rows.length;
+    };
+
+    //filter frozen rows out of display data
+
+
+    FrozenRows.prototype.getRows = function (rows) {
 
       var self = this,
-          frozen = [];
+          frozen = [],
+          output = rows.slice(0);
 
-      self.table.rowManager.activeRows.forEach(function (row, i) {
+      this.rows.forEach(function (row) {
 
-        if (row.extensions.frozen == true) {
+        var index = output.indexOf(row);
 
-          frozen.unshift(i);
+        if (index > -1) {
+
+          output.splice(index, 1);
         }
       });
 
-      frozen.forEach(function (index) {
-
-        self.table.rowManager.activeRows.splice(index, 1);
-      });
+      return output;
     };
 
     FrozenRows.prototype.freezeRow = function (row) {
@@ -11732,9 +11779,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.rowManager.adjustTableSize();
 
-        this.table.rowManager.refreshActiveData("display");
-
         this.rows.push(row);
+
+        this.table.rowManager.refreshActiveData("display");
 
         this.styleRows();
       } else {
@@ -11755,9 +11802,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.rowManager.adjustTableSize();
 
-        this.table.rowManager.refreshActiveData("display");
-
         this.rows.splice(index, 1);
+
+        this.table.rowManager.refreshActiveData("display");
 
         if (this.rows.length) {
 

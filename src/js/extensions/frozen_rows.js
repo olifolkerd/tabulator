@@ -2,6 +2,7 @@ var FrozenRows = function(table){
 	this.table = table; //hold Tabulator object
 	this.topElement = $("<div class='tabulator-frozen-rows-holder'></div>");
 	this.rows = [];
+	this.displayIndex = 0; //index in display pipeline
 };
 
 FrozenRows.prototype.initialize = function(){
@@ -9,19 +10,33 @@ FrozenRows.prototype.initialize = function(){
 	this.table.columnManager.element.append(this.topElement);
 };
 
-FrozenRows.prototype.filterFrozenRows = function(){
+FrozenRows.prototype.setDisplayIndex = function(index){
+	this.displayIndex = index;
+}
+
+FrozenRows.prototype.getDisplayIndex = function(){
+	return this.displayIndex;
+}
+
+FrozenRows.prototype.isFrozen = function(){
+	return !!this.rows.length;
+}
+
+//filter frozen rows out of display data
+FrozenRows.prototype.getRows = function(rows){
 	var self = this,
-	frozen = [];
+	frozen = [],
+	output = rows.slice(0);
 
-	self.table.rowManager.activeRows.forEach(function(row, i){
-		if(row.extensions.frozen == true){
-			frozen.unshift(i);
+	this.rows.forEach(function(row){
+		var index = output.indexOf(row);
+
+		if(index > -1){
+			output.splice(index, 1);
 		}
-	})
-
-	frozen.forEach(function(index){
-		self.table.rowManager.activeRows.splice(index, 1);
 	});
+
+	return output;
 };
 
 FrozenRows.prototype.freezeRow = function(row){
@@ -31,11 +46,13 @@ FrozenRows.prototype.freezeRow = function(row){
 		row.initialize();
 		row.normalizeHeight();
 		this.table.rowManager.adjustTableSize();
-		this.table.rowManager.refreshActiveData("display");
 
 		this.rows.push(row);
 
+		this.table.rowManager.refreshActiveData("display");
+
 		this.styleRows();
+
 	}else{
 		console.warn("Freeze Error - Row is already frozen");
 	}
@@ -49,9 +66,10 @@ FrozenRows.prototype.unfreezeRow = function(row){
 		row.extensions.frozen = false;
 		row.getElement().detach();
 		this.table.rowManager.adjustTableSize();
-		this.table.rowManager.refreshActiveData("display");
 
 		this.rows.splice(index, 1);
+
+		this.table.rowManager.refreshActiveData("display");
 
 		if(this.rows.length){
 			this.styleRows();
