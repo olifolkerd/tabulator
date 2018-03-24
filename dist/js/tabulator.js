@@ -8744,6 +8744,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.recursionBlock = false; //prevent focus recursion
 
+
+      this.invalidEdit = false;
     };
 
     //initialize column editor
@@ -8824,6 +8826,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Edit.prototype.clearEditor = function () {
 
       var cell = this.currentCell;
+
+      this.invalidEdit = false;
 
       if (cell) {
 
@@ -8915,10 +8919,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cellEditor,
           component;
 
-      //prevent editing if another cell is refuling to leave focus (eg. validation fail)
+      //prevent editing if another cell is refusing to leave focus (eg. validation fail)
 
 
       if (this.currentCell) {
+
+        if (!this.invalidEdit) {
+
+          this.cancelEdit();
+        } else {
+
+          return;
+        }
 
         return;
       }
@@ -8928,27 +8940,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       function success(value) {
 
-        var valid = true;
+        if (self.currentCell === cell) {
 
-        if (cell.column.extensions.validate && self.table.extExists("validate")) {
+          var valid = true;
 
-          valid = self.table.extensions.validate.validate(cell.column.extensions.validate, cell.getComponent(), value);
-        }
+          if (cell.column.extensions.validate && self.table.extExists("validate")) {
 
-        if (valid === true) {
+            valid = self.table.extensions.validate.validate(cell.column.extensions.validate, cell.getComponent(), value);
+          }
 
-          self.clearEditor();
+          if (valid === true) {
 
-          cell.setValue(value, true);
+            self.clearEditor();
+
+            cell.setValue(value, true);
+          } else {
+
+            self.invalidEdit = true;
+
+            cell.getElement().addClass("tabulator-validation-fail");
+
+            self.focusCellNoEvent(cell);
+
+            rendered();
+
+            self.table.options.validationFailed(cell.getComponent(), value, valid);
+          }
         } else {
 
-          cell.getElement().addClass("tabulator-validation-fail");
-
-          self.focusCellNoEvent(cell);
-
-          rendered();
-
-          self.table.options.validationFailed(cell.getComponent(), value, valid);
+          console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
         }
       };
 
@@ -8957,7 +8977,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       function cancel() {
 
-        self.cancelEdit();
+        if (self.currentCell === cell) {
+
+          self.cancelEdit();
+        } else {
+
+          console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
+        }
       };
 
       function onRendered(callback) {
