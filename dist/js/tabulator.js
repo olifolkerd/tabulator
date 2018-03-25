@@ -8749,6 +8749,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.mode = "table";
 
       this.showHeaders = true;
+
+      this.blocked = true; //block copy actions not originating from this command
+
     };
 
     Clipboard.prototype.initialize = function () {
@@ -8757,16 +8760,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table.element.on("copy", function (e) {
 
-        e.preventDefault();
+        if (!self.blocked) {
 
-        e.originalEvent.clipboardData.setData('text/plain', self.generateContent()); // REMOVE FIRST CONDITIONAL ONCE DIALOG MIGRATION IS COMEPLETE
+          e.preventDefault();
 
+          e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
+
+          self.blocked = true;
+        }
       });
     };
 
     Clipboard.prototype.copy = function (mode, showHeaders) {
 
       var range, sel;
+
+      this.blocked = false;
 
       this.mode = mode || "table";
 
@@ -13784,7 +13793,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       undo: "ctrl + 90",
 
-      redo: "ctrl + 89"
+      redo: "ctrl + 89",
+
+      copyToClipboard: "ctrl + 67"
 
     };
 
@@ -14004,6 +14015,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             e.preventDefault();
 
             this.table.extensions.history.redo();
+          }
+        }
+      },
+
+      copyToClipboard: function copyToClipboard(e) {
+
+        if (!this.table.extensions.edit.currentCell) {
+
+          if (this.table.extExists("clipboard", true)) {
+
+            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true);
           }
         }
       }

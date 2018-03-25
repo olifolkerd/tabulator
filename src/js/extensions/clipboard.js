@@ -2,21 +2,26 @@ var Clipboard = function(table){
 	this.table = table;
 	this.mode = "table";
 	this.showHeaders = true;
+	this.blocked = true; //block copy actions not originating from this command
 };
 
 Clipboard.prototype.initialize = function(){
 	var self = this;
 
 	this.table.element.on("copy", function(e){
-		e.preventDefault();
-	 	e.originalEvent.clipboardData.setData('text/plain', self.generateContent()); // REMOVE FIRST CONDITIONAL ONCE DIALOG MIGRATION IS COMEPLETE
-	 });
+		if(!self.blocked){
+			e.preventDefault();
+			e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
+
+			self.blocked = true;
+		}
+	});
 }
 
 
 Clipboard.prototype.copy = function(mode, showHeaders){
 	var range, sel;
-
+	this.blocked = false;
 	this.mode = mode || "table";
 	this.showHeaders = showHeaders === false ? false : true;
 
