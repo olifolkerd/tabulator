@@ -11419,6 +11419,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             element = cell.getElement(),
             max = formatterParams && formatterParams.max ? formatterParams.max : 100,
             min = formatterParams && formatterParams.min ? formatterParams.min : 0,
+            legendAlign = formatterParams && formatterParams.legendAlign ? formatterParams.legendAlign : "center",
             percent,
             percentValue,
             color,
@@ -11562,7 +11563,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         element.attr("aria-label", percentValue);
 
-        return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:4px;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:center; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
+        return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:4px;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
       },
 
       //background color
