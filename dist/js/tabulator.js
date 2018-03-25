@@ -565,6 +565,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
+      if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+        this.table.extensions.responsiveLayout.initialize();
+      }
+
       if (this.table.options.columnMoved) {
 
         this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
@@ -1381,6 +1386,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         table.extensions.accessor.initializeColumn(self);
       }
 
+      //set respoviveLayout
+
+      if (_typeof(table.options.responsiveLayout) && table.extExists("responsiveLayout")) {
+
+        table.extensions.responsiveLayout.initializeColumn(self);
+      }
+
       //set column visibility
 
       if (typeof def.visible != "undefined") {
@@ -1802,7 +1814,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //show column
 
-    Column.prototype.show = function (silent) {
+    Column.prototype.show = function (silent, responsiveToggle) {
 
       if (!this.visible) {
 
@@ -1826,9 +1838,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           cell.show();
         });
 
-        if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
+        if (this.table.options.persistentLayout && this.table.extExists("responsiveLayout", true)) {
 
           this.table.extensions.persistence.save("columns");
+        }
+
+        if (!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+          this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
         }
 
         if (!silent) {
@@ -1840,7 +1857,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //hide column
 
-    Column.prototype.hide = function (silent) {
+    Column.prototype.hide = function (silent, responsiveToggle) {
 
       if (this.visible) {
 
@@ -1867,6 +1884,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
 
           this.table.extensions.persistence.save("columns");
+        }
+
+        if (!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+
+          this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
         }
 
         if (!silent) {
@@ -6423,6 +6445,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (column) {
 
           column.show();
+
+          if (this.options.responsiveLayout && this.extExists("responsiveLayout", true)) {
+
+            this.extensions.responsiveLayout.update();
+          }
         } else {
 
           console.warn("Column Show Error - No matching column found:", field);
@@ -6438,6 +6465,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (column) {
 
           column.hide();
+
+          if (this.options.responsiveLayout && this.extExists("responsiveLayout", true)) {
+
+            this.extensions.responsiveLayout.update();
+          }
         } else {
 
           console.warn("Column Hide Error - No matching column found:", field);
@@ -15593,7 +15625,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.index = 0;
     };
 
-    //generate resposivle columns list
+    //generate resposive columns list
 
 
     ResponsiveLayout.prototype.initialize = function () {
@@ -15603,15 +15635,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //detemine level of responsivity for each column
 
 
-      this.table.columnManager.columnsByIndex.forEach(function (column) {
+      this.table.columnManager.columnsByIndex.forEach(function (column, i) {
 
-        var def = column.getDefinition();
+        if (column.extensions.responsive) {
 
-        column.extensions.responsive = { order: typeof def.responsive === "undefined" ? 1 : def.responsive };
+          if (column.extensions.responsive.order && column.extensions.responsive.visible) {
 
-        if (column.extensions.responsive.order) {
+            column.extensions.responsive.index = i;
 
-          columns.push(column);
+            columns.push(column);
+          }
         }
       });
 
@@ -15622,11 +15655,41 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       columns = columns.sort(function (a, b) {
 
-        return b.extensions.responsive.order - a.extensions.responsive.order;
+        var diff = b.extensions.responsive.order - a.extensions.responsive.order;
+
+        return diff || b.extensions.responsive.index - a.extensions.responsive.index;
       });
 
       this.columns = columns;
     };
+
+    //define layout information
+
+
+    ResponsiveLayout.prototype.initializeColumn = function (column) {
+
+      var def = column.getDefinition();
+
+      column.extensions.responsive = { order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible: def.visible === false ? false : true };
+    };
+
+    //update column visibility
+
+
+    ResponsiveLayout.prototype.updateColumnVisibility = function (column, visible) {
+
+      var index;
+
+      if (column.extensions.responsive) {
+
+        column.extensions.responsive.visible = visible;
+
+        this.initialize();
+      }
+    };
+
+    //redraw columns to fit space
+
 
     ResponsiveLayout.prototype.update = function () {
 
@@ -15648,7 +15711,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (column) {
 
-            column.hide();
+            column.hide(false, true);
 
             self.index++;
           } else {
@@ -15668,7 +15731,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               if (diff >= _column.getWidth()) {
 
-                _column.show();
+                _column.show(false, true);
 
                 //set column width to prevent calculation loops on uninitialized columns
 

@@ -406,6 +406,11 @@ Column.prototype._buildColumnHeader = function(){
 		table.extensions.accessor.initializeColumn(self);
 	}
 
+	//set respoviveLayout
+	if(typeof table.options.responsiveLayout && table.extExists("responsiveLayout")){
+		table.extensions.responsiveLayout.initializeColumn(self);
+	}
+
 	//set column visibility
 	if(typeof def.visible != "undefined"){
 		if(def.visible){
@@ -729,7 +734,7 @@ Column.prototype.checkColumnVisibility = function(){
 };
 
 //show column
-Column.prototype.show = function(silent){
+Column.prototype.show = function(silent, responsiveToggle){
 	if(!this.visible){
 		this.visible = true;
 
@@ -746,8 +751,12 @@ Column.prototype.show = function(silent){
 			cell.show();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
+		if(this.table.options.persistentLayout && this.table.extExists("responsiveLayout", true)){
 			this.table.extensions.persistence.save("columns");
+		}
+
+		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if(!silent){
@@ -757,7 +766,7 @@ Column.prototype.show = function(silent){
 };
 
 //hide column
-Column.prototype.hide = function(silent){
+Column.prototype.hide = function(silent, responsiveToggle){
 	if(this.visible){
 		this.visible = false;
 
@@ -776,6 +785,10 @@ Column.prototype.hide = function(silent){
 
 		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
 			this.table.extensions.persistence.save("columns");
+		}
+
+		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if(!silent){
