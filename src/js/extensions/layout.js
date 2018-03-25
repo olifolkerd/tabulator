@@ -92,28 +92,28 @@ Layout.prototype.modes = {
 			changeUnits = 0,
 			undersizeCols = [];
 
-			function calcGrow(column){
-				return (colWidth * (column.definition.widthGrow || 1));
+			function calcGrow(col){
+				return (colWidth * (col.column.definition.widthGrow || 1));
 			}
 
-			function calcShrink(column){
-				return  (calcWidth(column.width) - (colWidth * (column.definition.widthShrink || 0)))
+			function calcShrink(col){
+				return  (calcWidth(col.width) - (colWidth * (col.column.definition.widthShrink || 0)))
 			}
 
-			columns.forEach(function(column, i){
-				var width = shrinkCols ? calcShrink(column) : calcGrow(column);
-				if(column.minWidth >= width){
-					oversizeCols.push(column);
+			columns.forEach(function(col, i){
+				var width = shrinkCols ? calcShrink(col) : calcGrow(col);
+				if(col.column.minWidth >= width){
+					oversizeCols.push(col);
 				}else{
-					undersizeCols.push(column);
-					changeUnits += shrinkCols ? (column.definition.widthShrink || 1) : (column.definition.widthGrow || 1);
+					undersizeCols.push(col);
+					changeUnits += shrinkCols ? (col.column.definition.widthShrink || 1) : (col.column.definition.widthGrow || 1);
 				}
 			});
 
 			if(oversizeCols.length){
-				oversizeCols.forEach(function(column){
-					oversizeSpace += shrinkCols ?  column.width - column.minWidth : column.minWidth;
-					column.setWidth(column.minWidth);
+				oversizeCols.forEach(function(col){
+					oversizeSpace += shrinkCols ?  col.width - col.column.minWidth : col.column.minWidth;
+					col.width = col.column.minWidth;
 				});
 
 				remainingSpace = freeSpace - oversizeSpace;
@@ -127,7 +127,7 @@ Layout.prototype.modes = {
 				gap = changeUnits ? freeSpace - (Math.floor(freeSpace/changeUnits) * changeUnits) : freeSpace;
 
 				undersizeCols.forEach(function(column){
-					column.setWidth(shrinkCols ? calcShrink(column) : calcGrow(column));
+					column.width = shrinkCols ? calcShrink(column) : calcGrow(column);
 				});
 			}
 
@@ -158,15 +158,19 @@ Layout.prototype.modes = {
 
 					fixedWidth += colWidth > minWidth ? colWidth : minWidth;
 
-					column.setWidth(colWidth > minWidth ? colWidth : minWidth);
-
 					if(column.definition.widthShrink){
-						fixedShrinkColumns.push(column);
+						fixedShrinkColumns.push({
+							column:column,
+							width:colWidth > minWidth ? colWidth : minWidth
+						});
 						flexShrinkUnits += column.definition.widthShrink;
 					}
 
 				}else{
-					flexColumns.push(column);
+					flexColumns.push({
+						column:column,
+						width:0,
+					});
 					flexGrowUnits += column.definition.widthGrow || 1;
 				}
 			}
@@ -183,23 +187,36 @@ Layout.prototype.modes = {
 		var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
 
 		//increase width of last column to account for rounding errors
-		if(flexColumns.length){
-			flexColumns[flexColumns.length-1].setWidth(flexColumns[flexColumns.length-1].getWidth() + gapFill);
+		if(flexColumns.length && gapFill > 0){
+			flexColumns[flexColumns.length-1].width += + gapFill;
 		}
 
+		//caculate space for columns to be shrunk into
+		flexColumns.forEach(function(col){
+			flexWidth -= col.width;
+		})
+
+		overflowWidth = Math.abs(gapFill) + flexWidth;
+
+
 		//shrink oversize columns if there is no available space
-		overflowWidth = this.table.rowManager.element[0].scrollWidth - this.table.rowManager.element[0].clientWidth;
 		if(overflowWidth > 0 && flexShrinkUnits){
-			gapFill = scaleColumns(fixedShrinkColumns, Math.abs(overflowWidth), Math.floor(Math.abs(overflowWidth) / flexShrinkUnits), true);
+			gapFill = scaleColumns(fixedShrinkColumns, overflowWidth, Math.floor(overflowWidth / flexShrinkUnits), true);
 		}
 
 		//decrease width of last column to account for rounding errors
 		if(fixedShrinkColumns.length){
-			fixedShrinkColumns[fixedShrinkColumns.length-1].setWidth(fixedShrinkColumns[fixedShrinkColumns.length-1].getWidth() - gapFill);
+			fixedShrinkColumns[fixedShrinkColumns.length-1].width -= gapFill;
 		}
 
 
+		flexColumns.forEach(function(col){
+			col.column.setWidth(col.width);
+		});
 
+		fixedShrinkColumns.forEach(function(col){
+			col.column.setWidth(col.width);
+		});
 
 	},
 };

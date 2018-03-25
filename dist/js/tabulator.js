@@ -7339,38 +7339,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               changeUnits = 0,
               undersizeCols = [];
 
-          function calcGrow(column) {
+          function calcGrow(col) {
 
-            return colWidth * (column.definition.widthGrow || 1);
+            return colWidth * (col.column.definition.widthGrow || 1);
           }
 
-          function calcShrink(column) {
+          function calcShrink(col) {
 
-            return calcWidth(column.width) - colWidth * (column.definition.widthShrink || 0);
+            return calcWidth(col.width) - colWidth * (col.column.definition.widthShrink || 0);
           }
 
-          columns.forEach(function (column, i) {
+          columns.forEach(function (col, i) {
 
-            var width = shrinkCols ? calcShrink(column) : calcGrow(column);
+            var width = shrinkCols ? calcShrink(col) : calcGrow(col);
 
-            if (column.minWidth >= width) {
+            if (col.column.minWidth >= width) {
 
-              oversizeCols.push(column);
+              oversizeCols.push(col);
             } else {
 
-              undersizeCols.push(column);
+              undersizeCols.push(col);
 
-              changeUnits += shrinkCols ? column.definition.widthShrink || 1 : column.definition.widthGrow || 1;
+              changeUnits += shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
             }
           });
 
           if (oversizeCols.length) {
 
-            oversizeCols.forEach(function (column) {
+            oversizeCols.forEach(function (col) {
 
-              oversizeSpace += shrinkCols ? column.width - column.minWidth : column.minWidth;
+              oversizeSpace += shrinkCols ? col.width - col.column.minWidth : col.column.minWidth;
 
-              column.setWidth(column.minWidth);
+              col.width = col.column.minWidth;
             });
 
             remainingSpace = freeSpace - oversizeSpace;
@@ -7386,7 +7386,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             undersizeCols.forEach(function (column) {
 
-              column.setWidth(shrinkCols ? calcShrink(column) : calcGrow(column));
+              column.width = shrinkCols ? calcShrink(column) : calcGrow(column);
             });
           }
 
@@ -7422,17 +7422,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               fixedWidth += colWidth > minWidth ? colWidth : minWidth;
 
-              column.setWidth(colWidth > minWidth ? colWidth : minWidth);
-
               if (column.definition.widthShrink) {
 
-                fixedShrinkColumns.push(column);
+                fixedShrinkColumns.push({
+
+                  column: column,
+
+                  width: colWidth > minWidth ? colWidth : minWidth
+
+                });
 
                 flexShrinkUnits += column.definition.widthShrink;
               }
             } else {
 
-              flexColumns.push(column);
+              flexColumns.push({
+
+                column: column,
+
+                width: 0
+
+              });
 
               flexGrowUnits += column.definition.widthGrow || 1;
             }
@@ -7457,19 +7467,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         //increase width of last column to account for rounding errors
 
 
-        if (flexColumns.length) {
+        if (flexColumns.length && gapFill > 0) {
 
-          flexColumns[flexColumns.length - 1].setWidth(flexColumns[flexColumns.length - 1].getWidth() + gapFill);
+          flexColumns[flexColumns.length - 1].width += +gapFill;
         }
+
+        //caculate space for columns to be shrunk into
+
+
+        flexColumns.forEach(function (col) {
+
+          flexWidth -= col.width;
+        });
+
+        overflowWidth = Math.abs(gapFill) + flexWidth;
 
         //shrink oversize columns if there is no available space
 
 
-        overflowWidth = this.table.rowManager.element[0].scrollWidth - this.table.rowManager.element[0].clientWidth;
-
         if (overflowWidth > 0 && flexShrinkUnits) {
 
-          gapFill = scaleColumns(fixedShrinkColumns, Math.abs(overflowWidth), Math.floor(Math.abs(overflowWidth) / flexShrinkUnits), true);
+          gapFill = scaleColumns(fixedShrinkColumns, overflowWidth, Math.floor(overflowWidth / flexShrinkUnits), true);
         }
 
         //decrease width of last column to account for rounding errors
@@ -7477,8 +7495,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (fixedShrinkColumns.length) {
 
-          fixedShrinkColumns[fixedShrinkColumns.length - 1].setWidth(fixedShrinkColumns[fixedShrinkColumns.length - 1].getWidth() - gapFill);
+          fixedShrinkColumns[fixedShrinkColumns.length - 1].width -= gapFill;
         }
+
+        flexColumns.forEach(function (col) {
+
+          col.column.setWidth(col.width);
+        });
+
+        fixedShrinkColumns.forEach(function (col) {
+
+          col.column.setWidth(col.width);
+        });
       }
 
     };
