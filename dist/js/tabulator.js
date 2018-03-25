@@ -5901,9 +5901,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.extensions.page.reset(true);
 
-          // self.extensions.page.setPage(1);
-
-
           if (self.options.pagination == "local") {
 
             if (self.options.data.length) {
@@ -5922,6 +5919,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 self.rowManager.setData(self.options.data);
               }
             }
+          } else {
+
+            self.extensions.page.setPage(1);
           }
         } else {
 
@@ -12326,7 +12326,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.visible = false;
 
-      if (this.groupManager.table.rowManager.getRenderMode() == "classic") {
+      if (this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination) {
 
         this.element.removeClass("tabulator-group-visible");
 
@@ -12348,7 +12348,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.visible = true;
 
-      if (this.groupManager.table.rowManager.getRenderMode() == "classic") {
+      if (this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination) {
 
         this.element.addClass("tabulator-group-visible");
 

@@ -382,7 +382,6 @@
 
 	 			if(self.options.pagination && self.extExists("page")){
 	 				self.extensions.page.reset(true);
-	 				// self.extensions.page.setPage(1);
 
 	 				if(self.options.pagination == "local"){
 	 					if(self.options.data.length){
@@ -396,6 +395,8 @@
 	 							self.rowManager.setData(self.options.data);
 	 						}
 	 					}
+	 				}else{
+	 					self.extensions.page.setPage(1);
 	 				}
 	 			}else{
 	 				if(self.options.data.length){
