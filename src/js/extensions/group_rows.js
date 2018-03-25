@@ -386,7 +386,7 @@ Group.prototype.toggleVisibility = function(){
 Group.prototype.hide = function(){
 	this.visible = false;
 
-	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
+	if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
 
 		this.element.removeClass("tabulator-group-visible");
 
@@ -405,7 +405,7 @@ Group.prototype.show = function(){
 
 	self.visible = true;
 
-	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
+	if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
 
 		this.element.addClass("tabulator-group-visible");
 
