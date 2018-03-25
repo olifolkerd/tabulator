@@ -763,6 +763,10 @@
 
 	 			if(column){
 	 				column.show();
+
+	 				if(this.options.responsiveLayout && this.extExists("responsiveLayout", true)){
+	 					this.extensions.responsiveLayout.update();
+	 				}
 	 			}else{
 	 				console.warn("Column Show Error - No matching column found:", field);
 	 				return false;
@@ -774,6 +778,10 @@
 
 	 			if(column){
 	 				column.hide();
+
+	 				if(this.options.responsiveLayout && this.extExists("responsiveLayout", true)){
+	 					this.extensions.responsiveLayout.update();
+	 				}
 	 			}else{
 	 				console.warn("Column Hide Error - No matching column found:", field);
 	 				return false;
