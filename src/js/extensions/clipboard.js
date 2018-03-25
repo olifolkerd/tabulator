@@ -3,6 +3,7 @@ var Clipboard = function(table){
 	this.mode = "table";
 	this.showHeaders = true;
 	this.blocked = true; //block copy actions not originating from this command
+	this.originalSelectionText = ""; //hold text from original selection if text is selected
 };
 
 Clipboard.prototype.initialize = function(){
@@ -13,13 +14,17 @@ Clipboard.prototype.initialize = function(){
 			e.preventDefault();
 			e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
 
-			self.blocked = true;
+			self.reset();
 		}
 	});
 }
 
+Clipboard.prototype.reset = function(){
+	this.blocked = false;
+	this.originalSelectionText = "";
+}
 
-Clipboard.prototype.copy = function(mode, showHeaders){
+Clipboard.prototype.copy = function(mode, showHeaders, internal){
 	var range, sel;
 	this.blocked = false;
 	this.mode = mode || "table";
@@ -29,6 +34,12 @@ Clipboard.prototype.copy = function(mode, showHeaders){
 		range = document.createRange();
 		range.selectNodeContents(this.table.element[0]);
 		sel = window.getSelection();
+
+		if(sel.anchorNode && internal){
+			this.mode = "userSelection";
+			this.originalSelectionText = sel.toString();
+		}
+
 		sel.removeAllRanges();
 		sel.addRange(range);
 	} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
@@ -49,6 +60,10 @@ Clipboard.prototype.generateContent = function(){
 	headers = [],
 	columns = this.table.columnManager.columnsByIndex,
 	rows;
+
+	if(this.mode == "userSelection"){
+		return this.originalSelectionText;
+	}
 
 	if(this.showHeaders){
 		columns.forEach(function(column){

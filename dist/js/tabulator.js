@@ -8752,6 +8752,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.blocked = true; //block copy actions not originating from this command
 
+
+      this.originalSelectionText = ""; //hold text from original selection if text is selected
+
     };
 
     Clipboard.prototype.initialize = function () {
@@ -8766,12 +8769,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
 
-          self.blocked = true;
+          self.reset();
         }
       });
     };
 
-    Clipboard.prototype.copy = function (mode, showHeaders) {
+    Clipboard.prototype.reset = function () {
+
+      this.blocked = false;
+
+      this.originalSelectionText = "";
+    };
+
+    Clipboard.prototype.copy = function (mode, showHeaders, internal) {
 
       var range, sel;
 
@@ -8788,6 +8798,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         range.selectNodeContents(this.table.element[0]);
 
         sel = window.getSelection();
+
+        if (sel.anchorNode && internal) {
+
+          this.mode = "userSelection";
+
+          this.originalSelectionText = sel.toString();
+        }
 
         sel.removeAllRanges();
 
@@ -8815,6 +8832,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           headers = [],
           columns = this.table.columnManager.columnsByIndex,
           rows;
+
+      if (this.mode == "userSelection") {
+
+        return this.originalSelectionText;
+      }
 
       if (this.showHeaders) {
 
@@ -14025,7 +14047,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.table.extExists("clipboard", true)) {
 
-            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true);
+            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true, true);
           }
         }
       }
