@@ -264,6 +264,10 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	this._moveColumnInArray(this.columns, from, to, after);
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
+	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+		this.table.extensions.responsiveLayout.initialize();
+	}
+
 	if(this.table.options.columnMoved){
 		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
 	}
