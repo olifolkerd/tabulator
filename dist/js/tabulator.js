@@ -8757,8 +8757,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table.element.on("copy", function (e) {
 
-        console.log("copy");
-
         e.preventDefault();
 
         e.originalEvent.clipboardData.setData('text/plain', self.generateContent()); // REMOVE FIRST CONDITIONAL ONCE DIALOG MIGRATION IS COMEPLETE
@@ -8821,42 +8819,57 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       switch (this.mode) {
 
+        case "selected":
+
+          if (this.table.extExists("selectRow", true)) {
+
+            rows = this.table.extensions.selectRow.getSelectedRows();
+          }
+
+          break;
+
+        case "active":
+
+          rows = this.table.rowManager.getComponents(true);
+
+          break;
+
         case "table":
 
         default:
 
-          rows = this.table.rowManager.getRows();
-
-          rows.forEach(function (row) {
-
-            var rowArray = [],
-                rowData = row.getData();
-
-            columns.forEach(function (column) {
-
-              var value = column.getFieldValue(rowData);
-
-              if (typeof value == "undefined") {
-
-                value = "";
-              }
-
-              value = typeof value == "undefined" ? "" : value.toString();
-
-              if (value.match(/\r|\n/)) {
-
-                value = value.split('"').join('""');
-
-                value = '"' + value + '"';
-              }
-
-              rowArray.push(value);
-            });
-
-            data.push(rowArray);
-          });
+          rows = this.table.rowManager.getComponents();
 
       }
+
+      rows.forEach(function (row) {
+
+        var rowArray = [],
+            rowData = row.getData();
+
+        columns.forEach(function (column) {
+
+          var value = column.getFieldValue(rowData);
+
+          if (typeof value == "undefined") {
+
+            value = "";
+          }
+
+          value = typeof value == "undefined" ? "" : value.toString();
+
+          if (value.match(/\r|\n/)) {
+
+            value = value.split('"').join('""');
+
+            value = '"' + value + '"';
+          }
+
+          rowArray.push(value);
+        });
+
+        data.push(rowArray);
+      });
 
       return this.arrayToString(data);
     };
