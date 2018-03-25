@@ -374,6 +374,10 @@
 	 				ext.resizeTable.initialize();
 	 			}
 
+	 			if(this.extExists("clipboard")){
+	 				ext.clipboard.initialize();
+	 			}
+
 	 			options.tableBuilt();
 	 		},
 
@@ -727,6 +731,13 @@
 	 			}else{
 	 				console.warn("Position Error - No matching row found:", index);
 	 				return false;
+	 			}
+	 		},
+
+	 		//copy table data to clipboard
+	 		copyToClipboard:function(mode, showHeaders){
+	 			if(this.extExists("clipboard", true)){
+	 				this.extensions.clipboard.copy(mode, showHeaders);
 	 			}
 	 		},
 
