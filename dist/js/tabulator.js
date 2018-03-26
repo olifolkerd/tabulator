@@ -8859,17 +8859,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           break;
 
-        case "active":
+        case "table":
 
-          rows = this.table.rowManager.getComponents(true);
+          rows = this.table.rowManager.getComponents();
 
           break;
 
-        case "table":
+        case "active":
 
         default:
 
-          rows = this.table.rowManager.getComponents();
+          rows = this.table.rowManager.getComponents(true);
 
       }
 

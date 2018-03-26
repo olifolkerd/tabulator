@@ -81,13 +81,13 @@ Clipboard.prototype.generateContent = function(){
 		}
 		break;
 
-		case "active":
-		rows = this.table.rowManager.getComponents(true);
+		case "table":
+		rows = this.table.rowManager.getComponents();
 		break;
 
-		case "table":
+		case "active":
 		default:
-		rows = this.table.rowManager.getComponents();
+		rows = this.table.rowManager.getComponents(true);
 	}
 
 	rows.forEach(function(row){
