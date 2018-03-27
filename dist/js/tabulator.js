@@ -5463,6 +5463,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         paginationSize: false, //set number of rows to a page
 
+        paginationButtonCount: 5, // set count of page button 
+
         paginationElement: false, //element to hold pagination numbers
 
         paginationDataSent: {}, //pagination data sent to the server
@@ -14231,6 +14233,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.page = 1;
 
+      this.count = 5;
+
       this.max = 1;
 
       this.paginator = false;
@@ -14359,6 +14363,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.mode = self.table.options.pagination;
 
       self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 26);
+
+      self.count = self.table.options.paginationButtonCount;
     };
 
     //calculate maximum page from number of rows
@@ -14443,9 +14449,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      var min = this.page < this.max - 2 ? this.page - 2 : this.page - (4 - (this.max - this.page));
+      var leftSize = Math.floor((this.count - 1) / 2);
 
-      var max = this.page > 3 ? this.page + 2 : this.page + (5 - this.page);
+      var rightSize = Math.ceil((this.count - 1) / 2);
+
+      var min = this.max - this.page + leftSize + 1 < this.count ? this.max - this.count + 1 : Math.max(this.page - leftSize, 1);
+
+      var max = this.page <= rightSize ? Math.min(this.count, this.max) : Math.min(this.page + rightSize, this.max);
 
       self.pagesElement.empty();
 

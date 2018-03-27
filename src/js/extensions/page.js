@@ -12,6 +12,7 @@ var Page = function(table){
 	this.mode = "local";
 	this.size = 0;
 	this.page = 1;
+	this.count = 5;
 	this.max = 1;
 	this.paginator = false;
 };
@@ -109,6 +110,7 @@ Page.prototype.initialize = function(){
 	//set default values
 	self.mode = self.table.options.pagination;
 	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 26);
+	self.count = self.table.options.paginationButtonCount;
 };
 
 //calculate maximum page from number of rows
@@ -166,8 +168,10 @@ Page.prototype.setPageSize = function(size){
 Page.prototype._setPageButtons = function(){
 	var self = this;
 
-	var min = this.page < this.max-2 ? (this.page - 2) : (this.page - (4 - (this.max - this.page)));
-	var max = this.page > 3 ? (this.page + 2) : (this.page + (5 - this.page));
+	let leftSize = Math.floor((this.count-1) / 2);
+	let rightSize = Math.ceil((this.count-1) / 2);
+	let min = this.max - this.page + leftSize + 1 < this.count ? this.max-this.count+1: Math.max(this.page-leftSize,1);
+	let max = this.page <= rightSize? Math.min(this.count, this.max) :Math.min(this.page+rightSize, this.max);
 
 	self.pagesElement.empty();
 
