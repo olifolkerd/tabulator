@@ -7879,7 +7879,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (typeof data[field] != "undefined") {
 
-            column.setFieldValue(data, column.extensions.accessor.accessor(column.getFieldValue(data), data, column.extensions.accessor.params));
+            column.setFieldValue(data, column.extensions.accessor.accessor(column.getFieldValue(data), data, column.extensions.accessor.params, column.getComponent()));
           }
         }
       });

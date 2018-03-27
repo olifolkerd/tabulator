@@ -42,7 +42,7 @@ Accessor.prototype.transformRow = function(dataIn){
 			field = column.getField();
 
 			if(typeof data[field] != "undefined"){
-				column.setFieldValue(data, column.extensions.accessor.accessor(column.getFieldValue(data), data, column.extensions.accessor.params));
+				column.setFieldValue(data, column.extensions.accessor.accessor(column.getFieldValue(data), data, column.extensions.accessor.params, column.getComponent()));
 			}
 		}
 	});
