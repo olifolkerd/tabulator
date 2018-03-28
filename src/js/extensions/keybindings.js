@@ -246,8 +246,6 @@ Keybindings.prototype.actions = {
 	navPrev:function(e){
 		var cell = false;
 
-		console.log("np")
-
 		if(this.table.extExists("edit")){
 			cell = this.table.extensions.edit.currentCell;
 
@@ -263,8 +261,6 @@ Keybindings.prototype.actions = {
 
 		if(this.table.extExists("edit")){
 			cell = this.table.extensions.edit.currentCell;
-
-			console.log("nn", cell)
 
 			if(cell){
 				e.preventDefault();

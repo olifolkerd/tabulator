@@ -5192,8 +5192,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           nextCell = false,
           index = this.row.getCellIndex(this);
 
-      console.log("nav");
-
       return {
 
         next: function next() {
@@ -5204,8 +5202,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (!nextCell) {
 
             nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
-
-            console.log("NR", nextRow);
 
             if (nextRow) {
 
@@ -5219,8 +5215,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               }
             }
           } else {
-
-            console.log("nc");
 
             return true;
           }
@@ -5299,8 +5293,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         down: function down() {
 
           var nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
-
-          console.log("down", nextRow);
 
           if (nextRow) {
 
@@ -13929,8 +13921,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        console.log("np");
-
         if (this.table.extExists("edit")) {
 
           cell = this.table.extensions.edit.currentCell;
@@ -13951,8 +13941,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (this.table.extExists("edit")) {
 
           cell = this.table.extensions.edit.currentCell;
-
-          console.log("nn", cell);
 
           if (cell) {
 

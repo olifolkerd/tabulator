@@ -422,20 +422,13 @@ Cell.prototype.nav = function(){
 	nextCell = false,
 	index = this.row.getCellIndex(this);
 
-	console.log("nav")
-
 	return {
 		next:function(){
-
-
-
 			var nextCell = this.right(),
 			nextRow;
 
 			if(!nextCell){
 				nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
-				console.log("NR", nextRow)
-
 
 				if(nextRow){
 					nextCell = nextRow.findNextEditableCell(-1);
@@ -446,12 +439,10 @@ Cell.prototype.nav = function(){
 					}
 				}
 			}else{
-				console.log("nc")
 				return true;
 			}
 
 			return false;
-
 		},
 		prev:function(){
 			var nextCell = this.left(),
@@ -474,7 +465,6 @@ Cell.prototype.nav = function(){
 			}
 
 			return false;
-
 		},
 		left:function(){
 
@@ -486,7 +476,6 @@ Cell.prototype.nav = function(){
 			}else{
 				return false;
 			}
-
 		},
 		right:function(){
 			nextCell = self.row.findNextEditableCell(index);
@@ -507,7 +496,6 @@ Cell.prototype.nav = function(){
 		},
 		down:function(){
 			var nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
-			console.log("down", nextRow)
 
 			if(nextRow){
 				nextRow.cells[index].edit();
