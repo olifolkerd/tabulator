@@ -41,6 +41,7 @@
 
 	 			tooltips: false, //Tool tip value
 	 			tooltipsHeader: false, //Tool tip for headers
+	 			tooltipGenerationMode:"load", //when to generate tooltips
 
 	 			initialSort:false, //initial sorting criteria
 
@@ -51,6 +52,8 @@
 	 			keybindings:[], //array for keybindings
 
 	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
+	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data
+	 			downloadComplete:false, //function to manipulate download data
 
 	 			addRowPos:"bottom", //position to insert blank rows, top|bottom
 
@@ -241,13 +244,8 @@
 
 	 				self._buildElement();
 
-	 				//give the browser a chance to fully render the table then load first data set if present
-	 				// setTimeout(function(){
-
-	 					//load initial data set
-	 					this._loadInitialData();
-
-	 				// },20)
+	 				//load initial data set
+	 				this._loadInitialData();
 	 			}
 	 		},
 
@@ -377,6 +375,10 @@
 	 				ext.resizeTable.initialize();
 	 			}
 
+	 			if(this.extExists("clipboard")){
+	 				ext.clipboard.initialize();
+	 			}
+
 	 			options.tableBuilt();
 	 		},
 
@@ -385,7 +387,6 @@
 
 	 			if(self.options.pagination && self.extExists("page")){
 	 				self.extensions.page.reset(true);
-	 				self.extensions.page.setPage(1);
 
 	 				if(self.options.pagination == "local"){
 	 					if(self.options.data.length){
@@ -399,6 +400,8 @@
 	 							self.rowManager.setData(self.options.data);
 	 						}
 	 					}
+	 				}else{
+	 					self.extensions.page.setPage(1);
 	 				}
 	 			}else{
 	 				if(self.options.data.length){
@@ -424,8 +427,26 @@
 	 		_destroy: function(){
 	 			var element = this.element;
 
-	 			element.empty();
+	 			//clear row data
+	 			this.rowManager.rows.forEach(function(row){
+	 				row.wipe();
+	 			});
 
+	 			this.rowManager.rows = [];
+	 			this.rowManager.activeRows = [];
+	 			this.rowManager.displayRows = [];
+
+	 			//clear event bindings
+	 			if(this.options.autoResize && this.extExists("resizeTable")){
+	 				this.extensions.resizeTable.clearBindings();
+	 			}
+
+	 			if(this.extExists("keybindings")){
+	 				this.extensions.keybindings.clearBindings();
+	 			}
+
+	 			//clear DOM
+	 			element.empty();
 	 			element.removeClass("tabulator");
 	 		},
 
@@ -642,7 +663,7 @@
 
 	 			//recalc column calculations if present
 	 			if(this.extExists("columnCalcs")){
-	 				this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 				this.extensions.columnCalcs.recalc(this.rowManager.activeRows);
 	 			}
 
 	 			return row.getComponent();
@@ -663,7 +684,7 @@
 
 	 				//recalc column calculations if present
 	 				if(this.extExists("columnCalcs")){
-	 					this.extensions.columnCalcs.recalc(this.rowManager.displayRows);
+	 					this.extensions.columnCalcs.recalc(this.rowManager.activeRows);
 	 				}
 	 			}
 	 			return row.getComponent();
@@ -714,6 +735,13 @@
 	 			}
 	 		},
 
+	 		//copy table data to clipboard
+	 		copyToClipboard:function(mode, showHeaders){
+	 			if(this.extExists("clipboard", true)){
+	 				this.extensions.clipboard.copy(mode, showHeaders);
+	 			}
+	 		},
+
 	 		/////////////// Column Functions  ///////////////
 
 	 		setColumns:function(definition){
@@ -747,6 +775,10 @@
 
 	 			if(column){
 	 				column.show();
+
+	 				if(this.options.responsiveLayout && this.extExists("responsiveLayout", true)){
+	 					this.extensions.responsiveLayout.update();
+	 				}
 	 			}else{
 	 				console.warn("Column Show Error - No matching column found:", field);
 	 				return false;
@@ -758,6 +790,10 @@
 
 	 			if(column){
 	 				column.hide();
+
+	 				if(this.options.responsiveLayout && this.extExists("responsiveLayout", true)){
+	 					this.extensions.responsiveLayout.update();
+	 				}
 	 			}else{
 	 				console.warn("Column Hide Error - No matching column found:", field);
 	 				return false;
@@ -1059,7 +1095,7 @@
 	 			if(this.extExists("groupRows", true)){
 	 				this.options.groupBy = groups;
 	 				this.extensions.groupRows.initialize();
-	 				this.rowManager.refreshActiveData();
+	 				this.rowManager.refreshActiveData("display");
 	 			}else{
 	 				return false;
 	 			}
@@ -1070,8 +1106,7 @@
 	 				this.options.groupStartOpen = values;
 	 				this.extensions.groupRows.initialize();
 	 				if(this.options.groupBy){
-
-	 					this.rowManager.refreshActiveData();
+	 					this.rowManager.refreshActiveData("group");
 	 				}else{
 	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
 	 				}
@@ -1085,7 +1120,7 @@
 	 				this.options.groupHeader = values;
 	 				this.extensions.groupRows.initialize();
 	 				if(this.options.groupBy){
-	 					this.rowManager.refreshActiveData();
+	 					this.rowManager.refreshActiveData("group");
 	 				}else{
 	 					console.warn("Grouping Update - cant refresh view, no groups have been set");
 	 				}

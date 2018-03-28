@@ -142,6 +142,13 @@ Cell.prototype._configureCell = function(){
 		});
 	}
 
+	if (this.table.options.tooltipGenerationMode === "hover"){
+		//update tooltip on mouse enter
+		self.element.on("mouseenter", function(e){
+			self._generateTooltip();
+		});
+	}
+
 	if (cellEvents.cellTap){
 		tap = false;
 
@@ -236,6 +243,10 @@ Cell.prototype._generateTooltip = function(){
 			tooltip = self.value;
 		}else if(typeof(tooltip) == "function"){
 			tooltip = tooltip(self.getComponent());
+
+			if(tooltip === false){
+				tooltip = "";
+			}
 		}
 
 		self.element[0].setAttribute("title", tooltip);
@@ -286,7 +297,7 @@ Cell.prototype.setValue = function(value, mutate){
 			if(this.table.options.groupBy && this.table.extExists("groupRows")){
 				this.table.extensions.columnCalcs.recalcRowGroup(this.row);
 			}else{
-				this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+				this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 			}
 		}
 	}

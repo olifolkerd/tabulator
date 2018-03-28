@@ -2,6 +2,8 @@ var Keybindings = function(table){
 	this.table = table; //hold Tabulator object
 	this.watchKeys = null;
 	this.pressedKeys = null;
+	this.keyupBinding = false;
+	this.keydownBinding = false;
 };
 
 
@@ -92,7 +94,8 @@ Keybindings.prototype.mapBinding = function(action, symbolsList){
 Keybindings.prototype.bindEvents = function(){
 	var self = this;
 
-	this.table.element.on("keydown", function(e){
+
+	this.keyupBinding = function(e){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
 
@@ -104,9 +107,9 @@ Keybindings.prototype.bindEvents = function(){
 				self.checkBinding(e, binding);
 			});
 		}
-	});
+	}
 
-	this.table.element.on("keyup", function(e){
+	this.keydownBinding = function(e){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
 
@@ -118,7 +121,23 @@ Keybindings.prototype.bindEvents = function(){
 				self.pressedKeys.splice(index, 1);
 			}
 		}
-	});
+	}
+
+
+
+	this.table.element.on("keydown", this.keyupBinding);
+
+	this.table.element.on("keyup", this.keydownBinding);
+};
+
+Keybindings.prototype.clearBindings = function(){
+	if(this.keyupBinding){
+		this.table.element.off("keydown", this.keyupBinding);
+	}
+
+	if(this.keydownBinding){
+		this.table.element.off("keyup", this.keydownBinding);
+	}
 };
 
 
@@ -157,6 +176,7 @@ Keybindings.prototype.bindings = {
 	scrollToEnd:35,
 	undo:"ctrl + 90",
 	redo:"ctrl + 89",
+	copyToClipboard:"ctrl + 67",
 };
 
 
@@ -177,7 +197,7 @@ Keybindings.prototype.actions = {
 			if(newPos >= 0){
 				rowManager.element.scrollTop(newPos);
 			}else{
-				rowManager.scrollToRow(rowManager.displayRows[0]);
+				rowManager.scrollToRow(rowManager.getDisplayRows()[0]);
 			}
 		}
 
@@ -194,7 +214,7 @@ Keybindings.prototype.actions = {
 			if(newPos <= scrollMax){
 				rowManager.element.scrollTop(newPos);
 			}else{
-				rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+				rowManager.scrollToRow(rowManager.getDisplayRows()[rowManager.displayRowsCount - 1]);
 			}
 		}
 
@@ -207,7 +227,7 @@ Keybindings.prototype.actions = {
 		e.preventDefault();
 
 		if(rowManager.displayRowsCount){
-			rowManager.scrollToRow(rowManager.displayRows[0]);
+			rowManager.scrollToRow(rowManager.getDisplayRows()[0]);
 		}
 
 		this.table.element.focus();
@@ -218,7 +238,7 @@ Keybindings.prototype.actions = {
 		e.preventDefault();
 
 		if(rowManager.displayRowsCount){
-			rowManager.scrollToRow(rowManager.displayRows[rowManager.displayRows.length - 1]);
+			rowManager.scrollToRow(rowManager.getDisplayRows()[rowManager.displayRowsCount - 1]);
 		}
 
 		this.table.element.focus();
@@ -327,6 +347,13 @@ Keybindings.prototype.actions = {
 		}
 	},
 
+	copyToClipboard:function(e){
+		if(!this.table.extensions.edit.currentCell){
+			if(this.table.extExists("clipboard", true)){
+				this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true, true);
+			}
+		}
+	},
 };
 
 

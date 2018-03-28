@@ -386,7 +386,7 @@ Group.prototype.toggleVisibility = function(){
 Group.prototype.hide = function(){
 	this.visible = false;
 
-	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
+	if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
 
 		this.element.removeClass("tabulator-group-visible");
 
@@ -405,7 +405,7 @@ Group.prototype.show = function(){
 
 	self.visible = true;
 
-	if(this.groupManager.table.rowManager.getRenderMode() == "classic"){
+	if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
 
 		this.element.addClass("tabulator-group-visible");
 
@@ -554,8 +554,8 @@ var GroupRows = function(table){
 	this.headerGenerator = [function(){return "";}];
 	this.groupList = []; //ordered list of groups
 	this.groups = {}; //hold row groups
+	this.displayIndex = 0; //index in display pipeline
 };
-
 
 //initialize group configuration
 GroupRows.prototype.initialize = function(){
@@ -651,6 +651,15 @@ GroupRows.prototype.initialize = function(){
 
 };
 
+GroupRows.prototype.setDisplayIndex = function(index){
+	this.displayIndex = index;
+}
+
+GroupRows.prototype.getDisplayIndex = function(){
+	return this.displayIndex;
+}
+
+
 //return appropriate rows with group headers
 GroupRows.prototype.getRows = function(rows){
 	if(this.groupIDLookups.length){
@@ -741,8 +750,14 @@ GroupRows.prototype.updateGroupRows = function(force){
 
 	//force update of table display
 	if(force){
-		self.table.rowManager.setDisplayRows(output);
-		self.table.rowManager.reRenderInPosition();
+
+		var displayIndex = self.table.rowManager.setDisplayRows(output, this.getDisplayIndex())
+
+		if(displayIndex !== true){
+			this.setDisplayIndex(displayIndex);
+		}
+
+		self.table.rowManager.refreshActiveData("group", true, true);
 	}
 
 	return output;

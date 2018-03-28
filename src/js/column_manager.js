@@ -264,6 +264,10 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	this._moveColumnInArray(this.columns, from, to, after);
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
+	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
+		this.table.extensions.responsiveLayout.initialize();
+	}
+
 	if(this.table.options.columnMoved){
 		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
 	}
@@ -384,7 +388,7 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 	}
 
 	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	this.redraw();
@@ -456,7 +460,7 @@ ColumnManager.prototype.redraw = function(force){
 	}
 
 	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	if(force){

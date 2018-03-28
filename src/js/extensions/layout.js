@@ -57,51 +57,83 @@ Layout.prototype.modes = {
 		var totalWidth = self.table.element.innerWidth(); //table element width
 		var fixedWidth = 0; //total width of columns with a defined width
 		var flexWidth = 0; //total width available to flexible columns
+		var flexGrowUnits = 0; //total number of widthGrow blocks accross all columns
 		var flexColWidth = 0; //desired width of flexible columns
 		var flexColumns = []; //array of flexible width columns
+		var fixedShrinkColumns = []; //array of fixed width columns that can shrink
+		var flexShrinkUnits = 0; //total number of widthShrink blocks accross all columns
+		var overflowWidth = 0; //horizontal overflow width
 		var gapFill=0; //number of pixels to be added to final column to close and half pixel gaps
 
+		function calcWidth(width){
+			var colWidth;
+
+			if(typeof(width) == "string"){
+				if(width.indexOf("%") > -1){
+					colWidth = (totalWidth / 100) * parseInt(width);
+				}else{
+					colWidth = parseInt(width);
+				}
+			}else{
+				colWidth = width;
+			}
+
+			return colWidth;
+		}
+
 		//ensure columns resize to take up the correct amount of space
-		function scaleColumns(columns, freeSpace, colWidth){
+		function scaleColumns(columns, freeSpace, colWidth, shrinkCols){
 
 			var oversizeCols = [],
 			oversizeSpace = 0,
 			remainingSpace = 0,
 			nextColWidth = 0,
 			gap = 0,
+			changeUnits = 0,
 			undersizeCols = [];
 
-			columns.forEach(function(column, i){
-				if(column.minWidth >= colWidth){
-					oversizeCols.push(column);
+			function calcGrow(col){
+				return (colWidth * (col.column.definition.widthGrow || 1));
+			}
+
+			function calcShrink(col){
+				return  (calcWidth(col.width) - (colWidth * (col.column.definition.widthShrink || 0)))
+			}
+
+			columns.forEach(function(col, i){
+				var width = shrinkCols ? calcShrink(col) : calcGrow(col);
+				if(col.column.minWidth >= width){
+					oversizeCols.push(col);
 				}else{
-					undersizeCols.push(column);
+					undersizeCols.push(col);
+					changeUnits += shrinkCols ? (col.column.definition.widthShrink || 1) : (col.column.definition.widthGrow || 1);
 				}
 			});
 
 			if(oversizeCols.length){
-				oversizeCols.forEach(function(column){
-					oversizeSpace += column.minWidth;
-					column.setWidth(column.minWidth);
+				oversizeCols.forEach(function(col){
+					oversizeSpace += shrinkCols ?  col.width - col.column.minWidth : col.column.minWidth;
+					col.width = col.column.minWidth;
 				});
 
 				remainingSpace = freeSpace - oversizeSpace;
 
-				nextColWidth = undersizeCols.length ? Math.floor(remainingSpace/undersizeCols.length) : remainingSpace;
+				nextColWidth = changeUnits ? Math.floor(remainingSpace/changeUnits) : remainingSpace;
 
-				gap = remainingSpace - (nextColWidth * undersizeCols.length);
+				gap = remainingSpace - (nextColWidth * changeUnits);
 
-				gap += scaleColumns(undersizeCols, remainingSpace, nextColWidth);
+				gap += scaleColumns(undersizeCols, remainingSpace, nextColWidth, shrinkCols);
 			}else{
-				gap = undersizeCols.length ? freeSpace - (Math.floor(freeSpace/undersizeCols.length) * undersizeCols.length) : freeSpace;
+				gap = changeUnits ? freeSpace - (Math.floor(freeSpace/changeUnits) * changeUnits) : freeSpace;
 
 				undersizeCols.forEach(function(column){
-					column.setWidth(colWidth);
+					column.width = shrinkCols ? calcShrink(column) : calcGrow(column);
 				});
 			}
 
 			return gap;
 		}
+
 
 		if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
 			this.table.extensions.responsiveLayout.update();
@@ -122,37 +154,70 @@ Layout.prototype.modes = {
 
 				if(width){
 
-					if(typeof(width) == "string"){
-						if(width.indexOf("%") > -1){
-							colWidth = (totalWidth / 100) * parseInt(width);
-						}else{
-							colWidth = parseInt(width);
-						}
-					}else{
-						colWidth = width;
-					}
+					colWidth = calcWidth(width);
 
 					fixedWidth += colWidth > minWidth ? colWidth : minWidth;
 
+					if(column.definition.widthShrink){
+						fixedShrinkColumns.push({
+							column:column,
+							width:colWidth > minWidth ? colWidth : minWidth
+						});
+						flexShrinkUnits += column.definition.widthShrink;
+					}
+
 				}else{
-					flexColumns.push(column);
+					flexColumns.push({
+						column:column,
+						width:0,
+					});
+					flexGrowUnits += column.definition.widthGrow || 1;
 				}
 			}
 		});
+
 
 		//calculate available space
 		flexWidth = totalWidth - fixedWidth;
 
 		//calculate correct column size
-		flexColWidth = Math.floor(flexWidth / flexColumns.length)
+		flexColWidth = Math.floor(flexWidth / flexGrowUnits)
 
 		//generate column widths
-		var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth);
+		var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
 
 		//increase width of last column to account for rounding errors
-		if(flexColumns.length){
-			flexColumns[flexColumns.length-1].setWidth(flexColumns[flexColumns.length-1].getWidth() + gapFill);
+		if(flexColumns.length && gapFill > 0){
+			flexColumns[flexColumns.length-1].width += + gapFill;
 		}
+
+		//caculate space for columns to be shrunk into
+		flexColumns.forEach(function(col){
+			flexWidth -= col.width;
+		})
+
+		overflowWidth = Math.abs(gapFill) + flexWidth;
+
+
+		//shrink oversize columns if there is no available space
+		if(overflowWidth > 0 && flexShrinkUnits){
+			gapFill = scaleColumns(fixedShrinkColumns, overflowWidth, Math.floor(overflowWidth / flexShrinkUnits), true);
+		}
+
+		//decrease width of last column to account for rounding errors
+		if(fixedShrinkColumns.length){
+			fixedShrinkColumns[fixedShrinkColumns.length-1].width -= gapFill;
+		}
+
+
+		flexColumns.forEach(function(col){
+			col.column.setWidth(col.width);
+		});
+
+		fixedShrinkColumns.forEach(function(col){
+			col.column.setWidth(col.width);
+		});
+
 	},
 };
 

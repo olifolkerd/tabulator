@@ -74,7 +74,7 @@ MoveRows.prototype.initializeCell = function(cell){
 MoveRows.prototype._bindMouseMove = function(){
 	var self = this;
 
-	self.table.rowManager.displayRows.forEach(function(row){
+	self.table.rowManager.activeRows.forEach(function(row){
 		if(row.type === "row" && row.extensions.moveRow.mousemove){
 			row.element.on("mousemove", row.extensions.moveRow.mousemove);
 		}
@@ -84,7 +84,7 @@ MoveRows.prototype._bindMouseMove = function(){
 MoveRows.prototype._unbindMouseMove = function(){
 	var self = this;
 
-	self.table.rowManager.displayRows.forEach(function(row){
+	self.table.rowManager.activeRows.forEach(function(row){
 		if(row.type === "row" && row.extensions.moveRow.mousemove){
 			row.element.off("mousemove", row.extensions.moveRow.mousemove);
 		}

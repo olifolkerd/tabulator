@@ -518,7 +518,7 @@ Row.prototype.delete = function(){
 		if(this.table.options.groupBy && this.table.extExists("groupRows")){
 			this.table.extensions.columnCalcs.recalcRowGroup(this);
 		}else{
-			this.table.extensions.columnCalcs.recalc(this.table.rowManager.displayRows);
+			this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 	}
 };

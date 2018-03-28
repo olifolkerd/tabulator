@@ -1,6 +1,7 @@
 /*=include extensions/accessor.js */
 /*=include extensions/ajax.js */
 /*=include extensions/calculation_colums.js */
+/*=include extensions/clipboard.js */
 /*=include extensions/download.js */
 /*=include extensions/edit.js */
 /*=include extensions/filter.js */

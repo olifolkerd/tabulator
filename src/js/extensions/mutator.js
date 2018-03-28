@@ -39,7 +39,7 @@ Mutator.prototype.transformRow = function(data){
 			field = column.getField();
 
 			if(column.extensions.mutate.type != "edit"){
-				column.setFieldValue(data, column.extensions.mutate.mutator(column.getFieldValue(data), data, "data", column.extensions.mutate.params));
+				column.setFieldValue(data, column.extensions.mutate.mutator(column.getFieldValue(data), data, "data", column.extensions.mutate.params, column.getComponent()));
 			}
 		}
 	});
