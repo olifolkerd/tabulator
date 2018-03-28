@@ -422,14 +422,20 @@ Cell.prototype.nav = function(){
 	nextCell = false,
 	index = this.row.getCellIndex(this);
 
+	console.log("nav")
+
 	return {
 		next:function(){
+
+
 
 			var nextCell = this.right(),
 			nextRow;
 
 			if(!nextCell){
 				nextRow = self.table.rowManager.nextDisplayRow(self.row);
+				console.log("NR", nextRow)
+
 
 				if(nextRow){
 					nextCell = nextRow.findNextEditableCell(-1);
@@ -440,6 +446,7 @@ Cell.prototype.nav = function(){
 					}
 				}
 			}else{
+				console.log("nc")
 				return true;
 			}
 

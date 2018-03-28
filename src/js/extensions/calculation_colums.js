@@ -254,6 +254,39 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 		this.cells = cells;
 	}
 
+	row.findNextEditableCell = function(){
+		var nextRow = self.table.rowManager.nextDisplayRow(row),
+		nextCell;
+		console.log("CR");
+
+		if(nextRow){
+			nextCell = nextRow.findNextEditableCell(-1);
+
+			if(nextCell){
+				return nextCell;
+			}
+		}
+
+		return false;
+	}
+
+	row.findPrevEditableCell = function(){
+		console.log("CP");
+		var prevRow = self.table.rowManager.prevDisplayRow(row),
+		prevCell;
+
+		if(prevRow){
+			prevCell = prevRow.findPrevEditableCell(prevRow.cells.length);
+
+			if(prevCell){
+				return prevCell;
+			}
+
+		}
+		return false;
+	}
+
+
 	return row;
 };
 

@@ -497,12 +497,15 @@ RowManager.prototype.getRowIndex = function(row){
 
 
 RowManager.prototype.getDisplayRowIndex = function(row){
-	return this.findRowIndex(row, this.getDisplayRows());
+	var index = this.getDisplayRows().indexOf(row);
+	return index > -1 ? index : false;
 };
 
 RowManager.prototype.nextDisplayRow = function(row){
 	var index = this.getDisplayRowIndex(row),
 	nextRow = false;
+
+	console.log("index", index)
 
 	if(index !== false && index < this.displayRowsCount -1){
 		nextRow = this.getDisplayRows()[index+1];

@@ -2,7 +2,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v3.4.6 (c) Oliver Folkerd */
+/* Tabulator v3.5.0 (c) Oliver Folkerd */
 
 /*
  * This file is part of the Tabulator package.
@@ -2749,13 +2749,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowManager.prototype.getDisplayRowIndex = function (row) {
 
-      return this.findRowIndex(row, this.getDisplayRows());
+      var index = this.getDisplayRows().indexOf(row);
+
+      return index > -1 ? index : false;
     };
 
     RowManager.prototype.nextDisplayRow = function (row) {
 
       var index = this.getDisplayRowIndex(row),
           nextRow = false;
+
+      console.log("index", index);
 
       if (index !== false && index < this.displayRowsCount - 1) {
 
@@ -5180,6 +5184,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           nextCell = false,
           index = this.row.getCellIndex(this);
 
+      console.log("nav");
+
       return {
 
         next: function next() {
@@ -5190,6 +5196,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           if (!nextCell) {
 
             nextRow = self.table.rowManager.nextDisplayRow(self.row);
+
+            console.log("NR", nextRow);
 
             if (nextRow) {
 
@@ -5203,6 +5211,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               }
             }
           } else {
+
+            console.log("nc");
 
             return true;
           }
@@ -8508,6 +8518,46 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         this.cells = cells;
+      };
+
+      row.findNextEditableCell = function () {
+
+        var nextRow = self.table.rowManager.nextDisplayRow(row),
+            nextCell;
+
+        console.log("CR");
+
+        if (nextRow) {
+
+          nextCell = nextRow.findNextEditableCell(-1);
+
+          if (nextCell) {
+
+            return nextCell;
+          }
+        }
+
+        return false;
+      };
+
+      row.findPrevEditableCell = function () {
+
+        console.log("CP");
+
+        var prevRow = self.table.rowManager.prevDisplayRow(row),
+            prevCell;
+
+        if (prevRow) {
+
+          prevCell = prevRow.findPrevEditableCell(prevRow.cells.length);
+
+          if (prevCell) {
+
+            return prevCell;
+          }
+        }
+
+        return false;
       };
 
       return row;
@@ -12822,6 +12872,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this;
     };
 
+    Group.prototype.findNextEditableCell = function () {
+
+      var nextRow = this.groupManager.table.rowManager.nextDisplayRow(this),
+          nextCell;
+
+      console.log("GN", nextRow, this, this === this.groupManager.table.rowManager.getDisplayRows()[8], this.groupManager.table.rowManager.getDisplayRows().indexOf(this));
+
+      if (nextRow) {
+
+        nextCell = nextRow.findNextEditableCell(-1);
+
+        if (nextCell) {
+
+          return nextCell;
+        }
+      }
+
+      return false;
+    };
+
+    Group.prototype.findPrevEditableCell = function () {
+
+      console.log("GP");
+
+      var prevRow = this.groupManager.table.rowManager.prevDisplayRow(this),
+          prevCell;
+
+      if (prevRow) {
+
+        prevCell = prevRow.findPrevEditableCell(prevRow.cells.length);
+
+        if (prevCell) {
+
+          return prevCell;
+        }
+      }
+
+      return false;
+    };
+
+    Group.prototype.cells = [];
+
     Group.prototype.reinitializeHeight = function () {};
 
     Group.prototype.calcHeight = function () {};
@@ -13909,6 +14001,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
+        console.log("np");
+
         if (this.table.extExists("edit")) {
 
           cell = this.table.extensions.edit.currentCell;
@@ -13929,6 +14023,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (this.table.extExists("edit")) {
 
           cell = this.table.extensions.edit.currentCell;
+
+          console.log("nn", cell);
 
           if (cell) {
 
