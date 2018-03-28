@@ -501,25 +501,32 @@ RowManager.prototype.getDisplayRowIndex = function(row){
 	return index > -1 ? index : false;
 };
 
-RowManager.prototype.nextDisplayRow = function(row){
+RowManager.prototype.nextDisplayRow = function(row, rowOnly){
 	var index = this.getDisplayRowIndex(row),
 	nextRow = false;
 
-	console.log("index", index)
 
 	if(index !== false && index < this.displayRowsCount -1){
 		nextRow = this.getDisplayRows()[index+1];
 	}
 
+	if(nextRow && (!(nextRow instanceof Row) || nextRow.type != "row")){
+		return this.nextDisplayRow(nextRow, rowOnly);
+	}
+
 	return nextRow;
 };
 
-RowManager.prototype.prevDisplayRow = function(row){
+RowManager.prototype.prevDisplayRow = function(row, rowOnly){
 	var index = this.getDisplayRowIndex(row),
 	prevRow = false;
 
 	if(index){
 		prevRow = this.getDisplayRows()[index-1];
+	}
+
+	if(prevRow && (!(prevRow instanceof Row) || prevRow.type != "row")){
+		return this.prevDisplayRow(prevRow, rowOnly);
 	}
 
 	return prevRow;

@@ -2754,22 +2754,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return index > -1 ? index : false;
     };
 
-    RowManager.prototype.nextDisplayRow = function (row) {
+    RowManager.prototype.nextDisplayRow = function (row, rowOnly) {
 
       var index = this.getDisplayRowIndex(row),
           nextRow = false;
-
-      console.log("index", index);
 
       if (index !== false && index < this.displayRowsCount - 1) {
 
         nextRow = this.getDisplayRows()[index + 1];
       }
 
+      if (nextRow && (!(nextRow instanceof Row) || nextRow.type != "row")) {
+
+        return this.nextDisplayRow(nextRow, rowOnly);
+      }
+
       return nextRow;
     };
 
-    RowManager.prototype.prevDisplayRow = function (row) {
+    RowManager.prototype.prevDisplayRow = function (row, rowOnly) {
 
       var index = this.getDisplayRowIndex(row),
           prevRow = false;
@@ -2777,6 +2780,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (index) {
 
         prevRow = this.getDisplayRows()[index - 1];
+      }
+
+      if (prevRow && (!(prevRow instanceof Row) || prevRow.type != "row")) {
+
+        return this.prevDisplayRow(prevRow, rowOnly);
       }
 
       return prevRow;
@@ -5195,7 +5203,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (!nextCell) {
 
-            nextRow = self.table.rowManager.nextDisplayRow(self.row);
+            nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
 
             console.log("NR", nextRow);
 
@@ -5227,7 +5235,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (!nextCell) {
 
-            prevRow = self.table.rowManager.prevDisplayRow(self.row);
+            prevRow = self.table.rowManager.prevDisplayRow(self.row, true);
 
             if (prevRow) {
 
@@ -5280,7 +5288,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         up: function up() {
 
-          var nextRow = self.table.rowManager.prevDisplayRow(self.row);
+          var nextRow = self.table.rowManager.prevDisplayRow(self.row, true);
 
           if (nextRow) {
 
@@ -5290,7 +5298,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         down: function down() {
 
-          var nextRow = self.table.rowManager.nextDisplayRow(self.row);
+          var nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
+
+          console.log("down", nextRow);
 
           if (nextRow) {
 
@@ -8518,46 +8528,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         this.cells = cells;
-      };
-
-      row.findNextEditableCell = function () {
-
-        var nextRow = self.table.rowManager.nextDisplayRow(row),
-            nextCell;
-
-        console.log("CR");
-
-        if (nextRow) {
-
-          nextCell = nextRow.findNextEditableCell(-1);
-
-          if (nextCell) {
-
-            return nextCell;
-          }
-        }
-
-        return false;
-      };
-
-      row.findPrevEditableCell = function () {
-
-        console.log("CP");
-
-        var prevRow = self.table.rowManager.prevDisplayRow(row),
-            prevCell;
-
-        if (prevRow) {
-
-          prevCell = prevRow.findPrevEditableCell(prevRow.cells.length);
-
-          if (prevCell) {
-
-            return prevCell;
-          }
-        }
-
-        return false;
       };
 
       return row;
@@ -12871,48 +12841,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       return this;
     };
-
-    Group.prototype.findNextEditableCell = function () {
-
-      var nextRow = this.groupManager.table.rowManager.nextDisplayRow(this),
-          nextCell;
-
-      console.log("GN", nextRow, this, this === this.groupManager.table.rowManager.getDisplayRows()[8], this.groupManager.table.rowManager.getDisplayRows().indexOf(this));
-
-      if (nextRow) {
-
-        nextCell = nextRow.findNextEditableCell(-1);
-
-        if (nextCell) {
-
-          return nextCell;
-        }
-      }
-
-      return false;
-    };
-
-    Group.prototype.findPrevEditableCell = function () {
-
-      console.log("GP");
-
-      var prevRow = this.groupManager.table.rowManager.prevDisplayRow(this),
-          prevCell;
-
-      if (prevRow) {
-
-        prevCell = prevRow.findPrevEditableCell(prevRow.cells.length);
-
-        if (prevCell) {
-
-          return prevCell;
-        }
-      }
-
-      return false;
-    };
-
-    Group.prototype.cells = [];
 
     Group.prototype.reinitializeHeight = function () {};
 

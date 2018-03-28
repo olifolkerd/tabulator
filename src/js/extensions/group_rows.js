@@ -526,44 +526,6 @@ Group.prototype.getGroup = function(){
 	return this;
 }
 
-Group.prototype.findNextEditableCell = function(){
-	var nextRow = this.groupManager.table.rowManager.nextDisplayRow(this),
-	nextCell;
-
-	console.log("GN", nextRow, this, this === this.groupManager.table.rowManager.getDisplayRows()[8],  this.groupManager.table.rowManager.getDisplayRows().indexOf(this));
-
-	if(nextRow){
-		nextCell = nextRow.findNextEditableCell(-1);
-
-		if(nextCell){
-			return nextCell;
-		}
-	}
-
-	return false;
-}
-
-Group.prototype.findPrevEditableCell = function(){
-	console.log("GP");
-	var prevRow = this.groupManager.table.rowManager.prevDisplayRow(this),
-	prevCell;
-
-	if(prevRow){
-		prevCell = prevRow.findPrevEditableCell(prevRow.cells.length);
-
-		if(prevCell){
-			return prevCell;
-		}
-
-	}
-	return false;
-}
-
-Group.prototype.cells = [];
-
-
-
-
 Group.prototype.reinitializeHeight = function(){
 };
 Group.prototype.calcHeight = function(){

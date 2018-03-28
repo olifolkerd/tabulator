@@ -433,7 +433,7 @@ Cell.prototype.nav = function(){
 			nextRow;
 
 			if(!nextCell){
-				nextRow = self.table.rowManager.nextDisplayRow(self.row);
+				nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
 				console.log("NR", nextRow)
 
 
@@ -458,7 +458,7 @@ Cell.prototype.nav = function(){
 			prevRow;
 
 			if(!nextCell){
-				prevRow = self.table.rowManager.prevDisplayRow(self.row);
+				prevRow = self.table.rowManager.prevDisplayRow(self.row, true);
 
 				if(prevRow){
 					nextCell = prevRow.findPrevEditableCell(prevRow.cells.length);
@@ -499,14 +499,15 @@ Cell.prototype.nav = function(){
 			}
 		},
 		up:function(){
-			var nextRow = self.table.rowManager.prevDisplayRow(self.row);
+			var nextRow = self.table.rowManager.prevDisplayRow(self.row, true);
 
 			if(nextRow){
 				nextRow.cells[index].edit();
 			}
 		},
 		down:function(){
-			var nextRow = self.table.rowManager.nextDisplayRow(self.row);
+			var nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
+			console.log("down", nextRow)
 
 			if(nextRow){
 				nextRow.cells[index].edit();
