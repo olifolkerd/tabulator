@@ -582,13 +582,20 @@
 	 		},
 
 	 		addData:function(data, pos, index){
+	 			var rows = [], output = [];
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
 	 			}
 
 	 			if(data){
-	 				this.rowManager.addRows(data, pos, index);
+	 				rows = this.rowManager.addRows(data, pos, index);
+
+	 				rows.forEach(function(row){
+	 					output.push(row.getComponent());
+	 				});
+
+	 				return output;
 	 			}else{
 	 				console.warn("Update Error - No data provided");
 	 			}
@@ -597,6 +604,7 @@
 	 		//update table data
 	 		updateOrAddData:function(data){
 	 			var self = this;
+	 			var rows = [];
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
@@ -607,11 +615,14 @@
 	 					var row = self.rowManager.findRow(item[self.options.index]);
 
 	 					if(row){
-	 						row.updateData(item);
+	 						row.updateData(item)
+	 						rows.push(row.getComponent());
 	 					}else{
-	 						self.rowManager.addRows(item);
+	 						rows.push(self.rowManager.addRows(item)[0].getComponent());
 	 					}
 	 				})
+
+	 				return rows;
 	 			}else{
 	 				console.warn("Update Error - No data provided");
 	 			}
