@@ -8938,6 +8938,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.fields = {}; //hold filed multi dimension arrays
 
+
+      this.columnsByIndex = []; //hold columns in their order in the table
+
+
+      this.columnsByField = {}; //hold columns with lookup by field name
+
+
+      this.formattedColumns = []; //hold columns with downloadFormatter
+
     };
 
     //trigger file download
@@ -8967,45 +8976,138 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       }
 
+      this.processColumns();
+
       if (downloadFunc) {
 
         downloadFunc.call(this, self.processDefinitions(), self.processData(), options, buildLink);
       }
     };
 
+    Download.prototype.processColumns = function () {
+
+      var self = this;
+
+      self.columnsByIndex = [];
+
+      self.columnsByField = {};
+
+      this.formattedColumns = [];
+
+      self.table.columnManager.columnsByIndex.forEach(function (column) {
+
+        if (column.field && column.visible && column.definition.download !== false) {
+
+          self.columnsByIndex.push(column);
+
+          self.columnsByField[column.field] = column;
+
+          if (column.definition.downloadFormatter) {
+
+            self.processFormatter(column);
+          }
+        }
+      });
+    };
+
+    Download.prototype.processFormatter = function (column) {
+
+      var formatter = false;
+
+      if (this.table.extExists("format")) {
+
+        var formatterDef = column.definition.downloadFormatter;
+
+        if (formatterDef === true) {
+
+          formatterDef = column.definition.formatter;
+        }
+
+        //set column formatter
+
+
+        switch (typeof formatterDef === 'undefined' ? 'undefined' : _typeof(formatterDef)) {
+
+          case "string":
+
+            if (this.table.extensions.format.formatters[formatterDef]) {
+
+              formatter = this.table.extensions.format.formatters[formatterDef];
+            } else {
+
+              console.warn("Download Formatter Error - No such formatter found: ", formatterDef);
+
+              formatter = this.table.extensions.format.formatters.plaintext;
+            }
+
+            break;
+
+          case "function":
+
+            formatter = formatterDef;
+
+            break;
+
+          case "boolean":
+
+            break;
+
+          default:
+
+            formatter = this.table.extensions.format.formatters.plaintext;
+
+            break;
+
+        }
+
+        if (formatter) {
+
+          this.formattedColumns.push({
+
+            column: column,
+
+            formatter: formatter,
+
+            params: column.definition.downloadFormatterParams || {}
+
+          });
+        } else {
+
+          console.warn("Download Formatter Error - No such formatter found: ", formatterDef);
+        }
+      } else {
+
+        console.warn("Download Formatter Error - Cannot use download formatters, formatter extension is not installed");
+      }
+    };
+
     Download.prototype.processDefinitions = function () {
 
       var self = this,
-          definitions = self.table.columnManager.getDefinitions(),
           processedDefinitions = [];
 
-      self.fields = {};
+      self.columnsByIndex.forEach(function (column) {
 
-      definitions.forEach(function (column) {
+        var definition = column.definition;
 
-        if (column.field) {
+        if (column.download !== false) {
 
-          self.fields[column.field] = column.field.split(".");
-
-          if (column.download !== false) {
-
-            //isolate definiton from defintion object
+          //isolate definiton from defintion object
 
 
-            var def = {};
+          var def = {};
 
-            for (var key in column) {
+          for (var key in definition) {
 
-              def[key] = column[key];
-            }
-
-            if (typeof column.downloadTitle != "undefined") {
-
-              def.title = column.downloadTitle;
-            }
-
-            processedDefinitions.push(def);
+            def[key] = definition[key];
           }
+
+          if (typeof definition.downloadTitle != "undefined") {
+
+            def.title = definition.downloadTitle;
+          }
+
+          processedDefinitions.push(def);
         }
       });
 
@@ -9017,13 +9119,63 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           data = self.table.rowManager.getData(true);
 
-      //add user data processing step;
+      //create mock cell component to pass to formatters
+
+
+      var mockCellComponent = {
+
+        value: false,
+
+        data: {},
+
+        getValue: function getValue() {
+
+          return this.value;
+        },
+
+        getData: function getData() {
+
+          return this.data;
+        },
+
+        getElement: function getElement() {
+
+          return $();
+        },
+
+        getRow: function getRow() {
+
+          return {};
+        }
+
+      };
+
+      //bulk data processing
 
 
       if (typeof self.table.options.downloadDataMutator == "function") {
 
         data = self.table.options.downloadDataMutator(data);
       }
+
+      //trigger column formatters
+
+
+      self.formattedColumns.forEach(function (col) {
+
+        data.forEach(function (row) {
+
+          var value = col.column.getFieldValue(row);
+
+          mockCellComponent.value = value;
+
+          mockCellComponent.data = row;
+
+          value = col.formatter.call(self.table.extensions.format, mockCellComponent, col.params);
+
+          col.column.setFieldValue(row, value);
+        });
+      });
 
       return data;
     };
@@ -9077,24 +9229,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Download.prototype.getFieldValue = function (field, data) {
 
-      var dataObj = data,
-          structure = this.fields[field],
-          length = structure.length,
-          output;
+      var column = this.columnsByField[field];
 
-      for (var i = 0; i < length; i++) {
+      if (column) {
 
-        dataObj = dataObj[structure[i]];
-
-        output = dataObj;
-
-        if (!dataObj) {
-
-          break;
-        }
+        return column.getFieldValue(data);
       }
 
-      return output;
+      return false;
     };
 
     //downloaders
