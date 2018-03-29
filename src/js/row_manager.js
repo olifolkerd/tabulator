@@ -140,6 +140,8 @@ RowManager.prototype.findRow = function(subject){
 			return match || false;
 		}
 
+	}else if(typeof subject == "undefined" || subject === null){
+		return false;
 	}else{
 		//subject should be treated as the index of the row
 		let match = self.rows.find(function(row){
