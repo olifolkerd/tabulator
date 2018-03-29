@@ -5467,6 +5467,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         keybindings: [], //array for keybindings
 
 
+        clipboardSelector: "table",
+
+        clipboardFormatter: "table",
+
         downloadDataMutator: false, //function to manipulate table data before it is downloaded
 
         downloadReady: function downloadReady(data, blob) {
@@ -6419,11 +6423,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //copy table data to clipboard
 
-      copyToClipboard: function copyToClipboard(mode, showHeaders) {
+      copyToClipboard: function copyToClipboard(selector, selectorParams, formatter, formatterParams) {
 
         if (this.extExists("clipboard", true)) {
 
-          this.extensions.clipboard.copy(mode, showHeaders);
+          this.extensions.clipboard.copy(selector, selectorParams, formatter, formatterParams);
         }
       },
 
@@ -8766,14 +8770,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table;
 
-      this.mode = "table";
+      this.selector = false;
 
-      this.showHeaders = true;
+      this.selectorParams = {};
+
+      this.formatter = false;
+
+      this.formatterParams = {};
 
       this.blocked = true; //block copy actions not originating from this command
-
-
-      this.originalSelectionText = ""; //hold text from original selection if text is selected
 
     };
 
@@ -8801,15 +8806,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.originalSelectionText = "";
     };
 
-    Clipboard.prototype.copy = function (mode, showHeaders, internal) {
+    Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
 
       var range, sel;
 
       this.blocked = false;
-
-      this.mode = mode || "table";
-
-      this.showHeaders = showHeaders === false ? false : true;
 
       if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 
@@ -8819,11 +8820,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         sel = window.getSelection();
 
-        if (sel.anchorNode && internal) {
+        if (sel.toString() && internal) {
 
-          this.mode = "userSelection";
+          selector = "userSelection";
 
-          this.originalSelectionText = sel.toString();
+          formatter = "raw";
+
+          this.selectorParams = sel.toString();
         }
 
         sel.removeAllRanges();
@@ -8838,6 +8841,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         textRange.select();
       }
 
+      this.setSelector(selector);
+
+      this.selectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+
+      this.setFormatter(formatter);
+
+      this.formatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
+
       document.execCommand('copy');
 
       if (sel) {
@@ -8846,19 +8857,74 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    Clipboard.prototype.setSelector = function (selector) {
+
+      selector = selector || this.table.options.clipboardSelector;
+
+      switch (typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) {
+
+        case "string":
+
+          if (this.selectors[selector]) {
+
+            this.selector = this.selectors[selector];
+          } else {
+
+            console.warn("Clipboard Error - No such selector found:", selector);
+          }
+
+          break;
+
+        case "function":
+
+          this.selector = selector;
+
+          break;
+
+      }
+    };
+
+    Clipboard.prototype.setFormatter = function (formatter) {
+
+      formatter = formatter || this.table.options.clipboardFormatter;
+
+      switch (typeof formatter === 'undefined' ? 'undefined' : _typeof(formatter)) {
+
+        case "string":
+
+          if (this.formatters[formatter]) {
+
+            this.formatter = this.formatters[formatter];
+          } else {
+
+            console.warn("Clipboard Error - No such formatter found:", formatter);
+          }
+
+          break;
+
+        case "function":
+
+          this.formatter = formatter;
+
+          break;
+
+      }
+    };
+
     Clipboard.prototype.generateContent = function () {
 
-      var data = [],
+      var data = this.selector.call(this, this.selectorParams);
+
+      return this.formatter.call(this, data, this.formatterParams);
+    };
+
+    Clipboard.prototype.rowsToData = function (rows, params) {
+
+      var columns = this.table.columnManager.columnsByIndex,
           headers = [],
-          columns = this.table.columnManager.columnsByIndex,
-          rows;
+          data = [];
 
-      if (this.mode == "userSelection") {
-
-        return this.originalSelectionText;
-      }
-
-      if (this.showHeaders) {
+      if (params) {
 
         columns.forEach(function (column) {
 
@@ -8866,31 +8932,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         data.push(headers);
-      }
-
-      switch (this.mode) {
-
-        case "selected":
-
-          if (this.table.extExists("selectRow", true)) {
-
-            rows = this.table.extensions.selectRow.getSelectedRows();
-          }
-
-          break;
-
-        case "table":
-
-          rows = this.table.rowManager.getComponents();
-
-          break;
-
-        case "active":
-
-        default:
-
-          rows = this.table.rowManager.getComponents(true);
-
       }
 
       rows.forEach(function (row) {
@@ -8902,39 +8943,82 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var value = column.getFieldValue(rowData);
 
-          if (typeof value == "undefined") {
-
-            value = "";
-          }
-
-          value = typeof value == "undefined" ? "" : value.toString();
-
-          if (value.match(/\r|\n/)) {
-
-            value = value.split('"').join('""');
-
-            value = '"' + value + '"';
-          }
-
           rowArray.push(value);
         });
 
         data.push(rowArray);
       });
 
-      return this.arrayToString(data);
+      return data;
     };
 
-    Clipboard.prototype.arrayToString = function (data) {
+    Clipboard.prototype.selectors = {
 
-      var output = [];
+      userSelection: function userSelection(params) {
 
-      data.forEach(function (row) {
+        return params;
+      },
 
-        output.push(row.join("\t"));
-      });
+      selected: function selected(params) {
 
-      return output.join("\n");
+        var rows = [];
+
+        if (this.table.extExists("selectRow", true)) {
+
+          rows = this.table.extensions.selectRow.getSelectedRows();
+        }
+
+        return this.rowsToData(rows, params);
+      },
+
+      table: function table(params) {
+
+        return this.rowsToData(this.table.rowManager.getComponents(), params);
+      },
+
+      active: function active(params) {
+
+        return this.rowsToData(this.table.rowManager.getComponents(true), params);
+      }
+
+    };
+
+    Clipboard.prototype.formatters = {
+
+      raw: function raw(data, params) {
+
+        return data;
+      },
+
+      table: function table(data, params) {
+
+        var output = [];
+
+        data.forEach(function (row) {
+
+          row.forEach(function (value) {
+
+            if (typeof value == "undefined") {
+
+              value = "";
+            }
+
+            value = typeof value == "undefined" ? "" : value.toString();
+
+            if (value.match(/\r|\n/)) {
+
+              value = value.split('"').join('""');
+
+              value = '"' + value + '"';
+            }
+          });
+
+          output.push(row.join("\t"));
+        });
+
+        return output.join("\n");
+      }
+
     };
 
     Tabulator.registerExtension("clipboard", Clipboard);
@@ -14272,7 +14356,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.table.extExists("clipboard", true)) {
 
-            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true, true);
+            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true, null, null, true);
           }
         }
       }

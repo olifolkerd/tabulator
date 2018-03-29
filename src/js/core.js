@@ -51,6 +51,9 @@
 
 	 			keybindings:[], //array for keybindings
 
+	 			clipboardSelector:"table",
+	 			clipboardFormatter:"table",
+
 	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
 	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	 			downloadComplete:false, //function to manipulate download data
@@ -735,9 +738,9 @@
 	 		},
 
 	 		//copy table data to clipboard
-	 		copyToClipboard:function(mode, showHeaders){
+	 		copyToClipboard:function(selector, selectorParams, formatter, formatterParams){
 	 			if(this.extExists("clipboard", true)){
-	 				this.extensions.clipboard.copy(mode, showHeaders);
+	 				this.extensions.clipboard.copy(selector, selectorParams, formatter, formatterParams);
 	 			}
 	 		},
 

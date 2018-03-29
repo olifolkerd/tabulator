@@ -1,9 +1,11 @@
 var Clipboard = function(table){
 	this.table = table;
-	this.mode = "table";
-	this.showHeaders = true;
+	this.selector = false;
+	this.selectorParams = {};
+	this.formatter = false;
+	this.formatterParams = {};
+
 	this.blocked = true; //block copy actions not originating from this command
-	this.originalSelectionText = ""; //hold text from original selection if text is selected
 };
 
 Clipboard.prototype.initialize = function(){
@@ -12,6 +14,7 @@ Clipboard.prototype.initialize = function(){
 	this.table.element.on("copy", function(e){
 		if(!self.blocked){
 			e.preventDefault();
+
 			e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
 
 			self.reset();
@@ -24,20 +27,19 @@ Clipboard.prototype.reset = function(){
 	this.originalSelectionText = "";
 }
 
-Clipboard.prototype.copy = function(mode, showHeaders, internal){
+Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatterParams, internal){
 	var range, sel;
 	this.blocked = false;
-	this.mode = mode || "table";
-	this.showHeaders = showHeaders === false ? false : true;
 
 	if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 		range = document.createRange();
 		range.selectNodeContents(this.table.element[0]);
 		sel = window.getSelection();
 
-		if(sel.anchorNode && internal){
-			this.mode = "userSelection";
-			this.originalSelectionText = sel.toString();
+		if(sel.toString() && internal){
+			selector = "userSelection";
+			formatter = "raw";
+			this.selectorParams = sel.toString();
 		}
 
 		sel.removeAllRanges();
@@ -48,6 +50,11 @@ Clipboard.prototype.copy = function(mode, showHeaders, internal){
 		textRange.select();
 	}
 
+	this.setSelector(selector);
+	this.selectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+	this.setFormatter(formatter);
+	this.formatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
+
 	document.execCommand('copy');
 
 	if(sel){
@@ -55,39 +62,61 @@ Clipboard.prototype.copy = function(mode, showHeaders, internal){
 	}
 }
 
-Clipboard.prototype.generateContent = function(){
-	var data = [],
-	headers = [],
-	columns = this.table.columnManager.columnsByIndex,
-	rows;
+Clipboard.prototype.setSelector = function(selector){
 
-	if(this.mode == "userSelection"){
-		return this.originalSelectionText;
+	selector = selector || this.table.options.clipboardSelector;
+
+	switch(typeof selector){
+		case "string":
+			if(this.selectors[selector]){
+				this.selector = this.selectors[selector];
+			}else{
+				console.warn("Clipboard Error - No such selector found:", selector)
+			}
+		break;
+
+		case "function":
+			this.selector = selector
+		break;
 	}
+}
 
-	if(this.showHeaders){
+Clipboard.prototype.setFormatter = function(formatter){
+
+	formatter = formatter || this.table.options.clipboardFormatter;
+
+	switch(typeof formatter){
+		case "string":
+			if(this.formatters[formatter]){
+				this.formatter = this.formatters[formatter];
+			}else{
+				console.warn("Clipboard Error - No such formatter found:", formatter)
+			}
+		break;
+
+		case "function":
+			this.formatter = formatter
+		break;
+	}
+}
+
+
+Clipboard.prototype.generateContent = function(){
+	var data = this.selector.call(this, this.selectorParams);
+	return this.formatter.call(this, data, this.formatterParams);
+}
+
+Clipboard.prototype.rowsToData = function(rows, params){
+	var columns = this.table.columnManager.columnsByIndex,
+	headers = [],
+	data = [];
+
+	if(params){
 		columns.forEach(function(column){
 			headers.push(column.definition.title);
 		});
 
 		data.push(headers);
-	}
-
-	switch(this.mode){
-
-		case "selected":
-		if(this.table.extExists("selectRow", true)){
-			rows = this.table.extensions.selectRow.getSelectedRows();
-		}
-		break;
-
-		case "table":
-		rows = this.table.rowManager.getComponents();
-		break;
-
-		case "active":
-		default:
-		rows = this.table.rowManager.getComponents(true);
 	}
 
 	rows.forEach(function(row){
@@ -96,35 +125,63 @@ Clipboard.prototype.generateContent = function(){
 
 		columns.forEach(function(column){
 			var value = column.getFieldValue(rowData);
-
-			if(typeof value == "undefined"){
-				value = ""
-			}
-
-			value = typeof value == "undefined" ? "" : value.toString();
-
-			if(value.match(/\r|\n/)){
-				value = value.split('"').join('""');
-				value = '"' + value + '"';
-			}
-
 			rowArray.push(value);
 		});
 
 		data.push(rowArray);
 	});
 
-	return this.arrayToString(data);
+	return data;
 }
 
-Clipboard.prototype.arrayToString = function(data){
-	var output = [];
 
-	data.forEach(function(row){
-		output.push(row.join("\t"));
-	});
+Clipboard.prototype.selectors = {
+	userSelection: function(params){
+		return params;
+	},
+	selected: function(params){
+		var rows = [];
 
-	return output.join("\n");
+		if(this.table.extExists("selectRow", true)){
+			rows = this.table.extensions.selectRow.getSelectedRows();
+		}
+
+		return this.rowsToData(rows, params);
+	},
+	table: function(params){
+		return this.rowsToData(this.table.rowManager.getComponents(), params);
+	},
+	active: function(params){
+		return this.rowsToData(this.table.rowManager.getComponents(true), params);
+	},
+}
+
+Clipboard.prototype.formatters = {
+	raw: function(data, params){
+		return data;
+	},
+	table: function(data, params){
+		var output = [];
+
+		data.forEach(function(row){
+			row.forEach(function(value){
+				if(typeof value == "undefined"){
+					value = ""
+				}
+
+				value = typeof value == "undefined" ? "" : value.toString();
+
+				if(value.match(/\r|\n/)){
+					value = value.split('"').join('""');
+					value = '"' + value + '"';
+				}
+			});
+
+			output.push(row.join("\t"));
+		});
+
+		return output.join("\n");
+	}
 }
 
 
