@@ -350,7 +350,7 @@ Keybindings.prototype.actions = {
 	copyToClipboard:function(e){
 		if(!this.table.extensions.edit.currentCell){
 			if(this.table.extExists("clipboard", true)){
-				this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true, null, null, true);
+				this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", null, null, null, true);
 			}
 		}
 	},

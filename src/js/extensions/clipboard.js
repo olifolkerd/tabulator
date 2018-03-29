@@ -154,7 +154,7 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 		}
 
 		this.setSelector(selector);
-		this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+		this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.table.options.clipboardCopyHeader;
 		this.setFormatter(formatter);
 		this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 

@@ -5470,11 +5470,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         keybindings: [], //array for keybindings
 
 
-        clipboard: true, //enable clipboard
+        clipboard: false, //enable clipboard
 
         clipboardCopySelector: "table", //method of chosing which data is coppied to the clipboard
 
         clipboardCopyFormatter: "table", //convert data to a clipboard string
+
+        clipboardCopyHeader: true, //include table headers in copt
 
         clipboardPasteParser: "table", //convert pasted clipboard data to rows
 
@@ -9009,7 +9011,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.setSelector(selector);
 
-        this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+        this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.table.options.clipboardCopyHeader;
 
         this.setFormatter(formatter);
 
@@ -14649,7 +14651,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.table.extExists("clipboard", true)) {
 
-            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true, null, null, true);
+            this.table.extensions.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", null, null, null, true);
           }
         }
       }
