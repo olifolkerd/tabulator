@@ -7138,6 +7138,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       },
 
+      downloadIntercept: function downloadIntercept(type, filename, options, intercept) {
+
+        if (this.extExists("download", true)) {
+
+          this.extensions.download.download(type, filename, options, intercept);
+        }
+      },
+
       ////////////// Extension Management //////////////
 
 
@@ -8952,14 +8960,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //trigger file download
 
 
-    Download.prototype.download = function (type, filename, options) {
+    Download.prototype.download = function (type, filename, options, interceptCallback) {
 
       var self = this,
           downloadFunc = false;
 
       function buildLink(data, mime) {
 
-        self.triggerDownload(data, mime, type, filename);
+        if (interceptCallback) {
+
+          interceptCallback(data);
+        } else {
+
+          self.triggerDownload(data, mime, type, filename);
+        }
       }
 
       if (typeof type == "function") {
@@ -8980,7 +8994,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (downloadFunc) {
 
-        downloadFunc.call(this, self.processDefinitions(), self.processData(), options, buildLink);
+        downloadFunc.call(this, self.processDefinitions(), self.processData(), options || {}, buildLink);
       }
     };
 
@@ -9325,60 +9339,151 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       xlsx: function xlsx(columns, data, options, setFileContents) {
 
         var self = this,
-            titles = [],
-            fields = [],
-            rows = [],
-            workbook = { SheetNames: ["Sheet1"], Sheets: {} },
-            worksheet,
+            sheetName = options.sheetName || "Sheet1",
+            workbook = { SheetNames: [], Sheets: {} },
             output;
 
-        //convert rows to worksheet
+        function generateSheet() {
+
+          var titles = [],
+              fields = [],
+              rows = [],
+              worksheet;
+
+          //convert rows to worksheet
 
 
-        function rowsToSheet() {
+          function rowsToSheet() {
 
-          var sheet = {};
+            var sheet = {};
 
-          var range = { s: { c: 0, r: 0 }, e: { c: fields.length, r: rows.length } };
+            var range = { s: { c: 0, r: 0 }, e: { c: fields.length, r: rows.length } };
 
-          rows.forEach(function (row, i) {
+            rows.forEach(function (row, i) {
 
-            row.forEach(function (value, j) {
+              row.forEach(function (value, j) {
 
-              var cell = { v: typeof value == "undefined" || value === null ? "" : value };
+                var cell = { v: typeof value == "undefined" || value === null ? "" : value };
 
-              if (cell != null) {
+                if (cell != null) {
 
-                switch (_typeof(cell.v)) {
+                  switch (_typeof(cell.v)) {
 
-                  case "number":
+                    case "number":
 
-                    cell.t = 'n';
+                      cell.t = 'n';
 
-                    break;
+                      break;
 
-                  case "boolean":
+                    case "boolean":
 
-                    cell.t = 'b';
+                      cell.t = 'b';
 
-                    break;
+                      break;
 
-                  default:
+                    default:
 
-                    cell.t = 's';
+                      cell.t = 's';
 
-                    break;
+                      break;
 
+                  }
+
+                  sheet[XLSX.utils.encode_cell({ c: j, r: i })] = cell;
                 }
-
-                sheet[XLSX.utils.encode_cell({ c: j, r: i })] = cell;
-              }
+              });
             });
+
+            sheet['!ref'] = XLSX.utils.encode_range(range);
+
+            return sheet;
+          }
+
+          //get field lists
+
+
+          columns.forEach(function (column) {
+
+            if (column.field) {
+
+              titles.push(column.title);
+
+              fields.push(column.field);
+            }
           });
 
-          sheet['!ref'] = XLSX.utils.encode_range(range);
+          rows.push(titles);
 
-          return sheet;
+          //generate each row of the table
+
+
+          data.forEach(function (row) {
+
+            var rowData = [];
+
+            fields.forEach(function (field) {
+
+              rowData.push(self.getFieldValue(field, row));
+            });
+
+            rows.push(rowData);
+          });
+
+          worksheet = rowsToSheet();
+
+          return worksheet;
+        }
+
+        if (options.sheetOnly) {
+
+          setFileContents(generateSheet());
+
+          return;
+        }
+
+        if (options.sheets) {
+
+          for (var sheet in options.sheets) {
+
+            if (options.sheets[sheet] === true) {
+
+              workbook.SheetNames.push(sheet);
+
+              workbook.Sheets[sheet] = generateSheet();
+            } else {
+
+              var el = options.sheets[sheet];
+
+              if (typeof el == "string") {
+
+                el = $(el);
+              } else {
+
+                if (!el instanceof jQuery) {
+
+                  el = $(el);
+                }
+              }
+
+              if (el.length) {
+
+                workbook.SheetNames.push(sheet);
+
+                el.tabulator("downloadIntercept", "xlsx", "", { sheetOnly: true }, function (data) {
+
+                  workbook.Sheets[sheet] = data;
+                });
+              } else {
+
+                console.warn("Download Error - Not matching table found, ignoring sheet:", options.sheets[sheet]);
+              }
+            }
+          }
+        } else {
+
+          workbook.SheetNames.push(sheetName);
+
+          workbook.Sheets[sheetName] = this.downloaders.xlsxSheet.call(this, columns, data, options, setFileContents);
         }
 
         //convert workbook to binary array
@@ -9394,40 +9499,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             view[i] = s.charCodeAt(i) & 0xFF;
           }return buf;
         }
-
-        //get field lists
-
-
-        columns.forEach(function (column) {
-
-          if (column.field) {
-
-            titles.push(column.title);
-
-            fields.push(column.field);
-          }
-        });
-
-        rows.push(titles);
-
-        //generate each row of the table
-
-
-        data.forEach(function (row) {
-
-          var rowData = [];
-
-          fields.forEach(function (field) {
-
-            rowData.push(self.getFieldValue(field, row));
-          });
-
-          rows.push(rowData);
-        });
-
-        worksheet = rowsToSheet();
-
-        workbook.Sheets["Sheet1"] = worksheet;
 
         output = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'binary' });
 

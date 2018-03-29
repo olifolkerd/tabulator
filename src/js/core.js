@@ -1264,6 +1264,12 @@
 	 			}
 	 		},
 
+	 		downloadIntercept:function(type, filename, options, intercept){
+	 			if(this.extExists("download", true)){
+	 				this.extensions.download.download(type, filename, options, intercept);
+	 			}
+	 		},
+
 	 		////////////// Extension Management //////////////
 
 	 		//object to hold extensions
