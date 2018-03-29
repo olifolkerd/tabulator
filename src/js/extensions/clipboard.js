@@ -4,6 +4,8 @@ var Clipboard = function(table){
 	this.selectorParams = {};
 	this.formatter = false;
 	this.formatterParams = {};
+	this.parser = function(){};
+	this.pasteFunction = function(){};
 
 	this.blocked = true; //block copy actions not originating from this command
 };
@@ -23,7 +25,10 @@ Clipboard.prototype.initialize = function(){
 
 	this.table.element.on("paste", function(e){
 		self.paste(e);
-	})
+	});
+
+	this.setPasteParser(this.table.options.clipboardPasteParser);
+	this.setPasteFunction(this.table.options.clipboardPasteFunction);
 }
 
 Clipboard.prototype.reset = function(){
@@ -32,15 +37,51 @@ Clipboard.prototype.reset = function(){
 }
 
 
+Clipboard.prototype.setPasteFunction = function(paster){
+	switch(typeof paster){
+		case "string":
+		this.pasteFunction = this.pasteFunctions[paster];
+
+		if(!this.pasteFunction){
+			console.warn("Clipboard Error - No such paste function found:", paster)
+		}
+		break;
+
+		case "function":
+		this.pasteFunction = paster;
+		break;
+	}
+}
+
+Clipboard.prototype.setPasteParser = function(parser){
+	switch(typeof parser){
+		case "string":
+		this.parser = this.pasteParsers[parser];
+
+		if(!this.parser){
+			console.warn("Clipboard Error - No such paste parser found:", parser)
+		}
+		break;
+
+		case "function":
+		this.parser = parser;
+		break;
+	}
+}
+
+
 Clipboard.prototype.paste = function(e){
-	var data;
+	var data, rows;
 
 	if(this.checkPaseOrigin(e)){
 
 		data = this.getPasteData(e);
 
-		if(this.parsePasteData(data)){
+		rows = this.parser.call(this, data);
+console.log("rows", rows);
+		if(rows){
 			e.preventDefault();
+			this.pasteFunction.call(this, rows);
 		}
 	}
 }
@@ -70,91 +111,21 @@ Clipboard.prototype.getPasteData = function(e){
 }
 
 Clipboard.prototype.parsePasteData = function(clipboard){
-	var data = [],
-	success = false,
-	headerFindSuccess = true,
-	columns = this.table.columnManager.columnsByIndex,
-	columnMap = [],
-	rows = [];
 
-	//get data from clipboard into array of columns and rows.
-	clipboard = clipboard.split("\n");
 
-	clipboard.forEach(function(row){
-		data.push(row.split("\t"));
-	});
+	switch(this.table.options.clipboardPasteMode){
+		case "replace":
+		this.table.setData(rows);
+		break;
 
-	if(data.length && !(data.length === 1 && data[0].length < 2)){
-		success = true;
+		case "update":
+		this.table.updateOrAddData(rows);
+		break;
 
-		//check if headers are present by title
-		data[0].forEach(function(value){
-			var column = columns.find(function(column){
-				return column.definition.title.trim() === value.trim();
-			});
-
-			if(column){
-				columnMap.push(column);
-			}else{
-				headerFindSuccess = false;
-			}
-		});
-
-		//check if column headers are present by field
-		if(!headerFindSuccess){
-			headerFindSuccess = true;
-			columnMap = [];
-
-			data[0].forEach(function(value){
-				var column = columns.find(function(column){
-					return value.trim() && column.field.trim() === value.trim();
-				});
-
-				if(column){
-					columnMap.push(column);
-				}else{
-					headerFindSuccess = false;
-				}
-			});
-
-			if(!headerFindSuccess){
-				columnMap = columns;
-			}
-		}
-
-		//remove header row if found
-		if(headerFindSuccess){
-			data.shift();
-		}
-
-		data.forEach(function(item){
-			var row = {};
-
-			item.forEach(function(value, i){
-				if(columnMap[i]){
-					row[columnMap[i].field] = value;
-				}
-			});
-
-			rows.push(row);
-		});
-
-		switch(this.table.options.clipboardPasteMode){
-			case "replace":
-			this.table.setData(rows);
-			break;
-
-			case "update":
-			this.table.updateOrAddData(rows);
-			break;
-
-			case "insert":
-			this.table.addData(rows);
-			break;
-		}
-
+		case "insert":
+		this.table.addData(rows);
+		break;
 	}
-
 	return success;
 }
 
@@ -196,12 +167,12 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 
 Clipboard.prototype.setSelector = function(selector){
 
-	selector = selector || this.table.options.clipboardSelector;
+	selector = selector || this.table.options.clipboardCopySelector;
 
 	switch(typeof selector){
 		case "string":
-		if(this.selectors[selector]){
-			this.selector = this.selectors[selector];
+		if(this.copySelectors[selector]){
+			this.selector = this.copySelectors[selector];
 		}else{
 			console.warn("Clipboard Error - No such selector found:", selector)
 		}
@@ -215,19 +186,19 @@ Clipboard.prototype.setSelector = function(selector){
 
 Clipboard.prototype.setFormatter = function(formatter){
 
-	formatter = formatter || this.table.options.clipboardFormatter;
+	formatter = formatter || this.table.options.clipboardCopyFormatter;
 
 	switch(typeof formatter){
 		case "string":
-		if(this.formatters[formatter]){
-			this.formatter = this.formatters[formatter];
+		if(this.copyFormatters[formatter]){
+			this.formatter = this.copyFormatters[formatter];
 		}else{
 			console.warn("Clipboard Error - No such formatter found:", formatter)
 		}
 		break;
 
 		case "function":
-		this.formatter = formatter
+		this.formatter = formatter;
 		break;
 	}
 }
@@ -267,7 +238,7 @@ Clipboard.prototype.rowsToData = function(rows, params){
 }
 
 
-Clipboard.prototype.selectors = {
+Clipboard.prototype.copySelectors = {
 	userSelection: function(params){
 		return params;
 	},
@@ -288,7 +259,7 @@ Clipboard.prototype.selectors = {
 	},
 }
 
-Clipboard.prototype.formatters = {
+Clipboard.prototype.copyFormatters = {
 	raw: function(data, params){
 		return data;
 	},
@@ -315,6 +286,99 @@ Clipboard.prototype.formatters = {
 		return output.join("\n");
 	}
 }
+
+Clipboard.prototype.pasteParsers = {
+	table:function(clipboard){
+		var data = [],
+		success = false,
+		headerFindSuccess = true,
+		columns = this.table.columnManager.columnsByIndex,
+		columnMap = [],
+		rows = [];
+
+		console.log("clipboard", clipboard);
+
+		//get data from clipboard into array of columns and rows.
+		clipboard = clipboard.split("\n");
+
+		clipboard.forEach(function(row){
+			data.push(row.split("\t"));
+		});
+
+		if(data.length && !(data.length === 1 && data[0].length < 2)){
+			success = true;
+
+			//check if headers are present by title
+			data[0].forEach(function(value){
+				var column = columns.find(function(column){
+					return column.definition.title.trim() === value.trim();
+				});
+
+				if(column){
+					columnMap.push(column);
+				}else{
+					headerFindSuccess = false;
+				}
+			});
+
+			//check if column headers are present by field
+			if(!headerFindSuccess){
+				headerFindSuccess = true;
+				columnMap = [];
+
+				data[0].forEach(function(value){
+					var column = columns.find(function(column){
+						return value.trim() && column.field.trim() === value.trim();
+					});
+
+					if(column){
+						columnMap.push(column);
+					}else{
+						headerFindSuccess = false;
+					}
+				});
+
+				if(!headerFindSuccess){
+					columnMap = columns;
+				}
+			}
+
+			//remove header row if found
+			if(headerFindSuccess){
+				data.shift();
+			}
+
+			data.forEach(function(item){
+				var row = {};
+
+				item.forEach(function(value, i){
+					if(columnMap[i]){
+						row[columnMap[i].field] = value;
+					}
+				});
+
+				rows.push(row);
+			});
+
+			return rows;
+		}else{
+			return false;
+		}
+	}
+}
+
+Clipboard.prototype.pasteFunctions = {
+	replace:function(rows){
+		this.table.setData(rows);
+	},
+	update:function(rows){
+		this.table.updateOrAddData(rows);
+	},
+	insert:function(rows){
+		this.table.addData(rows);
+	},
+}
+
 
 
 Tabulator.registerExtension("clipboard", Clipboard);
