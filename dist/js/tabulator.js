@@ -5472,7 +5472,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         clipboard: false, //enable clipboard
 
-        clipboardCopySelector: "table", //method of chosing which data is coppied to the clipboard
+        clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard
 
         clipboardCopyFormatter: "table", //convert data to a clipboard string
 

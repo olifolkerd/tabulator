@@ -52,7 +52,7 @@
 	 			keybindings:[], //array for keybindings
 
 	 			clipboard:false, //enable clipboard
-	 			clipboardCopySelector:"table", //method of chosing which data is coppied to the clipboard
+	 			clipboardCopySelector:"active", //method of chosing which data is coppied to the clipboard
 	 			clipboardCopyFormatter:"table", //convert data to a clipboard string
 	 			clipboardCopyHeader:true, //include table headers in copt
 	 			clipboardPasteParser:"table", //convert pasted clipboard data to rows
