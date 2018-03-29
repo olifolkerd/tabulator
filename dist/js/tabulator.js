@@ -5470,6 +5470,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         keybindings: [], //array for keybindings
 
 
+        clipboard: true, //enable clipboard
+
         clipboardCopySelector: "table", //method of chosing which data is coppied to the clipboard
 
         clipboardCopyFormatter: "table", //convert data to a clipboard string
@@ -8801,6 +8803,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table;
 
+      this.mode = true;
+
       this.copySelector = false;
 
       this.copySelectorParams = {};
@@ -8821,28 +8825,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      this.table.element.on("copy", function (e) {
+      this.mode = this.table.options.clipboard;
 
-        var data;
+      if (this.mode === true || this.mode === "copy") {
 
-        if (!self.blocked) {
+        this.table.element.on("copy", function (e) {
 
-          e.preventDefault();
+          var data;
 
-          data = self.generateContent();
+          if (!self.blocked) {
 
-          e.originalEvent.clipboardData.setData('text/plain', data);
+            e.preventDefault();
 
-          self.table.options.clipboardCopied(data);
+            data = self.generateContent();
 
-          self.reset();
-        }
-      });
+            e.originalEvent.clipboardData.setData('text/plain', data);
 
-      this.table.element.on("paste", function (e) {
+            self.table.options.clipboardCopied(data);
 
-        self.paste(e);
-      });
+            self.reset();
+          }
+        });
+      }
+
+      if (this.mode === true || this.mode === "paste") {
+
+        this.table.element.on("paste", function (e) {
+
+          self.paste(e);
+        });
+      }
 
       this.setPasteParser(this.table.options.clipboardPasteParser);
 
@@ -8964,48 +8976,51 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.blocked = false;
 
-      if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+      if (this.mode === true || this.mode === "copy") {
 
-        range = document.createRange();
+        if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 
-        range.selectNodeContents(this.table.element[0]);
+          range = document.createRange();
 
-        sel = window.getSelection();
+          range.selectNodeContents(this.table.element[0]);
 
-        if (sel.toString() && internal) {
+          sel = window.getSelection();
 
-          selector = "userSelection";
+          if (sel.toString() && internal) {
 
-          formatter = "raw";
+            selector = "userSelection";
 
-          this.copySelectorParams = sel.toString();
+            formatter = "raw";
+
+            this.copySelectorParams = sel.toString();
+          }
+
+          sel.removeAllRanges();
+
+          sel.addRange(range);
+        } else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
+
+          textRange = document.body.createTextRange();
+
+          textRange.moveToElementText(this.table.element[0]);
+
+          textRange.select();
         }
 
-        sel.removeAllRanges();
+        this.setSelector(selector);
 
-        sel.addRange(range);
-      } else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
+        this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
 
-        textRange = document.body.createTextRange();
+        this.setFormatter(formatter);
 
-        textRange.moveToElementText(this.table.element[0]);
+        this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
-        textRange.select();
-      }
+        document.execCommand('copy');
 
-      this.setSelector(selector);
+        if (sel) {
 
-      this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
-
-      this.setFormatter(formatter);
-
-      this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
-
-      document.execCommand('copy');
-
-      if (sel) {
-
-        sel.removeAllRanges();
+          sel.removeAllRanges();
+        }
       }
     };
 

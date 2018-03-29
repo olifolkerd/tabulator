@@ -51,6 +51,7 @@
 
 	 			keybindings:[], //array for keybindings
 
+	 			clipboard:true, //enable clipboard
 	 			clipboardCopySelector:"table", //method of chosing which data is coppied to the clipboard
 	 			clipboardCopyFormatter:"table", //convert data to a clipboard string
 	 			clipboardPasteParser:"table", //convert pasted clipboard data to rows

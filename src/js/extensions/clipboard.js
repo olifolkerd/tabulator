@@ -1,5 +1,6 @@
 var Clipboard = function(table){
 	this.table = table;
+	this.mode = true;
 	this.copySelector = false;
 	this.copySelectorParams = {};
 	this.copyFormatter = false;
@@ -13,25 +14,31 @@ var Clipboard = function(table){
 Clipboard.prototype.initialize = function(){
 	var self = this;
 
-	this.table.element.on("copy", function(e){
-		var data;
+	this.mode = this.table.options.clipboard;
 
-		if(!self.blocked){
-			e.preventDefault();
+	if(this.mode === true || this.mode === "copy"){
+		this.table.element.on("copy", function(e){
+			var data;
 
-			data = self.generateContent()
+			if(!self.blocked){
+				e.preventDefault();
 
-			e.originalEvent.clipboardData.setData('text/plain', data);
+				data = self.generateContent()
 
-			self.table.options.clipboardCopied(data);
+				e.originalEvent.clipboardData.setData('text/plain', data);
 
-			self.reset();
-		}
-	});
+				self.table.options.clipboardCopied(data);
 
-	this.table.element.on("paste", function(e){
-		self.paste(e);
-	});
+				self.reset();
+			}
+		});
+	}
+
+	if(this.mode === true || this.mode === "paste"){
+		this.table.element.on("paste", function(e){
+			self.paste(e);
+		});
+	}
 
 	this.setPasteParser(this.table.options.clipboardPasteParser);
 	this.setPasteAction(this.table.options.clipboardPasteAction);
@@ -125,34 +132,37 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 	var range, sel;
 	this.blocked = false;
 
-	if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-		range = document.createRange();
-		range.selectNodeContents(this.table.element[0]);
-		sel = window.getSelection();
+	if(this.mode === true || this.mode === "copy"){
 
-		if(sel.toString() && internal){
-			selector = "userSelection";
-			formatter = "raw";
-			this.copySelectorParams = sel.toString();
+		if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+			range = document.createRange();
+			range.selectNodeContents(this.table.element[0]);
+			sel = window.getSelection();
+
+			if(sel.toString() && internal){
+				selector = "userSelection";
+				formatter = "raw";
+				this.copySelectorParams = sel.toString();
+			}
+
+			sel.removeAllRanges();
+			sel.addRange(range);
+		} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
+			textRange = document.body.createTextRange();
+			textRange.moveToElementText(this.table.element[0]);
+			textRange.select();
 		}
 
-		sel.removeAllRanges();
-		sel.addRange(range);
-	} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
-		textRange = document.body.createTextRange();
-		textRange.moveToElementText(this.table.element[0]);
-		textRange.select();
-	}
+		this.setSelector(selector);
+		this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+		this.setFormatter(formatter);
+		this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
-	this.setSelector(selector);
-	this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
-	this.setFormatter(formatter);
-	this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
+		document.execCommand('copy');
 
-	document.execCommand('copy');
-
-	if(sel){
-		sel.removeAllRanges();
+		if(sel){
+			sel.removeAllRanges();
+		}
 	}
 }
 
