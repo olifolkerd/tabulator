@@ -51,8 +51,9 @@
 
 	 			keybindings:[], //array for keybindings
 
-	 			clipboardSelector:"table",
-	 			clipboardFormatter:"table",
+	 			clipboardSelector:"table", //method of chosing which data is coppied to the clipboard
+	 			clipboardFormatter:"table", //convert data to a clipboard string
+	 			clipboardPasteMode:"insert", //what to do when data is pasted into the table
 
 	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
 	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data

@@ -20,12 +20,144 @@ Clipboard.prototype.initialize = function(){
 			self.reset();
 		}
 	});
+
+	this.table.element.on("paste", function(e){
+		self.paste(e);
+	})
 }
 
 Clipboard.prototype.reset = function(){
 	this.blocked = false;
 	this.originalSelectionText = "";
 }
+
+
+Clipboard.prototype.paste = function(e){
+	var data;
+
+	if(this.checkPaseOrigin(e)){
+
+		data = this.getPasteData(e);
+
+		if(this.parsePasteData(data)){
+			e.preventDefault();
+		}
+	}
+}
+
+Clipboard.prototype.checkPaseOrigin = function(e){
+	var valid = true;
+
+	if(e.target.tagName != "DIV" || this.table.extensions.edit.currentCell){
+		valid = false;
+	}
+
+	return valid;
+}
+
+Clipboard.prototype.getPasteData = function(e){
+	var data = undefined;
+
+	if (window.clipboardData && window.clipboardData.getData) {
+		data = window.clipboardData.getData('Text');
+	} else if (e.clipboardData && e.clipboardData.getData) {
+		data = e.clipboardData.getData('text/plain');
+	} else if (e.originalEvent && e.originalEvent.clipboardData.getData) {
+		data = e.originalEvent.clipboardData.getData('text/plain');
+	}
+
+	return data;
+}
+
+Clipboard.prototype.parsePasteData = function(clipboard){
+	var data = [],
+	success = false,
+	headerFindSuccess = true,
+	columns = this.table.columnManager.columnsByIndex,
+	columnMap = [],
+	rows = [];
+
+	//get data from clipboard into array of columns and rows.
+	clipboard = clipboard.split("\n");
+
+	clipboard.forEach(function(row){
+		data.push(row.split("\t"));
+	});
+
+	if(data.length && !(data.length === 1 && data[0].length < 2)){
+		success = true;
+
+		//check if headers are present by title
+		data[0].forEach(function(value){
+			var column = columns.find(function(column){
+				return column.definition.title.trim() === value.trim();
+			});
+
+			if(column){
+				columnMap.push(column);
+			}else{
+				headerFindSuccess = false;
+			}
+		});
+
+		//check if column headers are present by field
+		if(!headerFindSuccess){
+			headerFindSuccess = true;
+			columnMap = [];
+
+			data[0].forEach(function(value){
+				var column = columns.find(function(column){
+					return value.trim() && column.field.trim() === value.trim();
+				});
+
+				if(column){
+					columnMap.push(column);
+				}else{
+					headerFindSuccess = false;
+				}
+			});
+
+			if(!headerFindSuccess){
+				columnMap = columns;
+			}
+		}
+
+		//remove header row if found
+		if(headerFindSuccess){
+			data.shift();
+		}
+
+		data.forEach(function(item){
+			var row = {};
+
+			item.forEach(function(value, i){
+				if(columnMap[i]){
+					row[columnMap[i].field] = value;
+				}
+			});
+
+			rows.push(row);
+		});
+
+		switch(this.table.options.clipboardPasteMode){
+			case "replace":
+			this.table.setData(rows);
+			break;
+
+			case "update":
+			this.table.updateOrAddData(rows);
+			break;
+
+			case "insert":
+			this.table.addData(rows);
+			break;
+		}
+
+	}
+
+	return success;
+}
+
 
 Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatterParams, internal){
 	var range, sel;
@@ -68,15 +200,15 @@ Clipboard.prototype.setSelector = function(selector){
 
 	switch(typeof selector){
 		case "string":
-			if(this.selectors[selector]){
-				this.selector = this.selectors[selector];
-			}else{
-				console.warn("Clipboard Error - No such selector found:", selector)
-			}
+		if(this.selectors[selector]){
+			this.selector = this.selectors[selector];
+		}else{
+			console.warn("Clipboard Error - No such selector found:", selector)
+		}
 		break;
 
 		case "function":
-			this.selector = selector
+		this.selector = selector
 		break;
 	}
 }
@@ -87,15 +219,15 @@ Clipboard.prototype.setFormatter = function(formatter){
 
 	switch(typeof formatter){
 		case "string":
-			if(this.formatters[formatter]){
-				this.formatter = this.formatters[formatter];
-			}else{
-				console.warn("Clipboard Error - No such formatter found:", formatter)
-			}
+		if(this.formatters[formatter]){
+			this.formatter = this.formatters[formatter];
+		}else{
+			console.warn("Clipboard Error - No such formatter found:", formatter)
+		}
 		break;
 
 		case "function":
-			this.formatter = formatter
+		this.formatter = formatter
 		break;
 	}
 }

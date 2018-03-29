@@ -906,7 +906,7 @@ RowManager.prototype.getDisplayRows = function(index){
 
 //repeat action accross display rows
 RowManager.prototype.displayRowIterator = function(callback){
-	this.displayRows.forEach(callback(rows));
+	this.displayRows.forEach(callback);
 
 	this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;
 }
