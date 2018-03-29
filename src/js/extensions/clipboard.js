@@ -1,11 +1,11 @@
 var Clipboard = function(table){
 	this.table = table;
-	this.selector = false;
-	this.selectorParams = {};
-	this.formatter = false;
-	this.formatterParams = {};
-	this.parser = function(){};
-	this.pasteFunction = function(){};
+	this.copySelector = false;
+	this.copySelectorParams = {};
+	this.copyFormatter = false;
+	this.copyFormatterParams = {};
+	this.pasteParser = function(){};
+	this.pasteAction = function(){};
 
 	this.blocked = true; //block copy actions not originating from this command
 };
@@ -14,10 +14,16 @@ Clipboard.prototype.initialize = function(){
 	var self = this;
 
 	this.table.element.on("copy", function(e){
+		var data;
+
 		if(!self.blocked){
 			e.preventDefault();
 
-			e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
+			data = self.generateContent()
+
+			e.originalEvent.clipboardData.setData('text/plain', data);
+
+			self.table.options.clipboardCopied(data);
 
 			self.reset();
 		}
@@ -28,7 +34,7 @@ Clipboard.prototype.initialize = function(){
 	});
 
 	this.setPasteParser(this.table.options.clipboardPasteParser);
-	this.setPasteFunction(this.table.options.clipboardPasteFunction);
+	this.setPasteAction(this.table.options.clipboardPasteAction);
 }
 
 Clipboard.prototype.reset = function(){
@@ -37,18 +43,19 @@ Clipboard.prototype.reset = function(){
 }
 
 
-Clipboard.prototype.setPasteFunction = function(paster){
-	switch(typeof paster){
-		case "string":
-		this.pasteFunction = this.pasteFunctions[paster];
+Clipboard.prototype.setPasteAction = function(action){
 
-		if(!this.pasteFunction){
-			console.warn("Clipboard Error - No such paste function found:", paster)
+	switch(typeof action){
+		case "string":
+		this.pasteAction = this.pasteActions[action];
+
+		if(!this.pasteAction){
+			console.warn("Clipboard Error - No such paste action found:", action)
 		}
 		break;
 
 		case "function":
-		this.pasteFunction = paster;
+		this.pasteAction = action;
 		break;
 	}
 }
@@ -56,32 +63,35 @@ Clipboard.prototype.setPasteFunction = function(paster){
 Clipboard.prototype.setPasteParser = function(parser){
 	switch(typeof parser){
 		case "string":
-		this.parser = this.pasteParsers[parser];
+		this.pasteParser = this.pasteParsers[parser];
 
-		if(!this.parser){
+		if(!this.pasteParser){
 			console.warn("Clipboard Error - No such paste parser found:", parser)
 		}
 		break;
 
 		case "function":
-		this.parser = parser;
+		this.pasteParser = parser;
 		break;
 	}
 }
 
 
 Clipboard.prototype.paste = function(e){
-	var data, rows;
+	var data, rowData, rows;
 
 	if(this.checkPaseOrigin(e)){
 
 		data = this.getPasteData(e);
 
-		rows = this.parser.call(this, data);
-console.log("rows", rows);
-		if(rows){
+		rowData = this.pasteParser.call(this, data);
+
+		if(rowData){
 			e.preventDefault();
-			this.pasteFunction.call(this, rows);
+			rows = this.pasteAction.call(this, rowData);
+			this.table.options.clipboardPasted(data, rowData, rows);
+		}else{
+			this.table.options.clipboardPasteError(data);
 		}
 	}
 }
@@ -110,25 +120,6 @@ Clipboard.prototype.getPasteData = function(e){
 	return data;
 }
 
-Clipboard.prototype.parsePasteData = function(clipboard){
-
-
-	switch(this.table.options.clipboardPasteMode){
-		case "replace":
-		this.table.setData(rows);
-		break;
-
-		case "update":
-		this.table.updateOrAddData(rows);
-		break;
-
-		case "insert":
-		this.table.addData(rows);
-		break;
-	}
-	return success;
-}
-
 
 Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatterParams, internal){
 	var range, sel;
@@ -142,7 +133,7 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 		if(sel.toString() && internal){
 			selector = "userSelection";
 			formatter = "raw";
-			this.selectorParams = sel.toString();
+			this.copySelectorParams = sel.toString();
 		}
 
 		sel.removeAllRanges();
@@ -154,9 +145,9 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 	}
 
 	this.setSelector(selector);
-	this.selectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+	this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
 	this.setFormatter(formatter);
-	this.formatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
+	this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
 	document.execCommand('copy');
 
@@ -172,14 +163,14 @@ Clipboard.prototype.setSelector = function(selector){
 	switch(typeof selector){
 		case "string":
 		if(this.copySelectors[selector]){
-			this.selector = this.copySelectors[selector];
+			this.copySelector = this.copySelectors[selector];
 		}else{
 			console.warn("Clipboard Error - No such selector found:", selector)
 		}
 		break;
 
 		case "function":
-		this.selector = selector
+		this.copySelector = selector
 		break;
 	}
 }
@@ -191,22 +182,22 @@ Clipboard.prototype.setFormatter = function(formatter){
 	switch(typeof formatter){
 		case "string":
 		if(this.copyFormatters[formatter]){
-			this.formatter = this.copyFormatters[formatter];
+			this.copyFormatter = this.copyFormatters[formatter];
 		}else{
 			console.warn("Clipboard Error - No such formatter found:", formatter)
 		}
 		break;
 
 		case "function":
-		this.formatter = formatter;
+		this.copyFormatter = formatter;
 		break;
 	}
 }
 
 
 Clipboard.prototype.generateContent = function(){
-	var data = this.selector.call(this, this.selectorParams);
-	return this.formatter.call(this, data, this.formatterParams);
+	var data = this.copySelector.call(this, this.copySelectorParams);
+	return this.copyFormatter.call(this, data, this.copyFormatterParams);
 }
 
 Clipboard.prototype.rowsToData = function(rows, params){
@@ -296,8 +287,6 @@ Clipboard.prototype.pasteParsers = {
 		columnMap = [],
 		rows = [];
 
-		console.log("clipboard", clipboard);
-
 		//get data from clipboard into array of columns and rows.
 		clipboard = clipboard.split("\n");
 
@@ -367,15 +356,15 @@ Clipboard.prototype.pasteParsers = {
 	}
 }
 
-Clipboard.prototype.pasteFunctions = {
+Clipboard.prototype.pasteActions = {
 	replace:function(rows){
-		this.table.setData(rows);
+		return this.table.setData(rows);
 	},
 	update:function(rows){
-		this.table.updateOrAddData(rows);
+		return this.table.updateOrAddData(rows);
 	},
 	insert:function(rows){
-		this.table.addData(rows);
+		return this.table.addData(rows);
 	},
 }
 

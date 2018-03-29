@@ -54,7 +54,11 @@
 	 			clipboardCopySelector:"table", //method of chosing which data is coppied to the clipboard
 	 			clipboardCopyFormatter:"table", //convert data to a clipboard string
 	 			clipboardPasteParser:"table", //convert pasted clipboard data to rows
-	 			clipboardPasteFunction:"insert", //how to insert pasted data into the table
+	 			clipboardPasteAction:"insert", //how to insert pasted data into the table
+
+	 			clipboardCopied:function(){}, //data has been copied to the clipboard
+	 			clipboardPasted:function(){}, //data has been pasted into the table
+	 			clipboardPasteError:function(){}, //data has not successfully been pasted into the table
 
 	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
 	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data

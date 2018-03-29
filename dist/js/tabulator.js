@@ -2308,6 +2308,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           return match || false;
         }
+      } else if (typeof subject == "undefined" || subject === null) {
+
+        return false;
       } else {
 
         //subject should be treated as the index of the row
@@ -5473,7 +5476,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         clipboardPasteParser: "table", //convert pasted clipboard data to rows
 
-        clipboardPasteFunction: "insert", //how to insert pasted data into the table
+        clipboardPasteAction: "insert", //how to insert pasted data into the table
+
+
+        clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
+
+        clipboardPasted: function clipboardPasted() {}, //data has been pasted into the table
+
+        clipboardPasteError: function clipboardPasteError() {}, //data has not successfully been pasted into the table
 
 
         downloadDataMutator: false, //function to manipulate table data before it is downloaded
@@ -6213,6 +6223,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       addData: function addData(data, pos, index) {
 
+        var rows = [],
+            output = [];
+
         if (typeof data === "string") {
 
           data = JSON.parse(data);
@@ -6220,7 +6233,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (data) {
 
-          this.rowManager.addRows(data, pos, index);
+          rows = this.rowManager.addRows(data, pos, index);
+
+          rows.forEach(function (row) {
+
+            output.push(row.getComponent());
+          });
+
+          return output;
         } else {
 
           console.warn("Update Error - No data provided");
@@ -6232,6 +6252,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       updateOrAddData: function updateOrAddData(data) {
 
         var self = this;
+
+        var rows = [];
 
         if (typeof data === "string") {
 
@@ -6247,11 +6269,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             if (row) {
 
               row.updateData(item);
+
+              rows.push(row.getComponent());
             } else {
 
-              self.rowManager.addRows(item);
+              rows.push(self.rowManager.addRows(item)[0].getComponent());
             }
           });
+
+          return rows;
         } else {
 
           console.warn("Update Error - No data provided");
@@ -8775,17 +8801,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table;
 
-      this.selector = false;
+      this.copySelector = false;
 
-      this.selectorParams = {};
+      this.copySelectorParams = {};
 
-      this.formatter = false;
+      this.copyFormatter = false;
 
-      this.formatterParams = {};
+      this.copyFormatterParams = {};
 
-      this.parser = function () {};
+      this.pasteParser = function () {};
 
-      this.pasteFunction = function () {};
+      this.pasteAction = function () {};
 
       this.blocked = true; //block copy actions not originating from this command
 
@@ -8797,11 +8823,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table.element.on("copy", function (e) {
 
+        var data;
+
         if (!self.blocked) {
 
           e.preventDefault();
 
-          e.originalEvent.clipboardData.setData('text/plain', self.generateContent());
+          data = self.generateContent();
+
+          e.originalEvent.clipboardData.setData('text/plain', data);
+
+          self.table.options.clipboardCopied(data);
 
           self.reset();
         }
@@ -8814,7 +8846,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.setPasteParser(this.table.options.clipboardPasteParser);
 
-      this.setPasteFunction(this.table.options.clipboardPasteFunction);
+      this.setPasteAction(this.table.options.clipboardPasteAction);
     };
 
     Clipboard.prototype.reset = function () {
@@ -8824,24 +8856,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.originalSelectionText = "";
     };
 
-    Clipboard.prototype.setPasteFunction = function (paster) {
+    Clipboard.prototype.setPasteAction = function (action) {
 
-      switch (typeof paster === 'undefined' ? 'undefined' : _typeof(paster)) {
+      switch (typeof action === 'undefined' ? 'undefined' : _typeof(action)) {
 
         case "string":
 
-          this.pasteFunction = this.pasteFunctions[paster];
+          this.pasteAction = this.pasteActions[action];
 
-          if (!this.pasteFunction) {
+          if (!this.pasteAction) {
 
-            console.warn("Clipboard Error - No such paste function found:", paster);
+            console.warn("Clipboard Error - No such paste action found:", action);
           }
 
           break;
 
         case "function":
 
-          this.pasteFunction = paster;
+          this.pasteAction = action;
 
           break;
 
@@ -8854,9 +8886,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "string":
 
-          this.parser = this.pasteParsers[parser];
+          this.pasteParser = this.pasteParsers[parser];
 
-          if (!this.parser) {
+          if (!this.pasteParser) {
 
             console.warn("Clipboard Error - No such paste parser found:", parser);
           }
@@ -8865,7 +8897,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "function":
 
-          this.parser = parser;
+          this.pasteParser = parser;
 
           break;
 
@@ -8874,21 +8906,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Clipboard.prototype.paste = function (e) {
 
-      var data, rows;
+      var data, rowData, rows;
 
       if (this.checkPaseOrigin(e)) {
 
         data = this.getPasteData(e);
 
-        rows = this.parser.call(this, data);
+        rowData = this.pasteParser.call(this, data);
 
-        console.log("rows", rows);
-
-        if (rows) {
+        if (rowData) {
 
           e.preventDefault();
 
-          this.pasteFunction.call(this, rows);
+          rows = this.pasteAction.call(this, rowData);
+
+          this.table.options.clipboardPasted(data, rowData, rows);
+        } else {
+
+          this.table.options.clipboardPasteError(data);
         }
       }
     };
@@ -8923,33 +8958,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return data;
     };
 
-    Clipboard.prototype.parsePasteData = function (clipboard) {
-
-      switch (this.table.options.clipboardPasteMode) {
-
-        case "replace":
-
-          this.table.setData(rows);
-
-          break;
-
-        case "update":
-
-          this.table.updateOrAddData(rows);
-
-          break;
-
-        case "insert":
-
-          this.table.addData(rows);
-
-          break;
-
-      }
-
-      return success;
-    };
-
     Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
 
       var range, sel;
@@ -8970,7 +8978,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           formatter = "raw";
 
-          this.selectorParams = sel.toString();
+          this.copySelectorParams = sel.toString();
         }
 
         sel.removeAllRanges();
@@ -8987,11 +8995,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.setSelector(selector);
 
-      this.selectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
+      this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : {};
 
       this.setFormatter(formatter);
 
-      this.formatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
+      this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
       document.execCommand('copy');
 
@@ -9011,7 +9019,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.copySelectors[selector]) {
 
-            this.selector = this.copySelectors[selector];
+            this.copySelector = this.copySelectors[selector];
           } else {
 
             console.warn("Clipboard Error - No such selector found:", selector);
@@ -9021,7 +9029,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "function":
 
-          this.selector = selector;
+          this.copySelector = selector;
 
           break;
 
@@ -9038,7 +9046,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.copyFormatters[formatter]) {
 
-            this.formatter = this.copyFormatters[formatter];
+            this.copyFormatter = this.copyFormatters[formatter];
           } else {
 
             console.warn("Clipboard Error - No such formatter found:", formatter);
@@ -9048,7 +9056,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "function":
 
-          this.formatter = formatter;
+          this.copyFormatter = formatter;
 
           break;
 
@@ -9057,9 +9065,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Clipboard.prototype.generateContent = function () {
 
-      var data = this.selector.call(this, this.selectorParams);
+      var data = this.copySelector.call(this, this.copySelectorParams);
 
-      return this.formatter.call(this, data, this.formatterParams);
+      return this.copyFormatter.call(this, data, this.copyFormatterParams);
     };
 
     Clipboard.prototype.rowsToData = function (rows, params) {
@@ -9176,8 +9184,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             columnMap = [],
             rows = [];
 
-        console.log("clipboard", clipboard);
-
         //get data from clipboard into array of columns and rows.
 
 
@@ -9274,21 +9280,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     };
 
-    Clipboard.prototype.pasteFunctions = {
+    Clipboard.prototype.pasteActions = {
 
       replace: function replace(rows) {
 
-        this.table.setData(rows);
+        return this.table.setData(rows);
       },
 
       update: function update(rows) {
 
-        this.table.updateOrAddData(rows);
+        return this.table.updateOrAddData(rows);
       },
 
       insert: function insert(rows) {
 
-        this.table.addData(rows);
+        return this.table.addData(rows);
       }
 
     };
