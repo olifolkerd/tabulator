@@ -293,7 +293,7 @@ Clipboard.prototype.pasteParsers = {
 		var data = [],
 		success = false,
 		headerFindSuccess = true,
-		columns = this.table.columnManager.columnsByIndex,
+		columns = this.table.columnManager.columns,
 		columnMap = [],
 		rows = [];
 
@@ -310,7 +310,7 @@ Clipboard.prototype.pasteParsers = {
 			//check if headers are present by title
 			data[0].forEach(function(value){
 				var column = columns.find(function(column){
-					return column.definition.title.trim() === value.trim();
+					return value.trim() && column.definition.title.trim() === value.trim();
 				});
 
 				if(column){
@@ -338,7 +338,7 @@ Clipboard.prototype.pasteParsers = {
 				});
 
 				if(!headerFindSuccess){
-					columnMap = columns;
+					columnMap = this.table.columnManager.columnsByIndex;
 				}
 			}
 

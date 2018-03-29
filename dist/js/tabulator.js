@@ -9195,7 +9195,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var data = [],
             success = false,
             headerFindSuccess = true,
-            columns = this.table.columnManager.columnsByIndex,
+            columns = this.table.columnManager.columns,
             columnMap = [],
             rows = [];
 
@@ -9220,7 +9220,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             var column = columns.find(function (column) {
 
-              return column.definition.title.trim() === value.trim();
+              return value.trim() && column.definition.title.trim() === value.trim();
             });
 
             if (column) {
@@ -9259,7 +9259,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (!headerFindSuccess) {
 
-              columnMap = columns;
+              columnMap = this.table.columnManager.columnsByIndex;
             }
           }
 
