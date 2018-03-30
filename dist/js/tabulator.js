@@ -4264,6 +4264,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.normalizeHeight();
         }
 
+        //setup movable rows
+
+        if (self.table.options.responsiveLayout === "collapse" && self.table.extExists("responsiveLayout")) {
+
+          self.table.extensions.responsiveLayout.layoutRow(this);
+        }
+
         if (self.table.options.rowFormatter) {
 
           self.table.options.rowFormatter(self.getComponent());
@@ -5540,6 +5547,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
         responsiveLayout: false, //responsive layout flags
+
+        responsiveLayoutCollapseStartOpen: true, //start showing collapsed data
+
+        responsiveLayoutCollapseFormatter: false, //responsive layout collapse formatter
 
 
         pagination: false, //set pagination type
@@ -16503,7 +16514,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.columns = [];
 
+      this.hiddenColumns = [];
+
+      this.mode = "";
+
       this.index = 0;
+
+      this.collapseFormatter = [];
+
+      this.collapseStartOpen = true;
     };
 
     //generate resposive columns list
@@ -16512,6 +16531,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     ResponsiveLayout.prototype.initialize = function () {
 
       var columns = [];
+
+      this.mode = this.table.options.responsiveLayout;
+
+      this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
+
+      this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
+
+      this.hiddenColumns = [];
 
       //detemine level of responsivity for each column
 
@@ -16525,6 +16552,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             column.extensions.responsive.index = i;
 
             columns.push(column);
+
+            if (!column.visible && this.mode === "collapse") {
+
+              this.hiddenColumns.push(column);
+            }
           }
         }
       });
@@ -16542,6 +16574,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
 
       this.columns = columns;
+
+      if (this.mode === "collapse") {
+
+        this.generateCollapsedContent();
+      }
     };
 
     //define layout information
@@ -16552,6 +16589,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var def = column.getDefinition();
 
       column.extensions.responsive = { order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible: def.visible === false ? false : true };
+    };
+
+    ResponsiveLayout.prototype.layoutRow = function (row) {
+
+      var rowEl = row.getElement(),
+          el = $("<div class='tabulator-responsive-collapse'></div>");
+
+      if (!rowEl.hasClass("tabulator-calcs")) {
+
+        row.extensions.responsiveLayout = {
+
+          element: el
+
+        };
+
+        if (!this.collapseStartOpen) {
+
+          el.hide();
+        }
+
+        row.getElement().append(el);
+
+        this.generateCollapsedRowContent(row);
+      }
     };
 
     //update column visibility
@@ -16566,6 +16627,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         column.extensions.responsive.visible = visible;
 
         this.initialize();
+      }
+    };
+
+    ResponsiveLayout.prototype.hideColumn = function (column) {
+
+      column.hide(false, true);
+
+      if (this.mode === "collapse") {
+
+        this.hiddenColumns.unshift(column);
+
+        this.generateCollapsedContent();
+      }
+    };
+
+    ResponsiveLayout.prototype.showColumn = function (column) {
+
+      var index;
+
+      column.show(false, true);
+
+      //set column width to prevent calculation loops on uninitialized columns
+
+
+      column.setWidth(column.getWidth());
+
+      if (this.mode === "collapse") {
+
+        index = this.hiddenColumns.indexOf(column);
+
+        if (index > -1) {
+
+          this.hiddenColumns.splice(index, 1);
+        }
+
+        this.generateCollapsedContent();
       }
     };
 
@@ -16592,7 +16689,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (column) {
 
-            column.hide(false, true);
+            self.hideColumn(column);
 
             self.index++;
           } else {
@@ -16612,12 +16709,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               if (diff >= _column.getWidth()) {
 
-                _column.show(false, true);
-
-                //set column width to prevent calculation loops on uninitialized columns
-
-
-                _column.setWidth(_column.getWidth());
+                self.showColumn(_column);
 
                 self.index--;
               } else {
@@ -16639,6 +16731,56 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.table.rowManager.renderEmptyScroll();
         }
       }
+    };
+
+    ResponsiveLayout.prototype.generateCollapsedContent = function () {
+
+      var self = this,
+          rows = this.table.rowManager.getDisplayRows();
+
+      rows.forEach(function (row) {
+
+        self.generateCollapsedRowContent(row);
+      });
+    };
+
+    ResponsiveLayout.prototype.generateCollapsedRowContent = function (row) {
+
+      var el;
+
+      if (row.extensions.responsiveLayout) {
+
+        el = row.extensions.responsiveLayout.element;
+
+        el.empty();
+
+        el.append(this.collapseFormatter(this.generateCollapsedRowData(row)));
+      }
+    };
+
+    ResponsiveLayout.prototype.generateCollapsedRowData = function (row) {
+
+      var data = row.getData(),
+          output = {};
+
+      this.hiddenColumns.forEach(function (column) {
+
+        output[column.definition.title] = column.getFieldValue(data);
+      });
+
+      return output;
+    };
+
+    ResponsiveLayout.prototype.formatCollapsedData = function (data) {
+
+      var list = $("<table></table>");
+
+      for (var key in data) {
+
+        list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "<td></tr>");
+      }
+
+      return Object.keys(data).length ? list : "";
     };
 
     Tabulator.registerExtension("responsiveLayout", ResponsiveLayout);

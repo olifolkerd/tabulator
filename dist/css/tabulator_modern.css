@@ -171,6 +171,25 @@
   border-left: 2px solid #fff;
 }
 
+.tabulator .tabulator-header .tabulator-responsive-collapse {
+  box-sizing: border-box;
+  padding: 5px;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+.tabulator .tabulator-header .tabulator-responsive-collapse:empty {
+  display: none;
+}
+
+.tabulator .tabulator-header .tabulator-responsive-collapse table {
+  font-size: 16px;
+}
+
+.tabulator .tabulator-header .tabulator-responsive-collapse table tr td:first-of-type {
+  padding-right: 10px;
+}
+
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
   min-width: 200%;

@@ -236,6 +236,11 @@ Row.prototype.initialize = function(force){
 			self.normalizeHeight();
 		}
 
+		//setup movable rows
+		if(self.table.options.responsiveLayout === "collapse" && self.table.extExists("responsiveLayout")){
+			self.table.extensions.responsiveLayout.layoutRow(this);
+		}
+
 		if(self.table.options.rowFormatter){
 			self.table.options.rowFormatter(self.getComponent());
 		}

@@ -90,6 +90,8 @@
 	 			persistentLayoutID:"",//DEPRICATED - key for persistent storage;
 
 	 			responsiveLayout:false, //responsive layout flags
+	 			responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
+	 			responsiveLayoutCollapseFormatter:false, //responsive layout collapse formatter
 
 	 			pagination:false, //set pagination type
 	 			paginationSize:false, //set number of rows to a page

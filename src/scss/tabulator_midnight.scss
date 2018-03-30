@@ -254,6 +254,29 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			}
 		}
 
+		.tabulator-responsive-collapse{
+			box-sizing:border-box;
+
+			padding:5px;
+
+			border-top:1px solid $rowBorderColor;
+			border-bottom:1px solid $rowBorderColor;
+
+			&:empty{
+				display:none;
+			}
+
+			table{
+				font-size:$textSize;
+
+				tr{
+					td:first-of-type{
+						padding-right:10px;
+					}
+				}
+			}
+		}
+
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
 			min-width:200%;
