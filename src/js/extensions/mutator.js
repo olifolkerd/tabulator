@@ -76,10 +76,10 @@ Mutator.prototype.lookupMutator = function(value){
 
 //apply mutator to row
 Mutator.prototype.transformRow = function(data){
-	var self = this,
-	mutator;
+	var self = this;
 
 	self.table.columnManager.traverse(function(column){
+		var mutator;
 
 		if(column.extensions.mutate){
 
