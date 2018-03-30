@@ -1,45 +1,92 @@
 var Mutator = function(table){
 	this.table = table; //hold Tabulator object
+	this.allowedTypes = ["", "data", "edit"] //list of muatation types
 };
 
 //initialize column mutator
 Mutator.prototype.initializeColumn = function(column){
+	var self = this,
+	match = false,
+	config = {};
 
-	var config = {mutator:false, type:column.definition.mutateType, params:column.definition.mutatorParams || {}};
+	this.mapDepricatedFunctionality(column);
 
-	//set column mutator
-	switch(typeof column.definition.mutator){
-		case "string":
-		if(this.mutators[column.definition.mutator]){
-			config.mutator = this.mutators[column.definition.mutator]
-		}else{
-			console.warn("Mutator Error - No such mutator found, ignoring: ", column.definition.mutator);
+	this.allowedTypes.forEach(function(type){
+		var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
+		mutator;
+
+		if(column.definition[key]){
+			mutator = self.lookupMutator(column.definition[key]);
+
+			if(mutator){
+				match = true;
+
+				config[key] = {
+					mutator:mutator,
+					params: column.definition[key + "Params"] || {},
+				}
+			}
 		}
-		break;
+	});
 
-		case "function":
-		config.mutator = column.definition.mutator;
-		break;
-	}
-
-	if(config.mutator){
+	if(match){
 		column.extensions.mutate = config;
 	}
 };
 
+Mutator.prototype.mapDepricatedFunctionality = function(column){
+	var key = "";
+
+	if(column.definition.mutateType){
+
+		if(column.definition.mutateType != "all"){
+			key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
+
+			column.defintion[key] = column.definition.mutator;
+			delete column.definition.mutator;
+
+			console.warn("The %cmutateType='" + column.definition.mutateType + "'' %coption has been depricated and will be removed in version 4.0, use the %c " + key + "%c option instead", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;")
+
+		}else{
+			console.warn("The %cmutateType='all'' %coption has been depricated and will be removed in version 4.0, it is no longer needed", "font-weight:bold;", "font-weight:regular;")
+		}
+	}
+}
+
+Mutator.prototype.lookupMutator = function(value){
+	var mutator = false;
+
+	//set column mutator
+	switch(typeof value){
+		case "string":
+		if(this.mutators[value]){
+			mutator = this.mutators[value]
+		}else{
+			console.warn("Mutator Error - No such mutator found, ignoring: ", value);
+		}
+		break;
+
+		case "function":
+		mutator = value;
+		break;
+	}
+
+	return mutator;
+}
+
 //apply mutator to row
 Mutator.prototype.transformRow = function(data){
-	var self = this;
+	var self = this,
+	mutator;
 
 	self.table.columnManager.traverse(function(column){
-		var field;
 
 		if(column.extensions.mutate){
 
-			field = column.getField();
+			mutator = column.extensions.mutate.mutatorData || column.extensions.mutate.mutator || false;
 
-			if(column.extensions.mutate.type != "edit"){
-				column.setFieldValue(data, column.extensions.mutate.mutator(column.getFieldValue(data), data, "data", column.extensions.mutate.params, column.getComponent()));
+			if(mutator){
+				column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, "data", mutator.params, column.getComponent()));
 			}
 		}
 	});
@@ -49,7 +96,13 @@ Mutator.prototype.transformRow = function(data){
 
 //apply mutator to new cell value
 Mutator.prototype.transformCell = function(cell, value){
-	return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params, cell.getComponent())
+	var mutator = cell.column.extensions.mutate.mutatorEdit || cell.column.extensions.mutate.mutator || false;
+
+	if(mutator){
+		return mutator.mutator(value, cell.row.getData(), "edit", mutator.params, cell.getComponent())
+	}else{
+		return value;
+	}
 };
 
 //default mutators
