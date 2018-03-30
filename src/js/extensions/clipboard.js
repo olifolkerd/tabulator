@@ -206,6 +206,7 @@ Clipboard.prototype.setFormatter = function(formatter){
 
 
 Clipboard.prototype.generateContent = function(){
+	console.log(this.copySelector, this.copyFormatter)
 	var data = this.copySelector.call(this, this.copySelectorParams);
 	return this.copyFormatter.call(this, data, this.copyFormatterParams);
 }
@@ -225,7 +226,7 @@ Clipboard.prototype.rowsToData = function(rows, params){
 
 	rows.forEach(function(row){
 		var rowArray = [],
-		rowData = row.getData();
+		rowData = row.getData("clipboard");
 
 		columns.forEach(function(column){
 			var value = column.getFieldValue(rowData);

@@ -1374,14 +1374,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //set column mutator
 
-      if (typeof def.mutator != "undefined" && table.extExists("mutator")) {
+      if (table.extExists("mutator")) {
 
         table.extensions.mutator.initializeColumn(self);
       }
 
       //set column accessor
 
-      if (typeof def.accessor != "undefined" && table.extExists("accessor")) {
+      if (table.extExists("accessor")) {
 
         table.extensions.accessor.initializeColumn(self);
       }
@@ -2812,7 +2812,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return false;
     };
 
-    RowManager.prototype.getData = function (active) {
+    RowManager.prototype.getData = function (active, transform) {
 
       var self = this,
           output = [];
@@ -2821,7 +2821,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rows.forEach(function (row) {
 
-        output.push(row.getData(true));
+        output.push(row.getData(transform || "data"));
       });
 
       return output;
@@ -3969,9 +3969,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.row = row;
     };
 
-    RowComponent.prototype.getData = function () {
+    RowComponent.prototype.getData = function (transform) {
 
-      return this.row.getData(true);
+      return this.row.getData(transform);
     };
 
     RowComponent.prototype.getElement = function () {
@@ -3998,7 +3998,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     RowComponent.prototype.getIndex = function () {
 
-      return this.row.getData(true)[this.row.table.options.index];
+      return this.row.getData("data")[this.row.table.options.index];
     };
 
     RowComponent.prototype.getPosition = function (active) {
@@ -4486,7 +4486,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (self.table.extExists("accessor")) {
 
-          return self.table.extensions.accessor.transformRow(self.data);
+          return self.table.extensions.accessor.transformRow(self.data, transform);
         }
       } else {
 
@@ -5059,7 +5059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (mutate) {
 
-          if (this.column.extensions.mutate && this.column.extensions.mutate.type !== "data") {
+          if (this.column.extensions.mutate) {
 
             value = this.table.extensions.mutator.transformCell(this, value);
           }
@@ -5939,7 +5939,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (this.extExists("selectRow")) {
 
-          ext.selectRow.clearSelectionData();
+          ext.selectRow.clearSelectionData(true);
         }
 
         if (options.autoResize && this.extExists("resizeTable")) {
@@ -7876,6 +7876,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table; //hold Tabulator object
 
+
+      this.allowedTypes = ["", "data", "download", "clipboard"]; //list of accessor types
+
     };
 
     //initialize column accessor
@@ -7883,45 +7886,77 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Accessor.prototype.initializeColumn = function (column) {
 
-      var config = { accessor: false, params: column.definition.accessorParams || {} };
+      var self = this,
+          match = false,
+          config = {};
+
+      this.allowedTypes.forEach(function (type) {
+
+        var key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1)),
+            accessor;
+
+        if (column.definition[key]) {
+
+          accessor = self.lookupAccessor(column.definition[key]);
+
+          if (accessor) {
+
+            match = true;
+
+            config[key] = {
+
+              accessor: accessor,
+
+              params: column.definition[key + "Params"] || {}
+
+            };
+          }
+        }
+      });
+
+      if (match) {
+
+        column.extensions.accessor = config;
+      }
+    }, Accessor.prototype.lookupAccessor = function (value) {
+
+      var accessor = false;
 
       //set column accessor
 
 
-      switch (_typeof(column.definition.accessor)) {
+      switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 
         case "string":
 
-          if (this.accessors[column.definition.accessor]) {
+          if (this.accessors[value]) {
 
-            config.accessor = this.accessors[column.definition.accessor];
+            accessor = this.accessors[value];
           } else {
 
-            console.warn("Accessor Error - No such accessor found, ignoring: ", column.definition.accessor);
+            console.warn("Accessor Error - No such accessor found, ignoring: ", value);
           }
 
           break;
 
         case "function":
 
-          config.accessor = column.definition.accessor;
+          accessor = value;
 
           break;
 
       }
 
-      if (config.accessor) {
-
-        column.extensions.accessor = config;
-      }
-    },
+      return accessor;
+    };
 
     //apply accessor to row
 
 
-    Accessor.prototype.transformRow = function (dataIn) {
+    Accessor.prototype.transformRow = function (dataIn, type) {
 
-      var self = this;
+      var self = this,
+          key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1));
 
       //clone data object with deep copy to isolate internal data from returned result
 
@@ -7930,15 +7965,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.table.columnManager.traverse(function (column) {
 
-        var field;
+        var value, accessor;
 
         if (column.extensions.accessor) {
 
-          field = column.getField();
+          accessor = column.extensions.accessor[key] || column.extensions.accessor.accessor || false;
 
-          if (typeof data[field] != "undefined") {
+          if (accessor) {
 
-            column.setFieldValue(data, column.extensions.accessor.accessor(column.getFieldValue(data), data, column.extensions.accessor.params, column.getComponent()));
+            value = column.getFieldValue(data);
+
+            if (value != "undefined") {
+
+              column.setFieldValue(data, accessor.accessor(value, data, accessor.params, column.getComponent()));
+            }
           }
         }
       });
@@ -9082,6 +9122,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Clipboard.prototype.generateContent = function () {
 
+      console.log(this.copySelector, this.copyFormatter);
+
       var data = this.copySelector.call(this, this.copySelectorParams);
 
       return this.copyFormatter.call(this, data, this.copyFormatterParams);
@@ -9106,7 +9148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       rows.forEach(function (row) {
 
         var rowArray = [],
-            rowData = row.getData();
+            rowData = row.getData("clipboard");
 
         columns.forEach(function (column) {
 
@@ -9331,9 +9373,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.columnsByField = {}; //hold columns with lookup by field name
 
-
-      this.formattedColumns = []; //hold columns with downloadFormatter
-
     };
 
     //trigger file download
@@ -9385,8 +9424,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.columnsByField = {};
 
-      this.formattedColumns = [];
-
       self.table.columnManager.columnsByIndex.forEach(function (column) {
 
         if (column.field && column.visible && column.definition.download !== false) {
@@ -9394,84 +9431,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           self.columnsByIndex.push(column);
 
           self.columnsByField[column.field] = column;
-
-          if (column.definition.downloadFormatter) {
-
-            self.processFormatter(column);
-          }
         }
       });
-    };
-
-    Download.prototype.processFormatter = function (column) {
-
-      var formatter = false;
-
-      if (this.table.extExists("format")) {
-
-        var formatterDef = column.definition.downloadFormatter;
-
-        if (formatterDef === true) {
-
-          formatterDef = column.definition.formatter;
-        }
-
-        //set column formatter
-
-
-        switch (typeof formatterDef === 'undefined' ? 'undefined' : _typeof(formatterDef)) {
-
-          case "string":
-
-            if (this.table.extensions.format.formatters[formatterDef]) {
-
-              formatter = this.table.extensions.format.formatters[formatterDef];
-            } else {
-
-              console.warn("Download Formatter Error - No such formatter found: ", formatterDef);
-
-              formatter = this.table.extensions.format.formatters.plaintext;
-            }
-
-            break;
-
-          case "function":
-
-            formatter = formatterDef;
-
-            break;
-
-          case "boolean":
-
-            break;
-
-          default:
-
-            formatter = this.table.extensions.format.formatters.plaintext;
-
-            break;
-
-        }
-
-        if (formatter) {
-
-          this.formattedColumns.push({
-
-            column: column,
-
-            formatter: formatter,
-
-            params: column.definition.downloadFormatterParams || {}
-
-          });
-        } else {
-
-          console.warn("Download Formatter Error - No such formatter found: ", formatterDef);
-        }
-      } else {
-
-        console.warn("Download Formatter Error - Cannot use download formatters, formatter extension is not installed");
-      }
     };
 
     Download.prototype.processDefinitions = function () {
@@ -9510,38 +9471,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Download.prototype.processData = function () {
 
       var self = this,
-          data = self.table.rowManager.getData(true);
-
-      //create mock cell component to pass to formatters
-
-
-      var mockCellComponent = {
-
-        value: false,
-
-        data: {},
-
-        getValue: function getValue() {
-
-          return this.value;
-        },
-
-        getData: function getData() {
-
-          return this.data;
-        },
-
-        getElement: function getElement() {
-
-          return $();
-        },
-
-        getRow: function getRow() {
-
-          return {};
-        }
-
-      };
+          data = self.table.rowManager.getData(true, "download");
 
       //bulk data processing
 
@@ -9550,25 +9480,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         data = self.table.options.downloadDataMutator(data);
       }
-
-      //trigger column formatters
-
-
-      self.formattedColumns.forEach(function (col) {
-
-        data.forEach(function (row) {
-
-          var value = col.column.getFieldValue(row);
-
-          mockCellComponent.value = value;
-
-          mockCellComponent.data = row;
-
-          value = col.formatter.call(self.table.extensions.format, mockCellComponent, col.params);
-
-          col.column.setFieldValue(row, value);
-        });
-      });
 
       return data;
     };
@@ -15180,6 +15091,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.table = table; //hold Tabulator object
 
+
+      this.allowedTypes = ["", "data", "edit"]; //list of muatation types
+
     };
 
     //initialize column mutator
@@ -15187,37 +15101,94 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Mutator.prototype.initializeColumn = function (column) {
 
-      var config = { mutator: false, type: column.definition.mutateType, params: column.definition.mutatorParams || {} };
+      var self = this,
+          match = false,
+          config = {};
+
+      this.mapDepricatedFunctionality(column);
+
+      this.allowedTypes.forEach(function (type) {
+
+        var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
+            mutator;
+
+        if (column.definition[key]) {
+
+          mutator = self.lookupMutator(column.definition[key]);
+
+          if (mutator) {
+
+            match = true;
+
+            config[key] = {
+
+              mutator: mutator,
+
+              params: column.definition[key + "Params"] || {}
+
+            };
+          }
+        }
+      });
+
+      if (match) {
+
+        column.extensions.mutate = config;
+      }
+    };
+
+    Mutator.prototype.mapDepricatedFunctionality = function (column) {
+
+      var key = "";
+
+      if (column.definition.mutateType) {
+
+        if (column.definition.mutateType != "all") {
+
+          key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
+
+          column.defintion[key] = column.definition.mutator;
+
+          delete column.definition.mutator;
+
+          console.warn("The %cmutateType='" + column.definition.mutateType + "'' %coption has been depricated and will be removed in version 4.0, use the %c " + key + "%c option instead", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+        } else {
+
+          console.warn("The %cmutateType='all'' %coption has been depricated and will be removed in version 4.0, it is no longer needed", "font-weight:bold;", "font-weight:regular;");
+        }
+      }
+    };
+
+    Mutator.prototype.lookupMutator = function (value) {
+
+      var mutator = false;
 
       //set column mutator
 
 
-      switch (_typeof(column.definition.mutator)) {
+      switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 
         case "string":
 
-          if (this.mutators[column.definition.mutator]) {
+          if (this.mutators[value]) {
 
-            config.mutator = this.mutators[column.definition.mutator];
+            mutator = this.mutators[value];
           } else {
 
-            console.warn("Mutator Error - No such mutator found, ignoring: ", column.definition.mutator);
+            console.warn("Mutator Error - No such mutator found, ignoring: ", value);
           }
 
           break;
 
         case "function":
 
-          config.mutator = column.definition.mutator;
+          mutator = value;
 
           break;
 
       }
 
-      if (config.mutator) {
-
-        column.extensions.mutate = config;
-      }
+      return mutator;
     };
 
     //apply mutator to row
@@ -15225,19 +15196,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Mutator.prototype.transformRow = function (data) {
 
-      var self = this;
+      var self = this,
+          mutator;
 
       self.table.columnManager.traverse(function (column) {
 
-        var field;
-
         if (column.extensions.mutate) {
 
-          field = column.getField();
+          mutator = column.extensions.mutate.mutatorData || column.extensions.mutate.mutator || false;
 
-          if (column.extensions.mutate.type != "edit") {
+          if (mutator) {
 
-            column.setFieldValue(data, column.extensions.mutate.mutator(column.getFieldValue(data), data, "data", column.extensions.mutate.params, column.getComponent()));
+            column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, "data", mutator.params, column.getComponent()));
           }
         }
       });
@@ -15250,7 +15220,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Mutator.prototype.transformCell = function (cell, value) {
 
-      return cell.column.extensions.mutate.mutator(value, cell.row.getData(), "edit", cell.column.extensions.mutate.params, cell.getComponent());
+      var mutator = cell.column.extensions.mutate.mutatorEdit || cell.column.extensions.mutate.mutator || false;
+
+      if (mutator) {
+
+        return mutator.mutator(value, cell.row.getData(), "edit", mutator.params, cell.getComponent());
+      } else {
+
+        return value;
+      }
     };
 
     //default mutators
@@ -16680,13 +16658,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     };
 
-    SelectRow.prototype.clearSelectionData = function () {
+    SelectRow.prototype.clearSelectionData = function (silent) {
 
       this.selecting = false;
 
       this.selectPrev = [];
 
       this.selectedRows = [];
+
+      if (!silent) {
+
+        this._rowSelectionChanged();
+      }
     };
 
     SelectRow.prototype.initializeRow = function (row) {
@@ -17873,11 +17856,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           var parts = value.split(":");
 
-          var type = parts.shift();
+          var _type = parts.shift();
 
           var params = parts.join();
 
-          return this._buildValidator(type, params);
+          return this._buildValidator(_type, params);
 
           break;
 
