@@ -397,12 +397,12 @@ Column.prototype._buildColumnHeader = function(){
 
 
 	//set column mutator
-	if(typeof def.mutator != "undefined" && table.extExists("mutator")){
+	if(table.extExists("mutator")){
 		table.extensions.mutator.initializeColumn(self);
 	}
 
 	//set column accessor
-	if(typeof def.accessor != "undefined" && table.extExists("accessor")){
+	if(table.extExists("accessor")){
 		table.extensions.accessor.initializeColumn(self);
 	}
 
