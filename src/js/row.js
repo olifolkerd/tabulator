@@ -4,8 +4,8 @@ var RowComponent = function (row){
 	this.row = row;
 };
 
-RowComponent.prototype.getData = function(){
-	return this.row.getData(true);
+RowComponent.prototype.getData = function(transform){
+	return this.row.getData(transform);
 };
 
 RowComponent.prototype.getElement = function(){
@@ -27,7 +27,7 @@ RowComponent.prototype.getCell = function(column){
 };
 
 RowComponent.prototype.getIndex = function(){
-	return this.row.getData(true)[this.row.table.options.index];
+	return this.row.getData("data")[this.row.table.options.index];
 };
 
 RowComponent.prototype.getPosition = function(active){
@@ -406,7 +406,7 @@ Row.prototype.getData = function(transform){
 
 	if(transform){
 		if(self.table.extExists("accessor")){
-			return self.table.extensions.accessor.transformRow(self.data);
+			return self.table.extensions.accessor.transformRow(self.data, transform);
 		}
 	}else{
 		return this.data;

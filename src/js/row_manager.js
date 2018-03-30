@@ -551,14 +551,14 @@ RowManager.prototype.findRowIndex = function(row, list){
 };
 
 
-RowManager.prototype.getData = function(active){
+RowManager.prototype.getData = function(active, transform){
 	var self = this,
 	output = [];
 
 	var rows = active ? self.activeRows : self.rows;
 
 	rows.forEach(function(row){
-		output.push(row.getData(true));
+		output.push(row.getData(transform || "data"));
 	});
 
 	return output;
