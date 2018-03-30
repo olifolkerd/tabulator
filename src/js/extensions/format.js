@@ -388,6 +388,24 @@ Format.prototype.formatters = {
 		cell.getElement().addClass("tabulator-row-handle");
 		return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 	},
+
+	responsiveCollapse:function(cell, formatterParams){
+		var self = this,
+		el = $("<div class='tabulator-responsive-collapse-toggle'><span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span></div>");
+
+		cell.getElement().addClass("tabulator-row-handle");
+
+		if(self.table.options.responsiveLayoutCollapseStartOpen){
+			el.addClass("open");
+		}
+
+		el.click(function(){
+			$(this).toggleClass("open");
+			$(this).closest(".tabulator-row").find(".tabulator-responsive-collapse").toggle();
+		})
+
+		return el;
+	},
 };
 
 Tabulator.registerExtension("format", Format);
