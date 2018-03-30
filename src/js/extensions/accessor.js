@@ -74,7 +74,7 @@ Accessor.prototype.transformRow = function(dataIn, type){
 				value = column.getFieldValue(data);
 
 				if(value != "undefined"){
-					column.setFieldValue(data, accessor.accessor(value, data, accessor.params, column.getComponent()));
+					column.setFieldValue(data, accessor.accessor(value, data, type, accessor.params, column.getComponent()));
 				}
 			}
 		}
