@@ -16485,7 +16485,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.binding = function () {
 
-          this.table.element.tabulator("redraw");
+          table.element.tabulator("redraw");
         };
 
         $(window).resize(this.binding);
