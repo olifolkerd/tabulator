@@ -3,7 +3,6 @@ var Download = function(table){
 	this.fields = {}; //hold filed multi dimension arrays
 	this.columnsByIndex = []; //hold columns in their order in the table
 	this.columnsByField = {}; //hold columns with lookup by field name
-	this.formattedColumns = []; //hold columns with downloadFormatter
 };
 
 //trigger file download
@@ -41,73 +40,15 @@ Download.prototype.processColumns = function () {
 
 	self.columnsByIndex = [];
 	self.columnsByField = {};
-	this.formattedColumns = [];
 
 	self.table.columnManager.columnsByIndex.forEach(function (column) {
 
 		if (column.field && column.visible && column.definition.download !== false) {
 			self.columnsByIndex.push(column);
 			self.columnsByField[column.field] = column;
-
-			if(column.definition.downloadFormatter){
-				self.processFormatter(column);
-			}
 		}
 	});
 };
-
-Download.prototype.processFormatter = function (column) {
-	var formatter = false;
-
-	if(this.table.extExists("format")){
-
-		var formatterDef = column.definition.downloadFormatter
-
-		if(formatterDef === true){
-			formatterDef = column.definition.formatter;
-		}
-
-		//set column formatter
-		switch(typeof formatterDef){
-			case "string":
-			if(this.table.extensions.format.formatters[formatterDef]){
-				formatter = this.table.extensions.format.formatters[formatterDef]
-			}else{
-				console.warn("Download Formatter Error - No such formatter found: ", formatterDef);
-				formatter = this.table.extensions.format.formatters.plaintext;
-			}
-			break;
-
-			case "function":
-			formatter = formatterDef;
-			break;
-
-			case "boolean":
-
-			break;
-
-			default:
-			formatter = this.table.extensions.format.formatters.plaintext;
-			break;
-		}
-
-
-		if(formatter){
-			this.formattedColumns.push({
-				column:column,
-				formatter:formatter,
-				params:column.definition.downloadFormatterParams || {},
-			})
-		}else{
-			console.warn("Download Formatter Error - No such formatter found: ", formatterDef);
-		}
-
-	}else{
-		console.warn("Download Formatter Error - Cannot use download formatters, formatter extension is not installed")
-	}
-
-};
-
 
 Download.prototype.processDefinitions = function(){
 	var self = this,
@@ -137,45 +78,12 @@ Download.prototype.processDefinitions = function(){
 
 Download.prototype.processData = function(){
 	var self = this,
-	data = self.table.rowManager.getData(true);
-
-	//create mock cell component to pass to formatters
-	var mockCellComponent = {
-		value:false,
-		data:{},
-		getValue:function(){
-			return this.value;
-		},
-		getData:function(){
-			return this.data;
-		},
-		getElement:function(){
-			return $();
-		},
-		getRow:function(){
-			return {};
-		},
-	}
+	data = self.table.rowManager.getData(true, "download");
 
 	//bulk data processing
 	if(typeof self.table.options.downloadDataMutator == "function"){
 		data = self.table.options.downloadDataMutator(data);
 	}
-
-	//trigger column formatters
-	self.formattedColumns.forEach(function(col){
-		data.forEach(function(row){
-
-			var value = col.column.getFieldValue(row);
-
-			mockCellComponent.value = value;
-			mockCellComponent.data = row;
-
-			value = col.formatter.call(self.table.extensions.format, mockCellComponent, col.params);
-
-			col.column.setFieldValue(row, value);
-		});
-	});
 
 	return data;
 };
