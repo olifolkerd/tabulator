@@ -5,10 +5,14 @@ var SelectRow = function(table){
 	this.selectedRows = []; //hold selected rows
 };
 
-SelectRow.prototype.clearSelectionData = function(){
+SelectRow.prototype.clearSelectionData = function(silent){
 	this.selecting = false;
 	this.selectPrev = [];
 	this.selectedRows = [];
+
+	if(!silent){
+		this._rowSelectionChanged();
+	}
 };
 
 SelectRow.prototype.initializeRow = function(row){

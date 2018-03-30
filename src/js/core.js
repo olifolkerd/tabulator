@@ -378,7 +378,7 @@
 	 			}
 
 	 			if(this.extExists("selectRow")){
-	 				ext.selectRow.clearSelectionData();
+	 				ext.selectRow.clearSelectionData(true);
 	 			}
 
 	 			if(options.autoResize && this.extExists("resizeTable")){
