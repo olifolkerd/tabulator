@@ -16765,7 +16765,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.hiddenColumns.forEach(function (column) {
 
-        output[column.definition.title] = column.getFieldValue(data);
+        if (column.definition.title) {
+
+          output[column.definition.title] = column.getFieldValue(data);
+        }
       });
 
       return output;

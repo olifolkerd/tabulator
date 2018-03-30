@@ -183,7 +183,9 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 	output = {};
 
 	this.hiddenColumns.forEach(function(column){
-		output[column.definition.title] = column.getFieldValue(data);
+		if(column.definition.title){
+			output[column.definition.title] = column.getFieldValue(data);
+		}
 	});
 
 	return output;
