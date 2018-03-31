@@ -16853,7 +16853,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       for (var key in data) {
 
-        list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "<td></tr>");
+        list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>");
       }
 
       return Object.keys(data).length ? list : "";

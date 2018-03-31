@@ -224,7 +224,7 @@ ResponsiveLayout.prototype.formatCollapsedData = function(data){
 	var list = $("<table></table>");
 
 	for(var key in data){
-		list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "<td></tr>");
+		list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>");
 	}
 
 	return Object.keys(data).length ? list : "";
