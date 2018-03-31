@@ -278,8 +278,12 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 				font-size:$textSize;
 
 				tr{
-					td:first-of-type{
-						padding-right:10px;
+					td{
+						position: relative;
+
+						&:first-of-type{
+							padding-right:10px;
+						}
 					}
 				}
 			}

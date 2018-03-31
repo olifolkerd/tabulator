@@ -186,6 +186,10 @@
   font-size: 16px;
 }
 
+.tabulator .tabulator-header .tabulator-responsive-collapse table tr td {
+  position: relative;
+}
+
 .tabulator .tabulator-header .tabulator-responsive-collapse table tr td:first-of-type {
   padding-right: 10px;
 }

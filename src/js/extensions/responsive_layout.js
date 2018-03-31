@@ -179,12 +179,41 @@ ResponsiveLayout.prototype.generateCollapsedRowContent = function(row){
 }
 
 ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
-	var data = row.getData(),
-	output = {};
+	var self = this,
+	data = row.getData(),
+	output = {},
+	mockCellComponent;
 
 	this.hiddenColumns.forEach(function(column){
-		if(column.definition.title){
-			output[column.definition.title] = column.getFieldValue(data);
+		var value = column.getFieldValue(data);
+
+		if(column.definition.title && column.field){
+			if(column.extensions.format && self.table.options.responsiveLayoutCollapseUserFormatters){
+
+				mockCellComponent = {
+				    value:false,
+				    data:{},
+				    getValue:function(){
+				        return value;
+				    },
+				    getData:function(){
+				        return data;
+				    },
+				    getElement:function(){
+				        return $();
+				    },
+				    getRow:function(){
+				        return row.getComponent();
+				    },
+				    getColumn:function(){
+				        return column.getComponent();
+				    },
+				}
+
+				output[column.definition.title] = column.extensions.format.formatter.call(self.table.extensions.format, mockCellComponent, column.extensions.format.params);
+			}else{
+				output[column.definition.title] = value;
+			}
 		}
 	});
 

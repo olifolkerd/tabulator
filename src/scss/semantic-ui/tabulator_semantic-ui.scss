@@ -276,8 +276,12 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				font-size:$textSize;
 
 				tr{
-					td:first-of-type{
-						padding-right:10px;
+					td{
+						position: relative;
+
+						&:first-of-type{
+							padding-right:10px;
+						}
 					}
 				}
 			}
@@ -528,7 +532,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				border-radius:20px;
 				background:#666;
 
-				color:$rowBackgroundColor;
+				color:#fff;
 				font-weight:bold;
 				font-size:1.1em;
 

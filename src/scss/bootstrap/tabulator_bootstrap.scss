@@ -264,8 +264,12 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 				font-size:$textSize;
 
 				tr{
-					td:first-of-type{
-						padding-right:10px;
+					td{
+						position: relative;
+
+						&:first-of-type{
+							padding-right:10px;
+						}
 					}
 				}
 			}
