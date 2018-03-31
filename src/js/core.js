@@ -62,7 +62,7 @@
 	 			clipboardPasted:function(){}, //data has been pasted into the table
 	 			clipboardPasteError:function(){}, //data has not successfully been pasted into the table
 
-	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
+	 			downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	 			downloadComplete:false, //function to manipulate download data
 
@@ -226,8 +226,10 @@
 	 				console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 	 			}
 
-
-
+	 			if(this.options.downloadDataMutator){
+	 				this.options.downloadDataFormatter = this.options.downloadDataMutator;
+	 				console.warn("The%c downloadDataMutator%c option has been depricated and will be removed in version 4.0, use %cdownloadDataFormatter%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
 
 	 		},
 

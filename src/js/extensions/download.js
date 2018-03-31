@@ -81,8 +81,8 @@ Download.prototype.processData = function(){
 	data = self.table.rowManager.getData(true, "download");
 
 	//bulk data processing
-	if(typeof self.table.options.downloadDataMutator == "function"){
-		data = self.table.options.downloadDataMutator(data);
+	if(typeof self.table.options.downloadDataFormatter == "function"){
+		data = self.table.options.downloadDataFormatter(data);
 	}
 
 	return data;

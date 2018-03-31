@@ -5497,7 +5497,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         clipboardPasteError: function clipboardPasteError() {}, //data has not successfully been pasted into the table
 
 
-        downloadDataMutator: false, //function to manipulate table data before it is downloaded
+        downloadDataFormatter: false, //function to manipulate table data before it is downloaded
 
         downloadReady: function downloadReady(data, blob) {
           return blob;
@@ -5764,6 +5764,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.options.persistentLayout = true;
 
           console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+        }
+
+        if (this.options.downloadDataMutator) {
+
+          this.options.downloadDataFormatter = this.options.downloadDataMutator;
+
+          console.warn("The%c downloadDataMutator%c option has been depricated and will be removed in version 4.0, use %cdownloadDataFormatter%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
         }
       },
 
@@ -9487,9 +9494,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //bulk data processing
 
 
-      if (typeof self.table.options.downloadDataMutator == "function") {
+      if (typeof self.table.options.downloadDataFormatter == "function") {
 
-        data = self.table.options.downloadDataMutator(data);
+        data = self.table.options.downloadDataFormatter(data);
       }
 
       return data;
