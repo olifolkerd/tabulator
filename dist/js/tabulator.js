@@ -8173,8 +8173,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               data = self.table.options.ajaxResponse(self.url, self.params, data);
             }
 
-            self.table.options.dataLoaded(data);
-
             callback(data);
 
             self.hideLoader();
