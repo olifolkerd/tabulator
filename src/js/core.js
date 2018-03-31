@@ -118,6 +118,9 @@
 				movableColumns:false, //enable movable columns
 				movableRows:false, //enable movable rows
 
+				scrollToRowPosition:"top",
+				scrollToRowIfVisible:true,
+
 				rowFormatter:false,
 
 				placeholder:false,
@@ -734,11 +737,11 @@
 	 		},
 
 	 		//scroll to row in DOM
-	 		scrollToRow:function(index){
+	 		scrollToRow:function(index, position, ifVisible){
 	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
-	 				return this.rowManager.scrollToRow(row);
+	 				return this.rowManager.scrollToRow(row, position, ifVisible);
 	 			}else{
 	 				console.warn("Scroll Error - No matching row found:", index);
 	 				return false;

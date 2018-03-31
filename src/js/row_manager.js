@@ -164,10 +164,31 @@ RowManager.prototype.getRowFromPosition = function(position, active){
 	}
 }
 
-RowManager.prototype.scrollToRow = function(row){
-	var rowIndex = this.getDisplayRows().indexOf(row);
+RowManager.prototype.scrollToRow = function(row, position, ifVisible){
+	var rowIndex = this.getDisplayRows().indexOf(row),
+	offset = 0;
 
 	if(rowIndex > -1){
+
+		if(typeof position === "undefined"){
+			position = this.table.options.scrollToRowPosition;
+		}
+
+		if(typeof ifVisible === "undefined"){
+			ifVisible = this.table.options.scrollToRowIfVisible;
+		}
+
+		if(!ifVisible){
+			if(row.element.is(":visible")){
+				offset = row.element.offset().top - this.element.offset().top;
+
+				if(offset > 0 && offset < this.element[0].clientHeight - row.element.outerHeight()){
+					return false;
+				}
+			}
+		}
+
+		//scroll to row
 		switch(this.renderMode){
 			case"classic":
 			this.element.scrollTop(row.element.offset().top - this.element.offset().top + this.element.scrollTop());
@@ -176,8 +197,24 @@ RowManager.prototype.scrollToRow = function(row){
 			this._virtualRenderFill(rowIndex, true);
 			break;
 		}
+
+		//align to correct position
+		switch(position){
+			case "middle":
+			console.log("middly", this.element.scrollTop(), (this.element[0].clientHeight /2))
+			this.element.scrollTop(this.element.scrollTop() - (this.element[0].clientHeight / 2));
+			break;
+
+			case "bottom":
+			this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight + row.getElement().outerHeight());
+			break;
+		}
+
+		return true;
+
 	}else{
 		console.warn("Scroll Error - Row not visible");
+		return false;
 	}
 };
 

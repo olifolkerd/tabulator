@@ -2340,11 +2340,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    RowManager.prototype.scrollToRow = function (row) {
+    RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
-      var rowIndex = this.getDisplayRows().indexOf(row);
+      var rowIndex = this.getDisplayRows().indexOf(row),
+          offset = 0;
 
       if (rowIndex > -1) {
+
+        if (typeof position === "undefined") {
+
+          position = this.table.options.scrollToRowPosition;
+        }
+
+        if (typeof ifVisible === "undefined") {
+
+          ifVisible = this.table.options.scrollToRowIfVisible;
+        }
+
+        if (!ifVisible) {
+
+          if (row.element.is(":visible")) {
+
+            offset = row.element.offset().top - this.element.offset().top;
+
+            if (offset > 0 && offset < this.element[0].clientHeight - row.element.outerHeight()) {
+
+              return false;
+            }
+          }
+        }
+
+        //scroll to row
 
         switch (this.renderMode) {
 
@@ -2361,9 +2387,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             break;
 
         }
+
+        //align to correct position
+
+        switch (position) {
+
+          case "middle":
+
+            console.log("middly", this.element.scrollTop(), this.element[0].clientHeight / 2);
+
+            this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight / 2);
+
+            break;
+
+          case "bottom":
+
+            this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight + row.getElement().outerHeight());
+
+            break;
+
+        }
+
+        return true;
       } else {
 
         console.warn("Scroll Error - Row not visible");
+
+        return false;
       }
     };
 
@@ -5597,6 +5647,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         movableRows: false, //enable movable rows
 
 
+        scrollToRowPosition: "top",
+
+        scrollToRowIfVisible: true,
+
         rowFormatter: false,
 
         placeholder: false,
@@ -6439,13 +6493,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //scroll to row in DOM
 
-      scrollToRow: function scrollToRow(index) {
+      scrollToRow: function scrollToRow(index, position, ifVisible) {
 
         var row = this.rowManager.findRow(index);
 
         if (row) {
 
-          return this.rowManager.scrollToRow(row);
+          return this.rowManager.scrollToRow(row, position, ifVisible);
         } else {
 
           console.warn("Scroll Error - No matching row found:", index);
