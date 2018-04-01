@@ -4516,7 +4516,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.extExists("mutator")) {
 
-        self.data = self.table.extensions.mutator.transformRow(data);
+        self.data = self.table.extensions.mutator.transformRow(data, "data");
       } else {
 
         self.data = data;
@@ -4538,7 +4538,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.table.extExists("mutator")) {
 
-        data = self.table.extensions.mutator.transformRow(data);
+        data = self.table.extensions.mutator.transformRow(data, "data");
       }
 
       //set data
@@ -9099,6 +9099,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           e.preventDefault();
 
+          if (this.table.extExists("mutator")) {
+
+            rowData = this.mutateData(rowData);
+          }
+
           rows = this.pasteAction.call(this, rowData);
 
           this.table.options.clipboardPasted(data, rowData, rows);
@@ -9107,6 +9112,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.table.options.clipboardPasteError(data);
         }
       }
+    };
+
+    Clipboard.prototype.mutateData = function (data) {
+
+      var self = this,
+          output = [];
+
+      if (Array.isArray(data)) {
+
+        data.forEach(function (row) {
+
+          output.push(self.table.extensions.mutator.transformRow(row, "paste"));
+        });
+      } else {
+
+        output = data;
+      }
+
+      return output;
     };
 
     Clipboard.prototype.checkPaseOrigin = function (e) {
@@ -15239,7 +15263,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table = table; //hold Tabulator object
 
 
-      this.allowedTypes = ["", "data", "edit"]; //list of muatation types
+      this.allowedTypes = ["", "data", "edit", "paste"]; //list of muatation types
 
     };
 
@@ -15341,9 +15365,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //apply mutator to row
 
 
-    Mutator.prototype.transformRow = function (data) {
+    Mutator.prototype.transformRow = function (data, type) {
 
-      var self = this;
+      var self = this,
+          key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
 
       self.table.columnManager.traverse(function (column) {
 
@@ -15351,11 +15376,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (column.extensions.mutate) {
 
-          mutator = column.extensions.mutate.mutatorData || column.extensions.mutate.mutator || false;
+          mutator = column.extensions.mutate[key] || column.extensions.mutate.mutator || false;
 
           if (mutator) {
 
-            column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, "data", mutator.params, column.getComponent()));
+            column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, type, mutator.params, column.getComponent()));
           }
         }
       });

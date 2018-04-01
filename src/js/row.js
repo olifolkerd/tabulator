@@ -354,7 +354,7 @@ Row.prototype.setData = function(data){
 	var self = this;
 
 	if(self.table.extExists("mutator")){
-		self.data = self.table.extensions.mutator.transformRow(data);
+		self.data = self.table.extensions.mutator.transformRow(data, "data");
 	}else{
 		self.data = data;
 	}
@@ -370,7 +370,7 @@ Row.prototype.updateData = function(data){
 
 	//mutate incomming data if needed
 	if(self.table.extExists("mutator")){
-		data = self.table.extensions.mutator.transformRow(data);
+		data = self.table.extensions.mutator.transformRow(data, "data");
 	}
 
 	//set data

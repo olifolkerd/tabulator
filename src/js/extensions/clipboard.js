@@ -95,6 +95,11 @@ Clipboard.prototype.paste = function(e){
 
 		if(rowData){
 			e.preventDefault();
+
+			if(this.table.extExists("mutator")){
+				rowData = this.mutateData(rowData);
+			}
+
 			rows = this.pasteAction.call(this, rowData);
 			this.table.options.clipboardPasted(data, rowData, rows);
 		}else{
@@ -102,6 +107,22 @@ Clipboard.prototype.paste = function(e){
 		}
 	}
 }
+
+Clipboard.prototype.mutateData = function(data){
+	var self = this,
+	output = [];
+
+	if(Array.isArray(data)){
+		data.forEach(function(row){
+			output.push(self.table.extensions.mutator.transformRow(row, "paste"));
+		});
+	}else{
+		output = data;
+	}
+
+	return output;
+}
+
 
 Clipboard.prototype.checkPaseOrigin = function(e){
 	var valid = true;

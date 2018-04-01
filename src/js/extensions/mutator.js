@@ -1,6 +1,6 @@
 var Mutator = function(table){
 	this.table = table; //hold Tabulator object
-	this.allowedTypes = ["", "data", "edit"] //list of muatation types
+	this.allowedTypes = ["", "data", "edit", "paste"] //list of muatation types
 };
 
 //initialize column mutator
@@ -75,18 +75,19 @@ Mutator.prototype.lookupMutator = function(value){
 }
 
 //apply mutator to row
-Mutator.prototype.transformRow = function(data){
-	var self = this;
+Mutator.prototype.transformRow = function(data, type){
+	var self = this,
+	key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
 
 	self.table.columnManager.traverse(function(column){
 		var mutator;
 
 		if(column.extensions.mutate){
 
-			mutator = column.extensions.mutate.mutatorData || column.extensions.mutate.mutator || false;
+			mutator = column.extensions.mutate[key] || column.extensions.mutate.mutator || false;
 
 			if(mutator){
-				column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, "data", mutator.params, column.getComponent()));
+				column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, type, mutator.params, column.getComponent()));
 			}
 		}
 	});
