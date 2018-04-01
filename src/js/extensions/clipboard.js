@@ -206,7 +206,6 @@ Clipboard.prototype.setFormatter = function(formatter){
 
 
 Clipboard.prototype.generateContent = function(){
-	console.log(this.copySelector, this.copyFormatter)
 	var data = this.copySelector.call(this, this.copySelectorParams);
 	return this.copyFormatter.call(this, data, this.copyFormatterParams);
 }

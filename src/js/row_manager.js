@@ -201,7 +201,6 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 		//align to correct position
 		switch(position){
 			case "middle":
-			console.log("middly", this.element.scrollTop(), (this.element[0].clientHeight /2))
 			this.element.scrollTop(this.element.scrollTop() - (this.element[0].clientHeight / 2));
 			break;
 
