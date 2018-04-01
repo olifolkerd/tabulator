@@ -9123,7 +9123,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         data.forEach(function (row) {
 
-          output.push(self.table.extensions.mutator.transformRow(row, "paste"));
+          output.push(self.table.extensions.mutator.transformRow(row, "clipboard"));
         });
       } else {
 
@@ -15263,7 +15263,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.table = table; //hold Tabulator object
 
 
-      this.allowedTypes = ["", "data", "edit", "paste"]; //list of muatation types
+      this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
 
     };
 

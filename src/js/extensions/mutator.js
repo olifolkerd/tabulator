@@ -1,6 +1,6 @@
 var Mutator = function(table){
 	this.table = table; //hold Tabulator object
-	this.allowedTypes = ["", "data", "edit", "paste"] //list of muatation types
+	this.allowedTypes = ["", "data", "edit", "clipboard"] //list of muatation types
 };
 
 //initialize column mutator

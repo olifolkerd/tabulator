@@ -114,7 +114,7 @@ Clipboard.prototype.mutateData = function(data){
 
 	if(Array.isArray(data)){
 		data.forEach(function(row){
-			output.push(self.table.extensions.mutator.transformRow(row, "paste"));
+			output.push(self.table.extensions.mutator.transformRow(row, "clipboard"));
 		});
 	}else{
 		output = data;
