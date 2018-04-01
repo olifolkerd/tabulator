@@ -620,20 +620,73 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
-    ColumnManager.prototype.scrollToColumn = function (column) {
+    ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) {
 
-      var left;
+      var left = 0,
+          offset = 0,
+          adjust = 0;
+
+      if (typeof position === "undefined") {
+
+        position = this.table.options.scrollToColumnPosition;
+      }
+
+      if (typeof ifVisible === "undefined") {
+
+        ifVisible = this.table.options.scrollToColumnIfVisible;
+      }
 
       if (column.visible) {
 
-        left = column.element.position().left + this.element.scrollLeft() + column.element.innerWidth() - this.headersElement.innerWidth();
+        //align to correct position
+
+
+        switch (position) {
+
+          case "middle":
+
+            adjust = -this.element[0].clientWidth / 2;
+
+            break;
+
+          case "right":
+
+            adjust = column.element.innerWidth() - this.headersElement.innerWidth();
+
+            break;
+
+        }
+
+        //check column visibility
+
+
+        if (!ifVisible) {
+
+          offset = column.element.position().left;
+
+          if (offset > 0 && offset + column.element.outerWidth() < this.element[0].clientWidth) {
+
+            return false;
+          }
+        }
+
+        //calculate scroll position
+
+
+        left = column.element.position().left + this.element.scrollLeft() + adjust;
+
+        left = Math.max(Math.min(left, this.table.rowManager.element[0].scrollWidth - this.table.rowManager.element[0].clientWidth), 0);
 
         this.table.rowManager.scrollHorizontal(left);
 
         this.scrollHorizontal(left);
+
+        return true;
       } else {
 
         console.warn("Scroll Error - Column not visible");
+
+        return false;
       }
     };
 
@@ -2393,8 +2446,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         switch (position) {
 
           case "middle":
-
-            console.log("middly", this.element.scrollTop(), this.element[0].clientHeight / 2);
 
             this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight / 2);
 
@@ -5651,6 +5702,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         scrollToRowIfVisible: true,
 
+        scrollToColumnPosition: "left",
+
+        scrollToColumnIfVisible: true,
+
         rowFormatter: false,
 
         placeholder: false,
@@ -6663,13 +6718,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //scroll to column in DOM
 
-      scrollToColumn: function scrollToColumn(field) {
+      scrollToColumn: function scrollToColumn(field, position, ifVisible) {
 
         var column = this.columnManager.findColumn(field);
 
         if (column) {
 
-          return this.columnManager.scrollToColumn(column);
+          return this.columnManager.scrollToColumn(column, position, ifVisible);
         } else {
 
           console.warn("Scroll Error - No matching column found:", field);
@@ -9193,8 +9248,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     Clipboard.prototype.generateContent = function () {
-
-      console.log(this.copySelector, this.copyFormatter);
 
       var data = this.copySelector.call(this, this.copySelectorParams);
 

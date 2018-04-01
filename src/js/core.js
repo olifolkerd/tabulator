@@ -121,6 +121,9 @@
 				scrollToRowPosition:"top",
 				scrollToRowIfVisible:true,
 
+				scrollToColumnPosition:"left",
+				scrollToColumnIfVisible:true,
+
 				rowFormatter:false,
 
 				placeholder:false,
@@ -863,11 +866,11 @@
 	 		},
 
 	 		//scroll to column in DOM
-	 		scrollToColumn:function(field){
+	 		scrollToColumn:function(field, position, ifVisible){
 	 			var column = this.columnManager.findColumn(field);
 
 	 			if(column){
-	 				return this.columnManager.scrollToColumn(column);
+	 				return this.columnManager.scrollToColumn(column, position, ifVisible);
 	 			}else{
 	 				console.warn("Scroll Error - No matching column found:", field);
 	 				return false;
