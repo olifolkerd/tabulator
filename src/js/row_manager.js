@@ -178,6 +178,18 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 			ifVisible = this.table.options.scrollToRowIfVisible;
 		}
 
+
+		if(position === "nearest"){
+			switch(this.renderMode){
+				case"classic":
+				position = Math.abs(this.element.scrollTop() - row.element.position().top) > Math.abs(this.element.scrollTop() + this.element[0].clientHeight - row.element.position().top) ? "bottom" : "top";
+				break;
+				case"virtual":
+				position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
+				break;
+			}
+		}
+
 		//check row visibility
 		if(!ifVisible){
 			if(row.element.is(":visible")){
