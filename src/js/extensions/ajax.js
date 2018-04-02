@@ -92,7 +92,7 @@ Ajax.prototype.getUrl = function(){
 };
 
 //send ajax request
-Ajax.prototype.sendRequest = function(callback){
+Ajax.prototype.sendRequest = function(callback, silent){
 	var self = this;
 
 	if(self.url){
@@ -107,7 +107,9 @@ Ajax.prototype.sendRequest = function(callback){
 
 		if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
 
-			self.showLoader();
+			if(!silent){
+				self.showLoader();
+			}
 
 			$.ajax(self.config)
 			.done(function(data){

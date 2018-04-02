@@ -2410,6 +2410,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           ifVisible = this.table.options.scrollToRowIfVisible;
         }
 
+        //check row visibility
+
         if (!ifVisible) {
 
           if (row.element.is(":visible")) {
@@ -2471,7 +2473,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     ////////////////// Data Handling //////////////////
 
 
-    RowManager.prototype.setData = function (data) {
+    RowManager.prototype.setData = function (data, renderInPosition) {
+
+      var self = this;
+
+      if (renderInPosition && this.getDisplayRows().length) {
+
+        this.reRenderInPosition(function () {
+
+          self._setDataActual(data);
+        });
+      } else {
+
+        this._setDataActual(data);
+      }
+    };
+
+    RowManager.prototype._setDataActual = function (data) {
 
       var self = this;
 
@@ -2508,8 +2526,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but receved:", def);
           }
         });
-
-        self.table.options.dataLoaded(data);
 
         self.refreshActiveData();
       } else {
@@ -3380,7 +3396,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     //trigger rerender of table in current position
 
-    RowManager.prototype.reRenderInPosition = function () {
+    RowManager.prototype.reRenderInPosition = function (callback) {
 
       if (this.getRenderMode() == "virtual") {
 
@@ -3410,6 +3426,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               break;
             }
           }
+        }
+
+        if (callback) {
+
+          callback();
         }
 
         this._virtualRenderFill(topRow === false ? this.displayRowsCount - 1 : topRow, true, topOffset || 0);
@@ -6208,9 +6229,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //load data
 
+
       setData: function setData(data, params, config) {
 
-        var self = this;
+        this._setData(data, params, config);
+      },
+
+      _setData: function _setData(data, params, config, inPosition) {
 
         var self = this;
 
@@ -6220,7 +6245,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             //data is a json encoded string
 
-            self.rowManager.setData(JSON.parse(data));
+            self.rowManager.setData(JSON.parse(data), inPosition);
           } else {
 
             if (self.extExists("ajax", true)) {
@@ -6248,8 +6273,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
                 self.extensions.ajax.sendRequest(function (data) {
 
-                  self.rowManager.setData(data);
-                });
+                  self.rowManager.setData(data, inPosition);
+                }, inPosition);
               }
             }
           }
@@ -6259,7 +6284,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             //asume data is already an object
 
-            self.rowManager.setData(data);
+            self.rowManager.setData(data, inPosition);
           } else {
 
             //no data provided, check if ajaxURL is present;
@@ -6275,14 +6300,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
                 self.extensions.ajax.sendRequest(function (data) {
 
-                  self.rowManager.setData(data);
-                });
+                  self.rowManager.setData(data, inPosition);
+                }, inPosition);
               }
             } else {
 
               //empty data
 
-              self.rowManager.setData([]);
+              self.rowManager.setData([], inPosition);
             }
           }
         }
@@ -6324,6 +6349,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           return this.extensions.ajax.getUrl();
         }
+      },
+
+      //replace data, keeping table in position with same sort
+
+      replaceData: function replaceData(data, params, config) {
+
+        this._setData(data, params, config, true);
       },
 
       //update table data
@@ -8263,7 +8295,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //send ajax request
 
 
-    Ajax.prototype.sendRequest = function (callback) {
+    Ajax.prototype.sendRequest = function (callback, silent) {
 
       var self = this;
 
@@ -8280,7 +8312,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (self.table.options.ajaxRequesting(self.url, self.params) !== false) {
 
-          self.showLoader();
+          if (!silent) {
+
+            self.showLoader();
+          }
 
           $.ajax(self.config).done(function (data) {
 

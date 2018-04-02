@@ -490,14 +490,18 @@
 
 
 	 		//load data
+
 	 		setData:function(data, params, config){
-	 			var self = this;
+	 			this._setData(data, params, config);
+	 		},
+
+	 		_setData:function(data, params, config, inPosition){
 	 			var self = this;
 
 	 			if(typeof(data) === "string"){
 	 				if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
 	 					//data is a json encoded string
-	 					self.rowManager.setData(JSON.parse(data));
+	 					self.rowManager.setData(JSON.parse(data), inPosition);
 	 				}else{
 
 	 					if(self.extExists("ajax", true)){
@@ -517,15 +521,15 @@
 	 						}else{
 	 							//assume data is url, make ajax call to url to get data
 	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
+	 								self.rowManager.setData(data, inPosition);
+	 							}, inPosition);
 	 						}
 	 					}
 	 				}
 	 			}else{
 	 				if(data){
 	 					//asume data is already an object
-	 					self.rowManager.setData(data);
+	 					self.rowManager.setData(data, inPosition);
 	 				}else{
 
 	 					//no data provided, check if ajaxURL is present;
@@ -536,13 +540,13 @@
 	 							self.extensions.page.setPage(1);
 	 						}else{
 	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
+	 								self.rowManager.setData(data, inPosition);
+	 							}, inPosition);
 	 						}
 
 	 					}else{
 	 						//empty data
-	 						self.rowManager.setData([]);
+	 						self.rowManager.setData([], inPosition);
 	 					}
 	 				}
 	 			}
@@ -574,6 +578,11 @@
 	 			if(this.extExists("ajax", true)){
 	 				return this.extensions.ajax.getUrl();
 	 			}
+	 		},
+
+	 		//replace data, keeping table in position with same sort
+	 		replaceData:function(data, params, config){
+	 			this._setData(data, params, config, true);
 	 		},
 
 

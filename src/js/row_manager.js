@@ -178,6 +178,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 			ifVisible = this.table.options.scrollToRowIfVisible;
 		}
 
+		//check row visibility
 		if(!ifVisible){
 			if(row.element.is(":visible")){
 				offset = row.element.offset().top - this.element.offset().top;
@@ -220,7 +221,19 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 
 ////////////////// Data Handling //////////////////
 
-RowManager.prototype.setData = function(data){
+RowManager.prototype.setData = function(data, renderInPosition){
+	var self = this;
+	
+	if(renderInPosition && this.getDisplayRows().length){
+		this.reRenderInPosition(function(){
+			self._setDataActual(data);
+		});
+	}else{
+		this._setDataActual(data);
+	}
+};
+
+RowManager.prototype._setDataActual = function(data){
 	var self = this;
 
 	self.table.options.dataLoading(data);
@@ -250,13 +263,11 @@ RowManager.prototype.setData = function(data){
 			}
 		});
 
-		self.table.options.dataLoaded(data);
-
 		self.refreshActiveData();
 	}else{
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 	}
-};
+}
 
 RowManager.prototype.deleteRow = function(row){
 	var allIndex = this.rows.indexOf(row),
@@ -957,7 +968,7 @@ RowManager.prototype.getRows = function(){
 ///////////////// Table Rendering /////////////////
 
 //trigger rerender of table in current position
-RowManager.prototype.reRenderInPosition = function(){
+RowManager.prototype.reRenderInPosition = function(callback){
 	if(this.getRenderMode() == "virtual"){
 
 		var scrollTop = this.element.scrollTop();
@@ -980,6 +991,10 @@ RowManager.prototype.reRenderInPosition = function(){
 					break;
 				}
 			}
+		}
+
+		if(callback){
+			callback();
 		}
 
 		this._virtualRenderFill((topRow === false ? this.displayRowsCount - 1 : topRow), true, topOffset || 0);
