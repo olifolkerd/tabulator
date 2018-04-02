@@ -1450,16 +1450,15 @@ RowManager.prototype.normalizeHeight = function(){
 RowManager.prototype.adjustTableSize = function(){
 	var self = this;
 
+	let otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+
+	self.element.css({
+		"min-height":"calc(100% - " + otherHeight + "px)",
+		"height":"calc(100% - " + otherHeight + "px)",
+		"max-height":"calc(100% - " + otherHeight + "px)",
+	});
+
 	if(this.renderMode === "virtual"){
-
-		let otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
-
-		self.element.css({
-			"min-height":"calc(100% - " + otherHeight + "px)",
-			"height":"calc(100% - " + otherHeight + "px)",
-			"max-height":"calc(100% - " + otherHeight + "px)",
-		});
-
 		self.height = self.element.innerHeight();
 		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
 	}

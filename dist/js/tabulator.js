@@ -645,6 +645,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           case "middle":
 
+          case "center":
+
             adjust = -this.element[0].clientWidth / 2;
 
             break;
@@ -2410,6 +2412,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           ifVisible = this.table.options.scrollToRowIfVisible;
         }
 
+        if (position === "nearest") {
+
+          switch (this.renderMode) {
+
+            case "classic":
+
+              position = Math.abs(this.element.scrollTop() - row.element.position().top) > Math.abs(this.element.scrollTop() + this.element[0].clientHeight - row.element.position().top) ? "bottom" : "top";
+
+              break;
+
+            case "virtual":
+
+              position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
+
+              break;
+
+          }
+        }
+
         //check row visibility
 
         if (!ifVisible) {
@@ -4011,19 +4032,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
+      var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+
+      self.element.css({
+
+        "min-height": "calc(100% - " + otherHeight + "px)",
+
+        "height": "calc(100% - " + otherHeight + "px)",
+
+        "max-height": "calc(100% - " + otherHeight + "px)"
+
+      });
+
       if (this.renderMode === "virtual") {
-
-        var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
-
-        self.element.css({
-
-          "min-height": "calc(100% - " + otherHeight + "px)",
-
-          "height": "calc(100% - " + otherHeight + "px)",
-
-          "max-height": "calc(100% - " + otherHeight + "px)"
-
-        });
 
         self.height = self.element.innerHeight();
 
