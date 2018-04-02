@@ -329,6 +329,7 @@ ColumnManager.prototype.scrollToColumn = function(column, position, ifVisible){
 		//align to correct position
 		switch(position){
 			case "middle":
+			case "center":
 			adjust = -this.element[0].clientWidth / 2;
 			break;
 

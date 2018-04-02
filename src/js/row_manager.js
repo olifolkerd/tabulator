@@ -214,6 +214,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 		//align to correct position
 		switch(position){
 			case "middle":
+			case "center":
 			this.element.scrollTop(this.element.scrollTop() - (this.element[0].clientHeight / 2));
 			break;
 
