@@ -2470,6 +2470,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           case "middle":
 
+          case "center":
+
             this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight / 2);
 
             break;
@@ -5727,6 +5729,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         ajaxSorting: false,
 
+        ajaxProgressiveLoad: false, //progressive loading
+
+
         groupBy: false, //enable table grouping and set field to group by
 
         groupStartOpen: true, //starting state of group
@@ -6088,6 +6093,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         }
 
+        if (this.extExists("ajax")) {
+
+          ext.ajax.initialize();
+        }
+
         if (options.pagination && this.extExists("page", true)) {
 
           ext.page.initialize();
@@ -6096,11 +6106,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (options.groupBy && this.extExists("groupRows", true)) {
 
           ext.groupRows.initialize();
-        }
-
-        if (this.extExists("ajax")) {
-
-          ext.ajax.initialize();
         }
 
         if (this.extExists("keybindings")) {
@@ -6143,10 +6148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               if (self.options.ajaxURL && self.extExists("ajax")) {
 
-                self.extensions.ajax.sendRequest(function (data) {
-
-                  self.rowManager.setData(data);
-                });
+                self.extensions.ajax.loadData();
               } else {
 
                 self.rowManager.setData(self.options.data);
@@ -6165,10 +6167,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (self.options.ajaxURL && self.extExists("ajax")) {
 
-              self.extensions.ajax.sendRequest(function (data) {
-
-                self.rowManager.setData(data);
-              });
+              self.extensions.ajax.loadData();
             } else {
 
               self.rowManager.setData(self.options.data);
@@ -6253,6 +6252,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       setData: function setData(data, params, config) {
 
+        if (this.extExists("ajax")) {
+
+          this.extensions.ajax.blockActiveRequest();
+        }
+
         this._setData(data, params, config);
       },
 
@@ -6292,10 +6296,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
                 //assume data is url, make ajax call to url to get data
 
-                self.extensions.ajax.sendRequest(function (data) {
-
-                  self.rowManager.setData(data, inPosition);
-                }, inPosition);
+                self.extensions.ajax.loadData(inPosition);
               }
             }
           }
@@ -6319,10 +6320,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 self.extensions.page.setPage(1);
               } else {
 
-                self.extensions.ajax.sendRequest(function (data) {
-
-                  self.rowManager.setData(data, inPosition);
-                }, inPosition);
+                self.extensions.ajax.loadData(inPosition);
               }
             } else {
 
@@ -6337,6 +6335,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       //clear data
 
       clearData: function clearData() {
+
+        if (this.extExists("ajax")) {
+
+          this.extensions.ajax.blockActiveRequest();
+        }
 
         this.rowManager.clearData();
       },
@@ -6376,6 +6379,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       replaceData: function replaceData(data, params, config) {
 
+        if (this.extExists("ajax")) {
+
+          this.extensions.ajax.blockActiveRequest();
+        }
+
         this._setData(data, params, config, true);
       },
 
@@ -6384,6 +6392,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       updateData: function updateData(data) {
 
         var self = this;
+
+        if (this.extExists("ajax")) {
+
+          this.extensions.ajax.blockActiveRequest();
+        }
 
         if (typeof data === "string") {
 
@@ -6411,6 +6424,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var rows = [],
             output = [];
+
+        if (this.extExists("ajax")) {
+
+          this.extensions.ajax.blockActiveRequest();
+        }
 
         if (typeof data === "string") {
 
@@ -6440,6 +6458,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var self = this;
 
         var rows = [];
+
+        if (this.extExists("ajax")) {
+
+          this.extensions.ajax.blockActiveRequest();
+        }
 
         if (typeof data === "string") {
 
@@ -8198,6 +8221,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.loadingElement = false;
 
       this.errorElement = false;
+
+      this.progressiveLoad = false;
+
+      this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
+
     };
 
     //initialize setup options
@@ -8230,6 +8258,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.table.options.ajaxURL) {
 
         this.setUrl(this.table.options.ajaxURL);
+      }
+
+      if (this.table.options.ajaxProgressiveLoad) {
+
+        if (this.table.options.pagination) {
+
+          this.progressiveLoad = false;
+
+          console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
+        } else {
+
+          if (this.table.extExists("page")) {
+
+            this.progressiveLoad = this.table.options.ajaxProgressiveLoad;
+
+            this.table.extensions.page.initializeProgressive();
+          } else {
+
+            console.error("Pagination plugin is required for progressive ajax loading");
+          }
+        }
       }
     };
 
@@ -8313,14 +8362,55 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return this.url;
     };
 
+    //lstandard loading function
+
+
+    Ajax.prototype.loadData = function (inPosition) {
+
+      var self = this;
+
+      if (this.progressiveLoad) {
+
+        this._loadDataProgressive();
+      } else {
+
+        this._loadDataStandard(inPosition);
+      }
+    };
+
+    Ajax.prototype.blockActiveRequest = function () {
+
+      this.requestOrder++;
+    };
+
+    Ajax.prototype._loadDataProgressive = function () {
+
+      this.table.rowManager.setData([]);
+
+      this.table.extensions.page.setPage(1);
+    };
+
+    Ajax.prototype._loadDataStandard = function (inPosition) {
+
+      this.sendRequest(function (data) {
+
+        self.table.rowManager.setData(data, inPosition);
+      }, inPosition);
+    };
+
     //send ajax request
 
 
     Ajax.prototype.sendRequest = function (callback, silent) {
 
-      var self = this;
+      var self = this,
+          requestNo;
 
       if (self.url) {
+
+        self.requestOrder++;
+
+        requestNo = self.requestOrder;
 
         self._loadDefaultConfig();
 
@@ -8340,12 +8430,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           $.ajax(self.config).done(function (data) {
 
-            if (self.table.options.ajaxResponse) {
+            if (requestNo === self.requestOrder) {
 
-              data = self.table.options.ajaxResponse(self.url, self.params, data);
+              if (self.table.options.ajaxResponse) {
+
+                data = self.table.options.ajaxResponse(self.url, self.params, data);
+              }
+
+              callback(data);
+            } else {
+
+              console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
             }
-
-            callback(data);
 
             self.hideLoader();
           }).fail(function (xhr, textStatus, errorThrown) {
@@ -15501,7 +15597,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     //setup pageination
 
 
-    Page.prototype.initialize = function () {
+    Page.prototype.initialize = function (hidden) {
 
       var self = this;
 
@@ -15610,7 +15706,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.element.append(self.lastBut);
 
-      if (!self.table.options.paginationElement) {
+      if (!self.table.options.paginationElement && !hidden) {
 
         self.table.footerManager.append(self.element, self);
       }
@@ -15621,6 +15717,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.mode = self.table.options.pagination;
 
       self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 24);
+    };
+
+    Page.prototype.initializeProgressive = function (index) {
+
+      this.initialize(true);
+
+      this.mode = "progressive";
     };
 
     Page.prototype.setDisplayIndex = function (index) {
@@ -15891,6 +15994,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "remote":
 
+        case "progressive":
+
+          console.log("p", this.page);
+
           this._getRemotePage();
 
           break;
@@ -16003,13 +16110,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
-          left = this.table.rowManager.scrollLeft;
+          if (this.mode == "progressive") {
 
-          this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+            this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
 
-          this.table.rowManager.scrollHorizontal(left);
+            if (this.page < this.max) {
 
-          this.table.options.pageLoaded(this.getPage());
+              this.nextPage();
+            }
+          } else {
+
+            left = this.table.rowManager.scrollLeft;
+
+            this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+            this.table.rowManager.scrollHorizontal(left);
+
+            this.table.options.pageLoaded(this.getPage());
+          }
         } else {
 
           console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");

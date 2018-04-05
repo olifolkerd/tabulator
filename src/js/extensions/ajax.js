@@ -9,6 +9,10 @@ var Ajax = function(table){
 	this.msgElement = $("<div class='tabulator-loader-msg' role='alert'></div>"); //message element
 	this.loadingElement = false;
 	this.errorElement = false;
+
+	this.progressiveLoad = false;
+
+	this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
 };
 
 //initialize setup options
@@ -35,6 +39,19 @@ Ajax.prototype.initialize = function(){
 		this.setUrl(this.table.options.ajaxURL);
 	}
 
+	if(this.table.options.ajaxProgressiveLoad){
+		if(this.table.options.pagination){
+			this.progressiveLoad = false;
+			console.error("Progressive Load Error - Pagination and progressive load cannot be used at the same time");
+		}else{
+			if(this.table.extExists("page")){
+				this.progressiveLoad = this.table.options.ajaxProgressiveLoad;
+				this.table.extensions.page.initializeProgressive();
+			}else{
+				console.error("Pagination plugin is required for progressive ajax loading");
+			}
+		}
+	}
 };
 
 //set ajax params
@@ -91,11 +108,43 @@ Ajax.prototype.getUrl = function(){
 	return this.url;
 };
 
-//send ajax request
-Ajax.prototype.sendRequest = function(callback, silent){
+//lstandard loading function
+Ajax.prototype.loadData = function(inPosition){
 	var self = this;
 
+	if(this.progressiveLoad){
+		this._loadDataProgressive();
+	}else{
+		this._loadDataStandard(inPosition);
+	}
+};
+
+Ajax.prototype.blockActiveRequest = function(){
+	this.requestOrder ++;
+}
+
+Ajax.prototype._loadDataProgressive = function(){
+	this.table.rowManager.setData([]);
+	this.table.extensions.page.setPage(1);
+};
+
+
+Ajax.prototype._loadDataStandard = function(inPosition){
+	this.sendRequest(function(data){
+		self.table.rowManager.setData(data, inPosition);
+	}, inPosition);
+}
+
+
+//send ajax request
+Ajax.prototype.sendRequest = function(callback, silent){
+	var self = this,
+	requestNo;
+
 	if(self.url){
+
+		self.requestOrder ++;
+		requestNo = self.requestOrder;
 
 		self._loadDefaultConfig();
 
@@ -113,11 +162,16 @@ Ajax.prototype.sendRequest = function(callback, silent){
 
 			$.ajax(self.config)
 			.done(function(data){
-				if(self.table.options.ajaxResponse){
-					data = self.table.options.ajaxResponse(self.url, self.params, data);
-				}
 
-				callback(data);
+				if(requestNo === self.requestOrder){
+					if(self.table.options.ajaxResponse){
+						data = self.table.options.ajaxResponse(self.url, self.params, data);
+					}
+
+					callback(data);
+				}else{
+					console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made")
+				}
 
 				self.hideLoader();
 			})

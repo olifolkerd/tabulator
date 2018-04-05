@@ -109,6 +109,7 @@
 	 			ajaxLoaderError:false, //loader element
 	 			ajaxFiltering:false,
 	 			ajaxSorting:false,
+	 			ajaxProgressiveLoad:false, //progressive loading
 
 	 			groupBy:false, //enable table grouping and set field to group by
 				groupStartOpen:true, //starting state of group
@@ -372,16 +373,16 @@
 	 				}
 	 			}
 
+	 			if(this.extExists("ajax")){
+	 				ext.ajax.initialize();
+	 			}
+
 	 			if(options.pagination && this.extExists("page", true)){
 	 				ext.page.initialize();
 	 			}
 
 	 			if(options.groupBy && this.extExists("groupRows", true)){
 	 				ext.groupRows.initialize();
-	 			}
-
-	 			if(this.extExists("ajax")){
-	 				ext.ajax.initialize();
 	 			}
 
 	 			if(this.extExists("keybindings")){
@@ -414,9 +415,7 @@
 	 						self.rowManager.setData(self.options.data);
 	 					}else{
 	 						if(self.options.ajaxURL && self.extExists("ajax")){
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
+	 							self.extensions.ajax.loadData();
 	 						}else{
 	 							self.rowManager.setData(self.options.data);
 	 						}
@@ -429,9 +428,7 @@
 	 					self.rowManager.setData(self.options.data);
 	 				}else{
 	 					if(self.options.ajaxURL && self.extExists("ajax")){
-	 						self.extensions.ajax.sendRequest(function(data){
-	 							self.rowManager.setData(data);
-	 						});
+	 						self.extensions.ajax.loadData();
 	 					}else{
 	 						self.rowManager.setData(self.options.data);
 	 					}
@@ -492,6 +489,10 @@
 	 		//load data
 
 	 		setData:function(data, params, config){
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
+
 	 			this._setData(data, params, config);
 	 		},
 
@@ -520,9 +521,7 @@
 	 							self.extensions.page.setPage(1);
 	 						}else{
 	 							//assume data is url, make ajax call to url to get data
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data, inPosition);
-	 							}, inPosition);
+	 							self.extensions.ajax.loadData(inPosition);
 	 						}
 	 					}
 	 				}
@@ -539,9 +538,7 @@
 	 							self.extensions.page.reset(true);
 	 							self.extensions.page.setPage(1);
 	 						}else{
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data, inPosition);
-	 							}, inPosition);
+	 							self.extensions.ajax.loadData(inPosition);
 	 						}
 
 	 					}else{
@@ -554,6 +551,10 @@
 
 	 		//clear data
 	 		clearData:function(){
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
+
 	 			this.rowManager.clearData();
 	 		},
 
@@ -582,6 +583,10 @@
 
 	 		//replace data, keeping table in position with same sort
 	 		replaceData:function(data, params, config){
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
+
 	 			this._setData(data, params, config, true);
 	 		},
 
@@ -589,6 +594,10 @@
 	 		//update table data
 	 		updateData:function(data){
 	 			var self = this;
+
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
@@ -609,6 +618,10 @@
 
 	 		addData:function(data, pos, index){
 	 			var rows = [], output = [];
+
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
@@ -631,6 +644,10 @@
 	 		updateOrAddData:function(data){
 	 			var self = this;
 	 			var rows = [];
+
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
