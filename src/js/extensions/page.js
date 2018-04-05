@@ -305,7 +305,7 @@ Page.prototype.trigger = function(){
 
 		case "remote":
 		case "progressive":
-		console.log("p", this.page)
+		this.table.extensions.ajax.blockActiveRequest();
 		this._getRemotePage();
 		break;
 
@@ -376,7 +376,7 @@ Page.prototype._getRemotePageAuto = function(){
 
 	self.table.extensions.ajax.sendRequest(function(data){
 		self._parseRemoteData(data);
-	});
+	}, this.mode == "progressive");
 
 	self.table.extensions.ajax.setParams(oldParams);
 };
@@ -384,7 +384,8 @@ Page.prototype._getRemotePageAuto = function(){
 
 
 Page.prototype._parseRemoteData = function(data){
-	var left;
+	var self = this,
+	left;
 
 	if(data[this.paginationDataReceivedNames.last_page]){
 		if(data[this.paginationDataReceivedNames.data]){
@@ -393,7 +394,10 @@ Page.prototype._parseRemoteData = function(data){
 			if(this.mode == "progressive"){
 				this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
 				if(this.page < this.max){
-					this.nextPage();
+					setTimeout(function(){
+						self.nextPage();
+					}, self.table.options.ajaxProgressiveLoadDelay)
+
 				}
 			}else{
 				left = this.table.rowManager.scrollLeft;

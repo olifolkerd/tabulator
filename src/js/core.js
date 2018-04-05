@@ -110,6 +110,7 @@
 	 			ajaxFiltering:false,
 	 			ajaxSorting:false,
 	 			ajaxProgressiveLoad:false, //progressive loading
+	 			ajaxProgressiveLoadDelay:0, //delay between requests
 
 	 			groupBy:false, //enable table grouping and set field to group by
 				groupStartOpen:true, //starting state of group

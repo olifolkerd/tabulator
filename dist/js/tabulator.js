@@ -5731,6 +5731,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         ajaxProgressiveLoad: false, //progressive loading
 
+        ajaxProgressiveLoadDelay: 0, //delay between requests
+
 
         groupBy: false, //enable table grouping and set field to group by
 
@@ -15996,7 +15998,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "progressive":
 
-          console.log("p", this.page);
+          this.table.extensions.ajax.blockActiveRequest();
 
           this._getRemotePage();
 
@@ -16095,14 +16097,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.table.extensions.ajax.sendRequest(function (data) {
 
         self._parseRemoteData(data);
-      });
+      }, this.mode == "progressive");
 
       self.table.extensions.ajax.setParams(oldParams);
     };
 
     Page.prototype._parseRemoteData = function (data) {
 
-      var left;
+      var self = this,
+          left;
 
       if (data[this.paginationDataReceivedNames.last_page]) {
 
@@ -16116,7 +16119,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (this.page < this.max) {
 
-              this.nextPage();
+              setTimeout(function () {
+
+                self.nextPage();
+              }, self.table.options.ajaxProgressiveLoadDelay);
             }
           } else {
 
