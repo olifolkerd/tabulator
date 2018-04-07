@@ -236,11 +236,12 @@ ColumnManager.prototype.getDefinitionTree = function(){
 	return output;
 };
 
-ColumnManager.prototype.getComponents = function(){
+ColumnManager.prototype.getComponents = function(structured){
 	var self = this,
-	output = [];
+	output = [],
+	columns = structured ? self.columns : self.columnsByIndex;
 
-	self.columnsByIndex.forEach(function(column){
+	columns.forEach(function(column){
 		output.push(column.getComponent());
 	});
 

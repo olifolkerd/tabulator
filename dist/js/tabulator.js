@@ -531,12 +531,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return output;
     };
 
-    ColumnManager.prototype.getComponents = function () {
+    ColumnManager.prototype.getComponents = function (structured) {
 
       var self = this,
-          output = [];
+          output = [],
+          columns = structured ? self.columns : self.columnsByIndex;
 
-      self.columnsByIndex.forEach(function (column) {
+      columns.forEach(function (column) {
 
         output.push(column.getComponent());
       });
@@ -935,28 +936,68 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     ColumnComponent.prototype.show = function () {
 
-      this.column.show();
-    };
+      if (this.column.isGroup) {
 
-    ColumnComponent.prototype.hide = function () {
+        this.column.columns.forEach(function (column) {
 
-      this.column.hide();
-    };
-
-    ColumnComponent.prototype.toggle = function () {
-
-      if (this.column.visible) {
-
-        this.column.hide();
+          column.show();
+        });
       } else {
 
         this.column.show();
       }
     };
 
+    ColumnComponent.prototype.hide = function () {
+
+      if (this.column.isGroup) {
+
+        this.column.columns.forEach(function (column) {
+
+          column.hide();
+        });
+      } else {
+
+        this.column.hide();
+      }
+    };
+
+    ColumnComponent.prototype.toggle = function () {
+
+      if (this.column.visible) {
+
+        this.hide();
+      } else {
+
+        this.show();
+      }
+    };
+
     ColumnComponent.prototype.delete = function () {
 
       this.column.delete();
+    };
+
+    ColumnComponent.prototype.getSubColumns = function () {
+
+      var output = [];
+
+      if (this.column.columns.length) {
+
+        this.column.columns.forEach(function (column) {
+
+          output.push(column.getComponent());
+        });
+
+        return output;
+      }
+
+      return false;
+    };
+
+    ColumnComponent.prototype.getParentColumn = function () {
+
+      return this.column.parent instanceof Column ? this.column.parent.getComponent() : false;
     };
 
     ColumnComponent.prototype._getSelf = function () {
@@ -6734,9 +6775,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.columnManager.setColumns(definition);
       },
 
-      getColumns: function getColumns() {
+      getColumns: function getColumns(structured) {
 
-        return this.columnManager.getComponents();
+        return this.columnManager.getComponents(structured);
       },
 
       getColumnDefinitions: function getColumnDefinitions() {
@@ -13824,8 +13865,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
 
       this.groupIDLookups = [];
-
-      console.log("cc", this.table.options.columnCalcs);
 
       if (Array.isArray(groupBy) || groupBy) {
 

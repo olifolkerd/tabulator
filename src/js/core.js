@@ -811,8 +811,8 @@
 	 			this.columnManager.setColumns(definition);
 	 		},
 
-	 		getColumns:function(){
-	 			return this.columnManager.getComponents();
+	 		getColumns:function(structured){
+	 			return this.columnManager.getComponents(structured);
 	 		},
 
 	 		getColumnDefinitions:function(){

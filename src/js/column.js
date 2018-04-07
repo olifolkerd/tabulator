@@ -32,24 +32,54 @@ ColumnComponent.prototype.getVisibility = function(){
 };
 
 ColumnComponent.prototype.show = function(){
-	this.column.show();
+	if(this.column.isGroup){
+		this.column.columns.forEach(function(column){
+			column.show();
+		});
+	}else{
+		this.column.show();
+	}
 };
 
 ColumnComponent.prototype.hide = function(){
-	this.column.hide();
+	if(this.column.isGroup){
+		this.column.columns.forEach(function(column){
+			column.hide();
+		});
+	}else{
+		this.column.hide();
+	}
 };
 
 ColumnComponent.prototype.toggle = function(){
 	if(this.column.visible){
-		this.column.hide();
+		this.hide();
 	}else{
-		this.column.show();
+		this.show();
 	}
 };
 
 ColumnComponent.prototype.delete = function(){
 	this.column.delete();
 };
+
+ColumnComponent.prototype.getSubColumns = function(){
+	var output = []
+	if(this.column.columns.length){
+		this.column.columns.forEach(function(column){
+			output.push(column.getComponent())
+		});
+
+		return output;
+	}
+
+	return false;
+};
+
+ColumnComponent.prototype.getParentColumn = function(){
+	return this.column.parent instanceof Column ? this.column.parent.getComponent() : false;
+};
+
 
 ColumnComponent.prototype._getSelf = function(){
 	return this.column;
