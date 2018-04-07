@@ -109,6 +109,10 @@ RowManager.prototype.initialize = function(){
 			if(self.scrollTop != top){
 				self.scrollTop = top;
 				self.scrollVertical(dir);
+
+				if(self.table.options.ajaxProgressiveLoad == "scroll"){
+					self.table.extensions.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
+				}
 			}else{
 				self.scrollTop = top;
 			}
@@ -236,7 +240,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 
 RowManager.prototype.setData = function(data, renderInPosition){
 	var self = this;
-	
+
 	if(renderInPosition && this.getDisplayRows().length){
 		this.reRenderInPosition(function(){
 			self._setDataActual(data);

@@ -10,6 +10,8 @@ var Page = function(table){
 	this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title='' type='button'></button>");
 
 	this.mode = "local";
+	this.progressiveLoad = false;
+
 	this.size = 0;
 	this.page = 1;
 	this.max = 1;
@@ -112,9 +114,10 @@ Page.prototype.initialize = function(hidden){
 	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 24);
 };
 
-Page.prototype.initializeProgressive = function(index){
+Page.prototype.initializeProgressive = function(mode){
 	this.initialize(true);
-	this.mode = "progressive";
+	this.mode = "progressive_" + mode;
+	this.progressiveLoad = true;
 }
 
 Page.prototype.setDisplayIndex = function(index){
@@ -241,7 +244,9 @@ Page.prototype.nextPage = function(){
 		this.trigger();
 		return true;
 	}else{
-		console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+		if(!this.progressiveLoad){
+			console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+		}
 		return false;
 	}
 };
@@ -304,7 +309,8 @@ Page.prototype.trigger = function(){
 		break;
 
 		case "remote":
-		case "progressive":
+		case "progressive_load":
+		case "progressive_scroll":
 		this.table.extensions.ajax.blockActiveRequest();
 		this._getRemotePage();
 		break;
@@ -376,7 +382,7 @@ Page.prototype._getRemotePageAuto = function(){
 
 	self.table.extensions.ajax.sendRequest(function(data){
 		self._parseRemoteData(data);
-	}, this.mode == "progressive");
+	}, this.progressiveLoad);
 
 	self.table.extensions.ajax.setParams(oldParams);
 };
@@ -385,19 +391,35 @@ Page.prototype._getRemotePageAuto = function(){
 
 Page.prototype._parseRemoteData = function(data){
 	var self = this,
-	left;
+	left, data, margin;
 
 	if(data[this.paginationDataReceivedNames.last_page]){
 		if(data[this.paginationDataReceivedNames.data]){
 			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
-			if(this.mode == "progressive"){
-				this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
-				if(this.page < this.max){
-					setTimeout(function(){
-						self.nextPage();
-					}, self.table.options.ajaxProgressiveLoadDelay)
+			if(this.progressiveLoad){
+				switch(this.mode){
+					case "progressive_load":
+					this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+					if(this.page < this.max){
+						setTimeout(function(){
+							self.nextPage();
+						}, self.table.options.ajaxProgressiveLoadDelay)
 
+					}
+					break;
+
+					case "progressive_scroll":
+					data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
+
+					this.table.rowManager.setData(data, true);
+
+					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element[0].clientHeight * 2);
+
+					if(self.table.rowManager.element[0].scrollHeight <= (self.table.rowManager.element[0].clientHeight + margin)){
+						self.nextPage();
+					}
+					break;
 				}
 			}else{
 				left = this.table.rowManager.scrollLeft;

@@ -2325,6 +2325,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             self.scrollTop = top;
 
             self.scrollVertical(dir);
+
+            if (self.table.options.ajaxProgressiveLoad == "scroll") {
+
+              self.table.extensions.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
+            }
           } else {
 
             self.scrollTop = top;
@@ -8226,6 +8231,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.progressiveLoad = false;
 
+      this.loading = false;
+
       this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
 
     };
@@ -8275,7 +8282,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             this.progressiveLoad = this.table.options.ajaxProgressiveLoad;
 
-            this.table.extensions.page.initializeProgressive();
+            this.table.extensions.page.initializeProgressive(this.progressiveLoad);
           } else {
 
             console.error("Pagination plugin is required for progressive ajax loading");
@@ -8380,6 +8387,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    Ajax.prototype.nextPage = function (diff) {
+
+      var margin;
+
+      if (!this.loading) {
+
+        margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element[0].clientHeight * 2;
+
+        if (diff < margin) {
+
+          this.table.extensions.page.nextPage();
+        }
+      }
+    };
+
     Ajax.prototype.blockActiveRequest = function () {
 
       this.requestOrder++;
@@ -8425,6 +8447,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (self.table.options.ajaxRequesting(self.url, self.params) !== false) {
 
+          self.loading = true;
+
           if (!silent) {
 
             self.showLoader();
@@ -8446,6 +8470,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             }
 
             self.hideLoader();
+
+            self.loading = false;
           }).fail(function (xhr, textStatus, errorThrown) {
 
             console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
@@ -8458,6 +8484,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
               self.hideLoader();
             }, 3000);
+
+            self.loading = false;
           });
         }
       } else {
@@ -15584,6 +15612,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.mode = "local";
 
+      this.progressiveLoad = false;
+
       this.size = 0;
 
       this.page = 1;
@@ -15721,11 +15751,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 24);
     };
 
-    Page.prototype.initializeProgressive = function (index) {
+    Page.prototype.initializeProgressive = function (mode) {
 
       this.initialize(true);
 
-      this.mode = "progressive";
+      this.mode = "progressive_" + mode;
+
+      this.progressiveLoad = true;
     };
 
     Page.prototype.setDisplayIndex = function (index) {
@@ -15909,7 +15941,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         return true;
       } else {
 
-        console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+        if (!this.progressiveLoad) {
+
+          console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+        }
 
         return false;
       }
@@ -15996,7 +16031,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         case "remote":
 
-        case "progressive":
+        case "progressive_load":
+
+        case "progressive_scroll":
 
           this.table.extensions.ajax.blockActiveRequest();
 
@@ -16097,7 +16134,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       self.table.extensions.ajax.sendRequest(function (data) {
 
         self._parseRemoteData(data);
-      }, this.mode == "progressive");
+      }, this.progressiveLoad);
 
       self.table.extensions.ajax.setParams(oldParams);
     };
@@ -16105,7 +16142,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     Page.prototype._parseRemoteData = function (data) {
 
       var self = this,
-          left;
+          left,
+          data,
+          margin;
 
       if (data[this.paginationDataReceivedNames.last_page]) {
 
@@ -16113,16 +16152,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
-          if (this.mode == "progressive") {
+          if (this.progressiveLoad) {
 
-            this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+            switch (this.mode) {
 
-            if (this.page < this.max) {
+              case "progressive_load":
 
-              setTimeout(function () {
+                this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
 
-                self.nextPage();
-              }, self.table.options.ajaxProgressiveLoadDelay);
+                if (this.page < this.max) {
+
+                  setTimeout(function () {
+
+                    self.nextPage();
+                  }, self.table.options.ajaxProgressiveLoadDelay);
+                }
+
+                break;
+
+              case "progressive_scroll":
+
+                data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
+
+                this.table.rowManager.setData(data, true);
+
+                margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element[0].clientHeight * 2;
+
+                if (self.table.rowManager.element[0].scrollHeight <= self.table.rowManager.element[0].clientHeight + margin) {
+
+                  self.nextPage();
+                }
+
+                break;
+
             }
           } else {
 

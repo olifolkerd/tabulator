@@ -11,6 +11,7 @@ var Ajax = function(table){
 	this.errorElement = false;
 
 	this.progressiveLoad = false;
+	this.loading = false;
 
 	this.requestOrder = 0; //prevent requests comming out of sequence if overridden by another load request
 };
@@ -46,7 +47,7 @@ Ajax.prototype.initialize = function(){
 		}else{
 			if(this.table.extExists("page")){
 				this.progressiveLoad = this.table.options.ajaxProgressiveLoad;
-				this.table.extensions.page.initializeProgressive();
+				this.table.extensions.page.initializeProgressive(this.progressiveLoad);
 			}else{
 				console.error("Pagination plugin is required for progressive ajax loading");
 			}
@@ -119,6 +120,19 @@ Ajax.prototype.loadData = function(inPosition){
 	}
 };
 
+Ajax.prototype.nextPage = function(diff){
+	var margin;
+
+	if(!this.loading){
+
+		margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element[0].clientHeight * 2);
+
+		if(diff < margin){
+			this.table.extensions.page.nextPage();
+		}
+	}
+}
+
 Ajax.prototype.blockActiveRequest = function(){
 	this.requestOrder ++;
 }
@@ -128,13 +142,11 @@ Ajax.prototype._loadDataProgressive = function(){
 	this.table.extensions.page.setPage(1);
 };
 
-
 Ajax.prototype._loadDataStandard = function(inPosition){
 	this.sendRequest(function(data){
 		self.table.rowManager.setData(data, inPosition);
 	}, inPosition);
 }
-
 
 //send ajax request
 Ajax.prototype.sendRequest = function(callback, silent){
@@ -156,6 +168,8 @@ Ajax.prototype.sendRequest = function(callback, silent){
 
 		if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
 
+			self.loading = true;
+
 			if(!silent){
 				self.showLoader();
 			}
@@ -174,6 +188,8 @@ Ajax.prototype.sendRequest = function(callback, silent){
 				}
 
 				self.hideLoader();
+
+				self.loading = false;
 			})
 			.fail(function(xhr, textStatus, errorThrown){
 				console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
@@ -184,6 +200,8 @@ Ajax.prototype.sendRequest = function(callback, silent){
 				setTimeout(function(){
 					self.hideLoader();
 				}, 3000);
+
+				self.loading = false;
 			});
 		}
 
