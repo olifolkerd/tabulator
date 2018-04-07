@@ -167,6 +167,7 @@ ColumnCalcs.prototype.recalcRowGroup = function(row){
 
 ColumnCalcs.prototype.recalcGroup = function(group){
 	var data, rowData;
+
 	if(group){
 		if(group.calcs){
 			if(group.calcs.bottom){
@@ -174,6 +175,7 @@ ColumnCalcs.prototype.recalcGroup = function(group){
 				rowData = this.generateRowData("bottom", data);
 
 				group.calcs.bottom.updateData(rowData);
+				group.calcs.bottom.reinitialize();
 			}
 
 			if(group.calcs.top){
@@ -181,6 +183,7 @@ ColumnCalcs.prototype.recalcGroup = function(group){
 				rowData = this.generateRowData("top", data);
 
 				group.calcs.top.updateData(rowData);
+				group.calcs.top.reinitialize();
 			}
 		}
 	}

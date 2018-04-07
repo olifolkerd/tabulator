@@ -8856,6 +8856,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             rowData = this.generateRowData("bottom", data);
 
             group.calcs.bottom.updateData(rowData);
+
+            group.calcs.bottom.reinitialize();
           }
 
           if (group.calcs.top) {
@@ -8865,6 +8867,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             rowData = this.generateRowData("top", data);
 
             group.calcs.top.updateData(rowData);
+
+            group.calcs.top.reinitialize();
           }
         }
       }
