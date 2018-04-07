@@ -202,6 +202,8 @@
 	 			groupDblTap:false,
 	 			groupTapHold:false,
 
+	 			columnCalcs:true,
+
 	 			//pagination callbacks
 	 			pageLoaded:function(){},
 

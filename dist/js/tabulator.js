@@ -5928,6 +5928,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         groupTapHold: false,
 
+        columnCalcs: true,
+
         //pagination callbacks
 
         pageLoaded: function pageLoaded() {},
@@ -8686,7 +8688,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.topCalcs.push(column);
 
-          if (!this.table.options.groupBy) {
+          if (this.table.options.columnCalcs != "group") {
 
             this.initializeTopRow();
           }
@@ -8723,7 +8725,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.botCalcs.push(column);
 
-          if (!this.table.options.groupBy) {
+          if (this.table.options.columnCalcs != "group") {
 
             this.initializeBottomRow();
           }
@@ -13380,7 +13382,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.generateGroupHeaderContents();
 
-      if (this.groupManager.table.extExists("columnCalcs")) {
+      if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table") {
 
         this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
       }
@@ -13433,7 +13435,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.generateGroupHeaderContents();
 
-        if (this.groupManager.table.extExists("columnCalcs")) {
+        if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table") {
 
           this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
         }
@@ -13480,7 +13482,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           });
         } else {
 
-          if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()) {
+          if (this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()) {
 
             this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows);
 
@@ -13489,7 +13491,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           output = output.concat(this.rows);
 
-          if (this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
+          if (this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()) {
 
             this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
 
@@ -13498,7 +13500,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       } else {
 
-        if (!this.groupList.length && this.groupManager.table.options.groupClosedShowCalcs) {
+        if (!this.groupList.length && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.options.groupClosedShowCalcs) {
 
           if (this.groupManager.table.extExists("columnCalcs")) {
 
@@ -13823,15 +13825,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.groupIDLookups = [];
 
+      console.log("cc", this.table.options.columnCalcs);
+
       if (Array.isArray(groupBy) || groupBy) {
 
-        if (this.table.extExists("columnCalcs")) {
+        if (this.table.extExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both") {
 
           this.table.extensions.columnCalcs.removeCalcs();
         }
       } else {
 
-        if (this.table.extExists("columnCalcs")) {
+        if (this.table.extExists("columnCalcs") && this.table.options.columnCalcs != "group") {
 
           var cols = this.table.columnManager.getRealColumns();
 

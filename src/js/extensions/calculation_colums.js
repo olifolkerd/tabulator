@@ -50,7 +50,7 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 			column.extensions.columnCalcs = config;
 			this.topCalcs.push(column);
 
-			if(!this.table.options.groupBy){
+			if(this.table.options.columnCalcs != "group"){
 				this.initializeTopRow();
 			}
 		}
@@ -77,7 +77,7 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 			column.extensions.columnCalcs = config;
 			this.botCalcs.push(column);
 
-			if(!this.table.options.groupBy){
+			if(this.table.options.columnCalcs != "group"){
 				this.initializeBottomRow();
 			}
 		}
