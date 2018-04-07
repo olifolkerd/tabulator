@@ -11789,45 +11789,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       field.forEach(function (filter) {
 
-        var column;
+        filter = self.findFilter(filter);
 
-        var filterFunc = false;
-
-        if (typeof filter.field == "function") {
-
-          filterFunc = function filterFunc(data) {
-
-            return filter.field(data, filter.type || {}); // pass params to custom filter function
-
-          };
-        } else {
-
-          if (self.filters[filter.type]) {
-
-            column = self.table.columnManager.getColumnByField(filter.field);
-
-            if (column) {
-
-              filterFunc = function filterFunc(data) {
-
-                return self.filters[filter.type](filter.value, column.getFieldValue(data));
-              };
-            } else {
-
-              filterFunc = function filterFunc(data) {
-
-                return self.filters[filter.type](filter.value, data[filter.field]);
-              };
-            }
-          } else {
-
-            console.warn("Filter Error - No such filter type found, ignoring: ", filter.type);
-          }
-        }
-
-        if (filterFunc) {
-
-          filter.func = filterFunc;
+        if (filter) {
 
           self.filterList.push(filter);
 
@@ -11839,6 +11803,73 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.extensions.persistence.save("filter");
       }
+    };
+
+    Filter.prototype.findFilter = function (filter) {
+
+      var self = this,
+          column;
+
+      if (Array.isArray(filter)) {
+
+        return this.findSubFilters(filter);
+      }
+
+      var filterFunc = false;
+
+      if (typeof filter.field == "function") {
+
+        filterFunc = function filterFunc(data) {
+
+          return filter.field(data, filter.type || {}); // pass params to custom filter function
+
+        };
+      } else {
+
+        if (self.filters[filter.type]) {
+
+          column = self.table.columnManager.getColumnByField(filter.field);
+
+          if (column) {
+
+            filterFunc = function filterFunc(data) {
+
+              return self.filters[filter.type](filter.value, column.getFieldValue(data));
+            };
+          } else {
+
+            filterFunc = function filterFunc(data) {
+
+              return self.filters[filter.type](filter.value, data[filter.field]);
+            };
+          }
+        } else {
+
+          console.warn("Filter Error - No such filter type found, ignoring: ", filter.type);
+        }
+      }
+
+      filter.func = filterFunc;
+
+      return filter.func ? filter : false;
+    };
+
+    Filter.prototype.findSubFilters = function (filters) {
+
+      var self = this,
+          output = [];
+
+      filters.forEach(function (filter) {
+
+        filter = self.findFilter(filter);
+
+        if (filter) {
+
+          output.push(filter);
+        }
+      });
+
+      return output.length ? output : false;
     };
 
     //get all filters
@@ -12025,7 +12056,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       self.filterList.forEach(function (filter) {
 
-        if (!filter.func(data)) {
+        if (!self.filterRecurse(filter, data)) {
 
           match = false;
         }
@@ -12037,6 +12068,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           match = false;
         }
+      }
+
+      return match;
+    };
+
+    Filter.prototype.filterRecurse = function (filter, data) {
+
+      var self = this,
+          match = false;
+
+      if (Array.isArray(filter)) {
+
+        filter.forEach(function (subFilter) {
+
+          if (self.filterRecurse(subFilter, data)) {
+
+            match = true;
+          }
+        });
+      } else {
+
+        match = filter.func(data);
       }
 
       return match;

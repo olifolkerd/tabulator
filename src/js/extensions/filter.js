@@ -269,38 +269,9 @@ Filter.prototype.addFilter = function(field, type, value){
 
 	field.forEach(function(filter){
 
-		var column;
+		filter = self.findFilter(filter);
 
-		var filterFunc = false;
-
-		if(typeof filter.field == "function"){
-			filterFunc = function(data){
-				return filter.field(data, filter.type || {})// pass params to custom filter function
-			}
-		}else{
-
-			if(self.filters[filter.type]){
-
-				column = self.table.columnManager.getColumnByField(filter.field);
-
-				if(column){
-					filterFunc = function(data){
-						return self.filters[filter.type](filter.value, column.getFieldValue(data));
-					}
-				}else{
-					filterFunc = function(data){
-						return self.filters[filter.type](filter.value, data[filter.field]);
-					}
-				}
-
-
-			}else{
-				console.warn("Filter Error - No such filter type found, ignoring: ", filter.type);
-			}
-		}
-
-		if(filterFunc){
-			filter.func = filterFunc;
+		if(filter){
 			self.filterList.push(filter);
 
 			self.changed = true;
@@ -312,6 +283,67 @@ Filter.prototype.addFilter = function(field, type, value){
 	}
 
 };
+
+Filter.prototype.findFilter = function(filter){
+	var self = this,
+	column;
+
+	if(Array.isArray(filter)){
+		return this.findSubFilters(filter);
+	}
+
+
+	var filterFunc = false;
+
+	if(typeof filter.field == "function"){
+		filterFunc = function(data){
+			return filter.field(data, filter.type || {})// pass params to custom filter function
+		}
+	}else{
+
+		if(self.filters[filter.type]){
+
+			column = self.table.columnManager.getColumnByField(filter.field);
+
+			if(column){
+				filterFunc = function(data){
+					return self.filters[filter.type](filter.value, column.getFieldValue(data));
+				}
+			}else{
+				filterFunc = function(data){
+					return self.filters[filter.type](filter.value, data[filter.field]);
+				}
+			}
+
+
+		}else{
+			console.warn("Filter Error - No such filter type found, ignoring: ", filter.type);
+		}
+	}
+
+
+	filter.func = filterFunc;
+
+
+
+	return filter.func ? filter : false;
+};
+
+Filter.prototype.findSubFilters = function(filters){
+	var self = this,
+	output = [];
+
+	filters.forEach(function(filter){
+		filter = self.findFilter(filter);
+
+		if(filter){
+			output.push(filter);
+		}
+	});
+
+	return output.length ? output : false;
+}
+
 
 //get all filters
 Filter.prototype.getFilters = function(all, ajax){
@@ -455,7 +487,7 @@ Filter.prototype.filterRow = function(row){
 	data = row.getData();
 
 	self.filterList.forEach(function(filter){
-		if(!filter.func(data)){
+		if(!self.filterRecurse(filter, data)){
 			match = false;
 		}
 	});
@@ -469,6 +501,24 @@ Filter.prototype.filterRow = function(row){
 
 	return match;
 };
+
+Filter.prototype.filterRecurse = function(filter, data){
+	var self = this,
+	match = false;
+
+	if(Array.isArray(filter)){
+		filter.forEach(function(subFilter){
+			if(self.filterRecurse(subFilter, data)){
+				match = true;
+			}
+		});
+	}else{
+		match = filter.func(data);
+	}
+
+	return match;
+};
+
 
 
 //list of available filters
