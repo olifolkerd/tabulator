@@ -120,7 +120,11 @@
 				groupHeader:false, //header generation function
 
 				movableColumns:false, //enable movable columns
+
 				movableRows:false, //enable movable rows
+				movableRowsConnectedTables:false, //tables for movable rows to be connected to
+				movableRowsDepart:false,
+				movableRowsReceive:"insert",
 
 				scrollToRowPosition:"top",
 				scrollToRowIfVisible:true,
@@ -349,6 +353,10 @@
 
 	 			if(options.persistentLayout && this.extExists("persistence", true)){
 	 				options.columns = ext.persistence.load("columns", options.columns) ;
+	 			}
+
+	 			if(options.movableRows && this.extExists("moveRow")){
+	 				ext.moveRow.initialize();
 	 			}
 
 	 			if(this.extExists("columnCalcs")){
@@ -1340,6 +1348,29 @@
 	 				this.extensions.download.download(type, filename, options, intercept);
 	 			}
 	 		},
+
+
+
+	 		/////////// Inter Table Communications ///////////
+
+	 		movableRowsConnectTable:function(table, row){
+	 			if(this.extExists("moveRow", true)){
+	 				return this.extensions.moveRow.connect(table, row);
+	 			}
+	 		},
+
+	 		movableRowsDisconnectTable:function(table){
+	 			if(this.extExists("moveRow", true)){
+	 				return this.extensions.moveRow.disconnect(table);
+	 			}
+	 		},
+
+	 		movableRowsDropComplete:function(table, row, success){
+	 			if(this.extExists("moveRow", true)){
+	 				return this.extensions.moveRow.dropComplete(table, row, success);
+	 			}
+	 		},
+
 
 	 		////////////// Extension Management //////////////
 

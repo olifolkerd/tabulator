@@ -5894,8 +5894,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         movableColumns: false, //enable movable columns
 
+
         movableRows: false, //enable movable rows
 
+        movableRowsConnectedTables: false, //tables for movable rows to be connected to
+
+        movableRowsDepart: false,
+
+        movableRowsReceive: "insert",
 
         scrollToRowPosition: "top",
 
@@ -6217,6 +6223,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (options.persistentLayout && this.extExists("persistence", true)) {
 
           options.columns = ext.persistence.load("columns", options.columns);
+        }
+
+        if (options.movableRows && this.extExists("moveRow")) {
+
+          ext.moveRow.initialize();
         }
 
         if (this.extExists("columnCalcs")) {
@@ -7555,6 +7566,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (this.extExists("download", true)) {
 
           this.extensions.download.download(type, filename, options, intercept);
+        }
+      },
+
+      /////////// Inter Table Communications ///////////
+
+
+      movableRowsConnectTable: function movableRowsConnectTable(table, row) {
+
+        if (this.extExists("moveRow", true)) {
+
+          return this.extensions.moveRow.connect(table, row);
+        }
+      },
+
+      movableRowsDisconnectTable: function movableRowsDisconnectTable(table) {
+
+        if (this.extExists("moveRow", true)) {
+
+          return this.extensions.moveRow.disconnect(table);
+        }
+      },
+
+      movableRowsDropComplete: function movableRowsDropComplete(table, row, success) {
+
+        if (this.extExists("moveRow", true)) {
+
+          return this.extensions.moveRow.dropComplete(table, row, success);
         }
       },
 
@@ -15442,12 +15480,54 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.hasHandle = false; //row has handle instead of fully movable row
 
 
-      this.startY = 0; //starting position within header element
+      this.startY = 0; //starting Y position within header element
+
+
+      this.startX = 0; //starting X position within header element
 
 
       this.moveHover = this.moveHover.bind(this);
 
       this.endMove = this.endMove.bind(this);
+
+      this.connection = false;
+
+      this.connections = [];
+
+      this.connectedTable = false;
+
+      this.connectedRow = false;
+    };
+
+    MoveRows.prototype.initialize = function (handle) {
+
+      this.connection = this.table.options.movableRowsConnectedTables;
+    };
+
+    MoveRows.prototype.getConnections = function () {
+
+      var self = this,
+          connection;
+
+      this.connections = [];
+
+      if (Array.isArray(this.connection)) {
+
+        this.connections = this.connection;
+      } else {
+
+        connection = typeof this.connection == "string" ? $(this.connection) : this.connection;
+
+        connection.each(function () {
+
+          if (self.table.element[0] !== this) {
+
+            self.connections.push($(this));
+          }
+        });
+      }
+
+      return this.connections;
     };
 
     MoveRows.prototype.setHandle = function (handle) {
@@ -15459,6 +15539,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this,
           config = {};
+
+      //inter table drag drop
+
+
+      config.mouseup = function (e) {
+
+        self.tableRowDrop(e, row);
+      }.bind(self);
+
+      //same table drag drop
+
 
       config.mousemove = function (e) {
 
@@ -15528,7 +15619,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      self.table.rowManager.activeRows.forEach(function (row) {
+      self.table.rowManager.getDisplayRows().forEach(function (row) {
 
         if (row.type === "row" && row.extensions.moveRow.mousemove) {
 
@@ -15541,7 +15632,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      self.table.rowManager.activeRows.forEach(function (row) {
+      self.table.rowManager.getDisplayRows().forEach(function (row) {
 
         if (row.type === "row" && row.extensions.moveRow.mousemove) {
 
@@ -15552,19 +15643,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     MoveRows.prototype.startMove = function (e, row) {
 
-      var self = this,
-          element = row.getElement();
+      var element = row.getElement();
 
-      self.moving = row;
+      this.setStartPosition(e, row);
 
-      self.startY = e.pageY - element.offset().top;
+      this.moving = row;
 
-      self.table.element.addClass("tabulator-block-select");
+      this.table.element.addClass("tabulator-block-select");
 
       //create placeholder
 
 
-      self.placeholderElement.css({
+      this.placeholderElement.css({
 
         width: row.getWidth(),
 
@@ -15572,88 +15662,351 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       });
 
-      element.before(self.placeholderElement);
+      if (!this.connection) {
 
-      element.detach();
+        element.before(this.placeholderElement);
+
+        element.detach();
+      } else {
+
+        this.table.element.addClass("tabulator-movingrow-from");
+
+        this.connectToTables(row);
+      }
 
       //create hover element
 
 
-      self.hoverElement = element.clone();
+      this.hoverElement = element.clone();
 
-      self.hoverElement.addClass("tabulator-moving");
+      this.hoverElement.addClass("tabulator-moving");
 
-      self.table.rowManager.getTableElement().append(self.hoverElement);
+      if (this.connection) {
 
-      self.hoverElement.css({
+        $("body").append(this.hoverElement);
 
-        "left": 0,
+        this.hoverElement.css({
 
-        "top": 0
+          "left": 0,
 
-      });
+          "top": 0,
 
-      self._bindMouseMove();
+          "width": this.table.element.innerWidth(),
 
-      $("body").on("mousemove", self.moveHover);
+          "white-space": "nowrap",
 
-      $("body").on("mouseup", self.endMove);
+          "overflow": "hidden",
 
-      self.moveHover(e);
+          "pointer-events": "none"
+
+        });
+      } else {
+
+        this.table.rowManager.getTableElement().append(this.hoverElement);
+
+        this.hoverElement.css({
+
+          "left": 0,
+
+          "top": 0
+
+        });
+
+        this._bindMouseMove();
+      }
+
+      $("body").on("mousemove", this.moveHover);
+
+      $("body").on("mouseup", this.endMove);
+
+      this.moveHover(e);
+    };
+
+    MoveRows.prototype.setStartPosition = function (e, row) {
+
+      var element, position;
+
+      element = row.getElement();
+
+      if (this.connection) {
+
+        position = element[0].getBoundingClientRect();
+
+        this.startX = position.left - e.pageX;
+
+        this.startY = position.top - e.pageY;
+      } else {
+
+        this.startY = e.pageY - element.offset().top;
+      }
     };
 
     MoveRows.prototype.endMove = function (column) {
 
-      var self = this;
+      this._unbindMouseMove();
 
-      self._unbindMouseMove();
+      this.placeholderElement.after(this.moving.getElement());
 
-      self.placeholderElement.after(self.moving.getElement());
+      this.placeholderElement.detach();
 
-      self.placeholderElement.detach();
+      this.hoverElement.detach();
 
-      self.hoverElement.detach();
+      this.table.element.removeClass("tabulator-block-select");
 
-      self.table.element.removeClass("tabulator-block-select");
+      if (this.toRow) {
 
-      if (self.toRow) {
-
-        self.table.rowManager.moveRow(self.moving, self.toRow, self.toRowAfter);
+        this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
       }
 
-      self.moving = false;
+      this.moving = false;
 
-      self.toRow = false;
+      this.toRow = false;
 
-      self.toRowAfter = false;
+      this.toRowAfter = false;
 
-      $("body").off("mousemove", self.moveHover);
+      $("body").off("mousemove", this.moveHover);
 
-      $("body").off("mouseup", self.endMove);
+      $("body").off("mouseup", this.endMove);
+
+      if (this.connection) {
+
+        this.table.element.removeClass("tabulator-movingrow-from");
+
+        this.disconnectFromTables();
+      }
     };
 
     MoveRows.prototype.moveRow = function (row, after) {
 
-      var self = this;
+      this.toRow = row;
 
-      self.toRow = row;
-
-      self.toRowAfter = after;
+      this.toRowAfter = after;
     };
 
     MoveRows.prototype.moveHover = function (e) {
 
-      var self = this,
-          rowHolder = self.table.rowManager.getElement(),
+      if (this.connection) {
+
+        this.moveHoverConnections.call(this, e);
+      } else {
+
+        this.moveHoverTable.call(this, e);
+      }
+    };
+
+    MoveRows.prototype.moveHoverTable = function (e) {
+
+      var rowHolder = this.table.rowManager.getElement(),
           scrollTop = rowHolder.scrollTop(),
           yPos = e.pageY - rowHolder.offset().top + scrollTop,
           scrollPos;
 
-      self.hoverElement.css({
+      this.hoverElement.css({
 
-        "top": yPos - self.startY
+        "top": yPos - this.startY
 
       });
+    };
+
+    MoveRows.prototype.moveHoverConnections = function (e) {
+
+      this.hoverElement.css({
+
+        "left": this.startX + e.pageX,
+
+        "top": this.startY + e.pageY
+
+      });
+    };
+
+    //establish connection with other tables
+
+
+    MoveRows.prototype.connectToTables = function (row) {
+
+      var self = this,
+          connections = this.getConnections();
+
+      connections.forEach(function (connection) {
+
+        connection.tabulator("movableRowsConnectTable", self.table.element, row);
+      });
+    };
+
+    //disconnect from other tables
+
+
+    MoveRows.prototype.disconnectFromTables = function () {
+
+      var self = this,
+          connections = this.getConnections();
+
+      connections.forEach(function (connection) {
+
+        connection.tabulator("movableRowsDisconnectTable", self.table.element);
+      });
+    };
+
+    //accept incomming connection
+
+
+    MoveRows.prototype.connect = function (table, row) {
+
+      var self = this;
+
+      if (!this.connectedTable) {
+
+        this.connectedTable = table;
+
+        this.connectedRow = row;
+
+        this.table.element.addClass("tabulator-movingrow-to");
+
+        self.table.rowManager.getDisplayRows().forEach(function (row) {
+
+          if (row.type === "row" && row.extensions.moveRow.mouseup) {
+
+            row.element.on("mouseup", row.extensions.moveRow.mouseup);
+          }
+        });
+
+        self.table.element.on("mouseup", self.tableRowDrop.bind(self));
+
+        return true;
+      } else {
+
+        console.warn("Move Row Error - Table cannot accept connection, already connected to table:", this.connectedTable);
+
+        return false;
+      }
+    };
+
+    //close incomming connection
+
+
+    MoveRows.prototype.disconnect = function (table) {
+
+      var self = this;
+
+      if (table === this.connectedTable) {
+
+        this.connectedTable = false;
+
+        this.connectedRow = false;
+
+        this.table.element.removeClass("tabulator-movingrow-to");
+
+        self.table.rowManager.getDisplayRows().forEach(function (row) {
+
+          if (row.type === "row" && row.extensions.moveRow.mouseup) {
+
+            row.element.off("mouseup", row.extensions.moveRow.mouseup);
+          }
+        });
+
+        self.table.element.off("mouseup", self.tableRowDrop.bind(self));
+      } else {
+
+        console.warn("Move Row Error - trying to disconnect from non connected table");
+      }
+    };
+
+    MoveRows.prototype.dropComplete = function (table, row, success) {
+
+      var departer = false;
+
+      if (success) {
+
+        switch (_typeof(this.table.options.movableRowsDepart)) {
+
+          case "string":
+
+            departer = this.departers[this.table.options.movableRowsDepart];
+
+            break;
+
+          case "function":
+
+            departer = this.table.options.movableRowsDepart;
+
+            break;
+
+        }
+
+        if (departer) {
+
+          departer.call(this, this.moving, row, table);
+        } else {
+
+          if (this.table.options.movableRowsDepart) {
+
+            console.warn("Mover Row Error - no matching departer found:", this.table.options.movableRowsDepart);
+          }
+        }
+
+        this.endMove();
+      }
+    };
+
+    MoveRows.prototype.tableRowDrop = function (e, row) {
+
+      var receiver = false,
+          success = false;
+
+      e.stopImmediatePropagation();
+
+      switch (_typeof(this.table.options.movableRowsReceive)) {
+
+        case "string":
+
+          receiver = this.receivers[this.table.options.movableRowsReceive];
+
+          break;
+
+        case "function":
+
+          receiver = this.table.options.movableRowsReceive;
+
+          break;
+
+      }
+
+      if (receiver) {
+
+        success = receiver.call(this, this.connectedRow, row, this.connectedTable);
+      } else {
+
+        console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive);
+      }
+
+      this.connectedTable.tabulator("movableRowsDropComplete", this.table.element, row, success);
+    };
+
+    MoveRows.prototype.receivers = {
+
+      insert: function insert(fromRow, toRow, fromTable) {
+
+        this.table.addRow(fromRow.getData(), undefined, toRow);
+
+        return true;
+      },
+
+      add: function add(fromRow, toRow, fromTable) {
+
+        this.table.addRow(fromRow.getData());
+
+        return true;
+      }
+
+    };
+
+    MoveRows.prototype.departers = {
+
+      delete: function _delete(fromRow, toRow, toTable) {
+
+        fromRow.delete();
+      }
+
     };
 
     Tabulator.registerExtension("moveRow", MoveRows);
