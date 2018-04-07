@@ -15943,9 +15943,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             console.warn("Mover Row Error - no matching departer found:", this.table.options.movableRowsDepart);
           }
         }
-
-        this.endMove();
       }
+
+      this.endMove();
     };
 
     MoveRows.prototype.tableRowDrop = function (e, row) {

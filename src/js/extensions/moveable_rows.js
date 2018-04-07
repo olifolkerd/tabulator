@@ -351,9 +351,10 @@ MoveRows.prototype.dropComplete = function(table, row, success){
 			}
 		}
 
-		this.endMove();
-
 	}
+
+	this.endMove();
+
 }
 
 
