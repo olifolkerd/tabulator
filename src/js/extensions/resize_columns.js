@@ -34,16 +34,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 		handle.addEventListener("mousedown", function(e){
 			var nearestColumn = column.getLastColumn();
 
-			if(nearestColumn){
-				self.startColumn = column;
-				self._mouseDown(e, nearestColumn);
-			}
-		});
-
-		handle.addEventListener("mousedown", function(e){
-			var nearestColumn = column.getLastColumn();
-
-			if(nearestColumn){
+			if(nearestColumn && self._checkResizability(nearestColumn)){
 				self.startColumn = column;
 				self._mouseDown(e, nearestColumn);
 			}
@@ -51,7 +42,9 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 
 		//reszie column on  double click
 		handle.addEventListener("dblclick", function(e){
-			column.reinitializeWidth(true);
+			if(self._checkResizability(column)){
+				column.reinitializeWidth(true);
+			}
 		});
 
 
@@ -68,7 +61,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 				colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
 				prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
 
-				if(prevColumn){
+				if(prevColumn && self._checkResizability(prevColumn)){
 					self.startColumn = column;
 					self._mouseDown(e, prevColumn);
 				}
@@ -85,7 +78,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 				colIndex = self.table.columnManager.findColumnIndex(nearestColumn);
 				prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
 
-				if(prevColumn){
+				if(prevColumn && self._checkResizability(prevColumn)){
 					prevColumn.reinitializeWidth(true);
 				}
 			}
@@ -94,6 +87,11 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 		element.append(handle)
 		.append(prevHandle);
 	}
+};
+
+
+ResizeColumns.prototype._checkResizability = function(column){
+	return typeof column.definition.resizable != "undefined" ? column.definition.resizable : this.table.options.resizableColumns
 };
 
 ResizeColumns.prototype._mouseDown = function(e, column){
