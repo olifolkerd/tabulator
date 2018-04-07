@@ -157,6 +157,13 @@
 	 			rowResized:function(){},
 
 	 			//cell callbacks
+	 			//row callbacks
+	 			cellClick:false,
+	 			cellDblClick:false,
+	 			cellContext:false,
+	 			cellTap:false,
+	 			cellDblTap:false,
+	 			cellTapHold:false,
 	 			cellEditing:function(){},
 	 			cellEdited:function(){},
 	 			cellEditCancelled:function(){},

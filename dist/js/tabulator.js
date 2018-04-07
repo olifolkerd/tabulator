@@ -5058,27 +5058,57 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //set event bindings
 
-      if (cellEvents.cellClick) {
+      if (cellEvents.cellClick || self.table.options.cellClick) {
 
         self.element.on("click", function (e) {
 
-          cellEvents.cellClick(e, self.getComponent());
+          var component = self.getComponent();
+
+          if (cellEvents.cellClick) {
+
+            cellEvents.cellClick(e, component);
+          }
+
+          if (self.table.options.cellClick) {
+
+            self.table.options.cellClick(e, component);
+          }
         });
       }
 
-      if (cellEvents.cellDblClick) {
+      if (cellEvents.cellDblClick || this.table.options.cellDblClick) {
 
         self.element.on("dblclick", function (e) {
 
-          cellEvents.cellDblClick(e, self.getComponent());
+          var component = self.getComponent();
+
+          if (cellEvents.cellDblClick) {
+
+            cellEvents.cellDblClick(e, component);
+          }
+
+          if (self.table.options.cellDblClick) {
+
+            self.table.options.cellDblClick(e, component);
+          }
         });
       }
 
-      if (cellEvents.cellContext) {
+      if (cellEvents.cellContext || this.table.options.cellContext) {
 
         self.element.on("contextmenu", function (e) {
 
-          cellEvents.cellContext(e, self.getComponent());
+          var component = self.getComponent();
+
+          if (cellEvents.cellContext) {
+
+            cellEvents.cellContext(e, component);
+          }
+
+          if (self.table.options.cellContext) {
+
+            self.table.options.cellContext(e, component);
+          }
         });
       }
 
@@ -5092,7 +5122,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
       }
 
-      if (cellEvents.cellTap) {
+      if (cellEvents.cellTap || this.table.options.cellTap) {
 
         tap = false;
 
@@ -5105,14 +5135,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (tap) {
 
-            cellEvents.cellTap(e, self.getComponent());
+            var component = self.getComponent();
+
+            if (cellEvents.cellTap) {
+
+              cellEvents.cellTap(e, component);
+            }
+
+            if (self.table.options.cellTap) {
+
+              self.table.options.cellTap(e, component);
+            }
           }
 
           tap = false;
         });
       }
 
-      if (cellEvents.cellDblTap) {
+      if (cellEvents.cellDblTap || this.table.options.cellDblTap) {
 
         dblTap = null;
 
@@ -5124,7 +5164,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             dblTap = null;
 
-            cellEvents.cellDblTap(e, self.getComponent());
+            var component = self.getComponent();
+
+            if (cellEvents.cellDblTap) {
+
+              cellEvents.cellDblTap(e, component);
+            }
+
+            if (self.table.options.cellDblTap) {
+
+              self.table.options.cellDblTap(e, component);
+            }
           } else {
 
             dblTap = setTimeout(function () {
@@ -5137,7 +5187,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
       }
 
-      if (cellEvents.cellTapHold) {
+      if (cellEvents.cellTapHold || this.table.options.cellTapHold) {
 
         tapHold = null;
 
@@ -5153,7 +5203,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             tap = false;
 
-            cellEvents.cellTapHold(e, self.getComponent());
+            var component = self.getComponent();
+
+            if (cellEvents.cellTapHold) {
+
+              cellEvents.cellTapHold(e, component);
+            }
+
+            if (self.table.options.cellTapHold) {
+
+              self.table.options.cellTapHold(e, component);
+            }
           }, 1000);
         });
 
@@ -5892,6 +5952,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         rowResized: function rowResized() {},
 
         //cell callbacks
+
+        //row callbacks
+
+        cellClick: false,
+
+        cellDblClick: false,
+
+        cellContext: false,
+
+        cellTap: false,
+
+        cellDblTap: false,
+
+        cellTapHold: false,
 
         cellEditing: function cellEditing() {},
 
