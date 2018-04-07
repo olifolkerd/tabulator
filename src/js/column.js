@@ -64,16 +64,15 @@ ColumnComponent.prototype.delete = function(){
 };
 
 ColumnComponent.prototype.getSubColumns = function(){
-	var output = []
+	var output = [];
+
 	if(this.column.columns.length){
 		this.column.columns.forEach(function(column){
-			output.push(column.getComponent())
+			output.push(column.getComponent());
 		});
-
-		return output;
 	}
 
-	return false;
+	return output;
 };
 
 ColumnComponent.prototype.getParentColumn = function(){

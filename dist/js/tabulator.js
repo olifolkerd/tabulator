@@ -988,11 +988,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           output.push(column.getComponent());
         });
-
-        return output;
       }
 
-      return false;
+      return output;
     };
 
     ColumnComponent.prototype.getParentColumn = function () {
