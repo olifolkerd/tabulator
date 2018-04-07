@@ -131,7 +131,6 @@ Page.prototype.getDisplayIndex = function(){
 
 //calculate maximum page from number of rows
 Page.prototype.setMaxRows = function(rowCount){
-
 	if(!rowCount){
 		this.max = 1;
 	}else{

@@ -2507,17 +2507,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (renderInPosition && this.getDisplayRows().length) {
 
-        this.reRenderInPosition(function () {
+        if (self.table.options.pagination) {
 
-          self._setDataActual(data);
-        });
+          self._setDataActual(data, true);
+        } else {
+
+          this.reRenderInPosition(function () {
+
+            self._setDataActual(data);
+          });
+        }
       } else {
 
         this._setDataActual(data);
       }
     };
 
-    RowManager.prototype._setDataActual = function (data) {
+    RowManager.prototype._setDataActual = function (data, renderInPosition) {
 
       var self = this;
 
@@ -2555,7 +2561,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
-        self.refreshActiveData();
+        self.refreshActiveData(false, false, renderInPosition);
       } else {
 
         console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data === 'undefined' ? 'undefined' : _typeof(data), "\nData:     ", data);
@@ -2596,6 +2602,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.table.options.groupBy && this.table.extExists("groupRows")) {
 
         this.table.extensions.groupRows.updateGroupRows(true);
+      } else if (this.table.options.pagination && this.table.extExists("page")) {
+
+        this.refreshActiveData(false, false, true);
       } else {
 
         if (this.table.options.pagination && this.table.extExists("page")) {
@@ -2649,6 +2658,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       if (this.table.options.groupBy && this.table.extExists("groupRows")) {
 
         this.table.extensions.groupRows.updateGroupRows(true);
+      } else if (this.table.options.pagination && this.table.extExists("page")) {
+
+        this.refreshActiveData(false, false, true);
       } else {
 
         this.reRenderInPosition();
@@ -2687,7 +2699,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
       var row = new Row(data || {}, this),
-          top = this.findAddRowPos(pos);
+          top = this.findAddRowPos(pos),
+          dispRows;
+
+      if (!index && this.table.options.pagination && this.table.options.paginationAddRow == "page") {
+
+        dispRows = this.getDisplayRows();
+
+        if (top) {
+
+          if (dispRows.length) {
+
+            index = dispRows[0];
+          } else {
+
+            if (activeRows.length) {
+
+              index = activeRows[activeRows.length - 1];
+
+              top = false;
+            }
+          }
+        } else {
+
+          if (dispRows.length) {
+
+            index = dispRows[dispRows.length - 1];
+
+            top = true;
+          }
+        }
+      }
 
       if (index) {
 
@@ -2735,7 +2777,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.displayRowIterator(function (rows) {
 
-          displayIndex = rows.indexOf(index);
+          var displayIndex = rows.indexOf(index);
 
           if (displayIndex > -1) {
 
@@ -3266,7 +3308,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             skipStage = false;
           }
 
-          if (table.options.pagination && table.extExists("page")) {
+          if (table.options.pagination && table.extExists("page") && !renderInPosition) {
 
             if (table.extensions.page.getMode() == "local") {
 
@@ -4039,23 +4081,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
-
-      self.element.css({
-
-        "min-height": "calc(100% - " + otherHeight + "px)",
-
-        "height": "calc(100% - " + otherHeight + "px)",
-
-        "max-height": "calc(100% - " + otherHeight + "px)"
-
-      });
-
       if (this.renderMode === "virtual") {
 
         self.height = self.element.innerHeight();
 
         self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
+
+        var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+
+        self.element.css({
+
+          "min-height": "calc(100% - " + otherHeight + "px)",
+
+          "height": "calc(100% - " + otherHeight + "px)",
+
+          "max-height": "calc(100% - " + otherHeight + "px)"
+
+        });
       }
     };
 
@@ -5717,6 +5759,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         paginator: false, //pagination url string builder
 
+        paginationAddRow: "page", //add rows on table or page
+
 
         ajaxURL: false, //url for ajax loading
 
@@ -5737,6 +5781,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         ajaxProgressiveLoad: false, //progressive loading
 
         ajaxProgressiveLoadDelay: 0, //delay between requests
+
+        ajaxProgressiveLoadScrollMargin: 0, //margin before scroll begins
 
 
         groupBy: false, //enable table grouping and set field to group by

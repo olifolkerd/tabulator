@@ -100,6 +100,7 @@
 	 			paginationDataSent:{}, //pagination data sent to the server
 	 			paginationDataReceived:{}, //pagination data received from the server
 	 			paginator:false, //pagination url string builder
+	 			paginationAddRow: "page", //add rows on table or page
 
 	 			ajaxURL:false, //url for ajax loading
 	 			ajaxParams:{}, //params for ajax loading
@@ -111,6 +112,7 @@
 	 			ajaxSorting:false,
 	 			ajaxProgressiveLoad:false, //progressive loading
 	 			ajaxProgressiveLoadDelay:0, //delay between requests
+	 			ajaxProgressiveLoadScrollMargin:0, //margin before scroll begins
 
 	 			groupBy:false, //enable table grouping and set field to group by
 				groupStartOpen:true, //starting state of group
