@@ -266,9 +266,12 @@ MoveRows.prototype.connectToTables = function(row){
 	var self = this,
 	connections = this.getConnections();
 
+	this.table.options.movableRowsSendingStart(connections);
+
 	connections.forEach(function(connection){
 		connection.tabulator("movableRowsConnectTable", self.table.element, row);
 	});
+
 }
 
 
@@ -276,6 +279,8 @@ MoveRows.prototype.connectToTables = function(row){
 MoveRows.prototype.disconnectFromTables = function(){
 	var self = this,
 	connections = this.getConnections();
+
+	this.table.options.movableRowsSendingStop(connections);
 
 	connections.forEach(function(connection){
 		connection.tabulator("movableRowsDisconnectTable", self.table.element);
@@ -300,6 +305,8 @@ MoveRows.prototype.connect = function(table, row){
 
 		self.table.element.on("mouseup", self.tableRowDrop.bind(self));
 
+		this.table.options.movableRowsReceivingStart(row, table);
+
 		return true;
 	}else{
 		console.warn("Move Row Error - Table cannot accept connection, already connected to table:", this.connectedTable);
@@ -323,6 +330,8 @@ MoveRows.prototype.disconnect = function(table){
 		});
 
 		self.table.element.off("mouseup", self.tableRowDrop.bind(self));
+
+		this.table.options.movableRowsReceivingStop(table);
 	}else{
 		console.warn("Move Row Error - trying to disconnect from non connected table")
 	}
@@ -351,6 +360,10 @@ MoveRows.prototype.dropComplete = function(table, row, success){
 			}
 		}
 
+		this.table.options.movableRowsSent(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+
+	}else{
+		this.table.options.movableRowsSentFailed(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 	}
 
 	this.endMove();
@@ -380,6 +393,12 @@ MoveRows.prototype.tableRowDrop = function(e, row){
 		console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive)
 	}
 
+	if(success){
+		this.table.options.movableRowsReceived(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+	}else{
+		this.table.options.movableRowsReceivedFailed(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+	}
+
 	this.connectedTable.tabulator("movableRowsDropComplete", this.table.element, row, success);
 }
 
@@ -397,7 +416,6 @@ MoveRows.prototype.receivers = {
 	},
 
 	update:function(fromRow, toRow, fromTable){
-		console.log("to", toRow);
 		if(toRow){
 			toRow.update(fromRow.getData());
 			return true;

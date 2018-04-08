@@ -5903,6 +5903,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         movableRowsReceive: "insert",
 
+        movableRowsSendingStart: function movableRowsSendingStart() {},
+
+        movableRowsSent: function movableRowsSent() {},
+
+        movableRowsSentFailed: function movableRowsSentFailed() {},
+
+        movableRowsSendingStop: function movableRowsSendingStop() {},
+
+        movableRowsReceivingStart: function movableRowsReceivingStart() {},
+
+        movableRowsReceived: function movableRowsReceived() {},
+
+        movableRowsReceivedFailed: function movableRowsReceivedFailed() {},
+
+        movableRowsReceivingStop: function movableRowsReceivingStop() {},
+
         scrollToRowPosition: "top",
 
         scrollToRowIfVisible: true,
@@ -15827,6 +15843,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       var self = this,
           connections = this.getConnections();
 
+      this.table.options.movableRowsSendingStart(connections);
+
       connections.forEach(function (connection) {
 
         connection.tabulator("movableRowsConnectTable", self.table.element, row);
@@ -15840,6 +15858,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this,
           connections = this.getConnections();
+
+      this.table.options.movableRowsSendingStop(connections);
 
       connections.forEach(function (connection) {
 
@@ -15871,6 +15891,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         self.table.element.on("mouseup", self.tableRowDrop.bind(self));
+
+        this.table.options.movableRowsReceivingStart(row, table);
 
         return true;
       } else {
@@ -15905,6 +15927,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         });
 
         self.table.element.off("mouseup", self.tableRowDrop.bind(self));
+
+        this.table.options.movableRowsReceivingStop(table);
       } else {
 
         console.warn("Move Row Error - trying to disconnect from non connected table");
@@ -15943,6 +15967,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSend);
           }
         }
+
+        this.table.options.movableRowsSent(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+      } else {
+
+        this.table.options.movableRowsSentFailed(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
       }
 
       this.endMove();
@@ -15979,6 +16008,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive);
       }
 
+      if (success) {
+
+        this.table.options.movableRowsReceived(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+      } else {
+
+        this.table.options.movableRowsReceivedFailed(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+      }
+
       this.connectedTable.tabulator("movableRowsDropComplete", this.table.element, row, success);
     };
 
@@ -15999,8 +16036,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       },
 
       update: function update(fromRow, toRow, fromTable) {
-
-        console.log("to", toRow);
 
         if (toRow) {
 

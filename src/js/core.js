@@ -125,6 +125,14 @@
 				movableRowsConnectedTables:false, //tables for movable rows to be connected to
 				movableRowsSend:false,
 				movableRowsReceive:"insert",
+				movableRowsSendingStart:function(){},
+				movableRowsSent:function(){},
+				movableRowsSentFailed:function(){},
+				movableRowsSendingStop:function(){},
+				movableRowsReceivingStart:function(){},
+				movableRowsReceived:function(){},
+				movableRowsReceivedFailed:function(){},
+				movableRowsReceivingStop:function(){},
 
 				scrollToRowPosition:"top",
 				scrollToRowIfVisible:true,
