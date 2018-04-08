@@ -2634,6 +2634,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       });
 
+      this.reRenderInPosition();
+
       this.table.options.rowDeleted(row.getComponent());
 
       this.table.options.dataEdited(this.getData());

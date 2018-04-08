@@ -311,6 +311,8 @@ RowManager.prototype.deleteRow = function(row){
 		}
 	});
 
+	this.reRenderInPosition();
+
 	this.table.options.rowDeleted(row.getComponent());
 
 	this.table.options.dataEdited(this.getData());
