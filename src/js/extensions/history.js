@@ -22,8 +22,6 @@ History.prototype.action = function(type, component, data){
 	});
 
 	this.index ++;
-
-	console.log("a", type, this.index)
 };
 
 History.prototype.undo = function(){
@@ -35,8 +33,6 @@ History.prototype.undo = function(){
 
 		this.index--;
 
-		console.log("u", this.index)
-
 		this.table.options.historyUndo(action.type, action.component.getComponent(), action.data);
 
 		return true;
@@ -44,7 +40,6 @@ History.prototype.undo = function(){
 		console.warn("History Undo Error - No more history to undo");
 		return false;
 	}
-
 };
 
 History.prototype.redo = function(){
@@ -55,8 +50,6 @@ History.prototype.redo = function(){
 		let action = this.history[this.index];
 
 		this.redoers[action.type].call(this, action);
-
-		console.log("r", this.index)
 
 		this.table.options.historyRedo(action.type, action.component.getComponent(), action.data);
 
