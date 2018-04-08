@@ -14344,6 +14344,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       });
 
       this.index++;
+
+      console.log("a", type, this.index);
     };
 
     History.prototype.undo = function () {
@@ -14355,6 +14357,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.undoers[action.type].call(this, action);
 
         this.index--;
+
+        console.log("u", this.index);
 
         this.table.options.historyUndo(action.type, action.component.getComponent(), action.data);
 
@@ -14377,6 +14381,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.redoers[action.type].call(this, action);
 
+        console.log("r", this.index);
+
         this.table.options.historyRedo(action.type, action.component.getComponent(), action.data);
 
         return true;
@@ -14397,7 +14403,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rowAdd: function rowAdd(action) {
 
-        action.component.delete();
+        action.component.deleteActual();
       },
 
       rowDelete: function rowDelete(action) {
@@ -14432,7 +14438,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       rowDelete: function rowDelete(action) {
 
-        action.component.delete();
+        action.component.deleteActual();
       },
 
       rowMove: function rowMove(action) {

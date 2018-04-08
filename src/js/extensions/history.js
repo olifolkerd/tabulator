@@ -22,6 +22,8 @@ History.prototype.action = function(type, component, data){
 	});
 
 	this.index ++;
+
+	console.log("a", type, this.index)
 };
 
 History.prototype.undo = function(){
@@ -32,6 +34,8 @@ History.prototype.undo = function(){
 		this.undoers[action.type].call(this, action);
 
 		this.index--;
+
+		console.log("u", this.index)
 
 		this.table.options.historyUndo(action.type, action.component.getComponent(), action.data);
 
@@ -52,6 +56,8 @@ History.prototype.redo = function(){
 
 		this.redoers[action.type].call(this, action);
 
+		console.log("r", this.index)
+
 		this.table.options.historyRedo(action.type, action.component.getComponent(), action.data);
 
 		return true;
@@ -68,7 +74,7 @@ History.prototype.undoers = {
 	},
 
 	rowAdd: function(action){
-		action.component.delete();
+		action.component.deleteActual();
 	},
 
 	rowDelete: function(action){
@@ -96,7 +102,7 @@ History.prototype.redoers = {
 	},
 
 	rowDelete:function(action){
-		action.component.delete();
+		action.component.deleteActual();
 	},
 
 	rowMove: function(action){
