@@ -123,8 +123,8 @@
 
 				movableRows:false, //enable movable rows
 				movableRowsConnectedTables:false, //tables for movable rows to be connected to
-				movableRowsSend:false,
-				movableRowsReceive:"insert",
+				movableRowsSender:false,
+				movableRowsReceiver:"insert",
 				movableRowsSendingStart:function(){},
 				movableRowsSent:function(){},
 				movableRowsSentFailed:function(){},

@@ -342,21 +342,21 @@ MoveRows.prototype.dropComplete = function(table, row, success){
 
 	if(success){
 
-		switch(typeof this.table.options.movableRowsSend){
+		switch(typeof this.table.options.movableRowsSender){
 			case "string":
-			sender = this.senders[this.table.options.movableRowsSend];
+			sender = this.senders[this.table.options.movableRowsSender];
 			break;
 
 			case "function":
-			sender = this.table.options.movableRowsSend;
+			sender = this.table.options.movableRowsSender;
 			break;
 		}
 
 		if(sender){
 			sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table)
 		}else{
-			if(this.table.options.movableRowsSend){
-				console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSend);
+			if(this.table.options.movableRowsSender){
+				console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSender);
 			}
 		}
 
@@ -377,20 +377,20 @@ MoveRows.prototype.tableRowDrop = function(e, row){
 
 	e.stopImmediatePropagation();
 
-	switch(typeof this.table.options.movableRowsReceive){
+	switch(typeof this.table.options.movableRowsReceiver){
 		case "string":
-		receiver = this.receivers[this.table.options.movableRowsReceive];
+		receiver = this.receivers[this.table.options.movableRowsReceiver];
 		break;
 
 		case "function":
-		receiver = this.table.options.movableRowsReceive;
+		receiver = this.table.options.movableRowsReceiver;
 		break;
 	}
 
 	if(receiver){
 		success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable)
 	}else{
-		console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive)
+		console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver)
 	}
 
 	if(success){

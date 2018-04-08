@@ -5899,9 +5899,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         movableRowsConnectedTables: false, //tables for movable rows to be connected to
 
-        movableRowsSend: false,
+        movableRowsSender: false,
 
-        movableRowsReceive: "insert",
+        movableRowsReceiver: "insert",
 
         movableRowsSendingStart: function movableRowsSendingStart() {},
 
@@ -15941,17 +15941,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (success) {
 
-        switch (_typeof(this.table.options.movableRowsSend)) {
+        switch (_typeof(this.table.options.movableRowsSender)) {
 
           case "string":
 
-            sender = this.senders[this.table.options.movableRowsSend];
+            sender = this.senders[this.table.options.movableRowsSender];
 
             break;
 
           case "function":
 
-            sender = this.table.options.movableRowsSend;
+            sender = this.table.options.movableRowsSender;
 
             break;
 
@@ -15962,9 +15962,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
         } else {
 
-          if (this.table.options.movableRowsSend) {
+          if (this.table.options.movableRowsSender) {
 
-            console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSend);
+            console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSender);
           }
         }
 
@@ -15984,17 +15984,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       e.stopImmediatePropagation();
 
-      switch (_typeof(this.table.options.movableRowsReceive)) {
+      switch (_typeof(this.table.options.movableRowsReceiver)) {
 
         case "string":
 
-          receiver = this.receivers[this.table.options.movableRowsReceive];
+          receiver = this.receivers[this.table.options.movableRowsReceiver];
 
           break;
 
         case "function":
 
-          receiver = this.table.options.movableRowsReceive;
+          receiver = this.table.options.movableRowsReceiver;
 
           break;
 
@@ -16005,7 +16005,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
       } else {
 
-        console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive);
+        console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceiver);
       }
 
       if (success) {
