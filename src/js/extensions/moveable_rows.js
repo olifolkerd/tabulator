@@ -150,7 +150,7 @@ MoveRows.prototype.startMove = function(e, row){
 		element.before(this.placeholderElement)
 		element.detach();
 	}else{
-		this.table.element.addClass("tabulator-movingrow-from");
+		this.table.element.addClass("tabulator-movingrow-sending");
 		this.connectToTables(row);
 	}
 
@@ -223,7 +223,7 @@ MoveRows.prototype.endMove = function(column){
 	$("body").off("mouseup", this.endMove);
 
 	if(this.connection){
-		this.table.element.removeClass("tabulator-movingrow-from");
+		this.table.element.removeClass("tabulator-movingrow-sending");
 		this.disconnectFromTables();
 	}
 };
@@ -290,7 +290,7 @@ MoveRows.prototype.connect = function(table, row){
 		this.connectedTable = table;
 		this.connectedRow = row;
 
-		this.table.element.addClass("tabulator-movingrow-to");
+		this.table.element.addClass("tabulator-movingrow-receiving");
 
 		self.table.rowManager.getDisplayRows().forEach(function(row){
 			if(row.type === "row" && row.extensions.moveRow.mouseup){
@@ -314,7 +314,7 @@ MoveRows.prototype.disconnect = function(table){
 		this.connectedTable = false;
 		this.connectedRow = false;
 
-		this.table.element.removeClass("tabulator-movingrow-to");
+		this.table.element.removeClass("tabulator-movingrow-receiving");
 
 		self.table.rowManager.getDisplayRows().forEach(function(row){
 			if(row.type === "row" && row.extensions.moveRow.mouseup){
@@ -329,25 +329,25 @@ MoveRows.prototype.disconnect = function(table){
 }
 
 MoveRows.prototype.dropComplete = function(table, row, success){
-	var departer = false;
+	var sender = false;
 
 	if(success){
 
-		switch(typeof this.table.options.movableRowsDepart){
+		switch(typeof this.table.options.movableRowsSend){
 			case "string":
-			departer = this.departers[this.table.options.movableRowsDepart];
+			sender = this.senders[this.table.options.movableRowsSend];
 			break;
 
 			case "function":
-			departer = this.table.options.movableRowsDepart;
+			sender = this.table.options.movableRowsSend;
 			break;
 		}
 
-		if(departer){
-			departer.call(this, this.moving, row, table)
+		if(sender){
+			sender.call(this, this.moving, row, table)
 		}else{
-			if(this.table.options.movableRowsDepart){
-				console.warn("Mover Row Error - no matching departer found:", this.table.options.movableRowsDepart);
+			if(this.table.options.movableRowsSend){
+				console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSend);
 			}
 		}
 
@@ -394,10 +394,29 @@ MoveRows.prototype.receivers = {
 	add:function(fromRow, toRow, fromTable){
 		this.table.addRow(fromRow.getData());
 		return true;
-	}
+	},
+
+	update:function(fromRow, toRow, fromTable){
+		if(toRow){
+			toRow.update(fromRow.getData);
+			return true;
+		}
+
+		return false;
+	},
+
+	replace:function(fromRow, toRow, fromTable){
+		if(toRow){
+			this.table.addRow(fromRow.getData(), undefined, toRow);
+			toRow.delete();
+			return true;
+		}
+
+		return false;
+	},
 }
 
-MoveRows.prototype.departers = {
+MoveRows.prototype.senders = {
 	delete:function(fromRow, toRow, toTable){
 		fromRow.delete();
 	}

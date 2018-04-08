@@ -123,7 +123,7 @@
 
 				movableRows:false, //enable movable rows
 				movableRowsConnectedTables:false, //tables for movable rows to be connected to
-				movableRowsDepart:false,
+				movableRowsSend:false,
 				movableRowsReceive:"insert",
 
 				scrollToRowPosition:"top",

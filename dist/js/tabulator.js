@@ -5899,7 +5899,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         movableRowsConnectedTables: false, //tables for movable rows to be connected to
 
-        movableRowsDepart: false,
+        movableRowsSend: false,
 
         movableRowsReceive: "insert",
 
@@ -15669,7 +15669,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         element.detach();
       } else {
 
-        this.table.element.addClass("tabulator-movingrow-from");
+        this.table.element.addClass("tabulator-movingrow-sending");
 
         this.connectToTables(row);
       }
@@ -15770,7 +15770,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.connection) {
 
-        this.table.element.removeClass("tabulator-movingrow-from");
+        this.table.element.removeClass("tabulator-movingrow-sending");
 
         this.disconnectFromTables();
       }
@@ -15860,7 +15860,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.connectedRow = row;
 
-        this.table.element.addClass("tabulator-movingrow-to");
+        this.table.element.addClass("tabulator-movingrow-receiving");
 
         self.table.rowManager.getDisplayRows().forEach(function (row) {
 
@@ -15894,7 +15894,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.connectedRow = false;
 
-        this.table.element.removeClass("tabulator-movingrow-to");
+        this.table.element.removeClass("tabulator-movingrow-receiving");
 
         self.table.rowManager.getDisplayRows().forEach(function (row) {
 
@@ -15913,34 +15913,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     MoveRows.prototype.dropComplete = function (table, row, success) {
 
-      var departer = false;
+      var sender = false;
 
       if (success) {
 
-        switch (_typeof(this.table.options.movableRowsDepart)) {
+        switch (_typeof(this.table.options.movableRowsSend)) {
 
           case "string":
 
-            departer = this.departers[this.table.options.movableRowsDepart];
+            sender = this.senders[this.table.options.movableRowsSend];
 
             break;
 
           case "function":
 
-            departer = this.table.options.movableRowsDepart;
+            sender = this.table.options.movableRowsSend;
 
             break;
 
         }
 
-        if (departer) {
+        if (sender) {
 
-          departer.call(this, this.moving, row, table);
+          sender.call(this, this.moving, row, table);
         } else {
 
-          if (this.table.options.movableRowsDepart) {
+          if (this.table.options.movableRowsSend) {
 
-            console.warn("Mover Row Error - no matching departer found:", this.table.options.movableRowsDepart);
+            console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSend);
           }
         }
       }
@@ -15996,11 +15996,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.table.addRow(fromRow.getData());
 
         return true;
+      },
+
+      update: function update(fromRow, toRow, fromTable) {
+
+        if (toRow) {
+
+          toRow.update(fromRow.getData);
+
+          return true;
+        }
+
+        return false;
+      },
+
+      replace: function replace(fromRow, toRow, fromTable) {
+
+        if (toRow) {
+
+          this.table.addRow(fromRow.getData(), undefined, toRow);
+
+          toRow.delete();
+
+          return true;
+        }
+
+        return false;
       }
 
     };
 
-    MoveRows.prototype.departers = {
+    MoveRows.prototype.senders = {
 
       delete: function _delete(fromRow, toRow, toTable) {
 
