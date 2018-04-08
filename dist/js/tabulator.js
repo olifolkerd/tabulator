@@ -2558,6 +2558,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       } else {
 
+        this.resetScroll();
+
         this._setDataActual(data);
       }
     };

@@ -249,6 +249,8 @@ RowManager.prototype.setData = function(data, renderInPosition){
 			});
 		}
 	}else{
+
+		this.resetScroll();
 		this._setDataActual(data);
 	}
 };
