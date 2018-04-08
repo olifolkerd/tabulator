@@ -344,7 +344,7 @@ MoveRows.prototype.dropComplete = function(table, row, success){
 		}
 
 		if(sender){
-			sender.call(this, this.moving, row, table)
+			sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table)
 		}else{
 			if(this.table.options.movableRowsSend){
 				console.warn("Mover Row Error - no matching sender found:", this.table.options.movableRowsSend);
@@ -375,7 +375,7 @@ MoveRows.prototype.tableRowDrop = function(e, row){
 	}
 
 	if(receiver){
-		success = receiver.call(this, this.connectedRow, row, this.connectedTable)
+		success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable)
 	}else{
 		console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive)
 	}
@@ -397,8 +397,9 @@ MoveRows.prototype.receivers = {
 	},
 
 	update:function(fromRow, toRow, fromTable){
+		console.log("to", toRow);
 		if(toRow){
-			toRow.update(fromRow.getData);
+			toRow.update(fromRow.getData());
 			return true;
 		}
 

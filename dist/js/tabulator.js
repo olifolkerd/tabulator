@@ -15935,7 +15935,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (sender) {
 
-          sender.call(this, this.moving, row, table);
+          sender.call(this, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
         } else {
 
           if (this.table.options.movableRowsSend) {
@@ -15973,7 +15973,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (receiver) {
 
-        success = receiver.call(this, this.connectedRow, row, this.connectedTable);
+        success = receiver.call(this, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
       } else {
 
         console.warn("Mover Row Error - no matching receiver found:", this.table.options.movableRowsReceive);
@@ -16000,9 +16000,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       update: function update(fromRow, toRow, fromTable) {
 
+        console.log("to", toRow);
+
         if (toRow) {
 
-          toRow.update(fromRow.getData);
+          toRow.update(fromRow.getData());
 
           return true;
         }
