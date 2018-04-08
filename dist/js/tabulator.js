@@ -6430,6 +6430,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.browser = "edge";
 
           this.browserSlow = true;
+        } else if (ua.indexOf("Firefox") > -1) {
+
+          this.browser = "firefox";
+
+          this.browserSlow = false;
         } else {
 
           this.browser = "other";
@@ -11414,10 +11419,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         }).val(value);
 
-        onRendered(function () {
+        if (this.table.browser != "firefox") {
+          //prevent blur issue on mac firefox
 
-          input.focus();
-        });
+
+          onRendered(function () {
+
+            input.focus();
+          });
+        }
 
         if (value === true || value === "true" || value === "True" || value === 1) {
 
@@ -11473,10 +11483,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         }).val(value);
 
-        onRendered(function () {
+        if (this.table.browser != "firefox") {
+          //prevent blur issue on mac firefox
 
-          input.focus();
-        });
+
+          onRendered(function () {
+
+            input.focus();
+          });
+        }
 
         if (value === true || value === "true" || value === "True" || value === 1) {
 

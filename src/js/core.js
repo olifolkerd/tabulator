@@ -505,6 +505,9 @@
 	 			}else if(ua.indexOf("Edge") > -1){
 	 				this.browser = "edge";
 	 				this.browserSlow = true;
+	 			}else if(ua.indexOf("Firefox") > -1){
+	 				this.browser = "firefox";
+	 				this.browserSlow = false;
 	 			}else{
 	 				this.browser = "other";
 	 				this.browserSlow = false;
