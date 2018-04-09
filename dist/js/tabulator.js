@@ -10265,7 +10265,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         doc.save('myPDF.pdf');
 
-        return table;
+        return false;
       },
 
       xlsx: function xlsx(columns, data, options, setFileContents) {

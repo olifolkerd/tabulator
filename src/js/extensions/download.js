@@ -191,6 +191,70 @@ Download.prototype.downloaders = {
 		setFileContents(fileContents, "application/json");
 	},
 
+	pdf:function(columns, data, options, setFileContents){
+		var self = this,
+		fields = [],
+		header = "",
+		body = "",
+		table = "";
+
+		columns.forEach(function(column){
+			if(column.field){
+				header += `<th>${(column.title || "")}</th>`;
+				fields.push(column.field);
+			}
+		})
+
+
+		//build body rows
+		data.forEach(function(row){
+			var rowData = "";
+
+			fields.forEach(function(field){
+				var value = self.getFieldValue(field, row);
+
+				switch(typeof value){
+					case "object":
+					value = JSON.stringify(value);
+					break;
+
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = value;
+				}
+
+				rowData += `<td>${value}</td>`;
+			});
+
+			body += `<tr>${rowData}</tr>`;
+		});
+
+
+		//build table
+		table = `<table>
+		<thead>
+		<tr>${header}</tr>
+		</thead>
+		<tbody>${body}</tbody>
+		</table>`;
+
+		var table = $(table);
+		var elem = table;
+
+		var doc = new jsPDF('l', 'pt'); //set document to landscape, better for most tables
+		var res = doc.autoTableHtmlToJson(elem[0]);
+		doc.autoTable(res.columns, res.data, {
+		     // *additional autotable options go in here - see website for details*
+		})
+		doc.save('myPDF.pdf');
+
+		return false;
+	},
+
 	xlsx:function(columns, data, options, setFileContents){
 		var self = this,
 		sheetName = options.sheetName || "Sheet1",
