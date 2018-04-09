@@ -15403,6 +15403,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       });
 
+      oldCols.forEach(function (column, to) {
+          var from = self._findColumn(newCols, column);
+
+          if (!from) {
+              output.push(column);
+          }
+      });
+
       return output;
     };
 
