@@ -10189,26 +10189,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var self = this,
             fields = [],
-            header = "",
-            body = "",
-            table = "";
+            header = [],
+            body = [],
+            table = "",
+            autoTableParams = options && options.autoTable ? options.autoTable : {},
+            title = options && options.title ? options.title : "",
+            orientation = options && options.orientation == "portrait" ? "p" : "l";
+
+        //build column headers
+
 
         columns.forEach(function (column) {
 
           if (column.field) {
 
-            header += '<th>' + (column.title || "") + '</th>';
+            header.push(column.title || "");
 
             fields.push(column.field);
           }
         });
 
-        //build body rows
+        //build table rows
 
 
         data.forEach(function (row) {
 
-          var rowData = "";
+          var rowData = [];
 
           fields.forEach(function (field) {
 
@@ -10236,36 +10242,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             }
 
-            rowData += '<td>' + value + '</td>';
+            rowData.push(value);
           });
 
-          body += '<tr>' + rowData + '</tr>';
+          body.push(rowData);
         });
 
-        //build table
+        var doc = new jsPDF(orientation, 'pt'); //set document to landscape, better for most tables
 
 
-        table = '<table>\n\n \t\n\n \t\t \t\t\t<thead>\n\n \t\n\n \t\t \t\t\t<tr>' + header + '</tr>\n\n \t\n\n \t\t \t\t\t</thead>\n\n \t\n\n \t\t \t\t\t<tbody>' + body + '</tbody>\n\n \t\n\n \t\t \t\t\t</table>';
+        if (title) {
 
-        var table = $(table);
+          autoTableParams.addPageContent = function (data) {
 
-        var elem = table;
+            doc.text(title, 40, 30);
+          };
+        }
 
-        var doc = new jsPDF('l', 'pt'); //set document to landscape, better for most tables
+        doc.autoTable(header, body, autoTableParams);
 
+        setFileContents(doc.output("arraybuffer"), "application/pdf");
 
-        var res = doc.autoTableHtmlToJson(elem[0]);
-
-        doc.autoTable(res.columns, res.data, {
-
-          // *additional autotable options go in here - see website for details*
-
-
-        });
-
-        doc.save('myPDF.pdf');
-
-        return false;
+        ;
       },
 
       xlsx: function xlsx(columns, data, options, setFileContents) {

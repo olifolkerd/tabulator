@@ -194,21 +194,24 @@ Download.prototype.downloaders = {
 	pdf:function(columns, data, options, setFileContents){
 		var self = this,
 		fields = [],
-		header = "",
-		body = "",
-		table = "";
+		header = [],
+		body = [],
+		table = "",
+		autoTableParams = options && options.autoTable ? options.autoTable : {},
+		title = options && options.title ? options.title : "",
+		orientation = options && options.orientation == "portrait" ? "p" : "l";
 
+		//build column headers
 		columns.forEach(function(column){
 			if(column.field){
-				header += `<th>${(column.title || "")}</th>`;
+				header.push(column.title || "");
 				fields.push(column.field);
 			}
-		})
+		});
 
-
-		//build body rows
+		//build table rows
 		data.forEach(function(row){
-			var rowData = "";
+			var rowData = [];
 
 			fields.forEach(function(field){
 				var value = self.getFieldValue(field, row);
@@ -227,32 +230,24 @@ Download.prototype.downloaders = {
 					value = value;
 				}
 
-				rowData += `<td>${value}</td>`;
+				rowData.push(value);
 			});
 
-			body += `<tr>${rowData}</tr>`;
+			body.push(rowData);
 		});
 
 
-		//build table
-		table = `<table>
-		<thead>
-		<tr>${header}</tr>
-		</thead>
-		<tbody>${body}</tbody>
-		</table>`;
+		var doc = new jsPDF(orientation, 'pt'); //set document to landscape, better for most tables
 
-		var table = $(table);
-		var elem = table;
+		if(title){
+			autoTableParams.addPageContent = function(data) {
+				doc.text(title, 40, 30);
+			}
+		}
 
-		var doc = new jsPDF('l', 'pt'); //set document to landscape, better for most tables
-		var res = doc.autoTableHtmlToJson(elem[0]);
-		doc.autoTable(res.columns, res.data, {
-		     // *additional autotable options go in here - see website for details*
-		})
-		doc.save('myPDF.pdf');
+		doc.autoTable(header, body, autoTableParams);
 
-		return false;
+		setFileContents(doc.output("arraybuffer"), "application/pdf");
 	},
 
 	xlsx:function(columns, data, options, setFileContents){
