@@ -3924,15 +3924,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.vDomTop) {
 
-        var index = this.vDomTop - 1,
-            topRow = rows[index],
+        var _index = this.vDomTop - 1,
+            topRow = rows[_index],
             topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
         //hide top row if needed
 
         if (topDiff >= topRowHeight) {
 
-          this.styleRow(topRow, index);
+          this.styleRow(topRow, _index);
 
           table.prepend(topRow.getElement());
 
@@ -3952,10 +3952,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.vDomTopPad < 0) {
 
-            this.vDomTopPad = index * this.vDomRowHeight;
+            this.vDomTopPad = _index * this.vDomRowHeight;
           }
 
-          if (!index) {
+          if (!_index) {
 
             this.vDomTopPad = 0;
           }
@@ -4012,15 +4012,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.vDomBottom < this.displayRowsCount - 1) {
 
-        var index = this.vDomBottom + 1,
-            bottomRow = rows[index],
+        var _index2 = this.vDomBottom + 1,
+            bottomRow = rows[_index2],
             bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
         //hide bottom row if needed
 
         if (bottomDiff >= bottomRowHeight) {
 
-          this.styleRow(bottomRow, index);
+          this.styleRow(bottomRow, _index2);
 
           table.append(bottomRow.getElement());
 
@@ -4038,7 +4038,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.vDomBottomPad -= bottomRowHeight;
 
-          if (this.vDomBottomPad < 0 || index == this.displayRowsCount - 1) {
+          if (this.vDomBottomPad < 0 || _index2 == this.displayRowsCount - 1) {
 
             this.vDomBottomPad = 0;
           }
@@ -4822,15 +4822,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Row.prototype.delete = function () {
 
-      var index = this.table.rowManager.getRowIndex(this);
-
-      //deselect row if it is selected
-
-      if (this.table.extExists("selectRow")) {
-
-        this.table.extensions.selectRow._deselectRow(this.row, true);
-      }
-
       this.deleteActual();
 
       if (this.table.options.history && this.table.extExists("history")) {
@@ -4842,6 +4833,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         this.table.extensions.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
       };
+    };
+
+    Row.prototype.deleteActual = function () {
+
+      var index = this.table.rowManager.getRowIndex(this);
+
+      //deselect row if it is selected
+
+      if (this.table.extExists("selectRow")) {
+
+        this.table.extensions.selectRow._deselectRow(this.row, true);
+      }
+
+      this.table.rowManager.deleteRow(this);
+
+      this.deleteCells();
 
       //remove from group
 
@@ -4862,13 +4869,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
         }
       }
-    };
-
-    Row.prototype.deleteActual = function () {
-
-      this.table.rowManager.deleteRow(this);
-
-      this.deleteCells();
     };
 
     Row.prototype.deleteCells = function () {
@@ -10183,6 +10183,89 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var fileContents = JSON.stringify(data, null, '\t');
 
         setFileContents(fileContents, "application/json");
+      },
+
+      pdf: function pdf(columns, data, options, setFileContents) {
+
+        var self = this,
+            fields = [],
+            header = "",
+            body = "",
+            table = "";
+
+        columns.forEach(function (column) {
+
+          if (column.field) {
+
+            header += '<th>' + (column.title || "") + '</th>';
+
+            fields.push(column.field);
+          }
+        });
+
+        //build body rows
+
+
+        data.forEach(function (row) {
+
+          var rowData = "";
+
+          fields.forEach(function (field) {
+
+            var value = self.getFieldValue(field, row);
+
+            switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+
+              case "object":
+
+                value = JSON.stringify(value);
+
+                break;
+
+              case "undefined":
+
+              case "null":
+
+                value = "";
+
+                break;
+
+              default:
+
+                value = value;
+
+            }
+
+            rowData += '<td>' + value + '</td>';
+          });
+
+          body += '<tr>' + rowData + '</tr>';
+        });
+
+        //build table
+
+
+        table = '<table>\n\n \t\n\n \t\t \t\t\t<thead>\n\n \t\n\n \t\t \t\t\t<tr>' + header + '</tr>\n\n \t\n\n \t\t \t\t\t</thead>\n\n \t\n\n \t\t \t\t\t<tbody>' + body + '</tbody>\n\n \t\n\n \t\t \t\t\t</table>';
+
+        var table = $(table);
+
+        var elem = table;
+
+        var doc = new jsPDF('l', 'pt'); //set document to landscape, better for most tables
+
+
+        var res = doc.autoTableHtmlToJson(elem[0]);
+
+        doc.autoTable(res.columns, res.data, {
+
+          // *additional autotable options go in here - see website for details*
+
+
+        });
+
+        doc.save('myPDF.pdf');
+
+        return table;
       },
 
       xlsx: function xlsx(columns, data, options, setFileContents) {

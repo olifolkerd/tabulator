@@ -496,13 +496,6 @@ Row.prototype.getCells = function(){
 
 Row.prototype.delete = function(){
 
-	var index = this.table.rowManager.getRowIndex(this);
-
-	//deselect row if it is selected
-	if(this.table.extExists("selectRow")){
-		this.table.extensions.selectRow._deselectRow(this.row, true);
-	}
-
 	this.deleteActual();
 
 	if(this.table.options.history && this.table.extExists("history")){
@@ -512,6 +505,22 @@ Row.prototype.delete = function(){
 
 		this.table.extensions.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 	};
+
+};
+
+
+Row.prototype.deleteActual = function(){
+
+	var index = this.table.rowManager.getRowIndex(this);
+
+	//deselect row if it is selected
+	if(this.table.extExists("selectRow")){
+		this.table.extensions.selectRow._deselectRow(this.row, true);
+	}
+
+	this.table.rowManager.deleteRow(this);
+
+	this.deleteCells();
 
 	//remove from group
 	if(this.extensions.group){
@@ -526,13 +535,6 @@ Row.prototype.delete = function(){
 			this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 	}
-};
-
-
-Row.prototype.deleteActual = function(){
-	this.table.rowManager.deleteRow(this);
-
-	this.deleteCells();
 };
 
 
