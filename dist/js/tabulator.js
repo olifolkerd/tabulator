@@ -5850,7 +5850,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         responsiveLayoutCollapseStartOpen: true, //start showing collapsed data
 
-        responsiveLayoutCollapseUserFormatters: true, //responsive layout collapse formatter
+        responsiveLayoutCollapseUseFormatters: true, //responsive layout collapse formatter
 
         responsiveLayoutCollapseFormatter: false, //responsive layout collapse formatter
 
@@ -17910,7 +17910,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (column.definition.title && column.field) {
 
-          if (column.extensions.format && self.table.options.responsiveLayoutCollapseUserFormatters) {
+          if (column.extensions.format && self.table.options.responsiveLayoutCollapseUseFormatters) {
 
             mockCellComponent = {
 

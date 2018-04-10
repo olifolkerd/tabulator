@@ -188,7 +188,7 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 		var value = column.getFieldValue(data);
 
 		if(column.definition.title && column.field){
-			if(column.extensions.format && self.table.options.responsiveLayoutCollapseUserFormatters){
+			if(column.extensions.format && self.table.options.responsiveLayoutCollapseUseFormatters){
 
 				mockCellComponent = {
 				    value:false,

@@ -91,7 +91,7 @@
 
 	 			responsiveLayout:false, //responsive layout flags
 	 			responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
-	 			responsiveLayoutCollapseUserFormatters:true, //responsive layout collapse formatter
+	 			responsiveLayoutCollapseUseFormatters:true, //responsive layout collapse formatter
 	 			responsiveLayoutCollapseFormatter:false, //responsive layout collapse formatter
 
 	 			pagination:false, //set pagination type
