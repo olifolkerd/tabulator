@@ -32,7 +32,7 @@
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
 	 			resizableColumns:true, //resizable columns
-	 			resizableRows:true, //resizable rows
+	 			resizableRows:false, //resizable rows
 	 			autoResize:true, //auto resize table
 
 	 			columns:[],//store for colum header info

@@ -5747,7 +5747,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         resizableColumns: true, //resizable columns
 
-        resizableRows: true, //resizable rows
+        resizableRows: false, //resizable rows
 
         autoResize: true, //auto resize table
 
