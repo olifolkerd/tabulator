@@ -143,6 +143,7 @@ Ajax.prototype._loadDataProgressive = function(){
 };
 
 Ajax.prototype._loadDataStandard = function(inPosition){
+	var self = this;
 	this.sendRequest(function(data){
 		self.table.rowManager.setData(data, inPosition);
 	}, inPosition);

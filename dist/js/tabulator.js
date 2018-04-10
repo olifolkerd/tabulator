@@ -8645,6 +8645,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Ajax.prototype._loadDataStandard = function (inPosition) {
 
+      var self = this;
+
       this.sendRequest(function (data) {
 
         self.table.rowManager.setData(data, inPosition);
