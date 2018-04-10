@@ -15989,7 +15989,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.rowManager.getDisplayRows().forEach(function (row) {
 
-          if (row.type === "row" && row.extensions.moveRow.mouseup) {
+          if (row.type === "row" && row.extensions.moveRow && row.extensions.moveRow.mouseup) {
 
             row.element.on("mouseup", row.extensions.moveRow.mouseup);
           }
@@ -16025,7 +16025,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         self.table.rowManager.getDisplayRows().forEach(function (row) {
 
-          if (row.type === "row" && row.extensions.moveRow.mouseup) {
+          if (row.type === "row" && row.extensions.moveRow && row.extensions.moveRow.mouseup) {
 
             row.element.off("mouseup", row.extensions.moveRow.mouseup);
           }

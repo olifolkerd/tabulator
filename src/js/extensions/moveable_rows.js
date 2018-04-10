@@ -298,7 +298,7 @@ MoveRows.prototype.connect = function(table, row){
 		this.table.element.addClass("tabulator-movingrow-receiving");
 
 		self.table.rowManager.getDisplayRows().forEach(function(row){
-			if(row.type === "row" && row.extensions.moveRow.mouseup){
+			if(row.type === "row" && row.extensions.moveRow && row.extensions.moveRow.mouseup){
 				row.element.on("mouseup", row.extensions.moveRow.mouseup);
 			}
 		});
@@ -324,7 +324,7 @@ MoveRows.prototype.disconnect = function(table){
 		this.table.element.removeClass("tabulator-movingrow-receiving");
 
 		self.table.rowManager.getDisplayRows().forEach(function(row){
-			if(row.type === "row" && row.extensions.moveRow.mouseup){
+			if(row.type === "row" && row.extensions.moveRow && row.extensions.moveRow.mouseup){
 				row.element.off("mouseup", row.extensions.moveRow.mouseup);
 			}
 		});
