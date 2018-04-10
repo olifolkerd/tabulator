@@ -361,7 +361,7 @@ Download.prototype.downloaders = {
 
 		}else{
 			workbook.SheetNames.push(sheetName);
-			workbook.Sheets[sheetName] = this.downloaders.xlsxSheet.call(this, columns, data, options, setFileContents);
+			workbook.Sheets[sheetName] = generateSheet();
 		}
 
 

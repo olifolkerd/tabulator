@@ -10418,7 +10418,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           workbook.SheetNames.push(sheetName);
 
-          workbook.Sheets[sheetName] = this.downloaders.xlsxSheet.call(this, columns, data, options, setFileContents);
+          workbook.Sheets[sheetName] = generateSheet();
         }
 
         //convert workbook to binary array
