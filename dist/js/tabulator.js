@@ -15853,9 +15853,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         position = element[0].getBoundingClientRect();
 
-        this.startX = position.left - e.pageX;
+        this.startX = position.left - e.pageX + window.scrollX;
 
-        this.startY = position.top - e.pageY;
+        this.startY = position.top - e.pageY + window.scrollY;
       } else {
 
         this.startY = e.pageY - element.offset().top;

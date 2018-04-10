@@ -195,8 +195,8 @@ MoveRows.prototype.setStartPosition = function(e, row){
 	if(this.connection){
 		position = element[0].getBoundingClientRect();
 
-		this.startX = position.left - e.pageX;
-		this.startY = position.top - e.pageY;
+		this.startX = position.left - e.pageX + window.scrollX;
+		this.startY = position.top - e.pageY + window.scrollY;
 	}else{
 		this.startY = (e.pageY - element.offset().top);
 	}
