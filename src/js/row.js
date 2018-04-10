@@ -548,6 +548,11 @@ Row.prototype.deleteCells = function(){
 
 Row.prototype.wipe = function(){
 	this.deleteCells();
+
+	this.element.children().each(function(){
+		$(this).remove();
+	})
+
 	this.element.empty();
 	this.element.remove();
 }

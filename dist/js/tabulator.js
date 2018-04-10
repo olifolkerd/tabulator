@@ -4885,6 +4885,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.deleteCells();
 
+      this.element.children().each(function () {
+
+        $(this).remove();
+      });
+
       this.element.empty();
 
       this.element.remove();
@@ -10262,8 +10267,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         doc.autoTable(header, body, autoTableParams);
 
         setFileContents(doc.output("arraybuffer"), "application/pdf");
-
-        ;
       },
 
       xlsx: function xlsx(columns, data, options, setFileContents) {
