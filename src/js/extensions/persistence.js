@@ -89,6 +89,16 @@ Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 		}
 
 	});
+	oldCols.forEach(function (column, i) {
+		var from = self._findColumn(newCols, column);
+		if (!from) {
+			if(output.length>i){
+				output.splice(i, 0, column);
+			}else{	
+				output.push(column);
+			}
+		}
+	});
 
 	return output;
 };
