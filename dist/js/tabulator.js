@@ -2624,6 +2624,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
+        self.table.options.dataLoaded(data);
+
         self.refreshActiveData(false, false, renderInPosition);
       } else {
 

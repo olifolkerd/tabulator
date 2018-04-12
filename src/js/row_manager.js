@@ -285,6 +285,8 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 			}
 		});
 
+		self.table.options.dataLoaded(data);
+
 		self.refreshActiveData(false, false, renderInPosition);
 	}else{
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
