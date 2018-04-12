@@ -300,6 +300,7 @@
 }
 
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content {
+  box-sizing: border-box;
   position: relative;
   padding: 0.92857em 0.78571em;
 }

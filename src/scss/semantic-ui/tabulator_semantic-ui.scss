@@ -116,6 +116,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 			//hold content of column header
 			.tabulator-col-content{
+				box-sizing:border-box;
 				position: relative;
 				padding: $headerVerticalPadding $headerHorizontalPadding;
 

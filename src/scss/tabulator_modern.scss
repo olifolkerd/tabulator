@@ -113,6 +113,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 			//hold content of column header
 			.tabulator-col-content{
+				box-sizing:border-box;
 				position: relative;
 				padding:4px;
 

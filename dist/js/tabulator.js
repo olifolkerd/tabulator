@@ -1992,6 +1992,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       }
     };
 
+    Column.prototype.matchChildWidths = function () {
+
+      var childWidth = 0;
+
+      if (this.contentElement && this.columns.length) {
+
+        this.columns.forEach(function (column) {
+
+          childWidth += column.getWidth();
+        });
+
+        this.contentElement.css("max-width", childWidth - 1);
+      }
+    };
+
     Column.prototype.setWidth = function (width) {
 
       this.widthFixed = true;
@@ -2006,18 +2021,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         width = Math.floor(this.table.element.innerWidth() / 100 * parseInt(width));
       }
 
+      console.log;
+
       width = Math.max(this.minWidth, width);
 
       this.width = width;
 
-      if (!this.isGroup) {
+      this.element.css("width", width || "");
 
-        this.element.css("width", width || "");
+      if (!this.isGroup) {
 
         this.cells.forEach(function (cell) {
 
           cell.setWidth(width);
         });
+      }
+
+      if (this.parent.isGroup) {
+
+        this.parent.matchChildWidths();
       }
 
       //set resizable handles
