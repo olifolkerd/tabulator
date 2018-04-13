@@ -1364,24 +1364,9 @@
 
 	 		/////////// Inter Table Communications ///////////
 
-	 		movableRowsConnectTable:function(table, row){
-	 			if(this.extExists("moveRow", true)){
-	 				return this.extensions.moveRow.connect(table, row);
-	 			}
+	 		tableComms:function(table, extension, action, data){
+	 			this.extensions.commms.received(table, extension, action, data)
 	 		},
-
-	 		movableRowsDisconnectTable:function(table){
-	 			if(this.extExists("moveRow", true)){
-	 				return this.extensions.moveRow.disconnect(table);
-	 			}
-	 		},
-
-	 		movableRowsDropComplete:function(table, row, success){
-	 			if(this.extExists("moveRow", true)){
-	 				return this.extensions.moveRow.dropComplete(table, row, success);
-	 			}
-	 		},
-
 
 	 		////////////// Extension Management //////////////
 
@@ -1445,6 +1430,7 @@
 
 	 	/*=include extensions/layout.js */
 	 	/*=include extensions/localize.js */
+	 	/*=include extensions/comms.js */
 
 	 	/*=include extensions_enabled.js */
 

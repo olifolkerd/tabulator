@@ -27,27 +27,6 @@ MoveRows.prototype.initialize = function(handle){
 	this.connection = this.table.options.movableRowsConnectedTables;
 };
 
-MoveRows.prototype.getConnections = function(){
-	var self = this,
-	connection;
-
-	this.connections = [];
-
-	if(Array.isArray(this.connection)){
-		this.connections = this.connection;
-	}else{
-		connection = typeof this.connection == "string" ?  $(this.connection) : this.connection;
-
-		connection.each(function(){
-			if(self.table.element[0] !== this){
-				self.connections.push($(this));
-			}
-		});
-	}
-
-	return this.connections;
-}
-
 MoveRows.prototype.setHandle = function(handle){
 	this.hasHandle = handle;
 };
@@ -264,27 +243,24 @@ MoveRows.prototype.moveHoverConnections = function(e){
 //establish connection with other tables
 MoveRows.prototype.connectToTables = function(row){
 	var self = this,
-	connections = this.getConnections();
+	connections = this.table.extensions.comms.getConnections(this.connection);
 
 	this.table.options.movableRowsSendingStart(connections);
 
-	connections.forEach(function(connection){
-		connection.tabulator("movableRowsConnectTable", self.table.element, row);
+	this.table.extensions.comms.send(this.connection, "moveRow", "connect", {
+		row:row,
 	});
-
 }
 
 
 //disconnect from other tables
 MoveRows.prototype.disconnectFromTables = function(){
 	var self = this,
-	connections = this.getConnections();
+	connections = this.table.extensions.comms.getConnections(this.connection);
 
 	this.table.options.movableRowsSendingStop(connections);
 
-	connections.forEach(function(connection){
-		connection.tabulator("movableRowsDisconnectTable", self.table.element);
-	});
+	this.table.extensions.comms.send(this.connection, "moveRow", "disconnect");
 }
 
 
@@ -399,7 +375,10 @@ MoveRows.prototype.tableRowDrop = function(e, row){
 		this.table.options.movableRowsReceivedFailed(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 	}
 
-	this.connectedTable.tabulator("movableRowsDropComplete", this.table.element, row, success);
+	this.table.extensions.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
+		row:row,
+		success:success,
+	});
 }
 
 
@@ -438,6 +417,23 @@ MoveRows.prototype.receivers = {
 MoveRows.prototype.senders = {
 	delete:function(fromRow, toRow, toTable){
 		fromRow.delete();
+	}
+}
+
+
+MoveRows.prototype.commsReceived = function(table, action, data){
+	switch(action){
+		case "connect":
+		return this.connect(table, data.row);
+		break;
+
+		case "disconnect":
+		return this.disconnect(table);
+		break;
+
+		case "dropcomplete":
+		return this.dropComplete(table, data.row, data.success);
+		break;
 	}
 }
 

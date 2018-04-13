@@ -7626,28 +7626,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       /////////// Inter Table Communications ///////////
 
 
-      movableRowsConnectTable: function movableRowsConnectTable(table, row) {
+      tableComms: function tableComms(table, extension, action, data) {
 
-        if (this.extExists("moveRow", true)) {
-
-          return this.extensions.moveRow.connect(table, row);
-        }
-      },
-
-      movableRowsDisconnectTable: function movableRowsDisconnectTable(table) {
-
-        if (this.extExists("moveRow", true)) {
-
-          return this.extensions.moveRow.disconnect(table);
-        }
-      },
-
-      movableRowsDropComplete: function movableRowsDropComplete(table, row, success) {
-
-        if (this.extExists("moveRow", true)) {
-
-          return this.extensions.moveRow.dropComplete(table, row, success);
-        }
+        this.extensions.commms.received(table, extension, action, data);
       },
 
       ////////////// Extension Management //////////////
@@ -8336,6 +8317,58 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     Tabulator.registerExtension("localize", Localize);
+
+    var Comms = function Comms(table) {
+
+      this.table = table;
+    };
+
+    Comms.prototype.getConnections = function (selectors) {
+
+      var connections = [];
+
+      if (Array.isArray(selectors)) {
+
+        connections = selectors;
+      } else {
+
+        connection = typeof selectors == "string" ? $(selectors) : selectors;
+
+        connection.each(function () {
+
+          if (self.table.element[0] !== this) {
+
+            connections.push($(this));
+          }
+        });
+      }
+
+      return connections;
+    };
+
+    Comms.prototype.send = function (selectors, extension, action, data) {
+
+      var self = this,
+          connections = this.getConnections(selectors);
+
+      connections.forEach(function (connection) {
+
+        connection.tabulator("tableComms", self.table.element, extension, action, data);
+      });
+    };
+
+    Comms.prototype.receive = function (table, extension, action, data) {
+
+      if (this.extExists(extension)) {
+
+        return this.table.extensions[extension].commsReceived(table, action, data);
+      } else {
+
+        console.warn("Inter-table Comms Error - no such extension:", extension);
+      }
+    };
+
+    Tabulator.registerExtension("comms", Comms);
 
     var Accessor = function Accessor(table) {
 
@@ -15649,32 +15682,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       this.connection = this.table.options.movableRowsConnectedTables;
     };
 
-    MoveRows.prototype.getConnections = function () {
-
-      var self = this,
-          connection;
-
-      this.connections = [];
-
-      if (Array.isArray(this.connection)) {
-
-        this.connections = this.connection;
-      } else {
-
-        connection = typeof this.connection == "string" ? $(this.connection) : this.connection;
-
-        connection.each(function () {
-
-          if (self.table.element[0] !== this) {
-
-            self.connections.push($(this));
-          }
-        });
-      }
-
-      return this.connections;
-    };
-
     MoveRows.prototype.setHandle = function (handle) {
 
       this.hasHandle = handle;
@@ -15970,13 +15977,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     MoveRows.prototype.connectToTables = function (row) {
 
       var self = this,
-          connections = this.getConnections();
+          connections = this.table.extensions.comms.getConnections(this.connection);
 
       this.table.options.movableRowsSendingStart(connections);
 
-      connections.forEach(function (connection) {
+      this.table.extensions.comms.send(this.connection, "moveRow", "connect", {
 
-        connection.tabulator("movableRowsConnectTable", self.table.element, row);
+        row: row
+
       });
     };
 
@@ -15986,14 +15994,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     MoveRows.prototype.disconnectFromTables = function () {
 
       var self = this,
-          connections = this.getConnections();
+          connections = this.table.extensions.comms.getConnections(this.connection);
 
       this.table.options.movableRowsSendingStop(connections);
 
-      connections.forEach(function (connection) {
-
-        connection.tabulator("movableRowsDisconnectTable", self.table.element);
-      });
+      this.table.extensions.comms.send(this.connection, "moveRow", "disconnect");
     };
 
     //accept incomming connection
@@ -16145,7 +16150,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         this.table.options.movableRowsReceivedFailed(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
       }
 
-      this.connectedTable.tabulator("movableRowsDropComplete", this.table.element, row, success);
+      this.table.extensions.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
+
+        row: row,
+
+        success: success
+
+      });
     };
 
     MoveRows.prototype.receivers = {
@@ -16199,6 +16210,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         fromRow.delete();
       }
 
+    };
+
+    MoveRows.prototype.commsReceived = function (table, action, data) {
+
+      switch (action) {
+
+        case "connect":
+
+          return this.connect(table, data.row);
+
+          break;
+
+        case "disconnect":
+
+          return this.disconnect(table);
+
+          break;
+
+        case "dropcomplete":
+
+          return this.dropComplete(table, data.row, data.success);
+
+          break;
+
+      }
     };
 
     Tabulator.registerExtension("moveRow", MoveRows);
