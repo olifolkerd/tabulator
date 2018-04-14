@@ -7628,7 +7628,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       tableComms: function tableComms(table, extension, action, data) {
 
-        this.extensions.commms.received(table, extension, action, data);
+        this.extensions.comms.receive(table, extension, action, data);
       },
 
       ////////////// Extension Management //////////////
@@ -8325,7 +8325,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Comms.prototype.getConnections = function (selectors) {
 
-      var connections = [];
+      var self = this,
+          connections = [],
+          connection;
 
       if (Array.isArray(selectors)) {
 
@@ -8359,7 +8361,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Comms.prototype.receive = function (table, extension, action, data) {
 
-      if (this.extExists(extension)) {
+      if (this.table.extExists(extension)) {
 
         return this.table.extensions[extension].commsReceived(table, action, data);
       } else {

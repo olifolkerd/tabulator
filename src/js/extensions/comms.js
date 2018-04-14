@@ -4,7 +4,9 @@ var Comms = function(table){
 
 
 Comms.prototype.getConnections = function(selectors){
-	var connections = [];
+	var self = this,
+	connections = [],
+	connection;
 
 	if(Array.isArray(selectors)){
 		connections = selectors;
@@ -32,7 +34,7 @@ Comms.prototype.send = function(selectors, extension, action, data){
 
 
 Comms.prototype.receive = function(table, extension, action, data){
-	if(this.extExists(extension)){
+	if(this.table.extExists(extension)){
 		return this.table.extensions[extension].commsReceived(table, action, data);
 	}else{
 		console.warn("Inter-table Comms Error - no such extension:", extension);

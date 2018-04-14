@@ -1365,7 +1365,7 @@
 	 		/////////// Inter Table Communications ///////////
 
 	 		tableComms:function(table, extension, action, data){
-	 			this.extensions.commms.received(table, extension, action, data)
+	 			this.extensions.comms.receive(table, extension, action, data)
 	 		},
 
 	 		////////////// Extension Management //////////////
