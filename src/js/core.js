@@ -1354,14 +1354,6 @@
 	 			}
 	 		},
 
-	 		downloadIntercept:function(type, filename, options, intercept){
-	 			if(this.extExists("download", true)){
-	 				this.extensions.download.download(type, filename, options, intercept);
-	 			}
-	 		},
-
-
-
 	 		/////////// Inter Table Communications ///////////
 
 	 		tableComms:function(table, extension, action, data){

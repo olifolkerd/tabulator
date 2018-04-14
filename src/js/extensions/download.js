@@ -134,6 +134,15 @@ Download.prototype.getFieldValue = function(field, data){
 };
 
 
+Download.prototype.commsReceived = function(table, action, data){
+	switch(action){
+		case "intercept":
+		this.download(data.type, "", data.options, data.intercept);
+		break;
+	}
+};
+
+
 //downloaders
 Download.prototype.downloaders = {
 	csv:function(columns, data, options, setFileContents){
@@ -336,25 +345,15 @@ Download.prototype.downloaders = {
 					workbook.Sheets[sheet] = generateSheet();
 				}else{
 
-					var el = options.sheets[sheet];
+					workbook.SheetNames.push(sheet);
 
-					if(typeof el == "string"){
-						el = $(el);
-					}else{
-						if(!el instanceof jQuery){
-							el = $(el);
-						}
-					}
-
-					if(el.length){
-						workbook.SheetNames.push(sheet);
-
-						el.tabulator("downloadIntercept", "xlsx", "", {sheetOnly:true}, function(data){
+					this.table.extensions.comms.send(options.sheets[sheet], "download", "intercept",{
+						type:"xlsx",
+						options:{sheetOnly:true},
+						intercept:function(data){
 							workbook.Sheets[sheet] = data;
-						})
-					}else{
-						console.warn("Download Error - Not matching table found, ignoring sheet:", options.sheets[sheet])
-					}
+						}
+					});
 				}
 
 			}
@@ -379,5 +378,6 @@ Download.prototype.downloaders = {
 	},
 
 };
+
 
 Tabulator.registerExtension("download", Download);

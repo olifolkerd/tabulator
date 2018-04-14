@@ -7615,14 +7615,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       },
 
-      downloadIntercept: function downloadIntercept(type, filename, options, intercept) {
-
-        if (this.extExists("download", true)) {
-
-          this.extensions.download.download(type, filename, options, intercept);
-        }
-      },
-
       /////////// Inter Table Communications ///////////
 
 
@@ -8357,6 +8349,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         connection.tabulator("tableComms", self.table.element, extension, action, data);
       });
+
+      if (!connections.length && selectors) {
+
+        console.log("Table Connection Error - No tables matching selector found", selectors);
+      }
     };
 
     Comms.prototype.receive = function (table, extension, action, data) {
@@ -10168,6 +10165,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return false;
     };
 
+    Download.prototype.commsReceived = function (table, action, data) {
+
+      switch (action) {
+
+        case "intercept":
+
+          this.download(data.type, "", data.options, data.intercept);
+
+          break;
+
+      }
+    };
+
     //downloaders
 
 
@@ -10446,31 +10456,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               workbook.Sheets[sheet] = generateSheet();
             } else {
 
-              var el = options.sheets[sheet];
+              workbook.SheetNames.push(sheet);
 
-              if (typeof el == "string") {
+              this.table.extensions.comms.send(options.sheets[sheet], "download", "intercept", {
 
-                el = $(el);
-              } else {
+                type: "xlsx",
 
-                if (!el instanceof jQuery) {
+                options: { sheetOnly: true },
 
-                  el = $(el);
-                }
-              }
-
-              if (el.length) {
-
-                workbook.SheetNames.push(sheet);
-
-                el.tabulator("downloadIntercept", "xlsx", "", { sheetOnly: true }, function (data) {
+                intercept: function intercept(data) {
 
                   workbook.Sheets[sheet] = data;
-                });
-              } else {
+                }
 
-                console.warn("Download Error - Not matching table found, ignoring sheet:", options.sheets[sheet]);
-              }
+              });
             }
           }
         } else {

@@ -30,6 +30,10 @@ Comms.prototype.send = function(selectors, extension, action, data){
 	connections.forEach(function(connection){
 		connection.tabulator("tableComms", self.table.element, extension, action, data);
 	});
+
+	if(!connections.length && selectors){
+		console.log("Table Connection Error - No tables matching selector found", selectors);
+	}
 }
 
 
