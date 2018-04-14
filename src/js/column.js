@@ -32,24 +32,53 @@ ColumnComponent.prototype.getVisibility = function(){
 };
 
 ColumnComponent.prototype.show = function(){
-	this.column.show();
+	if(this.column.isGroup){
+		this.column.columns.forEach(function(column){
+			column.show();
+		});
+	}else{
+		this.column.show();
+	}
 };
 
 ColumnComponent.prototype.hide = function(){
-	this.column.hide();
+	if(this.column.isGroup){
+		this.column.columns.forEach(function(column){
+			column.hide();
+		});
+	}else{
+		this.column.hide();
+	}
 };
 
 ColumnComponent.prototype.toggle = function(){
 	if(this.column.visible){
-		this.column.hide();
+		this.hide();
 	}else{
-		this.column.show();
+		this.show();
 	}
 };
 
 ColumnComponent.prototype.delete = function(){
 	this.column.delete();
 };
+
+ColumnComponent.prototype.getSubColumns = function(){
+	var output = [];
+
+	if(this.column.columns.length){
+		this.column.columns.forEach(function(column){
+			output.push(column.getComponent());
+		});
+	}
+
+	return output;
+};
+
+ColumnComponent.prototype.getParentColumn = function(){
+	return this.column.parent instanceof Column ? this.column.parent.getComponent() : false;
+};
+
 
 ColumnComponent.prototype._getSelf = function(){
 	return this.column;
@@ -397,12 +426,12 @@ Column.prototype._buildColumnHeader = function(){
 
 
 	//set column mutator
-	if(typeof def.mutator != "undefined" && table.extExists("mutator")){
+	if(table.extExists("mutator")){
 		table.extensions.mutator.initializeColumn(self);
 	}
 
 	//set column accessor
-	if(typeof def.accessor != "undefined" && table.extExists("accessor")){
+	if(table.extExists("accessor")){
 		table.extensions.accessor.initializeColumn(self);
 	}
 
@@ -797,26 +826,45 @@ Column.prototype.hide = function(silent, responsiveToggle){
 	}
 };
 
+Column.prototype.matchChildWidths = function(){
+	var childWidth = 0;
+
+	if(this.contentElement && this.columns.length){
+		this.columns.forEach(function(column){
+			childWidth += column.getWidth();
+		});
+
+		this.contentElement.css("max-width", childWidth - 1);
+	}
+}
+
 Column.prototype.setWidth = function(width){
 	this.widthFixed = true;
 	this.setWidthActual(width);
 };
 
 Column.prototype.setWidthActual = function(width){
+
 	if(isNaN(width)){
 		width = Math.floor((this.table.element.innerWidth()/100) * parseInt(width));
 	}
+
+	console.log
 
 	width = Math.max(this.minWidth, width);
 
 	this.width = width;
 
-	if(!this.isGroup){
-		this.element.css("width", width || "");
+	this.element.css("width", width || "");
 
+	if(!this.isGroup){
 		this.cells.forEach(function(cell){
 			cell.setWidth(width);
 		});
+	}
+
+	if(this.parent.isGroup){
+		this.parent.matchChildWidths();
 	}
 
 	//set resizable handles

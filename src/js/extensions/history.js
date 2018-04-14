@@ -40,7 +40,6 @@ History.prototype.undo = function(){
 		console.warn("History Undo Error - No more history to undo");
 		return false;
 	}
-
 };
 
 History.prototype.redo = function(){
@@ -68,7 +67,7 @@ History.prototype.undoers = {
 	},
 
 	rowAdd: function(action){
-		action.component.delete();
+		action.component.deleteActual();
 	},
 
 	rowDelete: function(action){
@@ -96,7 +95,7 @@ History.prototype.redoers = {
 	},
 
 	rowDelete:function(action){
-		action.component.delete();
+		action.component.deleteActual();
 	},
 
 	rowMove: function(action){

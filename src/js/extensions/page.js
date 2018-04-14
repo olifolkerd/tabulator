@@ -10,6 +10,8 @@ var Page = function(table){
 	this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title='' type='button'></button>");
 
 	this.mode = "local";
+	this.progressiveLoad = false;
+
 	this.size = 0;
 	this.page = 1;
 	this.count = 5;
@@ -20,7 +22,7 @@ var Page = function(table){
 };
 
 //setup pageination
-Page.prototype.initialize = function(){
+Page.prototype.initialize = function(hidden){
 	var self = this;
 
 	//update param names
@@ -104,7 +106,7 @@ Page.prototype.initialize = function(){
 	self.element.append(self.nextBut);
 	self.element.append(self.lastBut);
 
-	if(!self.table.options.paginationElement){
+	if(!self.table.options.paginationElement && !hidden){
 		self.table.footerManager.append(self.element, self);
 	}
 
@@ -113,6 +115,12 @@ Page.prototype.initialize = function(){
 	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 24);
 	self.count = self.table.options.paginationButtonCount;
 };
+
+Page.prototype.initializeProgressive = function(mode){
+	this.initialize(true);
+	this.mode = "progressive_" + mode;
+	this.progressiveLoad = true;
+}
 
 Page.prototype.setDisplayIndex = function(index){
 	this.displayIndex = index;
@@ -125,7 +133,6 @@ Page.prototype.getDisplayIndex = function(){
 
 //calculate maximum page from number of rows
 Page.prototype.setMaxRows = function(rowCount){
-
 	if(!rowCount){
 		this.max = 1;
 	}else{
@@ -240,7 +247,9 @@ Page.prototype.nextPage = function(){
 		this.trigger();
 		return true;
 	}else{
-		console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+		if(!this.progressiveLoad){
+			console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+		}
 		return false;
 	}
 };
@@ -303,6 +312,9 @@ Page.prototype.trigger = function(){
 		break;
 
 		case "remote":
+		case "progressive_load":
+		case "progressive_scroll":
+		this.table.extensions.ajax.blockActiveRequest();
 		this._getRemotePage();
 		break;
 
@@ -373,7 +385,7 @@ Page.prototype._getRemotePageAuto = function(){
 
 	self.table.extensions.ajax.sendRequest(function(data){
 		self._parseRemoteData(data);
-	});
+	}, this.progressiveLoad);
 
 	self.table.extensions.ajax.setParams(oldParams);
 };
@@ -381,19 +393,47 @@ Page.prototype._getRemotePageAuto = function(){
 
 
 Page.prototype._parseRemoteData = function(data){
-	var left;
+	var self = this,
+	left, data, margin;
 
 	if(data[this.paginationDataReceivedNames.last_page]){
 		if(data[this.paginationDataReceivedNames.data]){
 			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
 
-			left = this.table.rowManager.scrollLeft;
+			if(this.progressiveLoad){
+				switch(this.mode){
+					case "progressive_load":
+					this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+					if(this.page < this.max){
+						setTimeout(function(){
+							self.nextPage();
+						}, self.table.options.ajaxProgressiveLoadDelay)
 
-			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+					}
+					break;
 
-			this.table.rowManager.scrollHorizontal(left);
+					case "progressive_scroll":
+					data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
 
-			this.table.options.pageLoaded(this.getPage());
+					this.table.rowManager.setData(data, true);
+
+					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element[0].clientHeight * 2);
+
+					if(self.table.rowManager.element[0].scrollHeight <= (self.table.rowManager.element[0].clientHeight + margin)){
+						self.nextPage();
+					}
+					break;
+				}
+			}else{
+				left = this.table.rowManager.scrollLeft;
+
+				this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+				this.table.rowManager.scrollHorizontal(left);
+
+				this.table.options.pageLoaded(this.getPage());
+			}
+
 		}else{
 			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
 		}
@@ -401,6 +441,9 @@ Page.prototype._parseRemoteData = function(data){
 		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
 	}
 };
+
+
+
 
 //handle the footer element being redrawn
 Page.prototype.footerRedraw = function(){

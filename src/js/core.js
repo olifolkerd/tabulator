@@ -32,7 +32,7 @@
 	 			columnVertAlign:"top", //vertical alignment of column headers
 
 	 			resizableColumns:true, //resizable columns
-	 			resizableRows:true, //resizable rows
+	 			resizableRows:false, //resizable rows
 	 			autoResize:true, //auto resize table
 
 	 			columns:[],//store for colum header info
@@ -51,7 +51,18 @@
 
 	 			keybindings:[], //array for keybindings
 
-	 			downloadDataMutator:false, //function to manipulate table data before it is downloaded
+	 			clipboard:false, //enable clipboard
+	 			clipboardCopySelector:"active", //method of chosing which data is coppied to the clipboard
+	 			clipboardCopyFormatter:"table", //convert data to a clipboard string
+	 			clipboardCopyHeader:true, //include table headers in copt
+	 			clipboardPasteParser:"table", //convert pasted clipboard data to rows
+	 			clipboardPasteAction:"insert", //how to insert pasted data into the table
+
+	 			clipboardCopied:function(){}, //data has been copied to the clipboard
+	 			clipboardPasted:function(){}, //data has been pasted into the table
+	 			clipboardPasteError:function(){}, //data has not successfully been pasted into the table
+
+	 			downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	 			downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	 			downloadComplete:false, //function to manipulate download data
 
@@ -79,6 +90,9 @@
 	 			persistentLayoutID:"",//DEPRICATED - key for persistent storage;
 
 	 			responsiveLayout:false, //responsive layout flags
+	 			responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
+	 			responsiveLayoutCollapseUseFormatters:true, //responsive layout collapse formatter
+	 			responsiveLayoutCollapseFormatter:false, //responsive layout collapse formatter
 
 	 			pagination:false, //set pagination type
 				paginationSize:false, //set number of rows to a page
@@ -87,6 +101,7 @@
 	 			paginationDataSent:{}, //pagination data sent to the server
 	 			paginationDataReceived:{}, //pagination data received from the server
 	 			paginator:false, //pagination url string builder
+	 			paginationAddRow: "page", //add rows on table or page
 
 	 			ajaxURL:false, //url for ajax loading
 	 			ajaxParams:{}, //params for ajax loading
@@ -96,6 +111,9 @@
 	 			ajaxLoaderError:false, //loader element
 	 			ajaxFiltering:false,
 	 			ajaxSorting:false,
+	 			ajaxProgressiveLoad:false, //progressive loading
+	 			ajaxProgressiveLoadDelay:0, //delay between requests
+	 			ajaxProgressiveLoadScrollMargin:0, //margin before scroll begins
 
 	 			groupBy:false, //enable table grouping and set field to group by
 				groupStartOpen:true, //starting state of group
@@ -103,7 +121,25 @@
 				groupHeader:false, //header generation function
 
 				movableColumns:false, //enable movable columns
+
 				movableRows:false, //enable movable rows
+				movableRowsConnectedTables:false, //tables for movable rows to be connected to
+				movableRowsSender:false,
+				movableRowsReceiver:"insert",
+				movableRowsSendingStart:function(){},
+				movableRowsSent:function(){},
+				movableRowsSentFailed:function(){},
+				movableRowsSendingStop:function(){},
+				movableRowsReceivingStart:function(){},
+				movableRowsReceived:function(){},
+				movableRowsReceivedFailed:function(){},
+				movableRowsReceivingStop:function(){},
+
+				scrollToRowPosition:"top",
+				scrollToRowIfVisible:true,
+
+				scrollToColumnPosition:"left",
+				scrollToColumnIfVisible:true,
 
 				rowFormatter:false,
 
@@ -134,6 +170,13 @@
 	 			rowResized:function(){},
 
 	 			//cell callbacks
+	 			//row callbacks
+	 			cellClick:false,
+	 			cellDblClick:false,
+	 			cellContext:false,
+	 			cellTap:false,
+	 			cellDblTap:false,
+	 			cellTapHold:false,
 	 			cellEditing:function(){},
 	 			cellEdited:function(){},
 	 			cellEditCancelled:function(){},
@@ -179,6 +222,8 @@
 	 			groupDblTap:false,
 	 			groupTapHold:false,
 
+	 			columnCalcs:true,
+
 	 			//pagination callbacks
 	 			pageLoaded:function(){},
 
@@ -213,8 +258,10 @@
 	 				console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 	 			}
 
-
-
+	 			if(this.options.downloadDataMutator){
+	 				this.options.downloadDataFormatter = this.options.downloadDataMutator;
+	 				console.warn("The%c downloadDataMutator%c option has been depricated and will be removed in version 4.0, use %cdownloadDataFormatter%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	 			}
 
 	 		},
 
@@ -317,6 +364,10 @@
 	 				options.columns = ext.persistence.load("columns", options.columns) ;
 	 			}
 
+	 			if(options.movableRows && this.extExists("moveRow")){
+	 				ext.moveRow.initialize();
+	 			}
+
 	 			if(this.extExists("columnCalcs")){
 	 				ext.columnCalcs.initialize();
 	 			}
@@ -351,6 +402,10 @@
 	 				}
 	 			}
 
+	 			if(this.extExists("ajax")){
+	 				ext.ajax.initialize();
+	 			}
+
 	 			if(options.pagination && this.extExists("page", true)){
 	 				ext.page.initialize();
 	 			}
@@ -359,16 +414,12 @@
 	 				ext.groupRows.initialize();
 	 			}
 
-	 			if(this.extExists("ajax")){
-	 				ext.ajax.initialize();
-	 			}
-
 	 			if(this.extExists("keybindings")){
 	 				ext.keybindings.initialize();
 	 			}
 
 	 			if(this.extExists("selectRow")){
-	 				ext.selectRow.clearSelectionData();
+	 				ext.selectRow.clearSelectionData(true);
 	 			}
 
 	 			if(options.autoResize && this.extExists("resizeTable")){
@@ -393,9 +444,7 @@
 	 						self.rowManager.setData(self.options.data);
 	 					}else{
 	 						if(self.options.ajaxURL && self.extExists("ajax")){
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
+	 							self.extensions.ajax.loadData();
 	 						}else{
 	 							self.rowManager.setData(self.options.data);
 	 						}
@@ -408,9 +457,7 @@
 	 					self.rowManager.setData(self.options.data);
 	 				}else{
 	 					if(self.options.ajaxURL && self.extExists("ajax")){
-	 						self.extensions.ajax.sendRequest(function(data){
-	 							self.rowManager.setData(data);
-	 						});
+	 						self.extensions.ajax.loadData();
 	 					}else{
 	 						self.rowManager.setData(self.options.data);
 	 					}
@@ -459,6 +506,9 @@
 	 			}else if(ua.indexOf("Edge") > -1){
 	 				this.browser = "edge";
 	 				this.browserSlow = true;
+	 			}else if(ua.indexOf("Firefox") > -1){
+	 				this.browser = "firefox";
+	 				this.browserSlow = false;
 	 			}else{
 	 				this.browser = "other";
 	 				this.browserSlow = false;
@@ -469,14 +519,22 @@
 
 
 	 		//load data
+
 	 		setData:function(data, params, config){
-	 			var self = this;
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
+
+	 			this._setData(data, params, config);
+	 		},
+
+	 		_setData:function(data, params, config, inPosition){
 	 			var self = this;
 
 	 			if(typeof(data) === "string"){
 	 				if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
 	 					//data is a json encoded string
-	 					self.rowManager.setData(JSON.parse(data));
+	 					self.rowManager.setData(JSON.parse(data), inPosition);
 	 				}else{
 
 	 					if(self.extExists("ajax", true)){
@@ -495,16 +553,14 @@
 	 							self.extensions.page.setPage(1);
 	 						}else{
 	 							//assume data is url, make ajax call to url to get data
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
+	 							self.extensions.ajax.loadData(inPosition);
 	 						}
 	 					}
 	 				}
 	 			}else{
 	 				if(data){
 	 					//asume data is already an object
-	 					self.rowManager.setData(data);
+	 					self.rowManager.setData(data, inPosition);
 	 				}else{
 
 	 					//no data provided, check if ajaxURL is present;
@@ -514,14 +570,12 @@
 	 							self.extensions.page.reset(true);
 	 							self.extensions.page.setPage(1);
 	 						}else{
-	 							self.extensions.ajax.sendRequest(function(data){
-	 								self.rowManager.setData(data);
-	 							});
+	 							self.extensions.ajax.loadData(inPosition);
 	 						}
 
 	 					}else{
 	 						//empty data
-	 						self.rowManager.setData([]);
+	 						self.rowManager.setData([], inPosition);
 	 					}
 	 				}
 	 			}
@@ -529,6 +583,10 @@
 
 	 		//clear data
 	 		clearData:function(){
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
+
 	 			this.rowManager.clearData();
 	 		},
 
@@ -555,10 +613,23 @@
 	 			}
 	 		},
 
+	 		//replace data, keeping table in position with same sort
+	 		replaceData:function(data, params, config){
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
+
+	 			this._setData(data, params, config, true);
+	 		},
+
 
 	 		//update table data
 	 		updateData:function(data){
 	 			var self = this;
+
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
@@ -578,13 +649,24 @@
 	 		},
 
 	 		addData:function(data, pos, index){
+	 			var rows = [], output = [];
+
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
 	 			}
 
 	 			if(data){
-	 				this.rowManager.addRows(data, pos, index);
+	 				rows = this.rowManager.addRows(data, pos, index);
+
+	 				rows.forEach(function(row){
+	 					output.push(row.getComponent());
+	 				});
+
+	 				return output;
 	 			}else{
 	 				console.warn("Update Error - No data provided");
 	 			}
@@ -593,6 +675,11 @@
 	 		//update table data
 	 		updateOrAddData:function(data){
 	 			var self = this;
+	 			var rows = [];
+
+	 			if(this.extExists("ajax")){
+	 				this.extensions.ajax.blockActiveRequest();
+	 			}
 
 	 			if(typeof data === "string"){
 	 				data = JSON.parse(data);
@@ -603,11 +690,14 @@
 	 					var row = self.rowManager.findRow(item[self.options.index]);
 
 	 					if(row){
-	 						row.updateData(item);
+	 						row.updateData(item)
+	 						rows.push(row.getComponent());
 	 					}else{
-	 						self.rowManager.addRows(item);
+	 						rows.push(self.rowManager.addRows(item)[0].getComponent());
 	 					}
 	 				})
+
+	 				return rows;
 	 			}else{
 	 				console.warn("Update Error - No data provided");
 	 			}
@@ -708,11 +798,11 @@
 	 		},
 
 	 		//scroll to row in DOM
-	 		scrollToRow:function(index){
+	 		scrollToRow:function(index, position, ifVisible){
 	 			var row = this.rowManager.findRow(index);
 
 	 			if(row){
-	 				return this.rowManager.scrollToRow(row);
+	 				return this.rowManager.scrollToRow(row, position, ifVisible);
 	 			}else{
 	 				console.warn("Scroll Error - No matching row found:", index);
 	 				return false;
@@ -736,9 +826,9 @@
 	 		},
 
 	 		//copy table data to clipboard
-	 		copyToClipboard:function(mode, showHeaders){
+	 		copyToClipboard:function(selector, selectorParams, formatter, formatterParams){
 	 			if(this.extExists("clipboard", true)){
-	 				this.extensions.clipboard.copy(mode, showHeaders);
+	 				this.extensions.clipboard.copy(selector, selectorParams, formatter, formatterParams);
 	 			}
 	 		},
 
@@ -748,8 +838,8 @@
 	 			this.columnManager.setColumns(definition);
 	 		},
 
-	 		getColumns:function(){
-	 			return this.columnManager.getComponents();
+	 		getColumns:function(structured){
+	 			return this.columnManager.getComponents(structured);
 	 		},
 
 	 		getColumnDefinitions:function(){
@@ -834,11 +924,11 @@
 	 		},
 
 	 		//scroll to column in DOM
-	 		scrollToColumn:function(field){
+	 		scrollToColumn:function(field, position, ifVisible){
 	 			var column = this.columnManager.findColumn(field);
 
 	 			if(column){
-	 				return this.columnManager.scrollToColumn(column);
+	 				return this.columnManager.scrollToColumn(column, position, ifVisible);
 	 			}else{
 	 				console.warn("Scroll Error - No matching column found:", field);
 	 				return false;
@@ -1265,6 +1355,12 @@
 	 			}
 	 		},
 
+	 		/////////// Inter Table Communications ///////////
+
+	 		tableComms:function(table, extension, action, data){
+	 			this.extensions.comms.receive(table, extension, action, data)
+	 		},
+
 	 		////////////// Extension Management //////////////
 
 	 		//object to hold extensions
@@ -1327,6 +1423,7 @@
 
 	 	/*=include extensions/layout.js */
 	 	/*=include extensions/localize.js */
+	 	/*=include extensions/comms.js */
 
 	 	/*=include extensions_enabled.js */
 

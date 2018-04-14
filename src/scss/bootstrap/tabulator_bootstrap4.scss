@@ -1,26 +1,28 @@
+@import "functions4.scss";
+@import "variables4.scss";
 
-@import "variables_table.scss";
-
-
+// Style conversion file, bootstrap to tabulator
 
 //Main Theme Variables
-$backgroundColor: $background; //background color of tabulator
-$textSize:14px; //table text size
+$backgroundColor: $table-bg; //background color of tabulator
+$borderColor:$table-border-color; //border to tablulator
+$textSize:$font-size-base; //table text size
 
 //header themeing
-$headerBackgroundColor:$headerBackground; //border to tablulator
-$headerTextColor:$headerColor; //header text colour
-$headerBorderColor:#ddd;  //header border color
-$headerSeperatorColor:#999; //header bottom seperator color
-$headerMargin:4px; //padding round header
+$headerBackgroundColor:#fff; //border to tablulator
+$headerSeperatorColor:$table-border-color; //header bottom seperator color
+
+$cellPadding:$table-cell-padding; //padding round header
 
 //column header arrows
 $sortArrowActive: #666;
 $sortArrowInactive: #bbb;
 
 //row themeing
-$rowBorderColor:#ddd; //table border color
-$rowTextColor:#333; //table text color
+$rowBackgroundColor:$backgroundColor; //table row background color
+$rowAltBackgroundColor: $table-accent-bg; //table row background color
+$rowBorderColor:$table-border-color; //table border color
+$rowHoverBackground:$table-hover-bg; //row background color on hover
 
 $rowSelectedBackground: #9ABCEA; //row background color when selected
 $rowSelectedBackgroundHover: #769BCC;//row background color when selected and hovered
@@ -30,10 +32,8 @@ $editBoxColor:#1D68CD; //border color for edit boxes
 $errorColor:#dd0000; //error indication
 
 //footer themeing
-$footerBackgroundColor:#fff; //border to tablulator
-$footerTextColor:#555; //footer text colour
-$footerBorderColor:#aaa; //footer border color
-$footerSeperatorColor:#999; //footer bottom seperator color
+$footerBorderColor:$table-border-color; //footer border color
+$footerSeperatorColor:$table-border-color; //footer bottom seperator color
 
 
 
@@ -45,12 +45,8 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	font-size:$textSize;
 	text-align: left;
 	width: 100%;
-
-	margin: $margin;
-	border: $border;
-	box-shadow: $boxShadow;
-	border-radius: $borderRadius;
-	color: $color;
+	max-width: 100%;
+	// margin-bottom: $line-height-computed;
 
 	-webkit-transform: translatez(0);
 	-moz-transform: translatez(0);
@@ -77,15 +73,10 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 		width:100%;
 
-		border-bottom: $headerBorder;
+		border-top:1px solid $headerSeperatorColor;
+		border-bottom:2px solid $headerSeperatorColor;
 		background-color: $headerBackgroundColor;
-
-		box-shadow: $headerBoxShadow;
-
-		color: $headerTextColor;
-		font-style: $headerFontStyle;
-		font-weight: $headerFontWeight;
-		text-transform: $headerTextTransform;
+		font-weight:bold;
 
 		white-space: nowrap;
 		overflow:hidden;
@@ -98,10 +89,8 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;
-
 			position:relative;
 			box-sizing:border-box;
-			// border-right: $headerDivider;
 			background-color: $headerBackgroundColor;
 			text-align:left;
 			vertical-align: bottom;
@@ -118,7 +107,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			.tabulator-col-content{
 				box-sizing:border-box;
 				position: relative;
-				padding: $headerVerticalPadding $headerHorizontalPadding;
+				padding:$cellPadding;
 
 				//hold title of column header
 				.tabulator-col-title{
@@ -147,7 +136,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 				.tabulator-arrow{
 					display: inline-block;
 					position: absolute;
-					top:18px;
+					top:14px;
 					right:8px;
 					width: 0;
 					height: 0;
@@ -166,7 +155,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 					position:relative;
 					display: flex;
 
-					border-top:1px solid $headerBorderColor;
+					border-top:1px solid $borderColor;
 					overflow: hidden;
 
 					.tabulator-col:last-child{
@@ -187,7 +176,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			&.ui-sortable-helper{
 				position: absolute;
 				background-color:darken($headerBackgroundColor, 10%) !important;
-				border:1px solid $headerBorderColor;
+				border:1px solid $borderColor;
 			}
 
 			//header filter containing element
@@ -261,10 +250,9 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			}
 		}
 
-
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			min-width:200%;
+			width:100%;
 
 			background:lighten($headerBackgroundColor, 5%) !important;
 
@@ -277,7 +265,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			}
 
 			border-top:1px solid $rowBorderColor;
-			border-bottom:1px solid $headerBorderColor;
+			border-bottom:1px solid $headerSeperatorColor;
 
 			overflow: hidden;
 		}
@@ -333,14 +321,14 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		.tabulator-table{
 			position:relative;
 			display:inline-block;
+			background-color:$rowBackgroundColor;
 			white-space: nowrap;
 			overflow:visible;
-			color:$rowTextColor;
 
 			.tabulator-row{
 				&.tabulator-calcs{
 					font-weight: bold;
-					background:darken($background, 5%) !important;
+					background:darken($rowAltBackgroundColor, 5%) !important;
 
 					&.tabulator-calcs-top{
 						border-bottom:2px solid $rowBorderColor;
@@ -376,21 +364,10 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 	//footer element
 	.tabulator-footer{
-		padding: $footerVerticalPadding $footerHorizontalPadding;
-
-		border-top: $footerBorder;
-		box-shadow: $footerBoxShadow;
-
-		background: $footerBackground;
-
-
+		padding:5px 10px;
+		border-top:2px solid $footerSeperatorColor;
 		text-align:right;
-		color: $footerColor;
-
-		font-style: $footerFontStyle;
-		font-weight: $footerFontWeight;
-		text-transform: $footerTextTransform;
-
+		font-weight:bold;
 		white-space:nowrap;
 		user-select:none;
 
@@ -402,15 +379,14 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
 			width:calc("100% + 20px");
-			margin:(-$footerVerticalPadding) (-$footerHorizontalPadding) $footerVerticalPadding (-$footerHorizontalPadding);
+			margin:-5px -10px 5px -10px;
 
 			text-align: left;
 
-			background:lighten($footerBackground, 5%) !important;
+			background:lighten($backgroundColor, 5%) !important;
 
 			.tabulator-row{
-				font-weight: bold;
-				background:lighten($footerBackground, 5%) !important;
+				background:lighten($backgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
@@ -423,7 +399,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			overflow: hidden;
 
 			&:only-child{
-				margin-bottom:-$footerVerticalPadding;
+				margin-bottom:-5px;
 				border-bottom:none;
 			}
 		}
@@ -441,10 +417,10 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			border-radius:3px;
 			padding:2px 5px;
 			background:rgba(255,255,255,.2);
-			color: $footerTextColor;
 			font-family:inherit;
 			font-weight:inherit;
 			font-size:inherit;
+
 
 			&.active{
 				color:#d00;
@@ -507,127 +483,74 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 	}
 
 
-	//Semantic-ui theming classes
 
-	.tabulator-tableHolder{
-		.tabulator-table{
-			.tabulator-row{
-				&.positive, .tabulator-cell.positive{
-					box-shadow: $positiveBoxShadow;
-					background: $positiveBackgroundColor !important;
-					color: $positiveColor !important;
+	//Bootstrap theming classes
 
-					&:hover{
-						background: $positiveBackgroundHover !important;
-						color: $positiveColorHover !important;
-					}
-				}
-
-				&.negative, .tabulator-cell.negative{
-					box-shadow: $negativeBoxShadow;
-					background: $negativeBackgroundColor !important;
-					color: $negativeColor !important;
-
-					&:hover{
-						background: $negativeBackgroundHover !important;
-						color: $negativeColorHover !important;
-					}
-				}
-
-				&.error, .tabulator-cell.error{
-					box-shadow: $errorBoxShadow;
-					background: $errorBackgroundColor !important;
-					color: $errorColor !important;
-
-					&:hover{
-						background: $errorBackgroundHover !important;
-						color: $errorColorHover !important;
-					}
-				}
-
-				&.warning, .tabulator-cell.warning{
-					box-shadow: $warningBoxShadow;
-					background: $warningBackgroundColor !important;
-					color: $warningColor !important;
-
-					&:hover{
-						background: $warningBackgroundHover !important;
-						color: $warningColorHover !important;
-					}
-				}
-
-				&.active, .tabulator-cell.active{
-					box-shadow: $activeBoxShadow;
-					background: $activeBackgroundColor !important;
-					color: $activeColor !important;
-
-					&:hover{
-						background: $positiveBackgroundHover !important;
-						color: $positiveColorHover !important;
-					}
-				}
-
-				&.active, &.disabled:hover, .tabulator-cell.active{
-					pointer-events: none;
-					color: $disabledTextColor;
-				}
-			}
-		}
-	}
-
-
-	&.inverted{
-
-		background: $invertedBackground;
-		color: $invertedCellColor;
-		border: $invertedBorder;
-
+	&.thead-dark{
 		.tabulator-header{
-			background-color: $invertedHeaderBackground;
-			border-color: $invertedHeaderBorderColor !important;
-			color: $invertedHeaderColor;
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
 
 			.tabulator-col{
-				border-color: $invertedCellBorderColor !important;
-			}
-		}
-
-		.tabulator-tableHolder{
-			.tabulator-table{
-				.tabulator-row{
-					color: $invertedCellColor;
-					border: $invertedBorder;
-
-					.tabulator-cell{
-						border-color: $invertedCellBorderColor !important;
-					}
-				}
-			}
-		}
-
-		.tabulator-footer{
-			background: $definitionPageBackground;
-		}
-	}
-
-	&.striped{
-		.tabulator-tableHolder{
-			.tabulator-table{
-				.tabulator-row{
-					&:nth-child(even){
-						background-color: $basicTableStripedBackground !important;
-					}
-				}
+				border-color: $table-dark-border-color;
+				background-color: $table-dark-bg;
+				color: $table-dark-color;
 			}
 		}
 	}
 
-	&.celled{
+	&.table-dark{
+		background-color: $table-dark-bg;
+
+		&:not(.thead-light) .tabulator-header{
+			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
+
+			.tabulator-col{
+				border-color: $table-dark-border-color;
+				background-color: $table-dark-bg;
+				color: $table-dark-color;
+			}
+		}
+
+		.tabulator-tableHolder{
+			color: $table-dark-color;
+		}
+
+
+		.tabulator-row{
+			border-color: $table-dark-border-color;
+
+			&:hover{
+				background-color: $table-dark-hover-bg !important;
+			}
+		}
+	}
+
+	&.table-striped{
+		.tabulator-row{
+			&:nth-child(even){
+				background-color: $rowAltBackgroundColor;
+			}
+		}
+
+		&.table-dark{
+			.tabulator-row{
+				&:nth-child(even){
+					background-color: $table-dark-accent-bg;
+				}
+			}
+		}
+	}
+
+	&.table-bordered{
 		border:1px solid $borderColor;
 
 		.tabulator-header{
 			.tabulator-col{
-				border-right:$cellBorder;
+				border-right:1px solid $borderColor;
 			}
 		}
 
@@ -635,251 +558,181 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			.tabulator-table{
 				.tabulator-row{
 					.tabulator-cell{
-						border-right:$cellBorder;
-					}
-				}
-			}
-		}
-
-	}
-
-
-	&[class*="single line"]{
-		.tabulator-tableHolder{
-			.tabulator-table{
-				.tabulator-row{
-					.tabulator-cell{
-						border-right:none;
+						border-right:1px solid $borderColor;
 					}
 				}
 			}
 		}
 	}
 
-	//coloured table varients
-	/* Red */
-	&.red {
-		border-top: $coloredBorderSize solid $red;
-	}
-	&.inverted.red {
-		background-color: $red !important;
-		color: $white !important;
+
+	&.table-borderless{
+		.tabulator-header{
+			border:none;
+		}
+
+		.tabulator-row{
+			border:none;
+		}
 	}
 
-	/* Orange */
-	&.orange {
-		border-top: $coloredBorderSize solid $orange;
-	}
-	&.inverted.orange {
-		background-color: $orange !important;
-		color: $white !important;
-	}
-
-	/* Yellow */
-	&.yellow {
-		border-top: $coloredBorderSize solid $yellow;
-	}
-	&.inverted.yellow {
-		background-color: $yellow !important;
-		color: $white !important;
-	}
-
-	/* Olive */
-	&.olive {
-		border-top: $coloredBorderSize solid $olive;
-	}
-	&.inverted.olive {
-		background-color: $olive !important;
-		color: $white !important;
-	}
-
-	/* Green */
-	&.green {
-		border-top: $coloredBorderSize solid $green;
-	}
-	&.inverted.green {
-		background-color: $green !important;
-		color: $white !important;
-	}
-
-	/* Teal */
-	&.teal {
-		border-top: $coloredBorderSize solid $teal;
-	}
-	&.inverted.teal {
-		background-color: $teal !important;
-		color: $white !important;
-	}
-
-	/* Blue */
-	&.blue {
-		border-top: $coloredBorderSize solid $blue;
-	}
-	&.inverted.blue {
-		background-color: $blue !important;
-		color: $white !important;
-	}
-
-	/* Violet */
-	&.violet {
-		border-top: $coloredBorderSize solid $violet;
-	}
-	&.inverted.violet {
-		background-color: $violet !important;
-		color: $white !important;
-	}
-
-	/* Purple */
-	&.purple {
-		border-top: $coloredBorderSize solid $purple;
-	}
-	&.inverted.purple {
-		background-color: $purple !important;
-		color: $white !important;
-	}
-
-	/* Pink */
-	&.pink {
-		border-top: $coloredBorderSize solid $pink;
-	}
-	&.inverted.pink {
-		background-color: $pink !important;
-		color: $white !important;
-	}
-
-	/* Brown */
-	&.brown {
-		border-top: $coloredBorderSize solid $brown;
-	}
-	&.inverted.brown {
-		background-color: $brown !important;
-		color: $white !important;
-	}
-
-	/* Grey */
-	&.grey {
-		border-top: $coloredBorderSize solid $grey;
-	}
-	&.inverted.grey {
-		background-color: $grey !important;
-		color: $white !important;
-	}
-
-	/* Black */
-	&.black {
-		border-top: $coloredBorderSize solid $black;
-	}
-	&.inverted.black {
-		background-color: $black !important;
-		color: $white !important;
-	}
-
-	&.padded{
+	&.table-sm{
 		.tabulator-header{
 			.tabulator-col{
 				.tabulator-col-content{
-					padding: $paddedVerticalPadding $paddedHorizontalPadding;
-
-					.tabulator-arrow{
-						top:20px;
-					}
+					padding:$table-cell-padding-sm !important;
 				}
 			}
 		}
+
 		.tabulator-tableHolder{
 			.tabulator-table{
 				.tabulator-row{
+					min-height:$textSize + ($table-cell-padding-sm * 2);
+
 					.tabulator-cell{
-						padding: $paddedVerticalPadding $paddedHorizontalPadding;
-					}
-				}
-			}
-		}
-
-		&.very{
-			.tabulator-header{
-				.tabulator-col{
-					.tabulator-col-content{
-						padding: $veryPaddedVerticalPadding $veryPaddedHorizontalPadding;
-
-						.tabulator-arrow{
-							top:26px;
-						}
-					}
-				}
-			}
-			.tabulator-tableHolder{
-				.tabulator-table{
-					.tabulator-row{
-						.tabulator-cell{
-							padding: $veryPaddedVerticalPadding $veryPaddedHorizontalPadding;
-						}
+						padding:$table-cell-padding-sm !important;
 					}
 				}
 			}
 		}
 	}
 
-	&.compact{
-		.tabulator-header{
-			.tabulator-col{
-				.tabulator-col-content{
-					padding: $compactVerticalPadding $compactHorizontalPadding;
 
-					.tabulator-arrow{
-						top:12px;
-					}
+	//row colors
+	.tabulator-tableHolder{
+		.tabulator-table{
+			.tabulator-row{
+				&.table-primary{
+					background:theme-color-level("primary", -9) !important;
 				}
-			}
-		}
-		.tabulator-tableHolder{
-			.tabulator-table{
-				.tabulator-row{
-					.tabulator-cell{
-						padding: $compactVerticalPadding $compactHorizontalPadding;
-					}
+				&.table-secondary{
+					background:theme-color-level("secondary", -9) !important;
 				}
-			}
-		}
+				&.table-success{
+					background:theme-color-level("success", -9) !important;
+				}
+				&.table-info{
+					background:theme-color-level("info", -9) !important;
+				}
+				&.table-warning{
+					background:theme-color-level("warning", -9) !important;
+				}
+				&.table-danger{
+					background:theme-color-level("danger", -9) !important;
+				}
+				&.table-light{
+					background:theme-color-level("light", -9) !important;
+				}
+				&.table-dark{
+					background:theme-color-level("dark", -9) !important;
+				}
+				&.table-active{
+					background:$table-active-bg !important;
+				}
 
-		&.very{
-			.tabulator-header{
-				.tabulator-col{
-					.tabulator-col-content{
-						padding: $veryCompactVerticalPadding $veryCompactHorizontalPadding;
-
-						.tabulator-arrow{
-							top:10px;
-						}
-					}
+				&.bg-primary{
+					background:theme-color-level("primary", 0) !important;
 				}
-			}
-			.tabulator-tableHolder{
-				.tabulator-table{
-					.tabulator-row{
-						.tabulator-cell{
-							padding: $veryCompactVerticalPadding $veryCompactHorizontalPadding;
-						}
+				&.bg-secondary{
+					background:theme-color-level("secondary", 0) !important;
+				}
+				&.bg-success{
+					background:theme-color-level("success", 0) !important;
+				}
+				&.bg-info{
+					background:theme-color-level("info", 0) !important;
+				}
+				&.bg-warning{
+					background:theme-color-level("warning", 0) !important;
+				}
+				&.bg-danger{
+					background:theme-color-level("danger", 0) !important;
+				}
+				&.bg-light{
+					background:theme-color-level("light", 0) !important;
+				}
+				&.bg-dark{
+					background:theme-color-level("dark", 0) !important;
+				}
+				&.bg-active{
+					background:$table-active-bg !important;
+				}
+
+				.tabulator-cell{
+					&.table-primary{
+						background:theme-color-level("primary", -9) !important;
+					}
+					&.table-secondary{
+						background:theme-color-level("secondary", -9) !important;
+					}
+					&.table-success{
+						background:theme-color-level("success", -9) !important;
+					}
+					&.table-info{
+						background:theme-color-level("info", -9) !important;
+					}
+					&.table-warning{
+						background:theme-color-level("warning", -9) !important;
+					}
+					&.table-danger{
+						background:theme-color-level("danger", -9) !important;
+					}
+					&.table-light{
+						background:theme-color-level("light", -9) !important;
+					}
+					&.table-dark{
+						background:theme-color-level("dark", -9) !important;
+					}
+					&.table-active{
+						background:$table-active-bg !important;
+					}
+
+					&.bg-primary{
+						background:theme-color-level("primary", 0) !important;
+					}
+					&.bg-secondary{
+						background:theme-color-level("secondary", 0) !important;
+					}
+					&.bg-success{
+						background:theme-color-level("success", 0) !important;
+					}
+					&.bg-info{
+						background:theme-color-level("info", 0) !important;
+					}
+					&.bg-warning{
+						background:theme-color-level("warning", 0) !important;
+					}
+					&.bg-danger{
+						background:theme-color-level("danger", 0) !important;
+					}
+					&.bg-light{
+						background:theme-color-level("light", 0) !important;
+					}
+					&.bg-dark{
+						background:theme-color-level("dark", 0) !important;
+					}
+					&.bg-active{
+						background:$table-active-bg !important;
 					}
 				}
 			}
 		}
 	}
+
 }
-
 
 //row element
 .tabulator-row{
 	position: relative;
 	box-sizing: border-box;
 
-	min-height:$textSize + ($headerMargin * 2);
-	border-bottom: $rowBorder;
+	min-height:$textSize + ($cellPadding * 2);
+	background-color: $rowBackgroundColor;
+	border-bottom:1px solid $rowBorderColor;
 
 	&.tabulator-selectable:hover{
-		box-shadow: $activeBoxShadow;
-		background: $activeBackgroundColor !important;
-		color: $activeColor !important;
+		background-color:$rowHoverBackground !important;
 		cursor: pointer;
 	}
 
@@ -964,14 +817,12 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		}
 	}
 
-
 	//cell element
 	.tabulator-cell{
 		display:inline-block;
 		position: relative;
 		box-sizing:border-box;
-		padding: $cellVerticalPadding $cellHorizontalPadding;
-		// border-right:1px solid $rowBorderColor;
+		padding:$cellPadding;
 		vertical-align:middle;
 		white-space:nowrap;
 		overflow:hidden;
@@ -1049,7 +900,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 			border-radius:20px;
 			background:#666;
 
-			color:#fff;
+			color:$rowBackgroundColor;
 			font-weight:bold;
 			font-size:1.1em;
 

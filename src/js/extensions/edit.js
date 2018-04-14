@@ -732,9 +732,11 @@ Edit.prototype.editors = {
 		})
 		.val(value);
 
-		onRendered(function(){
-			input.focus();
-		});
+		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
+			onRendered(function(){
+				input.focus();
+			});
+		}
 
 		if(value === true || value === "true" || value === "True" || value === 1){
 			input.prop("checked", true);
@@ -772,9 +774,11 @@ Edit.prototype.editors = {
 		})
 		.val(value);
 
-		onRendered(function(){
-			input.focus();
-		});
+		if(this.table.browser != "firefox"){  //prevent blur issue on mac firefox
+			onRendered(function(){
+				input.focus();
+			});
+		}
 
 		if(value === true || value === "true" || value === "True" || value === 1){
 			input.prop("checked", true);

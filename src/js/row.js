@@ -4,8 +4,8 @@ var RowComponent = function (row){
 	this.row = row;
 };
 
-RowComponent.prototype.getData = function(){
-	return this.row.getData(true);
+RowComponent.prototype.getData = function(transform){
+	return this.row.getData(transform);
 };
 
 RowComponent.prototype.getElement = function(){
@@ -27,7 +27,7 @@ RowComponent.prototype.getCell = function(column){
 };
 
 RowComponent.prototype.getIndex = function(){
-	return this.row.getData(true)[this.row.table.options.index];
+	return this.row.getData("data")[this.row.table.options.index];
 };
 
 RowComponent.prototype.getPosition = function(active){
@@ -236,6 +236,11 @@ Row.prototype.initialize = function(force){
 			self.normalizeHeight();
 		}
 
+		//setup movable rows
+		if(self.table.options.responsiveLayout === "collapse" && self.table.extExists("responsiveLayout")){
+			self.table.extensions.responsiveLayout.layoutRow(this);
+		}
+
 		if(self.table.options.rowFormatter){
 			self.table.options.rowFormatter(self.getComponent());
 		}
@@ -349,7 +354,7 @@ Row.prototype.setData = function(data){
 	var self = this;
 
 	if(self.table.extExists("mutator")){
-		self.data = self.table.extensions.mutator.transformRow(data);
+		self.data = self.table.extensions.mutator.transformRow(data, "data");
 	}else{
 		self.data = data;
 	}
@@ -365,7 +370,7 @@ Row.prototype.updateData = function(data){
 
 	//mutate incomming data if needed
 	if(self.table.extExists("mutator")){
-		data = self.table.extensions.mutator.transformRow(data);
+		data = self.table.extensions.mutator.transformRow(data, "data");
 	}
 
 	//set data
@@ -406,7 +411,7 @@ Row.prototype.getData = function(transform){
 
 	if(transform){
 		if(self.table.extExists("accessor")){
-			return self.table.extensions.accessor.transformRow(self.data);
+			return self.table.extensions.accessor.transformRow(self.data, transform);
 		}
 	}else{
 		return this.data;
@@ -491,13 +496,6 @@ Row.prototype.getCells = function(){
 
 Row.prototype.delete = function(){
 
-	var index = this.table.rowManager.getRowIndex(this);
-
-	//deselect row if it is selected
-	if(this.table.extExists("selectRow")){
-		this.table.extensions.selectRow._deselectRow(this.row, true);
-	}
-
 	this.deleteActual();
 
 	if(this.table.options.history && this.table.extExists("history")){
@@ -507,6 +505,22 @@ Row.prototype.delete = function(){
 
 		this.table.extensions.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 	};
+
+};
+
+
+Row.prototype.deleteActual = function(){
+
+	var index = this.table.rowManager.getRowIndex(this);
+
+	//deselect row if it is selected
+	if(this.table.extExists("selectRow")){
+		this.table.extensions.selectRow._deselectRow(this.row, true);
+	}
+
+	this.table.rowManager.deleteRow(this);
+
+	this.deleteCells();
 
 	//remove from group
 	if(this.extensions.group){
@@ -524,13 +538,6 @@ Row.prototype.delete = function(){
 };
 
 
-Row.prototype.deleteActual = function(){
-	this.table.rowManager.deleteRow(this);
-
-	this.deleteCells();
-};
-
-
 Row.prototype.deleteCells = function(){
 	var cellCount = this.cells.length;
 
@@ -541,6 +548,11 @@ Row.prototype.deleteCells = function(){
 
 Row.prototype.wipe = function(){
 	this.deleteCells();
+
+	this.element.children().each(function(){
+		$(this).remove();
+	})
+
 	this.element.empty();
 	this.element.remove();
 }

@@ -50,7 +50,7 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 			column.extensions.columnCalcs = config;
 			this.topCalcs.push(column);
 
-			if(!this.table.options.groupBy){
+			if(this.table.options.columnCalcs != "group"){
 				this.initializeTopRow();
 			}
 		}
@@ -77,7 +77,7 @@ ColumnCalcs.prototype.initializeColumn = function(column){
 			column.extensions.columnCalcs = config;
 			this.botCalcs.push(column);
 
-			if(!this.table.options.groupBy){
+			if(this.table.options.columnCalcs != "group"){
 				this.initializeBottomRow();
 			}
 		}
@@ -167,6 +167,7 @@ ColumnCalcs.prototype.recalcRowGroup = function(row){
 
 ColumnCalcs.prototype.recalcGroup = function(group){
 	var data, rowData;
+
 	if(group){
 		if(group.calcs){
 			if(group.calcs.bottom){
@@ -174,6 +175,7 @@ ColumnCalcs.prototype.recalcGroup = function(group){
 				rowData = this.generateRowData("bottom", data);
 
 				group.calcs.bottom.updateData(rowData);
+				group.calcs.bottom.reinitialize();
 			}
 
 			if(group.calcs.top){
@@ -181,6 +183,7 @@ ColumnCalcs.prototype.recalcGroup = function(group){
 				rowData = this.generateRowData("top", data);
 
 				group.calcs.top.updateData(rowData);
+				group.calcs.top.reinitialize();
 			}
 		}
 	}
