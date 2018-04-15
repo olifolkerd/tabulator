@@ -18270,19 +18270,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (row) {
 
-        var self = this;
+        if (self.selectedRows.indexOf(row) == -1) {
 
-        row.extensions.select.selected = true;
+          var self = this;
 
-        row.getElement().addClass("tabulator-selected");
+          row.extensions.select.selected = true;
 
-        self.selectedRows.push(row);
+          row.getElement().addClass("tabulator-selected");
 
-        if (!silent) {
+          self.selectedRows.push(row);
 
-          self.table.options.rowSelected(row.getComponent());
+          if (!silent) {
 
-          self._rowSelectionChanged();
+            self.table.options.rowSelected(row.getComponent());
+
+            self._rowSelectionChanged();
+          }
         }
       } else {
 
