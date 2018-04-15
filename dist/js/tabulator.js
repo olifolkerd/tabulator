@@ -3950,15 +3950,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.vDomTop) {
 
-        var _index = this.vDomTop - 1,
-            topRow = rows[_index],
+        var index = this.vDomTop - 1,
+            topRow = rows[index],
             topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
         //hide top row if needed
 
         if (topDiff >= topRowHeight) {
 
-          this.styleRow(topRow, _index);
+          this.styleRow(topRow, index);
 
           table.prepend(topRow.getElement());
 
@@ -3978,10 +3978,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           if (this.vDomTopPad < 0) {
 
-            this.vDomTopPad = _index * this.vDomRowHeight;
+            this.vDomTopPad = index * this.vDomRowHeight;
           }
 
-          if (!_index) {
+          if (!index) {
 
             this.vDomTopPad = 0;
           }
@@ -4038,15 +4038,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.vDomBottom < this.displayRowsCount - 1) {
 
-        var _index2 = this.vDomBottom + 1,
-            bottomRow = rows[_index2],
+        var index = this.vDomBottom + 1,
+            bottomRow = rows[index],
             bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
         //hide bottom row if needed
 
         if (bottomDiff >= bottomRowHeight) {
 
-          this.styleRow(bottomRow, _index2);
+          this.styleRow(bottomRow, index);
 
           table.append(bottomRow.getElement());
 
@@ -4064,7 +4064,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           this.vDomBottomPad -= bottomRowHeight;
 
-          if (this.vDomBottomPad < 0 || _index2 == this.displayRowsCount - 1) {
+          if (this.vDomBottomPad < 0 || index == this.displayRowsCount - 1) {
 
             this.vDomBottomPad = 0;
           }
@@ -4848,9 +4848,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Row.prototype.delete = function () {
 
+      var index;
+
       this.deleteActual();
 
       if (this.table.options.history && this.table.extExists("history")) {
+
+        index = this.table.rowManager.getRowIndex(this);
 
         if (index) {
 

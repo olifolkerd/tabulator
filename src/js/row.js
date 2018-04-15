@@ -495,10 +495,14 @@ Row.prototype.getCells = function(){
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function(){
+	var index;
 
 	this.deleteActual();
 
 	if(this.table.options.history && this.table.extExists("history")){
+
+		index = this.table.rowManager.getRowIndex(this);
+
 		if(index){
 			index = this.table.rowManager.rows[index-1];
 		}
