@@ -4852,6 +4852,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (this.table.options.history && this.table.extExists("history")) {
 
+		var index = this.table.rowManager.getRowIndex(this);
+
         if (index) {
 
           index = this.table.rowManager.rows[index - 1];
