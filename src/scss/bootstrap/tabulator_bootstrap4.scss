@@ -533,6 +533,20 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 		.tabulator-row{
 			&:nth-child(even){
 				background-color: $rowAltBackgroundColor;
+
+				&.tabulator-selected{
+					background-color:$rowSelectedBackground;
+				}
+
+				&.tabulator-selectable:hover{
+					background-color:$rowHoverBackground;
+					cursor: pointer;
+				}
+
+				&.tabulator-selected:hover{
+					background-color:$rowSelectedBackgroundHover;
+					cursor: pointer;
+				}
 			}
 		}
 
@@ -732,7 +746,7 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 	border-bottom:1px solid $rowBorderColor;
 
 	&.tabulator-selectable:hover{
-		background-color:$rowHoverBackground !important;
+		background-color:$rowHoverBackground;
 		cursor: pointer;
 	}
 

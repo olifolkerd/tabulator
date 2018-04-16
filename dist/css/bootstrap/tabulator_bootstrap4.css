@@ -410,6 +410,20 @@
   background-color: rgba(0, 0, 0, 0.05);
 }
 
+.tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selected {
+  background-color: #9ABCEA;
+}
+
+.tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selectable:hover {
+  background-color: rgba(0, 0, 0, 0.075);
+  cursor: pointer;
+}
+
+.tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selected:hover {
+  background-color: #769BCC;
+  cursor: pointer;
+}
+
 .tabulator.table-striped.table-dark .tabulator-row:nth-child(even) {
   background-color: rgba(255, 255, 255, 0.05);
 }
@@ -599,7 +613,7 @@
 }
 
 .tabulator-row.tabulator-selectable:hover {
-  background-color: rgba(0, 0, 0, 0.075) !important;
+  background-color: rgba(0, 0, 0, 0.075);
   cursor: pointer;
 }
 
