@@ -4576,7 +4576,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Row.prototype.calcHeight = function () {
 
-      this.height = this.element[0].clientHeight;
+      var maxHeight = 0;
+
+      this.cells.forEach(function (cell) {
+
+        var height = cell.getHeight();
+
+        if (height > maxHeight) {
+
+          maxHeight = height;
+        }
+      });
+
+      this.height = maxHeight;
 
       this.outerHeight = this.element[0].offsetHeight;
     };
@@ -4848,13 +4860,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Row.prototype.delete = function () {
 
-      var index;
+      var index = this.table.rowManager.getRowIndex(this);
 
       this.deleteActual();
 
       if (this.table.options.history && this.table.extExists("history")) {
-
-        index = this.table.rowManager.getRowIndex(this);
 
         if (index) {
 
@@ -14869,9 +14879,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     HtmlTableImport.prototype._generateBlankHeaders = function (element) {
 
-      var self = this;
-
-      var headers = $("tr:first td", element);
+      var self = this,
+          headers = $("tr:first td", element),
+          rows = $("tbody tr", element);
 
       headers.each(function (index) {
 
@@ -15677,6 +15687,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this.endMove = this.endMove.bind(this);
 
+      this.tableRowDropEvent = false;
+
       this.connection = false;
 
       this.connections = [];
@@ -16033,7 +16045,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
-        self.table.element.on("mouseup", self.tableRowDrop.bind(self));
+        self.tableRowDropEvent = self.tableRowDrop.bind(self);
+
+        self.table.element.on("mouseup", self.tableRowDropEvent);
 
         this.table.options.movableRowsReceivingStart(row, table);
 
@@ -16069,7 +16083,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           }
         });
 
-        self.table.element.off("mouseup", self.tableRowDrop.bind(self));
+        self.table.element.off("mouseup", self.tableRowDropEvent);
 
         this.table.options.movableRowsReceivingStop(table);
       } else {

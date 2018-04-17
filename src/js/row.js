@@ -275,7 +275,17 @@ Row.prototype.reinitialize = function(){
 
 //get heights when doing bulk row style calcs in virtual DOM
 Row.prototype.calcHeight = function(){
-	this.height = this.element[0].clientHeight;
+
+	var maxHeight = 0;
+
+	this.cells.forEach(function(cell){
+		var height = cell.getHeight();
+		if(height > maxHeight){
+			maxHeight = height;
+		}
+	})
+
+	this.height = maxHeight;
 	this.outerHeight = this.element[0].offsetHeight;
 };
 
@@ -292,6 +302,7 @@ Row.prototype.setCellHeight = function(){
 
 Row.prototype.clearCellHeight = function(){
 	this.cells.forEach(function(cell){
+
 		cell.clearHeight();
 	});
 }
