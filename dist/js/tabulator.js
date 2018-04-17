@@ -14808,11 +14808,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             width,
             attributes;
 
-        //list of possible attributes
-
-
-        var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "cellClick", "cellDblClick", "cellContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
-
         if (col) {
 
           exists = true;
@@ -14838,8 +14833,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         attributes = header[0].attributes;
 
-        //check for tablator inline options
+        // //check for tablator inline options
 
+
+        self._extractOptions(header, col);
 
         for (var i in attributes) {
 
@@ -14850,13 +14847,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             name = attrib.name.replace("tabulator-", "");
 
-            attribList.forEach(function (key) {
-
-              if (key.toLowerCase() == name) {
-
-                col[key] = self._attribValue(attrib.value);
-              }
-            });
+            col[name] = self._attribValue(attrib.value);
           }
         }
 

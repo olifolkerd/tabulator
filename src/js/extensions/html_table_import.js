@@ -67,14 +67,13 @@ HtmlTableImport.prototype.parseTable = function(){
 //extract tabluator attribute options
 HtmlTableImport.prototype._extractOptions = function(element, options){
 	var self = this,
-	attributes = element[0].attributes
+	attributes = element[0].attributes;
 
 	for(var index in attributes){
 		var attrib = attributes[index];
 		var name;
 
 		if(attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0){
-
 			name = attrib.name.replace("tabulator-", "");
 
 			for(var key in options){
@@ -122,10 +121,6 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 		col = self._findCol(header.text()),
 		width, attributes;
 
-		//list of possible attributes
-		var attribList = ["title", "field", "align", "width", "minWidth", "frozen", "sortable", "sorter", "formatter", "cellClick", "cellDblClick", "cellContext", "editable", "editor", "visible", "cssClass", "tooltip", "tooltipHeader", "editableTitle", "headerFilter", "mutator", "mutateType", "accessor"];
-
-
 		if(col){
 			exists = true;
 		}else{
@@ -142,11 +137,12 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 			col.width = width;
 		}
 
-
 		//check for tablator inline options
 		attributes = header[0].attributes;
 
-		//check for tablator inline options
+		// //check for tablator inline options
+		self._extractOptions(header, col);
+
 		for(var i in attributes){
 			var attrib = attributes[i],
 			name;
@@ -155,11 +151,7 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 
 				name = attrib.name.replace("tabulator-", "");
 
-				attribList.forEach(function(key){
-					if(key.toLowerCase() == name){
-						col[key] = self._attribValue(attrib.value);
-					}
-				});
+				col[name] = self._attribValue(attrib.value);
 			}
 		}
 
@@ -178,9 +170,9 @@ HtmlTableImport.prototype._extractHeaders = function(element){
 
 //generate blank headers
 HtmlTableImport.prototype._generateBlankHeaders = function(element){
-	var self = this;
-
-	var headers = $("tr:first td", element);
+	var self = this,
+	headers = $("tr:first td", element),
+	rows = $("tbody tr", element);
 
 	headers.each(function(index){
 		var col = {title:"", field:"col" + index};
