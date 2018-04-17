@@ -14,6 +14,7 @@ var MoveRows = function(table){
 
 	this.moveHover = this.moveHover.bind(this);
 	this.endMove = this.endMove.bind(this);
+	this.tableRowDropEvent = false;
 
 	this.connection = false;
 	this.connections = [];
@@ -279,7 +280,9 @@ MoveRows.prototype.connect = function(table, row){
 			}
 		});
 
-		self.table.element.on("mouseup", self.tableRowDrop.bind(self));
+		self.tableRowDropEvent = self.tableRowDrop.bind(self);
+
+		self.table.element.on("mouseup", self.tableRowDropEvent);
 
 		this.table.options.movableRowsReceivingStart(row, table);
 
@@ -305,7 +308,7 @@ MoveRows.prototype.disconnect = function(table){
 			}
 		});
 
-		self.table.element.off("mouseup", self.tableRowDrop.bind(self));
+		self.table.element.off("mouseup", self.tableRowDropEvent);
 
 		this.table.options.movableRowsReceivingStop(table);
 	}else{
