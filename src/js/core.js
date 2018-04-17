@@ -154,7 +154,8 @@
 	 			dataEdited:function(){},
 
 	 			//ajax callbacks
-	 			ajaxRequesting:function(){},
+	 			ajaxRequesting: function () { },
+	 			ajaxRequest: false,
 	 			ajaxResponse:false,
 	 			ajaxError:function(){},
 
