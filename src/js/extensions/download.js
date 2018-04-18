@@ -1,15 +1,21 @@
 var Download = function(table){
 	this.table = table; //hold Tabulator object
 	this.fields = {}; //hold filed multi dimension arrays
+	this.columnsByIndex = []; //hold columns in their order in the table
+	this.columnsByField = {}; //hold columns with lookup by field name
 };
 
 //trigger file download
-Download.prototype.download = function(type, filename, options){
+Download.prototype.download = function(type, filename, options, interceptCallback){
 	var self = this,
 	downloadFunc = false;
 
 	function buildLink(data, mime){
-		self.triggerDownload(data, mime, type, filename);
+		if(interceptCallback){
+			interceptCallback(data);
+		}else{
+			self.triggerDownload(data, mime, type, filename);
+		}
 	}
 
 	if(typeof type == "function"){
@@ -22,51 +28,61 @@ Download.prototype.download = function(type, filename, options){
 		}
 	}
 
+	this.processColumns();
+
 	if(downloadFunc){
-		downloadFunc.call(this, self.processDefinitions(), self.processData() , options, buildLink);
+		downloadFunc.call(this, self.processDefinitions(), self.processData() , options || {}, buildLink);
 	}
 };
 
+Download.prototype.processColumns = function () {
+	var self = this;
+
+	self.columnsByIndex = [];
+	self.columnsByField = {};
+
+	self.table.columnManager.columnsByIndex.forEach(function (column) {
+
+		if (column.field && column.visible && column.definition.download !== false) {
+			self.columnsByIndex.push(column);
+			self.columnsByField[column.field] = column;
+		}
+	});
+};
 
 Download.prototype.processDefinitions = function(){
 	var self = this,
-	definitions = self.table.columnManager.getDefinitions(),
 	processedDefinitions = [];
 
-	self.fields = {};
+	self.columnsByIndex.forEach(function(column){
+		var definition = column.definition;
 
-	definitions.forEach(function(column){
-		if(column.field){
-			self.fields[column.field] = column.field.split(".");
+		if(column.download !== false){
+			//isolate definiton from defintion object
+			var def = {};
 
-			if(column.download !== false){
-				//isolate definiton from defintion object
-				var def = {};
-
-				for(var key in column){
-					def[key] = column[key];
-				}
-
-				if(typeof column.downloadTitle != "undefined"){
-					def.title = column.downloadTitle;
-				}
-
-				processedDefinitions.push(def);
+			for(var key in definition){
+				def[key] = definition[key];
 			}
+
+			if(typeof definition.downloadTitle != "undefined"){
+				def.title = definition.downloadTitle;
+			}
+
+			processedDefinitions.push(def);
 		}
 	});
-
 
 	return  processedDefinitions;
 };
 
 Download.prototype.processData = function(){
 	var self = this,
-	data = self.table.rowManager.getData(true);
+	data = self.table.rowManager.getData(true, "download");
 
-	//add user data processing step;
-	if(typeof self.table.options.downloadDataMutator == "function"){
-		data = self.table.options.downloadDataMutator(data);
+	//bulk data processing
+	if(typeof self.table.options.downloadDataFormatter == "function"){
+		data = self.table.options.downloadDataFormatter(data);
 	}
 
 	return data;
@@ -108,23 +124,22 @@ Download.prototype.triggerDownload = function(data, mime, type, filename){
 
 //nested field lookup
 Download.prototype.getFieldValue = function(field, data){
-	var dataObj = data,
-	structure = this.fields[field],
-	length = structure.length,
-	output;
+	var column = this.columnsByField[field];
 
-	for(let i = 0; i < length; i++){
-
-		dataObj = dataObj[structure[i]];
-
-		output = dataObj;
-
-		if(!dataObj){
-			break;
-		}
+	if(column){
+		return	column.getFieldValue(data);
 	}
 
-	return output;
+	return false;
+};
+
+
+Download.prototype.commsReceived = function(table, action, data){
+	switch(action){
+		case "intercept":
+		this.download(data.type, "", data.options, data.intercept);
+		break;
+	}
 };
 
 
@@ -185,45 +200,169 @@ Download.prototype.downloaders = {
 		setFileContents(fileContents, "application/json");
 	},
 
-	xlsx:function(columns, data, options, setFileContents){
+	pdf:function(columns, data, options, setFileContents){
 		var self = this,
-		titles = [],
 		fields = [],
-		rows = [],
-		workbook = { SheetNames:["Sheet1"], Sheets:{} },
-		worksheet, output;
+		header = [],
+		body = [],
+		table = "",
+		autoTableParams = options && options.autoTable ? options.autoTable : {},
+		title = options && options.title ? options.title : "",
+		orientation = options && options.orientation == "portrait" ? "p" : "l";
 
-		//convert rows to worksheet
-		function rowsToSheet(){
-			var sheet = {};
-			var range = {s: {c:0, r:0}, e: {c:fields.length, r:rows.length }};
+		//build column headers
+		columns.forEach(function(column){
+			if(column.field){
+				header.push(column.title || "");
+				fields.push(column.field);
+			}
+		});
 
-			rows.forEach(function(row, i){
-				row.forEach(function(value, j){
-					var cell = {v: typeof value == "undefined" || value === null ? "" : value};
+		//build table rows
+		data.forEach(function(row){
+			var rowData = [];
 
-					if(cell != null){
-						switch(typeof cell.v){
-							case "number":
-							cell.t = 'n';
-							break;
-							case "boolean":
-							cell.t = 'b';
-							break;
-							default:
-							cell.t = 's';
-							break;
-						}
+			fields.forEach(function(field){
+				var value = self.getFieldValue(field, row);
 
-						sheet[XLSX.utils.encode_cell({c:j,r:i})] = cell
-					}
-				});
+				switch(typeof value){
+					case "object":
+					value = JSON.stringify(value);
+					break;
+
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = value;
+				}
+
+				rowData.push(value);
 			});
 
-			sheet['!ref'] = XLSX.utils.encode_range(range);
+			body.push(rowData);
+		});
 
-			return sheet;
+
+		var doc = new jsPDF(orientation, 'pt'); //set document to landscape, better for most tables
+
+		if(title){
+			autoTableParams.addPageContent = function(data) {
+				doc.text(title, 40, 30);
+			}
 		}
+
+		doc.autoTable(header, body, autoTableParams);
+
+		setFileContents(doc.output("arraybuffer"), "application/pdf");
+	},
+
+	xlsx:function(columns, data, options, setFileContents){
+		var self = this,
+		sheetName = options.sheetName || "Sheet1",
+		workbook = {SheetNames:[], Sheets:{}},
+		output;
+
+		function generateSheet(){
+			var titles = [],
+			fields = [],
+			rows = [],
+			worksheet;
+
+			//convert rows to worksheet
+			function rowsToSheet(){
+				var sheet = {};
+				var range = {s: {c:0, r:0}, e: {c:fields.length, r:rows.length }};
+
+				rows.forEach(function(row, i){
+					row.forEach(function(value, j){
+						var cell = {v: typeof value == "undefined" || value === null ? "" : value};
+
+						if(cell != null){
+							switch(typeof cell.v){
+								case "number":
+								cell.t = 'n';
+								break;
+								case "boolean":
+								cell.t = 'b';
+								break;
+								default:
+								cell.t = 's';
+								break;
+							}
+
+							sheet[XLSX.utils.encode_cell({c:j,r:i})] = cell
+						}
+					});
+				});
+
+				sheet['!ref'] = XLSX.utils.encode_range(range);
+
+				return sheet;
+			}
+
+			//get field lists
+			columns.forEach(function(column){
+				if(column.field){
+					titles.push(column.title);
+					fields.push(column.field);
+				}
+			});
+
+			rows.push(titles);
+
+			//generate each row of the table
+			data.forEach(function(row){
+				var rowData = [];
+
+				fields.forEach(function(field){
+					rowData.push(self.getFieldValue(field, row));
+				});
+
+				rows.push(rowData);
+			});
+
+			worksheet = rowsToSheet();
+
+			return worksheet;
+
+		}
+
+
+		if(options.sheetOnly){
+			setFileContents(generateSheet());
+			return;
+		}
+
+		if(options.sheets){
+			for(var sheet in options.sheets){
+
+
+				if(options.sheets[sheet] === true){
+					workbook.SheetNames.push(sheet);
+					workbook.Sheets[sheet] = generateSheet();
+				}else{
+
+					workbook.SheetNames.push(sheet);
+
+					this.table.extensions.comms.send(options.sheets[sheet], "download", "intercept",{
+						type:"xlsx",
+						options:{sheetOnly:true},
+						intercept:function(data){
+							workbook.Sheets[sheet] = data;
+						}
+					});
+				}
+
+			}
+
+		}else{
+			workbook.SheetNames.push(sheetName);
+			workbook.Sheets[sheetName] = generateSheet();
+		}
+
 
 		//convert workbook to binary array
 		function s2ab(s) {
@@ -233,35 +372,12 @@ Download.prototype.downloaders = {
 				return buf;
 		}
 
-		//get field lists
-		columns.forEach(function(column){
-			if(column.field){
-				titles.push(column.title);
-				fields.push(column.field);
-			}
-		});
-
-		rows.push(titles);
-
-		//generate each row of the table
-		data.forEach(function(row){
-			var rowData = [];
-
-			fields.forEach(function(field){
-				rowData.push(self.getFieldValue(field, row));
-			});
-
-			rows.push(rowData);
-		});
-
-
-		worksheet = rowsToSheet();
-		workbook.Sheets["Sheet1"] = worksheet;
-
 		output = XLSX.write(workbook, {bookType:'xlsx', bookSST:true, type: 'binary'});
 
 		setFileContents(s2ab(output), "application/octet-stream");
-	}
+	},
+
 };
+
 
 Tabulator.registerExtension("download", Download);

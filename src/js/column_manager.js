@@ -236,11 +236,12 @@ ColumnManager.prototype.getDefinitionTree = function(){
 	return output;
 };
 
-ColumnManager.prototype.getComponents = function(){
+ColumnManager.prototype.getComponents = function(structured){
 	var self = this,
-	output = [];
+	output = [],
+	columns = structured ? self.columns : self.columnsByIndex;
 
-	self.columnsByIndex.forEach(function(column){
+	columns.forEach(function(column){
 		output.push(column.getComponent());
 	});
 
@@ -311,16 +312,55 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, 
 	}
 };
 
-ColumnManager.prototype.scrollToColumn = function(column){
-	var left;
+ColumnManager.prototype.scrollToColumn = function(column, position, ifVisible){
+	var left = 0,
+	offset = 0,
+	adjust = 0;
+
+	if(typeof position === "undefined"){
+		position = this.table.options.scrollToColumnPosition;
+	}
+
+	if(typeof ifVisible === "undefined"){
+		ifVisible = this.table.options.scrollToColumnIfVisible;
+	}
 
 	if(column.visible){
-		left = column.element.position().left + this.element.scrollLeft() + column.element.innerWidth() - this.headersElement.innerWidth();
+
+		//align to correct position
+		switch(position){
+			case "middle":
+			case "center":
+			adjust = -this.element[0].clientWidth / 2;
+			break;
+
+			case "right":
+			adjust = column.element.innerWidth() - this.headersElement.innerWidth();
+			break;
+		}
+
+		//check column visibility
+		if(!ifVisible){
+
+			offset = column.element.position().left;
+
+			if(offset > 0 && offset + column.element.outerWidth() < this.element[0].clientWidth){
+				return false;
+			}
+		}
+
+		//calculate scroll position
+		left = column.element.position().left + this.element.scrollLeft() + adjust;
+
+		left = Math.max(Math.min(left, this.table.rowManager.element[0].scrollWidth - this.table.rowManager.element[0].clientWidth),0);
 
 		this.table.rowManager.scrollHorizontal(left);
 		this.scrollHorizontal(left);
+
+		return true
 	}else{
 		console.warn("Scroll Error - Column not visible");
+		return false;
 	}
 };
 

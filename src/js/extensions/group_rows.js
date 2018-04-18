@@ -242,7 +242,7 @@ Group.prototype.insertRow = function(row, to, after){
 
 	this.generateGroupHeaderContents();
 
-	if(this.groupManager.table.extExists("columnCalcs")){
+	if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 		this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
 	}
 };
@@ -286,7 +286,7 @@ Group.prototype.removeRow = function(row){
 		this.groupManager.updateGroupRows(true);
 	}else{
 		this.generateGroupHeaderContents();
-		if(this.groupManager.table.extExists("columnCalcs")){
+		if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 			this.groupManager.table.extensions.columnCalcs.recalcGroup(this);
 		}
 	}
@@ -325,20 +325,20 @@ Group.prototype.getHeadersAndRows = function(){
 			});
 
 		}else{
-			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
+			if(this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
 				this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows);
 				output.push(this.calcs.top);
 			}
 
 			output = output.concat(this.rows);
 
-			if(this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
+			if(this.groupManager.table.options.columnCalcs != "table" &&  this.groupManager.table.extExists("columnCalcs") && this.groupManager.table.extensions.columnCalcs.hasBottomCalcs()){
 				this.calcs.bottom = this.groupManager.table.extensions.columnCalcs.generateBottomRow(this.rows);
 				output.push(this.calcs.bottom);
 			}
 		}
 	}else{
-		if(!this.groupList.length && this.groupManager.table.options.groupClosedShowCalcs){
+		if(!this.groupList.length && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.options.groupClosedShowCalcs){
 			if(this.groupManager.table.extExists("columnCalcs")){
 				if(this.groupManager.table.extensions.columnCalcs.hasTopCalcs()){
 					this.calcs.top = this.groupManager.table.extensions.columnCalcs.generateTopRow(this.rows)
@@ -575,13 +575,12 @@ GroupRows.prototype.initialize = function(){
 
 	this.groupIDLookups = [];
 
-
 	if(Array.isArray(groupBy) || groupBy){
-		if(this.table.extExists("columnCalcs")){
+		if(this.table.extExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both"){
 			this.table.extensions.columnCalcs.removeCalcs();
 		}
 	}else{
-		if(this.table.extExists("columnCalcs")){
+		if(this.table.extExists("columnCalcs") && this.table.options.columnCalcs != "group"){
 
 			var cols = this.table.columnManager.getRealColumns();
 

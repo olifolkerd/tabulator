@@ -109,6 +109,10 @@ RowManager.prototype.initialize = function(){
 			if(self.scrollTop != top){
 				self.scrollTop = top;
 				self.scrollVertical(dir);
+
+				if(self.table.options.ajaxProgressiveLoad == "scroll"){
+					self.table.extensions.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
+				}
 			}else{
 				self.scrollTop = top;
 			}
@@ -140,6 +144,8 @@ RowManager.prototype.findRow = function(subject){
 			return match || false;
 		}
 
+	}else if(typeof subject == "undefined" || subject === null){
+		return false;
 	}else{
 		//subject should be treated as the index of the row
 		let match = self.rows.find(function(row){
@@ -162,10 +168,44 @@ RowManager.prototype.getRowFromPosition = function(position, active){
 	}
 }
 
-RowManager.prototype.scrollToRow = function(row){
-	var rowIndex = this.getDisplayRows().indexOf(row);
+RowManager.prototype.scrollToRow = function(row, position, ifVisible){
+	var rowIndex = this.getDisplayRows().indexOf(row),
+	offset = 0;
 
 	if(rowIndex > -1){
+
+		if(typeof position === "undefined"){
+			position = this.table.options.scrollToRowPosition;
+		}
+
+		if(typeof ifVisible === "undefined"){
+			ifVisible = this.table.options.scrollToRowIfVisible;
+		}
+
+
+		if(position === "nearest"){
+			switch(this.renderMode){
+				case"classic":
+				position = Math.abs(this.element.scrollTop() - row.element.position().top) > Math.abs(this.element.scrollTop() + this.element[0].clientHeight - row.element.position().top) ? "bottom" : "top";
+				break;
+				case"virtual":
+				position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
+				break;
+			}
+		}
+
+		//check row visibility
+		if(!ifVisible){
+			if(row.element.is(":visible")){
+				offset = row.element.offset().top - this.element.offset().top;
+
+				if(offset > 0 && offset < this.element[0].clientHeight - row.element.outerHeight()){
+					return false;
+				}
+			}
+		}
+
+		//scroll to row
 		switch(this.renderMode){
 			case"classic":
 			this.element.scrollTop(row.element.offset().top - this.element.offset().top + this.element.scrollTop());
@@ -174,15 +214,48 @@ RowManager.prototype.scrollToRow = function(row){
 			this._virtualRenderFill(rowIndex, true);
 			break;
 		}
+
+		//align to correct position
+		switch(position){
+			case "middle":
+			case "center":
+			this.element.scrollTop(this.element.scrollTop() - (this.element[0].clientHeight / 2));
+			break;
+
+			case "bottom":
+			this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight + row.getElement().outerHeight());
+			break;
+		}
+
+		return true;
+
 	}else{
 		console.warn("Scroll Error - Row not visible");
+		return false;
 	}
 };
 
 
 ////////////////// Data Handling //////////////////
 
-RowManager.prototype.setData = function(data){
+RowManager.prototype.setData = function(data, renderInPosition){
+	var self = this;
+	if(renderInPosition && this.getDisplayRows().length){
+		if(self.table.options.pagination){
+			self._setDataActual(data, true);
+		}else{
+			this.reRenderInPosition(function(){
+				self._setDataActual(data);
+			});
+		}
+	}else{
+
+		this.resetScroll();
+		this._setDataActual(data);
+	}
+};
+
+RowManager.prototype._setDataActual = function(data, renderInPosition){
 	var self = this;
 
 	self.table.options.dataLoading(data);
@@ -214,11 +287,11 @@ RowManager.prototype.setData = function(data){
 
 		self.table.options.dataLoaded(data);
 
-		self.refreshActiveData();
+		self.refreshActiveData(false, false, renderInPosition);
 	}else{
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 	}
-};
+}
 
 RowManager.prototype.deleteRow = function(row){
 	var allIndex = this.rows.indexOf(row),
@@ -242,12 +315,16 @@ RowManager.prototype.deleteRow = function(row){
 		}
 	});
 
+	this.reRenderInPosition();
+
 	this.table.options.rowDeleted(row.getComponent());
 
 	this.table.options.dataEdited(this.getData());
 
 	if(this.table.options.groupBy && this.table.extExists("groupRows")){
 		this.table.extensions.groupRows.updateGroupRows(true);
+	}else if(this.table.options.pagination && this.table.extExists("page")){
+		this.refreshActiveData(false, false, true);
 	}else{
 		if(this.table.options.pagination && this.table.extExists("page")){
 			this.refreshActiveData("page");
@@ -273,8 +350,8 @@ RowManager.prototype.addRows = function(data, pos, index){
 	length = 0,
 	rows = [];
 
-	pos = this.findAddRowPos(pos);
 
+	pos = this.findAddRowPos(pos);
 
 	if(!Array.isArray(data)){
 		data = [data];
@@ -293,6 +370,8 @@ RowManager.prototype.addRows = function(data, pos, index){
 
 	if(this.table.options.groupBy && this.table.extExists("groupRows")){
 		this.table.extensions.groupRows.updateGroupRows(true);
+	}else if(this.table.options.pagination && this.table.extExists("page")){
+		this.refreshActiveData(false, false, true);
 	}else{
 		this.reRenderInPosition();
 	}
@@ -325,7 +404,29 @@ RowManager.prototype.findAddRowPos = function(pos){
 
 RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	var row = new Row(data || {}, this),
-	top = this.findAddRowPos(pos);
+	top = this.findAddRowPos(pos),
+	dispRows;
+
+	if(!index && this.table.options.pagination && this.table.options.paginationAddRow == "page"){
+		dispRows = this.getDisplayRows();
+
+		if(top){
+			if(dispRows.length){
+				index = dispRows[0];
+			}else{
+				if(activeRows.length){
+					index = activeRows[activeRows.length-1];
+					top = false;
+				}
+			}
+		}else{
+			if(dispRows.length){
+
+				index = dispRows[dispRows.length - 1];
+				top = true;
+			}
+		}
+	}
 
 	if(index){
 		index = this.findRow(index);
@@ -360,9 +461,8 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 		let allIndex = this.rows.indexOf(index),
 		activeIndex = this.activeRows.indexOf(index);
 
-
 		this.displayRowIterator(function(rows){
-			displayIndex = rows.indexOf(index);
+			var displayIndex = rows.indexOf(index);
 
 			if(displayIndex > -1){
 				rows.splice((top ? displayIndex : displayIndex + 1), 0, row);
@@ -378,6 +478,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 		}
 
 	}else{
+
 		if(top){
 
 			this.displayRowIterator(function(rows){
@@ -497,26 +598,36 @@ RowManager.prototype.getRowIndex = function(row){
 
 
 RowManager.prototype.getDisplayRowIndex = function(row){
-	return this.findRowIndex(row, this.getDisplayRows());
+	var index = this.getDisplayRows().indexOf(row);
+	return index > -1 ? index : false;
 };
 
-RowManager.prototype.nextDisplayRow = function(row){
+RowManager.prototype.nextDisplayRow = function(row, rowOnly){
 	var index = this.getDisplayRowIndex(row),
 	nextRow = false;
+
 
 	if(index !== false && index < this.displayRowsCount -1){
 		nextRow = this.getDisplayRows()[index+1];
 	}
 
+	if(nextRow && (!(nextRow instanceof Row) || nextRow.type != "row")){
+		return this.nextDisplayRow(nextRow, rowOnly);
+	}
+
 	return nextRow;
 };
 
-RowManager.prototype.prevDisplayRow = function(row){
+RowManager.prototype.prevDisplayRow = function(row, rowOnly){
 	var index = this.getDisplayRowIndex(row),
 	prevRow = false;
 
 	if(index){
 		prevRow = this.getDisplayRows()[index-1];
+	}
+
+	if(prevRow && (!(prevRow instanceof Row) || prevRow.type != "row")){
+		return this.prevDisplayRow(prevRow, rowOnly);
 	}
 
 	return prevRow;
@@ -539,14 +650,14 @@ RowManager.prototype.findRowIndex = function(row, list){
 };
 
 
-RowManager.prototype.getData = function(active){
+RowManager.prototype.getData = function(active, transform){
 	var self = this,
 	output = [];
 
 	var rows = active ? self.activeRows : self.rows;
 
 	rows.forEach(function(row){
-		output.push(row.getData(true));
+		output.push(row.getData(transform || "data"));
 	});
 
 	return output;
@@ -784,7 +895,7 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			skipStage = false;
 		}
 
-		if(table.options.pagination && table.extExists("page")){
+		if(table.options.pagination && table.extExists("page") && !renderInPosition){
 			if(table.extensions.page.getMode() == "local"){
 				table.extensions.page.reset();
 			}
@@ -895,7 +1006,7 @@ RowManager.prototype.getDisplayRows = function(index){
 
 //repeat action accross display rows
 RowManager.prototype.displayRowIterator = function(callback){
-	this.displayRows.forEach(callback(rows));
+	this.displayRows.forEach(callback);
 
 	this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;
 }
@@ -908,7 +1019,7 @@ RowManager.prototype.getRows = function(){
 ///////////////// Table Rendering /////////////////
 
 //trigger rerender of table in current position
-RowManager.prototype.reRenderInPosition = function(){
+RowManager.prototype.reRenderInPosition = function(callback){
 	if(this.getRenderMode() == "virtual"){
 
 		var scrollTop = this.element.scrollTop();
@@ -931,6 +1042,10 @@ RowManager.prototype.reRenderInPosition = function(){
 					break;
 				}
 			}
+		}
+
+		if(callback){
+			callback();
 		}
 
 		this._virtualRenderFill((topRow === false ? this.displayRowsCount - 1 : topRow), true, topOffset || 0);
@@ -1373,7 +1488,10 @@ RowManager.prototype.normalizeHeight = function(){
 RowManager.prototype.adjustTableSize = function(){
 	var self = this;
 
+
 	if(this.renderMode === "virtual"){
+		self.height = self.element.innerHeight();
+		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
 
 		let otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
 
@@ -1382,9 +1500,6 @@ RowManager.prototype.adjustTableSize = function(){
 			"height":"calc(100% - " + otherHeight + "px)",
 			"max-height":"calc(100% - " + otherHeight + "px)",
 		});
-
-		self.height = self.element.innerHeight();
-		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
 	}
 };
 

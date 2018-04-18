@@ -5,10 +5,14 @@ var SelectRow = function(table){
 	this.selectedRows = []; //hold selected rows
 };
 
-SelectRow.prototype.clearSelectionData = function(){
+SelectRow.prototype.clearSelectionData = function(silent){
 	this.selecting = false;
 	this.selectPrev = [];
 	this.selectedRows = [];
+
+	if(!silent){
+		this._rowSelectionChanged();
+	}
 };
 
 SelectRow.prototype.initializeRow = function(row){
@@ -143,16 +147,18 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 	var row = self.table.rowManager.findRow(rowInfo);
 
 	if(row){
-		var self = this;
+		if(self.selectedRows.indexOf(row) == -1){
+			var self = this;
 
-		row.extensions.select.selected = true;
-		row.getElement().addClass("tabulator-selected");
+			row.extensions.select.selected = true;
+			row.getElement().addClass("tabulator-selected");
 
-		self.selectedRows.push(row);
+			self.selectedRows.push(row);
 
-		if(!silent){
-			self.table.options.rowSelected(row.getComponent());
-			self._rowSelectionChanged();
+			if(!silent){
+				self.table.options.rowSelected(row.getComponent());
+				self._rowSelectionChanged();
+			}
 		}
 	}else{
 		if(!silent){

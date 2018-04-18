@@ -124,21 +124,45 @@ Cell.prototype._configureCell = function(){
 	}
 
 	//set event bindings
-	if (cellEvents.cellClick){
+	if (cellEvents.cellClick || self.table.options.cellClick){
 		self.element.on("click", function(e){
-			cellEvents.cellClick(e, self.getComponent());
+			var component = self.getComponent();
+
+			if(cellEvents.cellClick){
+				cellEvents.cellClick(e, component);
+			}
+
+			if(self.table.options.cellClick){
+				self.table.options.cellClick(e, component);
+			}
 		});
 	}
 
-	if (cellEvents.cellDblClick){
+	if (cellEvents.cellDblClick || this.table.options.cellDblClick){
 		self.element.on("dblclick", function(e){
-			cellEvents.cellDblClick(e, self.getComponent());
+			var component = self.getComponent();
+
+			if(cellEvents.cellDblClick){
+				cellEvents.cellDblClick(e, component);
+			}
+
+			if(self.table.options.cellDblClick){
+				self.table.options.cellDblClick(e, component);
+			}
 		});
 	}
 
-	if (cellEvents.cellContext){
+	if (cellEvents.cellContext || this.table.options.cellContext){
 		self.element.on("contextmenu", function(e){
-			cellEvents.cellContext(e, self.getComponent());
+			var component = self.getComponent();
+
+			if(cellEvents.cellContext){
+				cellEvents.cellContext(e, component);
+			}
+
+			if(self.table.options.cellContext){
+				self.table.options.cellContext(e, component);
+			}
 		});
 	}
 
@@ -149,7 +173,7 @@ Cell.prototype._configureCell = function(){
 		});
 	}
 
-	if (cellEvents.cellTap){
+	if (cellEvents.cellTap || this.table.options.cellTap){
 		tap = false;
 
 		self.element.on("touchstart", function(e){
@@ -158,14 +182,22 @@ Cell.prototype._configureCell = function(){
 
 		self.element.on("touchend", function(e){
 			if(tap){
-				cellEvents.cellTap(e, self.getComponent());
+				var component = self.getComponent();
+
+				if(cellEvents.cellTap){
+					cellEvents.cellTap(e, component);
+				}
+
+				if(self.table.options.cellTap){
+					self.table.options.cellTap(e, component);
+				}
 			}
 
 			tap = false;
 		});
 	}
 
-	if (cellEvents.cellDblTap){
+	if (cellEvents.cellDblTap || this.table.options.cellDblTap){
 		dblTap = null;
 
 		self.element.on("touchend", function(e){
@@ -174,7 +206,15 @@ Cell.prototype._configureCell = function(){
 				clearTimeout(dblTap);
 				dblTap = null;
 
-				cellEvents.cellDblTap(e, self.getComponent());
+				var component = self.getComponent();
+
+				if(cellEvents.cellDblTap){
+					cellEvents.cellDblTap(e, component);
+				}
+
+				if(self.table.options.cellDblTap){
+					self.table.options.cellDblTap(e, component);
+				}
 			}else{
 
 				dblTap = setTimeout(function(){
@@ -186,7 +226,7 @@ Cell.prototype._configureCell = function(){
 		});
 	}
 
-	if (cellEvents.cellTapHold){
+	if (cellEvents.cellTapHold || this.table.options.cellTapHold){
 		tapHold = null;
 
 		self.element.on("touchstart", function(e){
@@ -196,7 +236,15 @@ Cell.prototype._configureCell = function(){
 				clearTimeout(tapHold);
 				tapHold = null;
 				tap = false;
-				cellEvents.cellTapHold(e, self.getComponent());
+				var component = self.getComponent();
+
+				if(cellEvents.cellTapHold){
+					cellEvents.cellTapHold(e, component);
+				}
+
+				if(self.table.options.cellTapHold){
+					self.table.options.cellTapHold(e, component);
+				}
 			}, 1000)
 
 		});
@@ -312,7 +360,7 @@ Cell.prototype.setValueProcessData = function(value, mutate){
 		changed = true;
 
 		if(mutate){
-			if(this.column.extensions.mutate && this.column.extensions.mutate.type !== "data"){
+			if(this.column.extensions.mutate){
 				value = this.table.extensions.mutator.transformCell(this, value);
 			}
 		}
@@ -424,12 +472,11 @@ Cell.prototype.nav = function(){
 
 	return {
 		next:function(){
-
 			var nextCell = this.right(),
 			nextRow;
 
 			if(!nextCell){
-				nextRow = self.table.rowManager.nextDisplayRow(self.row);
+				nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
 
 				if(nextRow){
 					nextCell = nextRow.findNextEditableCell(-1);
@@ -444,14 +491,13 @@ Cell.prototype.nav = function(){
 			}
 
 			return false;
-
 		},
 		prev:function(){
 			var nextCell = this.left(),
 			prevRow;
 
 			if(!nextCell){
-				prevRow = self.table.rowManager.prevDisplayRow(self.row);
+				prevRow = self.table.rowManager.prevDisplayRow(self.row, true);
 
 				if(prevRow){
 					nextCell = prevRow.findPrevEditableCell(prevRow.cells.length);
@@ -467,7 +513,6 @@ Cell.prototype.nav = function(){
 			}
 
 			return false;
-
 		},
 		left:function(){
 
@@ -479,7 +524,6 @@ Cell.prototype.nav = function(){
 			}else{
 				return false;
 			}
-
 		},
 		right:function(){
 			nextCell = self.row.findNextEditableCell(index);
@@ -492,14 +536,14 @@ Cell.prototype.nav = function(){
 			}
 		},
 		up:function(){
-			var nextRow = self.table.rowManager.prevDisplayRow(self.row);
+			var nextRow = self.table.rowManager.prevDisplayRow(self.row, true);
 
 			if(nextRow){
 				nextRow.cells[index].edit();
 			}
 		},
 		down:function(){
-			var nextRow = self.table.rowManager.nextDisplayRow(self.row);
+			var nextRow = self.table.rowManager.nextDisplayRow(self.row, true);
 
 			if(nextRow){
 				nextRow.cells[index].edit();
