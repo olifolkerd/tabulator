@@ -4576,7 +4576,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     Row.prototype.calcHeight = function () {
 
-      var maxHeight = 0;
+      var maxHeight = 0,
+          minHeight = this.element[0].clientHeight;
 
       this.cells.forEach(function (cell) {
 
@@ -4588,7 +4589,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
       });
 
-      this.height = maxHeight;
+      this.height = Math.max(maxHeight, minHeight);
 
       this.outerHeight = this.element[0].offsetHeight;
     };
