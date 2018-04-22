@@ -8371,7 +8371,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!connections.length && selectors) {
 
-        console.log("Table Connection Error - No tables matching selector found", selectors);
+        console.warn("Table Connection Error - No tables matching selector found", selectors);
       }
     };
 

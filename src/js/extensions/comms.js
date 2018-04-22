@@ -32,7 +32,7 @@ Comms.prototype.send = function(selectors, extension, action, data){
 	});
 
 	if(!connections.length && selectors){
-		console.log("Table Connection Error - No tables matching selector found", selectors);
+		console.warn("Table Connection Error - No tables matching selector found", selectors);
 	}
 }
 
