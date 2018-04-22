@@ -15910,9 +15910,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       this._unbindMouseMove();
 
-      this.placeholderElement.after(this.moving.getElement());
+      if (!this.connection) {
 
-      this.placeholderElement.detach();
+        this.placeholderElement.after(this.moving.getElement());
+
+        this.placeholderElement.detach();
+      }
 
       this.hoverElement.detach();
 

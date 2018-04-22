@@ -160,7 +160,6 @@ MoveRows.prototype.startMove = function(e, row){
 		this._bindMouseMove();
 	}
 
-
 	$("body").on("mousemove", this.moveHover);
 	$("body").on("mouseup", this.endMove);
 
@@ -185,8 +184,11 @@ MoveRows.prototype.setStartPosition = function(e, row){
 MoveRows.prototype.endMove = function(column){
 	this._unbindMouseMove();
 
-	this.placeholderElement.after(this.moving.getElement());
-	this.placeholderElement.detach();
+	if(!this.connection){
+		this.placeholderElement.after(this.moving.getElement());
+		this.placeholderElement.detach();
+	}
+
 	this.hoverElement.detach();
 
 	this.table.element.removeClass("tabulator-block-select");
