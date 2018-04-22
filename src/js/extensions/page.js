@@ -449,12 +449,12 @@ Page.prototype._parseRemoteData = function(data){
 Page.prototype.footerRedraw = function(){
 	var footer = this.table.footerManager.element;
 
-	if((footer.innerWidth() - footer[0].scrollWidth) < 0){
+	if((Math.ceil(footer.innerWidth()) - footer[0].scrollWidth) < 0){
 		this.pagesElement.hide();
 	}else{
 		this.pagesElement.show();
 
-		if((footer.innerWidth() - footer[0].scrollWidth) < 0){
+		if((Math.ceil(footer.innerWidth()) - footer[0].scrollWidth) < 0){
 			this.pagesElement.hide();
 		}
 	}

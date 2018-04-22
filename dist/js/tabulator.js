@@ -17038,14 +17038,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var footer = this.table.footerManager.element;
 
-      if (footer.innerWidth() - footer[0].scrollWidth < 0) {
+      if (Math.ceil(footer.innerWidth()) - footer[0].scrollWidth < 0) {
 
         this.pagesElement.hide();
       } else {
 
         this.pagesElement.show();
 
-        if (footer.innerWidth() - footer[0].scrollWidth < 0) {
+        if (Math.ceil(footer.innerWidth()) - footer[0].scrollWidth < 0) {
 
           this.pagesElement.hide();
         }
