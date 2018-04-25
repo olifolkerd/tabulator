@@ -5900,7 +5900,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         paginationSize: false, //set number of rows to a page
 
-        paginationButtonCount: 5, // set count of page button 
+        paginationButtonCount: 5, // set count of page button
 
         paginationElement: false, //element to hold pagination numbers
 
@@ -7489,9 +7489,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        if (this.table.extExists("edit", true)) {
+        if (this.extExists("edit", true)) {
 
-          cell = this.table.extensions.edit.currentCell;
+          cell = this.extensions.edit.currentCell;
 
           if (cell) {
 
@@ -7508,9 +7508,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        if (this.table.extExists("edit", true)) {
+        if (this.extExists("edit", true)) {
 
-          cell = this.table.extensions.edit.currentCell;
+          cell = this.extensions.edit.currentCell;
 
           if (cell) {
 
@@ -7527,9 +7527,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        if (this.table.extExists("edit", true)) {
+        if (this.extExists("edit", true)) {
 
-          cell = this.table.extensions.edit.currentCell;
+          cell = this.extensions.edit.currentCell;
 
           if (cell) {
 
@@ -7546,9 +7546,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        if (this.table.extExists("edit", true)) {
+        if (this.extExists("edit", true)) {
 
-          cell = this.table.extensions.edit.currentCell;
+          cell = this.extensions.edit.currentCell;
 
           if (cell) {
 
@@ -7565,9 +7565,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        if (this.table.extExists("edit", true)) {
+        if (this.extExists("edit", true)) {
 
-          cell = this.table.extensions.edit.currentCell;
+          cell = this.extensions.edit.currentCell;
 
           if (cell) {
 
@@ -7584,9 +7584,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         var cell = false;
 
-        if (this.table.extExists("edit", true)) {
+        if (this.extExists("edit", true)) {
 
-          cell = this.table.extensions.edit.currentCell;
+          cell = this.extensions.edit.currentCell;
 
           if (cell) {
 

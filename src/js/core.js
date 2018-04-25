@@ -96,7 +96,7 @@
 
 	 			pagination:false, //set pagination type
 				paginationSize:false, //set number of rows to a page
-				paginationButtonCount: 5, // set count of page button 
+				paginationButtonCount: 5, // set count of page button
 	 			paginationElement:false, //element to hold pagination numbers
 	 			paginationDataSent:{}, //pagination data sent to the server
 	 			paginationDataReceived:{}, //pagination data received from the server
@@ -1242,8 +1242,8 @@
 	 		navigatePrev:function(){
 	 			var cell = false;
 
-	 			if(this.table.extExists("edit", true)){
-	 				cell = this.table.extensions.edit.currentCell;
+	 			if(this.extExists("edit", true)){
+	 				cell = this.extensions.edit.currentCell;
 
 	 				if(cell){
 	 					e.preventDefault();
@@ -1257,8 +1257,8 @@
 	 		navigateNext:function(){
 	 			var cell = false;
 
-	 			if(this.table.extExists("edit", true)){
-	 				cell = this.table.extensions.edit.currentCell;
+	 			if(this.extExists("edit", true)){
+	 				cell = this.extensions.edit.currentCell;
 
 	 				if(cell){
 	 					e.preventDefault();
@@ -1272,8 +1272,8 @@
 	 		navigateLeft:function(){
 	 			var cell = false;
 
-	 			if(this.table.extExists("edit", true)){
-	 				cell = this.table.extensions.edit.currentCell;
+	 			if(this.extExists("edit", true)){
+	 				cell = this.extensions.edit.currentCell;
 
 	 				if(cell){
 	 					e.preventDefault();
@@ -1287,8 +1287,8 @@
 	 		navigateRight:function(){
 	 			var cell = false;
 
-	 			if(this.table.extExists("edit", true)){
-	 				cell = this.table.extensions.edit.currentCell;
+	 			if(this.extExists("edit", true)){
+	 				cell = this.extensions.edit.currentCell;
 
 	 				if(cell){
 	 					e.preventDefault();
@@ -1302,8 +1302,8 @@
 	 		navigateUp:function(){
 	 			var cell = false;
 
-	 			if(this.table.extExists("edit", true)){
-	 				cell = this.table.extensions.edit.currentCell;
+	 			if(this.extExists("edit", true)){
+	 				cell = this.extensions.edit.currentCell;
 
 	 				if(cell){
 	 					e.preventDefault();
@@ -1317,8 +1317,8 @@
 	 		navigateDown:function(){
 	 			var cell = false;
 
-	 			if(this.table.extExists("edit", true)){
-	 				cell = this.table.extensions.edit.currentCell;
+	 			if(this.extExists("edit", true)){
+	 				cell = this.extensions.edit.currentCell;
 
 	 				if(cell){
 	 					e.preventDefault();
