@@ -25,11 +25,11 @@ Clipboard.prototype.initialize = function(){
 
 				data = self.generateContent()
 
-				if (window.clipboardData && window.clipboardData.getData) {
+				if (window.clipboardData && window.clipboardData.setData) {
 					window.clipboardData.setData('Text', data);
-				} else if (e.clipboardData && e.clipboardData.getData) {
+				} else if (e.clipboardData && e.clipboardData.setData) {
 					e.clipboardData.setData('text/plain', data);
-				} else if (e.originalEvent && e.originalEvent.clipboardData.getData) {
+				} else if (e.originalEvent && e.originalEvent.clipboardData.setData) {
 					e.originalEvent.clipboardData.setData('text/plain', data);
 				}
 
