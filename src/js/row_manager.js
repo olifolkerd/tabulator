@@ -1289,7 +1289,9 @@ RowManager.prototype.scrollVertical = function(dir){
 
 	if(-topDiff > margin || bottomDiff > margin){
 		//if big scroll redraw table;
+		var left = this.scrollLeft;
 		this._virtualRenderFill(Math.floor((this.element[0].scrollTop / this.element[0].scrollHeight) * this.displayRowsCount));
+		this.scrollHorizontal(left);
 	}else{
 
 		if(dir){
