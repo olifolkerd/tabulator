@@ -414,16 +414,15 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 			if(dispRows.length){
 				index = dispRows[0];
 			}else{
-				if(activeRows.length){
-					index = activeRows[activeRows.length-1];
+				if(this.activeRows.length){
+					index = this.activeRows[this.activeRows.length-1];
 					top = false;
 				}
 			}
 		}else{
 			if(dispRows.length){
-
 				index = dispRows[dispRows.length - 1];
-				top = true;
+				top = dispRows.length < this.table.extensions.page.getPageSize() ? false : true;
 			}
 		}
 	}

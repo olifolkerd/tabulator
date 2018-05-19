@@ -2780,9 +2780,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             index = dispRows[0];
           } else {
 
-            if (activeRows.length) {
+            if (this.activeRows.length) {
 
-              index = activeRows[activeRows.length - 1];
+              index = this.activeRows[this.activeRows.length - 1];
 
               top = false;
             }
@@ -2793,7 +2793,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             index = dispRows[dispRows.length - 1];
 
-            top = true;
+            top = dispRows.length < this.table.extensions.page.getPageSize() ? false : true;
           }
         }
       }
