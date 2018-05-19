@@ -11981,7 +11981,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           //change text inputs to search inputs to allow for clearing of field
 
 
-          if (attrType == "text") {
+          if (attrType == "text" && this.table.browser !== "ie") {
 
             editorElement.attr("type", "search");
 

@@ -195,6 +195,13 @@ $footerSeperatorColor:$table-border-color; //footer bottom seperator color
 				svg{
 					margin-top: 3px;
 				}
+
+				input{
+					&::-ms-clear {
+					  width : 0;
+					  height: 0;
+					}
+				}
 			}
 
 

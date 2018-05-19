@@ -127,6 +127,11 @@
   margin-top: 3px;
 }
 
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input::-ms-clear {
+  width: 0;
+  height: 0;
+}
+
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
   padding-right: 25px;
 }

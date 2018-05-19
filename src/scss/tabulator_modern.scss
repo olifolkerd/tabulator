@@ -206,6 +206,13 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 				svg{
 					margin-top: 3px;
 				}
+
+				input{
+					&::-ms-clear {
+					  width : 0;
+					  height: 0;
+					}
+				}
 			}
 
 			//styling child elements for sortable columns

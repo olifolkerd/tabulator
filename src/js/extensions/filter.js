@@ -177,7 +177,7 @@ Filter.prototype.initializeColumn = function(column){
 			}
 
 			//change text inputs to search inputs to allow for clearing of field
-			if(attrType == "text"){
+			if(attrType == "text" && this.table.browser !== "ie"){
 				editorElement.attr("type", "search");
 				editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
 			}
