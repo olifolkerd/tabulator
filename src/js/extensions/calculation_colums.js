@@ -246,8 +246,7 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 				//generate cell and assign to correct column
 				var cell = new Cell(self.genColumn, row);
 				cell.column = column;
-
-				cell.setWidth(column.getWidth());
+				cell.setWidth(column.width);
 
 				column.cells.push(cell);
 				cells.push(cell);

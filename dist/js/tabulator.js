@@ -9217,7 +9217,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             cell.column = column;
 
-            cell.setWidth(column.getWidth());
+            cell.setWidth(column.width);
 
             column.cells.push(cell);
 
