@@ -9500,7 +9500,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             data = self.generateContent();
 
-            e.originalEvent.clipboardData.setData('text/plain', data);
+            if (window.clipboardData && window.clipboardData.getData) {
+
+              window.clipboardData.setData('Text', data);
+            } else if (e.clipboardData && e.clipboardData.getData) {
+
+              e.clipboardData.setData('text/plain', data);
+            } else if (e.originalEvent && e.originalEvent.clipboardData.getData) {
+
+              e.originalEvent.clipboardData.setData('text/plain', data);
+            }
 
             self.table.options.clipboardCopied(data);
 
