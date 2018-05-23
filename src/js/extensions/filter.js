@@ -559,7 +559,10 @@ Filter.prototype.filters ={
 		if(filterVal === null || typeof filterVal === "undefined"){
 			return rowVal === filterVal ? true : false;
 		}else{
-			return rowVal.toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
+			if(typeof rowVal != 'undefined' && rowVal)
+				return rowVal.toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
+			else
+				return false;
 		}
 	},
 
