@@ -426,7 +426,7 @@ Row.prototype.getData = function(transform){
 			return self.table.extensions.accessor.transformRow(self.data, transform);
 		}
 	}else{
-		return this.data;
+		return Object.assign({}, this.data);
 	}
 
 };
