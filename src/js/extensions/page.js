@@ -219,7 +219,7 @@ Page.prototype._setPageButtons = function(){
 
 Page.prototype._generatePageButton = function(page){
 	var self = this;
-	var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' type='button' arpagea-label='Show Page " + page + "'>" + page + "</button>");
+	var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' type='button' aria-label='Show Page " + page + "'>" + page + "</button>");
 
 	button.on("click", function(e){
 		self.setPage(page);
