@@ -4,10 +4,10 @@ var Page = function(table){
 
 	this.element = $("<span class='tabulator-paginator'></span>");
 	this.pagesElement = $("<span class='tabulator-pages'></span>");
-	this.firstBut = $("<button class='tabulator-page' data-page='first' type='button' aria-label='' title='' type='button'></button>");
-	this.prevBut = $("<button class='tabulator-page' data-page='prev' type='button' aria-label='' title='' type='button'></button>");
-	this.nextBut = $("<button class='tabulator-page' data-page='next' type='button' aria-label='' title='' type='button'></button>");
-	this.lastBut = $("<button class='tabulator-page' data-page='last' type='button' aria-label='' title='' type='button'></button>");
+	this.firstBut = $("<button class='tabulator-page' data-page='first' role='button' aria-label='' title='' type='button'></button>");
+	this.prevBut = $("<button class='tabulator-page' data-page='prev' role='button' aria-label='' title='' type='button'></button>");
+	this.nextBut = $("<button class='tabulator-page' data-page='next' role='button' aria-label='' title='' type='button'></button>");
+	this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title='' type='button'></button>");
 
 	this.mode = "local";
 	this.progressiveLoad = false;
@@ -219,7 +219,7 @@ Page.prototype._setPageButtons = function(){
 
 Page.prototype._generatePageButton = function(page){
 	var self = this;
-	var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' type='button' arpagea-label='Show Page " + page + "'>" + page + "</button>");
+	var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' type='button' arpagea-label='Show Page " + page + "'>" + page + "</button>");
 
 	button.on("click", function(e){
 		self.setPage(page);
