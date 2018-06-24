@@ -305,7 +305,11 @@ Group.prototype.removeGroup = function(group){
 		}
 
 		if(!this.groupList.length){
-			this.parent.removeGroup();
+			if(this.parent){
+				this.parent.removeGroup(this);
+			}else{
+				this.groupManager.removeGroup(this);
+			}
 		}
 	}
 }

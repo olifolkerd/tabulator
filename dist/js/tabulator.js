@@ -13876,7 +13876,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (!this.groupList.length) {
 
-          this.parent.removeGroup();
+          if (this.parent) {
+
+            this.parent.removeGroup(this);
+          } else {
+
+            this.groupManager.removeGroup(this);
+          }
         }
       }
     };
