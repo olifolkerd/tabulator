@@ -2021,8 +2021,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         width = Math.floor(this.table.element.innerWidth() / 100 * parseInt(width));
       }
 
-      console.log;
-
       width = Math.max(this.minWidth, width);
 
       this.width = width;
