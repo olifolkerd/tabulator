@@ -390,9 +390,30 @@ Group.prototype.hide = function(){
 
 		this.element.removeClass("tabulator-group-visible");
 
-		this.rows.forEach(function(row){
-			row.getElement().detach();
-		});
+		if(this.groupList.length){
+			this.groupList.forEach(function(group){
+
+				if(group.calcs.top){
+					console.log("det", "top")
+					group.calcs.top.getElement().detach();
+				}
+
+				if(group.calcs.bottom){
+					console.log("det", "bottom")
+					group.calcs.bottom.getElement().detach();
+				}
+
+				var rows = group.getHeadersAndRows();
+
+				rows.forEach(function(row){
+					row.getElement().detach();
+				});
+			});
+		}else{
+			this.rows.forEach(function(row){
+				row.getElement().detach();
+			});
+		}
 	}else{
 		this.groupManager.updateGroupRows(true);
 	}
@@ -409,10 +430,26 @@ Group.prototype.show = function(){
 
 		this.element.addClass("tabulator-group-visible");
 
-		self.rows.forEach(function(row){
-			self.getElement().after(row.getElement());
-			row.initialize();
-		});
+		var prev = self.getElement();
+
+		if(this.groupList.length){
+			this.groupList.forEach(function(group){
+				var rows = group.getHeadersAndRows();
+
+				rows.forEach(function(row){
+					prev.after(row.getElement());
+					row.initialize();
+					prev = row.getElement();
+				});
+			});
+
+		}else{
+			self.rows.forEach(function(row){
+				prev.after(row.getElement());
+				row.initialize();
+				prev = row.getElement();
+			});
+		}
 	}else{
 		this.groupManager.updateGroupRows(true);
 	}
