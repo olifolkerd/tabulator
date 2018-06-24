@@ -17038,6 +17038,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             this.table.rowManager.scrollHorizontal(left);
 
+            this.table.columnManager.scrollHorizontal(left);
+
             this.table.options.pageLoaded(this.getPage());
           }
         } else {

@@ -431,6 +431,8 @@ Page.prototype._parseRemoteData = function(data){
 
 				this.table.rowManager.scrollHorizontal(left);
 
+				this.table.columnManager.scrollHorizontal(left); 
+
 				this.table.options.pageLoaded(this.getPage());
 			}
 
