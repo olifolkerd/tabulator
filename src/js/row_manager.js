@@ -1528,7 +1528,7 @@ RowManager.prototype.redraw = function (force){
 
 	if(!force){
 
-		if(self.renderMode == "simple"){
+		if(self.renderMode == "classic"){
 			this._simpleRender();
 		}else{
 			this.reRenderInPosition();

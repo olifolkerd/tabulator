@@ -4202,7 +4202,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (!force) {
 
-        if (self.renderMode == "simple") {
+        if (self.renderMode == "classic") {
 
           this._simpleRender();
         } else {
