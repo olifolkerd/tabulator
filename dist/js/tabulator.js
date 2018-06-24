@@ -9868,7 +9868,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
               value = "";
             }
 
-            value = typeof value == "undefined" ? "" : value.toString();
+            value = typeof value == "undefined" || value === null ? "" : value.toString();
 
             if (value.match(/\r|\n/)) {
 
@@ -12481,7 +12481,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           return rowVal === filterVal ? true : false;
         } else {
 
-          return rowVal.toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
+          if (typeof rowVal !== 'undefined' && rowVal !== null) {
+
+            return String(rowVal).toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
+          } else {
+
+            return false;
+          }
         }
       },
 
@@ -16735,7 +16741,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       var self = this;
 
-      var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' arpagea-label='Show Page " + page + "'>" + page + "</button>");
+      var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' type='button' aria-label='Show Page " + page + "'>" + page + "</button>");
 
       button.on("click", function (e) {
 

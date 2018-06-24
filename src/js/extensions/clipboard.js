@@ -297,10 +297,10 @@ Clipboard.prototype.copyFormatters = {
 		data.forEach(function(row){
 			row.forEach(function(value){
 				if(typeof value == "undefined"){
-					value = ""
+					value = "";
 				}
 
-				value = typeof value == "undefined" ? "" : value.toString();
+				value = typeof value == "undefined" || value === null ? "" : value.toString();
 
 				if(value.match(/\r|\n/)){
 					value = value.split('"').join('""');
