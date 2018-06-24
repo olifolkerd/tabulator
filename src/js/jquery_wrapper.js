@@ -22,11 +22,7 @@
  		factory(jQuery);
  	}
  }(function ($, undefined) {
-
- 	/*=include core.js */
-
  	$.widget("ui.tabulator", Tabulator);
-
  }));
 
 
