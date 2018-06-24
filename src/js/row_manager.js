@@ -670,10 +670,10 @@ RowManager.prototype.getHtml = function(active){
 	table = "";
 
 		//build header row
-		this.table.columnManager.getComponents().forEach(function(column){
+		this.table.columnManager.getColumns().forEach(function(column){
 			var def = column.getDefinition();
 
-			if(column.getVisibility() && !def.hideInHtml){
+			if(column.visible && !def.hideInHtml){
 				header += `<th>${(def.title || "")}</th>`;
 				columns.push(column);
 			}
@@ -684,11 +684,13 @@ RowManager.prototype.getHtml = function(active){
 			var row = "";
 
 			columns.forEach(function(column){
-				var value = typeof rowData[column.getField()] === "undefined" ? "" : rowData[column.getField()] ;
+				var value = column.getFieldValue(rowData);
 
-				if(column.getVisibility()){
-					row += `<td>${value}</td>`;
+				if(typeof value === "undefined" || value === null){
+					value = ":";
 				}
+
+				row += `<td>${value}</td>`;
 			});
 
 			body += `<tr>${row}</tr>`;

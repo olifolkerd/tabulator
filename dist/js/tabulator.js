@@ -3091,11 +3091,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       //build header row
 
-      this.table.columnManager.getComponents().forEach(function (column) {
+      this.table.columnManager.getColumns().forEach(function (column) {
 
         var def = column.getDefinition();
 
-        if (column.getVisibility() && !def.hideInHtml) {
+        if (column.visible && !def.hideInHtml) {
 
           header += '<th>' + (def.title || "") + '</th>';
 
@@ -3111,12 +3111,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         columns.forEach(function (column) {
 
-          var value = typeof rowData[column.getField()] === "undefined" ? "" : rowData[column.getField()];
+          var value = column.getFieldValue(rowData);
 
-          if (column.getVisibility()) {
+          if (typeof value === "undefined" || value === null) {
 
-            row += '<td>' + value + '</td>';
+            value = ":";
           }
+
+          row += '<td>' + value + '</td>';
         });
 
         body += '<tr>' + row + '</tr>';
