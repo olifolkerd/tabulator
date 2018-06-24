@@ -3645,6 +3645,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (self.table.options.placeholder) {
 
+          if (this.renderMode) {
+
+            self.table.options.placeholder.attr("tabulator-render-mode", this.renderMode);
+          }
+
           self.getElement().append(self.table.options.placeholder);
         }
       }

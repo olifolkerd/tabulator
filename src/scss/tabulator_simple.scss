@@ -301,14 +301,17 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 		//default placeholder element
 		.tabulator-placeholder{
-			position: absolute;
 			box-sizing:border-box;
 			display: flex;
 			align-items:center;
 
-			top:0;
-			left:0;
-			height:100%;
+			&[tabulator-render-mode="virtual"]{
+				position: absolute;
+				top:0;
+				left:0;
+				height:100%;
+			}
+
 			width:100%;
 
 			span{

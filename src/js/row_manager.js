@@ -1103,6 +1103,11 @@ RowManager.prototype.renderTable = function(){
 
 	if(!self.displayRowsCount){
 		if(self.table.options.placeholder){
+
+			if(this.renderMode){
+				self.table.options.placeholder.attr("tabulator-render-mode", this.renderMode)
+			}
+
 			self.getElement().append(self.table.options.placeholder);
 		}
 	}
