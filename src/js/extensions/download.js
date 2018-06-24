@@ -276,27 +276,7 @@ Download.prototype.downloaders = {
 				var sheet = {};
 				var range = {s: {c:0, r:0}, e: {c:fields.length, r:rows.length }};
 
-				rows.forEach(function(row, i){
-					row.forEach(function(value, j){
-						var cell = {v: typeof value == "undefined" || value === null ? "" : value};
-
-						if(cell != null){
-							switch(typeof cell.v){
-								case "number":
-								cell.t = 'n';
-								break;
-								case "boolean":
-								cell.t = 'b';
-								break;
-								default:
-								cell.t = 's';
-								break;
-							}
-
-							sheet[XLSX.utils.encode_cell({c:j,r:i})] = cell
-						}
-					});
-				});
+				XLSX.utils.sheet_add_aoa(sheet, rows);
 
 				sheet['!ref'] = XLSX.utils.encode_range(range);
 
