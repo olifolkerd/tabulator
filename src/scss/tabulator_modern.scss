@@ -407,7 +407,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			width:calc("100% + 20px");
+			width:calc(100% + 20px);
 			margin:-5px -10px 5px -10px;
 
 			text-align: left;
