@@ -1123,11 +1123,24 @@ RowManager.prototype._simpleRender = function(){
 	self._clearVirtualDom();
 
 	if(self.displayRowsCount){
+
+		var onlyGroupHeaders = true;
+
 		self.getDisplayRows().forEach(function(row, index){
 			self.styleRow(row, index);
 			element.append(row.getElement());
 			row.initialize(true);
+
+			if(row.type !== "group"){
+				onlyGroupHeaders = false;
+			}
 		});
+
+		if(onlyGroupHeaders){
+			self.tableElement.css({
+				"min-width":self.table.columnManager.getWidth(),
+			});
+		}
 	}else{
 		self.renderEmptyScroll();
 	}
@@ -1136,6 +1149,7 @@ RowManager.prototype._simpleRender = function(){
 //show scrollbars on empty table div
 RowManager.prototype.renderEmptyScroll = function(){
 	var self = this;
+
 	self.tableElement.css({
 		"min-width":self.table.columnManager.getWidth(),
 		"min-height":"1px",
@@ -1529,7 +1543,13 @@ RowManager.prototype.redraw = function (force){
 	if(!force){
 
 		if(self.renderMode == "classic"){
-			this._simpleRender();
+
+			if(self.table.options.groupBy){
+				self.refreshActiveData("group", false, false);
+			}else{
+				this._simpleRender();
+			}
+
 		}else{
 			this.reRenderInPosition();
 			this.scrollHorizontal(left);

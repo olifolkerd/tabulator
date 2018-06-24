@@ -394,12 +394,10 @@ Group.prototype.hide = function(){
 			this.groupList.forEach(function(group){
 
 				if(group.calcs.top){
-					console.log("det", "top")
 					group.calcs.top.getElement().detach();
 				}
 
 				if(group.calcs.bottom){
-					console.log("det", "bottom")
 					group.calcs.bottom.getElement().detach();
 				}
 
@@ -409,11 +407,15 @@ Group.prototype.hide = function(){
 					row.getElement().detach();
 				});
 			});
+
 		}else{
 			this.rows.forEach(function(row){
 				row.getElement().detach();
 			});
 		}
+
+		this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex())
+
 	}else{
 		this.groupManager.updateGroupRows(true);
 	}
@@ -450,6 +452,8 @@ Group.prototype.show = function(){
 				prev = row.getElement();
 			});
 		}
+
+		this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex())
 	}else{
 		this.groupManager.updateGroupRows(true);
 	}

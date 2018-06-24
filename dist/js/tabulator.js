@@ -3668,6 +3668,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
       if (self.displayRowsCount) {
 
+        var onlyGroupHeaders = true;
+
         self.getDisplayRows().forEach(function (row, index) {
 
           self.styleRow(row, index);
@@ -3675,7 +3677,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           element.append(row.getElement());
 
           row.initialize(true);
+
+          if (row.type !== "group") {
+
+            onlyGroupHeaders = false;
+          }
         });
+
+        if (onlyGroupHeaders) {
+
+          self.tableElement.css({
+
+            "min-width": self.table.columnManager.getWidth()
+
+          });
+        }
       } else {
 
         self.renderEmptyScroll();
@@ -4204,7 +4220,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
         if (self.renderMode == "classic") {
 
-          this._simpleRender();
+          if (self.table.options.groupBy) {
+
+            self.refreshActiveData("group", false, false);
+          } else {
+
+            this._simpleRender();
+          }
         } else {
 
           this.reRenderInPosition();
@@ -13969,14 +13991,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             if (group.calcs.top) {
 
-              console.log("det", "top");
-
               group.calcs.top.getElement().detach();
             }
 
             if (group.calcs.bottom) {
-
-              console.log("det", "bottom");
 
               group.calcs.bottom.getElement().detach();
             }
@@ -13995,6 +14013,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             row.getElement().detach();
           });
         }
+
+        this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
       } else {
 
         this.groupManager.updateGroupRows(true);
@@ -14041,6 +14061,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             prev = row.getElement();
           });
         }
+
+        this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
       } else {
 
         this.groupManager.updateGroupRows(true);
