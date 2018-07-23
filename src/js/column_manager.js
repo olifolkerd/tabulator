@@ -162,7 +162,7 @@ ColumnManager.prototype.findColumn = function(subject){
 		}else if(subject instanceof jQuery){
 			//subject is a jquery element of the column header
 			let match = self.columns.find(function(column){
-				return column.element === subject;
+				return column.element.is(subject);
 			});
 
 			return match || false;
