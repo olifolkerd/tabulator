@@ -227,8 +227,8 @@ MoveRows.prototype.moveHover = function (e) {
 
 MoveRows.prototype.moveHoverTable = function (e) {
 	var rowHolder = this.table.rowManager.getElement(),
-	    scrollTop = rowHolder.scrollTop(),
-	    yPos = e.pageY - rowHolder.offset().top + scrollTop,
+	    scrollTop = rowHolder.scrollTop,
+	    yPos = e.pageY - rowHolder.getBoundingClientRect().top + scrollTop,
 	    scrollPos;
 
 	this.hoverElement.css({

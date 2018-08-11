@@ -2200,9 +2200,9 @@ var RowManager = function RowManager(table) {
 
 	this.table = table;
 
-	this.element = $("<div class='tabulator-tableHolder' tabindex='0'></div>"); //containing element
+	this.element = this.createHolderElement(); //containing element
 
-	this.tableElement = $("<div class='tabulator-table'></div>"); //table element
+	this.tableElement = this.createTableElement(); //table element
 
 	this.columnManager = null; //hold column manager object
 
@@ -2267,6 +2267,26 @@ var RowManager = function RowManager(table) {
 //////////////// Setup Functions /////////////////
 
 
+RowManager.prototype.createHolderElement = function () {
+
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-tableHolder");
+
+	el.setAttribute("tabindex", 0);
+
+	return el;
+};
+
+RowManager.prototype.createTableElement = function () {
+
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-table");
+
+	return el;
+};
+
 //return containing element
 
 RowManager.prototype.getElement = function () {
@@ -2309,15 +2329,15 @@ RowManager.prototype.initialize = function () {
 
 	//initialize manager
 
-	self.element.append(self.tableElement);
+	self.element.appendChild(self.tableElement);
 
 	self.firstRender = true;
 
 	//scroll header along with table body
 
-	self.element.scroll(function () {
+	self.element.addEventListener("scroll", function () {
 
-		var left = self.element[0].scrollLeft;
+		var left = self.element.scrollLeft;
 
 		//handle horizontal scrolling
 
@@ -2343,9 +2363,9 @@ RowManager.prototype.initialize = function () {
 
 	if (this.renderMode === "virtual") {
 
-		self.element.scroll(function () {
+		self.element.addEventListener("scroll", function () {
 
-			var top = self.element[0].scrollTop;
+			var top = self.element.scrollTop;
 
 			var dir = self.scrollTop > top;
 
@@ -2359,7 +2379,7 @@ RowManager.prototype.initialize = function () {
 
 				if (self.table.options.ajaxProgressiveLoad == "scroll") {
 
-					self.table.modules.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
+					self.table.modules.ajax.nextPage(self.element.scrollHeight - self.element.clientHeight - top);
 				}
 			} else {
 
@@ -2454,7 +2474,7 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
 				case "classic":
 
-					position = Math.abs(this.element.scrollTop() - row.element.position().top) > Math.abs(this.element.scrollTop() + this.element[0].clientHeight - row.element.position().top) ? "bottom" : "top";
+					position = Math.abs(this.element.scrollTop - row.element.position().top) > Math.abs(this.element.scrollTop + this.element.clientHeight - row.element.position().top) ? "bottom" : "top";
 
 					break;
 
@@ -2471,11 +2491,11 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
 		if (!ifVisible) {
 
-			if (row.element.is(":visible")) {
+			if (Tabulator.prototype.helpers.elVisible(row.element)) {
 
 				offset = row.element.offset().top - this.element.offset().top;
 
-				if (offset > 0 && offset < this.element[0].clientHeight - row.element.outerHeight()) {
+				if (offset > 0 && offset < this.element.clientHeight - row.element.outerHeight()) {
 
 					return false;
 				}
@@ -2488,7 +2508,7 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
 			case "classic":
 
-				this.element.scrollTop(row.element.offset().top - this.element.offset().top + this.element.scrollTop());
+				this.element.scrollTop = row.element.offset().top - this.element.offset().top + this.element.scrollTop;
 
 				break;
 
@@ -2508,13 +2528,13 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
 			case "center":
 
-				this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight / 2);
+				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight / 2;
 
 				break;
 
 			case "bottom":
 
-				this.element.scrollTop(this.element.scrollTop() - this.element[0].clientHeight + row.getElement().outerHeight());
+				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + row.getElement().outerHeight();
 
 				break;
 
@@ -3224,7 +3244,7 @@ RowManager.prototype.scrollHorizontal = function (left) {
 
 	this.scrollLeft = left;
 
-	this.element.scrollLeft(left);
+	this.element.scrollLeft = left;
 
 	if (this.table.options.groupBy) {
 
@@ -3389,7 +3409,7 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 
 	}
 
-	if (self.element.is(":visible")) {
+	if (Tabulator.prototype.helpers.elVisible(self.element)) {
 
 		if (renderInPosition) {
 
@@ -3511,7 +3531,7 @@ RowManager.prototype.reRenderInPosition = function (callback) {
 
 	if (this.getRenderMode() == "virtual") {
 
-		var scrollTop = this.element.scrollTop();
+		var scrollTop = this.element.scrollTop;
 
 		var topRow = false;
 
@@ -3575,7 +3595,7 @@ RowManager.prototype.renderTable = function () {
 
 	self.table.options.renderStarted();
 
-	self.element.scrollTop(0);
+	self.element.scrollTop = 0;
 
 	switch (self.renderMode) {
 
@@ -3656,11 +3676,7 @@ RowManager.prototype._simpleRender = function () {
 
 		if (onlyGroupHeaders) {
 
-			self.tableElement.css({
-
-				"min-width": self.table.columnManager.getWidth()
-
-			});
+			element.style.minWidth = self.table.columnManager.getWidth();
 		}
 	} else {
 
@@ -3672,17 +3688,11 @@ RowManager.prototype._simpleRender = function () {
 
 RowManager.prototype.renderEmptyScroll = function () {
 
-	var self = this;
+	this.tableElement.style.minWidth = self.table.columnManager.getWidth();
 
-	self.tableElement.css({
+	this.tableElement.style.minHeight = "1px";
 
-		"min-width": self.table.columnManager.getWidth(),
-
-		"min-height": "1px",
-
-		"visibility": "hidden"
-
-	});
+	this.tableElement.style.visibility = "hidden";
 };
 
 RowManager.prototype._clearVirtualDom = function () {
@@ -3694,21 +3704,19 @@ RowManager.prototype._clearVirtualDom = function () {
 		this.table.options.placeholder.detach();
 	}
 
-	element.children().detach();
+	// element.children.detach();
 
-	element.css({
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	}element.style.paddingTop = "";
 
-		"padding-top": "",
+	element.style.paddingBottom = "";
 
-		"padding-bottom": "",
+	element.style.minWidth = "";
 
-		"min-width": "",
+	element.style.minHeight = "";
 
-		"min-height": "",
-
-		"visibility": ""
-
-	});
+	element.style.visibility = "";
 
 	this.scrollTop = 0;
 
@@ -3756,9 +3764,11 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 		self._clearVirtualDom();
 	} else {
 
-		element.children().detach();
+		// element.children().detach();
 
-		//check if position is too close to bottom of table
+		while (element.firstChild) {
+			element.removeChild(element.firstChild);
+		} //check if position is too close to bottom of table
 
 		var heightOccpied = (self.displayRowsCount - position + 1) * self.vDomRowHeight;
 
@@ -3779,7 +3789,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 		position -= topPad;
 	}
 
-	if (self.displayRowsCount && self.element.is(":visible")) {
+	if (self.displayRowsCount && Tabulator.prototype.helpers.elVisible(self.element)) {
 
 		self.vDomTop = position;
 
@@ -3792,7 +3802,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 
 			self.styleRow(row, index);
 
-			element.append(row.getElement());
+			element.appendChild(row.getElement()[0]);
 
 			if (!row.initialized) {
 
@@ -3836,39 +3846,35 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 			self.vDomBottomPad = self.vDomBottom == self.displayRowsCount - 1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
 		}
 
-		element[0].style.paddingTop = self.vDomTopPad + "px";
+		element.style.paddingTop = self.vDomTopPad + "px";
 
-		element[0].style.paddingBottom = self.vDomBottomPad + "px";
+		element.style.paddingBottom = self.vDomBottomPad + "px";
 
 		if (forceMove) {
 
 			this.scrollTop = self.vDomTopPad + topPadHeight + offset;
 		}
 
-		this.scrollTop = Math.min(this.scrollTop, this.element[0].scrollHeight - this.height);
+		this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
 
 		//adjust for horizontal scrollbar if present
 
-		if (this.element[0].scrollWidth > this.element[0].offsetWidt) {
+		if (this.element.scrollWidth > this.element.offsetWidt) {
 
-			this.scrollTop += this.element[0].offsetHeight - this.element[0].clientHeight;
+			this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
 		}
 
 		this.vDomScrollPosTop = this.scrollTop;
 
 		this.vDomScrollPosBottom = this.scrollTop;
 
-		holder.scrollTop(this.scrollTop);
+		holder.scrollTop = this.scrollTop;
 
 		if (self.table.options.groupBy) {
 
 			if (self.table.modules.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.modules.groupRows.countGroups()) {
 
-				self.tableElement.css({
-
-					"min-width": self.table.columnManager.getWidth()
-
-				});
+				self.tableElement.style.minWidth = self.table.columnManager.getWidth();
 			}
 		}
 	} else {
@@ -3893,7 +3899,7 @@ RowManager.prototype.scrollVertical = function (dir) {
 
 		var left = this.scrollLeft;
 
-		this._virtualRenderFill(Math.floor(this.element[0].scrollTop / this.element[0].scrollHeight * this.displayRowsCount));
+		this._virtualRenderFill(Math.floor(this.element.scrollTop / this.element.scrollHeight * this.displayRowsCount));
 
 		this.scrollHorizontal(left);
 	} else {
@@ -3957,7 +3963,7 @@ RowManager.prototype._addTopRow = function (topDiff) {
 
 			this.styleRow(topRow, index);
 
-			table.prepend(topRow.getElement());
+			table.insertBefore(topRow.getElement()[0], table.firstChild);
 
 			if (!topRow.initialized || !topRow.heightInitialized) {
 
@@ -3983,7 +3989,7 @@ RowManager.prototype._addTopRow = function (topDiff) {
 				this.vDomTopPad = 0;
 			}
 
-			table[0].style.paddingTop = this.vDomTopPad + "px";
+			table.style.paddingTop = this.vDomTopPad + "px";
 
 			this.vDomScrollPosTop -= topRowHeight;
 
@@ -4014,7 +4020,7 @@ RowManager.prototype._removeTopRow = function (topDiff) {
 
 		this.vDomTopPad += topRowHeight;
 
-		table[0].style.paddingTop = this.vDomTopPad + "px";
+		table.style.paddingTop = this.vDomTopPad + "px";
 
 		this.vDomScrollPosTop += this.vDomTop ? topRowHeight : topRowHeight + this.vDomWindowBuffer;
 
@@ -4045,7 +4051,7 @@ RowManager.prototype._addBottomRow = function (bottomDiff) {
 
 			this.styleRow(bottomRow, index);
 
-			table.append(bottomRow.getElement());
+			table.appendChild(bottomRow.getElement()[0]);
 
 			if (!bottomRow.initialized || !bottomRow.heightInitialized) {
 
@@ -4066,7 +4072,7 @@ RowManager.prototype._addBottomRow = function (bottomDiff) {
 				this.vDomBottomPad = 0;
 			}
 
-			table[0].style.paddingBottom = this.vDomBottomPad + "px";
+			table.style.paddingBottom = this.vDomBottomPad + "px";
 
 			this.vDomScrollPosBottom += bottomRowHeight;
 
@@ -4102,7 +4108,7 @@ RowManager.prototype._removeBottomRow = function (bottomDiff) {
 			this.vDomBottomPad == 0;
 		}
 
-		table[0].style.paddingBottom = this.vDomBottomPad + "px";
+		table.style.paddingBottom = this.vDomBottomPad + "px";
 
 		this.vDomScrollPosBottom -= bottomRowHeight;
 
@@ -4133,9 +4139,7 @@ RowManager.prototype._quickNormalizeRowHeight = function (rows) {
 
 RowManager.prototype.normalizeHeight = function () {
 
-	var self = this;
-
-	self.activeRows.forEach(function (row) {
+	this.activeRows.forEach(function (row) {
 
 		row.normalizeHeight();
 	});
@@ -4145,25 +4149,19 @@ RowManager.prototype.normalizeHeight = function () {
 
 RowManager.prototype.adjustTableSize = function () {
 
-	var self = this;
-
 	if (this.renderMode === "virtual") {
 
-		self.height = self.element.innerHeight();
+		this.height = this.element.clientHeight;
 
-		self.vDomWindowBuffer = self.table.options.virtualDomBuffer || self.height;
+		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		var otherHeight = self.columnManager.getElement().outerHeight() + (self.table.footerManager ? self.table.footerManager.getElement().outerHeight() : 0);
+		var otherHeight = this.columnManager.getElement().outerHeight() + (this.table.footerManager ? this.table.footerManager.getElement().outerHeight() : 0);
 
-		self.element.css({
+		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
 
-			"min-height": "calc(100% - " + otherHeight + "px)",
+		this.element.style.height = "calc(100% - " + otherHeight + "px)";
 
-			"height": "calc(100% - " + otherHeight + "px)",
-
-			"max-height": "calc(100% - " + otherHeight + "px)"
-
-		});
+		this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
 	}
 };
 
@@ -4219,11 +4217,21 @@ RowManager.prototype.redraw = function (force) {
 
 RowManager.prototype.resetScroll = function () {
 
-	this.element.scrollLeft(0);
+	this.element.scrollLeft = 0;
 
-	this.element.scrollTop(0);
+	this.element.scrollTop = 0;
 
-	this.element.scroll();
+	if (this.table.browser === "ie") {
+
+		var event = document.createEvent("Event");
+
+		event.initEvent("scroll", false, true);
+
+		this.element.dispatchEvent(event);
+	} else {
+
+		this.element.dispatchEvent(new Event('scroll'));
+	}
 };
 
 //public row object
@@ -6349,7 +6357,7 @@ Tabulator.prototype._buildElement = function () {
 
 	element.appendChild(this.columnManager.getElement()[0]);
 
-	element.appendChild(this.rowManager.getElement()[0]);
+	element.appendChild(this.rowManager.getElement());
 
 	if (options.footerElement) {
 
@@ -7789,6 +7797,15 @@ Tabulator.prototype.modExists = function (plugin, required) {
 	}
 };
 
+Tabulator.prototype.helpers = {
+
+	elVisible: function elVisible(el) {
+
+		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
+	}
+
+};
+
 var Layout = function Layout(table) {
 
 	this.table = table;
@@ -7997,9 +8014,9 @@ Layout.prototype.modes = {
 		//adjust for vertical scrollbar if present
 
 
-		if (this.table.rowManager.element[0].scrollHeight > this.table.rowManager.element.innerHeight()) {
+		if (this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight) {
 
-			totalWidth -= this.table.rowManager.element[0].offsetWidth - this.table.rowManager.element[0].clientWidth;
+			totalWidth -= this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
 		}
 
 		columns.forEach(function (column) {
@@ -13667,7 +13684,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			if (!self.autoScrollTimeout) {
 				self.autoScrollTimeout = setTimeout(function () {
 					scrollPos = Math.max(0, scrollLeft - 5);
-					self.table.rowManager.getElement().scrollLeft(scrollPos);
+					self.table.rowManager.getElement().scrollLeft = scrollPos;
 					self.autoScrollTimeout = false;
 				}, 1);
 			}
@@ -13677,7 +13694,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			if (!self.autoScrollTimeout) {
 				self.autoScrollTimeout = setTimeout(function () {
 					scrollPos = Math.min(columnHolder.innerWidth(), scrollLeft + 5);
-					self.table.rowManager.getElement().scrollLeft(scrollPos);
+					self.table.rowManager.getElement().scrollLeft = scrollPos;
 					self.autoScrollTimeout = false;
 				}, 1);
 			}
@@ -13908,8 +13925,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	MoveRows.prototype.moveHoverTable = function (e) {
 		var rowHolder = this.table.rowManager.getElement(),
-		    scrollTop = rowHolder.scrollTop(),
-		    yPos = e.pageY - rowHolder.offset().top + scrollTop,
+		    scrollTop = rowHolder.scrollTop,
+		    yPos = e.pageY - rowHolder.getBoundingClientRect().top + scrollTop,
 		    scrollPos;
 
 		this.hoverElement.css({
@@ -15025,7 +15042,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			$("body").off("mouseup", mouseMove);
 			$("body").off("mousemove", mouseMove);
 
-			self.table.element.removeClass("tabulator-block-select");
+			self.table.element.classList.remove("tabulator-block-select");
 
 			if (self.table.options.persistentLayout && self.table.modExists("persistence", true)) {
 				self.table.modules.persistence.save("columns");
@@ -15112,7 +15129,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			$("body").off("mouseup", mouseMove);
 			$("body").off("mousemove", mouseMove);
 
-			self.table.element.removeClass("tabulator-block-select");
+			self.table.element.classList.remove("tabulator-block-select");
 
 			self.table.options.rowResized(row.getComponent());
 		}

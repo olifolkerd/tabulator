@@ -167,7 +167,7 @@ MoveColumns.prototype.moveHover = function(e){
 		if(!self.autoScrollTimeout){
 			self.autoScrollTimeout = setTimeout(function(){
 				scrollPos = Math.max(0,scrollLeft-5);
-				self.table.rowManager.getElement().scrollLeft(scrollPos);
+				self.table.rowManager.getElement().scrollLeft = scrollPos;
 				self.autoScrollTimeout = false;
 			}, 1);
 		}
@@ -177,7 +177,7 @@ MoveColumns.prototype.moveHover = function(e){
 		if(!self.autoScrollTimeout){
 			self.autoScrollTimeout = setTimeout(function(){
 				scrollPos = Math.min(columnHolder.innerWidth(), scrollLeft+5);
-				self.table.rowManager.getElement().scrollLeft(scrollPos);
+				self.table.rowManager.getElement().scrollLeft = scrollPos;
 				self.autoScrollTimeout = false;
 			}, 1);
 		}

@@ -397,7 +397,7 @@ Tabulator.prototype._buildElement = function(){
 
 	//build table elements
 	element.appendChild(this.columnManager.getElement()[0]);
-	element.appendChild(this.rowManager.getElement()[0]);
+	element.appendChild(this.rowManager.getElement());
 
 
 	if(options.footerElement){
@@ -1461,6 +1461,14 @@ Tabulator.prototype.modExists = function(plugin, required){
 		return false;
 	}
 };
+
+
+Tabulator.prototype.helpers = {
+
+	elVisible: function(el){
+		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
+	}
+}
 
 /*=include modules/layout.js */
 /*=include modules/localize.js */

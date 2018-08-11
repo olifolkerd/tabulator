@@ -140,8 +140,8 @@ Layout.prototype.modes = {
 		}
 
 		//adjust for vertical scrollbar if present
-		if(this.table.rowManager.element[0].scrollHeight > this.table.rowManager.element.innerHeight()){
-			totalWidth -= this.table.rowManager.element[0].offsetWidth - this.table.rowManager.element[0].clientWidth;
+		if(this.table.rowManager.element.scrollHeight > this.table.rowManager.element.clientHeight){
+			totalWidth -= this.table.rowManager.element.offsetWidth - this.table.rowManager.element.clientWidth;
 		}
 
 		columns.forEach(function(column){
