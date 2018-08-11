@@ -171,9 +171,9 @@ var ColumnManager = function ColumnManager(table) {
 	this.table = table; //hold parent table
 
 
-	this.headersElement = $("<div class='tabulator-headers'></div>");
+	this.headersElement = this.createHeadersElement();
 
-	this.element = $("<div class='tabulator-header'></div>"); //containing element
+	this.element = this.createHeaderElement(); //containing element
 
 
 	this.rowManager = null; //hold row manager object
@@ -190,11 +190,29 @@ var ColumnManager = function ColumnManager(table) {
 
 	this.scrollLeft = 0;
 
-	this.element.prepend(this.headersElement);
+	this.element.insertBefore(this.headersElement, this.element.firstChild);
 };
 
 ////////////// Setup Functions /////////////////
 
+
+ColumnManager.prototype.createHeadersElement = function () {
+
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-headers");
+
+	return el;
+};
+
+ColumnManager.prototype.createHeaderElement = function () {
+
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-header");
+
+	return el;
+};
 
 //link to row manager
 
@@ -226,9 +244,9 @@ ColumnManager.prototype.getHeadersElement = function () {
 ColumnManager.prototype.scrollHorizontal = function (left) {
 
 	var hozAdjust = 0,
-	    scrollWidth = this.element[0].scrollWidth - this.table.element.clientWidth;
+	    scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
-	this.element.scrollLeft(left);
+	this.element.scrollLeft = left;
 
 	//adjust for vertical scrollbar moving table when present
 
@@ -237,10 +255,10 @@ ColumnManager.prototype.scrollHorizontal = function (left) {
 
 		hozAdjust = left - scrollWidth;
 
-		this.element.css("margin-left", -hozAdjust);
+		this.element.style.marginLeft = -hozAdjust + "px";
 	} else {
 
-		this.element.css("margin-left", 0);
+		this.element.style.marginLeft = 0;
 	}
 
 	//keep frozen columns fixed in position
@@ -264,9 +282,9 @@ ColumnManager.prototype.setColumns = function (cols, row) {
 
 	var self = this;
 
-	self.headersElement.empty();
-
-	self.columns = [];
+	while (self.headersElement.firstChild) {
+		self.headersElement.removeChild(self.headersElement.firstChild);
+	}self.columns = [];
 
 	self.columnsByIndex = [];
 
@@ -322,12 +340,12 @@ ColumnManager.prototype._addColumn = function (definition, before, nextToColumn)
 
 			this.columns.unshift(column);
 
-			this.headersElement.prepend(column.getElement());
+			this.headersElement.insertBefore(column.getElement()[0], this.headersElement.firstChild);
 		} else {
 
 			this.columns.push(column);
 
-			this.headersElement.append(column.getElement());
+			this.headersElement.appendChild(column.getElement()[0]);
 		}
 	}
 
@@ -620,13 +638,13 @@ ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) 
 
 			case "center":
 
-				adjust = -this.element[0].clientWidth / 2;
+				adjust = -this.element.clientWidth / 2;
 
 				break;
 
 			case "right":
 
-				adjust = column.element.innerWidth() - this.headersElement.innerWidth();
+				adjust = column.element.innerWidth() - this.headersElement.clientWidth;
 
 				break;
 
@@ -639,7 +657,7 @@ ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) 
 
 			offset = column.element.position().left;
 
-			if (offset > 0 && offset + column.element.outerWidth() < this.element[0].clientWidth) {
+			if (offset > 0 && offset + column.element.outerWidth() < this.element.clientWidth) {
 
 				return false;
 			}
@@ -648,9 +666,9 @@ ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) 
 		//calculate scroll position
 
 
-		left = column.element.position().left + this.element.scrollLeft() + adjust;
+		left = column.element.position().left + this.element.scrollLeft + adjust;
 
-		left = Math.max(Math.min(left, this.table.rowManager.element[0].scrollWidth - this.table.rowManager.element[0].clientWidth), 0);
+		left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth), 0);
 
 		this.table.rowManager.scrollHorizontal(left);
 
@@ -697,9 +715,9 @@ ColumnManager.prototype.getFlexBaseWidth = function () {
 	//adjust for vertical scrollbar if present
 
 
-	if (self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()) {
+	if (self.rowManager.element.scrollHeight > self.rowManager.element.clientHeight) {
 
-		totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
+		totalWidth -= self.rowManager.element.offsetWidth - self.rowManager.element.clientWidth;
 	}
 
 	this.columnsByIndex.forEach(function (column) {
@@ -812,7 +830,7 @@ ColumnManager.prototype.redraw = function (force) {
 
 	if (force) {
 
-		if (this.element.is(":visible")) {
+		if (Tabulator.prototype.helpers.elVisible(this.element)) {
 
 			this._verticalAlignHeaders();
 		}
@@ -1700,7 +1718,7 @@ Column.prototype.verticalAlign = function (alignment) {
 
 	//calculate height of column header and group holder element
 
-	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 	this.element.css("height", parentHeight);
 
@@ -4155,7 +4173,7 @@ RowManager.prototype.adjustTableSize = function () {
 
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		var otherHeight = this.columnManager.getElement().outerHeight() + (this.table.footerManager ? this.table.footerManager.getElement().outerHeight() : 0);
+		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager ? this.table.footerManager.getElement().outerHeight() : 0);
 
 		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
 
@@ -6355,7 +6373,7 @@ Tabulator.prototype._buildElement = function () {
 
 	//build table elements
 
-	element.appendChild(this.columnManager.getElement()[0]);
+	element.appendChild(this.columnManager.getElement());
 
 	element.appendChild(this.rowManager.getElement());
 
@@ -8921,7 +8939,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	ColumnCalcs.prototype.initializeTopRow = function () {
 		if (!this.topInitialized) {
-			this.table.columnManager.headersElement.after(this.topElement);
+			// this.table.columnManager.headersElement.after(this.topElement);
+			this.table.columnManager.getElement().insertBefore(this.topElement[0], this.table.columnManager.headersElement.nextSibling);
 			this.topInitialized = true;
 		}
 	};
@@ -8935,7 +8954,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	ColumnCalcs.prototype.scrollHorizontal = function (left) {
 		var hozAdjust = 0,
-		    scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.clientWidth;
+		    scrollWidth = this.table.columnManager.getElement().scrollWidth - this.table.element.clientWidth;
 
 		if (this.botInitialized) {
 			this.botRow.getElement().css("margin-left", -left);
@@ -11849,10 +11868,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			//calculate row padding
 
 			self.leftMargin = self._calcSpace(self.leftColumns, self.leftColumns.length);
-			self.table.columnManager.headersElement.css("margin-left", self.leftMargin);
+			self.table.columnManager.headersElement.style.marginLeft = self.leftMargin + "px";
 
 			self.rightMargin = self._calcSpace(self.rightColumns, self.rightColumns.length);
-			self.table.columnManager.element.css("padding-right", self.rightMargin);
+			self.table.columnManager.element.style.paddingRight = self.rightMargin + "px";
 
 			self.table.rowManager.activeRows.forEach(function (row) {
 				self.layoutRow(row);
@@ -11957,7 +11976,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	FrozenRows.prototype.initialize = function () {
 		this.rows = [];
-		this.table.columnManager.element.append(this.topElement);
+		// this.table.columnManager.element.append(this.topElement);
+		this.table.columnManager.getElement().insertBefore(this.topElement[0], this.table.columnManager.headersElement.nextSibling);
 	};
 
 	FrozenRows.prototype.setDisplayIndex = function (index) {
@@ -13543,7 +13563,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			config.mousemove = function (e) {
 				if (column.parent === self.moving.parent) {
-					if (e.pageX - column.element.offset().left + self.table.columnManager.element.scrollLeft() > column.getWidth() / 2) {
+					if (e.pageX - column.element.offset().left + self.table.columnManager.element.scrollLeft > column.getWidth() / 2) {
 						if (self.toCol !== column || !self.toColAfter) {
 							column.element.after(self.placeholderElement);
 							self.moveColumn(column, true);
@@ -13594,7 +13614,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self.hoverElement = element.clone();
 		self.hoverElement.addClass("tabulator-moving");
 
-		self.table.columnManager.getElement().append(self.hoverElement);
+		self.table.columnManager.getElement().appendChild(self.hoverElement[0]);
 		self.hoverElement.css({
 			"left": 0,
 			"bottom": 0
@@ -13672,8 +13692,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 	MoveColumns.prototype.moveHover = function (e) {
 		var self = this,
 		    columnHolder = self.table.columnManager.getElement(),
-		    scrollLeft = columnHolder.scrollLeft(),
-		    xPos = e.pageX - columnHolder.offset().left + scrollLeft,
+		    scrollLeft = columnHolder.scrollLeft,
+		    xPos = e.pageX - columnHolder.getBoundingClientRect().left + scrollLeft,
 		    scrollPos;
 
 		self.hoverElement.css({
@@ -13690,10 +13710,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			}
 		}
 
-		if (scrollLeft + columnHolder.innerWidth() - xPos < self.autoScrollMargin) {
+		if (scrollLeft + columnHolder.clientWidth - xPos < self.autoScrollMargin) {
 			if (!self.autoScrollTimeout) {
 				self.autoScrollTimeout = setTimeout(function () {
-					scrollPos = Math.min(columnHolder.innerWidth(), scrollLeft + 5);
+					scrollPos = Math.min(columnHolder.clientWidth, scrollLeft + 5);
 					self.table.rowManager.getElement().scrollLeft = scrollPos;
 					self.autoScrollTimeout = false;
 				}, 1);
@@ -15305,7 +15325,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			var width = self.table.modules.layout.getMode() == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
-			var diff = self.table.columnManager.element.innerWidth() - width;
+			var diff = self.table.columnManager.element.clientWidth - width;
 
 			if (diff < 0) {
 				//table is too wide

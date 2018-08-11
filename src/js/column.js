@@ -632,7 +632,7 @@ Column.prototype.attachColumn = function(column){
 Column.prototype.verticalAlign = function(alignment){
 
 	//calculate height of column header and group holder element
-	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 	this.element.css("height", parentHeight);
 

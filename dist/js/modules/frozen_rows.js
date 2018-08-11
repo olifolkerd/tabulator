@@ -11,7 +11,8 @@ var FrozenRows = function FrozenRows(table) {
 
 FrozenRows.prototype.initialize = function () {
 	this.rows = [];
-	this.table.columnManager.element.append(this.topElement);
+	// this.table.columnManager.element.append(this.topElement);
+	this.table.columnManager.getElement().insertBefore(this.topElement[0], this.table.columnManager.headersElement.nextSibling);
 };
 
 FrozenRows.prototype.setDisplayIndex = function (index) {

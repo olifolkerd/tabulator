@@ -121,7 +121,7 @@ ResponsiveLayout.prototype.update = function () {
 
 		var width = self.table.modules.layout.getMode() == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
-		var diff = self.table.columnManager.element.innerWidth() - width;
+		var diff = self.table.columnManager.element.clientWidth - width;
 
 		if (diff < 0) {
 			//table is too wide

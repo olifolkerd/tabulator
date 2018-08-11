@@ -144,9 +144,9 @@ var ColumnManager = function ColumnManager(table) {
 
 	this.table = table; //hold parent table
 
-	this.headersElement = $("<div class='tabulator-headers'></div>");
+	this.headersElement = this.createHeadersElement();
 
-	this.element = $("<div class='tabulator-header'></div>"); //containing element
+	this.element = this.createHeaderElement(); //containing element
 
 	this.rowManager = null; //hold row manager object
 
@@ -158,11 +158,29 @@ var ColumnManager = function ColumnManager(table) {
 
 	this.scrollLeft = 0;
 
-	this.element.prepend(this.headersElement);
+	this.element.insertBefore(this.headersElement, this.element.firstChild);
 };
 
 ////////////// Setup Functions /////////////////
 
+
+ColumnManager.prototype.createHeadersElement = function () {
+
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-headers");
+
+	return el;
+};
+
+ColumnManager.prototype.createHeaderElement = function () {
+
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-header");
+
+	return el;
+};
 
 //link to row manager
 
@@ -190,9 +208,9 @@ ColumnManager.prototype.getHeadersElement = function () {
 ColumnManager.prototype.scrollHorizontal = function (left) {
 
 	var hozAdjust = 0,
-	    scrollWidth = this.element[0].scrollWidth - this.table.element.clientWidth;
+	    scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
-	this.element.scrollLeft(left);
+	this.element.scrollLeft = left;
 
 	//adjust for vertical scrollbar moving table when present
 
@@ -200,10 +218,10 @@ ColumnManager.prototype.scrollHorizontal = function (left) {
 
 		hozAdjust = left - scrollWidth;
 
-		this.element.css("margin-left", -hozAdjust);
+		this.element.style.marginLeft = -hozAdjust + "px";
 	} else {
 
-		this.element.css("margin-left", 0);
+		this.element.style.marginLeft = 0;
 	}
 
 	//keep frozen columns fixed in position
@@ -226,9 +244,9 @@ ColumnManager.prototype.setColumns = function (cols, row) {
 
 	var self = this;
 
-	self.headersElement.empty();
-
-	self.columns = [];
+	while (self.headersElement.firstChild) {
+		self.headersElement.removeChild(self.headersElement.firstChild);
+	}self.columns = [];
 
 	self.columnsByIndex = [];
 
@@ -283,12 +301,12 @@ ColumnManager.prototype._addColumn = function (definition, before, nextToColumn)
 
 			this.columns.unshift(column);
 
-			this.headersElement.prepend(column.getElement());
+			this.headersElement.insertBefore(column.getElement()[0], this.headersElement.firstChild);
 		} else {
 
 			this.columns.push(column);
 
-			this.headersElement.append(column.getElement());
+			this.headersElement.appendChild(column.getElement()[0]);
 		}
 	}
 
@@ -571,13 +589,13 @@ ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) 
 
 			case "center":
 
-				adjust = -this.element[0].clientWidth / 2;
+				adjust = -this.element.clientWidth / 2;
 
 				break;
 
 			case "right":
 
-				adjust = column.element.innerWidth() - this.headersElement.innerWidth();
+				adjust = column.element.innerWidth() - this.headersElement.clientWidth;
 
 				break;
 
@@ -589,7 +607,7 @@ ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) 
 
 			offset = column.element.position().left;
 
-			if (offset > 0 && offset + column.element.outerWidth() < this.element[0].clientWidth) {
+			if (offset > 0 && offset + column.element.outerWidth() < this.element.clientWidth) {
 
 				return false;
 			}
@@ -597,9 +615,9 @@ ColumnManager.prototype.scrollToColumn = function (column, position, ifVisible) 
 
 		//calculate scroll position
 
-		left = column.element.position().left + this.element.scrollLeft() + adjust;
+		left = column.element.position().left + this.element.scrollLeft + adjust;
 
-		left = Math.max(Math.min(left, this.table.rowManager.element[0].scrollWidth - this.table.rowManager.element[0].clientWidth), 0);
+		left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth), 0);
 
 		this.table.rowManager.scrollHorizontal(left);
 
@@ -644,9 +662,9 @@ ColumnManager.prototype.getFlexBaseWidth = function () {
 
 	//adjust for vertical scrollbar if present
 
-	if (self.rowManager.element[0].scrollHeight > self.rowManager.element.innerHeight()) {
+	if (self.rowManager.element.scrollHeight > self.rowManager.element.clientHeight) {
 
-		totalWidth -= self.rowManager.element[0].offsetWidth - self.rowManager.element[0].clientWidth;
+		totalWidth -= self.rowManager.element.offsetWidth - self.rowManager.element.clientWidth;
 	}
 
 	this.columnsByIndex.forEach(function (column) {
@@ -754,7 +772,7 @@ ColumnManager.prototype.redraw = function (force) {
 
 	if (force) {
 
-		if (this.element.is(":visible")) {
+		if (Tabulator.prototype.helpers.elVisible(this.element)) {
 
 			this._verticalAlignHeaders();
 		}
@@ -1432,7 +1450,7 @@ Column.prototype.attachColumn = function (column) {
 Column.prototype.verticalAlign = function (alignment) {
 
 	//calculate height of column header and group holder element
-	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 	this.element.css("height", parentHeight);
 
@@ -3299,7 +3317,7 @@ RowManager.prototype.adjustTableSize = function () {
 		this.height = this.element.clientHeight;
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		var otherHeight = this.columnManager.getElement().outerHeight() + (this.table.footerManager ? this.table.footerManager.getElement().outerHeight() : 0);
+		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager ? this.table.footerManager.getElement().outerHeight() : 0);
 
 		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
 		this.element.style.height = "calc(100% - " + otherHeight + "px)";
@@ -4919,7 +4937,7 @@ Tabulator.prototype._buildElement = function () {
 	}
 
 	//build table elements
-	element.appendChild(this.columnManager.getElement()[0]);
+	element.appendChild(this.columnManager.getElement());
 	element.appendChild(this.rowManager.getElement());
 
 	if (options.footerElement) {

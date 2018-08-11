@@ -28,7 +28,7 @@ MoveColumns.prototype.initializeColumn = function (column) {
 
 		config.mousemove = function (e) {
 			if (column.parent === self.moving.parent) {
-				if (e.pageX - column.element.offset().left + self.table.columnManager.element.scrollLeft() > column.getWidth() / 2) {
+				if (e.pageX - column.element.offset().left + self.table.columnManager.element.scrollLeft > column.getWidth() / 2) {
 					if (self.toCol !== column || !self.toColAfter) {
 						column.element.after(self.placeholderElement);
 						self.moveColumn(column, true);
@@ -79,7 +79,7 @@ MoveColumns.prototype.startMove = function (e, column) {
 	self.hoverElement = element.clone();
 	self.hoverElement.addClass("tabulator-moving");
 
-	self.table.columnManager.getElement().append(self.hoverElement);
+	self.table.columnManager.getElement().appendChild(self.hoverElement[0]);
 	self.hoverElement.css({
 		"left": 0,
 		"bottom": 0
@@ -157,8 +157,8 @@ MoveColumns.prototype.endMove = function (column) {
 MoveColumns.prototype.moveHover = function (e) {
 	var self = this,
 	    columnHolder = self.table.columnManager.getElement(),
-	    scrollLeft = columnHolder.scrollLeft(),
-	    xPos = e.pageX - columnHolder.offset().left + scrollLeft,
+	    scrollLeft = columnHolder.scrollLeft,
+	    xPos = e.pageX - columnHolder.getBoundingClientRect().left + scrollLeft,
 	    scrollPos;
 
 	self.hoverElement.css({
@@ -175,10 +175,10 @@ MoveColumns.prototype.moveHover = function (e) {
 		}
 	}
 
-	if (scrollLeft + columnHolder.innerWidth() - xPos < self.autoScrollMargin) {
+	if (scrollLeft + columnHolder.clientWidth - xPos < self.autoScrollMargin) {
 		if (!self.autoScrollTimeout) {
 			self.autoScrollTimeout = setTimeout(function () {
-				scrollPos = Math.min(columnHolder.innerWidth(), scrollLeft + 5);
+				scrollPos = Math.min(columnHolder.clientWidth, scrollLeft + 5);
 				self.table.rowManager.getElement().scrollLeft = scrollPos;
 				self.autoScrollTimeout = false;
 			}, 1);

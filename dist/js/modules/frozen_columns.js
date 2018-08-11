@@ -62,10 +62,10 @@ FrozenColumns.prototype.layout = function () {
 		//calculate row padding
 
 		self.leftMargin = self._calcSpace(self.leftColumns, self.leftColumns.length);
-		self.table.columnManager.headersElement.css("margin-left", self.leftMargin);
+		self.table.columnManager.headersElement.style.marginLeft = self.leftMargin + "px";
 
 		self.rightMargin = self._calcSpace(self.rightColumns, self.rightColumns.length);
-		self.table.columnManager.element.css("padding-right", self.rightMargin);
+		self.table.columnManager.element.style.paddingRight = self.rightMargin + "px";
 
 		self.table.rowManager.activeRows.forEach(function (row) {
 			self.layoutRow(row);

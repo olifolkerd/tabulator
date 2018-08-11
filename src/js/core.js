@@ -396,7 +396,7 @@ Tabulator.prototype._buildElement = function(){
 	}
 
 	//build table elements
-	element.appendChild(this.columnManager.getElement()[0]);
+	element.appendChild(this.columnManager.getElement());
 	element.appendChild(this.rowManager.getElement());
 
 
