@@ -125,18 +125,18 @@ Keybindings.prototype.bindEvents = function(){
 
 
 
-	this.table.element.on("keydown", this.keyupBinding);
+	this.table.element.addEventListener("keydown", this.keyupBinding);
 
-	this.table.element.on("keyup", this.keydownBinding);
+	this.table.element.addEventListener("keyup", this.keydownBinding);
 };
 
 Keybindings.prototype.clearBindings = function(){
 	if(this.keyupBinding){
-		this.table.element.off("keydown", this.keyupBinding);
+		this.table.element.removeEventListener("keydown", this.keyupBinding);
 	}
 
 	if(this.keydownBinding){
-		this.table.element.off("keyup", this.keydownBinding);
+		this.table.element.removeEventListener("keyup", this.keydownBinding);
 	}
 };
 

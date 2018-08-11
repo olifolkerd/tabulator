@@ -229,7 +229,7 @@ Ajax.prototype.showLoader = function(){
 			this.msgElement.append(this.table.modules.localize.getText("ajax|loading"));
 		}
 
-		this.table.element.append(this.loaderElement);
+		this.table.element.appendChild(this.loaderElement[0]);
 	}
 };
 
@@ -246,7 +246,7 @@ Ajax.prototype.showError = function(){
 		this.msgElement.append(this.table.modules.localize.getText("ajax|error"));
 	}
 
-	this.table.element.append(this.loaderElement);
+	this.table.element.appendChild(this.loaderElement[0]);
 };
 
 Ajax.prototype.hideLoader = function(){

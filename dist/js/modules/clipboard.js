@@ -23,7 +23,7 @@ Clipboard.prototype.initialize = function () {
 	this.mode = this.table.options.clipboard;
 
 	if (this.mode === true || this.mode === "copy") {
-		this.table.element.on("copy", function (e) {
+		this.table.element.addEventListener("copy", function (e) {
 			var data;
 
 			if (!self.blocked) {
@@ -47,7 +47,7 @@ Clipboard.prototype.initialize = function () {
 	}
 
 	if (this.mode === true || this.mode === "paste") {
-		this.table.element.on("paste", function (e) {
+		this.table.element.addEventListener("paste", function (e) {
 			self.paste(e);
 		});
 	}
@@ -165,7 +165,7 @@ Clipboard.prototype.copy = function (selector, selectorParams, formatter, format
 
 		if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 			range = document.createRange();
-			range.selectNodeContents(this.table.element[0]);
+			range.selectNodeContents(this.table.element);
 			sel = window.getSelection();
 
 			if (sel.toString() && internal) {
@@ -178,7 +178,7 @@ Clipboard.prototype.copy = function (selector, selectorParams, formatter, format
 			sel.addRange(range);
 		} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
 			textRange = document.body.createTextRange();
-			textRange.moveToElementText(this.table.element[0]);
+			textRange.moveToElementText(this.table.element);
 			textRange.select();
 		}
 

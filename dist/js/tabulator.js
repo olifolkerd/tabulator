@@ -226,7 +226,7 @@ ColumnManager.prototype.getHeadersElement = function () {
 ColumnManager.prototype.scrollHorizontal = function (left) {
 
 	var hozAdjust = 0,
-	    scrollWidth = this.element[0].scrollWidth - this.table.element.innerWidth();
+	    scrollWidth = this.element[0].scrollWidth - this.table.element.clientWidth;
 
 	this.element.scrollLeft(left);
 
@@ -688,7 +688,7 @@ ColumnManager.prototype.generateCells = function (row) {
 ColumnManager.prototype.getFlexBaseWidth = function () {
 
 	var self = this,
-	    totalWidth = self.table.element.innerWidth(),
+	    totalWidth = self.table.element.clientWidth,
 	    //table element width
 
 
@@ -1990,7 +1990,7 @@ Column.prototype.setWidthActual = function (width) {
 
 	if (isNaN(width)) {
 
-		width = Math.floor(this.table.element.innerWidth() / 100 * parseInt(width));
+		width = Math.floor(this.table.element.clientWidth / 100 * parseInt(width));
 	}
 
 	width = Math.max(this.minWidth, width);
@@ -3555,7 +3555,7 @@ RowManager.prototype.reRenderInPosition = function (callback) {
 
 RowManager.prototype.setRenderMode = function () {
 
-	if ((this.table.element.innerHeight() || this.table.options.height) && this.table.options.virtualDom) {
+	if ((this.table.element.clientHeight || this.table.options.height) && this.table.options.virtualDom) {
 
 		this.renderMode = "virtual";
 	} else {
@@ -5738,9 +5738,9 @@ FooterManager.prototype.activate = function (parent) {
 
 		this.active = true;
 
-		this.table.element.append(this.getElement());
+		this.table.element.appendChild(this.getElement()[0]);
 
-		this.table.element.show();
+		this.table.element.style.display = '';
 	}
 
 	if (parent) {
@@ -6184,9 +6184,12 @@ Tabulator.prototype.initializeElement = function (element) {
 		return true;
 	} else if (typeof element === "string") {
 
-		// this.element = document.querySelector(element);
+		this.element = document.querySelector(element);
 
-		this.element = $(element);
+		console.log("el", this.element);
+
+		// this.element = $(element);
+
 
 		if (this.element) {
 
@@ -6244,34 +6247,33 @@ Tabulator.prototype._mapDepricatedFunctionality = function () {
 
 Tabulator.prototype._create = function () {
 
-	var self = this,
-	    element = this.element;
+	var element = this.element;
 
-	self._clearObjectPointers();
+	this._clearObjectPointers();
 
-	self._mapDepricatedFunctionality();
+	this._mapDepricatedFunctionality();
 
-	self.bindModules();
+	this.bindModules();
 
-	if (element.is("table")) {
+	if (element.tagName === "TABLE") {
 
 		if (this.modExists("htmlTableImport", true)) {
 
-			self.modules.htmlTableImport.parseTable();
+			this.modules.htmlTableImport.parseTable();
 		}
 	} else {
 
-		self.columnManager = new ColumnManager(self);
+		this.columnManager = new ColumnManager(this);
 
-		self.rowManager = new RowManager(self);
+		this.rowManager = new RowManager(this);
 
-		self.footerManager = new FooterManager(self);
+		this.footerManager = new FooterManager(this);
 
-		self.columnManager.setRowManager(self.rowManager);
+		this.columnManager.setRowManager(this.rowManager);
 
-		self.rowManager.setColumnManager(self.columnManager);
+		this.rowManager.setColumnManager(this.columnManager);
 
-		self._buildElement();
+		this._buildElement();
 
 		this._loadInitialData();
 	}
@@ -6296,15 +6298,21 @@ Tabulator.prototype._buildElement = function () {
 
 	options.tableBuilding();
 
-	element.addClass("tabulator").attr("role", "grid").empty();
+	element.classList.add("tabulator");
 
-	//set table height
+	element.setAttribute("role", "grid");
+
+	//empty element
+
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	} //set table height
 
 	if (options.height) {
 
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
 
-		this.element.css({ "height": options.height });
+		element.style.height = options.height;
 	}
 
 	this.rowManager.initialize();
@@ -6339,9 +6347,9 @@ Tabulator.prototype._buildElement = function () {
 
 	//build table elements
 
-	element.append(this.columnManager.getElement());
+	element.appendChild(this.columnManager.getElement()[0]);
 
-	element.append(this.rowManager.getElement());
+	element.appendChild(this.rowManager.getElement()[0]);
 
 	if (options.footerElement) {
 
@@ -6528,9 +6536,9 @@ Tabulator.prototype._destroy = function () {
 
 	//clear DOM
 
-	element.empty();
-
-	element.removeClass("tabulator");
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	}element.classList.remove("tabulator");
 };
 
 Tabulator.prototype._detectBrowser = function () {
@@ -7157,7 +7165,7 @@ Tabulator.prototype.setHeight = function (height) {
 
 	this.options.height = isNaN(height) ? height : height + "px";
 
-	this.element.css({ "height": this.options.height });
+	this.element.style.height = this.options.height;
 
 	this.rowManager.redraw();
 };
@@ -7803,7 +7811,7 @@ Layout.prototype.initialize = function (layout) {
 		this.mode = 'fitData';
 	}
 
-	this.table.element.attr("tabulator-layout", this.mode);
+	this.table.element.setAttribute("tabulator-layout", this.mode);
 };
 
 Layout.prototype.getMode = function () {
@@ -7863,7 +7871,7 @@ Layout.prototype.modes = {
 
 		var self = this;
 
-		var totalWidth = self.table.element.innerWidth(); //table element width
+		var totalWidth = self.table.element.clientWidth; //table element width
 
 
 		var fixedWidth = 0; //total width of columns with a defined width
@@ -8406,7 +8414,7 @@ Comms.prototype.getConnections = function (selectors) {
 
 		connection.each(function () {
 
-			if (self.table.element[0] !== this) {
+			if (self.table.element !== this) {
 
 				connections.push($(this));
 			}
@@ -8757,7 +8765,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				this.msgElement.append(this.table.modules.localize.getText("ajax|loading"));
 			}
 
-			this.table.element.append(this.loaderElement);
+			this.table.element.appendChild(this.loaderElement[0]);
 		}
 	};
 
@@ -8772,7 +8780,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.msgElement.append(this.table.modules.localize.getText("ajax|error"));
 		}
 
-		this.table.element.append(this.loaderElement);
+		this.table.element.appendChild(this.loaderElement[0]);
 	};
 
 	Ajax.prototype.hideLoader = function () {
@@ -8910,7 +8918,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	ColumnCalcs.prototype.scrollHorizontal = function (left) {
 		var hozAdjust = 0,
-		    scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.innerWidth();
+		    scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.clientWidth;
 
 		if (this.botInitialized) {
 			this.botRow.getElement().css("margin-left", -left);
@@ -9233,7 +9241,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.mode = this.table.options.clipboard;
 
 		if (this.mode === true || this.mode === "copy") {
-			this.table.element.on("copy", function (e) {
+			this.table.element.addEventListener("copy", function (e) {
 				var data;
 
 				if (!self.blocked) {
@@ -9257,7 +9265,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		if (this.mode === true || this.mode === "paste") {
-			this.table.element.on("paste", function (e) {
+			this.table.element.addEventListener("paste", function (e) {
 				self.paste(e);
 			});
 		}
@@ -9375,7 +9383,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 				range = document.createRange();
-				range.selectNodeContents(this.table.element[0]);
+				range.selectNodeContents(this.table.element);
 				sel = window.getSelection();
 
 				if (sel.toString() && internal) {
@@ -9388,7 +9396,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				sel.addRange(range);
 			} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
 				textRange = document.body.createTextRange();
-				textRange.moveToElementText(this.table.element[0]);
+				textRange.moveToElementText(this.table.element);
 				textRange.select();
 			}
 
@@ -13263,18 +13271,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 			}
 		};
 
-		this.table.element.on("keydown", this.keyupBinding);
+		this.table.element.addEventListener("keydown", this.keyupBinding);
 
-		this.table.element.on("keyup", this.keydownBinding);
+		this.table.element.addEventListener("keyup", this.keydownBinding);
 	};
 
 	Keybindings.prototype.clearBindings = function () {
 		if (this.keyupBinding) {
-			this.table.element.off("keydown", this.keyupBinding);
+			this.table.element.removeEventListener("keydown", this.keyupBinding);
 		}
 
 		if (this.keydownBinding) {
-			this.table.element.off("keyup", this.keydownBinding);
+			this.table.element.removeEventListener("keyup", this.keydownBinding);
 		}
 	};
 
@@ -13555,7 +13563,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self.moving = column;
 		self.startX = e.pageX - element.offset().left;
 
-		self.table.element.addClass("tabulator-block-select");
+		self.table.element.classList.add("tabulator-block-select");
 
 		//create placeholder
 		self.placeholderElement.css({
@@ -13630,7 +13638,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self.placeholderElement.detach();
 		self.hoverElement.detach();
 
-		self.table.element.removeClass("tabulator-block-select");
+		self.table.element.classList.remove("tabulator-block-select");
 
 		if (self.toCol) {
 			self.table.columnManager.moveColumn(self.moving, self.toCol, self.toColAfter);
@@ -13795,7 +13803,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		this.moving = row;
 
-		this.table.element.addClass("tabulator-block-select");
+		this.table.element.classList.add("tabulator-block-select");
 
 		//create placeholder
 		this.placeholderElement.css({
@@ -13807,7 +13815,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			element.before(this.placeholderElement);
 			element.detach();
 		} else {
-			this.table.element.addClass("tabulator-movingrow-sending");
+			this.table.element.classList.add("tabulator-movingrow-sending");
 			this.connectToTables(row);
 		}
 
@@ -13821,7 +13829,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.hoverElement.css({
 				"left": 0,
 				"top": 0,
-				"width": this.table.element.innerWidth(),
+				"width": this.table.element.clientWidth,
 				"white-space": "nowrap",
 				"overflow": "hidden",
 				"pointer-events": "none"
@@ -13866,7 +13874,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		this.hoverElement.detach();
 
-		this.table.element.removeClass("tabulator-block-select");
+		this.table.element.classList.remove("tabulator-block-select");
 
 		if (this.toRow) {
 			this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
@@ -13880,7 +13888,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		$("body").off("mouseup", this.endMove);
 
 		if (this.connection) {
-			this.table.element.removeClass("tabulator-movingrow-sending");
+			this.table.element.classList.remove("tabulator-movingrow-sending");
 			this.disconnectFromTables();
 		}
 	};
@@ -13945,7 +13953,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.connectedTable = table;
 			this.connectedRow = row;
 
-			this.table.element.addClass("tabulator-movingrow-receiving");
+			this.table.element.classList.add("tabulator-movingrow-receiving");
 
 			self.table.rowManager.getDisplayRows().forEach(function (row) {
 				if (row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup) {
@@ -13955,7 +13963,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			self.tableRowDropEvent = self.tableRowDrop.bind(self);
 
-			self.table.element.on("mouseup", self.tableRowDropEvent);
+			self.table.element.addEventListener("mouseup", self.tableRowDropEvent);
 
 			this.table.options.movableRowsReceivingStart(row, table);
 
@@ -13973,7 +13981,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.connectedTable = false;
 			this.connectedRow = false;
 
-			this.table.element.removeClass("tabulator-movingrow-receiving");
+			this.table.element.classList.remove("tabulator-movingrow-receiving");
 
 			self.table.rowManager.getDisplayRows().forEach(function (row) {
 				if (row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup) {
@@ -13981,7 +13989,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			self.table.element.off("mouseup", self.tableRowDropEvent);
+			self.table.element.removeEventListener("mouseup", self.tableRowDropEvent);
 
 			this.table.options.movableRowsReceivingStop(table);
 		} else {
@@ -14704,7 +14712,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.mode = mode !== true ? mode : typeof window.localStorage !== 'undefined' ? "local" : "cookie";
 
 		//set storage tag
-		this.id = "tabulator-" + (id || this.table.element.attr("id") || "");
+		this.id = "tabulator-" + (id || this.table.element.getAttribute("id") || "");
 	};
 
 	//load saved definitions
@@ -14993,7 +15001,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	ResizeColumns.prototype._mouseDown = function (e, column) {
 		var self = this;
 
-		self.table.element.addClass("tabulator-block-select");
+		self.table.element.classList.add("tabulator-block-select");
 
 		function mouseMove(e) {
 			column.setWidth(self.startWidth + (e.screenX - self.startX));
@@ -15088,7 +15096,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	ResizeRows.prototype._mouseDown = function (e, row) {
 		var self = this;
 
-		self.table.element.addClass("tabulator-block-select");
+		self.table.element.classList.add("tabulator-block-select");
 
 		function mouseMove(e) {
 			row.setHeight(self.startHeight + (e.screenY - self.startY));
@@ -15140,7 +15148,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				table.redraw();
 			});
 
-			this.observer.observe(table.element[0]);
+			this.observer.observe(table.element);
 		} else {
 			this.binding = function () {
 				table.element.tabulator("redraw");
@@ -15156,7 +15164,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		if (this.observer) {
-			this.observer.unobserve(this.table.element[0]);
+			this.observer.unobserve(this.table.element);
 		}
 	};
 

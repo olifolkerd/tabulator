@@ -122,7 +122,7 @@ ColumnCalcs.prototype.initializeBottomRow = function(){
 
 ColumnCalcs.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
-	scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.innerWidth();
+	scrollWidth = this.table.columnManager.element[0].scrollWidth - this.table.element.clientWidth;
 
 	if(this.botInitialized){
 		this.botRow.getElement().css("margin-left", -left);

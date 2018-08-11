@@ -1058,7 +1058,7 @@ RowManager.prototype.reRenderInPosition = function(callback){
 };
 
 RowManager.prototype.setRenderMode = function(){
-	if((this.table.element.innerHeight() || this.table.options.height) && this.table.options.virtualDom){
+	if((this.table.element.clientHeight || this.table.options.height) && this.table.options.virtualDom){
 		this.renderMode = "virtual";
 	}else{
 		this.renderMode = "classic";

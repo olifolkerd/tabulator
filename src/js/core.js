@@ -271,8 +271,9 @@ Tabulator.prototype.initializeElement = function(element){
 		this.element = element;
 		return true;
 	}else if(typeof element === "string"){
-		// this.element = document.querySelector(element);
-		this.element = $(element);
+		this.element = document.querySelector(element);
+		console.log("el", this.element);
+		// this.element = $(element);
 
 		if(this.element){
 			return true;
@@ -316,29 +317,28 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 
 //concreate table
 Tabulator.prototype._create = function(){
-	var self = this,
-	element = this.element;
+	var element = this.element;
 
-	self._clearObjectPointers();
+	this._clearObjectPointers();
 
-	self._mapDepricatedFunctionality();
+	this._mapDepricatedFunctionality();
 
-	self.bindModules();
+	this.bindModules();
 
-	if(element.is("table")){
+	if(element.tagName === "TABLE"){
 		if(this.modExists("htmlTableImport", true)){
-			self.modules.htmlTableImport.parseTable();
+			this.modules.htmlTableImport.parseTable();
 		}
 	}else{
 
-		self.columnManager = new ColumnManager(self);
-		self.rowManager = new RowManager(self);
-		self.footerManager = new FooterManager(self);
+		this.columnManager = new ColumnManager(this);
+		this.rowManager = new RowManager(this);
+		this.footerManager = new FooterManager(this);
 
-		self.columnManager.setRowManager(self.rowManager);
-		self.rowManager.setColumnManager(self.columnManager);
+		this.columnManager.setRowManager(this.rowManager);
+		this.rowManager.setColumnManager(this.columnManager);
 
-		self._buildElement();
+		this._buildElement();
 
 		this._loadInitialData();
 	}
@@ -359,14 +359,16 @@ Tabulator.prototype._buildElement = function(){
 
 	options.tableBuilding();
 
-	element.addClass("tabulator")
-	.attr("role", "grid")
-	.empty();
+	element.classList.add("tabulator");
+	element.setAttribute("role", "grid");
+
+	//empty element
+	while(element.firstChild) element.removeChild(element.firstChild);
 
 	//set table height
 	if(options.height){
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
-		this.element.css({"height": options.height});
+		element.style.height = options.height;
 	}
 
 	this.rowManager.initialize();
@@ -394,8 +396,8 @@ Tabulator.prototype._buildElement = function(){
 	}
 
 	//build table elements
-	element.append(this.columnManager.getElement());
-	element.append(this.rowManager.getElement());
+	element.appendChild(this.columnManager.getElement()[0]);
+	element.appendChild(this.rowManager.getElement()[0]);
 
 
 	if(options.footerElement){
@@ -540,8 +542,8 @@ Tabulator.prototype._destroy = function(){
 	}
 
 	//clear DOM
-	element.empty();
-	element.removeClass("tabulator");
+	while(element.firstChild) element.removeChild(element.firstChild);
+	element.classList.remove("tabulator");
 };
 
 Tabulator.prototype._detectBrowser = function(){
@@ -1004,7 +1006,7 @@ Tabulator.prototype.redraw = function(force){
 
 Tabulator.prototype.setHeight = function(height){
 	this.options.height = isNaN(height) ? height : height + "px";
-	this.element.css({"height": this.options.height});
+	this.element.style.height = this.options.height;
 	this.rowManager.redraw();
 };
 

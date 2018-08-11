@@ -48,7 +48,7 @@ ResizeRows.prototype.initializeRow = function (row) {
 ResizeRows.prototype._mouseDown = function (e, row) {
 	var self = this;
 
-	self.table.element.addClass("tabulator-block-select");
+	self.table.element.classList.add("tabulator-block-select");
 
 	function mouseMove(e) {
 		row.setHeight(self.startHeight + (e.screenY - self.startY));
@@ -64,7 +64,7 @@ ResizeRows.prototype._mouseDown = function (e, row) {
 		$("body").off("mouseup", mouseMove);
 		$("body").off("mousemove", mouseMove);
 
-		self.table.element.removeClass("tabulator-block-select");
+		self.table.element.classList.remove("tabulator-block-select");
 
 		self.table.options.rowResized(row.getComponent());
 	}

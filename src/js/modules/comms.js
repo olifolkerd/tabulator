@@ -14,7 +14,7 @@ Comms.prototype.getConnections = function(selectors){
 		connection = typeof selectors == "string" ?  $(selectors) : selectors;
 
 		connection.each(function(){
-			if(self.table.element[0] !== this){
+			if(self.table.element !== this){
 				connections.push($(this));
 			}
 		});

@@ -17,7 +17,7 @@ ResizeTable.prototype.initialize = function (row) {
 			table.redraw();
 		});
 
-		this.observer.observe(table.element[0]);
+		this.observer.observe(table.element);
 	} else {
 		this.binding = function () {
 			table.element.tabulator("redraw");
@@ -33,7 +33,7 @@ ResizeTable.prototype.clearBindings = function (row) {
 	}
 
 	if (this.observer) {
-		this.observer.unobserve(this.table.element[0]);
+		this.observer.unobserve(this.table.element);
 	}
 };
 

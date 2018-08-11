@@ -49,8 +49,8 @@ FooterManager.prototype.deactivate = function(force){
 FooterManager.prototype.activate = function(parent){
 	if(!this.active){
 		this.active = true;
-		this.table.element.append(this.getElement());
-		this.table.element.show();
+		this.table.element.appendChild(this.getElement()[0]);
+		this.table.element.style.display = '';
 	}
 
 	if(parent){

@@ -122,7 +122,7 @@ MoveRows.prototype.startMove = function (e, row) {
 
 	this.moving = row;
 
-	this.table.element.addClass("tabulator-block-select");
+	this.table.element.classList.add("tabulator-block-select");
 
 	//create placeholder
 	this.placeholderElement.css({
@@ -134,7 +134,7 @@ MoveRows.prototype.startMove = function (e, row) {
 		element.before(this.placeholderElement);
 		element.detach();
 	} else {
-		this.table.element.addClass("tabulator-movingrow-sending");
+		this.table.element.classList.add("tabulator-movingrow-sending");
 		this.connectToTables(row);
 	}
 
@@ -148,7 +148,7 @@ MoveRows.prototype.startMove = function (e, row) {
 		this.hoverElement.css({
 			"left": 0,
 			"top": 0,
-			"width": this.table.element.innerWidth(),
+			"width": this.table.element.clientWidth,
 			"white-space": "nowrap",
 			"overflow": "hidden",
 			"pointer-events": "none"
@@ -193,7 +193,7 @@ MoveRows.prototype.endMove = function (column) {
 
 	this.hoverElement.detach();
 
-	this.table.element.removeClass("tabulator-block-select");
+	this.table.element.classList.remove("tabulator-block-select");
 
 	if (this.toRow) {
 		this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
@@ -207,7 +207,7 @@ MoveRows.prototype.endMove = function (column) {
 	$("body").off("mouseup", this.endMove);
 
 	if (this.connection) {
-		this.table.element.removeClass("tabulator-movingrow-sending");
+		this.table.element.classList.remove("tabulator-movingrow-sending");
 		this.disconnectFromTables();
 	}
 };
@@ -272,7 +272,7 @@ MoveRows.prototype.connect = function (table, row) {
 		this.connectedTable = table;
 		this.connectedRow = row;
 
-		this.table.element.addClass("tabulator-movingrow-receiving");
+		this.table.element.classList.add("tabulator-movingrow-receiving");
 
 		self.table.rowManager.getDisplayRows().forEach(function (row) {
 			if (row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup) {
@@ -282,7 +282,7 @@ MoveRows.prototype.connect = function (table, row) {
 
 		self.tableRowDropEvent = self.tableRowDrop.bind(self);
 
-		self.table.element.on("mouseup", self.tableRowDropEvent);
+		self.table.element.addEventListener("mouseup", self.tableRowDropEvent);
 
 		this.table.options.movableRowsReceivingStart(row, table);
 
@@ -300,7 +300,7 @@ MoveRows.prototype.disconnect = function (table) {
 		this.connectedTable = false;
 		this.connectedRow = false;
 
-		this.table.element.removeClass("tabulator-movingrow-receiving");
+		this.table.element.classList.remove("tabulator-movingrow-receiving");
 
 		self.table.rowManager.getDisplayRows().forEach(function (row) {
 			if (row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup) {
@@ -308,7 +308,7 @@ MoveRows.prototype.disconnect = function (table) {
 			}
 		});
 
-		self.table.element.off("mouseup", self.tableRowDropEvent);
+		self.table.element.removeEventListener("mouseup", self.tableRowDropEvent);
 
 		this.table.options.movableRowsReceivingStop(table);
 	} else {

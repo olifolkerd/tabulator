@@ -11,7 +11,7 @@ Persistence.prototype.initialize = function(mode, id){
 	this.mode = mode !== true ?  mode : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
 
 	//set storage tag
-	this.id = "tabulator-" + (id || (this.table.element.attr("id") || ""));
+	this.id = "tabulator-" + (id || (this.table.element.getAttribute("id") || ""));
 };
 
 //load saved definitions

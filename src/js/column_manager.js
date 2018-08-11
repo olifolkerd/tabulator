@@ -31,7 +31,7 @@ ColumnManager.prototype.getHeadersElement = function(){
 //scroll horizontally to match table body
 ColumnManager.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
-	scrollWidth = this.element[0].scrollWidth - this.table.element.innerWidth();
+	scrollWidth = this.element[0].scrollWidth - this.table.element.clientWidth;
 
 	this.element.scrollLeft(left);
 
@@ -383,7 +383,7 @@ ColumnManager.prototype.generateCells = function(row){
 
 ColumnManager.prototype.getFlexBaseWidth = function(){
 	var self = this,
-	totalWidth = self.table.element.innerWidth(), //table element width
+	totalWidth = self.table.element.clientWidth, //table element width
 	fixedWidth = 0;
 
 	//adjust for vertical scrollbar if present

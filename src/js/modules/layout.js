@@ -13,7 +13,7 @@ Layout.prototype.initialize = function(layout){
 		this.mode = 'fitData';
 	}
 
-	this.table.element.attr("tabulator-layout", this.mode);
+	this.table.element.setAttribute("tabulator-layout", this.mode);
 };
 
 Layout.prototype.getMode = function(){
@@ -54,7 +54,7 @@ Layout.prototype.modes = {
 	"fitColumns": function(columns){
 		var self = this;
 
-		var totalWidth = self.table.element.innerWidth(); //table element width
+		var totalWidth = self.table.element.clientWidth; //table element width
 		var fixedWidth = 0; //total width of columns with a defined width
 		var flexWidth = 0; //total width available to flexible columns
 		var flexGrowUnits = 0; //total number of widthGrow blocks accross all columns

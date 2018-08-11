@@ -65,7 +65,7 @@ MoveColumns.prototype.startMove = function (e, column) {
 	self.moving = column;
 	self.startX = e.pageX - element.offset().left;
 
-	self.table.element.addClass("tabulator-block-select");
+	self.table.element.classList.add("tabulator-block-select");
 
 	//create placeholder
 	self.placeholderElement.css({
@@ -140,7 +140,7 @@ MoveColumns.prototype.endMove = function (column) {
 	self.placeholderElement.detach();
 	self.hoverElement.detach();
 
-	self.table.element.removeClass("tabulator-block-select");
+	self.table.element.classList.remove("tabulator-block-select");
 
 	if (self.toCol) {
 		self.table.columnManager.moveColumn(self.moving, self.toCol, self.toColAfter);

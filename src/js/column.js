@@ -846,7 +846,7 @@ Column.prototype.setWidth = function(width){
 Column.prototype.setWidthActual = function(width){
 
 	if(isNaN(width)){
-		width = Math.floor((this.table.element.innerWidth()/100) * parseInt(width));
+		width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 	}
 
 	width = Math.max(this.minWidth, width);

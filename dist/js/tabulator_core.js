@@ -190,7 +190,7 @@ ColumnManager.prototype.getHeadersElement = function () {
 ColumnManager.prototype.scrollHorizontal = function (left) {
 
 	var hozAdjust = 0,
-	    scrollWidth = this.element[0].scrollWidth - this.table.element.innerWidth();
+	    scrollWidth = this.element[0].scrollWidth - this.table.element.clientWidth;
 
 	this.element.scrollLeft(left);
 
@@ -637,7 +637,7 @@ ColumnManager.prototype.generateCells = function (row) {
 ColumnManager.prototype.getFlexBaseWidth = function () {
 
 	var self = this,
-	    totalWidth = self.table.element.innerWidth(),
+	    totalWidth = self.table.element.clientWidth,
 	    //table element width
 
 	fixedWidth = 0;
@@ -1645,7 +1645,7 @@ Column.prototype.setWidth = function (width) {
 Column.prototype.setWidthActual = function (width) {
 
 	if (isNaN(width)) {
-		width = Math.floor(this.table.element.innerWidth() / 100 * parseInt(width));
+		width = Math.floor(this.table.element.clientWidth / 100 * parseInt(width));
 	}
 
 	width = Math.max(this.minWidth, width);
@@ -2840,7 +2840,7 @@ RowManager.prototype.reRenderInPosition = function (callback) {
 };
 
 RowManager.prototype.setRenderMode = function () {
-	if ((this.table.element.innerHeight() || this.table.options.height) && this.table.options.virtualDom) {
+	if ((this.table.element.clientHeight || this.table.options.height) && this.table.options.virtualDom) {
 		this.renderMode = "virtual";
 	} else {
 		this.renderMode = "classic";
@@ -4509,8 +4509,8 @@ FooterManager.prototype.deactivate = function (force) {
 FooterManager.prototype.activate = function (parent) {
 	if (!this.active) {
 		this.active = true;
-		this.table.element.append(this.getElement());
-		this.table.element.show();
+		this.table.element.appendChild(this.getElement()[0]);
+		this.table.element.style.display = '';
 	}
 
 	if (parent) {
@@ -4788,8 +4788,9 @@ Tabulator.prototype.initializeElement = function (element) {
 		this.element = element;
 		return true;
 	} else if (typeof element === "string") {
-		// this.element = document.querySelector(element);
-		this.element = $(element);
+		this.element = document.querySelector(element);
+		console.log("el", this.element);
+		// this.element = $(element);
 
 		if (this.element) {
 			return true;
@@ -4830,29 +4831,28 @@ Tabulator.prototype._mapDepricatedFunctionality = function () {
 
 //concreate table
 Tabulator.prototype._create = function () {
-	var self = this,
-	    element = this.element;
+	var element = this.element;
 
-	self._clearObjectPointers();
+	this._clearObjectPointers();
 
-	self._mapDepricatedFunctionality();
+	this._mapDepricatedFunctionality();
 
-	self.bindModules();
+	this.bindModules();
 
-	if (element.is("table")) {
+	if (element.tagName === "TABLE") {
 		if (this.modExists("htmlTableImport", true)) {
-			self.modules.htmlTableImport.parseTable();
+			this.modules.htmlTableImport.parseTable();
 		}
 	} else {
 
-		self.columnManager = new ColumnManager(self);
-		self.rowManager = new RowManager(self);
-		self.footerManager = new FooterManager(self);
+		this.columnManager = new ColumnManager(this);
+		this.rowManager = new RowManager(this);
+		this.footerManager = new FooterManager(this);
 
-		self.columnManager.setRowManager(self.rowManager);
-		self.rowManager.setColumnManager(self.columnManager);
+		this.columnManager.setRowManager(this.rowManager);
+		this.rowManager.setColumnManager(this.columnManager);
 
-		self._buildElement();
+		this._buildElement();
 
 		this._loadInitialData();
 	}
@@ -4872,12 +4872,16 @@ Tabulator.prototype._buildElement = function () {
 
 	options.tableBuilding();
 
-	element.addClass("tabulator").attr("role", "grid").empty();
+	element.classList.add("tabulator");
+	element.setAttribute("role", "grid");
 
-	//set table height
+	//empty element
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	} //set table height
 	if (options.height) {
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
-		this.element.css({ "height": options.height });
+		element.style.height = options.height;
 	}
 
 	this.rowManager.initialize();
@@ -4905,8 +4909,8 @@ Tabulator.prototype._buildElement = function () {
 	}
 
 	//build table elements
-	element.append(this.columnManager.getElement());
-	element.append(this.rowManager.getElement());
+	element.appendChild(this.columnManager.getElement()[0]);
+	element.appendChild(this.rowManager.getElement()[0]);
 
 	if (options.footerElement) {
 		this.footerManager.activate();
@@ -5049,8 +5053,9 @@ Tabulator.prototype._destroy = function () {
 	}
 
 	//clear DOM
-	element.empty();
-	element.removeClass("tabulator");
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	}element.classList.remove("tabulator");
 };
 
 Tabulator.prototype._detectBrowser = function () {
@@ -5510,7 +5515,7 @@ Tabulator.prototype.redraw = function (force) {
 
 Tabulator.prototype.setHeight = function (height) {
 	this.options.height = isNaN(height) ? height : height + "px";
-	this.element.css({ "height": this.options.height });
+	this.element.style.height = this.options.height;
 	this.rowManager.redraw();
 };
 
@@ -5981,7 +5986,7 @@ Layout.prototype.initialize = function (layout) {
 		this.mode = 'fitData';
 	}
 
-	this.table.element.attr("tabulator-layout", this.mode);
+	this.table.element.setAttribute("tabulator-layout", this.mode);
 };
 
 Layout.prototype.getMode = function () {
@@ -6036,7 +6041,7 @@ Layout.prototype.modes = {
 
 		var self = this;
 
-		var totalWidth = self.table.element.innerWidth(); //table element width
+		var totalWidth = self.table.element.clientWidth; //table element width
 
 		var fixedWidth = 0; //total width of columns with a defined width
 
@@ -6468,7 +6473,7 @@ Comms.prototype.getConnections = function (selectors) {
 		connection = typeof selectors == "string" ? $(selectors) : selectors;
 
 		connection.each(function () {
-			if (self.table.element[0] !== this) {
+			if (self.table.element !== this) {
 				connections.push($(this));
 			}
 		});
