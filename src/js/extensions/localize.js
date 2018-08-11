@@ -193,4 +193,4 @@ Localize.prototype.langs = {
 	},
 };
 
-Tabulator.registerExtension("localize", Localize);
+Tabulator.prototype.registerExtension("localize", Localize);

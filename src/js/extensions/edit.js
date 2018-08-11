@@ -805,4 +805,4 @@ Edit.prototype.editors = {
 	},
 };
 
-Tabulator.registerExtension("edit", Edit);
+Tabulator.prototype.registerExtension("edit", Edit);

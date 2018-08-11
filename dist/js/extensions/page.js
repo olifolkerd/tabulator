@@ -472,4 +472,4 @@ Page.prototype.paginationDataReceivedNames = {
 	"data": "data"
 };
 
-Tabulator.registerExtension("page", Page);
+Tabulator.prototype.registerExtension("page", Page);

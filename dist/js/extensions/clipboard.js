@@ -405,4 +405,4 @@ Clipboard.prototype.pasteActions = {
 	}
 };
 
-Tabulator.registerExtension("clipboard", Clipboard);
+Tabulator.prototype.registerExtension("clipboard", Clipboard);

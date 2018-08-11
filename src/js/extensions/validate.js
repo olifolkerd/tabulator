@@ -208,4 +208,4 @@ Validate.prototype.validators = {
 };
 
 
-Tabulator.registerExtension("validate", Validate);
+Tabulator.prototype.registerExtension("validate", Validate);

@@ -552,4 +552,4 @@ Sort.prototype.sorters = {
 	},
 };
 
-Tabulator.registerExtension("sort", Sort);
+Tabulator.prototype.registerExtension("sort", Sort);

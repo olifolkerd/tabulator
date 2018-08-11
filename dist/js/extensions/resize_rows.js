@@ -84,4 +84,4 @@ ResizeRows.prototype._mouseDown = function (e, row) {
 	$("body").on("mouseup", mouseUp);
 };
 
-Tabulator.registerExtension("resizeRows", ResizeRows);
+Tabulator.prototype.registerExtension("resizeRows", ResizeRows);

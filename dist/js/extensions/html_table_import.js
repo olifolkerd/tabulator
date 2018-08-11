@@ -191,4 +191,4 @@ HtmlTableImport.prototype._generateBlankHeaders = function (element) {
 	});
 };
 
-Tabulator.registerExtension("htmlTableImport", HtmlTableImport);
+Tabulator.prototype.registerExtension("htmlTableImport", HtmlTableImport);

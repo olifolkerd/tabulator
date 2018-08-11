@@ -561,7 +561,7 @@ Filter.prototype.filters ={
 		}else{
 			if(typeof rowVal !== 'undefined' && rowVal !== null){
 				return String(rowVal).toLowerCase().indexOf(filterVal.toLowerCase()) > -1 ? true : false;
-			}				
+			}
 			else{
 				return false;
 			}
@@ -579,4 +579,4 @@ Filter.prototype.filters ={
 	},
 };
 
-Tabulator.registerExtension("filter", Filter);
+Tabulator.prototype.registerExtension("filter", Filter);

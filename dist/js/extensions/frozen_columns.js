@@ -160,4 +160,4 @@ FrozenColumns.prototype._calcSpace = function (columns, index) {
 	return width;
 };
 
-Tabulator.registerExtension("frozenColumns", FrozenColumns);
+Tabulator.prototype.registerExtension("frozenColumns", FrozenColumns);

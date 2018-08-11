@@ -88,4 +88,4 @@ Accessor.prototype.accessors = {};
 
 
 
-Tabulator.registerExtension("accessor", Accessor);
+Tabulator.prototype.registerExtension("accessor", Accessor);

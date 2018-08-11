@@ -33,4 +33,4 @@ ResizeTable.prototype.clearBindings = function(row){
 	}
 }
 
-Tabulator.registerExtension("resizeTable", ResizeTable);
+Tabulator.prototype.registerExtension("resizeTable", ResizeTable);

@@ -46,4 +46,4 @@ Comms.prototype.receive = function(table, extension, action, data){
 }
 
 
-Tabulator.registerExtension("comms", Comms);
+Tabulator.prototype.registerExtension("comms", Comms);

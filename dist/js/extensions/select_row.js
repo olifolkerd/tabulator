@@ -251,4 +251,4 @@ SelectRow.prototype._rowSelectionChanged = function () {
 	this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
 };
 
-Tabulator.registerExtension("selectRow", SelectRow);
+Tabulator.prototype.registerExtension("selectRow", SelectRow);

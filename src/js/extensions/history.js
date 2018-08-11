@@ -124,4 +124,4 @@ History.prototype._rebindRow = function(oldRow, newRow){
 	});
 };
 
-Tabulator.registerExtension("history", History);
+Tabulator.prototype.registerExtension("history", History);

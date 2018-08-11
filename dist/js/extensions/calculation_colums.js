@@ -428,4 +428,4 @@ ColumnCalcs.prototype.calculations = {
 	}
 };
 
-Tabulator.registerExtension("columnCalcs", ColumnCalcs);
+Tabulator.prototype.registerExtension("columnCalcs", ColumnCalcs);

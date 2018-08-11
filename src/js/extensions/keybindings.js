@@ -357,4 +357,4 @@ Keybindings.prototype.actions = {
 };
 
 
-Tabulator.registerExtension("keybindings", Keybindings);
+Tabulator.prototype.registerExtension("keybindings", Keybindings);

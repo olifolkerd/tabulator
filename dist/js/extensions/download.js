@@ -355,4 +355,4 @@ Download.prototype.downloaders = {
 
 };
 
-Tabulator.registerExtension("download", Download);
+Tabulator.prototype.registerExtension("download", Download);

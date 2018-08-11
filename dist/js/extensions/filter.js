@@ -567,4 +567,4 @@ Filter.prototype.filters = {
 	}
 };
 
-Tabulator.registerExtension("filter", Filter);
+Tabulator.prototype.registerExtension("filter", Filter);

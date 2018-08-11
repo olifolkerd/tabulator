@@ -431,7 +431,7 @@ Page.prototype._parseRemoteData = function(data){
 
 				this.table.rowManager.scrollHorizontal(left);
 
-				this.table.columnManager.scrollHorizontal(left); 
+				this.table.columnManager.scrollHorizontal(left);
 
 				this.table.options.pageLoaded(this.getPage());
 			}
@@ -480,4 +480,4 @@ Page.prototype.paginationDataReceivedNames = {
 	"data":"data",
 };
 
-Tabulator.registerExtension("page", Page);
+Tabulator.prototype.registerExtension("page", Page);

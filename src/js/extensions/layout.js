@@ -222,4 +222,4 @@ Layout.prototype.modes = {
 };
 
 
-Tabulator.registerExtension("layout", Layout);
+Tabulator.prototype.registerExtension("layout", Layout);

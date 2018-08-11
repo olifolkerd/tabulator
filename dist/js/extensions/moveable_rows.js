@@ -434,4 +434,4 @@ MoveRows.prototype.commsReceived = function (table, action, data) {
 	}
 };
 
-Tabulator.registerExtension("moveRow", MoveRows);
+Tabulator.prototype.registerExtension("moveRow", MoveRows);

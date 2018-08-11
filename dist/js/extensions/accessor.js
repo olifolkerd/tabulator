@@ -88,4 +88,4 @@ Accessor.prototype.transformRow = function (dataIn, type) {
 //default accessors
 Accessor.prototype.accessors = {};
 
-Tabulator.registerExtension("accessor", Accessor);
+Tabulator.prototype.registerExtension("accessor", Accessor);

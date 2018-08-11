@@ -114,4 +114,4 @@ Mutator.prototype.transformCell = function (cell, value) {
 //default mutators
 Mutator.prototype.mutators = {};
 
-Tabulator.registerExtension("mutator", Mutator);
+Tabulator.prototype.registerExtension("mutator", Mutator);

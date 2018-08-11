@@ -186,4 +186,4 @@ MoveColumns.prototype.moveHover = function (e) {
 	}
 };
 
-Tabulator.registerExtension("moveColumn", MoveColumns);
+Tabulator.prototype.registerExtension("moveColumn", MoveColumns);

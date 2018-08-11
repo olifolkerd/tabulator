@@ -145,4 +145,4 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 	$("body").on("mouseup", mouseUp);
 };
 
-Tabulator.registerExtension("resizeColumns", ResizeColumns);
+Tabulator.prototype.registerExtension("resizeColumns", ResizeColumns);

@@ -810,4 +810,4 @@ GroupRows.prototype.removeGroup = function (group) {
 	}
 };
 
-Tabulator.registerExtension("groupRows", GroupRows);
+Tabulator.prototype.registerExtension("groupRows", GroupRows);

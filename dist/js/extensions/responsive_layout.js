@@ -233,4 +233,4 @@ ResponsiveLayout.prototype.formatCollapsedData = function (data) {
 	return Object.keys(data).length ? list : "";
 };
 
-Tabulator.registerExtension("responsiveLayout", ResponsiveLayout);
+Tabulator.prototype.registerExtension("responsiveLayout", ResponsiveLayout);

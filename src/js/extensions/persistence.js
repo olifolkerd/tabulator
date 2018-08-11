@@ -94,7 +94,7 @@ Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 		if (!from) {
 			if(output.length>i){
 				output.splice(i, 0, column);
-			}else{	
+			}else{
 				output.push(column);
 			}
 		}
@@ -205,4 +205,4 @@ Persistence.prototype.parseColumns = function(columns){
 	return definitions;
 };
 
-Tabulator.registerExtension("persistence", Persistence);
+Tabulator.prototype.registerExtension("persistence", Persistence);

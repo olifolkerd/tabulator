@@ -424,4 +424,4 @@ Format.prototype.formatters = {
 	}
 };
 
-Tabulator.registerExtension("format", Format);
+Tabulator.prototype.registerExtension("format", Format);

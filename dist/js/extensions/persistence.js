@@ -207,4 +207,4 @@ Persistence.prototype.parseColumns = function (columns) {
 	return definitions;
 };
 
-Tabulator.registerExtension("persistence", Persistence);
+Tabulator.prototype.registerExtension("persistence", Persistence);

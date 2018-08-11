@@ -262,4 +262,4 @@ Ajax.prototype.defaultConfig = {
 	success: function (data){}
 };
 
-Tabulator.registerExtension("ajax", Ajax);
+Tabulator.prototype.registerExtension("ajax", Ajax);

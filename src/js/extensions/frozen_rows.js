@@ -89,4 +89,4 @@ FrozenRows.prototype.styleRows = function(row){
 }
 
 
-Tabulator.registerExtension("frozenRows", FrozenRows);
+Tabulator.prototype.registerExtension("frozenRows", FrozenRows);
