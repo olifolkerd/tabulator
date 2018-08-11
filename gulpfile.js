@@ -55,7 +55,7 @@ gulp.task('styles', function() {
 //build tabulator
 gulp.task('tabulator', function() {
     //return gulp.src('src/js/**/*.js')
-    return gulp.src('src/js/core_extensions.js')
+    return gulp.src('src/js/core_modules.js')
     .pipe(insert.prepend(version + "\n"))
     //.pipe(sourcemaps.init())
     .pipe(include())
@@ -108,9 +108,9 @@ gulp.task('core', function() {
 
 
 //make jquery wrapper
-gulp.task('extensions', function(){
+gulp.task('modules', function(){
 
-    var path = __dirname + "/src/js/extensions/";
+    var path = __dirname + "/src/js/modules/";
 
     var files = fs.readdirSync(path);
 
@@ -119,7 +119,7 @@ gulp.task('extensions', function(){
     files.forEach(function(file, index){
 
         if(!core.includes(file)){
-            return gulp.src('src/js/extensions/' + file)
+            return gulp.src('src/js/modules/' + file)
             .pipe(insert.prepend(version + "\n"))
             .pipe(include())
             .pipe(babel({
@@ -131,11 +131,11 @@ gulp.task('extensions', function(){
                 ]
                 }))
             .pipe(concat(file))
-            .pipe(gulp.dest('dist/js/extensions/'))
+            .pipe(gulp.dest('dist/js/modules/'))
             .pipe(rename({suffix: '.min'}))
             .pipe(uglify())
             .pipe(insert.prepend(version))
-            .pipe(gulp.dest('dist/js/extensions/'))
+            .pipe(gulp.dest('dist/js/modules/'))
         }
         });
 
@@ -168,7 +168,7 @@ gulp.task('jquery', function(){
 gulp.task('scripts', function() {
     gulp.start('tabulator');
     gulp.start('core');
-    gulp.start('extensions');
+    gulp.start('modules');
     gulp.start('jquery');
     });
 

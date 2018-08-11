@@ -255,12 +255,12 @@ Cell.prototype._configureCell = function(){
 		});
 	}
 
-	if(self.column.extensions.edit){
-		self.table.extensions.edit.bindEditor(self);
+	if(self.column.modules.edit){
+		self.table.modules.edit.bindEditor(self);
 	}
 
-	if(self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.extExists("moveRow")){
-		self.table.extensions.moveRow.initializeCell(self);
+	if(self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.modExists("moveRow")){
+		self.table.modules.moveRow.initializeCell(self);
 	}
 
 	//hide cell if not visible
@@ -273,8 +273,8 @@ Cell.prototype._configureCell = function(){
 Cell.prototype._generateContents = function(){
 	var self = this;
 
-	if(self.table.extExists("format")){
-		self.element.html(self.table.extensions.format.formatValue(self));
+	if(self.table.modExists("format")){
+		self.element.html(self.table.modules.format.formatValue(self));
 	}else{
 		self.element.html(self.value);
 	}
@@ -325,8 +325,8 @@ Cell.prototype.setValue = function(value, mutate){
 	component;
 
 	if(changed){
-		if(this.table.options.history && this.table.extExists("history")){
-			this.table.extensions.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
+		if(this.table.options.history && this.table.modExists("history")){
+			this.table.modules.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
 		};
 
 		component = this.getComponent();
@@ -340,12 +340,12 @@ Cell.prototype.setValue = function(value, mutate){
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 
-	if(this.table.extExists("columnCalcs")){
+	if(this.table.modExists("columnCalcs")){
 		if(this.column.definition.topCalc || this.column.definition.bottomCalc){
-			if(this.table.options.groupBy && this.table.extExists("groupRows")){
-				this.table.extensions.columnCalcs.recalcRowGroup(this.row);
+			if(this.table.options.groupBy && this.table.modExists("groupRows")){
+				this.table.modules.columnCalcs.recalcRowGroup(this.row);
 			}else{
-				this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+				this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 			}
 		}
 	}
@@ -360,8 +360,8 @@ Cell.prototype.setValueProcessData = function(value, mutate){
 		changed = true;
 
 		if(mutate){
-			if(this.column.extensions.mutate){
-				value = this.table.extensions.mutator.transformCell(this, value);
+			if(this.column.modules.mutate){
+				value = this.table.modules.mutator.transformCell(this, value);
 			}
 		}
 	}
@@ -382,13 +382,13 @@ Cell.prototype.setValueActual = function(value){
 	this._generateTooltip();
 
 	//set resizable handles
-	if(this.table.options.resizableColumns && this.table.extExists("resizeColumns")){
-		this.table.extensions.resizeColumns.initializeColumn("cell", this.column, this.element);
+	if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
+		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
 	//handle frozen cells
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layoutElement(this.element, this.column);
+	if(this.table.modExists("frozenColumns")){
+		this.table.modules.frozenColumns.layoutElement(this.element, this.column);
 	}
 };
 
@@ -436,17 +436,17 @@ Cell.prototype.hide = function(){
 };
 
 Cell.prototype.edit = function(force){
-	if(this.table.extExists("edit", true)){
-		return this.table.extensions.edit.editCell(this, false, force);
+	if(this.table.modExists("edit", true)){
+		return this.table.modules.edit.editCell(this, false, force);
 	}
 };
 
 Cell.prototype.cancelEdit = function(){
-	if(this.table.extExists("edit", true)){
-		var editing = this.table.extensions.edit.getCurrentCell();
+	if(this.table.modExists("edit", true)){
+		var editing = this.table.modules.edit.getCurrentCell();
 
 		if(editing && editing._getSelf() === this){
-			this.table.extensions.edit.cancelEdit();
+			this.table.modules.edit.cancelEdit();
 		}else{
 			console.warn("Cancel Editor Error - This cell is not currently being edited ");
 		}

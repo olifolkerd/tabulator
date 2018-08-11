@@ -51,15 +51,15 @@ RowComponent.prototype.normalizeHeight = function(){
 };
 
 RowComponent.prototype.select = function(){
-	this.row.table.extensions.selectRow.selectRows(this.row);
+	this.row.table.modules.selectRow.selectRows(this.row);
 };
 
 RowComponent.prototype.deselect = function(){
-	this.row.table.extensions.selectRow.deselectRows(this.row);
+	this.row.table.modules.selectRow.deselectRows(this.row);
 };
 
 RowComponent.prototype.toggleSelect = function(){
-	this.row.table.extensions.selectRow.toggleRow(this.row);
+	this.row.table.modules.selectRow.toggleRow(this.row);
 };
 
 RowComponent.prototype._getSelf = function(){
@@ -67,14 +67,14 @@ RowComponent.prototype._getSelf = function(){
 };
 
 RowComponent.prototype.freeze = function(){
-	if(this.row.table.extExists("frozenRows", true)){
-		this.row.table.extensions.frozenRows.freezeRow(this.row);
+	if(this.row.table.modExists("frozenRows", true)){
+		this.row.table.modules.frozenRows.freezeRow(this.row);
 	}
 };
 
 RowComponent.prototype.unfreeze = function(){
-	if(this.row.table.extExists("frozenRows", true)){
-		this.row.table.extensions.frozenRows.unfreezeRow(this.row);
+	if(this.row.table.modExists("frozenRows", true)){
+		this.row.table.modules.frozenRows.unfreezeRow(this.row);
 	}
 };
 
@@ -95,7 +95,7 @@ var Row = function(data, parent){
 	this.data = {};
 	this.type = "row"; //type of element
 	this.element = $("<div class='tabulator-row' role='row'></div>");
-	this.extensions = {}; //hold extension variables;
+	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
 	this.outerHeight = 0; //holde lements outer height
@@ -116,13 +116,13 @@ Row.prototype.generateElement = function(){
 	dblTap,	tapHold, tap;
 
 	//set row selection characteristics
-	if(self.table.options.selectable !== false && self.table.extExists("selectRow")){
-		self.table.extensions.selectRow.initializeRow(this);
+	if(self.table.options.selectable !== false && self.table.modExists("selectRow")){
+		self.table.modules.selectRow.initializeRow(this);
 	}
 
 	//setup movable rows
-	if(self.table.options.movableRows !== false && self.table.extExists("moveRow")){
-		self.table.extensions.moveRow.initializeRow(this);
+	if(self.table.options.movableRows !== false && self.table.modExists("moveRow")){
+		self.table.modules.moveRow.initializeRow(this);
 	}
 
 	//handle row click events
@@ -222,8 +222,8 @@ Row.prototype.initialize = function(force){
 		self.element.empty();
 
 		//handle frozen cells
-		if(this.table.extExists("frozenColumns")){
-			this.table.extensions.frozenColumns.layoutRow(this);
+		if(this.table.modExists("frozenColumns")){
+			this.table.modules.frozenColumns.layoutRow(this);
 		}
 
 		this.generateCells();
@@ -237,8 +237,8 @@ Row.prototype.initialize = function(force){
 		}
 
 		//setup movable rows
-		if(self.table.options.responsiveLayout === "collapse" && self.table.extExists("responsiveLayout")){
-			self.table.extensions.responsiveLayout.layoutRow(this);
+		if(self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")){
+			self.table.modules.responsiveLayout.layoutRow(this);
 		}
 
 		if(self.table.options.rowFormatter){
@@ -246,8 +246,8 @@ Row.prototype.initialize = function(force){
 		}
 
 		//set resizable handles
-		if(self.table.options.resizableRows && self.table.extExists("resizeRows")){
-			self.table.extensions.resizeRows.initializeRow(self);
+		if(self.table.options.resizableRows && self.table.modExists("resizeRows")){
+			self.table.modules.resizeRows.initializeRow(self);
 		}
 
 		self.initialized = true;
@@ -365,8 +365,8 @@ Row.prototype.deleteCell = function(cell){
 Row.prototype.setData = function(data){
 	var self = this;
 
-	if(self.table.extExists("mutator")){
-		self.data = self.table.extensions.mutator.transformRow(data, "data");
+	if(self.table.modExists("mutator")){
+		self.data = self.table.modules.mutator.transformRow(data, "data");
 	}else{
 		self.data = data;
 	}
@@ -381,8 +381,8 @@ Row.prototype.updateData = function(data){
 	}
 
 	//mutate incomming data if needed
-	if(self.table.extExists("mutator")){
-		data = self.table.extensions.mutator.transformRow(data, "data");
+	if(self.table.modExists("mutator")){
+		data = self.table.modules.mutator.transformRow(data, "data");
 	}
 
 	//set data
@@ -422,8 +422,8 @@ Row.prototype.getData = function(transform){
 	var self = this;
 
 	if(transform){
-		if(self.table.extExists("accessor")){
-			return self.table.extensions.accessor.transformRow(self.data, transform);
+		if(self.table.modExists("accessor")){
+			return self.table.modules.accessor.transformRow(self.data, transform);
 		}
 	}else{
 		return this.data;
@@ -457,11 +457,11 @@ Row.prototype.findNextEditableCell = function(index){
 		for(var i = index+1; i < this.cells.length; i++){
 			let cell = this.cells[i];
 
-			if(cell.column.extensions.edit && cell.getElement().is(":visible")){
+			if(cell.column.modules.edit && cell.getElement().is(":visible")){
 				let allowEdit = true;
 
-				if(typeof cell.column.extensions.edit.check == "function"){
-					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+				if(typeof cell.column.modules.edit.check == "function"){
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
 
 				if(allowEdit){
@@ -483,9 +483,9 @@ Row.prototype.findPrevEditableCell = function(index){
 			let cell = this.cells[i],
 			allowEdit = true;
 
-			if(cell.column.extensions.edit && cell.getElement().is(":visible")){
-				if(typeof cell.column.extensions.edit.check == "function"){
-					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+			if(cell.column.modules.edit && cell.getElement().is(":visible")){
+				if(typeof cell.column.modules.edit.check == "function"){
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
 
 				if(allowEdit){
@@ -511,13 +511,13 @@ Row.prototype.delete = function(){
 
 	this.deleteActual();
 
-	if(this.table.options.history && this.table.extExists("history")){
+	if(this.table.options.history && this.table.modExists("history")){
 
 		if(index){
 			index = this.table.rowManager.rows[index-1];
 		}
 
-		this.table.extensions.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
+		this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 	};
 
 };
@@ -528,8 +528,8 @@ Row.prototype.deleteActual = function(){
 	var index = this.table.rowManager.getRowIndex(this);
 
 	//deselect row if it is selected
-	if(this.table.extExists("selectRow")){
-		this.table.extensions.selectRow._deselectRow(this.row, true);
+	if(this.table.modExists("selectRow")){
+		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
 	this.table.rowManager.deleteRow(this);
@@ -537,16 +537,16 @@ Row.prototype.deleteActual = function(){
 	this.deleteCells();
 
 	//remove from group
-	if(this.extensions.group){
-		this.extensions.group.removeRow(this);
+	if(this.modules.group){
+		this.modules.group.removeRow(this);
 	}
 
 	//recalc column calculations if present
-	if(this.table.extExists("columnCalcs")){
-		if(this.table.options.groupBy && this.table.extExists("groupRows")){
-			this.table.extensions.columnCalcs.recalcRowGroup(this);
+	if(this.table.modExists("columnCalcs")){
+		if(this.table.options.groupBy && this.table.modExists("groupRows")){
+			this.table.modules.columnCalcs.recalcRowGroup(this);
 		}else{
-			this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 	}
 };
@@ -573,7 +573,7 @@ Row.prototype.wipe = function(){
 
 
 Row.prototype.getGroup = function(){
-	return this.extensions.group || false;
+	return this.modules.group || false;
 }
 
 

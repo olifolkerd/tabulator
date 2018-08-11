@@ -87,11 +87,11 @@ RowManager.prototype.initialize = function(){
 			self.columnManager.scrollHorizontal(left);
 
 			if(self.table.options.groupBy){
-				self.table.extensions.groupRows.scrollHeaders(left);
+				self.table.modules.groupRows.scrollHeaders(left);
 			}
 
-			if(self.table.extExists("columnCalcs")){
-				self.table.extensions.columnCalcs.scrollHorizontal(left);
+			if(self.table.modExists("columnCalcs")){
+				self.table.modules.columnCalcs.scrollHorizontal(left);
 			}
 		}
 
@@ -111,7 +111,7 @@ RowManager.prototype.initialize = function(){
 				self.scrollVertical(dir);
 
 				if(self.table.options.ajaxProgressiveLoad == "scroll"){
-					self.table.extensions.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
+					self.table.modules.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
 				}
 			}else{
 				self.scrollTop = top;
@@ -266,14 +266,14 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 
 	self.rows = [];
 
-	if(this.table.options.history && this.table.extExists("history")){
-		this.table.extensions.history.clear();
+	if(this.table.options.history && this.table.modExists("history")){
+		this.table.modules.history.clear();
 	}
 
 	if(Array.isArray(data)){
 
-		if(this.table.extExists("selectRow")){
-			this.table.extensions.selectRow.clearSelectionData();
+		if(this.table.modExists("selectRow")){
+			this.table.modules.selectRow.clearSelectionData();
 		}
 
 		data.forEach(function(def, i){
@@ -321,12 +321,12 @@ RowManager.prototype.deleteRow = function(row){
 
 	this.table.options.dataEdited(this.getData());
 
-	if(this.table.options.groupBy && this.table.extExists("groupRows")){
-		this.table.extensions.groupRows.updateGroupRows(true);
-	}else if(this.table.options.pagination && this.table.extExists("page")){
+	if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		this.table.modules.groupRows.updateGroupRows(true);
+	}else if(this.table.options.pagination && this.table.modExists("page")){
 		this.refreshActiveData(false, false, true);
 	}else{
-		if(this.table.options.pagination && this.table.extExists("page")){
+		if(this.table.options.pagination && this.table.modExists("page")){
 			this.refreshActiveData("page");
 		}
 	}
@@ -337,8 +337,8 @@ RowManager.prototype.addRow = function(data, pos, index, blockRedraw){
 
 	var row = this.addRowActual(data, pos, index, blockRedraw);
 
-	if(this.table.options.history && this.table.extExists("history")){
-		this.table.extensions.history.action("rowAdd", row, {data:data, pos:pos, index:index});
+	if(this.table.options.history && this.table.modExists("history")){
+		this.table.modules.history.action("rowAdd", row, {data:data, pos:pos, index:index});
 	};
 
 	return row;
@@ -368,17 +368,17 @@ RowManager.prototype.addRows = function(data, pos, index){
 		rows.push(row);
 	});
 
-	if(this.table.options.groupBy && this.table.extExists("groupRows")){
-		this.table.extensions.groupRows.updateGroupRows(true);
-	}else if(this.table.options.pagination && this.table.extExists("page")){
+	if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		this.table.modules.groupRows.updateGroupRows(true);
+	}else if(this.table.options.pagination && this.table.modExists("page")){
 		this.refreshActiveData(false, false, true);
 	}else{
 		this.reRenderInPosition();
 	}
 
 	//recalc column calculations if present
-	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+	if(this.table.modExists("columnCalcs")){
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	return rows;
@@ -422,7 +422,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 		}else{
 			if(dispRows.length){
 				index = dispRows[dispRows.length - 1];
-				top = dispRows.length < this.table.extensions.page.getPageSize() ? false : true;
+				top = dispRows.length < this.table.modules.page.getPageSize() ? false : true;
 			}
 		}
 	}
@@ -431,8 +431,8 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 		index = this.findRow(index);
 	}
 
-	if(this.table.options.groupBy && this.table.extExists("groupRows")){
-		this.table.extensions.groupRows.assignRowToGroup(row);
+	if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		this.table.modules.groupRows.assignRowToGroup(row);
 
 		var groupRows = row.getGroup().rows;
 
@@ -510,8 +510,8 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 };
 
 RowManager.prototype.moveRow = function(from, to, after){
-	if(this.table.options.history && this.table.extExists("history")){
-		this.table.extensions.history.action("rowMove", from, {pos:this.getRowPosition(from), to:to, after:after});
+	if(this.table.options.history && this.table.modExists("history")){
+		this.table.modules.history.action("rowMove", from, {pos:this.getRowPosition(from), to:to, after:after});
 	};
 
 	this.moveRowActual(from, to, after);
@@ -529,7 +529,7 @@ RowManager.prototype.moveRowActual = function(from, to, after){
 		self._moveRowInArray(rows, from, to, after);
 	});
 
-	if(this.table.options.groupBy && this.table.extExists("groupRows")){
+	if(this.table.options.groupBy && this.table.modExists("groupRows")){
 		var toGroup = to.getGroup();
 		var fromGroup = from.getGroup();
 
@@ -730,30 +730,30 @@ RowManager.prototype.getHtml = function(active){
 		options = table.options,
 		params = {};
 
-		if(table.extExists("page")){
+		if(table.modExists("page")){
 		//set sort data if defined
 		if(options.ajaxSorting){
-			let sorters = self.table.extensions.sort.getSort();
+			let sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function(item){
 				delete item.column;
 			});
 
-			params[self.table.extensions.page.paginationDataSentNames.sorters] = sorters;
+			params[self.table.modules.page.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
 		if(options.ajaxFiltering){
-			let filters = self.table.extensions.filter.getFilters(true, true);
+			let filters = self.table.modules.filter.getFilters(true, true);
 
-			params[self.table.extensions.page.paginationDataSentNames.filters] = filters;
+			params[self.table.modules.page.paginationDataSentNames.filters] = filters;
 		}
 
 
-		self.table.extensions.ajax.setParams(params, true);
+		self.table.modules.ajax.setParams(params, true);
 	}
 
-	table.extensions.ajax.sendRequest(function(data){
+	table.modules.ajax.sendRequest(function(data){
 		self.setData(data);
 	});
 };
@@ -765,9 +765,9 @@ RowManager.prototype.filterRefresh = function(){
 	left = this.scrollLeft;
 
 	if(options.ajaxFiltering){
-		if(options.pagination == "remote" && table.extExists("page")){
-			table.extensions.page.reset(true);
-			table.extensions.page.setPage(1);
+		if(options.pagination == "remote" && table.modExists("page")){
+			table.modules.page.reset(true);
+			table.modules.page.setPage(1);
 		}else{
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -786,9 +786,9 @@ RowManager.prototype.sorterRefresh = function(){
 	left = this.scrollLeft;
 
 	if(options.ajaxSorting){
-		if(options.pagination == "remote" && table.extExists("page")){
-			table.extensions.page.reset(true);
-			table.extensions.page.setPage(1);
+		if(options.pagination == "remote" && table.modExists("page")){
+			table.modules.page.reset(true);
+			table.modules.page.setPage(1);
 		}else{
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -805,11 +805,11 @@ RowManager.prototype.scrollHorizontal = function(left){
 	this.element.scrollLeft(left);
 
 	if(this.table.options.groupBy){
-		this.table.extensions.groupRows.scrollHeaders(left);
+		this.table.modules.groupRows.scrollHeaders(left);
 	}
 
-	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.scrollHorizontal(left);
+	if(this.table.modExists("columnCalcs")){
+		this.table.modules.columnCalcs.scrollHorizontal(left);
 	}
 };
 
@@ -823,8 +823,8 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 		stage = "all";
 	}
 
-	if(table.options.selectable && !table.options.selectablePersistence && table.extExists("selectRow")){
-		table.extensions.selectRow.deselectRows();
+	if(table.options.selectable && !table.options.selectablePersistence && table.modExists("selectRow")){
+		table.modules.selectRow.deselectRows();
 	}
 
 	//cascade through data refresh stages
@@ -833,8 +833,8 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 
 		case "filter":
 		if(!skipStage){
-			if(table.extExists("filter")){
-				self.setActiveRows(table.extensions.filter.filter(self.rows));
+			if(table.modExists("filter")){
+				self.setActiveRows(table.modules.filter.filter(self.rows));
 			}else{
 				self.setActiveRows(self.rows.slice(0));
 			}
@@ -844,8 +844,8 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 
 		case "sort":
 		if(!skipStage){
-			if(table.extExists("sort")){
-				table.extensions.sort.sort();
+			if(table.modExists("sort")){
+				table.modules.sort.sort();
 			}
 		}else{
 			skipStage = false;
@@ -857,18 +857,18 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 
 		case "freeze":
 		if(!skipStage){
-			if(this.table.extExists("frozenRows")){
-				if(table.extensions.frozenRows.isFrozen()){
-					if(!table.extensions.frozenRows.getDisplayIndex()){
-						table.extensions.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
+			if(this.table.modExists("frozenRows")){
+				if(table.modules.frozenRows.isFrozen()){
+					if(!table.modules.frozenRows.getDisplayIndex()){
+						table.modules.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
 					}
 
-					displayIndex = table.extensions.frozenRows.getDisplayIndex();
+					displayIndex = table.modules.frozenRows.getDisplayIndex();
 
-					displayIndex = self.setDisplayRows(table.extensions.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+					displayIndex = self.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 					if(displayIndex !== true){
-						table.extensions.frozenRows.setDisplayIndex(displayIndex);
+						table.modules.frozenRows.setDisplayIndex(displayIndex);
 					}
 				}
 			}
@@ -878,49 +878,49 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 
 		case "group":
 		if(!skipStage){
-			if(table.options.groupBy && table.extExists("groupRows")){
+			if(table.options.groupBy && table.modExists("groupRows")){
 
-				if(!table.extensions.groupRows.getDisplayIndex()){
-					table.extensions.groupRows.setDisplayIndex(this.getNextDisplayIndex());
+				if(!table.modules.groupRows.getDisplayIndex()){
+					table.modules.groupRows.setDisplayIndex(this.getNextDisplayIndex());
 				}
 
-				displayIndex = table.extensions.groupRows.getDisplayIndex();
+				displayIndex = table.modules.groupRows.getDisplayIndex();
 
-				displayIndex = self.setDisplayRows(table.extensions.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+				displayIndex = self.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 				if(displayIndex !== true){
-					table.extensions.groupRows.setDisplayIndex(displayIndex);
+					table.modules.groupRows.setDisplayIndex(displayIndex);
 				}
 			}
 		}else{
 			skipStage = false;
 		}
 
-		if(table.options.pagination && table.extExists("page") && !renderInPosition){
-			if(table.extensions.page.getMode() == "local"){
-				table.extensions.page.reset();
+		if(table.options.pagination && table.modExists("page") && !renderInPosition){
+			if(table.modules.page.getMode() == "local"){
+				table.modules.page.reset();
 			}
 		}
 
 		case "page":
 		if(!skipStage){
-			if(table.options.pagination && table.extExists("page")){
+			if(table.options.pagination && table.modExists("page")){
 
-				if(!table.extensions.page.getDisplayIndex()){
-					table.extensions.page.setDisplayIndex(this.getNextDisplayIndex());
+				if(!table.modules.page.getDisplayIndex()){
+					table.modules.page.setDisplayIndex(this.getNextDisplayIndex());
 				}
 
-				displayIndex = table.extensions.page.getDisplayIndex();
+				displayIndex = table.modules.page.getDisplayIndex();
 
-				if(table.extensions.page.getMode() == "local"){
-					table.extensions.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
+				if(table.modules.page.getMode() == "local"){
+					table.modules.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
 				}
 
 
-				displayIndex = self.setDisplayRows(table.extensions.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+				displayIndex = self.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 				if(displayIndex !== true){
-					table.extensions.page.setDisplayIndex(displayIndex);
+					table.modules.page.setDisplayIndex(displayIndex);
 				}
 			}
 		}else{
@@ -940,8 +940,8 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 		}
 	}
 
-	if(table.extExists("columnCalcs")){
-		table.extensions.columnCalcs.recalc(this.activeRows);
+	if(table.modExists("columnCalcs")){
+		table.modules.columnCalcs.recalc(this.activeRows);
 	}
 };
 
@@ -958,16 +958,16 @@ RowManager.prototype.resetDisplayRows = function(){
 
 	this.displayRowsCount = this.displayRows[0].length;
 
-	if(this.table.extExists("frozenRows")){
-		this.table.extensions.frozenRows.setDisplayIndex(0);
+	if(this.table.modExists("frozenRows")){
+		this.table.modules.frozenRows.setDisplayIndex(0);
 	}
 
-	if(this.table.options.groupBy && this.table.extExists("groupRows")){
-		this.table.extensions.groupRows.setDisplayIndex(0);
+	if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		this.table.modules.groupRows.setDisplayIndex(0);
 	}
 
-	if(this.table.options.pagination && this.table.extExists("page")){
-		this.table.extensions.page.setDisplayIndex(0);
+	if(this.table.options.pagination && this.table.modExists("page")){
+		this.table.modules.page.setDisplayIndex(0);
 	}
 }
 
@@ -1090,14 +1090,14 @@ RowManager.prototype.renderTable = function(){
 	if(self.firstRender){
 		if(self.displayRowsCount){
 			self.firstRender = false;
-			self.table.extensions.layout.layout();
+			self.table.modules.layout.layout();
 		}else{
 			self.renderEmptyScroll();
 		}
 	}
 
-	if(self.table.extExists("frozenColumns")){
-		self.table.extensions.frozenColumns.layout();
+	if(self.table.modExists("frozenColumns")){
+		self.table.modules.frozenColumns.layout();
 	}
 
 
@@ -1289,7 +1289,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 		holder.scrollTop(this.scrollTop);
 
 		if(self.table.options.groupBy){
-			if(self.table.extensions.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.extensions.groupRows.countGroups()){
+			if(self.table.modules.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.modules.groupRows.countGroups()){
 
 				self.tableElement.css({
 					"min-width":self.table.columnManager.getWidth(),

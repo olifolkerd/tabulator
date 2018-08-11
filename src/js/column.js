@@ -114,7 +114,7 @@ var Column = function(def, parent){
 	this.setField(this.definition.field);
 
 
-	this.extensions = {}; //hold extension variables;
+	this.modules = {}; //hold module variables;
 
 	this.cellEvents = {
 		cellClick:false,
@@ -146,8 +146,8 @@ var Column = function(def, parent){
 		parent.registerColumnField(this);
 	}
 
-	if(def.rowHandle && this.table.options.movableRows !== false && this.table.extExists("moveRow")){
-		this.table.extensions.moveRow.setHandle(true);
+	if(def.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
+		this.table.modules.moveRow.setHandle(true);
 	}
 
 	this._mapDepricatedFunctionality()
@@ -205,7 +205,7 @@ Column.prototype.setTooltip = function(){
 	if(tooltip){
 		if(tooltip === true){
 			if(def.field){
-				self.table.extensions.localize.bind("columns|" + def.field, function(value){
+				self.table.modules.localize.bind("columns|" + def.field, function(value){
 					self.element.attr("title", value || def.title);
 				});
 			}else{
@@ -250,33 +250,33 @@ Column.prototype._buildHeader = function(){
 	self.setTooltip();
 
 	//set resizable handles
-	if(self.table.options.resizableColumns && self.table.extExists("resizeColumns")){
-		self.table.extensions.resizeColumns.initializeColumn("header", self, self.element);
+	if(self.table.options.resizableColumns && self.table.modExists("resizeColumns")){
+		self.table.modules.resizeColumns.initializeColumn("header", self, self.element);
 	}
 
 	//set resizable handles
-	if(def.headerFilter && self.table.extExists("filter") && self.table.extExists("edit")){
+	if(def.headerFilter && self.table.modExists("filter") && self.table.modExists("edit")){
 		if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-			self.table.extensions.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+			self.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
 		}
 
-		self.table.extensions.filter.initializeColumn(self);
+		self.table.modules.filter.initializeColumn(self);
 	}
 
 
 	//set resizable handles
-	if(self.table.extExists("frozenColumns")){
-		self.table.extensions.frozenColumns.initializeColumn(self);
+	if(self.table.modExists("frozenColumns")){
+		self.table.modules.frozenColumns.initializeColumn(self);
 	}
 
 	//set movable column
-	if(self.table.options.movableColumns && !self.isGroup && self.table.extExists("moveColumn")){
-		self.table.extensions.moveColumn.initializeColumn(self);
+	if(self.table.options.movableColumns && !self.isGroup && self.table.modExists("moveColumn")){
+		self.table.modules.moveColumn.initializeColumn(self);
 	}
 
 	//set calcs column
-	if((def.topCalc || def.bottomCalc) && self.table.extExists("columnCalcs")){
-		self.table.extensions.columnCalcs.initializeColumn(self);
+	if((def.topCalc || def.bottomCalc) && self.table.modExists("columnCalcs")){
+		self.table.modules.columnCalcs.initializeColumn(self);
 	}
 
 
@@ -405,39 +405,39 @@ Column.prototype._buildColumnHeader = function(){
 	sortable;
 
 	//set column sorter
-	if(table.extExists("sort")){
-		table.extensions.sort.initializeColumn(self, self.contentElement);
+	if(table.modExists("sort")){
+		table.modules.sort.initializeColumn(self, self.contentElement);
 	}
 
 	//set column formatter
-	if(table.extExists("format")){
-		table.extensions.format.initializeColumn(self);
+	if(table.modExists("format")){
+		table.modules.format.initializeColumn(self);
 	}
 
 	//set column editor
-	if(typeof def.editor != "undefined" && table.extExists("edit")){
-		table.extensions.edit.initializeColumn(self);
+	if(typeof def.editor != "undefined" && table.modExists("edit")){
+		table.modules.edit.initializeColumn(self);
 	}
 
 	//set colum validator
-	if(typeof def.validator != "undefined" && table.extExists("validate")){
-		table.extensions.validate.initializeColumn(self);
+	if(typeof def.validator != "undefined" && table.modExists("validate")){
+		table.modules.validate.initializeColumn(self);
 	}
 
 
 	//set column mutator
-	if(table.extExists("mutator")){
-		table.extensions.mutator.initializeColumn(self);
+	if(table.modExists("mutator")){
+		table.modules.mutator.initializeColumn(self);
 	}
 
 	//set column accessor
-	if(table.extExists("accessor")){
-		table.extensions.accessor.initializeColumn(self);
+	if(table.modExists("accessor")){
+		table.modules.accessor.initializeColumn(self);
 	}
 
 	//set respoviveLayout
-	if(typeof table.options.responsiveLayout && table.extExists("responsiveLayout")){
-		table.extensions.responsiveLayout.initializeColumn(self);
+	if(typeof table.options.responsiveLayout && table.modExists("responsiveLayout")){
+		table.modules.responsiveLayout.initializeColumn(self);
 	}
 
 	//set column visibility
@@ -508,7 +508,7 @@ Column.prototype._buildColumnHeaderTitle = function(){
 		titleHolderElement.append(titleElement);
 
 		if(def.field){
-			table.extensions.localize.bind("columns|" + def.field, function(text){
+			table.modules.localize.bind("columns|" + def.field, function(text){
 				titleElement.val(text || (def.title || "&nbsp"));
 			});
 		}else{
@@ -517,7 +517,7 @@ Column.prototype._buildColumnHeaderTitle = function(){
 
 	}else{
 		if(def.field){
-			table.extensions.localize.bind("columns|" + def.field, function(text){
+			table.modules.localize.bind("columns|" + def.field, function(text){
 				self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp"));
 			});
 		}else{
@@ -531,11 +531,11 @@ Column.prototype._buildColumnHeaderTitle = function(){
 Column.prototype._formatColumnHeaderTitle = function(el, title){
 	var formatter, contents;
 
-	if(this.definition.titleFormatter && this.table.extExists("format")){
+	if(this.definition.titleFormatter && this.table.modExists("format")){
 
-		formatter = this.table.extensions.format.getFormatter(this.definition.titleFormatter);
+		formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
 
-		contents = formatter.call(this.table.extensions.format, {
+		contents = formatter.call(this.table.modules.format, {
 			getValue:function(){
 				return title;
 			},
@@ -780,12 +780,12 @@ Column.prototype.show = function(silent, responsiveToggle){
 			cell.show();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.persistence.save("columns");
+		if(this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.persistence.save("columns");
 		}
 
-		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
+		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if(!silent){
@@ -812,12 +812,12 @@ Column.prototype.hide = function(silent, responsiveToggle){
 			cell.hide();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
-			this.table.extensions.persistence.save("columns");
+		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+			this.table.modules.persistence.save("columns");
 		}
 
-		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
+		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if(!silent){
@@ -866,8 +866,8 @@ Column.prototype.setWidthActual = function(width){
 	}
 
 	//set resizable handles
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layout();
+	if(this.table.modExists("frozenColumns")){
+		this.table.modules.frozenColumns.layout();
 	}
 };
 
@@ -954,15 +954,15 @@ Column.prototype.reinitializeWidth = function(force){
 	}
 
 	//hide header filters to prevent them altering column width
-	if(this.table.extExists("filter")){
-		this.table.extensions.filter.hideHeaderFilterElements();
+	if(this.table.modExists("filter")){
+		this.table.modules.filter.hideHeaderFilterElements();
 	}
 
 	this.fitToData();
 
 	//show header filters again after layout is complete
-	if(this.table.extExists("filter")){
-		this.table.extensions.filter.showHeaderFilterElements();
+	if(this.table.modExists("filter")){
+		this.table.modules.filter.showHeaderFilterElements();
 	}
 }
 

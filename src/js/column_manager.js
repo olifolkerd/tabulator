@@ -48,8 +48,8 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 
 	this.scrollLeft = left;
 
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layout();
+	if(this.table.modExists("frozenColumns")){
+		this.table.modules.frozenColumns.layout();
 	}
 };
 
@@ -67,8 +67,8 @@ ColumnManager.prototype.setColumns = function(cols, row){
 
 
 	//reset frozen columns
-	if(self.table.extExists("frozenColumns")){
-		self.table.extensions.frozenColumns.reset();
+	if(self.table.modExists("frozenColumns")){
+		self.table.modules.frozenColumns.reset();
 	}
 
 	cols.forEach(function(def, i){
@@ -77,8 +77,8 @@ ColumnManager.prototype.setColumns = function(cols, row){
 
 	self._reIndexColumns();
 
-	if(self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)){
-		self.table.extensions.responsiveLayout.initialize();
+	if(self.table.options.responsiveLayout && self.table.modExists("responsiveLayout", true)){
+		self.table.modules.responsiveLayout.initialize();
 	}
 
 	self.redraw(true);
@@ -265,16 +265,16 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	this._moveColumnInArray(this.columns, from, to, after);
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
-	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-		this.table.extensions.responsiveLayout.initialize();
+	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+		this.table.modules.responsiveLayout.initialize();
 	}
 
 	if(this.table.options.columnMoved){
 		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
 	}
 
-	if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
-		this.table.extensions.persistence.save("columns");
+	if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+		this.table.modules.persistence.save("columns");
 	}
 };
 
@@ -423,17 +423,17 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 
 	this._reIndexColumns();
 
-	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-		this.table.extensions.responsiveLayout.initialize();
+	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+		this.table.modules.responsiveLayout.initialize();
 	}
 
-	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+	if(this.table.modExists("columnCalcs")){
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	this.redraw();
 
-	if(this.table.extensions.layout.getMode() != "fitColumns"){
+	if(this.table.modules.layout.getMode() != "fitColumns"){
 		column.reinitializeWidth();
 	}
 
@@ -466,8 +466,8 @@ ColumnManager.prototype.deregisterColumn = function(column){
 		this.columns.splice(index, 1);
 	}
 
-	if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-		this.table.extensions.responsiveLayout.initialize();
+	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+		this.table.modules.responsiveLayout.initialize();
 	}
 
 	this.redraw();
@@ -483,33 +483,33 @@ ColumnManager.prototype.redraw = function(force){
 		this.table.rowManager.reinitialize();
 	}
 
-	if(this.table.extensions.layout.getMode() == "fitColumns"){
-		this.table.extensions.layout.layout();
+	if(this.table.modules.layout.getMode() == "fitColumns"){
+		this.table.modules.layout.layout();
 	}else{
 		if(force){
-			this.table.extensions.layout.layout();
+			this.table.modules.layout.layout();
 		}else{
-			if(this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-				this.table.extensions.responsiveLayout.update();
+			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+				this.table.modules.responsiveLayout.update();
 			}
 		}
 	}
 
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layout();
+	if(this.table.modExists("frozenColumns")){
+		this.table.modules.frozenColumns.layout();
 	}
 
-	if(this.table.extExists("columnCalcs")){
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+	if(this.table.modExists("columnCalcs")){
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	if(force){
-		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
-			this.table.extensions.persistence.save("columns");
+		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+			this.table.modules.persistence.save("columns");
 		}
 
-		if(this.table.extExists("columnCalcs")){
-			this.table.extensions.columnCalcs.redraw();
+		if(this.table.modExists("columnCalcs")){
+			this.table.modules.columnCalcs.redraw();
 		}
 	}
 

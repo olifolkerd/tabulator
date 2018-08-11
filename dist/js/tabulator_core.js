@@ -213,9 +213,9 @@ ColumnManager.prototype.scrollHorizontal = function (left) {
 
 	this.scrollLeft = left;
 
-	if (this.table.extExists("frozenColumns")) {
+	if (this.table.modExists("frozenColumns")) {
 
-		this.table.extensions.frozenColumns.layout();
+		this.table.modules.frozenColumns.layout();
 	}
 };
 
@@ -236,9 +236,9 @@ ColumnManager.prototype.setColumns = function (cols, row) {
 
 	//reset frozen columns
 
-	if (self.table.extExists("frozenColumns")) {
+	if (self.table.modExists("frozenColumns")) {
 
-		self.table.extensions.frozenColumns.reset();
+		self.table.modules.frozenColumns.reset();
 	}
 
 	cols.forEach(function (def, i) {
@@ -248,9 +248,9 @@ ColumnManager.prototype.setColumns = function (cols, row) {
 
 	self._reIndexColumns();
 
-	if (self.table.options.responsiveLayout && self.table.extExists("responsiveLayout", true)) {
+	if (self.table.options.responsiveLayout && self.table.modExists("responsiveLayout", true)) {
 
-		self.table.extensions.responsiveLayout.initialize();
+		self.table.modules.responsiveLayout.initialize();
 	}
 
 	self.redraw(true);
@@ -490,9 +490,9 @@ ColumnManager.prototype.moveColumn = function (from, to, after) {
 
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
-	if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+	if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-		this.table.extensions.responsiveLayout.initialize();
+		this.table.modules.responsiveLayout.initialize();
 	}
 
 	if (this.table.options.columnMoved) {
@@ -500,9 +500,9 @@ ColumnManager.prototype.moveColumn = function (from, to, after) {
 		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
 	}
 
-	if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
+	if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
 
-		this.table.extensions.persistence.save("columns");
+		this.table.modules.persistence.save("columns");
 	}
 };
 
@@ -686,19 +686,19 @@ ColumnManager.prototype.addColumn = function (definition, before, nextToColumn) 
 
 	this._reIndexColumns();
 
-	if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+	if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-		this.table.extensions.responsiveLayout.initialize();
+		this.table.modules.responsiveLayout.initialize();
 	}
 
-	if (this.table.extExists("columnCalcs")) {
+	if (this.table.modExists("columnCalcs")) {
 
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	this.redraw();
 
-	if (this.table.extensions.layout.getMode() != "fitColumns") {
+	if (this.table.modules.layout.getMode() != "fitColumns") {
 
 		column.reinitializeWidth();
 	}
@@ -740,9 +740,9 @@ ColumnManager.prototype.deregisterColumn = function (column) {
 		this.columns.splice(index, 1);
 	}
 
-	if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+	if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-		this.table.extensions.responsiveLayout.initialize();
+		this.table.modules.responsiveLayout.initialize();
 	}
 
 	this.redraw();
@@ -764,43 +764,43 @@ ColumnManager.prototype.redraw = function (force) {
 		this.table.rowManager.reinitialize();
 	}
 
-	if (this.table.extensions.layout.getMode() == "fitColumns") {
+	if (this.table.modules.layout.getMode() == "fitColumns") {
 
-		this.table.extensions.layout.layout();
+		this.table.modules.layout.layout();
 	} else {
 
 		if (force) {
 
-			this.table.extensions.layout.layout();
+			this.table.modules.layout.layout();
 		} else {
 
-			if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+			if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-				this.table.extensions.responsiveLayout.update();
+				this.table.modules.responsiveLayout.update();
 			}
 		}
 	}
 
-	if (this.table.extExists("frozenColumns")) {
+	if (this.table.modExists("frozenColumns")) {
 
-		this.table.extensions.frozenColumns.layout();
+		this.table.modules.frozenColumns.layout();
 	}
 
-	if (this.table.extExists("columnCalcs")) {
+	if (this.table.modExists("columnCalcs")) {
 
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	if (force) {
 
-		if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
+		if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
 
-			this.table.extensions.persistence.save("columns");
+			this.table.modules.persistence.save("columns");
 		}
 
-		if (this.table.extExists("columnCalcs")) {
+		if (this.table.modExists("columnCalcs")) {
 
-			this.table.extensions.columnCalcs.redraw();
+			this.table.modules.columnCalcs.redraw();
 		}
 	}
 
@@ -919,7 +919,7 @@ var Column = function Column(def, parent) {
 
 	this.setField(this.definition.field);
 
-	this.extensions = {}; //hold extension variables;
+	this.modules = {}; //hold module variables;
 
 	this.cellEvents = {
 		cellClick: false,
@@ -951,8 +951,8 @@ var Column = function Column(def, parent) {
 		parent.registerColumnField(this);
 	}
 
-	if (def.rowHandle && this.table.options.movableRows !== false && this.table.extExists("moveRow")) {
-		this.table.extensions.moveRow.setHandle(true);
+	if (def.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")) {
+		this.table.modules.moveRow.setHandle(true);
 	}
 
 	this._mapDepricatedFunctionality();
@@ -1009,7 +1009,7 @@ Column.prototype.setTooltip = function () {
 	if (tooltip) {
 		if (tooltip === true) {
 			if (def.field) {
-				self.table.extensions.localize.bind("columns|" + def.field, function (value) {
+				self.table.modules.localize.bind("columns|" + def.field, function (value) {
 					self.element.attr("title", value || def.title);
 				});
 			} else {
@@ -1054,32 +1054,32 @@ Column.prototype._buildHeader = function () {
 	self.setTooltip();
 
 	//set resizable handles
-	if (self.table.options.resizableColumns && self.table.extExists("resizeColumns")) {
-		self.table.extensions.resizeColumns.initializeColumn("header", self, self.element);
+	if (self.table.options.resizableColumns && self.table.modExists("resizeColumns")) {
+		self.table.modules.resizeColumns.initializeColumn("header", self, self.element);
 	}
 
 	//set resizable handles
-	if (def.headerFilter && self.table.extExists("filter") && self.table.extExists("edit")) {
+	if (def.headerFilter && self.table.modExists("filter") && self.table.modExists("edit")) {
 		if (typeof def.headerFilterPlaceholder !== "undefined" && def.field) {
-			self.table.extensions.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+			self.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
 		}
 
-		self.table.extensions.filter.initializeColumn(self);
+		self.table.modules.filter.initializeColumn(self);
 	}
 
 	//set resizable handles
-	if (self.table.extExists("frozenColumns")) {
-		self.table.extensions.frozenColumns.initializeColumn(self);
+	if (self.table.modExists("frozenColumns")) {
+		self.table.modules.frozenColumns.initializeColumn(self);
 	}
 
 	//set movable column
-	if (self.table.options.movableColumns && !self.isGroup && self.table.extExists("moveColumn")) {
-		self.table.extensions.moveColumn.initializeColumn(self);
+	if (self.table.options.movableColumns && !self.isGroup && self.table.modExists("moveColumn")) {
+		self.table.modules.moveColumn.initializeColumn(self);
 	}
 
 	//set calcs column
-	if ((def.topCalc || def.bottomCalc) && self.table.extExists("columnCalcs")) {
-		self.table.extensions.columnCalcs.initializeColumn(self);
+	if ((def.topCalc || def.bottomCalc) && self.table.modExists("columnCalcs")) {
+		self.table.modules.columnCalcs.initializeColumn(self);
 	}
 
 	//update header tooltip on mouse enter
@@ -1211,38 +1211,38 @@ Column.prototype._buildColumnHeader = function () {
 	    sortable;
 
 	//set column sorter
-	if (table.extExists("sort")) {
-		table.extensions.sort.initializeColumn(self, self.contentElement);
+	if (table.modExists("sort")) {
+		table.modules.sort.initializeColumn(self, self.contentElement);
 	}
 
 	//set column formatter
-	if (table.extExists("format")) {
-		table.extensions.format.initializeColumn(self);
+	if (table.modExists("format")) {
+		table.modules.format.initializeColumn(self);
 	}
 
 	//set column editor
-	if (typeof def.editor != "undefined" && table.extExists("edit")) {
-		table.extensions.edit.initializeColumn(self);
+	if (typeof def.editor != "undefined" && table.modExists("edit")) {
+		table.modules.edit.initializeColumn(self);
 	}
 
 	//set colum validator
-	if (typeof def.validator != "undefined" && table.extExists("validate")) {
-		table.extensions.validate.initializeColumn(self);
+	if (typeof def.validator != "undefined" && table.modExists("validate")) {
+		table.modules.validate.initializeColumn(self);
 	}
 
 	//set column mutator
-	if (table.extExists("mutator")) {
-		table.extensions.mutator.initializeColumn(self);
+	if (table.modExists("mutator")) {
+		table.modules.mutator.initializeColumn(self);
 	}
 
 	//set column accessor
-	if (table.extExists("accessor")) {
-		table.extensions.accessor.initializeColumn(self);
+	if (table.modExists("accessor")) {
+		table.modules.accessor.initializeColumn(self);
 	}
 
 	//set respoviveLayout
-	if (_typeof(table.options.responsiveLayout) && table.extExists("responsiveLayout")) {
-		table.extensions.responsiveLayout.initializeColumn(self);
+	if (_typeof(table.options.responsiveLayout) && table.modExists("responsiveLayout")) {
+		table.modules.responsiveLayout.initializeColumn(self);
 	}
 
 	//set column visibility
@@ -1313,7 +1313,7 @@ Column.prototype._buildColumnHeaderTitle = function () {
 		titleHolderElement.append(titleElement);
 
 		if (def.field) {
-			table.extensions.localize.bind("columns|" + def.field, function (text) {
+			table.modules.localize.bind("columns|" + def.field, function (text) {
 				titleElement.val(text || def.title || "&nbsp");
 			});
 		} else {
@@ -1321,7 +1321,7 @@ Column.prototype._buildColumnHeaderTitle = function () {
 		}
 	} else {
 		if (def.field) {
-			table.extensions.localize.bind("columns|" + def.field, function (text) {
+			table.modules.localize.bind("columns|" + def.field, function (text) {
 				self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp");
 			});
 		} else {
@@ -1335,11 +1335,11 @@ Column.prototype._buildColumnHeaderTitle = function () {
 Column.prototype._formatColumnHeaderTitle = function (el, title) {
 	var formatter, contents;
 
-	if (this.definition.titleFormatter && this.table.extExists("format")) {
+	if (this.definition.titleFormatter && this.table.modExists("format")) {
 
-		formatter = this.table.extensions.format.getFormatter(this.definition.titleFormatter);
+		formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
 
-		contents = formatter.call(this.table.extensions.format, {
+		contents = formatter.call(this.table.modules.format, {
 			getValue: function getValue() {
 				return title;
 			},
@@ -1579,12 +1579,12 @@ Column.prototype.show = function (silent, responsiveToggle) {
 			cell.show();
 		});
 
-		if (this.table.options.persistentLayout && this.table.extExists("responsiveLayout", true)) {
-			this.table.extensions.persistence.save("columns");
+		if (this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)) {
+			this.table.modules.persistence.save("columns");
 		}
 
-		if (!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
-			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
+		if (!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+			this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if (!silent) {
@@ -1611,12 +1611,12 @@ Column.prototype.hide = function (silent, responsiveToggle) {
 			cell.hide();
 		});
 
-		if (this.table.options.persistentLayout && this.table.extExists("persistence", true)) {
-			this.table.extensions.persistence.save("columns");
+		if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
+			this.table.modules.persistence.save("columns");
 		}
 
-		if (!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
-			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
+		if (!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+			this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if (!silent) {
@@ -1665,8 +1665,8 @@ Column.prototype.setWidthActual = function (width) {
 	}
 
 	//set resizable handles
-	if (this.table.extExists("frozenColumns")) {
-		this.table.extensions.frozenColumns.layout();
+	if (this.table.modExists("frozenColumns")) {
+		this.table.modules.frozenColumns.layout();
 	}
 };
 
@@ -1752,15 +1752,15 @@ Column.prototype.reinitializeWidth = function (force) {
 	}
 
 	//hide header filters to prevent them altering column width
-	if (this.table.extExists("filter")) {
-		this.table.extensions.filter.hideHeaderFilterElements();
+	if (this.table.modExists("filter")) {
+		this.table.modules.filter.hideHeaderFilterElements();
 	}
 
 	this.fitToData();
 
 	//show header filters again after layout is complete
-	if (this.table.extExists("filter")) {
-		this.table.extensions.filter.showHeaderFilterElements();
+	if (this.table.modExists("filter")) {
+		this.table.modules.filter.showHeaderFilterElements();
 	}
 };
 
@@ -1895,11 +1895,11 @@ RowManager.prototype.initialize = function () {
 			self.columnManager.scrollHorizontal(left);
 
 			if (self.table.options.groupBy) {
-				self.table.extensions.groupRows.scrollHeaders(left);
+				self.table.modules.groupRows.scrollHeaders(left);
 			}
 
-			if (self.table.extExists("columnCalcs")) {
-				self.table.extensions.columnCalcs.scrollHorizontal(left);
+			if (self.table.modExists("columnCalcs")) {
+				self.table.modules.columnCalcs.scrollHorizontal(left);
 			}
 		}
 
@@ -1919,7 +1919,7 @@ RowManager.prototype.initialize = function () {
 				self.scrollVertical(dir);
 
 				if (self.table.options.ajaxProgressiveLoad == "scroll") {
-					self.table.extensions.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
+					self.table.modules.ajax.nextPage(self.element[0].scrollHeight - self.element[0].clientHeight - top);
 				}
 			} else {
 				self.scrollTop = top;
@@ -2068,14 +2068,14 @@ RowManager.prototype._setDataActual = function (data, renderInPosition) {
 
 	self.rows = [];
 
-	if (this.table.options.history && this.table.extExists("history")) {
-		this.table.extensions.history.clear();
+	if (this.table.options.history && this.table.modExists("history")) {
+		this.table.modules.history.clear();
 	}
 
 	if (Array.isArray(data)) {
 
-		if (this.table.extExists("selectRow")) {
-			this.table.extensions.selectRow.clearSelectionData();
+		if (this.table.modExists("selectRow")) {
+			this.table.modules.selectRow.clearSelectionData();
 		}
 
 		data.forEach(function (def, i) {
@@ -2123,12 +2123,12 @@ RowManager.prototype.deleteRow = function (row) {
 
 	this.table.options.dataEdited(this.getData());
 
-	if (this.table.options.groupBy && this.table.extExists("groupRows")) {
-		this.table.extensions.groupRows.updateGroupRows(true);
-	} else if (this.table.options.pagination && this.table.extExists("page")) {
+	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+		this.table.modules.groupRows.updateGroupRows(true);
+	} else if (this.table.options.pagination && this.table.modExists("page")) {
 		this.refreshActiveData(false, false, true);
 	} else {
-		if (this.table.options.pagination && this.table.extExists("page")) {
+		if (this.table.options.pagination && this.table.modExists("page")) {
 			this.refreshActiveData("page");
 		}
 	}
@@ -2138,8 +2138,8 @@ RowManager.prototype.addRow = function (data, pos, index, blockRedraw) {
 
 	var row = this.addRowActual(data, pos, index, blockRedraw);
 
-	if (this.table.options.history && this.table.extExists("history")) {
-		this.table.extensions.history.action("rowAdd", row, { data: data, pos: pos, index: index });
+	if (this.table.options.history && this.table.modExists("history")) {
+		this.table.modules.history.action("rowAdd", row, { data: data, pos: pos, index: index });
 	};
 
 	return row;
@@ -2168,17 +2168,17 @@ RowManager.prototype.addRows = function (data, pos, index) {
 		rows.push(row);
 	});
 
-	if (this.table.options.groupBy && this.table.extExists("groupRows")) {
-		this.table.extensions.groupRows.updateGroupRows(true);
-	} else if (this.table.options.pagination && this.table.extExists("page")) {
+	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+		this.table.modules.groupRows.updateGroupRows(true);
+	} else if (this.table.options.pagination && this.table.modExists("page")) {
 		this.refreshActiveData(false, false, true);
 	} else {
 		this.reRenderInPosition();
 	}
 
 	//recalc column calculations if present
-	if (this.table.extExists("columnCalcs")) {
-		this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+	if (this.table.modExists("columnCalcs")) {
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 	}
 
 	return rows;
@@ -2221,7 +2221,7 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 		} else {
 			if (dispRows.length) {
 				index = dispRows[dispRows.length - 1];
-				top = dispRows.length < this.table.extensions.page.getPageSize() ? false : true;
+				top = dispRows.length < this.table.modules.page.getPageSize() ? false : true;
 			}
 		}
 	}
@@ -2230,8 +2230,8 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 		index = this.findRow(index);
 	}
 
-	if (this.table.options.groupBy && this.table.extExists("groupRows")) {
-		this.table.extensions.groupRows.assignRowToGroup(row);
+	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+		this.table.modules.groupRows.assignRowToGroup(row);
 
 		var groupRows = row.getGroup().rows;
 
@@ -2308,8 +2308,8 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 };
 
 RowManager.prototype.moveRow = function (from, to, after) {
-	if (this.table.options.history && this.table.extExists("history")) {
-		this.table.extensions.history.action("rowMove", from, { pos: this.getRowPosition(from), to: to, after: after });
+	if (this.table.options.history && this.table.modExists("history")) {
+		this.table.modules.history.action("rowMove", from, { pos: this.getRowPosition(from), to: to, after: after });
 	};
 
 	this.moveRowActual(from, to, after);
@@ -2326,7 +2326,7 @@ RowManager.prototype.moveRowActual = function (from, to, after) {
 		self._moveRowInArray(rows, from, to, after);
 	});
 
-	if (this.table.options.groupBy && this.table.extExists("groupRows")) {
+	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
 		var toGroup = to.getGroup();
 		var fromGroup = from.getGroup();
 
@@ -2517,29 +2517,29 @@ RowManager.prototype._genRemoteRequest = function () {
 	    options = table.options,
 	    params = {};
 
-	if (table.extExists("page")) {
+	if (table.modExists("page")) {
 		//set sort data if defined
 		if (options.ajaxSorting) {
-			var sorters = self.table.extensions.sort.getSort();
+			var sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function (item) {
 				delete item.column;
 			});
 
-			params[self.table.extensions.page.paginationDataSentNames.sorters] = sorters;
+			params[self.table.modules.page.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
 		if (options.ajaxFiltering) {
-			var filters = self.table.extensions.filter.getFilters(true, true);
+			var filters = self.table.modules.filter.getFilters(true, true);
 
-			params[self.table.extensions.page.paginationDataSentNames.filters] = filters;
+			params[self.table.modules.page.paginationDataSentNames.filters] = filters;
 		}
 
-		self.table.extensions.ajax.setParams(params, true);
+		self.table.modules.ajax.setParams(params, true);
 	}
 
-	table.extensions.ajax.sendRequest(function (data) {
+	table.modules.ajax.sendRequest(function (data) {
 		self.setData(data);
 	});
 };
@@ -2551,9 +2551,9 @@ RowManager.prototype.filterRefresh = function () {
 	    left = this.scrollLeft;
 
 	if (options.ajaxFiltering) {
-		if (options.pagination == "remote" && table.extExists("page")) {
-			table.extensions.page.reset(true);
-			table.extensions.page.setPage(1);
+		if (options.pagination == "remote" && table.modExists("page")) {
+			table.modules.page.reset(true);
+			table.modules.page.setPage(1);
 		} else {
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -2572,9 +2572,9 @@ RowManager.prototype.sorterRefresh = function () {
 	    left = this.scrollLeft;
 
 	if (options.ajaxSorting) {
-		if (options.pagination == "remote" && table.extExists("page")) {
-			table.extensions.page.reset(true);
-			table.extensions.page.setPage(1);
+		if (options.pagination == "remote" && table.modExists("page")) {
+			table.modules.page.reset(true);
+			table.modules.page.setPage(1);
 		} else {
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -2591,11 +2591,11 @@ RowManager.prototype.scrollHorizontal = function (left) {
 	this.element.scrollLeft(left);
 
 	if (this.table.options.groupBy) {
-		this.table.extensions.groupRows.scrollHeaders(left);
+		this.table.modules.groupRows.scrollHeaders(left);
 	}
 
-	if (this.table.extExists("columnCalcs")) {
-		this.table.extensions.columnCalcs.scrollHorizontal(left);
+	if (this.table.modExists("columnCalcs")) {
+		this.table.modules.columnCalcs.scrollHorizontal(left);
 	}
 };
 
@@ -2609,8 +2609,8 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 		stage = "all";
 	}
 
-	if (table.options.selectable && !table.options.selectablePersistence && table.extExists("selectRow")) {
-		table.extensions.selectRow.deselectRows();
+	if (table.options.selectable && !table.options.selectablePersistence && table.modExists("selectRow")) {
+		table.modules.selectRow.deselectRows();
 	}
 
 	//cascade through data refresh stages
@@ -2619,8 +2619,8 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 
 		case "filter":
 			if (!skipStage) {
-				if (table.extExists("filter")) {
-					self.setActiveRows(table.extensions.filter.filter(self.rows));
+				if (table.modExists("filter")) {
+					self.setActiveRows(table.modules.filter.filter(self.rows));
 				} else {
 					self.setActiveRows(self.rows.slice(0));
 				}
@@ -2630,8 +2630,8 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 
 		case "sort":
 			if (!skipStage) {
-				if (table.extExists("sort")) {
-					table.extensions.sort.sort();
+				if (table.modExists("sort")) {
+					table.modules.sort.sort();
 				}
 			} else {
 				skipStage = false;
@@ -2643,18 +2643,18 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 
 		case "freeze":
 			if (!skipStage) {
-				if (this.table.extExists("frozenRows")) {
-					if (table.extensions.frozenRows.isFrozen()) {
-						if (!table.extensions.frozenRows.getDisplayIndex()) {
-							table.extensions.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
+				if (this.table.modExists("frozenRows")) {
+					if (table.modules.frozenRows.isFrozen()) {
+						if (!table.modules.frozenRows.getDisplayIndex()) {
+							table.modules.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
 						}
 
-						displayIndex = table.extensions.frozenRows.getDisplayIndex();
+						displayIndex = table.modules.frozenRows.getDisplayIndex();
 
-						displayIndex = self.setDisplayRows(table.extensions.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+						displayIndex = self.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 						if (displayIndex !== true) {
-							table.extensions.frozenRows.setDisplayIndex(displayIndex);
+							table.modules.frozenRows.setDisplayIndex(displayIndex);
 						}
 					}
 				}
@@ -2664,48 +2664,48 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 
 		case "group":
 			if (!skipStage) {
-				if (table.options.groupBy && table.extExists("groupRows")) {
+				if (table.options.groupBy && table.modExists("groupRows")) {
 
-					if (!table.extensions.groupRows.getDisplayIndex()) {
-						table.extensions.groupRows.setDisplayIndex(this.getNextDisplayIndex());
+					if (!table.modules.groupRows.getDisplayIndex()) {
+						table.modules.groupRows.setDisplayIndex(this.getNextDisplayIndex());
 					}
 
-					displayIndex = table.extensions.groupRows.getDisplayIndex();
+					displayIndex = table.modules.groupRows.getDisplayIndex();
 
-					displayIndex = self.setDisplayRows(table.extensions.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+					displayIndex = self.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 					if (displayIndex !== true) {
-						table.extensions.groupRows.setDisplayIndex(displayIndex);
+						table.modules.groupRows.setDisplayIndex(displayIndex);
 					}
 				}
 			} else {
 				skipStage = false;
 			}
 
-			if (table.options.pagination && table.extExists("page") && !renderInPosition) {
-				if (table.extensions.page.getMode() == "local") {
-					table.extensions.page.reset();
+			if (table.options.pagination && table.modExists("page") && !renderInPosition) {
+				if (table.modules.page.getMode() == "local") {
+					table.modules.page.reset();
 				}
 			}
 
 		case "page":
 			if (!skipStage) {
-				if (table.options.pagination && table.extExists("page")) {
+				if (table.options.pagination && table.modExists("page")) {
 
-					if (!table.extensions.page.getDisplayIndex()) {
-						table.extensions.page.setDisplayIndex(this.getNextDisplayIndex());
+					if (!table.modules.page.getDisplayIndex()) {
+						table.modules.page.setDisplayIndex(this.getNextDisplayIndex());
 					}
 
-					displayIndex = table.extensions.page.getDisplayIndex();
+					displayIndex = table.modules.page.getDisplayIndex();
 
-					if (table.extensions.page.getMode() == "local") {
-						table.extensions.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
+					if (table.modules.page.getMode() == "local") {
+						table.modules.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
 					}
 
-					displayIndex = self.setDisplayRows(table.extensions.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+					displayIndex = self.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 					if (displayIndex !== true) {
-						table.extensions.page.setDisplayIndex(displayIndex);
+						table.modules.page.setDisplayIndex(displayIndex);
 					}
 				}
 			} else {
@@ -2724,8 +2724,8 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 		}
 	}
 
-	if (table.extExists("columnCalcs")) {
-		table.extensions.columnCalcs.recalc(this.activeRows);
+	if (table.modExists("columnCalcs")) {
+		table.modules.columnCalcs.recalc(this.activeRows);
 	}
 };
 
@@ -2742,16 +2742,16 @@ RowManager.prototype.resetDisplayRows = function () {
 
 	this.displayRowsCount = this.displayRows[0].length;
 
-	if (this.table.extExists("frozenRows")) {
-		this.table.extensions.frozenRows.setDisplayIndex(0);
+	if (this.table.modExists("frozenRows")) {
+		this.table.modules.frozenRows.setDisplayIndex(0);
 	}
 
-	if (this.table.options.groupBy && this.table.extExists("groupRows")) {
-		this.table.extensions.groupRows.setDisplayIndex(0);
+	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+		this.table.modules.groupRows.setDisplayIndex(0);
 	}
 
-	if (this.table.options.pagination && this.table.extExists("page")) {
-		this.table.extensions.page.setDisplayIndex(0);
+	if (this.table.options.pagination && this.table.modExists("page")) {
+		this.table.modules.page.setDisplayIndex(0);
 	}
 };
 
@@ -2871,14 +2871,14 @@ RowManager.prototype.renderTable = function () {
 	if (self.firstRender) {
 		if (self.displayRowsCount) {
 			self.firstRender = false;
-			self.table.extensions.layout.layout();
+			self.table.modules.layout.layout();
 		} else {
 			self.renderEmptyScroll();
 		}
 	}
 
-	if (self.table.extExists("frozenColumns")) {
-		self.table.extensions.frozenColumns.layout();
+	if (self.table.modExists("frozenColumns")) {
+		self.table.modules.frozenColumns.layout();
 	}
 
 	if (!self.displayRowsCount) {
@@ -3069,7 +3069,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 		holder.scrollTop(this.scrollTop);
 
 		if (self.table.options.groupBy) {
-			if (self.table.extensions.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.extensions.groupRows.countGroups()) {
+			if (self.table.modules.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.modules.groupRows.countGroups()) {
 
 				self.tableElement.css({
 					"min-width": self.table.columnManager.getWidth()
@@ -3400,15 +3400,15 @@ RowComponent.prototype.normalizeHeight = function () {
 };
 
 RowComponent.prototype.select = function () {
-	this.row.table.extensions.selectRow.selectRows(this.row);
+	this.row.table.modules.selectRow.selectRows(this.row);
 };
 
 RowComponent.prototype.deselect = function () {
-	this.row.table.extensions.selectRow.deselectRows(this.row);
+	this.row.table.modules.selectRow.deselectRows(this.row);
 };
 
 RowComponent.prototype.toggleSelect = function () {
-	this.row.table.extensions.selectRow.toggleRow(this.row);
+	this.row.table.modules.selectRow.toggleRow(this.row);
 };
 
 RowComponent.prototype._getSelf = function () {
@@ -3416,14 +3416,14 @@ RowComponent.prototype._getSelf = function () {
 };
 
 RowComponent.prototype.freeze = function () {
-	if (this.row.table.extExists("frozenRows", true)) {
-		this.row.table.extensions.frozenRows.freezeRow(this.row);
+	if (this.row.table.modExists("frozenRows", true)) {
+		this.row.table.modules.frozenRows.freezeRow(this.row);
 	}
 };
 
 RowComponent.prototype.unfreeze = function () {
-	if (this.row.table.extExists("frozenRows", true)) {
-		this.row.table.extensions.frozenRows.unfreezeRow(this.row);
+	if (this.row.table.modExists("frozenRows", true)) {
+		this.row.table.modules.frozenRows.unfreezeRow(this.row);
 	}
 };
 
@@ -3441,7 +3441,7 @@ var Row = function Row(data, parent) {
 	this.data = {};
 	this.type = "row"; //type of element
 	this.element = $("<div class='tabulator-row' role='row'></div>");
-	this.extensions = {}; //hold extension variables;
+	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
 	this.outerHeight = 0; //holde lements outer height
@@ -3463,13 +3463,13 @@ Row.prototype.generateElement = function () {
 	    tap;
 
 	//set row selection characteristics
-	if (self.table.options.selectable !== false && self.table.extExists("selectRow")) {
-		self.table.extensions.selectRow.initializeRow(this);
+	if (self.table.options.selectable !== false && self.table.modExists("selectRow")) {
+		self.table.modules.selectRow.initializeRow(this);
 	}
 
 	//setup movable rows
-	if (self.table.options.movableRows !== false && self.table.extExists("moveRow")) {
-		self.table.extensions.moveRow.initializeRow(this);
+	if (self.table.options.movableRows !== false && self.table.modExists("moveRow")) {
+		self.table.modules.moveRow.initializeRow(this);
 	}
 
 	//handle row click events
@@ -3566,8 +3566,8 @@ Row.prototype.initialize = function (force) {
 		self.element.empty();
 
 		//handle frozen cells
-		if (this.table.extExists("frozenColumns")) {
-			this.table.extensions.frozenColumns.layoutRow(this);
+		if (this.table.modExists("frozenColumns")) {
+			this.table.modules.frozenColumns.layoutRow(this);
 		}
 
 		this.generateCells();
@@ -3581,8 +3581,8 @@ Row.prototype.initialize = function (force) {
 		}
 
 		//setup movable rows
-		if (self.table.options.responsiveLayout === "collapse" && self.table.extExists("responsiveLayout")) {
-			self.table.extensions.responsiveLayout.layoutRow(this);
+		if (self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")) {
+			self.table.modules.responsiveLayout.layoutRow(this);
 		}
 
 		if (self.table.options.rowFormatter) {
@@ -3590,8 +3590,8 @@ Row.prototype.initialize = function (force) {
 		}
 
 		//set resizable handles
-		if (self.table.options.resizableRows && self.table.extExists("resizeRows")) {
-			self.table.extensions.resizeRows.initializeRow(self);
+		if (self.table.options.resizableRows && self.table.modExists("resizeRows")) {
+			self.table.modules.resizeRows.initializeRow(self);
 		}
 
 		self.initialized = true;
@@ -3707,8 +3707,8 @@ Row.prototype.deleteCell = function (cell) {
 Row.prototype.setData = function (data) {
 	var self = this;
 
-	if (self.table.extExists("mutator")) {
-		self.data = self.table.extensions.mutator.transformRow(data, "data");
+	if (self.table.modExists("mutator")) {
+		self.data = self.table.modules.mutator.transformRow(data, "data");
 	} else {
 		self.data = data;
 	}
@@ -3723,8 +3723,8 @@ Row.prototype.updateData = function (data) {
 	}
 
 	//mutate incomming data if needed
-	if (self.table.extExists("mutator")) {
-		data = self.table.extensions.mutator.transformRow(data, "data");
+	if (self.table.modExists("mutator")) {
+		data = self.table.modules.mutator.transformRow(data, "data");
 	}
 
 	//set data
@@ -3764,8 +3764,8 @@ Row.prototype.getData = function (transform) {
 	var self = this;
 
 	if (transform) {
-		if (self.table.extExists("accessor")) {
-			return self.table.extensions.accessor.transformRow(self.data, transform);
+		if (self.table.modExists("accessor")) {
+			return self.table.modules.accessor.transformRow(self.data, transform);
 		}
 	} else {
 		return this.data;
@@ -3793,11 +3793,11 @@ Row.prototype.getCell = function (column) {
 		for (var i = index + 1; i < this.cells.length; i++) {
 			var cell = this.cells[i];
 
-			if (cell.column.extensions.edit && cell.getElement().is(":visible")) {
+			if (cell.column.modules.edit && cell.getElement().is(":visible")) {
 				var allowEdit = true;
 
-				if (typeof cell.column.extensions.edit.check == "function") {
-					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+				if (typeof cell.column.modules.edit.check == "function") {
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
 
 				if (allowEdit) {
@@ -3817,9 +3817,9 @@ Row.prototype.getCell = function (column) {
 			var cell = this.cells[i],
 			    allowEdit = true;
 
-			if (cell.column.extensions.edit && cell.getElement().is(":visible")) {
-				if (typeof cell.column.extensions.edit.check == "function") {
-					allowEdit = cell.column.extensions.edit.check(cell.getComponent());
+			if (cell.column.modules.edit && cell.getElement().is(":visible")) {
+				if (typeof cell.column.modules.edit.check == "function") {
+					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
 
 				if (allowEdit) {
@@ -3842,13 +3842,13 @@ Row.prototype.delete = function () {
 
 	this.deleteActual();
 
-	if (this.table.options.history && this.table.extExists("history")) {
+	if (this.table.options.history && this.table.modExists("history")) {
 
 		if (index) {
 			index = this.table.rowManager.rows[index - 1];
 		}
 
-		this.table.extensions.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
+		this.table.modules.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
 	};
 };
 
@@ -3857,8 +3857,8 @@ Row.prototype.deleteActual = function () {
 	var index = this.table.rowManager.getRowIndex(this);
 
 	//deselect row if it is selected
-	if (this.table.extExists("selectRow")) {
-		this.table.extensions.selectRow._deselectRow(this.row, true);
+	if (this.table.modExists("selectRow")) {
+		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
 	this.table.rowManager.deleteRow(this);
@@ -3866,16 +3866,16 @@ Row.prototype.deleteActual = function () {
 	this.deleteCells();
 
 	//remove from group
-	if (this.extensions.group) {
-		this.extensions.group.removeRow(this);
+	if (this.modules.group) {
+		this.modules.group.removeRow(this);
 	}
 
 	//recalc column calculations if present
-	if (this.table.extExists("columnCalcs")) {
-		if (this.table.options.groupBy && this.table.extExists("groupRows")) {
-			this.table.extensions.columnCalcs.recalcRowGroup(this);
+	if (this.table.modExists("columnCalcs")) {
+		if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.columnCalcs.recalcRowGroup(this);
 		} else {
-			this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 	}
 };
@@ -3900,7 +3900,7 @@ Row.prototype.wipe = function () {
 };
 
 Row.prototype.getGroup = function () {
-	return this.extensions.group || false;
+	return this.modules.group || false;
 };
 
 //////////////// Object Generation /////////////////
@@ -4160,12 +4160,12 @@ Cell.prototype._configureCell = function () {
 		});
 	}
 
-	if (self.column.extensions.edit) {
-		self.table.extensions.edit.bindEditor(self);
+	if (self.column.modules.edit) {
+		self.table.modules.edit.bindEditor(self);
 	}
 
-	if (self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.extExists("moveRow")) {
-		self.table.extensions.moveRow.initializeCell(self);
+	if (self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.modExists("moveRow")) {
+		self.table.modules.moveRow.initializeCell(self);
 	}
 
 	//hide cell if not visible
@@ -4178,8 +4178,8 @@ Cell.prototype._configureCell = function () {
 Cell.prototype._generateContents = function () {
 	var self = this;
 
-	if (self.table.extExists("format")) {
-		self.element.html(self.table.extensions.format.formatValue(self));
+	if (self.table.modExists("format")) {
+		self.element.html(self.table.modules.format.formatValue(self));
 	} else {
 		self.element.html(self.value);
 	}
@@ -4229,8 +4229,8 @@ Cell.prototype.setValue = function (value, mutate) {
 	    component;
 
 	if (changed) {
-		if (this.table.options.history && this.table.extExists("history")) {
-			this.table.extensions.history.action("cellEdit", this, { oldValue: this.oldValue, newValue: this.value });
+		if (this.table.options.history && this.table.modExists("history")) {
+			this.table.modules.history.action("cellEdit", this, { oldValue: this.oldValue, newValue: this.value });
 		};
 
 		component = this.getComponent();
@@ -4244,12 +4244,12 @@ Cell.prototype.setValue = function (value, mutate) {
 		this.table.options.dataEdited(this.table.rowManager.getData());
 	}
 
-	if (this.table.extExists("columnCalcs")) {
+	if (this.table.modExists("columnCalcs")) {
 		if (this.column.definition.topCalc || this.column.definition.bottomCalc) {
-			if (this.table.options.groupBy && this.table.extExists("groupRows")) {
-				this.table.extensions.columnCalcs.recalcRowGroup(this.row);
+			if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+				this.table.modules.columnCalcs.recalcRowGroup(this.row);
 			} else {
-				this.table.extensions.columnCalcs.recalc(this.table.rowManager.activeRows);
+				this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 			}
 		}
 	}
@@ -4263,8 +4263,8 @@ Cell.prototype.setValueProcessData = function (value, mutate) {
 		changed = true;
 
 		if (mutate) {
-			if (this.column.extensions.mutate) {
-				value = this.table.extensions.mutator.transformCell(this, value);
+			if (this.column.modules.mutate) {
+				value = this.table.modules.mutator.transformCell(this, value);
 			}
 		}
 	}
@@ -4285,13 +4285,13 @@ Cell.prototype.setValueActual = function (value) {
 	this._generateTooltip();
 
 	//set resizable handles
-	if (this.table.options.resizableColumns && this.table.extExists("resizeColumns")) {
-		this.table.extensions.resizeColumns.initializeColumn("cell", this.column, this.element);
+	if (this.table.options.resizableColumns && this.table.modExists("resizeColumns")) {
+		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
 	//handle frozen cells
-	if (this.table.extExists("frozenColumns")) {
-		this.table.extensions.frozenColumns.layoutElement(this.element, this.column);
+	if (this.table.modExists("frozenColumns")) {
+		this.table.modules.frozenColumns.layoutElement(this.element, this.column);
 	}
 };
 
@@ -4338,17 +4338,17 @@ Cell.prototype.hide = function () {
 };
 
 Cell.prototype.edit = function (force) {
-	if (this.table.extExists("edit", true)) {
-		return this.table.extensions.edit.editCell(this, false, force);
+	if (this.table.modExists("edit", true)) {
+		return this.table.modules.edit.editCell(this, false, force);
 	}
 };
 
 Cell.prototype.cancelEdit = function () {
-	if (this.table.extExists("edit", true)) {
-		var editing = this.table.extensions.edit.getCurrentCell();
+	if (this.table.modExists("edit", true)) {
+		var editing = this.table.modules.edit.getCurrentCell();
 
 		if (editing && editing._getSelf() === this) {
-			this.table.extensions.edit.cancelEdit();
+			this.table.modules.edit.cancelEdit();
 		} else {
 			console.warn("Cancel Editor Error - This cell is not currently being edited ");
 		}
@@ -4534,7 +4534,7 @@ var Tabulator = function Tabulator(element, options) {
 	this.browser = ""; //hold current browser type
 	this.browserSlow = false; //handle reduced functionality for slower browsers
 
-	this.extensions = {}; //hold all extensions bound to this table
+	this.modules = {}; //hold all modules bound to this table
 
 
 	this.initializeElement(element);
@@ -4837,11 +4837,11 @@ Tabulator.prototype._create = function () {
 
 	self._mapDepricatedFunctionality();
 
-	self.bindExtensions();
+	self.bindModules();
 
 	if (element.is("table")) {
-		if (this.extExists("htmlTableImport", true)) {
-			self.extensions.htmlTableImport.parseTable();
+		if (this.modExists("htmlTableImport", true)) {
+			self.modules.htmlTableImport.parseTable();
 		}
 	} else {
 
@@ -4860,7 +4860,6 @@ Tabulator.prototype._create = function () {
 
 //clear pointers to objects in default config object
 Tabulator.prototype._clearObjectPointers = function () {
-	console.log("d", this.options);
 	this.options.columns = this.options.columns.slice(0);
 	this.options.data = this.options.data.slice(0);
 };
@@ -4868,7 +4867,7 @@ Tabulator.prototype._clearObjectPointers = function () {
 //build tabulator element
 Tabulator.prototype._buildElement = function () {
 	var element = this.element,
-	    ext = this.extensions,
+	    mod = this.modules,
 	    options = this.options;
 
 	options.tableBuilding();
@@ -4885,20 +4884,20 @@ Tabulator.prototype._buildElement = function () {
 
 	this._detectBrowser();
 
-	if (this.extExists("layout", true)) {
-		ext.layout.initialize(options.layout);
+	if (this.modExists("layout", true)) {
+		mod.layout.initialize(options.layout);
 	}
 
 	//set localization
 	if (options.headerFilterPlaceholder !== false) {
-		ext.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
+		mod.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
 	}
 
 	for (var locale in options.langs) {
-		ext.localize.installLang(locale, options.langs[locale]);
+		mod.localize.installLang(locale, options.langs[locale]);
 	}
 
-	ext.localize.setLocale(options.locale);
+	mod.localize.setLocale(options.locale);
 
 	//configure placeholder element
 	if (typeof options.placeholder == "string") {
@@ -4913,33 +4912,33 @@ Tabulator.prototype._buildElement = function () {
 		this.footerManager.activate();
 	}
 
-	if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.extExists("persistence", true)) {
-		ext.persistence.initialize(options.persistenceMode, options.persistenceID);
+	if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
+		mod.persistence.initialize(options.persistenceMode, options.persistenceID);
 	}
 
-	if (options.persistentLayout && this.extExists("persistence", true)) {
-		options.columns = ext.persistence.load("columns", options.columns);
+	if (options.persistentLayout && this.modExists("persistence", true)) {
+		options.columns = mod.persistence.load("columns", options.columns);
 	}
 
-	if (options.movableRows && this.extExists("moveRow")) {
-		ext.moveRow.initialize();
+	if (options.movableRows && this.modExists("moveRow")) {
+		mod.moveRow.initialize();
 	}
 
-	if (this.extExists("columnCalcs")) {
-		ext.columnCalcs.initialize();
+	if (this.modExists("columnCalcs")) {
+		mod.columnCalcs.initialize();
 	}
 
 	this.columnManager.setColumns(options.columns);
 
-	if (this.extExists("frozenRows")) {
-		this.extensions.frozenRows.initialize();
+	if (this.modExists("frozenRows")) {
+		this.modules.frozenRows.initialize();
 	}
 
-	if ((options.persistentSort || options.initialSort) && this.extExists("sort", true)) {
+	if ((options.persistentSort || options.initialSort) && this.modExists("sort", true)) {
 		var sorters = [];
 
-		if (options.persistentSort && this.extExists("persistence", true)) {
-			sorters = ext.persistence.load("sort");
+		if (options.persistentSort && this.modExists("persistence", true)) {
+			sorters = mod.persistence.load("sort");
 
 			if (sorters === false && options.initialSort) {
 				sorters = options.initialSort;
@@ -4948,43 +4947,43 @@ Tabulator.prototype._buildElement = function () {
 			sorters = options.initialSort;
 		}
 
-		ext.sort.setSort(sorters);
+		mod.sort.setSort(sorters);
 	}
 
-	if (options.persistentFilter && this.extExists("persistence", true)) {
-		var filters = ext.persistence.load("filter");
+	if (options.persistentFilter && this.modExists("persistence", true)) {
+		var filters = mod.persistence.load("filter");
 
 		if (filters !== false) {
 			this.setFilter(filters);
 		}
 	}
 
-	if (this.extExists("ajax")) {
-		ext.ajax.initialize();
+	if (this.modExists("ajax")) {
+		mod.ajax.initialize();
 	}
 
-	if (options.pagination && this.extExists("page", true)) {
-		ext.page.initialize();
+	if (options.pagination && this.modExists("page", true)) {
+		mod.page.initialize();
 	}
 
-	if (options.groupBy && this.extExists("groupRows", true)) {
-		ext.groupRows.initialize();
+	if (options.groupBy && this.modExists("groupRows", true)) {
+		mod.groupRows.initialize();
 	}
 
-	if (this.extExists("keybindings")) {
-		ext.keybindings.initialize();
+	if (this.modExists("keybindings")) {
+		mod.keybindings.initialize();
 	}
 
-	if (this.extExists("selectRow")) {
-		ext.selectRow.clearSelectionData(true);
+	if (this.modExists("selectRow")) {
+		mod.selectRow.clearSelectionData(true);
 	}
 
-	if (options.autoResize && this.extExists("resizeTable")) {
-		ext.resizeTable.initialize();
+	if (options.autoResize && this.modExists("resizeTable")) {
+		mod.resizeTable.initialize();
 	}
 
-	if (this.extExists("clipboard")) {
-		ext.clipboard.initialize();
+	if (this.modExists("clipboard")) {
+		mod.clipboard.initialize();
 	}
 
 	options.tableBuilt();
@@ -4993,28 +4992,28 @@ Tabulator.prototype._buildElement = function () {
 Tabulator.prototype._loadInitialData = function () {
 	var self = this;
 
-	if (self.options.pagination && self.extExists("page")) {
-		self.extensions.page.reset(true);
+	if (self.options.pagination && self.modExists("page")) {
+		self.modules.page.reset(true);
 
 		if (self.options.pagination == "local") {
 			if (self.options.data.length) {
 				self.rowManager.setData(self.options.data);
 			} else {
-				if (self.options.ajaxURL && self.extExists("ajax")) {
-					self.extensions.ajax.loadData();
+				if (self.options.ajaxURL && self.modExists("ajax")) {
+					self.modules.ajax.loadData();
 				} else {
 					self.rowManager.setData(self.options.data);
 				}
 			}
 		} else {
-			self.extensions.page.setPage(1);
+			self.modules.page.setPage(1);
 		}
 	} else {
 		if (self.options.data.length) {
 			self.rowManager.setData(self.options.data);
 		} else {
-			if (self.options.ajaxURL && self.extExists("ajax")) {
-				self.extensions.ajax.loadData();
+			if (self.options.ajaxURL && self.modExists("ajax")) {
+				self.modules.ajax.loadData();
 			} else {
 				self.rowManager.setData(self.options.data);
 			}
@@ -5041,12 +5040,12 @@ Tabulator.prototype._destroy = function () {
 	this.rowManager.displayRows = [];
 
 	//clear event bindings
-	if (this.options.autoResize && this.extExists("resizeTable")) {
-		this.extensions.resizeTable.clearBindings();
+	if (this.options.autoResize && this.modExists("resizeTable")) {
+		this.modules.resizeTable.clearBindings();
 	}
 
-	if (this.extExists("keybindings")) {
-		this.extensions.keybindings.clearBindings();
+	if (this.modExists("keybindings")) {
+		this.modules.keybindings.clearBindings();
 	}
 
 	//clear DOM
@@ -5077,8 +5076,8 @@ Tabulator.prototype._detectBrowser = function () {
 
 //load data
 Tabulator.prototype.setData = function (data, params, config) {
-	if (this.extExists("ajax")) {
-		this.extensions.ajax.blockActiveRequest();
+	if (this.modExists("ajax")) {
+		this.modules.ajax.blockActiveRequest();
 	}
 
 	this._setData(data, params, config);
@@ -5093,23 +5092,23 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 			self.rowManager.setData(JSON.parse(data), inPosition);
 		} else {
 
-			if (self.extExists("ajax", true)) {
+			if (self.modExists("ajax", true)) {
 				if (params) {
-					self.extensions.ajax.setParams(params);
+					self.modules.ajax.setParams(params);
 				}
 
 				if (config) {
-					self.extensions.ajax.setConfig(config);
+					self.modules.ajax.setConfig(config);
 				}
 
-				self.extensions.ajax.setUrl(data);
+				self.modules.ajax.setUrl(data);
 
-				if (self.options.pagination == "remote" && self.extExists("page", true)) {
-					self.extensions.page.reset(true);
-					self.extensions.page.setPage(1);
+				if (self.options.pagination == "remote" && self.modExists("page", true)) {
+					self.modules.page.reset(true);
+					self.modules.page.setPage(1);
 				} else {
 					//assume data is url, make ajax call to url to get data
-					self.extensions.ajax.loadData(inPosition);
+					self.modules.ajax.loadData(inPosition);
 				}
 			}
 		}
@@ -5120,13 +5119,13 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 		} else {
 
 			//no data provided, check if ajaxURL is present;
-			if (self.extExists("ajax") && self.extensions.ajax.getUrl) {
+			if (self.modExists("ajax") && self.modules.ajax.getUrl) {
 
-				if (self.options.pagination == "remote" && self.extExists("page", true)) {
-					self.extensions.page.reset(true);
-					self.extensions.page.setPage(1);
+				if (self.options.pagination == "remote" && self.modExists("page", true)) {
+					self.modules.page.reset(true);
+					self.modules.page.setPage(1);
 				} else {
-					self.extensions.ajax.loadData(inPosition);
+					self.modules.ajax.loadData(inPosition);
 				}
 			} else {
 				//empty data
@@ -5138,8 +5137,8 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 
 //clear data
 Tabulator.prototype.clearData = function () {
-	if (this.extExists("ajax")) {
-		this.extensions.ajax.blockActiveRequest();
+	if (this.modExists("ajax")) {
+		this.modules.ajax.blockActiveRequest();
 	}
 
 	this.rowManager.clearData();
@@ -5162,15 +5161,15 @@ Tabulator.prototype.getHtml = function (active) {
 
 //retrieve Ajax URL
 Tabulator.prototype.getAjaxUrl = function () {
-	if (this.extExists("ajax", true)) {
-		return this.extensions.ajax.getUrl();
+	if (this.modExists("ajax", true)) {
+		return this.modules.ajax.getUrl();
 	}
 };
 
 //replace data, keeping table in position with same sort
 Tabulator.prototype.replaceData = function (data, params, config) {
-	if (this.extExists("ajax")) {
-		this.extensions.ajax.blockActiveRequest();
+	if (this.modExists("ajax")) {
+		this.modules.ajax.blockActiveRequest();
 	}
 
 	this._setData(data, params, config, true);
@@ -5180,8 +5179,8 @@ Tabulator.prototype.replaceData = function (data, params, config) {
 Tabulator.prototype.updateData = function (data) {
 	var self = this;
 
-	if (this.extExists("ajax")) {
-		this.extensions.ajax.blockActiveRequest();
+	if (this.modExists("ajax")) {
+		this.modules.ajax.blockActiveRequest();
 	}
 
 	if (typeof data === "string") {
@@ -5205,8 +5204,8 @@ Tabulator.prototype.addData = function (data, pos, index) {
 	var rows = [],
 	    output = [];
 
-	if (this.extExists("ajax")) {
-		this.extensions.ajax.blockActiveRequest();
+	if (this.modExists("ajax")) {
+		this.modules.ajax.blockActiveRequest();
 	}
 
 	if (typeof data === "string") {
@@ -5231,8 +5230,8 @@ Tabulator.prototype.updateOrAddData = function (data) {
 	var self = this;
 	var rows = [];
 
-	if (this.extExists("ajax")) {
-		this.extensions.ajax.blockActiveRequest();
+	if (this.modExists("ajax")) {
+		this.modules.ajax.blockActiveRequest();
 	}
 
 	if (typeof data === "string") {
@@ -5306,8 +5305,8 @@ Tabulator.prototype.addRow = function (data, pos, index) {
 	row = this.rowManager.addRows(data, pos, index)[0];
 
 	//recalc column calculations if present
-	if (this.extExists("columnCalcs")) {
-		this.extensions.columnCalcs.recalc(this.rowManager.activeRows);
+	if (this.modExists("columnCalcs")) {
+		this.modules.columnCalcs.recalc(this.rowManager.activeRows);
 	}
 
 	return row.getComponent();
@@ -5327,8 +5326,8 @@ Tabulator.prototype.updateOrAddRow = function (index, data) {
 		row = this.rowManager.addRows(data)[0];
 
 		//recalc column calculations if present
-		if (this.extExists("columnCalcs")) {
-			this.extensions.columnCalcs.recalc(this.rowManager.activeRows);
+		if (this.modExists("columnCalcs")) {
+			this.modules.columnCalcs.recalc(this.rowManager.activeRows);
 		}
 	}
 	return row.getComponent();
@@ -5381,8 +5380,8 @@ Tabulator.prototype.getRowPosition = function (index, active) {
 
 //copy table data to clipboard
 Tabulator.prototype.copyToClipboard = function (selector, selectorParams, formatter, formatterParams) {
-	if (this.extExists("clipboard", true)) {
-		this.extensions.clipboard.copy(selector, selectorParams, formatter, formatterParams);
+	if (this.modExists("clipboard", true)) {
+		this.modules.clipboard.copy(selector, selectorParams, formatter, formatterParams);
 	}
 };
 
@@ -5401,14 +5400,14 @@ Tabulator.prototype.getColumnDefinitions = function () {
 };
 
 Tabulator.prototype.getColumnLayout = function () {
-	if (this.extExists("persistence", true)) {
-		return this.extensions.persistence.parseColumns(this.columnManager.getColumns());
+	if (this.modExists("persistence", true)) {
+		return this.modules.persistence.parseColumns(this.columnManager.getColumns());
 	}
 };
 
 Tabulator.prototype.setColumnLayout = function (layout) {
-	if (this.extExists("persistence", true)) {
-		this.columnManager.setColumns(this.extensions.persistence.mergeDefinition(this.options.columns, layout));
+	if (this.modExists("persistence", true)) {
+		this.columnManager.setColumns(this.modules.persistence.mergeDefinition(this.options.columns, layout));
 		return true;
 	}
 	return false;
@@ -5420,8 +5419,8 @@ Tabulator.prototype.showColumn = function (field) {
 	if (column) {
 		column.show();
 
-		if (this.options.responsiveLayout && this.extExists("responsiveLayout", true)) {
-			this.extensions.responsiveLayout.update();
+		if (this.options.responsiveLayout && this.modExists("responsiveLayout", true)) {
+			this.modules.responsiveLayout.update();
 		}
 	} else {
 		console.warn("Column Show Error - No matching column found:", field);
@@ -5435,8 +5434,8 @@ Tabulator.prototype.hideColumn = function (field) {
 	if (column) {
 		column.hide();
 
-		if (this.options.responsiveLayout && this.extExists("responsiveLayout", true)) {
-			this.extensions.responsiveLayout.update();
+		if (this.options.responsiveLayout && this.modExists("responsiveLayout", true)) {
+			this.modules.responsiveLayout.update();
 		}
 	} else {
 		console.warn("Column Hide Error - No matching column found:", field);
@@ -5490,15 +5489,15 @@ Tabulator.prototype.scrollToColumn = function (field, position, ifVisible) {
 
 //////////// Localization Functions  ////////////
 Tabulator.prototype.setLocale = function (locale) {
-	this.extensions.localize.setLocale(locale);
+	this.modules.localize.setLocale(locale);
 };
 
 Tabulator.prototype.getLocale = function () {
-	return this.extensions.localize.getLocale();
+	return this.modules.localize.getLocale();
 };
 
 Tabulator.prototype.getLang = function (locale) {
-	return this.extensions.localize.getLang(locale);
+	return this.modules.localize.getLang(locale);
 };
 
 //////////// General Public Functions ////////////
@@ -5519,28 +5518,28 @@ Tabulator.prototype.setHeight = function (height) {
 
 //trigger sort
 Tabulator.prototype.setSort = function (sortList, dir) {
-	if (this.extExists("sort", true)) {
-		this.extensions.sort.setSort(sortList, dir);
+	if (this.modExists("sort", true)) {
+		this.modules.sort.setSort(sortList, dir);
 		this.rowManager.sorterRefresh();
 	}
 };
 
 Tabulator.prototype.getSort = function () {
-	if (this.extExists("sort", true)) {
+	if (this.modExists("sort", true)) {
 		console.warn("The%c getSort%c function has been depricated and will be removed in version 4.0, use %c getSorters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
 		return this.getSorters();
 	}
 };
 
 Tabulator.prototype.getSorters = function () {
-	if (this.extExists("sort", true)) {
-		return this.extensions.sort.getSort();
+	if (this.modExists("sort", true)) {
+		return this.modules.sort.getSort();
 	}
 };
 
 Tabulator.prototype.clearSort = function () {
-	if (this.extExists("sort", true)) {
-		this.extensions.sort.clear();
+	if (this.modExists("sort", true)) {
+		this.modules.sort.clear();
 		this.rowManager.sorterRefresh();
 	}
 };
@@ -5549,16 +5548,16 @@ Tabulator.prototype.clearSort = function () {
 
 //set standard filters
 Tabulator.prototype.setFilter = function (field, type, value) {
-	if (this.extExists("filter", true)) {
-		this.extensions.filter.setFilter(field, type, value);
+	if (this.modExists("filter", true)) {
+		this.modules.filter.setFilter(field, type, value);
 		this.rowManager.filterRefresh();
 	}
 };
 
 //add filter to array
 Tabulator.prototype.addFilter = function (field, type, value) {
-	if (this.extExists("filter", true)) {
-		this.extensions.filter.addFilter(field, type, value);
+	if (this.modExists("filter", true)) {
+		this.modules.filter.addFilter(field, type, value);
 		this.rowManager.filterRefresh();
 	}
 };
@@ -5570,17 +5569,17 @@ Tabulator.prototype.getFilter = function (all) {
 };
 
 Tabulator.prototype.getFilters = function (all) {
-	if (this.extExists("filter", true)) {
-		return this.extensions.filter.getFilters(all);
+	if (this.modExists("filter", true)) {
+		return this.modules.filter.getFilters(all);
 	}
 };
 
 Tabulator.prototype.setHeaderFilterFocus = function (field) {
-	if (this.extExists("filter", true)) {
+	if (this.modExists("filter", true)) {
 		var column = this.columnManager.findColumn(field);
 
 		if (column) {
-			this.extensions.filter.setHeaderFilterFocus(column);
+			this.modules.filter.setHeaderFilterFocus(column);
 		} else {
 			console.warn("Column Filter Focus Error - No matching column found:", field);
 			return false;
@@ -5589,11 +5588,11 @@ Tabulator.prototype.setHeaderFilterFocus = function (field) {
 };
 
 Tabulator.prototype.setHeaderFilterValue = function (field, value) {
-	if (this.extExists("filter", true)) {
+	if (this.modExists("filter", true)) {
 		var column = this.columnManager.findColumn(field);
 
 		if (column) {
-			this.extensions.filter.setHeaderFilterValue(column, value);
+			this.modules.filter.setHeaderFilterValue(column, value);
 		} else {
 			console.warn("Column Filter Error - No matching column found:", field);
 			return false;
@@ -5602,126 +5601,126 @@ Tabulator.prototype.setHeaderFilterValue = function (field, value) {
 };
 
 Tabulator.prototype.getHeaderFilters = function () {
-	if (this.extExists("filter", true)) {
-		return this.extensions.filter.getHeaderFilters();
+	if (this.modExists("filter", true)) {
+		return this.modules.filter.getHeaderFilters();
 	}
 };
 
 //remove filter from array
 Tabulator.prototype.removeFilter = function (field, type, value) {
-	if (this.extExists("filter", true)) {
-		this.extensions.filter.removeFilter(field, type, value);
+	if (this.modExists("filter", true)) {
+		this.modules.filter.removeFilter(field, type, value);
 		this.rowManager.filterRefresh();
 	}
 };
 
 //clear filters
 Tabulator.prototype.clearFilter = function (all) {
-	if (this.extExists("filter", true)) {
-		this.extensions.filter.clearFilter(all);
+	if (this.modExists("filter", true)) {
+		this.modules.filter.clearFilter(all);
 		this.rowManager.filterRefresh();
 	}
 };
 
 //clear header filters
 Tabulator.prototype.clearHeaderFilter = function () {
-	if (this.extExists("filter", true)) {
-		this.extensions.filter.clearHeaderFilter();
+	if (this.modExists("filter", true)) {
+		this.modules.filter.clearHeaderFilter();
 		this.rowManager.filterRefresh();
 	}
 };
 
 ///////////////////// Filtering ////////////////////
 Tabulator.prototype.selectRow = function (rows) {
-	if (this.extExists("selectRow", true)) {
-		this.extensions.selectRow.selectRows(rows);
+	if (this.modExists("selectRow", true)) {
+		this.modules.selectRow.selectRows(rows);
 	}
 };
 
 Tabulator.prototype.deselectRow = function (rows) {
-	if (this.extExists("selectRow", true)) {
-		this.extensions.selectRow.deselectRows(rows);
+	if (this.modExists("selectRow", true)) {
+		this.modules.selectRow.deselectRows(rows);
 	}
 };
 
 Tabulator.prototype.toggleSelectRow = function (row) {
-	if (this.extExists("selectRow", true)) {
-		this.extensions.selectRow.toggleRow(row);
+	if (this.modExists("selectRow", true)) {
+		this.modules.selectRow.toggleRow(row);
 	}
 };
 
 Tabulator.prototype.getSelectedRows = function () {
-	if (this.extExists("selectRow", true)) {
-		return this.extensions.selectRow.getSelectedRows();
+	if (this.modExists("selectRow", true)) {
+		return this.modules.selectRow.getSelectedRows();
 	}
 };
 
 Tabulator.prototype.getSelectedData = function () {
-	if (this.extExists("selectRow", true)) {
-		return this.extensions.selectRow.getSelectedData();
+	if (this.modExists("selectRow", true)) {
+		return this.modules.selectRow.getSelectedData();
 	}
 };
 
 //////////// Pagination Functions  ////////////
 
 Tabulator.prototype.setMaxPage = function (max) {
-	if (this.options.pagination && this.extExists("page")) {
-		this.extensions.page.setMaxPage(max);
+	if (this.options.pagination && this.modExists("page")) {
+		this.modules.page.setMaxPage(max);
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.setPage = function (page) {
-	if (this.options.pagination && this.extExists("page")) {
-		this.extensions.page.setPage(page);
+	if (this.options.pagination && this.modExists("page")) {
+		this.modules.page.setPage(page);
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.setPageSize = function (size) {
-	if (this.options.pagination && this.extExists("page")) {
-		this.extensions.page.setPageSize(size);
-		this.extensions.page.setPage(1);
+	if (this.options.pagination && this.modExists("page")) {
+		this.modules.page.setPageSize(size);
+		this.modules.page.setPage(1);
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.getPageSize = function () {
-	if (this.options.pagination && this.extExists("page", true)) {
-		return this.extensions.page.getPageSize();
+	if (this.options.pagination && this.modExists("page", true)) {
+		return this.modules.page.getPageSize();
 	}
 };
 
 Tabulator.prototype.previousPage = function () {
-	if (this.options.pagination && this.extExists("page")) {
-		this.extensions.page.previousPage();
+	if (this.options.pagination && this.modExists("page")) {
+		this.modules.page.previousPage();
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.nextPage = function () {
-	if (this.options.pagination && this.extExists("page")) {
-		this.extensions.page.nextPage();
+	if (this.options.pagination && this.modExists("page")) {
+		this.modules.page.nextPage();
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.getPage = function () {
-	if (this.options.pagination && this.extExists("page")) {
-		return this.extensions.page.getPage();
+	if (this.options.pagination && this.modExists("page")) {
+		return this.modules.page.getPage();
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.getPageMax = function () {
-	if (this.options.pagination && this.extExists("page")) {
-		return this.extensions.page.getPageMax();
+	if (this.options.pagination && this.modExists("page")) {
+		return this.modules.page.getPageMax();
 	} else {
 		return false;
 	}
@@ -5730,9 +5729,9 @@ Tabulator.prototype.getPageMax = function () {
 ///////////////// Grouping Functions ///////////////
 
 Tabulator.prototype.setGroupBy = function (groups) {
-	if (this.extExists("groupRows", true)) {
+	if (this.modExists("groupRows", true)) {
 		this.options.groupBy = groups;
-		this.extensions.groupRows.initialize();
+		this.modules.groupRows.initialize();
 		this.rowManager.refreshActiveData("display");
 	} else {
 		return false;
@@ -5740,9 +5739,9 @@ Tabulator.prototype.setGroupBy = function (groups) {
 };
 
 Tabulator.prototype.setGroupStartOpen = function (values) {
-	if (this.extExists("groupRows", true)) {
+	if (this.modExists("groupRows", true)) {
 		this.options.groupStartOpen = values;
-		this.extensions.groupRows.initialize();
+		this.modules.groupRows.initialize();
 		if (this.options.groupBy) {
 			this.rowManager.refreshActiveData("group");
 		} else {
@@ -5754,9 +5753,9 @@ Tabulator.prototype.setGroupStartOpen = function (values) {
 };
 
 Tabulator.prototype.setGroupHeader = function (values) {
-	if (this.extExists("groupRows", true)) {
+	if (this.modExists("groupRows", true)) {
 		this.options.groupHeader = values;
-		this.extensions.groupRows.initialize();
+		this.modules.groupRows.initialize();
 		if (this.options.groupBy) {
 			this.rowManager.refreshActiveData("group");
 		} else {
@@ -5768,8 +5767,8 @@ Tabulator.prototype.setGroupHeader = function (values) {
 };
 
 Tabulator.prototype.getGroups = function (values) {
-	if (this.extExists("groupRows", true)) {
-		return this.extensions.groupRows.getGroups();
+	if (this.modExists("groupRows", true)) {
+		return this.modules.groupRows.getGroups();
 	} else {
 		return false;
 	}
@@ -5777,8 +5776,8 @@ Tabulator.prototype.getGroups = function (values) {
 
 ///////////////// Column Calculation Functions ///////////////
 Tabulator.prototype.getCalcResults = function () {
-	if (this.extExists("columnCalcs", true)) {
-		return this.extensions.columnCalcs.getResults();
+	if (this.modExists("columnCalcs", true)) {
+		return this.modules.columnCalcs.getResults();
 	} else {
 		return false;
 	}
@@ -5789,8 +5788,8 @@ Tabulator.prototype.getCalcResults = function () {
 Tabulator.prototype.navigatePrev = function () {
 	var cell = false;
 
-	if (this.extExists("edit", true)) {
-		cell = this.extensions.edit.currentCell;
+	if (this.modExists("edit", true)) {
+		cell = this.modules.edit.currentCell;
 
 		if (cell) {
 			e.preventDefault();
@@ -5804,8 +5803,8 @@ Tabulator.prototype.navigatePrev = function () {
 Tabulator.prototype.navigateNext = function () {
 	var cell = false;
 
-	if (this.extExists("edit", true)) {
-		cell = this.extensions.edit.currentCell;
+	if (this.modExists("edit", true)) {
+		cell = this.modules.edit.currentCell;
 
 		if (cell) {
 			e.preventDefault();
@@ -5819,8 +5818,8 @@ Tabulator.prototype.navigateNext = function () {
 Tabulator.prototype.navigateLeft = function () {
 	var cell = false;
 
-	if (this.extExists("edit", true)) {
-		cell = this.extensions.edit.currentCell;
+	if (this.modExists("edit", true)) {
+		cell = this.modules.edit.currentCell;
 
 		if (cell) {
 			e.preventDefault();
@@ -5834,8 +5833,8 @@ Tabulator.prototype.navigateLeft = function () {
 Tabulator.prototype.navigateRight = function () {
 	var cell = false;
 
-	if (this.extExists("edit", true)) {
-		cell = this.extensions.edit.currentCell;
+	if (this.modExists("edit", true)) {
+		cell = this.modules.edit.currentCell;
 
 		if (cell) {
 			e.preventDefault();
@@ -5849,8 +5848,8 @@ Tabulator.prototype.navigateRight = function () {
 Tabulator.prototype.navigateUp = function () {
 	var cell = false;
 
-	if (this.extExists("edit", true)) {
-		cell = this.extensions.edit.currentCell;
+	if (this.modExists("edit", true)) {
+		cell = this.modules.edit.currentCell;
 
 		if (cell) {
 			e.preventDefault();
@@ -5864,8 +5863,8 @@ Tabulator.prototype.navigateUp = function () {
 Tabulator.prototype.navigateDown = function () {
 	var cell = false;
 
-	if (this.extExists("edit", true)) {
-		cell = this.extensions.edit.currentCell;
+	if (this.modExists("edit", true)) {
+		cell = this.modules.edit.currentCell;
 
 		if (cell) {
 			e.preventDefault();
@@ -5878,16 +5877,16 @@ Tabulator.prototype.navigateDown = function () {
 
 /////////////// History Management //////////////
 Tabulator.prototype.undo = function () {
-	if (this.options.history && this.extExists("history", true)) {
-		return this.extensions.history.undo();
+	if (this.options.history && this.modExists("history", true)) {
+		return this.modules.history.undo();
 	} else {
 		return false;
 	}
 };
 
 Tabulator.prototype.redo = function () {
-	if (this.options.history && this.extExists("history", true)) {
-		return this.extensions.history.redo();
+	if (this.options.history && this.modExists("history", true)) {
+		return this.modules.history.redo();
 	} else {
 		return false;
 	}
@@ -5896,27 +5895,27 @@ Tabulator.prototype.redo = function () {
 /////////////// Download Management //////////////
 
 Tabulator.prototype.download = function (type, filename, options) {
-	if (this.extExists("download", true)) {
-		this.extensions.download.download(type, filename, options);
+	if (this.modExists("download", true)) {
+		this.modules.download.download(type, filename, options);
 	}
 };
 
 /////////// Inter Table Communications ///////////
 
-Tabulator.prototype.tableComms = function (table, extension, action, data) {
-	this.extensions.comms.receive(table, extension, action, data);
+Tabulator.prototype.tableComms = function (table, module, action, data) {
+	this.modules.comms.receive(table, module, action, data);
 };
 
 ////////////// Extension Management //////////////
 
-//object to hold extensions
-Tabulator.prototype.extensionBindings = {};
+//object to hold module
+Tabulator.prototype.moduleBindings = {};
 
-//extend extension
-Tabulator.prototype.extendExtension = function (name, property, values) {
+//extend module
+Tabulator.prototype.extendModule = function (name, property, values) {
 
-	if (Tabulator.prototype.extensionBindings[name]) {
-		var source = Tabulator.prototype.extensionBindings[name].prototype[property];
+	if (Tabulator.prototype.moduleBindings[name]) {
+		var source = Tabulator.prototype.moduleBindings[name].prototype[property];
 
 		if (source) {
 			if ((typeof values === 'undefined' ? 'undefined' : _typeof(values)) == "object") {
@@ -5924,45 +5923,41 @@ Tabulator.prototype.extendExtension = function (name, property, values) {
 					source[key] = values[key];
 				}
 			} else {
-				console.warn("Extension Error - Invalid value type, it must be an object");
+				console.warn("Module Error - Invalid value type, it must be an object");
 			}
 		} else {
-			console.warn("Extension Error - property does not exist:", property);
+			console.warn("Module Error - property does not exist:", property);
 		}
 	} else {
-		console.warn("Extension Error - extension does not exist:", name);
+		console.warn("Module Error - module does not exist:", name);
 	}
 };
 
-//add extension to tabulator
-Tabulator.prototype.registerExtension = function (name, extension) {
+//add module to tabulator
+Tabulator.prototype.registerModule = function (name, module) {
 	var self = this;
-	Tabulator.prototype.extensionBindings[name] = extension;
+	Tabulator.prototype.moduleBindings[name] = module;
 };
 
-//ensure that extensions are bound to instantiated function
-Tabulator.prototype.bindExtensions = function () {
-	this.extensions = {};
+//ensure that module are bound to instantiated function
+Tabulator.prototype.bindModules = function () {
+	this.modules = {};
 
-	for (var name in Tabulator.prototype.extensionBindings) {
-		this.extensions[name] = new Tabulator.prototype.extensionBindings[name](this);
+	for (var name in Tabulator.prototype.moduleBindings) {
+		this.modules[name] = new Tabulator.prototype.moduleBindings[name](this);
 	}
 };
 
-//Check for plugin
-Tabulator.prototype.extExists = function (plugin, required) {
-	if (this.extensions[plugin]) {
+//Check for module
+Tabulator.prototype.modExists = function (plugin, required) {
+	if (this.modules[plugin]) {
 		return true;
 	} else {
 		if (required) {
-			console.error("Tabulator Plugin Not Installed: " + plugin);
+			console.error("Tabulator Module Not Installed: " + plugin);
 		}
 		return false;
 	}
-};
-
-Tabulator.prototype.test = function (text) {
-	console.log("TEST", text);
 };
 
 var Layout = function Layout(table) {
@@ -5973,7 +5968,6 @@ var Layout = function Layout(table) {
 };
 
 //initialize layout system
-
 
 Layout.prototype.initialize = function (layout) {
 
@@ -5997,7 +5991,6 @@ Layout.prototype.getMode = function () {
 
 //trigger table layout
 
-
 Layout.prototype.layout = function () {
 
 	this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
@@ -6005,11 +5998,9 @@ Layout.prototype.layout = function () {
 
 //layout render functions
 
-
 Layout.prototype.modes = {
 
 	//resize columns to fit data the contain
-
 
 	"fitData": function fitData(columns) {
 
@@ -6018,14 +6009,13 @@ Layout.prototype.modes = {
 			column.reinitializeWidth();
 		});
 
-		if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+		if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-			this.table.extensions.responsiveLayout.update();
+			this.table.modules.responsiveLayout.update();
 		}
 	},
 
 	//resize columns to fit data the contain
-
 
 	"fitDataFill": function fitDataFill(columns) {
 
@@ -6034,14 +6024,13 @@ Layout.prototype.modes = {
 			column.reinitializeWidth();
 		});
 
-		if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+		if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-			this.table.extensions.responsiveLayout.update();
+			this.table.modules.responsiveLayout.update();
 		}
 	},
 
 	//resize columns to fit
-
 
 	"fitColumns": function fitColumns(columns) {
 
@@ -6049,30 +6038,21 @@ Layout.prototype.modes = {
 
 		var totalWidth = self.table.element.innerWidth(); //table element width
 
-
 		var fixedWidth = 0; //total width of columns with a defined width
-
 
 		var flexWidth = 0; //total width available to flexible columns
 
-
 		var flexGrowUnits = 0; //total number of widthGrow blocks accross all columns
-
 
 		var flexColWidth = 0; //desired width of flexible columns
 
-
 		var flexColumns = []; //array of flexible width columns
-
 
 		var fixedShrinkColumns = []; //array of fixed width columns that can shrink
 
-
 		var flexShrinkUnits = 0; //total number of widthShrink blocks accross all columns
 
-
 		var overflowWidth = 0; //horizontal overflow width
-
 
 		var gapFill = 0; //number of pixels to be added to final column to close and half pixel gaps
 
@@ -6099,7 +6079,6 @@ Layout.prototype.modes = {
 		}
 
 		//ensure columns resize to take up the correct amount of space
-
 
 		function scaleColumns(columns, freeSpace, colWidth, shrinkCols) {
 
@@ -6165,13 +6144,12 @@ Layout.prototype.modes = {
 			return gap;
 		}
 
-		if (this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)) {
+		if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
-			this.table.extensions.responsiveLayout.update();
+			this.table.modules.responsiveLayout.update();
 		}
 
 		//adjust for vertical scrollbar if present
-
 
 		if (this.table.rowManager.element[0].scrollHeight > this.table.rowManager.element.innerHeight()) {
 
@@ -6223,21 +6201,17 @@ Layout.prototype.modes = {
 
 		//calculate available space
 
-
 		flexWidth = totalWidth - fixedWidth;
 
 		//calculate correct column size
-
 
 		flexColWidth = Math.floor(flexWidth / flexGrowUnits);
 
 		//generate column widths
 
-
 		var gapFill = scaleColumns(flexColumns, flexWidth, flexColWidth, false);
 
 		//increase width of last column to account for rounding errors
-
 
 		if (flexColumns.length && gapFill > 0) {
 
@@ -6245,7 +6219,6 @@ Layout.prototype.modes = {
 		}
 
 		//caculate space for columns to be shrunk into
-
 
 		flexColumns.forEach(function (col) {
 
@@ -6256,14 +6229,12 @@ Layout.prototype.modes = {
 
 		//shrink oversize columns if there is no available space
 
-
 		if (overflowWidth > 0 && flexShrinkUnits) {
 
 			gapFill = scaleColumns(fixedShrinkColumns, overflowWidth, Math.floor(overflowWidth / flexShrinkUnits), true);
 		}
 
 		//decrease width of last column to account for rounding errors
-
 
 		if (fixedShrinkColumns.length) {
 
@@ -6283,7 +6254,7 @@ Layout.prototype.modes = {
 
 };
 
-Tabulator.prototype.registerExtension("layout", Layout);
+Tabulator.prototype.registerModule("layout", Layout);
 var Localize = function Localize(table) {
 	this.table = table; //hold Tabulator object
 	this.locale = "default"; //current locale
@@ -6481,7 +6452,7 @@ Localize.prototype.langs = {
 	}
 };
 
-Tabulator.prototype.registerExtension("localize", Localize);
+Tabulator.prototype.registerModule("localize", Localize);
 var Comms = function Comms(table) {
 	this.table = table;
 };
@@ -6506,12 +6477,12 @@ Comms.prototype.getConnections = function (selectors) {
 	return connections;
 };
 
-Comms.prototype.send = function (selectors, extension, action, data) {
+Comms.prototype.send = function (selectors, module, action, data) {
 	var self = this,
 	    connections = this.getConnections(selectors);
 
 	connections.forEach(function (connection) {
-		connection.tabulator("tableComms", self.table.element, extension, action, data);
+		connection.tabulator("tableComms", self.table.element, module, action, data);
 	});
 
 	if (!connections.length && selectors) {
@@ -6519,12 +6490,12 @@ Comms.prototype.send = function (selectors, extension, action, data) {
 	}
 };
 
-Comms.prototype.receive = function (table, extension, action, data) {
-	if (this.table.extExists(extension)) {
-		return this.table.extensions[extension].commsReceived(table, action, data);
+Comms.prototype.receive = function (table, module, action, data) {
+	if (this.table.modExists(module)) {
+		return this.table.modules[module].commsReceived(table, action, data);
 	} else {
-		console.warn("Inter-table Comms Error - no such extension:", extension);
+		console.warn("Inter-table Comms Error - no such module:", module);
 	}
 };
 
-Tabulator.prototype.registerExtension("comms", Comms);
+Tabulator.prototype.registerModule("comms", Comms);
