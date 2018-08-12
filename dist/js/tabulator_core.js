@@ -3348,7 +3348,7 @@ RowManager.prototype.adjustTableSize = function () {
 		this.height = this.element.clientHeight;
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager ? this.table.footerManager.getElement().outerHeight() : 0);
+		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager ? this.table.footerManager.getElement().offsetHeight : 0);
 
 		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
 		this.element.style.height = "calc(100% - " + otherHeight + "px)";
@@ -4531,10 +4531,18 @@ Cell.prototype.getComponent = function () {
 var FooterManager = function FooterManager(table) {
 	this.table = table;
 	this.active = false;
-	this.element = $("<div class='tabulator-footer'></div>"); //containing element
+	this.element = this.createElement(); //containing element
 	this.links = [];
 
 	this._initialize();
+};
+
+FooterManager.prototype.createElement = function () {
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-footer");
+
+	return el;
 };
 
 FooterManager.prototype._initialize = function (element) {
@@ -4550,14 +4558,14 @@ FooterManager.prototype.getElement = function () {
 FooterManager.prototype.append = function (element, parent) {
 	this.activate(parent);
 
-	this.element.append(element);
+	this.element.appendChild(element);
 	this.table.rowManager.adjustTableSize();
 };
 
 FooterManager.prototype.prepend = function (element, parent) {
 	this.activate(parent);
 
-	this.element.prepend(element);
+	this.element.insertBefore(element, this.element.firstChild);
 	this.table.rowManager.adjustTableSize();
 };
 
@@ -4568,7 +4576,7 @@ FooterManager.prototype.remove = function (element) {
 
 FooterManager.prototype.deactivate = function (force) {
 	if (this.element.is(":empty") || force) {
-		this.element.remove();
+		this.element.parentNode.removeChild(this.element);
 		this.active = false;
 	}
 

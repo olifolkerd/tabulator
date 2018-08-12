@@ -1,10 +1,18 @@
 var FooterManager = function(table){
 	this.table = table;
 	this.active = false;
-	this.element = $("<div class='tabulator-footer'></div>"); //containing element
+	this.element = this.createElement(); //containing element
 	this.links = [];
 
 	this._initialize();
+};
+
+FooterManager.prototype.createElement = function (){
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-footer");
+
+	return el;
 };
 
 FooterManager.prototype._initialize = function(element){
@@ -21,14 +29,14 @@ FooterManager.prototype.getElement = function(){
 FooterManager.prototype.append = function(element, parent){
 	this.activate(parent);
 
-	this.element.append(element);
+	this.element.appendChild(element);
 	this.table.rowManager.adjustTableSize();
 };
 
 FooterManager.prototype.prepend = function(element, parent){
 	this.activate(parent);
 
-	this.element.prepend(element);
+	this.element.insertBefore(element, this.element.firstChild);
 	this.table.rowManager.adjustTableSize();
 };
 
@@ -39,7 +47,7 @@ FooterManager.prototype.remove = function(element){
 
 FooterManager.prototype.deactivate = function(force){
 	if(this.element.is(":empty") || force){
-		this.element.remove();
+		this.element.parentNode.removeChild(this.element)
 		this.active = false;
 	}
 
