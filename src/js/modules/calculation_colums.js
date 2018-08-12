@@ -3,14 +3,20 @@ var ColumnCalcs = function(table){
 	this.topCalcs = [];
 	this.botCalcs = [];
 	this.genColumn = false;
-	this.topElement = $("<div class='tabulator-calcs-holder'></div>");
-	this.botElement = $("<div class='tabulator-calcs-holder'></div>");
+	this.topElement = this.createElement();
+	this.botElement = this.createElement();
 	this.topRow = false;
 	this.botRow = false;
 	this.topInitialized = false;
 	this.botInitialized = false;
 
 	this.initialize();
+};
+
+ColumnCalcs.prototype.createElement = function (){
+	var el = document.createElement("div");
+	el.classList.add("tabulator-calcs-holder");
+	return el;
 };
 
 ColumnCalcs.prototype.initialize = function(){
@@ -90,7 +96,7 @@ ColumnCalcs.prototype.removeCalcs = function(){
 
 	if(this.topInitialized){
 		this.topInitialized = false;
-		this.topElement.remove();
+		this.topElement.parentNode.removeChild(this.topElement);
 		changed = true;
 	}
 
@@ -108,7 +114,7 @@ ColumnCalcs.prototype.removeCalcs = function(){
 ColumnCalcs.prototype.initializeTopRow = function(){
 	if(!this.topInitialized){
 		// this.table.columnManager.headersElement.after(this.topElement);
-		this.table.columnManager.getElement().insertBefore(this.topElement[0], this.table.columnManager.headersElement.nextSibling);
+		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 		this.topInitialized = true;
 	}
 };
@@ -140,16 +146,16 @@ ColumnCalcs.prototype.recalc = function(rows){
 		if(this.topInitialized){
 			row = this.generateRow("top", this.rowsToData(rows))
 			this.topRow = row;
-			this.topElement.empty();
-			this.topElement.append(row.getElement());
+			while(this.topElement.firstChild) this.topElement.removeChild(this.topElement.firstChild);
+			this.topElement.appendChild(row.getElement());
 			row.initialize(true);
 		}
 
 		if(this.botInitialized){
 			row = this.generateRow("bottom", this.rowsToData(rows))
 			this.botRow = row;
-			this.botElement.empty();
-			this.botElement.append(row.getElement());
+			while(this.botElement.firstChild) this.botElement.removeChild(this.botElement.firstChild);
+			this.botElement.appendChild(row.getElement());
 			row.initialize(true);
 		}
 
@@ -236,12 +242,12 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 					self.genColumn.modules.format = {
 						formatter: self.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
 						params: column.definition[pos + "CalcFormatterParams"]
-					}
+					};
 				}else{
 					self.genColumn.modules.format = {
 						formatter: self.table.modules.format.getFormatter("plaintext"),
 						params:{}
-					}
+					};
 				}
 
 				//generate cell and assign to correct column
