@@ -39,7 +39,7 @@ Sort.prototype.initializeColumn = function(column, content){
 		colEl.classList.add("tabulator-sortable");
 
 		//create sorter arrow
-		content.append($("<div class='tabulator-arrow'></div>")[0]);
+		content.appendChild($("<div class='tabulator-arrow'></div>")[0]);
 
 		//sort on click
 		colEl.addEventListener("click", function(e){
