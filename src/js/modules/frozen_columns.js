@@ -116,7 +116,7 @@ FrozenColumns.prototype.layout = function(){
 FrozenColumns.prototype.layoutColumn = function(column){
 	var self = this;
 
-	self.layoutElement(column.element, column);
+	self.layoutElement(column.getElement, column);
 
 	column.cells.forEach(function(cell){
 		self.layoutElement(cell.element, column);
@@ -133,16 +133,14 @@ FrozenColumns.prototype.layoutRow = function(row){
 FrozenColumns.prototype.layoutElement = function(element, column){
 
 	if(column.modules.frozen){
-		var css = {
-			position:"absolute",
-			left:column.modules.frozen.margin
-		}
 
-		element.css(css);
-		element.addClass("tabulator-frozen");
+		element.style.position = "absolute";
+		element.style.left = column.modules.frozen.margin;
+
+		element.classList.add("tabulator-frozen");
 
 		if(column.modules.frozen.edge){
-			element.addClass("tabulator-frozen-" + column.modules.frozen.position);
+			element.classList.add("tabulator-frozen-" + column.modules.frozen.position);
 		}
 	}
 };

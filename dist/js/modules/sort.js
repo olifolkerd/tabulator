@@ -13,7 +13,9 @@ var Sort = function Sort(table) {
 //initialize column header for sorting
 Sort.prototype.initializeColumn = function (column, content) {
 	var self = this,
-	    sorter = false;
+	    sorter = false,
+	    colEl,
+	    arrowEl;
 
 	switch (_typeof(column.definition.sorter)) {
 		case "string":
@@ -37,13 +39,15 @@ Sort.prototype.initializeColumn = function (column, content) {
 
 	if (column.definition.headerSort !== false) {
 
-		column.element.addClass("tabulator-sortable");
+		colEl = column.getElement();
+
+		colEl.classList.add("tabulator-sortable");
 
 		//create sorter arrow
-		content.append($("<div class='tabulator-arrow'></div>"));
+		content.append($("<div class='tabulator-arrow'></div>")[0]);
 
 		//sort on click
-		column.element.on("click", function (e) {
+		colEl.addEventListener("click", function (e) {
 			var dir = "",
 			    sorters = [],
 			    match = false;
@@ -220,7 +224,7 @@ Sort.prototype.clearColumnHeaders = function () {
 	this.table.columnManager.getRealColumns().forEach(function (column) {
 		if (column.modules.sort) {
 			column.modules.sort.dir = "none";
-			column.element.attr("aria-sort", "none");
+			column.getElement().setAttribute("aria-sort", "none");
 		}
 	});
 };
@@ -228,7 +232,7 @@ Sort.prototype.clearColumnHeaders = function () {
 //set the column header sort direction
 Sort.prototype.setColumnHeader = function (column, dir) {
 	column.modules.sort.dir = dir;
-	column.element.attr("aria-sort", dir);
+	column.getElement().setAttribute("aria-sort", dir);
 };
 
 //sort each item in sort list

@@ -101,28 +101,30 @@ ColumnManager.prototype.setColumns = function(cols, row){
 };
 
 ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
-	var column = new Column(definition, this);
-	var index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
+	var column = new Column(definition, this),
+	colEl = column.getElement(),
+	index = nextToColumn ? this.findColumnIndex(nextToColumn) : nextToColumn;
 
 	if(nextToColumn && index > -1){
 
-		let parentIndex = this.columns.indexOf(nextToColumn.getTopColumn());
+		var parentIndex = this.columns.indexOf(nextToColumn.getTopColumn());
+		var nextEl = nextToColumn.getElement();
 
 		if(before){
 			this.columns.splice(parentIndex, 0, column);
-			nextToColumn.getElement().before(column.getElement());
+			nextEl.parentNode.insertBefore(colEl, nextEl);
 		}else{
 			this.columns.splice(parentIndex + 1, 0, column);
-			nextToColumn.getElement().after(column.getElement());
+			nextEl.parentNode.insertBefore(colEl, nextEl.nextSibling);
 		}
 
 	}else{
 		if(before){
 			this.columns.unshift(column);
-			this.headersElement.insertBefore(column.getElement()[0], this.headersElement.firstChild);
+			this.headersElement.insertBefore(column.getElement(), this.headersElement.firstChild);
 		}else{
 			this.columns.push(column);
-			this.headersElement.appendChild(column.getElement()[0]);
+			this.headersElement.appendChild(column.getElement());
 		}
 	}
 
@@ -331,7 +333,8 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, 
 ColumnManager.prototype.scrollToColumn = function(column, position, ifVisible){
 	var left = 0,
 	offset = 0,
-	adjust = 0;
+	adjust = 0,
+	colEl = column.getElement();
 
 	if(typeof position === "undefined"){
 		position = this.table.options.scrollToColumnPosition;
@@ -351,29 +354,29 @@ ColumnManager.prototype.scrollToColumn = function(column, position, ifVisible){
 			break;
 
 			case "right":
-			adjust = column.element.innerWidth() - this.headersElement.clientWidth;
+			adjust = colEl.clientWidth - this.headersElement.clientWidth;
 			break;
 		}
 
 		//check column visibility
 		if(!ifVisible){
 
-			offset = column.element.position().left;
+			offset = colEl.offsetLeft;
 
-			if(offset > 0 && offset + column.element.outerWidth() < this.element.clientWidth){
+			if(offset > 0 && offset + colEl.offsetWidth < this.element.clientWidth){
 				return false;
 			}
 		}
 
 		//calculate scroll position
-		left = column.element.position().left + this.element.scrollLeft + adjust;
+		left = colEl.offsetLeft + this.element.scrollLeft + adjust;
 
 		left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth),0);
 
 		this.table.rowManager.scrollHorizontal(left);
 		this.scrollHorizontal(left);
 
-		return true
+		return true;
 	}else{
 		console.warn("Scroll Error - Column not visible");
 		return false;

@@ -22,33 +22,36 @@ var MoveColumns = function MoveColumns(table) {
 
 MoveColumns.prototype.initializeColumn = function (column) {
 	var self = this,
-	    config = {};
+	    config = {},
+	    colEl;
 
 	if (!column.modules.frozen) {
 
+		colEl = column.getElement();
+
 		config.mousemove = function (e) {
 			if (column.parent === self.moving.parent) {
-				if (e.pageX - column.element.offset().left + self.table.columnManager.element.scrollLeft > column.getWidth() / 2) {
+				if (e.pageX - Tabulator.prototype.helpers.elOffset(colEl).left + self.table.columnManager.element.scrollLeft > column.getWidth() / 2) {
 					if (self.toCol !== column || !self.toColAfter) {
-						column.element.after(self.placeholderElement);
+						colEl.parentNode.insertBefore(self.placeholderElement, colEl.nextSibling);
 						self.moveColumn(column, true);
 					}
 				} else {
 					if (self.toCol !== column || self.toColAfter) {
-						column.element.before(self.placeholderElement);
+						colEl.parentNode.insertBefore(self.placeholderElement, colEl);
 						self.moveColumn(column, false);
 					}
 				}
 			}
 		}.bind(self);
 
-		column.getElement().on("mousedown", function (e) {
+		colEl.addEventListener("mousedown", function (e) {
 			self.checkTimeout = setTimeout(function () {
 				self.startMove(e, column);
 			}, self.checkPeriod);
 		});
 
-		column.getElement().on("mouseup", function (e) {
+		colEl.addEventListener("mouseup", function (e) {
 			if (self.checkTimeout) {
 				clearTimeout(self.checkTimeout);
 			}
@@ -63,7 +66,7 @@ MoveColumns.prototype.startMove = function (e, column) {
 	    element = column.getElement();
 
 	self.moving = column;
-	self.startX = e.pageX - element.offset().left;
+	self.startX = e.pageX - Tabulator.prototype.helpers.elOffset(element.left);
 
 	self.table.element.classList.add("tabulator-block-select");
 
@@ -72,12 +75,12 @@ MoveColumns.prototype.startMove = function (e, column) {
 		width: column.getWidth(),
 		height: column.getHeight()
 	});
-	element.before(self.placeholderElement);
-	element.detach();
+	element.parentNode.insertBefore(self.placeholderElement, element);
+	element.parentNode.removeChild(element);
 
 	//create hover element
-	self.hoverElement = element.clone();
-	self.hoverElement.addClass("tabulator-moving");
+	self.hoverElement = element.cloneNode(true);
+	self.hoverElement.classList.add("tabulator-moving");
 
 	self.table.columnManager.getElement().appendChild(self.hoverElement[0]);
 	self.hoverElement.css({
@@ -98,7 +101,7 @@ MoveColumns.prototype._bindMouseMove = function () {
 
 	self.table.columnManager.columnsByIndex.forEach(function (column) {
 		if (column.modules.moveColumn.mousemove) {
-			column.element.on("mousemove", column.modules.moveColumn.mousemove);
+			column.getElement().addEventListener("mousemove", column.modules.moveColumn.mousemove);
 		}
 	});
 };
@@ -108,7 +111,7 @@ MoveColumns.prototype._unbindMouseMove = function () {
 
 	self.table.columnManager.columnsByIndex.forEach(function (column) {
 		if (column.modules.moveColumn.mousemove) {
-			column.element.off("mousemove", column.modules.moveColumn.mousemove);
+			column.getElement().removeEventListener("mousemove", column.modules.moveColumn.mousemove);
 		}
 	});
 };
