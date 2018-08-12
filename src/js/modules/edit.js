@@ -100,8 +100,8 @@ Edit.prototype.bindEditor = function(cell){
 	element.setAttribute("tabindex", 0);
 
 	element.addEventListener("click", function(e){
-		if(!$(this).hasClass("tabulator-editing")){
-			$(this).focus();
+		if(!element.classList.contains("tabulator-editing")){
+			element.focus();
 		}
 	});
 
@@ -232,11 +232,13 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 				rendered();
 
 				//prevent editing from triggering rowClick event
-				element.children.forEach(function(child){
-					child.addEventListener("click", function(e){
+				var children = element.children;
+
+				for (var i = 0; i < children.length; i++) {
+				   children[i].addEventListener("click", function(e){
 						e.stopPropagation();
 					});
-				});
+				}
 
 			}else{
 				element.blur();
@@ -263,33 +265,38 @@ Edit.prototype.editors = {
 	input:function(cell, onRendered, success, cancel, editorParams){
 
 		//create and style input
-		var input = $("<input type='text'/>");
+		var cellValue = cell.getValue(),
+		input = document.createElement("input");
 
-		input.css({
-			"padding":"4px",
-			"width":"100%",
-			"box-sizing":"border-box",
-		})
-		.val(cell.getValue());
+		input.setAttribute("type", "text");
+
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		input.value = cellValue;
 
 		onRendered(function(){
 			input.focus();
-			input.css("height","100%");
+			input.style.height = "100%";
 		});
 
-		//submit new value on blur
-		input.on("change blur", function(e){
-			if(input.val() != cell.getValue()){
-				success(input.val());
+		function onChange(e){
+			if(input.value != cellValue){
+				success(input.value);
 			}else{
 				cancel();
 			}
-		});
+		}
+
+		//submit new value on blur or change
+		input.addEventListener("change", onChange);
+		input.addEventListener("blur", onChange);
 
 		//submit new value on enter
-		input.on("keydown", function(e){
+		input.addEventListener("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.val());
+				success(input.value);
 			}
 
 			if(e.keyCode == 27){
@@ -297,7 +304,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//resizable text area element
@@ -306,44 +313,47 @@ Edit.prototype.editors = {
 		cellValue = cell.getValue(),
 		value = String(typeof cellValue == "null" || typeof cellValue == "undefined" ? "" : cellValue),
 		count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
-		input = $("<textarea></textarea>"),
+		input = document.createElement("textarea"),
 		scrollHeight = 0;
 
         //create and style input
-        input.css({
-        	"display":"block",
-        	"height":"100%",
-        	"width":"100%",
-        	"padding":"2px",
-        	"box-sizing":"border-box",
-        	"white-space":"pre-wrap",
-        	"resize": "none",
-        })
-        .val(value);
+        input.style.display = "block";
+        input.style.padding = "2px";
+        input.style.height = "100%";
+        input.style.width = "100%";
+        input.style.boxSizing = "border-box";
+        input.style.whiteSpace = "pre-wrap";
+        input.style.resize = "none";
+
+      	input.value = value;
 
         onRendered(function(){
         	input.focus();
-        	input.css("height","100%");
+        	input.style.height = "100%";
         });
 
-        //submit new value on blur
-        input.on("change blur", function(e){
-        	if(input.val() != cell.getValue()){
-        		success(input.val());
+        function onChange(e){
+        	if(input.value != cellValue){
+        		success(input.value);
         		setTimeout(function(){
         			cell.getRow().normalizeHeight();
         		},300)
         	}else{
         		cancel();
         	}
-        });
+        }
 
-        input.on("keyup", function(){
+        //submit new value on blur or change
+        input.addEventListener("change", onChange);
+        input.addEventListener("blur", onChange);
 
-        	input.css({"height": ""});
+        input.addEventListener("keyup", function(){
 
-        	var heightNow = input[0].scrollHeight;
-        	input.css({"height": heightNow});
+        	input.style.height = "";
+
+        	var heightNow = input.scrollHeight;
+
+        	input.style.height = heightNow + "px";
 
         	if(heightNow != scrollHeight){
         		scrollHeight = heightNow;
@@ -351,47 +361,56 @@ Edit.prototype.editors = {
         	}
         });
 
-        input.on("keydown", function(e){
+        input.addEventListener("keydown", function(e){
         	if(e.keyCode == 27){
         		cancel();
         	}
         });
 
-        return input[0];
+        return input;
     },
 
     //input element with type of number
     number:function(cell, onRendered, success, cancel, editorParams){
 
-    	var max = typeof editorParams.max != "undefined" ? "max='" + editorParams.max + "'" : "";
-    	var min = typeof editorParams.min != "undefined" ? "min='" + editorParams.min + "'" : "";
-    	var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
-    	var input = $("<input type='number' " + max + " " + min + " " + step + "/>");
+    	var cellValue = cell.getValue(),
+    	input = document.createElement("input");
+
+    	input.setAttribute("type", "number");
+
+    	if(typeof editorParams.max != "undefined"){
+    		input.setAttribute("max", editorParams.max);
+    	}
+
+    	if(typeof editorParams.min != "undefined"){
+    		input.setAttribute("min", editorParams.min);
+    	}
+
+    	if(typeof editorParams.step != "undefined"){
+    		input.setAttribute("step", editorParams.step);
+    	}
 
 		//create and style input
-		input.css({
-			"padding":"4px",
-			"width":"100%",
-			"box-sizing":"border-box",
-		})
-		.val(cell.getValue());
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
 
-		onRendered(function(){
-			input.css("height","100%");
-			setTimeout(function(){
-				input.focus();
-			}, 10);
+		input.value = cellValue;
+
+		onRendered(function () {
+			input.focus();
+			input.style.height = "100%";
 		});
 
 		//submit new value on blur
-		input.on("blur", function(e){
-			var value = input.val();
+		input.addEventListener("blur", function(e){
+			var value = input.value;
 
 			if(!isNaN(value)){
 				value = Number(value);
 			}
 
-			if(value != cell.getValue()){
+			if(value != cellValue){
 				success(value);
 			}else{
 				cancel();
@@ -399,11 +418,11 @@ Edit.prototype.editors = {
 		});
 
 		//submit new value on enter
-		input.on("keydown", function(e){
+		input.addEventListener("keydown", function(e){
 			var value;
 
 			if(e.keyCode == 13){
-				value = input.val();
+				value = input.value;
 
 				if(!isNaN(value)){
 					value = Number(value);
@@ -417,41 +436,50 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
     //input element with type of number
     range:function(cell, onRendered, success, cancel, editorParams){
 
-    	var max =  "max='" + (typeof editorParams.max != "undefined" ? editorParams.max : 10) + "'" ;
-    	var min =  "min='" + (typeof editorParams.min != "undefined" ? editorParams.min : 0) + "'" ;
-    	var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
-    	var input = $("<input type='range' " + max + " " + min + " " + step + "/>");
+    	var cellValue = cell.getValue(),
+    	input = document.createElement("input");
 
-		//create and style input
-		input.css({
-			"padding":"4px",
-			"width":"100%",
-			"box-sizing":"border-box",
-		})
-		.val(cell.getValue());
+    	input.setAttribute("type", "range");
 
-		onRendered(function(){
-			input.css("height","100%");
-			setTimeout(function(){
-				input.focus();
-			}, 10);
-		});
+    	if (typeof editorParams.max != "undefined") {
+    		input.setAttribute("max", editorParams.max);
+    	}
+
+    	if (typeof editorParams.min != "undefined") {
+    		input.setAttribute("min", editorParams.min);
+    	}
+
+    	if (typeof editorParams.step != "undefined") {
+    		input.setAttribute("step", editorParams.step);
+    	}
+
+    	//create and style input
+    	input.style.padding = "4px";
+    	input.style.width = "100%";
+    	input.style.boxSizing = "border-box";
+
+    	input.value = cellValue;
+
+    	onRendered(function () {
+    		input.focus();
+    		input.style.height = "100%";
+    	});
 
 		//submit new value on blur
-		input.on("blur", function(e){
-			var value = input.val();
+		input.addEventListener("blur", function(e){
+			var value = input.value;
 
 			if(!isNaN(value)){
 				value = Number(value);
 			}
 
-			if(value != cell.getValue()){
+			if(value != cellValue){
 				success(value);
 			}else{
 				cancel();
@@ -459,11 +487,11 @@ Edit.prototype.editors = {
 		});
 
 		//submit new value on enter
-		input.on("keydown", function(e){
+		input.addEventListener("keydown", function(e){
 			var value;
 
 			if(e.keyCode == 13){
-				value = input.val();
+				value = input.value;
 
 				if(!isNaN(value)){
 					value = Number(value);
@@ -477,13 +505,13 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//select
 	select: function (cell, onRendered, success, cancel, editorParams) {
 		//create and style select
-		var select = $("<select><select/>");
+		var select = document.createElement("select");
 		var isArray = Array.isArray(editorParams);
 
 		if(typeof editorParams == "function"){
@@ -493,26 +521,31 @@ Edit.prototype.editors = {
 
 		function optionAppend(element, label, value, disabled){
 
-			var option = $("<option></option>").attr("value", value).text(label);
+			var option = document.createElement("option");
+
+			option.value = value;
+			option.text = label;
 
 			if(disabled){
-				option.prop("disabled", true);
+				option.disabled = true;
 			}
 
-			element.append(option);
+			element.appendChild(option);
 		}
 
 		function processOption(element, option){
 			var groupEl;
 
 			if(option.options){
-				groupEl = $("<optgroup></optgroup>").attr("label", option.label);
+				groupEl = document.createElement("optgroup");
+
+				groupEl.setAttribute("lavel", option.label);
 
 				option.options.forEach(function(item){
 					processOption(groupEl, item);
 				});
 
-				element.append(groupEl);
+				element.appendChild(groupEl);
 			}else{
 				optionAppend(element, typeof option.label == "undefined" ? option.value : option.label,  typeof option.value == "undefined" ? option.label : option.value, option.disabled);
 			}
@@ -528,29 +561,33 @@ Edit.prototype.editors = {
 			});
 		}
 
-		select.css({
-			"padding":"4px",
-			"width":"100%",
-			"box-sizing":"border-box",
-			"font-family":"",
-		}).val(cell.getValue())
+		//create and style input
+		select.style.padding = "4px";
+		select.style.width = "100%";
+		select.style.boxSizing = "border-box";
+		select.style.fontFamily = "";
+
+		select.value = cell.getValue();
 
 		onRendered(function () {
-			select.focus().click();
+			select.focus();
 		});
 
 		//submit new value on blur
-		select.on("change blur", function (e) {
-			success(select.val());
-		});
+		function onChange(e) {
+			success(select.options[select.selectedIndex].value);
+		}
+
+		select.addEventListener("change", onChange);
+		select.addEventListener("blur", onChange);
 
 		//submit new value on enter
-		select.on("keydown", function (e) {
+		select.addEventListener("keydown", function (e) {
 			if (e.keyCode === 13) {
-				success(select.val());
+				success(select.options[select.selectedIndex].value);
 			}
 		});
-		return select[0];
+		return select;
 	},
 
 	//start rating
