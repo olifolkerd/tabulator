@@ -122,11 +122,13 @@ MoveColumns.prototype.moveColumn = function(column, after){
 
 	if(after){
 		column.getCells().forEach(function(cell, i){
-			cell.getElement().after(movingCells[i].getElement())
+			var cellEl = cell.getElement();
+			cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
 		});
 	}else{
 		column.getCells().forEach(function(cell, i){
-			cell.getElement().before(movingCells[i].getElement())
+			var cellEl = cell.getElement();
+			cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
 		});
 	}
 };

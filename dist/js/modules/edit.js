@@ -63,15 +63,20 @@ Edit.prototype.getCurrentCell = function () {
 };
 
 Edit.prototype.clearEditor = function () {
-	var cell = this.currentCell;
+	var cell = this.currentCell,
+	    cellEl;
 
 	this.invalidEdit = false;
 
 	if (cell) {
 		this.currentCell = false;
-		cell.getElement().removeClass("tabulator-validation-fail");
-		cell.getElement().removeClass("tabulator-editing").empty();
-		cell.row.getElement().classList.remove("tabulator-row-editing");
+
+		cellEl = cell.getElement();
+		cellEl.classList.remove("tabulator-validation-fail");
+		cellEl.classList.remove("tabulator-editing");
+		while (cellEl.firstChild) {
+			cellEl.removeChild(cellEl.firstChild);
+		}cell.row.getElement().classList.remove("tabulator-row-editing");
 	}
 };
 
@@ -97,19 +102,19 @@ Edit.prototype.bindEditor = function (cell) {
 	var self = this,
 	    element = cell.getElement();
 
-	element.attr("tabindex", 0);
+	element.setAttribute("tabindex", 0);
 
-	element.on("click", function (e) {
+	element.addEventListener("click", function (e) {
 		if (!$(this).hasClass("tabulator-editing")) {
 			$(this).focus();
 		}
 	});
 
-	element.on("mousedown", function (e) {
+	element.addEventListener("mousedown", function (e) {
 		self.mouseClick = true;
 	});
 
-	element.on("focus", function (e) {
+	element.addEventListener("focus", function (e) {
 		if (!self.recursionBlock) {
 			self.edit(cell, e, false);
 		}
@@ -160,7 +165,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				cell.setValue(value, true);
 			} else {
 				self.invalidEdit = true;
-				cell.getElement().addClass("tabulator-validation-fail");
+				element.classList.add("tabulator-validation-fail");
 				self.focusCellNoEvent(cell);
 				rendered();
 				self.table.options.validationFailed(cell.getComponent(), value, valid);
@@ -224,17 +229,20 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 
 			//if editor returned, add to DOM, if false, abort edit
 			if (cellEditor !== false) {
-				element.addClass("tabulator-editing");
+				element.classList.add("tabulator-editing");
 				cell.row.getElement().classList.add("tabulator-row-editing");
-				element.empty();
-				element.append(cellEditor);
+				while (element.firstChild) {
+					element.removeChild(element.firstChild);
+				}element.appendChild(cellEditor);
 
 				//trigger onRendered Callback
 				rendered();
 
 				//prevent editing from triggering rowClick event
-				element.children().click(function (e) {
-					e.stopPropagation();
+				element.children.forEach(function (child) {
+					child.addEventListener("click", function (e) {
+						e.stopPropagation();
+					});
 				});
 			} else {
 				element.blur();
@@ -294,7 +302,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input;
+		return input[0];
 	},
 
 	//resizable text area element
@@ -353,7 +361,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input;
+		return input[0];
 	},
 
 	//input element with type of number
@@ -412,7 +420,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input;
+		return input[0];
 	},
 
 	//input element with type of number
@@ -471,7 +479,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input;
+		return input[0];
 	},
 
 	//select
@@ -544,7 +552,7 @@ Edit.prototype.editors = {
 				success(select.val());
 			}
 		});
-		return select;
+		return select[0];
 	},
 
 	//start rating
@@ -633,7 +641,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return stars;
+		return stars[0];
 	},
 
 	//draggable progress bar
@@ -725,7 +733,7 @@ Edit.prototype.editors = {
 			cancel();
 		});
 
-		return bar;
+		return bar[0];
 	},
 
 	//checkbox
@@ -767,7 +775,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input;
+		return input[0];
 	},
 
 	//checkbox
@@ -809,7 +817,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input;
+		return input[0];
 	}
 };
 

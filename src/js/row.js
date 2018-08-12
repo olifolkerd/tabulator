@@ -238,7 +238,7 @@ Row.prototype.initialize = function(force){
 		this.generateCells();
 
 		self.cells.forEach(function(cell){
-			self.element.appendChild(cell.getElement()[0]);
+			self.element.appendChild(cell.getElement());
 		});
 
 		if(force){
@@ -466,7 +466,7 @@ Row.prototype.findNextEditableCell = function(index){
 		for(var i = index+1; i < this.cells.length; i++){
 			let cell = this.cells[i];
 
-			if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])){
+			if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())){
 				let allowEdit = true;
 
 				if(typeof cell.column.modules.edit.check == "function"){
@@ -492,7 +492,7 @@ Row.prototype.findPrevEditableCell = function(index){
 			let cell = this.cells[i],
 			allowEdit = true;
 
-			if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])){
+			if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())){
 				if(typeof cell.column.modules.edit.check == "function"){
 					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}

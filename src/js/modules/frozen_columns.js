@@ -119,7 +119,7 @@ FrozenColumns.prototype.layoutColumn = function(column){
 	self.layoutElement(column.getElement, column);
 
 	column.cells.forEach(function(cell){
-		self.layoutElement(cell.element, column);
+		self.layoutElement(cell.getElement(), column);
 	});
 };
 

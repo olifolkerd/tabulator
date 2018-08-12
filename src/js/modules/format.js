@@ -106,7 +106,7 @@ Format.prototype.formatters = {
 
 	//multiline text area
 	textarea:function(cell, formatterParams){
-		cell.getElement().css({"white-space":"pre-wrap"});
+		cell.getElement().style.whiteSpace = "pre-wrap";
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	},
 
@@ -211,10 +211,10 @@ Format.prototype.formatters = {
 		var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 		if(value === true || value === "true" || value === "True" || value === 1 || value === "1"){
-			element.attr("aria-checked", true);
+			element.setAttribute("aria-checked", true);
 			return tick;
 		}else{
-			element.attr("aria-checked", false);
+			element.setAttribute("aria-checked", false);
 			return "";
 		}
 	},
@@ -227,10 +227,10 @@ Format.prototype.formatters = {
 		cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
 		if(value === true || value === "true" || value === "True" || value === 1 || value === "1"){
-			element.attr("aria-checked", true);
+			element.setAttribute("aria-checked", true);
 			return tick;
 		}else{
-			element.attr("aria-checked", false);
+			element.setAttribute("aria-checked", false);
 			return cross;
 		}
 	},
@@ -265,13 +265,11 @@ Format.prototype.formatters = {
 			stars.append(nextStar.clone());
 		}
 
-		element.css({
-			"white-space": "nowrap",
-			"overflow": "hidden",
-			"text-overflow": "ellipsis",
-		});
+		element.style.whiteSpace = "nowrap";
+		element.style.overflow = "hidden";
+		element.style.textOverflow = "ellipsis";
 
-		element.attr("aria-label", value);
+		element.setAttribute("aria-label", value);
 
 		return stars.html();
 	},
@@ -352,19 +350,17 @@ Format.prototype.formatters = {
 			legendColor = "#000";
 		}
 
-		element.css({
-			"min-width":"30px",
-			"position":"relative",
-		});
+		element.style.minWidth = "30px";
+		element.style.position = "relative";
 
-		element.attr("aria-label", percentValue);
+		element.setAttribute("aria-label", percentValue);
 
 		return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:4px;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
 	},
 
 	//background color
 	color:function(cell, formatterParams){
-		cell.getElement().css({"background-color":this.sanitizeHTML(cell.getValue())});
+		cell.getElement().style.backgroundColor = this.sanitizeHTML(cell.getValue());
 		return "";
 	},
 
@@ -385,7 +381,7 @@ Format.prototype.formatters = {
 
 	//row handle
 	handle:function(cell, formatterParams){
-		cell.getElement().addClass("tabulator-row-handle");
+		cell.getElement().classList.add("tabulator-row-handle");
 		return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 	},
 
@@ -393,7 +389,7 @@ Format.prototype.formatters = {
 		var self = this,
 		el = $("<div class='tabulator-responsive-collapse-toggle'><span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span></div>");
 
-		cell.getElement().addClass("tabulator-row-handle");
+		cell.getElement().classList.add("tabulator-row-handle");
 
 		if(self.table.options.responsiveLayoutCollapseStartOpen){
 			el.addClass("open");
@@ -404,7 +400,7 @@ Format.prototype.formatters = {
 			$(this).closest(".tabulator-row").find(".tabulator-responsive-collapse").toggle();
 		})
 
-		return el;
+		return el[0];
 	},
 };
 

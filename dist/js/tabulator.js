@@ -4597,7 +4597,7 @@ Row.prototype.initialize = function (force) {
 
 		self.cells.forEach(function (cell) {
 
-			self.element.appendChild(cell.getElement()[0]);
+			self.element.appendChild(cell.getElement());
 		});
 
 		if (force) {
@@ -4882,7 +4882,7 @@ Row.prototype.getCell = function (column) {
 
 			var cell = this.cells[i];
 
-			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])) {
+			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())) {
 
 				var allowEdit = true;
 
@@ -4913,7 +4913,7 @@ Row.prototype.getCell = function (column) {
 			var cell = this.cells[i],
 			    allowEdit = true;
 
-			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])) {
+			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())) {
 
 				if (typeof cell.column.modules.edit.check == "function") {
 
@@ -5051,7 +5051,7 @@ CellComponent.prototype.getOldValue = function () {
 
 CellComponent.prototype.getElement = function () {
 
-	return $(this.cell.getElement());
+	return this.cell.getElement();
 };
 
 CellComponent.prototype.getRow = function () {
@@ -5122,8 +5122,6 @@ var Cell = function Cell(column, row) {
 
 	this.row = row;
 
-	// this.element = $("<div class='tabulator-cell' role='gridcell'></div>");
-
 	this.element = null;
 
 	this.value = null;
@@ -5163,7 +5161,7 @@ Cell.prototype.generateElement = function () {
 
 	this.element.setAttribute("role", "gridcell");
 
-	this.element = $(this.element);
+	this.element = this.element;
 };
 
 Cell.prototype._configureCell = function () {
@@ -5178,23 +5176,23 @@ Cell.prototype._configureCell = function () {
 
 	//set text alignment
 
-	element[0].style.textAlign = self.column.hozAlign;
+	element.style.textAlign = self.column.hozAlign;
 
 	if (field) {
 
-		element.attr("tabulator-field", field);
+		element.setAttribute("tabulator-field", field);
 	}
 
 	if (self.column.definition.cssClass) {
 
-		element.addClass(self.column.definition.cssClass);
+		element.classList.add(self.column.definition.cssClass);
 	}
 
 	//set event bindings
 
 	if (cellEvents.cellClick || self.table.options.cellClick) {
 
-		self.element.on("click", function (e) {
+		self.element.addEventListener("click", function (e) {
 
 			var component = self.getComponent();
 
@@ -5212,7 +5210,7 @@ Cell.prototype._configureCell = function () {
 
 	if (cellEvents.cellDblClick || this.table.options.cellDblClick) {
 
-		self.element.on("dblclick", function (e) {
+		element.addEventListener("dblclick", function (e) {
 
 			var component = self.getComponent();
 
@@ -5230,7 +5228,7 @@ Cell.prototype._configureCell = function () {
 
 	if (cellEvents.cellContext || this.table.options.cellContext) {
 
-		self.element.on("contextmenu", function (e) {
+		element.addEventListener("contextmenu", function (e) {
 
 			var component = self.getComponent();
 
@@ -5250,7 +5248,7 @@ Cell.prototype._configureCell = function () {
 
 		//update tooltip on mouse enter
 
-		self.element.on("mouseenter", function (e) {
+		element.addEventListener("mouseenter", function (e) {
 
 			self._generateTooltip();
 		});
@@ -5260,12 +5258,12 @@ Cell.prototype._configureCell = function () {
 
 		tap = false;
 
-		self.element.on("touchstart", function (e) {
+		element.addEventListener("touchstart", function (e) {
 
 			tap = true;
 		});
 
-		self.element.on("touchend", function (e) {
+		element.addEventListener("touchend", function (e) {
 
 			if (tap) {
 
@@ -5290,7 +5288,7 @@ Cell.prototype._configureCell = function () {
 
 		dblTap = null;
 
-		self.element.on("touchend", function (e) {
+		element.addEventListener("touchend", function (e) {
 
 			if (dblTap) {
 
@@ -5325,7 +5323,7 @@ Cell.prototype._configureCell = function () {
 
 		tapHold = null;
 
-		self.element.on("touchstart", function (e) {
+		element.addEventListener("touchstart", function (e) {
 
 			clearTimeout(tapHold);
 
@@ -5351,7 +5349,7 @@ Cell.prototype._configureCell = function () {
 			}, 1000);
 		});
 
-		self.element.on("touchend", function (e) {
+		element.addEventListener("touchend", function (e) {
 
 			clearTimeout(tapHold);
 
@@ -5385,10 +5383,10 @@ Cell.prototype._generateContents = function () {
 
 	if (self.table.modExists("format")) {
 
-		self.element.html(self.table.modules.format.formatValue(self));
+		self.element.innerHTML = self.table.modules.format.formatValue(self);
 	} else {
 
-		self.element.html(self.value);
+		self.element.innerHTML = self.value;
 	}
 };
 
@@ -5415,10 +5413,10 @@ Cell.prototype._generateTooltip = function () {
 			}
 		}
 
-		self.element[0].setAttribute("title", tooltip);
+		self.element.setAttribute("title", tooltip);
 	} else {
 
-		self.element[0].setAttribute("title", "");
+		self.element.setAttribute("title", "");
 	}
 };
 
@@ -5536,53 +5534,54 @@ Cell.prototype.setWidth = function (width) {
 
 	// this.element.css("width", width || "");
 
-	this.element[0].style.width = width ? width + "px" : "";
+	this.element.style.width = width ? width + "px" : "";
 };
 
 Cell.prototype.getWidth = function () {
 
-	return this.width || this.element.outerWidth();
+	return this.width || this.element.offsetWidth;
 };
 
 Cell.prototype.setMinWidth = function (minWidth) {
 
 	this.minWidth = minWidth;
 
-	this.element[0].style.minWidth = minWidth ? minWidth + "px" : "";
+	this.element.style.minWidth = minWidth ? minWidth + "px" : "";
 };
 
 Cell.prototype.checkHeight = function () {
 
-	var height = this.element.css("height");
+	// var height = this.element.css("height");
+
 
 	this.row.reinitializeHeight();
 };
 
 Cell.prototype.clearHeight = function () {
 
-	this.element[0].style.height = "";
+	this.element.style.height = "";
 };
 
 Cell.prototype.setHeight = function (height) {
 
 	this.height = height;
 
-	this.element[0].style.height = height ? height + "px" : "";
+	this.element.style.height = height ? height + "px" : "";
 };
 
 Cell.prototype.getHeight = function () {
 
-	return this.height || this.element.outerHeight();
+	return this.height || this.element.offsetHeight;
 };
 
 Cell.prototype.show = function () {
 
-	this.element[0].style.display = "";
+	this.element.style.display = "";
 };
 
 Cell.prototype.hide = function () {
 
-	this.element[0].style.display = "none";
+	this.element.style.display = "none";
 };
 
 Cell.prototype.edit = function (force) {
@@ -5611,7 +5610,7 @@ Cell.prototype.cancelEdit = function () {
 
 Cell.prototype.delete = function () {
 
-	this.element.detach();
+	this.element.parentNode.removeChild(this.element);
 
 	this.column.deleteCell(this);
 
@@ -10140,15 +10139,20 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Edit.prototype.clearEditor = function () {
-		var cell = this.currentCell;
+		var cell = this.currentCell,
+		    cellEl;
 
 		this.invalidEdit = false;
 
 		if (cell) {
 			this.currentCell = false;
-			cell.getElement().removeClass("tabulator-validation-fail");
-			cell.getElement().removeClass("tabulator-editing").empty();
-			cell.row.getElement().classList.remove("tabulator-row-editing");
+
+			cellEl = cell.getElement();
+			cellEl.classList.remove("tabulator-validation-fail");
+			cellEl.classList.remove("tabulator-editing");
+			while (cellEl.firstChild) {
+				cellEl.removeChild(cellEl.firstChild);
+			}cell.row.getElement().classList.remove("tabulator-row-editing");
 		}
 	};
 
@@ -10174,19 +10178,19 @@ Tabulator.prototype.registerModule("comms", Comms);
 		var self = this,
 		    element = cell.getElement();
 
-		element.attr("tabindex", 0);
+		element.setAttribute("tabindex", 0);
 
-		element.on("click", function (e) {
+		element.addEventListener("click", function (e) {
 			if (!$(this).hasClass("tabulator-editing")) {
 				$(this).focus();
 			}
 		});
 
-		element.on("mousedown", function (e) {
+		element.addEventListener("mousedown", function (e) {
 			self.mouseClick = true;
 		});
 
-		element.on("focus", function (e) {
+		element.addEventListener("focus", function (e) {
 			if (!self.recursionBlock) {
 				self.edit(cell, e, false);
 			}
@@ -10237,7 +10241,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					cell.setValue(value, true);
 				} else {
 					self.invalidEdit = true;
-					cell.getElement().addClass("tabulator-validation-fail");
+					element.classList.add("tabulator-validation-fail");
 					self.focusCellNoEvent(cell);
 					rendered();
 					self.table.options.validationFailed(cell.getComponent(), value, valid);
@@ -10301,17 +10305,20 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 				//if editor returned, add to DOM, if false, abort edit
 				if (cellEditor !== false) {
-					element.addClass("tabulator-editing");
+					element.classList.add("tabulator-editing");
 					cell.row.getElement().classList.add("tabulator-row-editing");
-					element.empty();
-					element.append(cellEditor);
+					while (element.firstChild) {
+						element.removeChild(element.firstChild);
+					}element.appendChild(cellEditor);
 
 					//trigger onRendered Callback
 					rendered();
 
 					//prevent editing from triggering rowClick event
-					element.children().click(function (e) {
-						e.stopPropagation();
+					element.children.forEach(function (child) {
+						child.addEventListener("click", function (e) {
+							e.stopPropagation();
+						});
 					});
 				} else {
 					element.blur();
@@ -10371,7 +10378,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return input;
+			return input[0];
 		},
 
 		//resizable text area element
@@ -10430,7 +10437,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return input;
+			return input[0];
 		},
 
 		//input element with type of number
@@ -10489,7 +10496,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return input;
+			return input[0];
 		},
 
 		//input element with type of number
@@ -10548,7 +10555,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return input;
+			return input[0];
 		},
 
 		//select
@@ -10621,7 +10628,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					success(select.val());
 				}
 			});
-			return select;
+			return select[0];
 		},
 
 		//start rating
@@ -10710,7 +10717,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return stars;
+			return stars[0];
 		},
 
 		//draggable progress bar
@@ -10802,7 +10809,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				cancel();
 			});
 
-			return bar;
+			return bar[0];
 		},
 
 		//checkbox
@@ -10844,7 +10851,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return input;
+			return input[0];
 		},
 
 		//checkbox
@@ -10886,7 +10893,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			return input;
+			return input[0];
 		}
 	};
 
@@ -11561,7 +11568,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		//multiline text area
 		textarea: function textarea(cell, formatterParams) {
-			cell.getElement().css({ "white-space": "pre-wrap" });
+			cell.getElement().style.whiteSpace = "pre-wrap";
 			return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 		},
 
@@ -11669,10 +11676,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			var tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 
 			if (value === true || value === "true" || value === "True" || value === 1 || value === "1") {
-				element.attr("aria-checked", true);
+				element.setAttribute("aria-checked", true);
 				return tick;
 			} else {
-				element.attr("aria-checked", false);
+				element.setAttribute("aria-checked", false);
 				return "";
 			}
 		},
@@ -11685,10 +11692,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			    cross = '<svg enable-background="new 0 0 24 24" height="14" width="14"  viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 
 			if (value === true || value === "true" || value === "True" || value === 1 || value === "1") {
-				element.attr("aria-checked", true);
+				element.setAttribute("aria-checked", true);
 				return tick;
 			} else {
-				element.attr("aria-checked", false);
+				element.setAttribute("aria-checked", false);
 				return cross;
 			}
 		},
@@ -11723,13 +11730,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 				stars.append(nextStar.clone());
 			}
 
-			element.css({
-				"white-space": "nowrap",
-				"overflow": "hidden",
-				"text-overflow": "ellipsis"
-			});
+			element.style.whiteSpace = "nowrap";
+			element.style.overflow = "hidden";
+			element.style.textOverflow = "ellipsis";
 
-			element.attr("aria-label", value);
+			element.setAttribute("aria-label", value);
 
 			return stars.html();
 		},
@@ -11819,19 +11824,17 @@ Tabulator.prototype.registerModule("comms", Comms);
 					legendColor = "#000";
 			}
 
-			element.css({
-				"min-width": "30px",
-				"position": "relative"
-			});
+			element.style.minWidth = "30px";
+			element.style.position = "relative";
 
-			element.attr("aria-label", percentValue);
+			element.setAttribute("aria-label", percentValue);
 
 			return "<div style='position:absolute; top:8px; bottom:8px; left:4px; right:4px;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
 		},
 
 		//background color
 		color: function color(cell, formatterParams) {
-			cell.getElement().css({ "background-color": this.sanitizeHTML(cell.getValue()) });
+			cell.getElement().style.backgroundColor = this.sanitizeHTML(cell.getValue());
 			return "";
 		},
 
@@ -11852,7 +11855,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		//row handle
 		handle: function handle(cell, formatterParams) {
-			cell.getElement().addClass("tabulator-row-handle");
+			cell.getElement().classList.add("tabulator-row-handle");
 			return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 		},
 
@@ -11860,7 +11863,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			var self = this,
 			    el = $("<div class='tabulator-responsive-collapse-toggle'><span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span></div>");
 
-			cell.getElement().addClass("tabulator-row-handle");
+			cell.getElement().classList.add("tabulator-row-handle");
 
 			if (self.table.options.responsiveLayoutCollapseStartOpen) {
 				el.addClass("open");
@@ -11871,7 +11874,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				$(this).closest(".tabulator-row").find(".tabulator-responsive-collapse").toggle();
 			});
 
-			return el;
+			return el[0];
 		}
 	};
 
@@ -11994,7 +11997,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self.layoutElement(column.getElement, column);
 
 		column.cells.forEach(function (cell) {
-			self.layoutElement(cell.element, column);
+			self.layoutElement(cell.getElement(), column);
 		});
 	};
 
@@ -13733,11 +13736,13 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		if (after) {
 			column.getCells().forEach(function (cell, i) {
-				cell.getElement().after(movingCells[i].getElement());
+				var cellEl = cell.getElement();
+				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
 			});
 		} else {
 			column.getCells().forEach(function (cell, i) {
-				cell.getElement().before(movingCells[i].getElement());
+				var cellEl = cell.getElement();
+				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
 			});
 		}
 	};
@@ -13879,15 +13884,16 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	MoveRows.prototype.initializeCell = function (cell) {
-		var self = this;
+		var self = this,
+		    cellEl = cell.getElement();
 
-		cell.getElement().on("mousedown", function (e) {
+		cellEl.addEventListener("mousedown", function (e) {
 			self.checkTimeout = setTimeout(function () {
 				self.startMove(e, cell.row);
 			}, self.checkPeriod);
 		});
 
-		cell.getElement().on("mouseup", function (e) {
+		cellEl.addEventListener("mouseup", function (e) {
 			if (self.checkTimeout) {
 				clearTimeout(self.checkTimeout);
 			}
@@ -15108,14 +15114,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			});
 
-			//TEMPORARY BODGE UNTILL CELSS ARE DE JQUERIED
-			if (element.appendChild) {
-				element.appendChild(handle);
-				element.appendChild(prevHandle);
-			} else {
-				element.append(handle);
-				element.append(prevHandle);
-			}
+			element.appendChild(handle);
+			element.appendChild(prevHandle);
 		}
 	};
 

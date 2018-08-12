@@ -3642,7 +3642,7 @@ Row.prototype.initialize = function (force) {
 		this.generateCells();
 
 		self.cells.forEach(function (cell) {
-			self.element.appendChild(cell.getElement()[0]);
+			self.element.appendChild(cell.getElement());
 		});
 
 		if (force) {
@@ -3862,7 +3862,7 @@ Row.prototype.getCell = function (column) {
 		for (var i = index + 1; i < this.cells.length; i++) {
 			var cell = this.cells[i];
 
-			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])) {
+			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())) {
 				var allowEdit = true;
 
 				if (typeof cell.column.modules.edit.check == "function") {
@@ -3886,7 +3886,7 @@ Row.prototype.getCell = function (column) {
 			var cell = this.cells[i],
 			    allowEdit = true;
 
-			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])) {
+			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())) {
 				if (typeof cell.column.modules.edit.check == "function") {
 					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
@@ -3993,7 +3993,7 @@ CellComponent.prototype.getOldValue = function () {
 };
 
 CellComponent.prototype.getElement = function () {
-	return $(this.cell.getElement());
+	return this.cell.getElement();
 };
 
 CellComponent.prototype.getRow = function () {
@@ -4049,7 +4049,6 @@ var Cell = function Cell(column, row) {
 	this.table = column.table;
 	this.column = column;
 	this.row = row;
-	// this.element = $("<div class='tabulator-cell' role='gridcell'></div>");
 	this.element = null;
 	this.value = null;
 	this.oldValue = null;
@@ -4078,7 +4077,7 @@ Cell.prototype.generateElement = function () {
 	this.element = document.createElement('div');
 	this.element.className = "tabulator-cell";
 	this.element.setAttribute("role", "gridcell");
-	this.element = $(this.element);
+	this.element = this.element;
 };
 
 Cell.prototype._configureCell = function () {
@@ -4091,19 +4090,19 @@ Cell.prototype._configureCell = function () {
 	    tap;
 
 	//set text alignment
-	element[0].style.textAlign = self.column.hozAlign;
+	element.style.textAlign = self.column.hozAlign;
 
 	if (field) {
-		element.attr("tabulator-field", field);
+		element.setAttribute("tabulator-field", field);
 	}
 
 	if (self.column.definition.cssClass) {
-		element.addClass(self.column.definition.cssClass);
+		element.classList.add(self.column.definition.cssClass);
 	}
 
 	//set event bindings
 	if (cellEvents.cellClick || self.table.options.cellClick) {
-		self.element.on("click", function (e) {
+		self.element.addEventListener("click", function (e) {
 			var component = self.getComponent();
 
 			if (cellEvents.cellClick) {
@@ -4117,7 +4116,7 @@ Cell.prototype._configureCell = function () {
 	}
 
 	if (cellEvents.cellDblClick || this.table.options.cellDblClick) {
-		self.element.on("dblclick", function (e) {
+		element.addEventListener("dblclick", function (e) {
 			var component = self.getComponent();
 
 			if (cellEvents.cellDblClick) {
@@ -4131,7 +4130,7 @@ Cell.prototype._configureCell = function () {
 	}
 
 	if (cellEvents.cellContext || this.table.options.cellContext) {
-		self.element.on("contextmenu", function (e) {
+		element.addEventListener("contextmenu", function (e) {
 			var component = self.getComponent();
 
 			if (cellEvents.cellContext) {
@@ -4146,7 +4145,7 @@ Cell.prototype._configureCell = function () {
 
 	if (this.table.options.tooltipGenerationMode === "hover") {
 		//update tooltip on mouse enter
-		self.element.on("mouseenter", function (e) {
+		element.addEventListener("mouseenter", function (e) {
 			self._generateTooltip();
 		});
 	}
@@ -4154,11 +4153,11 @@ Cell.prototype._configureCell = function () {
 	if (cellEvents.cellTap || this.table.options.cellTap) {
 		tap = false;
 
-		self.element.on("touchstart", function (e) {
+		element.addEventListener("touchstart", function (e) {
 			tap = true;
 		});
 
-		self.element.on("touchend", function (e) {
+		element.addEventListener("touchend", function (e) {
 			if (tap) {
 				var component = self.getComponent();
 
@@ -4178,7 +4177,7 @@ Cell.prototype._configureCell = function () {
 	if (cellEvents.cellDblTap || this.table.options.cellDblTap) {
 		dblTap = null;
 
-		self.element.on("touchend", function (e) {
+		element.addEventListener("touchend", function (e) {
 
 			if (dblTap) {
 				clearTimeout(dblTap);
@@ -4206,7 +4205,7 @@ Cell.prototype._configureCell = function () {
 	if (cellEvents.cellTapHold || this.table.options.cellTapHold) {
 		tapHold = null;
 
-		self.element.on("touchstart", function (e) {
+		element.addEventListener("touchstart", function (e) {
 			clearTimeout(tapHold);
 
 			tapHold = setTimeout(function () {
@@ -4225,7 +4224,7 @@ Cell.prototype._configureCell = function () {
 			}, 1000);
 		});
 
-		self.element.on("touchend", function (e) {
+		element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);
 			tapHold = null;
 		});
@@ -4250,9 +4249,9 @@ Cell.prototype._generateContents = function () {
 	var self = this;
 
 	if (self.table.modExists("format")) {
-		self.element.html(self.table.modules.format.formatValue(self));
+		self.element.innerHTML = self.table.modules.format.formatValue(self);
 	} else {
-		self.element.html(self.value);
+		self.element.innerHTML = self.value;
 	}
 };
 
@@ -4273,9 +4272,9 @@ Cell.prototype._generateTooltip = function () {
 			}
 		}
 
-		self.element[0].setAttribute("title", tooltip);
+		self.element.setAttribute("title", tooltip);
 	} else {
-		self.element[0].setAttribute("title", "");
+		self.element.setAttribute("title", "");
 	}
 };
 
@@ -4369,43 +4368,43 @@ Cell.prototype.setValueActual = function (value) {
 Cell.prototype.setWidth = function (width) {
 	this.width = width;
 	// this.element.css("width", width || "");
-	this.element[0].style.width = width ? width + "px" : "";
+	this.element.style.width = width ? width + "px" : "";
 };
 
 Cell.prototype.getWidth = function () {
-	return this.width || this.element.outerWidth();
+	return this.width || this.element.offsetWidth;
 };
 
 Cell.prototype.setMinWidth = function (minWidth) {
 	this.minWidth = minWidth;
-	this.element[0].style.minWidth = minWidth ? minWidth + "px" : "";
+	this.element.style.minWidth = minWidth ? minWidth + "px" : "";
 };
 
 Cell.prototype.checkHeight = function () {
-	var height = this.element.css("height");
+	// var height = this.element.css("height");
 
 	this.row.reinitializeHeight();
 };
 
 Cell.prototype.clearHeight = function () {
-	this.element[0].style.height = "";
+	this.element.style.height = "";
 };
 
 Cell.prototype.setHeight = function (height) {
 	this.height = height;
-	this.element[0].style.height = height ? height + "px" : "";
+	this.element.style.height = height ? height + "px" : "";
 };
 
 Cell.prototype.getHeight = function () {
-	return this.height || this.element.outerHeight();
+	return this.height || this.element.offsetHeight;
 };
 
 Cell.prototype.show = function () {
-	this.element[0].style.display = "";
+	this.element.style.display = "";
 };
 
 Cell.prototype.hide = function () {
-	this.element[0].style.display = "none";
+	this.element.style.display = "none";
 };
 
 Cell.prototype.edit = function (force) {
@@ -4427,7 +4426,7 @@ Cell.prototype.cancelEdit = function () {
 };
 
 Cell.prototype.delete = function () {
-	this.element.detach();
+	this.element.parentNode.removeChild(this.element);
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);
 };

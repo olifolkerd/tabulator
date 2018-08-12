@@ -85,15 +85,16 @@ MoveRows.prototype.initializeRow = function (row) {
 };
 
 MoveRows.prototype.initializeCell = function (cell) {
-	var self = this;
+	var self = this,
+	    cellEl = cell.getElement();
 
-	cell.getElement().on("mousedown", function (e) {
+	cellEl.addEventListener("mousedown", function (e) {
 		self.checkTimeout = setTimeout(function () {
 			self.startMove(e, cell.row);
 		}, self.checkPeriod);
 	});
 
-	cell.getElement().on("mouseup", function (e) {
+	cellEl.addEventListener("mouseup", function (e) {
 		if (self.checkTimeout) {
 			clearTimeout(self.checkTimeout);
 		}

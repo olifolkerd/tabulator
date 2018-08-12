@@ -84,14 +84,8 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 			}
 		});
 
-		//TEMPORARY BODGE UNTILL CELSS ARE DE JQUERIED
-		if(element.appendChild){
-			element.appendChild(handle);
-			element.appendChild(prevHandle);
-		}else{
-			element.append(handle);
-			element.append(prevHandle);
-		}
+		element.appendChild(handle);
+		element.appendChild(prevHandle);
 	}
 };
 
