@@ -877,7 +877,7 @@ Column.prototype.checkCellHeights = function(){
 
 	this.cells.forEach(function(cell){
 		if(cell.row.heightInitialized){
-			if(cell.row.element[0].offsetParent !== null){
+			if(cell.row.getElement().offsetParent !== null){
 				rows.push(cell.row);
 				cell.row.clearCellHeight();
 			}else{

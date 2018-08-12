@@ -155,7 +155,7 @@ MoveColumns.prototype.moveHover = function(e){
 	var self = this,
 	columnHolder = self.table.columnManager.getElement(),
 	scrollLeft = columnHolder.scrollLeft,
-	xPos = (e.pageX - columnHolder.getBoundingClientRect().left) + scrollLeft,
+	xPos = (e.pageX - Tabulator.prototype.helpers.elOffset(columnHolder).left) + scrollLeft,
 	scrollPos;
 
 	self.hoverElement.css({

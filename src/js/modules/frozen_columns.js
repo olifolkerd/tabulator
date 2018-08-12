@@ -124,10 +124,10 @@ FrozenColumns.prototype.layoutColumn = function(column){
 };
 
 FrozenColumns.prototype.layoutRow = function(row){
-	row.getElement().css({
-		"padding-left": this.leftMargin,
-		"padding-right": this.rightMargin,
-	});
+	var rowEl = row.getElement();
+
+	rowEl.style.paddingLeft = this.leftMargin + "px";
+	rowEl.style.paddingRight = this.rightMargin + "px";
 };
 
 FrozenColumns.prototype.layoutElement = function(element, column){

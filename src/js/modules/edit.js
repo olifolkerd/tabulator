@@ -66,7 +66,7 @@ Edit.prototype.clearEditor = function(){
 		this.currentCell = false;
 		cell.getElement().removeClass("tabulator-validation-fail");
 		cell.getElement().removeClass("tabulator-editing").empty();
-		cell.row.getElement().removeClass("tabulator-row-editing");
+		cell.row.getElement().classList.remove("tabulator-row-editing");
 	}
 };
 
@@ -219,7 +219,7 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 			//if editor returned, add to DOM, if false, abort edit
 			if(cellEditor !== false){
 				element.addClass("tabulator-editing");
-				cell.row.getElement().addClass("tabulator-row-editing");
+				cell.row.getElement().classList.add("tabulator-row-editing");
 				element.empty();
 				element.append(cellEditor);
 

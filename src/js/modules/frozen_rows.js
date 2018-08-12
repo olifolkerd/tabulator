@@ -65,7 +65,10 @@ FrozenRows.prototype.unfreezeRow = function(row){
 	if(row.modules.frozen){
 
 		row.modules.frozen = false;
-		row.getElement().detach();
+
+		var rowEl = row.getElement();
+		rowEl.parentNode.removeChild(rowEl);
+
 		this.table.rowManager.adjustTableSize();
 
 		this.rows.splice(index, 1);

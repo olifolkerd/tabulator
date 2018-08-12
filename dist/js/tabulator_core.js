@@ -1693,7 +1693,7 @@ Column.prototype.checkCellHeights = function () {
 
 	this.cells.forEach(function (cell) {
 		if (cell.row.heightInitialized) {
-			if (cell.row.element[0].offsetParent !== null) {
+			if (cell.row.getElement().offsetParent !== null) {
 				rows.push(cell.row);
 				cell.row.clearCellHeight();
 			} else {
@@ -2010,6 +2010,8 @@ RowManager.prototype.getRowFromPosition = function (position, active) {
 
 RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 	var rowIndex = this.getDisplayRows().indexOf(row),
+	    rowEl = row.getElement(),
+	    rowTop,
 	    offset = 0;
 
 	if (rowIndex > -1) {
@@ -2025,7 +2027,8 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 		if (position === "nearest") {
 			switch (this.renderMode) {
 				case "classic":
-					position = Math.abs(this.element.scrollTop - row.element.position().top) > Math.abs(this.element.scrollTop + this.element.clientHeight - row.element.position().top) ? "bottom" : "top";
+					rowTop = Tabulator.prototype.helpers.elOffset(rowEl).top;
+					position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
 					break;
 				case "virtual":
 					position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
@@ -2035,10 +2038,10 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
 		//check row visibility
 		if (!ifVisible) {
-			if (Tabulator.prototype.helpers.elVisible(row.element)) {
-				offset = row.element.offset().top - this.element.offset().top;
+			if (Tabulator.prototype.helpers.elVisible(rowEl)) {
+				offset = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top;
 
-				if (offset > 0 && offset < this.element.clientHeight - row.element.outerHeight()) {
+				if (offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight) {
 					return false;
 				}
 			}
@@ -2047,7 +2050,7 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 		//scroll to row
 		switch (this.renderMode) {
 			case "classic":
-				this.element.scrollTop = row.element.offset().top - this.element.offset().top + this.element.scrollTop;
+				this.element.scrollTop = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top + this.element.scrollTop;
 				break;
 			case "virtual":
 				this._virtualRenderFill(rowIndex, true);
@@ -2062,7 +2065,7 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 				break;
 
 			case "bottom":
-				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + row.getElement().outerHeight();
+				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
 				break;
 		}
 
@@ -2851,7 +2854,7 @@ RowManager.prototype.reRenderInPosition = function (callback) {
 		for (var i = this.vDomTop; i <= this.vDomBottom; i++) {
 
 			if (rows[i]) {
-				var diff = scrollTop - rows[i].getElement().position().top;
+				var diff = scrollTop - rows[i].getElement().offsetTop;
 
 				if (topOffset === false || Math.abs(diff) < topOffset) {
 					topOffset = diff;
@@ -2943,7 +2946,7 @@ RowManager.prototype._simpleRender = function () {
 
 		self.getDisplayRows().forEach(function (row, index) {
 			self.styleRow(row, index);
-			element.append(row.getElement());
+			element.appendChild(row.getElement());
 			row.initialize(true);
 
 			if (row.type !== "group") {
@@ -2991,10 +2994,14 @@ RowManager.prototype._clearVirtualDom = function () {
 };
 
 RowManager.prototype.styleRow = function (row, index) {
+	var rowEl = row.getElement();
+
 	if (index % 2) {
-		row.element.addClass("tabulator-row-even").removeClass("tabulator-row-odd");
+		rowEl.classList.add("tabulator-row-even");
+		rowEl.classList.remove("tabulator-row-odd");
 	} else {
-		row.element.addClass("tabulator-row-odd").removeClass("tabulator-row-even");
+		rowEl.classList.add("tabulator-row-odd");
+		rowEl.classList.remove("tabulator-row-even");
 	}
 };
 
@@ -3047,7 +3054,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 
 			self.styleRow(row, index);
 
-			element.appendChild(row.getElement()[0]);
+			element.appendChild(row.getElement());
 			if (!row.initialized) {
 				row.initialize(true);
 			} else {
@@ -3164,7 +3171,7 @@ RowManager.prototype._addTopRow = function (topDiff) {
 		//hide top row if needed
 		if (topDiff >= topRowHeight) {
 			this.styleRow(topRow, index);
-			table.insertBefore(topRow.getElement()[0], table.firstChild);
+			table.insertBefore(topRow.getElement(), table.firstChild);
 			if (!topRow.initialized || !topRow.heightInitialized) {
 				this.vDomTopNewRows.push(topRow);
 
@@ -3206,7 +3213,8 @@ RowManager.prototype._removeTopRow = function (topDiff) {
 
 	if (topDiff >= topRowHeight) {
 
-		topRow.element.detach();
+		var rowEl = topRow.getElement();
+		rowEl.parentNode.removeChild(rowEl);
 
 		this.vDomTopPad += topRowHeight;
 		table.style.paddingTop = this.vDomTopPad + "px";
@@ -3233,7 +3241,7 @@ RowManager.prototype._addBottomRow = function (bottomDiff) {
 		//hide bottom row if needed
 		if (bottomDiff >= bottomRowHeight) {
 			this.styleRow(bottomRow, index);
-			table.appendChild(bottomRow.getElement()[0]);
+			table.appendChild(bottomRow.getElement());
 
 			if (!bottomRow.initialized || !bottomRow.heightInitialized) {
 				this.vDomBottomNewRows.push(bottomRow);
@@ -3273,7 +3281,8 @@ RowManager.prototype._removeBottomRow = function (bottomDiff) {
 
 	if (bottomDiff >= bottomRowHeight) {
 
-		bottomRow.element.detach();
+		var rowEl = bottomRow.getElement();
+		rowEl.parentNode.removeChild(rowEl);
 
 		this.vDomBottomPad += bottomRowHeight;
 
@@ -3468,7 +3477,7 @@ var Row = function Row(data, parent) {
 	this.parent = parent;
 	this.data = {};
 	this.type = "row"; //type of element
-	this.element = $("<div class='tabulator-row' role='row'></div>");
+	this.element = this.createElement();
 	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
@@ -3478,6 +3487,15 @@ var Row = function Row(data, parent) {
 
 	this.setData(data);
 	this.generateElement();
+};
+
+Row.prototype.createElement = function () {
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-row");
+	el.setAttribute("role", "row");
+
+	return el;
 };
 
 Row.prototype.getElement = function () {
@@ -3502,19 +3520,19 @@ Row.prototype.generateElement = function () {
 
 	//handle row click events
 	if (self.table.options.rowClick) {
-		self.element.on("click", function (e) {
+		self.element.addEventListener("click", function (e) {
 			self.table.options.rowClick(e, self.getComponent());
 		});
 	}
 
 	if (self.table.options.rowDblClick) {
-		self.element.on("dblclick", function (e) {
+		self.element.addEventListener("dblclick", function (e) {
 			self.table.options.rowDblClick(e, self.getComponent());
 		});
 	}
 
 	if (self.table.options.rowContext) {
-		self.element.on("contextmenu", function (e) {
+		self.element.addEventListener("contextmenu", function (e) {
 			self.table.options.rowContext(e, self.getComponent());
 		});
 	}
@@ -3523,11 +3541,11 @@ Row.prototype.generateElement = function () {
 
 		tap = false;
 
-		self.element.on("touchstart", function (e) {
+		self.element.addEventListener("touchstart", function (e) {
 			tap = true;
 		});
 
-		self.element.on("touchend", function (e) {
+		self.element.addEventListener("touchend", function (e) {
 			if (tap) {
 				self.table.options.rowTap(e, self.getComponent());
 			}
@@ -3540,7 +3558,7 @@ Row.prototype.generateElement = function () {
 
 		dblTap = null;
 
-		self.element.on("touchend", function (e) {
+		self.element.addEventListener("touchend", function (e) {
 
 			if (dblTap) {
 				clearTimeout(dblTap);
@@ -3561,7 +3579,7 @@ Row.prototype.generateElement = function () {
 
 		tapHold = null;
 
-		self.element.on("touchstart", function (e) {
+		self.element.addEventListener("touchstart", function (e) {
 			clearTimeout(tapHold);
 
 			tapHold = setTimeout(function () {
@@ -3572,7 +3590,7 @@ Row.prototype.generateElement = function () {
 			}, 1000);
 		});
 
-		self.element.on("touchend", function (e) {
+		self.element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);
 			tapHold = null;
 		});
@@ -3591,9 +3609,9 @@ Row.prototype.initialize = function (force) {
 
 		self.deleteCells();
 
-		self.element.empty();
-
-		//handle frozen cells
+		while (self.element.firstChild) {
+			self.element.removeChild(self.element.firstChild);
+		} //handle frozen cells
 		if (this.table.modExists("frozenColumns")) {
 			this.table.modules.frozenColumns.layoutRow(this);
 		}
@@ -3601,7 +3619,7 @@ Row.prototype.initialize = function (force) {
 		this.generateCells();
 
 		self.cells.forEach(function (cell) {
-			self.element.append(cell.getElement());
+			self.element.appendChild(cell.getElement()[0]);
 		});
 
 		if (force) {
@@ -3629,7 +3647,7 @@ Row.prototype.initialize = function (force) {
 Row.prototype.reinitializeHeight = function () {
 	this.heightInitialized = false;
 
-	if (this.element[0].offsetParent !== null) {
+	if (this.element.offsetParent !== null) {
 		this.normalizeHeight(true);
 	}
 };
@@ -3639,7 +3657,7 @@ Row.prototype.reinitialize = function () {
 	this.heightInitialized = false;
 	this.height = 0;
 
-	if (this.element[0].offsetParent !== null) {
+	if (this.element.offsetParent !== null) {
 		this.initialize(true);
 	}
 };
@@ -3648,7 +3666,7 @@ Row.prototype.reinitialize = function () {
 Row.prototype.calcHeight = function () {
 
 	var maxHeight = 0,
-	    minHeight = this.element[0].clientHeight;
+	    minHeight = this.element.clientHeight;
 
 	this.cells.forEach(function (cell) {
 		var height = cell.getHeight();
@@ -3658,7 +3676,7 @@ Row.prototype.calcHeight = function () {
 	});
 
 	this.height = Math.max(maxHeight, minHeight);
-	this.outerHeight = this.element[0].offsetHeight;
+	this.outerHeight = this.element.offsetHeight;
 };
 
 //set of cells
@@ -3706,7 +3724,7 @@ Row.prototype.setHeight = function (height, force) {
 		this.setCellHeight();
 
 		// this.outerHeight = this.element.outerHeight();
-		this.outerHeight = this.element[0].offsetHeight;
+		this.outerHeight = this.element.offsetHeight;
 	}
 };
 
@@ -3717,7 +3735,7 @@ Row.prototype.getHeight = function () {
 
 //return rows outer Width
 Row.prototype.getWidth = function () {
-	return this.element.outerWidth();
+	return this.element.offsetWidth;
 };
 
 //////////////// Cell Management /////////////////
@@ -3772,7 +3790,7 @@ Row.prototype.updateData = function (data) {
 	}
 
 	//Partial reinitialization if visible
-	if (this.element.is(":visible")) {
+	if (Tabulator.prototype.helpers.elVisible(this.element)) {
 		self.normalizeHeight();
 
 		if (self.table.options.rowFormatter) {
@@ -3821,7 +3839,7 @@ Row.prototype.getCell = function (column) {
 		for (var i = index + 1; i < this.cells.length; i++) {
 			var cell = this.cells[i];
 
-			if (cell.column.modules.edit && cell.getElement().is(":visible")) {
+			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])) {
 				var allowEdit = true;
 
 				if (typeof cell.column.modules.edit.check == "function") {
@@ -3845,7 +3863,7 @@ Row.prototype.getCell = function (column) {
 			var cell = this.cells[i],
 			    allowEdit = true;
 
-			if (cell.column.modules.edit && cell.getElement().is(":visible")) {
+			if (cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])) {
 				if (typeof cell.column.modules.edit.check == "function") {
 					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
@@ -3919,12 +3937,14 @@ Row.prototype.deleteCells = function () {
 Row.prototype.wipe = function () {
 	this.deleteCells();
 
-	this.element.children().each(function () {
-		$(this).remove();
-	});
+	// this.element.children().each(function(){
+	// 	$(this).remove();
+	// })
+	// this.element.empty();
 
-	this.element.empty();
-	this.element.remove();
+	while (this.element.firstChild) {
+		this.element.removeChild(this.element.firstChild);
+	}this.element.remove();
 };
 
 Row.prototype.getGroup = function () {
@@ -5997,6 +6017,15 @@ Tabulator.prototype.helpers = {
 
 	elVisible: function elVisible(el) {
 		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
+	},
+
+	elOffset: function elOffset(el) {
+		var box = el.getBoundingClientRect();
+
+		return {
+			top: box.top + window.pageYOffset - document.documentElement.clientTop,
+			left: box.left + window.pageXOffset - document.documentElement.clientLeft
+		};
 	}
 };
 

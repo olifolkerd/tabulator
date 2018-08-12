@@ -187,6 +187,8 @@ RowManager.prototype.getRowFromPosition = function(position, active){
 
 RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 	var rowIndex = this.getDisplayRows().indexOf(row),
+	rowEl = row.getElement(),
+	rowTop,
 	offset = 0;
 
 	if(rowIndex > -1){
@@ -203,7 +205,8 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 		if(position === "nearest"){
 			switch(this.renderMode){
 				case"classic":
-				position = Math.abs(this.element.scrollTop - row.element.position().top) > Math.abs(this.element.scrollTop + this.element.clientHeight - row.element.position().top) ? "bottom" : "top";
+				rowTop = Tabulator.prototype.helpers.elOffset(rowEl).top;
+				position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
 				break;
 				case"virtual":
 				position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
@@ -213,10 +216,10 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 
 		//check row visibility
 		if(!ifVisible){
-			if(Tabulator.prototype.helpers.elVisible(row.element)){
-				offset = row.element.offset().top - this.element.offset().top;
+			if(Tabulator.prototype.helpers.elVisible(rowEl)){
+				offset = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top;
 
-				if(offset > 0 && offset < this.element.clientHeight - row.element.outerHeight()){
+				if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
 					return false;
 				}
 			}
@@ -225,7 +228,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 		//scroll to row
 		switch(this.renderMode){
 			case"classic":
-			this.element.scrollTop = row.element.offset().top - this.element.offset().top + this.element.scrollTop;
+			this.element.scrollTop = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top + this.element.scrollTop;
 			break;
 			case"virtual":
 			this._virtualRenderFill(rowIndex, true);
@@ -240,7 +243,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 			break;
 
 			case "bottom":
-			this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + row.getElement().outerHeight();
+			this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
 			break;
 		}
 
@@ -1051,7 +1054,7 @@ RowManager.prototype.reRenderInPosition = function(callback){
 		for(var i = this.vDomTop; i <= this.vDomBottom; i++){
 
 			if(rows[i]){
-				var diff = scrollTop - rows[i].getElement().position().top;
+				var diff = scrollTop - rows[i].getElement().offsetTop;
 
 				if(topOffset === false || Math.abs(diff) < topOffset){
 					topOffset = diff;
@@ -1145,7 +1148,7 @@ RowManager.prototype._simpleRender = function(){
 
 		self.getDisplayRows().forEach(function(row, index){
 			self.styleRow(row, index);
-			element.append(row.getElement());
+			element.appendChild(row.getElement());
 			row.initialize(true);
 
 			if(row.type !== "group"){
@@ -1193,10 +1196,14 @@ RowManager.prototype._clearVirtualDom = function(){
 };
 
 RowManager.prototype.styleRow = function(row, index){
+	var rowEl = row.getElement();
+
 	if(index % 2){
-		row.element.addClass("tabulator-row-even").removeClass("tabulator-row-odd");
+		rowEl.classList.add("tabulator-row-even");
+		rowEl.classList.remove("tabulator-row-odd");
 	}else{
-		row.element.addClass("tabulator-row-odd").removeClass("tabulator-row-even");
+		rowEl.classList.add("tabulator-row-odd");
+		rowEl.classList.remove("tabulator-row-even");
 	}
 };
 
@@ -1249,7 +1256,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 
 			self.styleRow(row, index);
 
-			element.appendChild(row.getElement()[0]);
+			element.appendChild(row.getElement());
 			if(!row.initialized){
 				row.initialize(true);
 			}else{
@@ -1365,7 +1372,7 @@ RowManager.prototype._addTopRow = function(topDiff, i=0){
 		//hide top row if needed
 		if(topDiff >= topRowHeight){
 			this.styleRow(topRow, index);
-			table.insertBefore(topRow.getElement()[0], table.firstChild)
+			table.insertBefore(topRow.getElement(), table.firstChild)
 			if(!topRow.initialized || !topRow.heightInitialized){
 				this.vDomTopNewRows.push(topRow);
 
@@ -1409,7 +1416,8 @@ RowManager.prototype._removeTopRow = function(topDiff){
 
 	if(topDiff >= topRowHeight){
 
-		topRow.element.detach();
+		var rowEl = topRow.getElement();
+		rowEl.parentNode.removeChild(rowEl);
 
 		this.vDomTopPad += topRowHeight;
 		table.style.paddingTop = this.vDomTopPad + "px";
@@ -1435,7 +1443,7 @@ RowManager.prototype._addBottomRow = function(bottomDiff, i=0){
 		//hide bottom row if needed
 		if(bottomDiff >= bottomRowHeight){
 			this.styleRow(bottomRow, index);
-			table.appendChild(bottomRow.getElement()[0]);
+			table.appendChild(bottomRow.getElement());
 
 			if(!bottomRow.initialized || !bottomRow.heightInitialized){
 				this.vDomBottomNewRows.push(bottomRow);
@@ -1475,7 +1483,8 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 
 	if(bottomDiff >= bottomRowHeight){
 
-		bottomRow.element.detach();
+		var rowEl = bottomRow.getElement();
+		rowEl.parentNode.removeChild(rowEl);
 
 		this.vDomBottomPad += bottomRowHeight;
 

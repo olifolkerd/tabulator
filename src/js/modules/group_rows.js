@@ -408,13 +408,15 @@ Group.prototype.hide = function(){
 				var rows = group.getHeadersAndRows();
 
 				rows.forEach(function(row){
-					row.getElement().detach();
+					var rowEl = row.getElement();
+					rowEl.parentNode.removeChild(rowEl);
 				});
 			});
 
 		}else{
 			this.rows.forEach(function(row){
-				row.getElement().detach();
+				var rowEl = row.getElement();
+				rowEl.parentNode.removeChild(rowEl);
 			});
 		}
 
@@ -443,17 +445,19 @@ Group.prototype.show = function(){
 				var rows = group.getHeadersAndRows();
 
 				rows.forEach(function(row){
-					prev.after(row.getElement());
+					var rowEl = row.getElement();
+					prev.parentNode.insertBefore(rowEl, prev.nextSibling);
 					row.initialize();
-					prev = row.getElement();
+					prev = rowEl;
 				});
 			});
 
 		}else{
 			self.rows.forEach(function(row){
-				prev.after(row.getElement());
+				var rowEl = row.getElement();
+				prev.parentNode.insertBefore(rowEl, prev.nextSibling);
 				row.initialize();
-				prev = row.getElement();
+				prev = rowEl;
 			});
 		}
 

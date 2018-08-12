@@ -1467,7 +1467,16 @@ Tabulator.prototype.helpers = {
 
 	elVisible: function(el){
 		return !(el.offsetWidth <= 0 && el.offsetHeight <= 0);
-	}
+	},
+
+	elOffset: function(el){
+		const box = el.getBoundingClientRect();
+
+		  return {
+		    top: box.top + window.pageYOffset - document.documentElement.clientTop,
+		    left: box.left + window.pageXOffset - document.documentElement.clientLeft
+		  };
+	},
 }
 
 /*=include modules/layout.js */

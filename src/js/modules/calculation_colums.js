@@ -126,7 +126,7 @@ ColumnCalcs.prototype.scrollHorizontal = function(left){
 	scrollWidth = this.table.columnManager.getElement().scrollWidth - this.table.element.clientWidth;
 
 	if(this.botInitialized){
-		this.botRow.getElement().css("margin-left", -left);
+		this.botRow.getElement().style.marginLeft = (-left) + "px";
 	}
 };
 
@@ -217,7 +217,7 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 	rowData = this.generateRowData(pos, data),
 	row = new Row(rowData, this);
 
-	row.getElement().addClass("tabulator-calcs").addClass("tabulator-calcs-" + pos);
+	row.getElement().classList.add("tabulator-calcs", "tabulator-calcs-" + pos);
 	row.type = "calc";
 
 	row.generateCells = function(){

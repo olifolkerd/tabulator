@@ -12,7 +12,8 @@ var ResizeRows = function ResizeRows(table) {
 };
 
 ResizeRows.prototype.initializeRow = function (row) {
-	var self = this;
+	var self = this,
+	    rowEl = row.getElement();
 
 	var handle = document.createElement('div');
 	handle.className = "tabulator-row-resize-handle";
@@ -42,7 +43,8 @@ ResizeRows.prototype.initializeRow = function (row) {
 		}
 	});
 
-	row.getElement().append(handle).append(prevHandle);
+	rowEl.appendChild(handle[0]);
+	rowEl.appendChild(prevHandle[0]);
 };
 
 ResizeRows.prototype._mouseDown = function (e, row) {

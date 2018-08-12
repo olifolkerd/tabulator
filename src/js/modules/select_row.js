@@ -34,16 +34,17 @@ SelectRow.prototype.initializeRow = function(row){
 
 	//set row selection class
 	if(self.table.options.selectableCheck(row.getComponent())){
-		element.addClass("tabulator-selectable").removeClass("tabulator-unselectable");
+		element.classList.add("tabulator-selectable");
+		element.classList.remove("tabulator-unselectable");
 
 		if(self.table.options.selectable && self.table.options.selectable != "highlight"){
-			element.on("click", function(e){
+			element.addEventListener("click", function(e){
 				if(!self.selecting){
 					self.toggleRow(row);
 				}
 			});
 
-			element.on("mousedown", function(e){
+			element.addEventListener("mousedown", function(e){
 				if(e.shiftKey){
 					self.selecting = true;
 
@@ -58,7 +59,7 @@ SelectRow.prototype.initializeRow = function(row){
 				}
 			});
 
-			element.on("mouseenter", function(e){
+			element.addEventListener("mouseenter", function(e){
 				if(self.selecting){
 					self.toggleRow(row);
 
@@ -68,7 +69,7 @@ SelectRow.prototype.initializeRow = function(row){
 				}
 			});
 
-			element.on("mouseout", function(e){
+			element.addEventListener("mouseout", function(e){
 				if(self.selecting){
 					self.selectPrev.unshift(row);
 				}
@@ -76,7 +77,8 @@ SelectRow.prototype.initializeRow = function(row){
 		}
 
 	}else{
-		row.getElement().addClass("tabulator-unselectable").removeClass("tabulator-selectable");
+		element.classList.add("tabulator-unselectable");
+		element.classList.remove("tabulator-selectable");
 	}
 };
 
@@ -151,7 +153,7 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			var self = this;
 
 			row.modules.select.selected = true;
-			row.getElement().addClass("tabulator-selected");
+			row.getElement().classList.add("tabulator-selected");
 
 			self.selectedRows.push(row);
 
@@ -209,7 +211,7 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 		if(index > -1){
 
 			row.modules.select.selected = false;
-			row.getElement().removeClass("tabulator-selected");
+			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
 			if(!silent){

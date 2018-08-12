@@ -94,7 +94,7 @@ var Row = function(data, parent){
 	this.parent = parent;
 	this.data = {};
 	this.type = "row"; //type of element
-	this.element = $("<div class='tabulator-row' role='row'></div>");
+	this.element = this.createElement();
 	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
@@ -104,6 +104,15 @@ var Row = function(data, parent){
 
 	this.setData(data);
 	this.generateElement();
+};
+
+Row.prototype.createElement = function (){
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-row");
+	el.setAttribute("role", "row");
+
+	return el;
 };
 
 Row.prototype.getElement = function(){
@@ -127,19 +136,19 @@ Row.prototype.generateElement = function(){
 
 	//handle row click events
 	if (self.table.options.rowClick){
-		self.element.on("click", function(e){
+		self.element.addEventListener("click", function(e){
 			self.table.options.rowClick(e, self.getComponent());
 		})
 	}
 
 	if (self.table.options.rowDblClick){
-		self.element.on("dblclick", function(e){
+		self.element.addEventListener("dblclick", function(e){
 			self.table.options.rowDblClick(e, self.getComponent());
 		})
 	}
 
 	if (self.table.options.rowContext){
-		self.element.on("contextmenu", function(e){
+		self.element.addEventListener("contextmenu", function(e){
 			self.table.options.rowContext(e, self.getComponent());
 		})
 	}
@@ -148,11 +157,11 @@ Row.prototype.generateElement = function(){
 
 		tap = false;
 
-		self.element.on("touchstart", function(e){
+		self.element.addEventListener("touchstart", function(e){
 			tap = true;
 		});
 
-		self.element.on("touchend", function(e){
+		self.element.addEventListener("touchend", function(e){
 			if(tap){
 				self.table.options.rowTap(e, self.getComponent());
 			}
@@ -165,7 +174,7 @@ Row.prototype.generateElement = function(){
 
 		dblTap = null;
 
-		self.element.on("touchend", function(e){
+		self.element.addEventListener("touchend", function(e){
 
 			if(dblTap){
 				clearTimeout(dblTap);
@@ -188,7 +197,7 @@ Row.prototype.generateElement = function(){
 
 		tapHold = null;
 
-		self.element.on("touchstart", function(e){
+		self.element.addEventListener("touchstart", function(e){
 			clearTimeout(tapHold);
 
 			tapHold = setTimeout(function(){
@@ -200,7 +209,7 @@ Row.prototype.generateElement = function(){
 
 		});
 
-		self.element.on("touchend", function(e){
+		self.element.addEventListener("touchend", function(e){
 			clearTimeout(tapHold);
 			tapHold = null;
 		});
@@ -219,7 +228,7 @@ Row.prototype.initialize = function(force){
 
 		self.deleteCells();
 
-		self.element.empty();
+		while(self.element.firstChild) self.element.removeChild(self.element.firstChild);
 
 		//handle frozen cells
 		if(this.table.modExists("frozenColumns")){
@@ -229,7 +238,7 @@ Row.prototype.initialize = function(force){
 		this.generateCells();
 
 		self.cells.forEach(function(cell){
-			self.element.append(cell.getElement());
+			self.element.appendChild(cell.getElement()[0]);
 		});
 
 		if(force){
@@ -257,7 +266,7 @@ Row.prototype.initialize = function(force){
 Row.prototype.reinitializeHeight = function(){
 	this.heightInitialized = false;
 
-	if(this.element[0].offsetParent !== null){
+	if(this.element.offsetParent !== null){
 		this.normalizeHeight(true);
 	}
 };
@@ -268,7 +277,7 @@ Row.prototype.reinitialize = function(){
 	this.heightInitialized = false;
 	this.height = 0;
 
-	if(this.element[0].offsetParent !== null){
+	if(this.element.offsetParent !== null){
 		this.initialize(true);
 	}
 };
@@ -277,7 +286,7 @@ Row.prototype.reinitialize = function(){
 Row.prototype.calcHeight = function(){
 
 	var maxHeight = 0,
-	minHeight = this.element[0].clientHeight;
+	minHeight = this.element.clientHeight;
 
 	this.cells.forEach(function(cell){
 		var height = cell.getHeight();
@@ -287,7 +296,7 @@ Row.prototype.calcHeight = function(){
 	})
 
 	this.height = Math.max(maxHeight, minHeight);
-	this.outerHeight = this.element[0].offsetHeight;
+	this.outerHeight = this.element.offsetHeight;
 };
 
 //set of cells
@@ -335,7 +344,7 @@ Row.prototype.setHeight = function(height, force){
 		this.setCellHeight();
 
 		// this.outerHeight = this.element.outerHeight();
-		this.outerHeight = this.element[0].offsetHeight;
+		this.outerHeight = this.element.offsetHeight;
 	}
 };
 
@@ -346,7 +355,7 @@ Row.prototype.getHeight = function(){
 
 //return rows outer Width
 Row.prototype.getWidth = function(){
-	return this.element.outerWidth();
+	return this.element.offsetWidth;
 };
 
 
@@ -402,7 +411,7 @@ Row.prototype.updateData = function(data){
 	}
 
 	//Partial reinitialization if visible
-	if(this.element.is(":visible")){
+	if(Tabulator.prototype.helpers.elVisible(this.element)){
 		self.normalizeHeight();
 
 		if(self.table.options.rowFormatter){
@@ -457,7 +466,7 @@ Row.prototype.findNextEditableCell = function(index){
 		for(var i = index+1; i < this.cells.length; i++){
 			let cell = this.cells[i];
 
-			if(cell.column.modules.edit && cell.getElement().is(":visible")){
+			if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])){
 				let allowEdit = true;
 
 				if(typeof cell.column.modules.edit.check == "function"){
@@ -483,7 +492,7 @@ Row.prototype.findPrevEditableCell = function(index){
 			let cell = this.cells[i],
 			allowEdit = true;
 
-			if(cell.column.modules.edit && cell.getElement().is(":visible")){
+			if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement()[0])){
 				if(typeof cell.column.modules.edit.check == "function"){
 					allowEdit = cell.column.modules.edit.check(cell.getComponent());
 				}
@@ -563,11 +572,13 @@ Row.prototype.deleteCells = function(){
 Row.prototype.wipe = function(){
 	this.deleteCells();
 
-	this.element.children().each(function(){
-		$(this).remove();
-	})
+	// this.element.children().each(function(){
+	// 	$(this).remove();
+	// })
+	// this.element.empty();
 
-	this.element.empty();
+	while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+
 	this.element.remove();
 }
 
