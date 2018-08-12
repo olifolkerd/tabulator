@@ -5,8 +5,8 @@ var Ajax = function(table){
 	this.url = ""; //request URL
 	this.params = false; //request parameters
 
-	this.loaderElement = $("<div class='tablulator-loader'></div>"); //loader message div
-	this.msgElement = $("<div class='tabulator-loader-msg' role='alert'></div>"); //message element
+	this.loaderElement = this.createLoaderElement(); //loader message div
+	this.msgElement = this.createMsgElement(); //message element
 	this.loadingElement = false;
 	this.errorElement = false;
 
@@ -18,7 +18,7 @@ var Ajax = function(table){
 
 //initialize setup options
 Ajax.prototype.initialize = function(){
-	this.loaderElement.append(this.msgElement);
+	this.loaderElement.appendChild(this.msgElement);
 
 	if(this.table.options.ajaxLoaderLoading){
 		this.loadingElement = this.table.options.ajaxLoaderLoading;
@@ -53,6 +53,21 @@ Ajax.prototype.initialize = function(){
 			}
 		}
 	}
+};
+
+Ajax.prototype.createLoaderElement = function (){
+	var el = document.createElement("div");
+	el.classList.add("tablulator-loader");
+	return el;
+};
+
+Ajax.prototype.createMsgElement = function (){
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-loader-msg");
+	el.setAttribute("role", "alert");
+
+	return el;
 };
 
 //set ajax params
@@ -125,7 +140,7 @@ Ajax.prototype.nextPage = function(diff){
 
 	if(!this.loading){
 
-		margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element[0].clientHeight * 2);
+		margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.getElement().clientHeight * 2);
 
 		if(diff < margin){
 			this.table.modules.page.nextPage();
@@ -217,40 +232,42 @@ Ajax.prototype.showLoader = function(){
 
 	if(shouldLoad){
 
-		this.loaderElement.detach();
+		this.hideLoader();
 
-		this.msgElement.empty()
-		.removeClass("tabulator-error")
-		.addClass("tabulator-loading")
+		while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
+		this.msgElement.classList.remove("tabulator-error");
+		this.msgElement.classList.add("tabulator-loading");
 
 		if(this.loadingElement){
-			this.msgElement.append(this.loadingElement);
+			this.msgElement.appendChild(this.loadingElement);
 		}else{
-			this.msgElement.append(this.table.modules.localize.getText("ajax|loading"));
+			this.msgElement.innerHTML = this.table.modules.localize.getText("ajax|loading");
 		}
 
-		this.table.element.appendChild(this.loaderElement[0]);
+		this.table.element.appendChild(this.loaderElement);
 	}
 };
 
 Ajax.prototype.showError = function(){
-	this.loaderElement.detach();
+	this.hideLoader();
 
-	this.msgElement.empty()
-	.removeClass("tabulator-loading")
-	.addClass("tabulator-error")
+	while(this.msgElement.firstChild) this.msgElement.removeChild(this.msgElement.firstChild);
+	this.msgElement.classList.remove("tabulator-loading");
+	this.msgElement.classList.add("tabulator-error");
 
 	if(this.errorElement){
-		this.msgElement.append(this.errorElement);
+		this.msgElement.appendChild(this.errorElement);
 	}else{
-		this.msgElement.append(this.table.modules.localize.getText("ajax|error"));
+		this.msgElement.innerHTML = this.table.modules.localize.getText("ajax|error");
 	}
 
-	this.table.element.appendChild(this.loaderElement[0]);
+	this.table.element.appendChild(this.loaderElement);
 };
 
 Ajax.prototype.hideLoader = function(){
-	this.loaderElement.detach();
+	if(this.loaderElement.parentNode){
+		this.loaderElement.parentNode.removeChild(this.loaderElement);
+	}
 };
 
 //default ajax config object
