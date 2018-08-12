@@ -515,14 +515,13 @@ Column.prototype._buildColumnHeaderTitle = function(){
 		var titleElement = document.createElement("input");
 		titleElement.classList.add("tabulator-title-editor");
 
-		titleElement.on("click", function(e){
+		titleElement.addEventListener("click", function(e){
 			e.stopPropagation();
-			$(this).focus();
+			titleElement.focus();
 		});
 
-		titleElement.on("change", function(){
-			var newTitle = $(this).val();
-			def.title = newTitle;
+		titleElement.addEventListener("change", function(){
+			def.title = titleElement.value;
 			table.options.columnTitleChanged(self.getComponent());
 		});
 

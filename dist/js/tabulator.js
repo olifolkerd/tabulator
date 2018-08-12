@@ -1576,18 +1576,16 @@ Column.prototype._buildColumnHeaderTitle = function () {
 
 		titleElement.classList.add("tabulator-title-editor");
 
-		titleElement.on("click", function (e) {
+		titleElement.addEventListener("click", function (e) {
 
 			e.stopPropagation();
 
-			$(this).focus();
+			titleElement.focus();
 		});
 
-		titleElement.on("change", function () {
+		titleElement.addEventListener("change", function () {
 
-			var newTitle = $(this).val();
-
-			def.title = newTitle;
+			def.title = titleElement.value;
 
 			table.options.columnTitleChanged(self.getComponent());
 		});
@@ -6266,11 +6264,6 @@ Tabulator.prototype.initializeElement = function (element) {
 
 		this.element = document.querySelector(element);
 
-		console.log("el", this.element);
-
-		// this.element = $(element);
-
-
 		if (this.element) {
 
 			return true;
@@ -6422,7 +6415,17 @@ Tabulator.prototype._buildElement = function () {
 
 	if (typeof options.placeholder == "string") {
 
-		options.placeholder = $("<div class='tabulator-placeholder'><span>" + options.placeholder + "</span></div>");
+		var el = document.createElement("div");
+
+		el.classList.add("tabulator-placeholder");
+
+		var span = document.createElement("span");
+
+		span.innerHTML = options.placeholder;
+
+		el.appendChild(span);
+
+		options.placeholder = el;
 	}
 
 	//build table elements
