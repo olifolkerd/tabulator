@@ -5,7 +5,7 @@ var Ajax = function(table){
 	this.url = ""; //request URL
 	this.params = false; //request parameters
 
-	this.loaderElement = $("<div class='tablulator-loader'></div>"); //loader message div
+	this.loaderElement = $("<div class='tabulator-loader'></div>"); //loader message div
 	this.msgElement = $("<div class='tabulator-loader-msg' role='alert'></div>"); //message element
 	this.loadingElement = false;
 	this.errorElement = false;
