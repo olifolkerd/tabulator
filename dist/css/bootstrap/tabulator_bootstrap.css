@@ -331,7 +331,7 @@
   color: #fff;
 }
 
-.tabulator .tablulator-loader {
+.tabulator .tabulator-loader {
   position: absolute;
   display: -ms-flexbox;
   display: flex;
