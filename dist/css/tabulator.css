@@ -343,7 +343,7 @@
   cursor: ew-resize;
 }
 
-.tabulator .tablulator-loader {
+.tabulator .tabulator-loader {
   position: absolute;
   display: -ms-flexbox;
   display: flex;
@@ -358,7 +358,7 @@
   text-align: center;
 }
 
-.tabulator .tablulator-loader .tabulator-loader-msg {
+.tabulator .tabulator-loader .tabulator-loader-msg {
   display: inline-block;
   margin: 0 auto;
   padding: 10px 20px;
@@ -368,12 +368,12 @@
   font-size: 16px;
 }
 
-.tabulator .tablulator-loader .tabulator-loader-msg.tabulator-loading {
+.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-loading {
   border: 4px solid #333;
   color: #000;
 }
 
-.tabulator .tablulator-loader .tabulator-loader-msg.tabulator-error {
+.tabulator .tabulator-loader .tabulator-loader-msg.tabulator-error {
   border: 4px solid #D00;
   color: #590000;
 }
