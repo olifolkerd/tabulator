@@ -296,7 +296,7 @@ Edit.prototype.editors = {
 	textarea:function(cell, onRendered, success, cancel, editorParams){
 		var self = this,
 		cellValue = cell.getValue(),
-		value = String(typeof cellValue == "null" || typeof cellValue == "undefined" ? "" : cellValue),
+		value = String(typeof cellValue == "undefined" || cellValue === null ? "" : cellValue),
 		count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
 		input = $("<textarea></textarea>"),
 		scrollHeight = 0;
