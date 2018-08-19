@@ -392,7 +392,7 @@ Page.prototype._getRemotePageAuto = function () {
 	    pageParams;
 
 	//record old params and restore after request has been made
-	oldParams = $.extend(true, {}, self.table.modules.ajax.getParams());
+	oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
 	pageParams = self.table.modules.ajax.getParams();
 
 	//configure request params

@@ -7909,6 +7909,24 @@ Tabulator.prototype.helpers = {
 			left: box.left + window.pageXOffset - document.documentElement.clientLeft
 
 		};
+	},
+
+	deepClone: function deepClone(obj) {
+
+		var clone = {};
+
+		for (var i in obj) {
+
+			if (obj[i] != null && _typeof(obj[i]) === "object") {
+
+				clone[i] = cloneObject(obj[i]);
+			} else {
+
+				clone[i] = obj[i];
+			}
+		}
+
+		return clone;
 	}
 
 };
@@ -8354,7 +8372,7 @@ Localize.prototype.setLocale = function (desiredLocale) {
 
 	//load default lang template
 
-	self.lang = $.extend(true, {}, self.langs.default);
+	self.lang = Tabulator.prototype.helpers.deepClone(self.langs.default || {});
 
 	if (desiredLocale != "default") {
 
@@ -8637,7 +8655,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1));
 
 		//clone data object with deep copy to isolate internal data from returned result
-		var data = $.extend(true, {}, dataIn || {});
+		var data = Tabulator.prototype.helpers.deepClone(dataIn || {});
 
 		self.table.columnManager.traverse(function (column) {
 			var value, accessor;
@@ -14977,7 +14995,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    pageParams;
 
 		//record old params and restore after request has been made
-		oldParams = $.extend(true, {}, self.table.modules.ajax.getParams());
+		oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
 		pageParams = self.table.modules.ajax.getParams();
 
 		//configure request params

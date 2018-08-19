@@ -85,7 +85,7 @@ Localize.prototype.setLocale = function(desiredLocale){
 	self.locale = desiredLocale;
 
 	//load default lang template
-	self.lang = $.extend(true, {}, self.langs.default);
+	self.lang = Tabulator.prototype.helpers.deepClone(self.langs.default || {});
 
 	if(desiredLocale != "default"){
 		traverseLang(self.langs[desiredLocale], self.lang);

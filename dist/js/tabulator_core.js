@@ -6068,6 +6068,18 @@ Tabulator.prototype.helpers = {
 			top: box.top + window.pageYOffset - document.documentElement.clientTop,
 			left: box.left + window.pageXOffset - document.documentElement.clientLeft
 		};
+	},
+
+	deepClone: function deepClone(obj) {
+		var clone = {};
+		for (var i in obj) {
+			if (obj[i] != null && _typeof(obj[i]) === "object") {
+				clone[i] = cloneObject(obj[i]);
+			} else {
+				clone[i] = obj[i];
+			}
+		}
+		return clone;
 	}
 };
 
@@ -6452,7 +6464,7 @@ Localize.prototype.setLocale = function (desiredLocale) {
 	self.locale = desiredLocale;
 
 	//load default lang template
-	self.lang = $.extend(true, {}, self.langs.default);
+	self.lang = Tabulator.prototype.helpers.deepClone(self.langs.default || {});
 
 	if (desiredLocale != "default") {
 		traverseLang(self.langs[desiredLocale], self.lang);

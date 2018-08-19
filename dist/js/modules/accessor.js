@@ -63,7 +63,7 @@ Accessor.prototype.transformRow = function (dataIn, type) {
 	    key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1));
 
 	//clone data object with deep copy to isolate internal data from returned result
-	var data = $.extend(true, {}, dataIn || {});
+	var data = Tabulator.prototype.helpers.deepClone(dataIn || {});
 
 	self.table.columnManager.traverse(function (column) {
 		var value, accessor;
