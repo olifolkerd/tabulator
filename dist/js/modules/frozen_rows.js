@@ -4,15 +4,18 @@
 
 var FrozenRows = function FrozenRows(table) {
 	this.table = table; //hold Tabulator object
-	this.topElement = $("<div class='tabulator-frozen-rows-holder'></div>");
+	this.topElement = document.createElement("div");
 	this.rows = [];
 	this.displayIndex = 0; //index in display pipeline
 };
 
 FrozenRows.prototype.initialize = function () {
 	this.rows = [];
+
+	this.topElement.classList.add("tabulator-frozen-rows-holder");
+
 	// this.table.columnManager.element.append(this.topElement);
-	this.table.columnManager.getElement().insertBefore(this.topElement[0], this.table.columnManager.headersElement.nextSibling);
+	this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 };
 
 FrozenRows.prototype.setDisplayIndex = function (index) {
@@ -47,7 +50,7 @@ FrozenRows.prototype.getRows = function (rows) {
 FrozenRows.prototype.freezeRow = function (row) {
 	if (!row.modules.frozen) {
 		row.modules.frozen = true;
-		this.topElement.append(row.getElement());
+		this.topElement.appendChild(row.getElement());
 		row.initialize();
 		row.normalizeHeight();
 		this.table.rowManager.adjustTableSize();
