@@ -43,8 +43,10 @@ Sort.prototype.initializeColumn = function (column, content) {
 
 		colEl.classList.add("tabulator-sortable");
 
+		arrowEl = document.createElement("div");
+		arrowEl.classList.add("tabulator-arrow");
 		//create sorter arrow
-		content.appendChild($("<div class='tabulator-arrow'></div>")[0]);
+		content.appendChild(arrowEl);
 
 		//sort on click
 		colEl.addEventListener("click", function (e) {
@@ -139,7 +141,7 @@ Sort.prototype.setSort = function (sortList, dir) {
 //clear sorters
 Sort.prototype.clear = function () {
 	this.setSort([]);
-},
+};
 
 //find appropriate sorter for column
 Sort.prototype.findSorter = function (column) {
@@ -246,11 +248,11 @@ Sort.prototype._sortItem = function (column, dir, sortList, i) {
 		var result = self._sortRow(a, b, column, dir);
 
 		//if results match recurse through previous searchs to be sure
-		if (result == 0 && i) {
+		if (result === 0 && i) {
 			for (var j = i - 1; j >= 0; j--) {
 				result = self._sortRow(a, b, sortList[j].column, sortList[j].dir);
 
-				if (result != 0) {
+				if (result !== 0) {
 					break;
 				}
 			}
@@ -285,8 +287,8 @@ Sort.prototype.sorters = {
 		var alignEmptyValues = params.alignEmptyValues;
 		var emptyAlign = 0;
 
-		var a = parseFloat(String(a).replace(",", ""));
-		var b = parseFloat(String(b).replace(",", ""));
+		a = parseFloat(String(a).replace(",", ""));
+		b = parseFloat(String(b).replace(",", ""));
 
 		//handle non numeric values
 		if (isNaN(a)) {
