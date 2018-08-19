@@ -15490,8 +15490,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 			}
 		});
 
-		rowEl.appendChild(handle[0]);
-		rowEl.appendChild(prevHandle[0]);
+		rowEl.appendChild(handle);
+		rowEl.appendChild(prevHandle);
 	};
 
 	ResizeRows.prototype._mouseDown = function (e, row) {
@@ -15510,8 +15510,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 			// 	self.startColumn.modules.edit.blocked = false;
 			// }
 
-			$("body").off("mouseup", mouseMove);
-			$("body").off("mousemove", mouseMove);
+			document.body.removeEventListener("mouseup", mouseMove);
+			document.body.removeEventListener("mousemove", mouseMove);
 
 			self.table.element.classList.remove("tabulator-block-select");
 
@@ -15528,9 +15528,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self.startY = e.screenY;
 		self.startHeight = row.getHeight();
 
-		$("body").on("mousemove", mouseMove);
+		document.body.addEventListener("mousemove", mouseMove);
 
-		$("body").on("mouseup", mouseUp);
+		document.body.addEventListener("mouseup", mouseUp);
 	};
 
 	Tabulator.prototype.registerModule("resizeRows", ResizeRows);
