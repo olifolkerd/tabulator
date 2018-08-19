@@ -12180,10 +12180,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			});
 
 			//calculate right frozen columns
-			rightMargin = self.table.rowManager.element.innerWidth() + self.table.columnManager.scrollLeft;
+			rightMargin = self.table.rowManager.element.clientWidth + self.table.columnManager.scrollLeft;
 
-			if (tableHolder[0].scrollHeight > tableHolder.innerHeight()) {
-				rightMargin -= tableHolder[0].offsetWidth - tableHolder[0].clientWidth;
+			if (tableHolder.scrollHeight > tableHolder.clientHeight) {
+				rightMargin -= tableHolder.offsetWidth - tableHolder.clientWidth;
 			}
 
 			self.rightColumns.forEach(function (column, i) {
@@ -12203,7 +12203,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	FrozenColumns.prototype.layoutColumn = function (column) {
 		var self = this;
 
-		self.layoutElement(column.getElement, column);
+		self.layoutElement(column.getElement(), column);
 
 		column.cells.forEach(function (cell) {
 			self.layoutElement(cell.getElement(), column);
@@ -12220,9 +12220,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 	FrozenColumns.prototype.layoutElement = function (element, column) {
 
 		if (column.modules.frozen) {
-
 			element.style.position = "absolute";
-			element.style.left = column.modules.frozen.margin;
+			element.style.left = column.modules.frozen.margin + "px";
 
 			element.classList.add("tabulator-frozen");
 
