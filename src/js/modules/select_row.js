@@ -24,10 +24,10 @@ SelectRow.prototype.initializeRow = function(row){
 
 		setTimeout(function(){
 			self.selecting = false;
-		}, 50)
+		}, 50);
 
-		$("body").off("mouseup", endSelect);
-	}
+		document.body.removeEventListener("mouseup", endSelect);
+	};
 
 
 	row.modules.select = {selected:false};
@@ -50,8 +50,8 @@ SelectRow.prototype.initializeRow = function(row){
 
 					self.selectPrev = [];
 
-					$("body").on("mouseup", endSelect);
-					$("body").on("keyup", endSelect);
+					document.body.addEventListener("mouseup", endSelect);
+					document.body.addEventListener("keyup", endSelect);
 
 					self.toggleRow(row);
 
@@ -132,34 +132,31 @@ SelectRow.prototype.selectRows = function(rows){
 
 //select an individual row
 SelectRow.prototype._selectRow = function(rowInfo, silent, force){
-	var self = this,
-	index;
+	var index;
 
 	//handle max row count
-	if(!isNaN(self.table.options.selectable) && self.table.options.selectable !== true && !force){
-		if(self.selectedRows.length >= self.table.options.selectable){
-			if(self.table.options.selectableRollingSelection){
-				self._deselectRow(self.selectedRows[0]);
+	if(!isNaN(this.table.options.selectable) && this.table.options.selectable !== true && !force){
+		if(this.selectedRows.length >= this.table.options.selectable){
+			if(this.table.options.selectableRollingSelection){
+				this._deselectRow(this.selectedRows[0]);
 			}else{
 				return false;
 			}
 		}
 	}
 
-	var row = self.table.rowManager.findRow(rowInfo);
+	var row = this.table.rowManager.findRow(rowInfo);
 
 	if(row){
-		if(self.selectedRows.indexOf(row) == -1){
-			var self = this;
-
+		if(this.selectedRows.indexOf(row) == -1){
 			row.modules.select.selected = true;
 			row.getElement().classList.add("tabulator-selected");
 
-			self.selectedRows.push(row);
+			this.selectedRows.push(row);
 
 			if(!silent){
-				self.table.options.rowSelected(row.getComponent());
-				self._rowSelectionChanged();
+				this.table.options.rowSelected(row.getComponent());
+				this._rowSelectionChanged();
 			}
 		}
 	}else{
@@ -171,11 +168,12 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 
 //deselect a number of rows
 SelectRow.prototype.deselectRows = function(rows){
-	var self = this;
+	var self = this,
+	rowCount;
 
 	if(typeof rows == "undefined"){
 
-		let rowCount = self.selectedRows.length;
+		rowCount = self.selectedRows.length;
 
 		for(let i = 0; i < rowCount; i++){
 			self._deselectRow(self.selectedRows[0], true);
@@ -200,8 +198,6 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 	var self = this,
 	row = self.table.rowManager.findRow(rowInfo),
 	index;
-
-
 
 	if(row){
 		index = self.selectedRows.findIndex(function(selectedRow){
@@ -233,16 +229,16 @@ SelectRow.prototype.getSelectedData = function(){
 		data.push(row.getData());
 	});
 
-	return data
+	return data;
 };
 
 SelectRow.prototype.getSelectedRows = function(){
 
-	var rows = []
+	var rows = [];
 
 	this.selectedRows.forEach(function(row){
 		rows.push(row.getComponent());
-	})
+	});
 
 	return rows;
 };
