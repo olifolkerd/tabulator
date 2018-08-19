@@ -16653,14 +16653,15 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Validate.prototype._extractValidator = function (value) {
+		var parts, type, params;
 
 		switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 			case "string":
-				var parts = value.split(":");
-				var _type = parts.shift();
-				var params = parts.join();
+				parts = value.split(":");
+				type = parts.shift();
+				params = parts.join();
 
-				return this._buildValidator(_type, params);
+				return this._buildValidator(type, params);
 				break;
 
 			case "function":
@@ -16724,7 +16725,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				return true;
 			}
 			value = Number(value);
-			return typeof value === 'number' && isFinite(value) && value % 1 !== 0;;
+			return typeof value === 'number' && isFinite(value) && value % 1 !== 0;
 		},
 
 		//must be a number

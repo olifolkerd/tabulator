@@ -17,7 +17,7 @@ Validate.prototype.initializeColumn = function(column){
 				if(validator){
 					config.push(validator);
 				}
-			})
+			});
 
 		}else{
 			validator = this._extractValidator(column.definition.validator);
@@ -32,12 +32,13 @@ Validate.prototype.initializeColumn = function(column){
 };
 
 Validate.prototype._extractValidator = function(value){
+	var parts, type, params;
 
 	switch(typeof value){
 		case "string":
-		let parts = value.split(":");
-		let type = parts.shift();
-		let params = parts.join();
+		parts = value.split(":");
+		type = parts.shift();
+		params = parts.join();
 
 		return this._buildValidator(type, params);
 		break;
@@ -104,7 +105,7 @@ Validate.prototype.validators = {
 			return true;
 		}
 		value = Number(value);
-		return typeof value === 'number' && isFinite(value) && value % 1 !== 0;;
+		return typeof value === 'number' && isFinite(value) && value % 1 !== 0;
 	},
 
 	//must be a number
@@ -122,7 +123,6 @@ Validate.prototype.validators = {
 		}
 		return isNaN(value);
 	},
-
 
 	//maximum value
 	max: function(cell, value, parameters){
