@@ -2095,7 +2095,9 @@ Column.prototype.checkCellHeights = function () {
 
 Column.prototype.getWidth = function () {
 
-	return this.element.offsetWidth;
+	// return this.element.offsetWidth;
+
+	return this.width;
 };
 
 Column.prototype.getHeight = function () {
@@ -3734,7 +3736,7 @@ RowManager.prototype._simpleRender = function () {
 
 RowManager.prototype.renderEmptyScroll = function () {
 
-	this.tableElement.style.minWidth = self.table.columnManager.getWidth();
+	this.tableElement.style.minWidth = this.table.columnManager.getWidth();
 
 	this.tableElement.style.minHeight = "1px";
 
@@ -15626,7 +15628,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	ResponsiveLayout.prototype.layoutRow = function (row) {
 		var rowEl = row.getElement(),
-		    el = $("<div class='tabulator-responsive-collapse'></div>");
+		    el = document.createElement("div");
+
+		el.classList.add("tabulator-responsive-collapse");
 
 		if (!rowEl.classList.contains("tabulator-calcs")) {
 			row.modules.responsiveLayout = {
@@ -15634,10 +15638,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			};
 
 			if (!this.collapseStartOpen) {
-				el.hide();
+				el.style.display = 'none';
 			}
 
-			rowEl.appendChild(el[0]);
+			rowEl.appendChild(el);
 
 			this.generateCollapsedRowContent(row);
 		}
@@ -15657,7 +15661,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		if (this.mode === "collapse") {
 			this.hiddenColumns.unshift(column);
-
 			this.generateCollapsedContent();
 		}
 	};
@@ -15738,14 +15741,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	ResponsiveLayout.prototype.generateCollapsedRowContent = function (row) {
-		var el;
+		var el, contents;
 
 		if (row.modules.responsiveLayout) {
 			el = row.modules.responsiveLayout.element;
 
-			el.empty();
+			while (el.firstChild) {
+				el.removeChild(el.firstChild);
+			}contents = this.collapseFormatter(this.generateCollapsedRowData(row));
 
-			el.append(this.collapseFormatter(this.generateCollapsedRowData(row)));
+			if (contents) {
+				el.appendChild(contents);
+			}
 		}
 	};
 
@@ -15771,7 +15778,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 							return data;
 						},
 						getElement: function getElement() {
-							return $();
+							return document.createElement("div");
 						},
 						getRow: function getRow() {
 							return row.getComponent();
@@ -15792,11 +15799,14 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	ResponsiveLayout.prototype.formatCollapsedData = function (data) {
-		var list = $("<table></table>");
+		var list = document.createElement("table"),
+		    listContents = "";
 
 		for (var key in data) {
-			list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>");
+			listContents += "<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>";
 		}
+
+		list.innerHTML = listContents;
 
 		return Object.keys(data).length ? list : "";
 	};

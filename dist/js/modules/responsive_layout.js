@@ -58,7 +58,9 @@ ResponsiveLayout.prototype.initializeColumn = function (column) {
 
 ResponsiveLayout.prototype.layoutRow = function (row) {
 	var rowEl = row.getElement(),
-	    el = $("<div class='tabulator-responsive-collapse'></div>");
+	    el = document.createElement("div");
+
+	el.classList.add("tabulator-responsive-collapse");
 
 	if (!rowEl.classList.contains("tabulator-calcs")) {
 		row.modules.responsiveLayout = {
@@ -66,10 +68,10 @@ ResponsiveLayout.prototype.layoutRow = function (row) {
 		};
 
 		if (!this.collapseStartOpen) {
-			el.hide();
+			el.style.display = 'none';
 		}
 
-		rowEl.appendChild(el[0]);
+		rowEl.appendChild(el);
 
 		this.generateCollapsedRowContent(row);
 	}
@@ -89,7 +91,6 @@ ResponsiveLayout.prototype.hideColumn = function (column) {
 
 	if (this.mode === "collapse") {
 		this.hiddenColumns.unshift(column);
-
 		this.generateCollapsedContent();
 	}
 };
@@ -170,14 +171,18 @@ ResponsiveLayout.prototype.generateCollapsedContent = function () {
 };
 
 ResponsiveLayout.prototype.generateCollapsedRowContent = function (row) {
-	var el;
+	var el, contents;
 
 	if (row.modules.responsiveLayout) {
 		el = row.modules.responsiveLayout.element;
 
-		el.empty();
+		while (el.firstChild) {
+			el.removeChild(el.firstChild);
+		}contents = this.collapseFormatter(this.generateCollapsedRowData(row));
 
-		el.append(this.collapseFormatter(this.generateCollapsedRowData(row)));
+		if (contents) {
+			el.appendChild(contents);
+		}
 	}
 };
 
@@ -203,7 +208,7 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function (row) {
 						return data;
 					},
 					getElement: function getElement() {
-						return $();
+						return document.createElement("div");
 					},
 					getRow: function getRow() {
 						return row.getComponent();
@@ -224,11 +229,14 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function (row) {
 };
 
 ResponsiveLayout.prototype.formatCollapsedData = function (data) {
-	var list = $("<table></table>");
+	var list = document.createElement("table"),
+	    listContents = "";
 
 	for (var key in data) {
-		list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>");
+		listContents += "<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>";
 	}
+
+	list.innerHTML = listContents;
 
 	return Object.keys(data).length ? list : "";
 };

@@ -913,7 +913,8 @@ Column.prototype.checkCellHeights = function(){
 };
 
 Column.prototype.getWidth = function(){
-	return this.element.offsetWidth;
+	// return this.element.offsetWidth;
+	return this.width;
 };
 
 Column.prototype.getHeight = function(){

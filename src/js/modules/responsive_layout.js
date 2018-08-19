@@ -2,7 +2,7 @@ var ResponsiveLayout = function(table){
 	this.table = table; //hold Tabulator object
 	this.columns = [];
 	this.hiddenColumns = [];
-	this.mode = ""
+	this.mode = "";
 	this.index = 0;
 	this.collapseFormatter = [];
 	this.collapseStartOpen = true;
@@ -34,7 +34,7 @@ ResponsiveLayout.prototype.initialize = function(){
 	//sort list by responsivity
 	columns = columns.reverse();
 	columns = columns.sort(function(a, b){
-		var diff = b.modules.responsive.order - a.modules.responsive.order
+		var diff = b.modules.responsive.order - a.modules.responsive.order;
 		return diff || (b.modules.responsive.index - a.modules.responsive.index);
 	});
 
@@ -50,26 +50,28 @@ ResponsiveLayout.prototype.initializeColumn = function(column){
 	var def = column.getDefinition();
 
 	column.modules.responsive = {order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible:def.visible === false ? false : true};
-}
+};
 
 ResponsiveLayout.prototype.layoutRow = function(row){
 	var rowEl = row.getElement(),
-	el = $("<div class='tabulator-responsive-collapse'></div>");
+	el = document.createElement("div");
+
+	el.classList.add("tabulator-responsive-collapse");
 
 	if(!rowEl.classList.contains("tabulator-calcs")){
 		row.modules.responsiveLayout = {
 			element:el,
-		}
+		};
 
 		if(!this.collapseStartOpen){
-			el.hide();
+			el.style.display = 'none';
 		}
 
-		rowEl.appendChild(el[0]);
+		rowEl.appendChild(el);
 
 		this.generateCollapsedRowContent(row);
 	}
-}
+};
 
 //update column visibility
 ResponsiveLayout.prototype.updateColumnVisibility = function(column, visible){
@@ -78,17 +80,16 @@ ResponsiveLayout.prototype.updateColumnVisibility = function(column, visible){
 		column.modules.responsive.visible = visible;
 		this.initialize();
 	}
-}
+};
 
 ResponsiveLayout.prototype.hideColumn = function(column){
 	column.hide(false, true);
 
 	if(this.mode === "collapse"){
 		this.hiddenColumns.unshift(column);
-
-		this.generateCollapsedContent()
+		this.generateCollapsedContent();
 	}
-}
+};
 
 ResponsiveLayout.prototype.showColumn = function(column){
 	var index;
@@ -101,12 +102,12 @@ ResponsiveLayout.prototype.showColumn = function(column){
 		index = this.hiddenColumns.indexOf(column);
 
 		if(index > -1){
-			this.hiddenColumns.splice(index, 1)
+			this.hiddenColumns.splice(index, 1);
 		}
 
 		this.generateCollapsedContent();
 	}
-}
+};
 
 //redraw columns to fit space
 ResponsiveLayout.prototype.update = function(){
@@ -164,19 +165,23 @@ ResponsiveLayout.prototype.generateCollapsedContent = function(){
 	rows.forEach(function(row){
 		self.generateCollapsedRowContent(row);
 	});
-}
+};
 
 ResponsiveLayout.prototype.generateCollapsedRowContent = function(row){
-	var el;
+	var el, contents;
 
 	if(row.modules.responsiveLayout){
 		el = row.modules.responsiveLayout.element;
 
-		el.empty();
+		while(el.firstChild) el.removeChild(el.firstChild);
 
-		el.append(this.collapseFormatter(this.generateCollapsedRowData(row)))
+		contents = this.collapseFormatter(this.generateCollapsedRowData(row));
+
+		if(contents){
+			el.appendChild(contents);
+		}
 	}
-}
+};
 
 ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 	var self = this,
@@ -191,24 +196,24 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 			if(column.modules.format && self.table.options.responsiveLayoutCollapseUseFormatters){
 
 				mockCellComponent = {
-				    value:false,
-				    data:{},
-				    getValue:function(){
-				        return value;
-				    },
-				    getData:function(){
-				        return data;
-				    },
-				    getElement:function(){
-				        return $();
-				    },
-				    getRow:function(){
-				        return row.getComponent();
-				    },
-				    getColumn:function(){
-				        return column.getComponent();
-				    },
-				}
+					value:false,
+					data:{},
+					getValue:function(){
+						return value;
+					},
+					getData:function(){
+						return data;
+					},
+					getElement:function(){
+						return document.createElement("div");
+					},
+					getRow:function(){
+						return row.getComponent();
+					},
+					getColumn:function(){
+						return column.getComponent();
+					},
+				};
 
 				output[column.definition.title] = column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params);
 			}else{
@@ -218,16 +223,19 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 	});
 
 	return output;
-}
+};
 
 ResponsiveLayout.prototype.formatCollapsedData = function(data){
-	var list = $("<table></table>");
+	var list = document.createElement("table"),
+	listContents = "";
 
 	for(var key in data){
-		list.append("<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>");
+		listContents += "<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>";
 	}
 
+	list.innerHTML = listContents;
+
 	return Object.keys(data).length ? list : "";
-}
+};
 
 Tabulator.prototype.registerModule("responsiveLayout", ResponsiveLayout);

@@ -1166,7 +1166,7 @@ RowManager.prototype._simpleRender = function(){
 
 //show scrollbars on empty table div
 RowManager.prototype.renderEmptyScroll = function(){
-	this.tableElement.style.minWidth = self.table.columnManager.getWidth();
+	this.tableElement.style.minWidth = this.table.columnManager.getWidth();
 	this.tableElement.style.minHeight = "1px";
 	this.tableElement.style.visibility = "hidden";
 };
