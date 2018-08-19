@@ -8,33 +8,29 @@ Comms.prototype.getConnections = function(selectors){
 	connections = [],
 	connection;
 
-	if(Array.isArray(selectors)){
-		connections = selectors;
-	}else{
-		connection = typeof selectors == "string" ?  $(selectors) : selectors;
+	connection = Tabulator.prototype.comms.lookupTable(selectors);
 
-		connection.each(function(){
-			if(self.table.element !== this){
-				connections.push($(this));
-			}
-		});
-	}
+	connection.forEach(function(con){
+		if(self.table !== con){
+			connections.push(con);
+		}
+	});
 
 	return connections;
-}
+};
 
 Comms.prototype.send = function(selectors, module, action, data){
 	var self = this,
 	connections = this.getConnections(selectors);
 
 	connections.forEach(function(connection){
-		connection.tabulator("tableComms", self.table.element, module, action, data);
+		connection.tableComms(self.table.element, module, action, data);
 	});
 
 	if(!connections.length && selectors){
 		console.warn("Table Connection Error - No tables matching selector found", selectors);
 	}
-}
+};
 
 
 Comms.prototype.receive = function(table, module, action, data){
@@ -43,7 +39,7 @@ Comms.prototype.receive = function(table, module, action, data){
 	}else{
 		console.warn("Inter-table Comms Error - no such module:", module);
 	}
-}
+};
 
 
 Tabulator.prototype.registerModule("comms", Comms);

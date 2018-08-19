@@ -5889,6 +5889,8 @@ var Tabulator = function Tabulator(element, options) {
 	this.initializeOptions(options);
 
 	this._create();
+
+	Tabulator.prototype.comms.register(this); //register table for inderdevice communication
 };
 
 //default setup options
@@ -6621,6 +6623,9 @@ Tabulator.prototype._setOption = function (option, value) {
 Tabulator.prototype._destroy = function () {
 
 	var element = this.element;
+
+	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication
+
 
 	//clear row data
 
@@ -7942,6 +7947,79 @@ Tabulator.prototype.helpers = {
 
 };
 
+Tabulator.prototype.comms = {
+
+	tables: [],
+
+	register: function register(table) {
+
+		Tabulator.prototype.comms.tables.push(table);
+	},
+
+	deregister: function deregister(table) {
+
+		var index = Tabulator.prototype.comms.tables.indexOf(table);
+
+		if (index > -1) {
+
+			Tabulator.prototype.comms.tables.splice(index, 1);
+		}
+	},
+
+	lookupTable: function lookupTable(query) {
+
+		var results = [],
+		    matches,
+		    match;
+
+		if (typeof query === "string") {
+
+			matches = document.querySelectorAll(query);
+
+			if (matches.length) {
+
+				for (var i = 0; i < matches.length; i++) {
+
+					match = Tabulator.prototype.comms.matchElement(matches[i]);
+
+					if (match) {
+
+						results.push(match);
+					}
+				}
+			}
+		} else if (query instanceof HTMLElement || query instanceof Tabulator) {
+
+			match = Tabulator.prototype.comms.matchElement(query);
+
+			if (match) {
+
+				results.push(match);
+			}
+		} else if (Array.isArray(query)) {
+
+			query.forEach(function (item) {
+
+				results = results.concat(Tabulator.prototype.comms.lookupTable(item));
+			});
+		} else {
+
+			console.warn("Table Connection Error - Invalid Selector", query);
+		}
+
+		return results;
+	},
+
+	matchElement: function matchElement(element) {
+
+		return Tabulator.prototype.comms.tables.find(function (table) {
+
+			return element instanceof Tabulator ? table === element : table.element === element;
+		});
+	}
+
+};
+
 var Layout = function Layout(table) {
 
 	this.table = table;
@@ -8558,21 +8636,15 @@ Comms.prototype.getConnections = function (selectors) {
 	    connections = [],
 	    connection;
 
-	if (Array.isArray(selectors)) {
+	connection = Tabulator.prototype.comms.lookupTable(selectors);
 
-		connections = selectors;
-	} else {
+	connection.forEach(function (con) {
 
-		connection = typeof selectors == "string" ? $(selectors) : selectors;
+		if (self.table !== con) {
 
-		connection.each(function () {
-
-			if (self.table.element !== this) {
-
-				connections.push($(this));
-			}
-		});
-	}
+			connections.push(con);
+		}
+	});
 
 	return connections;
 };
@@ -8584,7 +8656,7 @@ Comms.prototype.send = function (selectors, module, action, data) {
 
 	connections.forEach(function (connection) {
 
-		connection.tabulator("tableComms", self.table.element, module, action, data);
+		connection.tableComms(self.table.element, module, action, data);
 	});
 
 	if (!connections.length && selectors) {

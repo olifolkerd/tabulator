@@ -27,6 +27,7 @@ var Tabulator = function(element, options){
 	this.initializeOptions(options);
 	this._create();
 
+	Tabulator.prototype.comms.register(this); //register table for inderdevice communication
 };
 
 //default setup options
@@ -528,6 +529,8 @@ Tabulator.prototype._setOption = function(option, value){
 //deconstructor
 Tabulator.prototype._destroy = function(){
 	var element = this.element;
+
+	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication
 
 	//clear row data
 	this.rowManager.rows.forEach(function(row){
@@ -1495,6 +1498,58 @@ Tabulator.prototype.helpers = {
 			}
 		}
 		return clone;
+	}
+};
+
+Tabulator.prototype.comms = {
+	tables:[],
+	register:function(table){
+		Tabulator.prototype.comms.tables.push(table);
+	},
+	deregister:function(table){
+		var index = Tabulator.prototype.comms.tables.indexOf(table);
+
+		if(index > -1){
+			Tabulator.prototype.comms.tables.splice(index, 1);
+		}
+	},
+	lookupTable:function(query){
+		var results = [],
+		matches, match;
+
+		if(typeof query === "string"){
+			matches = document.querySelectorAll(query);
+
+			if(matches.length){
+				for(var i = 0; i < matches.length; i++){
+					match = Tabulator.prototype.comms.matchElement(matches[i]);
+
+					if(match){
+						results.push(match);
+					}
+				}
+			}
+
+		}else if(query instanceof HTMLElement || query instanceof Tabulator){
+			match = Tabulator.prototype.comms.matchElement(query);
+
+			if(match){
+				results.push(match);
+			}
+		}else if(Array.isArray(query)){
+			query.forEach(function(item){
+				results = results.concat(Tabulator.prototype.comms.lookupTable(item));
+			});
+		}else{
+			console.warn("Table Connection Error - Invalid Selector", query);
+		}
+
+		return results;
+	},
+	matchElement:function(element){
+		return Tabulator.prototype.comms.tables.find(function(table){
+			return element instanceof Tabulator ? table === element : table.element === element;
+		});
 	}
 };
 
