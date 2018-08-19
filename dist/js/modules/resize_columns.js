@@ -119,8 +119,8 @@ ResizeColumns.prototype._mouseDown = function (e, column) {
 			column.checkCellHeights();
 		}
 
-		$("body").off("mouseup", mouseMove);
-		$("body").off("mousemove", mouseMove);
+		document.body.removeEventListener("mouseup", mouseMove);
+		document.body.removeEventListener("mousemove", mouseMove);
 
 		self.table.element.classList.remove("tabulator-block-select");
 
@@ -141,9 +141,9 @@ ResizeColumns.prototype._mouseDown = function (e, column) {
 	self.startX = e.screenX;
 	self.startWidth = column.getWidth();
 
-	$("body").on("mousemove", mouseMove);
+	document.body.addEventListener("mousemove", mouseMove);
 
-	$("body").on("mouseup", mouseUp);
+	document.body.addEventListener("mouseup", mouseUp);
 };
 
 Tabulator.prototype.registerModule("resizeColumns", ResizeColumns);

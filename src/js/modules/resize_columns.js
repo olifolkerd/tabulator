@@ -91,7 +91,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 
 
 ResizeColumns.prototype._checkResizability = function(column){
-	return typeof column.definition.resizable != "undefined" ? column.definition.resizable : this.table.options.resizableColumns
+	return typeof column.definition.resizable != "undefined" ? column.definition.resizable : this.table.options.resizableColumns;
 };
 
 ResizeColumns.prototype._mouseDown = function(e, column){
@@ -118,8 +118,8 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 			column.checkCellHeights();
 		}
 
-		$("body").off("mouseup", mouseMove);
-		$("body").off("mousemove", mouseMove);
+		document.body.removeEventListener("mouseup", mouseMove);
+		document.body.removeEventListener("mousemove", mouseMove);
 
 		self.table.element.classList.remove("tabulator-block-select");
 
@@ -127,7 +127,7 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 			self.table.modules.persistence.save("columns");
 		}
 
-		self.table.options.columnResized(self.startColumn.getComponent())
+		self.table.options.columnResized(self.startColumn.getComponent());
 	}
 
 	e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -140,9 +140,9 @@ ResizeColumns.prototype._mouseDown = function(e, column){
 	self.startX = e.screenX;
 	self.startWidth = column.getWidth();
 
-	$("body").on("mousemove", mouseMove);
+	document.body.addEventListener("mousemove", mouseMove);
 
-	$("body").on("mouseup", mouseUp);
+	document.body.addEventListener("mouseup", mouseUp);
 };
 
 Tabulator.prototype.registerModule("resizeColumns", ResizeColumns);
