@@ -327,19 +327,18 @@ Tabulator.prototype._create = function(){
 		if(this.modExists("htmlTableImport", true)){
 			this.modules.htmlTableImport.parseTable();
 		}
-	}else{
-
-		this.columnManager = new ColumnManager(this);
-		this.rowManager = new RowManager(this);
-		this.footerManager = new FooterManager(this);
-
-		this.columnManager.setRowManager(this.rowManager);
-		this.rowManager.setColumnManager(this.columnManager);
-
-		this._buildElement();
-
-		this._loadInitialData();
 	}
+
+	this.columnManager = new ColumnManager(this);
+	this.rowManager = new RowManager(this);
+	this.footerManager = new FooterManager(this);
+
+	this.columnManager.setRowManager(this.rowManager);
+	this.rowManager.setColumnManager(this.columnManager);
+
+	this._buildElement();
+
+	this._loadInitialData();
 };
 
 //clear pointers to objects in default config object
@@ -1479,10 +1478,10 @@ Tabulator.prototype.helpers = {
 	elOffset: function(el){
 		const box = el.getBoundingClientRect();
 
-		  return {
-		    top: box.top + window.pageYOffset - document.documentElement.clientTop,
-		    left: box.left + window.pageXOffset - document.documentElement.clientLeft
-		  };
+		return {
+			top: box.top + window.pageYOffset - document.documentElement.clientTop,
+			left: box.left + window.pageXOffset - document.documentElement.clientLeft
+		};
 	},
 }
 

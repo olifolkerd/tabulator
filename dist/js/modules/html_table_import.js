@@ -1,9 +1,12 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 /* Tabulator v4.0.0 (c) Oliver Folkerd */
 
 var HtmlTableImport = function HtmlTableImport(table) {
 	this.table = table; //hold Tabulator object
+	this.fieldIndex = [];
 	this.hasIndex = false;
 };
 
@@ -12,9 +15,10 @@ HtmlTableImport.prototype.parseTable = function () {
 	    element = self.table.element,
 	    options = self.table.options,
 	    columns = options.columns,
-	    headers = $("th", element),
-	    rows = $("tbody tr", element),
-	    data = [];
+	    headers = element.getElementsByTagName("th"),
+	    rows = element.getElementsByTagName("tbody")[0].getElementsByTagName("tr"),
+	    data = [],
+	    newTable;
 
 	self.hasIndex = false;
 
@@ -24,64 +28,73 @@ HtmlTableImport.prototype.parseTable = function () {
 	self._extractOptions(element, options);
 
 	if (headers.length) {
-		self._extractHeaders(element);
+		self._extractHeaders(headers, rows);
 	} else {
-		self._generateBlankHeaders(element);
+		self._generateBlankHeaders(headers, rows);
 	}
 
 	//iterate through table rows and build data set
-	rows.each(function (rowIndex) {
-		var item = {};
+	for (var index = 0; index < rows.length; index++) {
+		var row = rows[index],
+		    cells = row.getElementsByTagName("td"),
+		    item = {};
 
 		//create index if the dont exist in table
 		if (!self.hasIndex) {
-			item[options.index] = rowIndex;
+			item[options.index] = index;
+		}
+
+		for (var i = 0; i < cells.length; i++) {
+			var cell = cells[i];
+			if (typeof this.fieldIndex[i] !== "undefined") {
+				item[this.fieldIndex[i]] = cell.innerHTML;
+			}
 		}
 
 		//add row data to item
-		$("td", $(this)).each(function (colIndex) {
-			item[$(this).data("field")] = $(this).html();
-		});
-
 		data.push(item);
-	});
+	}
 
 	//create new element
-	var newElement = $("<div></div>");
+	var newElement = document.createElement("div");
 
 	//transfer attributes to new element
-	var attributes = element.prop("attributes");
+	var attributes = element.attributes;
 
 	// loop through attributes and apply them on div
-	$.each(attributes, function () {
-		newElement.attr(this.name, this.value);
-	});
+
+	for (var i in attributes) {
+		if (_typeof(attributes[i]) == "object") {
+			newElement.setAttribute(attributes[i].name, attributes[i].value);
+		}
+	}
 
 	// replace table with div element
-	element.replaceWith(newElement);
+	element.parentNode.replaceChild(newElement, element);
 
 	options.data = data;
 
 	self.table.options.htmlImported();
 
-	newElement.tabulator(options);
+	// // newElement.tabulator(options);
+
+	this.table.element = newElement;
 };
 
 //extract tabluator attribute options
 HtmlTableImport.prototype._extractOptions = function (element, options) {
-	var self = this,
-	    attributes = element[0].attributes;
+	var attributes = element.attributes;
 
 	for (var index in attributes) {
 		var attrib = attributes[index];
 		var name;
 
-		if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+		if ((typeof attrib === "undefined" ? "undefined" : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
 			name = attrib.name.replace("tabulator-", "");
 
 			for (var key in options) {
 				if (key.toLowerCase() == name) {
-					options[key] = self._attribValue(attrib.value);
+					options[key] = this._attribValue(attrib.value);
 				}
 			}
 		}
@@ -103,9 +116,7 @@ HtmlTableImport.prototype._attribValue = function (value) {
 
 //find column if it has already been defined
 HtmlTableImport.prototype._findCol = function (title) {
-	var self = this;
-
-	var match = self.table.options.columns.find(function (column) {
+	var match = this.table.options.columns.find(function (column) {
 		return column.title === title;
 	});
 
@@ -113,82 +124,76 @@ HtmlTableImport.prototype._findCol = function (title) {
 };
 
 //extract column from headers
-HtmlTableImport.prototype._extractHeaders = function (element) {
-	var self = this,
-	    headers = $("th", element),
-	    rows = $("tbody tr", element);
-
-	headers.each(function (index) {
-		var header = $(this),
+HtmlTableImport.prototype._extractHeaders = function (headers, rows) {
+	for (var index = 0; index < headers.length; index++) {
+		var header = headers[index],
 		    exists = false,
-		    col = self._findCol(header.text()),
+		    col = this._findCol(header.textContent),
 		    width,
 		    attributes;
 
 		if (col) {
 			exists = true;
 		} else {
-			col = { title: header.text().trim() };
+			col = { title: header.textContent.trim() };
 		}
 
 		if (!col.field) {
-			col.field = header.text().trim().toLowerCase().replace(" ", "_");
+			col.field = header.textContent.trim().toLowerCase().replace(" ", "_");
 		}
 
-		width = header.attr("width");
+		width = header.getAttribute("width");
 
 		if (width && !col.width) {
 			col.width = width;
 		}
 
 		//check for tablator inline options
-		attributes = header[0].attributes;
+		attributes = header.attributes;
 
 		// //check for tablator inline options
-		self._extractOptions(header, col);
+		this._extractOptions(header, col);
 
 		for (var i in attributes) {
 			var attrib = attributes[i],
 			    name;
 
-			if (attrib && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+			if ((typeof attrib === "undefined" ? "undefined" : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
 
 				name = attrib.name.replace("tabulator-", "");
 
-				col[name] = self._attribValue(attrib.value);
+				col[name] = this._attribValue(attrib.value);
 			}
 		}
 
-		$("td:eq(" + index + ")", rows).data("field", col.field);
+		this.fieldIndex[index] = col.field;
 
-		if (col.field == self.table.options.index) {
-			self.hasIndex = true;
+		if (col.field == this.table.options.index) {
+			this.hasIndex = true;
 		}
 
 		if (!exists) {
-			self.table.options.columns.push(col);
+			this.table.options.columns.push(col);
 		}
-	});
+	}
 };
 
 //generate blank headers
-HtmlTableImport.prototype._generateBlankHeaders = function (element) {
-	var self = this,
-	    headers = $("tr:first td", element),
-	    rows = $("tbody tr", element);
+HtmlTableImport.prototype._generateBlankHeaders = function (headers, rows) {
+	for (var index = 0; index < headers.length; index++) {
+		var header = headers[index],
+		    col = { title: "", field: "col" + index };
 
-	headers.each(function (index) {
-		var col = { title: "", field: "col" + index };
-		$("td:eq(" + index + ")", rows).data("field", col.field);
+		this.fieldIndex[index] = col.field;
 
-		var width = $(this).attr("width");
+		var width = header.getAttribute("width");
 
 		if (width) {
 			col.width = width;
 		}
 
-		self.table.options.columns.push(col);
-	});
+		this.table.options.columns.push(col);
+	}
 };
 
 Tabulator.prototype.registerModule("htmlTableImport", HtmlTableImport);
