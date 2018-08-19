@@ -194,13 +194,13 @@ Keybindings.prototype.actions = {
 	scrollPageUp: function scrollPageUp(e) {
 		var rowManager = this.table.rowManager,
 		    newPos = rowManager.scrollTop - rowManager.height,
-		    scrollMax = rowManager.element[0].scrollHeight;
+		    scrollMax = rowManager.element.scrollHeight;
 
 		e.preventDefault();
 
 		if (rowManager.displayRowsCount) {
 			if (newPos >= 0) {
-				rowManager.element.scrollTop(newPos);
+				rowManager.element.scrollTop = newPos;
 			} else {
 				rowManager.scrollToRow(rowManager.getDisplayRows()[0]);
 			}
@@ -211,13 +211,13 @@ Keybindings.prototype.actions = {
 	scrollPageDown: function scrollPageDown(e) {
 		var rowManager = this.table.rowManager,
 		    newPos = rowManager.scrollTop + rowManager.height,
-		    scrollMax = rowManager.element[0].scrollHeight;
+		    scrollMax = rowManager.element.scrollHeight;
 
 		e.preventDefault();
 
 		if (rowManager.displayRowsCount) {
 			if (newPos <= scrollMax) {
-				rowManager.element.scrollTop(newPos);
+				rowManager.element.scrollTop = newPos;
 			} else {
 				rowManager.scrollToRow(rowManager.getDisplayRows()[rowManager.displayRowsCount - 1]);
 			}
