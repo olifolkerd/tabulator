@@ -25,7 +25,8 @@ Filter.prototype.initializeColumn = function (column) {
 	    cellWrapper,
 	    typingTimer,
 	    tagType,
-	    attrType;
+	    attrType,
+	    searchTrigger;
 
 	//handle successfull value change
 	function success(value) {
@@ -87,11 +88,12 @@ Filter.prototype.initializeColumn = function (column) {
 	};
 
 	//handle aborted edit
-	function cancel() {};
+	function cancel() {}
 
 	if (field) {
 
-		filterElement = $("<div class='tabulator-header-filter'></div>");
+		filterElement = document.createElement("div");
+		filterElement.classList.add("tabulator-header-filter");
 
 		//set column editor
 		switch (_typeof(column.definition.headerFilter)) {
@@ -144,55 +146,56 @@ Filter.prototype.initializeColumn = function (column) {
 			//set Placeholder Text
 			if (field) {
 				self.table.modules.localize.bind("headerFilters|columns|" + column.definition.field, function (value) {
-					editorElement.attr("placeholder", typeof value !== "undefined" && value ? value : self.table.modules.localize.getText("headerFilters|default"));
+					editorElement.setAttribute("placeholder", typeof value !== "undefined" && value ? value : self.table.modules.localize.getText("headerFilters|default"));
 				});
 			} else {
 				self.table.modules.localize.bind("headerFilters|default", function (value) {
-					editorElement.attr("placeholdder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
+					editorElement.setAttribute("placeholdder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
 				});
 			}
 
 			//focus on element on click
-			editorElement.on("click", function (e) {
+			editorElement.addEventListener("click", function (e) {
 				e.stopPropagation();
-				$(this).focus();
+				editorElement.focus();
 			});
 
 			//live update filters as user types
 			typingTimer = false;
 
-			editorElement.on("keyup search", function (e) {
-				var element = $(this);
-
+			searchTrigger = function searchTrigger(e) {
 				if (typingTimer) {
 					clearTimeout(typingTimer);
 				}
 
 				typingTimer = setTimeout(function () {
-					success(element.val());
+					success(editorElement.value);
 				}, 300);
-			});
+			};
+
+			editorElement.addEventListener("keyup", searchTrigger);
+			editorElement.addEventListener("search", searchTrigger);
 
 			column.modules.filter.headerElement = editorElement;
 
 			//update number filtered columns on change
-			attrType = editorElement.attr("type") ? editorElement.attr("type").toLowerCase() : "";
+			attrType = editorElement.hasAttribute("type") ? editorElement.getAttribute("type").toLowerCase() : "";
 			if (attrType == "number") {
-				editorElement.on("change", function (e) {
-					success($(this).val());
+				editorElement.addEventListener("change", function (e) {
+					success(editorElement.value);
 				});
 			}
 
 			//change text inputs to search inputs to allow for clearing of field
 			if (attrType == "text" && this.table.browser !== "ie") {
-				editorElement.attr("type", "search");
-				editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+				editorElement.setAttribute("type", "search");
+				// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
 			}
 
 			//prevent input and select elements from propegating click to column sorters etc
-			tagType = editorElement.prop("tagName").toLowerCase();
+			tagType = editorElement.tagName.toLowerCase();
 			if (tagType == "input" || tagType == "select" || tagType == "textarea") {
-				editorElement.on("mousedown", function (e) {
+				editorElement.addEventListener("mousedown", function (e) {
 					e.stopPropagation();
 				});
 			}
@@ -211,14 +214,14 @@ Filter.prototype.initializeColumn = function (column) {
 //hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 Filter.prototype.hideHeaderFilterElements = function () {
 	this.headerFilterElements.forEach(function (element) {
-		element.hide();
+		element.style.display = 'none';
 	});
 };
 
 //show all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 Filter.prototype.showHeaderFilterElements = function () {
 	this.headerFilterElements.forEach(function (element) {
-		element.show();
+		element.style.display = '';
 	});
 };
 
@@ -454,8 +457,6 @@ Filter.prototype.filter = function (rowList) {
 				activeRows.push(row);
 			}
 		});
-
-		activeRows;
 	} else {
 		activeRows = rowList.slice(0);
 	}
