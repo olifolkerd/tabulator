@@ -79,8 +79,7 @@ var Group = function Group(groupManager, parent, level, key, field, generator, o
 	this.groups = [];
 	this.groupList = [];
 	this.generator = generator;
-	this.element = $("<div class='tabulator-row tabulator-group tabulator-group-level-" + level + "' role='rowgroup'></div>");
-	this.elementContents = $(""), this.arrowElement = $("<div class='tabulator-arrow'></div>");
+	this.elementContents = false;
 	this.height = 0;
 	this.outerHeight = 0;
 	this.initialized = false;
@@ -90,7 +89,19 @@ var Group = function Group(groupManager, parent, level, key, field, generator, o
 
 	this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
 
+	this.createElements();
 	this.addBindings();
+};
+
+Group.prototype.createElements = function () {
+	this.element = document.createElement("div");
+	this.element.classList.add("tabulator-row");
+	this.element.classList.add("tabulator-group");
+	this.element.classList.add("tabulator-group-level-" + this.level);
+	this.element.setAttribute("role", "rowgroup");
+
+	this.arrowElement = document.createElement("div");
+	this.arrowElement.classList.add("tabulator-arrow");
 };
 
 Group.prototype.addBindings = function () {
@@ -102,19 +113,19 @@ Group.prototype.addBindings = function () {
 
 	//handle group click events
 	if (self.groupManager.table.options.groupClick) {
-		self.element.on("click", function (e) {
+		self.element.addEventListener("click", function (e) {
 			self.groupManager.table.options.groupClick(e, self.getComponent());
 		});
 	}
 
 	if (self.groupManager.table.options.groupDblClick) {
-		self.element.on("dblclick", function (e) {
+		self.element.addEventListener("dblclick", function (e) {
 			self.groupManager.table.options.groupDblClick(e, self.getComponent());
 		});
 	}
 
 	if (self.groupManager.table.options.groupContext) {
-		self.element.on("contextmenu", function (e) {
+		self.element.addEventListener("contextmenu", function (e) {
 			self.groupManager.table.options.groupContext(e, self.getComponent());
 		});
 	}
@@ -123,11 +134,11 @@ Group.prototype.addBindings = function () {
 
 		tap = false;
 
-		self.element.on("touchstart", function (e) {
+		self.element.addEventListener("touchstart", function (e) {
 			tap = true;
 		});
 
-		self.element.on("touchend", function (e) {
+		self.element.addEventListener("touchend", function (e) {
 			if (tap) {
 				self.groupManager.table.options.groupTap(e, self.getComponent());
 			}
@@ -140,7 +151,7 @@ Group.prototype.addBindings = function () {
 
 		dblTap = null;
 
-		self.element.on("touchend", function (e) {
+		self.element.addEventListener("touchend", function (e) {
 
 			if (dblTap) {
 				clearTimeout(dblTap);
@@ -161,7 +172,7 @@ Group.prototype.addBindings = function () {
 
 		tapHold = null;
 
-		self.element.on("touchstart", function (e) {
+		self.element.addEventListener("touchstart", function (e) {
 			clearTimeout(tapHold);
 
 			tapHold = setTimeout(function () {
@@ -172,7 +183,7 @@ Group.prototype.addBindings = function () {
 			}, 1000);
 		});
 
-		self.element.on("touchend", function (e) {
+		self.element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);
 			tapHold = null;
 		});
@@ -181,7 +192,7 @@ Group.prototype.addBindings = function () {
 	if (self.groupManager.table.options.groupToggleElement) {
 		toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
 
-		toggleElement.on("click", function (e) {
+		toggleElement.addEventListener("click", function (e) {
 			e.stopPropagation();
 			e.stopImmediatePropagation();
 			self.toggleVisibility();
@@ -213,7 +224,6 @@ Group.prototype._addRow = function (row) {
 };
 
 Group.prototype.insertRow = function (row, to, after) {
-
 	var data = this.conformRowData({});
 
 	row.updateData(data);
@@ -247,7 +257,6 @@ Group.prototype.getRowIndex = function (row) {};
 
 //update row data to match grouping contraints
 Group.prototype.conformRowData = function (data) {
-
 	if (this.field) {
 		data[this.field] = this.key;
 	} else {
@@ -388,12 +397,16 @@ Group.prototype.hide = function () {
 		if (this.groupList.length) {
 			this.groupList.forEach(function (group) {
 
+				var el;
+
 				if (group.calcs.top) {
-					group.calcs.top.getElement().detach();
+					el = group.calcs.top.getElement();
+					el.parentNode.removeChild(el);
 				}
 
 				if (group.calcs.bottom) {
-					group.calcs.bottom.getElement().detach();
+					el = group.calcs.bottom.getElement();
+					el.parentNode.removeChild(el);
 				}
 
 				var rows = group.getHeadersAndRows();
@@ -425,7 +438,7 @@ Group.prototype.show = function () {
 
 	if (this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination) {
 
-		this.element.addClass("tabulator-group-visible");
+		this.element.classList.add("tabulator-group-visible");
 
 		var prev = self.getElement();
 
@@ -500,7 +513,15 @@ Group.prototype.generateGroupHeaderContents = function () {
 
 	this.elementContents = this.generator(this.key, this.getRowCount(), data, this.getComponent());
 
-	this.element.empty().append(this.elementContents).prepend(this.arrowElement);
+	while (this.element.firstChild) {
+		this.element.removeChild(this.element.firstChild);
+	}if (typeof this.elementContents === "string") {
+		this.element.innerHTML = this.elementContents;
+	} else {
+		this.element.appendChild(this.elementContents);
+	}
+
+	this.element.insertBefore(this.arrowElement, this.element.firstChild);
 };
 
 ////////////// Standard Row Functions //////////////
@@ -511,12 +532,14 @@ Group.prototype.getElement = function () {
 	this._visSet();
 
 	if (this.visible) {
-		this.element.addClass("tabulator-group-visible");
+		this.element.classList.add("tabulator-group-visible");
 	} else {
-		this.element.removeClass("tabulator-group-visible");
+		this.element.classList.remove("tabulator-group-visible");
 	}
 
-	this.element.children().detach();
+	this.element.childNodes.forEach(function (child) {
+		child.parentNode.removeChild(child);
+	});
 
 	this.generateGroupHeaderContents();
 
@@ -527,7 +550,7 @@ Group.prototype.getElement = function () {
 
 //normalize the height of elements in the row
 Group.prototype.normalizeHeight = function () {
-	this.setHeight(this.element.innerHeight());
+	this.setHeight(this.element.clientHeight);
 };
 
 Group.prototype.initialize = function (force) {
@@ -549,7 +572,7 @@ Group.prototype.reinitialize = function () {
 Group.prototype.setHeight = function (height) {
 	if (this.height != height) {
 		this.height = height;
-		this.outerHeight = this.element.outerHeight();
+		this.outerHeight = this.element.offsetHeight;
 	}
 };
 
@@ -705,7 +728,7 @@ GroupRows.prototype.getRows = function (rows) {
 
 		if (this.table.options.dataGrouped) {
 			this.table.options.dataGrouped(this.getGroups());
-		};
+		}
 
 		return this.updateGroupRows();
 	} else {
@@ -755,8 +778,9 @@ GroupRows.prototype.generateGroups = function (rows) {
 
 GroupRows.prototype.assignRowToGroup = function (row, oldGroups) {
 	var groupID = this.groupIDLookups[0].func(row.getData()),
-	    oldGroups = oldGroups || [],
 	    newGroupNeeded = !this.groups[groupID];
+
+	oldGroups = oldGroups || [];
 
 	if (newGroupNeeded) {
 		var group = new Group(this, false, 0, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupID]);
@@ -796,7 +820,7 @@ GroupRows.prototype.updateGroupRows = function (force) {
 
 GroupRows.prototype.scrollHeaders = function (left) {
 	this.groupList.forEach(function (group) {
-		group.arrowElement.css("margin-left", left);
+		group.arrowElement.style.marginLeft = left + "px";
 	});
 };
 
