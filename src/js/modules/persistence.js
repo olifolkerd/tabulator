@@ -62,7 +62,7 @@ Persistence.prototype.retreiveData = function(type){
 	}
 
 	return data ? JSON.parse(data) : false;
-}
+};
 
 //merge old and new column defintions
 Persistence.prototype.mergeDefinition = function(oldCols, newCols){
@@ -121,7 +121,7 @@ Persistence.prototype._findColumn = function(columns, subject){
 			return col === subject;
 			break;
 		}
-	})
+	});
 };
 
 //save data
@@ -179,7 +179,7 @@ Persistence.prototype.saveData = function(id, data){
 		default:
 		console.warn("Persistance Save Error - invalid mode selected", this.mode);
 	}
-}
+};
 
 //build premission list
 Persistence.prototype.parseColumns = function(columns){
