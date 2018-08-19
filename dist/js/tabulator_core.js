@@ -1673,7 +1673,7 @@ Column.prototype.matchChildWidths = function () {
 			childWidth += column.getWidth();
 		});
 
-		this.contentElement.css("max-width", childWidth - 1);
+		this.contentElement.style.maxWidth = childWidth - 1 + "px";
 	}
 };
 
@@ -2201,7 +2201,7 @@ RowManager.prototype.addRow = function (data, pos, index, blockRedraw) {
 
 	if (this.table.options.history && this.table.modExists("history")) {
 		this.table.modules.history.action("rowAdd", row, { data: data, pos: pos, index: index });
-	};
+	}
 
 	return row;
 };
@@ -2246,7 +2246,6 @@ RowManager.prototype.addRows = function (data, pos, index) {
 };
 
 RowManager.prototype.findAddRowPos = function (pos) {
-
 	if (typeof pos === "undefined") {
 		pos = this.table.options.addRowPos;
 	}
@@ -2314,7 +2313,7 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 				this._moveRowInArray(row.getGroup().rows, row, index, top);
 			}
 		}
-	};
+	}
 
 	if (index) {
 		var allIndex = this.rows.indexOf(index),
@@ -2371,7 +2370,7 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 RowManager.prototype.moveRow = function (from, to, after) {
 	if (this.table.options.history && this.table.modExists("history")) {
 		this.table.modules.history.action("rowMove", from, { pos: this.getRowPosition(from), to: to, after: after });
-	};
+	}
 
 	this.moveRowActual(from, to, after);
 
@@ -2946,10 +2945,10 @@ RowManager.prototype.renderTable = function () {
 		if (self.table.options.placeholder) {
 
 			if (this.renderMode) {
-				self.table.options.placeholder.attr("tabulator-render-mode", this.renderMode);
+				self.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 			}
 
-			self.getElement().append(self.table.options.placeholder);
+			self.getElement().appendChild(self.table.options.placeholder);
 		}
 	}
 
@@ -2996,7 +2995,7 @@ RowManager.prototype._clearVirtualDom = function () {
 	var element = this.tableElement;
 
 	if (this.table.options.placeholder) {
-		this.table.options.placeholder.detach();
+		this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
 	}
 
 	// element.children.detach();
@@ -3310,7 +3309,7 @@ RowManager.prototype._removeBottomRow = function (bottomDiff) {
 		this.vDomBottomPad += bottomRowHeight;
 
 		if (this.vDomBottomPad < 0) {
-			this.vDomBottomPad == 0;
+			this.vDomBottomPad = 0;
 		}
 
 		table.style.paddingBottom = this.vDomBottomPad + "px";
@@ -3387,7 +3386,7 @@ RowManager.prototype.redraw = function (force) {
 
 		if (!this.displayRowsCount) {
 			if (this.table.options.placeholder) {
-				this.getElement().append(this.table.options.placeholder);
+				this.getElement().appendChild(this.table.options.placeholder);
 			}
 		}
 	} else {
@@ -3842,20 +3841,24 @@ Row.prototype.getData = function (transform) {
 };
 
 Row.prototype.getCell = function (column) {
-	var match = false,
-	    column = this.table.columnManager.findColumn(column);
+	var match = false;
+
+	column = this.table.columnManager.findColumn(column);
 
 	match = this.cells.find(function (cell) {
 		return cell.column === column;
 	});
 
 	return match;
-}, Row.prototype.getCellIndex = function (findCell) {
+};
+
+Row.prototype.getCellIndex = function (findCell) {
 	return this.cells.findIndex(function (cell) {
 		return cell === findCell;
 	});
-}, Row.prototype.findNextEditableCell = function (index) {
+};
 
+Row.prototype.findNextEditableCell = function (index) {
 	var nextCell = false;
 
 	if (index < this.cells.length - 1) {
@@ -3878,7 +3881,9 @@ Row.prototype.getCell = function (column) {
 	}
 
 	return nextCell;
-}, Row.prototype.findPrevEditableCell = function (index) {
+};
+
+Row.prototype.findPrevEditableCell = function (index) {
 	var prevCell = false;
 
 	if (index > 0) {
@@ -3900,9 +3905,11 @@ Row.prototype.getCell = function (column) {
 	}
 
 	return prevCell;
-}, Row.prototype.getCells = function () {
+};
+
+Row.prototype.getCells = function () {
 	return this.cells;
-},
+};
 
 ///////////////////// Actions  /////////////////////
 
@@ -3918,7 +3925,7 @@ Row.prototype.delete = function () {
 		}
 
 		this.table.modules.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
-	};
+	}
 };
 
 Row.prototype.deleteActual = function () {
@@ -3968,6 +3975,7 @@ Row.prototype.wipe = function () {
 	while (this.element.firstChild) {
 		this.element.removeChild(this.element.firstChild);
 	}this.element.remove();
+	this.element.parentNode.removeChild(this.element);
 };
 
 Row.prototype.getGroup = function () {
@@ -4307,7 +4315,7 @@ Cell.prototype.setValue = function (value, mutate) {
 	if (changed) {
 		if (this.table.options.history && this.table.modExists("history")) {
 			this.table.modules.history.action("cellEdit", this, { oldValue: this.oldValue, newValue: this.value });
-		};
+		}
 
 		component = this.getComponent();
 
@@ -4577,7 +4585,7 @@ FooterManager.prototype.prepend = function (element, parent) {
 };
 
 FooterManager.prototype.remove = function (element) {
-	element.remove();
+	element.parentNode.removeChild(element);
 	this.deactivate();
 };
 
@@ -6074,7 +6082,7 @@ Tabulator.prototype.helpers = {
 		var clone = {};
 		for (var i in obj) {
 			if (obj[i] != null && _typeof(obj[i]) === "object") {
-				clone[i] = cloneObject(obj[i]);
+				clone[i] = this.deepClone(obj[i]);
 			} else {
 				clone[i] = obj[i];
 			}

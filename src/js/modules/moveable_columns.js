@@ -138,7 +138,7 @@ MoveColumns.prototype.moveColumn = function(column, after){
 MoveColumns.prototype.endMove = function(column){
 	this._unbindMouseMove();
 
-	this.placeholderElement.after(this.moving.getElement());
+	this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
 	this.placeholderElement.parentNode.removeChild(this.placeholderElement);
 	this.hoverElement.parentNode.removeChild(this.hoverElement);
 

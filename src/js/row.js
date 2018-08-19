@@ -87,8 +87,6 @@ RowComponent.prototype.getGroup = function(){
 };
 
 
-
-
 var Row = function(data, parent){
 	this.table = parent.table;
 	this.parent = parent;
@@ -138,19 +136,19 @@ Row.prototype.generateElement = function(){
 	if (self.table.options.rowClick){
 		self.element.addEventListener("click", function(e){
 			self.table.options.rowClick(e, self.getComponent());
-		})
+		});
 	}
 
 	if (self.table.options.rowDblClick){
 		self.element.addEventListener("dblclick", function(e){
 			self.table.options.rowDblClick(e, self.getComponent());
-		})
+		});
 	}
 
 	if (self.table.options.rowContext){
 		self.element.addEventListener("contextmenu", function(e){
 			self.table.options.rowContext(e, self.getComponent());
-		})
+		});
 	}
 
 	if (self.table.options.rowTap){
@@ -205,7 +203,7 @@ Row.prototype.generateElement = function(){
 				tapHold = null;
 				tap = false;
 				self.table.options.rowTapHold(e, self.getComponent());
-			}, 1000)
+			}, 1000);
 
 		});
 
@@ -218,7 +216,7 @@ Row.prototype.generateElement = function(){
 
 Row.prototype.generateCells = function(){
 	this.cells = this.table.columnManager.generateCells(this);
-}
+};
 
 //functions to setup on first render
 Row.prototype.initialize = function(force){
@@ -293,7 +291,7 @@ Row.prototype.calcHeight = function(){
 		if(height > maxHeight){
 			maxHeight = height;
 		}
-	})
+	});
 
 	this.height = Math.max(maxHeight, minHeight);
 	this.outerHeight = this.element.offsetHeight;
@@ -315,7 +313,7 @@ Row.prototype.clearCellHeight = function(){
 
 		cell.clearHeight();
 	});
-}
+};
 
 //normalize the height of elements in the row
 Row.prototype.normalizeHeight = function(force){
@@ -441,7 +439,8 @@ Row.prototype.getData = function(transform){
 };
 
 Row.prototype.getCell = function(column){
-	var match = false,
+	var match = false;
+
 	column = this.table.columnManager.findColumn(column);
 
 	match = this.cells.find(function(cell){
@@ -449,17 +448,16 @@ Row.prototype.getCell = function(column){
 	});
 
 	return match;
-},
+};
 
 Row.prototype.getCellIndex = function(findCell){
 	return this.cells.findIndex(function(cell){
 		return cell === findCell;
 	});
-},
+};
 
 
 Row.prototype.findNextEditableCell = function(index){
-
 	var nextCell = false;
 
 	if(index < this.cells.length-1){
@@ -482,7 +480,7 @@ Row.prototype.findNextEditableCell = function(index){
 	}
 
 	return nextCell;
-},
+};
 
 Row.prototype.findPrevEditableCell = function(index){
 	var prevCell = false;
@@ -506,12 +504,12 @@ Row.prototype.findPrevEditableCell = function(index){
 	}
 
 	return prevCell;
-},
+};
 
 
 Row.prototype.getCells = function(){
 	return this.cells;
-},
+};
 
 ///////////////////// Actions  /////////////////////
 
@@ -527,7 +525,7 @@ Row.prototype.delete = function(){
 		}
 
 		this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
-	};
+	}
 
 };
 
@@ -580,12 +578,13 @@ Row.prototype.wipe = function(){
 	while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
 	this.element.remove();
-}
+	this.element.parentNode.removeChild(this.element);
+};
 
 
 Row.prototype.getGroup = function(){
 	return this.modules.group || false;
-}
+};
 
 
 //////////////// Object Generation /////////////////

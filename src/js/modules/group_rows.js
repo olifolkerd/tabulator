@@ -400,7 +400,7 @@ Group.prototype.hide = function(){
 
 	if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
 
-		this.element.removeClass("tabulator-group-visible");
+		this.element.classList.remove("tabulator-group-visible");
 
 		if(this.groupList.length){
 			this.groupList.forEach(function(group){

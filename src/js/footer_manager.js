@@ -41,18 +41,18 @@ FooterManager.prototype.prepend = function(element, parent){
 };
 
 FooterManager.prototype.remove = function(element){
-	element.remove();
+	element.parentNode.removeChild(element);
 	this.deactivate();
 };
 
 FooterManager.prototype.deactivate = function(force){
 	if(this.element.is(":empty") || force){
-		this.element.parentNode.removeChild(this.element)
+		this.element.parentNode.removeChild(this.element);
 		this.active = false;
 	}
 
 	// this.table.rowManager.adjustTableSize();
-}
+};
 
 FooterManager.prototype.activate = function(parent){
 	if(!this.active){
@@ -64,7 +64,7 @@ FooterManager.prototype.activate = function(parent){
 	if(parent){
 		this.links.push(parent);
 	}
-}
+};
 
 FooterManager.prototype.redraw = function(){
 	this.links.forEach(function(link){

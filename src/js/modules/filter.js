@@ -194,7 +194,7 @@ Filter.prototype.initializeColumn = function(column){
 
 			filterElement.append(editorElement);
 
-			column.contentElement.append(filterElement);
+			column.contentElement.appendChild(filterElement);
 
 			self.headerFilterElements.push(editorElement);
 		}

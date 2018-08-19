@@ -164,7 +164,7 @@ MoveRows.prototype.startMove = function (e, row) {
 		this.hoverElement.style.overflow = "hidden";
 		this.hoverElement.style.pointerEvents = "none";
 	} else {
-		this.table.rowManager.getTableElement().append(this.hoverElement);
+		this.table.rowManager.getTableElement().appendChild(this.hoverElement);
 
 		this.hoverElement.style.left = "0";
 		this.hoverElement.style.top = "0";
@@ -196,7 +196,7 @@ MoveRows.prototype.endMove = function (column) {
 	this._unbindMouseMove();
 
 	if (!this.connection) {
-		this.placeholderElement.after(this.moving.getElement());
+		this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
 		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
 	}
 

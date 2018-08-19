@@ -263,23 +263,14 @@ Format.prototype.formatters = {
 	},
 
 	//star rating
-	star: function (_star) {
-		function star(_x, _x2) {
-			return _star.apply(this, arguments);
-		}
-
-		star.toString = function () {
-			return _star.toString();
-		};
-
-		return star;
-	}(function (cell, formatterParams) {
+	star: function star(cell, formatterParams) {
 		var value = cell.getValue(),
 		    element = cell.getElement(),
 		    maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
-		    stars = starsHolder = document.createElement("span"),
-		    stars = document.createElementNS('http://www.w3.org/2000/svg', "svg");
-		starActive = '<polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>', starInactive = '<polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+		    stars = document.createElement("span"),
+		    star = document.createElementNS('http://www.w3.org/2000/svg', "svg"),
+		    starActive = '<polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>',
+		    starInactive = '<polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
 
 		//style stars holder
 		stars.style.verticalAlign = "middle";
@@ -297,7 +288,7 @@ Format.prototype.formatters = {
 			var nextStar = star.cloneNode(true);
 			nextStar.innerHTML = i <= value ? starActive : starInactive;
 
-			stars.append(nextStar.clone());
+			stars.append(nextStar);
 		}
 
 		element.style.whiteSpace = "nowrap";
@@ -306,8 +297,8 @@ Format.prototype.formatters = {
 
 		element.setAttribute("aria-label", value);
 
-		return stars.html();
-	}),
+		return stars;
+	},
 
 	//progress bar
 	progress: function progress(cell, formatterParams) {

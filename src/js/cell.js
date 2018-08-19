@@ -244,7 +244,7 @@ Cell.prototype._configureCell = function(){
 				if(self.table.options.cellTapHold){
 					self.table.options.cellTapHold(e, component);
 				}
-			}, 1000)
+			}, 1000);
 
 		});
 
@@ -332,7 +332,7 @@ Cell.prototype.setValue = function(value, mutate){
 	if(changed){
 		if(this.table.options.history && this.table.modExists("history")){
 			this.table.modules.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
-		};
+		}
 
 		component = this.getComponent();
 
@@ -374,7 +374,7 @@ Cell.prototype.setValueProcessData = function(value, mutate){
 	this.setValueActual(value);
 
 	return changed;
-}
+};
 
 Cell.prototype.setValueActual = function(value){
 	this.oldValue = this.value;
@@ -462,7 +462,7 @@ Cell.prototype.cancelEdit = function(){
 
 
 Cell.prototype.delete = function(){
-	this.element.parentNode.removeChild(this.element)
+	this.element.parentNode.removeChild(this.element);
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);
 };
@@ -555,7 +555,7 @@ Cell.prototype.nav = function(){
 			}
 		},
 
-	}
+	};
 
 };
 

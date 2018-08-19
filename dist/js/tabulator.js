@@ -2017,7 +2017,7 @@ Column.prototype.matchChildWidths = function () {
 			childWidth += column.getWidth();
 		});
 
-		this.contentElement.css("max-width", childWidth - 1);
+		this.contentElement.style.maxWidth = childWidth - 1 + "px";
 	}
 };
 
@@ -2726,7 +2726,7 @@ RowManager.prototype.addRow = function (data, pos, index, blockRedraw) {
 	if (this.table.options.history && this.table.modExists("history")) {
 
 		this.table.modules.history.action("rowAdd", row, { data: data, pos: pos, index: index });
-	};
+	}
 
 	return row;
 };
@@ -2873,7 +2873,7 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 				this._moveRowInArray(row.getGroup().rows, row, index, top);
 			}
 		}
-	};
+	}
 
 	if (index) {
 
@@ -2943,7 +2943,7 @@ RowManager.prototype.moveRow = function (from, to, after) {
 	if (this.table.options.history && this.table.modExists("history")) {
 
 		this.table.modules.history.action("rowMove", from, { pos: this.getRowPosition(from), to: to, after: after });
-	};
+	}
 
 	this.moveRowActual(from, to, after);
 
@@ -3685,10 +3685,10 @@ RowManager.prototype.renderTable = function () {
 
 			if (this.renderMode) {
 
-				self.table.options.placeholder.attr("tabulator-render-mode", this.renderMode);
+				self.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 			}
 
-			self.getElement().append(self.table.options.placeholder);
+			self.getElement().appendChild(self.table.options.placeholder);
 		}
 	}
 
@@ -3749,7 +3749,7 @@ RowManager.prototype._clearVirtualDom = function () {
 
 	if (this.table.options.placeholder) {
 
-		this.table.options.placeholder.detach();
+		this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
 	}
 
 	// element.children.detach();
@@ -4163,7 +4163,7 @@ RowManager.prototype._removeBottomRow = function (bottomDiff) {
 
 		if (this.vDomBottomPad < 0) {
 
-			this.vDomBottomPad == 0;
+			this.vDomBottomPad = 0;
 		}
 
 		table.style.paddingBottom = this.vDomBottomPad + "px";
@@ -4264,7 +4264,7 @@ RowManager.prototype.redraw = function (force) {
 
 			if (this.table.options.placeholder) {
 
-				this.getElement().append(this.table.options.placeholder);
+				this.getElement().appendChild(this.table.options.placeholder);
 			}
 		}
 	} else {
@@ -4857,8 +4857,9 @@ Row.prototype.getData = function (transform) {
 
 Row.prototype.getCell = function (column) {
 
-	var match = false,
-	    column = this.table.columnManager.findColumn(column);
+	var match = false;
+
+	column = this.table.columnManager.findColumn(column);
 
 	match = this.cells.find(function (cell) {
 
@@ -4866,13 +4867,17 @@ Row.prototype.getCell = function (column) {
 	});
 
 	return match;
-}, Row.prototype.getCellIndex = function (findCell) {
+};
+
+Row.prototype.getCellIndex = function (findCell) {
 
 	return this.cells.findIndex(function (cell) {
 
 		return cell === findCell;
 	});
-}, Row.prototype.findNextEditableCell = function (index) {
+};
+
+Row.prototype.findNextEditableCell = function (index) {
 
 	var nextCell = false;
 
@@ -4902,7 +4907,9 @@ Row.prototype.getCell = function (column) {
 	}
 
 	return nextCell;
-}, Row.prototype.findPrevEditableCell = function (index) {
+};
+
+Row.prototype.findPrevEditableCell = function (index) {
 
 	var prevCell = false;
 
@@ -4931,10 +4938,12 @@ Row.prototype.getCell = function (column) {
 	}
 
 	return prevCell;
-}, Row.prototype.getCells = function () {
+};
+
+Row.prototype.getCells = function () {
 
 	return this.cells;
-},
+};
 
 ///////////////////// Actions  /////////////////////
 
@@ -4953,7 +4962,7 @@ Row.prototype.delete = function () {
 		}
 
 		this.table.modules.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
-	};
+	}
 };
 
 Row.prototype.deleteActual = function () {
@@ -5018,6 +5027,8 @@ Row.prototype.wipe = function () {
 	while (this.element.firstChild) {
 		this.element.removeChild(this.element.firstChild);
 	}this.element.remove();
+
+	this.element.parentNode.removeChild(this.element);
 };
 
 Row.prototype.getGroup = function () {
@@ -5459,7 +5470,7 @@ Cell.prototype.setValue = function (value, mutate) {
 		if (this.table.options.history && this.table.modExists("history")) {
 
 			this.table.modules.history.action("cellEdit", this, { oldValue: this.oldValue, newValue: this.value });
-		};
+		}
 
 		component = this.getComponent();
 
@@ -5813,7 +5824,7 @@ FooterManager.prototype.prepend = function (element, parent) {
 
 FooterManager.prototype.remove = function (element) {
 
-	element.remove();
+	element.parentNode.removeChild(element);
 
 	this.deactivate();
 };
@@ -7919,7 +7930,7 @@ Tabulator.prototype.helpers = {
 
 			if (obj[i] != null && _typeof(obj[i]) === "object") {
 
-				clone[i] = cloneObject(obj[i]);
+				clone[i] = this.deepClone(obj[i]);
 			} else {
 
 				clone[i] = obj[i];
@@ -11274,7 +11285,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 				filterElement.append(editorElement);
 
-				column.contentElement.append(filterElement);
+				column.contentElement.appendChild(filterElement);
 
 				self.headerFilterElements.push(editorElement);
 			}
@@ -11900,23 +11911,14 @@ Tabulator.prototype.registerModule("comms", Comms);
 		},
 
 		//star rating
-		star: function (_star) {
-			function star(_x3, _x4) {
-				return _star.apply(this, arguments);
-			}
-
-			star.toString = function () {
-				return _star.toString();
-			};
-
-			return star;
-		}(function (cell, formatterParams) {
+		star: function star(cell, formatterParams) {
 			var value = cell.getValue(),
 			    element = cell.getElement(),
 			    maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
-			    stars = starsHolder = document.createElement("span"),
-			    stars = document.createElementNS('http://www.w3.org/2000/svg', "svg");
-			starActive = '<polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>', starInactive = '<polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+			    stars = document.createElement("span"),
+			    star = document.createElementNS('http://www.w3.org/2000/svg', "svg"),
+			    starActive = '<polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>',
+			    starInactive = '<polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
 
 			//style stars holder
 			stars.style.verticalAlign = "middle";
@@ -11934,7 +11936,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				var nextStar = star.cloneNode(true);
 				nextStar.innerHTML = i <= value ? starActive : starInactive;
 
-				stars.append(nextStar.clone());
+				stars.append(nextStar);
 			}
 
 			element.style.whiteSpace = "nowrap";
@@ -11943,8 +11945,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			element.setAttribute("aria-label", value);
 
-			return stars.html();
-		}),
+			return stars;
+		},
 
 		//progress bar
 		progress: function progress(cell, formatterParams) {
@@ -12750,7 +12752,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		if (this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination) {
 
-			this.element.removeClass("tabulator-group-visible");
+			this.element.classList.remove("tabulator-group-visible");
 
 			if (this.groupList.length) {
 				this.groupList.forEach(function (group) {
@@ -14009,7 +14011,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	MoveColumns.prototype.endMove = function (column) {
 		this._unbindMouseMove();
 
-		this.placeholderElement.after(this.moving.getElement());
+		this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
 		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
 		this.hoverElement.parentNode.removeChild(this.hoverElement);
 
@@ -14218,7 +14220,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.hoverElement.style.overflow = "hidden";
 			this.hoverElement.style.pointerEvents = "none";
 		} else {
-			this.table.rowManager.getTableElement().append(this.hoverElement);
+			this.table.rowManager.getTableElement().appendChild(this.hoverElement);
 
 			this.hoverElement.style.left = "0";
 			this.hoverElement.style.top = "0";
@@ -14250,7 +14252,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this._unbindMouseMove();
 
 		if (!this.connection) {
-			this.placeholderElement.after(this.moving.getElement());
+			this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
 			this.placeholderElement.parentNode.removeChild(this.placeholderElement);
 		}
 

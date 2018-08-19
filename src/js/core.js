@@ -1488,7 +1488,7 @@ Tabulator.prototype.helpers = {
 		var clone = {};
 		for(var i in obj) {
 			if(obj[i] != null && typeof(obj[i])  === "object"){
-				clone[i] = cloneObject(obj[i]);
+				clone[i] = this.deepClone(obj[i]);
 			}
 			else{
 				clone[i] = obj[i];

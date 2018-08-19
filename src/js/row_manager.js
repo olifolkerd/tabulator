@@ -183,7 +183,7 @@ RowManager.prototype.getRowFromPosition = function(position, active){
 	}else{
 		return this.rows[position];
 	}
-}
+};
 
 RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 	var rowIndex = this.getDisplayRows().indexOf(row),
@@ -311,7 +311,7 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 	}else{
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 	}
-}
+};
 
 RowManager.prototype.deleteRow = function(row){
 	var allIndex = this.rows.indexOf(row),
@@ -359,7 +359,7 @@ RowManager.prototype.addRow = function(data, pos, index, blockRedraw){
 
 	if(this.table.options.history && this.table.modExists("history")){
 		this.table.modules.history.action("rowAdd", row, {data:data, pos:pos, index:index});
-	};
+	}
 
 	return row;
 };
@@ -405,7 +405,6 @@ RowManager.prototype.addRows = function(data, pos, index){
 };
 
 RowManager.prototype.findAddRowPos = function(pos){
-
 	if(typeof pos === "undefined"){
 		pos = this.table.options.addRowPos;
 	}
@@ -474,7 +473,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 				this._moveRowInArray(row.getGroup().rows, row, index, top);
 			}
 		}
-	};
+	}
 
 	if(index){
 		let allIndex = this.rows.indexOf(index),
@@ -532,7 +531,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 RowManager.prototype.moveRow = function(from, to, after){
 	if(this.table.options.history && this.table.modExists("history")){
 		this.table.modules.history.action("rowMove", from, {pos:this.getRowPosition(from), to:to, after:after});
-	};
+	}
 
 	this.moveRowActual(from, to, after);
 
@@ -697,7 +696,7 @@ RowManager.prototype.getHtml = function(active){
 				header += `<th>${(def.title || "")}</th>`;
 				columns.push(column);
 			}
-		})
+		});
 
 		//build body rows
 		data.forEach(function(rowData){
@@ -989,12 +988,12 @@ RowManager.prototype.resetDisplayRows = function(){
 	if(this.table.options.pagination && this.table.modExists("page")){
 		this.table.modules.page.setDisplayIndex(0);
 	}
-}
+};
 
 
 RowManager.prototype.getNextDisplayIndex = function(){
 	return this.displayRows.length;
-}
+};
 
 //set display row pipeline data
 RowManager.prototype.setDisplayRows = function(displayRows, index){
@@ -1023,14 +1022,14 @@ RowManager.prototype.getDisplayRows = function(index){
 		return this.displayRows[index] || [];
 	}
 
-}
+};
 
 //repeat action accross display rows
 RowManager.prototype.displayRowIterator = function(callback){
 	this.displayRows.forEach(callback);
 
 	this.displayRowsCount = this.displayRows[this.displayRows.length -1].length;
-}
+};
 
 //return only actual rows (not group headers etc)
 RowManager.prototype.getRows = function(){
@@ -1083,7 +1082,7 @@ RowManager.prototype.setRenderMode = function(){
 	}else{
 		this.renderMode = "classic";
 	}
-}
+};
 
 
 RowManager.prototype.getRenderMode = function(){
@@ -1125,10 +1124,10 @@ RowManager.prototype.renderTable = function(){
 		if(self.table.options.placeholder){
 
 			if(this.renderMode){
-				self.table.options.placeholder.attr("tabulator-render-mode", this.renderMode)
+				self.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 			}
 
-			self.getElement().append(self.table.options.placeholder);
+			self.getElement().appendChild(self.table.options.placeholder);
 		}
 	}
 
@@ -1157,7 +1156,7 @@ RowManager.prototype._simpleRender = function(){
 		});
 
 		if(onlyGroupHeaders){
-			element.style.minWidth = self.table.columnManager.getWidth()
+			element.style.minWidth = self.table.columnManager.getWidth();
 		}
 	}else{
 		self.renderEmptyScroll();
@@ -1175,7 +1174,7 @@ RowManager.prototype._clearVirtualDom = function(){
 	var element = this.tableElement;
 
 	if(this.table.options.placeholder){
-		this.table.options.placeholder.detach();
+		this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
 	}
 
 	// element.children.detach();
@@ -1229,7 +1228,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 		while(element.firstChild) element.removeChild(element.firstChild);
 
 		//check if position is too close to bottom of table
-		let heightOccpied = (self.displayRowsCount - position + 1) * self.vDomRowHeight
+		let heightOccpied = (self.displayRowsCount - position + 1) * self.vDomRowHeight;
 
 		if(heightOccpied < self.height){
 			position -= Math.ceil((self.height - heightOccpied) / self.vDomRowHeight);
@@ -1333,7 +1332,7 @@ RowManager.prototype.scrollVertical = function(dir){
 		if(dir){
 			//scrolling up
 			if(topDiff < 0){
-				this._addTopRow(-topDiff)
+				this._addTopRow(-topDiff);
 			}
 
 			if(topDiff < 0){
@@ -1372,7 +1371,7 @@ RowManager.prototype._addTopRow = function(topDiff, i=0){
 		//hide top row if needed
 		if(topDiff >= topRowHeight){
 			this.styleRow(topRow, index);
-			table.insertBefore(topRow.getElement(), table.firstChild)
+			table.insertBefore(topRow.getElement(), table.firstChild);
 			if(!topRow.initialized || !topRow.heightInitialized){
 				this.vDomTopNewRows.push(topRow);
 
@@ -1489,7 +1488,7 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 		this.vDomBottomPad += bottomRowHeight;
 
 		if(this.vDomBottomPad < 0){
-			this.vDomBottomPad == 0;
+			this.vDomBottomPad = 0;
 		}
 
 		table.style.paddingBottom = this.vDomBottomPad + "px";
@@ -1568,7 +1567,7 @@ RowManager.prototype.redraw = function (force){
 
 		if(!this.displayRowsCount){
 			if(this.table.options.placeholder){
-				this.getElement().append(this.table.options.placeholder);
+				this.getElement().appendChild(this.table.options.placeholder);
 			}
 		}
 
