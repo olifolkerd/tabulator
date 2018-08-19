@@ -2,13 +2,6 @@ var Page = function(table){
 
 	this.table = table; //hold Tabulator object
 
-	this.element = $("<span class='tabulator-paginator'></span>");
-	this.pagesElement = $("<span class='tabulator-pages'></span>");
-	this.firstBut = $("<button class='tabulator-page' data-page='first' role='button' aria-label='' title='' type='button'></button>");
-	this.prevBut = $("<button class='tabulator-page' data-page='prev' role='button' aria-label='' title='' type='button'></button>");
-	this.nextBut = $("<button class='tabulator-page' data-page='next' role='button' aria-label='' title='' type='button'></button>");
-	this.lastBut = $("<button class='tabulator-page' data-page='last' role='button' aria-label='' title='' type='button'></button>");
-
 	this.mode = "local";
 	this.progressiveLoad = false;
 
@@ -19,6 +12,38 @@ var Page = function(table){
 	this.paginator = false;
 
 	this.displayIndex = 0; //index in display pipeline
+
+	this.createElements();
+};
+
+Page.prototype.createElements = function(){
+
+	var button;
+
+	this.element = document.createElement("span");
+	this.element.classList.add("tabulator-paginator");
+
+	this.pagesElement = document.createElement("span");
+	this.pagesElement.classList.add("tabulator-pages");
+
+	button = document.createElement("button");
+	button.classList.add("tabulator-page");
+	button.setAttribute("type", "button");
+	button.setAttribute("role", "button");
+	button.setAttribute("aria-label", "");
+	button.setAttribute("title", "");
+
+	this.firstBut = button.cloneNode(true);
+	this.firstBut.setAttribute("data-page", "first");
+
+	this.prevBut = button.cloneNode(true);
+	this.prevBut.setAttribute("data-page", "prev");
+
+	this.nextBut = button.cloneNode(true);
+	this.nextBut.setAttribute("data-page", "next");
+
+	this.lastBut = button.cloneNode(true);
+	this.lastBut.setAttribute("data-page", "last");
 };
 
 //setup pageination
@@ -43,55 +68,55 @@ Page.prototype.initialize = function(hidden){
 
 	//bind localizations
 	self.table.modules.localize.bind("pagination|first", function(value){
-		self.firstBut.html(value);
+		self.firstBut.innerHTML = value;
 	});
 
 	self.table.modules.localize.bind("pagination|first_title", function(value){
-		self.firstBut.attr("aria-label", value)
-		.attr("title", value);
+		self.firstBut.setAttribute("aria-label", value)
+		self.firstBut.setAttribute("title", value);
 	});
 
 	self.table.modules.localize.bind("pagination|prev", function(value){
-		self.prevBut.html(value);
+		self.prevBut.innerHTML = value;
 	});
 
 	self.table.modules.localize.bind("pagination|prev_title", function(value){
-		self.prevBut.attr("aria-label", value)
-		.attr("title", value);
+		self.prevBut.setAttribute("aria-label", value)
+		self.prevBut.setAttribute("title", value);
 	});
 
 	self.table.modules.localize.bind("pagination|next", function(value){
-		self.nextBut.html(value);
+		self.nextBut.innerHTML = value;
 	});
 
 	self.table.modules.localize.bind("pagination|next_title", function(value){
-		self.nextBut.attr("aria-label", value)
-		.attr("title", value);
+		self.nextBut.setAttribute("aria-label", value)
+		self.nextBut.setAttribute("title", value);
 	});
 
 	self.table.modules.localize.bind("pagination|last", function(value){
-		self.lastBut.html(value);
+		self.lastBut.innerHTML = value;
 	});
 
 	self.table.modules.localize.bind("pagination|last_title", function(value){
-		self.lastBut.attr("aria-label", value)
-		.attr("title", value);
+		self.lastBut.setAttribute("aria-label", value)
+		self.lastBut.setAttribute("title", value);
 	});
 
 	//click bindings
-	self.firstBut.on("click", function(){
+	self.firstBut.addEventListener("click", function(){
 		self.setPage(1);
 	});
 
-	self.prevBut.on("click", function(){
+	self.prevBut.addEventListener("click", function(){
 		self.previousPage();
 	});
 
-	self.nextBut.on("click", function(){
+	self.nextBut.addEventListener("click", function(){
 		self.nextPage();
 	});
 
-	self.lastBut.on("click", function(){
+	self.lastBut.addEventListener("click", function(){
 		self.setPage(self.max);
 	});
 
@@ -100,11 +125,11 @@ Page.prototype.initialize = function(hidden){
 	}
 
 	//append to DOM
-	self.element.append(self.firstBut);
-	self.element.append(self.prevBut);
-	self.element.append(self.pagesElement);
-	self.element.append(self.nextBut);
-	self.element.append(self.lastBut);
+	self.element.appendChild(self.firstBut);
+	self.element.appendChild(self.prevBut);
+	self.element.appendChild(self.pagesElement);
+	self.element.appendChild(self.nextBut);
+	self.element.appendChild(self.lastBut);
 
 	if(!self.table.options.paginationElement && !hidden){
 		self.table.footerManager.append(self.element, self);
@@ -112,7 +137,7 @@ Page.prototype.initialize = function(hidden){
 
 	//set default values
 	self.mode = self.table.options.pagination;
-	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().innerHeight() / 24);
+	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().clientHeight / 24);
 	self.count = self.table.options.paginationButtonCount;
 };
 
@@ -120,15 +145,15 @@ Page.prototype.initializeProgressive = function(mode){
 	this.initialize(true);
 	this.mode = "progressive_" + mode;
 	this.progressiveLoad = true;
-}
+};
 
 Page.prototype.setDisplayIndex = function(index){
 	this.displayIndex = index;
-}
+};
 
 Page.prototype.getDisplayIndex = function(){
 	return this.displayIndex;
-}
+};
 
 
 //calculate maximum page from number of rows
@@ -190,27 +215,27 @@ Page.prototype._setPageButtons = function(){
 	let min = this.max - this.page + leftSize + 1 < this.count ? this.max-this.count+1: Math.max(this.page-leftSize,1);
 	let max = this.page <= rightSize? Math.min(this.count, this.max) :Math.min(this.page+rightSize, this.max);
 
-	self.pagesElement.empty();
+	while(self.pagesElement.firstChild) self.pagesElement.removeChild(self.pagesElement.firstChild);
 
 	if(self.page == 1){
-		self.firstBut.prop("disabled", true);
-		self.prevBut.prop("disabled", true);
+		self.firstBut.disabled = true;
+		self.prevBut.disabled = true;
 	}else{
-		self.firstBut.prop("disabled", false);
-		self.prevBut.prop("disabled", false);
+		self.firstBut.disabled = false;
+		self.prevBut.disabled = false;
 	}
 
 	if(self.page == self.max){
-		self.lastBut.prop("disabled", true);
-		self.nextBut.prop("disabled", true);
+		self.lastBut.disabled = true;
+		self.nextBut.disabled = true;
 	}else{
-		self.lastBut.prop("disabled", false);
-		self.nextBut.prop("disabled", false);
+		self.lastBut.disabled = false;
+		self.nextBut.disabled = false;
 	}
 
 	for(let i = min; i <= max; i++){
 		if(i>0 && i <= self.max){
-			self.pagesElement.append(self._generatePageButton(i));
+			self.pagesElement.appendChild(self._generatePageButton(i));
 		}
 	}
 
@@ -218,10 +243,22 @@ Page.prototype._setPageButtons = function(){
 };
 
 Page.prototype._generatePageButton = function(page){
-	var self = this;
-	var button = $("<button class='tabulator-page " + (page == self.page ? "active" : "") + "' data-page='" + page + "' role='button' type='button' aria-label='Show Page " + page + "'>" + page + "</button>");
+	var self = this,
+	button = document.createElement("button");
 
-	button.on("click", function(e){
+	button.classList.add("tabulator-page");
+	if(page == self.page){
+		button.classList.add("active");
+	}
+
+	button.setAttribute("type", "button");
+	button.setAttribute("role", "button");
+	button.setAttribute("aria-label", "Show Page " + page);
+	button.setAttribute("title", "Show Page " + page);
+	button.setAttribute("data-page", page);
+	button.textContent = page;
+
+	button.addEventListener("click", function(e){
 		self.setPage(page);
 	});
 
@@ -264,7 +301,7 @@ Page.prototype.getPageMax = function(){
 	return this.max;
 };
 
-Page.prototype.getPageSize = function(size){;
+Page.prototype.getPageSize = function(size){
 	return this.size;
 };
 
@@ -407,8 +444,7 @@ Page.prototype._parseRemoteData = function(data){
 					if(this.page < this.max){
 						setTimeout(function(){
 							self.nextPage();
-						}, self.table.options.ajaxProgressiveLoadDelay)
-
+						}, self.table.options.ajaxProgressiveLoadDelay);
 					}
 					break;
 
@@ -417,9 +453,9 @@ Page.prototype._parseRemoteData = function(data){
 
 					this.table.rowManager.setData(data, true);
 
-					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element[0].clientHeight * 2);
+					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
-					if(self.table.rowManager.element[0].scrollHeight <= (self.table.rowManager.element[0].clientHeight + margin)){
+					if(self.table.rowManager.element[0].scrollHeight <= (self.table.rowManager.element.clientHeight + margin)){
 						self.nextPage();
 					}
 					break;
@@ -451,13 +487,13 @@ Page.prototype._parseRemoteData = function(data){
 Page.prototype.footerRedraw = function(){
 	var footer = this.table.footerManager.element;
 
-	if((Math.ceil(footer.innerWidth()) - footer[0].scrollWidth) < 0){
-		this.pagesElement.hide();
+	if((Math.ceil(footer.clientWidth) - footer.scrollWidth) < 0){
+		this.pagesElement.style.display = 'none';
 	}else{
-		this.pagesElement.show();
+		this.pagesElement.style.display = '';
 
-		if((Math.ceil(footer.innerWidth()) - footer[0].scrollWidth) < 0){
-			this.pagesElement.hide();
+		if((Math.ceil(footer.clientWidth) - footer.scrollWidth) < 0){
+			this.pagesElement.style.display = 'none';
 		}
 	}
 };
