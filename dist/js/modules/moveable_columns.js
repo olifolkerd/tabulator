@@ -5,7 +5,7 @@
 var MoveColumns = function MoveColumns(table) {
 	this.table = table; //hold Tabulator object
 	this.placeholderElement = this.createPlaceholderElement();
-	this.hoverElement = $(); //floating column header element
+	this.hoverElement = false; //floating column header element
 	this.checkTimeout = false; //click check timeout holder
 	this.checkPeriod = 250; //period to wait on mousedown to consider this a move and not a click
 	this.moving = false; //currently moving column
