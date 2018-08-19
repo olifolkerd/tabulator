@@ -235,7 +235,7 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 				var children = element.children;
 
 				for (var i = 0; i < children.length; i++) {
-				   children[i].addEventListener("click", function(e){
+					children[i].addEventListener("click", function(e){
 						e.stopPropagation();
 					});
 				}
@@ -325,7 +325,7 @@ Edit.prototype.editors = {
         input.style.whiteSpace = "pre-wrap";
         input.style.resize = "none";
 
-      	input.value = value;
+        input.value = value;
 
         onRendered(function(){
         	input.focus();
@@ -575,7 +575,11 @@ Edit.prototype.editors = {
 
 		//submit new value on blur
 		function onChange(e) {
-			success(select.options[select.selectedIndex].value);
+			if(select.selectedIndex > -1){
+				success(select.options[select.selectedIndex].value);
+			}else{
+				cancel();
+			}
 		}
 
 		select.addEventListener("change", onChange);
@@ -592,88 +596,126 @@ Edit.prototype.editors = {
 
 	//start rating
 	star:function(cell, onRendered, success, cancel, editorParams){
-		var element = cell.getElement(),
+		var self = this,
+		element = cell.getElement(),
 		value = cell.getValue(),
-		maxStars = $("svg", element).length || 5,
-		size = $("svg:first", element).attr("width") || 14,
-		stars=$("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>"),
-		starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>'),
-		starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		maxStars = element.getElementsByTagName("svg").length || 5,
+		size = element.getElementsByTagName("svg")[0] ? element.getElementsByTagName("svg")[0].getAttribute("width") : 14,
+		stars = [],
+		starsHolder = document.createElement("div"),
+		star = document.createElementNS('http://www.w3.org/2000/svg', "svg");
 
+		//change star type
+		function starChange(val){
+			stars.forEach(function(star, i){
+				if(i < val){
+					if(self.table.browser == "ie"){
+						star.setAttribute("class", "tabulator-star-active");
+					}else{
+						star.classList.replace("tabulator-star-inactive", "tabulator-star-active");
+					}
 
-		//change number of active stars
-		var starChange = function(element){
-			if($(".tabulator-star-active", element.closest("div")).length != element.prevAll("svg").length + 1){
-				element.prevAll("svg").replaceWith(starActive.clone());
-				element.nextAll("svg").replaceWith(starInactive.clone());
-				element.replaceWith(starActive.clone());
-			}
+					star.innerHTML = '<polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+				}else{
+					if(self.table.browser == "ie"){
+						star.setAttribute("class", "tabulator-star-inactive");
+					}else{
+						star.classList.replace("tabulator-star-active", "tabulator-star-inactive");
+					}
+
+					star.innerHTML = '<polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+				}
+			});
 		}
 
-		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+		//build stars
+		function buildStar(i){
+			var nextStar = star.cloneNode(true);
 
+			stars.push(nextStar);
+
+			nextStar.addEventListener("mouseover", function(e){
+				e.stopPropagation();
+				starChange(i);
+			});
+
+			nextStar.addEventListener("click", function(e){
+				e.stopPropagation();
+				success(i);
+			});
+
+			starsHolder.appendChild(nextStar);
+		}
+
+		//handle keyboard navigation value change
+		function changeValue(val){
+			value = val;
+			starChange(val);
+		}
+
+		//style cell
+		element.style.whiteSpace = "nowrap";
+		element.style.overflow = "hidden";
+		element.style.textOverflow = "ellipsis";
+
+		//style holding element
+		starsHolder.style.verticalAlign = "middle";
+		starsHolder.style.display = "inline-block";
+		starsHolder.style.padding = "4px";
+		// starsHolder.style.backgroundColor = "#f00";
+
+		//style star
+		star.setAttribute("width", size);
+		star.setAttribute("height", size);
+		star.setAttribute("viewBox", "0 0 512 512");
+		star.setAttribute("xml:space", "preserve");
+		star.style.padding = "0 1px";
+
+		//create correct number of stars
 		for(var i=1;i<= maxStars;i++){
-			let nextStar = i <= value ? starActive : starInactive;
-			stars.append(nextStar.clone());
+			buildStar(i);
 		}
 
-		stars.on("mouseover", "svg", function(e){
-			e.stopPropagation();
-			starChange($(this));
+		//ensure value does not exceed number of stars
+		value = Math.min(parseInt(value), maxStars);
+
+		// set initial styling of stars
+		starChange(value);
+
+		starsHolder.addEventListener("mouseover", function(e){
+			starChange(0);
 		});
 
-		stars.on("mouseover", function(e){
-			$("svg", $(this)).replaceWith(starInactive.clone());
-		});
-
-		stars.on("click", function(e){
+		starsHolder.addEventListener("click", function(e){
 			success(0);
 		});
 
-		stars.on("click", "svg", function(e){
-			e.stopPropagation();
-			success($(this).prevAll("svg").length + 1);
-		});
-
-		element.css({
-			"white-space": "nowrap",
-			"overflow": "hidden",
-			"text-overflow": "ellipsis",
-		});
-
-		element.on("blur", function(){
+		element.addEventListener("blur", function(e){
 			cancel();
 		});
 
 		//allow key based navigation
-		element.on("keydown", function(e){
+		element.addEventListener("keydown", function(e){
 			switch(e.keyCode){
 				case 39: //right arrow
-				starChange($(".tabulator-star-inactive:first", stars));
+				changeValue(value + 1);
 				break;
 
 				case 37: //left arrow
-				let prevstar = $(".tabulator-star-active:last", stars).prev("svg");
-
-				if(prevstar.length){
-					starChange(prevstar);
-				}else{
-					$("svg", stars).replaceWith(starInactive.clone());
-				}
+				changeValue(value - 1);
 				break;
 
 				case 13: //enter
-				success($(".tabulator-star-active", stars).length);
+				success(value);
 				break;
 
 				case 27: //escape
 				cancel();
 				break;
-
 			}
 		});
 
-		return stars[0];
+		return starsHolder;
 	},
 
 	//draggable progress bar

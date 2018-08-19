@@ -105,8 +105,8 @@ Edit.prototype.bindEditor = function (cell) {
 	element.setAttribute("tabindex", 0);
 
 	element.addEventListener("click", function (e) {
-		if (!$(this).hasClass("tabulator-editing")) {
-			$(this).focus();
+		if (!element.classList.contains("tabulator-editing")) {
+			element.focus();
 		}
 	});
 
@@ -239,11 +239,13 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				rendered();
 
 				//prevent editing from triggering rowClick event
-				element.children.forEach(function (child) {
-					child.addEventListener("click", function (e) {
+				var children = element.children;
+
+				for (var i = 0; i < children.length; i++) {
+					children[i].addEventListener("click", function (e) {
 						e.stopPropagation();
 					});
-				});
+				}
 			} else {
 				element.blur();
 				return false;
@@ -269,32 +271,38 @@ Edit.prototype.editors = {
 	input: function input(cell, onRendered, success, cancel, editorParams) {
 
 		//create and style input
-		var input = $("<input type='text'/>");
+		var cellValue = cell.getValue(),
+		    input = document.createElement("input");
 
-		input.css({
-			"padding": "4px",
-			"width": "100%",
-			"box-sizing": "border-box"
-		}).val(cell.getValue());
+		input.setAttribute("type", "text");
+
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		input.value = cellValue;
 
 		onRendered(function () {
 			input.focus();
-			input.css("height", "100%");
+			input.style.height = "100%";
 		});
 
-		//submit new value on blur
-		input.on("change blur", function (e) {
-			if (input.val() != cell.getValue()) {
-				success(input.val());
+		function onChange(e) {
+			if (input.value != cellValue) {
+				success(input.value);
 			} else {
 				cancel();
 			}
-		});
+		}
+
+		//submit new value on blur or change
+		input.addEventListener("change", onChange);
+		input.addEventListener("blur", onChange);
 
 		//submit new value on enter
-		input.on("keydown", function (e) {
+		input.addEventListener("keydown", function (e) {
 			if (e.keyCode == 13) {
-				success(input.val());
+				success(input.value);
 			}
 
 			if (e.keyCode == 27) {
@@ -302,7 +310,7 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//resizable text area element
@@ -311,43 +319,47 @@ Edit.prototype.editors = {
 		    cellValue = cell.getValue(),
 		    value = String(typeof cellValue == "null" || typeof cellValue == "undefined" ? "" : cellValue),
 		    count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
-		    input = $("<textarea></textarea>"),
+		    input = document.createElement("textarea"),
 		    scrollHeight = 0;
 
 		//create and style input
-		input.css({
-			"display": "block",
-			"height": "100%",
-			"width": "100%",
-			"padding": "2px",
-			"box-sizing": "border-box",
-			"white-space": "pre-wrap",
-			"resize": "none"
-		}).val(value);
+		input.style.display = "block";
+		input.style.padding = "2px";
+		input.style.height = "100%";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+		input.style.whiteSpace = "pre-wrap";
+		input.style.resize = "none";
+
+		input.value = value;
 
 		onRendered(function () {
 			input.focus();
-			input.css("height", "100%");
+			input.style.height = "100%";
 		});
 
-		//submit new value on blur
-		input.on("change blur", function (e) {
-			if (input.val() != cell.getValue()) {
-				success(input.val());
+		function onChange(e) {
+			if (input.value != cellValue) {
+				success(input.value);
 				setTimeout(function () {
 					cell.getRow().normalizeHeight();
 				}, 300);
 			} else {
 				cancel();
 			}
-		});
+		}
 
-		input.on("keyup", function () {
+		//submit new value on blur or change
+		input.addEventListener("change", onChange);
+		input.addEventListener("blur", onChange);
 
-			input.css({ "height": "" });
+		input.addEventListener("keyup", function () {
 
-			var heightNow = input[0].scrollHeight;
-			input.css({ "height": heightNow });
+			input.style.height = "";
+
+			var heightNow = input.scrollHeight;
+
+			input.style.height = heightNow + "px";
 
 			if (heightNow != scrollHeight) {
 				scrollHeight = heightNow;
@@ -355,46 +367,56 @@ Edit.prototype.editors = {
 			}
 		});
 
-		input.on("keydown", function (e) {
+		input.addEventListener("keydown", function (e) {
 			if (e.keyCode == 27) {
 				cancel();
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//input element with type of number
 	number: function number(cell, onRendered, success, cancel, editorParams) {
 
-		var max = typeof editorParams.max != "undefined" ? "max='" + editorParams.max + "'" : "";
-		var min = typeof editorParams.min != "undefined" ? "min='" + editorParams.min + "'" : "";
-		var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
-		var input = $("<input type='number' " + max + " " + min + " " + step + "/>");
+		var cellValue = cell.getValue(),
+		    input = document.createElement("input");
+
+		input.setAttribute("type", "number");
+
+		if (typeof editorParams.max != "undefined") {
+			input.setAttribute("max", editorParams.max);
+		}
+
+		if (typeof editorParams.min != "undefined") {
+			input.setAttribute("min", editorParams.min);
+		}
+
+		if (typeof editorParams.step != "undefined") {
+			input.setAttribute("step", editorParams.step);
+		}
 
 		//create and style input
-		input.css({
-			"padding": "4px",
-			"width": "100%",
-			"box-sizing": "border-box"
-		}).val(cell.getValue());
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		input.value = cellValue;
 
 		onRendered(function () {
-			input.css("height", "100%");
-			setTimeout(function () {
-				input.focus();
-			}, 10);
+			input.focus();
+			input.style.height = "100%";
 		});
 
 		//submit new value on blur
-		input.on("blur", function (e) {
-			var value = input.val();
+		input.addEventListener("blur", function (e) {
+			var value = input.value;
 
 			if (!isNaN(value)) {
 				value = Number(value);
 			}
 
-			if (value != cell.getValue()) {
+			if (value != cellValue) {
 				success(value);
 			} else {
 				cancel();
@@ -402,11 +424,11 @@ Edit.prototype.editors = {
 		});
 
 		//submit new value on enter
-		input.on("keydown", function (e) {
+		input.addEventListener("keydown", function (e) {
 			var value;
 
 			if (e.keyCode == 13) {
-				value = input.val();
+				value = input.value;
 
 				if (!isNaN(value)) {
 					value = Number(value);
@@ -420,40 +442,50 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//input element with type of number
 	range: function range(cell, onRendered, success, cancel, editorParams) {
 
-		var max = "max='" + (typeof editorParams.max != "undefined" ? editorParams.max : 10) + "'";
-		var min = "min='" + (typeof editorParams.min != "undefined" ? editorParams.min : 0) + "'";
-		var step = "step='" + (typeof editorParams.step != "undefined" ? editorParams.step : 1) + "'";
-		var input = $("<input type='range' " + max + " " + min + " " + step + "/>");
+		var cellValue = cell.getValue(),
+		    input = document.createElement("input");
+
+		input.setAttribute("type", "range");
+
+		if (typeof editorParams.max != "undefined") {
+			input.setAttribute("max", editorParams.max);
+		}
+
+		if (typeof editorParams.min != "undefined") {
+			input.setAttribute("min", editorParams.min);
+		}
+
+		if (typeof editorParams.step != "undefined") {
+			input.setAttribute("step", editorParams.step);
+		}
 
 		//create and style input
-		input.css({
-			"padding": "4px",
-			"width": "100%",
-			"box-sizing": "border-box"
-		}).val(cell.getValue());
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		input.value = cellValue;
 
 		onRendered(function () {
-			input.css("height", "100%");
-			setTimeout(function () {
-				input.focus();
-			}, 10);
+			input.focus();
+			input.style.height = "100%";
 		});
 
 		//submit new value on blur
-		input.on("blur", function (e) {
-			var value = input.val();
+		input.addEventListener("blur", function (e) {
+			var value = input.value;
 
 			if (!isNaN(value)) {
 				value = Number(value);
 			}
 
-			if (value != cell.getValue()) {
+			if (value != cellValue) {
 				success(value);
 			} else {
 				cancel();
@@ -461,11 +493,11 @@ Edit.prototype.editors = {
 		});
 
 		//submit new value on enter
-		input.on("keydown", function (e) {
+		input.addEventListener("keydown", function (e) {
 			var value;
 
 			if (e.keyCode == 13) {
-				value = input.val();
+				value = input.value;
 
 				if (!isNaN(value)) {
 					value = Number(value);
@@ -479,13 +511,13 @@ Edit.prototype.editors = {
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//select
 	select: function select(cell, onRendered, success, cancel, editorParams) {
 		//create and style select
-		var select = $("<select><select/>");
+		var select = document.createElement("select");
 		var isArray = Array.isArray(editorParams);
 
 		if (typeof editorParams == "function") {
@@ -495,26 +527,31 @@ Edit.prototype.editors = {
 
 		function optionAppend(element, label, value, disabled) {
 
-			var option = $("<option></option>").attr("value", value).text(label);
+			var option = document.createElement("option");
+
+			option.value = value;
+			option.text = label;
 
 			if (disabled) {
-				option.prop("disabled", true);
+				option.disabled = true;
 			}
 
-			element.append(option);
+			element.appendChild(option);
 		}
 
 		function processOption(element, option) {
 			var groupEl;
 
 			if (option.options) {
-				groupEl = $("<optgroup></optgroup>").attr("label", option.label);
+				groupEl = document.createElement("optgroup");
+
+				groupEl.setAttribute("lavel", option.label);
 
 				option.options.forEach(function (item) {
 					processOption(groupEl, item);
 				});
 
-				element.append(groupEl);
+				element.appendChild(groupEl);
 			} else {
 				optionAppend(element, typeof option.label == "undefined" ? option.value : option.label, typeof option.value == "undefined" ? option.label : option.value, option.disabled);
 			}
@@ -530,118 +567,165 @@ Edit.prototype.editors = {
 			});
 		}
 
-		select.css({
-			"padding": "4px",
-			"width": "100%",
-			"box-sizing": "border-box",
-			"font-family": ""
-		}).val(cell.getValue());
+		//create and style input
+		select.style.padding = "4px";
+		select.style.width = "100%";
+		select.style.boxSizing = "border-box";
+		select.style.fontFamily = "";
+
+		select.value = cell.getValue();
 
 		onRendered(function () {
-			select.focus().click();
+			select.focus();
 		});
 
 		//submit new value on blur
-		select.on("change blur", function (e) {
-			success(select.val());
-		});
+		function onChange(e) {
+			if (select.selectedIndex > -1) {
+				success(select.options[select.selectedIndex].value);
+			} else {
+				cancel();
+			}
+		}
+
+		select.addEventListener("change", onChange);
+		select.addEventListener("blur", onChange);
 
 		//submit new value on enter
-		select.on("keydown", function (e) {
+		select.addEventListener("keydown", function (e) {
 			if (e.keyCode === 13) {
-				success(select.val());
+				success(select.options[select.selectedIndex].value);
 			}
 		});
-		return select[0];
+		return select;
 	},
 
 	//start rating
 	star: function star(cell, onRendered, success, cancel, editorParams) {
-		var element = cell.getElement(),
+		var self = this,
+		    element = cell.getElement(),
 		    value = cell.getValue(),
-		    maxStars = $("svg", element).length || 5,
-		    size = $("svg:first", element).attr("width") || 14,
-		    stars = $("<div style='vertical-align:middle; padding:4px; display:inline-block; vertical-align:middle;'></div>"),
-		    starActive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-active" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>'),
-		    starInactive = $('<svg width="' + size + '" height="' + size + '" class="tabulator-star-inactive" viewBox="0 0 512 512" xml:space="preserve" style="padding:0 1px;"><polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+		    maxStars = element.getElementsByTagName("svg").length || 5,
+		    size = element.getElementsByTagName("svg")[0] ? element.getElementsByTagName("svg")[0].getAttribute("width") : 14,
+		    stars = [],
+		    starsHolder = document.createElement("div"),
+		    star = document.createElementNS('http://www.w3.org/2000/svg', "svg");
 
-		//change number of active stars
-		var starChange = function starChange(element) {
-			if ($(".tabulator-star-active", element.closest("div")).length != element.prevAll("svg").length + 1) {
-				element.prevAll("svg").replaceWith(starActive.clone());
-				element.nextAll("svg").replaceWith(starInactive.clone());
-				element.replaceWith(starActive.clone());
-			}
-		};
+		//change star type
+		function starChange(val) {
+			stars.forEach(function (star, i) {
+				if (i < val) {
+					if (self.table.browser == "ie") {
+						star.setAttribute("class", "tabulator-star-active");
+					} else {
+						star.classList.replace("tabulator-star-inactive", "tabulator-star-active");
+					}
 
-		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+					star.innerHTML = '<polygon fill="#488CE9" stroke="#014AAE" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+				} else {
+					if (self.table.browser == "ie") {
+						star.setAttribute("class", "tabulator-star-inactive");
+					} else {
+						star.classList.replace("tabulator-star-active", "tabulator-star-inactive");
+					}
 
-		for (var i = 1; i <= maxStars; i++) {
-			var nextStar = i <= value ? starActive : starInactive;
-			stars.append(nextStar.clone());
+					star.innerHTML = '<polygon fill="#010155" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+				}
+			});
 		}
 
-		stars.on("mouseover", "svg", function (e) {
-			e.stopPropagation();
-			starChange($(this));
+		//build stars
+		function buildStar(i) {
+			var nextStar = star.cloneNode(true);
+
+			stars.push(nextStar);
+
+			nextStar.addEventListener("mouseover", function (e) {
+				e.stopPropagation();
+				starChange(i);
+			});
+
+			nextStar.addEventListener("click", function (e) {
+				e.stopPropagation();
+				success(i);
+			});
+
+			starsHolder.appendChild(nextStar);
+		}
+
+		//handle keyboard navigation value change
+		function changeValue(val) {
+			value = val;
+			starChange(val);
+		}
+
+		//style cell
+		element.style.whiteSpace = "nowrap";
+		element.style.overflow = "hidden";
+		element.style.textOverflow = "ellipsis";
+
+		//style holding element
+		starsHolder.style.verticalAlign = "middle";
+		starsHolder.style.display = "inline-block";
+		starsHolder.style.padding = "4px";
+		// starsHolder.style.backgroundColor = "#f00";
+
+		//style star
+		star.setAttribute("width", size);
+		star.setAttribute("height", size);
+		star.setAttribute("viewBox", "0 0 512 512");
+		star.setAttribute("xml:space", "preserve");
+		star.style.padding = "0 1px";
+
+		//create correct number of stars
+		for (var i = 1; i <= maxStars; i++) {
+			buildStar(i);
+		}
+
+		//ensure value does not exceed number of stars
+		value = Math.min(parseInt(value), maxStars);
+
+		// set initial styling of stars
+		starChange(value);
+
+		starsHolder.addEventListener("mouseover", function (e) {
+			starChange(0);
 		});
 
-		stars.on("mouseover", function (e) {
-			$("svg", $(this)).replaceWith(starInactive.clone());
-		});
-
-		stars.on("click", function (e) {
+		starsHolder.addEventListener("click", function (e) {
 			success(0);
 		});
 
-		stars.on("click", "svg", function (e) {
-			e.stopPropagation();
-			success($(this).prevAll("svg").length + 1);
-		});
-
-		element.css({
-			"white-space": "nowrap",
-			"overflow": "hidden",
-			"text-overflow": "ellipsis"
-		});
-
-		element.on("blur", function () {
+		element.addEventListener("blur", function (e) {
 			cancel();
 		});
 
 		//allow key based navigation
-		element.on("keydown", function (e) {
+		element.addEventListener("keydown", function (e) {
 			switch (e.keyCode) {
 				case 39:
 					//right arrow
-					starChange($(".tabulator-star-inactive:first", stars));
+					changeValue(value + 1);
 					break;
 
 				case 37:
 					//left arrow
-					var prevstar = $(".tabulator-star-active:last", stars).prev("svg");
-
-					if (prevstar.length) {
-						starChange(prevstar);
-					} else {
-						$("svg", stars).replaceWith(starInactive.clone());
-					}
+					changeValue(value - 1);
 					break;
 
 				case 13:
 					//enter
-					success($(".tabulator-star-active", stars).length);
+					success(value);
 					break;
 
 				case 27:
 					//escape
 					cancel();
 					break;
-
 			}
 		});
 
-		return stars[0];
+		return starsHolder;
 	},
 
 	//draggable progress bar
