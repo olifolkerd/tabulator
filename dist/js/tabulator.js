@@ -13852,7 +13852,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	Tabulator.prototype.registerModule("keybindings", Keybindings);
 	var MoveColumns = function MoveColumns(table) {
 		this.table = table; //hold Tabulator object
-		this.placeholderElement = $("<div class='tabulator-col tabulator-col-placeholder'></div>");
+		this.placeholderElement = this.createPlaceholderElement();
 		this.hoverElement = $(); //floating column header element
 		this.checkTimeout = false; //click check timeout holder
 		this.checkPeriod = 250; //period to wait on mousedown to consider this a move and not a click
@@ -13866,6 +13866,15 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		this.moveHover = this.moveHover.bind(this);
 		this.endMove = this.endMove.bind(this);
+	};
+
+	MoveColumns.prototype.createPlaceholderElement = function () {
+		var el = document.createElement("div");
+
+		el.classList.add("tabulator-col");
+		el.classList.add("tabulator-col-placeholder");
+
+		return el;
 	};
 
 	MoveColumns.prototype.initializeColumn = function (column) {
@@ -13910,44 +13919,40 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	MoveColumns.prototype.startMove = function (e, column) {
-		var self = this,
-		    element = column.getElement();
+		var element = column.getElement();
 
-		self.moving = column;
-		self.startX = e.pageX - Tabulator.prototype.helpers.elOffset(element.left);
+		this.moving = column;
+		this.startX = e.pageX - Tabulator.prototype.helpers.elOffset(element).left;
 
-		self.table.element.classList.add("tabulator-block-select");
+		this.table.element.classList.add("tabulator-block-select");
 
 		//create placeholder
-		self.placeholderElement.css({
-			width: column.getWidth(),
-			height: column.getHeight()
-		});
-		element.parentNode.insertBefore(self.placeholderElement, element);
+
+		this.placeholderElement.style.width = column.getWidth() + "px";
+		this.placeholderElement.style.height = column.getHeight() + "px";
+
+		element.parentNode.insertBefore(this.placeholderElement, element);
 		element.parentNode.removeChild(element);
 
 		//create hover element
-		self.hoverElement = element.cloneNode(true);
-		self.hoverElement.classList.add("tabulator-moving");
+		this.hoverElement = element.cloneNode(true);
+		this.hoverElement.classList.add("tabulator-moving");
 
-		self.table.columnManager.getElement().appendChild(self.hoverElement[0]);
-		self.hoverElement.css({
-			"left": 0,
-			"bottom": 0
-		});
+		this.table.columnManager.getElement().appendChild(this.hoverElement);
 
-		self._bindMouseMove();
+		this.hoverElement.style.left = "0";
+		this.hoverElement.style.bottom = "0";
 
-		$("body").on("mousemove", self.moveHover);
-		$("body").on("mouseup", self.endMove);
+		this._bindMouseMove();
 
-		self.moveHover(e);
+		document.body.addEventListener("mousemove", this.moveHover);
+		document.body.addEventListener("mouseup", this.endMove);
+
+		this.moveHover(e);
 	};
 
 	MoveColumns.prototype._bindMouseMove = function () {
-		var self = this;
-
-		self.table.columnManager.columnsByIndex.forEach(function (column) {
+		this.table.columnManager.columnsByIndex.forEach(function (column) {
 			if (column.modules.moveColumn.mousemove) {
 				column.getElement().addEventListener("mousemove", column.modules.moveColumn.mousemove);
 			}
@@ -13955,9 +13960,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	MoveColumns.prototype._unbindMouseMove = function () {
-		var self = this;
-
-		self.table.columnManager.columnsByIndex.forEach(function (column) {
+		this.table.columnManager.columnsByIndex.forEach(function (column) {
 			if (column.modules.moveColumn.mousemove) {
 				column.getElement().removeEventListener("mousemove", column.modules.moveColumn.mousemove);
 			}
@@ -13965,11 +13968,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	MoveColumns.prototype.moveColumn = function (column, after) {
-		var self = this,
-		    movingCells = this.moving.getCells();
+		var movingCells = this.moving.getCells();
 
-		self.toCol = column;
-		self.toColAfter = after;
+		this.toCol = column;
+		this.toColAfter = after;
 
 		if (after) {
 			column.getCells().forEach(function (cell, i) {
@@ -13985,26 +13987,24 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	MoveColumns.prototype.endMove = function (column) {
-		var self = this;
+		this._unbindMouseMove();
 
-		self._unbindMouseMove();
+		this.placeholderElement.after(this.moving.getElement());
+		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
+		this.hoverElement.parentNode.removeChild(this.hoverElement);
 
-		self.placeholderElement.after(self.moving.getElement());
-		self.placeholderElement.detach();
-		self.hoverElement.detach();
+		this.table.element.classList.remove("tabulator-block-select");
 
-		self.table.element.classList.remove("tabulator-block-select");
-
-		if (self.toCol) {
-			self.table.columnManager.moveColumn(self.moving, self.toCol, self.toColAfter);
+		if (this.toCol) {
+			this.table.columnManager.moveColumn(this.moving, this.toCol, this.toColAfter);
 		}
 
-		self.moving = false;
-		self.toCol = false;
-		self.toColAfter = false;
+		this.moving = false;
+		this.toCol = false;
+		this.toColAfter = false;
 
-		$("body").off("mousemove", self.moveHover);
-		$("body").off("mouseup", self.endMove);
+		document.body.removeEventListener("mousemove", this.moveHover);
+		document.body.removeEventListener("mouseup", this.endMove);
 	};
 
 	MoveColumns.prototype.moveHover = function (e) {
@@ -14014,9 +14014,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    xPos = e.pageX - Tabulator.prototype.helpers.elOffset(columnHolder).left + scrollLeft,
 		    scrollPos;
 
-		self.hoverElement.css({
-			"left": xPos - self.startX
-		});
+		self.hoverElement.style.left = xPos - self.startX + "px";
 
 		if (xPos - scrollLeft < self.autoScrollMargin) {
 			if (!self.autoScrollTimeout) {
