@@ -91,7 +91,7 @@ Localize.prototype.setLocale = function(desiredLocale){
 		traverseLang(self.langs[desiredLocale], self.lang);
 	}
 
-	self.table.options.localized(self.locale, self.lang)
+	self.table.options.localized(self.locale, self.lang);
 
 	self._executeBindings();
 };
@@ -125,7 +125,7 @@ Localize.prototype._getLangElement = function(path, locale){
 	var root = self.lang;
 
 	path.forEach(function(level){
-		var rootPath
+		var rootPath;
 
 		if(root){
 			rootPath = root[level];
