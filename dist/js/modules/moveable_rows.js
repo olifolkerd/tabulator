@@ -7,7 +7,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var MoveRows = function MoveRows(table) {
 
 	this.table = table; //hold Tabulator object
-	this.placeholderElement = $("<div class='tabulator-row tabulator-row-placeholder'></div>");
+	this.placeholderElement = this.createPlaceholderElement();
 	this.hoverElement = $(); //floating row header element
 	this.checkTimeout = false; //click check timeout holder
 	this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
@@ -27,6 +27,15 @@ var MoveRows = function MoveRows(table) {
 
 	this.connectedTable = false;
 	this.connectedRow = false;
+};
+
+MoveRows.prototype.createPlaceholderElement = function () {
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-row");
+	el.classList.add("tabulator-row-placeholder");
+
+	return el;
 };
 
 MoveRows.prototype.initialize = function (handle) {
@@ -49,7 +58,7 @@ MoveRows.prototype.initializeRow = function (row) {
 
 	//same table drag drop
 	config.mousemove = function (e) {
-		if (e.pageY - row.element.offset().top + self.table.rowManager.element.scrollTop() > row.getHeight() / 2) {
+		if (e.pageY - Tabulator.prototype.helpers.elOffset(row.element).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
 			if (self.toRow !== row || !self.toRowAfter) {
 				var rowEl = row.getElement();
 				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
@@ -131,13 +140,11 @@ MoveRows.prototype.startMove = function (e, row) {
 	this.table.element.classList.add("tabulator-block-select");
 
 	//create placeholder
-	this.placeholderElement.css({
-		width: row.getWidth(),
-		height: row.getHeight()
-	});
+	this.placeholderElement.style.width = row.getWidth() + "px";
+	this.placeholderElement.style.height = row.getHeight() + "px";
 
 	if (!this.connection) {
-		element.parentNode.insertBefore(this.placeholderElement[0], element);
+		element.parentNode.insertBefore(this.placeholderElement, element);
 		element.parentNode.removeChild(element);
 	} else {
 		this.table.element.classList.add("tabulator-movingrow-sending");
@@ -149,28 +156,24 @@ MoveRows.prototype.startMove = function (e, row) {
 	this.hoverElement.classList.add("tabulator-moving");
 
 	if (this.connection) {
-
-		$("body").append(this.hoverElement);
-		this.hoverElement.css({
-			"left": 0,
-			"top": 0,
-			"width": this.table.element.clientWidth,
-			"white-space": "nowrap",
-			"overflow": "hidden",
-			"pointer-events": "none"
-		});
+		document.body.appendChild(this.hoverElement);
+		this.hoverElement.style.left = "0";
+		this.hoverElement.style.top = "0";
+		this.hoverElement.style.width = this.table.element.clientWidth + "px";
+		this.hoverElement.style.whiteSpace = "nowrap";
+		this.hoverElement.style.overflow = "hidden";
+		this.hoverElement.style.pointerEvents = "none";
 	} else {
 		this.table.rowManager.getTableElement().append(this.hoverElement);
-		this.hoverElement.css({
-			"left": 0,
-			"top": 0
-		});
+
+		this.hoverElement.style.left = "0";
+		this.hoverElement.style.top = "0";
 
 		this._bindMouseMove();
 	}
 
-	$("body").on("mousemove", this.moveHover);
-	$("body").on("mouseup", this.endMove);
+	document.body.addEventListener("mousemove", this.moveHover);
+	document.body.addEventListener("mouseup", this.endMove);
 
 	this.moveHover(e);
 };
@@ -194,10 +197,10 @@ MoveRows.prototype.endMove = function (column) {
 
 	if (!this.connection) {
 		this.placeholderElement.after(this.moving.getElement());
-		this.placeholderElement.detach();
+		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
 	}
 
-	this.hoverElement.detach();
+	this.hoverElement.parentNode.removeChild(this.hoverElement);
 
 	this.table.element.classList.remove("tabulator-block-select");
 
@@ -209,8 +212,8 @@ MoveRows.prototype.endMove = function (column) {
 	this.toRow = false;
 	this.toRowAfter = false;
 
-	$("body").off("mousemove", this.moveHover);
-	$("body").off("mouseup", this.endMove);
+	document.body.removeEventListener("mousemove", this.moveHover);
+	document.body.removeEventListener("mouseup", this.endMove);
 
 	if (this.connection) {
 		this.table.element.classList.remove("tabulator-movingrow-sending");
@@ -237,16 +240,12 @@ MoveRows.prototype.moveHoverTable = function (e) {
 	    yPos = e.pageY - rowHolder.getBoundingClientRect().top + scrollTop,
 	    scrollPos;
 
-	this.hoverElement.css({
-		"top": yPos - this.startY
-	});
+	this.hoverElement.style.top = yPos - this.startY + "px";
 };
 
 MoveRows.prototype.moveHoverConnections = function (e) {
-	this.hoverElement.css({
-		"left": this.startX + e.pageX,
-		"top": this.startY + e.pageY
-	});
+	this.hoverElement.style.left = this.startX + e.pageX + "px";
+	this.hoverElement.style.top = this.startY + e.pageY + "px";
 };
 
 //establish connection with other tables

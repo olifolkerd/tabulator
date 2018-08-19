@@ -1,8 +1,8 @@
 var MoveRows = function(table){
 
 	this.table = table; //hold Tabulator object
-	this.placeholderElement = $("<div class='tabulator-row tabulator-row-placeholder'></div>");
-	this.hoverElement = $(); //floating row header element
+	this.placeholderElement = this.createPlaceholderElement();
+	this.hoverElement = false; //floating row header element
 	this.checkTimeout = false; //click check timeout holder
 	this.checkPeriod = 150; //period to wait on mousedown to consider this a move and not a click
 	this.moving = false; //currently moving row
@@ -23,6 +23,15 @@ var MoveRows = function(table){
 	this.connectedRow = false;
 };
 
+MoveRows.prototype.createPlaceholderElement = function(){
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-row");
+	el.classList.add("tabulator-row-placeholder");
+
+	return el;
+};
+
 
 MoveRows.prototype.initialize = function(handle){
 	this.connection = this.table.options.movableRowsConnectedTables;
@@ -40,11 +49,11 @@ MoveRows.prototype.initializeRow = function(row){
 	//inter table drag drop
 	config.mouseup = function(e){
 		self.tableRowDrop(e, row);
-	}.bind(self)
+	}.bind(self);
 
 	//same table drag drop
 	config.mousemove = function(e){
-		if(((e.pageY - row.element.offset().top) + self.table.rowManager.element.scrollTop()) > (row.getHeight() / 2)){
+		if(((e.pageY - Tabulator.prototype.helpers.elOffset(row.element).top) + self.table.rowManager.element.scrollTop) > (row.getHeight() / 2)){
 			if(self.toRow !== row || !self.toRowAfter){
 				var rowEl = row.getElement();
 				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
@@ -127,13 +136,11 @@ MoveRows.prototype.startMove = function(e, row){
 	this.table.element.classList.add("tabulator-block-select");
 
 	//create placeholder
-	this.placeholderElement.css({
-		width:row.getWidth(),
-		height:row.getHeight(),
-	});
+	this.placeholderElement.style.width = row.getWidth() + "px";
+	this.placeholderElement.style.height = row.getHeight() + "px";
 
 	if(!this.connection){
-		element.parentNode.insertBefore(this.placeholderElement[0], element);
+		element.parentNode.insertBefore(this.placeholderElement, element);
 		element.parentNode.removeChild(element);
 	}else{
 		this.table.element.classList.add("tabulator-movingrow-sending");
@@ -145,29 +152,24 @@ MoveRows.prototype.startMove = function(e, row){
 	this.hoverElement.classList.add("tabulator-moving");
 
 	if(this.connection){
-
-		$("body").append(this.hoverElement);
-		this.hoverElement.css({
-			"left":0,
-			"top":0,
-			"width":this.table.element.clientWidth,
-			"white-space": "nowrap",
-			"overflow":"hidden",
-			"pointer-events":"none",
-		});
-
+		document.body.appendChild(this.hoverElement);
+		this.hoverElement.style.left = "0";
+		this.hoverElement.style.top = "0";
+		this.hoverElement.style.width = this.table.element.clientWidth + "px";
+		this.hoverElement.style.whiteSpace = "nowrap";
+		this.hoverElement.style.overflow = "hidden";
+		this.hoverElement.style.pointerEvents = "none";
 	}else{
 		this.table.rowManager.getTableElement().append(this.hoverElement);
-		this.hoverElement.css({
-			"left":0,
-			"top":0,
-		});
+
+		this.hoverElement.style.left = "0";
+		this.hoverElement.style.top = "0";
 
 		this._bindMouseMove();
 	}
 
-	$("body").on("mousemove", this.moveHover);
-	$("body").on("mouseup", this.endMove);
+	document.body.addEventListener("mousemove", this.moveHover);
+	document.body.addEventListener("mouseup", this.endMove);
 
 	this.moveHover(e);
 };
@@ -192,10 +194,10 @@ MoveRows.prototype.endMove = function(column){
 
 	if(!this.connection){
 		this.placeholderElement.after(this.moving.getElement());
-		this.placeholderElement.detach();
+		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
 	}
 
-	this.hoverElement.detach();
+	this.hoverElement.parentNode.removeChild(this.hoverElement);
 
 	this.table.element.classList.remove("tabulator-block-select");
 
@@ -207,8 +209,8 @@ MoveRows.prototype.endMove = function(column){
 	this.toRow = false;
 	this.toRowAfter = false;
 
-	$("body").off("mousemove", this.moveHover);
-	$("body").off("mouseup", this.endMove);
+	document.body.removeEventListener("mousemove", this.moveHover);
+	document.body.removeEventListener("mouseup", this.endMove);
 
 	if(this.connection){
 		this.table.element.classList.remove("tabulator-movingrow-sending");
@@ -235,18 +237,14 @@ MoveRows.prototype.moveHoverTable = function(e){
 	yPos = (e.pageY - rowHolder.getBoundingClientRect().top) + scrollTop,
 	scrollPos;
 
-	this.hoverElement.css({
-		"top":yPos - this.startY,
-	});
-}
+	this.hoverElement.style.top = (yPos - this.startY) + "px";
+};
 
 
 MoveRows.prototype.moveHoverConnections = function(e){
-	this.hoverElement.css({
-		"left":this.startX + e.pageX,
-		"top":this.startY + e.pageY,
-	});
-}
+	this.hoverElement.style.left = (this.startX + e.pageX) + "px";
+	this.hoverElement.style.top = (this.startY + e.pageY) + "px";
+};
 
 
 //establish connection with other tables
@@ -259,7 +257,7 @@ MoveRows.prototype.connectToTables = function(row){
 	this.table.modules.comms.send(this.connection, "moveRow", "connect", {
 		row:row,
 	});
-}
+};
 
 
 //disconnect from other tables
@@ -270,7 +268,7 @@ MoveRows.prototype.disconnectFromTables = function(){
 	this.table.options.movableRowsSendingStop(connections);
 
 	this.table.modules.comms.send(this.connection, "moveRow", "disconnect");
-}
+};
 
 
 //accept incomming connection
@@ -299,7 +297,7 @@ MoveRows.prototype.connect = function(table, row){
 		console.warn("Move Row Error - Table cannot accept connection, already connected to table:", this.connectedTable);
 		return false;
 	}
-}
+};
 
 //close incomming connection
 MoveRows.prototype.disconnect = function(table){
@@ -322,7 +320,7 @@ MoveRows.prototype.disconnect = function(table){
 	}else{
 		console.warn("Move Row Error - trying to disconnect from non connected table")
 	}
-}
+};
 
 MoveRows.prototype.dropComplete = function(table, row, success){
 	var sender = false;
@@ -355,7 +353,7 @@ MoveRows.prototype.dropComplete = function(table, row, success){
 
 	this.endMove();
 
-}
+};
 
 
 MoveRows.prototype.tableRowDrop = function(e, row){
@@ -390,7 +388,7 @@ MoveRows.prototype.tableRowDrop = function(e, row){
 		row:row,
 		success:success,
 	});
-}
+};
 
 
 
@@ -423,13 +421,13 @@ MoveRows.prototype.receivers = {
 
 		return false;
 	},
-}
+};
 
 MoveRows.prototype.senders = {
 	delete:function(fromRow, toRow, toTable){
 		fromRow.delete();
 	}
-}
+};
 
 
 MoveRows.prototype.commsReceived = function(table, action, data){
@@ -446,7 +444,7 @@ MoveRows.prototype.commsReceived = function(table, action, data){
 		return this.dropComplete(table, data.row, data.success);
 		break;
 	}
-}
+};
 
 
 Tabulator.prototype.registerModule("moveRow", MoveRows);
