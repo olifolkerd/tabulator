@@ -15555,13 +15555,13 @@ Tabulator.prototype.registerModule("comms", Comms);
 				table.element.tabulator("redraw");
 			};
 
-			$(window).resize(this.binding);
+			window.addEventListener("resize", this.binding);
 		}
 	};
 
 	ResizeTable.prototype.clearBindings = function (row) {
 		if (this.binding) {
-			$(window).off("resize", this.binding);
+			window.removeEventListener("resize", this.binding);
 		}
 
 		if (this.observer) {
