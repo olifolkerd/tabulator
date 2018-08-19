@@ -4245,10 +4245,16 @@ Cell.prototype._configureCell = function () {
 
 //generate cell contents
 Cell.prototype._generateContents = function () {
-	var self = this;
+	var self = this,
+	    val;
 
 	if (self.table.modExists("format")) {
-		self.element.innerHTML = self.table.modules.format.formatValue(self);
+		val = self.table.modules.format.formatValue(self);
+		if (typeof val === "string") {
+			self.element.innerHTML = val;
+		} else {
+			self.element.appendChild(val);
+		}
 	} else {
 		self.element.innerHTML = self.value;
 	}

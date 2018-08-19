@@ -5377,11 +5377,20 @@ Cell.prototype._configureCell = function () {
 
 Cell.prototype._generateContents = function () {
 
-	var self = this;
+	var self = this,
+	    val;
 
 	if (self.table.modExists("format")) {
 
-		self.element.innerHTML = self.table.modules.format.formatValue(self);
+		val = self.table.modules.format.formatValue(self);
+
+		if (typeof val === "string") {
+
+			self.element.innerHTML = val;
+		} else {
+
+			self.element.appendChild(val);
+		}
 	} else {
 
 		self.element.innerHTML = self.value;
@@ -11758,8 +11767,12 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		//clickable mailto link
 		email: function email(cell, formatterParams) {
-			var value = this.sanitizeHTML(cell.getValue());
-			return "<a href='mailto:" + value + "'>" + this.emptyToSpace(value) + "</a>";
+			var value = this.sanitizeHTML(cell.getValue()),
+			    el = document.createElement("a");
+			el.setAttribute("href", "mailto:" + value);
+			el.innerHTML = this.emptyToSpace(value);
+
+			return el;
 		},
 
 		//clickable anchor tag
@@ -11767,6 +11780,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			var value = this.sanitizeHTML(cell.getValue()),
 			    urlPrefix = formatterParams.urlPrefix || "",
 			    label = this.emptyToSpace(value),
+			    el = document.createElement("a"),
 			    data;
 
 			if (formatterParams.labelField) {
@@ -11803,16 +11817,19 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			}
 
-			return "<a href='" + urlPrefix + value + "'>" + label + "</a>";
+			el.setAttribute("href", urlPrefix + value);
+			el.innerHTML = this.emptyToSpace(label);
+
+			return el;
 		},
 
 		//image element
 		image: function image(cell, formatterParams) {
-			var value = this.sanitizeHTML(cell.getValue());
+			var value = this.sanitizeHTML(cell.getValue()),
+			    el = document.createElement("img");
+			el.setAttribute("src", value);
 
-			var el = $("<img src='" + value + "'/>");
-
-			el.on("load", function () {
+			el.addEventListener("load", function () {
 				cell.getRow().normalizeHeight();
 			});
 
@@ -11864,19 +11881,39 @@ Tabulator.prototype.registerModule("comms", Comms);
 		},
 
 		//star rating
-		star: function star(cell, formatterParams) {
+		star: function (_star) {
+			function star(_x3, _x4) {
+				return _star.apply(this, arguments);
+			}
+
+			star.toString = function () {
+				return _star.toString();
+			};
+
+			return star;
+		}(function (cell, formatterParams) {
 			var value = cell.getValue(),
 			    element = cell.getElement(),
 			    maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
-			    stars = $("<span style='vertical-align:middle;'></span>"),
-			    starActive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>'),
-			    starInactive = $('<svg width="14" height="14" viewBox="0 0 512 512" xml:space="preserve" style="margin:0 1px;"><polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/></svg>');
+			    stars = starsHolder = document.createElement("span"),
+			    stars = document.createElementNS('http://www.w3.org/2000/svg', "svg");
+			starActive = '<polygon fill="#FFEA00" stroke="#C1AB60" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>', starInactive = '<polygon fill="#D2D2D2" stroke="#686868" stroke-width="37.6152" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" points="259.216,29.942 330.27,173.919 489.16,197.007 374.185,309.08 401.33,467.31 259.216,392.612 117.104,467.31 144.25,309.08 29.274,197.007 188.165,173.919 "/>';
+
+			//style stars holder
+			stars.style.verticalAlign = "middle";
+
+			//style star
+			star.setAttribute("width", "14");
+			star.setAttribute("height", "14");
+			star.setAttribute("viewBox", "0 0 512 512");
+			star.setAttribute("xml:space", "preserve");
+			star.style.padding = "0 1px";
 
 			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
 
 			for (var i = 1; i <= maxStars; i++) {
-
-				var nextStar = i <= value ? starActive : starInactive;
+				var nextStar = star.cloneNode(true);
+				nextStar.innerHTML = i <= value ? starActive : starInactive;
 
 				stars.append(nextStar.clone());
 			}
@@ -11888,7 +11925,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			element.setAttribute("aria-label", value);
 
 			return stars.html();
-		},
+		}),
 
 		//progress bar
 		progress: function progress(cell, formatterParams) {
@@ -12012,20 +12049,41 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		responsiveCollapse: function responsiveCollapse(cell, formatterParams) {
 			var self = this,
-			    el = $("<div class='tabulator-responsive-collapse-toggle'><span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span></div>");
+			    open = false;
+			el = document.createElement("div");
+
+			function toggleList(isOpen) {
+				var collapse = cell.getRow().getElement().getElementsByClassName(".tabulator-responsive-collapse")[0];
+				open = isOpen;
+
+				if (open) {
+					el.classList.add("open");
+					if (collapse) {
+						collapse.style.display = '';
+					}
+				} else {
+					if (collapse) {
+						collapse.style.display = 'none';
+					}
+				}
+			}
+
+			el.classList.add("tabulator-responsive-collapse-toggle");
+			el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
 
 			cell.getElement().classList.add("tabulator-row-handle");
 
 			if (self.table.options.responsiveLayoutCollapseStartOpen) {
-				el.addClass("open");
+				open = true;
 			}
 
-			el.click(function () {
-				$(this).toggleClass("open");
-				$(this).closest(".tabulator-row").find(".tabulator-responsive-collapse").toggle();
+			el.addEventListener("click", function () {
+				toggleList(!open);
 			});
 
-			return el[0];
+			toggleList(open);
+
+			return el;
 		}
 	};
 
