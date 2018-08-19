@@ -662,7 +662,6 @@ Edit.prototype.editors = {
 		starsHolder.style.verticalAlign = "middle";
 		starsHolder.style.display = "inline-block";
 		starsHolder.style.padding = "4px";
-		// starsHolder.style.backgroundColor = "#f00";
 
 		//style star
 		star.setAttribute("width", size);
@@ -721,76 +720,98 @@ Edit.prototype.editors = {
 	//draggable progress bar
 	progress:function(cell, onRendered, success, cancel, editorParams){
 		var element = cell.getElement(),
-		max = $("div", element).data("max"),
-		min = $("div", element).data("min"),
+		max = typeof editorParams.max === "undefined" ? ( element.getElementsByTagName("div")[0].getAttribute("max") || 100) : editorParams.max,
+		min = typeof editorParams.min === "undefined" ? ( element.getElementsByTagName("div")[0].getAttribute("min") || 0) : editorParams.min,
 		percent = (max - min) / 100,
 		value = cell.getValue() || 0,
-		handle = $("<div class='tabulator-progress-handle' style='position:absolute; right:0; top:0; bottom:0; width:5px;'></div>"),
-		bar;
+		handle = document.createElement("div"),
+		bar = document.createElement("div"),
+		mouseDrag, mouseDragWidth;
 
-		var newVal = function(){
-			var calcVal = (percent * Math.round(bar.outerWidth() / (element.width()/100))) + min;
+		//set new value
+		function updateValue(){
+			var calcVal = (percent * Math.round(bar.offsetWidth / (element.clientWidth/100))) + min;
+			console.log("success", calcVal, percent, bar.offsetWidth,element.clientWidth, min)
 			success(calcVal);
-			element.attr("aria-valuenow", calcVal).attr("aria-label", value);
+			element.setAttribute("aria-valuenow", calcVal);
+			element.setAttribute("aria-label", value);
 		}
 
+		//style handle
+		handle.style.position = "absolute";
+		handle.style.right = "0";
+		handle.style.top = "0";
+		handle.style.bottom = "0";
+		handle.style.width = "5px";
+		handle.classList.add("tabulator-progress-handle");
+
+		//style bar
+		bar.style.display = "inline-block";
+		bar.style.position = "absolute";
+		bar.style.top = "8px";
+		bar.style.bottom = "8px";
+		bar.style.left = "4px";
+		bar.style.marginRight = "4px";
+		bar.style.backgroundColor = "#488CE9";
+		bar.style.maxWidth = "100%";
+		bar.style.minWidth = "0%";
+
+		//style cell
+		element.style.padding = "0 4px";
+
 		//make sure value is in range
-		value = parseFloat(value) <= max ? parseFloat(value) : max;
-		value = parseFloat(value) >= min ? parseFloat(value) : min;
+		value = Math.min(parseFloat(value), max);
+		value = Math.max(parseFloat(value), min);
 
 		//workout percentage
 		value = 100 - Math.round((value - min) / percent);
+		bar.style.right = value + "%";
 
-		bar = $("<div style='position:absolute; top:8px; bottom:8px; left:4px; right:" + value + "%; margin-right:4px; background-color:#488CE9; display:inline-block; max-width:100%; min-width:0%;' data-max='" + max + "' data-min='" + min + "'></div>"),
+		element.setAttribute("aria-valuemin", min);
+		element.setAttribute("aria-valuemax", max);
 
-		element.css({
-			padding:"0 4px",
+		bar.appendChild(handle);
+
+		handle.addEventListener("mousedown", function(e){
+			mouseDrag = e.screenX;
+			mouseDragWidth = bar.offsetWidth;
 		});
 
-		element.attr("aria-valuemin", min).attr("aria-valuemax", max);
-
-		bar.append(handle);
-
-		handle.on("mousedown", function(e){
-			bar.data("mouseDrag", e.screenX);
-			bar.data("mouseDragWidth", bar.outerWidth());
+		handle.addEventListener("mouseover", function(){
+			handle.style.cursor = "ew-resize";
 		});
 
-		handle.on("mouseover", function(){$(this).css({cursor:"ew-resize"})});
-
-		element.on("mousemove", function(e){
-			if(bar.data("mouseDrag")){
-				bar.css({width: bar.data("mouseDragWidth") + (e.screenX - bar.data("mouseDrag"))})
+		element.addEventListener("mousemove", function(e){
+			if(mouseDrag){
+				bar.style.width = (mouseDragWidth + e.screenX - mouseDrag) + "px";
 			}
 		});
 
-		element.on("mouseup", function(e){
-			if(bar.data("mouseDrag")){
+		element.addEventListener("mouseup", function(e){
+			if(mouseDrag){
 				e.stopPropagation();
 				e.stopImmediatePropagation();
 
-				bar.data("mouseDragOut", true);
-				bar.data("mouseDrag", false);
-				bar.data("mouseDragWidth", false);
+				mouseDrag = false;
+				mouseDragWidth = false;
 
-				newVal();
-
+				updateValue();
 			}
 		});
 
 		//allow key based navigation
-		element.on("keydown", function(e){
+		element.addEventListener("keydown", function(e){
 			switch(e.keyCode){
 				case 39: //right arrow
-				bar.css({"width" : bar.width() + element.width()/100});
+				bar.style.width = (bar.clientWidth + element.clientWidth/100) + "px";
 				break;
 
 				case 37: //left arrow
-				bar.css({"width" : bar.width() - element.width()/100});
+				bar.style.width = (bar.clientWidth - element.clientWidth/100) + "px";
 				break;
 
 				case 13: //enter
-				newVal();
+				updateValue();
 				break;
 
 				case 27: //escape
@@ -800,24 +821,23 @@ Edit.prototype.editors = {
 			}
 		});
 
-		element.on("blur", function(){
+		element.addEventListener("blur", function(){
 			cancel();
 		});
 
-		return bar[0];
+		return bar;
 	},
 
 	//checkbox
 	tickCross:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
-		input = $("<input type='checkbox'/>");
+		input = document.createElement("input");
 
-		//create and style input
-		input.css({
-			"margin-top":"5px",
-			"box-sizing":"border-box",
-		})
-		.val(value);
+		input.setAttribute("type", "checkbox");
+		input.style.marginTop = "5px";
+		input.style.boxSizing = "border-box";
+
+		input.value = value;
 
 		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 			onRendered(function(){
@@ -825,70 +845,69 @@ Edit.prototype.editors = {
 			});
 		}
 
-		if(value === true || value === "true" || value === "True" || value === 1){
-			input.prop("checked", true);
-		}else{
-			input.prop("checked", false);
-		}
+		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
 		//submit new value on blur
-		input.on("change blur", function(e){
-			success(input.is(":checked"));
+		input.addEventListener("change", function(e){
+			success(input.checked);
+		});
+
+		input.addEventListener("blur", function(e){
+			success(input.checked);
 		});
 
 		//submit new value on enter
-		input.on("keydown", function(e){
+		input.addEventListener("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.is(":checked"));
+				success(input.checked);
 			}
 			if(e.keyCode == 27){
 				cancel();
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 
 	//checkbox
 	tick:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
-		input = $("<input type='checkbox'/>");
+		input = document.createElement("input");
 
-		//create and style input
-		input.css({
-			"margin-top":"5px",
-			"box-sizing":"border-box",
-		})
-		.val(value);
+		input.setAttribute("type", "checkbox");
+		input.style.marginTop = "5px";
+		input.style.boxSizing = "border-box";
 
-		if(this.table.browser != "firefox"){  //prevent blur issue on mac firefox
+		input.value = value;
+
+		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 			onRendered(function(){
 				input.focus();
 			});
 		}
 
-		if(value === true || value === "true" || value === "True" || value === 1){
-			input.prop("checked", true);
-		}else{
-			input.prop("checked", false);
-		}
+		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
 		//submit new value on blur
-		input.on("change blur", function(e){
-			success(input.is(":checked"));
+		input.addEventListener("change", function(e){
+			success(input.checked);
+		});
+
+		input.addEventListener("blur", function(e){
+			success(input.checked);
 		});
 
 		//submit new value on enter
-		input.on("keydown", function(e){
+		input.addEventListener("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.is(":checked"));
+				success(input.checked);
 			}
 			if(e.keyCode == 27){
 				cancel();
 			}
 		});
 
-		return input[0];
+		return input;
 	},
 };
 
