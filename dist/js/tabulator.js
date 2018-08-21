@@ -9074,11 +9074,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//default ajax config object
 	Ajax.prototype.defaultConfig = {
-		url: "",
-		type: "GET",
-		async: true,
-		dataType: "json",
-		success: function success(data) {}
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json; charset=utf-8"
+		}
 	};
 
 	Tabulator.prototype.registerModule("ajax", Ajax);

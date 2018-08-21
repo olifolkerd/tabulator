@@ -146,11 +146,11 @@ Ajax.prototype.nextPage = function(diff){
 			this.table.modules.page.nextPage();
 		}
 	}
-}
+};
 
 Ajax.prototype.blockActiveRequest = function(){
 	this.requestOrder ++;
-}
+};
 
 Ajax.prototype._loadDataProgressive = function(){
 	this.table.rowManager.setData([]);
@@ -162,7 +162,7 @@ Ajax.prototype._loadDataStandard = function(inPosition){
 	this.sendRequest(function(data){
 		self.table.rowManager.setData(data, inPosition);
 	}, inPosition);
-}
+};
 
 //send ajax request
 Ajax.prototype.sendRequest = function(callback, silent){
@@ -309,11 +309,10 @@ Ajax.prototype.hideLoader = function(){
 
 //default ajax config object
 Ajax.prototype.defaultConfig = {
-	url: "",
-	type: "GET",
-	async: true,
-	dataType:"json",
-	success: function (data){}
+	method: "GET",
+	headers: {
+		"Content-Type": "application/json; charset=utf-8",
+	}
 };
 
 Tabulator.prototype.registerModule("ajax", Ajax);
