@@ -8858,7 +8858,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this._loadDefaultConfig();
 
 		if (typeof config == "string") {
-			this.config.type = config;
+			this.config.method = config;
 		} else {
 			for (var key in config) {
 				this.config[key] = config[key];
@@ -8933,19 +8933,29 @@ Tabulator.prototype.registerModule("comms", Comms);
 	//send ajax request
 	Ajax.prototype.sendRequest = function (callback, silent) {
 		var self = this,
-		    requestNo;
+		    url = self.url,
+		    requestNo,
+		    esc,
+		    query;
 
-		if (self.url) {
+		if (url) {
 
 			self.requestOrder++;
 			requestNo = self.requestOrder;
 
 			self._loadDefaultConfig();
 
-			self.config.url = self.url;
-
 			if (self.params) {
-				self.config.data = self.params;
+				if (!self.config.method || self.config.method == "get") {
+					var esc = encodeURIComponent;
+					var query = Object.keys(self.params).map(function (k) {
+						return esc(k) + '=' + esc(self.params[k]);
+					}).join('&');
+
+					url += "?" + query;
+				} else {
+					self.config.body = JSON.stringify(self.params);
+				}
 			}
 
 			if (self.table.options.ajaxRequesting(self.url, self.params) !== false) {
@@ -8956,25 +8966,52 @@ Tabulator.prototype.registerModule("comms", Comms);
 					self.showLoader();
 				}
 
-				$.ajax(self.config).done(function (data) {
+				fetch(url, self.config).then(function (response) {
+					if (response.ok) {
+						response.json().then(function (data) {
+							if (response.ok) {
 
-					if (requestNo === self.requestOrder) {
-						if (self.table.options.ajaxResponse) {
-							data = self.table.options.ajaxResponse(self.url, self.params, data);
-						}
+								if (requestNo === self.requestOrder) {
+									if (self.table.options.ajaxResponse) {
+										data = self.table.options.ajaxResponse(self.url, self.params, data);
+									}
 
-						callback(data);
+									callback(data);
+								} else {
+									console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+								}
+							}
+
+							self.hideLoader();
+
+							self.loading = false;
+						}).catch(function (error) {
+							console.warn("Ajax Load Error - Invalid JSON returned", error);
+
+							self.showError();
+
+							setTimeout(function () {
+								self.hideLoader();
+							}, 3000);
+
+							self.loading = false;
+						});
 					} else {
-						console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+						console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
+
+						self.table.options.ajaxError(response, response.status, response.statusText);
+						self.showError();
+
+						setTimeout(function () {
+							self.hideLoader();
+						}, 3000);
+
+						self.loading = false;
 					}
+				}).catch(function (error) {
+					console.error("Ajax Load Error - Connection Error: ", error);
 
-					self.hideLoader();
-
-					self.loading = false;
-				}).fail(function (xhr, textStatus, errorThrown) {
-					console.error("Ajax Load Error - Connection Error: " + xhr.status, errorThrown);
-
-					self.table.options.ajaxError(xhr, textStatus, errorThrown);
+					self.table.options.ajaxError(error, error, error);
 					self.showError();
 
 					setTimeout(function () {
