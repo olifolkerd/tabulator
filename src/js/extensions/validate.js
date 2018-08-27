@@ -35,9 +35,9 @@ Validate.prototype._extractValidator = function(value){
 
 	switch(typeof value){
 		case "string":
-		let parts = value.split(":");
+		let parts = value.split(":",1);
 		let type = parts.shift();
-		let params = parts.join();
+		let params = parts[0];
 
 		return this._buildValidator(type, params);
 		break;
