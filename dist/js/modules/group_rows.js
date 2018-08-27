@@ -479,7 +479,7 @@ Group.prototype._visSet = function () {
 			data.push(row.getData());
 		});
 
-		this.visible = this.visible(this.key, this.getRowCount(), data, this.getRowCount());
+		this.visible = this.visible(this.key, this.getRowCount(), data, this.getComponent());
 	}
 };
 
