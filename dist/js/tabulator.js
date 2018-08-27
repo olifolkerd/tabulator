@@ -3724,7 +3724,7 @@ RowManager.prototype._simpleRender = function () {
 
 		if (onlyGroupHeaders) {
 
-			element.style.minWidth = self.table.columnManager.getWidth();
+			element.style.minWidth = self.table.columnManager.getWidth() + "px";
 		}
 	} else {
 
@@ -3807,6 +3807,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 	    rowsHeight = 0,
 	    topPadHeight = 0,
 	    i = 0,
+	    onlyGroupHeaders = true,
 	    rows = self.getDisplayRows();
 
 	position = position || 0;
@@ -3877,6 +3878,11 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 				rowsHeight += row.getHeight();
 			}
 
+			if (row.type !== "group") {
+
+				onlyGroupHeaders = false;
+			}
+
 			self.vDomBottom++;
 
 			i++;
@@ -3923,6 +3929,8 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 		this.vDomScrollPosBottom = this.scrollTop;
 
 		holder.scrollTop = this.scrollTop;
+
+		element.style.minWidth = onlyGroupHeaders ? self.table.columnManager.getWidth() + "px" : "";
 
 		if (self.table.options.groupBy) {
 
