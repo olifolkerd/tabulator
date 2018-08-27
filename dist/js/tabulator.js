@@ -1752,7 +1752,7 @@ Column.prototype.verticalAlign = function (alignment) {
 
 	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
-	this.element.style.height = parentHeight;
+	this.element.style.height = parentHeight + "px";
 
 	if (this.isGroup) {
 

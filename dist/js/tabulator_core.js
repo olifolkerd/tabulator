@@ -1476,7 +1476,7 @@ Column.prototype.verticalAlign = function (alignment) {
 	//calculate height of column header and group holder element
 	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
-	this.element.style.height = parentHeight;
+	this.element.style.height = parentHeight + "px";
 
 	if (this.isGroup) {
 		this.groupElement.style.minHeight = parentHeight - this.contentElement.offsetHeight + "px";
