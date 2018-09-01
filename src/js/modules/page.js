@@ -72,7 +72,7 @@ Page.prototype.initialize = function(hidden){
 	});
 
 	self.table.modules.localize.bind("pagination|first_title", function(value){
-		self.firstBut.setAttribute("aria-label", value)
+		self.firstBut.setAttribute("aria-label", value);
 		self.firstBut.setAttribute("title", value);
 	});
 
@@ -81,7 +81,7 @@ Page.prototype.initialize = function(hidden){
 	});
 
 	self.table.modules.localize.bind("pagination|prev_title", function(value){
-		self.prevBut.setAttribute("aria-label", value)
+		self.prevBut.setAttribute("aria-label", value);
 		self.prevBut.setAttribute("title", value);
 	});
 
@@ -90,7 +90,7 @@ Page.prototype.initialize = function(hidden){
 	});
 
 	self.table.modules.localize.bind("pagination|next_title", function(value){
-		self.nextBut.setAttribute("aria-label", value)
+		self.nextBut.setAttribute("aria-label", value);
 		self.nextBut.setAttribute("title", value);
 	});
 
@@ -99,7 +99,7 @@ Page.prototype.initialize = function(hidden){
 	});
 
 	self.table.modules.localize.bind("pagination|last_title", function(value){
-		self.lastBut.setAttribute("aria-label", value)
+		self.lastBut.setAttribute("aria-label", value);
 		self.lastBut.setAttribute("title", value);
 	});
 
@@ -402,7 +402,7 @@ Page.prototype._getRemotePageAuto = function(){
 	}
 
 	//set sort data if defined
-	if(this.table.modExists("sort")){
+	if(this.table.options.ajaxSorting && this.table.modExists("sort")){
 		let sorters = self.table.modules.sort.getSort();
 
 		sorters.forEach(function(item){
@@ -413,7 +413,7 @@ Page.prototype._getRemotePageAuto = function(){
 	}
 
 	//set filter data if defined
-	if(this.table.modExists("filter")){
+	if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
 		let filters = self.table.modules.filter.getFilters(true, true);
 		pageParams[this.paginationDataSentNames.filters] = filters;
 	}
@@ -455,7 +455,7 @@ Page.prototype._parseRemoteData = function(data){
 
 					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
-					if(self.table.rowManager.element[0].scrollHeight <= (self.table.rowManager.element.clientHeight + margin)){
+					if(self.table.rowManager.element.scrollHeight <= (self.table.rowManager.element.clientHeight + margin)){
 						self.nextPage();
 					}
 					break;

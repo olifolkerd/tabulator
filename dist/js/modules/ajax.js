@@ -1,5 +1,7 @@
 "use strict";
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 /* Tabulator v4.0.0 (c) Oliver Folkerd */
 
 var Ajax = function Ajax(table) {
@@ -168,6 +170,38 @@ Ajax.prototype._loadDataStandard = function (inPosition) {
 	}, inPosition);
 };
 
+Ajax.prototype.serializeParams = function (data, prefix) {
+	var self = this,
+	    output = [],
+	    encoded = [];
+
+	prefix = prefix || "";
+
+	if (Array.isArray(data)) {
+
+		data.forEach(function (item, i) {
+			output = output.concat(self.serializeParams(item, prefix ? prefix + "[" + i + "]" : i));
+		});
+	} else if ((typeof data === "undefined" ? "undefined" : _typeof(data)) === "object") {
+
+		for (var key in data) {
+			output = output.concat(self.serializeParams(data[key], prefix ? prefix + "[" + key + "]" : key));
+		}
+	} else {
+		output.push({ key: prefix, val: data });
+	}
+
+	if (prefix) {
+		return output;
+	} else {
+		output.forEach(function (item) {
+			encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.val));
+		});
+
+		return encoded.join("&");
+	}
+};
+
 //send ajax request
 Ajax.prototype.sendRequest = function (callback, silent) {
 	var self = this,
@@ -185,12 +219,7 @@ Ajax.prototype.sendRequest = function (callback, silent) {
 
 		if (self.params) {
 			if (!self.config.method || self.config.method == "get") {
-				var esc = encodeURIComponent;
-				var query = Object.keys(self.params).map(function (k) {
-					return esc(k) + '=' + esc(self.params[k]);
-				}).join('&');
-
-				url += "?" + query;
+				url += "?" + self.serializeParams(self.params);
 			} else {
 				self.config.body = JSON.stringify(self.params);
 			}

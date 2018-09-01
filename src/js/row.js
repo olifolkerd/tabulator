@@ -576,8 +576,7 @@ Row.prototype.wipe = function(){
 	// this.element.empty();
 
 	while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
-
-	this.element.remove();
+	// this.element.remove();
 	this.element.parentNode.removeChild(this.element);
 };
 

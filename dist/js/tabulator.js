@@ -3241,6 +3241,9 @@ RowManager.prototype.filterRefresh = function () {
 			table.modules.page.reset(true);
 
 			table.modules.page.setPage(1);
+		} else if (options.ajaxProgressiveLoad) {
+
+			table.modules.ajax.loadData();
 		} else {
 
 			//assume data is url, make ajax call to url to get data
@@ -3265,11 +3268,14 @@ RowManager.prototype.sorterRefresh = function () {
 
 	if (options.ajaxSorting) {
 
-		if (options.pagination == "remote" && table.modExists("page")) {
+		if ((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")) {
 
 			table.modules.page.reset(true);
 
 			table.modules.page.setPage(1);
+		} else if (options.ajaxProgressiveLoad) {
+
+			table.modules.ajax.loadData();
 		} else {
 
 			//assume data is url, make ajax call to url to get data
@@ -5030,7 +5036,7 @@ Row.prototype.wipe = function () {
 
 	while (this.element.firstChild) {
 		this.element.removeChild(this.element.firstChild);
-	}this.element.remove();
+	} // this.element.remove();
 
 	this.element.parentNode.removeChild(this.element);
 };
@@ -8882,6 +8888,38 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}, inPosition);
 	};
 
+	Ajax.prototype.serializeParams = function (data, prefix) {
+		var self = this,
+		    output = [],
+		    encoded = [];
+
+		prefix = prefix || "";
+
+		if (Array.isArray(data)) {
+
+			data.forEach(function (item, i) {
+				output = output.concat(self.serializeParams(item, prefix ? prefix + "[" + i + "]" : i));
+			});
+		} else if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === "object") {
+
+			for (var key in data) {
+				output = output.concat(self.serializeParams(data[key], prefix ? prefix + "[" + key + "]" : key));
+			}
+		} else {
+			output.push({ key: prefix, val: data });
+		}
+
+		if (prefix) {
+			return output;
+		} else {
+			output.forEach(function (item) {
+				encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.val));
+			});
+
+			return encoded.join("&");
+		}
+	};
+
 	//send ajax request
 	Ajax.prototype.sendRequest = function (callback, silent) {
 		var self = this,
@@ -8899,12 +8937,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			if (self.params) {
 				if (!self.config.method || self.config.method == "get") {
-					var esc = encodeURIComponent;
-					var query = Object.keys(self.params).map(function (k) {
-						return esc(k) + '=' + esc(self.params[k]);
-					}).join('&');
-
-					url += "?" + query;
+					url += "?" + self.serializeParams(self.params);
 				} else {
 					self.config.body = JSON.stringify(self.params);
 				}
@@ -15040,7 +15073,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		//set sort data if defined
-		if (this.table.modExists("sort")) {
+		if (this.table.options.ajaxSorting && this.table.modExists("sort")) {
 			var sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function (item) {
@@ -15051,7 +15084,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		//set filter data if defined
-		if (this.table.modExists("filter")) {
+		if (this.table.options.ajaxFiltering && this.table.modExists("filter")) {
 			var filters = self.table.modules.filter.getFilters(true, true);
 			pageParams[this.paginationDataSentNames.filters] = filters;
 		}
@@ -15093,7 +15126,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 							margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element.clientHeight * 2;
 
-							if (self.table.rowManager.element[0].scrollHeight <= self.table.rowManager.element.clientHeight + margin) {
+							if (self.table.rowManager.element.scrollHeight <= self.table.rowManager.element.clientHeight + margin) {
 								self.nextPage();
 							}
 							break;

@@ -2612,6 +2612,8 @@ RowManager.prototype.filterRefresh = function () {
 		if (options.pagination == "remote" && table.modExists("page")) {
 			table.modules.page.reset(true);
 			table.modules.page.setPage(1);
+		} else if (options.ajaxProgressiveLoad) {
+			table.modules.ajax.loadData();
 		} else {
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -2630,9 +2632,11 @@ RowManager.prototype.sorterRefresh = function () {
 	    left = this.scrollLeft;
 
 	if (options.ajaxSorting) {
-		if (options.pagination == "remote" && table.modExists("page")) {
+		if ((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")) {
 			table.modules.page.reset(true);
 			table.modules.page.setPage(1);
+		} else if (options.ajaxProgressiveLoad) {
+			table.modules.ajax.loadData();
 		} else {
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -3979,7 +3983,7 @@ Row.prototype.wipe = function () {
 
 	while (this.element.firstChild) {
 		this.element.removeChild(this.element.firstChild);
-	}this.element.remove();
+	} // this.element.remove();
 	this.element.parentNode.removeChild(this.element);
 };
 
