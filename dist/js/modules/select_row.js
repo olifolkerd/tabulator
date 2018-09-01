@@ -180,7 +180,7 @@ SelectRow.prototype.deselectRows = function (rows) {
 		rowCount = self.selectedRows.length;
 
 		for (var i = 0; i < rowCount; i++) {
-			self._deselectRow(self.selectedRows[0], true);
+			self._deselectRow(self.selectedRows[0], false);
 		}
 
 		self._rowSelectionChanged();

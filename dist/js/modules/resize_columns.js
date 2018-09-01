@@ -119,7 +119,7 @@ ResizeColumns.prototype._mouseDown = function (e, column) {
 			column.checkCellHeights();
 		}
 
-		document.body.removeEventListener("mouseup", mouseMove);
+		document.body.removeEventListener("mouseup", mouseUp);
 		document.body.removeEventListener("mousemove", mouseMove);
 
 		self.table.element.classList.remove("tabulator-block-select");
@@ -142,7 +142,6 @@ ResizeColumns.prototype._mouseDown = function (e, column) {
 	self.startWidth = column.getWidth();
 
 	document.body.addEventListener("mousemove", mouseMove);
-
 	document.body.addEventListener("mouseup", mouseUp);
 };
 

@@ -2996,7 +2996,7 @@ RowManager.prototype.renderEmptyScroll = function () {
 RowManager.prototype._clearVirtualDom = function () {
 	var element = this.tableElement;
 
-	if (this.table.options.placeholder) {
+	if (this.table.options.placeholder && this.table.options.placeholder.parentNode) {
 		this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
 	}
 

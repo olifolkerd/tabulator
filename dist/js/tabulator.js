@@ -3749,7 +3749,7 @@ RowManager.prototype._clearVirtualDom = function () {
 
 	var element = this.tableElement;
 
-	if (this.table.options.placeholder) {
+	if (this.table.options.placeholder && this.table.options.placeholder.parentNode) {
 
 		this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
 	}
@@ -15507,7 +15507,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				column.checkCellHeights();
 			}
 
-			document.body.removeEventListener("mouseup", mouseMove);
+			document.body.removeEventListener("mouseup", mouseUp);
 			document.body.removeEventListener("mousemove", mouseMove);
 
 			self.table.element.classList.remove("tabulator-block-select");
@@ -15530,7 +15530,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self.startWidth = column.getWidth();
 
 		document.body.addEventListener("mousemove", mouseMove);
-
 		document.body.addEventListener("mouseup", mouseUp);
 	};
 
@@ -16072,7 +16071,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			rowCount = self.selectedRows.length;
 
 			for (var i = 0; i < rowCount; i++) {
-				self._deselectRow(self.selectedRows[0], true);
+				self._deselectRow(self.selectedRows[0], false);
 			}
 
 			self._rowSelectionChanged();
