@@ -1105,8 +1105,6 @@ var Column = function Column(def, parent) {
 		this.table.modules.moveRow.setHandle(true);
 	}
 
-	this._mapDepricatedFunctionality();
-
 	this._buildHeader();
 };
 
@@ -1130,21 +1128,6 @@ Column.prototype.createGroupElement = function () {
 	el.classList.add("tabulator-col-group-cols");
 
 	return el;
-};
-
-//////////////// Setup Functions /////////////////
-
-Column.prototype._mapDepricatedFunctionality = function (field) {
-
-	if (this.definition.tooltipHeader) {
-
-		console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltip%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-
-		if (typeof this.definition.headerTooltip == "undefined") {
-
-			this.definition.headerTooltip = this.definition.tooltipHeader;
-		}
-	}
 };
 
 Column.prototype.setField = function (field) {
@@ -5925,8 +5908,6 @@ Tabulator.prototype.defaultOptions = {
 
 	layoutColumnsOnNewData: false, //update column widths on setData
 
-	fitColumns: false, //DEPRICATED - fit colums to width of screen;
-
 
 	columnMinWidth: 40, //minimum global width for a column
 
@@ -6030,8 +6011,6 @@ Tabulator.prototype.defaultOptions = {
 	persistenceID: "", //key for persistent storage
 
 	persistenceMode: true, //mode for storing persistence information
-
-	persistentLayoutID: "", //DEPRICATED - key for persistent storage;
 
 
 	responsiveLayout: false, //responsive layout flags
@@ -6337,38 +6316,7 @@ Tabulator.prototype.initializeElement = function (element) {
 
 //convert depricated functionality to new functions
 
-Tabulator.prototype._mapDepricatedFunctionality = function () {
-
-	if (this.options.fitColumns) {
-
-		this.options.layout = "fitColumns";
-
-		console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-
-	if (this.options.persistentLayoutID) {
-
-		this.options.persistenceID = this.options.persistentLayoutID;
-
-		console.warn("The%c persistentLayoutID%c option has been depricated and will be removed in version 4.0, use %c persistenceID%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-
-	if (this.options.persistentLayout === "cookie" || this.options.persistentLayout === "local") {
-
-		this.options.persistenceMode = this.options.persistentLayout;
-
-		this.options.persistentLayout = true;
-
-		console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-
-	if (this.options.downloadDataMutator) {
-
-		this.options.downloadDataFormatter = this.options.downloadDataMutator;
-
-		console.warn("The%c downloadDataMutator%c option has been depricated and will be removed in version 4.0, use %cdownloadDataFormatter%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-};
+Tabulator.prototype._mapDepricatedFunctionality = function () {};
 
 //concreate table
 
@@ -7324,16 +7272,6 @@ Tabulator.prototype.setSort = function (sortList, dir) {
 	}
 };
 
-Tabulator.prototype.getSort = function () {
-
-	if (this.modExists("sort", true)) {
-
-		console.warn("The%c getSort%c function has been depricated and will be removed in version 4.0, use %c getSorters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-
-		return this.getSorters();
-	}
-};
-
 Tabulator.prototype.getSorters = function () {
 
 	if (this.modExists("sort", true)) {
@@ -7380,13 +7318,6 @@ Tabulator.prototype.addFilter = function (field, type, value) {
 };
 
 //get all filters
-
-Tabulator.prototype.getFilter = function (all) {
-
-	console.warn("The%c getFilter%c function has been depricated and will be removed in version 4.0, use %c getFilters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-
-	this.getFilters(all);
-};
 
 Tabulator.prototype.getFilters = function (all) {
 
@@ -11795,10 +11726,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 			case "string":
 				if (self.formatters[column.definition.formatter]) {
 					config.formatter = self.formatters[column.definition.formatter];
-
-					if (column.definition.formatter === "email") {
-						console.warn("The%c email%c formatter has been depricated and will be removed in version 4.0, use the %clink %cformatter with %cformatterParams:{urlPrefix:'mailto:'} %cinstead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-					}
 				} else {
 					console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
 					config.formatter = self.formatters.plaintext;
@@ -14636,8 +14563,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    match = false,
 		    config = {};
 
-		this.mapDepricatedFunctionality(column);
-
 		this.allowedTypes.forEach(function (type) {
 			var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 			    mutator;
@@ -14658,24 +14583,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		if (match) {
 			column.modules.mutate = config;
-		}
-	};
-
-	Mutator.prototype.mapDepricatedFunctionality = function (column) {
-		var key = "";
-
-		if (column.definition.mutateType) {
-
-			if (column.definition.mutateType != "all") {
-				key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
-
-				column.defintion[key] = column.definition.mutator;
-				delete column.definition.mutator;
-
-				console.warn("The %cmutateType='" + column.definition.mutateType + "'' %coption has been depricated and will be removed in version 4.0, use the %c " + key + "%c option instead", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-			} else {
-				console.warn("The %cmutateType='all'' %coption has been depricated and will be removed in version 4.0, it is no longer needed", "font-weight:bold;", "font-weight:regular;");
-			}
 		}
 	};
 

@@ -18,10 +18,6 @@ Format.prototype.initializeColumn = function (column) {
 		case "string":
 			if (self.formatters[column.definition.formatter]) {
 				config.formatter = self.formatters[column.definition.formatter];
-
-				if (column.definition.formatter === "email") {
-					console.warn("The%c email%c formatter has been depricated and will be removed in version 4.0, use the %clink %cformatter with %cformatterParams:{urlPrefix:'mailto:'} %cinstead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-				}
 			} else {
 				console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
 				config.formatter = self.formatters.plaintext;
@@ -145,16 +141,6 @@ Format.prototype.formatters = {
 		}
 
 		return after ? integer + decimal + symbol : symbol + integer + decimal;
-	},
-
-	//clickable mailto link
-	email: function email(cell, formatterParams) {
-		var value = this.sanitizeHTML(cell.getValue()),
-		    el = document.createElement("a");
-		el.setAttribute("href", "mailto:" + value);
-		el.innerHTML = this.emptyToSpace(value);
-
-		return el;
 	},
 
 	//clickable anchor tag

@@ -37,7 +37,6 @@ Tabulator.prototype.defaultOptions = {
 
 	layout:"fitData", ///layout type "fitColumns" | "fitData"
 	layoutColumnsOnNewData:false, //update column widths on setData
-	fitColumns:false, //DEPRICATED - fit colums to width of screen;
 
 	columnMinWidth:40, //minimum global width for a column
 	columnVertAlign:"top", //vertical alignment of column headers
@@ -98,7 +97,6 @@ Tabulator.prototype.defaultOptions = {
 	persistentFilter:false, //store filters in memory
 	persistenceID:"", //key for persistent storage
 	persistenceMode:true, //mode for storing persistence information
-	persistentLayoutID:"",//DEPRICATED - key for persistent storage;
 
 	responsiveLayout:false, //responsive layout flags
 	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
@@ -290,27 +288,6 @@ Tabulator.prototype.initializeElement = function(element){
 
 //convert depricated functionality to new functions
 Tabulator.prototype._mapDepricatedFunctionality = function(){
-
-	if(this.options.fitColumns){
-		this.options.layout = "fitColumns";
-		console.warn("The%c fitColumns:true%c option has been depricated and will be removed in version 4.0, use %c layout:'fitColumns'%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-
-	if(this.options.persistentLayoutID){
-		this.options.persistenceID = this.options.persistentLayoutID;
-		console.warn("The%c persistentLayoutID%c option has been depricated and will be removed in version 4.0, use %c persistenceID%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-
-	if(this.options.persistentLayout === "cookie" || this.options.persistentLayout === "local"){
-		this.options.persistenceMode = this.options.persistentLayout;
-		this.options.persistentLayout = true;
-		console.warn("Setting the persistent storage mode on the%c persistentLayout%c option has been depricated and will be removed in version 4.0, use %c persistenceMode%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
-
-	if(this.options.downloadDataMutator){
-		this.options.downloadDataFormatter = this.options.downloadDataMutator;
-		console.warn("The%c downloadDataMutator%c option has been depricated and will be removed in version 4.0, use %cdownloadDataFormatter%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	}
 
 };
 
@@ -1029,13 +1006,6 @@ Tabulator.prototype.setSort = function(sortList, dir){
 	}
 };
 
-Tabulator.prototype.getSort = function(){
-	if(this.modExists("sort", true)){
-		console.warn("The%c getSort%c function has been depricated and will be removed in version 4.0, use %c getSorters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-		return this.getSorters();
-	}
-};
-
 Tabulator.prototype.getSorters = function(){
 	if(this.modExists("sort", true)){
 		return this.modules.sort.getSort();
@@ -1069,11 +1039,6 @@ Tabulator.prototype.addFilter = function(field, type, value){
 };
 
 //get all filters
-Tabulator.prototype.getFilter = function(all){
-	console.warn("The%c getFilter%c function has been depricated and will be removed in version 4.0, use %c getFilters%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-	this.getFilters(all);
-};
-
 Tabulator.prototype.getFilters = function(all){
 	if(this.modExists("filter", true)){
 		return this.modules.filter.getFilters(all);

@@ -150,8 +150,6 @@ var Column = function(def, parent){
 		this.table.modules.moveRow.setHandle(true);
 	}
 
-	this._mapDepricatedFunctionality();
-
 	this._buildHeader();
 };
 
@@ -171,18 +169,6 @@ Column.prototype.createGroupElement = function (){
 	el.classList.add("tabulator-col-group-cols");
 
 	return el;
-};
-
-
-//////////////// Setup Functions /////////////////
-Column.prototype._mapDepricatedFunctionality = function(field){
-	if(this.definition.tooltipHeader){
-		console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltip%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
-
-		if(typeof this.definition.headerTooltip == "undefined"){
-			this.definition.headerTooltip = this.definition.tooltipHeader;
-		}
-	}
 };
 
 Column.prototype.setField = function(field){

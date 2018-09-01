@@ -9,8 +9,6 @@ Mutator.prototype.initializeColumn = function(column){
 	match = false,
 	config = {};
 
-	this.mapDepricatedFunctionality(column);
-
 	this.allowedTypes.forEach(function(type){
 		var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 		mutator;
@@ -33,25 +31,6 @@ Mutator.prototype.initializeColumn = function(column){
 		column.modules.mutate = config;
 	}
 };
-
-Mutator.prototype.mapDepricatedFunctionality = function(column){
-	var key = "";
-
-	if(column.definition.mutateType){
-
-		if(column.definition.mutateType != "all"){
-			key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
-
-			column.defintion[key] = column.definition.mutator;
-			delete column.definition.mutator;
-
-			console.warn("The %cmutateType='" + column.definition.mutateType + "'' %coption has been depricated and will be removed in version 4.0, use the %c " + key + "%c option instead", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;")
-
-		}else{
-			console.warn("The %cmutateType='all'' %coption has been depricated and will be removed in version 4.0, it is no longer needed", "font-weight:bold;", "font-weight:regular;")
-		}
-	}
-}
 
 Mutator.prototype.lookupMutator = function(value){
 	var mutator = false;
