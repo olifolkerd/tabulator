@@ -164,6 +164,41 @@ Ajax.prototype._loadDataStandard = function(inPosition){
 	}, inPosition);
 };
 
+Ajax.prototype.serializeParams = function(data, prefix){
+	var self = this,
+	output = [],
+	encoded = [];
+
+	prefix = prefix || "";
+
+	if ( Array.isArray(data) ) {
+
+		data.forEach(function(item, i){
+			output = output.concat(self.serializeParams(item, prefix ? prefix + "[" + i + "]" : i));
+		});
+
+	}else if (typeof data === "object"){
+
+		for (var key in data){
+			output = output.concat(self.serializeParams(data[key], prefix ? prefix + "[" + key + "]" : key));
+		}
+
+	}else{
+		output.push({key:prefix, val:data});
+	}
+
+	if(prefix){
+		return output;
+	}else{
+		output.forEach(function(item){
+			encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.val));
+		});
+
+		return encoded.join("&");
+	}
+
+};
+
 //send ajax request
 Ajax.prototype.sendRequest = function(callback, silent){
 	var self = this,
@@ -179,12 +214,7 @@ Ajax.prototype.sendRequest = function(callback, silent){
 
 		if(self.params){
 			if(!self.config.method || self.config.method == "get"){
-				var esc = encodeURIComponent;
-				var query = Object.keys(self.params)
-				.map(k => esc(k) + '=' + esc(self.params[k]))
-				.join('&');
-
-				url += "?" + query;
+				url += "?" + self.serializeParams(self.params);
 			}else{
 				self.config.body = JSON.stringify(self.params);
 			}
