@@ -11927,6 +11927,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 			}
 
 			el.setAttribute("href", urlPrefix + value);
+
+			if (formatterParams.traget) {
+				el.setAttribute("target", formatterParams.traget);
+			}
+
 			el.innerHTML = this.emptyToSpace(label);
 
 			return el;
