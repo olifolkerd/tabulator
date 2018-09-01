@@ -648,10 +648,11 @@ Column.prototype.attachColumn = function(column){
 };
 
 //vertically align header in column
-Column.prototype.verticalAlign = function(alignment){
+Column.prototype.verticalAlign = function(alignment, height){
 
 	//calculate height of column header and group holder element
-	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : (height || this.parent.getHeadersElement().clientHeight);
+	// var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 	this.element.style.height = parentHeight + "px";
 

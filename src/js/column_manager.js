@@ -151,14 +151,22 @@ ColumnManager.prototype._reIndexColumns = function(){
 
 //ensure column headers take up the correct amount of space in column groups
 ColumnManager.prototype._verticalAlignHeaders = function(){
-	var self = this;
+	var self = this, minHeight = 0;
 
 	self.columns.forEach(function(column){
+		var height;
+
 		column.clearVerticalAlign();
+
+		height = column.getHeight();
+
+		if(height > minHeight){
+			minHeight = height;
+		}
 	});
 
 	self.columns.forEach(function(column){
-		column.verticalAlign(self.table.options.columnVertAlign);
+		column.verticalAlign(self.table.options.columnVertAlign, minHeight);
 	});
 
 	self.rowManager.adjustTableSize();

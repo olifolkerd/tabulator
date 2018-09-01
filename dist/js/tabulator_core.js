@@ -342,16 +342,26 @@ ColumnManager.prototype._reIndexColumns = function () {
 
 ColumnManager.prototype._verticalAlignHeaders = function () {
 
-	var self = this;
+	var self = this,
+	    minHeight = 0;
 
 	self.columns.forEach(function (column) {
 
+		var height;
+
 		column.clearVerticalAlign();
+
+		height = column.getHeight();
+
+		if (height > minHeight) {
+
+			minHeight = height;
+		}
 	});
 
 	self.columns.forEach(function (column) {
 
-		column.verticalAlign(self.table.options.columnVertAlign);
+		column.verticalAlign(self.table.options.columnVertAlign, minHeight);
 	});
 
 	self.rowManager.adjustTableSize();
@@ -1471,10 +1481,11 @@ Column.prototype.attachColumn = function (column) {
 };
 
 //vertically align header in column
-Column.prototype.verticalAlign = function (alignment) {
+Column.prototype.verticalAlign = function (alignment, height) {
 
 	//calculate height of column header and group holder element
-	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : height || this.parent.getHeadersElement().clientHeight;
+	// var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
 	this.element.style.height = parentHeight + "px";
 
