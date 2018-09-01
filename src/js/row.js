@@ -389,7 +389,7 @@ Row.prototype.updateData = function(data){
 
 	//mutate incomming data if needed
 	if(self.table.modExists("mutator")){
-		data = self.table.modules.mutator.transformRow(data, "data");
+		data = self.table.modules.mutator.transformRow(data, "data", true);
 	}
 
 	//set data

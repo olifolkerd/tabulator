@@ -4795,7 +4795,7 @@ Row.prototype.updateData = function (data) {
 
 	if (self.table.modExists("mutator")) {
 
-		data = self.table.modules.mutator.transformRow(data, "data");
+		data = self.table.modules.mutator.transformRow(data, "data", true);
 	}
 
 	//set data
@@ -5401,7 +5401,7 @@ Cell.prototype._generateContents = function () {
 
 		val = self.table.modules.format.formatValue(self);
 
-		if (typeof val === "string") {
+		if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) !== "object") {
 
 			self.element.innerHTML = val;
 		} else {
@@ -11851,16 +11851,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 			return after ? integer + decimal + symbol : symbol + integer + decimal;
 		},
 
-		//clickable mailto link
-		email: function email(cell, formatterParams) {
-			var value = this.sanitizeHTML(cell.getValue()),
-			    el = document.createElement("a");
-			el.setAttribute("href", "mailto:" + value);
-			el.innerHTML = this.emptyToSpace(value);
-
-			return el;
-		},
-
 		//clickable anchor tag
 		link: function link(cell, formatterParams) {
 			var value = this.sanitizeHTML(cell.getValue()),
@@ -14608,9 +14598,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	//apply mutator to row
-	Mutator.prototype.transformRow = function (data, type) {
+	Mutator.prototype.transformRow = function (data, type, update) {
 		var self = this,
-		    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
+		    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
+		    value;
 
 		self.table.columnManager.traverse(function (column) {
 			var mutator;
@@ -14620,7 +14611,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 				mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
 				if (mutator) {
-					column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, type, mutator.params, column.getComponent()));
+					value = column.getFieldValue(data);
+
+					if (!update || update && typeof value !== "undefined") {
+						column.setFieldValue(data, mutator.mutator(value, data, type, mutator.params, column.getComponent()));
+					}
 				}
 			}
 		});

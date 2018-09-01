@@ -274,7 +274,7 @@ Cell.prototype._generateContents = function(){
 
 	if(self.table.modExists("format")){
 		val = self.table.modules.format.formatValue(self);
-		if(typeof val === "string"){
+		if(typeof val !== "object"){
 			self.element.innerHTML = val;
 		}else{
 			self.element.appendChild(val);

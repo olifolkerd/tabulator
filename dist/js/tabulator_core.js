@@ -3797,7 +3797,7 @@ Row.prototype.updateData = function (data) {
 
 	//mutate incomming data if needed
 	if (self.table.modExists("mutator")) {
-		data = self.table.modules.mutator.transformRow(data, "data");
+		data = self.table.modules.mutator.transformRow(data, "data", true);
 	}
 
 	//set data
@@ -4264,7 +4264,7 @@ Cell.prototype._generateContents = function () {
 
 	if (self.table.modExists("format")) {
 		val = self.table.modules.format.formatValue(self);
-		if (typeof val === "string") {
+		if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) !== "object") {
 			self.element.innerHTML = val;
 		} else {
 			self.element.appendChild(val);

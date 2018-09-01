@@ -60,9 +60,10 @@ Mutator.prototype.lookupMutator = function (value) {
 };
 
 //apply mutator to row
-Mutator.prototype.transformRow = function (data, type) {
+Mutator.prototype.transformRow = function (data, type, update) {
 	var self = this,
-	    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1));
+	    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
+	    value;
 
 	self.table.columnManager.traverse(function (column) {
 		var mutator;
@@ -72,7 +73,11 @@ Mutator.prototype.transformRow = function (data, type) {
 			mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
 			if (mutator) {
-				column.setFieldValue(data, mutator.mutator(column.getFieldValue(data), data, type, mutator.params, column.getComponent()));
+				value = column.getFieldValue(data);
+
+				if (!update || update && typeof value !== "undefined") {
+					column.setFieldValue(data, mutator.mutator(value, data, type, mutator.params, column.getComponent()));
+				}
 			}
 		}
 	});
