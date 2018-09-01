@@ -3483,6 +3483,10 @@ RowComponent.prototype.toggleSelect = function () {
 	this.row.table.modules.selectRow.toggleRow(this.row);
 };
 
+RowComponent.prototype.isSelected = function () {
+	return this.row.table.modules.selectRow.isRowSelected(this.row);
+};
+
 RowComponent.prototype._getSelf = function () {
 	return this.row;
 };
@@ -5122,13 +5126,8 @@ Tabulator.prototype._loadInitialData = function () {
 	}
 };
 
-//set options
-Tabulator.prototype._setOption = function (option, value) {
-	console.error("Options Error - Tabulator does not allow options to be set after initialization unless there is a function defined for that purpose");
-};
-
 //deconstructor
-Tabulator.prototype._destroy = function () {
+Tabulator.prototype.destroy = function () {
 	var element = this.element;
 
 	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication

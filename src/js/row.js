@@ -62,6 +62,10 @@ RowComponent.prototype.toggleSelect = function(){
 	this.row.table.modules.selectRow.toggleRow(this.row);
 };
 
+RowComponent.prototype.isSelected = function(){
+	return this.row.table.modules.selectRow.isRowSelected(this.row);
+};
+
 RowComponent.prototype._getSelf = function(){
 	return this.row;
 };

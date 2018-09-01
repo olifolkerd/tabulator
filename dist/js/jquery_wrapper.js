@@ -25,5 +25,24 @@
     factory(jQuery);
   }
 })(function ($, undefined) {
-  $.widget("ui.tabulator", Tabulator);
+  $.widget("ui.tabulator", {
+    _create: function _create() {
+      this.table = new Tabulator(this.element[0], this.options);
+
+      //map tabulator functions to jquery wrapper
+      for (var key in Tabulator.prototype) {
+        if (typeof Tabulator.prototype[key] === "function" && key.charAt(0) !== "_") {
+          this[key] = this.table[key].bind(this.table);
+        }
+      }
+    },
+
+    _setOption: function _setOption(option, value) {
+      console.error("Tabulator jQuery wrapper does not support setting options after the table has been instantiated");
+    },
+
+    _destroy: function _destroy(option, value) {
+      this.table.destroy();
+    }
+  });
 });

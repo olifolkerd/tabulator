@@ -170,6 +170,10 @@ SelectRow.prototype._selectRow = function (rowInfo, silent, force) {
 	}
 };
 
+SelectRow.prototype.isRowSelected = function (row) {
+	return this.selectedRows.indexOf(row) !== -1;
+};
+
 //deselect a number of rows
 SelectRow.prototype.deselectRows = function (rows) {
 	var self = this,
