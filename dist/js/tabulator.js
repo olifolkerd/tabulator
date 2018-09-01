@@ -12282,9 +12282,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 			//calculate right frozen columns
 			rightMargin = self.table.rowManager.element.clientWidth + self.table.columnManager.scrollLeft;
 
-			if (tableHolder.scrollHeight > tableHolder.clientHeight) {
-				rightMargin -= tableHolder.offsetWidth - tableHolder.clientWidth;
-			}
+			// if(tableHolder.scrollHeight > tableHolder.clientHeight){
+			// 	rightMargin -= tableHolder.offsetWidth - tableHolder.clientWidth;
+			// }
 
 			self.rightColumns.forEach(function (column, i) {
 				column.modules.frozen.margin = rightMargin - self._calcSpace(self.rightColumns, i + 1);
@@ -12314,7 +12314,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		var rowEl = row.getElement();
 
 		rowEl.style.paddingLeft = this.leftMargin + "px";
-		rowEl.style.paddingRight = this.rightMargin + "px";
+		// rowEl.style.paddingRight = this.rightMargin + "px";
 	};
 
 	FrozenColumns.prototype.layoutElement = function (element, column) {
