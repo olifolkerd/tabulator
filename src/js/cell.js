@@ -61,6 +61,10 @@ CellComponent.prototype.checkHeight = function(){
 	this.cell.checkHeight();
 };
 
+CellComponent.prototype.getTable = function(){
+	return this.cell.table;
+};
+
 CellComponent.prototype._getSelf = function(){
 	return this.cell;
 };

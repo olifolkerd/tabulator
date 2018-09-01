@@ -88,6 +88,10 @@ ColumnComponent.prototype.scrollTo = function(){
 	this.column.table.columManager.scrollToColumn(this.column);
 };
 
+ColumnComponent.prototype.getTable = function(){
+	return this.column.table;
+};
+
 
 var Column = function(def, parent){
 	var self = this;

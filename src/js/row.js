@@ -86,6 +86,10 @@ RowComponent.prototype.getGroup = function(){
 	return this.row.getGroup().getComponent();
 };
 
+RowComponent.prototype.getTable = function(){
+	return this.row.table;
+};
+
 
 var Row = function(data, parent){
 	this.table = parent.table;

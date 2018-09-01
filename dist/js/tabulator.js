@@ -1011,6 +1011,11 @@ ColumnComponent.prototype.scrollTo = function () {
 	this.column.table.columManager.scrollToColumn(this.column);
 };
 
+ColumnComponent.prototype.getTable = function () {
+
+	return this.column.table;
+};
+
 var Column = function Column(def, parent) {
 
 	var self = this;
@@ -4412,6 +4417,11 @@ RowComponent.prototype.getGroup = function () {
 	return this.row.getGroup().getComponent();
 };
 
+RowComponent.prototype.getTable = function () {
+
+	return this.row.table;
+};
+
 var Row = function Row(data, parent) {
 
 	this.table = parent.table;
@@ -5128,6 +5138,11 @@ CellComponent.prototype.nav = function () {
 CellComponent.prototype.checkHeight = function () {
 
 	this.cell.checkHeight();
+};
+
+CellComponent.prototype.getTable = function () {
+
+	return this.cell.table;
 };
 
 CellComponent.prototype._getSelf = function () {
@@ -12502,6 +12517,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	GroupComponent.prototype._getSelf = function () {
 		return this.group;
+	};
+
+	GroupComponent.prototype.getTable = function () {
+		return this.group.table;
 	};
 
 	//////////////////////////////////////////////////

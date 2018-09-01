@@ -60,6 +60,10 @@ GroupComponent.prototype._getSelf = function () {
 	return this.group;
 };
 
+GroupComponent.prototype.getTable = function () {
+	return this.group.table;
+};
+
 //////////////////////////////////////////////////
 //////////////// Group Functions /////////////////
 //////////////////////////////////////////////////
