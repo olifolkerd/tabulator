@@ -132,9 +132,9 @@ Ajax.prototype.loadData = function(inPosition){
 	var self = this;
 
 	if(this.progressiveLoad){
-		this._loadDataProgressive();
+		return this._loadDataProgressive();
 	}else{
-		this._loadDataStandard(inPosition);
+		return this._loadDataStandard(inPosition);
 	}
 };
 
@@ -157,14 +157,18 @@ Ajax.prototype.blockActiveRequest = function(){
 
 Ajax.prototype._loadDataProgressive = function(){
 	this.table.rowManager.setData([]);
-	this.table.modules.page.setPage(1);
+	return this.table.modules.page.setPage(1);
 };
 
 Ajax.prototype._loadDataStandard = function(inPosition){
-	var self = this;
-	this.sendRequest(function(data){
-		self.table.rowManager.setData(data, inPosition);
-	}, inPosition);
+	return new Promise((resolve, reject)=>{
+		this.sendRequest(inPosition)
+		.then((data)=>{
+			this.table.rowManager.setData(data, inPosition);
+			resolve();
+		})
+		.catch((e)=>{reject()});
+	});
 };
 
 Ajax.prototype.serializeParams = function(data, prefix){
@@ -203,7 +207,7 @@ Ajax.prototype.serializeParams = function(data, prefix){
 };
 
 //send ajax request
-Ajax.prototype.sendRequest = function(callback, silent){
+Ajax.prototype.sendRequest = function(silent){
 	var self = this,
 	url = self.url,
 	requestNo, esc, query;
@@ -213,41 +217,49 @@ Ajax.prototype.sendRequest = function(callback, silent){
 
 	self._loadDefaultConfig();
 
-	if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
+	return new Promise((resolve, reject)=>{
+		if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
 
-		self.loading = true;
+			self.loading = true;
 
-		if(!silent){
-			self.showLoader();
-		}
-
-		this.loaderPromise(url, self.config, self.params).then((data)=>{
-			if(requestNo === self.requestOrder){
-				if(self.table.options.ajaxResponse){
-					data = self.table.options.ajaxResponse(self.url, self.params, data);
-				}
-				callback(data);
-			}else{
-				console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+			if(!silent){
+				self.showLoader();
 			}
 
-			self.hideLoader();
+			this.loaderPromise(url, self.config, self.params).then((data)=>{
+				if(requestNo === self.requestOrder){
+					if(self.table.options.ajaxResponse){
+						data = self.table.options.ajaxResponse(self.url, self.params, data);
+					}
+					resolve(data);
+				}else{
+					console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+				}
 
-			self.loading = false;
-		})
-		.catch((error)=>{
-			console.error("Ajax Load Error: ", error);
-			self.table.options.ajaxError(error);
-
-			self.showError();
-
-			setTimeout(function(){
 				self.hideLoader();
-			}, 3000);
 
-			self.loading = false;
-		});
-	}
+				self.loading = false;
+			})
+			.catch((error)=>{
+				console.error("Ajax Load Error: ", error);
+				self.table.options.ajaxError(error);
+
+				self.showError();
+
+				setTimeout(function(){
+					self.hideLoader();
+				}, 3000);
+
+				self.loading = false;
+
+				reject();
+			});
+		}else{
+			reject();
+		}
+	});
+
+
 };
 
 Ajax.prototype.showLoader = function(){

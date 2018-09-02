@@ -189,14 +189,21 @@ Page.prototype.setMaxPage = function(max){
 
 //set current page number
 Page.prototype.setPage = function(page){
-	if(page > 0 && page <= this.max){
-		this.page = page;
-		this.trigger();
-		return true;
-	}else{
-		console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
-		return false;
-	}
+	return new Promise((resolve, reject)=>{
+		if(page > 0 && page <= this.max){
+			this.page = page;
+			this.trigger()
+			.then(()=>{
+				resolve();
+			})
+			.catch(()=>{
+				reject();
+			});
+		}else{
+			console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
+			reject();
+		}
+	});
 };
 
 Page.prototype.setPageSize = function(size){
@@ -267,28 +274,42 @@ Page.prototype._generatePageButton = function(page){
 
 //previous page
 Page.prototype.previousPage = function(){
-	if(this.page > 1){
-		this.page--;
-		this.trigger();
-		return true;
-	}else{
-		console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-		return false;
-	}
+	return new Promise((resolve, reject)=>{
+		if(this.page > 1){
+			this.page--;
+			this.trigger()
+			.then(()=>{
+				resolve();
+			})
+			.catch(()=>{
+				reject();
+			});
+		}else{
+			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
+			reject()
+		}
+	});
 };
 
 //next page
 Page.prototype.nextPage = function(){
-	if(this.page < this.max){
-		this.page++;
-		this.trigger();
-		return true;
-	}else{
-		if(!this.progressiveLoad){
-			console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+	return new Promise((resolve, reject)=>{
+		if(this.page < this.max){
+			this.page++;
+			this.trigger()
+			.then(()=>{
+				resolve();
+			})
+			.catch(()=>{
+				reject();
+			});
+		}else{
+			if(!this.progressiveLoad){
+				console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+			}
+			reject()
 		}
-		return false;
-	}
+	});
 };
 
 //return current page number
@@ -338,93 +359,115 @@ Page.prototype.getRows = function(data){
 Page.prototype.trigger = function(){
 	var left;
 
-	switch(this.mode){
-		case "local":
-		left = this.table.rowManager.scrollLeft;
+	return new Promise((resolve, reject)=>{
 
-		this.table.rowManager.refreshActiveData("page");
-		this.table.rowManager.scrollHorizontal(left);
+		switch(this.mode){
+			case "local":
+			left = this.table.rowManager.scrollLeft;
 
-		this.table.options.pageLoaded(this.getPage());
-		break;
+			this.table.rowManager.refreshActiveData("page");
+			this.table.rowManager.scrollHorizontal(left);
 
-		case "remote":
-		case "progressive_load":
-		case "progressive_scroll":
-		this.table.modules.ajax.blockActiveRequest();
-		this._getRemotePage();
-		break;
+			this.table.options.pageLoaded(this.getPage());
+			resolve();
+			break;
 
-		default:
-		console.warn("Pagination Error - no such pagination mode:", this.mode);
-	}
+			case "remote":
+			case "progressive_load":
+			case "progressive_scroll":
+			this.table.modules.ajax.blockActiveRequest();
+			this._getRemotePage()
+			.then(()=>{
+				resolve();
+			})
+			.catch(()=>{
+				reject();
+			});
+			break;
+
+			default:
+			console.warn("Pagination Error - no such pagination mode:", this.mode);
+			reject();
+		}
+	});
 };
 
 Page.prototype._getRemotePage = function(){
 	if(this.table.modExists("ajax", true)){
 
 		if(this.paginator){
-			this._getRemotePagePaginator();
+			return this._getRemotePagePaginator();
 		}else{
-			this._getRemotePageAuto();
+			return this._getRemotePageAuto();
 		}
 	}
 };
 
 Page.prototype._getRemotePagePaginator = function(){
-	var self = this,
-	ajax = self.table.modules.ajax,
+	var ajax = this.table.modules.ajax,
 	oldUrl = ajax.getUrl();
 
-	ajax.setUrl(self.paginator(ajax.getUrl(), self.page, self.size, ajax.getParams()))
+	return new Promise((resolve, reject)=>{
 
-	ajax.sendRequest(function(data){
-		self._parseRemoteData(data);
+		ajax.setUrl(this.paginator(ajax.getUrl(), this.page, this.size, ajax.getParams()));
+
+		ajax.sendRequest()
+		.then((data)=>{
+			this._parseRemoteData(data);
+			resolve();
+		})
+		.catch((e)=>{reject()});
+
+		ajax.setUrl(oldUrl);
 	});
-
-	ajax.setUrl(oldUrl);
 };
 
 Page.prototype._getRemotePageAuto = function(){
 	var self = this,
 	oldParams, pageParams;
 
-	//record old params and restore after request has been made
-	oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
-	pageParams = self.table.modules.ajax.getParams();
+	return new Promise((resolve, reject)=>{
 
-	//configure request params
-	pageParams[this.paginationDataSentNames.page] = self.page;
+		//record old params and restore after request has been made
+		oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
+		pageParams = self.table.modules.ajax.getParams();
 
-	//set page size if defined
-	if(this.size){
-		pageParams[this.paginationDataSentNames.size] = this.size;
-	}
+		//configure request params
+		pageParams[this.paginationDataSentNames.page] = self.page;
 
-	//set sort data if defined
-	if(this.table.options.ajaxSorting && this.table.modExists("sort")){
-		let sorters = self.table.modules.sort.getSort();
+		//set page size if defined
+		if(this.size){
+			pageParams[this.paginationDataSentNames.size] = this.size;
+		}
 
-		sorters.forEach(function(item){
-			delete item.column;
-		});
+		//set sort data if defined
+		if(this.table.options.ajaxSorting && this.table.modExists("sort")){
+			let sorters = self.table.modules.sort.getSort();
 
-		pageParams[this.paginationDataSentNames.sorters] = sorters;
-	}
+			sorters.forEach(function(item){
+				delete item.column;
+			});
 
-	//set filter data if defined
-	if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
-		let filters = self.table.modules.filter.getFilters(true, true);
-		pageParams[this.paginationDataSentNames.filters] = filters;
-	}
+			pageParams[this.paginationDataSentNames.sorters] = sorters;
+		}
 
-	self.table.modules.ajax.setParams(pageParams);
+		//set filter data if defined
+		if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
+			let filters = self.table.modules.filter.getFilters(true, true);
+			pageParams[this.paginationDataSentNames.filters] = filters;
+		}
 
-	self.table.modules.ajax.sendRequest(function(data){
-		self._parseRemoteData(data);
-	}, this.progressiveLoad);
+		self.table.modules.ajax.setParams(pageParams);
 
-	self.table.modules.ajax.setParams(oldParams);
+		self.table.modules.ajax.sendRequest(this.progressiveLoad)
+		.then((data)=>{
+			self._parseRemoteData(data);
+			resolve();
+		})
+		.catch((e)=>{reject()});
+
+		self.table.modules.ajax.setParams(oldParams);
+	});
 };
 
 

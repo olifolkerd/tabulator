@@ -117,12 +117,12 @@ Tabulator.prototype.defaultOptions = {
 	ajaxURL:false, //url for ajax loading
 	ajaxParams:{}, //params for ajax loading
 	ajaxConfig:"get", //ajax request type
+	ajaxPromiseFunc:false, //promise function
 	ajaxLoader:true, //show loader
 	ajaxLoaderLoading:false, //loader element
 	ajaxLoaderError:false, //loader element
 	ajaxFiltering:false,
 	ajaxSorting:false,
-	ajaxPromise:false,
 	ajaxProgressiveLoad:false, //progressive loading
 	ajaxProgressiveLoadDelay:0, //delay between requests
 	ajaxProgressiveLoadScrollMargin:0, //margin before scroll begins
@@ -567,7 +567,7 @@ Tabulator.prototype.setData = function(data, params, config){
 		this.modules.ajax.blockActiveRequest();
 	}
 
-	this._setData(data, params, config);
+	return this._setData(data, params, config);
 };
 
 Tabulator.prototype._setData = function(data, params, config, inPosition){
@@ -575,53 +575,53 @@ Tabulator.prototype._setData = function(data, params, config, inPosition){
 
 	if(typeof(data) === "string"){
 		if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
-			//data is a json encoded string
-			self.rowManager.setData(JSON.parse(data), inPosition);
-		}else{
-
-			if(self.modExists("ajax", true)){
-				if(params){
-					self.modules.ajax.setParams(params);
-				}
-
-				if(config){
-					self.modules.ajax.setConfig(config);
-				}
-
-				self.modules.ajax.setUrl(data);
-
-				if(self.options.pagination == "remote" && self.modExists("page", true)){
-					self.modules.page.reset(true);
-					self.modules.page.setPage(1);
-				}else{
-					//assume data is url, make ajax call to url to get data
-					self.modules.ajax.loadData(inPosition);
-				}
-			}
-		}
-	}else{
-		if(data){
-			//asume data is already an object
-			self.rowManager.setData(data, inPosition);
-		}else{
-
-			//no data provided, check if ajaxURL is present;
-			if(self.modExists("ajax") && self.modules.ajax.getUrl){
-
-				if(self.options.pagination == "remote" && self.modExists("page", true)){
-					self.modules.page.reset(true);
-					self.modules.page.setPage(1);
-				}else{
-					self.modules.ajax.loadData(inPosition);
-				}
-
+				//data is a json encoded string
+				return self.rowManager.setData(JSON.parse(data), inPosition);
 			}else{
-				//empty data
-				self.rowManager.setData([], inPosition);
+
+				if(self.modExists("ajax", true)){
+					if(params){
+						self.modules.ajax.setParams(params);
+					}
+
+					if(config){
+						self.modules.ajax.setConfig(config);
+					}
+
+					self.modules.ajax.setUrl(data);
+
+					if(self.options.pagination == "remote" && self.modExists("page", true)){
+						self.modules.page.reset(true);
+						return self.modules.page.setPage(1);
+					}else{
+						//assume data is url, make ajax call to url to get data
+						return self.modules.ajax.loadData(inPosition);
+					}
+				}
+			}
+		}else{
+			if(data){
+				//asume data is already an object
+				return self.rowManager.setData(data, inPosition);
+			}else{
+
+				//no data provided, check if ajaxURL is present;
+				if(self.modExists("ajax") && self.modules.ajax.getUrl){
+
+					if(self.options.pagination == "remote" && self.modExists("page", true)){
+						self.modules.page.reset(true);
+						return self.modules.page.setPage(1);
+					}else{
+						return self.modules.ajax.loadData(inPosition);
+					}
+
+				}else{
+					//empty data
+					return self.rowManager.setData([], inPosition);
+				}
 			}
 		}
-	}
-};
+	};
 
 //clear data
 Tabulator.prototype.clearData = function(){
@@ -660,7 +660,7 @@ Tabulator.prototype.replaceData = function(data, params, config){
 		this.modules.ajax.blockActiveRequest();
 	}
 
-	this._setData(data, params, config, true);
+	return this._setData(data, params, config, true);
 };
 
 

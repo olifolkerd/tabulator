@@ -191,14 +191,21 @@ Page.prototype.setMaxPage = function (max) {
 
 //set current page number
 Page.prototype.setPage = function (page) {
-	if (page > 0 && page <= this.max) {
-		this.page = page;
-		this.trigger();
-		return true;
-	} else {
-		console.warn("Pagination Error - Requested page is out of range of 1 - " + this.max + ":", page);
-		return false;
-	}
+	var _this = this;
+
+	return new Promise(function (resolve, reject) {
+		if (page > 0 && page <= _this.max) {
+			_this.page = page;
+			_this.trigger().then(function () {
+				resolve();
+			}).catch(function () {
+				reject();
+			});
+		} else {
+			console.warn("Pagination Error - Requested page is out of range of 1 - " + _this.max + ":", page);
+			reject();
+		}
+	});
 };
 
 Page.prototype.setPageSize = function (size) {
@@ -268,28 +275,42 @@ Page.prototype._generatePageButton = function (page) {
 
 //previous page
 Page.prototype.previousPage = function () {
-	if (this.page > 1) {
-		this.page--;
-		this.trigger();
-		return true;
-	} else {
-		console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-		return false;
-	}
+	var _this2 = this;
+
+	return new Promise(function (resolve, reject) {
+		if (_this2.page > 1) {
+			_this2.page--;
+			_this2.trigger().then(function () {
+				resolve();
+			}).catch(function () {
+				reject();
+			});
+		} else {
+			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
+			reject();
+		}
+	});
 };
 
 //next page
 Page.prototype.nextPage = function () {
-	if (this.page < this.max) {
-		this.page++;
-		this.trigger();
-		return true;
-	} else {
-		if (!this.progressiveLoad) {
-			console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
+	var _this3 = this;
+
+	return new Promise(function (resolve, reject) {
+		if (_this3.page < _this3.max) {
+			_this3.page++;
+			_this3.trigger().then(function () {
+				resolve();
+			}).catch(function () {
+				reject();
+			});
+		} else {
+			if (!_this3.progressiveLoad) {
+				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this3.max + ":", _this3.max + 1);
+			}
+			reject();
 		}
-		return false;
-	}
+	});
 };
 
 //return current page number
@@ -337,96 +358,122 @@ Page.prototype.getRows = function (data) {
 };
 
 Page.prototype.trigger = function () {
+	var _this4 = this;
+
 	var left;
 
-	switch (this.mode) {
-		case "local":
-			left = this.table.rowManager.scrollLeft;
+	return new Promise(function (resolve, reject) {
 
-			this.table.rowManager.refreshActiveData("page");
-			this.table.rowManager.scrollHorizontal(left);
+		switch (_this4.mode) {
+			case "local":
+				left = _this4.table.rowManager.scrollLeft;
 
-			this.table.options.pageLoaded(this.getPage());
-			break;
+				_this4.table.rowManager.refreshActiveData("page");
+				_this4.table.rowManager.scrollHorizontal(left);
 
-		case "remote":
-		case "progressive_load":
-		case "progressive_scroll":
-			this.table.modules.ajax.blockActiveRequest();
-			this._getRemotePage();
-			break;
+				_this4.table.options.pageLoaded(_this4.getPage());
+				resolve();
+				break;
 
-		default:
-			console.warn("Pagination Error - no such pagination mode:", this.mode);
-	}
+			case "remote":
+			case "progressive_load":
+			case "progressive_scroll":
+				_this4.table.modules.ajax.blockActiveRequest();
+				_this4._getRemotePage().then(function () {
+					resolve();
+				}).catch(function () {
+					reject();
+				});
+				break;
+
+			default:
+				console.warn("Pagination Error - no such pagination mode:", _this4.mode);
+				reject();
+		}
+	});
 };
 
 Page.prototype._getRemotePage = function () {
 	if (this.table.modExists("ajax", true)) {
 
 		if (this.paginator) {
-			this._getRemotePagePaginator();
+			return this._getRemotePagePaginator();
 		} else {
-			this._getRemotePageAuto();
+			return this._getRemotePageAuto();
 		}
 	}
 };
 
 Page.prototype._getRemotePagePaginator = function () {
-	var self = this,
-	    ajax = self.table.modules.ajax,
+	var _this5 = this;
+
+	var ajax = this.table.modules.ajax,
 	    oldUrl = ajax.getUrl();
 
-	ajax.setUrl(self.paginator(ajax.getUrl(), self.page, self.size, ajax.getParams()));
+	return new Promise(function (resolve, reject) {
 
-	ajax.sendRequest(function (data) {
-		self._parseRemoteData(data);
+		ajax.setUrl(_this5.paginator(ajax.getUrl(), _this5.page, _this5.size, ajax.getParams()));
+
+		ajax.sendRequest().then(function (data) {
+			_this5._parseRemoteData(data);
+			resolve();
+		}).catch(function (e) {
+			reject();
+		});
+
+		ajax.setUrl(oldUrl);
 	});
-
-	ajax.setUrl(oldUrl);
 };
 
 Page.prototype._getRemotePageAuto = function () {
+	var _this6 = this;
+
 	var self = this,
 	    oldParams,
 	    pageParams;
 
-	//record old params and restore after request has been made
-	oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
-	pageParams = self.table.modules.ajax.getParams();
+	return new Promise(function (resolve, reject) {
 
-	//configure request params
-	pageParams[this.paginationDataSentNames.page] = self.page;
+		//record old params and restore after request has been made
+		oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
+		pageParams = self.table.modules.ajax.getParams();
 
-	//set page size if defined
-	if (this.size) {
-		pageParams[this.paginationDataSentNames.size] = this.size;
-	}
+		//configure request params
+		pageParams[_this6.paginationDataSentNames.page] = self.page;
 
-	//set sort data if defined
-	if (this.table.options.ajaxSorting && this.table.modExists("sort")) {
-		var sorters = self.table.modules.sort.getSort();
+		//set page size if defined
+		if (_this6.size) {
+			pageParams[_this6.paginationDataSentNames.size] = _this6.size;
+		}
 
-		sorters.forEach(function (item) {
-			delete item.column;
+		//set sort data if defined
+		if (_this6.table.options.ajaxSorting && _this6.table.modExists("sort")) {
+			var sorters = self.table.modules.sort.getSort();
+
+			sorters.forEach(function (item) {
+				delete item.column;
+			});
+
+			pageParams[_this6.paginationDataSentNames.sorters] = sorters;
+		}
+
+		//set filter data if defined
+		if (_this6.table.options.ajaxFiltering && _this6.table.modExists("filter")) {
+			var filters = self.table.modules.filter.getFilters(true, true);
+			pageParams[_this6.paginationDataSentNames.filters] = filters;
+		}
+
+		self.table.modules.ajax.setParams(pageParams);
+
+		self.table.modules.ajax.sendRequest(_this6.progressiveLoad).then(function (data) {
+			self._parseRemoteData(data);
+			resolve();
+		}).catch(function (e) {
+			reject();
 		});
 
-		pageParams[this.paginationDataSentNames.sorters] = sorters;
-	}
-
-	//set filter data if defined
-	if (this.table.options.ajaxFiltering && this.table.modExists("filter")) {
-		var filters = self.table.modules.filter.getFilters(true, true);
-		pageParams[this.paginationDataSentNames.filters] = filters;
-	}
-
-	self.table.modules.ajax.setParams(pageParams);
-
-	self.table.modules.ajax.sendRequest(function (data) {
-		self._parseRemoteData(data);
-	}, this.progressiveLoad);
-
-	self.table.modules.ajax.setParams(oldParams);
+		self.table.modules.ajax.setParams(oldParams);
+	});
 };
 
 Page.prototype._parseRemoteData = function (data) {

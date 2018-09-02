@@ -260,19 +260,23 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 
 RowManager.prototype.setData = function(data, renderInPosition){
 	var self = this;
-	if(renderInPosition && this.getDisplayRows().length){
-		if(self.table.options.pagination){
-			self._setDataActual(data, true);
-		}else{
-			this.reRenderInPosition(function(){
-				self._setDataActual(data);
-			});
-		}
-	}else{
 
-		this.resetScroll();
-		this._setDataActual(data);
-	}
+	return new Promise((resolve, reject)=>{
+		if(renderInPosition && this.getDisplayRows().length){
+			if(self.table.options.pagination){
+				self._setDataActual(data, true);
+			}else{
+				this.reRenderInPosition(function(){
+					self._setDataActual(data);
+				});
+			}
+		}else{
+			this.resetScroll();
+			this._setDataActual(data);
+		}
+
+		resolve();
+	});
 };
 
 RowManager.prototype._setDataActual = function(data, renderInPosition){
@@ -772,9 +776,12 @@ RowManager.prototype.getHtml = function(active){
 		self.table.modules.ajax.setParams(params, true);
 	}
 
-	table.modules.ajax.sendRequest(function(data){
+	table.modules.ajax.sendRequest()
+	.then((data)=>{
 		self.setData(data);
-	});
+	})
+	.catch((e)=>{});
+
 };
 
 //choose the path to refresh data after a filter update

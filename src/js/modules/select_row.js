@@ -251,4 +251,4 @@ SelectRow.prototype._rowSelectionChanged = function(){
 	this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
 };
 
-Tabulator.prototype.registerModule("selectRow", SelectRow);
+// Tabulator.prototype.registerModule("selectRow", SelectRow);

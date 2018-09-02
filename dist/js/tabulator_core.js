@@ -2122,20 +2122,26 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 ////////////////// Data Handling //////////////////
 
 RowManager.prototype.setData = function (data, renderInPosition) {
-	var self = this;
-	if (renderInPosition && this.getDisplayRows().length) {
-		if (self.table.options.pagination) {
-			self._setDataActual(data, true);
-		} else {
-			this.reRenderInPosition(function () {
-				self._setDataActual(data);
-			});
-		}
-	} else {
+	var _this = this;
 
-		this.resetScroll();
-		this._setDataActual(data);
-	}
+	var self = this;
+
+	return new Promise(function (resolve, reject) {
+		if (renderInPosition && _this.getDisplayRows().length) {
+			if (self.table.options.pagination) {
+				self._setDataActual(data, true);
+			} else {
+				_this.reRenderInPosition(function () {
+					self._setDataActual(data);
+				});
+			}
+		} else {
+			_this.resetScroll();
+			_this._setDataActual(data);
+		}
+
+		resolve();
+	});
 };
 
 RowManager.prototype._setDataActual = function (data, renderInPosition) {
@@ -2619,9 +2625,9 @@ RowManager.prototype._genRemoteRequest = function () {
 		self.table.modules.ajax.setParams(params, true);
 	}
 
-	table.modules.ajax.sendRequest(function (data) {
+	table.modules.ajax.sendRequest().then(function (data) {
 		self.setData(data);
-	});
+	}).catch(function (e) {});
 };
 
 //choose the path to refresh data after a filter update
@@ -4773,12 +4779,12 @@ Tabulator.prototype.defaultOptions = {
 	ajaxURL: false, //url for ajax loading
 	ajaxParams: {}, //params for ajax loading
 	ajaxConfig: "get", //ajax request type
+	ajaxPromiseFunc: false, //promise function
 	ajaxLoader: true, //show loader
 	ajaxLoaderLoading: false, //loader element
 	ajaxLoaderError: false, //loader element
 	ajaxFiltering: false,
 	ajaxSorting: false,
-	ajaxPromise: false,
 	ajaxProgressiveLoad: false, //progressive loading
 	ajaxProgressiveLoadDelay: 0, //delay between requests
 	ajaxProgressiveLoadScrollMargin: 0, //margin before scroll begins
@@ -5216,7 +5222,7 @@ Tabulator.prototype.setData = function (data, params, config) {
 		this.modules.ajax.blockActiveRequest();
 	}
 
-	this._setData(data, params, config);
+	return this._setData(data, params, config);
 };
 
 Tabulator.prototype._setData = function (data, params, config, inPosition) {
@@ -5225,7 +5231,7 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 	if (typeof data === "string") {
 		if (data.indexOf("{") == 0 || data.indexOf("[") == 0) {
 			//data is a json encoded string
-			self.rowManager.setData(JSON.parse(data), inPosition);
+			return self.rowManager.setData(JSON.parse(data), inPosition);
 		} else {
 
 			if (self.modExists("ajax", true)) {
@@ -5241,17 +5247,17 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 
 				if (self.options.pagination == "remote" && self.modExists("page", true)) {
 					self.modules.page.reset(true);
-					self.modules.page.setPage(1);
+					return self.modules.page.setPage(1);
 				} else {
 					//assume data is url, make ajax call to url to get data
-					self.modules.ajax.loadData(inPosition);
+					return self.modules.ajax.loadData(inPosition);
 				}
 			}
 		}
 	} else {
 		if (data) {
 			//asume data is already an object
-			self.rowManager.setData(data, inPosition);
+			return self.rowManager.setData(data, inPosition);
 		} else {
 
 			//no data provided, check if ajaxURL is present;
@@ -5259,13 +5265,13 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 
 				if (self.options.pagination == "remote" && self.modExists("page", true)) {
 					self.modules.page.reset(true);
-					self.modules.page.setPage(1);
+					return self.modules.page.setPage(1);
 				} else {
-					self.modules.ajax.loadData(inPosition);
+					return self.modules.ajax.loadData(inPosition);
 				}
 			} else {
 				//empty data
-				self.rowManager.setData([], inPosition);
+				return self.rowManager.setData([], inPosition);
 			}
 		}
 	}
@@ -5308,7 +5314,7 @@ Tabulator.prototype.replaceData = function (data, params, config) {
 		this.modules.ajax.blockActiveRequest();
 	}
 
-	this._setData(data, params, config, true);
+	return this._setData(data, params, config, true);
 };
 
 //update table data
