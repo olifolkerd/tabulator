@@ -5971,6 +5971,8 @@ Tabulator.prototype.defaultOptions = {
 
 	initialSort: false, //initial sorting criteria
 
+	initialFilter: false, //initial filtering criteria
+
 
 	footerElement: false, //hold footer element
 
@@ -6522,14 +6524,26 @@ Tabulator.prototype._buildElement = function () {
 		mod.sort.setSort(sorters);
 	}
 
-	if (options.persistentFilter && this.modExists("persistence", true)) {
+	if ((options.persistentFilter || options.initialFilter) && this.modExists("filter", true)) {
 
-		var filters = mod.persistence.load("filter");
+		var filters = [];
 
-		if (filters !== false) {
+		if (options.persistentFilter && this.modExists("persistence", true)) {
 
-			this.setFilter(filters);
+			filters = mod.persistence.load("filter");
+
+			if (filters === false && options.initialFilter) {
+
+				filters = options.initialFilter;
+			}
+		} else if (options.initialFilter) {
+
+			filters = options.initialFilter;
 		}
+
+		mod.filter.setFilter(filters);
+
+		// this.setFilter(filters);
 	}
 
 	if (this.modExists("ajax")) {

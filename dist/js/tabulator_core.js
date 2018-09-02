@@ -4693,6 +4693,7 @@ Tabulator.prototype.defaultOptions = {
 	tooltipGenerationMode: "load", //when to generate tooltips
 
 	initialSort: false, //initial sorting criteria
+	initialFilter: false, //initial filtering criteria
 
 	footerElement: false, //hold footer element
 
@@ -5063,12 +5064,21 @@ Tabulator.prototype._buildElement = function () {
 		mod.sort.setSort(sorters);
 	}
 
-	if (options.persistentFilter && this.modExists("persistence", true)) {
-		var filters = mod.persistence.load("filter");
+	if ((options.persistentFilter || options.initialFilter) && this.modExists("filter", true)) {
+		var filters = [];
 
-		if (filters !== false) {
-			this.setFilter(filters);
+		if (options.persistentFilter && this.modExists("persistence", true)) {
+			filters = mod.persistence.load("filter");
+
+			if (filters === false && options.initialFilter) {
+				filters = options.initialFilter;
+			}
+		} else if (options.initialFilter) {
+			filters = options.initialFilter;
 		}
+
+		mod.filter.setFilter(filters);
+		// this.setFilter(filters);
 	}
 
 	if (this.modExists("ajax")) {
