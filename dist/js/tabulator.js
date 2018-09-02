@@ -1641,7 +1641,7 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
 		params = this.definition.titleFormatterParams || {};
 
-		params = typeof params === "function" ? params(mockCell) : params;
+		params = typeof params === "function" ? params() : params;
 
 		contents = formatter.call(this.table.modules.format, mockCell, params);
 
@@ -11350,7 +11350,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 					}
 				};
 
-				editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, column.definition.headerFilterParams || {});
+				params = column.definition.headerFilterParams || {};
+
+				params = typeof params === "function" ? params() : params;
+
+				editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, params);
 
 				//set Placeholder Text
 				if (field) {

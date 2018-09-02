@@ -1392,7 +1392,7 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
 		params = this.definition.titleFormatterParams || {};
 
-		params = typeof params === "function" ? params(mockCell) : params;
+		params = typeof params === "function" ? params() : params;
 
 		contents = formatter.call(this.table.modules.format, mockCell, params);
 

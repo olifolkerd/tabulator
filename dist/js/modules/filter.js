@@ -147,7 +147,11 @@ Filter.prototype.initializeColumn = function (column) {
 				}
 			};
 
-			editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, column.definition.headerFilterParams || {});
+			params = column.definition.headerFilterParams || {};
+
+			params = typeof params === "function" ? params() : params;
+
+			editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, params);
 
 			//set Placeholder Text
 			if (field) {
