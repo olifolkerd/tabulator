@@ -8712,7 +8712,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		var data = Tabulator.prototype.helpers.deepClone(dataIn || {});
 
 		self.table.columnManager.traverse(function (column) {
-			var value, accessor;
+			var value, accessor, params, component;
 
 			if (column.modules.accessor) {
 
@@ -8722,7 +8722,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 					value = column.getFieldValue(data);
 
 					if (value != "undefined") {
-						column.setFieldValue(data, accessor.accessor(value, data, type, accessor.params, column.getComponent()));
+						component = column.getComponent();
+						params = typeof accessor.params === "function" ? accessor.params(value, data, type, component) : accessor.params;
+						column.setFieldValue(data, accessor.accessor(value, data, type, params, component));
 					}
 				}
 			}
