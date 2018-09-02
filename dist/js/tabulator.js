@@ -11790,6 +11790,15 @@ Tabulator.prototype.registerModule("comms", Comms);
 			return rowVal != filterVal ? true : false;
 		},
 
+		"regex": function regex(filterVal, rowVal) {
+
+			if (typeof filterVal == "string") {
+				filterVal = new RegExp(filterVal);
+			}
+
+			return filterVal.test(rowVal);
+		},
+
 		//contains the string
 		"like": function like(filterVal, rowVal) {
 			if (filterVal === null || typeof filterVal === "undefined") {
