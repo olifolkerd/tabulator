@@ -1619,13 +1619,13 @@ Column.prototype._buildColumnHeaderTitle = function () {
 
 Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
-	var formatter, contents;
+	var formatter, contents, params, mockCell;
 
 	if (this.definition.titleFormatter && this.table.modExists("format")) {
 
 		formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
 
-		contents = formatter.call(this.table.modules.format, {
+		mockCell = {
 
 			getValue: function getValue() {
 
@@ -1637,7 +1637,13 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 				return el;
 			}
 
-		}, this.definition.titleFormatterParams || {});
+		};
+
+		params = this.definition.titleFormatterParams || {};
+
+		params = typeof params === "function" ? params(mockCell) : params;
+
+		contents = formatter.call(this.table.modules.format, mockCell, params);
 
 		el.appendChild(contents);
 	} else {
