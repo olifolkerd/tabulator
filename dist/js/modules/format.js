@@ -282,7 +282,7 @@ Format.prototype.formatters = {
 			var nextStar = star.cloneNode(true);
 			nextStar.innerHTML = i <= value ? starActive : starInactive;
 
-			stars.append(nextStar);
+			stars.appendChild(nextStar);
 		}
 
 		element.style.whiteSpace = "nowrap";

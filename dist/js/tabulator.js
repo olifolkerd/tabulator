@@ -1016,6 +1016,14 @@ ColumnComponent.prototype.getTable = function () {
 	return this.column.table;
 };
 
+ColumnComponent.prototype.headerFilterFocus = function () {
+
+	if (this.column.table.modExists("filter", true)) {
+
+		this.column.table.modules.filter.setHeaderFilterFocus(this.column);
+	}
+};
+
 ColumnComponent.prototype.setHeaderFilterValue = function (value) {
 
 	if (this.column.table.modExists("filter", true)) {
@@ -11438,7 +11446,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					});
 				}
 
-				filterElement.append(editorElement);
+				filterElement.appendChild(editorElement);
 
 				column.contentElement.appendChild(filterElement);
 
@@ -12085,7 +12093,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				var nextStar = star.cloneNode(true);
 				nextStar.innerHTML = i <= value ? starActive : starInactive;
 
-				stars.append(nextStar);
+				stars.appendChild(nextStar);
 			}
 
 			element.style.whiteSpace = "nowrap";

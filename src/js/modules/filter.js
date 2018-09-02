@@ -201,7 +201,7 @@ Filter.prototype.initializeColumn = function(column){
 				});
 			}
 
-			filterElement.append(editorElement);
+			filterElement.appendChild(editorElement);
 
 			column.contentElement.appendChild(filterElement);
 
