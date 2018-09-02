@@ -23,7 +23,8 @@ RowComponent.prototype.getCells = function(){
 };
 
 RowComponent.prototype.getCell = function(column){
-	return this.row.getCell(column).getComponent();
+	var cell = this.row.getCell(column);
+	return cell ? cell.getComponent() : false;
 };
 
 RowComponent.prototype.getIndex = function(){
