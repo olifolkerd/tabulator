@@ -5059,7 +5059,10 @@ Row.prototype.wipe = function () {
 		this.element.removeChild(this.element.firstChild);
 	} // this.element.remove();
 
-	this.element.parentNode.removeChild(this.element);
+	if (this.element.parentNode) {
+
+		this.element.parentNode.removeChild(this.element);
+	}
 };
 
 Row.prototype.getGroup = function () {
