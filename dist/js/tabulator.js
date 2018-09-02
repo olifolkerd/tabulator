@@ -10402,14 +10402,13 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    rendered = function rendered() {},
 		    element = cell.getElement(),
 		    cellEditor,
-		    component;
+		    component,
+		    params;
 
 		//prevent editing if another cell is refusing to leave focus (eg. validation fail)
 		if (this.currentCell) {
 			if (!this.invalidEdit) {
 				this.cancelEdit();
-			} else {
-				return;
 			}
 			return;
 		}
@@ -10437,7 +10436,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			} else {
 				console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
 			}
-		};
+		}
 
 		//handle aborted edit
 		function cancel() {
@@ -10446,7 +10445,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			} else {
 				console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 			}
-		};
+		}
 
 		function onRendered(callback) {
 			rendered = callback;
@@ -10489,7 +10488,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 				self.table.options.cellEditing(component);
 
-				cellEditor = cell.column.modules.edit.editor.call(self, component, onRendered, success, cancel, cell.column.modules.edit.params);
+				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
+
+				cellEditor = cell.column.modules.edit.editor.call(self, component, onRendered, success, cancel, params);
 
 				//if editor returned, add to DOM, if false, abort edit
 				if (cellEditor !== false) {
