@@ -9,6 +9,7 @@ var Ajax = function(table){
 	this.msgElement = this.createMsgElement(); //message element
 	this.loadingElement = false;
 	this.errorElement = false;
+	this.loaderPromise = false;
 
 	this.progressiveLoad = false;
 	this.loading = false;
@@ -23,6 +24,8 @@ Ajax.prototype.initialize = function(){
 	if(this.table.options.ajaxLoaderLoading){
 		this.loadingElement = this.table.options.ajaxLoaderLoading;
 	}
+
+	this.loaderPromise = this.table.options.ajaxPromiseFunc || this.defaultLoaderPromise;
 
 	if(this.table.options.ajaxLoaderError){
 		this.errorElement = this.table.options.ajaxLoaderError;
@@ -205,92 +208,45 @@ Ajax.prototype.sendRequest = function(callback, silent){
 	url = self.url,
 	requestNo, esc, query;
 
-	if(url){
+	self.requestOrder ++;
+	requestNo = self.requestOrder;
 
-		self.requestOrder ++;
-		requestNo = self.requestOrder;
+	self._loadDefaultConfig();
 
-		self._loadDefaultConfig();
+	if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
 
-		if(self.params){
-			if(!self.config.method || self.config.method == "get"){
-				url += "?" + self.serializeParams(self.params);
-			}else{
-				self.config.body = JSON.stringify(self.params);
-			}
+		self.loading = true;
+
+		if(!silent){
+			self.showLoader();
 		}
 
-		if(self.table.options.ajaxRequesting(self.url, self.params) !== false){
-
-			self.loading = true;
-
-			if(!silent){
-				self.showLoader();
-			}
-
-			fetch(url, self.config)
-			.then((response)=>{
-				if(response.ok) {
-					response.json()
-					.then((data)=>{
-						if(response.ok) {
-
-							if(requestNo === self.requestOrder){
-								if(self.table.options.ajaxResponse){
-									data = self.table.options.ajaxResponse(self.url, self.params, data);
-								}
-
-								callback(data);
-							}else{
-								console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
-							}
-						}
-
-						self.hideLoader();
-
-						self.loading = false;
-					}).catch((error)=>{
-						console.warn("Ajax Load Error - Invalid JSON returned", error);
-
-						self.showError();
-
-						setTimeout(function(){
-							self.hideLoader();
-						}, 3000);
-
-						self.loading = false;
-					});
-				}else{
-					console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
-
-					self.table.options.ajaxError(response, response.status, response.statusText);
-					self.showError();
-
-					setTimeout(function(){
-						self.hideLoader();
-					}, 3000);
-
-					self.loading = false;
+		this.loaderPromise(url, self.config, self.params).then((data)=>{
+			if(requestNo === self.requestOrder){
+				if(self.table.options.ajaxResponse){
+					data = self.table.options.ajaxResponse(self.url, self.params, data);
 				}
-			})
-			.catch((error)=>{
-				console.error("Ajax Load Error - Connection Error: ", error);
+				callback(data);
+			}else{
+				console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
+			}
 
-				self.table.options.ajaxError(error, error, error);
-				self.showError();
+			self.hideLoader();
 
-				setTimeout(function(){
-					self.hideLoader();
-				}, 3000);
+			self.loading = false;
+		})
+		.catch((error)=>{
+			console.error("Ajax Load Error: ", error);
+			self.table.options.ajaxError(error);
 
-				self.loading = false;
-			});
+			self.showError();
 
-		}
+			setTimeout(function(){
+				self.hideLoader();
+			}, 3000);
 
-	}else{
-		console.warn("Ajax Load Error - No URL Set");
-		return false;
+			self.loading = false;
+		});
 	}
 };
 
@@ -343,6 +299,47 @@ Ajax.prototype.defaultConfig = {
 	headers: {
 		"Content-Type": "application/json; charset=utf-8",
 	}
+};
+
+Ajax.prototype.defaultLoaderPromise = function(url, config, params){
+	var self = this;
+
+	return new Promise(function(resolve, reject){
+
+		if(url){
+
+			if(params){
+				if(!config.method || config.method == "get"){
+					url += "?" + self.serializeParams(params);
+				}else{
+					config.body = JSON.stringify(params);
+				}
+			}
+
+			fetch(url, config)
+			.then((response)=>{
+				if(response.ok) {
+					response.json()
+					.then((data)=>{
+						resolve(data);
+					}).catch((error)=>{
+						reject(error);
+						console.warn("Ajax Load Error - Invalid JSON returned", error);
+					});
+				}else{
+					console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
+					reject(response);
+				}
+			})
+			.catch((error)=>{
+				console.error("Ajax Load Error - Connection Error: ", error);
+				reject(error);
+			});
+		}else{
+			reject("No URL Set");
+		}
+
+	});
 };
 
 Tabulator.prototype.registerModule("ajax", Ajax);

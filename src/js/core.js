@@ -122,6 +122,7 @@ Tabulator.prototype.defaultOptions = {
 	ajaxLoaderError:false, //loader element
 	ajaxFiltering:false,
 	ajaxSorting:false,
+	ajaxPromise:false,
 	ajaxProgressiveLoad:false, //progressive loading
 	ajaxProgressiveLoadDelay:0, //delay between requests
 	ajaxProgressiveLoadScrollMargin:0, //margin before scroll begins
