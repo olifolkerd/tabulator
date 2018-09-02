@@ -198,6 +198,26 @@ Format.prototype.formatters = {
 		el = document.createElement("img");
 		el.setAttribute("src", value);
 
+		switch(typeof formatterParams.height){
+			case "number":
+			element.style.height = formatterParams.height + "px";
+			break;
+
+			case "string":
+			element.style.height = formatterParams.height;
+			break;
+		}
+
+		switch(typeof formatterParams.width){
+			case "number":
+			element.style.width = formatterParams.width + "px";
+			break;
+
+			case "string":
+			element.style.width = formatterParams.width;
+			break;
+		}
+
 		el.addEventListener("load", function(){
 			cell.getRow().normalizeHeight();
 		});
