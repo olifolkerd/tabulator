@@ -26,7 +26,8 @@ Filter.prototype.initializeColumn = function (column) {
 	    typingTimer,
 	    tagType,
 	    attrType,
-	    searchTrigger;
+	    searchTrigger,
+	    params;
 
 	//handle successfull value change
 	function success(value) {
@@ -49,7 +50,12 @@ Filter.prototype.initializeColumn = function (column) {
 
 				case "function":
 					filterFunc = function filterFunc(data) {
-						return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
+						var params = column.definition.headerFilterFuncParams || {};
+						var fieldVal = column.getFieldValue(data);
+
+						params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+						return column.definition.headerFilterFunc(value, fieldVal, data, params);
 					};
 
 					type = filterFunc;
@@ -81,7 +87,7 @@ Filter.prototype.initializeColumn = function (column) {
 		self.changed = true;
 
 		self.table.rowManager.filterRefresh();
-	};
+	}
 
 	column.modules.filter = {
 		success: success

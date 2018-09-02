@@ -11229,7 +11229,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    typingTimer,
 		    tagType,
 		    attrType,
-		    searchTrigger;
+		    searchTrigger,
+		    params;
 
 		//handle successfull value change
 		function success(value) {
@@ -11252,7 +11253,12 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 					case "function":
 						filterFunc = function filterFunc(data) {
-							return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
+							var params = column.definition.headerFilterFuncParams || {};
+							var fieldVal = column.getFieldValue(data);
+
+							params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+							return column.definition.headerFilterFunc(value, fieldVal, data, params);
 						};
 
 						type = filterFunc;
@@ -11284,7 +11290,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			self.changed = true;
 
 			self.table.rowManager.filterRefresh();
-		};
+		}
 
 		column.modules.filter = {
 			success: success

@@ -14,7 +14,7 @@ var Filter = function(table){
 Filter.prototype.initializeColumn = function(column){
 	var self = this,
 	field = column.getField(),
-	filterElement, editor, editorElement, cellWrapper, typingTimer, tagType, attrType, searchTrigger;
+	filterElement, editor, editorElement, cellWrapper, typingTimer, tagType, attrType, searchTrigger, params;
 
 
 	//handle successfull value change
@@ -30,7 +30,7 @@ Filter.prototype.initializeColumn = function(column){
 					type = column.definition.headerFilterFunc;
 					filterFunc = function(data){
 						return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
-					}
+					};
 				}else{
 					console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
 				}
@@ -38,8 +38,13 @@ Filter.prototype.initializeColumn = function(column){
 
 				case "function":
 				filterFunc = function(data){
-					return column.definition.headerFilterFunc(value, column.getFieldValue(data), data, column.definition.headerFilterFuncParams || {});
-				}
+					var params = column.definition.headerFilterFuncParams || {};
+					var fieldVal = column.getFieldValue(data);
+
+					params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+					return column.definition.headerFilterFunc(value, fieldVal, data, params);
+				};
 
 				type = filterFunc;
 				break;
@@ -50,14 +55,14 @@ Filter.prototype.initializeColumn = function(column){
 					case "partial":
 					filterFunc = function(data){
 						return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
-					}
+					};
 					type = "like";
 					break;
 
 					default:
 					filterFunc = function(data){
 						return column.getFieldValue(data) == value;
-					}
+					};
 					type = "=";
 				}
 			}
@@ -71,11 +76,11 @@ Filter.prototype.initializeColumn = function(column){
 		self.changed = true;
 
 		self.table.rowManager.filterRefresh();
-	};
+	}
 
 	column.modules.filter = {
 		success:success,
-	}
+	};
 
 	//handle aborted edit
 	function cancel(){}
