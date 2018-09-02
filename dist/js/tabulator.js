@@ -4360,7 +4360,9 @@ RowComponent.prototype.getCells = function () {
 
 RowComponent.prototype.getCell = function (column) {
 
-	return this.row.getCell(column).getComponent();
+	var cell = this.row.getCell(column);
+
+	return cell ? cell.getComponent() : false;
 };
 
 RowComponent.prototype.getIndex = function () {
@@ -6000,6 +6002,8 @@ Tabulator.prototype.defaultOptions = {
 
 
 	clipboard: false, //enable clipboard
+
+	clipboardCopyStyled: true, //formatted table data
 
 	clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard
 
@@ -9568,6 +9572,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.copyFormatterParams = {};
 		this.pasteParser = function () {};
 		this.pasteAction = function () {};
+		this.htmlElement = false;
 
 		this.blocked = true; //block copy actions not originating from this command
 	};
@@ -9590,8 +9595,14 @@ Tabulator.prototype.registerModule("comms", Comms);
 						window.clipboardData.setData('Text', data);
 					} else if (e.clipboardData && e.clipboardData.setData) {
 						e.clipboardData.setData('text/plain', data);
+						if (self.htmlElement) {
+							e.clipboardData.setData('text/html', self.htmlElement.outerHTML);
+						}
 					} else if (e.originalEvent && e.originalEvent.clipboardData.setData) {
 						e.originalEvent.clipboardData.setData('text/plain', data);
+						if (self.htmlElement) {
+							e.originalEvent.clipboardData.setData('text/html', self.htmlElement.outerHTML);
+						}
 					}
 
 					self.table.options.clipboardCopied(data);
@@ -9789,7 +9800,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Clipboard.prototype.generateContent = function () {
-		var data = this.copySelector.call(this, this.copySelectorParams);
+		var data;
+
+		this.htmlElement = false;
+		data = this.copySelector.call(this, this.copySelectorParams);
+
 		return this.copyFormatter.call(this, data, this.copyFormatterParams);
 	};
 
@@ -9797,6 +9812,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 		var columns = this.table.columnManager.columnsByIndex,
 		    headers = [],
 		    data = [];
+
+		if (this.table.options.clipboardCopyStyled) {
+			this.generateHTML(rows, params);
+		}
 
 		if (params) {
 			columns.forEach(function (column) {
@@ -9819,6 +9838,127 @@ Tabulator.prototype.registerModule("comms", Comms);
 		});
 
 		return data;
+	};
+
+	Clipboard.prototype.generateHTML = function (rows, showHeaders) {
+		var self = this,
+		    columns = this.table.columnManager.columnsByIndex,
+		    data = [],
+		    headers,
+		    body,
+		    oddRow,
+		    evenRow,
+		    firstRow,
+		    firstCell,
+		    lastCell,
+		    styleCells;
+
+		//create table element
+		this.htmlElement = document.createElement("table");
+		self.mapElementStyles(this.table.element, this.htmlElement, ["border-top", "border-left", "border-right", "border-bottom"]);
+
+		//create headers if needed
+		if (showHeaders) {
+			headers = document.createElement("tr");
+
+			columns.forEach(function (column) {
+				var col = document.createElement("th");
+				col.innerHTML = column.definition.title;
+
+				self.mapElementStyles(column.getElement(), col, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+				headers.appendChild(col);
+			});
+
+			self.mapElementStyles(this.table.columnManager.getHeadersElement(), headers, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+			this.htmlElement.appendChild(document.createElement("thead").appendChild(headers));
+		}
+
+		//create table body
+		body = document.createElement("tbody");
+
+		//lookup row styles
+		if (window.getComputedStyle) {
+			oddRow = this.table.element.getElementsByClassName("tabulator-row-odd")[0];
+			evenRow = this.table.element.getElementsByClassName("tabulator-row-even")[0];
+			firstRow = this.table.element.getElementsByClassName("tabulator-row")[0];
+
+			if (firstRow) {
+				styleCells = firstRow.getElementsByClassName("tabulator-cell");
+				firstCell = styleCells[0];
+				lastCell = styleCells[styleCells.length - 1];
+			}
+		}
+
+		//add rows to table
+		rows.forEach(function (row, i) {
+			var rowEl = document.createElement("tr"),
+			    rowData = row.getData("clipboard"),
+			    styleRow = firstRow;
+
+			columns.forEach(function (column, j) {
+				var cellEl = document.createElement("td");
+				cellEl.innerHTML = column.getFieldValue(rowData);
+
+				if (column.definition.align) {
+					cellEl.style.textAlign = column.definition.align;
+				}
+
+				if (j < columns.length - 1) {
+					if (firstCell) {
+						self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+					}
+				} else {
+					if (firstCell) {
+						self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+					}
+				}
+
+				rowEl.appendChild(cellEl);
+			});
+
+			if (!(i % 2) && oddRow) {
+				styleRow = oddRow;
+			}
+
+			if (i % 2 && evenRow) {
+				styleRow = evenRow;
+			}
+
+			if (styleRow) {
+				self.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+			}
+
+			body.appendChild(rowEl);
+		});
+
+		this.htmlElement.appendChild(body);
+	};
+
+	Clipboard.prototype.mapElementStyles = function (from, to, props) {
+
+		var lookup = {
+			"background-color": "backgroundColor",
+			"color": "fontColor",
+			"font-weight": "fontWeight",
+			"font-family": "fontFamily",
+			"font-size": "fontSize",
+			"border-top": "borderTop",
+			"border-left": "borderLeft",
+			"border-right": "borderRight",
+			"border-bottom": "borderBottom"
+		};
+
+		if (window.getComputedStyle) {
+			var fromStyle = window.getComputedStyle(from);
+
+			props.forEach(function (prop) {
+				to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
+			});
+		}
+
+		// return window.getComputedStyle ? window.getComputedStyle(element, null).getPropertyValue(property) : element.style[property.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); })];
 	};
 
 	Clipboard.prototype.copySelectors = {

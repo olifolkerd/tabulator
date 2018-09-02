@@ -7,6 +7,7 @@ var Clipboard = function(table){
 	this.copyFormatterParams = {};
 	this.pasteParser = function(){};
 	this.pasteAction = function(){};
+	this.htmlElement = false;
 
 	this.blocked = true; //block copy actions not originating from this command
 };
@@ -23,14 +24,20 @@ Clipboard.prototype.initialize = function(){
 			if(!self.blocked){
 				e.preventDefault();
 
-				data = self.generateContent()
+				data = self.generateContent();
 
 				if (window.clipboardData && window.clipboardData.setData) {
 					window.clipboardData.setData('Text', data);
 				} else if (e.clipboardData && e.clipboardData.setData) {
 					e.clipboardData.setData('text/plain', data);
+					if(self.htmlElement){
+						e.clipboardData.setData('text/html', self.htmlElement.outerHTML);
+					}
 				} else if (e.originalEvent && e.originalEvent.clipboardData.setData) {
 					e.originalEvent.clipboardData.setData('text/plain', data);
+					if(self.htmlElement){
+						e.originalEvent.clipboardData.setData('text/html', self.htmlElement.outerHTML);
+					}
 				}
 
 				self.table.options.clipboardCopied(data);
@@ -48,12 +55,12 @@ Clipboard.prototype.initialize = function(){
 
 	this.setPasteParser(this.table.options.clipboardPasteParser);
 	this.setPasteAction(this.table.options.clipboardPasteAction);
-}
+};
 
 Clipboard.prototype.reset = function(){
 	this.blocked = false;
 	this.originalSelectionText = "";
-}
+};
 
 
 Clipboard.prototype.setPasteAction = function(action){
@@ -63,7 +70,7 @@ Clipboard.prototype.setPasteAction = function(action){
 		this.pasteAction = this.pasteActions[action];
 
 		if(!this.pasteAction){
-			console.warn("Clipboard Error - No such paste action found:", action)
+			console.warn("Clipboard Error - No such paste action found:", action);
 		}
 		break;
 
@@ -71,7 +78,7 @@ Clipboard.prototype.setPasteAction = function(action){
 		this.pasteAction = action;
 		break;
 	}
-}
+};
 
 Clipboard.prototype.setPasteParser = function(parser){
 	switch(typeof parser){
@@ -79,7 +86,7 @@ Clipboard.prototype.setPasteParser = function(parser){
 		this.pasteParser = this.pasteParsers[parser];
 
 		if(!this.pasteParser){
-			console.warn("Clipboard Error - No such paste parser found:", parser)
+			console.warn("Clipboard Error - No such paste parser found:", parser);
 		}
 		break;
 
@@ -87,7 +94,7 @@ Clipboard.prototype.setPasteParser = function(parser){
 		this.pasteParser = parser;
 		break;
 	}
-}
+};
 
 
 Clipboard.prototype.paste = function(e){
@@ -112,7 +119,7 @@ Clipboard.prototype.paste = function(e){
 			this.table.options.clipboardPasteError(data);
 		}
 	}
-}
+};
 
 Clipboard.prototype.mutateData = function(data){
 	var self = this,
@@ -127,7 +134,7 @@ Clipboard.prototype.mutateData = function(data){
 	}
 
 	return output;
-}
+};
 
 
 Clipboard.prototype.checkPaseOrigin = function(e){
@@ -138,7 +145,7 @@ Clipboard.prototype.checkPaseOrigin = function(e){
 	}
 
 	return valid;
-}
+};
 
 Clipboard.prototype.getPasteData = function(e){
 	var data = undefined;
@@ -152,7 +159,7 @@ Clipboard.prototype.getPasteData = function(e){
 	}
 
 	return data;
-}
+};
 
 
 Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatterParams, internal){
@@ -191,7 +198,7 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 			sel.removeAllRanges();
 		}
 	}
-}
+};
 
 Clipboard.prototype.setSelector = function(selector){
 
@@ -202,15 +209,15 @@ Clipboard.prototype.setSelector = function(selector){
 		if(this.copySelectors[selector]){
 			this.copySelector = this.copySelectors[selector];
 		}else{
-			console.warn("Clipboard Error - No such selector found:", selector)
+			console.warn("Clipboard Error - No such selector found:", selector);
 		}
 		break;
 
 		case "function":
-		this.copySelector = selector
+		this.copySelector = selector;
 		break;
 	}
-}
+};
 
 Clipboard.prototype.setFormatter = function(formatter){
 
@@ -221,7 +228,7 @@ Clipboard.prototype.setFormatter = function(formatter){
 		if(this.copyFormatters[formatter]){
 			this.copyFormatter = this.copyFormatters[formatter];
 		}else{
-			console.warn("Clipboard Error - No such formatter found:", formatter)
+			console.warn("Clipboard Error - No such formatter found:", formatter);
 		}
 		break;
 
@@ -229,18 +236,26 @@ Clipboard.prototype.setFormatter = function(formatter){
 		this.copyFormatter = formatter;
 		break;
 	}
-}
+};
 
 
 Clipboard.prototype.generateContent = function(){
-	var data = this.copySelector.call(this, this.copySelectorParams);
+	var data;
+
+	this.htmlElement = false;
+	data = this.copySelector.call(this, this.copySelectorParams);
+
 	return this.copyFormatter.call(this, data, this.copyFormatterParams);
-}
+};
 
 Clipboard.prototype.rowsToData = function(rows, params){
 	var columns = this.table.columnManager.columnsByIndex,
 	headers = [],
 	data = [];
+
+	if(this.table.options.clipboardCopyStyled){
+		this.generateHTML(rows, params);
+	}
 
 	if(params){
 		columns.forEach(function(column){
@@ -263,7 +278,121 @@ Clipboard.prototype.rowsToData = function(rows, params){
 	});
 
 	return data;
-}
+};
+
+Clipboard.prototype.generateHTML = function (rows, showHeaders){
+	var self = this,
+	columns = this.table.columnManager.columnsByIndex,
+	data = [],
+	headers, body, oddRow, evenRow, firstRow, firstCell, lastCell, styleCells;
+
+	//create table element
+	this.htmlElement = document.createElement("table");
+	self.mapElementStyles(this.table.element, this.htmlElement, ["border-top", "border-left", "border-right", "border-bottom"]);
+
+	//create headers if needed
+	if(showHeaders){
+		headers = document.createElement("tr");
+
+		columns.forEach(function(column){
+			var col = document.createElement("th");
+			col.innerHTML = column.definition.title;
+
+			self.mapElementStyles(column.getElement(), col, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+			headers.appendChild(col);
+		});
+
+		self.mapElementStyles(this.table.columnManager.getHeadersElement(), headers, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+		this.htmlElement.appendChild(document.createElement("thead").appendChild(headers));
+	}
+
+	//create table body
+	body = document.createElement("tbody");
+
+	//lookup row styles
+	if(window.getComputedStyle){
+		oddRow = this.table.element.getElementsByClassName("tabulator-row-odd")[0];
+		evenRow = this.table.element.getElementsByClassName("tabulator-row-even")[0];
+		firstRow = this.table.element.getElementsByClassName("tabulator-row")[0];
+
+		if(firstRow){
+			styleCells = firstRow.getElementsByClassName("tabulator-cell");
+			firstCell = styleCells[0];
+			lastCell = styleCells[styleCells.length - 1];
+		}
+	}
+
+	//add rows to table
+	rows.forEach(function(row, i){
+		var rowEl = document.createElement("tr"),
+		rowData = row.getData("clipboard"),
+		styleRow = firstRow;
+
+		columns.forEach(function(column, j){
+			var cellEl = document.createElement("td");
+			cellEl.innerHTML = column.getFieldValue(rowData);
+
+			if(column.definition.align){
+				cellEl.style.textAlign = column.definition.align;
+			}
+
+			if(j < columns.length - 1){
+				if(firstCell){
+					self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+				}
+			}else{
+				if(firstCell){
+					self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+				}
+			}
+
+			rowEl.appendChild(cellEl);
+		});
+
+		if(!(i % 2) && oddRow){
+			styleRow = oddRow;
+		}
+
+		if((i % 2) && evenRow){
+			styleRow = evenRow;
+		}
+
+		if(styleRow){
+			self.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+		}
+
+		body.appendChild(rowEl);
+	});
+
+	this.htmlElement.appendChild(body);
+};
+
+Clipboard.prototype.mapElementStyles = function(from, to, props){
+
+	var lookup = {
+		"background-color" : "backgroundColor",
+		"color" : "fontColor",
+		"font-weight" : "fontWeight",
+		"font-family" : "fontFamily",
+		"font-size" : "fontSize",
+		"border-top" : "borderTop",
+		"border-left" : "borderLeft",
+		"border-right" : "borderRight",
+		"border-bottom" : "borderBottom",
+	};
+
+	if(window.getComputedStyle){
+		var fromStyle = window.getComputedStyle(from);
+
+		props.forEach(function(prop){
+			to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
+		});
+	}
+
+	// return window.getComputedStyle ? window.getComputedStyle(element, null).getPropertyValue(property) : element.style[property.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); })];
+};
 
 
 Clipboard.prototype.copySelectors = {
@@ -285,7 +414,7 @@ Clipboard.prototype.copySelectors = {
 	active: function(params){
 		return this.rowsToData(this.table.rowManager.getComponents(true), params);
 	},
-}
+};
 
 Clipboard.prototype.copyFormatters = {
 	raw: function(data, params){
@@ -312,8 +441,8 @@ Clipboard.prototype.copyFormatters = {
 		});
 
 		return output.join("\n");
-	}
-}
+	},
+};
 
 Clipboard.prototype.pasteParsers = {
 	table:function(clipboard){
@@ -391,7 +520,7 @@ Clipboard.prototype.pasteParsers = {
 			return false;
 		}
 	}
-}
+};
 
 Clipboard.prototype.pasteActions = {
 	replace:function(rows){
@@ -403,7 +532,7 @@ Clipboard.prototype.pasteActions = {
 	insert:function(rows){
 		return this.table.addData(rows);
 	},
-}
+};
 
 
 

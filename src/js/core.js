@@ -63,6 +63,7 @@ Tabulator.prototype.defaultOptions = {
 	keybindings:[], //array for keybindings
 
 	clipboard:false, //enable clipboard
+	clipboardCopyStyled:true, //formatted table data
 	clipboardCopySelector:"active", //method of chosing which data is coppied to the clipboard
 	clipboardCopyFormatter:"table", //convert data to a clipboard string
 	clipboardCopyHeader:true, //include table headers in copt

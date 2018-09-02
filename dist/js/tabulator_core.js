@@ -3462,7 +3462,8 @@ RowComponent.prototype.getCells = function () {
 };
 
 RowComponent.prototype.getCell = function (column) {
-	return this.row.getCell(column).getComponent();
+	var cell = this.row.getCell(column);
+	return cell ? cell.getComponent() : false;
 };
 
 RowComponent.prototype.getIndex = function () {
@@ -4714,6 +4715,7 @@ Tabulator.prototype.defaultOptions = {
 	keybindings: [], //array for keybindings
 
 	clipboard: false, //enable clipboard
+	clipboardCopyStyled: true, //formatted table data
 	clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard
 	clipboardCopyFormatter: "table", //convert data to a clipboard string
 	clipboardCopyHeader: true, //include table headers in copt
