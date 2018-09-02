@@ -270,7 +270,8 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 ColumnCalcs.prototype.generateRowData = function(pos, data){
 	var rowData = {},
 	calcs = pos == "top" ? this.topCalcs : this.botCalcs,
-	type = pos == "top" ? "topCalc" : "botCalc";
+	type = pos == "top" ? "topCalc" : "botCalc",
+	params, paramKey;
 
 	calcs.forEach(function(column){
 		var values = [];
@@ -280,7 +281,10 @@ ColumnCalcs.prototype.generateRowData = function(pos, data){
 				values.push(column.getFieldValue(item));
 			});
 
-			column.setFieldValue(rowData, column.modules.columnCalcs[type](values, data, column.modules.columnCalcs[type + "Params"]));
+			paramKey = type + "Params";
+			params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](value, data) : column.modules.columnCalcs[paramKey];
+
+			column.setFieldValue(rowData, column.modules.columnCalcs[type](values, data, params));
 		}
 	});
 
