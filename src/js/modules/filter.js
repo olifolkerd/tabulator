@@ -241,7 +241,7 @@ Filter.prototype.setHeaderFilterFocus = function(column){
 Filter.prototype.setHeaderFilterValue = function(column, value){
 	if (column){
 		if(column.modules.filter && column.modules.filter.headerElement){
-			column.modules.filter.headerElement.val(value);
+			column.modules.filter.headerElement.value = value;
 			column.modules.filter.success(value);
 		}else{
 			console.warn("Column Filter Error - No header filter set on column:", column.getField());
@@ -448,7 +448,7 @@ Filter.prototype.clearHeaderFilter = function(){
 	this.headerFilters = {};
 
 	this.headerFilterElements.forEach(function(element){
-		element.val("");
+		element.value = "";
 	});
 
 	this.changed = true;

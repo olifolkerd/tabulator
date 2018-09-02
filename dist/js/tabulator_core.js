@@ -930,6 +930,12 @@ ColumnComponent.prototype.getTable = function () {
 	return this.column.table;
 };
 
+ColumnComponent.prototype.setHeaderFilterValue = function (value) {
+	if (this.column.table.modExists("filter", true)) {
+		this.column.table.modules.filter.setHeaderFilterValue(this.column, value);
+	}
+};
+
 var Column = function Column(def, parent) {
 	var self = this;
 

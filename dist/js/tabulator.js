@@ -1016,6 +1016,14 @@ ColumnComponent.prototype.getTable = function () {
 	return this.column.table;
 };
 
+ColumnComponent.prototype.setHeaderFilterValue = function (value) {
+
+	if (this.column.table.modExists("filter", true)) {
+
+		this.column.table.modules.filter.setHeaderFilterValue(this.column, value);
+	}
+};
+
 var Column = function Column(def, parent) {
 
 	var self = this;
@@ -11468,7 +11476,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	Filter.prototype.setHeaderFilterValue = function (column, value) {
 		if (column) {
 			if (column.modules.filter && column.modules.filter.headerElement) {
-				column.modules.filter.headerElement.val(value);
+				column.modules.filter.headerElement.value = value;
 				column.modules.filter.success(value);
 			} else {
 				console.warn("Column Filter Error - No header filter set on column:", column.getField());
@@ -11664,7 +11672,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.headerFilters = {};
 
 		this.headerFilterElements.forEach(function (element) {
-			element.val("");
+			element.value = "";
 		});
 
 		this.changed = true;
