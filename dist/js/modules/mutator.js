@@ -66,17 +66,18 @@ Mutator.prototype.transformRow = function (data, type, update) {
 	    value;
 
 	self.table.columnManager.traverse(function (column) {
-		var mutator;
+		var mutator, params, component;
 
 		if (column.modules.mutate) {
-
 			mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
 			if (mutator) {
 				value = column.getFieldValue(data);
 
 				if (!update || update && typeof value !== "undefined") {
-					column.setFieldValue(data, mutator.mutator(value, data, type, mutator.params, column.getComponent()));
+					component = column.getComponent();
+					params = typeof mutator.params === "function" ? mutator.params(value, data, type, component) : mutator.params;
+					column.setFieldValue(data, mutator.mutator(value, data, type, params, component));
 				}
 			}
 		}
