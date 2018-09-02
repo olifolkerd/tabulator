@@ -11793,7 +11793,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//return a formatted value for a cell
 	Format.prototype.formatValue = function (cell) {
-		return cell.column.modules.format.formatter.call(this, cell.getComponent(), cell.column.modules.format.params);
+		var component = cell.getComponent(),
+		    params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
+
+		return cell.column.modules.format.formatter.call(this, component, params);
 	};
 
 	Format.prototype.sanitizeHTML = function (value) {
