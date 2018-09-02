@@ -16430,7 +16430,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//process individual rows for a sort function on active data
 	Sort.prototype._sortRow = function (a, b, column, dir) {
-		var self = this;
+		var params, el1Comp, el2Comp, colComp;
 
 		//switch elements depending on search direction
 		var el1 = dir == "asc" ? a : b;
@@ -16442,7 +16442,13 @@ Tabulator.prototype.registerModule("comms", Comms);
 		a = typeof a !== "undefined" ? a : "";
 		b = typeof b !== "undefined" ? b : "";
 
-		return column.modules.sort.sorter.call(self, a, b, el1.getComponent(), el2.getComponent(), column.getComponent(), dir, column.modules.sort.params);
+		el1Comp = el1.getComponent();
+		el2Comp = el2.getComponent();
+		colComp = column.getComponent();
+
+		params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(el1Comp, el2Comp, colComp, dir) : column.modules.sort.params;
+
+		return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, colComp, dir, params);
 	};
 
 	//default data sorters
