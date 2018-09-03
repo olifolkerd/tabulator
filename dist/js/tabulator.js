@@ -6384,15 +6384,13 @@ Tabulator.prototype._mapDepricatedFunctionality = function () {};
 
 Tabulator.prototype._create = function () {
 
-	var element = this.element;
-
 	this._clearObjectPointers();
 
 	this._mapDepricatedFunctionality();
 
 	this.bindModules();
 
-	if (element.tagName === "TABLE") {
+	if (this.element.tagName === "TABLE") {
 
 		if (this.modExists("htmlTableImport", true)) {
 
@@ -16701,7 +16699,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		var activeRows = self.table.rowManager.activeRows;
 
-		params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
+		var params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
 
 		activeRows.sort(function (a, b) {
 

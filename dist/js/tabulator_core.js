@@ -4951,15 +4951,13 @@ Tabulator.prototype._mapDepricatedFunctionality = function () {};
 
 //concreate table
 Tabulator.prototype._create = function () {
-	var element = this.element;
-
 	this._clearObjectPointers();
 
 	this._mapDepricatedFunctionality();
 
 	this.bindModules();
 
-	if (element.tagName === "TABLE") {
+	if (this.element.tagName === "TABLE") {
 		if (this.modExists("htmlTableImport", true)) {
 			this.modules.htmlTableImport.parseTable();
 		}

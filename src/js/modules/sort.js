@@ -240,7 +240,7 @@ Sort.prototype._sortItem = function(column, dir, sortList, i){
 
 	var activeRows = self.table.rowManager.activeRows;
 
-	params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
+	var params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
 
 	activeRows.sort(function(a, b){
 
@@ -263,7 +263,7 @@ Sort.prototype._sortItem = function(column, dir, sortList, i){
 
 //process individual rows for a sort function on active data
 Sort.prototype._sortRow = function(a, b, column, dir, params){
-	var params, el1Comp, el2Comp, colComp;
+	var el1Comp, el2Comp, colComp;
 
 	//switch elements depending on search direction
 	var el1 = dir == "asc" ? a : b;
