@@ -243,14 +243,16 @@ Sort.prototype._sortItem = function (column, dir, sortList, i) {
 
 	var activeRows = self.table.rowManager.activeRows;
 
+	params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
+
 	activeRows.sort(function (a, b) {
 
-		var result = self._sortRow(a, b, column, dir);
+		var result = self._sortRow(a, b, column, dir, params);
 
 		//if results match recurse through previous searchs to be sure
 		if (result === 0 && i) {
 			for (var j = i - 1; j >= 0; j--) {
-				result = self._sortRow(a, b, sortList[j].column, sortList[j].dir);
+				result = self._sortRow(a, b, sortList[j].column, sortList[j].dir, params);
 
 				if (result !== 0) {
 					break;
@@ -263,7 +265,7 @@ Sort.prototype._sortItem = function (column, dir, sortList, i) {
 };
 
 //process individual rows for a sort function on active data
-Sort.prototype._sortRow = function (a, b, column, dir) {
+Sort.prototype._sortRow = function (a, b, column, dir, params) {
 	var params, el1Comp, el2Comp, colComp;
 
 	//switch elements depending on search direction
@@ -278,11 +280,8 @@ Sort.prototype._sortRow = function (a, b, column, dir) {
 
 	el1Comp = el1.getComponent();
 	el2Comp = el2.getComponent();
-	colComp = column.getComponent();
 
-	params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(el1Comp, el2Comp, colComp, dir) : column.modules.sort.params;
-
-	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, colComp, dir, params);
+	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 };
 
 //default data sorters
