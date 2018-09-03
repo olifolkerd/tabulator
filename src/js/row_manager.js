@@ -309,7 +309,7 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 			}
 		});
 
-		self.table.options.dataLoaded(data);
+		self.table.options.dataLoaded.call(this.table, data);
 
 		self.refreshActiveData(false, false, renderInPosition);
 	}else{
