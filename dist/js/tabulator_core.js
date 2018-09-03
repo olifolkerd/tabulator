@@ -4679,7 +4679,7 @@ var Tabulator = function Tabulator(element, options) {
 
 
 	this.initializeElement(element);
-	this.initializeOptions(options);
+	this.initializeOptions(options || {});
 	this._create();
 
 	Tabulator.prototype.comms.register(this); //register table for inderdevice communication

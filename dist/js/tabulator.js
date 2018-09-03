@@ -5946,7 +5946,7 @@ var Tabulator = function Tabulator(element, options) {
 
 	this.initializeElement(element);
 
-	this.initializeOptions(options);
+	this.initializeOptions(options || {});
 
 	this._create();
 
@@ -16722,7 +16722,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//process individual rows for a sort function on active data
 	Sort.prototype._sortRow = function (a, b, column, dir, params) {
-		var params, el1Comp, el2Comp, colComp;
+		var el1Comp, el2Comp, colComp;
 
 		//switch elements depending on search direction
 		var el1 = dir == "asc" ? a : b;
