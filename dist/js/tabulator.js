@@ -1672,14 +1672,11 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
 Column.prototype._buildGroupHeader = function () {
 
-	var def = self.definition,
-	    table = self.table;
-
 	this.element.classList.add("tabulator-col-group");
 
 	this.element.setAttribute("role", "columngroup");
 
-	this.element.setAttribute("aria-title", def.title);
+	this.element.setAttribute("aria-title", this.definition.title);
 
 	this.element.appendChild(this.groupElement);
 };
