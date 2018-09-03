@@ -436,8 +436,8 @@ Format.prototype.formatters = {
 
 	responsiveCollapse: function responsiveCollapse(cell, formatterParams) {
 		var self = this,
-		    open = false;
-		el = document.createElement("div");
+		    open = false,
+		    el = document.createElement("div");
 
 		function toggleList(isOpen) {
 			var collapse = cell.getRow().getElement().getElementsByClassName(".tabulator-responsive-collapse")[0];

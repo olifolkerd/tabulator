@@ -419,7 +419,8 @@ Format.prototype.formatters = {
 	},
 
 	responsiveCollapse:function(cell, formatterParams){
-		var self = this, open = false;
+		var self = this,
+		open = false,
 		el = document.createElement("div");
 
 		function toggleList(isOpen){
