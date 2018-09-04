@@ -16459,7 +16459,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
 	};
 
-	// Tabulator.prototype.registerModule("selectRow", SelectRow);
+	Tabulator.prototype.registerModule("selectRow", SelectRow);
 	var Sort = function Sort(table) {
 		this.table = table; //hold Tabulator object
 		this.sortList = []; //holder current sort
