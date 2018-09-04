@@ -15950,7 +15950,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.observer.observe(table.element);
 		} else {
 			this.binding = function () {
-				table.element.tabulator("redraw");
+				table.redraw();
 			};
 
 			window.addEventListener("resize", this.binding);
