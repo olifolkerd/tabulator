@@ -5450,23 +5450,36 @@ Cell.prototype._configureCell = function () {
 
 Cell.prototype._generateContents = function () {
 
-	var self = this,
-	    val;
+	var val;
 
-	if (self.table.modExists("format")) {
+	if (this.table.modExists("format")) {
 
-		val = self.table.modules.format.formatValue(self);
-
-		if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) !== "object") {
-
-			self.element.innerHTML = val;
-		} else {
-
-			self.element.appendChild(val);
-		}
+		val = this.table.modules.format.formatValue(this);
 	} else {
 
-		self.element.innerHTML = self.value;
+		val = this.element.innerHTML = this.value;
+	}
+
+	switch (typeof val === 'undefined' ? 'undefined' : _typeof(val)) {
+
+		case "object":
+
+			this.element.appendChild(val);
+
+			break;
+
+		case "undefined":
+
+		case "null":
+
+			this.element.innerHTML = "";
+
+			break;
+
+		default:
+
+			this.element.innerHTML = val;
+
 	}
 };
 
@@ -5474,18 +5487,16 @@ Cell.prototype._generateContents = function () {
 
 Cell.prototype._generateTooltip = function () {
 
-	var self = this;
-
-	var tooltip = self.column.tooltip;
+	var tooltip = this.column.tooltip;
 
 	if (tooltip) {
 
 		if (tooltip === true) {
 
-			tooltip = self.value;
+			tooltip = this.value;
 		} else if (typeof tooltip == "function") {
 
-			tooltip = tooltip(self.getComponent());
+			tooltip = tooltip(this.getComponent());
 
 			if (tooltip === false) {
 
@@ -5493,10 +5504,10 @@ Cell.prototype._generateTooltip = function () {
 			}
 		}
 
-		self.element.setAttribute("title", tooltip);
+		this.element.setAttribute("title", tooltip);
 	} else {
 
-		self.element.setAttribute("title", "");
+		this.element.setAttribute("title", "");
 	}
 };
 
