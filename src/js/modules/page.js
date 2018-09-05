@@ -368,7 +368,7 @@ Page.prototype.trigger = function(){
 			this.table.rowManager.refreshActiveData("page");
 			this.table.rowManager.scrollHorizontal(left);
 
-			this.table.options.pageLoaded(this.getPage());
+			this.table.options.pageLoaded.call(this.table, this.getPage());
 			resolve();
 			break;
 
@@ -512,7 +512,7 @@ Page.prototype._parseRemoteData = function(data){
 
 				this.table.columnManager.scrollHorizontal(left);
 
-				this.table.options.pageLoaded(this.getPage());
+				this.table.options.pageLoaded.call(this.table, this.getPage());
 			}
 
 		}else{

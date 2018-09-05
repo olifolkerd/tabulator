@@ -371,7 +371,7 @@ Page.prototype.trigger = function () {
 				_this4.table.rowManager.refreshActiveData("page");
 				_this4.table.rowManager.scrollHorizontal(left);
 
-				_this4.table.options.pageLoaded(_this4.getPage());
+				_this4.table.options.pageLoaded.call(_this4.table, _this4.getPage());
 				resolve();
 				break;
 
@@ -518,7 +518,7 @@ Page.prototype._parseRemoteData = function (data) {
 
 				this.table.columnManager.scrollHorizontal(left);
 
-				this.table.options.pageLoaded(this.getPage());
+				this.table.options.pageLoaded.call(this.table, this.getPage());
 			}
 		} else {
 			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");

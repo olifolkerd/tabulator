@@ -91,7 +91,7 @@ Localize.prototype.setLocale = function(desiredLocale){
 		traverseLang(self.langs[desiredLocale], self.lang);
 	}
 
-	self.table.options.localized(self.locale, self.lang);
+	self.table.options.localized.call(self.table, self.locale, self.lang);
 
 	self._executeBindings();
 };

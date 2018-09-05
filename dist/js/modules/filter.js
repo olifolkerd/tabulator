@@ -457,7 +457,7 @@ Filter.prototype.filter = function (rowList) {
 	    activeRowComponents = [];
 
 	if (self.table.options.dataFiltering) {
-		self.table.options.dataFiltering(self.getFilters());
+		self.table.options.dataFiltering.call(self.table, self.getFilters());
 	}
 
 	if (!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)) {
@@ -477,7 +477,7 @@ Filter.prototype.filter = function (rowList) {
 			activeRowComponents.push(row.getComponent());
 		});
 
-		self.table.options.dataFiltered(self.getFilters(), activeRowComponents);
+		self.table.options.dataFiltered.call(self.table, self.getFilters(), activeRowComponents);
 	}
 
 	return activeRows;

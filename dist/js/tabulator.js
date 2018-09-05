@@ -575,7 +575,7 @@ ColumnManager.prototype.moveColumn = function (from, to, after) {
 
 	if (this.table.options.columnMoved) {
 
-		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
+		this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
 	}
 
 	if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
@@ -1601,7 +1601,7 @@ Column.prototype._buildColumnHeaderTitle = function () {
 
 			def.title = titleElement.value;
 
-			table.options.columnTitleChanged(self.getComponent());
+			table.options.columnTitleChanged.call(self.table, self.getComponent());
 		});
 
 		titleHolderElement.appendChild(titleElement);
@@ -1941,7 +1941,7 @@ Column.prototype.checkColumnVisibility = function () {
 
 		this.show();
 
-		this.parent.table.options.columnVisibilityChanged(this.getComponent(), false);
+		this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 	} else {
 
 		this.hide();
@@ -1982,7 +1982,7 @@ Column.prototype.show = function (silent, responsiveToggle) {
 
 		if (!silent) {
 
-			this.table.options.columnVisibilityChanged(this.getComponent(), true);
+			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
 		}
 	}
 };
@@ -2021,7 +2021,7 @@ Column.prototype.hide = function (silent, responsiveToggle) {
 
 		if (!silent) {
 
-			this.table.options.columnVisibilityChanged(this.getComponent(), false);
+			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 		}
 	}
 };
@@ -2654,7 +2654,7 @@ RowManager.prototype._setDataActual = function (data, renderInPosition) {
 
 	var self = this;
 
-	self.table.options.dataLoading(data);
+	self.table.options.dataLoading.call(this.table, data);
 
 	self.rows.forEach(function (row) {
 
@@ -2726,9 +2726,9 @@ RowManager.prototype.deleteRow = function (row) {
 
 	this.reRenderInPosition();
 
-	this.table.options.rowDeleted(row.getComponent());
+	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited(this.getData());
+	this.table.options.dataEdited.call(this.table, this.getData());
 
 	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
 
@@ -2952,9 +2952,9 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
 	this.setActiveRows(this.activeRows);
 
-	this.table.options.rowAdded(row.getComponent());
+	this.table.options.rowAdded.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited(this.getData());
+	this.table.options.dataEdited.call(this.table, this.getData());
 
 	if (!blockRedraw) {
 
@@ -2973,7 +2973,7 @@ RowManager.prototype.moveRow = function (from, to, after) {
 
 	this.moveRowActual(from, to, after);
 
-	this.table.options.rowMoved(from.getComponent());
+	this.table.options.rowMoved.call(this.table, from.getComponent());
 };
 
 RowManager.prototype.moveRowActual = function (from, to, after) {
@@ -3673,7 +3673,7 @@ RowManager.prototype.renderTable = function () {
 
 	var self = this;
 
-	self.table.options.renderStarted();
+	self.table.options.renderStarted.call(this.table);
 
 	self.element.scrollTop = 0;
 
@@ -3724,7 +3724,7 @@ RowManager.prototype.renderTable = function () {
 		}
 	}
 
-	self.table.options.renderComplete();
+	self.table.options.renderComplete.call(this.table);
 };
 
 //simple render on heightless table
@@ -4888,7 +4888,7 @@ Row.prototype.updateData = function (data) {
 	//self.reinitialize();
 
 
-	self.table.options.rowUpdated(self.getComponent());
+	self.table.options.rowUpdated.call(this.table, self.getComponent());
 };
 
 Row.prototype.getData = function (transform) {
@@ -5269,12 +5269,12 @@ Cell.prototype._configureCell = function () {
 
 			if (cellEvents.cellClick) {
 
-				cellEvents.cellClick(e, component);
+				cellEvents.cellClick.call(self.table, e, component);
 			}
 
 			if (self.table.options.cellClick) {
 
-				self.table.options.cellClick(e, component);
+				self.table.options.cellClick.call(self.table, e, component);
 			}
 		});
 	}
@@ -5287,12 +5287,12 @@ Cell.prototype._configureCell = function () {
 
 			if (cellEvents.cellDblClick) {
 
-				cellEvents.cellDblClick(e, component);
+				cellEvents.cellDblClick.call(self.table, e, component);
 			}
 
 			if (self.table.options.cellDblClick) {
 
-				self.table.options.cellDblClick(e, component);
+				self.table.options.cellDblClick.call(self.table, e, component);
 			}
 		});
 	}
@@ -5305,12 +5305,12 @@ Cell.prototype._configureCell = function () {
 
 			if (cellEvents.cellContext) {
 
-				cellEvents.cellContext(e, component);
+				cellEvents.cellContext.call(self.table, e, component);
 			}
 
 			if (self.table.options.cellContext) {
 
-				self.table.options.cellContext(e, component);
+				self.table.options.cellContext.call(self.table, e, component);
 			}
 		});
 	}
@@ -5342,12 +5342,12 @@ Cell.prototype._configureCell = function () {
 
 				if (cellEvents.cellTap) {
 
-					cellEvents.cellTap(e, component);
+					cellEvents.cellTap.call(self.table, e, component);
 				}
 
 				if (self.table.options.cellTap) {
 
-					self.table.options.cellTap(e, component);
+					self.table.options.cellTap.call(self.table, e, component);
 				}
 			}
 
@@ -5371,12 +5371,12 @@ Cell.prototype._configureCell = function () {
 
 				if (cellEvents.cellDblTap) {
 
-					cellEvents.cellDblTap(e, component);
+					cellEvents.cellDblTap.call(self.table, e, component);
 				}
 
 				if (self.table.options.cellDblTap) {
 
-					self.table.options.cellDblTap(e, component);
+					self.table.options.cellDblTap.call(self.table, e, component);
 				}
 			} else {
 
@@ -5410,12 +5410,12 @@ Cell.prototype._configureCell = function () {
 
 				if (cellEvents.cellTapHold) {
 
-					cellEvents.cellTapHold(e, component);
+					cellEvents.cellTapHold.call(self.table, e, component);
 				}
 
 				if (self.table.options.cellTapHold) {
 
-					self.table.options.cellTapHold(e, component);
+					self.table.options.cellTapHold.call(self.table, e, component);
 				}
 			}, 1000);
 		});
@@ -5547,12 +5547,12 @@ Cell.prototype.setValue = function (value, mutate) {
 
 		if (this.column.cellEvents.cellEdited) {
 
-			this.column.cellEvents.cellEdited(component);
+			this.column.cellEvents.cellEdited.call(this.table, component);
 		}
 
-		this.table.options.cellEdited(component);
+		this.table.options.cellEdited.call(this.table, component);
 
-		this.table.options.dataEdited(this.table.rowManager.getData());
+		this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
 	}
 
 	if (this.table.modExists("columnCalcs")) {
@@ -6441,7 +6441,7 @@ Tabulator.prototype._buildElement = function () {
 	    mod = this.modules,
 	    options = this.options;
 
-	options.tableBuilding();
+	options.tableBuilding.call(this);
 
 	element.classList.add("tabulator");
 
@@ -6615,7 +6615,7 @@ Tabulator.prototype._buildElement = function () {
 		mod.clipboard.initialize();
 	}
 
-	options.tableBuilt();
+	options.tableBuilt.call(this);
 };
 
 Tabulator.prototype._loadInitialData = function () {
@@ -8496,7 +8496,7 @@ Localize.prototype.setLocale = function (desiredLocale) {
 		traverseLang(self.langs[desiredLocale], self.lang);
 	}
 
-	self.table.options.localized(self.locale, self.lang);
+	self.table.options.localized.call(self.table, self.locale, self.lang);
 
 	self._executeBindings();
 };
@@ -9017,7 +9017,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self._loadDefaultConfig();
 
 		return new Promise(function (resolve, reject) {
-			if (self.table.options.ajaxRequesting(self.url, self.params) !== false) {
+			if (self.table.options.ajaxRequesting.call(_this3.table, self.url, self.params) !== false) {
 
 				self.loading = true;
 
@@ -9028,7 +9028,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				_this3.loaderPromise(url, self.config, self.params).then(function (data) {
 					if (requestNo === self.requestOrder) {
 						if (self.table.options.ajaxResponse) {
-							data = self.table.options.ajaxResponse(self.url, self.params, data);
+							data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
 						}
 						resolve(data);
 					} else {
@@ -9040,7 +9040,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					self.loading = false;
 				}).catch(function (error) {
 					console.error("Ajax Load Error: ", error);
-					self.table.options.ajaxError(error);
+					self.table.options.ajaxError.call(self.table, error);
 
 					self.showError();
 
@@ -9630,7 +9630,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 						}
 					}
 
-					self.table.options.clipboardCopied(data);
+					self.table.options.clipboardCopied.call(this.table, data);
 
 					self.reset();
 				}
@@ -9702,9 +9702,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 
 				rows = this.pasteAction.call(this, rowData);
-				this.table.options.clipboardPasted(data, rowData, rows);
+				this.table.options.clipboardPasted.call(this.table, data, rowData, rows);
 			} else {
-				this.table.options.clipboardPasteError(data);
+				this.table.options.clipboardPasteError.call(this.table, data);
 			}
 		}
 	};
@@ -10222,7 +10222,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    blob = new Blob([data], { type: mime }),
 		    filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-		blob = this.table.options.downloadReady(data, blob);
+		blob = this.table.options.downloadReady.call(this.table, data, blob);
 
 		if (blob) {
 
@@ -10565,10 +10565,10 @@ Tabulator.prototype.registerModule("comms", Comms);
 			cell.setValueActual(cell.getValue());
 
 			if (cell.column.cellEvents.cellEditCancelled) {
-				cell.column.cellEvents.cellEditCancelled(component);
+				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
 
-			this.table.options.cellEditCancelled(component);
+			this.table.options.cellEditCancelled.call(this.table, component);
 		}
 	};
 
@@ -10642,7 +10642,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					element.classList.add("tabulator-validation-fail");
 					self.focusCellNoEvent(cell);
 					rendered();
-					self.table.options.validationFailed(cell.getComponent(), value, valid);
+					self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 				}
 			} else {
 				console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
@@ -10689,15 +10689,15 @@ Tabulator.prototype.registerModule("comms", Comms);
 					this.mouseClick = false;
 
 					if (cell.column.cellEvents.cellClick) {
-						cell.column.cellEvents.cellClick(component);
+						cell.column.cellEvents.cellClick.call(this.table, component);
 					}
 				}
 
 				if (cell.column.cellEvents.cellEditing) {
-					cell.column.cellEvents.cellEditing(component);
+					cell.column.cellEvents.cellEditing.call(this.table, component);
 				}
 
-				self.table.options.cellEditing(component);
+				self.table.options.cellEditing.call(this.table, component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 
@@ -11858,7 +11858,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    activeRowComponents = [];
 
 		if (self.table.options.dataFiltering) {
-			self.table.options.dataFiltering(self.getFilters());
+			self.table.options.dataFiltering.call(self.table, self.getFilters());
 		}
 
 		if (!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)) {
@@ -11878,7 +11878,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				activeRowComponents.push(row.getComponent());
 			});
 
-			self.table.options.dataFiltered(self.getFilters(), activeRowComponents);
+			self.table.options.dataFiltered.call(self.table, self.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;
@@ -13143,7 +13143,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.options.groupVisibilityChanged(this.getComponent(), false);
+		this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), false);
 	};
 
 	Group.prototype.show = function () {
@@ -13182,7 +13182,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.options.groupVisibilityChanged(this.getComponent(), true);
+		this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), true);
 	};
 
 	Group.prototype._visSet = function () {
@@ -13437,12 +13437,12 @@ Tabulator.prototype.registerModule("comms", Comms);
 	GroupRows.prototype.getRows = function (rows) {
 		if (this.groupIDLookups.length) {
 
-			this.table.options.dataGrouping();
+			this.table.options.dataGrouping.call(this.table);
 
 			this.generateGroups(rows);
 
 			if (this.table.options.dataGrouped) {
-				this.table.options.dataGrouped(this.getGroups());
+				this.table.options.dataGrouped.call(this.table, this.getGroups());
 			}
 
 			return this.updateGroupRows();
@@ -13588,7 +13588,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			this.index--;
 
-			this.table.options.historyUndo(action.type, action.component.getComponent(), action.data);
+			this.table.options.historyUndo.call(this.table, action.type, action.component.getComponent(), action.data);
 
 			return true;
 		} else {
@@ -13606,7 +13606,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			this.redoers[action.type].call(this, action);
 
-			this.table.options.historyRedo(action.type, action.component.getComponent(), action.data);
+			this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
 
 			return true;
 		} else {
@@ -13695,7 +13695,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		self.hasIndex = false;
 
-		self.table.options.htmlImporting();
+		self.table.options.htmlImporting.call(this.table);
 
 		//check for tablator inline options
 		self._extractOptions(element, options);
@@ -13747,7 +13747,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		options.data = data;
 
-		self.table.options.htmlImported();
+		self.table.options.htmlImported.call(this.table);
 
 		// // newElement.tabulator(options);
 
@@ -14664,7 +14664,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		var self = this,
 		    connections = this.table.modules.comms.getConnections(this.connection);
 
-		this.table.options.movableRowsSendingStart(connections);
+		this.table.options.movableRowsSendingStart.call(this.table, connections);
 
 		this.table.modules.comms.send(this.connection, "moveRow", "connect", {
 			row: row
@@ -14676,7 +14676,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		var self = this,
 		    connections = this.table.modules.comms.getConnections(this.connection);
 
-		this.table.options.movableRowsSendingStop(connections);
+		this.table.options.movableRowsSendingStop.call(this.table, connections);
 
 		this.table.modules.comms.send(this.connection, "moveRow", "disconnect");
 	};
@@ -14700,7 +14700,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			self.table.element.addEventListener("mouseup", self.tableRowDropEvent);
 
-			this.table.options.movableRowsReceivingStart(row, table);
+			this.table.options.movableRowsReceivingStart.call(this.table, row, table);
 
 			return true;
 		} else {
@@ -14726,7 +14726,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			self.table.element.removeEventListener("mouseup", self.tableRowDropEvent);
 
-			this.table.options.movableRowsReceivingStop(table);
+			this.table.options.movableRowsReceivingStop.call(this.table, table);
 		} else {
 			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
@@ -14755,9 +14755,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 				}
 			}
 
-			this.table.options.movableRowsSent(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.options.movableRowsSent.call(this.table, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		} else {
-			this.table.options.movableRowsSentFailed(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.options.movableRowsSentFailed.call(this.table, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}
 
 		this.endMove();
@@ -14786,9 +14786,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		if (success) {
-			this.table.options.movableRowsReceived(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.options.movableRowsReceived.call(this.table, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		} else {
-			this.table.options.movableRowsReceivedFailed(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.options.movableRowsReceivedFailed.call(this.table, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}
 
 		this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
@@ -15317,7 +15317,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					_this8.table.rowManager.refreshActiveData("page");
 					_this8.table.rowManager.scrollHorizontal(left);
 
-					_this8.table.options.pageLoaded(_this8.getPage());
+					_this8.table.options.pageLoaded.call(_this8.table, _this8.getPage());
 					resolve();
 					break;
 
@@ -15464,7 +15464,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 					this.table.columnManager.scrollHorizontal(left);
 
-					this.table.options.pageLoaded(this.getPage());
+					this.table.options.pageLoaded.call(this.table, this.getPage());
 				}
 			} else {
 				console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
@@ -15840,7 +15840,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				self.table.modules.persistence.save("columns");
 			}
 
-			self.table.options.columnResized(self.startColumn.getComponent());
+			self.table.options.columnResized.call(self.table, self.startColumn.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -15924,7 +15924,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			self.table.options.rowResized(row.getComponent());
+			self.table.options.rowResized.call(this.table, row.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -16253,7 +16253,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		row.modules.select = { selected: false };
 
 		//set row selection class
-		if (self.table.options.selectableCheck(row.getComponent())) {
+		if (self.table.options.selectableCheck.call(this.table, row.getComponent())) {
 			element.classList.add("tabulator-selectable");
 			element.classList.remove("tabulator-unselectable");
 
@@ -16303,7 +16303,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//toggle row selection
 	SelectRow.prototype.toggleRow = function (row) {
-		if (this.table.options.selectableCheck(row.getComponent())) {
+		if (this.table.options.selectableCheck.call(this.table, row.getComponent())) {
 			if (row.modules.select.selected) {
 				this._deselectRow(row);
 			} else {
@@ -16374,7 +16374,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				this.selectedRows.push(row);
 
 				if (!silent) {
-					this.table.options.rowSelected(row.getComponent());
+					this.table.options.rowSelected.call(this.table, row.getComponent());
 					this._rowSelectionChanged();
 				}
 			}
@@ -16434,7 +16434,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				self.selectedRows.splice(index, 1);
 
 				if (!silent) {
-					self.table.options.rowDeselected(row.getComponent());
+					self.table.options.rowDeselected.call(this.table, row.getComponent());
 					self._rowSelectionChanged();
 				}
 			}
@@ -16467,7 +16467,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	SelectRow.prototype._rowSelectionChanged = function () {
-		this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
+		this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
 	};
 
 	Tabulator.prototype.registerModule("selectRow", SelectRow);
@@ -16656,7 +16656,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    lastSort;
 
 		if (self.table.options.dataSorting) {
-			self.table.options.dataSorting(self.getSort());
+			self.table.options.dataSorting.call(self.table, self.getSort());
 		}
 
 		self.clearColumnHeaders();
@@ -16684,7 +16684,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		if (self.table.options.dataSorted) {
-			self.table.options.dataSorted(self.getSort(), self.table.rowManager.getComponents(true));
+			self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents(true));
 		}
 	};
 

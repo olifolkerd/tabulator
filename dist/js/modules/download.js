@@ -99,7 +99,7 @@ Download.prototype.triggerDownload = function (data, mime, type, filename) {
 	    blob = new Blob([data], { type: mime }),
 	    filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-	blob = this.table.options.downloadReady(data, blob);
+	blob = this.table.options.downloadReady.call(this.table, data, blob);
 
 	if (blob) {
 

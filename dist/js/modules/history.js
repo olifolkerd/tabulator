@@ -36,7 +36,7 @@ History.prototype.undo = function () {
 
 		this.index--;
 
-		this.table.options.historyUndo(action.type, action.component.getComponent(), action.data);
+		this.table.options.historyUndo.call(this.table, action.type, action.component.getComponent(), action.data);
 
 		return true;
 	} else {
@@ -54,7 +54,7 @@ History.prototype.redo = function () {
 
 		this.redoers[action.type].call(this, action);
 
-		this.table.options.historyRedo(action.type, action.component.getComponent(), action.data);
+		this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
 
 		return true;
 	} else {

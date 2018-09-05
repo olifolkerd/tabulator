@@ -525,7 +525,7 @@ Column.prototype._buildColumnHeaderTitle = function(){
 
 		titleElement.addEventListener("change", function(){
 			def.title = titleElement.value;
-			table.options.columnTitleChanged(self.getComponent());
+			table.options.columnTitleChanged.call(self.table, self.getComponent());
 		});
 
 		titleHolderElement.appendChild(titleElement);
@@ -781,7 +781,7 @@ Column.prototype.checkColumnVisibility = function(){
 
 	if(visible){
 		this.show();
-		this.parent.table.options.columnVisibilityChanged(this.getComponent(), false);
+		this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 	}else{
 		this.hide();
 	}
@@ -814,7 +814,7 @@ Column.prototype.show = function(silent, responsiveToggle){
 		}
 
 		if(!silent){
-			this.table.options.columnVisibilityChanged(this.getComponent(), true);
+			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
 		}
 	}
 };
@@ -845,7 +845,7 @@ Column.prototype.hide = function(silent, responsiveToggle){
 		}
 
 		if(!silent){
-			this.table.options.columnVisibilityChanged(this.getComponent(), false);
+			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 		}
 	}
 };

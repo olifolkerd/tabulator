@@ -431,7 +431,7 @@ Row.prototype.updateData = function(data){
 
 	//self.reinitialize();
 
-	self.table.options.rowUpdated(self.getComponent());
+	self.table.options.rowUpdated.call(this.table, self.getComponent());
 };
 
 Row.prototype.getData = function(transform){

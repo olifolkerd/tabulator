@@ -16,7 +16,7 @@ HtmlTableImport.prototype.parseTable = function(){
 
 	self.hasIndex = false;
 
-	self.table.options.htmlImporting();
+	self.table.options.htmlImporting.call(this.table);
 
 	//check for tablator inline options
 	self._extractOptions(element, options);
@@ -69,7 +69,7 @@ HtmlTableImport.prototype.parseTable = function(){
 
 	options.data = data;
 
-	self.table.options.htmlImported();
+	self.table.options.htmlImported.call(this.table);
 
 	// // newElement.tabulator(options);
 

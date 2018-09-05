@@ -33,7 +33,7 @@ SelectRow.prototype.initializeRow = function(row){
 	row.modules.select = {selected:false};
 
 	//set row selection class
-	if(self.table.options.selectableCheck(row.getComponent())){
+	if(self.table.options.selectableCheck.call(this.table, row.getComponent())){
 		element.classList.add("tabulator-selectable");
 		element.classList.remove("tabulator-unselectable");
 
@@ -84,7 +84,7 @@ SelectRow.prototype.initializeRow = function(row){
 
 //toggle row selection
 SelectRow.prototype.toggleRow = function(row){
-	if(this.table.options.selectableCheck(row.getComponent())){
+	if(this.table.options.selectableCheck.call(this.table, row.getComponent())){
 		if(row.modules.select.selected){
 			this._deselectRow(row);
 		}else{
@@ -155,7 +155,7 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			this.selectedRows.push(row);
 
 			if(!silent){
-				this.table.options.rowSelected(row.getComponent());
+				this.table.options.rowSelected.call(this.table, row.getComponent());
 				this._rowSelectionChanged();
 			}
 		}
@@ -215,7 +215,7 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			self.selectedRows.splice(index, 1);
 
 			if(!silent){
-				self.table.options.rowDeselected(row.getComponent());
+				self.table.options.rowDeselected.call(this.table, row.getComponent());
 				self._rowSelectionChanged();
 			}
 		}
@@ -248,7 +248,7 @@ SelectRow.prototype.getSelectedRows = function(){
 };
 
 SelectRow.prototype._rowSelectionChanged = function(){
-	this.table.options.rowSelectionChanged(this.getSelectedData(), this.getSelectedRows());
+	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
 };
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);

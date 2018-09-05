@@ -296,7 +296,7 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 	}
 
 	if(this.table.options.columnMoved){
-		this.table.options.columnMoved(from.getComponent(), this.table.columnManager.getComponents());
+		this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
 	}
 
 	if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){

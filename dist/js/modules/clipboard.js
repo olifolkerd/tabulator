@@ -46,7 +46,7 @@ Clipboard.prototype.initialize = function () {
 					}
 				}
 
-				self.table.options.clipboardCopied(data);
+				self.table.options.clipboardCopied.call(this.table, data);
 
 				self.reset();
 			}
@@ -118,9 +118,9 @@ Clipboard.prototype.paste = function (e) {
 			}
 
 			rows = this.pasteAction.call(this, rowData);
-			this.table.options.clipboardPasted(data, rowData, rows);
+			this.table.options.clipboardPasted.call(this.table, data, rowData, rows);
 		} else {
-			this.table.options.clipboardPasteError(data);
+			this.table.options.clipboardPasteError.call(this.table, data);
 		}
 	}
 };

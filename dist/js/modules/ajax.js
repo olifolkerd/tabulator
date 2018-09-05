@@ -227,7 +227,7 @@ Ajax.prototype.sendRequest = function (silent) {
 	self._loadDefaultConfig();
 
 	return new Promise(function (resolve, reject) {
-		if (self.table.options.ajaxRequesting(self.url, self.params) !== false) {
+		if (self.table.options.ajaxRequesting.call(_this2.table, self.url, self.params) !== false) {
 
 			self.loading = true;
 
@@ -238,7 +238,7 @@ Ajax.prototype.sendRequest = function (silent) {
 			_this2.loaderPromise(url, self.config, self.params).then(function (data) {
 				if (requestNo === self.requestOrder) {
 					if (self.table.options.ajaxResponse) {
-						data = self.table.options.ajaxResponse(self.url, self.params, data);
+						data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
 					}
 					resolve(data);
 				} else {
@@ -250,7 +250,7 @@ Ajax.prototype.sendRequest = function (silent) {
 				self.loading = false;
 			}).catch(function (error) {
 				console.error("Ajax Load Error: ", error);
-				self.table.options.ajaxError(error);
+				self.table.options.ajaxError.call(self.table, error);
 
 				self.showError();
 

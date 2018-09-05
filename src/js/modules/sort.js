@@ -185,7 +185,7 @@ Sort.prototype.sort = function(){
 	var self = this, lastSort;
 
 	if(self.table.options.dataSorting){
-		self.table.options.dataSorting(self.getSort());
+		self.table.options.dataSorting.call(self.table, self.getSort());
 	}
 
 	self.clearColumnHeaders();
@@ -213,7 +213,7 @@ Sort.prototype.sort = function(){
 	}
 
 	if(self.table.options.dataSorted){
-		self.table.options.dataSorted(self.getSort(), self.table.rowManager.getComponents(true));
+		self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents(true));
 	}
 
 };

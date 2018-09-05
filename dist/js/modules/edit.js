@@ -90,10 +90,10 @@ Edit.prototype.cancelEdit = function () {
 		cell.setValueActual(cell.getValue());
 
 		if (cell.column.cellEvents.cellEditCancelled) {
-			cell.column.cellEvents.cellEditCancelled(component);
+			cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 		}
 
-		this.table.options.cellEditCancelled(component);
+		this.table.options.cellEditCancelled.call(this.table, component);
 	}
 };
 
@@ -167,7 +167,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				element.classList.add("tabulator-validation-fail");
 				self.focusCellNoEvent(cell);
 				rendered();
-				self.table.options.validationFailed(cell.getComponent(), value, valid);
+				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 			}
 		} else {
 			console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
@@ -214,15 +214,15 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				this.mouseClick = false;
 
 				if (cell.column.cellEvents.cellClick) {
-					cell.column.cellEvents.cellClick(component);
+					cell.column.cellEvents.cellClick.call(this.table, component);
 				}
 			}
 
 			if (cell.column.cellEvents.cellEditing) {
-				cell.column.cellEvents.cellEditing(component);
+				cell.column.cellEvents.cellEditing.call(this.table, component);
 			}
 
-			self.table.options.cellEditing(component);
+			self.table.options.cellEditing.call(this.table, component);
 
 			params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 

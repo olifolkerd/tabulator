@@ -64,7 +64,7 @@ ResizeRows.prototype._mouseDown = function(e, row){
 
 		self.table.element.classList.remove("tabulator-block-select");
 
-		self.table.options.rowResized(row.getComponent());
+		self.table.options.rowResized.call(this.table, row.getComponent());
 	}
 
 	e.stopPropagation(); //prevent resize from interfereing with movable columns

@@ -253,7 +253,7 @@ MoveRows.prototype.connectToTables = function (row) {
 	var self = this,
 	    connections = this.table.modules.comms.getConnections(this.connection);
 
-	this.table.options.movableRowsSendingStart(connections);
+	this.table.options.movableRowsSendingStart.call(this.table, connections);
 
 	this.table.modules.comms.send(this.connection, "moveRow", "connect", {
 		row: row
@@ -265,7 +265,7 @@ MoveRows.prototype.disconnectFromTables = function () {
 	var self = this,
 	    connections = this.table.modules.comms.getConnections(this.connection);
 
-	this.table.options.movableRowsSendingStop(connections);
+	this.table.options.movableRowsSendingStop.call(this.table, connections);
 
 	this.table.modules.comms.send(this.connection, "moveRow", "disconnect");
 };
@@ -289,7 +289,7 @@ MoveRows.prototype.connect = function (table, row) {
 
 		self.table.element.addEventListener("mouseup", self.tableRowDropEvent);
 
-		this.table.options.movableRowsReceivingStart(row, table);
+		this.table.options.movableRowsReceivingStart.call(this.table, row, table);
 
 		return true;
 	} else {
@@ -315,7 +315,7 @@ MoveRows.prototype.disconnect = function (table) {
 
 		self.table.element.removeEventListener("mouseup", self.tableRowDropEvent);
 
-		this.table.options.movableRowsReceivingStop(table);
+		this.table.options.movableRowsReceivingStop.call(this.table, table);
 	} else {
 		console.warn("Move Row Error - trying to disconnect from non connected table");
 	}
@@ -344,9 +344,9 @@ MoveRows.prototype.dropComplete = function (table, row, success) {
 			}
 		}
 
-		this.table.options.movableRowsSent(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+		this.table.options.movableRowsSent.call(this.table, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 	} else {
-		this.table.options.movableRowsSentFailed(this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+		this.table.options.movableRowsSentFailed.call(this.table, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 	}
 
 	this.endMove();
@@ -375,9 +375,9 @@ MoveRows.prototype.tableRowDrop = function (e, row) {
 	}
 
 	if (success) {
-		this.table.options.movableRowsReceived(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+		this.table.options.movableRowsReceived.call(this.table, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 	} else {
-		this.table.options.movableRowsReceivedFailed(this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+		this.table.options.movableRowsReceivedFailed.call(this.table, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 	}
 
 	this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {

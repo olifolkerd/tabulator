@@ -442,7 +442,7 @@ Group.prototype.hide = function(){
 		this.groupManager.updateGroupRows(true);
 	}
 
-	this.groupManager.table.options.groupVisibilityChanged(this.getComponent(), false);
+	this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), false);
 };
 
 Group.prototype.show = function(){
@@ -482,7 +482,7 @@ Group.prototype.show = function(){
 		this.groupManager.updateGroupRows(true);
 	}
 
-	this.groupManager.table.options.groupVisibilityChanged(this.getComponent(), true);
+	this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), true);
 };
 
 Group.prototype._visSet = function(){
@@ -738,12 +738,12 @@ GroupRows.prototype.getDisplayIndex = function(){
 GroupRows.prototype.getRows = function(rows){
 	if(this.groupIDLookups.length){
 
-		this.table.options.dataGrouping();
+		this.table.options.dataGrouping.call(this.table);
 
 		this.generateGroups(rows);
 
 		if(this.table.options.dataGrouped){
-			this.table.options.dataGrouped(this.getGroups());
+			this.table.options.dataGrouped.call(this.table, this.getGroups());
 		}
 
 		return this.updateGroupRows();

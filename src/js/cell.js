@@ -132,11 +132,11 @@ Cell.prototype._configureCell = function(){
 			var component = self.getComponent();
 
 			if(cellEvents.cellClick){
-				cellEvents.cellClick(e, component);
+				cellEvents.cellClick.call(self.table, e, component);
 			}
 
 			if(self.table.options.cellClick){
-				self.table.options.cellClick(e, component);
+				self.table.options.cellClick.call(self.table, e, component);
 			}
 		});
 	}
@@ -146,11 +146,11 @@ Cell.prototype._configureCell = function(){
 			var component = self.getComponent();
 
 			if(cellEvents.cellDblClick){
-				cellEvents.cellDblClick(e, component);
+				cellEvents.cellDblClick.call(self.table, e, component);
 			}
 
 			if(self.table.options.cellDblClick){
-				self.table.options.cellDblClick(e, component);
+				self.table.options.cellDblClick.call(self.table, e, component);
 			}
 		});
 	}
@@ -160,11 +160,11 @@ Cell.prototype._configureCell = function(){
 			var component = self.getComponent();
 
 			if(cellEvents.cellContext){
-				cellEvents.cellContext(e, component);
+				cellEvents.cellContext.call(self.table, e, component);
 			}
 
 			if(self.table.options.cellContext){
-				self.table.options.cellContext(e, component);
+				self.table.options.cellContext.call(self.table, e, component);
 			}
 		});
 	}
@@ -188,11 +188,11 @@ Cell.prototype._configureCell = function(){
 				var component = self.getComponent();
 
 				if(cellEvents.cellTap){
-					cellEvents.cellTap(e, component);
+					cellEvents.cellTap.call(self.table, e, component);
 				}
 
 				if(self.table.options.cellTap){
-					self.table.options.cellTap(e, component);
+					self.table.options.cellTap.call(self.table, e, component);
 				}
 			}
 
@@ -212,11 +212,11 @@ Cell.prototype._configureCell = function(){
 				var component = self.getComponent();
 
 				if(cellEvents.cellDblTap){
-					cellEvents.cellDblTap(e, component);
+					cellEvents.cellDblTap.call(self.table, e, component);
 				}
 
 				if(self.table.options.cellDblTap){
-					self.table.options.cellDblTap(e, component);
+					self.table.options.cellDblTap.call(self.table, e, component);
 				}
 			}else{
 
@@ -242,11 +242,11 @@ Cell.prototype._configureCell = function(){
 				var component = self.getComponent();
 
 				if(cellEvents.cellTapHold){
-					cellEvents.cellTapHold(e, component);
+					cellEvents.cellTapHold.call(self.table, e, component);
 				}
 
 				if(self.table.options.cellTapHold){
-					self.table.options.cellTapHold(e, component);
+					self.table.options.cellTapHold.call(self.table, e, component);
 				}
 			}, 1000);
 
@@ -345,12 +345,12 @@ Cell.prototype.setValue = function(value, mutate){
 		component = this.getComponent();
 
 		if(this.column.cellEvents.cellEdited){
-			this.column.cellEvents.cellEdited(component);
+			this.column.cellEvents.cellEdited.call(this.table, component);
 		}
 
-		this.table.options.cellEdited(component);
+		this.table.options.cellEdited.call(this.table, component);
 
-		this.table.options.dataEdited(this.table.rowManager.getData());
+		this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
 	}
 
 	if(this.table.modExists("columnCalcs")){

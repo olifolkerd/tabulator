@@ -333,7 +333,7 @@ Tabulator.prototype._buildElement = function(){
 	mod = this.modules,
 	options = this.options;
 
-	options.tableBuilding();
+	options.tableBuilding.call(this);
 
 	element.classList.add("tabulator");
 	element.setAttribute("role", "grid");
@@ -474,7 +474,7 @@ Tabulator.prototype._buildElement = function(){
 		mod.clipboard.initialize();
 	}
 
-	options.tableBuilt();
+	options.tableBuilt.call(this);
 };
 
 Tabulator.prototype._loadInitialData = function(){

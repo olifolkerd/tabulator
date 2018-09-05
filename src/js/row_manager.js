@@ -282,7 +282,7 @@ RowManager.prototype.setData = function(data, renderInPosition){
 RowManager.prototype._setDataActual = function(data, renderInPosition){
 	var self = this;
 
-	self.table.options.dataLoading(data);
+	self.table.options.dataLoading.call(this.table, data);
 
 	self.rows.forEach(function(row){
 		row.wipe();
@@ -341,9 +341,9 @@ RowManager.prototype.deleteRow = function(row){
 
 	this.reRenderInPosition();
 
-	this.table.options.rowDeleted(row.getComponent());
+	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited(this.getData());
+	this.table.options.dataEdited.call(this.table, this.getData());
 
 	if(this.table.options.groupBy && this.table.modExists("groupRows")){
 		this.table.modules.groupRows.updateGroupRows(true);
@@ -521,9 +521,9 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 
 	this.setActiveRows(this.activeRows);
 
-	this.table.options.rowAdded(row.getComponent());
+	this.table.options.rowAdded.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited(this.getData());
+	this.table.options.dataEdited.call(this.table, this.getData());
 
 	if(!blockRedraw){
 		this.reRenderInPosition();
@@ -539,7 +539,7 @@ RowManager.prototype.moveRow = function(from, to, after){
 
 	this.moveRowActual(from, to, after);
 
-	this.table.options.rowMoved(from.getComponent());
+	this.table.options.rowMoved.call(this.table, from.getComponent());
 };
 
 
@@ -1104,7 +1104,7 @@ RowManager.prototype.getRenderMode = function(){
 RowManager.prototype.renderTable = function(){
 	var self = this;
 
-	self.table.options.renderStarted();
+	self.table.options.renderStarted.call(this.table);
 
 	self.element.scrollTop = 0;
 
@@ -1143,7 +1143,7 @@ RowManager.prototype.renderTable = function(){
 		}
 	}
 
-	self.table.options.renderComplete();
+	self.table.options.renderComplete.call(this.table);
 };
 
 //simple render on heightless table
