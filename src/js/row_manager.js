@@ -1546,7 +1546,7 @@ RowManager.prototype.adjustTableSize = function(){
 		this.height = this.element.clientHeight;
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		let otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager ? this.table.footerManager.getElement().offsetHeight : 0);
+		let otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
 
 		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
 		this.element.style.height = "calc(100% - " + otherHeight + "px)";

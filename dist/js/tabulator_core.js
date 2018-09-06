@@ -3382,7 +3382,7 @@ RowManager.prototype.adjustTableSize = function () {
 		this.height = this.element.clientHeight;
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager ? this.table.footerManager.getElement().offsetHeight : 0);
+		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
 
 		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
 		this.element.style.height = "calc(100% - " + otherHeight + "px)";
@@ -4600,6 +4600,7 @@ var FooterManager = function FooterManager(table) {
 	this.table = table;
 	this.active = false;
 	this.element = this.createElement(); //containing element
+	this.external = false;
 	this.links = [];
 
 	this._initialize();
@@ -4615,7 +4616,21 @@ FooterManager.prototype.createElement = function () {
 
 FooterManager.prototype._initialize = function (element) {
 	if (this.table.options.footerElement) {
-		this.element = this.table.options.footerElement;
+
+		switch (_typeof(this.table.options.footerElement)) {
+			case "string":
+
+				if (this.table.options.footerElement[0] === "<") {
+					this.element.innerHTML = this.table.options.footerElement;
+				} else {
+					this.external = true;
+					this.element = document.querySelector(this.table.options.footerElement);
+				}
+				break;
+			default:
+				this.element = this.table.options.footerElement;
+				break;
+		}
 	}
 };
 
@@ -4644,7 +4659,9 @@ FooterManager.prototype.remove = function (element) {
 
 FooterManager.prototype.deactivate = function (force) {
 	if (this.element.is(":empty") || force) {
-		this.element.parentNode.removeChild(this.element);
+		if (!this.external) {
+			this.element.parentNode.removeChild(this.element);
+		}
 		this.active = false;
 	}
 
@@ -4654,8 +4671,10 @@ FooterManager.prototype.deactivate = function (force) {
 FooterManager.prototype.activate = function (parent) {
 	if (!this.active) {
 		this.active = true;
-		this.table.element.appendChild(this.getElement());
-		this.table.element.style.display = '';
+		if (!this.external) {
+			this.table.element.appendChild(this.getElement());
+			this.table.element.style.display = '';
+		}
 	}
 
 	if (parent) {
