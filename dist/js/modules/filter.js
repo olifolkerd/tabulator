@@ -16,26 +16,20 @@ var Filter = function Filter(table) {
 };
 
 //initialize column header filter
-Filter.prototype.initializeColumn = function (column) {
+Filter.prototype.initializeColumn = function (column, value) {
 	var self = this,
 	    field = column.getField(),
-	    filterElement,
-	    editor,
-	    editorElement,
-	    cellWrapper,
-	    typingTimer,
-	    tagType,
-	    attrType,
-	    searchTrigger,
 	    params;
 
 	//handle successfull value change
 	function success(value) {
-		var filterType = tagType == "input" && attrType == "text" || tagType == "textarea" ? "partial" : "match",
+		var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 		    type = "",
 		    filterFunc;
 
 		if (value) {
+			column.modules.filter.value = value;
+
 			switch (_typeof(column.definition.headerFilterFunc)) {
 				case "string":
 					if (self.filters[column.definition.headerFilterFunc]) {
@@ -90,11 +84,32 @@ Filter.prototype.initializeColumn = function (column) {
 	}
 
 	column.modules.filter = {
-		success: success
+		success: success,
+		attrType: false,
+		tagType: false
 	};
+
+	this.generateHeaderFilterElement(column);
+};
+
+Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
+	var self = this,
+	    success = column.modules.filter.success,
+	    field = column.getField(),
+	    filterElement,
+	    editor,
+	    editorElement,
+	    cellWrapper,
+	    typingTimer,
+	    searchTrigger,
+	    params;
 
 	//handle aborted edit
 	function cancel() {}
+
+	if (column.modules.filter.headerElement && column.modules.filter.headerElement.parentNode) {
+		column.modules.filter.headerElement.parentNode.removeChild(column.modules.filter.headerElement);
+	}
 
 	if (field) {
 
@@ -132,7 +147,7 @@ Filter.prototype.initializeColumn = function (column) {
 
 			cellWrapper = {
 				getValue: function getValue() {
-					return "";
+					return typeof initialValue !== "undefined" ? initialValue : "";
 				},
 				getField: function getField() {
 					return column.definition.field;
@@ -149,7 +164,7 @@ Filter.prototype.initializeColumn = function (column) {
 
 			params = column.definition.headerFilterParams || {};
 
-			params = typeof params === "function" ? params() : params;
+			params = typeof params === "function" ? params.call(self.table) : params;
 
 			editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, params);
 
@@ -189,22 +204,23 @@ Filter.prototype.initializeColumn = function (column) {
 			column.modules.filter.headerElement = editorElement;
 
 			//update number filtered columns on change
-			attrType = editorElement.hasAttribute("type") ? editorElement.getAttribute("type").toLowerCase() : "";
-			if (attrType == "number") {
+
+			column.modules.filter.attrType = editorElement.hasAttribute("type") ? editorElement.getAttribute("type").toLowerCase() : "";
+			if (column.modules.filter.attrType == "number") {
 				editorElement.addEventListener("change", function (e) {
 					success(editorElement.value);
 				});
 			}
 
 			//change text inputs to search inputs to allow for clearing of field
-			if (attrType == "text" && this.table.browser !== "ie") {
+			if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
 				editorElement.setAttribute("type", "search");
 				// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
 			}
 
 			//prevent input and select elements from propegating click to column sorters etc
-			tagType = editorElement.tagName.toLowerCase();
-			if (tagType == "input" || tagType == "select" || tagType == "textarea") {
+			column.modules.filter.tagType = editorElement.tagName.toLowerCase();
+			if (column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea") {
 				editorElement.addEventListener("mousedown", function (e) {
 					e.stopPropagation();
 				});
@@ -248,8 +264,18 @@ Filter.prototype.setHeaderFilterFocus = function (column) {
 Filter.prototype.setHeaderFilterValue = function (column, value) {
 	if (column) {
 		if (column.modules.filter && column.modules.filter.headerElement) {
-			column.modules.filter.headerElement.value = value;
+			this.generateHeaderFilterElement(column, value);
 			column.modules.filter.success(value);
+		} else {
+			console.warn("Column Filter Error - No header filter set on column:", column.getField());
+		}
+	}
+};
+
+Filter.prototype.reloadHeaderFilter = function (column) {
+	if (column) {
+		if (column.modules.filter && column.modules.filter.headerElement) {
+			this.generateHeaderFilterElement(column, column.modules.filter.value);
 		} else {
 			console.warn("Column Filter Error - No header filter set on column:", column.getField());
 		}

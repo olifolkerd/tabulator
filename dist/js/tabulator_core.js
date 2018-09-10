@@ -936,6 +936,12 @@ ColumnComponent.prototype.headerFilterFocus = function () {
 	}
 };
 
+ColumnComponent.prototype.reloadHeaderFilter = function () {
+	if (this.column.table.modExists("filter", true)) {
+		this.column.table.modules.filter.reloadHeaderFilter(this.column);
+	}
+};
+
 ColumnComponent.prototype.setHeaderFilterValue = function (value) {
 	if (this.column.table.modExists("filter", true)) {
 		this.column.table.modules.filter.setHeaderFilterValue(this.column, value);
@@ -5553,6 +5559,10 @@ Tabulator.prototype.setColumns = function (definition) {
 
 Tabulator.prototype.getColumns = function (structured) {
 	return this.columnManager.getComponents(structured);
+};
+
+Tabulator.prototype.getColumn = function (field) {
+	return this.columnManager.findColumn(field).getComponent();
 };
 
 Tabulator.prototype.getColumnDefinitions = function () {

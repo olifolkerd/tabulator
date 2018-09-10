@@ -881,6 +881,10 @@ Tabulator.prototype.getColumns = function(structured){
 	return this.columnManager.getComponents(structured);
 };
 
+Tabulator.prototype.getColumn = function(field){
+	return this.columnManager.findColumn(field).getComponent();
+};
+
 Tabulator.prototype.getColumnDefinitions = function(){
 	return this.columnManager.getDefinitionTree();
 };
