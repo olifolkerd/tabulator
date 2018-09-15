@@ -4461,6 +4461,7 @@ Cell.prototype.checkHeight = function () {
 
 Cell.prototype.clearHeight = function () {
 	this.element.style.height = "";
+	this.height = null;
 };
 
 Cell.prototype.setHeight = function (height) {

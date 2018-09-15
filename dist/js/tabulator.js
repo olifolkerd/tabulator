@@ -5659,6 +5659,8 @@ Cell.prototype.checkHeight = function () {
 Cell.prototype.clearHeight = function () {
 
 	this.element.style.height = "";
+
+	this.height = null;
 };
 
 Cell.prototype.setHeight = function (height) {
@@ -14687,7 +14689,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	MoveRows.prototype.endMove = function (e) {
-
 		if (!e || e.which === 1) {
 			this._unbindMouseMove();
 
