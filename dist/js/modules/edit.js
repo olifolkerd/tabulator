@@ -302,12 +302,14 @@ Edit.prototype.editors = {
 
 		//submit new value on enter
 		input.addEventListener("keydown", function (e) {
-			if (e.keyCode == 13) {
-				success(input.value);
-			}
+			switch (e.keyCode) {
+				case 13:
+					success(input.value);
+					break;
 
-			if (e.keyCode == 27) {
-				cancel();
+				case 27:
+					cancel();
+					break;
 			}
 		});
 
@@ -430,8 +432,6 @@ Edit.prototype.editors = {
 
 		//submit new value on enter
 		input.addEventListener("keydown", function (e) {
-			var value;
-
 			switch (e.keyCode) {
 				case 13:
 				case 9:
@@ -479,11 +479,10 @@ Edit.prototype.editors = {
 			input.style.height = "100%";
 		});
 
-		//submit new value on blur
-		input.addEventListener("blur", function (e) {
+		function onChange() {
 			var value = input.value;
 
-			if (!isNaN(value)) {
+			if (!isNaN(value) && value !== "") {
 				value = Number(value);
 			}
 
@@ -492,24 +491,24 @@ Edit.prototype.editors = {
 			} else {
 				cancel();
 			}
+		}
+
+		//submit new value on blur
+		input.addEventListener("blur", function (e) {
+			onChange();
 		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function (e) {
-			var value;
+			switch (e.keyCode) {
+				case 13:
+				case 9:
+					onChange();
+					break;
 
-			if (e.keyCode == 13) {
-				value = input.value;
-
-				if (!isNaN(value)) {
-					value = Number(value);
-				}
-
-				success(value);
-			}
-
-			if (e.keyCode == 27) {
-				cancel();
+				case 27:
+					cancel();
+					break;
 			}
 		});
 
