@@ -5687,7 +5687,7 @@ Cell.prototype.edit = function (force) {
 
 	if (this.table.modExists("edit", true)) {
 
-		return this.table.modules.edit.editCell(this, false, force);
+		return this.table.modules.edit.editCell(this, force);
 	}
 };
 
