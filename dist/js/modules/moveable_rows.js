@@ -78,14 +78,18 @@ MoveRows.prototype.initializeRow = function (row) {
 		rowEl = row.getElement();
 
 		rowEl.addEventListener("mousedown", function (e) {
-			self.checkTimeout = setTimeout(function () {
-				self.startMove(e, row);
-			}, self.checkPeriod);
+			if (e.which === 1) {
+				self.checkTimeout = setTimeout(function () {
+					self.startMove(e, row);
+				}, self.checkPeriod);
+			}
 		});
 
 		rowEl.addEventListener("mouseup", function (e) {
-			if (self.checkTimeout) {
-				clearTimeout(self.checkTimeout);
+			if (e.which === 1) {
+				if (self.checkTimeout) {
+					clearTimeout(self.checkTimeout);
+				}
 			}
 		});
 	}
@@ -98,14 +102,18 @@ MoveRows.prototype.initializeCell = function (cell) {
 	    cellEl = cell.getElement();
 
 	cellEl.addEventListener("mousedown", function (e) {
-		self.checkTimeout = setTimeout(function () {
-			self.startMove(e, cell.row);
-		}, self.checkPeriod);
+		if (e.which === 1) {
+			self.checkTimeout = setTimeout(function () {
+				self.startMove(e, cell.row);
+			}, self.checkPeriod);
+		}
 	});
 
 	cellEl.addEventListener("mouseup", function (e) {
-		if (self.checkTimeout) {
-			clearTimeout(self.checkTimeout);
+		if (e.which === 1) {
+			if (self.checkTimeout) {
+				clearTimeout(self.checkTimeout);
+			}
 		}
 	});
 };
@@ -192,32 +200,34 @@ MoveRows.prototype.setStartPosition = function (e, row) {
 	}
 };
 
-MoveRows.prototype.endMove = function (column) {
-	this._unbindMouseMove();
+MoveRows.prototype.endMove = function (e) {
+	if (!e || e.which === 1) {
+		this._unbindMouseMove();
 
-	if (!this.connection) {
-		this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
-		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
-	}
+		if (!this.connection) {
+			this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
+			this.placeholderElement.parentNode.removeChild(this.placeholderElement);
+		}
 
-	this.hoverElement.parentNode.removeChild(this.hoverElement);
+		this.hoverElement.parentNode.removeChild(this.hoverElement);
 
-	this.table.element.classList.remove("tabulator-block-select");
+		this.table.element.classList.remove("tabulator-block-select");
 
-	if (this.toRow) {
-		this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
-	}
+		if (this.toRow) {
+			this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
+		}
 
-	this.moving = false;
-	this.toRow = false;
-	this.toRowAfter = false;
+		this.moving = false;
+		this.toRow = false;
+		this.toRowAfter = false;
 
-	document.body.removeEventListener("mousemove", this.moveHover);
-	document.body.removeEventListener("mouseup", this.endMove);
+		document.body.removeEventListener("mousemove", this.moveHover);
+		document.body.removeEventListener("mouseup", this.endMove);
 
-	if (this.connection) {
-		this.table.element.classList.remove("tabulator-movingrow-sending");
-		this.disconnectFromTables();
+		if (this.connection) {
+			this.table.element.classList.remove("tabulator-movingrow-sending");
+			this.disconnectFromTables();
+		}
 	}
 };
 

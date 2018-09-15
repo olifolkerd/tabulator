@@ -14564,14 +14564,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 			rowEl = row.getElement();
 
 			rowEl.addEventListener("mousedown", function (e) {
-				self.checkTimeout = setTimeout(function () {
-					self.startMove(e, row);
-				}, self.checkPeriod);
+				if (e.which === 1) {
+					self.checkTimeout = setTimeout(function () {
+						self.startMove(e, row);
+					}, self.checkPeriod);
+				}
 			});
 
 			rowEl.addEventListener("mouseup", function (e) {
-				if (self.checkTimeout) {
-					clearTimeout(self.checkTimeout);
+				if (e.which === 1) {
+					if (self.checkTimeout) {
+						clearTimeout(self.checkTimeout);
+					}
 				}
 			});
 		}
@@ -14584,14 +14588,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 		    cellEl = cell.getElement();
 
 		cellEl.addEventListener("mousedown", function (e) {
-			self.checkTimeout = setTimeout(function () {
-				self.startMove(e, cell.row);
-			}, self.checkPeriod);
+			if (e.which === 1) {
+				self.checkTimeout = setTimeout(function () {
+					self.startMove(e, cell.row);
+				}, self.checkPeriod);
+			}
 		});
 
 		cellEl.addEventListener("mouseup", function (e) {
-			if (self.checkTimeout) {
-				clearTimeout(self.checkTimeout);
+			if (e.which === 1) {
+				if (self.checkTimeout) {
+					clearTimeout(self.checkTimeout);
+				}
 			}
 		});
 	};
@@ -14678,32 +14686,35 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 	};
 
-	MoveRows.prototype.endMove = function (column) {
-		this._unbindMouseMove();
+	MoveRows.prototype.endMove = function (e) {
 
-		if (!this.connection) {
-			this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
-			this.placeholderElement.parentNode.removeChild(this.placeholderElement);
-		}
+		if (!e || e.which === 1) {
+			this._unbindMouseMove();
 
-		this.hoverElement.parentNode.removeChild(this.hoverElement);
+			if (!this.connection) {
+				this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
+				this.placeholderElement.parentNode.removeChild(this.placeholderElement);
+			}
 
-		this.table.element.classList.remove("tabulator-block-select");
+			this.hoverElement.parentNode.removeChild(this.hoverElement);
 
-		if (this.toRow) {
-			this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
-		}
+			this.table.element.classList.remove("tabulator-block-select");
 
-		this.moving = false;
-		this.toRow = false;
-		this.toRowAfter = false;
+			if (this.toRow) {
+				this.table.rowManager.moveRow(this.moving, this.toRow, this.toRowAfter);
+			}
 
-		document.body.removeEventListener("mousemove", this.moveHover);
-		document.body.removeEventListener("mouseup", this.endMove);
+			this.moving = false;
+			this.toRow = false;
+			this.toRowAfter = false;
 
-		if (this.connection) {
-			this.table.element.classList.remove("tabulator-movingrow-sending");
-			this.disconnectFromTables();
+			document.body.removeEventListener("mousemove", this.moveHover);
+			document.body.removeEventListener("mouseup", this.endMove);
+
+			if (this.connection) {
+				this.table.element.classList.remove("tabulator-movingrow-sending");
+				this.disconnectFromTables();
+			}
 		}
 	};
 
