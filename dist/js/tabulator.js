@@ -14349,14 +14349,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 			}.bind(self);
 
 			colEl.addEventListener("mousedown", function (e) {
-				self.checkTimeout = setTimeout(function () {
-					self.startMove(e, column);
-				}, self.checkPeriod);
+				if (e.which === 1) {
+					self.checkTimeout = setTimeout(function () {
+						self.startMove(e, column);
+					}, self.checkPeriod);
+				}
 			});
 
 			colEl.addEventListener("mouseup", function (e) {
-				if (self.checkTimeout) {
-					clearTimeout(self.checkTimeout);
+				if (e.which === 1) {
+					if (self.checkTimeout) {
+						clearTimeout(self.checkTimeout);
+					}
 				}
 			});
 		}
@@ -14432,25 +14436,27 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 	};
 
-	MoveColumns.prototype.endMove = function (column) {
-		this._unbindMouseMove();
+	MoveColumns.prototype.endMove = function (e) {
+		if (e.which === 1) {
+			this._unbindMouseMove();
 
-		this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
-		this.placeholderElement.parentNode.removeChild(this.placeholderElement);
-		this.hoverElement.parentNode.removeChild(this.hoverElement);
+			this.placeholderElement.parentNode.insertBefore(this.moving.getElement(), this.placeholderElement.nextSibling);
+			this.placeholderElement.parentNode.removeChild(this.placeholderElement);
+			this.hoverElement.parentNode.removeChild(this.hoverElement);
 
-		this.table.element.classList.remove("tabulator-block-select");
+			this.table.element.classList.remove("tabulator-block-select");
 
-		if (this.toCol) {
-			this.table.columnManager.moveColumn(this.moving, this.toCol, this.toColAfter);
+			if (this.toCol) {
+				this.table.columnManager.moveColumn(this.moving, this.toCol, this.toColAfter);
+			}
+
+			this.moving = false;
+			this.toCol = false;
+			this.toColAfter = false;
+
+			document.body.removeEventListener("mousemove", this.moveHover);
+			document.body.removeEventListener("mouseup", this.endMove);
 		}
-
-		this.moving = false;
-		this.toCol = false;
-		this.toColAfter = false;
-
-		document.body.removeEventListener("mousemove", this.moveHover);
-		document.body.removeEventListener("mouseup", this.endMove);
 	};
 
 	MoveColumns.prototype.moveHover = function (e) {
