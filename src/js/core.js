@@ -1425,6 +1425,4 @@
 	 	/*=include extensions/localize.js */
 	 	/*=include extensions/comms.js */
 
-	 	/*=include extensions_enabled.js */
-
 	 })();
