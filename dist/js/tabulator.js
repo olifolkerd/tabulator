@@ -3959,7 +3959,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 
 		//adjust for horizontal scrollbar if present
 
-		if (this.element.scrollWidth > this.element.offsetWidt) {
+		if (this.element.scrollWidth > this.element.offsetWidth) {
 
 			this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
 		}
