@@ -393,8 +393,8 @@ Format.prototype.formatters = {
 					index = Math.min(index, formatterParams.legendColor.length - 1);
 					index = Math.max(index, 0);
 					legendColor = formatterParams.legendColor[index];
-					break;
 				}
+				break;
 			default:
 				legendColor = "#000";
 		}
