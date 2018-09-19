@@ -7885,6 +7885,28 @@ Tabulator.prototype.redo = function () {
 	}
 };
 
+Tabulator.prototype.getHistoryUndoSize = function () {
+
+	if (this.options.history && this.modExists("history", true)) {
+
+		return this.modules.history.getHistoryUndoSize();
+	} else {
+
+		return false;
+	}
+};
+
+Tabulator.prototype.getHistoryRedoSize = function () {
+
+	if (this.options.history && this.modExists("history", true)) {
+
+		return this.modules.history.getHistoryRedoSize();
+	} else {
+
+		return false;
+	}
+};
+
 /////////////// Download Management //////////////
 
 
@@ -13648,6 +13670,14 @@ Tabulator.prototype.registerModule("comms", Comms);
 		});
 
 		this.index++;
+	};
+
+	History.prototype.getHistoryUndoSize = function () {
+		return this.index + 1;
+	};
+
+	History.prototype.getHistoryRedoSize = function () {
+		return this.history.length - (this.index + 1);
 	};
 
 	History.prototype.undo = function () {

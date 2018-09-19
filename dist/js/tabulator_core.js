@@ -6051,6 +6051,22 @@ Tabulator.prototype.redo = function () {
 	}
 };
 
+Tabulator.prototype.getHistoryUndoSize = function () {
+	if (this.options.history && this.modExists("history", true)) {
+		return this.modules.history.getHistoryUndoSize();
+	} else {
+		return false;
+	}
+};
+
+Tabulator.prototype.getHistoryRedoSize = function () {
+	if (this.options.history && this.modExists("history", true)) {
+		return this.modules.history.getHistoryRedoSize();
+	} else {
+		return false;
+	}
+};
+
 /////////////// Download Management //////////////
 
 Tabulator.prototype.download = function (type, filename, options) {

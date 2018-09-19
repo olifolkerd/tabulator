@@ -27,6 +27,14 @@ History.prototype.action = function (type, component, data) {
 	this.index++;
 };
 
+History.prototype.getHistoryUndoSize = function () {
+	return this.index + 1;
+};
+
+History.prototype.getHistoryRedoSize = function () {
+	return this.history.length - (this.index + 1);
+};
+
 History.prototype.undo = function () {
 
 	if (this.index > -1) {
