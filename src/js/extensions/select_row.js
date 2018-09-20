@@ -1,12 +1,12 @@
 var SelectRow = function(table){
 	this.table = table; //hold Tabulator object
-	this.selecting = false; //flag selecting in progress
+	this.focusedRow = undefined; //last clicked row
 	this.selectPrev = []; //hold previously selected element for drag drop selection
 	this.selectedRows = []; //hold selected rows
 };
 
 SelectRow.prototype.clearSelectionData = function(silent){
-	this.selecting = false;
+	this.focusedRow = undefined;
 	this.selectPrev = [];
 	this.selectedRows = [];
 
@@ -23,7 +23,7 @@ SelectRow.prototype.initializeRow = function(row){
 	var endSelect = function(){
 
 		setTimeout(function(){
-			self.selecting = false;
+			self.focusedRow = undefined;
 		}, 50)
 
 		$("body").off("mouseup", endSelect);
@@ -38,40 +38,40 @@ SelectRow.prototype.initializeRow = function(row){
 
 		if(self.table.options.selectable && self.table.options.selectable != "highlight"){
 			element.on("click", function(e){
-				if(!self.selecting){
-					self.toggleRow(row);
-				}
-			});
+			if (e.shiftKey) {
+                            var rows = self.table.getRows().slice(0);
+                            if(self.focusedRow===undefined) {
+                                self.focusedRow = row;
+                            }
+                            var focusedRowIdx = rows.findIndex(function(x){return x.row===self.focusedRow})
+                            var rowIdx = rows.findIndex(function(x){return x.row===row})
 
-			element.on("mousedown", function(e){
-				if(e.shiftKey){
-					self.selecting = true;
+                            var fromRowIdx = focusedRowIdx<=rowIdx?focusedRowIdx:rowIdx;
+                            var toRowIdx = focusedRowIdx>=rowIdx?focusedRowIdx:rowIdx;
 
-					self.selectPrev = [];
+                            var toggeledRows = rows.splice(fromRowIdx, toRowIdx-fromRowIdx+1);
 
-					$("body").on("mouseup", endSelect);
-					$("body").on("keyup", endSelect);
+                            toggeledRows = toggeledRows.filter(function(x){
+                                return x.row!==self.focusedRow;
+                            });
 
-					self.toggleRow(row);
+                            if(e.ctrlKey){
+                                toggeledRows.forEach(function(x){self.toggleRow(x.row)});
+                                self.focusedRow = row;
+                            }else{
+                                self.deselectRows();
+                                self.selectRows(toggeledRows);
+                            }
 
-					return false;
-				}
-			});
-
-			element.on("mouseenter", function(e){
-				if(self.selecting){
-					self.toggleRow(row);
-
-					if(self.selectPrev[1] == row){
-						self.toggleRow(self.selectPrev[0]);
-					}
-				}
-			});
-
-			element.on("mouseout", function(e){
-				if(self.selecting){
-					self.selectPrev.unshift(row);
-				}
+                        }
+                        else if (e.ctrlKey) {
+                            self.toggleRow(row);
+                            self.focusedRow = row;
+                        }else {
+                            self.deselectRows();
+                            self.selectRows(row);
+                            self.focusedRow = row;
+                        }
 			});
 		}
 
