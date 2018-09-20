@@ -39,7 +39,7 @@ SelectRow.prototype.initializeRow = function(row){
 		if(self.table.options.selectable && self.table.options.selectable != "highlight"){
 			element.on("click", function(e){
 			if (e.shiftKey) {
-                            var rows = self.table.getRows();
+                            var rows = self.table.getRows().slice(0);
                             if(self.focusedRow===undefined) {
                                 self.focusedRow = row;
                             }
