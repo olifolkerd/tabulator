@@ -175,9 +175,14 @@ Ajax.prototype.sendRequest = function(callback, silent){
 				self.showLoader();
 			}
 
-			$.ajax(self.config)
-			.done(function(data){
-
+      var ajax;
+      if (this.table.options.ajaxRequest) {
+           ajax = this.table.options.ajaxRequest(self.config);
+      }
+      else {
+           ajax = $.ajax(self.config);
+      }
+      ajax.done(function (data) {
 				if(requestNo === self.requestOrder){
 					if(self.table.options.ajaxResponse){
 						data = self.table.options.ajaxResponse(self.url, self.params, data);
