@@ -1,26 +1,26 @@
 
 //public column object
 var ColumnComponent = function (column){
-	this.column = column;
+	this._column = column;
 	this.type = "ColumnComponent";
 };
 
 ColumnComponent.prototype.getElement = function(){
-	return this.column.getElement();
+	return this._column.getElement();
 };
 
 ColumnComponent.prototype.getDefinition = function(){
-	return this.column.getDefinition();
+	return this._column.getDefinition();
 };
 
 ColumnComponent.prototype.getField = function(){
-	return this.column.getField();
+	return this._column.getField();
 };
 
 ColumnComponent.prototype.getCells = function(){
 	var cells = [];
 
-	this.column.cells.forEach(function(cell){
+	this._column.cells.forEach(function(cell){
 		cells.push(cell.getComponent());
 	});
 
@@ -28,31 +28,31 @@ ColumnComponent.prototype.getCells = function(){
 };
 
 ColumnComponent.prototype.getVisibility = function(){
-	return this.column.visible;
+	return this._column.visible;
 };
 
 ColumnComponent.prototype.show = function(){
-	if(this.column.isGroup){
-		this.column.columns.forEach(function(column){
+	if(this._column.isGroup){
+		this._column.columns.forEach(function(column){
 			column.show();
 		});
 	}else{
-		this.column.show();
+		this._column.show();
 	}
 };
 
 ColumnComponent.prototype.hide = function(){
-	if(this.column.isGroup){
-		this.column.columns.forEach(function(column){
+	if(this._column.isGroup){
+		this._column.columns.forEach(function(column){
 			column.hide();
 		});
 	}else{
-		this.column.hide();
+		this._column.hide();
 	}
 };
 
 ColumnComponent.prototype.toggle = function(){
-	if(this.column.visible){
+	if(this._column.visible){
 		this.hide();
 	}else{
 		this.show();
@@ -60,14 +60,14 @@ ColumnComponent.prototype.toggle = function(){
 };
 
 ColumnComponent.prototype.delete = function(){
-	this.column.delete();
+	this._column.delete();
 };
 
 ColumnComponent.prototype.getSubColumns = function(){
 	var output = [];
 
-	if(this.column.columns.length){
-		this.column.columns.forEach(function(column){
+	if(this._column.columns.length){
+		this._column.columns.forEach(function(column){
 			output.push(column.getComponent());
 		});
 	}
@@ -76,37 +76,37 @@ ColumnComponent.prototype.getSubColumns = function(){
 };
 
 ColumnComponent.prototype.getParentColumn = function(){
-	return this.column.parent instanceof Column ? this.column.parent.getComponent() : false;
+	return this._column.parent instanceof Column ? this._column.parent.getComponent() : false;
 };
 
 
 ColumnComponent.prototype._getSelf = function(){
-	return this.column;
+	return this._column;
 };
 
 ColumnComponent.prototype.scrollTo = function(){
-	this.column.table.columManager.scrollToColumn(this.column);
+	this._column.table.columManager.scrollToColumn(this._column);
 };
 
 ColumnComponent.prototype.getTable = function(){
-	return this.column.table;
+	return this._column.table;
 };
 
 ColumnComponent.prototype.headerFilterFocus = function(){
-	if(this.column.table.modExists("filter", true)){
-		this.column.table.modules.filter.setHeaderFilterFocus(this.column);
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.setHeaderFilterFocus(this._column);
 	}
 };
 
 ColumnComponent.prototype.reloadHeaderFilter = function(){
-	if(this.column.table.modExists("filter", true)){
-		this.column.table.modules.filter.reloadHeaderFilter(this.column);
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.reloadHeaderFilter(this._column);
 	}
 };
 
 ColumnComponent.prototype.setHeaderFilterValue = function(value){
-	if(this.column.table.modExists("filter", true)){
-		this.column.table.modules.filter.setHeaderFilterValue(this.column, value);
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
 	}
 };
 

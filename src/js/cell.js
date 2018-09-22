@@ -1,35 +1,35 @@
 
 //public row object
 var CellComponent = function (cell){
-	this.cell = cell;
+	this._cell = cell;
 };
 
 CellComponent.prototype.getValue = function(){
-	return this.cell.getValue();
+	return this._cell.getValue();
 };
 
 CellComponent.prototype.getOldValue = function(){
-	return this.cell.getOldValue();
+	return this._cell.getOldValue();
 };
 
 CellComponent.prototype.getElement = function(){
-	return this.cell.getElement();
+	return this._cell.getElement();
 };
 
 CellComponent.prototype.getRow = function(){
-	return this.cell.row.getComponent();
+	return this._cell.row.getComponent();
 };
 
 CellComponent.prototype.getData = function(){
-	return this.cell.row.getData();
+	return this._cell.row.getData();
 };
 
 CellComponent.prototype.getField = function(){
-	return this.cell.column.getField();
+	return this._cell.column.getField();
 };
 
 CellComponent.prototype.getColumn = function(){
-	return this.cell.column.getComponent();
+	return this._cell.column.getComponent();
 };
 
 CellComponent.prototype.setValue = function(value, mutate){
@@ -37,36 +37,36 @@ CellComponent.prototype.setValue = function(value, mutate){
 		mutate = true;
 	}
 
-	this.cell.setValue(value, mutate);
+	this._cell.setValue(value, mutate);
 };
 
 CellComponent.prototype.restoreOldValue = function(){
-	this.cell.setValueActual(this.cell.getOldValue());
+	this._cell.setValueActual(this._cell.getOldValue());
 };
 
 CellComponent.prototype.edit = function(force){
-	return this.cell.edit(force);
+	return this._cell.edit(force);
 };
 
 CellComponent.prototype.cancelEdit = function(){
-	this.cell.cancelEdit(force);
+	this._cell.cancelEdit(force);
 };
 
 
 CellComponent.prototype.nav = function(){
-	return this.cell.nav();
+	return this._cell.nav();
 };
 
 CellComponent.prototype.checkHeight = function(){
-	this.cell.checkHeight();
+	this._cell.checkHeight();
 };
 
 CellComponent.prototype.getTable = function(){
-	return this.cell.table;
+	return this._cell.table;
 };
 
 CellComponent.prototype._getSelf = function(){
-	return this.cell;
+	return this._cell;
 };
 
 

@@ -4,22 +4,22 @@
 
 //public group object
 var GroupComponent = function GroupComponent(group) {
-	this.group = group;
+	this._group = group;
 	this.type = "GroupComponent";
 };
 
 GroupComponent.prototype.getKey = function () {
-	return this.group.key;
+	return this._group.key;
 };
 
 GroupComponent.prototype.getElement = function () {
-	return this.group.element;
+	return this._group.element;
 };
 
 GroupComponent.prototype.getRows = function () {
 	var output = [];
 
-	this.group.rows.forEach(function (row) {
+	this._group.rows.forEach(function (row) {
 		output.push(row.getComponent());
 	});
 
@@ -29,7 +29,7 @@ GroupComponent.prototype.getRows = function () {
 GroupComponent.prototype.getSubGroups = function () {
 	var output = [];
 
-	this.group.groupList.forEach(function (child) {
+	this._group.groupList.forEach(function (child) {
 		output.push(child.getComponent());
 	});
 
@@ -37,31 +37,31 @@ GroupComponent.prototype.getSubGroups = function () {
 };
 
 GroupComponent.prototype.getParentGroup = function () {
-	return this.group.parent ? this.group.parent.getComponent() : false;
+	return this._group.parent ? this._group.parent.getComponent() : false;
 };
 
 GroupComponent.prototype.getVisibility = function () {
-	return this.group.visible;
+	return this._group.visible;
 };
 
 GroupComponent.prototype.show = function () {
-	this.group.show();
+	this._group.show();
 };
 
 GroupComponent.prototype.hide = function () {
-	this.group.hide();
+	this._group.hide();
 };
 
 GroupComponent.prototype.toggle = function () {
-	this.group.toggleVisibility();
+	this._group.toggleVisibility();
 };
 
 GroupComponent.prototype._getSelf = function () {
-	return this.group;
+	return this._group;
 };
 
 GroupComponent.prototype.getTable = function () {
-	return this.group.table;
+	return this._group.table;
 };
 
 //////////////////////////////////////////////////

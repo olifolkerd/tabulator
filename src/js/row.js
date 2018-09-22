@@ -1,21 +1,21 @@
 
 //public row object
 var RowComponent = function (row){
-	this.row = row;
+	this._row = row;
 };
 
 RowComponent.prototype.getData = function(transform){
-	return this.row.getData(transform);
+	return this._row.getData(transform);
 };
 
 RowComponent.prototype.getElement = function(){
-	return this.row.getElement();
+	return this._row.getElement();
 };
 
 RowComponent.prototype.getCells = function(){
 	var cells = [];
 
-	this.row.getCells().forEach(function(cell){
+	this._row.getCells().forEach(function(cell){
 		cells.push(cell.getComponent());
 	});
 
@@ -23,76 +23,76 @@ RowComponent.prototype.getCells = function(){
 };
 
 RowComponent.prototype.getCell = function(column){
-	var cell = this.row.getCell(column);
+	var cell = this._row.getCell(column);
 	return cell ? cell.getComponent() : false;
 };
 
 RowComponent.prototype.getIndex = function(){
-	return this.row.getData("data")[this.row.table.options.index];
+	return this._row.getData("data")[this._row.table.options.index];
 };
 
 RowComponent.prototype.getPosition = function(active){
-	return this.row.table.rowManager.getRowPosition(this.row, active);
+	return this._row.table.rowManager.getRowPosition(this._row, active);
 };
 
 RowComponent.prototype.delete = function(){
-	this.row.delete();
+	this._row.delete();
 };
 
 RowComponent.prototype.scrollTo = function(){
-	this.row.table.rowManager.scrollToRow(this.row);
+	this._row.table.rowManager.scrollToRow(this._row);
 };
 
 RowComponent.prototype.update = function(data){
-	this.row.updateData(data);
+	this._row.updateData(data);
 };
 
 RowComponent.prototype.normalizeHeight = function(){
-	this.row.normalizeHeight(true);
+	this._row.normalizeHeight(true);
 };
 
 RowComponent.prototype.select = function(){
-	this.row.table.modules.selectRow.selectRows(this.row);
+	this._row.table.modules.selectRow.selectRows(this._row);
 };
 
 RowComponent.prototype.deselect = function(){
-	this.row.table.modules.selectRow.deselectRows(this.row);
+	this._row.table.modules.selectRow.deselectRows(this._row);
 };
 
 RowComponent.prototype.toggleSelect = function(){
-	this.row.table.modules.selectRow.toggleRow(this.row);
+	this._row.table.modules.selectRow.toggleRow(this._row);
 };
 
 RowComponent.prototype.isSelected = function(){
-	return this.row.table.modules.selectRow.isRowSelected(this.row);
+	return this._row.table.modules.selectRow.isRowSelected(this._row);
 };
 
 RowComponent.prototype._getSelf = function(){
-	return this.row;
+	return this._row;
 };
 
 RowComponent.prototype.freeze = function(){
-	if(this.row.table.modExists("frozenRows", true)){
-		this.row.table.modules.frozenRows.freezeRow(this.row);
+	if(this._row.table.modExists("frozenRows", true)){
+		this._row.table.modules.frozenRows.freezeRow(this._row);
 	}
 };
 
 RowComponent.prototype.unfreeze = function(){
-	if(this.row.table.modExists("frozenRows", true)){
-		this.row.table.modules.frozenRows.unfreezeRow(this.row);
+	if(this._row.table.modExists("frozenRows", true)){
+		this._row.table.modules.frozenRows.unfreezeRow(this._row);
 	}
 };
 
 RowComponent.prototype.reformat = function(){
-	return this.row.reinitialize();
+	return this._row.reinitialize();
 };
 
 RowComponent.prototype.getGroup = function(){
-	return this.row.getGroup().getComponent();
+	return this._row.getGroup().getComponent();
 };
 
 RowComponent.prototype.getTable = function(){
-	return this.row.table;
+	return this._row.table;
 };
 
 
