@@ -10833,7 +10833,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			input.style.width = "100%";
 			input.style.boxSizing = "border-box";
 
-			input.value = cellValue;
+			input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 			onRendered(function () {
 				input.focus();
