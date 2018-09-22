@@ -208,7 +208,7 @@ Download.prototype.downloaders = {
 		    header = [],
 		    body = [],
 		    table = "",
-		    autoTableParams = options && options.autoTable ? options.autoTable : {},
+		    autoTableParams = {},
 		    title = options && options.title ? options.title : "",
 		    orientation = options && options.orientation == "portrait" ? "p" : "l";
 
@@ -248,6 +248,14 @@ Download.prototype.downloaders = {
 		});
 
 		var doc = new jsPDF(orientation, 'pt'); //set document to landscape, better for most tables
+
+		if (options && options.autoTable) {
+			if (typeof options.autoTable === "function") {
+				autoTableParams = options.autoTable(doc) || {};
+			} else {
+				autoTableParams = options.autoTable;
+			}
+		}
 
 		if (title) {
 			autoTableParams.addPageContent = function (data) {
