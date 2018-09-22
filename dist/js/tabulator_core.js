@@ -3691,6 +3691,7 @@ Row.prototype.initialize = function (force) {
 
 		self.cells.forEach(function (cell) {
 			self.element.appendChild(cell.getElement());
+			cell.cellRendered();
 		});
 
 		if (force) {
@@ -4327,6 +4328,12 @@ Cell.prototype._generateContents = function () {
 			break;
 		default:
 			this.element.innerHTML = val;
+	}
+};
+
+Cell.prototype.cellRendered = function () {
+	if (this.table.modExists("format") && this.table.modules.format.cellRendered) {
+		this.table.modules.format.cellRendered(this);
 	}
 };
 

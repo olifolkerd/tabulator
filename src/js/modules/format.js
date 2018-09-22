@@ -11,7 +11,7 @@ Format.prototype.initializeColumn = function(column){
 	switch(typeof column.definition.formatter){
 		case "string":
 		if(self.formatters[column.definition.formatter]){
-			config.formatter = self.formatters[column.definition.formatter]
+			config.formatter = self.formatters[column.definition.formatter];
 		}else{
 			console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
 			config.formatter = self.formatters.plaintext;
@@ -30,12 +30,22 @@ Format.prototype.initializeColumn = function(column){
 	column.modules.format = config;
 };
 
+Format.prototype.cellRendered = function(cell){
+	if(cell.column.modules.format.renderedCallback){
+		cell.column.modules.format.renderedCallback();
+	}
+};
+
 //return a formatted value for a cell
 Format.prototype.formatValue = function(cell){
 	var component = cell.getComponent(),
 	params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
 
-	return cell.column.modules.format.formatter.call(this, component, params);
+	function onRendered(callback){
+		cell.column.modules.format.renderedCallback = callback;
+	}
+
+	return cell.column.modules.format.formatter.call(this, component, params, onRendered);
 };
 
 
@@ -94,23 +104,23 @@ Format.prototype.getFormatter = function(formatter){
 //default data formatters
 Format.prototype.formatters = {
 	//plain text value
-	plaintext:function(cell, formatterParams){
+	plaintext:function(cell, formatterParams, onRendered){
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	},
 
 	//html text value
-	html:function(cell, formatterParams){
+	html:function(cell, formatterParams, onRendered){
 		return cell.getValue();
 	},
 
 	//multiline text area
-	textarea:function(cell, formatterParams){
+	textarea:function(cell, formatterParams, onRendered){
 		cell.getElement().style.whiteSpace = "pre-wrap";
 		return this.emptyToSpace(this.sanitizeHTML(cell.getValue()));
 	},
 
 	//currency formatting
-	money:function(cell, formatterParams){
+	money:function(cell, formatterParams, onRendered){
 		var floatVal = parseFloat(cell.getValue()),
 		number, integer, decimal, rgx;
 
@@ -140,7 +150,7 @@ Format.prototype.formatters = {
 	},
 
 	//clickable anchor tag
-	link:function(cell, formatterParams){
+	link:function(cell, formatterParams, onRendered){
 		var value = this.sanitizeHTML(cell.getValue()),
 		urlPrefix = formatterParams.urlPrefix || "",
 		label = this.emptyToSpace(value),
@@ -193,7 +203,7 @@ Format.prototype.formatters = {
 	},
 
 	//image element
-	image:function(cell, formatterParams){
+	image:function(cell, formatterParams, onRendered){
 		var value = this.sanitizeHTML(cell.getValue()),
 		el = document.createElement("img");
 		el.setAttribute("src", value);
@@ -226,7 +236,7 @@ Format.prototype.formatters = {
 	},
 
 	//tick or empty cell
-	tick:function(cell, formatterParams){
+	tick:function(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		element = cell.getElement();
 
@@ -242,7 +252,7 @@ Format.prototype.formatters = {
 	},
 
 	//tick or cross
-	tickCross:function(cell, formatterParams){
+	tickCross:function(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		tick = '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>',
@@ -258,7 +268,7 @@ Format.prototype.formatters = {
 	},
 
 	//select
-	lookup: function (cell, formatterParams) {
+	lookup: function (cell, formatterParams, onRendered) {
 		var value = cell.getValue();
 
 		if (typeof formatterParams[value] === "undefined") {
@@ -270,7 +280,7 @@ Format.prototype.formatters = {
 	},
 
 	//star rating
-	star:function(cell, formatterParams){
+	star:function(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		element = cell.getElement(),
 		maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,
@@ -308,7 +318,7 @@ Format.prototype.formatters = {
 	},
 
 	//progress bar
-	progress:function(cell, formatterParams){ //progress bar
+	progress:function(cell, formatterParams, onRendered){ //progress bar
 		var value = this.sanitizeHTML(cell.getValue()) || 0,
 		element = cell.getElement(),
 		max = formatterParams && formatterParams.max ? formatterParams.max : 100,
@@ -392,33 +402,33 @@ Format.prototype.formatters = {
 	},
 
 	//background color
-	color:function(cell, formatterParams){
+	color:function(cell, formatterParams, onRendered){
 		cell.getElement().style.backgroundColor = this.sanitizeHTML(cell.getValue());
 		return "";
 	},
 
 	//tick icon
-	buttonTick:function(cell, formatterParams){
+	buttonTick:function(cell, formatterParams, onRendered){
 		return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#2DC214" clip-rule="evenodd" d="M21.652,3.211c-0.293-0.295-0.77-0.295-1.061,0L9.41,14.34  c-0.293,0.297-0.771,0.297-1.062,0L3.449,9.351C3.304,9.203,3.114,9.13,2.923,9.129C2.73,9.128,2.534,9.201,2.387,9.351  l-2.165,1.946C0.078,11.445,0,11.63,0,11.823c0,0.194,0.078,0.397,0.223,0.544l4.94,5.184c0.292,0.296,0.771,0.776,1.062,1.07  l2.124,2.141c0.292,0.293,0.769,0.293,1.062,0l14.366-14.34c0.293-0.294,0.293-0.777,0-1.071L21.652,3.211z" fill-rule="evenodd"/></svg>';
 	},
 
 	//cross icon
-	buttonCross:function(cell, formatterParams){
+	buttonCross:function(cell, formatterParams, onRendered){
 		return '<svg enable-background="new 0 0 24 24" height="14" width="14" viewBox="0 0 24 24" xml:space="preserve" ><path fill="#CE1515" d="M22.245,4.015c0.313,0.313,0.313,0.826,0,1.139l-6.276,6.27c-0.313,0.312-0.313,0.826,0,1.14l6.273,6.272  c0.313,0.313,0.313,0.826,0,1.14l-2.285,2.277c-0.314,0.312-0.828,0.312-1.142,0l-6.271-6.271c-0.313-0.313-0.828-0.313-1.141,0  l-6.276,6.267c-0.313,0.313-0.828,0.313-1.141,0l-2.282-2.28c-0.313-0.313-0.313-0.826,0-1.14l6.278-6.269  c0.313-0.312,0.313-0.826,0-1.14L1.709,5.147c-0.314-0.313-0.314-0.827,0-1.14l2.284-2.278C4.308,1.417,4.821,1.417,5.135,1.73  L11.405,8c0.314,0.314,0.828,0.314,1.141,0.001l6.276-6.267c0.312-0.312,0.826-0.312,1.141,0L22.245,4.015z"/></svg>';
 	},
 
 	//current row number
-	rownum:function(cell, formatterParams){
+	rownum:function(cell, formatterParams, onRendered){
 		return this.table.rowManager.activeRows.indexOf(cell.getRow()._getSelf()) + 1;
 	},
 
 	//row handle
-	handle:function(cell, formatterParams){
+	handle:function(cell, formatterParams, onRendered){
 		cell.getElement().classList.add("tabulator-row-handle");
 		return "<div class='tabulator-row-handle-box'><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div><div class='tabulator-row-handle-bar'></div></div>";
 	},
 
-	responsiveCollapse:function(cell, formatterParams){
+	responsiveCollapse:function(cell, formatterParams, onRendered){
 		var self = this,
 		open = false,
 		el = document.createElement("div");

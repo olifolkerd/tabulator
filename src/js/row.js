@@ -246,6 +246,7 @@ Row.prototype.initialize = function(force){
 
 		self.cells.forEach(function(cell){
 			self.element.appendChild(cell.getElement());
+			cell.cellRendered();
 		});
 
 		if(force){

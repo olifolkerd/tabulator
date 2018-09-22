@@ -295,6 +295,12 @@ Cell.prototype._generateContents = function(){
 	}
 };
 
+Cell.prototype.cellRendered = function(){
+	if(this.table.modExists("format") && this.table.modules.format.cellRendered){
+		this.table.modules.format.cellRendered(this);
+	}
+};
+
 //generate tooltip text
 Cell.prototype._generateTooltip = function(){
 	var tooltip = this.column.tooltip;
