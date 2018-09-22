@@ -170,7 +170,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 			}
 		} else {
-			console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
+			// console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
 		}
 	}
 
@@ -179,7 +179,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 		if (self.currentCell === cell) {
 			self.cancelEdit();
 		} else {
-			console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
+			// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 		}
 	}
 

@@ -10722,7 +10722,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 				}
 			} else {
-				console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
+				// console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
 			}
 		}
 
@@ -10731,7 +10731,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			if (self.currentCell === cell) {
 				self.cancelEdit();
 			} else {
-				console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
+				// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 			}
 		}
 
