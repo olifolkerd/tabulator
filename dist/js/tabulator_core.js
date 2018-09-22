@@ -1092,14 +1092,13 @@ Column.prototype.setTooltip = function () {
 //build header element
 Column.prototype._buildHeader = function () {
 	var self = this,
-	    def = self.definition,
-	    dblTap,
-	    tapHold,
-	    tap;
+	    def = self.definition;
 
 	while (self.element.firstChild) {
 		self.element.removeChild(self.element.firstChild);
-	}self.contentElement = self._buildColumnHeaderContent();
+	}self.contentElement = self._bindEvents();
+
+	self.contentElement = self._buildColumnHeaderContent();
 
 	self.element.appendChild(self.contentElement);
 
@@ -1144,6 +1143,15 @@ Column.prototype._buildHeader = function () {
 	self.element.addEventListener("mouseenter", function (e) {
 		self.setTooltip();
 	});
+};
+
+Column.prototype._bindEvents = function () {
+
+	var self = this,
+	    def = self.definition,
+	    dblTap,
+	    tapHold,
+	    tap;
 
 	//setup header click event bindings
 	if (typeof def.headerClick == "function") {
