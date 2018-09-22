@@ -10459,10 +10459,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 			if (options && options.autoTable) {
 				if (typeof options.autoTable === "function") {
-					console.log("funcs", options.autoTable);
 					autoTableParams = options.autoTable(doc) || {};
 				} else {
-					console.log("obj", options.autoTable);
 					autoTableParams = options.autoTable;
 				}
 			}
