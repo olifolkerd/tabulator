@@ -267,6 +267,28 @@ Format.prototype.formatters = {
 		}
 	},
 
+	datetime:function(cell, formatterParams, onRendered){
+		var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
+		var	outputFormat = formatterParams.outputFormat || "DD/MM/YYYY hh:mm:ss";
+		var	invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
+		var value = cell.getValue();
+
+		var newDatetime = moment(value, inputFormat);
+
+		if(newDatetime.isValid()){
+			return newDatetime.format(outputFormat);
+		}else{
+
+			if(invalid === true){
+				return value;
+			}else if(typeof invalid === "function"){
+				return invalid();
+			}else{
+				return invalid;
+			}
+		}
+	},
+
 	//select
 	lookup: function (cell, formatterParams, onRendered) {
 		var value = cell.getValue();
