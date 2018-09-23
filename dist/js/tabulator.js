@@ -3788,7 +3788,7 @@ RowManager.prototype.renderEmptyScroll = function () {
 
 	this.tableElement.style.minHeight = "1px";
 
-	this.tableElement.style.visibility = "hidden";
+	// this.tableElement.style.visibility = "hidden";
 };
 
 RowManager.prototype._clearVirtualDom = function () {

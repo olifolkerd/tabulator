@@ -1179,7 +1179,7 @@ RowManager.prototype._simpleRender = function(){
 RowManager.prototype.renderEmptyScroll = function(){
 	this.tableElement.style.minWidth = this.table.columnManager.getWidth();
 	this.tableElement.style.minHeight = "1px";
-	this.tableElement.style.visibility = "hidden";
+	// this.tableElement.style.visibility = "hidden";
 };
 
 RowManager.prototype._clearVirtualDom = function(){
