@@ -1,7 +1,7 @@
 {
   "name": "tabulator-tables",
   "version": "4.0.0",
-  "description": "Interactive table generation plugin for jQuery UI",
+  "description": "Interactive table generation JavaScript library",
   "main": "dist/js/tabulator.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,8 +17,6 @@
     "tabulator",
     "editable",
     "cookie",
-    "jquery",
-    "jqueryui",
     "sort",
     "format",
     "resizable",
