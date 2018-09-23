@@ -374,38 +374,39 @@ RowManager.prototype.addRows = function(data, pos, index){
 	length = 0,
 	rows = [];
 
+	return new Promise((resolve, reject) => {
+		pos = this.findAddRowPos(pos);
 
-	pos = this.findAddRowPos(pos);
+		if(!Array.isArray(data)){
+			data = [data];
+		}
 
-	if(!Array.isArray(data)){
-		data = [data];
-	}
+		length = data.length - 1;
 
-	length = data.length - 1;
+		if((typeof index == "undefined" && pos) || (typeof index !== "undefined" && !pos)){
+			data.reverse();
+		}
 
-	if((typeof index == "undefined" && pos) || (typeof index !== "undefined" && !pos)){
-		data.reverse();
-	}
+		data.forEach(function(item, i){
+			var row = self.addRow(item, pos, index, true);
+			rows.push(row);
+		});
 
-	data.forEach(function(item, i){
-		var row = self.addRow(item, pos, index, true);
-		rows.push(row);
+		if(this.table.options.groupBy && this.table.modExists("groupRows")){
+			this.table.modules.groupRows.updateGroupRows(true);
+		}else if(this.table.options.pagination && this.table.modExists("page")){
+			this.refreshActiveData(false, false, true);
+		}else{
+			this.reRenderInPosition();
+		}
+
+		//recalc column calculations if present
+		if(this.table.modExists("columnCalcs")){
+			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
+		}
+
+		resolve(rows);
 	});
-
-	if(this.table.options.groupBy && this.table.modExists("groupRows")){
-		this.table.modules.groupRows.updateGroupRows(true);
-	}else if(this.table.options.pagination && this.table.modExists("page")){
-		this.refreshActiveData(false, false, true);
-	}else{
-		this.reRenderInPosition();
-	}
-
-	//recalc column calculations if present
-	if(this.table.modExists("columnCalcs")){
-		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-	}
-
-	return rows;
 };
 
 RowManager.prototype.findAddRowPos = function(pos){

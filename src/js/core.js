@@ -695,33 +695,38 @@ Tabulator.prototype.updateData = function(data){
 			});
 		}else{
 			console.warn("Update Error - No data provided");
+			reject("Update Error - No data provided");
 		}
 	});
 
 };
 
 Tabulator.prototype.addData = function(data, pos, index){
-	var rows = [], output = [];
+	return new Promise((resolve, reject) => {
+		if(this.modExists("ajax")){
+			this.modules.ajax.blockActiveRequest();
+		}
 
-	if(this.modExists("ajax")){
-		this.modules.ajax.blockActiveRequest();
-	}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-	if(typeof data === "string"){
-		data = JSON.parse(data);
-	}
+		if(data){
+			this.rowManager.addRows(data, pos, index)
+			.then((rows) => {
+				var output = [];
 
-	if(data){
-		rows = this.rowManager.addRows(data, pos, index);
+				rows.forEach(function(row){
+					output.push(row.getComponent());
+				});
 
-		rows.forEach(function(row){
-			output.push(row.getComponent());
-		});
-
-		return output;
-	}else{
-		console.warn("Update Error - No data provided");
-	}
+				resolve(output);
+			});
+		}else{
+			console.warn("Update Error - No data provided");
+			reject("Update Error - No data provided");
+		}
+	});
 };
 
 //update table data

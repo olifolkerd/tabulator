@@ -2245,41 +2245,45 @@ RowManager.prototype.addRow = function (data, pos, index, blockRedraw) {
 
 //add multiple rows
 RowManager.prototype.addRows = function (data, pos, index) {
+	var _this2 = this;
+
 	var self = this,
 	    length = 0,
 	    rows = [];
 
-	pos = this.findAddRowPos(pos);
+	return new Promise(function (resolve, reject) {
+		pos = _this2.findAddRowPos(pos);
 
-	if (!Array.isArray(data)) {
-		data = [data];
-	}
+		if (!Array.isArray(data)) {
+			data = [data];
+		}
 
-	length = data.length - 1;
+		length = data.length - 1;
 
-	if (typeof index == "undefined" && pos || typeof index !== "undefined" && !pos) {
-		data.reverse();
-	}
+		if (typeof index == "undefined" && pos || typeof index !== "undefined" && !pos) {
+			data.reverse();
+		}
 
-	data.forEach(function (item, i) {
-		var row = self.addRow(item, pos, index, true);
-		rows.push(row);
+		data.forEach(function (item, i) {
+			var row = self.addRow(item, pos, index, true);
+			rows.push(row);
+		});
+
+		if (_this2.table.options.groupBy && _this2.table.modExists("groupRows")) {
+			_this2.table.modules.groupRows.updateGroupRows(true);
+		} else if (_this2.table.options.pagination && _this2.table.modExists("page")) {
+			_this2.refreshActiveData(false, false, true);
+		} else {
+			_this2.reRenderInPosition();
+		}
+
+		//recalc column calculations if present
+		if (_this2.table.modExists("columnCalcs")) {
+			_this2.table.modules.columnCalcs.recalc(_this2.table.rowManager.activeRows);
+		}
+
+		resolve(rows);
 	});
-
-	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
-		this.table.modules.groupRows.updateGroupRows(true);
-	} else if (this.table.options.pagination && this.table.modExists("page")) {
-		this.refreshActiveData(false, false, true);
-	} else {
-		this.reRenderInPosition();
-	}
-
-	//recalc column calculations if present
-	if (this.table.modExists("columnCalcs")) {
-		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-	}
-
-	return rows;
 };
 
 RowManager.prototype.findAddRowPos = function (pos) {
@@ -3842,7 +3846,7 @@ Row.prototype.setData = function (data) {
 
 //update the rows data
 Row.prototype.updateData = function (data) {
-	var _this2 = this;
+	var _this3 = this;
 
 	var self = this;
 
@@ -3864,7 +3868,7 @@ Row.prototype.updateData = function (data) {
 
 		//update affected cells only
 		for (var attrname in data) {
-			var cell = _this2.getCell(attrname);
+			var cell = _this3.getCell(attrname);
 
 			if (cell) {
 				if (cell.getValue() != data[attrname]) {
@@ -3874,20 +3878,20 @@ Row.prototype.updateData = function (data) {
 		}
 
 		//Partial reinitialization if visible
-		if (Tabulator.prototype.helpers.elVisible(_this2.element)) {
+		if (Tabulator.prototype.helpers.elVisible(_this3.element)) {
 			self.normalizeHeight();
 
 			if (self.table.options.rowFormatter) {
 				self.table.options.rowFormatter(self.getComponent());
 			}
 		} else {
-			_this2.initialized = false;
-			_this2.height = 0;
+			_this3.initialized = false;
+			_this3.height = 0;
 		}
 
 		//self.reinitialize();
 
-		self.table.options.rowUpdated.call(_this2.table, self.getComponent());
+		self.table.options.rowUpdated.call(_this3.table, self.getComponent());
 
 		resolve();
 	});
@@ -5366,14 +5370,14 @@ Tabulator.prototype.replaceData = function (data, params, config) {
 
 //update table data
 Tabulator.prototype.updateData = function (data) {
-	var _this3 = this;
+	var _this4 = this;
 
 	var self = this;
 	var responses = 0;
 
 	return new Promise(function (resolve, reject) {
-		if (_this3.modExists("ajax")) {
-			_this3.modules.ajax.blockActiveRequest();
+		if (_this4.modExists("ajax")) {
+			_this4.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -5398,33 +5402,38 @@ Tabulator.prototype.updateData = function (data) {
 			});
 		} else {
 			console.warn("Update Error - No data provided");
+			reject("Update Error - No data provided");
 		}
 	});
 };
 
 Tabulator.prototype.addData = function (data, pos, index) {
-	var rows = [],
-	    output = [];
+	var _this5 = this;
 
-	if (this.modExists("ajax")) {
-		this.modules.ajax.blockActiveRequest();
-	}
+	return new Promise(function (resolve, reject) {
+		if (_this5.modExists("ajax")) {
+			_this5.modules.ajax.blockActiveRequest();
+		}
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+		if (typeof data === "string") {
+			data = JSON.parse(data);
+		}
 
-	if (data) {
-		rows = this.rowManager.addRows(data, pos, index);
+		if (data) {
+			_this5.rowManager.addRows(data, pos, index).then(function (rows) {
+				var output = [];
 
-		rows.forEach(function (row) {
-			output.push(row.getComponent());
-		});
+				rows.forEach(function (row) {
+					output.push(row.getComponent());
+				});
 
-		return output;
-	} else {
-		console.warn("Update Error - No data provided");
-	}
+				resolve(output);
+			});
+		} else {
+			console.warn("Update Error - No data provided");
+			reject("Update Error - No data provided");
+		}
+	});
 };
 
 //update table data
