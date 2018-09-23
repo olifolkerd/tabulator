@@ -845,23 +845,43 @@ Tabulator.prototype.addRow = function(data, pos, index){
 
 //update a row if it exitsts otherwise create it
 Tabulator.prototype.updateOrAddRow = function(index, data){
-	var row = this.rowManager.findRow(index);
 
-	if(typeof data === "string"){
-		data = JSON.parse(data);
-	}
+	return new Promise((resolve, reject) => {
+		var row = this.rowManager.findRow(index);
 
-	if(row){
-		row.updateData(data);
-	}else{
-		row = this.rowManager.addRows(data)[0];
-
-		//recalc column calculations if present
-		if(this.modExists("columnCalcs")){
-			this.modules.columnCalcs.recalc(this.rowManager.activeRows);
+		if(typeof data === "string"){
+			data = JSON.parse(data);
 		}
-	}
-	return row.getComponent();
+
+		if(row){
+			row.updateData(data)
+			.then(()=>{
+				//recalc column calculations if present
+				if(this.modExists("columnCalcs")){
+					this.modules.columnCalcs.recalc(this.rowManager.activeRows);
+				}
+
+				resolve(row.getComponent());
+			})
+			.catch((err)=>{
+				reject(err);
+			});
+		}else{
+			row = this.rowManager.addRows(data)
+			.then((rows)=>{
+				//recalc column calculations if present
+				if(this.modExists("columnCalcs")){
+					this.modules.columnCalcs.recalc(this.rowManager.activeRows);
+				}
+
+				resolve(rows[0].getComponent());
+			})
+			.catch((err)=>{
+				reject(err);
+			});
+		}
+	});
+
 };
 
 //update row data

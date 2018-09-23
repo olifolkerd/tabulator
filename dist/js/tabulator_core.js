@@ -5558,23 +5558,39 @@ Tabulator.prototype.addRow = function (data, pos, index) {
 
 //update a row if it exitsts otherwise create it
 Tabulator.prototype.updateOrAddRow = function (index, data) {
-	var row = this.rowManager.findRow(index);
+	var _this10 = this;
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+	return new Promise(function (resolve, reject) {
+		var row = _this10.rowManager.findRow(index);
 
-	if (row) {
-		row.updateData(data);
-	} else {
-		row = this.rowManager.addRows(data)[0];
-
-		//recalc column calculations if present
-		if (this.modExists("columnCalcs")) {
-			this.modules.columnCalcs.recalc(this.rowManager.activeRows);
+		if (typeof data === "string") {
+			data = JSON.parse(data);
 		}
-	}
-	return row.getComponent();
+
+		if (row) {
+			row.updateData(data).then(function () {
+				//recalc column calculations if present
+				if (_this10.modExists("columnCalcs")) {
+					_this10.modules.columnCalcs.recalc(_this10.rowManager.activeRows);
+				}
+
+				resolve(row.getComponent());
+			}).catch(function (err) {
+				reject(err);
+			});
+		} else {
+			row = _this10.rowManager.addRows(data).then(function (rows) {
+				//recalc column calculations if present
+				if (_this10.modExists("columnCalcs")) {
+					_this10.modules.columnCalcs.recalc(_this10.rowManager.activeRows);
+				}
+
+				resolve(rows[0].getComponent());
+			}).catch(function (err) {
+				reject(err);
+			});
+		}
+	});
 };
 
 //update row data

@@ -7191,30 +7191,51 @@ Tabulator.prototype.addRow = function (data, pos, index) {
 //update a row if it exitsts otherwise create it
 
 Tabulator.prototype.updateOrAddRow = function (index, data) {
+	var _this10 = this;
 
-	var row = this.rowManager.findRow(index);
+	return new Promise(function (resolve, reject) {
 
-	if (typeof data === "string") {
+		var row = _this10.rowManager.findRow(index);
 
-		data = JSON.parse(data);
-	}
+		if (typeof data === "string") {
 
-	if (row) {
-
-		row.updateData(data);
-	} else {
-
-		row = this.rowManager.addRows(data)[0];
-
-		//recalc column calculations if present
-
-		if (this.modExists("columnCalcs")) {
-
-			this.modules.columnCalcs.recalc(this.rowManager.activeRows);
+			data = JSON.parse(data);
 		}
-	}
 
-	return row.getComponent();
+		if (row) {
+
+			row.updateData(data).then(function () {
+
+				//recalc column calculations if present
+
+				if (_this10.modExists("columnCalcs")) {
+
+					_this10.modules.columnCalcs.recalc(_this10.rowManager.activeRows);
+				}
+
+				resolve(row.getComponent());
+			}).catch(function (err) {
+
+				reject(err);
+			});
+		} else {
+
+			row = _this10.rowManager.addRows(data).then(function (rows) {
+
+				//recalc column calculations if present
+
+				if (_this10.modExists("columnCalcs")) {
+
+					_this10.modules.columnCalcs.recalc(_this10.rowManager.activeRows);
+				}
+
+				resolve(rows[0].getComponent());
+			}).catch(function (err) {
+
+				reject(err);
+			});
+		}
+	});
 };
 
 //update row data
@@ -9117,11 +9138,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Ajax.prototype._loadDataStandard = function (inPosition) {
-		var _this10 = this;
+		var _this11 = this;
 
 		return new Promise(function (resolve, reject) {
-			_this10.sendRequest(inPosition).then(function (data) {
-				_this10.table.rowManager.setData(data, inPosition);
+			_this11.sendRequest(inPosition).then(function (data) {
+				_this11.table.rowManager.setData(data, inPosition);
 				resolve();
 			}).catch(function (e) {
 				reject();
@@ -9163,7 +9184,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//send ajax request
 	Ajax.prototype.sendRequest = function (silent) {
-		var _this11 = this;
+		var _this12 = this;
 
 		var self = this,
 		    url = self.url,
@@ -9177,7 +9198,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self._loadDefaultConfig();
 
 		return new Promise(function (resolve, reject) {
-			if (self.table.options.ajaxRequesting.call(_this11.table, self.url, self.params) !== false) {
+			if (self.table.options.ajaxRequesting.call(_this12.table, self.url, self.params) !== false) {
 
 				self.loading = true;
 
@@ -9185,7 +9206,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					self.showLoader();
 				}
 
-				_this11.loaderPromise(url, self.config, self.params).then(function (data) {
+				_this12.loaderPromise(url, self.config, self.params).then(function (data) {
 					if (requestNo === self.requestOrder) {
 						if (self.table.options.ajaxResponse) {
 							data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
@@ -14145,13 +14166,13 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this12 = this;
+		var _this13 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this12.actions[key]) {
+			if (_this13.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -15394,18 +15415,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this13 = this;
+		var _this14 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this13.max) {
-				_this13.page = page;
-				_this13.trigger().then(function () {
+			if (page > 0 && page <= _this14.max) {
+				_this14.page = page;
+				_this14.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this13.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this14.max + ":", page);
 				reject();
 			}
 		});
@@ -15478,12 +15499,12 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this14 = this;
+		var _this15 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this14.page > 1) {
-				_this14.page--;
-				_this14.trigger().then(function () {
+			if (_this15.page > 1) {
+				_this15.page--;
+				_this15.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -15497,19 +15518,19 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this15 = this;
+		var _this16 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this15.page < _this15.max) {
-				_this15.page++;
-				_this15.trigger().then(function () {
+			if (_this16.page < _this16.max) {
+				_this16.page++;
+				_this16.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this15.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this15.max + ":", _this15.max + 1);
+				if (!_this16.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this16.max + ":", _this16.max + 1);
 				}
 				reject();
 			}
@@ -15561,28 +15582,28 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype.trigger = function () {
-		var _this16 = this;
+		var _this17 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this16.mode) {
+			switch (_this17.mode) {
 				case "local":
-					left = _this16.table.rowManager.scrollLeft;
+					left = _this17.table.rowManager.scrollLeft;
 
-					_this16.table.rowManager.refreshActiveData("page");
-					_this16.table.rowManager.scrollHorizontal(left);
+					_this17.table.rowManager.refreshActiveData("page");
+					_this17.table.rowManager.scrollHorizontal(left);
 
-					_this16.table.options.pageLoaded.call(_this16.table, _this16.getPage());
+					_this17.table.options.pageLoaded.call(_this17.table, _this17.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this16.table.modules.ajax.blockActiveRequest();
-					_this16._getRemotePage().then(function () {
+					_this17.table.modules.ajax.blockActiveRequest();
+					_this17._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -15590,7 +15611,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this16.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this17.mode);
 					reject();
 			}
 		});
@@ -15608,17 +15629,17 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype._getRemotePagePaginator = function () {
-		var _this17 = this;
+		var _this18 = this;
 
 		var ajax = this.table.modules.ajax,
 		    oldUrl = ajax.getUrl();
 
 		return new Promise(function (resolve, reject) {
 
-			ajax.setUrl(_this17.paginator(ajax.getUrl(), _this17.page, _this17.size, ajax.getParams()));
+			ajax.setUrl(_this18.paginator(ajax.getUrl(), _this18.page, _this18.size, ajax.getParams()));
 
 			ajax.sendRequest().then(function (data) {
-				_this17._parseRemoteData(data);
+				_this18._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
 				reject();
@@ -15629,7 +15650,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype._getRemotePageAuto = function () {
-		var _this18 = this;
+		var _this19 = this;
 
 		var self = this,
 		    oldParams,
@@ -15642,33 +15663,33 @@ Tabulator.prototype.registerModule("comms", Comms);
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this18.paginationDataSentNames.page] = self.page;
+			pageParams[_this19.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this18.size) {
-				pageParams[_this18.paginationDataSentNames.size] = _this18.size;
+			if (_this19.size) {
+				pageParams[_this19.paginationDataSentNames.size] = _this19.size;
 			}
 
 			//set sort data if defined
-			if (_this18.table.options.ajaxSorting && _this18.table.modExists("sort")) {
+			if (_this19.table.options.ajaxSorting && _this19.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this18.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this19.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this18.table.options.ajaxFiltering && _this18.table.modExists("filter")) {
+			if (_this19.table.options.ajaxFiltering && _this19.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this18.paginationDataSentNames.filters] = filters;
+				pageParams[_this19.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this18.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this19.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
