@@ -23,7 +23,7 @@ Filter.prototype.initializeColumn = function(column, value){
 		type = "",
 		filterFunc;
 
-		if(value){
+		if(!column.modules.filter.emptyFunc(value)){
 			column.modules.filter.value = value;
 
 			switch(typeof column.definition.headerFilterFunc){
@@ -84,6 +84,7 @@ Filter.prototype.initializeColumn = function(column, value){
 		success:success,
 		attrType:false,
 		tagType:false,
+		emptyFunc:false,
 	};
 
 	this.generateHeaderFilterElement(column);
@@ -104,6 +105,11 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 
 	if(field){
 
+		//set empty value function
+		column.modules.filter.emptyFunc = column.definition.headerFilterEmptyCheck || function(value){
+			return !value && value !== "0";
+		};
+
 		filterElement = document.createElement("div");
 		filterElement.classList.add("tabulator-header-filter");
 
@@ -112,6 +118,12 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 			case "string":
 			if(self.table.modules.edit.editors[column.definition.headerFilter]){
 				editor = self.table.modules.edit.editors[column.definition.headerFilter];
+
+				if((column.definition.headerFilter === "tick" || column.definition.headerFilter === "tickCross") && !column.definition.headerFilterEmptyCheck){
+					column.modules.filter.emptyFunc = function(value){
+						return value !== true && value !== false;
+					};
+				}
 			}else{
 				console.warn("Filter Error - Cannot build header filter, No such editor found: ", column.definition.editor);
 			}
@@ -127,6 +139,12 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 			}else{
 				if(column.definition.formatter && self.table.modules.edit.editors[column.definition.formatter]){
 					editor = self.table.modules.edit.editors[column.definition.formatter];
+
+					if((column.definition.formatter === "tick" || column.definition.formatter === "tickCross") && !column.definition.headerFilterEmptyCheck){
+						column.modules.filter.emptyFunc = function(value){
+							return value !== true && value !== false;
+						};
+					}
 				}else{
 					editor = self.table.modules.edit.editors["input"];
 				}
