@@ -32,7 +32,7 @@ Ajax.prototype.initialize = function () {
 		this.loadingElement = this.table.options.ajaxLoaderLoading;
 	}
 
-	this.loaderPromise = this.table.options.ajaxPromiseFunc || this.defaultLoaderPromise;
+	this.loaderPromise = this.table.options.ajaxRequestFunc || this.defaultLoaderPromise;
 
 	this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
 

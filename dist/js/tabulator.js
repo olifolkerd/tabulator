@@ -6198,7 +6198,7 @@ Tabulator.prototype.defaultOptions = {
 
 	ajaxConfig: "get", //ajax request type
 
-	ajaxPromiseFunc: false, //promise function
+	ajaxRequestFunc: false, //promise function
 
 	ajaxLoader: true, //show loader
 
@@ -9039,7 +9039,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			this.loadingElement = this.table.options.ajaxLoaderLoading;
 		}
 
-		this.loaderPromise = this.table.options.ajaxPromiseFunc || this.defaultLoaderPromise;
+		this.loaderPromise = this.table.options.ajaxRequestFunc || this.defaultLoaderPromise;
 
 		this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
 
