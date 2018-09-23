@@ -805,15 +805,23 @@ Tabulator.prototype.getRowFromPosition = function(position, active){
 
 //delete row from table
 Tabulator.prototype.deleteRow = function(index){
-	var row = this.rowManager.findRow(index);
+	return new Promise((resolve, reject) => {
+		var row = this.rowManager.findRow(index);
 
-	if(row){
-		row.delete();
-		return true;
-	}else{
-		console.warn("Delete Error - No matching row found:", index);
-		return false;
-	}
+		if(row){
+			row.delete()
+			.then(() => {
+				resolve();
+			})
+			.catch((err) => {
+				reject(err);
+			});
+
+		}else{
+			console.warn("Delete Error - No matching row found:", index);
+			reject("Delete Error - No matching row found")
+		}
+	});
 };
 
 //add row to table

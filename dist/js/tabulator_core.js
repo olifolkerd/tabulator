@@ -3496,7 +3496,7 @@ RowComponent.prototype.getPosition = function (active) {
 };
 
 RowComponent.prototype.delete = function () {
-	this._row.delete();
+	return this._row.delete();
 };
 
 RowComponent.prototype.scrollTo = function () {
@@ -3983,18 +3983,24 @@ Row.prototype.getCells = function () {
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function () {
-	var index = this.table.rowManager.getRowIndex(this);
+	var _this4 = this;
 
-	this.deleteActual();
+	return new Promise(function (resolve, reject) {
+		var index = _this4.table.rowManager.getRowIndex(_this4);
 
-	if (this.table.options.history && this.table.modExists("history")) {
+		_this4.deleteActual();
 
-		if (index) {
-			index = this.table.rowManager.rows[index - 1];
+		if (_this4.table.options.history && _this4.table.modExists("history")) {
+
+			if (index) {
+				index = _this4.table.rowManager.rows[index - 1];
+			}
+
+			_this4.table.modules.history.action("rowDelete", _this4, { data: _this4.getData(), pos: !index, index: index });
 		}
 
-		this.table.modules.history.action("rowDelete", this, { data: this.getData(), pos: !index, index: index });
-	}
+		resolve();
+	});
 };
 
 Row.prototype.deleteActual = function () {
@@ -5370,14 +5376,14 @@ Tabulator.prototype.replaceData = function (data, params, config) {
 
 //update table data
 Tabulator.prototype.updateData = function (data) {
-	var _this4 = this;
+	var _this5 = this;
 
 	var self = this;
 	var responses = 0;
 
 	return new Promise(function (resolve, reject) {
-		if (_this4.modExists("ajax")) {
-			_this4.modules.ajax.blockActiveRequest();
+		if (_this5.modExists("ajax")) {
+			_this5.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -5408,11 +5414,11 @@ Tabulator.prototype.updateData = function (data) {
 };
 
 Tabulator.prototype.addData = function (data, pos, index) {
-	var _this5 = this;
+	var _this6 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this5.modExists("ajax")) {
-			_this5.modules.ajax.blockActiveRequest();
+		if (_this6.modExists("ajax")) {
+			_this6.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -5420,7 +5426,7 @@ Tabulator.prototype.addData = function (data, pos, index) {
 		}
 
 		if (data) {
-			_this5.rowManager.addRows(data, pos, index).then(function (rows) {
+			_this6.rowManager.addRows(data, pos, index).then(function (rows) {
 				var output = [];
 
 				rows.forEach(function (row) {
@@ -5438,15 +5444,15 @@ Tabulator.prototype.addData = function (data, pos, index) {
 
 //update table data
 Tabulator.prototype.updateOrAddData = function (data) {
-	var _this6 = this;
+	var _this7 = this;
 
 	var self = this,
 	    rows = [],
 	    responses = 0;
 
 	return new Promise(function (resolve, reject) {
-		if (_this6.modExists("ajax")) {
-			_this6.modules.ajax.blockActiveRequest();
+		if (_this7.modExists("ajax")) {
+			_this7.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -5512,15 +5518,22 @@ Tabulator.prototype.getRowFromPosition = function (position, active) {
 
 //delete row from table
 Tabulator.prototype.deleteRow = function (index) {
-	var row = this.rowManager.findRow(index);
+	var _this8 = this;
 
-	if (row) {
-		row.delete();
-		return true;
-	} else {
-		console.warn("Delete Error - No matching row found:", index);
-		return false;
-	}
+	return new Promise(function (resolve, reject) {
+		var row = _this8.rowManager.findRow(index);
+
+		if (row) {
+			row.delete().then(function () {
+				resolve();
+			}).catch(function (err) {
+				reject(err);
+			});
+		} else {
+			console.warn("Delete Error - No matching row found:", index);
+			reject("Delete Error - No matching row found");
+		}
+	});
 };
 
 //add row to table

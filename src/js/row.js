@@ -36,7 +36,7 @@ RowComponent.prototype.getPosition = function(active){
 };
 
 RowComponent.prototype.delete = function(){
-	this._row.delete();
+	return this._row.delete();
 };
 
 RowComponent.prototype.scrollTo = function(){
@@ -529,19 +529,22 @@ Row.prototype.getCells = function(){
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function(){
-	var index = this.table.rowManager.getRowIndex(this);
+	return new Promise((resolve, reject) => {
+		var index = this.table.rowManager.getRowIndex(this);
 
-	this.deleteActual();
+		this.deleteActual();
 
-	if(this.table.options.history && this.table.modExists("history")){
+		if(this.table.options.history && this.table.modExists("history")){
 
-		if(index){
-			index = this.table.rowManager.rows[index-1];
+			if(index){
+				index = this.table.rowManager.rows[index-1];
+			}
+
+			this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 		}
 
-		this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
-	}
-
+		resolve();
+	});
 };
 
 
