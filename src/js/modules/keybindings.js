@@ -6,7 +6,6 @@ var Keybindings = function(table){
 	this.keydownBinding = false;
 };
 
-
 Keybindings.prototype.initialize = function(){
 	var bindings = this.table.options.keybindings,
 	mergedBindings = {};
@@ -64,7 +63,7 @@ Keybindings.prototype.mapBinding = function(action, symbolsList){
 		keys: [],
 		ctrl: false,
 		shift: false,
-	}
+	};
 
 	var symbols = symbolsList.toString().toLowerCase().split(" ").join("").split("+");
 
@@ -94,7 +93,6 @@ Keybindings.prototype.mapBinding = function(action, symbolsList){
 Keybindings.prototype.bindEvents = function(){
 	var self = this;
 
-
 	this.keyupBinding = function(e){
 		var code = e.keyCode;
 		var bindings = self.watchKeys[code];
@@ -107,7 +105,7 @@ Keybindings.prototype.bindEvents = function(){
 				self.checkBinding(e, binding);
 			});
 		}
-	}
+	};
 
 	this.keydownBinding = function(e){
 		var code = e.keyCode;
@@ -121,9 +119,7 @@ Keybindings.prototype.bindEvents = function(){
 				self.pressedKeys.splice(index, 1);
 			}
 		}
-	}
-
-
+	};
 
 	this.table.element.addEventListener("keydown", this.keyupBinding);
 
@@ -178,7 +174,6 @@ Keybindings.prototype.bindings = {
 	redo:"ctrl + 89",
 	copyToClipboard:"ctrl + 67",
 };
-
 
 //default actions
 Keybindings.prototype.actions = {

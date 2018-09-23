@@ -9820,7 +9820,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Clipboard.prototype.getPasteData = function (e) {
-		var data = undefined;
+		var data;
 
 		if (window.clipboardData && window.clipboardData.getData) {
 			data = window.clipboardData.getData('Text');
@@ -10142,7 +10142,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 				//check if headers are present by title
 				data[0].forEach(function (value) {
 					var column = columns.find(function (column) {
-						return value.trim() && column.definition.title.trim() === value.trim();
+						return value && column.definition.title && value.trim() && column.definition.title.trim() === value.trim();
 					});
 
 					if (column) {
@@ -10159,7 +10159,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 					data[0].forEach(function (value) {
 						var column = columns.find(function (column) {
-							return value.trim() && column.field.trim() === value.trim();
+							return value && column.field && value.trim() && column.field.trim() === value.trim();
 						});
 
 						if (column) {
