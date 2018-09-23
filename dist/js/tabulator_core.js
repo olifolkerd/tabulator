@@ -5438,33 +5438,52 @@ Tabulator.prototype.addData = function (data, pos, index) {
 
 //update table data
 Tabulator.prototype.updateOrAddData = function (data) {
-	var self = this;
-	var rows = [];
+	var _this6 = this;
 
-	if (this.modExists("ajax")) {
-		this.modules.ajax.blockActiveRequest();
-	}
+	var self = this,
+	    rows = [],
+	    responses = 0;
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+	return new Promise(function (resolve, reject) {
+		if (_this6.modExists("ajax")) {
+			_this6.modules.ajax.blockActiveRequest();
+		}
 
-	if (data) {
-		data.forEach(function (item) {
-			var row = self.rowManager.findRow(item[self.options.index]);
+		if (typeof data === "string") {
+			data = JSON.parse(data);
+		}
 
-			if (row) {
-				row.updateData(item);
-				rows.push(row.getComponent());
-			} else {
-				rows.push(self.rowManager.addRows(item)[0].getComponent());
-			}
-		});
+		if (data) {
+			data.forEach(function (item) {
+				var row = self.rowManager.findRow(item[self.options.index]);
 
-		return rows;
-	} else {
-		console.warn("Update Error - No data provided");
-	}
+				responses++;
+
+				if (row) {
+					row.updateData(item).then(function () {
+						responses--;
+						rows.push(row.getComponent());
+
+						if (!responses) {
+							resolve(rows);
+						}
+					});
+				} else {
+					self.rowManager.addRows(item).then(function (newRows) {
+						responses--;
+						rows.push(newRows[0].getComponent());
+
+						if (!responses) {
+							resolve(rows);
+						}
+					});
+				}
+			});
+		} else {
+			console.warn("Update Error - No data provided");
+			reject("Update Error - No data provided");
+		}
+	});
 };
 
 //get row object

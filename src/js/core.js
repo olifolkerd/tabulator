@@ -731,33 +731,52 @@ Tabulator.prototype.addData = function(data, pos, index){
 
 //update table data
 Tabulator.prototype.updateOrAddData = function(data){
-	var self = this;
-	var rows = [];
+	var self = this,
+	rows = [],
+	responses = 0;
 
-	if(this.modExists("ajax")){
-		this.modules.ajax.blockActiveRequest();
-	}
+	return new Promise((resolve, reject) => {
+		if(this.modExists("ajax")){
+			this.modules.ajax.blockActiveRequest();
+		}
 
-	if(typeof data === "string"){
-		data = JSON.parse(data);
-	}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-	if(data){
-		data.forEach(function(item){
-			var row = self.rowManager.findRow(item[self.options.index]);
+		if(data){
+			data.forEach(function(item){
+				var row = self.rowManager.findRow(item[self.options.index]);
 
-			if(row){
-				row.updateData(item)
-				rows.push(row.getComponent());
-			}else{
-				rows.push(self.rowManager.addRows(item)[0].getComponent());
-			}
-		})
+				responses++;
 
-		return rows;
-	}else{
-		console.warn("Update Error - No data provided");
-	}
+				if(row){
+					row.updateData(item)
+					.then(()=>{
+						responses--;
+						rows.push(row.getComponent());
+
+						if(!responses){
+							resolve(rows);
+						}
+					});
+				}else{
+					self.rowManager.addRows(item)
+					.then((newRows)=>{
+						responses--;
+						rows.push(newRows[0].getComponent());
+
+						if(!responses){
+							resolve(rows);
+						}
+					});
+				}
+			});
+		}else{
+			console.warn("Update Error - No data provided");
+			reject("Update Error - No data provided");
+		}
+	});
 };
 
 //get row object
