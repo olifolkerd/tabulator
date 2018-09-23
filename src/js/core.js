@@ -487,7 +487,7 @@ Tabulator.prototype._loadInitialData = function(){
 			if(self.options.data.length){
 				self.rowManager.setData(self.options.data);
 			}else{
-				if(self.options.ajaxURL && self.modExists("ajax")){
+				if((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")){
 					self.modules.ajax.loadData();
 				}else{
 					self.rowManager.setData(self.options.data);
@@ -500,7 +500,7 @@ Tabulator.prototype._loadInitialData = function(){
 		if(self.options.data.length){
 			self.rowManager.setData(self.options.data);
 		}else{
-			if(self.options.ajaxURL && self.modExists("ajax")){
+			if((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")){
 				self.modules.ajax.loadData();
 			}else{
 				self.rowManager.setData(self.options.data);
@@ -604,7 +604,7 @@ Tabulator.prototype._setData = function(data, params, config, inPosition){
 			}else{
 
 				//no data provided, check if ajaxURL is present;
-				if(self.modExists("ajax") && self.modules.ajax.getUrl){
+				if(self.modExists("ajax") && (self.modules.ajax.getUrl || self.options.ajaxURLGenerator)){
 
 					if(self.options.pagination == "remote" && self.modExists("page", true)){
 						self.modules.page.reset(true);
