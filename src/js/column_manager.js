@@ -344,51 +344,55 @@ ColumnManager.prototype.scrollToColumn = function(column, position, ifVisible){
 	adjust = 0,
 	colEl = column.getElement();
 
-	if(typeof position === "undefined"){
-		position = this.table.options.scrollToColumnPosition;
-	}
+	return new Promise((resolve, reject) => {
 
-	if(typeof ifVisible === "undefined"){
-		ifVisible = this.table.options.scrollToColumnIfVisible;
-	}
-
-	if(column.visible){
-
-		//align to correct position
-		switch(position){
-			case "middle":
-			case "center":
-			adjust = -this.element.clientWidth / 2;
-			break;
-
-			case "right":
-			adjust = colEl.clientWidth - this.headersElement.clientWidth;
-			break;
+		if(typeof position === "undefined"){
+			position = this.table.options.scrollToColumnPosition;
 		}
 
-		//check column visibility
-		if(!ifVisible){
+		if(typeof ifVisible === "undefined"){
+			ifVisible = this.table.options.scrollToColumnIfVisible;
+		}
 
-			offset = colEl.offsetLeft;
+		if(column.visible){
 
-			if(offset > 0 && offset + colEl.offsetWidth < this.element.clientWidth){
-				return false;
+			//align to correct position
+			switch(position){
+				case "middle":
+				case "center":
+				adjust = -this.element.clientWidth / 2;
+				break;
+
+				case "right":
+				adjust = colEl.clientWidth - this.headersElement.clientWidth;
+				break;
 			}
+
+			//check column visibility
+			if(!ifVisible){
+
+				offset = colEl.offsetLeft;
+
+				if(offset > 0 && offset + colEl.offsetWidth < this.element.clientWidth){
+					return false;
+				}
+			}
+
+			//calculate scroll position
+			left = colEl.offsetLeft + this.element.scrollLeft + adjust;
+
+			left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth),0);
+
+			this.table.rowManager.scrollHorizontal(left);
+			this.scrollHorizontal(left);
+
+			resolve();
+		}else{
+			console.warn("Scroll Error - Column not visible");
+			reject("Scroll Error - Column not visible");
 		}
 
-		//calculate scroll position
-		left = colEl.offsetLeft + this.element.scrollLeft + adjust;
-
-		left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth),0);
-
-		this.table.rowManager.scrollHorizontal(left);
-		this.scrollHorizontal(left);
-
-		return true;
-	}else{
-		console.warn("Scroll Error - Column not visible");
-		return false;
-	}
+	});
 };
 
 //////////////// Cell Management /////////////////

@@ -1045,14 +1045,24 @@ Tabulator.prototype.deleteColumn = function(field){
 
 //scroll to column in DOM
 Tabulator.prototype.scrollToColumn = function(field, position, ifVisible){
-	var column = this.columnManager.findColumn(field);
 
-	if(column){
-		return this.columnManager.scrollToColumn(column, position, ifVisible);
-	}else{
-		console.warn("Scroll Error - No matching column found:", field);
-		return false;
-	}
+	return new Promise((resolve, reject) => {
+		var column = this.columnManager.findColumn(field);
+
+		if(column){
+			this.columnManager.scrollToColumn(column, position, ifVisible)
+			.then(()=>{
+				resolve();
+			})
+			.catch((err)=>{
+				reject(err);
+			});
+		}else{
+			console.warn("Scroll Error - No matching column found:", field);
+			reject("Scroll Error - No matching column found");
+		}
+	});
+
 };
 
 
