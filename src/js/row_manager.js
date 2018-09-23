@@ -191,68 +191,70 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 	rowTop,
 	offset = 0;
 
-	if(rowIndex > -1){
+	return new Promise((resolve, reject) => {
+		if(rowIndex > -1){
 
-		if(typeof position === "undefined"){
-			position = this.table.options.scrollToRowPosition;
-		}
-
-		if(typeof ifVisible === "undefined"){
-			ifVisible = this.table.options.scrollToRowIfVisible;
-		}
-
-
-		if(position === "nearest"){
-			switch(this.renderMode){
-				case"classic":
-				rowTop = Tabulator.prototype.helpers.elOffset(rowEl).top;
-				position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
-				break;
-				case"virtual":
-				position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
-				break;
+			if(typeof position === "undefined"){
+				position = this.table.options.scrollToRowPosition;
 			}
-		}
 
-		//check row visibility
-		if(!ifVisible){
-			if(Tabulator.prototype.helpers.elVisible(rowEl)){
-				offset = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top;
+			if(typeof ifVisible === "undefined"){
+				ifVisible = this.table.options.scrollToRowIfVisible;
+			}
 
-				if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
-					return false;
+
+			if(position === "nearest"){
+				switch(this.renderMode){
+					case"classic":
+					rowTop = Tabulator.prototype.helpers.elOffset(rowEl).top;
+					position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
+					break;
+					case"virtual":
+					position = Math.abs(this.vDomTop - rowIndex) > Math.abs(this.vDomBottom - rowIndex) ? "bottom" : "top";
+					break;
 				}
 			}
+
+			//check row visibility
+			if(!ifVisible){
+				if(Tabulator.prototype.helpers.elVisible(rowEl)){
+					offset = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top;
+
+					if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
+						return false;
+					}
+				}
+			}
+
+			//scroll to row
+			switch(this.renderMode){
+				case"classic":
+				this.element.scrollTop = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top + this.element.scrollTop;
+				break;
+				case"virtual":
+				this._virtualRenderFill(rowIndex, true);
+				break;
+			}
+
+			//align to correct position
+			switch(position){
+				case "middle":
+				case "center":
+				this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
+				break;
+
+				case "bottom":
+				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
+				break;
+			}
+
+			resolve();
+
+		}else{
+			console.warn("Scroll Error - Row not visible");
+			reject("Scroll Error - Row not visible");
 		}
-
-		//scroll to row
-		switch(this.renderMode){
-			case"classic":
-			this.element.scrollTop = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top + this.element.scrollTop;
-			break;
-			case"virtual":
-			this._virtualRenderFill(rowIndex, true);
-			break;
-		}
-
-		//align to correct position
-		switch(position){
-			case "middle":
-			case "center":
-			this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
-			break;
-
-			case "bottom":
-			this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
-			break;
-		}
-
-		return true;
-
-	}else{
-		console.warn("Scroll Error - Row not visible");
-		return false;
-	}
+	});
 };
 
 

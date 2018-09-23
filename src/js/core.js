@@ -907,14 +907,22 @@ Tabulator.prototype.updateRow = function(index, data){
 
 //scroll to row in DOM
 Tabulator.prototype.scrollToRow = function(index, position, ifVisible){
-	var row = this.rowManager.findRow(index);
+	return new Promise((resolve, reject) => {
+		var row = this.rowManager.findRow(index);
 
-	if(row){
-		return this.rowManager.scrollToRow(row, position, ifVisible);
-	}else{
-		console.warn("Scroll Error - No matching row found:", index);
-		return false;
-	}
+		if(row){
+			this.rowManager.scrollToRow(row, position, ifVisible)
+			.then(()=>{
+				resolve();
+			})
+			.catch((err)=>{
+				reject(err);
+			});
+		}else{
+			console.warn("Scroll Error - No matching row found:", index);
+			reject("Scroll Error - No matching row found");
+		}
+	});
 };
 
 Tabulator.prototype.getRows = function(active){

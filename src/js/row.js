@@ -40,7 +40,7 @@ RowComponent.prototype.delete = function(){
 };
 
 RowComponent.prototype.scrollTo = function(){
-	this._row.table.rowManager.scrollToRow(this._row);
+	return this._row.table.rowManager.scrollToRow(this._row);
 };
 
 RowComponent.prototype.update = function(data){
