@@ -1,15 +1,39 @@
 var FooterManager = function(table){
 	this.table = table;
 	this.active = false;
-	this.element = $("<div class='tabulator-footer'></div>"); //containing element
+	this.element = this.createElement(); //containing element
+	this.external = false;
 	this.links = [];
 
 	this._initialize();
 };
 
+FooterManager.prototype.createElement = function (){
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-footer");
+
+	return el;
+};
+
 FooterManager.prototype._initialize = function(element){
 	if(this.table.options.footerElement){
-		this.element = this.table.options.footerElement;
+
+		switch(typeof this.table.options.footerElement){
+			case "string":
+
+			if(this.table.options.footerElement[0] === "<"){
+				this.element.innerHTML = this.table.options.footerElement;
+			}else{
+				this.external = true;
+				this.element = document.querySelector(this.table.options.footerElement);
+			}
+			break;
+			default:
+			this.element = this.table.options.footerElement;
+			break;
+		}
+
 	}
 };
 
@@ -21,42 +45,47 @@ FooterManager.prototype.getElement = function(){
 FooterManager.prototype.append = function(element, parent){
 	this.activate(parent);
 
-	this.element.append(element);
+	this.element.appendChild(element);
 	this.table.rowManager.adjustTableSize();
 };
 
 FooterManager.prototype.prepend = function(element, parent){
 	this.activate(parent);
 
-	this.element.prepend(element);
+	this.element.insertBefore(element, this.element.firstChild);
 	this.table.rowManager.adjustTableSize();
 };
 
 FooterManager.prototype.remove = function(element){
-	element.remove();
+	element.parentNode.removeChild(element);
 	this.deactivate();
 };
 
 FooterManager.prototype.deactivate = function(force){
 	if(this.element.is(":empty") || force){
-		this.element.remove();
+		if(!this.external){
+			this.element.parentNode.removeChild(this.element);
+		}
 		this.active = false;
+
 	}
 
 	// this.table.rowManager.adjustTableSize();
-}
+};
 
 FooterManager.prototype.activate = function(parent){
 	if(!this.active){
 		this.active = true;
-		this.table.element.append(this.getElement());
-		this.table.element.show();
+		if(!this.external){
+			this.table.element.appendChild(this.getElement());
+			this.table.element.style.display = '';
+		}
 	}
 
 	if(parent){
 		this.links.push(parent);
 	}
-}
+};
 
 FooterManager.prototype.redraw = function(){
 	this.links.forEach(function(link){

@@ -265,7 +265,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			min-width:200%;
+			min-width:400%;
 
 			background:darken($headerBackgroundColor, 10%) !important;
 
@@ -284,7 +284,7 @@ $footerSeperatorColor:#999; //footer bottom seperator color
 		}
 
 		.tabulator-frozen-rows-holder{
-			min-width:200%;
+			min-width:400%;
 
 			&:empty{
 				display: none;

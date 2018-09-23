@@ -1,26 +1,26 @@
 
 //public column object
 var ColumnComponent = function (column){
-	this.column = column;
+	this._column = column;
 	this.type = "ColumnComponent";
 };
 
 ColumnComponent.prototype.getElement = function(){
-	return this.column.getElement();
+	return this._column.getElement();
 };
 
 ColumnComponent.prototype.getDefinition = function(){
-	return this.column.getDefinition();
+	return this._column.getDefinition();
 };
 
 ColumnComponent.prototype.getField = function(){
-	return this.column.getField();
+	return this._column.getField();
 };
 
 ColumnComponent.prototype.getCells = function(){
 	var cells = [];
 
-	this.column.cells.forEach(function(cell){
+	this._column.cells.forEach(function(cell){
 		cells.push(cell.getComponent());
 	});
 
@@ -28,31 +28,31 @@ ColumnComponent.prototype.getCells = function(){
 };
 
 ColumnComponent.prototype.getVisibility = function(){
-	return this.column.visible;
+	return this._column.visible;
 };
 
 ColumnComponent.prototype.show = function(){
-	if(this.column.isGroup){
-		this.column.columns.forEach(function(column){
+	if(this._column.isGroup){
+		this._column.columns.forEach(function(column){
 			column.show();
 		});
 	}else{
-		this.column.show();
+		this._column.show();
 	}
 };
 
 ColumnComponent.prototype.hide = function(){
-	if(this.column.isGroup){
-		this.column.columns.forEach(function(column){
+	if(this._column.isGroup){
+		this._column.columns.forEach(function(column){
 			column.hide();
 		});
 	}else{
-		this.column.hide();
+		this._column.hide();
 	}
 };
 
 ColumnComponent.prototype.toggle = function(){
-	if(this.column.visible){
+	if(this._column.visible){
 		this.hide();
 	}else{
 		this.show();
@@ -60,14 +60,14 @@ ColumnComponent.prototype.toggle = function(){
 };
 
 ColumnComponent.prototype.delete = function(){
-	this.column.delete();
+	this._column.delete();
 };
 
 ColumnComponent.prototype.getSubColumns = function(){
 	var output = [];
 
-	if(this.column.columns.length){
-		this.column.columns.forEach(function(column){
+	if(this._column.columns.length){
+		this._column.columns.forEach(function(column){
 			output.push(column.getComponent());
 		});
 	}
@@ -76,17 +76,40 @@ ColumnComponent.prototype.getSubColumns = function(){
 };
 
 ColumnComponent.prototype.getParentColumn = function(){
-	return this.column.parent instanceof Column ? this.column.parent.getComponent() : false;
+	return this._column.parent instanceof Column ? this._column.parent.getComponent() : false;
 };
 
 
 ColumnComponent.prototype._getSelf = function(){
-	return this.column;
+	return this._column;
 };
 
 ColumnComponent.prototype.scrollTo = function(){
-	this.column.table.columManager.scrollToColumn(this.column);
+	return this._column.table.columManager.scrollToColumn(this._column);
 };
+
+ColumnComponent.prototype.getTable = function(){
+	return this._column.table;
+};
+
+ColumnComponent.prototype.headerFilterFocus = function(){
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.setHeaderFilterFocus(this._column);
+	}
+};
+
+ColumnComponent.prototype.reloadHeaderFilter = function(){
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.reloadHeaderFilter(this._column);
+	}
+};
+
+ColumnComponent.prototype.setHeaderFilterValue = function(value){
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
+	}
+};
+
 
 
 var Column = function(def, parent){
@@ -98,9 +121,9 @@ var Column = function(def, parent){
 	this.type = "column"; //type of element
 	this.columns = []; //child columns
 	this.cells = []; //cells bound to this column
-	this.element = $("<div class='tabulator-col' role='columnheader' aria-sort='none'></div>"); //column header element
+	this.element = this.createElement(); //column header element
 	this.contentElement = false;
-	this.groupElement = $("<div class='tabulator-col-group-cols'></div>"); //column group holder element
+	this.groupElement = this.createGroupElement(); //column group holder element
 	this.isGroup = false;
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
@@ -114,7 +137,7 @@ var Column = function(def, parent){
 	this.setField(this.definition.field);
 
 
-	this.extensions = {}; //hold extension variables;
+	this.modules = {}; //hold module variables;
 
 	this.cellEvents = {
 		cellClick:false,
@@ -146,25 +169,29 @@ var Column = function(def, parent){
 		parent.registerColumnField(this);
 	}
 
-	if(def.rowHandle && this.table.options.movableRows !== false && this.table.extExists("moveRow")){
-		this.table.extensions.moveRow.setHandle(true);
+	if(def.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
+		this.table.modules.moveRow.setHandle(true);
 	}
-
-	this._mapDepricatedFunctionality()
 
 	this._buildHeader();
 };
 
+Column.prototype.createElement = function (){
+	var el = document.createElement("div");
 
-//////////////// Setup Functions /////////////////
-Column.prototype._mapDepricatedFunctionality = function(field){
-	if(this.definition.tooltipHeader){
-		console.warn("The%c tooltipHeader%c column definition property has been depricated and will be removed in version 4.0, use %c headerTooltip%c instead.", "font-weight:bold;", "font-weight:regular;", "font-weight:bold;", "font-weight:regular;");
+	el.classList.add("tabulator-col");
+	el.setAttribute("role", "columnheader");
+	el.setAttribute("aria-sort", "none");
 
-		if(typeof this.definition.headerTooltip == "undefined"){
-			this.definition.headerTooltip = this.definition.tooltipHeader;
-		}
-	}
+	return el;
+};
+
+Column.prototype.createGroupElement = function (){
+	var el = document.createElement("div");
+
+	el.classList.add("tabulator-col-group-cols");
+
+	return el;
 };
 
 Column.prototype.setField = function(field){
@@ -205,11 +232,11 @@ Column.prototype.setTooltip = function(){
 	if(tooltip){
 		if(tooltip === true){
 			if(def.field){
-				self.table.extensions.localize.bind("columns|" + def.field, function(value){
-					self.element.attr("title", value || def.title);
+				self.table.modules.localize.bind("columns|" + def.field, function(value){
+					self.element.setAttribute("title", value || def.title);
 				});
 			}else{
-				self.element.attr("title", def.title);
+				self.element.setAttribute("title", def.title);
 			}
 
 		}else{
@@ -221,25 +248,26 @@ Column.prototype.setTooltip = function(){
 				}
 			}
 
-			self.element.attr("title", tooltip);
+			self.element.setAttribute("title", tooltip);
 		}
 
 	}else{
-		self.element.attr("title", "");
+		self.element.setAttribute("title", "");
 	}
-}
+};
 
 //build header element
 Column.prototype._buildHeader = function(){
 	var self = this,
-	def = self.definition,
-	dblTap,	tapHold, tap;
+	def = self.definition;
 
-	self.element.empty();
+	while(self.element.firstChild) self.element.removeChild(self.element.firstChild);
+
+	self.contentElement = self._bindEvents();
 
 	self.contentElement = self._buildColumnHeaderContent();
 
-	self.element.append(self.contentElement);
+	self.element.appendChild(self.contentElement);
 
 	if(self.isGroup){
 		self._buildGroupHeader();
@@ -250,63 +278,70 @@ Column.prototype._buildHeader = function(){
 	self.setTooltip();
 
 	//set resizable handles
-	if(self.table.options.resizableColumns && self.table.extExists("resizeColumns")){
-		self.table.extensions.resizeColumns.initializeColumn("header", self, self.element);
+	if(self.table.options.resizableColumns && self.table.modExists("resizeColumns")){
+		self.table.modules.resizeColumns.initializeColumn("header", self, self.element);
 	}
 
 	//set resizable handles
-	if(def.headerFilter && self.table.extExists("filter") && self.table.extExists("edit")){
+	if(def.headerFilter && self.table.modExists("filter") && self.table.modExists("edit")){
 		if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-			self.table.extensions.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+			self.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
 		}
 
-		self.table.extensions.filter.initializeColumn(self);
+		self.table.modules.filter.initializeColumn(self);
 	}
 
 
 	//set resizable handles
-	if(self.table.extExists("frozenColumns")){
-		self.table.extensions.frozenColumns.initializeColumn(self);
+	if(self.table.modExists("frozenColumns")){
+		self.table.modules.frozenColumns.initializeColumn(self);
 	}
 
 	//set movable column
-	if(self.table.options.movableColumns && !self.isGroup && self.table.extExists("moveColumn")){
-		self.table.extensions.moveColumn.initializeColumn(self);
+	if(self.table.options.movableColumns && !self.isGroup && self.table.modExists("moveColumn")){
+		self.table.modules.moveColumn.initializeColumn(self);
 	}
 
 	//set calcs column
-	if((def.topCalc || def.bottomCalc) && self.table.extExists("columnCalcs")){
-		self.table.extensions.columnCalcs.initializeColumn(self);
+	if((def.topCalc || def.bottomCalc) && self.table.modExists("columnCalcs")){
+		self.table.modules.columnCalcs.initializeColumn(self);
 	}
 
 
 	//update header tooltip on mouse enter
-	self.element.on("mouseenter", function(e){
+	self.element.addEventListener("mouseenter", function(e){
 		self.setTooltip();
 	});
+};
+
+Column.prototype._bindEvents = function(){
+
+	var self = this,
+	def = self.definition,
+	dblTap,	tapHold, tap;
 
 	//setup header click event bindings
 	if(typeof(def.headerClick) == "function"){
-		self.element.on("click", function(e){def.headerClick(e, self.getComponent())})
+		self.element.addEventListener("click", function(e){def.headerClick(e, self.getComponent());});
 	}
 
 	if(typeof(def.headerDblClick) == "function"){
-		self.element.on("dblclick", function(e){def.headerDblClick(e, self.getComponent())});
+		self.element.addEventListener("dblclick", function(e){def.headerDblClick(e, self.getComponent());});
 	}
 
 	if(typeof(def.headerContext) == "function"){
-		self.element.on("contextmenu", function(e){def.headerContext(e, self.getComponent())});
+		self.element.addEventListener("contextmenu", function(e){def.headerContext(e, self.getComponent());});
 	}
 
 	//setup header tap event bindings
 	if(typeof(def.headerTap) == "function"){
 		tap = false;
 
-		self.element.on("touchstart", function(e){
+		self.element.addEventListener("touchstart", function(e){
 			tap = true;
 		});
 
-		self.element.on("touchend", function(e){
+		self.element.addEventListener("touchend", function(e){
 			if(tap){
 				def.headerTap(e, self.getComponent());
 			}
@@ -318,7 +353,7 @@ Column.prototype._buildHeader = function(){
 	if(typeof(def.headerDblTap) == "function"){
 		dblTap = null;
 
-		self.element.on("touchend", function(e){
+		self.element.addEventListener("touchend", function(e){
 
 			if(dblTap){
 				clearTimeout(dblTap);
@@ -339,7 +374,7 @@ Column.prototype._buildHeader = function(){
 	if(typeof(def.headerTapHold) == "function"){
 		tapHold = null;
 
-		self.element.on("touchstart", function(e){
+		self.element.addEventListener("touchstart", function(e){
 			clearTimeout(tapHold);
 
 			tapHold = setTimeout(function(){
@@ -347,11 +382,11 @@ Column.prototype._buildHeader = function(){
 				tapHold = null;
 				tap = false;
 				def.headerTapHold(e, self.getComponent());
-			}, 1000)
+			}, 1000);
 
 		});
 
-		self.element.on("touchend", function(e){
+		self.element.addEventListener("touchend", function(e){
 			clearTimeout(tapHold);
 			tapHold = null;
 		});
@@ -405,39 +440,39 @@ Column.prototype._buildColumnHeader = function(){
 	sortable;
 
 	//set column sorter
-	if(table.extExists("sort")){
-		table.extensions.sort.initializeColumn(self, self.contentElement);
+	if(table.modExists("sort")){
+		table.modules.sort.initializeColumn(self, self.contentElement);
 	}
 
 	//set column formatter
-	if(table.extExists("format")){
-		table.extensions.format.initializeColumn(self);
+	if(table.modExists("format")){
+		table.modules.format.initializeColumn(self);
 	}
 
 	//set column editor
-	if(typeof def.editor != "undefined" && table.extExists("edit")){
-		table.extensions.edit.initializeColumn(self);
+	if(typeof def.editor != "undefined" && table.modExists("edit")){
+		table.modules.edit.initializeColumn(self);
 	}
 
 	//set colum validator
-	if(typeof def.validator != "undefined" && table.extExists("validate")){
-		table.extensions.validate.initializeColumn(self);
+	if(typeof def.validator != "undefined" && table.modExists("validate")){
+		table.modules.validate.initializeColumn(self);
 	}
 
 
 	//set column mutator
-	if(table.extExists("mutator")){
-		table.extensions.mutator.initializeColumn(self);
+	if(table.modExists("mutator")){
+		table.modules.mutator.initializeColumn(self);
 	}
 
 	//set column accessor
-	if(table.extExists("accessor")){
-		table.extensions.accessor.initializeColumn(self);
+	if(table.modExists("accessor")){
+		table.modules.accessor.initializeColumn(self);
 	}
 
 	//set respoviveLayout
-	if(typeof table.options.responsiveLayout && table.extExists("responsiveLayout")){
-		table.extensions.responsiveLayout.initializeColumn(self);
+	if(typeof table.options.responsiveLayout && table.modExists("responsiveLayout")){
+		table.modules.responsiveLayout.initializeColumn(self);
 	}
 
 	//set column visibility
@@ -451,11 +486,11 @@ Column.prototype._buildColumnHeader = function(){
 
 	//asign additional css classes to column header
 	if(def.cssClass){
-		self.element.addClass(def.cssClass);
+		self.element.classList.add(def.cssClass);
 	}
 
 	if(def.field){
-		this.element.attr("tabulator-field", def.field)
+		this.element.setAttribute("tabulator-field", def.field);
 	}
 
 	//set min width if present
@@ -475,9 +510,10 @@ Column.prototype._buildColumnHeaderContent = function(){
 	def = self.definition,
 	table = self.table;
 
-	var contentElement = $("<div class='tabulator-col-content'></div>");
+	var contentElement = document.createElement("div");
+	contentElement.classList.add("tabulator-col-content");
 
-	contentElement.append(self._buildColumnHeaderTitle());
+	contentElement.appendChild(self._buildColumnHeaderTitle());
 
 	return contentElement;
 };
@@ -489,35 +525,36 @@ Column.prototype._buildColumnHeaderTitle = function(){
 	table = self.table,
 	title;
 
-	var titleHolderElement = $("<div class='tabulator-col-title'></div>");
+	var titleHolderElement = document.createElement("div");
+	titleHolderElement.classList.add("tabulator-col-title");
 
 	if(def.editableTitle){
-		var titleElement = $("<input class='tabulator-title-editor'>");
+		var titleElement = document.createElement("input");
+		titleElement.classList.add("tabulator-title-editor");
 
-		titleElement.on("click", function(e){
+		titleElement.addEventListener("click", function(e){
 			e.stopPropagation();
-			$(this).focus();
+			titleElement.focus();
 		});
 
-		titleElement.on("change", function(){
-			var newTitle = $(this).val();
-			def.title = newTitle;
-			table.options.columnTitleChanged(self.getComponent());
+		titleElement.addEventListener("change", function(){
+			def.title = titleElement.value;
+			table.options.columnTitleChanged.call(self.table, self.getComponent());
 		});
 
-		titleHolderElement.append(titleElement);
+		titleHolderElement.appendChild(titleElement);
 
 		if(def.field){
-			table.extensions.localize.bind("columns|" + def.field, function(text){
-				titleElement.val(text || (def.title || "&nbsp"));
+			table.modules.localize.bind("columns|" + def.field, function(text){
+				titleElement.value = text || (def.title || "&nbsp");
 			});
 		}else{
-			titleElement.val(def.title || "&nbsp");
+			titleElement.value  = def.title || "&nbsp";
 		}
 
 	}else{
 		if(def.field){
-			table.extensions.localize.bind("columns|" + def.field, function(text){
+			table.modules.localize.bind("columns|" + def.field, function(text){
 				self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp"));
 			});
 		}else{
@@ -529,39 +566,41 @@ Column.prototype._buildColumnHeaderTitle = function(){
 };
 
 Column.prototype._formatColumnHeaderTitle = function(el, title){
-	var formatter, contents;
+	var formatter, contents, params, mockCell;
 
-	if(this.definition.titleFormatter && this.table.extExists("format")){
+	if(this.definition.titleFormatter && this.table.modExists("format")){
 
-		formatter = this.table.extensions.format.getFormatter(this.definition.titleFormatter);
+		formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
 
-		contents = formatter.call(this.table.extensions.format, {
+		mockCell = {
 			getValue:function(){
 				return title;
 			},
 			getElement:function(){
 				return el;
 			}
-		}, this.definition.titleFormatterParams || {});
+		};
 
-		el.append(contents);
+		params = this.definition.titleFormatterParams || {};
+
+		params = typeof params === "function" ? params() : params;
+
+		contents = formatter.call(this.table.modules.format, mockCell, params);
+
+		el.appendChild(contents);
 	}else{
-		el.html(title);
+		el.innerHTML = title;
 	}
 };
 
 
 //build header element for column group
 Column.prototype._buildGroupHeader = function(){
-	var self = this,
-	def = self.definition,
-	table = self.table;
+	this.element.classList.add("tabulator-col-group");
+	this.element.setAttribute("role", "columngroup");
+	this.element.setAttribute("aria-title", this.definition.title);
 
-	self.element.addClass("tabulator-col-group")
-	.attr("role", "columngroup")
-	.attr("aria-title", def.title);
-
-	self.element.append(self.groupElement);
+	this.element.appendChild(this.groupElement);
 };
 
 //flat field lookup
@@ -622,30 +661,31 @@ Column.prototype.attachColumn = function(column){
 
 	if(self.groupElement){
 		self.columns.push(column);
-		self.groupElement.append(column.getElement());
+		self.groupElement.appendChild(column.getElement());
 	}else{
 		console.warn("Column Warning - Column being attached to another column instead of column group");
 	}
 };
 
 //vertically align header in column
-Column.prototype.verticalAlign = function(alignment){
+Column.prototype.verticalAlign = function(alignment, height){
 
 	//calculate height of column header and group holder element
-	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().innerHeight() : this.parent.getHeadersElement().innerHeight();
+	var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : (height || this.parent.getHeadersElement().clientHeight);
+	// var parentHeight = this.parent.isGroup ? this.parent.getGroupElement().clientHeight : this.parent.getHeadersElement().clientHeight;
 
-	this.element.css("height", parentHeight);
+	this.element.style.height = parentHeight + "px";
 
 	if(this.isGroup){
-		this.groupElement.css("min-height", parentHeight - this.contentElement.outerHeight());
+		this.groupElement.style.minHeight = (parentHeight - this.contentElement.offsetHeight) + "px";
 	}
 
 	//vertically align cell contents
 	if(!this.isGroup && alignment !== "top"){
 		if(alignment === "bottom"){
-			this.element.css({"padding-top": this.element.innerHeight() - this.contentElement.outerHeight()});
+			this.element.style.paddingTop = (this.element.clientHeight - this.contentElement.offsetHeight) + "px";
 		}else{
-			this.element.css({"padding-top": (this.element.innerHeight() - this.contentElement.outerHeight()) / 2 });
+			this.element.style.paddingTop = ((this.element.clientHeight - this.contentElement.offsetHeight) / 2) + "px";
 		}
 	}
 
@@ -656,9 +696,9 @@ Column.prototype.verticalAlign = function(alignment){
 
 //clear vertical alignmenet
 Column.prototype.clearVerticalAlign = function(){
-	this.element.css("padding-top","");
-	this.element.css("height","");
-	this.element.css("min-height","");
+	this.element.style.paddingTop = "";
+	this.element.style.height = "";
+	this.element.style.minHeight = "";
 
 	this.columns.forEach(function(column){
 		column.clearVerticalAlign();
@@ -754,8 +794,8 @@ Column.prototype.checkColumnVisibility = function(){
 	});
 
 	if(visible){
-		this.show()
-		this.parent.table.options.columnVisibilityChanged(this.getComponent(), false);
+		this.show();
+		this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 	}else{
 		this.hide();
 	}
@@ -767,9 +807,8 @@ Column.prototype.show = function(silent, responsiveToggle){
 	if(!this.visible){
 		this.visible = true;
 
-		this.element.css({
-			"display":"",
-		});
+		this.element.style.display = "";
+
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
@@ -780,16 +819,16 @@ Column.prototype.show = function(silent, responsiveToggle){
 			cell.show();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.persistence.save("columns");
+		if(this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.persistence.save("columns");
 		}
 
-		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
+		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if(!silent){
-			this.table.options.columnVisibilityChanged(this.getComponent(), true);
+			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
 		}
 	}
 };
@@ -799,9 +838,8 @@ Column.prototype.hide = function(silent, responsiveToggle){
 	if(this.visible){
 		this.visible = false;
 
-		this.element.css({
-			"display":"none",
-		});
+		this.element.style.display = "none";
+
 		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.parent.isGroup){
@@ -812,16 +850,16 @@ Column.prototype.hide = function(silent, responsiveToggle){
 			cell.hide();
 		});
 
-		if(this.table.options.persistentLayout && this.table.extExists("persistence", true)){
-			this.table.extensions.persistence.save("columns");
+		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+			this.table.modules.persistence.save("columns");
 		}
 
-		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.extExists("responsiveLayout", true)){
-			this.table.extensions.responsiveLayout.updateColumnVisibility(this, this.visible);
+		if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
 		}
 
 		if(!silent){
-			this.table.options.columnVisibilityChanged(this.getComponent(), false);
+			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 		}
 	}
 };
@@ -834,9 +872,9 @@ Column.prototype.matchChildWidths = function(){
 			childWidth += column.getWidth();
 		});
 
-		this.contentElement.css("max-width", childWidth - 1);
+		this.contentElement.style.maxWidth = (childWidth - 1) + "px";
 	}
-}
+};
 
 Column.prototype.setWidth = function(width){
 	this.widthFixed = true;
@@ -846,14 +884,14 @@ Column.prototype.setWidth = function(width){
 Column.prototype.setWidthActual = function(width){
 
 	if(isNaN(width)){
-		width = Math.floor((this.table.element.innerWidth()/100) * parseInt(width));
+		width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 	}
 
 	width = Math.max(this.minWidth, width);
 
 	this.width = width;
 
-	this.element.css("width", width || "");
+	this.element.style.width = width ? width + "px" : "";
 
 	if(!this.isGroup){
 		this.cells.forEach(function(cell){
@@ -866,8 +904,8 @@ Column.prototype.setWidthActual = function(width){
 	}
 
 	//set resizable handles
-	if(this.table.extExists("frozenColumns")){
-		this.table.extensions.frozenColumns.layout();
+	if(this.table.modExists("frozenColumns")){
+		this.table.modules.frozenColumns.layout();
 	}
 };
 
@@ -877,7 +915,7 @@ Column.prototype.checkCellHeights = function(){
 
 	this.cells.forEach(function(cell){
 		if(cell.row.heightInitialized){
-			if(cell.row.element[0].offsetParent !== null){
+			if(cell.row.getElement().offsetParent !== null){
 				rows.push(cell.row);
 				cell.row.clearCellHeight();
 			}else{
@@ -888,25 +926,26 @@ Column.prototype.checkCellHeights = function(){
 
 	rows.forEach(function(row){
 		row.calcHeight();
-	})
+	});
 
 	rows.forEach(function(row){
 		row.setCellHeight();
-	})
+	});
 };
 
 Column.prototype.getWidth = function(){
-	return this.element.outerWidth();
+	// return this.element.offsetWidth;
+	return this.width;
 };
 
 Column.prototype.getHeight = function(){
-	return this.element.outerHeight();
+	return this.element.offsetHeight;
 };
 
 Column.prototype.setMinWidth = function(minWidth){
 	this.minWidth = minWidth;
 
-	this.element.css("min-width", minWidth || "");
+	this.element.style.minWidth = minWidth ? minWidth + "px" : "";
 
 	this.cells.forEach(function(cell){
 		cell.setMinWidth(minWidth);
@@ -926,7 +965,7 @@ Column.prototype.delete = function(){
 		this.cells[0].delete();
 	}
 
-	this.element.detach();
+	this.element.parentNode.removeChild(this.element);
 
 	this.table.columnManager.deregisterColumn(this);
 };
@@ -954,31 +993,31 @@ Column.prototype.reinitializeWidth = function(force){
 	}
 
 	//hide header filters to prevent them altering column width
-	if(this.table.extExists("filter")){
-		this.table.extensions.filter.hideHeaderFilterElements();
+	if(this.table.modExists("filter")){
+		this.table.modules.filter.hideHeaderFilterElements();
 	}
 
 	this.fitToData();
 
 	//show header filters again after layout is complete
-	if(this.table.extExists("filter")){
-		this.table.extensions.filter.showHeaderFilterElements();
+	if(this.table.modExists("filter")){
+		this.table.modules.filter.showHeaderFilterElements();
 	}
-}
+};
 
 //set column width to maximum cell width
 Column.prototype.fitToData = function(){
 	var self = this;
 
 	if(!this.widthFixed){
-		this.element.css("width", "")
+		this.element.width = "";
 
 		self.cells.forEach(function(cell){
 			cell.setWidth("");
 		});
 	}
 
-	var maxWidth = this.element.outerWidth();
+	var maxWidth = this.element.offsetWidth;
 
 	if(!self.width || !this.widthFixed){
 		self.cells.forEach(function(cell){
