@@ -845,7 +845,6 @@ Tabulator.prototype.addRow = function(data, pos, index){
 
 //update a row if it exitsts otherwise create it
 Tabulator.prototype.updateOrAddRow = function(index, data){
-
 	return new Promise((resolve, reject) => {
 		var row = this.rowManager.findRow(index);
 
@@ -881,24 +880,29 @@ Tabulator.prototype.updateOrAddRow = function(index, data){
 			});
 		}
 	});
-
 };
 
 //update row data
 Tabulator.prototype.updateRow = function(index, data){
-	var row = this.rowManager.findRow(index);
+	return new Promise((resolve, reject) => {
+		var row = this.rowManager.findRow(index);
 
-	if(typeof data === "string"){
-		data = JSON.parse(data);
-	}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-	if(row){
-		row.updateData(data);
-		return row.getComponent();
-	}else{
-		console.warn("Update Error - No matching row found:", index);
-		return false;
-	}
+		if(row){
+			row.updateData(data).then(()=>{
+				resolve(row.getComponent());
+			})
+			.catch((err)=>{
+				reject(err);
+			});
+		}else{
+			console.warn("Update Error - No matching row found:", index);
+			reject("Update Error - No matching row found");
+		}
+	});
 };
 
 //scroll to row in DOM

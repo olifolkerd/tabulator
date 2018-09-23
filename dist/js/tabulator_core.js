@@ -5595,19 +5595,26 @@ Tabulator.prototype.updateOrAddRow = function (index, data) {
 
 //update row data
 Tabulator.prototype.updateRow = function (index, data) {
-	var row = this.rowManager.findRow(index);
+	var _this11 = this;
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+	return new Promise(function (resolve, reject) {
+		var row = _this11.rowManager.findRow(index);
 
-	if (row) {
-		row.updateData(data);
-		return row.getComponent();
-	} else {
-		console.warn("Update Error - No matching row found:", index);
-		return false;
-	}
+		if (typeof data === "string") {
+			data = JSON.parse(data);
+		}
+
+		if (row) {
+			row.updateData(data).then(function () {
+				resolve(row.getComponent());
+			}).catch(function (err) {
+				reject(err);
+			});
+		} else {
+			console.warn("Update Error - No matching row found:", index);
+			reject("Update Error - No matching row found");
+		}
+	});
 };
 
 //scroll to row in DOM
