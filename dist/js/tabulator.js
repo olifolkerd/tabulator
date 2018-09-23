@@ -7352,7 +7352,17 @@ Tabulator.prototype.getColumns = function (structured) {
 
 Tabulator.prototype.getColumn = function (field) {
 
-	return this.columnManager.findColumn(field).getComponent();
+	var col = this.columnManager.findColumn(field);
+
+	if (col) {
+
+		return col.getComponent();
+	} else {
+
+		console.warn("Find Error - No matching column found:", field);
+
+		return false;
+	}
 };
 
 Tabulator.prototype.getColumnDefinitions = function () {
