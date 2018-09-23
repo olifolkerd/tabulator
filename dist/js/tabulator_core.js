@@ -5538,21 +5538,22 @@ Tabulator.prototype.deleteRow = function (index) {
 
 //add row to table
 Tabulator.prototype.addRow = function (data, pos, index) {
+	var _this9 = this;
 
-	var row;
+	return new Promise(function (resolve, reject) {
+		if (typeof data === "string") {
+			data = JSON.parse(data);
+		}
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+		_this9.rowManager.addRows(data, pos, index).then(function (rows) {
+			//recalc column calculations if present
+			if (_this9.modExists("columnCalcs")) {
+				_this9.modules.columnCalcs.recalc(_this9.rowManager.activeRows);
+			}
 
-	row = this.rowManager.addRows(data, pos, index)[0];
-
-	//recalc column calculations if present
-	if (this.modExists("columnCalcs")) {
-		this.modules.columnCalcs.recalc(this.rowManager.activeRows);
-	}
-
-	return row.getComponent();
+			resolve(rows[0].getComponent());
+		});
+	});
 };
 
 //update a row if it exitsts otherwise create it

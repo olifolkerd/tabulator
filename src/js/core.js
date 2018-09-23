@@ -826,21 +826,21 @@ Tabulator.prototype.deleteRow = function(index){
 
 //add row to table
 Tabulator.prototype.addRow = function(data, pos, index){
+	return new Promise((resolve, reject) => {
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-	var row;
+		this.rowManager.addRows(data, pos, index)
+		.then((rows)=>{
+			//recalc column calculations if present
+			if(this.modExists("columnCalcs")){
+				this.modules.columnCalcs.recalc(this.rowManager.activeRows);
+			}
 
-	if(typeof data === "string"){
-		data = JSON.parse(data);
-	}
-
-	row = this.rowManager.addRows(data, pos, index)[0];
-
-	//recalc column calculations if present
-	if(this.modExists("columnCalcs")){
-		this.modules.columnCalcs.recalc(this.rowManager.activeRows);
-	}
-
-	return row.getComponent();
+			resolve(rows[0].getComponent());
+		});
+	});
 };
 
 //update a row if it exitsts otherwise create it

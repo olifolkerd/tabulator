@@ -7165,24 +7165,27 @@ Tabulator.prototype.deleteRow = function (index) {
 //add row to table
 
 Tabulator.prototype.addRow = function (data, pos, index) {
+	var _this9 = this;
 
-	var row;
+	return new Promise(function (resolve, reject) {
 
-	if (typeof data === "string") {
+		if (typeof data === "string") {
 
-		data = JSON.parse(data);
-	}
+			data = JSON.parse(data);
+		}
 
-	row = this.rowManager.addRows(data, pos, index)[0];
+		_this9.rowManager.addRows(data, pos, index).then(function (rows) {
 
-	//recalc column calculations if present
+			//recalc column calculations if present
 
-	if (this.modExists("columnCalcs")) {
+			if (_this9.modExists("columnCalcs")) {
 
-		this.modules.columnCalcs.recalc(this.rowManager.activeRows);
-	}
+				_this9.modules.columnCalcs.recalc(_this9.rowManager.activeRows);
+			}
 
-	return row.getComponent();
+			resolve(rows[0].getComponent());
+		});
+	});
 };
 
 //update a row if it exitsts otherwise create it
@@ -9114,11 +9117,11 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Ajax.prototype._loadDataStandard = function (inPosition) {
-		var _this9 = this;
+		var _this10 = this;
 
 		return new Promise(function (resolve, reject) {
-			_this9.sendRequest(inPosition).then(function (data) {
-				_this9.table.rowManager.setData(data, inPosition);
+			_this10.sendRequest(inPosition).then(function (data) {
+				_this10.table.rowManager.setData(data, inPosition);
 				resolve();
 			}).catch(function (e) {
 				reject();
@@ -9160,7 +9163,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//send ajax request
 	Ajax.prototype.sendRequest = function (silent) {
-		var _this10 = this;
+		var _this11 = this;
 
 		var self = this,
 		    url = self.url,
@@ -9174,7 +9177,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		self._loadDefaultConfig();
 
 		return new Promise(function (resolve, reject) {
-			if (self.table.options.ajaxRequesting.call(_this10.table, self.url, self.params) !== false) {
+			if (self.table.options.ajaxRequesting.call(_this11.table, self.url, self.params) !== false) {
 
 				self.loading = true;
 
@@ -9182,7 +9185,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					self.showLoader();
 				}
 
-				_this10.loaderPromise(url, self.config, self.params).then(function (data) {
+				_this11.loaderPromise(url, self.config, self.params).then(function (data) {
 					if (requestNo === self.requestOrder) {
 						if (self.table.options.ajaxResponse) {
 							data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
@@ -14142,13 +14145,13 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this11 = this;
+		var _this12 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this11.actions[key]) {
+			if (_this12.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -15391,18 +15394,18 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this12 = this;
+		var _this13 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this12.max) {
-				_this12.page = page;
-				_this12.trigger().then(function () {
+			if (page > 0 && page <= _this13.max) {
+				_this13.page = page;
+				_this13.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this12.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this13.max + ":", page);
 				reject();
 			}
 		});
@@ -15475,12 +15478,12 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this13 = this;
+		var _this14 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this13.page > 1) {
-				_this13.page--;
-				_this13.trigger().then(function () {
+			if (_this14.page > 1) {
+				_this14.page--;
+				_this14.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -15494,19 +15497,19 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this14 = this;
+		var _this15 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this14.page < _this14.max) {
-				_this14.page++;
-				_this14.trigger().then(function () {
+			if (_this15.page < _this15.max) {
+				_this15.page++;
+				_this15.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this14.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this14.max + ":", _this14.max + 1);
+				if (!_this15.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this15.max + ":", _this15.max + 1);
 				}
 				reject();
 			}
@@ -15558,28 +15561,28 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype.trigger = function () {
-		var _this15 = this;
+		var _this16 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this15.mode) {
+			switch (_this16.mode) {
 				case "local":
-					left = _this15.table.rowManager.scrollLeft;
+					left = _this16.table.rowManager.scrollLeft;
 
-					_this15.table.rowManager.refreshActiveData("page");
-					_this15.table.rowManager.scrollHorizontal(left);
+					_this16.table.rowManager.refreshActiveData("page");
+					_this16.table.rowManager.scrollHorizontal(left);
 
-					_this15.table.options.pageLoaded.call(_this15.table, _this15.getPage());
+					_this16.table.options.pageLoaded.call(_this16.table, _this16.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this15.table.modules.ajax.blockActiveRequest();
-					_this15._getRemotePage().then(function () {
+					_this16.table.modules.ajax.blockActiveRequest();
+					_this16._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -15587,7 +15590,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this15.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this16.mode);
 					reject();
 			}
 		});
@@ -15605,17 +15608,17 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype._getRemotePagePaginator = function () {
-		var _this16 = this;
+		var _this17 = this;
 
 		var ajax = this.table.modules.ajax,
 		    oldUrl = ajax.getUrl();
 
 		return new Promise(function (resolve, reject) {
 
-			ajax.setUrl(_this16.paginator(ajax.getUrl(), _this16.page, _this16.size, ajax.getParams()));
+			ajax.setUrl(_this17.paginator(ajax.getUrl(), _this17.page, _this17.size, ajax.getParams()));
 
 			ajax.sendRequest().then(function (data) {
-				_this16._parseRemoteData(data);
+				_this17._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
 				reject();
@@ -15626,7 +15629,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype._getRemotePageAuto = function () {
-		var _this17 = this;
+		var _this18 = this;
 
 		var self = this,
 		    oldParams,
@@ -15639,33 +15642,33 @@ Tabulator.prototype.registerModule("comms", Comms);
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this17.paginationDataSentNames.page] = self.page;
+			pageParams[_this18.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this17.size) {
-				pageParams[_this17.paginationDataSentNames.size] = _this17.size;
+			if (_this18.size) {
+				pageParams[_this18.paginationDataSentNames.size] = _this18.size;
 			}
 
 			//set sort data if defined
-			if (_this17.table.options.ajaxSorting && _this17.table.modExists("sort")) {
+			if (_this18.table.options.ajaxSorting && _this18.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this17.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this18.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this17.table.options.ajaxFiltering && _this17.table.modExists("filter")) {
+			if (_this18.table.options.ajaxFiltering && _this18.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this17.paginationDataSentNames.filters] = filters;
+				pageParams[_this18.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this17.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this18.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
