@@ -4840,10 +4840,10 @@ Tabulator.prototype.defaultOptions = {
 	paginationElement: false, //element to hold pagination numbers
 	paginationDataSent: {}, //pagination data sent to the server
 	paginationDataReceived: {}, //pagination data received from the server
-	paginator: false, //pagination url string builder
 	paginationAddRow: "page", //add rows on table or page
 
 	ajaxURL: false, //url for ajax loading
+	ajaxURLGenerator: false,
 	ajaxParams: {}, //params for ajax loading
 	ajaxConfig: "get", //ajax request type
 	ajaxPromiseFunc: false, //promise function

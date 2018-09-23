@@ -9,7 +9,6 @@ var Page = function(table){
 	this.page = 1;
 	this.count = 5;
 	this.max = 1;
-	this.paginator = false;
 
 	this.displayIndex = 0; //index in display pipeline
 
@@ -58,11 +57,6 @@ Page.prototype.initialize = function(hidden){
 	for(let key in self.table.options.paginationDataReceived){
 		self.paginationDataReceivedNames[key] = self.table.options.paginationDataReceived[key];
 	}
-
-	if(self.table.options.paginator){
-		self.paginator = self.table.options.paginator;
-	}
-
 
 	//build pagination element
 
@@ -393,40 +387,15 @@ Page.prototype.trigger = function(){
 };
 
 Page.prototype._getRemotePage = function(){
-	if(this.table.modExists("ajax", true)){
-
-		if(this.paginator){
-			return this._getRemotePagePaginator();
-		}else{
-			return this._getRemotePageAuto();
-		}
-	}
-};
-
-Page.prototype._getRemotePagePaginator = function(){
-	var ajax = this.table.modules.ajax,
-	oldUrl = ajax.getUrl();
-
-	return new Promise((resolve, reject)=>{
-
-		ajax.setUrl(this.paginator(ajax.getUrl(), this.page, this.size, ajax.getParams()));
-
-		ajax.sendRequest()
-		.then((data)=>{
-			this._parseRemoteData(data);
-			resolve();
-		})
-		.catch((e)=>{reject()});
-
-		ajax.setUrl(oldUrl);
-	});
-};
-
-Page.prototype._getRemotePageAuto = function(){
 	var self = this,
 	oldParams, pageParams;
 
+
 	return new Promise((resolve, reject)=>{
+
+		if(!self.table.modExists("ajax", true)){
+			reject()
+		}
 
 		//record old params and restore after request has been made
 		oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});

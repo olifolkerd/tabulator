@@ -3,6 +3,7 @@ var Ajax = function(table){
 	this.table = table; //hold Tabulator object
 	this.config = false; //hold config object for ajax request
 	this.url = ""; //request URL
+	this.urlGenerator = false;
 	this.params = false; //request parameters
 
 	this.loaderElement = this.createLoaderElement(); //loader message div
@@ -26,6 +27,8 @@ Ajax.prototype.initialize = function(){
 	}
 
 	this.loaderPromise = this.table.options.ajaxPromiseFunc || this.defaultLoaderPromise;
+
+	this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
 
 	if(this.table.options.ajaxLoaderError){
 		this.errorElement = this.table.options.ajaxLoaderError;
@@ -313,20 +316,26 @@ Ajax.prototype.defaultConfig = {
 	}
 };
 
+Ajax.prototype.defaultURLGenerator = function(url, config, params){
+	if(params){
+		if(!config.method || config.method == "get"){
+			url += "?" + this.serializeParams(params);
+		}else{
+			config.body = JSON.stringify(params);
+		}
+	}
+
+	return url;
+};
+
 Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 	var self = this;
 
 	return new Promise(function(resolve, reject){
 
-		if(url){
+		url = self.urlGenerator(url, config, params);
 
-			if(params){
-				if(!config.method || config.method == "get"){
-					url += "?" + self.serializeParams(params);
-				}else{
-					config.body = JSON.stringify(params);
-				}
-			}
+		if(url){
 
 			fetch(url, config)
 			.then((response)=>{

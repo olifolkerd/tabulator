@@ -13,7 +13,6 @@ var Page = function Page(table) {
 	this.page = 1;
 	this.count = 5;
 	this.max = 1;
-	this.paginator = false;
 
 	this.displayIndex = 0; //index in display pipeline
 
@@ -61,10 +60,6 @@ Page.prototype.initialize = function (hidden) {
 
 	for (var _key in self.table.options.paginationDataReceived) {
 		self.paginationDataReceivedNames[_key] = self.table.options.paginationDataReceived[_key];
-	}
-
-	if (self.table.options.paginator) {
-		self.paginator = self.table.options.paginator;
 	}
 
 	//build pagination element
@@ -394,39 +389,7 @@ Page.prototype.trigger = function () {
 };
 
 Page.prototype._getRemotePage = function () {
-	if (this.table.modExists("ajax", true)) {
-
-		if (this.paginator) {
-			return this._getRemotePagePaginator();
-		} else {
-			return this._getRemotePageAuto();
-		}
-	}
-};
-
-Page.prototype._getRemotePagePaginator = function () {
 	var _this5 = this;
-
-	var ajax = this.table.modules.ajax,
-	    oldUrl = ajax.getUrl();
-
-	return new Promise(function (resolve, reject) {
-
-		ajax.setUrl(_this5.paginator(ajax.getUrl(), _this5.page, _this5.size, ajax.getParams()));
-
-		ajax.sendRequest().then(function (data) {
-			_this5._parseRemoteData(data);
-			resolve();
-		}).catch(function (e) {
-			reject();
-		});
-
-		ajax.setUrl(oldUrl);
-	});
-};
-
-Page.prototype._getRemotePageAuto = function () {
-	var _this6 = this;
 
 	var self = this,
 	    oldParams,
@@ -434,38 +397,42 @@ Page.prototype._getRemotePageAuto = function () {
 
 	return new Promise(function (resolve, reject) {
 
+		if (!self.table.modExists("ajax", true)) {
+			reject();
+		}
+
 		//record old params and restore after request has been made
 		oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
 		pageParams = self.table.modules.ajax.getParams();
 
 		//configure request params
-		pageParams[_this6.paginationDataSentNames.page] = self.page;
+		pageParams[_this5.paginationDataSentNames.page] = self.page;
 
 		//set page size if defined
-		if (_this6.size) {
-			pageParams[_this6.paginationDataSentNames.size] = _this6.size;
+		if (_this5.size) {
+			pageParams[_this5.paginationDataSentNames.size] = _this5.size;
 		}
 
 		//set sort data if defined
-		if (_this6.table.options.ajaxSorting && _this6.table.modExists("sort")) {
+		if (_this5.table.options.ajaxSorting && _this5.table.modExists("sort")) {
 			var sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function (item) {
 				delete item.column;
 			});
 
-			pageParams[_this6.paginationDataSentNames.sorters] = sorters;
+			pageParams[_this5.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
-		if (_this6.table.options.ajaxFiltering && _this6.table.modExists("filter")) {
+		if (_this5.table.options.ajaxFiltering && _this5.table.modExists("filter")) {
 			var filters = self.table.modules.filter.getFilters(true, true);
-			pageParams[_this6.paginationDataSentNames.filters] = filters;
+			pageParams[_this5.paginationDataSentNames.filters] = filters;
 		}
 
 		self.table.modules.ajax.setParams(pageParams);
 
-		self.table.modules.ajax.sendRequest(_this6.progressiveLoad).then(function (data) {
+		self.table.modules.ajax.sendRequest(_this5.progressiveLoad).then(function (data) {
 			self._parseRemoteData(data);
 			resolve();
 		}).catch(function (e) {

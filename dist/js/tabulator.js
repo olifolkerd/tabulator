@@ -6187,12 +6187,12 @@ Tabulator.prototype.defaultOptions = {
 
 	paginationDataReceived: {}, //pagination data received from the server
 
-	paginator: false, //pagination url string builder
-
 	paginationAddRow: "page", //add rows on table or page
 
 
 	ajaxURL: false, //url for ajax loading
+
+	ajaxURLGenerator: false,
 
 	ajaxParams: {}, //params for ajax loading
 
@@ -9016,6 +9016,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.table = table; //hold Tabulator object
 		this.config = false; //hold config object for ajax request
 		this.url = ""; //request URL
+		this.urlGenerator = false;
 		this.params = false; //request parameters
 
 		this.loaderElement = this.createLoaderElement(); //loader message div
@@ -9039,6 +9040,8 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 
 		this.loaderPromise = this.table.options.ajaxPromiseFunc || this.defaultLoaderPromise;
+
+		this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
 
 		if (this.table.options.ajaxLoaderError) {
 			this.errorElement = this.table.options.ajaxLoaderError;
@@ -9328,20 +9331,26 @@ Tabulator.prototype.registerModule("comms", Comms);
 		}
 	};
 
+	Ajax.prototype.defaultURLGenerator = function (url, config, params) {
+		if (params) {
+			if (!config.method || config.method == "get") {
+				url += "?" + this.serializeParams(params);
+			} else {
+				config.body = JSON.stringify(params);
+			}
+		}
+
+		return url;
+	};
+
 	Ajax.prototype.defaultLoaderPromise = function (url, config, params) {
 		var self = this;
 
 		return new Promise(function (resolve, reject) {
 
-			if (url) {
+			url = self.urlGenerator(url, config, params);
 
-				if (params) {
-					if (!config.method || config.method == "get") {
-						url += "?" + self.serializeParams(params);
-					} else {
-						config.body = JSON.stringify(params);
-					}
-				}
+			if (url) {
 
 				fetch(url, config).then(function (response) {
 					if (response.ok) {
@@ -15273,7 +15282,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 		this.page = 1;
 		this.count = 5;
 		this.max = 1;
-		this.paginator = false;
 
 		this.displayIndex = 0; //index in display pipeline
 
@@ -15321,10 +15329,6 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		for (var _key2 in self.table.options.paginationDataReceived) {
 			self.paginationDataReceivedNames[_key2] = self.table.options.paginationDataReceived[_key2];
-		}
-
-		if (self.table.options.paginator) {
-			self.paginator = self.table.options.paginator;
 		}
 
 		//build pagination element
@@ -15654,39 +15658,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 	};
 
 	Page.prototype._getRemotePage = function () {
-		if (this.table.modExists("ajax", true)) {
-
-			if (this.paginator) {
-				return this._getRemotePagePaginator();
-			} else {
-				return this._getRemotePageAuto();
-			}
-		}
-	};
-
-	Page.prototype._getRemotePagePaginator = function () {
 		var _this23 = this;
-
-		var ajax = this.table.modules.ajax,
-		    oldUrl = ajax.getUrl();
-
-		return new Promise(function (resolve, reject) {
-
-			ajax.setUrl(_this23.paginator(ajax.getUrl(), _this23.page, _this23.size, ajax.getParams()));
-
-			ajax.sendRequest().then(function (data) {
-				_this23._parseRemoteData(data);
-				resolve();
-			}).catch(function (e) {
-				reject();
-			});
-
-			ajax.setUrl(oldUrl);
-		});
-	};
-
-	Page.prototype._getRemotePageAuto = function () {
-		var _this24 = this;
 
 		var self = this,
 		    oldParams,
@@ -15694,38 +15666,42 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		return new Promise(function (resolve, reject) {
 
+			if (!self.table.modExists("ajax", true)) {
+				reject();
+			}
+
 			//record old params and restore after request has been made
 			oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this24.paginationDataSentNames.page] = self.page;
+			pageParams[_this23.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this24.size) {
-				pageParams[_this24.paginationDataSentNames.size] = _this24.size;
+			if (_this23.size) {
+				pageParams[_this23.paginationDataSentNames.size] = _this23.size;
 			}
 
 			//set sort data if defined
-			if (_this24.table.options.ajaxSorting && _this24.table.modExists("sort")) {
+			if (_this23.table.options.ajaxSorting && _this23.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this24.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this23.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this24.table.options.ajaxFiltering && _this24.table.modExists("filter")) {
+			if (_this23.table.options.ajaxFiltering && _this23.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this24.paginationDataSentNames.filters] = filters;
+				pageParams[_this23.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this24.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this23.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
