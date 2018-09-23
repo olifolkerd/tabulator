@@ -28,17 +28,17 @@ Validate.prototype.initializeColumn = function(column){
 		}
 
 		column.modules.validate = config.length ? config : false;
-
-	};
+	}
+};
 
 Validate.prototype._extractValidator = function(value){
 	var parts, type, params;
 
 	switch(typeof value){
 		case "string":
-		let parts = value.split(":",1);
-		let type = parts.shift();
-		let params = parts[0];
+		parts = value.split(":",1);
+		type = parts.shift();
+		params = parts[0];
 
 		return this._buildValidator(type, params);
 		break;

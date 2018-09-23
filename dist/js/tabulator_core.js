@@ -392,7 +392,7 @@ ColumnManager.prototype.findColumn = function (subject) {
 
 			var match = self.columns.find(function (column) {
 
-				return column.element === subject;
+				return column.element.is(subject);
 			});
 
 			return match || false;
@@ -2037,7 +2037,7 @@ RowManager.prototype.findRow = function (subject) {
 		} else if (subject instanceof HTMLElement) {
 			//subject is a HTML element of the row
 			var match = self.rows.find(function (row) {
-				return row.element === subject;
+				return row.element.is(subject);
 			});
 
 			return match || false;

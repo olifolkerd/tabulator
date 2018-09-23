@@ -435,7 +435,7 @@ ColumnManager.prototype.findColumn = function (subject) {
 
 			var match = self.columns.find(function (column) {
 
-				return column.element === subject;
+				return column.element.is(subject);
 			});
 
 			return match || false;
@@ -2498,7 +2498,7 @@ RowManager.prototype.findRow = function (subject) {
 
 			var match = self.rows.find(function (row) {
 
-				return row.element === subject;
+				return row.element.is(subject);
 			});
 
 			return match || false;
@@ -17420,9 +17420,9 @@ Tabulator.prototype.registerModule("comms", Comms);
 
 		switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 			case "string":
-				parts = value.split(":");
+				parts = value.split(":", 1);
 				type = parts.shift();
-				params = parts.join();
+				params = parts[0];
 
 				return this._buildValidator(type, params);
 				break;

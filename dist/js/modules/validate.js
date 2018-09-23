@@ -41,9 +41,9 @@ Validate.prototype._extractValidator = function (value) {
 
 	switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
 		case "string":
-			parts = value.split(":");
+			parts = value.split(":", 1);
 			type = parts.shift();
-			params = parts.join();
+			params = parts[0];
 
 			return this._buildValidator(type, params);
 			break;
