@@ -3500,7 +3500,7 @@ RowComponent.prototype.scrollTo = function () {
 };
 
 RowComponent.prototype.update = function (data) {
-	this._row.updateData(data);
+	return this._row.updateData(data);
 };
 
 RowComponent.prototype.normalizeHeight = function () {
@@ -3842,48 +3842,55 @@ Row.prototype.setData = function (data) {
 
 //update the rows data
 Row.prototype.updateData = function (data) {
+	var _this2 = this;
+
 	var self = this;
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+	return new Promise(function (resolve, reject) {
 
-	//mutate incomming data if needed
-	if (self.table.modExists("mutator")) {
-		data = self.table.modules.mutator.transformRow(data, "data", true);
-	}
+		if (typeof data === "string") {
+			data = JSON.parse(data);
+		}
 
-	//set data
-	for (var attrname in data) {
-		self.data[attrname] = data[attrname];
-	}
+		//mutate incomming data if needed
+		if (self.table.modExists("mutator")) {
+			data = self.table.modules.mutator.transformRow(data, "data", true);
+		}
 
-	//update affected cells only
-	for (var attrname in data) {
-		var cell = this.getCell(attrname);
+		//set data
+		for (var attrname in data) {
+			self.data[attrname] = data[attrname];
+		}
 
-		if (cell) {
-			if (cell.getValue() != data[attrname]) {
-				cell.setValueProcessData(data[attrname]);
+		//update affected cells only
+		for (var attrname in data) {
+			var cell = _this2.getCell(attrname);
+
+			if (cell) {
+				if (cell.getValue() != data[attrname]) {
+					cell.setValueProcessData(data[attrname]);
+				}
 			}
 		}
-	}
 
-	//Partial reinitialization if visible
-	if (Tabulator.prototype.helpers.elVisible(this.element)) {
-		self.normalizeHeight();
+		//Partial reinitialization if visible
+		if (Tabulator.prototype.helpers.elVisible(_this2.element)) {
+			self.normalizeHeight();
 
-		if (self.table.options.rowFormatter) {
-			self.table.options.rowFormatter(self.getComponent());
+			if (self.table.options.rowFormatter) {
+				self.table.options.rowFormatter(self.getComponent());
+			}
+		} else {
+			_this2.initialized = false;
+			_this2.height = 0;
 		}
-	} else {
-		this.initialized = false;
-		this.height = 0;
-	}
 
-	//self.reinitialize();
+		//self.reinitialize();
 
-	self.table.options.rowUpdated.call(this.table, self.getComponent());
+		self.table.options.rowUpdated.call(_this2.table, self.getComponent());
+
+		resolve();
+	});
 };
 
 Row.prototype.getData = function (transform) {
@@ -5359,27 +5366,40 @@ Tabulator.prototype.replaceData = function (data, params, config) {
 
 //update table data
 Tabulator.prototype.updateData = function (data) {
+	var _this3 = this;
+
 	var self = this;
+	var responses = 0;
 
-	if (this.modExists("ajax")) {
-		this.modules.ajax.blockActiveRequest();
-	}
+	return new Promise(function (resolve, reject) {
+		if (_this3.modExists("ajax")) {
+			_this3.modules.ajax.blockActiveRequest();
+		}
 
-	if (typeof data === "string") {
-		data = JSON.parse(data);
-	}
+		if (typeof data === "string") {
+			data = JSON.parse(data);
+		}
 
-	if (data) {
-		data.forEach(function (item) {
-			var row = self.rowManager.findRow(item[self.options.index]);
+		if (data) {
+			data.forEach(function (item) {
+				var row = self.rowManager.findRow(item[self.options.index]);
 
-			if (row) {
-				row.updateData(item);
-			}
-		});
-	} else {
-		console.warn("Update Error - No data provided");
-	}
+				if (row) {
+					responses++;
+
+					row.updateData(item).then(function () {
+						responses--;
+
+						if (!responses) {
+							resolve();
+						}
+					});
+				}
+			});
+		} else {
+			console.warn("Update Error - No data provided");
+		}
+	});
 };
 
 Tabulator.prototype.addData = function (data, pos, index) {

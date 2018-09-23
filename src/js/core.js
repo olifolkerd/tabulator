@@ -665,26 +665,39 @@ Tabulator.prototype.replaceData = function(data, params, config){
 //update table data
 Tabulator.prototype.updateData = function(data){
 	var self = this;
+	var responses = 0;
 
-	if(this.modExists("ajax")){
-		this.modules.ajax.blockActiveRequest();
-	}
+	return new Promise((resolve, reject) => {
+		if(this.modExists("ajax")){
+			this.modules.ajax.blockActiveRequest();
+		}
 
-	if(typeof data === "string"){
-		data = JSON.parse(data);
-	}
+		if(typeof data === "string"){
+			data = JSON.parse(data);
+		}
 
-	if(data){
-		data.forEach(function(item){
-			var row = self.rowManager.findRow(item[self.options.index]);
+		if(data){
+			data.forEach(function(item){
+				var row = self.rowManager.findRow(item[self.options.index]);
 
-			if(row){
-				row.updateData(item);
-			}
-		})
-	}else{
-		console.warn("Update Error - No data provided");
-	}
+				if(row){
+					responses++;
+
+					row.updateData(item)
+					.then(()=>{
+						responses--;
+
+						if(!responses){
+							resolve();
+						}
+					});
+				}
+			});
+		}else{
+			console.warn("Update Error - No data provided");
+		}
+	});
+
 };
 
 Tabulator.prototype.addData = function(data, pos, index){
