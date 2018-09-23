@@ -189,7 +189,7 @@
 }
 
 .tabulator .tabulator-header .tabulator-frozen-rows-holder {
-  min-width: 200%;
+  min-width: 400%;
 }
 
 .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {

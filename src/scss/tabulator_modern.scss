@@ -272,7 +272,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			min-width:200%;
+			min-width:400%;
 
 			border-top:2px solid $headerSeperatorColor !important;
 
@@ -299,7 +299,7 @@ $handleColorAlt: lighten($primary, 10%); //color for even numbered rows
 		}
 
 		.tabulator-frozen-rows-holder{
-			min-width:200%;
+			min-width:400%;
 
 			&:empty{
 				display: none;
