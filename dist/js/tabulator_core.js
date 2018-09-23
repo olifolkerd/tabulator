@@ -386,9 +386,9 @@ ColumnManager.prototype.findColumn = function (subject) {
 			//subject is public column component
 
 			return subject._getSelf() || false;
-		} else if (subject instanceof jQuery) {
+		} else if (subject instanceof HTMLElement) {
 
-			//subject is a jquery element of the column header
+			//subject is a HTML element of the column header
 
 			var match = self.columns.find(function (column) {
 
@@ -2030,8 +2030,8 @@ RowManager.prototype.findRow = function (subject) {
 		} else if (subject instanceof RowComponent) {
 			//subject is public row component
 			return subject._getSelf() || false;
-		} else if (subject instanceof jQuery) {
-			//subject is a jquery element of the row
+		} else if (subject instanceof HTMLElement) {
+			//subject is a HTML element of the row
 			var match = self.rows.find(function (row) {
 				return row.element === subject;
 			});

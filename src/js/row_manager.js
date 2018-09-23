@@ -152,8 +152,8 @@ RowManager.prototype.findRow = function(subject){
 		}else if(subject instanceof RowComponent){
 			//subject is public row component
 			return subject._getSelf() || false;
-		}else if(subject instanceof jQuery){
-			//subject is a jquery element of the row
+		}else if(subject instanceof HTMLElement){
+			//subject is a HTML element of the row
 			let match = self.rows.find(function(row){
 				return row.element === subject;
 			});
