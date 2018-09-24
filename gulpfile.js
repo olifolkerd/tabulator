@@ -62,13 +62,14 @@ gulp.task('tabulator', function() {
     //.pipe(jshint())
     // .pipe(jshint.reporter('default'))
     .pipe(babel({
-     //presets:['es2015']
-     presets: [["env", {
-        "targets": {
-          "browsers": ["last 4 versions"]
-      }
-      }]
-      ]
+        //presets:['es2015']
+        presets: [["env",{
+            "targets": {
+              "browsers": ["last 4 versions"]
+            },
+            loose: true,
+            modules: false,
+        }, ], {  }]
       }))
     .pipe(concat('tabulator.js'))
     .pipe(gulp.dest('dist/js'))
@@ -92,7 +93,9 @@ gulp.task('core', function() {
         presets: [["env", {
           "targets": {
             "browsers": ["last 4 versions"]
-        }
+        },
+        loose: true,
+        modules: false,
         }]
         ]
         }))
@@ -126,7 +129,9 @@ gulp.task('modules', function(){
                 presets: [["env", {
                   "targets": {
                     "browsers": ["last 4 versions"]
-                }
+                },
+                loose: true,
+                modules: false,
                 }]
                 ]
                 }))
@@ -150,7 +155,9 @@ gulp.task('jquery', function(){
         presets: [["env", {
           "targets": {
             "browsers": ["last 4 versions"]
-        }
+        },
+        loose: true,
+        modules: false,
         }]
         ]
         }))
