@@ -12420,7 +12420,7 @@ Tabulator.prototype.registerModule("comms", Comms);
 			}
 
 			number = precision !== false ? floatVal.toFixed(precision) : floatVal;
-			number = number.split(".");
+			number = String(number).split(".");
 
 			integer = number[0];
 			decimal = number.length > 1 ? decimalSym + number[1] : "";
