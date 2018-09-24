@@ -4385,6 +4385,10 @@ Cell.prototype._generateTooltip = function () {
 			}
 		}
 
+		if (typeof tooltip === "undefined") {
+			tooltip = "";
+		}
+
 		this.element.setAttribute("title", tooltip);
 	} else {
 		this.element.setAttribute("title", "");
