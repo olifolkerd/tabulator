@@ -4751,7 +4751,6 @@ var Tabulator = function Tabulator(element, options) {
 
 	this.modules = {}; //hold all modules bound to this table
 
-
 	this.initializeElement(element);
 	this.initializeOptions(options || {});
 	this._create();

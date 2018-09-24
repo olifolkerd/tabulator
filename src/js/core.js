@@ -1,4 +1,3 @@
-
 'use strict';
 
 /*=include polyfills.js */
@@ -21,7 +20,6 @@ var Tabulator = function(element, options){
 	this.browserSlow = false; //handle reduced functionality for slower browsers
 
 	this.modules = {}; //hold all modules bound to this table
-
 
 	this.initializeElement(element);
 	this.initializeOptions(options || {});

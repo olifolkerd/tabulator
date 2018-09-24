@@ -1,5 +1,3 @@
-"use strict";
-
 /* Tabulator v4.0.0 (c) Oliver Folkerd */
 
 //public group object
