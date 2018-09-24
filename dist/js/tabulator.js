@@ -11476,7 +11476,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			//set new value
 			function updateValue() {
 				var calcVal = percent * Math.round(bar.offsetWidth / (element.clientWidth / 100)) + min;
-				console.log("success", calcVal, percent, bar.offsetWidth, element.clientWidth, min);
 				success(calcVal);
 				element.setAttribute("aria-valuenow", calcVal);
 				element.setAttribute("aria-label", value);
