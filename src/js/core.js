@@ -81,6 +81,7 @@ Tabulator.prototype.defaultOptions = {
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 	selectable:"highlight", //highlight rows on hover
+	selectableRangeType: "drag", //highlight rows on hover
 	selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
 	selectablePersistence:true, // maintain selection when table view is updated
 	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
