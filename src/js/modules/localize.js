@@ -185,6 +185,7 @@ Localize.prototype.langs = {
 			"prev_title":"Prev Page",
 			"next":"Next",
 			"next_title":"Next Page",
+			"page_button_title":"Show Page ${page}",
 		},
 		"headerFilters":{
 			"default":"filter column...",

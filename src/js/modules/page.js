@@ -254,8 +254,10 @@ Page.prototype._generatePageButton = function(page){
 
 	button.setAttribute("type", "button");
 	button.setAttribute("role", "button");
-	button.setAttribute("aria-label", "Show Page " + page);
-	button.setAttribute("title", "Show Page " + page);
+	var title = self.table.modules.localize.getText( "pagination", "page_button_title" );
+	title = title.split( "${page}" ).join( page );
+	button.setAttribute("aria-label", title );
+	button.setAttribute("title", title ); 
 	button.setAttribute("data-page", page);
 	button.textContent = page;
 
