@@ -53,6 +53,8 @@ Tabulator.prototype.defaultOptions = {
 
 	initialSort:false, //initial sorting criteria
 	initialFilter:false, //initial filtering criteria
+	
+	singleSortMode: false, //multiple or single column sorting
 
 	footerElement:false, //hold footer element
 
