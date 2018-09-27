@@ -1,38 +1,38 @@
 
 //Main Theme Variables
-$backgroundColor: #fff; //background color of tabulator
-$borderColor:#222; //border to tablulator
-$textSize:14px; //table text size
+$backgroundColor: #fff !default; //background color of tabulator
+$borderColor:#222 !default; //border to tablulator
+$textSize:14px !default; //table text size
 
 //header themeing
-$headerBackgroundColor:#222; //border to tablulator
-$headerTextColor:#fff; //header text colour
-$headerBorderColor:#aaa;  //header border color
-$headerSeperatorColor:#3FB449; //header bottom seperator color
-$headerMargin:4px; //padding round header
+$headerBackgroundColor:#222 !default; //border to tablulator
+$headerTextColor:#fff !default; //header text colour
+$headerBorderColor:#aaa !default;  //header border color
+$headerSeperatorColor:#3FB449 !default; //header bottom seperator color
+$headerMargin:4px !default; //padding round header
 
 //column header arrows
-$sortArrowActive: #3FB449;
-$sortArrowInactive: #bbb;
+$sortArrowActive: #3FB449 !default;
+$sortArrowInactive: #bbb !default;
 
 //row themeing
-$rowBackgroundColor:#fff; //table row background color
-$rowAltBackgroundColor:#EFEFEF; //table row background color
-$rowBorderColor:#aaa; //table border color
-$rowTextColor:#333; //table text color
-$rowHoverBackground:#bbb; //row background color on hover
+$rowBackgroundColor:#fff !default; //table row background color
+$rowAltBackgroundColor:#EFEFEF !default; //table row background color
+$rowBorderColor:#aaa !default; //table border color
+$rowTextColor:#333 !default; //table text color
+$rowHoverBackground:#bbb !default; //row background color on hover
 
-$rowSelectedBackground: #9ABCEA; //row background color when selected
-$rowSelectedBackgroundHover: #769BCC;//row background color when selected and hovered
+$rowSelectedBackground: #9ABCEA !default; //row background color when selected
+$rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
 
-$editBoxColor:#1D68CD; //border color for edit boxes
-$errorColor:#dd0000; //error indication
+$editBoxColor:#1D68CD !default; //border color for edit boxes
+$errorColor:#dd0000 !default; //error indication
 
 //footer themeing
-$footerBackgroundColor:#222; //border to tablulator
-$footerTextColor:#222; //footer text colour
-$footerBorderColor:#aaa; //footer border color
-$footerSeperatorColor:#3FB449; //footer bottom seperator color
+$footerBackgroundColor:#222 !default; //border to tablulator
+$footerTextColor:#222 !default; //footer text colour
+$footerBorderColor:#aaa !default; //footer border color
+$footerSeperatorColor:#3FB449 !default; //footer bottom seperator color
 
 
 
