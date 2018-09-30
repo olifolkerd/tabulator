@@ -24,7 +24,11 @@
     "scrollable",
     "ajax",
     "json",
-    "widget"
+    "widget",
+    "jquery",
+    "react",
+    "angular",
+    "vue"
   ],
   "author": "Oli Folkerd",
   "license": "MIT",

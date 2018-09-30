@@ -19,7 +19,11 @@
     "scrollable",
     "ajax",
     "json",
-    "widget"
+    "widget",
+    "jquery",
+    "react",
+    "angular",
+    "vue"
   ],
   "authors": [
     "Oli Folkerd"
