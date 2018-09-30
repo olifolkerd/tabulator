@@ -9213,36 +9213,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	};
 
-	Ajax.prototype.serializeParams = function (data, prefix) {
+	Ajax.prototype.generateParamsList = function (data, prefix) {
 		var self = this,
-		    output = [],
-		    encoded = [];
+		    output = [];
 
 		prefix = prefix || "";
 
 		if (Array.isArray(data)) {
-
 			data.forEach(function (item, i) {
-				output = output.concat(self.serializeParams(item, prefix ? prefix + "[" + i + "]" : i));
+				output = output.concat(self.generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
 			});
 		} else if ((typeof data === 'undefined' ? 'undefined' : _typeof(data)) === "object") {
-
 			for (var key in data) {
-				output = output.concat(self.serializeParams(data[key], prefix ? prefix + "[" + key + "]" : key));
+				output = output.concat(self.generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
 			}
 		} else {
-			output.push({ key: prefix, val: data });
+			output.push({ key: prefix, value: data });
 		}
 
-		if (prefix) {
-			return output;
-		} else {
-			output.forEach(function (item) {
-				encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.val));
-			});
+		return output;
+	};
 
-			return encoded.join("&");
-		}
+	Ajax.prototype.serializeParams = function (params) {
+		var output = this.generateParamsList(params),
+		    encoded = [];
+
+		output.forEach(function (item) {
+			encoded.push(encodeURIComponent(item.key) + "=" + encodeURIComponent(item.value));
+		});
+
+		return encoded.join("&");
+	};
+
+	Ajax.prototype.formDataParams = function (params) {
+		var output = this.generateParamsList(params),
+		    form = new FormData();
+
+		output.forEach(function (item) {
+			form.append(item.key, item.value);
+		});
+
+		return form;
 	};
 
 	//send ajax request
@@ -9349,18 +9360,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//default ajax config object
 	Ajax.prototype.defaultConfig = {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json; charset=utf-8"
-		}
+		method: "GET"
 	};
 
 	Ajax.prototype.defaultURLGenerator = function (url, config, params) {
 		if (params) {
-			if (!config.method || config.method == "get") {
+			if (!config.method || config.method.toLowerCase() == "get") {
 				url += "?" + this.serializeParams(params);
 			} else {
-				config.body = JSON.stringify(params);
+				config.body = this.formDataParams(params);
 			}
 		}
 
