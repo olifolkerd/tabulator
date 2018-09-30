@@ -12362,7 +12362,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Format.prototype.emptyToSpace = function (value) {
-		return value === null ? "&nbsp" : value;
+		return value === null || typeof value === "undefined" ? "&nbsp" : value;
 	};
 
 	//get formatter for cell
