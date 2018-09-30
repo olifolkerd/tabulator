@@ -11,7 +11,7 @@ Full documentation & demos can be found at: [http://tabulator.info](http://tabul
 
 NPM Package Changed
 ================================
-jQuery was removed from Tabulator in this release, so Tabulator has moved in NPM from the old [jquery.tabulator](https://www.npmjs.com/package/jquery.tabulator) package to the new [tabulator-tables](https://www.npmjs.com/package/tabulator-tables) package.
+jQuery was removed as a dependency in this release, so Tabulator has moved in NPM from the old [jquery.tabulator](https://www.npmjs.com/package/jquery.tabulator) package to the new [tabulator-tables](https://www.npmjs.com/package/tabulator-tables) package.
 
 
 Features
@@ -23,6 +23,12 @@ Simply include the library and the css in your project and you're away!
 Tabulator is packed with useful features including:
 
 ![Tabluator Features](http://olifolkerd.github.io/tabulator/images/featurelist_share.png)
+
+
+Frontend Framework Support
+================================
+Tabulator is built to work with all the major front end JavaScript frameworks including React, Angular and Vue.
+
 
 Setup
 ================================
