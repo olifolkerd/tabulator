@@ -4749,7 +4749,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Row.prototype.calcHeight = function () {
 
 		var maxHeight = 0,
-		    minHeight = this.element.clientHeight;
+		    minHeight = self.table.options.resizableRows ? this.element.clientHeight : 0;
 
 		this.cells.forEach(function (cell) {
 

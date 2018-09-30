@@ -3758,7 +3758,7 @@ Row.prototype.reinitialize = function () {
 Row.prototype.calcHeight = function () {
 
 	var maxHeight = 0,
-	    minHeight = this.element.clientHeight;
+	    minHeight = self.table.options.resizableRows ? this.element.clientHeight : 0;
 
 	this.cells.forEach(function (cell) {
 		var height = cell.getHeight();
