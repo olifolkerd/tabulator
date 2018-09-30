@@ -628,45 +628,45 @@
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.positive, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.positive {
   box-shadow: 0px 0px 0px #A3C293 inset;
   background: #FCFFF5 !important;
-  color: #2C662D !important;
+  color: #21BA45 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.positive:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.positive:hover {
   background: #f7ffe6 !important;
-  color: #275b28 !important;
+  color: #13ae38 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.negative, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.negative {
   box-shadow: 0px 0px 0px #E0B4B4 inset;
   background: #FFF6F6 !important;
-  color: #9F3A38 !important;
+  color: #DB2828 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.negative:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.negative:hover {
   background: #ffe7e7 !important;
-  color: #943634 !important;
+  color: #d41616 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.error, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.error {
   box-shadow: 0px 0px 0px #E0B4B4 inset;
   background: #FFF6F6 !important;
-  color: #dd0000 !important;
+  color: #DB2828 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.error:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.error:hover {
   background: #ffe7e7 !important;
-  color: #943634 !important;
+  color: #d12323 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.warning, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.warning {
   box-shadow: 0px 0px 0px #C9BA9B inset;
   background: #FFFAF3 !important;
-  color: #573A08 !important;
+  color: #F2C037 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.warning:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.warning:hover {
   background: #fff4e4 !important;
-  color: #493107 !important;
+  color: #f1bb29 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.active {
@@ -677,12 +677,12 @@
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.active:hover {
   background: #f7ffe6 !important;
-  color: #275b28 !important;
+  color: #13ae38 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.active, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.disabled:hover, .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.active {
   pointer-events: none;
-  color: rgba(40, 40, 40, 0.3);
+  color: rgba(0, 0, 0, 0.2);
 }
 
 .tabulator.inverted {
@@ -1011,13 +1011,13 @@
 }
 
 .tabulator-row .tabulator-cell.tabulator-validation-fail {
-  border: 1px solid #dd0000;
+  border: 1px solid #DB2828;
 }
 
 .tabulator-row .tabulator-cell.tabulator-validation-fail input, .tabulator-row .tabulator-cell.tabulator-validation-fail select {
   border: 1px;
   background: transparent;
-  color: #dd0000;
+  color: #DB2828;
 }
 
 .tabulator-row .tabulator-cell:first-child .tabulator-col-resize-handle.prev {
