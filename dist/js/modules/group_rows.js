@@ -566,7 +566,7 @@ Group.prototype.reinitialize = function () {
 	this.initialized = false;
 	this.height = 0;
 
-	if (this.element.is(":visible")) {
+	if (Tabulator.prototype.helpers.elVisible(this.element)) {
 		this.initialize(true);
 	}
 };

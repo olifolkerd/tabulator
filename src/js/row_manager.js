@@ -155,7 +155,7 @@ RowManager.prototype.findRow = function(subject){
 		}else if(subject instanceof HTMLElement){
 			//subject is a HTML element of the row
 			let match = self.rows.find(function(row){
-				return row.element.is(subject);
+				return row.element === subject;
 			});
 
 			return match || false;

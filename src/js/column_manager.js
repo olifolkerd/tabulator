@@ -188,7 +188,7 @@ ColumnManager.prototype.findColumn = function(subject){
 		}else if(subject instanceof HTMLElement){
 			//subject is a HTML element of the column header
 			let match = self.columns.find(function(column){
-				return column.element.is(subject);
+				return column.element === subject;
 			});
 
 			return match || false;

@@ -746,13 +746,13 @@ Edit.prototype.editors = {
 
 		//submit new value on blur
 		input.on("change blur", function(e){
-			success(input.is(":checked"));
+			success(input.checked);
 		});
 
 		//submit new value on enter
 		input.on("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.is(":checked"));
+				success(input.checked);
 			}
 			if(e.keyCode == 27){
 				cancel();
@@ -788,13 +788,13 @@ Edit.prototype.editors = {
 
 		//submit new value on blur
 		input.on("change blur", function(e){
-			success(input.is(":checked"));
+			success(input.checked);
 		});
 
 		//submit new value on enter
 		input.on("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.is(":checked"));
+				success(input.checked);
 			}
 			if(e.keyCode == 27){
 				cancel();

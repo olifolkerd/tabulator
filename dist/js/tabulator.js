@@ -445,7 +445,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				var match = self.columns.find(function (column) {
 
-					return column.element.is(subject);
+					return column.element === subject;
 				});
 
 				return match || false;
@@ -2508,7 +2508,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				var match = self.rows.find(function (row) {
 
-					return row.element.is(subject);
+					return row.element === subject;
 				});
 
 				return match || false;
@@ -5993,7 +5993,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	FooterManager.prototype.deactivate = function (force) {
 
-		if (this.element.is(":empty") || force) {
+		if (!this.element.firstChild || force) {
 
 			if (!this.external) {
 
@@ -13650,7 +13650,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.initialized = false;
 		this.height = 0;
 
-		if (this.element.is(":visible")) {
+		if (Tabulator.prototype.helpers.elVisible(this.element)) {
 			this.initialize(true);
 		}
 	};

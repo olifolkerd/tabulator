@@ -392,7 +392,7 @@ ColumnManager.prototype.findColumn = function (subject) {
 
 			var match = self.columns.find(function (column) {
 
-				return column.element.is(subject);
+				return column.element === subject;
 			});
 
 			return match || false;
@@ -2037,7 +2037,7 @@ RowManager.prototype.findRow = function (subject) {
 		} else if (subject instanceof HTMLElement) {
 			//subject is a HTML element of the row
 			var match = self.rows.find(function (row) {
-				return row.element.is(subject);
+				return row.element === subject;
 			});
 
 			return match || false;
@@ -4709,7 +4709,7 @@ FooterManager.prototype.remove = function (element) {
 };
 
 FooterManager.prototype.deactivate = function (force) {
-	if (this.element.is(":empty") || force) {
+	if (!this.element.firstChild || force) {
 		if (!this.external) {
 			this.element.parentNode.removeChild(this.element);
 		}

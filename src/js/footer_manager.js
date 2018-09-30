@@ -62,12 +62,11 @@ FooterManager.prototype.remove = function(element){
 };
 
 FooterManager.prototype.deactivate = function(force){
-	if(this.element.is(":empty") || force){
+	if(!this.element.firstChild || force){
 		if(!this.external){
 			this.element.parentNode.removeChild(this.element);
 		}
 		this.active = false;
-
 	}
 
 	// this.table.rowManager.adjustTableSize();
