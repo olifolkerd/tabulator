@@ -12794,7 +12794,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    el = document.createElement("div");
 
 			function toggleList(isOpen) {
-				var collapse = cell.getRow().getElement().getElementsByClassName(".tabulator-responsive-collapse")[0];
+				var collapse = cell.getRow().getElement().getElementsByClassName("tabulator-responsive-collapse")[0];
+
 				open = isOpen;
 
 				if (open) {
@@ -12803,6 +12804,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						collapse.style.display = '';
 					}
 				} else {
+					el.classList.remove("open");
 					if (collapse) {
 						collapse.style.display = 'none';
 					}
