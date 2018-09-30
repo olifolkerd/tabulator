@@ -8,241 +8,240 @@
        Element
 --------------------*/
 
-$verticalMargin: 1em;
-$horizontalMargin: 0em;
-$margin: $verticalMargin $horizontalMargin;
-$borderCollapse: separate;
-$borderSpacing: 0px;
-$borderRadius: $defaultBorderRadius;
+$verticalMargin: 1em !default;
+$horizontalMargin: 0em !default;
+$margin: $verticalMargin $horizontalMargin !default;
+$borderCollapse: separate !default;
+$borderSpacing: 0px !default;
+$borderRadius: $defaultBorderRadius !default;
 $transition:
   background $defaultDuration $defaultEasing,
-  color $defaultDuration $defaultEasing
-;
-$background: $white;
-$color: $textColor;
-$borderWidth: 1px;
-$border: $borderWidth solid $borderColor;
-$boxShadow: none;
-$textAlign: left;
+  color $defaultDuration $defaultEasing !default;
+$background: $white !default;
+$color: $textColor !default;
+$borderWidth: 1px !default;
+$border: $borderWidth solid $borderColor !default;
+$boxShadow: none !default;
+$textAlign: left !default;
 
 /*--------------
      Parts
 ---------------*/
 
 /* Table Row */
-$rowBorder: 1px solid $internalBorderColor;
+$rowBorder: 1px solid $internalBorderColor !default;
 
 /* Table Cell */
-$cellVerticalPadding: $relativeMini;
-$cellHorizontalPadding: $relativeMini;
-$cellVerticalAlign: inherit;
-$cellTextAlign: inherit;
-$cellBorder: 1px solid $internalBorderColor;
+$cellVerticalPadding: $relativeMini !default;
+$cellHorizontalPadding: $relativeMini !default;
+$cellVerticalAlign: inherit !default;
+$cellTextAlign: inherit !default;
+$cellBorder: 1px solid $internalBorderColor !default;
 
 /* Table Header */
-$headerBorder: 1px solid $internalBorderColor;
-$headerDivider: none;
-$headerBackground: $offWhite;
-$headerAlign: inherit;
-$headerVerticalAlign: inherit;
-$headerColor: $textColor;
-$headerVerticalPadding: $relativeSmall;
-$headerHorizontalPadding: $cellHorizontalPadding;
-$headerFontStyle: none;
-$headerFontWeight: bold;
-$headerTextTransform: none;
-$headerBoxShadow: none;
+$headerBorder: 1px solid $internalBorderColor !default;
+$headerDivider: none !default;
+$headerBackground: $offWhite !default;
+$headerAlign: inherit !default;
+$headerVerticalAlign: inherit !default;
+$headerColor: $textColor !default;
+$headerVerticalPadding: $relativeSmall !default;
+$headerHorizontalPadding: $cellHorizontalPadding !default;
+$headerFontStyle: none !default;
+$headerFontWeight: bold !default;
+$headerTextTransform: none !default;
+$headerBoxShadow: none !default;
 
 /* Table Footer */
-$footerBoxShadow: none;
-$footerBorder: 1px solid $borderColor;
-$footerDivider: none;
-$footerBackground: $offWhite;
-$footerAlign: inherit;
-$footerVerticalAlign: middle;
-$footerColor: $textColor;
-$footerVerticalPadding: $cellVerticalPadding;
-$footerHorizontalPadding: $cellHorizontalPadding;
-$footerFontStyle: normal;
-$footerFontWeight: normal;
-$footerTextTransform: none;
+$footerBoxShadow: none !default;
+$footerBorder: 1px solid $borderColor !default;
+$footerDivider: none !default;
+$footerBackground: $offWhite !default;
+$footerAlign: inherit !default;
+$footerVerticalAlign: middle !default;
+$footerColor: $textColor !default;
+$footerVerticalPadding: $cellVerticalPadding !default;
+$footerHorizontalPadding: $cellHorizontalPadding !default;
+$footerFontStyle: normal !default;
+$footerFontWeight: normal !default;
+$footerTextTransform: none !default;
 
 /* Responsive Size */
-$responsiveHeaderDisplay: block;
-$responsiveFooterDisplay: block;
-$responsiveRowVerticalPadding: 1em;
-$responsiveRowBoxShadow: 0px -1px 0px 0px rgba(0, 0, 0, 0.1) inset !important;
-$responsiveCellVerticalPadding: 0.25em;
-$responsiveCellHorizontalPadding: 0.75em;
-$responsiveCellBoxShadow: none !important;
+$responsiveHeaderDisplay: block !default;
+$responsiveFooterDisplay: block !default;
+$responsiveRowVerticalPadding: 1em !default;
+$responsiveRowBoxShadow: 0px -1px 0px 0px rgba(0, 0, 0, 0.1) inset !important !default;
+$responsiveCellVerticalPadding: 0.25em !default;
+$responsiveCellHorizontalPadding: 0.75em !default;
+$responsiveCellBoxShadow: none !important !default;
 
 /*-------------------
        Types
 --------------------*/
 
 /* Definition */
-$definitionPageBackground: $white;
+$definitionPageBackground: $white !default;
 
-$definitionHeaderBackground: transparent;
-$definitionHeaderColor: $unselectedTextColor;
-$definitionHeaderFontWeight: normal;
+$definitionHeaderBackground: transparent !default;
+$definitionHeaderColor: $unselectedTextColor !default;
+$definitionHeaderFontWeight: normal !default;
 
-$definitionFooterBackground: $definitionHeaderBackground;
-$definitionFooterColor: $definitionHeaderColor;
-$definitionFooterFontWeight: $definitionHeaderFontWeight;
+$definitionFooterBackground: $definitionHeaderBackground !default;
+$definitionFooterColor: $definitionHeaderColor !default;
+$definitionFooterFontWeight: $definitionHeaderFontWeight !default;
 
-$definitionColumnBackground: $subtleTransparentBlack;
-$definitionColumnFontWeight: bold;
-$definitionColumnColor: $selectedTextColor;
-$definitionColumnFontSize: $relativeMedium;
-$definitionColumnTextTransform: '';
-$definitionColumnBoxShadow: '';
-$definitionColumnTextAlign: '';
-$definitionColumnHorizontalPadding: '';
+$definitionColumnBackground: $subtleTransparentBlack !default;
+$definitionColumnFontWeight: bold !default;
+$definitionColumnColor: $selectedTextColor !default;
+$definitionColumnFontSize: $relativeMedium !default;
+$definitionColumnTextTransform: '' !default;
+$definitionColumnBoxShadow: '' !default;
+$definitionColumnTextAlign: '' !default;
+$definitionColumnHorizontalPadding: '' !default;
 
 
 /*--------------
     Couplings
 ---------------*/
 
-$iconVerticalAlign: baseline;
+$iconVerticalAlign: baseline !default;
 
 /*--------------
      States
 ---------------*/
 
-$stateMarkerWidth: 0px;
+$stateMarkerWidth: 0px !default;
 
 /* Positive */
-$positiveColor: $positiveTextColor;
-$positiveBoxShadow: $stateMarkerWidth 0px 0px $positiveBorderColor inset;
-$positiveBackgroundHover: darken($positiveBackgroundColor, 3);
-$positiveColorHover: darken($positiveColor, 3);
+$positiveColor: $positiveTextColor !default;
+$positiveBoxShadow: $stateMarkerWidth 0px 0px $positiveBorderColor inset !default;
+$positiveBackgroundHover: darken($positiveBackgroundColor, 3) !default;
+$positiveColorHover: darken($positiveColor, 3) !default;
 
 /* Negative */
-$negativeColor: $negativeTextColor;
-$negativeBoxShadow: $stateMarkerWidth 0px 0px $negativeBorderColor inset;
-$negativeBackgroundHover: darken($negativeBackgroundColor, 3);
-$negativeColorHover: darken($negativeColor, 3);
+$negativeColor: $negativeTextColor !default;
+$negativeBoxShadow: $stateMarkerWidth 0px 0px $negativeBorderColor inset !default;
+$negativeBackgroundHover: darken($negativeBackgroundColor, 3) !default;
+$negativeColorHover: darken($negativeColor, 3) !default;
 
 /* Error */
-$errorColor: $errorTextColor;
-$errorBoxShadow: $stateMarkerWidth 0px 0px $errorBorderColor inset;
-$errorBackgroundHover: darken($errorBackgroundColor, 3);
-$errorColorHover: darken($errorColor, 3);
+$errorColor: $errorTextColor !default;
+$errorBoxShadow: $stateMarkerWidth 0px 0px $errorBorderColor inset !default;
+$errorBackgroundHover: darken($errorBackgroundColor, 3) !default;
+$errorColorHover: darken($errorColor, 3) !default;
 
 /* Warning */
-$warningColor: $warningTextColor;
-$warningBoxShadow: $stateMarkerWidth 0px 0px $warningBorderColor inset;
-$warningBackgroundHover: darken($warningBackgroundColor, 3);
-$warningColorHover: darken($warningColor, 3);
+$warningColor: $warningTextColor !default;
+$warningBoxShadow: $stateMarkerWidth 0px 0px $warningBorderColor inset !default;
+$warningBackgroundHover: darken($warningBackgroundColor, 3) !default;
+$warningColorHover: darken($warningColor, 3) !default;
 
 /* Active */
-$activeColor: $textColor;
-$activeBackgroundColor: #E0E0E0;
-$activeBoxShadow: $stateMarkerWidth 0px 0px $activeColor inset;
+$activeColor: $textColor !default;
+$activeBackgroundColor: #E0E0E0 !default;
+$activeBoxShadow: $stateMarkerWidth 0px 0px $activeColor inset !default;
 
-$activeBackgroundHover: #EFEFEF;
-$activeColorHover: $selectedTextColor;
+$activeBackgroundHover: #EFEFEF !default;
+$activeColorHover: $selectedTextColor !default;
 
 /*--------------
      Types
 ---------------*/
 
 /* Attached */
-$attachedTopOffset: 0px;
-$attachedBottomOffset: 0px;
-$attachedHorizontalOffset: -$borderWidth;
-$attachedWidth: calc(100% + #{$attachedHorizontalOffset * -2});
-$attachedBoxShadow: none;
-$attachedBorder: $borderWidth solid $solidBorderColor;
+$attachedTopOffset: 0px !default;
+$attachedBottomOffset: 0px !default;
+$attachedHorizontalOffset: -$borderWidth !default;
+$attachedWidth: calc(100% + #{$attachedHorizontalOffset * -2}) !default;
+$attachedBoxShadow: none !default;
+$attachedBorder: $borderWidth solid $solidBorderColor !default;
 $attachedBottomBoxShadow:
   $boxShadow,
   $attachedBoxShadow
-;
+ !default;
 
 /* Striped */
-$stripedBackground: rgba(0, 0, 50, 0.02);
-$invertedStripedBackground: rgba(255, 255, 255, 0.05);
+$stripedBackground: rgba(0, 0, 50, 0.02) !default;
+$invertedStripedBackground: rgba(255, 255, 255, 0.05) !default;
 
 /* Selectable */
-$selectableBackground: $transparentBlack;
-$selectableTextColor: $selectedTextColor;
-$selectableInvertedBackground: $transparentWhite;
-$selectableInvertedTextColor: $invertedSelectedTextColor;
+$selectableBackground: $transparentBlack !default;
+$selectableTextColor: $selectedTextColor !default;
+$selectableInvertedBackground: $transparentWhite !default;
+$selectableInvertedTextColor: $invertedSelectedTextColor !default;
 
 /* Sortable */
-$sortableBackground: '';
-$sortableColor: $textColor;
+$sortableBackground: '' !default;
+$sortableColor: $textColor !default;
 
-$sortableBorder: 1px solid $borderColor;
-$sortableIconWidth: auto;
-$sortableIconDistance: 0.5em;
-$sortableIconOpacity: 0.8;
-$sortableIconFont: 'Icons';
-$sortableIconAscending: '\f0d8';
-$sortableIconDescending: '\f0d7';
-$sortableDisabledColor: $disabledTextColor;
+$sortableBorder: 1px solid $borderColor !default;
+$sortableIconWidth: auto !default;
+$sortableIconDistance: 0.5em !default;
+$sortableIconOpacity: 0.8 !default;
+$sortableIconFont: 'Icons' !default;
+$sortableIconAscending: '\f0d8' !default;
+$sortableIconDescending: '\f0d7' !default;
+$sortableDisabledColor: $disabledTextColor !default;
 
-$sortableHoverBackground: $transparentBlack;
-$sortableHoverColor: $hoveredTextColor;
+$sortableHoverBackground: $transparentBlack !default;
+$sortableHoverColor: $hoveredTextColor !default;
 
-$sortableActiveBackground: $transparentBlack;
-$sortableActiveColor: $selectedTextColor;
+$sortableActiveBackground: $transparentBlack !default;
+$sortableActiveColor: $selectedTextColor !default;
 
-$sortableActiveHoverBackground: $transparentBlack;
-$sortableActiveHoverColor: $selectedTextColor;
+$sortableActiveHoverBackground: $transparentBlack !default;
+$sortableActiveHoverColor: $selectedTextColor !default;
 
-$sortableInvertedBorderColor: transparent;
-$sortableInvertedHoverBackground: $transparentWhite $subtleGradient;
-$sortableInvertedHoverColor: $invertedHoveredTextColor;
-$sortableInvertedActiveBackground: $strongTransparentWhite $subtleGradient;
-$sortableInvertedActiveColor: $invertedSelectedTextColor;
+$sortableInvertedBorderColor: transparent !default;
+$sortableInvertedHoverBackground: $transparentWhite $subtleGradient !default;
+$sortableInvertedHoverColor: $invertedHoveredTextColor !default;
+$sortableInvertedActiveBackground: $strongTransparentWhite $subtleGradient !default;
+$sortableInvertedActiveColor: $invertedSelectedTextColor !default;
 
 /* Colors */
-$coloredBorderSize: 0.2em;
-$coloredBorderRadius: 0em 0em $borderRadius $borderRadius;
+$coloredBorderSize: 0.2em !default;
+$coloredBorderRadius: 0em 0em $borderRadius $borderRadius !default;
 
 /* Inverted */
-$invertedBackground: #333333;
-$invertedBorder: none;
-$invertedCellBorderColor: $whiteBorderColor;
-$invertedCellColor: $invertedTextColor;
+$invertedBackground: #333333 !default;
+$invertedBorder: none !default;
+$invertedCellBorderColor: $whiteBorderColor !default;
+$invertedCellColor: $invertedTextColor !default;
 
-$invertedHeaderBackground: $veryStrongTransparentBlack;
-$invertedHeaderColor: $invertedTextColor;
-$invertedHeaderBorderColor: $invertedCellBorderColor;
+$invertedHeaderBackground: $veryStrongTransparentBlack !default;
+$invertedHeaderColor: $invertedTextColor !default;
+$invertedHeaderBorderColor: $invertedCellBorderColor !default;
 
-$invertedDefinitionColumnBackground: $subtleTransparentWhite;
-$invertedDefinitionColumnColor: $invertedSelectedTextColor;
-$invertedDefinitionColumnFontWeight: bold;
+$invertedDefinitionColumnBackground: $subtleTransparentWhite !default;
+$invertedDefinitionColumnColor: $invertedSelectedTextColor !default;
+$invertedDefinitionColumnFontWeight: bold !default;
 
 /* Basic */
-$basicTableBackground: transparent;
-$basicTableBorder: $borderWidth solid $borderColor;
-$basicBoxShadow: none;
+$basicTableBackground: transparent !default;
+$basicTableBorder: $borderWidth solid $borderColor !default;
+$basicBoxShadow: none !default;
 
-$basicTableHeaderBackground: transparent;
-$basicTableCellBackground: transparent;
-$basicTableHeaderDivider: none;
-$basicTableCellBorder: 1px solid rgba(0, 0, 0, 0.1);
-$basicTableCellPadding: '';
-$basicTableStripedBackground: $transparentBlack;
+$basicTableHeaderBackground: transparent !default;
+$basicTableCellBackground: transparent !default;
+$basicTableHeaderDivider: none !default;
+$basicTableCellBorder: 1px solid rgba(0, 0, 0, 0.1) !default;
+$basicTableCellPadding: '' !default;
+$basicTableStripedBackground: $transparentBlack !default;
 
 /* Padded */
-$paddedVerticalPadding: 1em;
-$paddedHorizontalPadding: 1em;
-$veryPaddedVerticalPadding: 1.5em;
-$veryPaddedHorizontalPadding: 1.5em;
+$paddedVerticalPadding: 1em !default;
+$paddedHorizontalPadding: 1em !default;
+$veryPaddedVerticalPadding: 1.5em !default;
+$veryPaddedHorizontalPadding: 1.5em !default;
 
 /* Compact */
-$compactVerticalPadding: 0.5em;
-$compactHorizontalPadding: 0.7em;
-$veryCompactVerticalPadding: 0.4em;
-$veryCompactHorizontalPadding: 0.6em;
+$compactVerticalPadding: 0.5em !default;
+$compactHorizontalPadding: 0.7em !default;
+$veryCompactVerticalPadding: 0.4em !default;
+$veryCompactHorizontalPadding: 0.6em !default;
 
 
 /* Sizes */
-$small: 0.9em;
-$medium: 1em;
-$large: 1.1em;
+$small: 0.9em !default;
+$medium: 1em !default;
+$large: 1.1em !default;
