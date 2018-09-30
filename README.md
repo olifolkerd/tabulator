@@ -8,6 +8,12 @@ Full documentation & demos can be found at: [http://tabulator.info](http://tabul
 ***
 ![Tabluator Table](http://tabulator.info/images/tabulator_table.jpg)
 ***
+
+NPM Package Changed
+================================
+jQuery was removed from Tabulator in this release, so Tabulator has moved in NPM from the old [jquery.tabulator](https://www.npmjs.com/package/jquery.tabulator) package to the new [tabulator-tables](https://www.npmjs.com/package/tabulator-tables) package.
+
+
 Features
 ================================
 Tabulator allows you to create interactive tables in seconds from any HTML Table, Javascript Array or JSON formatted data.
