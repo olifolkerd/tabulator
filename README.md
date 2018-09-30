@@ -54,8 +54,8 @@ npm install tabulator-tables --save
 ### CDNJS
 To access Tabulator directly from the CDNJS CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:
 ```html
-<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.0.1/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.0.1/js/tabulator.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.0.2/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.0.2/js/tabulator.min.js"></script>
 ```
 
 Coming Soon
