@@ -1,4 +1,4 @@
-/* Tabulator v4.0.2 (c) Oliver Folkerd */
+/* Tabulator v4.0.3 (c) Oliver Folkerd */
 
 /*
  * This file is part of the Tabulator package.

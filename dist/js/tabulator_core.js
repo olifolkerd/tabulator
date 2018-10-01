@@ -1,4 +1,4 @@
-/* Tabulator v4.0.2 (c) Oliver Folkerd */
+/* Tabulator v4.0.3 (c) Oliver Folkerd */
 
 'use strict';
 
@@ -4122,7 +4122,7 @@ CellComponent.prototype.edit = function (force) {
 };
 
 CellComponent.prototype.cancelEdit = function () {
-	this._cell.cancelEdit(force);
+	this._cell.cancelEdit();
 };
 
 CellComponent.prototype.nav = function () {

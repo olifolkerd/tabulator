@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.0.2 (c) Oliver Folkerd */
+/* Tabulator v4.0.3 (c) Oliver Folkerd */
 
 ;(function (global, factory) {
 	if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined') {
@@ -5214,7 +5214,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	CellComponent.prototype.cancelEdit = function () {
 
-		this._cell.cancelEdit(force);
+		this._cell.cancelEdit();
 	};
 
 	CellComponent.prototype.nav = function () {
@@ -12494,8 +12494,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			el.setAttribute("href", urlPrefix + value);
 
-			if (formatterParams.traget) {
-				el.setAttribute("target", formatterParams.traget);
+			if (formatterParams.target) {
+				el.setAttribute("target", formatterParams.target);
 			}
 
 			el.innerHTML = this.emptyToSpace(label);
