@@ -193,8 +193,8 @@ Format.prototype.formatters = {
 
 		el.setAttribute("href", urlPrefix + value);
 
-		if(formatterParams.traget){
-			el.setAttribute("target", formatterParams.traget);
+		if(formatterParams.target){
+			el.setAttribute("target", formatterParams.target);
 		}
 
 		el.innerHTML = this.emptyToSpace(label);
