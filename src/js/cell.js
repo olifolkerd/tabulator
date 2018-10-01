@@ -49,7 +49,7 @@ CellComponent.prototype.edit = function(force){
 };
 
 CellComponent.prototype.cancelEdit = function(){
-	this._cell.cancelEdit(force);
+	this._cell.cancelEdit();
 };
 
 
