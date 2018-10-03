@@ -63,11 +63,11 @@ To get Tabulator via the NPM package manager, open a terminal in your project di
 npm install tabulator-tables --save
 ```
 
-### CDNJS
-To access Tabulator directly from the CDNJS CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:
+### CDN - UNPKG
+To access Tabulator directly from the UNPKG CDN servers, include the following two lines at the start of your project, instead of the localy hosted versions:
 ```html
-<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.0.4/css/tabulator.min.css" rel="stylesheet">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.0.4/js/tabulator.min.js"></script>
+<link href="https://unpkg.com/tabulator-tables@4.0.4/dist/css/tabulator.min.css" rel="stylesheet">
+<script type="text/javascript" src="https://unpkg.com/tabulator-tables@4.0.4/dist/js/tabulator.min.js"></script>
 ```
 
 Coming Soon
