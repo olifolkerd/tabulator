@@ -11685,6 +11685,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Filter.prototype.initializeColumn = function (column, value) {
 		var self = this,
 		    field = column.getField(),
+		    blockSuccess = false,
 		    params;
 
 		//handle successfull value change
@@ -11693,60 +11694,69 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    type = "",
 			    filterFunc;
 
-			if (!column.modules.filter.emptyFunc(value)) {
-				column.modules.filter.value = value;
+			if (!blockSuccess) {
 
-				switch (_typeof(column.definition.headerFilterFunc)) {
-					case "string":
-						if (self.filters[column.definition.headerFilterFunc]) {
-							type = column.definition.headerFilterFunc;
-							filterFunc = function filterFunc(data) {
-								return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
-							};
-						} else {
-							console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
-						}
-						break;
+				blockSuccess = true;
 
-					case "function":
-						filterFunc = function filterFunc(data) {
-							var params = column.definition.headerFilterFuncParams || {};
-							var fieldVal = column.getFieldValue(data);
+				setTimeout(function () {
+					blockSuccess = false;
+				}, 100);
 
-							params = typeof params === "function" ? params(value, fieldVal, data) : params;
+				if (!column.modules.filter.emptyFunc(value)) {
+					column.modules.filter.value = value;
 
-							return column.definition.headerFilterFunc(value, fieldVal, data, params);
-						};
-
-						type = filterFunc;
-						break;
-				}
-
-				if (!filterFunc) {
-					switch (filterType) {
-						case "partial":
-							filterFunc = function filterFunc(data) {
-								return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
-							};
-							type = "like";
+					switch (_typeof(column.definition.headerFilterFunc)) {
+						case "string":
+							if (self.filters[column.definition.headerFilterFunc]) {
+								type = column.definition.headerFilterFunc;
+								filterFunc = function filterFunc(data) {
+									return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
+								};
+							} else {
+								console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
+							}
 							break;
 
-						default:
+						case "function":
 							filterFunc = function filterFunc(data) {
-								return column.getFieldValue(data) == value;
+								var params = column.definition.headerFilterFuncParams || {};
+								var fieldVal = column.getFieldValue(data);
+
+								params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+								return column.definition.headerFilterFunc(value, fieldVal, data, params);
 							};
-							type = "=";
+
+							type = filterFunc;
+							break;
 					}
+
+					if (!filterFunc) {
+						switch (filterType) {
+							case "partial":
+								filterFunc = function filterFunc(data) {
+									return String(column.getFieldValue(data)).toLowerCase().indexOf(String(value).toLowerCase()) > -1;
+								};
+								type = "like";
+								break;
+
+							default:
+								filterFunc = function filterFunc(data) {
+									return column.getFieldValue(data) == value;
+								};
+								type = "=";
+						}
+					}
+
+					self.headerFilters[field] = { value: value, func: filterFunc, type: type };
+				} else {
+					delete self.headerFilters[field];
 				}
 
-				self.headerFilters[field] = { value: value, func: filterFunc, type: type };
-			} else {
-				delete self.headerFilters[field];
+				self.changed = true;
+
+				self.table.rowManager.filterRefresh();
 			}
-
-			self.changed = true;
-
-			self.table.rowManager.filterRefresh();
 		}
 
 		column.modules.filter = {
