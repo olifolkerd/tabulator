@@ -201,7 +201,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 				});
 			} else {
 				self.table.modules.localize.bind("headerFilters|default", function (value) {
-					editorElement.setAttribute("placeholdder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
+					editorElement.setAttribute("placeholder", typeof self.column.definition.headerFilterPlaceholder !== "undefined" && self.column.definition.headerFilterPlaceholder ? self.column.definition.headerFilterPlaceholder : value);
 				});
 			}
 
