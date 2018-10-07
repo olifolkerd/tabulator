@@ -6941,6 +6941,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.rowManager.getDataCount(active);
 	};
 
+	//search for specific row components
+
+	Tabulator.prototype.searchRows = function (field, type, value) {
+
+		if (this.modExists("filter", true)) {
+
+			return this.modules.filter.search("rows", field, type, value);
+		}
+	};
+
+	//search for specific data
+
+	Tabulator.prototype.searchData = function (field, type, value) {
+
+		if (this.modExists("filter", true)) {
+
+			return this.modules.filter.search("data", field, type, value);
+		}
+	};
+
 	//get table html
 
 	Tabulator.prototype.getHtml = function (active) {
@@ -12170,8 +12190,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.changed = true;
 	};
 
+	//search data and return matching rows
+	Filter.prototype.search = function (searchType, field, type, value) {
+		var self = this,
+		    activeRows = [],
+		    filterList = [];
+
+		if (!Array.isArray(field)) {
+			field = [{ field: field, type: type, value: value }];
+		}
+
+		field.forEach(function (filter) {
+			filter = self.findFilter(filter);
+
+			if (filter) {
+				filterList.push(filter);
+			}
+		});
+
+		this.table.rowManager.rows.forEach(function (row) {
+			var match = true;
+
+			filterList.forEach(function (filter) {
+				if (!self.filterRecurse(filter, row.getData())) {
+					match = false;
+				}
+			});
+
+			if (match) {
+				activeRows.push(searchType === "data" ? row.getData("data") : row.getComponent());
+			}
+		});
+
+		return activeRows;
+	};
+
 	//filter row array
-	Filter.prototype.filter = function (rowList) {
+	Filter.prototype.filter = function (rowList, filters) {
 		var self = this,
 		    activeRows = [],
 		    activeRowComponents = [];
@@ -12204,7 +12259,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//filter individual row
-	Filter.prototype.filterRow = function (row) {
+	Filter.prototype.filterRow = function (row, filters) {
 		var self = this,
 		    match = true,
 		    data = row.getData();

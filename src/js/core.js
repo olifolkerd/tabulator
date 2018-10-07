@@ -638,6 +638,20 @@ Tabulator.prototype.getDataCount = function(active){
 	return this.rowManager.getDataCount(active);
 };
 
+//search for specific row components
+Tabulator.prototype.searchRows = function(field, type, value){
+	if(this.modExists("filter", true)){
+		return this.modules.filter.search("rows", field, type, value);
+	}
+};
+
+//search for specific data
+Tabulator.prototype.searchData = function(field, type, value){
+	if(this.modExists("filter", true)){
+		return this.modules.filter.search("data", field, type, value);
+	}
+};
+
 //get table html
 Tabulator.prototype.getHtml = function(active){
 	return this.rowManager.getHtml(active);
