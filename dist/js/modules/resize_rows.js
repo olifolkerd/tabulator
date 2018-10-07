@@ -1,4 +1,4 @@
-/* Tabulator v4.0.4 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 var ResizeRows = function ResizeRows(table) {
 	this.table = table; //hold Tabulator object
