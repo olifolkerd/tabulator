@@ -17,7 +17,7 @@ var Filter = function Filter(table) {
 Filter.prototype.initializeColumn = function (column, value) {
 	var self = this,
 	    field = column.getField(),
-	    blockSuccess = false,
+	    prevSuccess,
 	    params;
 
 	//handle successfull value change
@@ -26,13 +26,9 @@ Filter.prototype.initializeColumn = function (column, value) {
 		    type = "",
 		    filterFunc;
 
-		if (!blockSuccess) {
+		if (typeof prevSuccess === "undefined" || prevSuccess !== value) {
 
-			blockSuccess = true;
-
-			setTimeout(function () {
-				blockSuccess = false;
-			}, 100);
+			prevSuccess = value;
 
 			if (!column.modules.filter.emptyFunc(value)) {
 				column.modules.filter.value = value;
