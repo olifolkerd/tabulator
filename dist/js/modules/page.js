@@ -447,49 +447,49 @@ Page.prototype._parseRemoteData = function (data) {
 	    data,
 	    margin;
 
-	if (data[this.paginationDataReceivedNames.last_page]) {
-		if (data[this.paginationDataReceivedNames.data]) {
-			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]);
+	if (typeof data[this.paginationDataReceivedNames.last_page] === "undefined") {
+		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+	}
 
-			if (this.progressiveLoad) {
-				switch (this.mode) {
-					case "progressive_load":
-						this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
-						if (this.page < this.max) {
-							setTimeout(function () {
-								self.nextPage();
-							}, self.table.options.ajaxProgressiveLoadDelay);
-						}
-						break;
+	if (data[this.paginationDataReceivedNames.data]) {
+		this.max = parseInt(data[this.paginationDataReceivedNames.last_page]) || 1;
 
-					case "progressive_scroll":
-						data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
-
-						this.table.rowManager.setData(data, true);
-
-						margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element.clientHeight * 2;
-
-						if (self.table.rowManager.element.scrollHeight <= self.table.rowManager.element.clientHeight + margin) {
+		if (this.progressiveLoad) {
+			switch (this.mode) {
+				case "progressive_load":
+					this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+					if (this.page < this.max) {
+						setTimeout(function () {
 							self.nextPage();
-						}
-						break;
-				}
-			} else {
-				left = this.table.rowManager.scrollLeft;
+						}, self.table.options.ajaxProgressiveLoadDelay);
+					}
+					break;
 
-				this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+				case "progressive_scroll":
+					data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
 
-				this.table.rowManager.scrollHorizontal(left);
+					this.table.rowManager.setData(data, true);
 
-				this.table.columnManager.scrollHorizontal(left);
+					margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element.clientHeight * 2;
 
-				this.table.options.pageLoaded.call(this.table, this.getPage());
+					if (self.table.rowManager.element.scrollHeight <= self.table.rowManager.element.clientHeight + margin) {
+						self.nextPage();
+					}
+					break;
 			}
 		} else {
-			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
+			left = this.table.rowManager.scrollLeft;
+
+			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+
+			this.table.rowManager.scrollHorizontal(left);
+
+			this.table.columnManager.scrollHorizontal(left);
+
+			this.table.options.pageLoaded.call(this.table, this.getPage());
 		}
 	} else {
-		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
 	}
 };
 
