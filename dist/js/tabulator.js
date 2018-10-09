@@ -14082,13 +14082,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    options = self.table.options,
 		    columns = options.columns,
 		    headers = element.getElementsByTagName("th"),
-		    rows = element.getElementsByTagName("tbody")[0].getElementsByTagName("tr"),
+		    rows = element.getElementsByTagName("tbody")[0],
 		    data = [],
 		    newTable;
 
 		self.hasIndex = false;
 
 		self.table.options.htmlImporting.call(this.table);
+
+		rows = rows ? rows.getElementsByTagName("tr") : [];
 
 		//check for tablator inline options
 		self._extractOptions(element, options);
