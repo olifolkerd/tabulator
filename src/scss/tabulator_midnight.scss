@@ -1,11 +1,11 @@
 
 //Main Theme Variables
 $backgroundColor: #222 !default; //background color of tabulator
-$borderColor:#333 !default; //border to tablulator
+$borderColor:#333 !default; //border to tabulator
 $textSize:14px !default; //table text size
 
 //header themeing
-$headerBackgroundColor:#333 !default; //border to tablulator
+$headerBackgroundColor:#333 !default; //border to tabulator
 $headerTextColor:#fff !default; //header text colour
 $headerBorderColor:#aaa !default;  //header border color
 $headerSeperatorColor:#999 !default; //header bottom seperator color
@@ -29,7 +29,7 @@ $editBoxColor:#999 !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
 
 //footer themeing
-$footerBackgroundColor:#333 !default; //border to tablulator
+$footerBackgroundColor:#333 !default; //border to tabulator
 $footerTextColor:#333 !default; //footer text colour
 $footerBorderColor:#aaa !default; //footer border color
 $footerSeperatorColor:#999 !default; //footer bottom seperator color
@@ -459,7 +459,7 @@ $footerSeperatorColor:#999 !default; //footer bottom seperator color
 	}
 
 	//holding div that contains loader and covers tabulator element to prevent interaction
-	.tablulator-loader{
+	.tabulator-loader{
 		position:absolute;
 		display: flex;
 		align-items:center;

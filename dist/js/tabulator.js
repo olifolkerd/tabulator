@@ -9100,7 +9100,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Ajax.prototype.createLoaderElement = function () {
 		var el = document.createElement("div");
-		el.classList.add("tablulator-loader");
+		el.classList.add("tabulator-loader");
 		return el;
 	};
 
@@ -14149,7 +14149,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.table.element = newElement;
 	};
 
-	//extract tabluator attribute options
+	//extract tabulator attribute options
 	HtmlTableImport.prototype._extractOptions = function (element, options) {
 		var attributes = element.attributes;
 

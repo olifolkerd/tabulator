@@ -5,11 +5,11 @@
 
 //Main Theme Variables
 $backgroundColor: $table-bg !default; //background color of tabulator
-$borderColor:$table-border-color !default; //border to tablulator
+$borderColor:$table-border-color !default; //border to tabulator
 $textSize:$font-size-base !default; //table text size
 
 //header themeing
-$headerBackgroundColor:#fff !default; //border to tablulator
+$headerBackgroundColor:#fff !default; //border to tabulator
 $headerSeperatorColor:$table-border-color !default; //header bottom seperator color
 
 $cellPadding:$table-cell-padding !default; //padding round header
@@ -472,7 +472,7 @@ $footerSeperatorColor:$table-border-color !default; //footer bottom seperator co
 	}
 
 	//holding div that contains loader and covers tabulator element to prevent interaction
-	.tablulator-loader{
+	.tabulator-loader{
 		position:absolute;
 		display: flex;
 		align-items:center;

@@ -81,7 +81,7 @@ HtmlTableImport.prototype.parseTable = function () {
 	this.table.element = newElement;
 };
 
-//extract tabluator attribute options
+//extract tabulator attribute options
 HtmlTableImport.prototype._extractOptions = function (element, options) {
 	var attributes = element.attributes;
 
