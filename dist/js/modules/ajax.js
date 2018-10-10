@@ -67,7 +67,7 @@ Ajax.prototype.initialize = function () {
 
 Ajax.prototype.createLoaderElement = function () {
 	var el = document.createElement("div");
-	el.classList.add("tablulator-loader");
+	el.classList.add("tabulator-loader");
 	return el;
 };
 

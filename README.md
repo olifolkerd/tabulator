@@ -1,4 +1,4 @@
-![Tabluator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
+![Tabulator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
 
 ### Version 4.0 Out Now!
 
@@ -6,7 +6,7 @@ An easy to use interactive table generation JavaScript library
 
 Full documentation & demos can be found at: [http://tabulator.info](http://tabulator.info)
 ***
-![Tabluator Table](http://tabulator.info/images/tabulator_table.jpg)
+![Tabulator Table](http://tabulator.info/images/tabulator_table.jpg)
 ***
 
 NPM Package Changed
@@ -22,7 +22,7 @@ Simply include the library and the css in your project and you're away!
 
 Tabulator is packed with useful features including:
 
-![Tabluator Features](http://olifolkerd.github.io/tabulator/images/featurelist_share.png)
+![Tabulator Features](http://olifolkerd.github.io/tabulator/images/featurelist_share.png)
 
 
 Frontend Framework Support
