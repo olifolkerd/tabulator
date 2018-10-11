@@ -1022,7 +1022,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	ColumnComponent.prototype.scrollTo = function () {
 
-		return this._column.table.columManager.scrollToColumn(this._column);
+		return this._column.table.columnManager.scrollToColumn(this._column);
 	};
 
 	ColumnComponent.prototype.getTable = function () {
