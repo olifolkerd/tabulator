@@ -344,6 +344,24 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 
 		if(url){
 
+			//configure headers
+			if(typeof config.credentials === "undefined"){
+				config.credentials = 'include';
+			}
+
+			if(typeof config.headers === "undefined"){
+				config.headers = {};
+			}
+
+			// if(typeof config.headers.Accept === "undefined"){
+			// 	config.headers.Accept = "application/json";
+			// }
+
+			if(typeof config.headers["X-Requested-With"] === "undefined"){
+				config.headers["X-Requested-With"] = "XMLHttpRequest";
+			}
+
+			//send request
 			fetch(url, config)
 			.then((response)=>{
 				if(response.ok) {
