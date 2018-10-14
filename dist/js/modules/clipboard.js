@@ -176,7 +176,7 @@ Clipboard.prototype.copy = function (selector, selectorParams, formatter, format
 			if (sel.toString() && internal) {
 				selector = "userSelection";
 				formatter = "raw";
-				this.copySelectorParams = sel.toString();
+				selectorParams = sel.toString();
 			}
 
 			sel.removeAllRanges();
@@ -201,7 +201,6 @@ Clipboard.prototype.copy = function (selector, selectorParams, formatter, format
 };
 
 Clipboard.prototype.setSelector = function (selector) {
-
 	selector = selector || this.table.options.clipboardCopySelector;
 
 	switch (typeof selector === "undefined" ? "undefined" : _typeof(selector)) {

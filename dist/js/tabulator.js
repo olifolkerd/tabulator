@@ -10020,7 +10020,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (sel.toString() && internal) {
 					selector = "userSelection";
 					formatter = "raw";
-					this.copySelectorParams = sel.toString();
+					selectorParams = sel.toString();
 				}
 
 				sel.removeAllRanges();
@@ -10045,7 +10045,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Clipboard.prototype.setSelector = function (selector) {
-
 		selector = selector || this.table.options.clipboardCopySelector;
 
 		switch (typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) {
