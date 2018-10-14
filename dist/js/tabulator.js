@@ -15102,7 +15102,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			self.table.rowManager.getDisplayRows().forEach(function (row) {
 				if (row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup) {
-					row.getElement.addEventListener("mouseup", row.modules.moveRow.mouseup);
+					row.getElement().addEventListener("mouseup", row.modules.moveRow.mouseup);
 				}
 			});
 
