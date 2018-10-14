@@ -269,7 +269,7 @@ Format.prototype.formatters = {
 			element.setAttribute("aria-checked", true);
 			return tick;
 		} else {
-			if (empty && (value === "null" || value === null || typeof value === "undefined")) {
+			if (empty && (value === "null" || value === "" || value === null || typeof value === "undefined")) {
 				element.setAttribute("aria-checked", "mixed");
 				return "";
 			} else {
