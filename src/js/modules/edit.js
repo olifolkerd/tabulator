@@ -830,13 +830,21 @@ Edit.prototype.editors = {
 	//checkbox
 	tickCross:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
-		input = document.createElement("input");
+		input = document.createElement("input"),
+		tristate = editorParams.tristate,
+		indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
+		indetermState = false;
 
 		input.setAttribute("type", "checkbox");
 		input.style.marginTop = "5px";
 		input.style.boxSizing = "border-box";
 
 		input.value = value;
+
+		if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
+			indetermState = true;
+			input.indeterminate = true;
+		}
 
 		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 			onRendered(function(){
@@ -846,19 +854,36 @@ Edit.prototype.editors = {
 
 		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
+		function setValue(){
+			if(tristate){
+				if(input.checked && !indetermState){
+					console.log("indeterm")
+					input.checked = false;
+					input.indeterminate = true;
+					indetermState = true;
+					return indetermValue;
+				}else{
+					indetermState = false;
+					return input.checked;
+				}
+			}else{
+				return input.checked;
+			}
+		}
+
 		//submit new value on blur
 		input.addEventListener("change", function(e){
-			success(input.checked);
+			success(setValue());
 		});
 
 		input.addEventListener("blur", function(e){
-			success(input.checked);
+			success(setValue());
 		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.checked);
+				success(setValue());
 			}
 			if(e.keyCode == 27){
 				cancel();
@@ -871,13 +896,21 @@ Edit.prototype.editors = {
 	//checkbox
 	tick:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
-		input = document.createElement("input");
+		input = document.createElement("input"),
+		tristate = editorParams.tristate,
+		indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
+		indetermState = false;
 
 		input.setAttribute("type", "checkbox");
 		input.style.marginTop = "5px";
 		input.style.boxSizing = "border-box";
 
 		input.value = value;
+
+		if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
+			indetermState = true;
+			input.indeterminate = true;
+		}
 
 		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 			onRendered(function(){
@@ -887,19 +920,36 @@ Edit.prototype.editors = {
 
 		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
+		function setValue(){
+			if(tristate){
+				if(input.checked && !indetermState){
+					console.log("indeterm")
+					input.checked = false;
+					input.indeterminate = true;
+					indetermState = true;
+					return indetermValue;
+				}else{
+					indetermState = false;
+					return input.checked;
+				}
+			}else{
+				return input.checked;
+			}
+		}
+
 		//submit new value on blur
 		input.addEventListener("change", function(e){
-			success(input.checked);
+			success(setValue());
 		});
 
 		input.addEventListener("blur", function(e){
-			success(input.checked);
+			success(setValue());
 		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.checked);
+				success(setValue());
 			}
 			if(e.keyCode == 27){
 				cancel();
