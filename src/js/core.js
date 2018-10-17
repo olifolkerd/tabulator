@@ -1349,6 +1349,13 @@ Tabulator.prototype.getGroups = function(values){
 	}
 };
 
+// get grouped table data in the same format as getData()
+Tabulator.prototype.getGroupedData = function(){
+	if (this.modExists("groupRows", true)){
+		return this.options.groupBy ? 
+				this.modules.groupRows.getGroupedData() : this.getData()
+	}
+}
 
 ///////////////// Column Calculation Functions ///////////////
 Tabulator.prototype.getCalcResults = function(){
