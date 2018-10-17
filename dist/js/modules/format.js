@@ -209,9 +209,8 @@ Format.prototype.formatters = {
 
 	//image element
 	image: function image(cell, formatterParams, onRendered) {
-		var value = this.sanitizeHTML(cell.getValue()),
-		    el = document.createElement("img");
-		el.setAttribute("src", value);
+		var el = document.createElement("img");
+		el.setAttribute("src", cell.getValue());
 
 		switch (_typeof(formatterParams.height)) {
 			case "number":
