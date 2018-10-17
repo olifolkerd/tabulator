@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.0.4 (c) Oliver Folkerd */
 
 ;(function (global, factory) {
 	if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined') {
@@ -6239,6 +6239,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		groupHeader: false, //header generation function
 
+		fileGroupHeader: false, //header generation function for download files
+
+		downloadGroupedData: true, //format downloads to reflect data grouping
+
 
 		movableColumns: false, //enable movable columns
 
@@ -6933,6 +6937,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		return this.rowManager.getData(active);
 	};
+
+	// get grouped table data in the same format as getData()
+	Tabulator.prototype.getGroupedData = function () {
+
+		if (this.options.groupBy) {
+			var groups = this.getGroups();
+			var data = [];
+			var createGroupHeader = this.options.fileGroupHeader ?
+										this.options.fileGroupHeader : 
+											this.options.groupHeader;
+
+			for (let [index, group] of groups.entries()) {
+				// set the field value for the group header to whatever the first column is
+				var groupHeader = {};
+				groupHeader[this.getColumns()[0]._column.field] = createGroupHeader(group._group.key, group._group.rows.length, group._group.rows, group._group);
+				
+				data.push(groupHeader);
+
+				for (let [i, row] of group.getRows().entries()) {
+					data.push(row._row.data);
+				}
+			}
+
+			return data
+
+		}
+		// return standard data if table is not actually grouped
+		else {
+			return this.getData()
+		}
+	}
 
 	//get table data array count
 
@@ -7837,16 +7872,44 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	///////////////// Grouping Functions ///////////////
 
+	// clears all grouping from the table
+	Tabulator.prototype.clearGrouping = function () {
+
+		this.options.groupBy = false;
+
+		if (this.getGroups().length > 0) {
+			this.getGroups().forEach(function(group) {
+				group._group.groupManager.removeGroup(group._group);
+			});
+		} 
+
+		this.rowManager.refreshActiveData("display");
+	};
+
+	//allows users to control how they want their data downloaded
+	Tabulator.prototype.setDownloadGroupedData = function (downloadGroupedData) {
+
+		this.options.downloadGroupedData = downloadGroupedData;
+	};
 
 	Tabulator.prototype.setGroupBy = function (groups) {
 
 		if (this.modExists("groupRows", true)) {
 
-			this.options.groupBy = groups;
+			// clear all groups if an empty value is passed in
+			if(groups === "") {
 
-			this.modules.groupRows.initialize();
+				this.clearGrouping();
+				return false
+			}
 
-			this.rowManager.refreshActiveData("display");
+			else {
+
+				this.options.groupBy = groups;
+				this.modules.groupRows.initialize();
+				this.rowManager.refreshActiveData("display");
+			}
+
 		} else {
 
 			return false;
@@ -7886,6 +7949,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.rowManager.refreshActiveData("group");
 			} else {
+
+				console.warn("Grouping Update - cant refresh view, no groups have been set");
+			}
+		} else {
+
+			return false;
+		}
+	};
+
+	// sets a group heading for download files if the user wishes
+	Tabulator.prototype.setFileGroupHeader = function (values) {
+
+		if (this.modExists("groupRows", true)) {
+
+			this.options.fileGroupHeader = values;
+
+			this.modules.groupRows.initialize();
+
+			if (!this.options.groupBy) {
 
 				console.warn("Grouping Update - cant refresh view, no groups have been set");
 			}
@@ -10020,7 +10102,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (sel.toString() && internal) {
 					selector = "userSelection";
 					formatter = "raw";
-					selectorParams = sel.toString();
+					this.copySelectorParams = sel.toString();
 				}
 
 				sel.removeAllRanges();
@@ -10045,6 +10127,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Clipboard.prototype.setSelector = function (selector) {
+
 		selector = selector || this.table.options.clipboardCopySelector;
 
 		switch (typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) {
@@ -10471,7 +10554,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			data = self.table.options.downloadDataFormatter(data);
 		}
 
-		return data;
+		// handling for grouped data
+		if (self.table.options.downloadGroupedData && self.table.options.groupBy) {
+			data = self.table.getGroupedData();
+		}
+		else if(!self.table.options.downloadGroupedData && self.table.options.groupBy) {
+			console.warn(`You are downloading ungrouped data despite having grouped it.
+			If you did not intend this, please set table.downloadGroupedData back to True.`); 
+		}
+
+		return data
 	};
 
 	Download.prototype.triggerDownload = function (data, mime, type, filename) {
@@ -10541,11 +10633,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					fields.push(column.field);
 				}
 			});
+					
 
 			//generate header row
 			fileContents = [titles.join(delimiter)];
 
-			//generate each row of the table
 			data.forEach(function (row) {
 				var rowData = [];
 
@@ -10566,7 +10658,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							value = value;
 					}
 
-					//escape uotation marks
+					//escape quotation marks
 					rowData.push('"' + String(value).split('"').join('""') + '"');
 				});
 
@@ -12570,7 +12662,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				element.setAttribute("aria-checked", true);
 				return tick;
 			} else {
-				if (empty && (value === "null" || value === "" || value === null || typeof value === "undefined")) {
+				if (empty && (value === "null" || value === null || typeof value === "undefined")) {
 					element.setAttribute("aria-checked", "mixed");
 					return "";
 				} else {
@@ -15102,7 +15194,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			self.table.rowManager.getDisplayRows().forEach(function (row) {
 				if (row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup) {
-					row.getElement().addEventListener("mouseup", row.modules.moveRow.mouseup);
+					row.getElement.addEventListener("mouseup", row.modules.moveRow.mouseup);
 				}
 			});
 

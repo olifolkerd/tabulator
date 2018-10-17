@@ -764,6 +764,51 @@ GroupRows.prototype.getGroups = function(){
 	return groupComponents;
 };
 
+GroupRows.prototype.getGroupedData = function(){
+	var pullGroupListData = function(groupList) {
+		var groupListData = [];
+		groupListData.subGroupRowCount = 0;
+
+		groupList.forEach( function(group) {
+			var groupHeader = {};
+			var childData = [];
+
+			if (group.hasSubGroups) {
+				childData = pullGroupListData(group.groupList);
+			}
+
+			else {	
+				groupHeader["groupHeader"] = group.generator(group.key, group.rows.length, group.rows, group);
+				groupHeader["level"] = group.level;
+				groupHeader["rowCount"] = group.getRows().length;
+
+				groupListData.push(groupHeader);
+
+				if (group.parent) { 
+					groupListData.subGroupRowCount += groupHeader["rowCount"];
+				}
+
+				for (let [i, row] of group.getRows().entries()) {
+					groupListData.push(row.data);
+				}
+
+				return;
+			}
+
+			groupHeader["level"] = group.level;
+			groupHeader["rowCount"] = childData.subGroupRowCount;
+			groupHeader["groupHeader"] = group.generator(group.key, childData.subGroupRowCount, group.rows, group);
+
+			groupListData.push(groupHeader);
+			groupListData.push(...childData);
+		});
+
+		return groupListData
+	};
+
+	return pullGroupListData(this.groupList);
+};
+
 GroupRows.prototype.getRowGroup = function(row){
 	var match = false;
 
