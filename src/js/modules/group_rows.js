@@ -765,20 +765,22 @@ GroupRows.prototype.getGroups = function(){
 };
 
 GroupRows.prototype.pullGroupListData = function(groupList) {
-	var groupListData = [];
-	groupListData.subGroupRowCount = 0;
 	var self = this;
+	var groupListData = [];
 
 	groupList.forEach( function(group) {
 		var groupHeader = {};
+			groupHeader.level = 0;
+			groupHeader.rowCount = 0;
+			groupHeader.headerContent = "";
 		var childData = [];
 
 		if (group.hasSubGroups) {
 			childData = self.pullGroupListData(group.groupList);
 
 			groupHeader.level = group.level;
-			groupHeader.rowCount = childData.subGroupRowCount;
-			groupHeader.headerContent = group.generator(group.key, childData.subGroupRowCount, group.rows, group);
+			groupHeader.rowCount = childData.length - group.groupList.length; // data length minus number of sub-headers
+			groupHeader.headerContent = group.generator(group.key, groupHeader.rowCount, group.rows, group);
 
 			groupListData.push(groupHeader);
 			groupListData = groupListData.concat(childData);
@@ -791,12 +793,8 @@ GroupRows.prototype.pullGroupListData = function(groupList) {
 
 			groupListData.push(groupHeader);
 
-			if (group.parent) { 
-				groupListData.subGroupRowCount += groupHeader.rowCount;
-			}
-
 			group.getRows().forEach( function(row) {
-				groupListData.push(row.getData());
+				groupListData.push(row.getData("data"));
 			});
 		}
 	});
