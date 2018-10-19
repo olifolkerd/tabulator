@@ -508,6 +508,111 @@ Edit.prototype.editors = {
 		return input;
 	},
 
+	autocomp: function (cell, onRendered, success, cancel, editorParams) {
+		var container = document.createElement("div");
+		container.className = "autocomp";
+		var list = document.createElement("ul");
+		list.style.margin = "0";
+		list.style.padding = "0";
+		list.style.position = "absolute";
+		list.style.backgroundColor = "#f5f5f5";
+		list.style.boxShadow = "3px 3px 3px #777";
+		list.style.zIndex = 1;
+		list.style.width = "100%";
+		list.style.maxHeight = "135px";
+		list.style.overflowY = "auto";
+
+		var isArray = Array.isArray(editorParams);
+		if(typeof editorParams.values == "function"){
+			editorParams = editorParams.values(cell);
+			isArray = Array.isArray(editorParams.values);
+		}
+
+		function addListItems(element, label, value){
+			var item = document.createElement("li");
+			item.innerHTML = value;
+			item.style.padding = "5px";
+			item.dataset.value = value;
+			item.onmousedown = function(e) {
+				success(e.target.dataset.value);
+			}
+			element.appendChild(item);
+		}
+
+		if(!isArray && editorParams && typeof editorParams.values === "object"){
+			for(var key in editorParams.values){
+				addListItems(list, editorParams.values[key], key)
+			}
+		}
+
+		// --- input
+		var cellValue = cell.getValue(),
+		input = document.createElement("input");
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+		input.value = cellValue;
+
+		function onkey(e) {
+			for (let i = 0; i < list.children.length; i += 1) {
+				const child = list.children[i];
+				if (child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) >= 0) {
+					child.style.display = 'block';
+				} else {
+					child.style.display = 'none';
+				}
+			}
+		}
+		input.onkeyup = onkey;
+		input.onkeypress = onkey;
+		input.onkeydown = function(e) {
+			switch (e.keyCode) {
+				case 40: // if the DOWN key is pressed
+					for (let i = 0; i < list.children.length; i += 1) {
+						const child = list.children[i];
+						if (child.style.display === "block") {
+							success(child.innerText);
+							break;
+						}
+					}
+					break;
+				case 13:
+				case 9:
+					onChange();
+					break;
+				case 27:
+					cancel();
+					break;
+			}
+		}
+
+		function onChange(){
+			var value = input.value;
+			if(value != cellValue){
+				success(value);
+			}else{
+				cancel();
+			}
+		}
+		//submit new value on blur
+		input.addEventListener("blur", function(e){
+			onChange();
+		});
+
+		// add to container
+		container.appendChild(input);
+		container.appendChild(list);
+
+		onRendered(function () {
+			input.select();
+			input.focus();
+			input.style.height = "100%";
+			container.parentElement.style.overflow = 'unset'; // to show the list dropdown
+		});
+
+		return container;
+	},
+
 	//select
 	select: function (cell, onRendered, success, cancel, editorParams) {
 		//create and style select
