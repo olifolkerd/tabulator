@@ -78,6 +78,14 @@ Tabulator.prototype.defaultOptions = {
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	downloadComplete:false, //function to manipulate download data
 
+	dataTree:false, //enable data tree
+	dataTreeBranchElement: true, //show data tree branch element
+	dataTreeChildIndent:9, //data tree child indent in px
+	dataTreeChildField:"_children", //data tre column field to look for child rows
+	dataTreeCollapseElement:false, //data tree row collapse element
+	dataTreeExpandElement:false, //data tree row expand element
+
+
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
 	selectable:"highlight", //highlight rows on hover
@@ -389,6 +397,9 @@ Tabulator.prototype._buildElement = function(){
 		this.footerManager.activate();
 	}
 
+	if(options.dataTree && this.modExists("dataTree", true)){
+		mod.dataTree.initialize();
+	}
 
 	if( (options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)){
 		mod.persistence.initialize(options.persistenceMode, options.persistenceID);

@@ -672,6 +672,91 @@ $footerSeperatorColor:#3FB449 !default; //footer bottom seperator color
 			}
 		}
 
+		.tabulator-data-tree-branch{
+			display:inline-block;
+			vertical-align:middle;
+
+			height:9px;
+			width:7px;
+
+			margin-top:-9px;
+			margin-right:5px;
+
+			border-bottom-left-radius:1px;
+
+			border-left:2px solid $rowBorderColor;
+			border-bottom:2px solid $rowBorderColor;
+		}
+
+		.tabulator-data-tree-control{
+
+			display:inline-flex;
+			justify-content:center;
+			align-items:center;
+			vertical-align:middle;
+
+			height:11px;
+			width:11px;
+
+			margin-right:5px;
+
+			border:1px solid $rowTextColor;
+			border-radius:2px;
+			background:rgba(0, 0, 0, .1);
+
+			overflow:hidden;
+
+			&:hover{
+				cursor:pointer;
+				background:rgba(0, 0, 0, .2);
+			}
+
+			.tabulator-data-tree-control-collapse{
+				display:inline-block;
+				position: relative;
+
+				height: 7px;
+				width: 1px;
+
+				background: transparent;
+
+				&:after {
+					position: absolute;
+					content: "";
+					left: -3px;
+					top: 3px;
+
+					height: 1px;
+					width: 7px;
+
+					background: $rowTextColor;
+				}
+			}
+
+			.tabulator-data-tree-control-expand{
+				display:inline-block;
+				position: relative;
+
+				height: 7px;
+				width: 1px;
+
+				background: $rowTextColor;
+
+				&:after {
+					position: absolute;
+					content: "";
+					left: -3px;
+					top: 3px;
+
+					height: 1px;
+					width: 7px;
+
+					background: $rowTextColor;
+				}
+			}
+
+		}
+
 		.tabulator-responsive-collapse-toggle{
 			display: inline-flex;
 			align-items:center;

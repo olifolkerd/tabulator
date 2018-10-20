@@ -429,7 +429,7 @@ RowManager.prototype.findAddRowPos = function(pos){
 
 
 RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
-	var row = new Row(data || {}, this),
+	var row = data instanceof Row ? data : new Row(data || {}, this),
 	top = this.findAddRowPos(pos),
 	dispRows;
 

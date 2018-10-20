@@ -141,6 +141,11 @@ Row.prototype.generateElement = function(){
 		self.table.modules.moveRow.initializeRow(this);
 	}
 
+	//setup data tree
+	if(self.table.options.dataTree !== false && self.table.modExists("dataTree")){
+		self.table.modules.dataTree.initializeRow(this);
+	}
+
 	//handle row click events
 	if (self.table.options.rowClick){
 		self.element.addEventListener("click", function(e){
@@ -251,6 +256,11 @@ Row.prototype.initialize = function(force){
 
 		if(force){
 			self.normalizeHeight();
+		}
+
+		//setup movable rows
+		if(self.table.options.dataTree && self.table.modExists("dataTree")){
+			self.table.modules.dataTree.layoutRow(this);
 		}
 
 		//setup movable rows
@@ -557,9 +567,16 @@ Row.prototype.deleteActual = function(){
 		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
+	if(this.table.options.dataTree && this.table.modExists("dataTree")){
+		this.table.modules.dataTree.collapseRow(this);
+	}
+
 	this.table.rowManager.deleteRow(this);
 
 	this.deleteCells();
+
+	this.initialized = false;
+	this.heightInitialized = false;
 
 	//remove from group
 	if(this.modules.group){

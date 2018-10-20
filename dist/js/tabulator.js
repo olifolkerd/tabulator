@@ -2867,7 +2867,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
-		var row = new Row(data || {}, this),
+		var row = data instanceof Row ? data : new Row(data || {}, this),
 		    top = this.findAddRowPos(pos),
 		    dispRows;
 
@@ -4559,6 +4559,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.table.modules.moveRow.initializeRow(this);
 		}
 
+		//setup data tree
+
+		if (self.table.options.dataTree !== false && self.table.modExists("dataTree")) {
+
+			self.table.modules.dataTree.initializeRow(this);
+		}
+
 		//handle row click events
 
 		if (self.table.options.rowClick) {
@@ -4695,6 +4702,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (force) {
 
 				self.normalizeHeight();
+			}
+
+			//setup movable rows
+
+			if (self.table.options.dataTree && self.table.modExists("dataTree")) {
+
+				self.table.modules.dataTree.layoutRow(this);
 			}
 
 			//setup movable rows
@@ -5080,9 +5094,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.selectRow._deselectRow(this.row, true);
 		}
 
+		if (this.table.options.dataTree && this.table.modExists("dataTree")) {
+
+			this.table.modules.dataTree.collapseRow(this);
+		}
+
 		this.table.rowManager.deleteRow(this);
 
 		this.deleteCells();
+
+		this.initialized = false;
+
+		this.heightInitialized = false;
 
 		//remove from group
 
@@ -6146,6 +6169,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		downloadComplete: false, //function to manipulate download data
 
 
+		dataTree: false, //enable data tree
+
+		dataTreeBranchElement: true, //show data tree branch element
+
+		dataTreeChildIndent: 9, //data tree child indent in px
+
+		dataTreeChildField: "_children", //data tre column field to look for child rows
+
+		dataTreeCollapseElement: false, //data tree row collapse element
+
+		dataTreeExpandElement: false, //data tree row expand element
+
+
 		addRowPos: "bottom", //position to insert blank rows, top|bottom
 
 
@@ -6609,6 +6645,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (options.footerElement) {
 
 			this.footerManager.activate();
+		}
+
+		if (options.dataTree && this.modExists("dataTree", true)) {
+
+			mod.dataTree.initialize();
 		}
 
 		if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
@@ -10426,6 +10467,165 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Tabulator.prototype.registerModule("clipboard", Clipboard);
 
+	var DataTree = function DataTree(table) {
+		this.table = table;
+		this.indent = 10;
+		this.field = "";
+		this.collapseEl = null;
+		this.expandEl = null;
+		this.branchEl = null;
+	};
+
+	DataTree.prototype.initialize = function () {
+		var dummyEl = null,
+		    options = this.table.options;
+
+		this.field = options.dataTreeChildField;
+		this.indent = options.dataTreeChildIndent;
+
+		if (options.dataTreeBranchElement) {
+
+			if (options.dataTreeBranchElement === true) {
+				this.branchEl = document.createElement("div");
+				this.branchEl.classList.add("tabulator-data-tree-branch");
+			} else {
+				if (typeof options.dataTreeBranchElement === "string") {
+					dummyEl = document.createElement("div");
+					dummyEl.innerHTML = options.dataTreeBranchElement;
+					this.branchEl = dummyEl.firstChild;
+				} else {
+					this.branchEl = options.dataTreeBranchElement;
+				}
+			}
+		}
+
+		if (options.dataTreeCollapseElement) {
+			if (typeof options.dataTreeCollapseElement === "string") {
+				dummyEl = document.createElement("div");
+				dummyEl.innerHTML = options.dataTreeCollapseElement;
+				this.collapseEl = dummyEl.firstChild;
+			} else {
+				this.collapseEl = options.dataTreeCollapseElement;
+			}
+		} else {
+			this.collapseEl = document.createElement("div");
+			this.collapseEl.classList.add("tabulator-data-tree-control");
+			this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
+		}
+
+		if (options.dataTreeExpandElement) {
+			if (typeof options.dataTreeExpandElement === "string") {
+				dummyEl = document.createElement("div");
+				dummyEl.innerHTML = options.dataTreeExpandElement;
+				this.expandEl = dummyEl.firstChild;
+			} else {
+				this.expandEl = options.dataTreeExpandElement;
+			}
+		} else {
+			this.expandEl = document.createElement("div");
+			this.expandEl.classList.add("tabulator-data-tree-control");
+			this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
+		}
+	};
+
+	DataTree.prototype.initializeRow = function (row) {
+		row.modules.dataTable = {
+			index: 0,
+			open: false,
+			controlEl: false,
+			branchEl: false,
+			children: typeof row.getData()[this.field] !== "undefined"
+		};
+	};
+
+	DataTree.prototype.layoutRow = function (row) {
+		var cell = row.getCells()[0],
+		    el = cell.getElement();
+
+		el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + row.modules.dataTable.index * this.indent + "px";
+
+		if (row.modules.dataTable.branchEl) {
+			row.modules.dataTable.branchEl.parentNode.removeChild(row.modules.dataTable.branchEl);
+		}
+
+		this.generateControlElement(row, el);
+
+		if (row.modules.dataTable.index && this.branchEl) {
+			row.modules.dataTable.branchEl = this.branchEl.cloneNode(true);
+			el.insertBefore(row.modules.dataTable.branchEl, el.firstChild);
+			el.style.paddingLeft = parseInt(el.style.paddingLeft) + (row.modules.dataTable.branchEl.offsetWidth + row.modules.dataTable.branchEl.style.marginRight) * (row.modules.dataTable.index - 1) + "px";
+		}
+	};
+
+	DataTree.prototype.generateControlElement = function (row, el) {
+		var _this18 = this;
+
+		var config = row.modules.dataTable,
+		    el = el || row.getCells()[0].getElement(),
+		    oldControl = config.controlEl;
+
+		if (config.children !== false) {
+
+			if (config.open) {
+				config.controlEl = this.collapseEl.cloneNode(true);
+				config.controlEl.addEventListener("click", function () {
+					_this18.collapseRow(row);
+				});
+			} else {
+				config.controlEl = this.expandEl.cloneNode(true);
+				config.controlEl.addEventListener("click", function () {
+					_this18.expandRow(row);
+				});
+			}
+
+			if (oldControl) {
+				oldControl.parentNode.replaceChild(config.controlEl, oldControl);
+			} else {
+				el.insertBefore(config.controlEl, el.firstChild);
+			}
+		}
+	};
+
+	DataTree.prototype.expandRow = function (row) {
+		var _this19 = this;
+
+		var config = row.modules.dataTable,
+		    promise;
+
+		if (!Array.isArray(config.children)) {
+			config.children = [];
+
+			row.getData()[this.field].forEach(function (childData) {
+				var childRow = new Row(childData || {}, _this19.table.rowManager);
+				childRow.modules.dataTable.index = row.modules.dataTable.index + 1;
+				config.children.push(childRow);
+			});
+		}
+
+		promise = this.table.rowManager.addRows(config.children, false, row);
+
+		promise.then(function (rows) {
+			config.children = rows;
+		});
+
+		config.open = true;
+		this.generateControlElement(row);
+	};
+
+	DataTree.prototype.collapseRow = function (row) {
+		var config = row.modules.dataTable;
+
+		if (Array.isArray(config.children)) {
+			config.children.forEach(function (childRow) {
+				childRow.delete();
+			});
+
+			config.open = false;
+			this.generateControlElement(row);
+		}
+	};
+
+	Tabulator.prototype.registerModule("dataTree", DataTree);
 	var Download = function Download(table) {
 		this.table = table; //hold Tabulator object
 		this.fields = {}; //hold filed multi dimension arrays
@@ -14427,13 +14627,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this18 = this;
+		var _this20 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this18.actions[key]) {
+			if (_this20.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -15671,18 +15871,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this19 = this;
+		var _this21 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this19.max) {
-				_this19.page = page;
-				_this19.trigger().then(function () {
+			if (page > 0 && page <= _this21.max) {
+				_this21.page = page;
+				_this21.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this19.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this21.max + ":", page);
 				reject();
 			}
 		});
@@ -15755,12 +15955,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this20 = this;
+		var _this22 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this20.page > 1) {
-				_this20.page--;
-				_this20.trigger().then(function () {
+			if (_this22.page > 1) {
+				_this22.page--;
+				_this22.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -15774,19 +15974,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this21 = this;
+		var _this23 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this21.page < _this21.max) {
-				_this21.page++;
-				_this21.trigger().then(function () {
+			if (_this23.page < _this23.max) {
+				_this23.page++;
+				_this23.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this21.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this21.max + ":", _this21.max + 1);
+				if (!_this23.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this23.max + ":", _this23.max + 1);
 				}
 				reject();
 			}
@@ -15838,28 +16038,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this22 = this;
+		var _this24 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this22.mode) {
+			switch (_this24.mode) {
 				case "local":
-					left = _this22.table.rowManager.scrollLeft;
+					left = _this24.table.rowManager.scrollLeft;
 
-					_this22.table.rowManager.refreshActiveData("page");
-					_this22.table.rowManager.scrollHorizontal(left);
+					_this24.table.rowManager.refreshActiveData("page");
+					_this24.table.rowManager.scrollHorizontal(left);
 
-					_this22.table.options.pageLoaded.call(_this22.table, _this22.getPage());
+					_this24.table.options.pageLoaded.call(_this24.table, _this24.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this22.table.modules.ajax.blockActiveRequest();
-					_this22._getRemotePage().then(function () {
+					_this24.table.modules.ajax.blockActiveRequest();
+					_this24._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -15867,14 +16067,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this22.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this24.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this23 = this;
+		var _this25 = this;
 
 		var self = this,
 		    oldParams,
@@ -15891,33 +16091,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this23.paginationDataSentNames.page] = self.page;
+			pageParams[_this25.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this23.size) {
-				pageParams[_this23.paginationDataSentNames.size] = _this23.size;
+			if (_this25.size) {
+				pageParams[_this25.paginationDataSentNames.size] = _this25.size;
 			}
 
 			//set sort data if defined
-			if (_this23.table.options.ajaxSorting && _this23.table.modExists("sort")) {
+			if (_this25.table.options.ajaxSorting && _this25.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this23.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this25.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this23.table.options.ajaxFiltering && _this23.table.modExists("filter")) {
+			if (_this25.table.options.ajaxFiltering && _this25.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this23.paginationDataSentNames.filters] = filters;
+				pageParams[_this25.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this23.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this25.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {

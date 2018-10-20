@@ -2311,7 +2311,7 @@ RowManager.prototype.findAddRowPos = function (pos) {
 };
 
 RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
-	var row = new Row(data || {}, this),
+	var row = data instanceof Row ? data : new Row(data || {}, this),
 	    top = this.findAddRowPos(pos),
 	    dispRows;
 
@@ -3609,6 +3609,11 @@ Row.prototype.generateElement = function () {
 		self.table.modules.moveRow.initializeRow(this);
 	}
 
+	//setup data tree
+	if (self.table.options.dataTree !== false && self.table.modExists("dataTree")) {
+		self.table.modules.dataTree.initializeRow(this);
+	}
+
 	//handle row click events
 	if (self.table.options.rowClick) {
 		self.element.addEventListener("click", function (e) {
@@ -3716,6 +3721,11 @@ Row.prototype.initialize = function (force) {
 
 		if (force) {
 			self.normalizeHeight();
+		}
+
+		//setup movable rows
+		if (self.table.options.dataTree && self.table.modExists("dataTree")) {
+			self.table.modules.dataTree.layoutRow(this);
 		}
 
 		//setup movable rows
@@ -4020,9 +4030,16 @@ Row.prototype.deleteActual = function () {
 		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
+	if (this.table.options.dataTree && this.table.modExists("dataTree")) {
+		this.table.modules.dataTree.collapseRow(this);
+	}
+
 	this.table.rowManager.deleteRow(this);
 
 	this.deleteCells();
+
+	this.initialized = false;
+	this.heightInitialized = false;
 
 	//remove from group
 	if (this.modules.group) {
@@ -4810,6 +4827,14 @@ Tabulator.prototype.defaultOptions = {
 	}, //function to manipulate download data
 	downloadComplete: false, //function to manipulate download data
 
+	dataTree: false, //enable data tree
+	dataTreeBranchElement: true, //show data tree branch element
+	dataTreeChildIndent: 9, //data tree child indent in px
+	dataTreeChildField: "_children", //data tre column field to look for child rows
+	dataTreeCollapseElement: false, //data tree row collapse element
+	dataTreeExpandElement: false, //data tree row expand element
+
+
 	addRowPos: "bottom", //position to insert blank rows, top|bottom
 
 	selectable: "highlight", //highlight rows on hover
@@ -5115,6 +5140,10 @@ Tabulator.prototype._buildElement = function () {
 
 	if (options.footerElement) {
 		this.footerManager.activate();
+	}
+
+	if (options.dataTree && this.modExists("dataTree", true)) {
+		mod.dataTree.initialize();
 	}
 
 	if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
