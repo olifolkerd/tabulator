@@ -511,6 +511,21 @@ Edit.prototype.editors = {
 	autocomp: function (cell, onRendered, success, cancel, editorParams) {
 		var container = document.createElement("div");
 		container.className = "autocomp";
+
+		function onCancel(){
+			container.parentElement.style.overflow = 'hidden'; // reset back to hidden
+			cancel();
+		}
+		function onChange(){
+			container.parentElement.style.overflow = 'hidden'; // reset back to hidden
+			var value = input.value;
+			if(value != cellValue){
+				success(value);
+			}else{
+				cancel();
+			}
+		}
+		
 		var list = document.createElement("ul");
 		list.style.margin = "0";
 		list.style.padding = "0";
@@ -547,6 +562,7 @@ Edit.prototype.editors = {
 				idx = idx + 1;
 			}
 		}
+		var activeItem = null;
 
 		// --- input
 		var cellValue = cell.getValue(),
@@ -555,28 +571,32 @@ Edit.prototype.editors = {
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
 		input.value = cellValue;
+		input.onclick = function() {
+			activeItem = null;
+		}
 
 		function onkey(e) {
-			for (let i = 0; i < list.children.length; i += 1) {
-				const child = list.children[i];
-				if (child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) >= 0) {
-					child.style.display = 'block';
-				} else {
-					child.style.display = 'none';
-				}
+			if (e.keyCode < 38 && e.keyCode > 42) {		// if not Arrow Keys
+				for (let i = 0; i < list.children.length; i += 1) {
+					const child = list.children[i];
+					if (child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) >= 0) {
+						child.style.display = "block";
+					} else {
+						child.style.display = "none";
+					}
+				}	
 			}
 		}
 		input.onkeyup = onkey;
 		input.onkeypress = onkey;
 
-		var activeItem = list.firstChild;
 		list.onkeydown = function(e) {
 			switch (e.keyCode) {
 				case 13:
 					success(activeItem.dataset.value);
 					break;
 				case 27:
-					cancel();
+					onCancel();
 					break;
 				case 38: // if the UP key is pressed
 					e.preventDefault();
@@ -603,8 +623,9 @@ Edit.prototype.editors = {
 					e.stopPropagation();
 					for (let i = 0; i < list.children.length; i += 1) {
 						const child = list.children[i];
-						if (child.style.display === "block") {
-							child.focus();
+						if (child.style.display !== "none") {
+							activeItem = child;
+							child.focus(); // this will trigger input's blur event
 							break;
 						}
 					}
@@ -614,23 +635,17 @@ Edit.prototype.editors = {
 					onChange();
 					break;
 				case 27:
-					cancel();
+					onCancel();
 					break;
 			}
 		}
 
-		function onChange(){
-			var value = input.value;
-			if(value != cellValue){
-				success(value);
-			}else{
-				cancel();
-			}
-		}
 		//submit new value on blur
-		// input.addEventListener("blur", function(e){
-		// 	onChange();
-		// });
+		input.addEventListener("blur", function(e){
+			if (!activeItem) {
+				onChange(); // user has not focused on a list item => exit Edit mode
+			}
+		});
 
 		// add to container
 		container.appendChild(input);
