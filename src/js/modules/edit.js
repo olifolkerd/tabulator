@@ -576,7 +576,7 @@ Edit.prototype.editors = {
 		}
 
 		function onkey(e) {
-			if (e.keyCode < 38 && e.keyCode > 42) {		// if not Arrow Keys
+			if (e.keyCode >= 48 || e.keyCode <= 13) {
 				for (let i = 0; i < list.children.length; i += 1) {
 					const child = list.children[i];
 					if (child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) >= 0) {
