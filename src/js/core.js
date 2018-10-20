@@ -54,6 +54,8 @@ Tabulator.prototype.defaultOptions = {
 	initialSort:false, //initial sorting criteria
 	initialFilter:false, //initial filtering criteria
 
+	sortOrderReverse:false, //reverse internal sort ordering
+
 	footerElement:false, //hold footer element
 
 	index:"id", //filed for row index

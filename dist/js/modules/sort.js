@@ -184,7 +184,10 @@ Sort.prototype.findSorter = function (column) {
 //work through sort list sorting data
 Sort.prototype.sort = function () {
 	var self = this,
-	    lastSort;
+	    lastSort,
+	    sortList;
+
+	sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList;
 
 	if (self.table.options.dataSorting) {
 		self.table.options.dataSorting.call(self.table, self.getSort());
@@ -194,7 +197,7 @@ Sort.prototype.sort = function () {
 
 	if (!self.table.options.ajaxSorting) {
 
-		self.sortList.forEach(function (item, i) {
+		sortList.forEach(function (item, i) {
 
 			if (item.column && item.column.modules.sort) {
 
@@ -203,13 +206,13 @@ Sort.prototype.sort = function () {
 					item.column.modules.sort.sorter = self.findSorter(item.column);
 				}
 
-				self._sortItem(item.column, item.dir, self.sortList, i);
+				self._sortItem(item.column, item.dir, sortList, i);
 			}
 
 			self.setColumnHeader(item.column, item.dir);
 		});
 	} else {
-		self.sortList.forEach(function (item, i) {
+		sortList.forEach(function (item, i) {
 			self.setColumnHeader(item.column, item.dir);
 		});
 	}

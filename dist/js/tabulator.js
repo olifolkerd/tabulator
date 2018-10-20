@@ -6103,6 +6103,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		initialFilter: false, //initial filtering criteria
 
 
+		sortOrderReverse: false, //reverse internal sort ordering
+
+
 		footerElement: false, //hold footer element
 
 
@@ -17156,7 +17159,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//work through sort list sorting data
 	Sort.prototype.sort = function () {
 		var self = this,
-		    lastSort;
+		    lastSort,
+		    sortList;
+
+		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList;
 
 		if (self.table.options.dataSorting) {
 			self.table.options.dataSorting.call(self.table, self.getSort());
@@ -17166,7 +17172,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (!self.table.options.ajaxSorting) {
 
-			self.sortList.forEach(function (item, i) {
+			sortList.forEach(function (item, i) {
 
 				if (item.column && item.column.modules.sort) {
 
@@ -17175,13 +17181,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						item.column.modules.sort.sorter = self.findSorter(item.column);
 					}
 
-					self._sortItem(item.column, item.dir, self.sortList, i);
+					self._sortItem(item.column, item.dir, sortList, i);
 				}
 
 				self.setColumnHeader(item.column, item.dir);
 			});
 		} else {
-			self.sortList.forEach(function (item, i) {
+			sortList.forEach(function (item, i) {
 				self.setColumnHeader(item.column, item.dir);
 			});
 		}
