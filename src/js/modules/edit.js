@@ -528,11 +528,12 @@ Edit.prototype.editors = {
 			isArray = Array.isArray(editorParams.values);
 		}
 
-		function addListItems(element, label, value){
+		function addListItems(element, label, value, idx){
 			var item = document.createElement("li");
 			item.innerHTML = value;
 			item.style.padding = "5px";
 			item.dataset.value = value;
+			item.tabIndex = "" + idx;
 			item.onmousedown = function(e) {
 				success(e.target.dataset.value);
 			}
@@ -540,8 +541,10 @@ Edit.prototype.editors = {
 		}
 
 		if(!isArray && editorParams && typeof editorParams.values === "object"){
+			var idx = 0;
 			for(var key in editorParams.values){
-				addListItems(list, editorParams.values[key], key)
+				addListItems(list, editorParams.values[key], key, idx)
+				idx = idx + 1;
 			}
 		}
 
@@ -565,13 +568,43 @@ Edit.prototype.editors = {
 		}
 		input.onkeyup = onkey;
 		input.onkeypress = onkey;
+
+		var activeItem = list.firstChild;
+		list.onkeydown = function(e) {
+			switch (e.keyCode) {
+				case 13:
+					success(activeItem.dataset.value);
+					break;
+				case 27:
+					cancel();
+					break;
+				case 38: // if the UP key is pressed
+					e.preventDefault();
+					e.stopPropagation();
+					if (activeItem.previousSibling) {
+						activeItem = activeItem.previousSibling;
+						activeItem.focus();
+					}
+					break;
+				case 40: // if the DOWN key is pressed
+					e.preventDefault();
+					e.stopPropagation();
+					if (activeItem.nextSibling) {
+						activeItem = activeItem.nextSibling;
+						activeItem.focus();
+					}
+					break;
+			}
+		}
 		input.onkeydown = function(e) {
 			switch (e.keyCode) {
 				case 40: // if the DOWN key is pressed
+					e.preventDefault();
+					e.stopPropagation();
 					for (let i = 0; i < list.children.length; i += 1) {
 						const child = list.children[i];
 						if (child.style.display === "block") {
-							success(child.innerText);
+							child.focus();
 							break;
 						}
 					}
@@ -595,9 +628,9 @@ Edit.prototype.editors = {
 			}
 		}
 		//submit new value on blur
-		input.addEventListener("blur", function(e){
-			onChange();
-		});
+		// input.addEventListener("blur", function(e){
+		// 	onChange();
+		// });
 
 		// add to container
 		container.appendChild(input);
