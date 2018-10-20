@@ -535,6 +535,7 @@ Edit.prototype.editors = {
 		list.style.zIndex = 1;
 		list.style.width = "100%";
 		list.style.maxHeight = "135px";
+		list.style.marginTop = "4px";
 		list.style.overflowY = "auto";
 
 		var isArray = Array.isArray(editorParams);
@@ -576,7 +577,7 @@ Edit.prototype.editors = {
 		}
 
 		function onkey(e) {
-			if (e.keyCode >= 48 || e.keyCode <= 13) {
+			if (e.keyCode >= 48 || e.keyCode <= 13 || e.keyCode == 32) {
 				for (let i = 0; i < list.children.length; i += 1) {
 					const child = list.children[i];
 					if (child.innerText.toLowerCase().indexOf(e.target.value.toLowerCase()) >= 0) {
