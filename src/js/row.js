@@ -568,7 +568,7 @@ Row.prototype.deleteActual = function(){
 	}
 
 	if(this.table.options.dataTree && this.table.modExists("dataTree")){
-		this.table.modules.dataTree.collapseRow(this);
+		this.table.modules.dataTree.collapseRow(this, true);
 	}
 
 	this.table.rowManager.deleteRow(this);

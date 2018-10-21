@@ -84,6 +84,8 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeChildField:"_children", //data tre column field to look for child rows
 	dataTreeCollapseElement:false, //data tree row collapse element
 	dataTreeExpandElement:false, //data tree row expand element
+	dataTreeRowExpanded:function(){}, //row has been expanded
+	dataTreeRowCollapsed:function(){}, //row has been collapsed
 
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom

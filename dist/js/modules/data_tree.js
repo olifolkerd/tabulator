@@ -73,20 +73,21 @@ DataTree.prototype.initializeRow = function (row) {
 
 DataTree.prototype.layoutRow = function (row) {
 	var cell = row.getCells()[0],
-	    el = cell.getElement();
+	    el = cell.getElement(),
+	    config = row.modules.dataTable;
 
-	el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + row.modules.dataTable.index * this.indent + "px";
+	el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + config.index * this.indent + "px";
 
-	if (row.modules.dataTable.branchEl) {
-		row.modules.dataTable.branchEl.parentNode.removeChild(row.modules.dataTable.branchEl);
+	if (config.branchEl) {
+		config.branchEl.parentNode.removeChild(config.branchEl);
 	}
 
 	this.generateControlElement(row, el);
 
-	if (row.modules.dataTable.index && this.branchEl) {
-		row.modules.dataTable.branchEl = this.branchEl.cloneNode(true);
-		el.insertBefore(row.modules.dataTable.branchEl, el.firstChild);
-		el.style.paddingLeft = parseInt(el.style.paddingLeft) + (row.modules.dataTable.branchEl.offsetWidth + row.modules.dataTable.branchEl.style.marginRight) * (row.modules.dataTable.index - 1) + "px";
+	if (config.index && this.branchEl) {
+		config.branchEl = this.branchEl.cloneNode(true);
+		el.insertBefore(config.branchEl, el.firstChild);
+		el.style.paddingLeft = parseInt(el.style.paddingLeft) + (config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1) + "px";
 	}
 };
 
@@ -111,7 +112,7 @@ DataTree.prototype.generateControlElement = function (row, el) {
 			});
 		}
 
-		if (oldControl) {
+		if (oldControl && oldControl.parentNode === el) {
 			oldControl.parentNode.replaceChild(config.controlEl, oldControl);
 		} else {
 			el.insertBefore(config.controlEl, el.firstChild);
@@ -119,7 +120,7 @@ DataTree.prototype.generateControlElement = function (row, el) {
 	}
 };
 
-DataTree.prototype.expandRow = function (row) {
+DataTree.prototype.expandRow = function (row, silent) {
 	var _this2 = this;
 
 	var config = row.modules.dataTable,
@@ -135,17 +136,26 @@ DataTree.prototype.expandRow = function (row) {
 		});
 	}
 
-	promise = this.table.rowManager.addRows(config.children, false, row);
+	promise = this.table.rowManager.addRows(config.children.slice(), false, row);
 
 	promise.then(function (rows) {
-		config.children = rows;
+		rows.forEach(function (childRow) {
+			if (childRow.modules.dataTable.open) {
+				_this2.expandRow(childRow, true);
+			}
+		});
 	});
 
 	config.open = true;
+
+	if (!silent) {
+		this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTable.index);
+	}
+
 	this.generateControlElement(row);
 };
 
-DataTree.prototype.collapseRow = function (row) {
+DataTree.prototype.collapseRow = function (row, silent) {
 	var config = row.modules.dataTable;
 
 	if (Array.isArray(config.children)) {
@@ -153,7 +163,10 @@ DataTree.prototype.collapseRow = function (row) {
 			childRow.delete();
 		});
 
-		config.open = false;
+		if (!silent) {
+			config.open = false;
+			this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTable.index);
+		}
 		this.generateControlElement(row);
 	}
 };

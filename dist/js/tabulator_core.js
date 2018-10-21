@@ -4031,7 +4031,7 @@ Row.prototype.deleteActual = function () {
 	}
 
 	if (this.table.options.dataTree && this.table.modExists("dataTree")) {
-		this.table.modules.dataTree.collapseRow(this);
+		this.table.modules.dataTree.collapseRow(this, true);
 	}
 
 	this.table.rowManager.deleteRow(this);
@@ -4833,6 +4833,8 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeChildField: "_children", //data tre column field to look for child rows
 	dataTreeCollapseElement: false, //data tree row collapse element
 	dataTreeExpandElement: false, //data tree row expand element
+	dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
+	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 
 
 	addRowPos: "bottom", //position to insert blank rows, top|bottom
