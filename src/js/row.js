@@ -83,6 +83,41 @@ RowComponent.prototype.unfreeze = function(){
 	}
 };
 
+RowComponent.prototype.treeCollapse = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		this._row.table.modules.dataTree.collapseRow(this._row);
+	}
+};
+
+RowComponent.prototype.treeExpand = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		this._row.table.modules.dataTree.expandRow(this._row);
+	}
+};
+
+RowComponent.prototype.treeToggle = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		this._row.table.modules.dataTree.toggleRow(this._row);
+	}
+};
+
+RowComponent.prototype.getTreeParent = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		return this._row.table.modules.dataTree.getTreeParent(this._row);
+	}
+
+	return false;
+};
+
+RowComponent.prototype.getTreeChildren = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		return this._row.table.modules.dataTree.getTreeChildren(this._row);
+	}
+
+	return false;
+};
+
+
 RowComponent.prototype.reformat = function(){
 	return this._row.reinitialize();
 };

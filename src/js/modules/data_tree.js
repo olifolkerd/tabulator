@@ -60,11 +60,12 @@ DataTree.prototype.initialize = function(){
 };
 
 DataTree.prototype.initializeRow = function(row){
-	row.modules.dataTable = {
+	row.modules.dataTree = {
 		index:0,
 		open:false,
 		controlEl:false,
 		branchEl:false,
+		parent:false,
 		children:typeof row.getData()[this.field] !== "undefined",
 	};
 };
@@ -73,7 +74,7 @@ DataTree.prototype.initializeRow = function(row){
 DataTree.prototype.layoutRow = function(row){
 	var cell = row.getCells()[0],
 	el = cell.getElement(),
-	config = row.modules.dataTable;
+	config = row.modules.dataTree;
 
 	el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + (config.index * this.indent) + "px";
 
@@ -91,7 +92,7 @@ DataTree.prototype.layoutRow = function(row){
 };
 
 DataTree.prototype.generateControlElement = function(row, el){
-	var config = row.modules.dataTable,
+	var config = row.modules.dataTree,
 	el = el || row.getCells()[0].getElement(),
 	oldControl = config.controlEl;
 
@@ -118,53 +119,103 @@ DataTree.prototype.generateControlElement = function(row, el){
 };
 
 DataTree.prototype.expandRow = function(row, silent){
-	var config = row.modules.dataTable,
+	var config = row.modules.dataTree,
 	promise;
 
-	if(!Array.isArray(config.children)){
-		config.children = [];
+	if(config.children !== false){
 
-		row.getData()[this.field].forEach((childData) => {
-			var childRow = new Row(childData || {}, this.table.rowManager);
-			childRow.modules.dataTable.index = row.modules.dataTable.index + 1;
-			config.children.push(childRow);
+		if(!Array.isArray(config.children)){
+			config.children = this.generateChildren(row);
+		}
+
+		promise = this.table.rowManager.addRows(config.children.slice(), false, row);
+
+		promise.then((rows) => {
+			rows.forEach((childRow) => {
+				if(childRow.modules.dataTree.open){
+					this.expandRow(childRow, true);
+				}
+			});
 		});
-	}
 
-	promise = this.table.rowManager.addRows(config.children.slice(), false, row);
-
-	promise.then((rows) => {
-		rows.forEach((childRow) => {
-			if(childRow.modules.dataTable.open){
-				this.expandRow(childRow, true);
-			}
-		});
-	});
-
-	config.open = true;
-
-	if(!silent){
-		this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTable.index);
-	}
-
-	this.generateControlElement(row);
-};
-
-DataTree.prototype.collapseRow = function(row, silent){
-	var config = row.modules.dataTable;
-
-	if(Array.isArray(config.children)){
-		config.children.forEach(function(childRow){
-			childRow.delete();
-		});
+		config.open = true;
 
 		if(!silent){
-			config.open = false;
-			this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTable.index);
+			this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTree.index);
 		}
+
 		this.generateControlElement(row);
 	}
 };
+
+DataTree.prototype.generateChildren = function(row){
+	var children = [];
+
+	row.getData()[this.field].forEach((childData) => {
+		var childRow = new Row(childData || {}, this.table.rowManager);
+		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
+		childRow.modules.dataTree.parent = row;
+		children.push(childRow);
+	});
+
+	return children;
+};
+
+DataTree.prototype.collapseRow = function(row, silent){
+	var config = row.modules.dataTree;
+
+	if(config.children !== false){
+
+		if(Array.isArray(config.children)){
+			config.children.forEach(function(childRow){
+				childRow.delete();
+			});
+
+			if(!silent){
+				config.open = false;
+				this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTree.index);
+			}
+			this.generateControlElement(row);
+		}
+	}
+};
+
+DataTree.prototype.toggleRow = function(row){
+	var config = row.modules.dataTree;
+
+	if(config.children !== false){
+		if(config.open){
+			this.collapseRow(row);
+		}else{
+			this.expandRow(row);
+		}
+	}
+};
+
+DataTree.prototype.getTreeParent = function(row){
+	return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
+};
+
+DataTree.prototype.getTreeChildren = function(row){
+	var config = row.modules.dataTree,
+	output = [];
+
+	if(config.children){
+
+		if(!Array.isArray(config.children)){
+			config.children = this.generateChildren(row);
+		}
+
+		config.children.forEach((childRow) => {
+			if(childRow instanceof Row){
+				output.push(childRow.getComponent());
+			}
+		});
+	}
+
+	return output;
+};
+
 
 
 Tabulator.prototype.registerModule("dataTree", DataTree);

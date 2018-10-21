@@ -4477,6 +4477,50 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	RowComponent.prototype.treeCollapse = function () {
+
+		if (this._row.table.modExists("dataTree", true)) {
+
+			this._row.table.modules.dataTree.collapseRow(this._row);
+		}
+	};
+
+	RowComponent.prototype.treeExpand = function () {
+
+		if (this._row.table.modExists("dataTree", true)) {
+
+			this._row.table.modules.dataTree.expandRow(this._row);
+		}
+	};
+
+	RowComponent.prototype.treeToggle = function () {
+
+		if (this._row.table.modExists("dataTree", true)) {
+
+			this._row.table.modules.dataTree.toggleRow(this._row);
+		}
+	};
+
+	RowComponent.prototype.getTreeParent = function () {
+
+		if (this._row.table.modExists("dataTree", true)) {
+
+			return this._row.table.modules.dataTree.getTreeParent(this._row);
+		}
+
+		return false;
+	};
+
+	RowComponent.prototype.getTreeChildren = function () {
+
+		if (this._row.table.modExists("dataTree", true)) {
+
+			return this._row.table.modules.dataTree.getTreeChildren(this._row);
+		}
+
+		return false;
+	};
+
 	RowComponent.prototype.reformat = function () {
 
 		return this._row.reinitialize();
@@ -10533,11 +10577,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	DataTree.prototype.initializeRow = function (row) {
-		row.modules.dataTable = {
+		row.modules.dataTree = {
 			index: 0,
 			open: false,
 			controlEl: false,
 			branchEl: false,
+			parent: false,
 			children: typeof row.getData()[this.field] !== "undefined"
 		};
 	};
@@ -10545,7 +10590,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	DataTree.prototype.layoutRow = function (row) {
 		var cell = row.getCells()[0],
 		    el = cell.getElement(),
-		    config = row.modules.dataTable;
+		    config = row.modules.dataTree;
 
 		el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + config.index * this.indent + "px";
 
@@ -10565,7 +10610,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	DataTree.prototype.generateControlElement = function (row, el) {
 		var _this18 = this;
 
-		var config = row.modules.dataTable,
+		var config = row.modules.dataTree,
 		    el = el || row.getCells()[0].getElement(),
 		    oldControl = config.controlEl;
 
@@ -10594,52 +10639,103 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	DataTree.prototype.expandRow = function (row, silent) {
 		var _this19 = this;
 
-		var config = row.modules.dataTable,
+		var config = row.modules.dataTree,
 		    promise;
 
-		if (!Array.isArray(config.children)) {
-			config.children = [];
+		if (config.children !== false) {
 
-			row.getData()[this.field].forEach(function (childData) {
-				var childRow = new Row(childData || {}, _this19.table.rowManager);
-				childRow.modules.dataTable.index = row.modules.dataTable.index + 1;
-				config.children.push(childRow);
+			if (!Array.isArray(config.children)) {
+				config.children = this.generateChildren(row);
+			}
+
+			promise = this.table.rowManager.addRows(config.children.slice(), false, row);
+
+			promise.then(function (rows) {
+				rows.forEach(function (childRow) {
+					if (childRow.modules.dataTree.open) {
+						_this19.expandRow(childRow, true);
+					}
+				});
 			});
+
+			config.open = true;
+
+			if (!silent) {
+				this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTree.index);
+			}
+
+			this.generateControlElement(row);
 		}
+	};
 
-		promise = this.table.rowManager.addRows(config.children.slice(), false, row);
+	DataTree.prototype.generateChildren = function (row) {
+		var _this20 = this;
 
-		promise.then(function (rows) {
-			rows.forEach(function (childRow) {
-				if (childRow.modules.dataTable.open) {
-					_this19.expandRow(childRow, true);
-				}
-			});
+		var children = [];
+
+		row.getData()[this.field].forEach(function (childData) {
+			var childRow = new Row(childData || {}, _this20.table.rowManager);
+			childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
+			childRow.modules.dataTree.parent = row;
+			children.push(childRow);
 		});
 
-		config.open = true;
-
-		if (!silent) {
-			this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTable.index);
-		}
-
-		this.generateControlElement(row);
+		return children;
 	};
 
 	DataTree.prototype.collapseRow = function (row, silent) {
-		var config = row.modules.dataTable;
+		var config = row.modules.dataTree;
 
-		if (Array.isArray(config.children)) {
-			config.children.forEach(function (childRow) {
-				childRow.delete();
-			});
+		if (config.children !== false) {
 
-			if (!silent) {
-				config.open = false;
-				this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTable.index);
+			if (Array.isArray(config.children)) {
+				config.children.forEach(function (childRow) {
+					childRow.delete();
+				});
+
+				if (!silent) {
+					config.open = false;
+					this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTree.index);
+				}
+				this.generateControlElement(row);
 			}
-			this.generateControlElement(row);
 		}
+	};
+
+	DataTree.prototype.toggleRow = function (row) {
+		var config = row.modules.dataTree;
+
+		if (config.children !== false) {
+			if (config.open) {
+				this.collapseRow(row);
+			} else {
+				this.expandRow(row);
+			}
+		}
+	};
+
+	DataTree.prototype.getTreeParent = function (row) {
+		return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
+	};
+
+	DataTree.prototype.getTreeChildren = function (row) {
+		var config = row.modules.dataTree,
+		    output = [];
+
+		if (config.children) {
+
+			if (!Array.isArray(config.children)) {
+				config.children = this.generateChildren(row);
+			}
+
+			config.children.forEach(function (childRow) {
+				if (childRow instanceof Row) {
+					output.push(childRow.getComponent());
+				}
+			});
+		}
+
+		return output;
 	};
 
 	Tabulator.prototype.registerModule("dataTree", DataTree);
@@ -14644,13 +14740,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this20 = this;
+		var _this21 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this20.actions[key]) {
+			if (_this21.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -15888,18 +15984,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this21 = this;
+		var _this22 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this21.max) {
-				_this21.page = page;
-				_this21.trigger().then(function () {
+			if (page > 0 && page <= _this22.max) {
+				_this22.page = page;
+				_this22.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this21.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this22.max + ":", page);
 				reject();
 			}
 		});
@@ -15972,12 +16068,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this22 = this;
+		var _this23 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this22.page > 1) {
-				_this22.page--;
-				_this22.trigger().then(function () {
+			if (_this23.page > 1) {
+				_this23.page--;
+				_this23.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -15991,19 +16087,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this23 = this;
+		var _this24 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this23.page < _this23.max) {
-				_this23.page++;
-				_this23.trigger().then(function () {
+			if (_this24.page < _this24.max) {
+				_this24.page++;
+				_this24.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this23.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this23.max + ":", _this23.max + 1);
+				if (!_this24.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this24.max + ":", _this24.max + 1);
 				}
 				reject();
 			}
@@ -16055,28 +16151,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this24 = this;
+		var _this25 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this24.mode) {
+			switch (_this25.mode) {
 				case "local":
-					left = _this24.table.rowManager.scrollLeft;
+					left = _this25.table.rowManager.scrollLeft;
 
-					_this24.table.rowManager.refreshActiveData("page");
-					_this24.table.rowManager.scrollHorizontal(left);
+					_this25.table.rowManager.refreshActiveData("page");
+					_this25.table.rowManager.scrollHorizontal(left);
 
-					_this24.table.options.pageLoaded.call(_this24.table, _this24.getPage());
+					_this25.table.options.pageLoaded.call(_this25.table, _this25.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this24.table.modules.ajax.blockActiveRequest();
-					_this24._getRemotePage().then(function () {
+					_this25.table.modules.ajax.blockActiveRequest();
+					_this25._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -16084,14 +16180,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this24.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this25.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this25 = this;
+		var _this26 = this;
 
 		var self = this,
 		    oldParams,
@@ -16108,33 +16204,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this25.paginationDataSentNames.page] = self.page;
+			pageParams[_this26.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this25.size) {
-				pageParams[_this25.paginationDataSentNames.size] = _this25.size;
+			if (_this26.size) {
+				pageParams[_this26.paginationDataSentNames.size] = _this26.size;
 			}
 
 			//set sort data if defined
-			if (_this25.table.options.ajaxSorting && _this25.table.modExists("sort")) {
+			if (_this26.table.options.ajaxSorting && _this26.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this25.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this26.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this25.table.options.ajaxFiltering && _this25.table.modExists("filter")) {
+			if (_this26.table.options.ajaxFiltering && _this26.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this25.paginationDataSentNames.filters] = filters;
+				pageParams[_this26.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this25.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this26.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
