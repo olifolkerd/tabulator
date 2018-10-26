@@ -307,7 +307,7 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 				var row = new Row(def, self);
 				self.rows.push(row);
 			}else{
-				console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but receved:", def);
+				console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but received:", def);
 			}
 		});
 
