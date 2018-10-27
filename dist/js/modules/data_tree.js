@@ -66,20 +66,20 @@ DataTree.prototype.initialize = function () {
 		this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 	}
 
-	switch (_typeof(options.dataTreeStartOpen)) {
+	switch (_typeof(options.dataTreeStartExpanded)) {
 		case "boolean":
 			this.startOpen = function (row, index) {
-				return options.dataTreeStartOpen;
+				return options.dataTreeStartExpanded;
 			};
 			break;
 
 		case "function":
-			this.startOpen = options.dataTreeStartOpen;
+			this.startOpen = options.dataTreeStartExpanded;
 			break;
 
 		default:
 			this.startOpen = function (row, index) {
-				return options.dataTreeStartOpen[index];
+				return options.dataTreeStartExpanded[index];
 			};
 			break;
 	}

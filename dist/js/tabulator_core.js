@@ -4887,7 +4887,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeChildField: "_children", //data tre column field to look for child rows
 	dataTreeCollapseElement: false, //data tree row collapse element
 	dataTreeExpandElement: false, //data tree row expand element
-	dataTreeStartOpen: false,
+	dataTreeStartExpanded: false,
 	dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
 	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 

@@ -6252,7 +6252,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		dataTreeExpandElement: false, //data tree row expand element
 
-		dataTreeStartOpen: false,
+		dataTreeStartExpanded: false,
 
 		dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
 

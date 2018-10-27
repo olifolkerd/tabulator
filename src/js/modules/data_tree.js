@@ -63,20 +63,20 @@ DataTree.prototype.initialize = function(){
 	}
 
 
-	switch(typeof options.dataTreeStartOpen){
+	switch(typeof options.dataTreeStartExpanded){
 		case "boolean":
 		this.startOpen = function(row, index){
-			return options.dataTreeStartOpen;
+			return options.dataTreeStartExpanded;
 		};
 		break;
 
 		case "function":
-		this.startOpen = options.dataTreeStartOpen;
+		this.startOpen = options.dataTreeStartExpanded;
 		break;
 
 		default:
 		this.startOpen = function(row, index){
-			return options.dataTreeStartOpen[index];
+			return options.dataTreeStartExpanded[index];
 		};
 		break;
 	}
@@ -98,8 +98,6 @@ DataTree.prototype.initializeRow = function(row){
 		parent:false,
 		children:children,
 	};
-
-
 };
 
 
