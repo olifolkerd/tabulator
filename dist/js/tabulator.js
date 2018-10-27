@@ -4561,6 +4561,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._row.table;
 	};
 
+	RowComponent.prototype.getNextRow = function () {
+
+		return this._row.nextRow();
+	};
+
+	RowComponent.prototype.getPrevRow = function () {
+
+		return this._row.prevRow();
+	};
+
 	var Row = function Row(data, parent) {
 
 		this.table = parent.table;
@@ -5124,6 +5134,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Row.prototype.getCells = function () {
 
 		return this.cells;
+	};
+
+	Row.prototype.nextRow = function () {
+
+		var row = this.table.rowManager.nextDisplayRow(this, true);
+
+		return row ? row.getComponent() : false;
+	};
+
+	Row.prototype.prevRow = function () {
+
+		var row = this.table.rowManager.prevDisplayRow(this, true);
+
+		return row ? row.getComponent() : false;
 	};
 
 	///////////////////// Actions  /////////////////////

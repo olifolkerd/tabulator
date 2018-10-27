@@ -117,7 +117,6 @@ RowComponent.prototype.getTreeChildren = function(){
 	return false;
 };
 
-
 RowComponent.prototype.reformat = function(){
 	return this._row.reinitialize();
 };
@@ -128,6 +127,14 @@ RowComponent.prototype.getGroup = function(){
 
 RowComponent.prototype.getTable = function(){
 	return this._row.table;
+};
+
+RowComponent.prototype.getNextRow = function(){
+	return this._row.nextRow();
+};
+
+RowComponent.prototype.getPrevRow = function(){
+	return this._row.prevRow();
 };
 
 
@@ -569,6 +576,16 @@ Row.prototype.findPrevEditableCell = function(index){
 
 Row.prototype.getCells = function(){
 	return this.cells;
+};
+
+Row.prototype.nextRow = function(){
+	var row = this.table.rowManager.nextDisplayRow(this, true);
+	return row ? row.getComponent() : false;
+};
+
+Row.prototype.prevRow = function(){
+	var row = this.table.rowManager.prevDisplayRow(this, true);
+	return row ? row.getComponent() : false;
 };
 
 ///////////////////// Actions  /////////////////////
