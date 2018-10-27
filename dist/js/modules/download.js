@@ -207,8 +207,16 @@ Download.prototype.downloaders = {
 		    body = [],
 		    table = "",
 		    autoTableParams = {},
-		    title = options && options.title ? options.title : "",
-		    orientation = options && options.orientation == "portrait" ? "p" : "l";
+		    jsPDFParams = options.jsPDF || {},
+		    title = options && options.title ? options.title : "";
+
+		if (!jsPDFParams.orientation) {
+			jsPDFParams.orientation = options.orientation || "landscape";
+		}
+
+		if (!jsPDFParams.unit) {
+			jsPDFParams.unit = "pt";
+		}
 
 		//build column headers
 		columns.forEach(function (column) {
@@ -245,7 +253,7 @@ Download.prototype.downloaders = {
 			body.push(rowData);
 		});
 
-		var doc = new jsPDF(orientation, 'pt'); //set document to landscape, better for most tables
+		var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
 		if (options && options.autoTable) {
 			if (typeof options.autoTable === "function") {

@@ -11050,8 +11050,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    body = [],
 			    table = "",
 			    autoTableParams = {},
-			    title = options && options.title ? options.title : "",
-			    orientation = options && options.orientation == "portrait" ? "p" : "l";
+			    jsPDFParams = options.jsPDF || {},
+			    title = options && options.title ? options.title : "";
+
+			if (!jsPDFParams.orientation) {
+				jsPDFParams.orientation = options.orientation || "landscape";
+			}
+
+			if (!jsPDFParams.unit) {
+				jsPDFParams.unit = "pt";
+			}
 
 			//build column headers
 			columns.forEach(function (column) {
@@ -11088,7 +11096,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				body.push(rowData);
 			});
 
-			var doc = new jsPDF(orientation, 'pt'); //set document to landscape, better for most tables
+			var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
 			if (options && options.autoTable) {
 				if (typeof options.autoTable === "function") {
@@ -12149,7 +12157,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function setValue() {
 				if (tristate) {
 					if (input.checked && !indetermState) {
-						console.log("indeterm");
 						input.checked = false;
 						input.indeterminate = true;
 						indetermState = true;
