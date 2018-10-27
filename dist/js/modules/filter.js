@@ -22,6 +22,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 
 	//handle successfull value change
 	function success(value) {
+		console.log("success", value);
 		var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 		    type = "",
 		    filterFunc;
@@ -33,7 +34,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 			setTimeout(function () {
 				blockSuccess = false;
 			}, 100);
-
+			console.log("filter", column.modules.filter);
 			if (!column.modules.filter.emptyFunc(value)) {
 				column.modules.filter.value = value;
 
@@ -224,32 +225,33 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 				}, 300);
 			};
 
-			editorElement.addEventListener("keyup", searchTrigger);
-			editorElement.addEventListener("search", searchTrigger);
-
 			column.modules.filter.headerElement = editorElement;
-
-			//update number filtered columns on change
-
 			column.modules.filter.attrType = editorElement.hasAttribute("type") ? editorElement.getAttribute("type").toLowerCase() : "";
-			if (column.modules.filter.attrType == "number") {
-				editorElement.addEventListener("change", function (e) {
-					success(editorElement.value);
-				});
-			}
-
-			//change text inputs to search inputs to allow for clearing of field
-			if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
-				editorElement.setAttribute("type", "search");
-				// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
-			}
-
-			//prevent input and select elements from propegating click to column sorters etc
 			column.modules.filter.tagType = editorElement.tagName.toLowerCase();
-			if (column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea") {
-				editorElement.addEventListener("mousedown", function (e) {
-					e.stopPropagation();
-				});
+
+			if (column.definition.headerFilterLiveFilter !== false) {
+				editorElement.addEventListener("keyup", searchTrigger);
+				editorElement.addEventListener("search", searchTrigger);
+
+				//update number filtered columns on change
+				if (column.modules.filter.attrType == "number") {
+					editorElement.addEventListener("change", function (e) {
+						success(editorElement.value);
+					});
+				}
+
+				//change text inputs to search inputs to allow for clearing of field
+				if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
+					editorElement.setAttribute("type", "search");
+					// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+				}
+
+				//prevent input and select elements from propegating click to column sorters etc
+				if (column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea") {
+					editorElement.addEventListener("mousedown", function (e) {
+						e.stopPropagation();
+					});
+				}
 			}
 
 			filterElement.appendChild(editorElement);
