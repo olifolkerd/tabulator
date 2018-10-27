@@ -6,6 +6,8 @@ var DataTree = function(table){
 	this.expandEl = null;
 	this.branchEl = null;
 
+	this.startOpen = function(){};
+
 	this.displayIndex = 0;
 };
 
@@ -59,21 +61,45 @@ DataTree.prototype.initialize = function(){
 		this.expandEl.classList.add("tabulator-data-tree-control");
 		this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 	}
+
+
+	switch(typeof options.dataTreeStartOpen){
+		case "boolean":
+		this.startOpen = function(row, index){
+			return options.dataTreeStartOpen;
+		};
+		break;
+
+		case "function":
+		this.startOpen = options.dataTreeStartOpen;
+		break;
+
+		default:
+		this.startOpen = function(row, index){
+			return options.dataTreeStartOpen[index];
+		};
+		break;
+	}
+
+
+
+
 };
 
 DataTree.prototype.initializeRow = function(row){
+
+	var children = typeof row.getData()[this.field] !== "undefined";
+
 	row.modules.dataTree = {
 		index:0,
-		open:this.table.options.dataTreeStartOpen,
+		open:children ? this.startOpen(row.getComponent(), 0) : false,
 		controlEl:false,
 		branchEl:false,
 		parent:false,
-		children:typeof row.getData()[this.field] !== "undefined",
+		children:children,
 	};
 
-	if(this.table.options.dataTreeStartOpen){
-		this.expandRow(row);
-	}
+
 };
 
 
@@ -191,6 +217,7 @@ DataTree.prototype.generateChildren = function(row){
 		var childRow = new Row(childData || {}, this.table.rowManager);
 		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 		childRow.modules.dataTree.parent = row;
+		childRow.modules.dataTree.open = this.startOpen(row, childRow.modules.dataTree.index);
 		children.push(childRow);
 	});
 

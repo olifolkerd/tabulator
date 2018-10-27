@@ -2795,12 +2795,6 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 				skipStage = false;
 			}
 
-			if (table.options.pagination && table.modExists("page") && !renderInPosition) {
-				if (table.modules.page.getMode() == "local") {
-					table.modules.page.reset();
-				}
-			}
-
 		case "tree":
 
 			if (!skipStage) {
@@ -2819,6 +2813,12 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 				}
 			} else {
 				skipStage = false;
+			}
+
+			if (table.options.pagination && table.modExists("page") && !renderInPosition) {
+				if (table.modules.page.getMode() == "local") {
+					table.modules.page.reset();
+				}
 			}
 
 		case "page":

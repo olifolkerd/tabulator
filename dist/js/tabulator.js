@@ -3487,14 +3487,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					skipStage = false;
 				}
 
-				if (table.options.pagination && table.modExists("page") && !renderInPosition) {
-
-					if (table.modules.page.getMode() == "local") {
-
-						table.modules.page.reset();
-					}
-				}
-
 			case "tree":
 
 				if (!skipStage) {
@@ -3518,6 +3510,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				} else {
 
 					skipStage = false;
+				}
+
+				if (table.options.pagination && table.modExists("page") && !renderInPosition) {
+
+					if (table.modules.page.getMode() == "local") {
+
+						table.modules.page.reset();
+					}
 				}
 
 			case "page":
@@ -10552,6 +10552,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.expandEl = null;
 		this.branchEl = null;
 
+		this.startOpen = function () {};
+
 		this.displayIndex = 0;
 	};
 
@@ -10605,21 +10607,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.expandEl.classList.add("tabulator-data-tree-control");
 			this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 		}
+
+		switch (_typeof(options.dataTreeStartOpen)) {
+			case "boolean":
+				this.startOpen = function (row, index) {
+					return options.dataTreeStartOpen;
+				};
+				break;
+
+			case "function":
+				this.startOpen = options.dataTreeStartOpen;
+				break;
+
+			default:
+				this.startOpen = function (row, index) {
+					return options.dataTreeStartOpen[index];
+				};
+				break;
+		}
 	};
 
 	DataTree.prototype.initializeRow = function (row) {
+
+		var children = typeof row.getData()[this.field] !== "undefined";
+
 		row.modules.dataTree = {
 			index: 0,
-			open: this.table.options.dataTreeStartOpen,
+			open: children ? this.startOpen(row.getComponent(), 0) : false,
 			controlEl: false,
 			branchEl: false,
 			parent: false,
-			children: typeof row.getData()[this.field] !== "undefined"
+			children: children
 		};
-
-		if (this.table.options.dataTreeStartOpen) {
-			this.expandRow(row);
-		}
 	};
 
 	DataTree.prototype.layoutRow = function (row) {
@@ -10742,6 +10761,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var childRow = new Row(childData || {}, _this21.table.rowManager);
 			childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 			childRow.modules.dataTree.parent = row;
+			childRow.modules.dataTree.open = _this21.startOpen(row, childRow.modules.dataTree.index);
 			children.push(childRow);
 		});
 

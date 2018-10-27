@@ -1,3 +1,5 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 /* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 var DataTree = function DataTree(table) {
@@ -7,6 +9,8 @@ var DataTree = function DataTree(table) {
 	this.collapseEl = null;
 	this.expandEl = null;
 	this.branchEl = null;
+
+	this.startOpen = function () {};
 
 	this.displayIndex = 0;
 };
@@ -61,21 +65,38 @@ DataTree.prototype.initialize = function () {
 		this.expandEl.classList.add("tabulator-data-tree-control");
 		this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 	}
+
+	switch (_typeof(options.dataTreeStartOpen)) {
+		case "boolean":
+			this.startOpen = function (row, index) {
+				return options.dataTreeStartOpen;
+			};
+			break;
+
+		case "function":
+			this.startOpen = options.dataTreeStartOpen;
+			break;
+
+		default:
+			this.startOpen = function (row, index) {
+				return options.dataTreeStartOpen[index];
+			};
+			break;
+	}
 };
 
 DataTree.prototype.initializeRow = function (row) {
+
+	var children = typeof row.getData()[this.field] !== "undefined";
+
 	row.modules.dataTree = {
 		index: 0,
-		open: this.table.options.dataTreeStartOpen,
+		open: children ? this.startOpen(row.getComponent(), 0) : false,
 		controlEl: false,
 		branchEl: false,
 		parent: false,
-		children: typeof row.getData()[this.field] !== "undefined"
+		children: children
 	};
-
-	if (this.table.options.dataTreeStartOpen) {
-		this.expandRow(row);
-	}
 };
 
 DataTree.prototype.layoutRow = function (row) {
@@ -198,6 +219,7 @@ DataTree.prototype.generateChildren = function (row) {
 		var childRow = new Row(childData || {}, _this4.table.rowManager);
 		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 		childRow.modules.dataTree.parent = row;
+		childRow.modules.dataTree.open = _this4.startOpen(row, childRow.modules.dataTree.index);
 		children.push(childRow);
 	});
 

@@ -930,11 +930,7 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			skipStage = false;
 		}
 
-		if(table.options.pagination && table.modExists("page") && !renderInPosition){
-			if(table.modules.page.getMode() == "local"){
-				table.modules.page.reset();
-			}
-		}
+
 
 		case "tree":
 
@@ -956,6 +952,11 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			skipStage = false;
 		}
 
+		if(table.options.pagination && table.modExists("page") && !renderInPosition){
+			if(table.modules.page.getMode() == "local"){
+				table.modules.page.reset();
+			}
+		}
 
 		case "page":
 		if(!skipStage){
