@@ -18109,7 +18109,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 			case "string":
-				parts = value.split(":", 1);
+				parts = value.split(":", 2);
 				type = parts.shift();
 				params = parts[0];
 
