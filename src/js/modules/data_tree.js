@@ -106,15 +106,21 @@ DataTree.prototype.generateControlElement = function(row, el){
 
 		if(config.open){
 			config.controlEl = this.collapseEl.cloneNode(true);
-			config.controlEl.addEventListener("click", () => {
+			config.controlEl.addEventListener("click", (e) => {
+				e.stopPropagation();
 				this.collapseRow(row);
 			});
 		}else{
 			config.controlEl = this.expandEl.cloneNode(true);
-			config.controlEl.addEventListener("click", () => {
+			config.controlEl.addEventListener("click", (e) => {
+				e.stopPropagation();
 				this.expandRow(row);
 			});
 		}
+
+		config.controlEl.addEventListener("mousedown", (e) => {
+			e.stopPropagation();
+		});
 
 		if(oldControl && oldControl.parentNode === el){
 			oldControl.parentNode.replaceChild(config.controlEl,oldControl);
@@ -257,6 +263,14 @@ DataTree.prototype.getTreeChildren = function(row){
 	return output;
 };
 
+
+DataTree.prototype.checkForRestyle = function(cell){
+	if(!cell.row.cells.indexOf(cell)){
+		if(cell.row.modules.dataTree.children !== false){
+			cell.row.reinitialize();
+		}
+	}
+};
 
 
 Tabulator.prototype.registerModule("dataTree", DataTree);

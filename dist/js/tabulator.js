@@ -10653,15 +10653,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (config.open) {
 				config.controlEl = this.collapseEl.cloneNode(true);
-				config.controlEl.addEventListener("click", function () {
+				config.controlEl.addEventListener("click", function (e) {
+					e.stopPropagation();
 					_this18.collapseRow(row);
 				});
 			} else {
 				config.controlEl = this.expandEl.cloneNode(true);
-				config.controlEl.addEventListener("click", function () {
+				config.controlEl.addEventListener("click", function (e) {
+					e.stopPropagation();
 					_this18.expandRow(row);
 				});
 			}
+
+			config.controlEl.addEventListener("mousedown", function (e) {
+				e.stopPropagation();
+			});
 
 			if (oldControl && oldControl.parentNode === el) {
 				oldControl.parentNode.replaceChild(config.controlEl, oldControl);
@@ -10804,6 +10810,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		return output;
+	};
+
+	DataTree.prototype.checkForRestyle = function (cell) {
+		if (!cell.row.cells.indexOf(cell)) {
+			if (cell.row.modules.dataTree.children !== false) {
+				cell.row.reinitialize();
+			}
+		}
 	};
 
 	Tabulator.prototype.registerModule("dataTree", DataTree);
@@ -11325,6 +11339,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (valid === true) {
 					self.clearEditor();
 					cell.setValue(value, true);
+
+					if (self.table.options.dataTree && self.table.modExists("dataTree")) {
+						self.table.modules.dataTree.checkForRestyle(cell);
+					}
 				} else {
 					self.invalidEdit = true;
 					element.classList.add("tabulator-validation-fail");
@@ -11341,6 +11359,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		function cancel() {
 			if (self.currentCell === cell) {
 				self.cancelEdit();
+
+				if (self.table.options.dataTree && self.table.modExists("dataTree")) {
+					self.table.modules.dataTree.checkForRestyle(cell);
+				}
 			} else {
 				// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 			}

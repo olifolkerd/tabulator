@@ -155,6 +155,10 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 			if(valid === true){
 				self.clearEditor();
 				cell.setValue(value, true);
+
+				if(self.table.options.dataTree && self.table.modExists("dataTree")){
+					self.table.modules.dataTree.checkForRestyle(cell);
+				}
 			}else{
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
@@ -171,6 +175,10 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	function cancel(){
 		if(self.currentCell === cell){
 			self.cancelEdit();
+
+			if(self.table.options.dataTree && self.table.modExists("dataTree")){
+				self.table.modules.dataTree.checkForRestyle(cell);
+			}
 		}else{
 			// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 		}
