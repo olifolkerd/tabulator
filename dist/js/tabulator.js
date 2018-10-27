@@ -12083,7 +12083,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function setValue() {
 				if (tristate) {
 					if (input.checked && !indetermState) {
-						console.log("indeterm");
 						input.checked = false;
 						input.indeterminate = true;
 						indetermState = true;

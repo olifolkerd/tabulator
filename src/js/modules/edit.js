@@ -865,7 +865,6 @@ Edit.prototype.editors = {
 		function setValue(){
 			if(tristate){
 				if(input.checked && !indetermState){
-					console.log("indeterm")
 					input.checked = false;
 					input.indeterminate = true;
 					indetermState = true;
@@ -931,7 +930,6 @@ Edit.prototype.editors = {
 		function setValue(){
 			if(tristate){
 				if(input.checked && !indetermState){
-					console.log("indeterm")
 					input.checked = false;
 					input.indeterminate = true;
 					indetermState = true;
