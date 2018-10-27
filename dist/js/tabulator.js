@@ -1177,7 +1177,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.field = field;
 
-		this.fieldStructure = field ? field.split(".") : [];
+		this.fieldStructure = field ? this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field] : [];
 
 		this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
 
@@ -6183,6 +6183,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 		data: [], //default starting data
+
+
+		nestedFieldSeparator: ".", //seperatpr for nested data
 
 
 		tooltips: false, //Tool tip value

@@ -47,6 +47,8 @@ Tabulator.prototype.defaultOptions = {
 
 	data:[], //default starting data
 
+	nestedFieldSeparator:".", //seperatpr for nested data
+
 	tooltips: false, //Tool tip value
 	tooltipsHeader: false, //Tool tip for headers
 	tooltipGenerationMode:"load", //when to generate tooltips

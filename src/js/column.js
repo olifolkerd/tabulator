@@ -196,7 +196,7 @@ Column.prototype.createGroupElement = function (){
 
 Column.prototype.setField = function(field){
 	this.field = field;
-	this.fieldStructure = field ? field.split(".") : [];
+	this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];
 	this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
 	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
 };
