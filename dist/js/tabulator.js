@@ -6355,6 +6355,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		groupStartOpen: true, //starting state of group
 
+		groupValues: false,
 
 		groupHeader: false, //header generation function
 
@@ -13747,6 +13748,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.createElements();
 		this.addBindings();
+
+		this.createValueGroups();
 	};
 
 	Group.prototype.createElements = function () {
@@ -13758,6 +13761,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.arrowElement = document.createElement("div");
 		this.arrowElement.classList.add("tabulator-arrow");
+	};
+
+	Group.prototype.createValueGroups = function () {
+		var _this22 = this;
+
+		var level = this.level + 1;
+		if (this.groupManager.allowedValues && this.groupManager.allowedValues[level]) {
+			this.groupManager.allowedValues[level].forEach(function (value) {
+				_this22._createGroup(value, level);
+			});
+		}
 	};
 
 	Group.prototype.addBindings = function () {
@@ -13856,21 +13870,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Group.prototype._createGroup = function (groupID, level) {
+		var groupKey = level + "_" + groupID;
+		var group = new Group(this.groupManager, this, level, groupID, this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupKey] : false);
+
+		this.groups[groupKey] = group;
+		this.groupList.push(group);
+	};
+
 	Group.prototype._addRowToGroup = function (row) {
 
 		var level = this.level + 1;
 
 		if (this.hasSubGroups) {
-			var groupID = this.groupManager.groupIDLookups[level].func(row.getData());
+			var groupID = this.groupManager.groupIDLookups[level].func(row.getData()),
+			    groupKey = level + "_" + groupID;
 
-			if (!this.groups[groupID]) {
-				var group = new Group(this.groupManager, this, level, groupID, this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
+			if (this.groupManager.allowedValues && this.groupManager.allowedValues[level]) {
+				if (this.groups[groupKey]) {
+					this.groups[groupKey].addRow(row);
+				}
+			} else {
+				if (!this.groups[groupKey]) {
+					this._createGroup(groupID, level);
+				}
 
-				this.groups[groupID] = group;
-				this.groupList.push(group);
+				this.groups[groupKey].addRow(row);
 			}
-
-			this.groups[groupID].addRow(row);
 		}
 	};
 
@@ -13950,10 +13976,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Group.prototype.removeGroup = function (group) {
-		var index;
+		var groupKey = group.level + "_" + group.key,
+		    index;
 
-		if (this.groups[group.key]) {
-			delete this.groups[group.key];
+		if (this.groups[groupKey]) {
+			delete this.groups[groupKey];
 
 			index = this.groupList.indexOf(group);
 
@@ -14267,6 +14294,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return "";
 		}];
 		this.groupList = []; //ordered list of groups
+		this.allowedValues = false;
 		this.groups = {}; //hold row groups
 		this.displayIndex = 0; //index in display pipeline
 	};
@@ -14277,6 +14305,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    groupBy = self.table.options.groupBy,
 		    startOpen = self.table.options.groupStartOpen,
 		    groupHeader = self.table.options.groupHeader;
+
+		this.allowedValues = self.table.options.groupValues;
 
 		self.headerGenerator = [function () {
 			return "";
@@ -14319,7 +14349,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groupBy = [groupBy];
 		}
 
-		groupBy.forEach(function (group) {
+		groupBy.forEach(function (group, i) {
 			var lookupFunc, column;
 
 			if (typeof group == "function") {
@@ -14340,7 +14370,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			self.groupIDLookups.push({
 				field: typeof group === "function" ? false : group,
-				func: lookupFunc
+				func: lookupFunc,
+				values: self.allowedValues ? self.allowedValues[i] : false
 			});
 		});
 
@@ -14427,25 +14458,62 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		self.groups = {};
 		self.groupList = [];
 
-		rows.forEach(function (row) {
-			self.assignRowToGroup(row, oldGroups);
-		});
+		if (this.allowedValues && this.allowedValues[0]) {
+			this.allowedValues[0].forEach(function (value) {
+				self.createGroup(value, 0, oldGroups);
+			});
+
+			rows.forEach(function (row) {
+				self.assignRowToExistingGroup(row, oldGroups);
+			});
+		} else {
+			rows.forEach(function (row) {
+				self.assignRowToGroup(row, oldGroups);
+			});
+		}
+	};
+
+	GroupRows.prototype.createGroup = function (groupID, level, oldGroups) {
+		var groupKey = level + "_" + groupID,
+		    group;
+
+		oldGroups = oldGroups || [];
+
+		group = new Group(this, false, level, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupKey]);
+
+		this.groups[groupKey] = group;
+		this.groupList.push(group);
 	};
 
 	GroupRows.prototype.assignRowToGroup = function (row, oldGroups) {
 		var groupID = this.groupIDLookups[0].func(row.getData()),
-		    newGroupNeeded = !this.groups[groupID];
+		    groupKey = "0_" + groupID;
 
-		oldGroups = oldGroups || [];
-
-		if (newGroupNeeded) {
-			var group = new Group(this, false, 0, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupID]);
-
-			this.groups[groupID] = group;
-			this.groupList.push(group);
+		if (!this.groups[groupKey]) {
+			this.createGroup(groupID, 0, oldGroups);
 		}
 
-		this.groups[groupID].addRow(row);
+		this.groups[groupKey].addRow(row);
+	};
+
+	GroupRows.prototype.assignRowToExistingGroup = function (row, oldGroups) {
+		var groupID = this.groupIDLookups[0].func(row.getData()),
+		    groupKey = "0_" + groupID;
+
+		if (this.groups[groupKey]) {
+			this.groups[groupKey].addRow(row);
+		}
+	};
+
+	GroupRows.prototype.assignRowToGroup = function (row, oldGroups) {
+		var groupID = this.groupIDLookups[0].func(row.getData()),
+		    newGroupNeeded = !this.groups["0_" + groupID];
+
+		if (newGroupNeeded) {
+			this.createGroup(groupID, 0, oldGroups);
+		}
+
+		this.groups["0_" + groupID].addRow(row);
 
 		return !newGroupNeeded;
 	};
@@ -14481,10 +14549,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupRows.prototype.removeGroup = function (group) {
-		var index;
+		var groupKey = group.level + "_" + group.key,
+		    index;
 
-		if (this.groups[group.key]) {
-			delete this.groups[group.key];
+		if (this.groups[groupKey]) {
+			delete this.groups[groupKey];
 
 			index = this.groupList.indexOf(group);
 
@@ -14853,13 +14922,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this22 = this;
+		var _this23 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this22.actions[key]) {
+			if (_this23.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -16097,18 +16166,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this23 = this;
+		var _this24 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this23.max) {
-				_this23.page = page;
-				_this23.trigger().then(function () {
+			if (page > 0 && page <= _this24.max) {
+				_this24.page = page;
+				_this24.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this23.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this24.max + ":", page);
 				reject();
 			}
 		});
@@ -16181,12 +16250,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this24 = this;
+		var _this25 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this24.page > 1) {
-				_this24.page--;
-				_this24.trigger().then(function () {
+			if (_this25.page > 1) {
+				_this25.page--;
+				_this25.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -16200,19 +16269,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this25 = this;
+		var _this26 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this25.page < _this25.max) {
-				_this25.page++;
-				_this25.trigger().then(function () {
+			if (_this26.page < _this26.max) {
+				_this26.page++;
+				_this26.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this25.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this25.max + ":", _this25.max + 1);
+				if (!_this26.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this26.max + ":", _this26.max + 1);
 				}
 				reject();
 			}
@@ -16264,28 +16333,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this26 = this;
+		var _this27 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this26.mode) {
+			switch (_this27.mode) {
 				case "local":
-					left = _this26.table.rowManager.scrollLeft;
+					left = _this27.table.rowManager.scrollLeft;
 
-					_this26.table.rowManager.refreshActiveData("page");
-					_this26.table.rowManager.scrollHorizontal(left);
+					_this27.table.rowManager.refreshActiveData("page");
+					_this27.table.rowManager.scrollHorizontal(left);
 
-					_this26.table.options.pageLoaded.call(_this26.table, _this26.getPage());
+					_this27.table.options.pageLoaded.call(_this27.table, _this27.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this26.table.modules.ajax.blockActiveRequest();
-					_this26._getRemotePage().then(function () {
+					_this27.table.modules.ajax.blockActiveRequest();
+					_this27._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -16293,14 +16362,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this26.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this27.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this27 = this;
+		var _this28 = this;
 
 		var self = this,
 		    oldParams,
@@ -16317,33 +16386,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this27.paginationDataSentNames.page] = self.page;
+			pageParams[_this28.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this27.size) {
-				pageParams[_this27.paginationDataSentNames.size] = _this27.size;
+			if (_this28.size) {
+				pageParams[_this28.paginationDataSentNames.size] = _this28.size;
 			}
 
 			//set sort data if defined
-			if (_this27.table.options.ajaxSorting && _this27.table.modExists("sort")) {
+			if (_this28.table.options.ajaxSorting && _this28.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this27.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this28.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this27.table.options.ajaxFiltering && _this27.table.modExists("filter")) {
+			if (_this28.table.options.ajaxFiltering && _this28.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this27.paginationDataSentNames.filters] = filters;
+				pageParams[_this28.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this27.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this28.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {

@@ -93,6 +93,8 @@ var Group = function(groupManager, parent, level, key, field, generator, oldGrou
 
 	this.createElements();
 	this.addBindings();
+
+	this.createValueGroups();
 };
 
 Group.prototype.createElements = function(){
@@ -104,6 +106,15 @@ Group.prototype.createElements = function(){
 
 	this.arrowElement = document.createElement("div");
 	this.arrowElement.classList.add("tabulator-arrow");
+};
+
+Group.prototype.createValueGroups = function(){
+	var level = this.level + 1;
+	if(this.groupManager.allowedValues && this.groupManager.allowedValues[level]){
+		this.groupManager.allowedValues[level].forEach((value) => {
+			this._createGroup(value, level);
+		});
+	}
 };
 
 Group.prototype.addBindings = function(){
@@ -206,23 +217,35 @@ Group.prototype.addBindings = function(){
 
 };
 
+
+Group.prototype._createGroup = function(groupID, level){
+	var groupKey = level + "_" + groupID;
+	var group = new Group(this.groupManager, this, level, groupID,  this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupKey] : false);
+
+	this.groups[groupKey] = group;
+	this.groupList.push(group);
+};
+
 Group.prototype._addRowToGroup = function(row){
 
 	var level = this.level + 1;
 
 	if(this.hasSubGroups){
-		var groupID = this.groupManager.groupIDLookups[level].func(row.getData());
+		var groupID = this.groupManager.groupIDLookups[level].func(row.getData()),
+		groupKey = level + "_" + groupID;
 
-		if(!this.groups[groupID]){
-			var group = new Group(this.groupManager, this, level, groupID,  this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupID] : false);
+		if(this.groupManager.allowedValues && this.groupManager.allowedValues[level]){
+			if(this.groups[groupKey]){
+				this.groups[groupKey].addRow(row);
+			}
+		}else{
+			if(!this.groups[groupKey]){
+				this._createGroup(groupID, level);
+			}
 
-			this.groups[groupID] = group;
-			this.groupList.push(group);
+			this.groups[groupKey].addRow(row);
 		}
-
-		this.groups[groupID].addRow(row);
 	}
-
 };
 
 Group.prototype._addRow = function(row){
@@ -305,10 +328,11 @@ Group.prototype.removeRow = function(row){
 };
 
 Group.prototype.removeGroup = function(group){
-	var index;
+	var groupKey = group.level + "_" + group.key,
+	index;
 
-	if(this.groups[group.key]){
-		delete this.groups[group.key];
+	if(this.groups[groupKey]){
+		delete this.groups[groupKey];
 
 		index = this.groupList.indexOf(group);
 
@@ -628,6 +652,7 @@ var GroupRows = function(table){
 	this.startOpen = [function(){return false;}]; //starting state of group
 	this.headerGenerator = [function(){return "";}];
 	this.groupList = []; //ordered list of groups
+	this.allowedValues = false;
 	this.groups = {}; //hold row groups
 	this.displayIndex = 0; //index in display pipeline
 };
@@ -638,6 +663,8 @@ GroupRows.prototype.initialize = function(){
 	groupBy = self.table.options.groupBy,
 	startOpen = self.table.options.groupStartOpen,
 	groupHeader = self.table.options.groupHeader;
+
+	this.allowedValues = self.table.options.groupValues;
 
 	self.headerGenerator = [function(){return "";}];
 	this.startOpen = [function(){return false;}]; //starting state of group
@@ -677,7 +704,7 @@ GroupRows.prototype.initialize = function(){
 		groupBy = [groupBy];
 	}
 
-	groupBy.forEach(function(group){
+	groupBy.forEach(function(group, i){
 		var lookupFunc, column;
 
 		if(typeof group == "function"){
@@ -699,6 +726,7 @@ GroupRows.prototype.initialize = function(){
 		self.groupIDLookups.push({
 			field: typeof group === "function" ? false : group,
 			func:lookupFunc,
+			values:self.allowedValues ? self.allowedValues[i] : false,
 		});
 	});
 
@@ -789,29 +817,68 @@ GroupRows.prototype.generateGroups = function(rows){
 	self.groups = {};
 	self.groupList =[];
 
-	rows.forEach(function(row){
-		self.assignRowToGroup(row, oldGroups);
-	});
+	if(this.allowedValues && this.allowedValues[0]){
+		this.allowedValues[0].forEach(function(value){
+			self.createGroup(value, 0, oldGroups);
+		});
 
+		rows.forEach(function(row){
+			self.assignRowToExistingGroup(row, oldGroups);
+		});
+	}else{
+		rows.forEach(function(row){
+			self.assignRowToGroup(row, oldGroups);
+		});
+	}
+
+};
+
+GroupRows.prototype.createGroup = function(groupID, level, oldGroups){
+	var groupKey = level + "_" + groupID,
+	group;
+
+	oldGroups = oldGroups || [];
+
+	group = new Group(this, false, level, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupKey]);
+
+	this.groups[groupKey] = group;
+	this.groupList.push(group);
 };
 
 GroupRows.prototype.assignRowToGroup = function(row, oldGroups){
 	var groupID = this.groupIDLookups[0].func(row.getData()),
-	newGroupNeeded = !this.groups[groupID];
+	groupKey = "0_" + groupID;
 
-	oldGroups = oldGroups || [];
-
-	if(newGroupNeeded){
-		var group = new Group(this, false, 0, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupID]);
-
-		this.groups[groupID] = group;
-		this.groupList.push(group);
+	if(!this.groups[groupKey]){
+		this.createGroup(groupID, 0, oldGroups);
 	}
 
-	this.groups[groupID].addRow(row);
+	this.groups[groupKey].addRow(row);
+};
+
+GroupRows.prototype.assignRowToExistingGroup = function(row, oldGroups){
+	var groupID = this.groupIDLookups[0].func(row.getData()),
+	groupKey = "0_" + groupID;
+
+	if(this.groups[groupKey]){
+		this.groups[groupKey].addRow(row);
+	}
+};
+
+
+GroupRows.prototype.assignRowToGroup = function(row, oldGroups){
+	var groupID = this.groupIDLookups[0].func(row.getData()),
+	newGroupNeeded = !this.groups["0_" + groupID];
+
+	if(newGroupNeeded){
+		this.createGroup(groupID, 0, oldGroups);
+	}
+
+	this.groups["0_" + groupID].addRow(row);
 
 	return !newGroupNeeded;
 };
+
 
 
 GroupRows.prototype.updateGroupRows = function(force){
@@ -845,10 +912,11 @@ GroupRows.prototype.scrollHeaders = function(left){
 };
 
 GroupRows.prototype.removeGroup = function(group){
-	var index;
+	var groupKey = group.level + "_" + group.key,
+	index;
 
-	if(this.groups[group.key]){
-		delete this.groups[group.key];
+	if(this.groups[groupKey]){
+		delete this.groups[groupKey];
 
 		index = this.groupList.indexOf(group);
 
