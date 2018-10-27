@@ -2801,6 +2801,26 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 				}
 			}
 
+		case "tree":
+
+			if (!skipStage) {
+				if (table.options.dataTree && table.modExists("dataTree")) {
+					if (!table.modules.dataTree.getDisplayIndex()) {
+						table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
+					}
+
+					displayIndex = table.modules.dataTree.getDisplayIndex();
+
+					displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+					if (displayIndex !== true) {
+						table.modules.dataTree.setDisplayIndex(displayIndex);
+					}
+				}
+			} else {
+				skipStage = false;
+			}
+
 		case "page":
 			if (!skipStage) {
 				if (table.options.pagination && table.modExists("page")) {
@@ -4064,9 +4084,9 @@ Row.prototype.deleteActual = function () {
 		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
-	if (this.table.options.dataTree && this.table.modExists("dataTree")) {
-		this.table.modules.dataTree.collapseRow(this, true);
-	}
+	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
+	// 	this.table.modules.dataTree.collapseRow(this, true);
+	// }
 
 	this.table.rowManager.deleteRow(this);
 
@@ -4867,6 +4887,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeChildField: "_children", //data tre column field to look for child rows
 	dataTreeCollapseElement: false, //data tree row collapse element
 	dataTreeExpandElement: false, //data tree row expand element
+	dataTreeStartOpen: false,
 	dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
 	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 

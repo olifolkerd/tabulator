@@ -936,6 +936,27 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			}
 		}
 
+		case "tree":
+
+		if(!skipStage){
+			if(table.options.dataTree && table.modExists("dataTree")){
+				if(!table.modules.dataTree.getDisplayIndex()){
+					table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
+				}
+
+				displayIndex = table.modules.dataTree.getDisplayIndex();
+
+				displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+				if(displayIndex !== true){
+					table.modules.dataTree.setDisplayIndex(displayIndex);
+				}
+			}
+		}else{
+			skipStage = false;
+		}
+
+
 		case "page":
 		if(!skipStage){
 			if(table.options.pagination && table.modExists("page")){

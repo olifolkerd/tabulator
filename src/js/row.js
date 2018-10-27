@@ -602,9 +602,9 @@ Row.prototype.deleteActual = function(){
 		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
-	if(this.table.options.dataTree && this.table.modExists("dataTree")){
-		this.table.modules.dataTree.collapseRow(this, true);
-	}
+	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
+	// 	this.table.modules.dataTree.collapseRow(this, true);
+	// }
 
 	this.table.rowManager.deleteRow(this);
 

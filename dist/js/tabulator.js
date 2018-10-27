@@ -3495,6 +3495,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
+			case "tree":
+
+				if (!skipStage) {
+
+					if (table.options.dataTree && table.modExists("dataTree")) {
+
+						if (!table.modules.dataTree.getDisplayIndex()) {
+
+							table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
+						}
+
+						displayIndex = table.modules.dataTree.getDisplayIndex();
+
+						displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+						if (displayIndex !== true) {
+
+							table.modules.dataTree.setDisplayIndex(displayIndex);
+						}
+					}
+				} else {
+
+					skipStage = false;
+				}
+
 			case "page":
 
 				if (!skipStage) {
@@ -5138,10 +5163,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.selectRow._deselectRow(this.row, true);
 		}
 
-		if (this.table.options.dataTree && this.table.modExists("dataTree")) {
+		// if(this.table.options.dataTree && this.table.modExists("dataTree")){
 
-			this.table.modules.dataTree.collapseRow(this, true);
-		}
+		// 	this.table.modules.dataTree.collapseRow(this, true);
+
+		// }
+
 
 		this.table.rowManager.deleteRow(this);
 
@@ -6224,6 +6251,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		dataTreeCollapseElement: false, //data tree row collapse element
 
 		dataTreeExpandElement: false, //data tree row expand element
+
+		dataTreeStartOpen: false,
 
 		dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
 
@@ -10522,6 +10551,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.collapseEl = null;
 		this.expandEl = null;
 		this.branchEl = null;
+
+		this.displayIndex = 0;
 	};
 
 	DataTree.prototype.initialize = function () {
@@ -10579,12 +10610,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	DataTree.prototype.initializeRow = function (row) {
 		row.modules.dataTree = {
 			index: 0,
-			open: false,
+			open: this.table.options.dataTreeStartOpen,
 			controlEl: false,
 			branchEl: false,
 			parent: false,
 			children: typeof row.getData()[this.field] !== "undefined"
 		};
+
+		if (this.table.options.dataTreeStartOpen) {
+			this.expandRow(row);
+		}
 	};
 
 	DataTree.prototype.layoutRow = function (row) {
@@ -10636,45 +10671,69 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	DataTree.prototype.expandRow = function (row, silent) {
+	DataTree.prototype.setDisplayIndex = function (index) {
+		this.displayIndex = index;
+	};
+
+	DataTree.prototype.getDisplayIndex = function () {
+		return this.displayIndex;
+	};
+
+	DataTree.prototype.getRows = function (rows) {
 		var _this19 = this;
 
+		var output = [];
+
+		rows.forEach(function (row, i) {
+			var config = row.modules.dataTree.children,
+			    children;
+
+			output.push(row);
+
+			if (!config.index && config.children !== false) {
+				children = _this19.getChildren(row);
+
+				children.forEach(function (child) {
+					output.push(child);
+				});
+			}
+		});
+
+		return output;
+	};
+
+	DataTree.prototype.getChildren = function (row) {
+		var _this20 = this;
+
 		var config = row.modules.dataTree,
-		    promise;
+		    output = [];
 
-		if (config.children !== false) {
-
+		if (config.children !== false && config.open) {
 			if (!Array.isArray(config.children)) {
 				config.children = this.generateChildren(row);
 			}
 
-			promise = this.table.rowManager.addRows(config.children.slice(), false, row);
+			config.children.forEach(function (child) {
+				output.push(child);
 
-			promise.then(function (rows) {
-				rows.forEach(function (childRow) {
-					if (childRow.modules.dataTree.open) {
-						_this19.expandRow(childRow, true);
-					}
+				var subChildren = _this20.getChildren(child);
+
+				subChildren.forEach(function (sub) {
+					output.push(sub);
 				});
 			});
-
-			config.open = true;
-
-			if (!silent) {
-				this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTree.index);
-			}
-
-			this.generateControlElement(row);
 		}
+
+		return output;
 	};
 
 	DataTree.prototype.generateChildren = function (row) {
-		var _this20 = this;
+		var _this21 = this;
 
 		var children = [];
 
 		row.getData()[this.field].forEach(function (childData) {
-			var childRow = new Row(childData || {}, _this20.table.rowManager);
+			var childRow = new Row(childData || {}, _this21.table.rowManager);
 			childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 			childRow.modules.dataTree.parent = row;
 			children.push(childRow);
@@ -10683,22 +10742,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return children;
 	};
 
-	DataTree.prototype.collapseRow = function (row, silent) {
+	DataTree.prototype.expandRow = function (row, silent) {
 		var config = row.modules.dataTree;
 
 		if (config.children !== false) {
+			config.open = true;
 
-			if (Array.isArray(config.children)) {
-				config.children.forEach(function (childRow) {
-					childRow.delete();
-				});
+			row.reinitialize();
 
-				if (!silent) {
-					config.open = false;
-					this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTree.index);
-				}
-				this.generateControlElement(row);
-			}
+			this.table.rowManager.refreshActiveData("tree", false, true);
+
+			this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTree.index);
+		}
+	};
+
+	DataTree.prototype.collapseRow = function (row) {
+		var config = row.modules.dataTree;
+
+		if (config.children !== false) {
+			config.open = false;
+
+			row.reinitialize();
+
+			this.table.rowManager.refreshActiveData("tree", false, true);
+
+			this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTree.index);
 		}
 	};
 
@@ -14740,13 +14808,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this21 = this;
+		var _this22 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this21.actions[key]) {
+			if (_this22.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -15984,18 +16052,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this22 = this;
+		var _this23 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this22.max) {
-				_this22.page = page;
-				_this22.trigger().then(function () {
+			if (page > 0 && page <= _this23.max) {
+				_this23.page = page;
+				_this23.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this22.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this23.max + ":", page);
 				reject();
 			}
 		});
@@ -16068,12 +16136,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this23 = this;
+		var _this24 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this23.page > 1) {
-				_this23.page--;
-				_this23.trigger().then(function () {
+			if (_this24.page > 1) {
+				_this24.page--;
+				_this24.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -16087,19 +16155,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this24 = this;
+		var _this25 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this24.page < _this24.max) {
-				_this24.page++;
-				_this24.trigger().then(function () {
+			if (_this25.page < _this25.max) {
+				_this25.page++;
+				_this25.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this24.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this24.max + ":", _this24.max + 1);
+				if (!_this25.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this25.max + ":", _this25.max + 1);
 				}
 				reject();
 			}
@@ -16151,28 +16219,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this25 = this;
+		var _this26 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this25.mode) {
+			switch (_this26.mode) {
 				case "local":
-					left = _this25.table.rowManager.scrollLeft;
+					left = _this26.table.rowManager.scrollLeft;
 
-					_this25.table.rowManager.refreshActiveData("page");
-					_this25.table.rowManager.scrollHorizontal(left);
+					_this26.table.rowManager.refreshActiveData("page");
+					_this26.table.rowManager.scrollHorizontal(left);
 
-					_this25.table.options.pageLoaded.call(_this25.table, _this25.getPage());
+					_this26.table.options.pageLoaded.call(_this26.table, _this26.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this25.table.modules.ajax.blockActiveRequest();
-					_this25._getRemotePage().then(function () {
+					_this26.table.modules.ajax.blockActiveRequest();
+					_this26._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -16180,14 +16248,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this25.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this26.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this26 = this;
+		var _this27 = this;
 
 		var self = this,
 		    oldParams,
@@ -16204,33 +16272,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this26.paginationDataSentNames.page] = self.page;
+			pageParams[_this27.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this26.size) {
-				pageParams[_this26.paginationDataSentNames.size] = _this26.size;
+			if (_this27.size) {
+				pageParams[_this27.paginationDataSentNames.size] = _this27.size;
 			}
 
 			//set sort data if defined
-			if (_this26.table.options.ajaxSorting && _this26.table.modExists("sort")) {
+			if (_this27.table.options.ajaxSorting && _this27.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this26.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this27.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this26.table.options.ajaxFiltering && _this26.table.modExists("filter")) {
+			if (_this27.table.options.ajaxFiltering && _this27.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this26.paginationDataSentNames.filters] = filters;
+				pageParams[_this27.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this26.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this27.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
