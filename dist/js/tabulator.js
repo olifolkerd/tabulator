@@ -6266,7 +6266,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		downloadComplete: false, //function to manipulate download data
 
-		downloadConfig: { //donwload config
+		downloadConfig: { //download config
 
 			columnGroups: false,
 

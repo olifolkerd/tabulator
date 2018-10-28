@@ -351,8 +351,6 @@ Download.prototype.downloaders = {
 		jsPDFParams = options.jsPDF || {},
 		title = options && options.title ? options.title : "";
 
-
-
 		if(!jsPDFParams.orientation){
 			jsPDFParams.orientation = options.orientation || "landscape";
 		}
