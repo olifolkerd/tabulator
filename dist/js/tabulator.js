@@ -6266,6 +6266,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		downloadComplete: false, //function to manipulate download data
 
+		downloadConfig: { //donwload config
+
+			columnGroups: false,
+
+			rowGroups: false,
+
+			columnCalcs: false
+
+		},
 
 		dataTree: false, //enable data tree
 
@@ -8068,7 +8077,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.modExists("groupRows", true)) {
 
-			return this.modules.groupRows.getGroups();
+			return this.modules.groupRows.getGroups(true);
 		} else {
 
 			return false;
@@ -9907,7 +9916,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    groups;
 
 		if (this.table.options.groupBy && this.table.modExists("groupRows")) {
-			groups = this.table.modules.groupRows.getGroups();
+			groups = this.table.modules.groupRows.getGroups(true);
 
 			groups.forEach(function (group) {
 				results[group.getKey()] = self.getGroupResults(group);
@@ -10874,12 +10883,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.fields = {}; //hold filed multi dimension arrays
 		this.columnsByIndex = []; //hold columns in their order in the table
 		this.columnsByField = {}; //hold columns with lookup by field name
+		this.config = {};
 	};
 
 	//trigger file download
 	Download.prototype.download = function (type, filename, options, interceptCallback) {
 		var self = this,
 		    downloadFunc = false;
+		this.processConfig();
 
 		function buildLink(data, mime) {
 			if (interceptCallback) {
@@ -10902,7 +10913,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.processColumns();
 
 		if (downloadFunc) {
-			downloadFunc.call(this, self.processDefinitions(), self.processData(), options || {}, buildLink);
+			downloadFunc.call(this, self.processDefinitions(), self.processData(), options || {}, buildLink, this.config);
+		}
+	};
+
+	Download.prototype.processConfig = function () {
+		var config = this.table.options.downloadConfig;
+
+		if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.config.rowGroups = true;
+		}
+
+		if (config.columGroups && this.table.columnManager.columns.length == this.table.columnManager.columnsByIndex.length) {
+			this.config.columGroups = true;
 		}
 	};
 
@@ -10948,8 +10971,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Download.prototype.processData = function () {
+		var _this22 = this;
+
 		var self = this,
-		    data = self.table.rowManager.getData(true, "download");
+		    data = [],
+		    groups = [];
+
+		if (this.config.rowGroups) {
+			groups = this.table.modules.groupRows.getGroups();
+
+			groups.forEach(function (group) {
+				data.push(_this22.processGroupData(group));
+			});
+		} else {
+			data = self.table.rowManager.getData(true, "download");
+		}
 
 		//bulk data processing
 		if (typeof self.table.options.downloadDataFormatter == "function") {
@@ -10957,6 +10993,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		return data;
+	};
+
+	Download.prototype.processGroupData = function (group) {
+		var _this23 = this;
+
+		var subGroups = group.getSubGroups();
+
+		var groupData = {
+			type: "group",
+			key: group.key
+		};
+
+		if (subGroups.length) {
+			groupData.subgroups = [];
+
+			subGroups.forEach(function (subGroup) {
+				groupData.subgroups.push(_this23.processGroupData(subGroup));
+			});
+		} else {
+			groupData.rows = group.getData(true, "download");
+		}
+
+		return groupData;
 	};
 
 	Download.prototype.triggerDownload = function (data, mime, type, filename) {
@@ -11012,12 +11071,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//downloaders
 	Download.prototype.downloaders = {
-		csv: function csv(columns, data, options, setFileContents) {
+		csv: function csv(columns, data, options, setFileContents, config) {
 			var self = this,
 			    titles = [],
 			    fields = [],
 			    delimiter = options && options.delimiter ? options.delimiter : ",",
 			    fileContents;
+
+			if (config.rowGroups) {
+				console.error("Download Error - CSV downloader cannot handle row groups");
+			}
 
 			//get field lists
 			columns.forEach(function (column) {
@@ -11051,7 +11114,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							value = value;
 					}
 
-					//escape uotation marks
+					//escape quotation marks
 					rowData.push('"' + String(value).split('"').join('""') + '"');
 				});
 
@@ -11061,19 +11124,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			setFileContents(fileContents.join("\n"), "text/csv");
 		},
 
-		json: function json(columns, data, options, setFileContents) {
+		json: function json(columns, data, options, setFileContents, config) {
 			var fileContents = JSON.stringify(data, null, '\t');
 
 			setFileContents(fileContents, "application/json");
 		},
 
-		pdf: function pdf(columns, data, options, setFileContents) {
+		pdf: function pdf(columns, data, options, setFileContents, config) {
 			var self = this,
 			    fields = [],
 			    header = [],
 			    body = [],
 			    table = "",
+			    groupRowIndexs = [],
 			    autoTableParams = {},
+			    rowGroupStyles = {},
 			    jsPDFParams = options.jsPDF || {},
 			    title = options && options.title ? options.title : "";
 
@@ -11093,32 +11158,63 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			});
 
-			//build table rows
-			data.forEach(function (row) {
-				var rowData = [];
+			function parseValue(value) {
+				switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+					case "object":
+						value = JSON.stringify(value);
+						break;
 
-				fields.forEach(function (field) {
-					var value = self.getFieldValue(field, row);
+					case "undefined":
+					case "null":
+						value = "";
+						break;
 
-					switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
-						case "object":
-							value = JSON.stringify(value);
-							break;
+					default:
+						value = value;
+				}
 
-						case "undefined":
-						case "null":
-							value = "";
-							break;
+				return value;
+			}
 
-						default:
-							value = value;
-					}
+			function parseRows(data) {
+				//build table rows
+				data.forEach(function (row) {
+					var rowData = [];
 
-					rowData.push(value);
+					fields.forEach(function (field) {
+						var value = self.getFieldValue(field, row);
+						rowData.push(parseValue(value));
+					});
+
+					body.push(rowData);
 				});
+			}
 
-				body.push(rowData);
-			});
+			function parseGroup(group) {
+				var groupData = [];
+
+				groupData.push(parseValue(group.key));
+
+				groupRowIndexs.push(body.length);
+
+				body.push(groupData);
+
+				if (group.subGroups) {
+					group.subGroups.forEach(function (subGroup) {
+						parseGroup(subGroup);
+					});
+				} else {
+					parseRows(group.rows);
+				}
+			}
+
+			if (config.rowGroups) {
+				data.forEach(function (group) {
+					parseGroup(group);
+				});
+			} else {
+				parseRows(data);
+			}
 
 			var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
@@ -11127,6 +11223,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					autoTableParams = options.autoTable(doc) || {};
 				} else {
 					autoTableParams = options.autoTable;
+				}
+			}
+
+			if (config.rowGroups) {
+
+				if (!autoTableParams.createdCell) {
+
+					rowGroupStyles = options.rowGroupStyles || {
+						fontStyle: "bold",
+						fontSize: 12,
+						cellPadding: 6,
+						fillColor: 220
+					};
+
+					autoTableParams.createdCell = function (cell, data) {
+						if (groupRowIndexs.indexOf(data.row.index) > -1) {
+							for (var key in rowGroupStyles) {
+								cell.styles[key] = rowGroupStyles[key];
+							}
+						}
+					};
 				}
 			}
 
@@ -11141,10 +11258,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			setFileContents(doc.output("arraybuffer"), "application/pdf");
 		},
 
-		xlsx: function xlsx(columns, data, options, setFileContents) {
+		xlsx: function xlsx(columns, data, options, setFileContents, config) {
 			var self = this,
 			    sheetName = options.sheetName || "Sheet1",
 			    workbook = { SheetNames: [], Sheets: {} },
+			    groupRowIndexs = [],
 			    output;
 
 			function generateSheet() {
@@ -11162,6 +11280,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					sheet['!ref'] = XLSX.utils.encode_range(range);
 
+					var merges = generateMerges();
+
+					if (merges.length) {
+						sheet["!merges"] = merges;
+					}
+
 					return sheet;
 				}
 
@@ -11175,16 +11299,54 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				rows.push(titles);
 
-				//generate each row of the table
-				data.forEach(function (row) {
-					var rowData = [];
+				function generateMerges() {
+					var output = [];
 
-					fields.forEach(function (field) {
-						rowData.push(self.getFieldValue(field, row));
+					groupRowIndexs.forEach(function (index) {
+						output.push({ s: { r: index, c: 0 }, e: { r: index, c: fields.length - 1 } });
 					});
 
-					rows.push(rowData);
-				});
+					return output;
+				}
+
+				//generate each row of the table
+				function parseRows(data) {
+					data.forEach(function (row) {
+						var rowData = [];
+
+						fields.forEach(function (field) {
+							rowData.push(self.getFieldValue(field, row));
+						});
+
+						rows.push(rowData);
+					});
+				}
+
+				function parseGroup(group) {
+					var groupData = [];
+
+					groupData.push(group.key);
+
+					groupRowIndexs.push(rows.length);
+
+					rows.push(groupData);
+
+					if (group.subGroups) {
+						group.subGroups.forEach(function (subGroup) {
+							parseGroup(subGroup);
+						});
+					} else {
+						parseRows(group.rows);
+					}
+				}
+
+				if (config.rowGroups) {
+					data.forEach(function (group) {
+						parseGroup(group);
+					});
+				} else {
+					parseRows(data);
+				}
 
 				worksheet = rowsToSheet();
 
@@ -12238,7 +12400,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//handle successfull value change
 		function success(value) {
-			console.log("success", value);
 			var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 			    type = "",
 			    filterFunc;
@@ -12250,7 +12411,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				setTimeout(function () {
 					blockSuccess = false;
 				}, 100);
-				console.log("filter", column.modules.filter);
+
 				if (!column.modules.filter.emptyFunc(value)) {
 					column.modules.filter.value = value;
 
@@ -13702,23 +13863,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupComponent.prototype.getRows = function () {
-		var output = [];
-
-		this._group.rows.forEach(function (row) {
-			output.push(row.getComponent());
-		});
-
-		return output;
+		return this._group.getRows(true);
 	};
 
 	GroupComponent.prototype.getSubGroups = function () {
-		var output = [];
-
-		this._group.groupList.forEach(function (child) {
-			output.push(child.getComponent());
-		});
-
-		return output;
+		return this._group.getSubGroups(true);
 	};
 
 	GroupComponent.prototype.getParentGroup = function () {
@@ -13796,12 +13945,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Group.prototype.createValueGroups = function () {
-		var _this22 = this;
+		var _this24 = this;
 
 		var level = this.level + 1;
 		if (this.groupManager.allowedValues && this.groupManager.allowedValues[level]) {
 			this.groupManager.allowedValues[level].forEach(function (value) {
-				_this22._createGroup(value, level);
+				_this24._createGroup(value, level);
 			});
 		}
 	};
@@ -14075,6 +14224,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return output;
 	};
 
+	Group.prototype.getData = function (visible, transform) {
+		var self = this,
+		    output = [];
+
+		this._visSet();
+
+		if (!visible || visible && this.visible) {
+			this.rows.forEach(function (row) {
+				output.push(row.getData(transform || "data"));
+			});
+		}
+
+		return output;
+	};
+
 	Group.prototype.getRows = function () {
 		this._visSet();
 
@@ -14217,6 +14381,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		return match;
+	};
+
+	Group.prototype.getSubGroups = function (component) {
+		var output = [];
+
+		this.groupList.forEach(function (child) {
+			output.push(component ? child.getComponent() : child);
+		});
+
+		return output;
+	};
+
+	Group.prototype.getRows = function (compoment) {
+		var output = [];
+
+		this.rows.forEach(function (row) {
+			output.push(compoment ? row.getComponent() : row);
+		});
+
+		return output;
 	};
 
 	Group.prototype.generateGroupHeaderContents = function () {
@@ -14446,7 +14630,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.generateGroups(rows);
 
 			if (this.table.options.dataGrouped) {
-				this.table.options.dataGrouped.call(this.table, this.getGroups());
+				this.table.options.dataGrouped.call(this.table, this.getGroups(true));
 			}
 
 			return this.updateGroupRows();
@@ -14455,11 +14639,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	GroupRows.prototype.getGroups = function () {
+	GroupRows.prototype.getGroups = function (compoment) {
 		var groupComponents = [];
 
 		this.groupList.forEach(function (group) {
-			groupComponents.push(group.getComponent());
+			groupComponents.push(compoment ? group.getComponent() : group);
 		});
 
 		return groupComponents;
@@ -14954,13 +15138,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this23 = this;
+		var _this25 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this23.actions[key]) {
+			if (_this25.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -16198,18 +16382,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this24 = this;
+		var _this26 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this24.max) {
-				_this24.page = page;
-				_this24.trigger().then(function () {
+			if (page > 0 && page <= _this26.max) {
+				_this26.page = page;
+				_this26.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this24.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this26.max + ":", page);
 				reject();
 			}
 		});
@@ -16282,12 +16466,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this25 = this;
+		var _this27 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this25.page > 1) {
-				_this25.page--;
-				_this25.trigger().then(function () {
+			if (_this27.page > 1) {
+				_this27.page--;
+				_this27.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -16301,19 +16485,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this26 = this;
+		var _this28 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this26.page < _this26.max) {
-				_this26.page++;
-				_this26.trigger().then(function () {
+			if (_this28.page < _this28.max) {
+				_this28.page++;
+				_this28.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this26.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this26.max + ":", _this26.max + 1);
+				if (!_this28.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this28.max + ":", _this28.max + 1);
 				}
 				reject();
 			}
@@ -16365,28 +16549,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this27 = this;
+		var _this29 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this27.mode) {
+			switch (_this29.mode) {
 				case "local":
-					left = _this27.table.rowManager.scrollLeft;
+					left = _this29.table.rowManager.scrollLeft;
 
-					_this27.table.rowManager.refreshActiveData("page");
-					_this27.table.rowManager.scrollHorizontal(left);
+					_this29.table.rowManager.refreshActiveData("page");
+					_this29.table.rowManager.scrollHorizontal(left);
 
-					_this27.table.options.pageLoaded.call(_this27.table, _this27.getPage());
+					_this29.table.options.pageLoaded.call(_this29.table, _this29.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this27.table.modules.ajax.blockActiveRequest();
-					_this27._getRemotePage().then(function () {
+					_this29.table.modules.ajax.blockActiveRequest();
+					_this29._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -16394,14 +16578,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this27.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this29.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this28 = this;
+		var _this30 = this;
 
 		var self = this,
 		    oldParams,
@@ -16418,33 +16602,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this28.paginationDataSentNames.page] = self.page;
+			pageParams[_this30.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this28.size) {
-				pageParams[_this28.paginationDataSentNames.size] = _this28.size;
+			if (_this30.size) {
+				pageParams[_this30.paginationDataSentNames.size] = _this30.size;
 			}
 
 			//set sort data if defined
-			if (_this28.table.options.ajaxSorting && _this28.table.modExists("sort")) {
+			if (_this30.table.options.ajaxSorting && _this30.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this28.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this30.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this28.table.options.ajaxFiltering && _this28.table.modExists("filter")) {
+			if (_this30.table.options.ajaxFiltering && _this30.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this28.paginationDataSentNames.filters] = filters;
+				pageParams[_this30.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this28.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this30.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {

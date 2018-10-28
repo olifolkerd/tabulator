@@ -549,7 +549,7 @@ Group.prototype.getRowGroup = function(row){
 Group.prototype.getSubGroups = function(component){
 	var output = [];
 
-	this._group.groupList.forEach(function(child){
+	this.groupList.forEach(function(child){
 		output.push(component ? child.getComponent() : child);
 	});
 
@@ -559,7 +559,7 @@ Group.prototype.getSubGroups = function(component){
 Group.prototype.getRows = function(compoment){
 	var output = [];
 
-	this._group.rows.forEach(function(row){
+	this.rows.forEach(function(row){
 		output.push(compoment ? row.getComponent() : row);
 	});
 

@@ -22,7 +22,6 @@ Filter.prototype.initializeColumn = function (column, value) {
 
 	//handle successfull value change
 	function success(value) {
-		console.log("success", value);
 		var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 		    type = "",
 		    filterFunc;
@@ -34,7 +33,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 			setTimeout(function () {
 				blockSuccess = false;
 			}, 100);
-			console.log("filter", column.modules.filter);
+
 			if (!column.modules.filter.emptyFunc(value)) {
 				column.modules.filter.value = value;
 
