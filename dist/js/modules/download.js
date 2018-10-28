@@ -130,10 +130,10 @@ Download.prototype.processGroupData = function (group) {
 	};
 
 	if (subGroups.length) {
-		groupData.subgroups = [];
+		groupData.subGroups = [];
 
 		subGroups.forEach(function (subGroup) {
-			groupData.subgroups.push(_this2.processGroupData(subGroup));
+			groupData.subGroups.push(_this2.processGroupData(subGroup));
 		});
 	} else {
 		groupData.rows = group.getData(true, "download");
@@ -202,10 +202,6 @@ Download.prototype.downloaders = {
 		    delimiter = options && options.delimiter ? options.delimiter : ",",
 		    fileContents;
 
-		if (config.rowGroups) {
-			console.error("Download Error - CSV downloader cannot handle row groups");
-		}
-
 		//get field lists
 		columns.forEach(function (column) {
 			if (column.field) {
@@ -217,33 +213,54 @@ Download.prototype.downloaders = {
 		//generate header row
 		fileContents = [titles.join(delimiter)];
 
-		//generate each row of the table
-		data.forEach(function (row) {
-			var rowData = [];
+		function parseRows(data) {
+			//generate each row of the table
+			data.forEach(function (row) {
+				var rowData = [];
 
-			fields.forEach(function (field) {
-				var value = self.getFieldValue(field, row);
+				fields.forEach(function (field) {
+					var value = self.getFieldValue(field, row);
 
-				switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
-					case "object":
-						value = JSON.stringify(value);
-						break;
+					switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
+						case "object":
+							value = JSON.stringify(value);
+							break;
 
-					case "undefined":
-					case "null":
-						value = "";
-						break;
+						case "undefined":
+						case "null":
+							value = "";
+							break;
 
-					default:
-						value = value;
-				}
+						default:
+							value = value;
+					}
 
-				//escape quotation marks
-				rowData.push('"' + String(value).split('"').join('""') + '"');
+					//escape quotation marks
+					rowData.push('"' + String(value).split('"').join('""') + '"');
+				});
+
+				fileContents.push(rowData.join(delimiter));
 			});
+		}
 
-			fileContents.push(rowData.join(delimiter));
-		});
+		function parseGroup(group) {
+			if (group.subGroups) {
+				group.subGroups.forEach(function (subGroup) {
+					parseGroup(subGroup);
+				});
+			} else {
+				parseRows(group.rows);
+			}
+		}
+
+		if (config.rowGroups) {
+			console.warn("Download Warning - CSV downloader cannot process row groups");
+			data.forEach(function (group) {
+				parseGroup(group);
+			});
+		} else {
+			parseRows(data);
+		}
 
 		setFileContents(fileContents.join("\n"), "text/csv");
 	},
@@ -351,22 +368,29 @@ Download.prototype.downloaders = {
 		}
 
 		if (config.rowGroups) {
+			var createdCell = function createdCell(cell, data) {
+				if (groupRowIndexs.indexOf(data.row.index) > -1) {
+					for (var key in rowGroupStyles) {
+						cell.styles[key] = rowGroupStyles[key];
+					}
+				}
+			};
+
+			rowGroupStyles = options.rowGroupStyles || {
+				fontStyle: "bold",
+				fontSize: 12,
+				cellPadding: 6,
+				fillColor: 220
+			};
 
 			if (!autoTableParams.createdCell) {
-
-				rowGroupStyles = options.rowGroupStyles || {
-					fontStyle: "bold",
-					fontSize: 12,
-					cellPadding: 6,
-					fillColor: 220
-				};
+				autoTableParams.createdCell = createdCell;
+			} else {
+				var createdCellHolder = autoTableParams.createdCell;
 
 				autoTableParams.createdCell = function (cell, data) {
-					if (groupRowIndexs.indexOf(data.row.index) > -1) {
-						for (var key in rowGroupStyles) {
-							cell.styles[key] = rowGroupStyles[key];
-						}
-					}
+					createdCell(cell, data);
+					createdCellHolder(cell, data);
 				};
 			}
 		}
@@ -388,6 +412,8 @@ Download.prototype.downloaders = {
 		    workbook = { SheetNames: [], Sheets: {} },
 		    groupRowIndexs = [],
 		    output;
+
+		console.log("data", data);
 
 		function generateSheet() {
 			var titles = [],
@@ -460,6 +486,7 @@ Download.prototype.downloaders = {
 						parseGroup(subGroup);
 					});
 				} else {
+					console.log("parse", group, group.rows);
 					parseRows(group.rows);
 				}
 			}

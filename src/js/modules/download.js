@@ -123,10 +123,10 @@ Download.prototype.processGroupData = function(group){
 	};
 
 	if(subGroups.length){
-		groupData.subgroups = [];
+		groupData.subGroups = [];
 
 		subGroups.forEach((subGroup) => {
-			groupData.subgroups.push(this.processGroupData(subGroup));
+			groupData.subGroups.push(this.processGroupData(subGroup));
 		});
 	}else{
 		groupData.rows = group.getData(true, "download");
@@ -199,10 +199,6 @@ Download.prototype.downloaders = {
 		delimiter = options && options.delimiter ? options.delimiter : ",",
 		fileContents;
 
-		if(config.rowGroups){
-			console.error("Download Error - CSV downloader cannot handle row groups");
-		}
-
 		//get field lists
 		columns.forEach(function(column){
 			if(column.field){
@@ -214,33 +210,56 @@ Download.prototype.downloaders = {
 		//generate header row
 		fileContents = [titles.join(delimiter)];
 
-		//generate each row of the table
-		data.forEach(function(row){
-			var rowData = [];
 
-			fields.forEach(function(field){
-				var value = self.getFieldValue(field, row);
+		function parseRows(data){
+			//generate each row of the table
+			data.forEach(function(row){
+				var rowData = [];
 
-				switch(typeof value){
-					case "object":
-					value = JSON.stringify(value);
-					break;
+				fields.forEach(function(field){
+					var value = self.getFieldValue(field, row);
 
-					case "undefined":
-					case "null":
-					value = "";
-					break;
+					switch(typeof value){
+						case "object":
+						value = JSON.stringify(value);
+						break;
 
-					default:
-					value = value;
-				}
+						case "undefined":
+						case "null":
+						value = "";
+						break;
 
-				//escape quotation marks
-				rowData.push('"' + String(value).split('"').join('""') + '"');
+						default:
+						value = value;
+					}
+
+					//escape quotation marks
+					rowData.push('"' + String(value).split('"').join('""') + '"');
+				});
+
+				fileContents.push(rowData.join(delimiter));
 			});
+		}
 
-			fileContents.push(rowData.join(delimiter));
-		});
+
+		function parseGroup(group){
+			if(group.subGroups){
+				group.subGroups.forEach(function(subGroup){
+					parseGroup(subGroup);
+				});
+			}else{
+				parseRows(group.rows);
+			}
+		}
+
+		if(config.rowGroups){
+			console.warn("Download Warning - CSV downloader cannot process row groups");
+			data.forEach(function(group){
+				parseGroup(group);
+			});
+		}else{
+			parseRows(data);
+		}
 
 		setFileContents(fileContents.join("\n"), "text/csv");
 	},
@@ -351,21 +370,29 @@ Download.prototype.downloaders = {
 
 		if(config.rowGroups){
 
-			if(!autoTableParams.createdCell){
+			rowGroupStyles = options.rowGroupStyles || {
+				fontStyle: "bold",
+				fontSize: 12,
+				cellPadding: 6,
+				fillColor: 220,
+			};
 
-				rowGroupStyles = options.rowGroupStyles || {
-					fontStyle: "bold",
-					fontSize: 12,
-					cellPadding: 6,
-					fillColor: 220,
-				};
+			function createdCell (cell, data){
+				if(groupRowIndexs.indexOf(data.row.index) > -1){
+					for(var key in rowGroupStyles){
+						cell.styles[key] = rowGroupStyles[key];
+					}
+				}
+			}
+
+			if(!autoTableParams.createdCell){
+				autoTableParams.createdCell = createdCell;
+			}else{
+				var createdCellHolder = autoTableParams.createdCell;
 
 				autoTableParams.createdCell = function(cell, data){
-					if(groupRowIndexs.indexOf(data.row.index) > -1){
-						for(var key in rowGroupStyles){
-							cell.styles[key] = rowGroupStyles[key];
-						}
-					}
+					createdCell(cell, data);
+					createdCellHolder(cell, data);
 				};
 			}
 		}
@@ -387,6 +414,8 @@ Download.prototype.downloaders = {
 		workbook = {SheetNames:[], Sheets:{}},
 		groupRowIndexs = [],
 		output;
+
+		console.log("data", data)
 
 		function generateSheet(){
 			var titles = [],
@@ -460,6 +489,7 @@ Download.prototype.downloaders = {
 						parseGroup(subGroup);
 					});
 				}else{
+					console.log("parse", group, group.rows)
 					parseRows(group.rows);
 				}
 			}
