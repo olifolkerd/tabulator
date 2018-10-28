@@ -1376,7 +1376,7 @@ Tabulator.prototype.setGroupHeader = function(values){
 
 Tabulator.prototype.getGroups = function(values){
 	if(this.modExists("groupRows", true)){
-		return this.modules.groupRows.getGroups();
+		return this.modules.groupRows.getGroups(true);
 	}else{
 		return false;
 	}

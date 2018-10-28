@@ -15,23 +15,11 @@ GroupComponent.prototype.getElement = function(){
 };
 
 GroupComponent.prototype.getRows = function(){
-	var output = [];
-
-	this._group.rows.forEach(function(row){
-		output.push(row.getComponent());
-	});
-
-	return output;
+	return this._group.getRows(true);
 };
 
 GroupComponent.prototype.getSubGroups = function(){
-	var output = [];
-
-	this._group.groupList.forEach(function(child){
-		output.push(child.getComponent());
-	});
-
-	return output;
+	return this._group.getSubGroups(true);
 };
 
 GroupComponent.prototype.getParentGroup = function(){
@@ -396,6 +384,21 @@ Group.prototype.getHeadersAndRows = function(){
 	return output;
 };
 
+Group.prototype.getData = function(visible, transform){
+	var self = this,
+	output = [];
+
+	this._visSet();
+
+	if(!visible || (visible && this.visible)){
+		this.rows.forEach(function(row){
+			output.push(row.getData(transform || "data"));
+		});
+	}
+
+	return output;
+};
+
 Group.prototype.getRows = function(){
 	this._visSet();
 
@@ -541,6 +544,26 @@ Group.prototype.getRowGroup = function(row){
 	}
 
 	return match;
+};
+
+Group.prototype.getSubGroups = function(component){
+	var output = [];
+
+	this._group.groupList.forEach(function(child){
+		output.push(component ? child.getComponent() : child);
+	});
+
+	return output;
+};
+
+Group.prototype.getRows = function(compoment){
+	var output = [];
+
+	this._group.rows.forEach(function(row){
+		output.push(compoment ? row.getComponent() : row);
+	});
+
+	return output;
 };
 
 Group.prototype.generateGroupHeaderContents = function(){
@@ -771,7 +794,7 @@ GroupRows.prototype.getRows = function(rows){
 		this.generateGroups(rows);
 
 		if(this.table.options.dataGrouped){
-			this.table.options.dataGrouped.call(this.table, this.getGroups());
+			this.table.options.dataGrouped.call(this.table, this.getGroups(true));
 		}
 
 		return this.updateGroupRows();
@@ -782,11 +805,11 @@ GroupRows.prototype.getRows = function(rows){
 
 };
 
-GroupRows.prototype.getGroups = function(){
+GroupRows.prototype.getGroups = function(compoment){
 	var groupComponents = [];
 
 	this.groupList.forEach(function(group){
-		groupComponents.push(group.getComponent());
+		groupComponents.push(compoment ? group.getComponent() : group);
 	});
 
 	return groupComponents;
