@@ -10924,8 +10924,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.config.rowGroups = true;
 		}
 
-		if (config.columGroups && this.table.columnManager.columns.length == this.table.columnManager.columnsByIndex.length) {
-			this.config.columGroups = true;
+		if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
+			this.config.columnGroups = true;
 		}
 	};
 
@@ -10948,30 +10948,80 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var self = this,
 		    processedDefinitions = [];
 
-		self.columnsByIndex.forEach(function (column) {
-			var definition = column.definition;
+		if (this.config.columnGroups) {
+			self.table.columnManager.columns.forEach(function (column) {
+				var colData = self.processColumnGroup(column);
 
-			if (column.download !== false) {
-				//isolate definiton from defintion object
-				var def = {};
-
-				for (var key in definition) {
-					def[key] = definition[key];
+				if (colData) {
+					processedDefinitions.push(colData);
 				}
-
-				if (typeof definition.downloadTitle != "undefined") {
-					def.title = definition.downloadTitle;
+			});
+		} else {
+			self.columnsByIndex.forEach(function (column) {
+				if (column.download !== false) {
+					//isolate definiton from defintion object
+					processedDefinitions.push(self.processDefinition(column));
 				}
-
-				processedDefinitions.push(def);
-			}
-		});
+			});
+		}
 
 		return processedDefinitions;
 	};
 
-	Download.prototype.processData = function () {
+	Download.prototype.processColumnGroup = function (column) {
 		var _this22 = this;
+
+		var subGroups = column.columns;
+
+		var groupData = {
+			type: "group",
+			title: column.definition.title
+		};
+
+		if (subGroups.length) {
+			groupData.subGroups = [];
+			groupData.width = 0;
+
+			subGroups.forEach(function (subGroup) {
+				var subGroupData = _this22.processColumnGroup(subGroup);
+
+				if (subGroupData) {
+					groupData.width += subGroupData.width;
+					groupData.subGroups.push(subGroupData);
+				}
+			});
+
+			if (!groupData.width) {
+				return false;
+			}
+		} else {
+			if (column.field && column.visible && column.definition.download !== false) {
+				groupData.width = 1;
+				groupData.definition = this.processDefinition(column);
+			} else {
+				return false;
+			}
+		}
+
+		return groupData;
+	};
+
+	Download.prototype.processDefinition = function (column) {
+		var def = {};
+
+		for (var key in column.definition) {
+			def[key] = column.definition[key];
+		}
+
+		if (typeof column.definition.downloadTitle != "undefined") {
+			def.title = column.definition.downloadTitle;
+		}
+
+		return def;
+	};
+
+	Download.prototype.processData = function () {
+		var _this23 = this;
 
 		var self = this,
 		    data = [],
@@ -10981,7 +11031,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groups = this.table.modules.groupRows.getGroups();
 
 			groups.forEach(function (group) {
-				data.push(_this22.processGroupData(group));
+				data.push(_this23.processGroupData(group));
 			});
 		} else {
 			data = self.table.rowManager.getData(true, "download");
@@ -10996,7 +11046,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Download.prototype.processGroupData = function (group) {
-		var _this23 = this;
+		var _this24 = this;
 
 		var subGroups = group.getSubGroups();
 
@@ -11009,7 +11059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groupData.subGroups = [];
 
 			subGroups.forEach(function (subGroup) {
-				groupData.subGroups.push(_this23.processGroupData(subGroup));
+				groupData.subGroups.push(_this24.processGroupData(subGroup));
 			});
 		} else {
 			groupData.rows = group.getData(true, "download");
@@ -11078,13 +11128,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    delimiter = options && options.delimiter ? options.delimiter : ",",
 			    fileContents;
 
-			//get field lists
-			columns.forEach(function (column) {
-				if (column.field) {
+			//build column headers
+			function parseSimpleTitles() {
+				columns.forEach(function (column) {
 					titles.push('"' + String(column.title).split('"').join('""') + '"');
 					fields.push(column.field);
+				});
+			}
+
+			function parseColumnGroup(column, level) {
+				if (column.subGroups) {
+					column.subGroups.forEach(function (subGroup) {
+						parseColumnGroup(subGroup, level + 1);
+					});
+				} else {
+					titles.push('"' + String(column.title).split('"').join('""') + '"');
+					fields.push(column.definition.field);
 				}
-			});
+			}
+
+			if (config.columnGroups) {
+				console.warn("Download Warning - CSV downloader cannot process column groups");
+
+				columns.forEach(function (column) {
+					parseColumnGroup(column, 0);
+				});
+			} else {
+				parseSimpleTitles();
+			}
 
 			//generate header row
 			fileContents = [titles.join(delimiter)];
@@ -11131,6 +11202,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (config.rowGroups) {
 				console.warn("Download Warning - CSV downloader cannot process row groups");
+
 				data.forEach(function (group) {
 					parseGroup(group);
 				});
@@ -11168,12 +11240,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			//build column headers
-			columns.forEach(function (column) {
-				if (column.field) {
+			function parseSimpleTitles() {
+				columns.forEach(function (column) {
+					if (column.field) {
+						header.push(column.title || "");
+						fields.push(column.field);
+					}
+				});
+			}
+
+			function parseColumnGroup(column, level) {
+				if (column.subGroups) {
+					column.subGroups.forEach(function (subGroup) {
+						parseColumnGroup(subGroup, level + 1);
+					});
+				} else {
 					header.push(column.title || "");
-					fields.push(column.field);
+					fields.push(column.definition.field);
 				}
-			});
+			}
+
+			if (config.columnGroups) {
+				console.warn("Download Warning - PDF downloader cannot process column groups");
+
+				columns.forEach(function (column) {
+					parseColumnGroup(column, 0);
+				});
+			} else {
+				parseSimpleTitles();
+			}
 
 			function parseValue(value) {
 				switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
@@ -11287,9 +11382,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    sheetName = options.sheetName || "Sheet1",
 			    workbook = { SheetNames: [], Sheets: {} },
 			    groupRowIndexs = [],
+			    groupColumnIndexs = [],
 			    output;
-
-			console.log("data", data);
 
 			function generateSheet() {
 				var titles = [],
@@ -11315,21 +11409,101 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					return sheet;
 				}
 
-				//get field lists
-				columns.forEach(function (column) {
-					if (column.field) {
+				function parseSimpleTitles() {
+					//get field lists
+					columns.forEach(function (column) {
 						titles.push(column.title);
 						fields.push(column.field);
-					}
-				});
+					});
 
-				rows.push(titles);
+					rows.push(titles);
+				}
+
+				function parseColumnGroup(column, level) {
+
+					if (typeof titles[level] === "undefined") {
+						titles[level] = [];
+					}
+
+					if (typeof groupColumnIndexs[level] === "undefined") {
+						groupColumnIndexs[level] = [];
+					}
+
+					if (column.width > 1) {
+
+						groupColumnIndexs[level].push({
+							type: "hoz",
+							start: titles[level].length,
+							end: titles[level].length + column.width - 1
+						});
+					}
+
+					titles[level].push(column.title);
+
+					if (column.subGroups) {
+						column.subGroups.forEach(function (subGroup) {
+							parseColumnGroup(subGroup, level + 1);
+						});
+					} else {
+						fields.push(column.definition.field);
+						padColumnTitles(fields.length - 1, level);
+
+						groupColumnIndexs[level].push({
+							type: "vert",
+							start: fields.length - 1
+						});
+					}
+				}
+
+				function padColumnTitles() {
+					var max = 0;
+
+					titles.forEach(function (title) {
+						var len = title.length;
+						if (len > max) {
+							max = len;
+						}
+					});
+
+					titles.forEach(function (title) {
+						var len = title.length;
+						if (len < max) {
+							for (var i = len; i < max; i++) {
+								title.push("");
+							}
+						}
+					});
+				}
+
+				if (config.columnGroups) {
+					columns.forEach(function (column) {
+						parseColumnGroup(column, 0);
+					});
+
+					titles.forEach(function (title) {
+						rows.push(title);
+					});
+				} else {
+					parseSimpleTitles();
+				}
 
 				function generateMerges() {
 					var output = [];
 
 					groupRowIndexs.forEach(function (index) {
 						output.push({ s: { r: index, c: 0 }, e: { r: index, c: fields.length - 1 } });
+					});
+
+					groupColumnIndexs.forEach(function (merges, level) {
+						merges.forEach(function (merge) {
+							if (merge.type === "hoz") {
+								output.push({ s: { r: level, c: merge.start }, e: { r: level, c: merge.end } });
+							} else {
+								if (level != titles.length - 1) {
+									output.push({ s: { r: level, c: merge.start }, e: { r: titles.length - 1, c: merge.start } });
+								}
+							}
+						});
 					});
 
 					return output;
@@ -11362,7 +11536,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							parseGroup(subGroup);
 						});
 					} else {
-						console.log("parse", group, group.rows);
 						parseRows(group.rows);
 					}
 				}
@@ -13972,12 +14145,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Group.prototype.createValueGroups = function () {
-		var _this24 = this;
+		var _this25 = this;
 
 		var level = this.level + 1;
 		if (this.groupManager.allowedValues && this.groupManager.allowedValues[level]) {
 			this.groupManager.allowedValues[level].forEach(function (value) {
-				_this24._createGroup(value, level);
+				_this25._createGroup(value, level);
 			});
 		}
 	};
@@ -15165,13 +15338,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this25 = this;
+		var _this26 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this25.actions[key]) {
+			if (_this26.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -16409,18 +16582,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this26 = this;
+		var _this27 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (page > 0 && page <= _this26.max) {
-				_this26.page = page;
-				_this26.trigger().then(function () {
+			if (page > 0 && page <= _this27.max) {
+				_this27.page = page;
+				_this27.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this26.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this27.max + ":", page);
 				reject();
 			}
 		});
@@ -16493,12 +16666,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this27 = this;
+		var _this28 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this27.page > 1) {
-				_this27.page--;
-				_this27.trigger().then(function () {
+			if (_this28.page > 1) {
+				_this28.page--;
+				_this28.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -16512,19 +16685,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this28 = this;
+		var _this29 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this28.page < _this28.max) {
-				_this28.page++;
-				_this28.trigger().then(function () {
+			if (_this29.page < _this29.max) {
+				_this29.page++;
+				_this29.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this28.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this28.max + ":", _this28.max + 1);
+				if (!_this29.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this29.max + ":", _this29.max + 1);
 				}
 				reject();
 			}
@@ -16576,28 +16749,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this29 = this;
+		var _this30 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this29.mode) {
+			switch (_this30.mode) {
 				case "local":
-					left = _this29.table.rowManager.scrollLeft;
+					left = _this30.table.rowManager.scrollLeft;
 
-					_this29.table.rowManager.refreshActiveData("page");
-					_this29.table.rowManager.scrollHorizontal(left);
+					_this30.table.rowManager.refreshActiveData("page");
+					_this30.table.rowManager.scrollHorizontal(left);
 
-					_this29.table.options.pageLoaded.call(_this29.table, _this29.getPage());
+					_this30.table.options.pageLoaded.call(_this30.table, _this30.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this29.table.modules.ajax.blockActiveRequest();
-					_this29._getRemotePage().then(function () {
+					_this30.table.modules.ajax.blockActiveRequest();
+					_this30._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -16605,14 +16778,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this29.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this30.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this30 = this;
+		var _this31 = this;
 
 		var self = this,
 		    oldParams,
@@ -16629,33 +16802,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this30.paginationDataSentNames.page] = self.page;
+			pageParams[_this31.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this30.size) {
-				pageParams[_this30.paginationDataSentNames.size] = _this30.size;
+			if (_this31.size) {
+				pageParams[_this31.paginationDataSentNames.size] = _this31.size;
 			}
 
 			//set sort data if defined
-			if (_this30.table.options.ajaxSorting && _this30.table.modExists("sort")) {
+			if (_this31.table.options.ajaxSorting && _this31.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this30.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this31.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this30.table.options.ajaxFiltering && _this30.table.modExists("filter")) {
+			if (_this31.table.options.ajaxFiltering && _this31.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this30.paginationDataSentNames.filters] = filters;
+				pageParams[_this31.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this30.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this31.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {

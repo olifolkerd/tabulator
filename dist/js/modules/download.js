@@ -48,8 +48,8 @@ Download.prototype.processConfig = function () {
 		this.config.rowGroups = true;
 	}
 
-	if (config.columGroups && this.table.columnManager.columns.length == this.table.columnManager.columnsByIndex.length) {
-		this.config.columGroups = true;
+	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
+		this.config.columnGroups = true;
 	}
 };
 
@@ -72,30 +72,80 @@ Download.prototype.processDefinitions = function () {
 	var self = this,
 	    processedDefinitions = [];
 
-	self.columnsByIndex.forEach(function (column) {
-		var definition = column.definition;
+	if (this.config.columnGroups) {
+		self.table.columnManager.columns.forEach(function (column) {
+			var colData = self.processColumnGroup(column);
 
-		if (column.download !== false) {
-			//isolate definiton from defintion object
-			var def = {};
-
-			for (var key in definition) {
-				def[key] = definition[key];
+			if (colData) {
+				processedDefinitions.push(colData);
 			}
-
-			if (typeof definition.downloadTitle != "undefined") {
-				def.title = definition.downloadTitle;
+		});
+	} else {
+		self.columnsByIndex.forEach(function (column) {
+			if (column.download !== false) {
+				//isolate definiton from defintion object
+				processedDefinitions.push(self.processDefinition(column));
 			}
-
-			processedDefinitions.push(def);
-		}
-	});
+		});
+	}
 
 	return processedDefinitions;
 };
 
-Download.prototype.processData = function () {
+Download.prototype.processColumnGroup = function (column) {
 	var _this = this;
+
+	var subGroups = column.columns;
+
+	var groupData = {
+		type: "group",
+		title: column.definition.title
+	};
+
+	if (subGroups.length) {
+		groupData.subGroups = [];
+		groupData.width = 0;
+
+		subGroups.forEach(function (subGroup) {
+			var subGroupData = _this.processColumnGroup(subGroup);
+
+			if (subGroupData) {
+				groupData.width += subGroupData.width;
+				groupData.subGroups.push(subGroupData);
+			}
+		});
+
+		if (!groupData.width) {
+			return false;
+		}
+	} else {
+		if (column.field && column.visible && column.definition.download !== false) {
+			groupData.width = 1;
+			groupData.definition = this.processDefinition(column);
+		} else {
+			return false;
+		}
+	}
+
+	return groupData;
+};
+
+Download.prototype.processDefinition = function (column) {
+	var def = {};
+
+	for (var key in column.definition) {
+		def[key] = column.definition[key];
+	}
+
+	if (typeof column.definition.downloadTitle != "undefined") {
+		def.title = column.definition.downloadTitle;
+	}
+
+	return def;
+};
+
+Download.prototype.processData = function () {
+	var _this2 = this;
 
 	var self = this,
 	    data = [],
@@ -105,7 +155,7 @@ Download.prototype.processData = function () {
 		groups = this.table.modules.groupRows.getGroups();
 
 		groups.forEach(function (group) {
-			data.push(_this.processGroupData(group));
+			data.push(_this2.processGroupData(group));
 		});
 	} else {
 		data = self.table.rowManager.getData(true, "download");
@@ -120,7 +170,7 @@ Download.prototype.processData = function () {
 };
 
 Download.prototype.processGroupData = function (group) {
-	var _this2 = this;
+	var _this3 = this;
 
 	var subGroups = group.getSubGroups();
 
@@ -133,7 +183,7 @@ Download.prototype.processGroupData = function (group) {
 		groupData.subGroups = [];
 
 		subGroups.forEach(function (subGroup) {
-			groupData.subGroups.push(_this2.processGroupData(subGroup));
+			groupData.subGroups.push(_this3.processGroupData(subGroup));
 		});
 	} else {
 		groupData.rows = group.getData(true, "download");
@@ -202,13 +252,34 @@ Download.prototype.downloaders = {
 		    delimiter = options && options.delimiter ? options.delimiter : ",",
 		    fileContents;
 
-		//get field lists
-		columns.forEach(function (column) {
-			if (column.field) {
+		//build column headers
+		function parseSimpleTitles() {
+			columns.forEach(function (column) {
 				titles.push('"' + String(column.title).split('"').join('""') + '"');
 				fields.push(column.field);
+			});
+		}
+
+		function parseColumnGroup(column, level) {
+			if (column.subGroups) {
+				column.subGroups.forEach(function (subGroup) {
+					parseColumnGroup(subGroup, level + 1);
+				});
+			} else {
+				titles.push('"' + String(column.title).split('"').join('""') + '"');
+				fields.push(column.definition.field);
 			}
-		});
+		}
+
+		if (config.columnGroups) {
+			console.warn("Download Warning - CSV downloader cannot process column groups");
+
+			columns.forEach(function (column) {
+				parseColumnGroup(column, 0);
+			});
+		} else {
+			parseSimpleTitles();
+		}
 
 		//generate header row
 		fileContents = [titles.join(delimiter)];
@@ -255,6 +326,7 @@ Download.prototype.downloaders = {
 
 		if (config.rowGroups) {
 			console.warn("Download Warning - CSV downloader cannot process row groups");
+
 			data.forEach(function (group) {
 				parseGroup(group);
 			});
@@ -292,12 +364,35 @@ Download.prototype.downloaders = {
 		}
 
 		//build column headers
-		columns.forEach(function (column) {
-			if (column.field) {
+		function parseSimpleTitles() {
+			columns.forEach(function (column) {
+				if (column.field) {
+					header.push(column.title || "");
+					fields.push(column.field);
+				}
+			});
+		}
+
+		function parseColumnGroup(column, level) {
+			if (column.subGroups) {
+				column.subGroups.forEach(function (subGroup) {
+					parseColumnGroup(subGroup, level + 1);
+				});
+			} else {
 				header.push(column.title || "");
-				fields.push(column.field);
+				fields.push(column.definition.field);
 			}
-		});
+		}
+
+		if (config.columnGroups) {
+			console.warn("Download Warning - PDF downloader cannot process column groups");
+
+			columns.forEach(function (column) {
+				parseColumnGroup(column, 0);
+			});
+		} else {
+			parseSimpleTitles();
+		}
 
 		function parseValue(value) {
 			switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
@@ -411,9 +506,8 @@ Download.prototype.downloaders = {
 		    sheetName = options.sheetName || "Sheet1",
 		    workbook = { SheetNames: [], Sheets: {} },
 		    groupRowIndexs = [],
+		    groupColumnIndexs = [],
 		    output;
-
-		console.log("data", data);
 
 		function generateSheet() {
 			var titles = [],
@@ -439,21 +533,101 @@ Download.prototype.downloaders = {
 				return sheet;
 			}
 
-			//get field lists
-			columns.forEach(function (column) {
-				if (column.field) {
+			function parseSimpleTitles() {
+				//get field lists
+				columns.forEach(function (column) {
 					titles.push(column.title);
 					fields.push(column.field);
-				}
-			});
+				});
 
-			rows.push(titles);
+				rows.push(titles);
+			}
+
+			function parseColumnGroup(column, level) {
+
+				if (typeof titles[level] === "undefined") {
+					titles[level] = [];
+				}
+
+				if (typeof groupColumnIndexs[level] === "undefined") {
+					groupColumnIndexs[level] = [];
+				}
+
+				if (column.width > 1) {
+
+					groupColumnIndexs[level].push({
+						type: "hoz",
+						start: titles[level].length,
+						end: titles[level].length + column.width - 1
+					});
+				}
+
+				titles[level].push(column.title);
+
+				if (column.subGroups) {
+					column.subGroups.forEach(function (subGroup) {
+						parseColumnGroup(subGroup, level + 1);
+					});
+				} else {
+					fields.push(column.definition.field);
+					padColumnTitles(fields.length - 1, level);
+
+					groupColumnIndexs[level].push({
+						type: "vert",
+						start: fields.length - 1
+					});
+				}
+			}
+
+			function padColumnTitles() {
+				var max = 0;
+
+				titles.forEach(function (title) {
+					var len = title.length;
+					if (len > max) {
+						max = len;
+					}
+				});
+
+				titles.forEach(function (title) {
+					var len = title.length;
+					if (len < max) {
+						for (var i = len; i < max; i++) {
+							title.push("");
+						}
+					}
+				});
+			}
+
+			if (config.columnGroups) {
+				columns.forEach(function (column) {
+					parseColumnGroup(column, 0);
+				});
+
+				titles.forEach(function (title) {
+					rows.push(title);
+				});
+			} else {
+				parseSimpleTitles();
+			}
 
 			function generateMerges() {
 				var output = [];
 
 				groupRowIndexs.forEach(function (index) {
 					output.push({ s: { r: index, c: 0 }, e: { r: index, c: fields.length - 1 } });
+				});
+
+				groupColumnIndexs.forEach(function (merges, level) {
+					merges.forEach(function (merge) {
+						if (merge.type === "hoz") {
+							output.push({ s: { r: level, c: merge.start }, e: { r: level, c: merge.end } });
+						} else {
+							if (level != titles.length - 1) {
+								output.push({ s: { r: level, c: merge.start }, e: { r: titles.length - 1, c: merge.start } });
+							}
+						}
+					});
 				});
 
 				return output;
@@ -486,7 +660,6 @@ Download.prototype.downloaders = {
 						parseGroup(subGroup);
 					});
 				} else {
-					console.log("parse", group, group.rows);
 					parseRows(group.rows);
 				}
 			}
