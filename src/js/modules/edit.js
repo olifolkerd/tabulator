@@ -20,8 +20,13 @@ Edit.prototype.initializeColumn = function(column){
 	//set column editor
 	switch(typeof column.definition.editor){
 		case "string":
+
+		if(column.definition.editor === "tick"){
+			console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+		}
+
 		if(self.editors[column.definition.editor]){
-			config.editor = self.editors[column.definition.editor]
+			config.editor = self.editors[column.definition.editor];
 		}else{
 			console.warn("Editor Error - No such editor found: ", column.definition.editor);
 		}
@@ -36,6 +41,11 @@ Edit.prototype.initializeColumn = function(column){
 		if(column.definition.editor === true){
 
 			if(typeof column.definition.formatter !== "function"){
+
+				if(column.definition.formatter === "tick"){
+					console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+				}
+
 				if(self.editors[column.definition.formatter]){
 					config.editor = self.editors[column.definition.formatter];
 				}else{
@@ -902,67 +912,7 @@ Edit.prototype.editors = {
 
 	//checkbox
 	tick:function(cell, onRendered, success, cancel, editorParams){
-		var value = cell.getValue(),
-		input = document.createElement("input"),
-		tristate = editorParams.tristate,
-		indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
-		indetermState = false;
-
-		input.setAttribute("type", "checkbox");
-		input.style.marginTop = "5px";
-		input.style.boxSizing = "border-box";
-
-		input.value = value;
-
-		if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
-			indetermState = true;
-			input.indeterminate = true;
-		}
-
-		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
-			onRendered(function(){
-				input.focus();
-			});
-		}
-
-		input.checked = value === true || value === "true" || value === "True" || value === 1;
-
-		function setValue(){
-			if(tristate){
-				if(input.checked && !indetermState){
-					input.checked = false;
-					input.indeterminate = true;
-					indetermState = true;
-					return indetermValue;
-				}else{
-					indetermState = false;
-					return input.checked;
-				}
-			}else{
-				return input.checked;
-			}
-		}
-
-		//submit new value on blur
-		input.addEventListener("change", function(e){
-			success(setValue());
-		});
-
-		input.addEventListener("blur", function(e){
-			success(setValue());
-		});
-
-		//submit new value on enter
-		input.addEventListener("keydown", function(e){
-			if(e.keyCode == 13){
-				success(setValue());
-			}
-			if(e.keyCode == 27){
-				cancel();
-			}
-		});
-
-		return input;
+		return this.editors.tickCross.call(this, cell, onRendered, success, cancel, editorParams);
 	},
 };
 
