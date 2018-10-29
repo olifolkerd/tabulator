@@ -187,7 +187,7 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 
 			params = typeof params === "function" ? params.call(self.table) : params;
 
-			editorElement = editor.call(self, cellWrapper, function(){}, success, cancel, params);
+			editorElement = editor.call(this.table.modules.edit, cellWrapper, function(){}, success, cancel, params);
 
 			//set Placeholder Text
 			if(field){
