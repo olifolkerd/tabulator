@@ -25,6 +25,7 @@ Edit.prototype.initializeColumn = function (column) {
 		case "string":
 
 			if (column.definition.editor === "tick") {
+				column.definition.editor = "tickCross";
 				console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 			}
 
@@ -46,6 +47,7 @@ Edit.prototype.initializeColumn = function (column) {
 				if (typeof column.definition.formatter !== "function") {
 
 					if (column.definition.formatter === "tick") {
+						column.definition.formatter = "tickCross";
 						console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 					}
 
@@ -923,11 +925,6 @@ Edit.prototype.editors = {
 		});
 
 		return input;
-	},
-
-	//checkbox
-	tick: function tick(cell, onRendered, success, cancel, editorParams) {
-		return this.editors.tickCross.call(this, cell, onRendered, success, cancel, editorParams);
 	}
 };
 

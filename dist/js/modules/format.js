@@ -16,6 +16,12 @@ Format.prototype.initializeColumn = function (column) {
 		case "string":
 
 			if (column.definition.formatter === "tick") {
+				column.definition.formatter = "tickCross";
+
+				if (typeof column.definition.formatterParams.crossElement == "undefined") {
+					column.definition.formatterParams.crossElement = false;
+				}
+
 				console.warn("DEFPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
 			}
 
@@ -243,15 +249,6 @@ Format.prototype.formatters = {
 		});
 
 		return el;
-	},
-
-	//tick or empty cell
-	tick: function tick(cell, formatterParams, onRendered) {
-		if (typeof formatterParams.crossElement == "undefined") {
-			formatterParams.crossElement = false;
-		}
-
-		return this.formatters.tickCross.call(this, cell, formatterParams, onRendered);
 	},
 
 	//tick or cross

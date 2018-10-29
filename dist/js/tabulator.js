@@ -11622,6 +11622,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			case "string":
 
 				if (column.definition.editor === "tick") {
+					column.definition.editor = "tickCross";
 					console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 				}
 
@@ -11643,6 +11644,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (typeof column.definition.formatter !== "function") {
 
 						if (column.definition.formatter === "tick") {
+							column.definition.formatter = "tickCross";
 							console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 						}
 
@@ -12520,11 +12522,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			return input;
-		},
-
-		//checkbox
-		tick: function tick(cell, onRendered, success, cancel, editorParams) {
-			return this.editors.tickCross.call(this, cell, onRendered, success, cancel, editorParams);
 		}
 	};
 
@@ -13217,6 +13214,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			case "string":
 
 				if (column.definition.formatter === "tick") {
+					column.definition.formatter = "tickCross";
+
+					if (typeof column.definition.formatterParams.crossElement == "undefined") {
+						column.definition.formatterParams.crossElement = false;
+					}
+
 					console.warn("DEFPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
 				}
 
@@ -13444,15 +13447,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			return el;
-		},
-
-		//tick or empty cell
-		tick: function tick(cell, formatterParams, onRendered) {
-			if (typeof formatterParams.crossElement == "undefined") {
-				formatterParams.crossElement = false;
-			}
-
-			return this.formatters.tickCross.call(this, cell, formatterParams, onRendered);
 		},
 
 		//tick or cross
