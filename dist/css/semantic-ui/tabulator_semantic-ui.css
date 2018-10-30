@@ -401,6 +401,38 @@
   border-bottom: none;
 }
 
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical .tabulator-col-content .tabulator-col-title {
+  -webkit-writing-mode: vertical-rl;
+      -ms-writing-mode: tb-rl;
+          writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-col-vertical-flip .tabulator-col-title {
+  -ms-transform: rotate(180deg);
+      transform: rotate(180deg);
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable .tabulator-col-title {
+  padding-right: 0;
+  padding-top: 20px;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable.tabulator-col-vertical-flip .tabulator-col-title {
+  padding-right: 0;
+  padding-bottom: 20px;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable .tabulator-arrow {
+  right: calc(50% - 6px);
+}
+
 .tabulator .tabulator-header .tabulator-frozen {
   display: inline-block;
   position: absolute;

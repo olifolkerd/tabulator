@@ -263,6 +263,14 @@ Column.prototype._buildHeader = function(){
 
 	while(self.element.firstChild) self.element.removeChild(self.element.firstChild);
 
+	if(def.headerVertical){
+		self.element.classList.add("tabulator-col-vertical");
+
+		if(def.headerVertical === "flip"){
+			self.element.classList.add("tabulator-col-vertical-flip");
+		}
+	}
+
 	self.contentElement = self._bindEvents();
 
 	self.contentElement = self._buildColumnHeaderContent();

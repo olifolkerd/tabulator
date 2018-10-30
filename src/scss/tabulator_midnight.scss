@@ -243,6 +243,44 @@ $footerSeperatorColor:#999 !default; //footer bottom seperator color
 				}
 			}
 
+			&.tabulator-col-vertical{
+				.tabulator-col-content{
+					.tabulator-col-title{
+						writing-mode: vertical-rl;
+						text-orientation: mixed;
+
+						display:flex;
+						align-items:center;
+						justify-content:center;
+					}
+				}
+
+				&.tabulator-col-vertical-flip{
+					.tabulator-col-title{
+						transform: rotate(180deg);
+					}
+				}
+
+				&.tabulator-sortable{
+					.tabulator-col-title{
+						padding-right:0;
+						padding-top:20px;
+					}
+
+					&.tabulator-col-vertical-flip{
+						.tabulator-col-title{
+							padding-right:0;
+							padding-bottom:20px;
+						}
+
+					}
+
+					.tabulator-arrow{
+						right:calc(50% - 6px);
+					}
+				}
+			}
+
 		}
 
 		.tabulator-frozen{

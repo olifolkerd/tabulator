@@ -1266,7 +1266,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		while (self.element.firstChild) {
 			self.element.removeChild(self.element.firstChild);
-		}self.contentElement = self._bindEvents();
+		}if (def.headerVertical) {
+
+			self.element.classList.add("tabulator-col-vertical");
+
+			if (def.headerVertical === "flip") {
+
+				self.element.classList.add("tabulator-col-vertical-flip");
+			}
+		}
+
+		self.contentElement = self._bindEvents();
 
 		self.contentElement = self._buildColumnHeaderContent();
 
