@@ -495,11 +495,18 @@ Filter.prototype.clearFilter = function(all){
 };
 
 //clear header filters
-Filter.prototype.clearHeaderFilter = function(){
+Filter.prototype.clearHeaderFilter = function () {
 	this.headerFilters = {};
 
-	this.headerFilterElements.forEach(function(element){
-		element.value = "";
+	this.headerFilterElements.forEach(function (element) {
+		if (!element.tagName.localeCompare("input", 'en', {sensitivity: 'base'}) && !element.type.localeCompare("checkbox", 'en', {sensitivity: 'base'})) {
+			if (element.checked) {
+				element.click();
+			}
+		}
+		else {
+			element.value = "";
+		}
 	});
 
 	this.changed = true;
