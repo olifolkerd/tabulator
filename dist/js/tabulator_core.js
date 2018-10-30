@@ -1434,7 +1434,17 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
 		contents = formatter.call(this.table.modules.format, mockCell, params);
 
-		el.appendChild(contents);
+		switch (typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) {
+			case "object":
+				this.element.appendChild(contents);
+				break;
+			case "undefined":
+			case "null":
+				this.element.innerHTML = "";
+				break;
+			default:
+				this.element.innerHTML = contents;
+		}
 	} else {
 		el.innerHTML = title;
 	}
