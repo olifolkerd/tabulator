@@ -6250,6 +6250,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardPasteAction: "insert", //how to insert pasted data into the table
 
+		clipboardConfig: { //clipboard config
+
+			columnHeader: true,
+
+			columnGroups: false,
+
+			rowGroups: false,
+
+			columnCalcs: false
+
+		},
 
 		clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
 
@@ -10052,6 +10063,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.pasteParser = function () {};
 		this.pasteAction = function () {};
 		this.htmlElement = false;
+		this.config = {};
 
 		this.blocked = true; //block copy actions not originating from this command
 	};
@@ -10064,6 +10076,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.mode === true || this.mode === "copy") {
 			this.table.element.addEventListener("copy", function (e) {
 				var data;
+
+				this.processConfig();
 
 				if (!self.blocked) {
 					e.preventDefault();
@@ -10099,6 +10113,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.setPasteParser(this.table.options.clipboardPasteParser);
 		this.setPasteAction(this.table.options.clipboardPasteAction);
+	};
+
+	Clipboard.prototype.processConfig = function () {
+		var config = this.table.options.clipboardCopyConfig;
+
+		if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.config.rowGroups = true;
+		}
+
+		if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
+			this.config.columnGroups = true;
+		}
 	};
 
 	Clipboard.prototype.reset = function () {
@@ -10282,12 +10308,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var data;
 
 		this.htmlElement = false;
-		data = this.copySelector.call(this, this.copySelectorParams);
+		data = this.copySelector.call(this, this.copySelectorParams, this.config);
 
 		return this.copyFormatter.call(this, data, this.copyFormatterParams);
 	};
 
-	Clipboard.prototype.rowsToData = function (rows, params) {
+	Clipboard.prototype.rowsToData = function (rows, config, params) {
 		var columns = this.table.columnManager.columnsByIndex,
 		    headers = [],
 		    data = [];
@@ -10441,23 +10467,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Clipboard.prototype.copySelectors = {
-		userSelection: function userSelection(params) {
+		userSelection: function userSelection(config, params) {
 			return params;
 		},
-		selected: function selected(params) {
+		selected: function selected(config, params) {
 			var rows = [];
 
 			if (this.table.modExists("selectRow", true)) {
 				rows = this.table.modules.selectRow.getSelectedRows();
 			}
 
-			return this.rowsToData(rows, params);
+			return this.rowsToData(rows, config, params);
 		},
-		table: function table(params) {
-			return this.rowsToData(this.table.rowManager.getComponents(), params);
+		table: function table(config, params) {
+			return this.rowsToData(this.table.rowManager.getComponents(), config, params);
 		},
-		active: function active(params) {
-			return this.rowsToData(this.table.rowManager.getComponents(true), params);
+		active: function active(config, params) {
+			return this.rowsToData(this.table.rowManager.getComponents(true), config, params);
 		}
 	};
 

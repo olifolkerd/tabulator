@@ -71,6 +71,12 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyHeader:true, //include table headers in copt
 	clipboardPasteParser:"table", //convert pasted clipboard data to rows
 	clipboardPasteAction:"insert", //how to insert pasted data into the table
+	clipboardConfig:{	//clipboard config
+		columnHeader:true,
+		columnGroups:false,
+		rowGroups:false,
+		columnCalcs:false,
+	},
 
 	clipboardCopied:function(){}, //data has been copied to the clipboard
 	clipboardPasted:function(){}, //data has been pasted into the table

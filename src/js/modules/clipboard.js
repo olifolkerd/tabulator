@@ -8,6 +8,7 @@ var Clipboard = function(table){
 	this.pasteParser = function(){};
 	this.pasteAction = function(){};
 	this.htmlElement = false;
+	this.config = {};
 
 	this.blocked = true; //block copy actions not originating from this command
 };
@@ -20,6 +21,8 @@ Clipboard.prototype.initialize = function(){
 	if(this.mode === true || this.mode === "copy"){
 		this.table.element.addEventListener("copy", function(e){
 			var data;
+
+			this.processConfig();
 
 			if(!self.blocked){
 				e.preventDefault();
@@ -56,6 +59,19 @@ Clipboard.prototype.initialize = function(){
 	this.setPasteParser(this.table.options.clipboardPasteParser);
 	this.setPasteAction(this.table.options.clipboardPasteAction);
 };
+
+Clipboard.prototype.processConfig = function(){
+	var config = this.table.options.clipboardCopyConfig;
+
+	if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")){
+		this.config.rowGroups = true;
+	}
+
+	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length){
+		this.config.columnGroups = true;
+	}
+};
+
 
 Clipboard.prototype.reset = function(){
 	this.blocked = false;
@@ -243,12 +259,12 @@ Clipboard.prototype.generateContent = function(){
 	var data;
 
 	this.htmlElement = false;
-	data = this.copySelector.call(this, this.copySelectorParams);
+	data = this.copySelector.call(this, this.copySelectorParams, this.config);
 
 	return this.copyFormatter.call(this, data, this.copyFormatterParams);
 };
 
-Clipboard.prototype.rowsToData = function(rows, params){
+Clipboard.prototype.rowsToData = function(rows, config, params){
 	var columns = this.table.columnManager.columnsByIndex,
 	headers = [],
 	data = [];
@@ -396,23 +412,23 @@ Clipboard.prototype.mapElementStyles = function(from, to, props){
 
 
 Clipboard.prototype.copySelectors = {
-	userSelection: function(params){
+	userSelection: function(config, params){
 		return params;
 	},
-	selected: function(params){
+	selected: function(config, params){
 		var rows = [];
 
 		if(this.table.modExists("selectRow", true)){
 			rows = this.table.modules.selectRow.getSelectedRows();
 		}
 
-		return this.rowsToData(rows, params);
+		return this.rowsToData(rows, config, params);
 	},
-	table: function(params){
-		return this.rowsToData(this.table.rowManager.getComponents(), params);
+	table: function(config, params){
+		return this.rowsToData(this.table.rowManager.getComponents(), config, params);
 	},
-	active: function(params){
-		return this.rowsToData(this.table.rowManager.getComponents(true), params);
+	active: function(config, params){
+		return this.rowsToData(this.table.rowManager.getComponents(true), config, params);
 	},
 };
 
