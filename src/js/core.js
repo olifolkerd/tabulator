@@ -1570,18 +1570,25 @@ Tabulator.prototype.helpers = {
 		};
 	},
 
-	deepClone: function(obj){
-		var clone = {};
-		for(var i in obj) {
-			if(obj[i] != null && typeof(obj[i])  === "object"){
-				clone[i] = this.deepClone(obj[i]);
-			}
-			else{
-				clone[i] = obj[i];
-			}
-		}
-		return clone;
-	}
+    deepClone: function(obj){
+        // xxx deepClone is losing columns with a value of date.
+        // when calling this recursive, and the grid has a Date value, the grid loses the date value causing an empty object to be returned.
+        // So data is lost when calling getData() as a result.
+        // Add a test to see if obj is a date and allow it to pass through like any other value.  This fixes the data loss for this issue since Dates are 'objects'.
+        var clone = {};
+        for(var i in obj) {
+            if (obj[i] != null && typeof(obj[i]) === "object") {
+                if (obj[i] instanceof Date) {
+                    clone[i] = obj[i];
+                } else {
+                    clone[i] = this.deepClone(obj[i]);
+                }
+            } else {
+                clone[i] = obj[i];
+            }
+        }
+        return clone;
+    }
 };
 
 Tabulator.prototype.comms = {
