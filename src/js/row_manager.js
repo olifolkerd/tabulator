@@ -1527,7 +1527,10 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 	if(bottomDiff >= bottomRowHeight){
 
 		var rowEl = bottomRow.getElement();
-		rowEl.parentNode.removeChild(rowEl);
+
+		if(rowEl.parentNode){
+			rowEl.parentNode.removeChild(rowEl);
+		}
 
 		this.vDomBottomPad += bottomRowHeight;
 
