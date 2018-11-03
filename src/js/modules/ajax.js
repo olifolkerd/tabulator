@@ -333,7 +333,7 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 
 		//set body content if not GET request
 		if(config.method != "get"){
-			contentType = self.contentTypeFormatters[self.table.options.ajaxContentType];
+			contentType = typeof self.table.options.ajaxContentType === "object" ?  self.table.options.ajaxContentType : self.contentTypeFormatters[self.table.options.ajaxContentType];
 			if(contentType){
 
 				for(var key in contentType.headers){

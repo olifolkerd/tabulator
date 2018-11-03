@@ -9596,7 +9596,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//set body content if not GET request
 			if (config.method != "get") {
-				contentType = self.contentTypeFormatters[self.table.options.ajaxContentType];
+				contentType = _typeof(self.table.options.ajaxContentType) === "object" ? self.table.options.ajaxContentType : self.contentTypeFormatters[self.table.options.ajaxContentType];
 				if (contentType) {
 
 					for (var key in contentType.headers) {
