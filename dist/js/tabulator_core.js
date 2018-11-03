@@ -4911,12 +4911,7 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyHeader: true, //include table headers in copt
 	clipboardPasteParser: "table", //convert pasted clipboard data to rows
 	clipboardPasteAction: "insert", //how to insert pasted data into the table
-	clipboardCopyConfig: { //clipboard config
-		columnHeaders: true,
-		columnGroups: false,
-		rowGroups: false,
-		columnCalcs: false
-	},
+	clipboardCopyConfig: false, //clipboard config
 
 	clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
 	clipboardPasted: function clipboardPasted() {}, //data has been pasted into the table

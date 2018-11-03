@@ -65,18 +65,23 @@ Clipboard.prototype.initialize = function () {
 };
 
 Clipboard.prototype.processConfig = function () {
-	var config = this.table.options.clipboardCopyConfig;
+	var config = {
+		columnHeaders: "groups",
+		rowGroups: true
+	};
+
+	if (this.table.options.clipboardCopyConfig) {
+		for (var key in this.table.options.clipboardCopyConfig) {
+			config[key] = this.table.options.clipboardCopyConfig[key];
+		}
+	}
 
 	if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
 		this.config.rowGroups = true;
 	}
 
-	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
-		this.config.columnGroups = true;
-	}
-
-	if (this.table.options.clipboardCopyConfig.columnHeaders) {
-		if ((this.table.options.clipboardCopyConfig.columnHeaders === "groups" || this.table.options.clipboardCopyConfig.columnHeaders === true) && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
+	if (config.columnHeaders) {
+		if ((config.columnHeaders === "groups" || config === true) && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
 			this.config.columnHeaders = "groups";
 		} else {
 			this.config.columnHeaders = "columns";
@@ -380,8 +385,6 @@ Clipboard.prototype.groupHeadersToRows = function (columns) {
 	columns.forEach(function (column) {
 		parseColumnGroup(column, 0);
 	});
-
-	console.log("headers", headers);
 
 	return headers;
 };
