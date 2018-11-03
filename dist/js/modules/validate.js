@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 var Validate = function Validate(table) {
 	this.table = table;
@@ -39,7 +39,7 @@ Validate.prototype._extractValidator = function (value) {
 
 	switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
 		case "string":
-			parts = value.split(":", 1);
+			parts = value.split(":", 2);
 			type = parts.shift();
 			params = parts[0];
 

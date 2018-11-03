@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 var Filter = function Filter(table) {
 
@@ -9,6 +9,7 @@ var Filter = function Filter(table) {
 	this.filterList = []; //hold filter list
 	this.headerFilters = {}; //hold column filters
 	this.headerFilterElements = []; //hold header filter elements for manipulation
+	this.headerFilterColumns = []; //hold columns that use header filters
 
 	this.changed = false; //has filtering changed since last render
 };
@@ -188,7 +189,17 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 
 			params = typeof params === "function" ? params.call(self.table) : params;
 
-			editorElement = editor.call(self, cellWrapper, function () {}, success, cancel, params);
+			editorElement = editor.call(this.table.modules.edit, cellWrapper, function () {}, success, cancel, params);
+
+			if (!editorElement) {
+				console.warn("Filter Error - Cannot add filter to " + field + " column, editor returned a value of false");
+				return;
+			}
+
+			if (!(editorElement instanceof Node)) {
+				console.warn("Filter Error - Cannot add filter to " + field + " column, editor should return an instance of Node, the editor returned:", editorElement);
+				return;
+			}
 
 			//set Placeholder Text
 			if (field) {
@@ -220,32 +231,36 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 				}, 300);
 			};
 
-			editorElement.addEventListener("keyup", searchTrigger);
-			editorElement.addEventListener("search", searchTrigger);
-
 			column.modules.filter.headerElement = editorElement;
-
-			//update number filtered columns on change
-
 			column.modules.filter.attrType = editorElement.hasAttribute("type") ? editorElement.getAttribute("type").toLowerCase() : "";
-			if (column.modules.filter.attrType == "number") {
-				editorElement.addEventListener("change", function (e) {
-					success(editorElement.value);
-				});
-			}
-
-			//change text inputs to search inputs to allow for clearing of field
-			if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
-				editorElement.setAttribute("type", "search");
-				// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
-			}
-
-			//prevent input and select elements from propegating click to column sorters etc
 			column.modules.filter.tagType = editorElement.tagName.toLowerCase();
-			if (column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea") {
-				editorElement.addEventListener("mousedown", function (e) {
-					e.stopPropagation();
-				});
+
+			if (column.definition.headerFilterLiveFilter !== false) {
+
+				if (!(column.definition.headerFilter === "autocomplete" || column.definition.editor === "autocomplete" && column.definition.headerFilter === true)) {
+					editorElement.addEventListener("keyup", searchTrigger);
+					editorElement.addEventListener("search", searchTrigger);
+
+					//update number filtered columns on change
+					if (column.modules.filter.attrType == "number") {
+						editorElement.addEventListener("change", function (e) {
+							success(editorElement.value);
+						});
+					}
+
+					//change text inputs to search inputs to allow for clearing of field
+					if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
+						editorElement.setAttribute("type", "search");
+						// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+					}
+				}
+
+				//prevent input and select elements from propegating click to column sorters etc
+				if (column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea") {
+					editorElement.addEventListener("mousedown", function (e) {
+						e.stopPropagation();
+					});
+				}
 			}
 
 			filterElement.appendChild(editorElement);
@@ -253,6 +268,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 			column.contentElement.appendChild(filterElement);
 
 			self.headerFilterElements.push(editorElement);
+			self.headerFilterColumns.push(column);
 		}
 	} else {
 		console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
@@ -489,17 +505,55 @@ Filter.prototype.clearFilter = function (all) {
 
 //clear header filters
 Filter.prototype.clearHeaderFilter = function () {
+	var self = this;
+
 	this.headerFilters = {};
 
-	this.headerFilterElements.forEach(function (element) {
-		element.value = "";
+	this.headerFilterColumns.forEach(function (column) {
+		column.modules.filter.value = null;
+		self.reloadHeaderFilter(column);
 	});
 
 	this.changed = true;
 };
 
+//search data and return matching rows
+Filter.prototype.search = function (searchType, field, type, value) {
+	var self = this,
+	    activeRows = [],
+	    filterList = [];
+
+	if (!Array.isArray(field)) {
+		field = [{ field: field, type: type, value: value }];
+	}
+
+	field.forEach(function (filter) {
+		filter = self.findFilter(filter);
+
+		if (filter) {
+			filterList.push(filter);
+		}
+	});
+
+	this.table.rowManager.rows.forEach(function (row) {
+		var match = true;
+
+		filterList.forEach(function (filter) {
+			if (!self.filterRecurse(filter, row.getData())) {
+				match = false;
+			}
+		});
+
+		if (match) {
+			activeRows.push(searchType === "data" ? row.getData("data") : row.getComponent());
+		}
+	});
+
+	return activeRows;
+};
+
 //filter row array
-Filter.prototype.filter = function (rowList) {
+Filter.prototype.filter = function (rowList, filters) {
 	var self = this,
 	    activeRows = [],
 	    activeRowComponents = [];
@@ -532,7 +586,7 @@ Filter.prototype.filter = function (rowList) {
 };
 
 //filter individual row
-Filter.prototype.filterRow = function (row) {
+Filter.prototype.filterRow = function (row, filters) {
 	var self = this,
 	    match = true,
 	    data = row.getData();

@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 var ColumnCalcs = function ColumnCalcs(table) {
 	this.table = table; //hold Tabulator object
@@ -315,7 +315,7 @@ ColumnCalcs.prototype.getResults = function () {
 	    groups;
 
 	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
-		groups = this.table.modules.groupRows.getGroups();
+		groups = this.table.modules.groupRows.getGroups(true);
 
 		groups.forEach(function (group) {
 			results[group.getKey()] = self.getGroupResults(group);

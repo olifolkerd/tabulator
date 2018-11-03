@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 var Sort = function Sort(table) {
 	this.table = table; //hold Tabulator object
@@ -184,7 +184,10 @@ Sort.prototype.findSorter = function (column) {
 //work through sort list sorting data
 Sort.prototype.sort = function () {
 	var self = this,
-	    lastSort;
+	    lastSort,
+	    sortList;
+
+	sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList;
 
 	if (self.table.options.dataSorting) {
 		self.table.options.dataSorting.call(self.table, self.getSort());
@@ -194,7 +197,7 @@ Sort.prototype.sort = function () {
 
 	if (!self.table.options.ajaxSorting) {
 
-		self.sortList.forEach(function (item, i) {
+		sortList.forEach(function (item, i) {
 
 			if (item.column && item.column.modules.sort) {
 
@@ -203,13 +206,13 @@ Sort.prototype.sort = function () {
 					item.column.modules.sort.sorter = self.findSorter(item.column);
 				}
 
-				self._sortItem(item.column, item.dir, self.sortList, i);
+				self._sortItem(item.column, item.dir, sortList, i);
 			}
 
 			self.setColumnHeader(item.column, item.dir);
 		});
 	} else {
-		self.sortList.forEach(function (item, i) {
+		sortList.forEach(function (item, i) {
 			self.setColumnHeader(item.column, item.dir);
 		});
 	}
@@ -348,72 +351,27 @@ Sort.prototype.sorters = {
 
 	//sort date
 	date: function date(a, b, aRow, bRow, column, dir, params) {
-		var self = this;
-		var format = params.format || "DD/MM/YYYY";
-		var alignEmptyValues = params.alignEmptyValues;
-		var emptyAlign = 0;
-
-		if (typeof moment != "undefined") {
-			a = moment(a, format);
-			b = moment(b, format);
-
-			if (!a.isValid()) {
-				emptyAlign = !b.isValid() ? 0 : -1;
-			} else if (!b.isValid()) {
-				emptyAlign = 1;
-			} else {
-				//compare valid values
-				return a - b;
-			}
-
-			//fix empty values in position
-			if (alignEmptyValues === "top" && dir === "desc" || alignEmptyValues === "bottom" && dir === "asc") {
-				emptyAlign *= -1;
-			}
-
-			return emptyAlign;
-		} else {
-			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		if (!params.format) {
+			params.format = "DD/MM/YYYY";
 		}
+
+		return this.sorters.datetime.call(this, a, b, aRow, bRow, column, dir, params);
 	},
 
 	//sort hh:mm formatted times
 	time: function time(a, b, aRow, bRow, column, dir, params) {
-		var self = this;
-		var format = params.format || "hh:mm";
-		var alignEmptyValues = params.alignEmptyValues;
-		var emptyAlign = 0;
-
-		if (typeof moment != "undefined") {
-			a = moment(a, format);
-			b = moment(b, format);
-
-			if (!a.isValid()) {
-				emptyAlign = !b.isValid() ? 0 : -1;
-			} else if (!b.isValid()) {
-				emptyAlign = 1;
-			} else {
-				//compare valid values
-				return a - b;
-			}
-
-			//fix empty values in position
-			if (alignEmptyValues === "top" && dir === "desc" || alignEmptyValues === "bottom" && dir === "asc") {
-				emptyAlign *= -1;
-			}
-
-			return emptyAlign;
-		} else {
-			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+		if (!params.format) {
+			params.format = "hh:mm";
 		}
+
+		return this.sorters.datetime.call(this, a, b, aRow, bRow, column, dir, params);
 	},
 
 	//sort datetime
 	datetime: function datetime(a, b, aRow, bRow, column, dir, params) {
-		var self = this;
-		var format = params.format || "DD/MM/YYYY hh:mm:ss";
-		var alignEmptyValues = params.alignEmptyValues;
-		var emptyAlign = 0;
+		var format = params.format || "DD/MM/YYYY hh:mm:ss",
+		    alignEmptyValues = params.alignEmptyValues,
+		    emptyAlign = 0;
 
 		if (typeof moment != "undefined") {
 			a = moment(a, format);
@@ -435,7 +393,7 @@ Sort.prototype.sorters = {
 
 			return emptyAlign;
 		} else {
-			console.error("Sort Error - 'date' sorter is dependant on moment.js");
+			console.error("Sort Error - 'datetime' sorter is dependant on moment.js");
 		}
 	},
 

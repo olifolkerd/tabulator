@@ -208,17 +208,6 @@ Ajax.prototype.serializeParams = function(params){
 };
 
 
-Ajax.prototype.formDataParams = function(params){
-	var output = this.generateParamsList(params),
-	form = new FormData();
-
-	output.forEach(function(item){
-		form.append(item.key, item.value);
-	});
-
-	return form;
-};
-
 //send ajax request
 Ajax.prototype.sendRequest = function(silent){
 	var self = this,
@@ -324,11 +313,10 @@ Ajax.prototype.defaultConfig = {
 };
 
 Ajax.prototype.defaultURLGenerator = function(url, config, params){
-	if(params){
+	if(params && Object.keys(params).length){
 		if(!config.method || config.method.toLowerCase() == "get"){
+			config.method = "get";
 			url += "?" + this.serializeParams(params);
-		}else{
-			config.body = this.formDataParams(params);
 		}
 	}
 
@@ -336,14 +324,55 @@ Ajax.prototype.defaultURLGenerator = function(url, config, params){
 };
 
 Ajax.prototype.defaultLoaderPromise = function(url, config, params){
-	var self = this;
+	var self = this, contentType;
 
 	return new Promise(function(resolve, reject){
 
+		//set url
 		url = self.urlGenerator(url, config, params);
+
+		//set body content if not GET request
+		if(config.method != "get"){
+			contentType = typeof self.table.options.ajaxContentType === "object" ?  self.table.options.ajaxContentType : self.contentTypeFormatters[self.table.options.ajaxContentType];
+			if(contentType){
+
+				for(var key in contentType.headers){
+					if(!config.headers){
+						config.headers = {};
+					}
+
+					if(typeof config.headers[key] === "undefined"){
+						config.headers[key] = contentType.headers[key];
+					}
+				}
+
+				config.body = contentType.body.call(self, url, config, params);
+
+			}else{
+				console.warn("Ajax Error - Invalid ajaxContentType value:", self.table.options.ajaxContentType);
+			}
+		}
 
 		if(url){
 
+			//configure headers
+			if(typeof config.credentials === "undefined"){
+				config.credentials = 'include';
+			}
+
+			if(typeof config.headers === "undefined"){
+				config.headers = {};
+			}
+
+			if(typeof config.headers.Accept === "undefined"){
+				config.headers.Accept = "application/json";
+			}
+
+			if(typeof config.headers["X-Requested-With"] === "undefined"){
+				config.headers["X-Requested-With"] = "XMLHttpRequest";
+			}
+
+			//send request
 			fetch(url, config)
 			.then((response)=>{
 				if(response.ok) {
@@ -369,5 +398,30 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 
 	});
 };
+
+Ajax.prototype.contentTypeFormatters = {
+	"json":{
+		headers:{
+			'Content-Type': 'application/json',
+		},
+		body:function(url, config, params){
+			return JSON.stringify(params);
+		},
+	},
+	"form":{
+		headers:{
+		},
+		body:function(url, config, params){
+			var output = this.generateParamsList(params),
+			form = new FormData();
+
+			output.forEach(function(item){
+				form.append(item.key, item.value);
+			});
+
+			return form;
+		},
+	},
+}
 
 Tabulator.prototype.registerModule("ajax", Ajax);

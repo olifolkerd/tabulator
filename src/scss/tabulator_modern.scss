@@ -35,6 +35,7 @@ $footerBackgroundColor:#fff !default; //border to tabulator
 $footerTextColor:$primary !default; //footer text colour
 $footerBorderColor:#aaa !default; //footer border color
 $footerSeperatorColor:#999 !default; //footer bottom seperator color
+$footerActiveColor:$primary !default; //footer bottom active text color
 
 $handleWidth:10px !default; //width of the row handle
 $handleColor: $primary !default; //color for odd numbered rows
@@ -245,6 +246,44 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 					.tabulator-col-content .tabulator-arrow{
 						border-top: 6px solid $sortArrowActive;
 						border-bottom: none;
+					}
+				}
+			}
+
+			&.tabulator-col-vertical{
+				.tabulator-col-content{
+					.tabulator-col-title{
+						writing-mode: vertical-rl;
+						text-orientation: mixed;
+
+						display:flex;
+						align-items:center;
+						justify-content:center;
+					}
+				}
+
+				&.tabulator-col-vertical-flip{
+					.tabulator-col-title{
+						transform: rotate(180deg);
+					}
+				}
+
+				&.tabulator-sortable{
+					.tabulator-col-title{
+						padding-right:0;
+						padding-top:20px;
+					}
+
+					&.tabulator-col-vertical-flip{
+						.tabulator-col-title{
+							padding-right:0;
+							padding-bottom:20px;
+						}
+
+					}
+
+					.tabulator-arrow{
+						right:calc(50% - 6px);
 					}
 				}
 			}
@@ -463,7 +502,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			font-size:inherit;
 
 			&.active{
-				color:$primary;
+				color:$footerActiveColor;
 			}
 
 			&:disabled{
@@ -705,6 +744,91 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			}
 		}
 
+		.tabulator-data-tree-branch{
+			display:inline-block;
+			vertical-align:middle;
+
+			height:9px;
+			width:7px;
+
+			margin-top:-9px;
+			margin-right:5px;
+
+			border-bottom-left-radius:1px;
+
+			border-left:2px solid $rowBorderColor;
+			border-bottom:2px solid $rowBorderColor;
+		}
+
+		.tabulator-data-tree-control{
+
+			display:inline-flex;
+			justify-content:center;
+			align-items:center;
+			vertical-align:middle;
+
+			height:11px;
+			width:11px;
+
+			margin-right:5px;
+
+			border:1px solid $rowTextColor;
+			border-radius:2px;
+			background:rgba(0, 0, 0, .1);
+
+			overflow:hidden;
+
+			&:hover{
+				cursor:pointer;
+				background:rgba(0, 0, 0, .2);
+			}
+
+			.tabulator-data-tree-control-collapse{
+				display:inline-block;
+				position: relative;
+
+				height: 7px;
+				width: 1px;
+
+				background: transparent;
+
+				&:after {
+					position: absolute;
+					content: "";
+					left: -3px;
+					top: 3px;
+
+					height: 1px;
+					width: 7px;
+
+					background: $rowTextColor;
+				}
+			}
+
+			.tabulator-data-tree-control-expand{
+				display:inline-block;
+				position: relative;
+
+				height: 7px;
+				width: 1px;
+
+				background: $rowTextColor;
+
+				&:after {
+					position: absolute;
+					content: "";
+					left: -3px;
+					top: 3px;
+
+					height: 1px;
+					width: 7px;
+
+					background: $rowTextColor;
+				}
+			}
+
+		}
+
 		.tabulator-responsive-collapse-toggle{
 			display: inline-flex;
 			align-items:center;
@@ -823,5 +947,49 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			margin-left:10px;
 			color:$primary;
 		}
+	}
+}
+
+.tabulator-edit-select-list{
+	position: absolute;
+	display:inline-block;
+	box-sizing:border-box;
+
+	max-height:200px;
+
+	background:$rowBackgroundColor;
+	border:1px solid $rowBorderColor;
+
+	font-size:$textSize;
+
+	overflow-y:auto;
+	-webkit-overflow-scrolling: touch;
+
+	.tabulator-edit-select-list-item{
+		padding:4px;
+
+		color:$rowTextColor;
+
+		&.active{
+			color:$rowBackgroundColor;
+			background:$editBoxColor;
+		}
+
+		&:hover{
+			cursor:pointer;
+
+			color:$rowBackgroundColor;
+			background:$editBoxColor;
+		}
+	}
+
+	.tabulator-edit-select-list-group{
+		border-bottom:1px solid $rowBorderColor;
+
+		padding:4px;
+		padding-top:6px;
+
+		color:$rowTextColor;
+		font-weight:bold;
 	}
 }

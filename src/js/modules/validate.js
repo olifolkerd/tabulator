@@ -36,7 +36,7 @@ Validate.prototype._extractValidator = function(value){
 
 	switch(typeof value){
 		case "string":
-		parts = value.split(":",1);
+		parts = value.split(":",2);
 		type = parts.shift();
 		params = parts[0];
 

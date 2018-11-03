@@ -2,6 +2,7 @@
 /*=include modules/ajax.js */
 /*=include modules/calculation_colums.js */
 /*=include modules/clipboard.js */
+/*=include modules/data_tree.js */
 /*=include modules/download.js */
 /*=include modules/edit.js */
 /*=include modules/filter.js */
