@@ -22,7 +22,7 @@ Clipboard.prototype.initialize = function(){
 		this.table.element.addEventListener("copy", function(e){
 			var data;
 
-			this.processConfig();
+			self.processConfig();
 
 			if(!self.blocked){
 				e.preventDefault();
@@ -70,6 +70,8 @@ Clipboard.prototype.processConfig = function(){
 	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length){
 		this.config.columnGroups = true;
 	}
+
+	this.config.columnHeaders = this.table.options.clipboardCopyConfig.columnHeaders;
 };
 
 
@@ -259,27 +261,25 @@ Clipboard.prototype.generateContent = function(){
 	var data;
 
 	this.htmlElement = false;
-	data = this.copySelector.call(this, this.copySelectorParams, this.config);
+	data = this.copySelector.call(this, this.config, this.copySelectorParams);
 
-	return this.copyFormatter.call(this, data, this.copyFormatterParams);
+	return this.copyFormatter.call(this, data, this.config, this.copyFormatterParams);
+};
+
+Clipboard.prototype.generateHeaders = function(config){
+	var columns = this.table.columnManager.columnsByIndex,
+	headers = [];
+
+	columns.forEach(function(column){
+		headers.push(column.definition.title);
+	});
+
+	return headers;
 };
 
 Clipboard.prototype.rowsToData = function(rows, config, params){
 	var columns = this.table.columnManager.columnsByIndex,
-	headers = [],
 	data = [];
-
-	if(this.table.options.clipboardCopyStyled){
-		this.generateHTML(rows, params);
-	}
-
-	if(params){
-		columns.forEach(function(column){
-			headers.push(column.definition.title);
-		});
-
-		data.push(headers);
-	}
 
 	rows.forEach(function(row){
 		var rowArray = [],
@@ -296,18 +296,96 @@ Clipboard.prototype.rowsToData = function(rows, config, params){
 	return data;
 };
 
-Clipboard.prototype.generateHTML = function (rows, showHeaders){
+Clipboard.prototype.buildComplexRows = function(config){
+	var output = [],
+	groups = this.table.modules.groupRows.getGroups();
+
+	groups.forEach((group) => {
+		output.push(this.processGroupData(group));
+	});
+
+	return output;
+};
+
+
+
+Clipboard.prototype.processGroupData = function(group){
+	var subGroups = group.getSubGroups();
+
+	var groupData = {
+		type:"group",
+		key:group.key
+	};
+
+	if(subGroups.length){
+		groupData.subGroups = [];
+
+		subGroups.forEach((subGroup) => {
+			groupData.subGroups.push(this.processGroupData(subGroup));
+		});
+	}else{
+		groupData.rows = group.getRows(true);
+	}
+
+	return groupData;
+};
+
+
+Clipboard.prototype.buildOutput = function(rows, config, params){
+	var output = [];
+
+	if(config.columnHeaders){
+		output.push(this.generateHeaders(config));
+	}
+
+	//generate styled content
+	if(this.table.options.clipboardCopyStyled){
+		this.generateHTML(rows, config, params);
+	}
+
+	//generate unstyled content
+	if(config.rowGroups){
+		rows.forEach((row) => {
+			output = output.concat(this.parseRowGroupData(row, config, params));
+		});
+	}else{
+		output = output.concat(this.rowsToData(rows, config, params));
+	}
+
+	return output;
+};
+
+
+Clipboard.prototype.parseRowGroupData = function (group, config, params){
+	var groupData = [];
+
+	groupData.push([group.key]);
+
+	if(group.subGroups){
+		group.subGroups.forEach((subGroup) => {
+			groupData = groupData.concat(this.parseRowGroupData(subGroup, config, params));
+		});
+	}else{
+
+		groupData = groupData.concat(this.rowsToData(group.rows, config, params));
+	}
+
+	return groupData;
+};
+
+
+Clipboard.prototype.generateHTML = function (rows, config, params){
 	var self = this,
 	columns = this.table.columnManager.columnsByIndex,
 	data = [],
-	headers, body, oddRow, evenRow, firstRow, firstCell, lastCell, styleCells;
+	headers, body, oddRow, evenRow, firstRow, firstCell, firstGroup, lastCell, styleCells;
 
 	//create table element
 	this.htmlElement = document.createElement("table");
 	self.mapElementStyles(this.table.element, this.htmlElement, ["border-top", "border-left", "border-right", "border-bottom"]);
 
 	//create headers if needed
-	if(showHeaders){
+	if(config.columnHeaders){
 		headers = document.createElement("tr");
 
 		columns.forEach(function(column){
@@ -329,9 +407,10 @@ Clipboard.prototype.generateHTML = function (rows, showHeaders){
 
 	//lookup row styles
 	if(window.getComputedStyle){
-		oddRow = this.table.element.getElementsByClassName("tabulator-row-odd")[0];
-		evenRow = this.table.element.getElementsByClassName("tabulator-row-even")[0];
-		firstRow = this.table.element.getElementsByClassName("tabulator-row")[0];
+		oddRow = this.table.element.querySelector(".tabulator-row-odd:not(.tabulator-group):not(.tabulator-calcs)");
+		evenRow = this.table.element.querySelector(".tabulator-row-even:not(.tabulator-group):not(.tabulator-calcs)");
+		firstRow = this.table.element.querySelector(".tabulator-row:not(.tabulator-group):not(.tabulator-calcs)");
+		firstGroup = this.table.element.getElementsByClassName("tabulator-group")[0];
 
 		if(firstRow){
 			styleCells = firstRow.getElementsByClassName("tabulator-cell");
@@ -340,47 +419,79 @@ Clipboard.prototype.generateHTML = function (rows, showHeaders){
 		}
 	}
 
-	//add rows to table
-	rows.forEach(function(row, i){
-		var rowEl = document.createElement("tr"),
-		rowData = row.getData("clipboard"),
-		styleRow = firstRow;
+	function processRows(rowArray){
+		//add rows to table
+		rowArray.forEach(function(row, i){
+			var rowEl = document.createElement("tr"),
+			rowData = row.getData("clipboard"),
+			styleRow = firstRow;
 
-		columns.forEach(function(column, j){
-			var cellEl = document.createElement("td");
-			cellEl.innerHTML = column.getFieldValue(rowData);
+			columns.forEach(function(column, j){
+				var cellEl = document.createElement("td");
+				cellEl.innerHTML = column.getFieldValue(rowData);
 
-			if(column.definition.align){
-				cellEl.style.textAlign = column.definition.align;
+				if(column.definition.align){
+					cellEl.style.textAlign = column.definition.align;
+				}
+
+				if(j < columns.length - 1){
+					if(firstCell){
+						self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+					}
+				}else{
+					if(firstCell){
+						self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+					}
+				}
+
+				rowEl.appendChild(cellEl);
+			});
+
+			if(!(i % 2) && oddRow){
+				styleRow = oddRow;
 			}
 
-			if(j < columns.length - 1){
-				if(firstCell){
-					self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
-				}
-			}else{
-				if(firstCell){
-					self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
-				}
+			if((i % 2) && evenRow){
+				styleRow = evenRow;
 			}
 
-			rowEl.appendChild(cellEl);
+			if(styleRow){
+				self.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+			}
+
+			body.appendChild(rowEl);
 		});
+	}
 
-		if(!(i % 2) && oddRow){
-			styleRow = oddRow;
+	function processGroup(group){
+		var groupEl = document.createElement("tr"),
+		groupCellEl = document.createElement("td");
+
+		groupCellEl.colSpan = columns.length;
+
+		groupCellEl.innerHTML = group.key;
+
+		groupEl.appendChild(groupCellEl);
+		body.appendChild(groupEl);
+
+		self.mapElementStyles(firstGroup, groupEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+
+		if(group.subGroups){
+			group.subGroups.forEach((subGroup) => {
+				processGroup(subGroup);
+			});
+		}else{
+			processRows(group.rows);
 		}
+	}
 
-		if((i % 2) && evenRow){
-			styleRow = evenRow;
-		}
-
-		if(styleRow){
-			self.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-		}
-
-		body.appendChild(rowEl);
-	});
+	if(config.rowGroups){
+		rows.forEach((group) => {
+			processGroup(group);
+		});
+	}else{
+		processRows(rows);
+	}
 
 	this.htmlElement.appendChild(body);
 };
@@ -422,13 +533,29 @@ Clipboard.prototype.copySelectors = {
 			rows = this.table.modules.selectRow.getSelectedRows();
 		}
 
-		return this.rowsToData(rows, config, params);
+		if(config.rowGroups){
+			console.warn("Clipboard Warning - select coptSelector does not support row groups");
+		}
+
+		return this.buildOutput(rows, config, params)
 	},
 	table: function(config, params){
-		return this.rowsToData(this.table.rowManager.getComponents(), config, params);
+		if(config.rowGroups){
+			console.warn("Clipboard Warning - table coptSelector does not support row groups");
+		}
+
+		return this.buildOutput(this.table.rowManager.getComponents(), config, params);
 	},
 	active: function(config, params){
-		return this.rowsToData(this.table.rowManager.getComponents(true), config, params);
+		var rows;
+
+		if(config.rowGroups){
+			rows = this.buildComplexRows(config);
+		}else{
+			rows = this.table.rowManager.getComponents(true);
+		}
+
+		return this.buildOutput(rows, config, params);
 	},
 };
 

@@ -399,11 +399,11 @@ Group.prototype.getData = function(visible, transform){
 	return output;
 };
 
-Group.prototype.getRows = function(){
-	this._visSet();
+// Group.prototype.getRows = function(){
+// 	this._visSet();
 
-	return this.visible ? this.rows : [];
-};
+// 	return this.visible ? this.rows : [];
+// };
 
 Group.prototype.getRowCount = function(){
 	var count = 0;

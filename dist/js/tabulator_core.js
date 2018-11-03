@@ -3402,7 +3402,10 @@ RowManager.prototype._removeBottomRow = function (bottomDiff) {
 	if (bottomDiff >= bottomRowHeight) {
 
 		var rowEl = bottomRow.getElement();
-		rowEl.parentNode.removeChild(rowEl);
+
+		if (rowEl.parentNode) {
+			rowEl.parentNode.removeChild(rowEl);
+		}
 
 		this.vDomBottomPad += bottomRowHeight;
 
@@ -4908,8 +4911,8 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyHeader: true, //include table headers in copt
 	clipboardPasteParser: "table", //convert pasted clipboard data to rows
 	clipboardPasteAction: "insert", //how to insert pasted data into the table
-	clipboardConfig: { //clipboard config
-		columnHeader: true,
+	clipboardCopyConfig: { //clipboard config
+		columnHeaders: true,
 		columnGroups: false,
 		rowGroups: false,
 		columnCalcs: false
@@ -6437,7 +6440,8 @@ Tabulator.prototype.helpers = {
 	},
 
 	deepClone: function deepClone(obj) {
-		var clone = {};
+		var clone = Array.isArray(obj) ? [] : {};
+
 		for (var i in obj) {
 			if (obj[i] != null && _typeof(obj[i]) === "object") {
 				clone[i] = this.deepClone(obj[i]);
