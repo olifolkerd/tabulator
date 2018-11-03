@@ -735,9 +735,12 @@
   position: absolute;
   display: inline-block;
   box-sizing: border-box;
+  max-height: 200px;
   background: #fff;
   border: 1px solid #aaa;
   font-size: 14px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item {

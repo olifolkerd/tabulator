@@ -12612,158 +12612,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//select
 		select: function select(cell, onRendered, success, cancel, editorParams) {
-			//create and style select
-			var select = document.createElement("select");
-			var isArray = Array.isArray(editorParams);
-
-			if (typeof editorParams == "function") {
-				editorParams = editorParams(cell);
-				isArray = Array.isArray(editorParams);
-			}
-
-			function optionAppend(element, label, value, disabled) {
-
-				var option = document.createElement("option");
-
-				option.value = value;
-				option.text = label;
-
-				if (disabled) {
-					option.disabled = true;
-				}
-
-				element.appendChild(option);
-			}
-
-			function processOption(element, option) {
-				var groupEl;
-
-				if (option.options) {
-					groupEl = document.createElement("optgroup");
-
-					groupEl.setAttribute("lavel", option.label);
-
-					option.options.forEach(function (item) {
-						processOption(groupEl, item);
-					});
-
-					element.appendChild(groupEl);
-				} else {
-					optionAppend(element, typeof option.label == "undefined" ? option.value : option.label, typeof option.value == "undefined" ? option.label : option.value, option.disabled);
-				}
-			}
-
-			if (!isArray && (typeof editorParams === 'undefined' ? 'undefined' : _typeof(editorParams)) === "object") {
-				for (var key in editorParams) {
-					optionAppend(select, editorParams[key], key);
-				}
-			} else if (isArray) {
-				editorParams.forEach(function (item) {
-					processOption(select, item);
-				});
-			}
-
-			//create and style input
-			select.style.padding = "4px";
-			select.style.width = "100%";
-			select.style.boxSizing = "border-box";
-			select.style.fontFamily = "";
-
-			select.value = cell.getValue();
-
-			onRendered(function () {
-				select.focus();
-			});
-
-			//submit new value on blur
-			function onChange(e) {
-				if (select.selectedIndex > -1) {
-					success(select.options[select.selectedIndex].value);
-				} else {
-					cancel();
-				}
-			}
-
-			select.addEventListener("change", onChange);
-			select.addEventListener("blur", onChange);
-
-			//submit new value on enter
-			select.addEventListener("keydown", function (e) {
-				if (e.keyCode === 13) {
-					success(select.options[select.selectedIndex].value);
-				}
-			});
-			return select;
-		},
-
-		selectNew: function selectNew(cell, onRendered, success, cancel, editorParams) {
-			var cellEl = cell.getElement(),
+			var self = this,
+			    cellEl = cell.getElement(),
 			    initialValue = cell.getValue(),
+			    input = document.createElement("input"),
+			    listEl = document.createElement("div"),
 			    displayItems = [],
 			    currentItem = {},
-			    blurable = true,
-			    listEl;
+			    blurable = true;
 
-			////////////////////////OLD///////////////////////
+			if (Array.isArray(editorParams) || !Array.isArray(editorParams) && (typeof editorParams === 'undefined' ? 'undefined' : _typeof(editorParams)) === "object" && !editorParams.values) {
+				console.warn("DEPRICATION WANRING - values for the select editor must now be passed into the valuse property of the editorParams object, not as the editorParams object");
+				editorParams = { values: editorParams };
+			}
 
-			//create and style input
-			var input = document.createElement("input");
+			function getUniqueColumnValues() {
+				var output = {},
+				    column = cell.getColumn()._getSelf(),
+				    data = self.table.getData();
 
-			input.setAttribute("type", "text");
+				data.forEach(function (row) {
+					var val = column.getFieldValue(row);
 
-			input.style.padding = "4px";
-			input.style.width = "100%";
-			input.style.boxSizing = "border-box";
-			input.readonly = true;
+					if (val !== null && typeof val !== "undefined" && val !== "") {
+						output[val] = true;
+					}
+				});
 
-			//allow key based navigation
-			input.addEventListener("keydown", function (e) {
-				var index;
-
-				switch (e.keyCode) {
-					case 38:
-						//up arrow
-						e.stopImmediatePropagation();
-						e.stopPropagation();
-
-						index = displayItems.indexOf(currentItem);
-
-						if (index > 0) {
-							setCurrentItem(displayItems[index - 1]);
-						}
-						break;
-
-					case 40:
-						//down arrow
-						e.stopImmediatePropagation();
-						e.stopPropagation();
-
-						index = displayItems.indexOf(currentItem);
-
-						if (index < displayItems.length - 1) {
-							setCurrentItem(displayItems[index + 1]);
-						}
-						break;
-
-					case 13:
-						//enter
-						chooseItem();
-						break;
-
-					case 27:
-						//escape
-						cancelItem();
-						break;
-				}
-			});
-
-			input.addEventListener("blur", function (e) {
-				if (blurable) {
-					cancelItem();
-				}
-			});
-
-			////////////////////////OLD///////////////////////
+				return Object.keys(output);
+			}
 
 			function parseItems(inputValues, curentValue) {
 				var itemList = [];
@@ -12856,9 +12733,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function chooseItem() {
-				if (listEl.parentNode) {
-					listEl.parentNode.removeChild(listEl);
-				}
+				hideList();
 
 				if (initialValue !== currentItem.value) {
 					success(currentItem.value);
@@ -12868,55 +12743,102 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function cancelItem() {
-				if (listEl.parentNode) {
-					listEl.parentNode.removeChild(listEl);
-				}
-
+				hideList();
 				cancel();
 			}
 
+			function showList() {
+				if (!listEl.parentNode) {
+
+					if (editorParams.values === true) {
+						parseItems(getUniqueColumnValues(), initialValue);
+					} else {
+						parseItems(editorParams.values || [], initialValue);
+					}
+
+					var offset = Tabulator.prototype.helpers.elOffset(cellEl);
+
+					listEl.style.minWidth = cellEl.offsetWidth + "px";
+
+					listEl.style.top = offset.top + cellEl.offsetHeight + "px";
+					listEl.style.left = offset.left + "px";
+					document.body.appendChild(listEl);
+				}
+			}
+
+			function hideList() {
+				if (listEl.parentNode) {
+					listEl.parentNode.removeChild(listEl);
+				}
+			}
+
+			//style input
+			input.setAttribute("type", "text");
+
+			input.style.padding = "4px";
+			input.style.width = "100%";
+			input.style.boxSizing = "border-box";
+			input.readonly = true;
+
+			//allow key based navigation
+			input.addEventListener("keydown", function (e) {
+				var index;
+
+				switch (e.keyCode) {
+					case 38:
+						//up arrow
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+
+						index = displayItems.indexOf(currentItem);
+
+						if (index > 0) {
+							setCurrentItem(displayItems[index - 1]);
+						}
+						break;
+
+					case 40:
+						//down arrow
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+
+						index = displayItems.indexOf(currentItem);
+
+						if (index < displayItems.length - 1) {
+							setCurrentItem(displayItems[index + 1]);
+						}
+						break;
+
+					case 13:
+						//enter
+						chooseItem();
+						break;
+
+					case 27:
+						//escape
+						cancelItem();
+						break;
+				}
+			});
+
+			input.addEventListener("blur", function (e) {
+				if (blurable) {
+					cancelItem();
+				}
+			});
+
+			input.addEventListener("focus", function (e) {
+				showList();
+			});
+
+			//style list element
 			listEl = document.createElement("div");
 			listEl.classList.add("tabulator-edit-select-list");
 
-			listEl.style.minWidth = cellEl.offsetWidth + "px";
-
-			parseItems(editorParams.values || [], initialValue);
-
 			onRendered(function () {
-				input.focus();
 				input.style.height = "100%";
-
-				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
-
-				listEl.style.top = offset.top + cellEl.offsetHeight + "px";
-				listEl.style.left = offset.left + "px";
-				document.body.appendChild(listEl);
+				input.focus();
 			});
-
-			// function onChange(e){
-			// 	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
-			// 		success(input.value);
-			// 	}else{
-			// 		cancel();
-			// 	}
-			// }
-
-			// //submit new value on blur or change
-			// input.addEventListener("change", onChange);
-			// input.addEventListener("blur", onChange);
-
-			// //submit new value on enter
-			// input.addEventListener("keydown", function(e){
-			// 	switch(e.keyCode){
-			// 		case 13:
-			// 		success(input.value);
-			// 		break;
-
-			// 		case 27:
-			// 		cancel();
-			// 		break;
-			// 	}
-			// });
 
 			return input;
 		},

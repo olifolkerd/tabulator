@@ -919,10 +919,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	display:inline-block;
 	box-sizing:border-box;
 
+	max-height:200px;
+
 	background:$rowBackgroundColor;
 	border:1px solid $rowBorderColor;
 
 	font-size:$textSize;
+
+	overflow-y:auto;
+	-webkit-overflow-scrolling: touch;
 
 	.tabulator-edit-select-list-item{
 		padding:4px;
