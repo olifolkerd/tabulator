@@ -35,6 +35,7 @@ $footerBackgroundColor:#fff !default; //border to tablulator
 $footerTextColor:$primary !default; //footer text colour
 $footerBorderColor:#aaa !default; //footer border color
 $footerSeperatorColor:#999 !default; //footer bottom seperator color
+$footerActiveColor:$primary !default; //footer bottom active text color
 
 $handleWidth:10px !default; //width of the row handle
 $handleColor: $primary !default; //color for odd numbered rows
@@ -501,7 +502,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			font-size:inherit;
 
 			&.active{
-				color:$primary;
+				color:$footerActiveColor;
 			}
 
 			&:disabled{

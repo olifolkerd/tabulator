@@ -33,7 +33,7 @@ $footerBackgroundColor:#222 !default; //border to tablulator
 $footerTextColor:#222 !default; //footer text colour
 $footerBorderColor:#aaa !default; //footer border color
 $footerSeperatorColor:#3FB449 !default; //footer bottom seperator color
-
+$footerActiveColor:$footerSeperatorColor !default; //footer bottom active text color
 
 
 //Tabulator Containing Element
@@ -463,7 +463,7 @@ $footerSeperatorColor:#3FB449 !default; //footer bottom seperator color
 			font-size:inherit;
 
 			&.active{
-				color:$footerSeperatorColor;
+				color:$footerActiveColor;
 			}
 
 			&:disabled{

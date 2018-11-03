@@ -34,7 +34,7 @@ $errorColor:#dd0000 !default; //error indication
 //footer themeing
 $footerBorderColor:$table-border-color !default; //footer border color
 $footerSeperatorColor:$table-border-color !default; //footer bottom seperator color
-
+$footerActiveColor:#d00 !default; //footer bottom active text color
 
 
 //Tabulator Containing Element
@@ -470,7 +470,7 @@ $footerSeperatorColor:$table-border-color !default; //footer bottom seperator co
 
 
 			&.active{
-				color:#d00;
+				color:$footerActiveColor;
 			}
 
 			&:disabled{
