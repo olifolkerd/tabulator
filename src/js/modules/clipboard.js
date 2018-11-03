@@ -71,7 +71,15 @@ Clipboard.prototype.processConfig = function(){
 		this.config.columnGroups = true;
 	}
 
-	this.config.columnHeaders = this.table.options.clipboardCopyConfig.columnHeaders;
+	if(this.table.options.clipboardCopyConfig.columnHeaders){
+		if((this.table.options.clipboardCopyConfig.columnHeaders === "groups" || this.table.options.clipboardCopyConfig.columnHeaders === true)  && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length){
+			this.config.columnHeaders = "groups";
+		}else{
+			this.config.columnHeaders = "columns";
+		}
+	}else{
+		this.config.columnHeaders = false;
+	}
 };
 
 
@@ -266,13 +274,112 @@ Clipboard.prototype.generateContent = function(){
 	return this.copyFormatter.call(this, data, this.config, this.copyFormatterParams);
 };
 
-Clipboard.prototype.generateHeaders = function(config){
-	var columns = this.table.columnManager.columnsByIndex,
-	headers = [];
+Clipboard.prototype.generateSimpleHeaders = function(columns){
+	var headers = [];
 
 	columns.forEach(function(column){
 		headers.push(column.definition.title);
 	});
+
+	return headers;
+};
+
+Clipboard.prototype.generateColumnGroupHeaders = function(columns){
+	var output = [];
+
+	this.table.columnManager.columns.forEach((column) => {
+		var colData = this.processColumnGroup(column);
+
+		if(colData){
+			output.push(colData);
+		}
+	});
+
+	return output;
+};
+
+Clipboard.prototype.processColumnGroup = function(column){
+	var subGroups = column.columns;
+
+	var groupData = {
+		type:"group",
+		title:column.definition.title,
+		column:column,
+	};
+
+	if(subGroups.length){
+		groupData.subGroups = [];
+		groupData.width = 0;
+
+		subGroups.forEach((subGroup) => {
+			var subGroupData = this.processColumnGroup(subGroup);
+
+			if(subGroupData){
+				groupData.width += subGroupData.width;
+				groupData.subGroups.push(subGroupData);
+			}
+		});
+
+		if(!groupData.width){
+			return false;
+		}
+	}else{
+		if(column.field && column.visible){
+			groupData.width = 1;
+		}else{
+			return false;
+		}
+	}
+
+	return groupData;
+};
+
+Clipboard.prototype.groupHeadersToRows = function(columns){
+
+	var headers = [];
+
+	function parseColumnGroup(column, level){
+
+		if(typeof headers[level] === "undefined"){
+			headers[level] = [];
+		}
+
+		headers[level].push(column.title);
+
+		if(column.subGroups){
+			column.subGroups.forEach(function(subGroup){
+				parseColumnGroup(subGroup, level+1);
+			});
+		}else{
+			padColumnheaders();
+		}
+	}
+
+	function padColumnheaders(){
+		var max = 0;
+
+		headers.forEach(function(title){
+			var len = title.length;
+			if(len > max){
+				max = len;
+			}
+		});
+
+		headers.forEach(function(title){
+			var len = title.length;
+			if(len < max){
+				for(var i = len; i < max; i++){
+					title.push("");
+				}
+			}
+		});
+	}
+
+	columns.forEach(function(column){
+		parseColumnGroup(column,0);
+	});
+
+	console.log("headers", headers);
 
 	return headers;
 };
@@ -332,15 +439,24 @@ Clipboard.prototype.processGroupData = function(group){
 
 
 Clipboard.prototype.buildOutput = function(rows, config, params){
-	var output = [];
+	var output = [],
+	columns = this.table.columnManager.columnsByIndex;
 
 	if(config.columnHeaders){
-		output.push(this.generateHeaders(config));
+
+		if(config.columnHeaders == "groups"){
+			columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
+
+			output = output.concat(this.groupHeadersToRows(columns));
+		}else{
+			output.push(this.generateSimpleHeaders(columns));
+		}
+
 	}
 
 	//generate styled content
 	if(this.table.options.clipboardCopyStyled){
-		this.generateHTML(rows, config, params);
+		this.generateHTML(rows, columns, config, params);
 	}
 
 	//generate unstyled content
@@ -374,33 +490,113 @@ Clipboard.prototype.parseRowGroupData = function (group, config, params){
 };
 
 
-Clipboard.prototype.generateHTML = function (rows, config, params){
+Clipboard.prototype.generateHTML = function (rows, columns, config, params){
 	var self = this,
-	columns = this.table.columnManager.columnsByIndex,
 	data = [],
-	headers, body, oddRow, evenRow, firstRow, firstCell, firstGroup, lastCell, styleCells;
+	headers = [], body, oddRow, evenRow, firstRow, firstCell, firstGroup, lastCell, styleCells;
 
 	//create table element
 	this.htmlElement = document.createElement("table");
 	self.mapElementStyles(this.table.element, this.htmlElement, ["border-top", "border-left", "border-right", "border-bottom"]);
 
-	//create headers if needed
-	if(config.columnHeaders){
-		headers = document.createElement("tr");
+	function generateSimpleHeaders(){
+		var headerEl = document.createElement("tr");
 
 		columns.forEach(function(column){
-			var col = document.createElement("th");
-			col.innerHTML = column.definition.title;
+			var columnEl = document.createElement("th");
+			columnEl.innerHTML = column.definition.title;
 
-			self.mapElementStyles(column.getElement(), col, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			self.mapElementStyles(column.getElement(), columnEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
-			headers.appendChild(col);
+			headerEl.appendChild(columnEl);
 		});
 
-		self.mapElementStyles(this.table.columnManager.getHeadersElement(), headers, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+		self.mapElementStyles(self.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
-		this.htmlElement.appendChild(document.createElement("thead").appendChild(headers));
+		self.htmlElement.appendChild(document.createElement("thead").appendChild(headerEl));
 	}
+
+
+	function generateHeaders(headers){
+
+		var headerHolderEl = document.createElement("thead");
+
+		headers.forEach(function(columns){
+			var headerEl =  document.createElement("tr");
+
+			columns.forEach(function(column){
+				var columnEl = document.createElement("th");
+
+				if(column.width > 1){
+					columnEl.colSpan = column.width;
+				}
+
+				if(column.height > 1){
+					columnEl.rowSpan = column.height;
+				}
+
+				columnEl.innerHTML = column.title;
+
+				self.mapElementStyles(column.element, columnEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+				headerEl.appendChild(columnEl);
+			});
+
+			self.mapElementStyles(self.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+			headerHolderEl.appendChild(headerEl);
+		});
+
+		self.htmlElement.appendChild(headerHolderEl);
+
+	}
+
+	function parseColumnGroup(column, level){
+
+		if(typeof headers[level] === "undefined"){
+			headers[level] = [];
+		}
+
+		headers[level].push({
+			title:column.title,
+			width:column.width,
+			height:1,
+			children:!!column.subGroups,
+			element:column.column.getElement(),
+		});
+
+		if(column.subGroups){
+			column.subGroups.forEach(function(subGroup){
+				parseColumnGroup(subGroup, level+1);
+			});
+		}
+	}
+
+	function padVerticalColumnheaders(){
+		headers.forEach(function(row, index){
+			row.forEach(function(header){
+				if(!header.children){
+					header.height = headers.length - index;
+				}
+			});
+		});
+	}
+
+	//create headers if needed
+	if(config.columnHeaders){
+		if(config.columnHeaders == "groups"){
+			columns.forEach(function(column){
+				parseColumnGroup(column,0);
+			});
+
+			padVerticalColumnheaders();
+			generateHeaders(headers);
+		}else{
+			generateSimpleHeaders();
+		}
+	}
+
+	columns = this.table.columnManager.columnsByIndex;
 
 	//create table body
 	body = document.createElement("tbody");
@@ -427,8 +623,9 @@ Clipboard.prototype.generateHTML = function (rows, config, params){
 			styleRow = firstRow;
 
 			columns.forEach(function(column, j){
-				var cellEl = document.createElement("td");
-				cellEl.innerHTML = column.getFieldValue(rowData);
+				var cellEl = document.createElement("td"),
+				value = column.getFieldValue(rowData);
+				cellEl.innerHTML = typeof value === "undefined" ? "" : value;
 
 				if(column.definition.align){
 					cellEl.style.textAlign = column.definition.align;

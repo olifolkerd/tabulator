@@ -75,7 +75,15 @@ Clipboard.prototype.processConfig = function () {
 		this.config.columnGroups = true;
 	}
 
-	this.config.columnHeaders = this.table.options.clipboardCopyConfig.columnHeaders;
+	if (this.table.options.clipboardCopyConfig.columnHeaders) {
+		if ((this.table.options.clipboardCopyConfig.columnHeaders === "groups" || this.table.options.clipboardCopyConfig.columnHeaders === true) && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
+			this.config.columnHeaders = "groups";
+		} else {
+			this.config.columnHeaders = "columns";
+		}
+	} else {
+		this.config.columnHeaders = false;
+	}
 };
 
 Clipboard.prototype.reset = function () {
@@ -264,13 +272,116 @@ Clipboard.prototype.generateContent = function () {
 	return this.copyFormatter.call(this, data, this.config, this.copyFormatterParams);
 };
 
-Clipboard.prototype.generateHeaders = function (config) {
-	var columns = this.table.columnManager.columnsByIndex,
-	    headers = [];
+Clipboard.prototype.generateSimpleHeaders = function (columns) {
+	var headers = [];
 
 	columns.forEach(function (column) {
 		headers.push(column.definition.title);
 	});
+
+	return headers;
+};
+
+Clipboard.prototype.generateColumnGroupHeaders = function (columns) {
+	var _this = this;
+
+	var output = [];
+
+	this.table.columnManager.columns.forEach(function (column) {
+		var colData = _this.processColumnGroup(column);
+
+		if (colData) {
+			output.push(colData);
+		}
+	});
+
+	return output;
+};
+
+Clipboard.prototype.processColumnGroup = function (column) {
+	var _this2 = this;
+
+	var subGroups = column.columns;
+
+	var groupData = {
+		type: "group",
+		title: column.definition.title,
+		column: column
+	};
+
+	if (subGroups.length) {
+		groupData.subGroups = [];
+		groupData.width = 0;
+
+		subGroups.forEach(function (subGroup) {
+			var subGroupData = _this2.processColumnGroup(subGroup);
+
+			if (subGroupData) {
+				groupData.width += subGroupData.width;
+				groupData.subGroups.push(subGroupData);
+			}
+		});
+
+		if (!groupData.width) {
+			return false;
+		}
+	} else {
+		if (column.field && column.visible) {
+			groupData.width = 1;
+		} else {
+			return false;
+		}
+	}
+
+	return groupData;
+};
+
+Clipboard.prototype.groupHeadersToRows = function (columns) {
+
+	var headers = [];
+
+	function parseColumnGroup(column, level) {
+
+		if (typeof headers[level] === "undefined") {
+			headers[level] = [];
+		}
+
+		headers[level].push(column.title);
+
+		if (column.subGroups) {
+			column.subGroups.forEach(function (subGroup) {
+				parseColumnGroup(subGroup, level + 1);
+			});
+		} else {
+			padColumnheaders();
+		}
+	}
+
+	function padColumnheaders() {
+		var max = 0;
+
+		headers.forEach(function (title) {
+			var len = title.length;
+			if (len > max) {
+				max = len;
+			}
+		});
+
+		headers.forEach(function (title) {
+			var len = title.length;
+			if (len < max) {
+				for (var i = len; i < max; i++) {
+					title.push("");
+				}
+			}
+		});
+	}
+
+	columns.forEach(function (column) {
+		parseColumnGroup(column, 0);
+	});
+
+	console.log("headers", headers);
 
 	return headers;
 };
@@ -295,20 +406,20 @@ Clipboard.prototype.rowsToData = function (rows, config, params) {
 };
 
 Clipboard.prototype.buildComplexRows = function (config) {
-	var _this = this;
+	var _this3 = this;
 
 	var output = [],
 	    groups = this.table.modules.groupRows.getGroups();
 
 	groups.forEach(function (group) {
-		output.push(_this.processGroupData(group));
+		output.push(_this3.processGroupData(group));
 	});
 
 	return output;
 };
 
 Clipboard.prototype.processGroupData = function (group) {
-	var _this2 = this;
+	var _this4 = this;
 
 	var subGroups = group.getSubGroups();
 
@@ -321,7 +432,7 @@ Clipboard.prototype.processGroupData = function (group) {
 		groupData.subGroups = [];
 
 		subGroups.forEach(function (subGroup) {
-			groupData.subGroups.push(_this2.processGroupData(subGroup));
+			groupData.subGroups.push(_this4.processGroupData(subGroup));
 		});
 	} else {
 		groupData.rows = group.getRows(true);
@@ -331,23 +442,31 @@ Clipboard.prototype.processGroupData = function (group) {
 };
 
 Clipboard.prototype.buildOutput = function (rows, config, params) {
-	var _this3 = this;
+	var _this5 = this;
 
-	var output = [];
+	var output = [],
+	    columns = this.table.columnManager.columnsByIndex;
 
 	if (config.columnHeaders) {
-		output.push(this.generateHeaders(config));
+
+		if (config.columnHeaders == "groups") {
+			columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
+
+			output = output.concat(this.groupHeadersToRows(columns));
+		} else {
+			output.push(this.generateSimpleHeaders(columns));
+		}
 	}
 
 	//generate styled content
 	if (this.table.options.clipboardCopyStyled) {
-		this.generateHTML(rows, config, params);
+		this.generateHTML(rows, columns, config, params);
 	}
 
 	//generate unstyled content
 	if (config.rowGroups) {
 		rows.forEach(function (row) {
-			output = output.concat(_this3.parseRowGroupData(row, config, params));
+			output = output.concat(_this5.parseRowGroupData(row, config, params));
 		});
 	} else {
 		output = output.concat(this.rowsToData(rows, config, params));
@@ -357,7 +476,7 @@ Clipboard.prototype.buildOutput = function (rows, config, params) {
 };
 
 Clipboard.prototype.parseRowGroupData = function (group, config, params) {
-	var _this4 = this;
+	var _this6 = this;
 
 	var groupData = [];
 
@@ -365,7 +484,7 @@ Clipboard.prototype.parseRowGroupData = function (group, config, params) {
 
 	if (group.subGroups) {
 		group.subGroups.forEach(function (subGroup) {
-			groupData = groupData.concat(_this4.parseRowGroupData(subGroup, config, params));
+			groupData = groupData.concat(_this6.parseRowGroupData(subGroup, config, params));
 		});
 	} else {
 
@@ -375,11 +494,10 @@ Clipboard.prototype.parseRowGroupData = function (group, config, params) {
 	return groupData;
 };
 
-Clipboard.prototype.generateHTML = function (rows, config, params) {
+Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 	var self = this,
-	    columns = this.table.columnManager.columnsByIndex,
 	    data = [],
-	    headers,
+	    headers = [],
 	    body,
 	    oddRow,
 	    evenRow,
@@ -393,23 +511,102 @@ Clipboard.prototype.generateHTML = function (rows, config, params) {
 	this.htmlElement = document.createElement("table");
 	self.mapElementStyles(this.table.element, this.htmlElement, ["border-top", "border-left", "border-right", "border-bottom"]);
 
-	//create headers if needed
-	if (config.columnHeaders) {
-		headers = document.createElement("tr");
+	function generateSimpleHeaders() {
+		var headerEl = document.createElement("tr");
 
 		columns.forEach(function (column) {
-			var col = document.createElement("th");
-			col.innerHTML = column.definition.title;
+			var columnEl = document.createElement("th");
+			columnEl.innerHTML = column.definition.title;
 
-			self.mapElementStyles(column.getElement(), col, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			self.mapElementStyles(column.getElement(), columnEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
-			headers.appendChild(col);
+			headerEl.appendChild(columnEl);
 		});
 
-		self.mapElementStyles(this.table.columnManager.getHeadersElement(), headers, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+		self.mapElementStyles(self.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
-		this.htmlElement.appendChild(document.createElement("thead").appendChild(headers));
+		self.htmlElement.appendChild(document.createElement("thead").appendChild(headerEl));
 	}
+
+	function generateHeaders(headers) {
+
+		var headerHolderEl = document.createElement("thead");
+
+		headers.forEach(function (columns) {
+			var headerEl = document.createElement("tr");
+
+			columns.forEach(function (column) {
+				var columnEl = document.createElement("th");
+
+				if (column.width > 1) {
+					columnEl.colSpan = column.width;
+				}
+
+				if (column.height > 1) {
+					columnEl.rowSpan = column.height;
+				}
+
+				columnEl.innerHTML = column.title;
+
+				self.mapElementStyles(column.element, columnEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+				headerEl.appendChild(columnEl);
+			});
+
+			self.mapElementStyles(self.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
+			headerHolderEl.appendChild(headerEl);
+		});
+
+		self.htmlElement.appendChild(headerHolderEl);
+	}
+
+	function parseColumnGroup(column, level) {
+
+		if (typeof headers[level] === "undefined") {
+			headers[level] = [];
+		}
+
+		headers[level].push({
+			title: column.title,
+			width: column.width,
+			height: 1,
+			children: !!column.subGroups,
+			element: column.column.getElement()
+		});
+
+		if (column.subGroups) {
+			column.subGroups.forEach(function (subGroup) {
+				parseColumnGroup(subGroup, level + 1);
+			});
+		}
+	}
+
+	function padVerticalColumnheaders() {
+		headers.forEach(function (row, index) {
+			row.forEach(function (header) {
+				if (!header.children) {
+					header.height = headers.length - index;
+				}
+			});
+		});
+	}
+
+	//create headers if needed
+	if (config.columnHeaders) {
+		if (config.columnHeaders == "groups") {
+			columns.forEach(function (column) {
+				parseColumnGroup(column, 0);
+			});
+
+			padVerticalColumnheaders();
+			generateHeaders(headers);
+		} else {
+			generateSimpleHeaders();
+		}
+	}
+
+	columns = this.table.columnManager.columnsByIndex;
 
 	//create table body
 	body = document.createElement("tbody");
@@ -436,8 +633,9 @@ Clipboard.prototype.generateHTML = function (rows, config, params) {
 			    styleRow = firstRow;
 
 			columns.forEach(function (column, j) {
-				var cellEl = document.createElement("td");
-				cellEl.innerHTML = column.getFieldValue(rowData);
+				var cellEl = document.createElement("td"),
+				    value = column.getFieldValue(rowData);
+				cellEl.innerHTML = typeof value === "undefined" ? "" : value;
 
 				if (column.definition.align) {
 					cellEl.style.textAlign = column.definition.align;
