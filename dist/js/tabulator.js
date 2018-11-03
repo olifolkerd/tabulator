@@ -10739,6 +10739,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							value = value;
 					}
 
+					cellEl.innerHTML = value;
+
 					if (column.definition.align) {
 						cellEl.style.textAlign = column.definition.align;
 					}

@@ -66,11 +66,8 @@ Clipboard.prototype.processConfig = function(){
 		rowGroups:true,
 	};
 
-
 	if(typeof this.table.options.clipboardCopyHeader !== "undefined"){
-
 		config.columnHeaders = this.table.options.clipboardCopyHeader;
-
 		console.warn("DEPRICATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
 	}
 
@@ -405,6 +402,21 @@ Clipboard.prototype.rowsToData = function(rows, config, params){
 
 		columns.forEach(function(column){
 			var value = column.getFieldValue(rowData);
+
+			switch(typeof value){
+				case "object":
+				value = JSON.stringify(value);
+				break;
+
+				case "undefined":
+				case "null":
+				value = "";
+				break;
+
+				default:
+				value = value;
+			}
+
 			rowArray.push(value);
 		});
 
@@ -636,7 +648,22 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params){
 			columns.forEach(function(column, j){
 				var cellEl = document.createElement("td"),
 				value = column.getFieldValue(rowData);
-				cellEl.innerHTML = typeof value === "undefined" ? "" : value;
+
+				switch(typeof value){
+					case "object":
+					value = JSON.stringify(value);
+					break;
+
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = value;
+				}
+
+				cellEl.innerHTML = value;
 
 				if(column.definition.align){
 					cellEl.style.textAlign = column.definition.align;
