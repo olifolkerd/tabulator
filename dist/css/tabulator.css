@@ -730,3 +730,28 @@
   margin-left: 10px;
   color: #d00;
 }
+
+.tabulator-edit-select-list {
+  position: absolute;
+  display: inline-block;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #aaa;
+  font-size: 14px;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item {
+  padding: 4px;
+  color: #333;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item.active {
+  color: #fff;
+  background: #1D68CD;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
+  cursor: pointer;
+  color: #fff;
+  background: #1D68CD;
+}

@@ -12696,6 +12696,231 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return select;
 		},
 
+		selectNew: function selectNew(cell, onRendered, success, cancel, editorParams) {
+			var cellEl = cell.getElement(),
+			    initialValue = cell.getValue(),
+			    displayItems = [],
+			    currentItem = {},
+			    blurable = true,
+			    listEl;
+
+			////////////////////////OLD///////////////////////
+
+			//create and style input
+			var input = document.createElement("input");
+
+			input.setAttribute("type", "text");
+
+			input.style.padding = "4px";
+			input.style.width = "100%";
+			input.style.boxSizing = "border-box";
+			input.readonly = true;
+
+			//allow key based navigation
+			input.addEventListener("keydown", function (e) {
+				var index;
+
+				switch (e.keyCode) {
+					case 38:
+						//up arrow
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+
+						index = displayItems.indexOf(currentItem);
+
+						if (index > 0) {
+							setCurrentItem(displayItems[index - 1]);
+						}
+						break;
+
+					case 40:
+						//down arrow
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+
+						index = displayItems.indexOf(currentItem);
+
+						if (index < displayItems.length - 1) {
+							setCurrentItem(displayItems[index + 1]);
+						}
+						break;
+
+					case 13:
+						//enter
+						chooseItem();
+						break;
+
+					case 27:
+						//escape
+						cancelItem();
+						break;
+				}
+			});
+
+			input.addEventListener("blur", function (e) {
+				if (blurable) {
+					cancelItem();
+				}
+			});
+
+			////////////////////////OLD///////////////////////
+
+			function parseItems(inputValues, curentValue) {
+				var itemList = [];
+
+				if (Array.isArray(inputValues)) {
+					inputValues.forEach(function (value) {
+						var item = {
+							title: value,
+							value: value,
+							active: false,
+							elsement: false
+						};
+
+						if (item.value === curentValue) {
+							setCurrentItem(item);
+						}
+
+						itemList.push(item);
+					});
+				} else {
+					for (var key in inputValues) {
+						var item = {
+							title: inputValues[key],
+							value: key,
+							active: false,
+							elsement: false
+						};
+
+						if (item.value === curentValue) {
+							setCurrentItem(item);
+						}
+
+						itemList.push(item);
+					}
+				}
+
+				displayItems = itemList;
+
+				fillList();
+			}
+
+			function fillList() {
+				while (listEl.firstChild) {
+					listEl.removeChild(listEl.firstChild);
+				}displayItems.forEach(function (item) {
+					var el = item.element;
+
+					if (!el) {
+						el = document.createElement("div");
+						el.classList.add("tabulator-edit-select-list-item");
+						el.tabIndex = 0;
+						el.innerHTML = item.title;
+
+						el.addEventListener("click", function () {
+							setCurrentItem(item);
+							chooseItem();
+						});
+
+						el.addEventListener("mousedown", function () {
+							blurable = false;
+
+							setTimeout(function () {
+								blurable = true;
+							}, 10);
+						});
+
+						item.element = el;
+
+						if (item === currentItem) {
+							item.element.classList.add("active");
+						}
+					}
+
+					listEl.appendChild(el);
+				});
+			}
+
+			function setCurrentItem(item) {
+
+				if (currentItem && currentItem.element) {
+					currentItem.element.classList.remove("active");
+				}
+
+				currentItem = item;
+				input.value = item.title;
+
+				if (item.element) {
+					item.element.classList.add("active");
+				}
+			}
+
+			function chooseItem() {
+				if (listEl.parentNode) {
+					listEl.parentNode.removeChild(listEl);
+				}
+
+				if (initialValue !== currentItem.value) {
+					success(currentItem.value);
+				} else {
+					cancel();
+				}
+			}
+
+			function cancelItem() {
+				if (listEl.parentNode) {
+					listEl.parentNode.removeChild(listEl);
+				}
+
+				cancel();
+			}
+
+			listEl = document.createElement("div");
+			listEl.classList.add("tabulator-edit-select-list");
+
+			listEl.style.minWidth = cellEl.offsetWidth + "px";
+
+			parseItems(editorParams.values || [], initialValue);
+
+			onRendered(function () {
+				input.focus();
+				input.style.height = "100%";
+
+				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
+
+				listEl.style.top = offset.top + cellEl.offsetHeight + "px";
+				listEl.style.left = offset.left + "px";
+				document.body.appendChild(listEl);
+			});
+
+			// function onChange(e){
+			// 	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
+			// 		success(input.value);
+			// 	}else{
+			// 		cancel();
+			// 	}
+			// }
+
+			// //submit new value on blur or change
+			// input.addEventListener("change", onChange);
+			// input.addEventListener("blur", onChange);
+
+			// //submit new value on enter
+			// input.addEventListener("keydown", function(e){
+			// 	switch(e.keyCode){
+			// 		case 13:
+			// 		success(input.value);
+			// 		break;
+
+			// 		case 27:
+			// 		cancel();
+			// 		break;
+			// 	}
+			// });
+
+			return input;
+		},
+
 		//start rating
 		star: function star(cell, onRendered, success, cancel, editorParams) {
 			var self = this,
