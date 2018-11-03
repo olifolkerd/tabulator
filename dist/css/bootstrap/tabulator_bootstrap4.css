@@ -971,3 +971,37 @@
   margin-left: 10px;
   color: #666;
 }
+
+.tabulator-edit-select-list {
+  position: absolute;
+  display: inline-block;
+  box-sizing: border-box;
+  max-height: 200px;
+  background: transparent;
+  border: 1px solid #dee2e6;
+  font-size: 1rem;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item {
+  padding: 4px;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item.active {
+  color: transparent;
+  background: #1D68CD;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
+  cursor: pointer;
+  color: transparent;
+  background: #1D68CD;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-group {
+  border-bottom: 1px solid #dee2e6;
+  padding: 4px;
+  padding-top: 6px;
+  font-weight: bold;
+}
