@@ -595,6 +595,10 @@ Edit.prototype.editors = {
 				return item;
 			}
 
+			if (typeof inputValues == "function") {
+				inputValues = inputValues(cell);
+			}
+
 			if (Array.isArray(inputValues)) {
 				inputValues.forEach(function (value) {
 					var item;
