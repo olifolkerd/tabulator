@@ -9,6 +9,7 @@ var Filter = function Filter(table) {
 	this.filterList = []; //hold filter list
 	this.headerFilters = {}; //hold column filters
 	this.headerFilterElements = []; //hold header filter elements for manipulation
+	this.headerFilterColumns = []; //hold columns that use header filters
 
 	this.changed = false; //has filtering changed since last render
 };
@@ -267,6 +268,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 			column.contentElement.appendChild(filterElement);
 
 			self.headerFilterElements.push(editorElement);
+			self.headerFilterColumns.push(column);
 		}
 	} else {
 		console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
@@ -503,10 +505,13 @@ Filter.prototype.clearFilter = function (all) {
 
 //clear header filters
 Filter.prototype.clearHeaderFilter = function () {
+	var self = this;
+
 	this.headerFilters = {};
 
-	this.headerFilterElements.forEach(function (element) {
-		element.value = "";
+	this.headerFilterColumns.forEach(function (column) {
+		column.modules.filter.value = null;
+		self.reloadHeaderFilter(column);
 	});
 
 	this.changed = true;

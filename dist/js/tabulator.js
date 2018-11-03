@@ -2756,7 +2756,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					self.rows.push(row);
 				} else {
 
-					console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but receved:", def);
+					console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but received:", def);
 				}
 			});
 
@@ -5225,7 +5225,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.table.modExists("selectRow")) {
 
-			this.table.modules.selectRow._deselectRow(this.row, true);
+			this.table.modules.selectRow._deselectRow(this, true);
 		}
 
 		// if(this.table.options.dataTree && this.table.modExists("dataTree")){
@@ -13517,6 +13517,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.filterList = []; //hold filter list
 		this.headerFilters = {}; //hold column filters
 		this.headerFilterElements = []; //hold header filter elements for manipulation
+		this.headerFilterColumns = []; //hold columns that use header filters
 
 		this.changed = false; //has filtering changed since last render
 	};
@@ -13775,6 +13776,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				column.contentElement.appendChild(filterElement);
 
 				self.headerFilterElements.push(editorElement);
+				self.headerFilterColumns.push(column);
 			}
 		} else {
 			console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
@@ -14011,10 +14013,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//clear header filters
 	Filter.prototype.clearHeaderFilter = function () {
+		var self = this;
+
 		this.headerFilters = {};
 
-		this.headerFilterElements.forEach(function (element) {
-			element.value = "";
+		this.headerFilterColumns.forEach(function (column) {
+			column.modules.filter.value = null;
+			self.reloadHeaderFilter(column);
 		});
 
 		this.changed = true;

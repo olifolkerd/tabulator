@@ -2212,7 +2212,7 @@ RowManager.prototype._setDataActual = function (data, renderInPosition) {
 				var row = new Row(def, self);
 				self.rows.push(row);
 			} else {
-				console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but receved:", def);
+				console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but received:", def);
 			}
 		});
 
@@ -4125,7 +4125,7 @@ Row.prototype.deleteActual = function () {
 
 	//deselect row if it is selected
 	if (this.table.modExists("selectRow")) {
-		this.table.modules.selectRow._deselectRow(this.row, true);
+		this.table.modules.selectRow._deselectRow(this, true);
 	}
 
 	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
