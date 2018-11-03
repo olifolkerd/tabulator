@@ -313,7 +313,7 @@ Ajax.prototype.defaultConfig = {
 };
 
 Ajax.prototype.defaultURLGenerator = function(url, config, params){
-	if(params){
+	if(params && Object.keys(params).length){
 		if(!config.method || config.method.toLowerCase() == "get"){
 			config.method = "get";
 			url += "?" + this.serializeParams(params);
