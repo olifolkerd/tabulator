@@ -758,3 +758,11 @@
   color: #fff;
   background: #1D68CD;
 }
+
+.tabulator-edit-select-list .tabulator-edit-select-list-group {
+  border-bottom: 1px solid #aaa;
+  padding: 4px;
+  padding-top: 6px;
+  color: #333;
+  font-weight: bold;
+}

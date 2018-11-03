@@ -932,7 +932,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	.tabulator-edit-select-list-item{
 		padding:4px;
 
-
 		color:$rowTextColor;
 
 		&.active{
@@ -946,5 +945,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			color:$rowBackgroundColor;
 			background:$editBoxColor;
 		}
+	}
+
+	.tabulator-edit-select-list-group{
+		border-bottom:1px solid $rowBorderColor;
+
+		padding:4px;
+		padding-top:6px;
+
+		color:$rowTextColor;
+		font-weight:bold;
 	}
 }

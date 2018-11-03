@@ -548,6 +548,7 @@ Edit.prototype.editors = {
 		    initialValue = cell.getValue(),
 		    input = document.createElement("input"),
 		    listEl = document.createElement("div"),
+		    dataItems = [],
 		    displayItems = [],
 		    currentItem = {},
 		    blurable = true;
@@ -574,41 +575,81 @@ Edit.prototype.editors = {
 		}
 
 		function parseItems(inputValues, curentValue) {
-			var itemList = [];
+			var dataList = [];
+			var displayList = [];
+
+			function processComplexListItem(item) {
+				var item = {
+					label: editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label) : item.label,
+					value: item.value,
+					element: false
+				};
+
+				if (item.value === curentValue) {
+					setCurrentItem(item);
+				}
+
+				dataList.push(item);
+				displayList.push(item);
+
+				return item;
+			}
 
 			if (Array.isArray(inputValues)) {
 				inputValues.forEach(function (value) {
-					var item = {
-						title: value,
-						value: value,
-						active: false,
-						elsement: false
-					};
+					var item;
 
-					if (item.value === curentValue) {
-						setCurrentItem(item);
+					if ((typeof value === "undefined" ? "undefined" : _typeof(value)) === "object") {
+
+						if (value.options) {
+							item = {
+								label: value.label,
+								group: true,
+								element: false
+							};
+
+							displayList.push(item);
+
+							value.options.forEach(function (item) {
+								processComplexListItem(item);
+							});
+						} else {
+							processComplexListItem(value);
+						}
+					} else {
+						item = {
+							label: editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
+							value: value,
+							element: false
+						};
+
+						if (item.value === curentValue) {
+							setCurrentItem(item);
+						}
+
+						dataList.push(item);
+						displayList.push(item);
 					}
-
-					itemList.push(item);
 				});
 			} else {
 				for (var key in inputValues) {
 					var item = {
-						title: inputValues[key],
+						label: editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
 						value: key,
-						active: false,
-						elsement: false
+						element: false
 					};
 
 					if (item.value === curentValue) {
 						setCurrentItem(item);
 					}
 
-					itemList.push(item);
+					dataList.push(item);
+					displayList.push(item);
 				}
 			}
 
-			displayItems = itemList;
+			dataItems = dataList;
+			displayItems = displayList;
 
 			fillList();
 		}
@@ -620,15 +661,27 @@ Edit.prototype.editors = {
 				var el = item.element;
 
 				if (!el) {
-					el = document.createElement("div");
-					el.classList.add("tabulator-edit-select-list-item");
-					el.tabIndex = 0;
-					el.innerHTML = item.title;
 
-					el.addEventListener("click", function () {
-						setCurrentItem(item);
-						chooseItem();
-					});
+					if (item.group) {
+						el = document.createElement("div");
+						el.classList.add("tabulator-edit-select-list-group");
+						el.tabIndex = 0;
+						el.innerHTML = item.label;
+					} else {
+						el = document.createElement("div");
+						el.classList.add("tabulator-edit-select-list-item");
+						el.tabIndex = 0;
+						el.innerHTML = item.label;
+
+						el.addEventListener("click", function () {
+							setCurrentItem(item);
+							chooseItem();
+						});
+
+						if (item === currentItem) {
+							el.classList.add("active");
+						}
+					}
 
 					el.addEventListener("mousedown", function () {
 						blurable = false;
@@ -639,10 +692,6 @@ Edit.prototype.editors = {
 					});
 
 					item.element = el;
-
-					if (item === currentItem) {
-						item.element.classList.add("active");
-					}
 				}
 
 				listEl.appendChild(el);
@@ -656,7 +705,7 @@ Edit.prototype.editors = {
 			}
 
 			currentItem = item;
-			input.value = item.title;
+			input.value = item.label;
 
 			if (item.element) {
 				item.element.classList.add("active");
@@ -721,10 +770,10 @@ Edit.prototype.editors = {
 					e.stopImmediatePropagation();
 					e.stopPropagation();
 
-					index = displayItems.indexOf(currentItem);
+					index = dataItems.indexOf(currentItem);
 
 					if (index > 0) {
-						setCurrentItem(displayItems[index - 1]);
+						setCurrentItem(dataItems[index - 1]);
 					}
 					break;
 
@@ -733,13 +782,13 @@ Edit.prototype.editors = {
 					e.stopImmediatePropagation();
 					e.stopPropagation();
 
-					index = displayItems.indexOf(currentItem);
+					index = dataItems.indexOf(currentItem);
 
-					if (index < displayItems.length - 1) {
+					if (index < dataItems.length - 1) {
 						if (index == -1) {
-							setCurrentItem(displayItems[0]);
+							setCurrentItem(dataItems[0]);
 						} else {
-							setCurrentItem(displayItems[index + 1]);
+							setCurrentItem(dataItems[index + 1]);
 						}
 					}
 					break;
@@ -812,10 +861,9 @@ Edit.prototype.editors = {
 			if (Array.isArray(inputValues)) {
 				inputValues.forEach(function (value) {
 					var item = {
-						title: editorParams.searchFunc ? editorParams.searchFunc(value, value) : value,
+						title: editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
 						value: value,
-						active: false,
-						elsement: false
+						element: false
 					};
 
 					if (item.value === curentValue) {
@@ -827,10 +875,9 @@ Edit.prototype.editors = {
 			} else {
 				for (var key in inputValues) {
 					var item = {
-						title: editorParams.searchFunc ? editorParams.searchFunc(key, inputValues[key]) : inputValues[key],
+						title: editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
 						value: key,
-						active: false,
-						elsement: false
+						element: false
 					};
 
 					if (item.value === curentValue) {
