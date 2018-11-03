@@ -34,7 +34,7 @@ $errorColor:#dd0000 !default; //error indication
 //footer themeing
 $footerBorderColor:$pagination-border-color !default; //footer border color
 $footerSeperatorColor:$table-border-color !default; //footer bottom seperator color
-
+$footerActiveColor:$pagination-active-color !default; //footer bottom active text color
 
 
 //Tabulator Containing Element
@@ -234,6 +234,44 @@ $footerSeperatorColor:$table-border-color !default; //footer bottom seperator co
 					.tabulator-col-content .tabulator-arrow{
 						border-top: 6px solid $sortArrowActive;
 						border-bottom: none;
+					}
+				}
+			}
+
+			&.tabulator-col-vertical{
+				.tabulator-col-content{
+					.tabulator-col-title{
+						writing-mode: vertical-rl;
+						text-orientation: mixed;
+
+						display:flex;
+						align-items:center;
+						justify-content:center;
+					}
+				}
+
+				&.tabulator-col-vertical-flip{
+					.tabulator-col-title{
+						transform: rotate(180deg);
+					}
+				}
+
+				&.tabulator-sortable{
+					.tabulator-col-title{
+						padding-right:0;
+						padding-top:20px;
+					}
+
+					&.tabulator-col-vertical-flip{
+						.tabulator-col-title{
+							padding-right:0;
+							padding-bottom:20px;
+						}
+
+					}
+
+					.tabulator-arrow{
+						right:calc(50% - 6px);
 					}
 				}
 			}
@@ -451,7 +489,7 @@ $footerSeperatorColor:$table-border-color !default; //footer bottom seperator co
 			&.active{
 				border-color:$pagination-active-border-color;
 				background-color:$pagination-active-bg;
-				color:$pagination-active-color;
+				color:$footerActiveColor;
 			}
 
 			&:disabled{
@@ -929,6 +967,91 @@ $footerSeperatorColor:$table-border-color !default; //footer bottom seperator co
 			}
 		}
 
+		.tabulator-data-tree-branch{
+			display:inline-block;
+			vertical-align:middle;
+
+			height:9px;
+			width:7px;
+
+			margin-top:-9px;
+			margin-right:5px;
+
+			border-bottom-left-radius:1px;
+
+			border-left:2px solid $rowBorderColor;
+			border-bottom:2px solid $rowBorderColor;
+		}
+
+		.tabulator-data-tree-control{
+
+			display:inline-flex;
+			justify-content:center;
+			align-items:center;
+			vertical-align:middle;
+
+			height:11px;
+			width:11px;
+
+			margin-right:5px;
+
+			border:1px solid #ccc;
+			border-radius:2px;
+			background:rgba(0, 0, 0, .1);
+
+			overflow:hidden;
+
+			&:hover{
+				cursor:pointer;
+				background:rgba(0, 0, 0, .2);
+			}
+
+			.tabulator-data-tree-control-collapse{
+				display:inline-block;
+				position: relative;
+
+				height: 7px;
+				width: 1px;
+
+				background: transparent;
+
+				&:after {
+					position: absolute;
+					content: "";
+					left: -3px;
+					top: 3px;
+
+					height: 1px;
+					width: 7px;
+
+					background: #ccc;
+				}
+			}
+
+			.tabulator-data-tree-control-expand{
+				display:inline-block;
+				position: relative;
+
+				height: 7px;
+				width: 1px;
+
+				background: #ccc;
+
+				&:after {
+					position: absolute;
+					content: "";
+					left: -3px;
+					top: 3px;
+
+					height: 1px;
+					width: 7px;
+
+					background: #ccc;
+				}
+			}
+
+		}
+
 		.tabulator-responsive-collapse-toggle{
 			display: inline-flex;
 			align-items:center;
@@ -1045,5 +1168,46 @@ $footerSeperatorColor:$table-border-color !default; //footer bottom seperator co
 			margin-left:10px;
 			color:#666;
 		}
+	}
+}
+
+.tabulator-edit-select-list{
+	position: absolute;
+	display:inline-block;
+	box-sizing:border-box;
+
+	max-height:200px;
+
+	background:$rowBackgroundColor;
+	border:1px solid $rowBorderColor;
+
+	font-size:$textSize;
+
+	overflow-y:auto;
+	-webkit-overflow-scrolling: touch;
+
+	.tabulator-edit-select-list-item{
+		padding:4px;
+
+		&.active{
+			color:$rowBackgroundColor;
+			background:$editBoxColor;
+		}
+
+		&:hover{
+			cursor:pointer;
+
+			color:$rowBackgroundColor;
+			background:$editBoxColor;
+		}
+	}
+
+	.tabulator-edit-select-list-group{
+		border-bottom:1px solid $rowBorderColor;
+
+		padding:4px;
+		padding-top:6px;
+
+		font-weight:bold;
 	}
 }

@@ -1,4 +1,4 @@
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
   border: 1px solid #fff;
@@ -160,6 +160,38 @@
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="desc"] .tabulator-col-content .tabulator-arrow {
   border-top: 6px solid #3759D7;
   border-bottom: none;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical .tabulator-col-content .tabulator-col-title {
+  -webkit-writing-mode: vertical-rl;
+      -ms-writing-mode: tb-rl;
+          writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: center;
+      justify-content: center;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-col-vertical-flip .tabulator-col-title {
+  -ms-transform: rotate(180deg);
+      transform: rotate(180deg);
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable .tabulator-col-title {
+  padding-right: 0;
+  padding-top: 20px;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable.tabulator-col-vertical-flip .tabulator-col-title {
+  padding-right: 0;
+  padding-bottom: 20px;
+}
+
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable .tabulator-arrow {
+  right: calc(50% - 6px);
 }
 
 .tabulator .tabulator-header .tabulator-frozen {
@@ -555,6 +587,76 @@
   background: #666;
 }
 
+.tabulator-row .tabulator-cell .tabulator-data-tree-branch {
+  display: inline-block;
+  vertical-align: middle;
+  height: 9px;
+  width: 7px;
+  margin-top: -9px;
+  margin-right: 5px;
+  border-bottom-left-radius: 1px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-control {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+  vertical-align: middle;
+  height: 11px;
+  width: 11px;
+  margin-right: 5px;
+  border: 1px solid #333;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-control:hover {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-control .tabulator-data-tree-control-collapse {
+  display: inline-block;
+  position: relative;
+  height: 7px;
+  width: 1px;
+  background: transparent;
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-control .tabulator-data-tree-control-collapse:after {
+  position: absolute;
+  content: "";
+  left: -3px;
+  top: 3px;
+  height: 1px;
+  width: 7px;
+  background: #333;
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-control .tabulator-data-tree-control-expand {
+  display: inline-block;
+  position: relative;
+  height: 7px;
+  width: 1px;
+  background: #333;
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-control .tabulator-data-tree-control-expand:after {
+  position: absolute;
+  content: "";
+  left: -3px;
+  top: 3px;
+  height: 1px;
+  width: 7px;
+  background: #333;
+}
+
 .tabulator-row .tabulator-cell .tabulator-responsive-collapse-toggle {
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -652,4 +754,40 @@
 .tabulator-row.tabulator-group span {
   margin-left: 10px;
   color: #3759D7;
+}
+
+.tabulator-edit-select-list {
+  position: absolute;
+  display: inline-block;
+  box-sizing: border-box;
+  max-height: 200px;
+  background: #f3f3f3;
+  border: 1px solid #fff;
+  font-size: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item {
+  padding: 4px;
+  color: #333;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item.active {
+  color: #f3f3f3;
+  background: #1D68CD;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
+  cursor: pointer;
+  color: #f3f3f3;
+  background: #1D68CD;
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-group {
+  border-bottom: 1px solid #fff;
+  padding: 4px;
+  padding-top: 6px;
+  color: #333;
+  font-weight: bold;
 }

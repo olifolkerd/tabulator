@@ -316,7 +316,7 @@ ColumnCalcs.prototype.getResults = function(){
 	groups;
 
 	if(this.table.options.groupBy && this.table.modExists("groupRows")){
-		groups = this.table.modules.groupRows.getGroups();
+		groups = this.table.modules.groupRows.getGroups(true);
 
 		groups.forEach(function(group){
 			results[group.getKey()] = self.getGroupResults(group);

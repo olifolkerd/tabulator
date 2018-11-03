@@ -182,7 +182,17 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 
 			params = typeof params === "function" ? params.call(self.table) : params;
 
-			editorElement = editor.call(self, cellWrapper, function(){}, success, cancel, params);
+			editorElement = editor.call(this.table.modules.edit, cellWrapper, function(){}, success, cancel, params);
+
+			if(!editorElement){
+				console.warn("Filter Error - Cannot add filter to " + field + " column, editor returned a value of false");
+				return;
+			}
+
+			if(!(editorElement instanceof Node)){
+				console.warn("Filter Error - Cannot add filter to " + field + " column, editor should return an instance of Node, the editor returned:", editorElement);
+				return;
+			}
 
 			//set Placeholder Text
 			if(field){
@@ -214,32 +224,38 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 				},300);
 			};
 
-			editorElement.addEventListener("keyup", searchTrigger);
-			editorElement.addEventListener("search", searchTrigger);
-
 			column.modules.filter.headerElement = editorElement;
-
-			//update number filtered columns on change
-
 			column.modules.filter.attrType = editorElement.hasAttribute("type") ? editorElement.getAttribute("type").toLowerCase() : "" ;
-			if(column.modules.filter.attrType == "number"){
-				editorElement.addEventListener("change", function(e){
-					success(editorElement.value);
-				});
+			column.modules.filter.tagType = editorElement.tagName.toLowerCase();
+
+			if(column.definition.headerFilterLiveFilter !== false){
+
+				if(!(column.definition.headerFilter === "autocomplete" || (column.definition.editor === "autocomplete" && column.definition.headerFilter === true))){
+					editorElement.addEventListener("keyup", searchTrigger);
+					editorElement.addEventListener("search", searchTrigger);
+
+
+				//update number filtered columns on change
+				if(column.modules.filter.attrType == "number"){
+					editorElement.addEventListener("change", function(e){
+						success(editorElement.value);
+					});
+				}
+
+				//change text inputs to search inputs to allow for clearing of field
+				if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
+					editorElement.setAttribute("type", "search");
+					// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+				}
+
 			}
 
-			//change text inputs to search inputs to allow for clearing of field
-			if(column.modules.filter.attrType == "text" && this.table.browser !== "ie"){
-				editorElement.setAttribute("type", "search");
-				// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
-			}
-
-			//prevent input and select elements from propegating click to column sorters etc
-			column.modules.filter.tagType = editorElement.tagName.toLowerCase()
-			if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){
-				editorElement.addEventListener("mousedown",function(e){
-					e.stopPropagation();
-				});
+				//prevent input and select elements from propegating click to column sorters etc
+				if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){
+					editorElement.addEventListener("mousedown",function(e){
+						e.stopPropagation();
+					});
+				}
 			}
 
 			filterElement.appendChild(editorElement);
@@ -252,7 +268,7 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 		console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
 	}
 
-}
+};
 
 //hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 Filter.prototype.hideHeaderFilterElements = function(){
@@ -505,8 +521,44 @@ Filter.prototype.clearHeaderFilter = function(){
 	this.changed = true;
 };
 
+//search data and return matching rows
+Filter.prototype.search = function (searchType, field, type, value){
+	var self = this,
+	activeRows = [],
+	filterList = [];
+
+	if(!Array.isArray(field)){
+		field = [{field:field, type:type, value:value}];
+	}
+
+	field.forEach(function(filter){
+		filter = self.findFilter(filter);
+
+		if(filter){
+			filterList.push(filter);
+		}
+	});
+
+	this.table.rowManager.rows.forEach(function(row){
+		var match = true;
+
+		filterList.forEach(function(filter){
+			if(!self.filterRecurse(filter, row.getData())){
+				match = false;
+			}
+		});
+
+		if(match){
+			activeRows.push(searchType === "data" ? row.getData("data") : row.getComponent());
+		}
+
+	});
+
+	return activeRows;
+};
+
 //filter row array
-Filter.prototype.filter = function(rowList){
+Filter.prototype.filter = function(rowList, filters){
 	var self = this,
 	activeRows = [],
 	activeRowComponents = [];
@@ -541,7 +593,7 @@ Filter.prototype.filter = function(rowList){
 };
 
 //filter individual row
-Filter.prototype.filterRow = function(row){
+Filter.prototype.filterRow = function(row, filters){
 	var self = this,
 	match = true,
 	data = row.getData();

@@ -196,7 +196,7 @@ Column.prototype.createGroupElement = function (){
 
 Column.prototype.setField = function(field){
 	this.field = field;
-	this.fieldStructure = field ? field.split(".") : [];
+	this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];
 	this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
 	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
 };
@@ -262,6 +262,14 @@ Column.prototype._buildHeader = function(){
 	def = self.definition;
 
 	while(self.element.firstChild) self.element.removeChild(self.element.firstChild);
+
+	if(def.headerVertical){
+		self.element.classList.add("tabulator-col-vertical");
+
+		if(def.headerVertical === "flip"){
+			self.element.classList.add("tabulator-col-vertical-flip");
+		}
+	}
 
 	self.contentElement = self._bindEvents();
 
@@ -587,7 +595,22 @@ Column.prototype._formatColumnHeaderTitle = function(el, title){
 
 		contents = formatter.call(this.table.modules.format, mockCell, params);
 
-		el.appendChild(contents);
+		switch(typeof contents){
+			case "object":
+			if(contents instanceof Node){
+				this.element.appendChild(contents);
+			}else{
+				this.element.innerHTML = "";
+				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+			}
+			break;
+			case "undefined":
+			case "null":
+			this.element.innerHTML = "";
+			break;
+			default:
+			this.element.innerHTML = contents;
+		}
 	}else{
 		el.innerHTML = title;
 	}

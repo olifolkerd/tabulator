@@ -429,7 +429,7 @@ RowManager.prototype.findAddRowPos = function(pos){
 
 
 RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
-	var row = new Row(data || {}, this),
+	var row = data instanceof Row ? data : new Row(data || {}, this),
 	top = this.findAddRowPos(pos),
 	dispRows;
 
@@ -924,6 +924,28 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 
 				if(displayIndex !== true){
 					table.modules.groupRows.setDisplayIndex(displayIndex);
+				}
+			}
+		}else{
+			skipStage = false;
+		}
+
+
+
+		case "tree":
+
+		if(!skipStage){
+			if(table.options.dataTree && table.modExists("dataTree")){
+				if(!table.modules.dataTree.getDisplayIndex()){
+					table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
+				}
+
+				displayIndex = table.modules.dataTree.getDisplayIndex();
+
+				displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+				if(displayIndex !== true){
+					table.modules.dataTree.setDisplayIndex(displayIndex);
 				}
 			}
 		}else{
@@ -1505,7 +1527,10 @@ RowManager.prototype._removeBottomRow = function(bottomDiff){
 	if(bottomDiff >= bottomRowHeight){
 
 		var rowEl = bottomRow.getElement();
-		rowEl.parentNode.removeChild(rowEl);
+
+		if(rowEl.parentNode){
+			rowEl.parentNode.removeChild(rowEl);
+		}
 
 		this.vDomBottomPad += bottomRowHeight;
 

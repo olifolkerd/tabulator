@@ -47,12 +47,16 @@ Tabulator.prototype.defaultOptions = {
 
 	data:[], //default starting data
 
+	nestedFieldSeparator:".", //seperatpr for nested data
+
 	tooltips: false, //Tool tip value
 	tooltipsHeader: false, //Tool tip for headers
 	tooltipGenerationMode:"load", //when to generate tooltips
 
 	initialSort:false, //initial sorting criteria
 	initialFilter:false, //initial filtering criteria
+
+	sortOrderReverse:false, //reverse internal sort ordering
 
 	footerElement:false, //hold footer element
 
@@ -64,9 +68,9 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyStyled:true, //formatted table data
 	clipboardCopySelector:"active", //method of chosing which data is coppied to the clipboard
 	clipboardCopyFormatter:"table", //convert data to a clipboard string
-	clipboardCopyHeader:true, //include table headers in copt
 	clipboardPasteParser:"table", //convert pasted clipboard data to rows
 	clipboardPasteAction:"insert", //how to insert pasted data into the table
+	clipboardCopyConfig:false, //clipboard config
 
 	clipboardCopied:function(){}, //data has been copied to the clipboard
 	clipboardPasted:function(){}, //data has been pasted into the table
@@ -75,6 +79,18 @@ Tabulator.prototype.defaultOptions = {
 	downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	downloadComplete:false, //function to manipulate download data
+	downloadConfig:false,	//download config
+
+	dataTree:false, //enable data tree
+	dataTreeBranchElement: true, //show data tree branch element
+	dataTreeChildIndent:9, //data tree child indent in px
+	dataTreeChildField:"_children", //data tre column field to look for child rows
+	dataTreeCollapseElement:false, //data tree row collapse element
+	dataTreeExpandElement:false, //data tree row expand element
+	dataTreeStartExpanded:false,
+	dataTreeRowExpanded:function(){}, //row has been expanded
+	dataTreeRowCollapsed:function(){}, //row has been collapsed
+
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
@@ -115,6 +131,7 @@ Tabulator.prototype.defaultOptions = {
 	ajaxURLGenerator:false,
 	ajaxParams:{}, //params for ajax loading
 	ajaxConfig:"get", //ajax request type
+	ajaxContentType:"form", //ajax request type
 	ajaxRequestFunc:false, //promise function
 	ajaxLoader:true, //show loader
 	ajaxLoaderLoading:false, //loader element
@@ -127,6 +144,7 @@ Tabulator.prototype.defaultOptions = {
 
 	groupBy:false, //enable table grouping and set field to group by
 	groupStartOpen:true, //starting state of group
+	groupValues:false,
 
 	groupHeader:false, //header generation function
 
@@ -387,6 +405,9 @@ Tabulator.prototype._buildElement = function(){
 		this.footerManager.activate();
 	}
 
+	if(options.dataTree && this.modExists("dataTree", true)){
+		mod.dataTree.initialize();
+	}
 
 	if( (options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)){
 		mod.persistence.initialize(options.persistenceMode, options.persistenceID);
@@ -636,6 +657,20 @@ Tabulator.prototype.getData = function(active){
 //get table data array count
 Tabulator.prototype.getDataCount = function(active){
 	return this.rowManager.getDataCount(active);
+};
+
+//search for specific row components
+Tabulator.prototype.searchRows = function(field, type, value){
+	if(this.modExists("filter", true)){
+		return this.modules.filter.search("rows", field, type, value);
+	}
+};
+
+//search for specific data
+Tabulator.prototype.searchData = function(field, type, value){
+	if(this.modExists("filter", true)){
+		return this.modules.filter.search("data", field, type, value);
+	}
 };
 
 //get table html
@@ -1343,7 +1378,7 @@ Tabulator.prototype.setGroupHeader = function(values){
 
 Tabulator.prototype.getGroups = function(values){
 	if(this.modExists("groupRows", true)){
-		return this.modules.groupRows.getGroups();
+		return this.modules.groupRows.getGroups(true);
 	}else{
 		return false;
 	}
@@ -1571,7 +1606,8 @@ Tabulator.prototype.helpers = {
 	},
 
 	deepClone: function(obj){
-		var clone = {};
+		var clone = Array.isArray(obj) ? [] : {};
+
 		for(var i in obj) {
 			if(obj[i] != null && typeof(obj[i])  === "object"){
 				clone[i] = this.deepClone(obj[i]);

@@ -1,4 +1,4 @@
-/* Tabulator v4.0.5 (c) Oliver Folkerd */
+/* Tabulator v4.1.0 (c) Oliver Folkerd */
 
 'use strict';
 
@@ -1035,7 +1035,7 @@ Column.prototype.createGroupElement = function () {
 
 Column.prototype.setField = function (field) {
 	this.field = field;
-	this.fieldStructure = field ? field.split(".") : [];
+	this.fieldStructure = field ? this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field] : [];
 	this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
 	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
 };
@@ -1100,7 +1100,15 @@ Column.prototype._buildHeader = function () {
 
 	while (self.element.firstChild) {
 		self.element.removeChild(self.element.firstChild);
-	}self.contentElement = self._bindEvents();
+	}if (def.headerVertical) {
+		self.element.classList.add("tabulator-col-vertical");
+
+		if (def.headerVertical === "flip") {
+			self.element.classList.add("tabulator-col-vertical-flip");
+		}
+	}
+
+	self.contentElement = self._bindEvents();
 
 	self.contentElement = self._buildColumnHeaderContent();
 
@@ -1426,7 +1434,22 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
 		contents = formatter.call(this.table.modules.format, mockCell, params);
 
-		el.appendChild(contents);
+		switch (typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) {
+			case "object":
+				if (contents instanceof Node) {
+					this.element.appendChild(contents);
+				} else {
+					this.element.innerHTML = "";
+					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+				}
+				break;
+			case "undefined":
+			case "null":
+				this.element.innerHTML = "";
+				break;
+			default:
+				this.element.innerHTML = contents;
+		}
 	} else {
 		el.innerHTML = title;
 	}
@@ -2311,7 +2334,7 @@ RowManager.prototype.findAddRowPos = function (pos) {
 };
 
 RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
-	var row = new Row(data || {}, this),
+	var row = data instanceof Row ? data : new Row(data || {}, this),
 	    top = this.findAddRowPos(pos),
 	    dispRows;
 
@@ -2789,6 +2812,26 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 
 					if (displayIndex !== true) {
 						table.modules.groupRows.setDisplayIndex(displayIndex);
+					}
+				}
+			} else {
+				skipStage = false;
+			}
+
+		case "tree":
+
+			if (!skipStage) {
+				if (table.options.dataTree && table.modExists("dataTree")) {
+					if (!table.modules.dataTree.getDisplayIndex()) {
+						table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
+					}
+
+					displayIndex = table.modules.dataTree.getDisplayIndex();
+
+					displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+					if (displayIndex !== true) {
+						table.modules.dataTree.setDisplayIndex(displayIndex);
 					}
 				}
 			} else {
@@ -3364,7 +3407,10 @@ RowManager.prototype._removeBottomRow = function (bottomDiff) {
 	if (bottomDiff >= bottomRowHeight) {
 
 		var rowEl = bottomRow.getElement();
-		rowEl.parentNode.removeChild(rowEl);
+
+		if (rowEl.parentNode) {
+			rowEl.parentNode.removeChild(rowEl);
+		}
 
 		this.vDomBottomPad += bottomRowHeight;
 
@@ -3551,6 +3597,40 @@ RowComponent.prototype.unfreeze = function () {
 	}
 };
 
+RowComponent.prototype.treeCollapse = function () {
+	if (this._row.table.modExists("dataTree", true)) {
+		this._row.table.modules.dataTree.collapseRow(this._row);
+	}
+};
+
+RowComponent.prototype.treeExpand = function () {
+	if (this._row.table.modExists("dataTree", true)) {
+		this._row.table.modules.dataTree.expandRow(this._row);
+	}
+};
+
+RowComponent.prototype.treeToggle = function () {
+	if (this._row.table.modExists("dataTree", true)) {
+		this._row.table.modules.dataTree.toggleRow(this._row);
+	}
+};
+
+RowComponent.prototype.getTreeParent = function () {
+	if (this._row.table.modExists("dataTree", true)) {
+		return this._row.table.modules.dataTree.getTreeParent(this._row);
+	}
+
+	return false;
+};
+
+RowComponent.prototype.getTreeChildren = function () {
+	if (this._row.table.modExists("dataTree", true)) {
+		return this._row.table.modules.dataTree.getTreeChildren(this._row);
+	}
+
+	return false;
+};
+
 RowComponent.prototype.reformat = function () {
 	return this._row.reinitialize();
 };
@@ -3561,6 +3641,14 @@ RowComponent.prototype.getGroup = function () {
 
 RowComponent.prototype.getTable = function () {
 	return this._row.table;
+};
+
+RowComponent.prototype.getNextRow = function () {
+	return this._row.nextRow();
+};
+
+RowComponent.prototype.getPrevRow = function () {
+	return this._row.prevRow();
 };
 
 var Row = function Row(data, parent) {
@@ -3607,6 +3695,11 @@ Row.prototype.generateElement = function () {
 	//setup movable rows
 	if (self.table.options.movableRows !== false && self.table.modExists("moveRow")) {
 		self.table.modules.moveRow.initializeRow(this);
+	}
+
+	//setup data tree
+	if (self.table.options.dataTree !== false && self.table.modExists("dataTree")) {
+		self.table.modules.dataTree.initializeRow(this);
 	}
 
 	//handle row click events
@@ -3716,6 +3809,11 @@ Row.prototype.initialize = function (force) {
 
 		if (force) {
 			self.normalizeHeight();
+		}
+
+		//setup movable rows
+		if (self.table.options.dataTree && self.table.modExists("dataTree")) {
+			self.table.modules.dataTree.layoutRow(this);
 		}
 
 		//setup movable rows
@@ -3988,6 +4086,16 @@ Row.prototype.getCells = function () {
 	return this.cells;
 };
 
+Row.prototype.nextRow = function () {
+	var row = this.table.rowManager.nextDisplayRow(this, true);
+	return row ? row.getComponent() : false;
+};
+
+Row.prototype.prevRow = function () {
+	var row = this.table.rowManager.prevDisplayRow(this, true);
+	return row ? row.getComponent() : false;
+};
+
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function () {
@@ -4020,9 +4128,16 @@ Row.prototype.deleteActual = function () {
 		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
+	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
+	// 	this.table.modules.dataTree.collapseRow(this, true);
+	// }
+
 	this.table.rowManager.deleteRow(this);
 
 	this.deleteCells();
+
+	this.initialized = false;
+	this.heightInitialized = false;
 
 	//remove from group
 	if (this.modules.group) {
@@ -4353,7 +4468,12 @@ Cell.prototype._generateContents = function () {
 
 	switch (typeof val === 'undefined' ? 'undefined' : _typeof(val)) {
 		case "object":
-			this.element.appendChild(val);
+			if (val instanceof Node) {
+				this.element.appendChild(val);
+			} else {
+				this.element.innerHTML = "";
+				console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+			}
 			break;
 		case "undefined":
 		case "null":
@@ -4777,12 +4897,16 @@ Tabulator.prototype.defaultOptions = {
 
 	data: [], //default starting data
 
+	nestedFieldSeparator: ".", //seperatpr for nested data
+
 	tooltips: false, //Tool tip value
 	tooltipsHeader: false, //Tool tip for headers
 	tooltipGenerationMode: "load", //when to generate tooltips
 
 	initialSort: false, //initial sorting criteria
 	initialFilter: false, //initial filtering criteria
+
+	sortOrderReverse: false, //reverse internal sort ordering
 
 	footerElement: false, //hold footer element
 
@@ -4794,9 +4918,9 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyStyled: true, //formatted table data
 	clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard
 	clipboardCopyFormatter: "table", //convert data to a clipboard string
-	clipboardCopyHeader: true, //include table headers in copt
 	clipboardPasteParser: "table", //convert pasted clipboard data to rows
 	clipboardPasteAction: "insert", //how to insert pasted data into the table
+	clipboardCopyConfig: false, //clipboard config
 
 	clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
 	clipboardPasted: function clipboardPasted() {}, //data has been pasted into the table
@@ -4807,6 +4931,18 @@ Tabulator.prototype.defaultOptions = {
 		return blob;
 	}, //function to manipulate download data
 	downloadComplete: false, //function to manipulate download data
+	downloadConfig: false, //download config
+
+	dataTree: false, //enable data tree
+	dataTreeBranchElement: true, //show data tree branch element
+	dataTreeChildIndent: 9, //data tree child indent in px
+	dataTreeChildField: "_children", //data tre column field to look for child rows
+	dataTreeCollapseElement: false, //data tree row collapse element
+	dataTreeExpandElement: false, //data tree row expand element
+	dataTreeStartExpanded: false,
+	dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
+	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
+
 
 	addRowPos: "bottom", //position to insert blank rows, top|bottom
 
@@ -4849,6 +4985,7 @@ Tabulator.prototype.defaultOptions = {
 	ajaxURLGenerator: false,
 	ajaxParams: {}, //params for ajax loading
 	ajaxConfig: "get", //ajax request type
+	ajaxContentType: "form", //ajax request type
 	ajaxRequestFunc: false, //promise function
 	ajaxLoader: true, //show loader
 	ajaxLoaderLoading: false, //loader element
@@ -4861,6 +4998,7 @@ Tabulator.prototype.defaultOptions = {
 
 	groupBy: false, //enable table grouping and set field to group by
 	groupStartOpen: true, //starting state of group
+	groupValues: false,
 
 	groupHeader: false, //header generation function
 
@@ -5115,6 +5253,10 @@ Tabulator.prototype._buildElement = function () {
 		this.footerManager.activate();
 	}
 
+	if (options.dataTree && this.modExists("dataTree", true)) {
+		mod.dataTree.initialize();
+	}
+
 	if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
 		mod.persistence.initialize(options.persistenceMode, options.persistenceID);
 	}
@@ -5362,6 +5504,20 @@ Tabulator.prototype.getData = function (active) {
 //get table data array count
 Tabulator.prototype.getDataCount = function (active) {
 	return this.rowManager.getDataCount(active);
+};
+
+//search for specific row components
+Tabulator.prototype.searchRows = function (field, type, value) {
+	if (this.modExists("filter", true)) {
+		return this.modules.filter.search("rows", field, type, value);
+	}
+};
+
+//search for specific data
+Tabulator.prototype.searchData = function (field, type, value) {
+	if (this.modExists("filter", true)) {
+		return this.modules.filter.search("data", field, type, value);
+	}
 };
 
 //get table html
@@ -6061,7 +6217,7 @@ Tabulator.prototype.setGroupHeader = function (values) {
 
 Tabulator.prototype.getGroups = function (values) {
 	if (this.modExists("groupRows", true)) {
-		return this.modules.groupRows.getGroups();
+		return this.modules.groupRows.getGroups(true);
 	} else {
 		return false;
 	}
@@ -6285,7 +6441,8 @@ Tabulator.prototype.helpers = {
 	},
 
 	deepClone: function deepClone(obj) {
-		var clone = {};
+		var clone = Array.isArray(obj) ? [] : {};
+
 		for (var i in obj) {
 			if (obj[i] != null && _typeof(obj[i]) === "object") {
 				clone[i] = this.deepClone(obj[i]);

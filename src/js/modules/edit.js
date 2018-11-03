@@ -20,8 +20,14 @@ Edit.prototype.initializeColumn = function(column){
 	//set column editor
 	switch(typeof column.definition.editor){
 		case "string":
+
+		if(column.definition.editor === "tick"){
+			column.definition.editor = "tickCross";
+			console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+		}
+
 		if(self.editors[column.definition.editor]){
-			config.editor = self.editors[column.definition.editor]
+			config.editor = self.editors[column.definition.editor];
 		}else{
 			console.warn("Editor Error - No such editor found: ", column.definition.editor);
 		}
@@ -36,6 +42,12 @@ Edit.prototype.initializeColumn = function(column){
 		if(column.definition.editor === true){
 
 			if(typeof column.definition.formatter !== "function"){
+
+				if(column.definition.formatter === "tick"){
+					column.definition.formatter = "tickCross";
+					console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+				}
+
 				if(self.editors[column.definition.formatter]){
 					config.editor = self.editors[column.definition.formatter];
 				}else{
@@ -155,6 +167,10 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 			if(valid === true){
 				self.clearEditor();
 				cell.setValue(value, true);
+
+				if(self.table.options.dataTree && self.table.modExists("dataTree")){
+					self.table.modules.dataTree.checkForRestyle(cell);
+				}
 			}else{
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
@@ -171,6 +187,10 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	function cancel(){
 		if(self.currentCell === cell){
 			self.cancelEdit();
+
+			if(self.table.options.dataTree && self.table.modExists("dataTree")){
+				self.table.modules.dataTree.checkForRestyle(cell);
+			}
 		}else{
 			// console.warn("Edit Success Error - cannot call cancel on a cell that is no longer being edited");
 		}
@@ -223,21 +243,28 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 
 			//if editor returned, add to DOM, if false, abort edit
 			if(cellEditor !== false){
-				element.classList.add("tabulator-editing");
-				cell.row.getElement().classList.add("tabulator-row-editing");
-				while(element.firstChild) element.removeChild(element.firstChild);
-				element.appendChild(cellEditor);
 
-				//trigger onRendered Callback
-				rendered();
+				if(cellEditor instanceof Node){
+					element.classList.add("tabulator-editing");
+					cell.row.getElement().classList.add("tabulator-row-editing");
+					while(element.firstChild) element.removeChild(element.firstChild);
+					element.appendChild(cellEditor);
 
-				//prevent editing from triggering rowClick event
-				var children = element.children;
+					//trigger onRendered Callback
+					rendered();
 
-				for (var i = 0; i < children.length; i++) {
-					children[i].addEventListener("click", function(e){
-						e.stopPropagation();
-					});
+					//prevent editing from triggering rowClick event
+					var children = element.children;
+
+					for (var i = 0; i < children.length; i++) {
+						children[i].addEventListener("click", function(e){
+							e.stopPropagation();
+						});
+					}
+				}else{
+					console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
+					element.blur();
+					return false;
 				}
 
 			}else{
@@ -282,7 +309,7 @@ Edit.prototype.editors = {
 		});
 
 		function onChange(e){
-			if(input.value != cellValue){
+			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
 				success(input.value);
 			}else{
 				cancel();
@@ -335,7 +362,8 @@ Edit.prototype.editors = {
         });
 
         function onChange(e){
-        	if(input.value != cellValue){
+
+        	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
         		success(input.value);
         		setTimeout(function(){
         			cell.getRow().normalizeHeight();
@@ -509,89 +537,595 @@ Edit.prototype.editors = {
 	},
 
 	//select
-	select: function (cell, onRendered, success, cancel, editorParams) {
-		//create and style select
-		var select = document.createElement("select");
-		var isArray = Array.isArray(editorParams);
+	select:function(cell, onRendered, success, cancel, editorParams){
+		var self = this,
+		cellEl = cell.getElement(),
+		initialValue = cell.getValue(),
+		input = document.createElement("input"),
+		listEl = document.createElement("div"),
+		dataItems = [],
+		displayItems = [],
+		currentItem = {},
+		blurable = true;
 
-		if(typeof editorParams == "function"){
-			editorParams = editorParams(cell);
-			isArray = Array.isArray(editorParams);
+		if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
+			console.warn("DEPRICATION WANRING - values for the select editor must now be passed into the valuse property of the editorParams object, not as the editorParams object");
+			editorParams = {values:editorParams};
 		}
 
-		function optionAppend(element, label, value, disabled){
+		function getUniqueColumnValues(){
+			var output = {},
+			column = cell.getColumn()._getSelf(),
+			data = self.table.getData();
 
-			var option = document.createElement("option");
+			data.forEach(function(row){
+				var val = column.getFieldValue(row);
 
-			option.value = value;
-			option.text = label;
+				if(val !== null && typeof val !== "undefined" && val !== ""){
+					output[val] = true;
+				}
+			});
 
-			if(disabled){
-				option.disabled = true;
+			return Object.keys(output);
+		}
+
+		function parseItems(inputValues, curentValue){
+			var dataList = [];
+			var displayList = [];
+
+			function processComplexListItem(item){
+				var item = {
+					label:editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label) : item.label,
+					value:item.value,
+					element:false,
+				};
+
+				if(item.value === curentValue){
+					setCurrentItem(item);
+				}
+
+				dataList.push(item);
+				displayList.push(item);
+
+				return item;
 			}
 
-			element.appendChild(option);
-		}
+			if(typeof inputValues == "function"){
+				inputValues = inputValues(cell);
+			}
 
-		function processOption(element, option){
-			var groupEl;
+			if(Array.isArray(inputValues)){
+				inputValues.forEach(function(value){
+					var item;
 
-			if(option.options){
-				groupEl = document.createElement("optgroup");
+					if(typeof value === "object"){
 
-				groupEl.setAttribute("lavel", option.label);
+						if(value.options){
+							item = {
+								label:value.label,
+								group:true,
+								element:false,
+							};
 
-				option.options.forEach(function(item){
-					processOption(groupEl, item);
+							displayList.push(item);
+
+							value.options.forEach(function(item){
+								processComplexListItem(item);
+							});
+						}else{
+							processComplexListItem(value);
+						}
+
+					}else{
+						item = {
+							label:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
+							value:value,
+							element:false,
+						};
+
+						if(item.value === curentValue){
+							setCurrentItem(item);
+						}
+
+						dataList.push(item);
+						displayList.push(item);
+					}
 				});
-
-				element.appendChild(groupEl);
 			}else{
-				optionAppend(element, typeof option.label == "undefined" ? option.value : option.label,  typeof option.value == "undefined" ? option.label : option.value, option.disabled);
+				for(var key in inputValues){
+					var item = {
+						label:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
+						value:key,
+						element:false,
+					};
+
+					if(item.value === curentValue){
+						setCurrentItem(item);
+					}
+
+					dataList.push(item);
+					displayList.push(item);
+				}
 			}
+
+			dataItems = dataList;
+			displayItems = displayList;
+
+			fillList();
 		}
 
-		if(!isArray && typeof editorParams === "object"){
-			for(var key in editorParams){
-				optionAppend(select, editorParams[key], key)
-			}
-		}else if (isArray){
-			editorParams.forEach(function(item){
-				processOption(select, item);
+		function fillList(){
+			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+
+			displayItems.forEach(function(item){
+				var el = item.element;
+
+				if(!el){
+
+					if(item.group){
+						el = document.createElement("div");
+						el.classList.add("tabulator-edit-select-list-group");
+						el.tabIndex = 0;
+						el.innerHTML = item.label;
+					}else{
+						el = document.createElement("div");
+						el.classList.add("tabulator-edit-select-list-item");
+						el.tabIndex = 0;
+						el.innerHTML = item.label;
+
+						el.addEventListener("click", function(){
+							setCurrentItem(item);
+							chooseItem();
+						});
+
+						if(item === currentItem){
+							el.classList.add("active");
+						}
+					}
+
+					el.addEventListener("mousedown", function(){
+						blurable = false;
+
+						setTimeout(function(){
+							blurable = true;
+						}, 10);
+					});
+
+					item.element = el;
+
+
+				}
+
+				listEl.appendChild(el);
 			});
 		}
 
-		//create and style input
-		select.style.padding = "4px";
-		select.style.width = "100%";
-		select.style.boxSizing = "border-box";
-		select.style.fontFamily = "";
 
-		select.value = cell.getValue();
+		function setCurrentItem(item){
 
-		onRendered(function () {
-			select.focus();
-		});
+			if(currentItem && currentItem.element){
+				currentItem.element.classList.remove("active");
+			}
 
-		//submit new value on blur
-		function onChange(e) {
-			if(select.selectedIndex > -1){
-				success(select.options[select.selectedIndex].value);
+			currentItem = item;
+			input.value = item.label;
+
+			if(item.element){
+				item.element.classList.add("active");
+			}
+		}
+
+
+		function chooseItem(){
+			hideList();
+
+			if(initialValue !== currentItem.value){
+				success(currentItem.value);
 			}else{
 				cancel();
 			}
 		}
 
-		select.addEventListener("change", onChange);
-		select.addEventListener("blur", onChange);
+		function cancelItem(){
+			hideList();
+			cancel();
+		}
 
-		//submit new value on enter
-		select.addEventListener("keydown", function (e) {
-			if (e.keyCode === 13) {
-				success(select.options[select.selectedIndex].value);
+		function showList(){
+			if(!listEl.parentNode){
+
+				if(editorParams.values === true){
+					parseItems(getUniqueColumnValues(), initialValue);
+				}else{
+					parseItems(editorParams.values || [], initialValue);
+				}
+
+
+				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
+
+				listEl.style.minWidth = cellEl.offsetWidth + "px";
+
+				listEl.style.top = (offset.top + cellEl.offsetHeight) + "px";
+				listEl.style.left = offset.left + "px";
+				document.body.appendChild(listEl);
+			}
+		}
+
+		function hideList(){
+			if(listEl.parentNode){
+				listEl.parentNode.removeChild(listEl);
+			}
+		}
+
+		//style input
+		input.setAttribute("type", "text");
+
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+		input.readonly = true;
+
+		//allow key based navigation
+		input.addEventListener("keydown", function(e){
+			var index;
+
+			switch(e.keyCode){
+				case 38: //up arrow
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+
+				index = dataItems.indexOf(currentItem);
+
+				if(index > 0){
+					setCurrentItem(dataItems[index - 1]);
+				}
+				break;
+
+				case 40: //down arrow
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+
+				index = dataItems.indexOf(currentItem);
+
+				if(index < dataItems.length - 1){
+					if(index == -1){
+						setCurrentItem(dataItems[0]);
+					}else{
+						setCurrentItem(dataItems[index + 1]);
+					}
+				}
+				break;
+
+				case 13: //enter
+				chooseItem();
+				break;
+
+				case 27: //escape
+				cancelItem();
+				break;
 			}
 		});
-		return select;
+
+		input.addEventListener("blur", function(e){
+			if(blurable){
+				cancelItem();
+			}
+		});
+
+		input.addEventListener("focus", function(e){
+			showList();
+		});
+
+		//style list element
+		listEl = document.createElement("div");
+		listEl.classList.add("tabulator-edit-select-list");
+
+		onRendered(function(){
+			input.style.height = "100%";
+			input.focus();
+		});
+
+		return input;
+	},
+
+
+	//autocomplete
+	autocomplete:function(cell, onRendered, success, cancel, editorParams){
+		var self = this,
+		cellEl = cell.getElement(),
+		initialValue = cell.getValue(),
+		input = document.createElement("input"),
+		listEl = document.createElement("div"),
+		allItems = [],
+		displayItems = [],
+		currentItem = {},
+		blurable = true;
+
+		function getUniqueColumnValues(){
+			var output = {},
+			column = cell.getColumn()._getSelf(),
+			data = self.table.getData();
+
+			data.forEach(function(row){
+				var val = column.getFieldValue(row);
+
+				if(val !== null && typeof val !== "undefined" && val !== ""){
+					output[val] = true;
+				}
+			});
+
+			return Object.keys(output);
+		}
+
+		function parseItems(inputValues, curentValue){
+			var itemList = [];
+
+			if(Array.isArray(inputValues)){
+				inputValues.forEach(function(value){
+					var item = {
+						title:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
+						value:value,
+						element:false,
+					};
+
+					if(item.value === curentValue){
+						setCurrentItem(item);
+					}
+
+					itemList.push(item);
+				});
+			}else{
+				for(var key in inputValues){
+					var item = {
+						title:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
+						value:key,
+						element:false,
+					};
+
+					if(item.value === curentValue){
+						setCurrentItem(item);
+					}
+
+					itemList.push(item);
+				}
+			}
+
+			allItems = itemList;
+		}
+
+		function filterList(term){
+			var matches = [];
+
+			if(editorParams.searchFunc){
+				matches = editorParams.searchFunc(term, values);
+			}else{
+				if(term === ""){
+
+					if(editorParams.showListOnEmpty){
+						allItems.forEach(function(item){
+							matches.push(item);
+						});
+					}
+				}else{
+					allItems.forEach(function(item){
+
+						if(item.value !== null || typeof item.value !== "undefined"){
+							if(String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1){
+								matches.push(item);
+							}
+						}
+					});
+				}
+			}
+
+			displayItems = matches;
+
+			fillList();
+		}
+
+		function fillList(){
+			var current = false;
+
+			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+
+			displayItems.forEach(function(item){
+				var el = item.element;
+
+				if(!el){
+					el = document.createElement("div");
+					el.classList.add("tabulator-edit-select-list-item");
+					el.tabIndex = 0;
+					el.innerHTML = item.title;
+
+					el.addEventListener("click", function(){
+						setCurrentItem(item);
+						chooseItem();
+					});
+
+					el.addEventListener("mousedown", function(){
+						blurable = false;
+
+						setTimeout(function(){
+							blurable = true;
+						}, 10);
+					});
+
+					item.element = el;
+
+					if(item === currentItem){
+						item.element.classList.add("active");
+						current = true;
+					}
+				}
+
+				listEl.appendChild(el);
+			});
+
+			if(!current){
+				setCurrentItem(false);
+			}
+		}
+
+
+		function setCurrentItem(item, showInputValue){
+			if(currentItem && currentItem.element){
+				currentItem.element.classList.remove("active");
+			}
+
+			currentItem = item;
+
+			if(item && item.element){
+				item.element.classList.add("active");
+			}
+		}
+
+
+		function chooseItem(){
+			hideList();
+
+			if(currentItem){
+				if(initialValue !== currentItem.value){
+					initialValue = currentItem.value;
+					input.value = currentItem.value;
+					success(input.value);
+				}else{
+					cancel();
+				}
+			}else{
+				if(editorParams.freetext){
+					initialValue = input.value;
+					success(input.value);
+				}else{
+					if(editorParams.allowEmpty && input.value === ""){
+						initialValue = input.value;
+						success(input.value);
+					}else{
+						cancel();
+					}
+				}
+			}
+		}
+
+		function cancelItem(){
+			hideList();
+			cancel();
+		}
+
+		function showList(){
+			if(!listEl.parentNode){
+				while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+
+				if(editorParams.values === true){
+					parseItems(getUniqueColumnValues(), initialValue);
+				}else{
+					parseItems(editorParams.values || [], initialValue);
+				}
+
+				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
+
+				listEl.style.minWidth = cellEl.offsetWidth + "px";
+
+				listEl.style.top = (offset.top + cellEl.offsetHeight) + "px";
+				listEl.style.left = offset.left + "px";
+				document.body.appendChild(listEl);
+			}
+		}
+
+		function hideList(){
+			if(listEl.parentNode){
+				listEl.parentNode.removeChild(listEl);
+			}
+		}
+
+		//style input
+		input.setAttribute("type", "text");
+
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		//allow key based navigation
+		input.addEventListener("keydown", function(e){
+			var index;
+
+			switch(e.keyCode){
+				case 38: //up arrow
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+
+				index = displayItems.indexOf(currentItem);
+
+				if(index > 0){
+					setCurrentItem(displayItems[index - 1]);
+				}else{
+					setCurrentItem(false);
+				}
+				break;
+
+				case 40: //down arrow
+				e.stopImmediatePropagation();
+				e.stopPropagation();
+
+				index = displayItems.indexOf(currentItem);
+
+				if(index < displayItems.length - 1){
+					if(index == -1){
+						setCurrentItem(displayItems[0]);
+					}else{
+						setCurrentItem(displayItems[index + 1]);
+					}
+				}
+				break;
+
+				case 13: //enter
+				chooseItem();
+				break;
+
+				case 27: //escape
+				cancelItem();
+				break;
+			}
+		});
+
+		input.addEventListener("keyup", function(e){
+
+			switch(e.keyCode){
+				case 38: //up arrow
+				case 37: //left arrow
+				case 39: //up arrow
+				case 40: //right arrow
+				case 13: //enter
+				case 27: //escape
+				break;
+
+				default:
+				filterList(input.value);
+			}
+
+		});
+
+		input.addEventListener("blur", function(e){
+			if(blurable){
+				chooseItem();
+			}
+		});
+
+		input.addEventListener("focus", function(e){
+			showList();
+			input.value = initialValue;
+			filterList(initialValue);
+		});
+
+		//style list element
+		listEl = document.createElement("div");
+		listEl.classList.add("tabulator-edit-select-list");
+
+		onRendered(function(){
+			input.style.height = "100%";
+			input.focus();
+		});
+
+		return input;
 	},
 
 	//start rating
@@ -830,13 +1364,21 @@ Edit.prototype.editors = {
 	//checkbox
 	tickCross:function(cell, onRendered, success, cancel, editorParams){
 		var value = cell.getValue(),
-		input = document.createElement("input");
+		input = document.createElement("input"),
+		tristate = editorParams.tristate,
+		indetermValue = typeof editorParams.indeterminateValue === "undefined" ? null : editorParams.indeterminateValue,
+		indetermState = false;
 
 		input.setAttribute("type", "checkbox");
 		input.style.marginTop = "5px";
 		input.style.boxSizing = "border-box";
 
 		input.value = value;
+
+		if(tristate && (typeof value === "undefined" || value === indetermValue || value === "")){
+			indetermState = true;
+			input.indeterminate = true;
+		}
 
 		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 			onRendered(function(){
@@ -846,60 +1388,35 @@ Edit.prototype.editors = {
 
 		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
-		//submit new value on blur
-		input.addEventListener("change", function(e){
-			success(input.checked);
-		});
-
-		input.addEventListener("blur", function(e){
-			success(input.checked);
-		});
-
-		//submit new value on enter
-		input.addEventListener("keydown", function(e){
-			if(e.keyCode == 13){
-				success(input.checked);
+		function setValue(){
+			if(tristate){
+				if(input.checked && !indetermState){
+					input.checked = false;
+					input.indeterminate = true;
+					indetermState = true;
+					return indetermValue;
+				}else{
+					indetermState = false;
+					return input.checked;
+				}
+			}else{
+				return input.checked;
 			}
-			if(e.keyCode == 27){
-				cancel();
-			}
-		});
-
-		return input;
-	},
-
-	//checkbox
-	tick:function(cell, onRendered, success, cancel, editorParams){
-		var value = cell.getValue(),
-		input = document.createElement("input");
-
-		input.setAttribute("type", "checkbox");
-		input.style.marginTop = "5px";
-		input.style.boxSizing = "border-box";
-
-		input.value = value;
-
-		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
-			onRendered(function(){
-				input.focus();
-			});
 		}
 
-		input.checked = value === true || value === "true" || value === "True" || value === 1;
-
 		//submit new value on blur
 		input.addEventListener("change", function(e){
-			success(input.checked);
+			success(setValue());
 		});
 
 		input.addEventListener("blur", function(e){
-			success(input.checked);
+			success(setValue());
 		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){
 			if(e.keyCode == 13){
-				success(input.checked);
+				success(setValue());
 			}
 			if(e.keyCode == 27){
 				cancel();

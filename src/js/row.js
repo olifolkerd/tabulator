@@ -83,6 +83,40 @@ RowComponent.prototype.unfreeze = function(){
 	}
 };
 
+RowComponent.prototype.treeCollapse = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		this._row.table.modules.dataTree.collapseRow(this._row);
+	}
+};
+
+RowComponent.prototype.treeExpand = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		this._row.table.modules.dataTree.expandRow(this._row);
+	}
+};
+
+RowComponent.prototype.treeToggle = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		this._row.table.modules.dataTree.toggleRow(this._row);
+	}
+};
+
+RowComponent.prototype.getTreeParent = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		return this._row.table.modules.dataTree.getTreeParent(this._row);
+	}
+
+	return false;
+};
+
+RowComponent.prototype.getTreeChildren = function(){
+	if(this._row.table.modExists("dataTree", true)){
+		return this._row.table.modules.dataTree.getTreeChildren(this._row);
+	}
+
+	return false;
+};
+
 RowComponent.prototype.reformat = function(){
 	return this._row.reinitialize();
 };
@@ -93,6 +127,14 @@ RowComponent.prototype.getGroup = function(){
 
 RowComponent.prototype.getTable = function(){
 	return this._row.table;
+};
+
+RowComponent.prototype.getNextRow = function(){
+	return this._row.nextRow();
+};
+
+RowComponent.prototype.getPrevRow = function(){
+	return this._row.prevRow();
 };
 
 
@@ -139,6 +181,11 @@ Row.prototype.generateElement = function(){
 	//setup movable rows
 	if(self.table.options.movableRows !== false && self.table.modExists("moveRow")){
 		self.table.modules.moveRow.initializeRow(this);
+	}
+
+	//setup data tree
+	if(self.table.options.dataTree !== false && self.table.modExists("dataTree")){
+		self.table.modules.dataTree.initializeRow(this);
 	}
 
 	//handle row click events
@@ -251,6 +298,11 @@ Row.prototype.initialize = function(force){
 
 		if(force){
 			self.normalizeHeight();
+		}
+
+		//setup movable rows
+		if(self.table.options.dataTree && self.table.modExists("dataTree")){
+			self.table.modules.dataTree.layoutRow(this);
 		}
 
 		//setup movable rows
@@ -526,6 +578,16 @@ Row.prototype.getCells = function(){
 	return this.cells;
 };
 
+Row.prototype.nextRow = function(){
+	var row = this.table.rowManager.nextDisplayRow(this, true);
+	return row ? row.getComponent() : false;
+};
+
+Row.prototype.prevRow = function(){
+	var row = this.table.rowManager.prevDisplayRow(this, true);
+	return row ? row.getComponent() : false;
+};
+
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function(){
@@ -557,9 +619,16 @@ Row.prototype.deleteActual = function(){
 		this.table.modules.selectRow._deselectRow(this.row, true);
 	}
 
+	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
+	// 	this.table.modules.dataTree.collapseRow(this, true);
+	// }
+
 	this.table.rowManager.deleteRow(this);
 
 	this.deleteCells();
+
+	this.initialized = false;
+	this.heightInitialized = false;
 
 	//remove from group
 	if(this.modules.group){
