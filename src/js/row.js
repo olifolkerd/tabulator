@@ -616,7 +616,7 @@ Row.prototype.deleteActual = function(){
 
 	//deselect row if it is selected
 	if(this.table.modExists("selectRow")){
-		this.table.modules.selectRow._deselectRow(this.row, true);
+		this.table.modules.selectRow._deselectRow(this, true);
 	}
 
 	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
