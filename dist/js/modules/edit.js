@@ -26,7 +26,7 @@ Edit.prototype.initializeColumn = function (column) {
 
 			if (column.definition.editor === "tick") {
 				column.definition.editor = "tickCross";
-				console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+				console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 			}
 
 			if (self.editors[column.definition.editor]) {
@@ -48,7 +48,7 @@ Edit.prototype.initializeColumn = function (column) {
 
 					if (column.definition.formatter === "tick") {
 						column.definition.formatter = "tickCross";
-						console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+						console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 					}
 
 					if (self.editors[column.definition.formatter]) {

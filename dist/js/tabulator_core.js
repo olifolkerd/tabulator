@@ -4908,7 +4908,6 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyStyled: true, //formatted table data
 	clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard
 	clipboardCopyFormatter: "table", //convert data to a clipboard string
-	clipboardCopyHeader: true, //include table headers in copt
 	clipboardPasteParser: "table", //convert pasted clipboard data to rows
 	clipboardPasteAction: "insert", //how to insert pasted data into the table
 	clipboardCopyConfig: false, //clipboard config

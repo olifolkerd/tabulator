@@ -18,7 +18,7 @@ Format.prototype.initializeColumn = function(column){
 				column.definition.formatterParams.crossElement = false;
 			}
 
-			console.warn("DEFPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
+			console.warn("DEPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
 		}
 
 		if(self.formatters[column.definition.formatter]){

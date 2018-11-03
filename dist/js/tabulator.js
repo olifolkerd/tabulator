@@ -6277,8 +6277,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardCopyFormatter: "table", //convert data to a clipboard string
 
-		clipboardCopyHeader: true, //include table headers in copt
-
 		clipboardPasteParser: "table", //convert pasted clipboard data to rows
 
 		clipboardPasteAction: "insert", //how to insert pasted data into the table
@@ -10145,6 +10143,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			rowGroups: true
 		};
 
+		if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
+
+			config.columnHeaders = this.table.options.clipboardCopyHeader;
+
+			console.warn("DEPRICATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
+		}
+
 		if (this.table.options.clipboardCopyConfig) {
 			for (var key in this.table.options.clipboardCopyConfig) {
 				config[key] = this.table.options.clipboardCopyConfig[key];
@@ -10293,7 +10298,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			this.setSelector(selector);
-			this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.table.options.clipboardCopyHeader;
+			this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.config.columnHeaders;
 			this.setFormatter(formatter);
 			this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
@@ -12005,7 +12010,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (column.definition.editor === "tick") {
 					column.definition.editor = "tickCross";
-					console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+					console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 				}
 
 				if (self.editors[column.definition.editor]) {
@@ -12027,7 +12032,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						if (column.definition.formatter === "tick") {
 							column.definition.formatter = "tickCross";
-							console.warn("DEFPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+							console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 						}
 
 						if (self.editors[column.definition.formatter]) {
@@ -13602,7 +13607,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						column.definition.formatterParams.crossElement = false;
 					}
 
-					console.warn("DEFPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
+					console.warn("DEPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
 				}
 
 				if (self.formatters[column.definition.formatter]) {

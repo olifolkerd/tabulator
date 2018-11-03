@@ -66,6 +66,14 @@ Clipboard.prototype.processConfig = function(){
 		rowGroups:true,
 	};
 
+
+	if(typeof this.table.options.clipboardCopyHeader !== "undefined"){
+
+		config.columnHeaders = this.table.options.clipboardCopyHeader;
+
+		console.warn("DEPRICATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
+	}
+
 	if(this.table.options.clipboardCopyConfig){
 		for(var key in this.table.options.clipboardCopyConfig){
 			config[key] = this.table.options.clipboardCopyConfig[key];
@@ -219,7 +227,7 @@ Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatt
 		}
 
 		this.setSelector(selector);
-		this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.table.options.clipboardCopyHeader;
+		this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.config.columnHeaders;
 		this.setFormatter(formatter);
 		this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
