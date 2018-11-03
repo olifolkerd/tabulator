@@ -1705,7 +1705,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				case "object":
 
-					this.element.appendChild(contents);
+					if (contents instanceof Node) {
+
+						this.element.appendChild(contents);
+					} else {
+
+						this.element.innerHTML = "";
+
+						console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+					}
 
 					break;
 
@@ -5667,7 +5675,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			case "object":
 
-				this.element.appendChild(val);
+				if (val instanceof Node) {
+
+					this.element.appendChild(val);
+				} else {
+
+					this.element.innerHTML = "";
+
+					console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+				}
 
 				break;
 
@@ -12264,22 +12280,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				//if editor returned, add to DOM, if false, abort edit
 				if (cellEditor !== false) {
-					element.classList.add("tabulator-editing");
-					cell.row.getElement().classList.add("tabulator-row-editing");
-					while (element.firstChild) {
-						element.removeChild(element.firstChild);
-					}element.appendChild(cellEditor);
 
-					//trigger onRendered Callback
-					rendered();
+					if (cellEditor instanceof Node) {
+						element.classList.add("tabulator-editing");
+						cell.row.getElement().classList.add("tabulator-row-editing");
+						while (element.firstChild) {
+							element.removeChild(element.firstChild);
+						}element.appendChild(cellEditor);
 
-					//prevent editing from triggering rowClick event
-					var children = element.children;
+						//trigger onRendered Callback
+						rendered();
 
-					for (var i = 0; i < children.length; i++) {
-						children[i].addEventListener("click", function (e) {
-							e.stopPropagation();
-						});
+						//prevent editing from triggering rowClick event
+						var children = element.children;
+
+						for (var i = 0; i < children.length; i++) {
+							children[i].addEventListener("click", function (e) {
+								e.stopPropagation();
+							});
+						}
+					} else {
+						console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
+						element.blur();
+						return false;
 					}
 				} else {
 					element.blur();
@@ -13137,6 +13160,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				params = typeof params === "function" ? params.call(self.table) : params;
 
 				editorElement = editor.call(this.table.modules.edit, cellWrapper, function () {}, success, cancel, params);
+
+				if (!editorElement) {
+					console.warn("Filter Error - Cannot add filter to " + field + " column, editor returned a value of false");
+					return;
+				}
+
+				if (!(editorElement instanceof Node)) {
+					console.warn("Filter Error - Cannot add filter to " + field + " column, editor should return an instance of Node, the editor returned:", editorElement);
+					return;
+				}
 
 				//set Placeholder Text
 				if (field) {

@@ -194,6 +194,16 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 
 			editorElement = editor.call(this.table.modules.edit, cellWrapper, function () {}, success, cancel, params);
 
+			if (!editorElement) {
+				console.warn("Filter Error - Cannot add filter to " + field + " column, editor returned a value of false");
+				return;
+			}
+
+			if (!(editorElement instanceof Node)) {
+				console.warn("Filter Error - Cannot add filter to " + field + " column, editor should return an instance of Node, the editor returned:", editorElement);
+				return;
+			}
+
 			//set Placeholder Text
 			if (field) {
 				self.table.modules.localize.bind("headerFilters|columns|" + column.definition.field, function (value) {

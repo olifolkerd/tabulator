@@ -1436,7 +1436,12 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 
 		switch (typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) {
 			case "object":
-				this.element.appendChild(contents);
+				if (contents instanceof Node) {
+					this.element.appendChild(contents);
+				} else {
+					this.element.innerHTML = "";
+					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+				}
 				break;
 			case "undefined":
 			case "null":
@@ -4463,7 +4468,12 @@ Cell.prototype._generateContents = function () {
 
 	switch (typeof val === 'undefined' ? 'undefined' : _typeof(val)) {
 		case "object":
-			this.element.appendChild(val);
+			if (val instanceof Node) {
+				this.element.appendChild(val);
+			} else {
+				this.element.innerHTML = "";
+				console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+			}
 			break;
 		case "undefined":
 		case "null":

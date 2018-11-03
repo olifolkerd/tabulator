@@ -597,7 +597,12 @@ Column.prototype._formatColumnHeaderTitle = function(el, title){
 
 		switch(typeof contents){
 			case "object":
-			this.element.appendChild(contents);
+			if(contents instanceof Node){
+				this.element.appendChild(contents);
+			}else{
+				this.element.innerHTML = "";
+				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
+			}
 			break;
 			case "undefined":
 			case "null":

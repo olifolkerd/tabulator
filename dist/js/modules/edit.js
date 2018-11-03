@@ -248,22 +248,29 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 
 			//if editor returned, add to DOM, if false, abort edit
 			if (cellEditor !== false) {
-				element.classList.add("tabulator-editing");
-				cell.row.getElement().classList.add("tabulator-row-editing");
-				while (element.firstChild) {
-					element.removeChild(element.firstChild);
-				}element.appendChild(cellEditor);
 
-				//trigger onRendered Callback
-				rendered();
+				if (cellEditor instanceof Node) {
+					element.classList.add("tabulator-editing");
+					cell.row.getElement().classList.add("tabulator-row-editing");
+					while (element.firstChild) {
+						element.removeChild(element.firstChild);
+					}element.appendChild(cellEditor);
 
-				//prevent editing from triggering rowClick event
-				var children = element.children;
+					//trigger onRendered Callback
+					rendered();
 
-				for (var i = 0; i < children.length; i++) {
-					children[i].addEventListener("click", function (e) {
-						e.stopPropagation();
-					});
+					//prevent editing from triggering rowClick event
+					var children = element.children;
+
+					for (var i = 0; i < children.length; i++) {
+						children[i].addEventListener("click", function (e) {
+							e.stopPropagation();
+						});
+					}
+				} else {
+					console.warn("Edit Error - Editor should return an instance of Node, the editor returned:", cellEditor);
+					element.blur();
+					return false;
 				}
 			} else {
 				element.blur();
