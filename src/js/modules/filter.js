@@ -234,8 +234,11 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 			column.modules.filter.tagType = editorElement.tagName.toLowerCase();
 
 			if(column.definition.headerFilterLiveFilter !== false){
-				editorElement.addEventListener("keyup", searchTrigger);
-				editorElement.addEventListener("search", searchTrigger);
+
+				if(!(column.definition.headerFilter === "autocomplete" || (column.definition.editor === "autocomplete" && column.definition.headerFilter === true))){
+					editorElement.addEventListener("keyup", searchTrigger);
+					editorElement.addEventListener("search", searchTrigger);
+
 
 				//update number filtered columns on change
 				if(column.modules.filter.attrType == "number"){
@@ -249,6 +252,8 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 					editorElement.setAttribute("type", "search");
 					// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
 				}
+
+			}
 
 				//prevent input and select elements from propegating click to column sorters etc
 				if(column.modules.filter.tagType == "input" || column.modules.filter.tagType == "select" || column.modules.filter.tagType == "textarea"){

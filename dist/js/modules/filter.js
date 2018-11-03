@@ -239,20 +239,23 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 			column.modules.filter.tagType = editorElement.tagName.toLowerCase();
 
 			if (column.definition.headerFilterLiveFilter !== false) {
-				editorElement.addEventListener("keyup", searchTrigger);
-				editorElement.addEventListener("search", searchTrigger);
 
-				//update number filtered columns on change
-				if (column.modules.filter.attrType == "number") {
-					editorElement.addEventListener("change", function (e) {
-						success(editorElement.value);
-					});
-				}
+				if (!(column.definition.headerFilter === "autocomplete" || column.definition.editor === "autocomplete" && column.definition.headerFilter === true)) {
+					editorElement.addEventListener("keyup", searchTrigger);
+					editorElement.addEventListener("search", searchTrigger);
 
-				//change text inputs to search inputs to allow for clearing of field
-				if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
-					editorElement.setAttribute("type", "search");
-					// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+					//update number filtered columns on change
+					if (column.modules.filter.attrType == "number") {
+						editorElement.addEventListener("change", function (e) {
+							success(editorElement.value);
+						});
+					}
+
+					//change text inputs to search inputs to allow for clearing of field
+					if (column.modules.filter.attrType == "text" && this.table.browser !== "ie") {
+						editorElement.setAttribute("type", "search");
+						// editorElement.off("change blur"); //prevent blur from triggering filter and preventing selection click
+					}
 				}
 
 				//prevent input and select elements from propegating click to column sorters etc

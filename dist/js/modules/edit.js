@@ -736,7 +736,11 @@ Edit.prototype.editors = {
 					index = displayItems.indexOf(currentItem);
 
 					if (index < displayItems.length - 1) {
-						setCurrentItem(displayItems[index + 1]);
+						if (index == -1) {
+							setCurrentItem(displayItems[0]);
+						} else {
+							setCurrentItem(displayItems[index + 1]);
+						}
 					}
 					break;
 
@@ -760,6 +764,309 @@ Edit.prototype.editors = {
 
 		input.addEventListener("focus", function (e) {
 			showList();
+		});
+
+		//style list element
+		listEl = document.createElement("div");
+		listEl.classList.add("tabulator-edit-select-list");
+
+		onRendered(function () {
+			input.style.height = "100%";
+			input.focus();
+		});
+
+		return input;
+	},
+
+	//autocomplete
+	autocomplete: function autocomplete(cell, onRendered, success, cancel, editorParams) {
+		var self = this,
+		    cellEl = cell.getElement(),
+		    initialValue = cell.getValue(),
+		    input = document.createElement("input"),
+		    listEl = document.createElement("div"),
+		    allItems = [],
+		    displayItems = [],
+		    currentItem = {},
+		    blurable = true;
+
+		function getUniqueColumnValues() {
+			var output = {},
+			    column = cell.getColumn()._getSelf(),
+			    data = self.table.getData();
+
+			data.forEach(function (row) {
+				var val = column.getFieldValue(row);
+
+				if (val !== null && typeof val !== "undefined" && val !== "") {
+					output[val] = true;
+				}
+			});
+
+			return Object.keys(output);
+		}
+
+		function parseItems(inputValues, curentValue) {
+			var itemList = [];
+
+			if (Array.isArray(inputValues)) {
+				inputValues.forEach(function (value) {
+					var item = {
+						title: editorParams.searchFunc ? editorParams.searchFunc(value, value) : value,
+						value: value,
+						active: false,
+						elsement: false
+					};
+
+					if (item.value === curentValue) {
+						setCurrentItem(item);
+					}
+
+					itemList.push(item);
+				});
+			} else {
+				for (var key in inputValues) {
+					var item = {
+						title: editorParams.searchFunc ? editorParams.searchFunc(key, inputValues[key]) : inputValues[key],
+						value: key,
+						active: false,
+						elsement: false
+					};
+
+					if (item.value === curentValue) {
+						setCurrentItem(item);
+					}
+
+					itemList.push(item);
+				}
+			}
+
+			allItems = itemList;
+		}
+
+		function filterList(term) {
+			var matches = [];
+
+			if (editorParams.searchFunc) {
+				matches = editorParams.searchFunc(term, values);
+			} else {
+				if (term === "") {
+
+					if (editorParams.showListOnEmpty) {
+						allItems.forEach(function (item) {
+							matches.push(item);
+						});
+					}
+				} else {
+					allItems.forEach(function (item) {
+
+						if (item.value !== null || typeof item.value !== "undefined") {
+							if (String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1) {
+								matches.push(item);
+							}
+						}
+					});
+				}
+			}
+
+			displayItems = matches;
+
+			fillList();
+		}
+
+		function fillList() {
+			var current = false;
+
+			while (listEl.firstChild) {
+				listEl.removeChild(listEl.firstChild);
+			}displayItems.forEach(function (item) {
+				var el = item.element;
+
+				if (!el) {
+					el = document.createElement("div");
+					el.classList.add("tabulator-edit-select-list-item");
+					el.tabIndex = 0;
+					el.innerHTML = item.title;
+
+					el.addEventListener("click", function () {
+						setCurrentItem(item);
+						chooseItem();
+					});
+
+					el.addEventListener("mousedown", function () {
+						blurable = false;
+
+						setTimeout(function () {
+							blurable = true;
+						}, 10);
+					});
+
+					item.element = el;
+
+					if (item === currentItem) {
+						item.element.classList.add("active");
+						current = true;
+					}
+				}
+
+				listEl.appendChild(el);
+			});
+
+			if (!current) {
+				setCurrentItem(false);
+			}
+		}
+
+		function setCurrentItem(item, showInputValue) {
+			if (currentItem && currentItem.element) {
+				currentItem.element.classList.remove("active");
+			}
+
+			currentItem = item;
+
+			if (item && item.element) {
+				item.element.classList.add("active");
+			}
+		}
+
+		function chooseItem() {
+			hideList();
+
+			if (currentItem) {
+				if (initialValue !== currentItem.value) {
+					initialValue = currentItem.value;
+					input.value = currentItem.value;
+					success(input.value);
+				} else {
+					cancel();
+				}
+			} else {
+				if (editorParams.freetext) {
+					initialValue = input.value;
+					success(input.value);
+				} else {
+					if (editorParams.allowEmpty && input.value === "") {
+						initialValue = input.value;
+						success(input.value);
+					} else {
+						cancel();
+					}
+				}
+			}
+		}
+
+		function cancelItem() {
+			hideList();
+			cancel();
+		}
+
+		function showList() {
+			if (!listEl.parentNode) {
+				while (listEl.firstChild) {
+					listEl.removeChild(listEl.firstChild);
+				}if (editorParams.values === true) {
+					parseItems(getUniqueColumnValues(), initialValue);
+				} else {
+					parseItems(editorParams.values || [], initialValue);
+				}
+
+				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
+
+				listEl.style.minWidth = cellEl.offsetWidth + "px";
+
+				listEl.style.top = offset.top + cellEl.offsetHeight + "px";
+				listEl.style.left = offset.left + "px";
+				document.body.appendChild(listEl);
+			}
+		}
+
+		function hideList() {
+			if (listEl.parentNode) {
+				listEl.parentNode.removeChild(listEl);
+			}
+		}
+
+		//style input
+		input.setAttribute("type", "text");
+
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		//allow key based navigation
+		input.addEventListener("keydown", function (e) {
+			var index;
+
+			switch (e.keyCode) {
+				case 38:
+					//up arrow
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+
+					index = displayItems.indexOf(currentItem);
+
+					if (index > 0) {
+						setCurrentItem(displayItems[index - 1]);
+					} else {
+						setCurrentItem(false);
+					}
+					break;
+
+				case 40:
+					//down arrow
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+
+					index = displayItems.indexOf(currentItem);
+
+					if (index < displayItems.length - 1) {
+						if (index == -1) {
+							setCurrentItem(displayItems[0]);
+						} else {
+							setCurrentItem(displayItems[index + 1]);
+						}
+					}
+					break;
+
+				case 13:
+					//enter
+					chooseItem();
+					break;
+
+				case 27:
+					//escape
+					cancelItem();
+					break;
+			}
+		});
+
+		input.addEventListener("keyup", function (e) {
+
+			switch (e.keyCode) {
+				case 38: //up arrow
+				case 37: //left arrow
+				case 39: //up arrow
+				case 40: //right arrow
+				case 13: //enter
+				case 27:
+					//escape
+					break;
+
+				default:
+					filterList(input.value);
+			}
+		});
+
+		input.addEventListener("blur", function (e) {
+			if (blurable) {
+				chooseItem();
+			}
+		});
+
+		input.addEventListener("focus", function (e) {
+			showList();
+			input.value = initialValue;
+			filterList(initialValue);
 		});
 
 		//style list element
