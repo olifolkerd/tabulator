@@ -4985,6 +4985,7 @@ Tabulator.prototype.defaultOptions = {
 	ajaxURLGenerator: false,
 	ajaxParams: {}, //params for ajax loading
 	ajaxConfig: "get", //ajax request type
+	ajaxContentType: "form", //ajax request type
 	ajaxRequestFunc: false, //promise function
 	ajaxLoader: true, //show loader
 	ajaxLoaderLoading: false, //loader element

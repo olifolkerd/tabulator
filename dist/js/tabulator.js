@@ -6407,6 +6407,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		ajaxConfig: "get", //ajax request type
 
+		ajaxContentType: "form", //ajax request type
+
 		ajaxRequestFunc: false, //promise function
 
 		ajaxLoader: true, //show loader
@@ -9465,17 +9467,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return encoded.join("&");
 	};
 
-	Ajax.prototype.formDataParams = function (params) {
-		var output = this.generateParamsList(params),
-		    form = new FormData();
-
-		output.forEach(function (item) {
-			form.append(item.key, item.value);
-		});
-
-		return form;
-	};
-
 	//send ajax request
 	Ajax.prototype.sendRequest = function (silent) {
 		var _this17 = this;
@@ -9586,9 +9577,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Ajax.prototype.defaultURLGenerator = function (url, config, params) {
 		if (params) {
 			if (!config.method || config.method.toLowerCase() == "get") {
+				config.method = "get";
 				url += "?" + this.serializeParams(params);
-			} else {
-				config.body = this.formDataParams(params);
 			}
 		}
 
@@ -9596,11 +9586,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Ajax.prototype.defaultLoaderPromise = function (url, config, params) {
-		var self = this;
+		var self = this,
+		    contentType;
 
 		return new Promise(function (resolve, reject) {
 
+			//set url
 			url = self.urlGenerator(url, config, params);
+
+			//set body content if not GET request
+			if (config.method != "get") {
+				contentType = self.contentTypeFormatters[self.table.options.ajaxContentType];
+				if (contentType) {
+
+					for (var key in contentType.headers) {
+						if (!config.headers) {
+							config.headers = {};
+						}
+
+						if (typeof config.headers[key] === "undefined") {
+							config.headers[key] = contentType.headers[key];
+						}
+					}
+
+					config.body = contentType.body.call(self, url, config, params);
+				} else {
+					console.warn("Ajax Error - Invalid ajaxContentType value:", self.table.options.ajaxContentType);
+				}
+			}
 
 			if (url) {
 
@@ -9613,9 +9626,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					config.headers = {};
 				}
 
-				// if(typeof config.headers.Accept === "undefined"){
-				// 	config.headers.Accept = "application/json";
-				// }
+				if (typeof config.headers.Accept === "undefined") {
+					config.headers.Accept = "application/json";
+				}
 
 				if (typeof config.headers["X-Requested-With"] === "undefined") {
 					config.headers["X-Requested-With"] = "XMLHttpRequest";
@@ -9642,6 +9655,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				reject("No URL Set");
 			}
 		});
+	};
+
+	Ajax.prototype.contentTypeFormatters = {
+		"json": {
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: function body(url, config, params) {
+				return JSON.stringify(params);
+			}
+		},
+		"form": {
+			headers: {},
+			body: function body(url, config, params) {
+				var output = this.generateParamsList(params),
+				    form = new FormData();
+
+				output.forEach(function (item) {
+					form.append(item.key, item.value);
+				});
+
+				return form;
+			}
+		}
 	};
 
 	Tabulator.prototype.registerModule("ajax", Ajax);
