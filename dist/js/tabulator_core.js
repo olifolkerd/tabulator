@@ -6445,7 +6445,11 @@ Tabulator.prototype.helpers = {
 
 		for (var i in obj) {
 			if (obj[i] != null && _typeof(obj[i]) === "object") {
-				clone[i] = this.deepClone(obj[i]);
+				if (obj[i] instanceof Date) {
+					clone[i] = new Date(obj[i]);
+				} else {
+					clone[i] = this.deepClone(obj[i]);
+				}
 			} else {
 				clone[i] = obj[i];
 			}
