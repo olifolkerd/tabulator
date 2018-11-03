@@ -79,11 +79,7 @@ Tabulator.prototype.defaultOptions = {
 	downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	downloadComplete:false, //function to manipulate download data
-	downloadConfig:{	//download config
-		columnGroups:false,
-		rowGroups:false,
-		columnCalcs:false,
-	},
+	downloadConfig:false,	//download config
 
 	dataTree:false, //enable data tree
 	dataTreeBranchElement: true, //show data tree branch element

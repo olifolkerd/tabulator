@@ -6299,15 +6299,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		downloadComplete: false, //function to manipulate download data
 
-		downloadConfig: { //download config
+		downloadConfig: false, //download config
 
-			columnGroups: false,
-
-			rowGroups: false,
-
-			columnCalcs: false
-
-		},
 
 		dataTree: false, //enable data tree
 
@@ -10144,9 +10137,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		};
 
 		if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
-
 			config.columnHeaders = this.table.options.clipboardCopyHeader;
-
 			console.warn("DEPRICATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
 		}
 
@@ -10479,6 +10470,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			columns.forEach(function (column) {
 				var value = column.getFieldValue(rowData);
+
+				switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+					case "object":
+						value = JSON.stringify(value);
+						break;
+
+					case "undefined":
+					case "null":
+						value = "";
+						break;
+
+					default:
+						value = value;
+				}
+
 				rowArray.push(value);
 			});
 
@@ -10718,7 +10724,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				columns.forEach(function (column, j) {
 					var cellEl = document.createElement("td"),
 					    value = column.getFieldValue(rowData);
-					cellEl.innerHTML = typeof value === "undefined" ? "" : value;
+
+					switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+						case "object":
+							value = JSON.stringify(value);
+							break;
+
+						case "undefined":
+						case "null":
+							value = "";
+							break;
+
+						default:
+							value = value;
+					}
 
 					if (column.definition.align) {
 						cellEl.style.textAlign = column.definition.align;
@@ -11305,7 +11324,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Download.prototype.processConfig = function () {
-		var config = this.table.options.downloadConfig;
+		var config = { //download config
+			columnGroups: true,
+			rowGroups: true
+		};
+
+		if (this.table.options.downloadConfig) {
+			for (var key in this.table.options.downloadConfig) {
+				config[key] = this.table.options.downloadConfig[key];
+			}
+		}
 
 		if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
 			this.config.rowGroups = true;
@@ -11902,7 +11930,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						var rowData = [];
 
 						fields.forEach(function (field) {
-							rowData.push(self.getFieldValue(field, row));
+							var value = self.getFieldValue(field, row);
+
+							rowData.push((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object" ? JSON.stringify(value) : value);
 						});
 
 						rows.push(rowData);

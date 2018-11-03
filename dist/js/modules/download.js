@@ -42,7 +42,16 @@ Download.prototype.download = function (type, filename, options, interceptCallba
 };
 
 Download.prototype.processConfig = function () {
-	var config = this.table.options.downloadConfig;
+	var config = { //download config
+		columnGroups: true,
+		rowGroups: true
+	};
+
+	if (this.table.options.downloadConfig) {
+		for (var key in this.table.options.downloadConfig) {
+			config[key] = this.table.options.downloadConfig[key];
+		}
+	}
 
 	if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
 		this.config.rowGroups = true;
@@ -639,7 +648,9 @@ Download.prototype.downloaders = {
 					var rowData = [];
 
 					fields.forEach(function (field) {
-						rowData.push(self.getFieldValue(field, row));
+						var value = self.getFieldValue(field, row);
+
+						rowData.push((typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? JSON.stringify(value) : value);
 					});
 
 					rows.push(rowData);
