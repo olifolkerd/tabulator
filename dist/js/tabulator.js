@@ -12323,7 +12323,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			function onChange(e) {
-				if (input.value != cellValue) {
+				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
 					success(input.value);
 				} else {
 					cancel();
@@ -12376,7 +12376,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			function onChange(e) {
-				if (input.value != cellValue) {
+
+				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
 					success(input.value);
 					setTimeout(function () {
 						cell.getRow().normalizeHeight();

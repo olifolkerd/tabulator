@@ -307,7 +307,7 @@ Edit.prototype.editors = {
 		});
 
 		function onChange(e) {
-			if (input.value != cellValue) {
+			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
 				success(input.value);
 			} else {
 				cancel();
@@ -360,7 +360,8 @@ Edit.prototype.editors = {
 		});
 
 		function onChange(e) {
-			if (input.value != cellValue) {
+
+			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
 				success(input.value);
 				setTimeout(function () {
 					cell.getRow().normalizeHeight();
