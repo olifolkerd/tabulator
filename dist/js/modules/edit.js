@@ -670,12 +670,12 @@ Edit.prototype.editors = {
 						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-group");
 						el.tabIndex = 0;
-						el.innerHTML = item.label;
+						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 					} else {
 						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-item");
 						el.tabIndex = 0;
-						el.innerHTML = item.label;
+						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 						el.addEventListener("click", function () {
 							setCurrentItem(item);
@@ -709,7 +709,7 @@ Edit.prototype.editors = {
 			}
 
 			currentItem = item;
-			input.value = item.label;
+			input.value = item.label === "&nbsp;" ? "" : item.label;
 
 			if (item.element) {
 				item.element.classList.add("active");
@@ -720,6 +720,7 @@ Edit.prototype.editors = {
 			hideList();
 
 			if (initialValue !== currentItem.value) {
+				initialValue = currentItem.value;
 				success(currentItem.value);
 			} else {
 				cancel();

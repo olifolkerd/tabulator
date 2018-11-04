@@ -170,6 +170,9 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 				getElement:function(){
 					return filterElement;
 				},
+				getColumn:function(){
+					return column.getComponent();
+				},
 				getRow:function(){
 					return {
 						normalizeHeight:function(){

@@ -178,6 +178,9 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 				getElement: function getElement() {
 					return filterElement;
 				},
+				getColumn: function getColumn() {
+					return column.getComponent();
+				},
 				getRow: function getRow() {
 					return {
 						normalizeHeight: function normalizeHeight() {}

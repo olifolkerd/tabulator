@@ -6345,7 +6345,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		selectable: "highlight", //highlight rows on hover
 
-		selectableRangeType: "drag", //highlight rows on hover
+		selectableRangeMode: "drag", //highlight rows on hover
 
 		selectableRollingSelection: true, //roll selection once maximum number of selectable rows is reached
 
@@ -12759,12 +12759,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							el = document.createElement("div");
 							el.classList.add("tabulator-edit-select-list-group");
 							el.tabIndex = 0;
-							el.innerHTML = item.label;
+							el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 						} else {
 							el = document.createElement("div");
 							el.classList.add("tabulator-edit-select-list-item");
 							el.tabIndex = 0;
-							el.innerHTML = item.label;
+							el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 							el.addEventListener("click", function () {
 								setCurrentItem(item);
@@ -12798,7 +12798,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				currentItem = item;
-				input.value = item.label;
+				input.value = item.label === "&nbsp;" ? "" : item.label;
 
 				if (item.element) {
 					item.element.classList.add("active");
@@ -12809,6 +12809,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				hideList();
 
 				if (initialValue !== currentItem.value) {
+					initialValue = currentItem.value;
 					success(currentItem.value);
 				} else {
 					cancel();
@@ -13706,6 +13707,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					},
 					getElement: function getElement() {
 						return filterElement;
+					},
+					getColumn: function getColumn() {
+						return column.getComponent();
 					},
 					getRow: function getRow() {
 						return {
