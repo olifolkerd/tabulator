@@ -801,6 +801,47 @@ GroupRows.prototype.getGroups = function (compoment) {
 	return groupComponents;
 };
 
+GroupRows.prototype.pullGroupListData = function (groupList) {
+	var self = this;
+	var groupListData = [];
+
+	groupList.forEach(function (group) {
+		var groupHeader = {};
+		groupHeader.level = 0;
+		groupHeader.rowCount = 0;
+		groupHeader.headerContent = "";
+		var childData = [];
+
+		if (group.hasSubGroups) {
+			childData = self.pullGroupListData(group.groupList);
+
+			groupHeader.level = group.level;
+			groupHeader.rowCount = childData.length - group.groupList.length; // data length minus number of sub-headers
+			groupHeader.headerContent = group.generator(group.key, groupHeader.rowCount, group.rows, group);
+
+			groupListData.push(groupHeader);
+			groupListData = groupListData.concat(childData);
+		} else {
+			groupHeader.level = group.level;
+			groupHeader.headerContent = group.generator(group.key, group.rows.length, group.rows, group);
+			groupHeader.rowCount = group.getRows().length;
+
+			groupListData.push(groupHeader);
+
+			group.getRows().forEach(function (row) {
+				groupListData.push(row.getData("data"));
+			});
+		}
+	});
+
+	return groupListData;
+};
+
+GroupRows.prototype.getGroupedData = function () {
+
+	return this.pullGroupListData(this.groupList);
+};
+
 GroupRows.prototype.getRowGroup = function (row) {
 	var match = false;
 

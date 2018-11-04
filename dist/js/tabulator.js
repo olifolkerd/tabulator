@@ -6273,6 +6273,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		initialFilter: false, //initial filtering criteria
 
 
+		columnHeaderSortMulti: true, //multiple or single column sorting
+
+
 		sortOrderReverse: false, //reverse internal sort ordering
 
 
@@ -6341,6 +6344,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 		selectable: "highlight", //highlight rows on hover
+
+		selectableRangeType: "drag", //highlight rows on hover
 
 		selectableRollingSelection: true, //roll selection once maximum number of selectable rows is reached
 
@@ -8125,6 +8130,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else {
 
 			return false;
+		}
+	};
+
+	// get grouped table data in the same format as getData()
+
+	Tabulator.prototype.getGroupedData = function () {
+
+		if (this.modExists("groupRows", true)) {
+
+			return this.options.groupBy ? this.modules.groupRows.getGroupedData() : this.getData();
 		}
 	};
 
@@ -15793,6 +15808,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return groupComponents;
 	};
 
+	GroupRows.prototype.pullGroupListData = function (groupList) {
+		var self = this;
+		var groupListData = [];
+
+		groupList.forEach(function (group) {
+			var groupHeader = {};
+			groupHeader.level = 0;
+			groupHeader.rowCount = 0;
+			groupHeader.headerContent = "";
+			var childData = [];
+
+			if (group.hasSubGroups) {
+				childData = self.pullGroupListData(group.groupList);
+
+				groupHeader.level = group.level;
+				groupHeader.rowCount = childData.length - group.groupList.length; // data length minus number of sub-headers
+				groupHeader.headerContent = group.generator(group.key, groupHeader.rowCount, group.rows, group);
+
+				groupListData.push(groupHeader);
+				groupListData = groupListData.concat(childData);
+			} else {
+				groupHeader.level = group.level;
+				groupHeader.headerContent = group.generator(group.key, group.rows.length, group.rows, group);
+				groupHeader.rowCount = group.getRows().length;
+
+				groupListData.push(groupHeader);
+
+				group.getRows().forEach(function (row) {
+					groupListData.push(row.getData("data"));
+				});
+			}
+		});
+
+		return groupListData;
+	};
+
+	GroupRows.prototype.getGroupedData = function () {
+
+		return this.pullGroupListData(this.groupList);
+	};
+
 	GroupRows.prototype.getRowGroup = function (row) {
 		var match = false;
 
@@ -18585,12 +18641,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var SelectRow = function SelectRow(table) {
 		this.table = table; //hold Tabulator object
 		this.selecting = false; //flag selecting in progress
+		this.lastClickedRow = false; //last clicked row
 		this.selectPrev = []; //hold previously selected element for drag drop selection
 		this.selectedRows = []; //hold selected rows
 	};
 
 	SelectRow.prototype.clearSelectionData = function (silent) {
 		this.selecting = false;
+		this.lastClickedRow = false;
 		this.selectPrev = [];
 		this.selectedRows = [];
 
@@ -18621,42 +18679,78 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			element.classList.remove("tabulator-unselectable");
 
 			if (self.table.options.selectable && self.table.options.selectable != "highlight") {
-				element.addEventListener("click", function (e) {
-					if (!self.selecting) {
-						self.toggleRow(row);
-					}
-				});
+				if (self.table.options.selectableRangeType && self.table.options.selectableRangeType === "click") {
+					element.addEventListener("click", function (e) {
+						if (e.shiftKey) {
+							self.lastClickedRow = self.lastClickedRow || row;
 
-				element.addEventListener("mousedown", function (e) {
-					if (e.shiftKey) {
-						self.selecting = true;
+							var lastClickedRowIdx = self.table.rowManager.getDisplayRowIndex(self.lastClickedRow);
+							var rowIdx = self.table.rowManager.getDisplayRowIndex(row);
 
-						self.selectPrev = [];
+							var fromRowIdx = lastClickedRowIdx <= rowIdx ? lastClickedRowIdx : rowIdx;
+							var toRowIdx = lastClickedRowIdx >= rowIdx ? lastClickedRowIdx : rowIdx;
 
-						document.body.addEventListener("mouseup", endSelect);
-						document.body.addEventListener("keyup", endSelect);
+							var rows = self.table.rowManager.getDisplayRows().slice(0);
+							var toggledRows = rows.splice(fromRowIdx, toRowIdx - fromRowIdx + 1);
 
-						self.toggleRow(row);
-
-						return false;
-					}
-				});
-
-				element.addEventListener("mouseenter", function (e) {
-					if (self.selecting) {
-						self.toggleRow(row);
-
-						if (self.selectPrev[1] == row) {
-							self.toggleRow(self.selectPrev[0]);
+							if (e.ctrlKey) {
+								toggledRows.forEach(function (toggledRow) {
+									if (toggledRow !== self.lastClickedRow) {
+										self.toggleRow(toggledRow);
+									}
+								});
+								self.lastClickedRow = row;
+							} else {
+								self.deselectRows();
+								self.selectRows(toggledRows);
+							}
+						} else if (e.ctrlKey) {
+							self.toggleRow(row);
+							self.lastClickedRow = row;
+						} else {
+							self.deselectRows();
+							self.selectRows(row);
+							self.lastClickedRow = row;
 						}
-					}
-				});
+					});
+				} else {
+					element.addEventListener("click", function (e) {
+						if (!self.selecting) {
+							self.toggleRow(row);
+						}
+					});
 
-				element.addEventListener("mouseout", function (e) {
-					if (self.selecting) {
-						self.selectPrev.unshift(row);
-					}
-				});
+					element.addEventListener("mousedown", function (e) {
+						if (e.shiftKey) {
+							self.selecting = true;
+
+							self.selectPrev = [];
+
+							document.body.addEventListener("mouseup", endSelect);
+							document.body.addEventListener("keyup", endSelect);
+
+							self.toggleRow(row);
+
+							return false;
+						}
+					});
+
+					element.addEventListener("mouseenter", function (e) {
+						if (self.selecting) {
+							self.toggleRow(row);
+
+							if (self.selectPrev[1] == row) {
+								self.toggleRow(self.selectPrev[0]);
+							}
+						}
+					});
+
+					element.addEventListener("mouseout", function (e) {
+						if (self.selecting) {
+							self.selectPrev.unshift(row);
+						}
+					});
+				}
 			}
 		} else {
 			element.classList.add("tabulator-unselectable");
@@ -18834,6 +18928,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("selectRow", SelectRow);
+
 	var Sort = function Sort(table) {
 		this.table = table; //hold Tabulator object
 		this.sortList = []; //holder current sort
@@ -18887,7 +18982,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (column.modules.sort) {
 					dir = column.modules.sort.dir == "asc" ? "desc" : column.modules.sort.dir == "desc" ? "asc" : column.modules.sort.startingDir;
 
-					if (e.shiftKey || e.ctrlKey) {
+					if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
 						sorters = self.getSort();
 
 						match = sorters.findIndex(function (sorter) {
@@ -19357,6 +19452,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("sort", Sort);
+
 	var Validate = function Validate(table) {
 		this.table = table;
 	};

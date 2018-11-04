@@ -4906,6 +4906,8 @@ Tabulator.prototype.defaultOptions = {
 	initialSort: false, //initial sorting criteria
 	initialFilter: false, //initial filtering criteria
 
+	columnHeaderSortMulti: true, //multiple or single column sorting
+
 	sortOrderReverse: false, //reverse internal sort ordering
 
 	footerElement: false, //hold footer element
@@ -4947,6 +4949,7 @@ Tabulator.prototype.defaultOptions = {
 	addRowPos: "bottom", //position to insert blank rows, top|bottom
 
 	selectable: "highlight", //highlight rows on hover
+	selectableRangeType: "drag", //highlight rows on hover
 	selectableRollingSelection: true, //roll selection once maximum number of selectable rows is reached
 	selectablePersistence: true, // maintain selection when table view is updated
 	selectableCheck: function selectableCheck(data, row) {
@@ -6220,6 +6223,13 @@ Tabulator.prototype.getGroups = function (values) {
 		return this.modules.groupRows.getGroups(true);
 	} else {
 		return false;
+	}
+};
+
+// get grouped table data in the same format as getData()
+Tabulator.prototype.getGroupedData = function () {
+	if (this.modExists("groupRows", true)) {
+		return this.options.groupBy ? this.modules.groupRows.getGroupedData() : this.getData();
 	}
 };
 

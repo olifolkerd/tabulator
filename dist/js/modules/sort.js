@@ -55,7 +55,7 @@ Sort.prototype.initializeColumn = function (column, content) {
 			if (column.modules.sort) {
 				dir = column.modules.sort.dir == "asc" ? "desc" : column.modules.sort.dir == "desc" ? "asc" : column.modules.sort.startingDir;
 
-				if (e.shiftKey || e.ctrlKey) {
+				if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
 					sorters = self.getSort();
 
 					match = sorters.findIndex(function (sorter) {
