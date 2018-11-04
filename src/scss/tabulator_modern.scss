@@ -965,6 +965,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	overflow-y:auto;
 	-webkit-overflow-scrolling: touch;
 
+	z-index: 10000;
+
 	.tabulator-edit-select-list-item{
 		padding:4px;
 

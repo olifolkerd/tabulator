@@ -924,6 +924,8 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 	overflow-y:auto;
 	-webkit-overflow-scrolling: touch;
 
+	z-index: 10000;
+
 	.tabulator-edit-select-list-item{
 		padding:4px;
 
