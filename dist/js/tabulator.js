@@ -14239,8 +14239,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (column.definition.formatter === "tick") {
 					column.definition.formatter = "tickCross";
 
-					if (typeof column.definition.formatterParams.crossElement == "undefined") {
-						column.definition.formatterParams.crossElement = false;
+					if (typeof config.params.crossElement == "undefined") {
+						config.params.crossElement = false;
 					}
 
 					console.warn("DEPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
