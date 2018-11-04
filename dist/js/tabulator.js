@@ -18679,7 +18679,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			element.classList.remove("tabulator-unselectable");
 
 			if (self.table.options.selectable && self.table.options.selectable != "highlight") {
-				if (self.table.options.selectableRangeType && self.table.options.selectableRangeType === "click") {
+				if (self.table.options.selectableRangeMode && self.table.options.selectableRangeMode === "click") {
 					element.addEventListener("click", function (e) {
 						if (e.shiftKey) {
 							self.lastClickedRow = self.lastClickedRow || row;
