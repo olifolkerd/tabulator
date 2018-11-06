@@ -9429,7 +9429,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.getElement().clientHeight * 2;
 
 			if (diff < margin) {
-				this.table.modules.page.nextPage();
+				this.table.modules.page.nextPage().then(function () {}).catch(function () {
+					;
+				});
 			}
 		}
 	};
