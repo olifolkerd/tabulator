@@ -9429,9 +9429,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.getElement().clientHeight * 2;
 
 			if (diff < margin) {
-				this.table.modules.page.nextPage().then(function () {}).catch(function () {
-					;
-				});
+				this.table.modules.page.nextPage().then(function () {}).catch(function () {});
 			}
 		}
 	};
@@ -17515,7 +17513,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 
 		self.nextBut.addEventListener("click", function () {
-			self.nextPage();
+			self.nextPage().then(function () {}).catch(function () {});
 		});
 
 		self.lastBut.addEventListener("click", function () {
@@ -17866,7 +17864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
 						if (this.page < this.max) {
 							setTimeout(function () {
-								self.nextPage();
+								self.nextPage().then(function () {}).catch(function () {});
 							}, self.table.options.ajaxProgressiveLoadDelay);
 						}
 						break;
@@ -17879,7 +17877,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element.clientHeight * 2;
 
 						if (self.table.rowManager.element.scrollHeight <= self.table.rowManager.element.clientHeight + margin) {
-							self.nextPage();
+							self.nextPage().then(function () {}).catch(function () {});
 						}
 						break;
 				}

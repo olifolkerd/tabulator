@@ -107,7 +107,7 @@ Page.prototype.initialize = function(hidden){
 	});
 
 	self.nextBut.addEventListener("click", function(){
-		self.nextPage();
+		self.nextPage().then(()=>{}).catch(()=>{});
 	});
 
 	self.lastBut.addEventListener("click", function(){
@@ -301,7 +301,7 @@ Page.prototype.nextPage = function(){
 			if(!this.progressiveLoad){
 				console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);
 			}
-			reject()
+			reject();
 		}
 	});
 };
@@ -458,7 +458,7 @@ Page.prototype._parseRemoteData = function(data){
 				this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
 				if(this.page < this.max){
 					setTimeout(function(){
-						self.nextPage();
+						self.nextPage().then(()=>{}).catch(()=>{});
 					}, self.table.options.ajaxProgressiveLoadDelay);
 				}
 				break;
@@ -471,7 +471,7 @@ Page.prototype._parseRemoteData = function(data){
 				margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
 				if(self.table.rowManager.element.scrollHeight <= (self.table.rowManager.element.clientHeight + margin)){
-					self.nextPage();
+					self.nextPage().then(()=>{}).catch(()=>{});
 				}
 				break;
 			}

@@ -150,8 +150,7 @@ Ajax.prototype.nextPage = function(diff){
 
 		if(diff < margin){
 			this.table.modules.page.nextPage()
-			.then(()=>{}).catch(()=>{;
-			});
+			.then(()=>{}).catch(()=>{});
 		}
 	}
 };

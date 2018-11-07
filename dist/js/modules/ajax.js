@@ -153,9 +153,7 @@ Ajax.prototype.nextPage = function (diff) {
 		margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.getElement().clientHeight * 2;
 
 		if (diff < margin) {
-			this.table.modules.page.nextPage().then(function () {}).catch(function () {
-				;
-			});
+			this.table.modules.page.nextPage().then(function () {}).catch(function () {});
 		}
 	}
 };
