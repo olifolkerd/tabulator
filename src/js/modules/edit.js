@@ -1389,16 +1389,24 @@ Edit.prototype.editors = {
 
 		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
-		function setValue(){
+		function setValue(blur){
 			if(tristate){
-				if(input.checked && !indetermState){
-					input.checked = false;
-					input.indeterminate = true;
-					indetermState = true;
-					return indetermValue;
+				if(!blur){
+					if(input.checked && !indetermState){
+						input.checked = false;
+						input.indeterminate = true;
+						indetermState = true;
+						return indetermValue;
+					}else{
+						indetermState = false;
+						return input.checked;
+					}
 				}else{
-					indetermState = false;
-					return input.checked;
+					if(indetermState){
+						return indetermValue;
+					}else{
+						return input.checked;
+					}
 				}
 			}else{
 				return input.checked;
@@ -1411,7 +1419,7 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("blur", function(e){
-			success(setValue());
+			success(setValue(true));
 		});
 
 		//submit new value on enter
