@@ -109,6 +109,8 @@ FrozenColumns.prototype.layout = function(){
 
 			self.layoutColumn(column);
 		});
+
+		this.table.rowManager.tableElement.style.marginRight = this.rightMargin + "px";
 	}
 };
 

@@ -14867,6 +14867,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				self.layoutColumn(column);
 			});
+
+			this.table.rowManager.tableElement.style.marginRight = this.rightMargin + "px";
 		}
 	};
 
@@ -18414,7 +18416,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//generate resposive columns list
 	ResponsiveLayout.prototype.initialize = function () {
-		var columns = [];
+		var self = this,
+		    columns = [];
 
 		this.mode = this.table.options.responsiveLayout;
 		this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
@@ -18428,8 +18431,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					column.modules.responsive.index = i;
 					columns.push(column);
 
-					if (!column.visible && this.mode === "collapse") {
-						this.hiddenColumns.push(column);
+					if (!column.visible && self.mode === "collapse") {
+						self.hiddenColumns.push(column);
 					}
 				}
 			}
@@ -18642,6 +18645,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("responsiveLayout", ResponsiveLayout);
+
 	var SelectRow = function SelectRow(table) {
 		this.table = table; //hold Tabulator object
 		this.selecting = false; //flag selecting in progress
