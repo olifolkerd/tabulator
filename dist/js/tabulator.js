@@ -10212,7 +10212,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
 			config.columnHeaders = this.table.options.clipboardCopyHeader;
-			console.warn("DEPRICATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
+			console.warn("DEPRECATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
 		}
 
 		if (this.table.options.clipboardCopyConfig) {
@@ -12115,7 +12115,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (column.definition.editor === "tick") {
 					column.definition.editor = "tickCross";
-					console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+					console.warn("DEPRECATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 				}
 
 				if (self.editors[column.definition.editor]) {
@@ -12137,7 +12137,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						if (column.definition.formatter === "tick") {
 							column.definition.formatter = "tickCross";
-							console.warn("DEPRICATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+							console.warn("DEPRECATION WANRING - the tick editor has been depricated, please use the tickCross editor");
 						}
 
 						if (self.editors[column.definition.formatter]) {
@@ -12643,7 +12643,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    blurable = true;
 
 			if (Array.isArray(editorParams) || !Array.isArray(editorParams) && (typeof editorParams === 'undefined' ? 'undefined' : _typeof(editorParams)) === "object" && !editorParams.values) {
-				console.warn("DEPRICATION WANRING - values for the select editor must now be passed into the valuse property of the editorParams object, not as the editorParams object");
+				console.warn("DEPRECATION WANRING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
 				editorParams = { values: editorParams };
 			}
 

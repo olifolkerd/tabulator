@@ -554,7 +554,7 @@ Edit.prototype.editors = {
 		    blurable = true;
 
 		if (Array.isArray(editorParams) || !Array.isArray(editorParams) && (typeof editorParams === "undefined" ? "undefined" : _typeof(editorParams)) === "object" && !editorParams.values) {
-			console.warn("DEPRECATION WANRING - values for the select editor must now be passed into the valuse property of the editorParams object, not as the editorParams object");
+			console.warn("DEPRECATION WANRING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
 			editorParams = { values: editorParams };
 		}
 
