@@ -5,6 +5,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var Mutator = function Mutator(table) {
 	this.table = table; //hold Tabulator object
 	this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
+	this.enabled = true;
 };
 
 //initialize column mutator
@@ -63,23 +64,26 @@ Mutator.prototype.transformRow = function (data, type, update) {
 	    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 	    value;
 
-	self.table.columnManager.traverse(function (column) {
-		var mutator, params, component;
+	if (this.enabled) {
 
-		if (column.modules.mutate) {
-			mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
+		self.table.columnManager.traverse(function (column) {
+			var mutator, params, component;
 
-			if (mutator) {
-				value = column.getFieldValue(data);
+			if (column.modules.mutate) {
+				mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
-				if (!update || update && typeof value !== "undefined") {
-					component = column.getComponent();
-					params = typeof mutator.params === "function" ? mutator.params(value, data, type, component) : mutator.params;
-					column.setFieldValue(data, mutator.mutator(value, data, type, params, component));
+				if (mutator) {
+					value = column.getFieldValue(data);
+
+					if (!update || update && typeof value !== "undefined") {
+						component = column.getComponent();
+						params = typeof mutator.params === "function" ? mutator.params(value, data, type, component) : mutator.params;
+						column.setFieldValue(data, mutator.mutator(value, data, type, params, component));
+					}
 				}
 			}
-		}
-	});
+		});
+	}
 
 	return data;
 };
@@ -93,6 +97,14 @@ Mutator.prototype.transformCell = function (cell, value) {
 	} else {
 		return value;
 	}
+};
+
+Mutator.prototype.enable = function () {
+	this.enabled = true;
+};
+
+Mutator.prototype.disable = function () {
+	this.enabled = false;
 };
 
 //default mutators

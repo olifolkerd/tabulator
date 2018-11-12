@@ -221,7 +221,17 @@ ColumnCalcs.prototype.rowsToData = function (rows) {
 ColumnCalcs.prototype.generateRow = function (pos, data) {
 	var self = this,
 	    rowData = this.generateRowData(pos, data),
-	    row = new Row(rowData, this);
+	    row;
+
+	if (self.table.modExists("mutator")) {
+		self.table.modules.mutator.disable();
+	}
+
+	row = new Row(rowData, this);
+
+	if (self.table.modExists("mutator")) {
+		self.table.modules.mutator.enable();
+	}
 
 	row.getElement().classList.add("tabulator-calcs", "tabulator-calcs-" + pos);
 	row.type = "calc";
