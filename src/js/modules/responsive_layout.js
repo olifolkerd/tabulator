@@ -10,7 +10,8 @@ var ResponsiveLayout = function(table){
 
 //generate resposive columns list
 ResponsiveLayout.prototype.initialize = function(){
-	var columns=[];
+	var self = this,
+	    columns = [];
 
 	this.mode = this.table.options.responsiveLayout;
 	this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
@@ -24,8 +25,8 @@ ResponsiveLayout.prototype.initialize = function(){
 				column.modules.responsive.index = i;
 				columns.push(column);
 
-				if(!column.visible && this.mode === "collapse"){
-					this.hiddenColumns.push(column);
+				if(!column.visible && self.mode === "collapse"){
+					self.hiddenColumns.push(column);
 				}
 			}
 		}
