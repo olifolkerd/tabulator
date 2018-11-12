@@ -14243,7 +14243,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						config.params.crossElement = false;
 					}
 
-					console.warn("DEPRICATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
+					console.warn("DEPRECATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
 				}
 
 				if (self.formatters[column.definition.formatter]) {

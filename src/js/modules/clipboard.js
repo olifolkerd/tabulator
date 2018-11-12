@@ -68,7 +68,7 @@ Clipboard.prototype.processConfig = function(){
 
 	if(typeof this.table.options.clipboardCopyHeader !== "undefined"){
 		config.columnHeaders = this.table.options.clipboardCopyHeader;
-		console.warn("DEPRICATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
+		console.warn("DEPRECATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
 	}
 
 	if(this.table.options.clipboardCopyConfig){
