@@ -12321,7 +12321,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this.mouseClick = false;
 
 					if (cell.column.cellEvents.cellClick) {
-						cell.column.cellEvents.cellClick.call(this.table, component);
+						cell.column.cellEvents.cellClick.call(this.table, e, component);
 					}
 				}
 

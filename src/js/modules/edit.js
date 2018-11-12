@@ -227,7 +227,7 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 				this.mouseClick = false;
 
 				if(cell.column.cellEvents.cellClick){
-					cell.column.cellEvents.cellClick.call(this.table, component);
+					cell.column.cellEvents.cellClick.call(this.table, e, component);
 				}
 			}
 
