@@ -4045,7 +4045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (forceMove) {
 
-				this.scrollTop = self.vDomTopPad + topPadHeight + offset;
+				this.scrollTop = self.vDomTopPad + topPadHeight + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
 			}
 
 			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);

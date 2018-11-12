@@ -3212,7 +3212,7 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 		element.style.paddingBottom = self.vDomBottomPad + "px";
 
 		if (forceMove) {
-			this.scrollTop = self.vDomTopPad + topPadHeight + offset;
+			this.scrollTop = self.vDomTopPad + topPadHeight + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
 		}
 
 		this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
