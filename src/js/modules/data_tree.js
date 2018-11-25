@@ -166,17 +166,21 @@ DataTree.prototype.getRows = function(rows){
 	var output = [];
 
 	rows.forEach((row, i) => {
-		var config = row.modules.dataTree.children,
-		children;
+		var config, children;
 
 		output.push(row);
 
-		if(!config.index && config.children !== false){
-			children = this.getChildren(row);
+		if(row instanceof Row){
 
-			children.forEach((child) => {
-				output.push(child);
-			});
+			config = row.modules.dataTree.children
+
+			if(!config.index && config.children !== false){
+				children = this.getChildren(row);
+
+				children.forEach((child) => {
+					output.push(child);
+				});
+			}
 		}
 	});
 

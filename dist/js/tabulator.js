@@ -11238,17 +11238,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var output = [];
 
 		rows.forEach(function (row, i) {
-			var config = row.modules.dataTree.children,
-			    children;
+			var config, children;
 
 			output.push(row);
 
-			if (!config.index && config.children !== false) {
-				children = _this25.getChildren(row);
+			if (row instanceof Row) {
 
-				children.forEach(function (child) {
-					output.push(child);
-				});
+				config = row.modules.dataTree.children;
+
+				if (!config.index && config.children !== false) {
+					children = _this25.getChildren(row);
+
+					children.forEach(function (child) {
+						output.push(child);
+					});
+				}
 			}
 		});
 
