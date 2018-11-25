@@ -331,7 +331,7 @@ Group.prototype.removeGroup = function (group) {
 	}
 };
 
-Group.prototype.getHeadersAndRows = function () {
+Group.prototype.getHeadersAndRows = function (noCalc) {
 	var output = [];
 
 	output.push(this);
@@ -342,17 +342,26 @@ Group.prototype.getHeadersAndRows = function () {
 
 		if (this.groupList.length) {
 			this.groupList.forEach(function (group) {
-				output = output.concat(group.getHeadersAndRows());
+				output = output.concat(group.getHeadersAndRows(noCalc));
 			});
 		} else {
-			if (this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
+			if (!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
+				if (this.calcs.top) {
+					this.calcs.top.detachElement();
+				}
+
 				this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 				output.push(this.calcs.top);
 			}
 
 			output = output.concat(this.rows);
 
-			if (this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
+			if (!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
+
+				if (this.calcs.bottom) {
+					this.calcs.bottom.detachElement();
+				}
+
 				this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 				output.push(this.calcs.bottom);
 			}
@@ -360,12 +369,18 @@ Group.prototype.getHeadersAndRows = function () {
 	} else {
 		if (!this.groupList.length && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.options.groupClosedShowCalcs) {
 			if (this.groupManager.table.modExists("columnCalcs")) {
-				if (this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
+				if (!noCalc && this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
+					if (this.calcs.top) {
+						this.calcs.top.detachElement();
+					}
 					this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 					output.push(this.calcs.top);
 				}
 
-				if (this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
+				if (!noCalc && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
+					if (this.calcs.bottom) {
+						this.calcs.bottom.detachElement();
+					}
 					this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 					output.push(this.calcs.bottom);
 				}
@@ -428,23 +443,10 @@ Group.prototype.hide = function () {
 		if (this.groupList.length) {
 			this.groupList.forEach(function (group) {
 
-				var el;
-
-				if (group.calcs.top) {
-					el = group.calcs.top.getElement();
-					el.parentNode.removeChild(el);
-				}
-
-				if (group.calcs.bottom) {
-					el = group.calcs.bottom.getElement();
-					el.parentNode.removeChild(el);
-				}
-
 				var rows = group.getHeadersAndRows();
 
 				rows.forEach(function (row) {
-					var rowEl = row.getElement();
-					rowEl.parentNode.removeChild(rowEl);
+					row.detachElement();
 				});
 			});
 		} else {
@@ -597,6 +599,12 @@ Group.prototype.getElement = function () {
 	// this.addBindings();
 
 	return this.element;
+};
+
+Group.prototype.detachElement = function () {
+	if (this.element && this.element.parentNode) {
+		this.element.parentNode.removeChild(this.element);
+	}
 };
 
 //normalize the height of elements in the row
