@@ -168,6 +168,11 @@ Row.prototype.getElement = function(){
 	return this.element;
 };
 
+Row.prototype.detachElement = function(){
+	if (this.element && this.element.parentNode){
+		this.element.parentNode.removeChild(this.element);
+	}
+};
 
 Row.prototype.generateElement = function(){
 	var self = this,
