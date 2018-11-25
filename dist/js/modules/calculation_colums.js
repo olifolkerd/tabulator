@@ -200,12 +200,10 @@ ColumnCalcs.prototype.recalcGroup = function (group) {
 
 //generate top stats row
 ColumnCalcs.prototype.generateTopRow = function (rows) {
-	console.trace("CALC top");
 	return this.generateRow("top", this.rowsToData(rows));
 };
 //generate bottom stats row
 ColumnCalcs.prototype.generateBottomRow = function (rows) {
-	console.trace("CALC bottom");
 	return this.generateRow("bottom", this.rowsToData(rows));
 };
 
