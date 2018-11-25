@@ -4050,9 +4050,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
 
-			//adjust for horizontal scrollbar if present
+			//adjust for horizontal scrollbar if present (and not at top of table)
 
-			if (this.element.scrollWidth > this.element.offsetWidth) {
+			if (this.element.scrollWidth > this.element.offsetWidth && forceMove) {
 
 				this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
 			}

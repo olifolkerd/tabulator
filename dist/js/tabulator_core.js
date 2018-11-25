@@ -3217,8 +3217,8 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 
 		this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
 
-		//adjust for horizontal scrollbar if present
-		if (this.element.scrollWidth > this.element.offsetWidth) {
+		//adjust for horizontal scrollbar if present (and not at top of table)
+		if (this.element.scrollWidth > this.element.offsetWidth && forceMove) {
 			this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
 		}
 
