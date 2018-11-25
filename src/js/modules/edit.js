@@ -430,6 +430,11 @@ Edit.prototype.editors = {
 		onRendered(function () {
 			input.focus();
 			input.style.height = "100%";
+
+			//submit new value on blur
+			input.addEventListener("blur", function(e){
+				onChange();
+			});
 		});
 
 		function onChange(){
@@ -445,11 +450,6 @@ Edit.prototype.editors = {
 				cancel();
 			}
 		}
-
-		//submit new value on blur
-		input.addEventListener("blur", function(e){
-			onChange();
-		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){

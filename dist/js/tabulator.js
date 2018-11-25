@@ -12546,6 +12546,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			onRendered(function () {
 				input.focus();
 				input.style.height = "100%";
+
+				//submit new value on blur
+				input.addEventListener("blur", function (e) {
+					onChange();
+				});
 			});
 
 			function onChange() {
@@ -12561,11 +12566,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					cancel();
 				}
 			}
-
-			//submit new value on blur
-			input.addEventListener("blur", function (e) {
-				onChange();
-			});
 
 			//submit new value on enter
 			input.addEventListener("keydown", function (e) {
