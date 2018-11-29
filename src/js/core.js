@@ -1250,9 +1250,9 @@ Tabulator.prototype.setMaxPage = function(max){
 
 Tabulator.prototype.setPage = function(page){
 	if(this.options.pagination && this.modExists("page")){
-		this.modules.page.setPage(page);
+		return this.modules.page.setPage(page);
 	}else{
-		return false;
+		return Promise.reject();
 	}
 };
 
