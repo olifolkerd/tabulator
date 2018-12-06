@@ -494,7 +494,10 @@ Column.prototype._buildColumnHeader = function(){
 
 	//asign additional css classes to column header
 	if(def.cssClass){
-		self.element.classList.add(def.cssClass);
+		var classeNames = def.cssClass.split(" ");
+		classeNames.forEach(function(className) {
+			self.element.classList.add(className)
+		});
 	}
 
 	if(def.field){

@@ -123,7 +123,10 @@ Cell.prototype._configureCell = function(){
 	}
 
 	if(self.column.definition.cssClass){
-		element.classList.add(self.column.definition.cssClass);
+		var classNames = self.column.definition.cssClass.split(" ")
+		classNames.forEach(function(className) {
+			element.classList.add(className)
+		});
 	}
 
 	//set event bindings
