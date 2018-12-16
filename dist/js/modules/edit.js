@@ -179,7 +179,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 			} else {
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
-				// self.focusCellNoEvent(cell);
+				self.focusCellNoEvent(cell);
 				rendered();
 				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 			}
@@ -841,6 +841,7 @@ Edit.prototype.editors = {
 		    listEl = document.createElement("div"),
 		    allItems = [],
 		    displayItems = [],
+		    values = [],
 		    currentItem = {},
 		    blurable = true;
 
@@ -896,7 +897,7 @@ Edit.prototype.editors = {
 			allItems = itemList;
 		}
 
-		function filterList(term) {
+		function filterList(term, intialLoad) {
 			var matches = [];
 
 			if (editorParams.searchFunc) {
@@ -913,7 +914,7 @@ Edit.prototype.editors = {
 					allItems.forEach(function (item) {
 
 						if (item.value !== null || typeof item.value !== "undefined") {
-							if (String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1) {
+							if (String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1 || String(item.title).toLowerCase().indexOf(String(term).toLowerCase()) > -1) {
 								matches.push(item);
 							}
 						}
@@ -923,10 +924,10 @@ Edit.prototype.editors = {
 
 			displayItems = matches;
 
-			fillList();
+			fillList(intialLoad);
 		}
 
-		function fillList() {
+		function fillList(intialLoad) {
 			var current = false;
 
 			while (listEl.firstChild) {
@@ -954,6 +955,12 @@ Edit.prototype.editors = {
 					});
 
 					item.element = el;
+
+					if (intialLoad && item.value == initialValue) {
+						input.value = item.title;
+						item.element.classList.add("active");
+						current = true;
+					}
 
 					if (item === currentItem) {
 						item.element.classList.add("active");
@@ -1017,10 +1024,12 @@ Edit.prototype.editors = {
 				while (listEl.firstChild) {
 					listEl.removeChild(listEl.firstChild);
 				}if (editorParams.values === true) {
-					parseItems(getUniqueColumnValues(), initialValue);
+					values = getUniqueColumnValues();
 				} else {
-					parseItems(editorParams.values || [], initialValue);
+					values = editorParams.values || [];
 				}
+
+				parseItems(values, initialValue);
 
 				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
 
@@ -1118,7 +1127,7 @@ Edit.prototype.editors = {
 		input.addEventListener("focus", function (e) {
 			showList();
 			input.value = initialValue;
-			filterList(initialValue);
+			filterList(initialValue, true);
 		});
 
 		//style list element

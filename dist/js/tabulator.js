@@ -12313,7 +12313,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				} else {
 					self.invalidEdit = true;
 					element.classList.add("tabulator-validation-fail");
-					// self.focusCellNoEvent(cell);
+					self.focusCellNoEvent(cell);
 					rendered();
 					self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 				}
@@ -12975,6 +12975,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    listEl = document.createElement("div"),
 			    allItems = [],
 			    displayItems = [],
+			    values = [],
 			    currentItem = {},
 			    blurable = true;
 
@@ -13030,7 +13031,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				allItems = itemList;
 			}
 
-			function filterList(term) {
+			function filterList(term, intialLoad) {
 				var matches = [];
 
 				if (editorParams.searchFunc) {
@@ -13047,7 +13048,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						allItems.forEach(function (item) {
 
 							if (item.value !== null || typeof item.value !== "undefined") {
-								if (String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1) {
+								if (String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1 || String(item.title).toLowerCase().indexOf(String(term).toLowerCase()) > -1) {
 									matches.push(item);
 								}
 							}
@@ -13057,10 +13058,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				displayItems = matches;
 
-				fillList();
+				fillList(intialLoad);
 			}
 
-			function fillList() {
+			function fillList(intialLoad) {
 				var current = false;
 
 				while (listEl.firstChild) {
@@ -13088,6 +13089,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 
 						item.element = el;
+
+						if (intialLoad && item.value == initialValue) {
+							input.value = item.title;
+							item.element.classList.add("active");
+							current = true;
+						}
 
 						if (item === currentItem) {
 							item.element.classList.add("active");
@@ -13151,10 +13158,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					while (listEl.firstChild) {
 						listEl.removeChild(listEl.firstChild);
 					}if (editorParams.values === true) {
-						parseItems(getUniqueColumnValues(), initialValue);
+						values = getUniqueColumnValues();
 					} else {
-						parseItems(editorParams.values || [], initialValue);
+						values = editorParams.values || [];
 					}
+
+					parseItems(values, initialValue);
 
 					var offset = Tabulator.prototype.helpers.elOffset(cellEl);
 
@@ -13252,7 +13261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.addEventListener("focus", function (e) {
 				showList();
 				input.value = initialValue;
-				filterList(initialValue);
+				filterList(initialValue, true);
 			});
 
 			//style list element
