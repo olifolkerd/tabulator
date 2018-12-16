@@ -2028,8 +2028,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.element.style.display = "";
 
-			this.table.columnManager._verticalAlignHeaders();
-
 			if (this.parent.isGroup) {
 
 				this.parent.checkColumnVisibility();
@@ -2039,6 +2037,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				cell.show();
 			});
+
+			if (!this.isGroup && this.width === null) {
+
+				this.reinitializeWidth();
+			}
+
+			this.table.columnManager._verticalAlignHeaders();
 
 			if (this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)) {
 

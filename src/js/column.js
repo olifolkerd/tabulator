@@ -833,8 +833,6 @@ Column.prototype.show = function(silent, responsiveToggle){
 
 		this.element.style.display = "";
 
-		this.table.columnManager._verticalAlignHeaders();
-
 		if(this.parent.isGroup){
 			this.parent.checkColumnVisibility();
 		}
@@ -842,6 +840,12 @@ Column.prototype.show = function(silent, responsiveToggle){
 		this.cells.forEach(function(cell){
 			cell.show();
 		});
+
+		if(!this.isGroup && this.width === null){
+			this.reinitializeWidth();
+		}
+
+		this.table.columnManager._verticalAlignHeaders();
 
 		if(this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)){
 			this.table.modules.persistence.save("columns");
