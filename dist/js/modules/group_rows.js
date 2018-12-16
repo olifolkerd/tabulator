@@ -590,9 +590,9 @@ Group.prototype.getElement = function () {
 		this.element.classList.remove("tabulator-group-visible");
 	}
 
-	this.element.childNodes.forEach(function (child) {
-		child.parentNode.removeChild(child);
-	});
+	for (var i = 0; i < this.element.childNodes.length; ++i) {
+		this.element.childNodes[i].parentNode.removeChild(this.element.childNodes[i]);
+	}
 
 	this.generateGroupHeaderContents();
 
