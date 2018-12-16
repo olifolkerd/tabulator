@@ -220,21 +220,21 @@ Format.prototype.formatters = {
 
 		switch(typeof formatterParams.height){
 			case "number":
-			element.style.height = formatterParams.height + "px";
+			el.style.height = formatterParams.height + "px";
 			break;
 
 			case "string":
-			element.style.height = formatterParams.height;
+			el.style.height = formatterParams.height;
 			break;
 		}
 
 		switch(typeof formatterParams.width){
 			case "number":
-			element.style.width = formatterParams.width + "px";
+			el.style.width = formatterParams.width + "px";
 			break;
 
 			case "string":
-			element.style.width = formatterParams.width;
+			el.style.width = formatterParams.width;
 			break;
 		}
 
