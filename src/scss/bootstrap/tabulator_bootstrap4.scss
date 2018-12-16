@@ -1178,7 +1178,7 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 	max-height:200px;
 
-	background:$rowBackgroundColor;
+	background:$headerBackgroundColor;
 	border:1px solid $rowBorderColor;
 
 	font-size:$textSize;
@@ -1192,14 +1192,14 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		padding:4px;
 
 		&.active{
-			color:$rowBackgroundColor;
+			color:$headerBackgroundColor;
 			background:$editBoxColor;
 		}
 
 		&:hover{
 			cursor:pointer;
 
-			color:$rowBackgroundColor;
+			color:$headerBackgroundColor;
 			background:$editBoxColor;
 		}
 	}

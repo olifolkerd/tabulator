@@ -958,7 +958,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	max-height:200px;
 
 	background:$rowBackgroundColor;
-	border:1px solid $rowBorderColor;
+	border:1px solid $editBoxColor;
 
 	font-size:$textSize;
 

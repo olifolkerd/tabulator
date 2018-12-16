@@ -977,7 +977,7 @@
   display: inline-block;
   box-sizing: border-box;
   max-height: 200px;
-  background: transparent;
+  background: #fff;
   border: 1px solid #dee2e6;
   font-size: 1rem;
   overflow-y: auto;
@@ -990,13 +990,13 @@
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item.active {
-  color: transparent;
+  color: #fff;
   background: #1D68CD;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
   cursor: pointer;
-  color: transparent;
+  color: #fff;
   background: #1D68CD;
 }
 

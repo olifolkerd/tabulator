@@ -916,7 +916,7 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 
 	max-height:200px;
 
-	background:$rowBackgroundColor;
+	background:$rowTextColor;
 	border:1px solid $rowBorderColor;
 
 	font-size:$textSize;
@@ -929,18 +929,18 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 	.tabulator-edit-select-list-item{
 		padding:4px;
 
-		color:$rowTextColor;
+		color:$rowBackgroundColor;
 
 		&.active{
-			color:$rowBackgroundColor;
-			background:$editBoxColor;
+			color:$editBoxColor;
+			background:$rowAltBackgroundColor;
 		}
 
 		&:hover{
 			cursor:pointer;
 
-			color:$rowBackgroundColor;
-			background:$editBoxColor;
+			color:$editBoxColor;
+			background:$rowBackgroundColor;
 		}
 	}
 

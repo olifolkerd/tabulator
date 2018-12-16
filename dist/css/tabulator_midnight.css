@@ -738,7 +738,7 @@
   display: inline-block;
   box-sizing: border-box;
   max-height: 200px;
-  background: #666;
+  background: #fff;
   border: 1px solid #888;
   font-size: 14px;
   overflow-y: auto;
@@ -748,18 +748,18 @@
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item {
   padding: 4px;
-  color: #fff;
+  color: #666;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item.active {
-  color: #666;
-  background: #999;
+  color: #999;
+  background: #444;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
   cursor: pointer;
-  color: #666;
-  background: #999;
+  color: #999;
+  background: #666;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-group {
