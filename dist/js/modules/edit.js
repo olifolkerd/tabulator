@@ -179,7 +179,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 			} else {
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
-				self.focusCellNoEvent(cell);
+				// self.focusCellNoEvent(cell);
 				rendered();
 				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 			}
