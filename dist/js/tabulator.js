@@ -1573,7 +1573,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (def.cssClass) {
 
-			self.element.classList.add(def.cssClass);
+			var classeNames = def.cssClass.split(" ");
+
+			classeNames.forEach(function (className) {
+
+				self.element.classList.add(className);
+			});
 		}
 
 		if (def.field) {
@@ -5482,7 +5487,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (self.column.definition.cssClass) {
 
-			element.classList.add(self.column.definition.cssClass);
+			var classNames = self.column.definition.cssClass.split(" ");
+
+			classNames.forEach(function (className) {
+
+				element.classList.add(className);
+			});
 		}
 
 		//set event bindings
@@ -8009,10 +8019,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.options.pagination && this.modExists("page")) {
 
-			this.modules.page.setPage(page);
+			return this.modules.page.setPage(page);
 		} else {
 
-			return false;
+			return new Promise(function (resolve, reject) {
+				reject();
+			});
 		}
 	};
 
@@ -14487,21 +14499,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			switch (_typeof(formatterParams.height)) {
 				case "number":
-					element.style.height = formatterParams.height + "px";
+					el.style.height = formatterParams.height + "px";
 					break;
 
 				case "string":
-					element.style.height = formatterParams.height;
+					el.style.height = formatterParams.height;
 					break;
 			}
 
 			switch (_typeof(formatterParams.width)) {
 				case "number":
-					element.style.width = formatterParams.width + "px";
+					el.style.width = formatterParams.width + "px";
 					break;
 
 				case "string":
-					element.style.width = formatterParams.width;
+					el.style.width = formatterParams.width;
 					break;
 			}
 
@@ -14799,6 +14811,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("format", Format);
+
 	var FrozenColumns = function FrozenColumns(table) {
 		this.table = table; //hold Tabulator object
 		this.leftColumns = [];

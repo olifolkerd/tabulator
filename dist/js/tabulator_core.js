@@ -1334,7 +1334,10 @@ Column.prototype._buildColumnHeader = function () {
 
 	//asign additional css classes to column header
 	if (def.cssClass) {
-		self.element.classList.add(def.cssClass);
+		var classeNames = def.cssClass.split(" ");
+		classeNames.forEach(function (className) {
+			self.element.classList.add(className);
+		});
 	}
 
 	if (def.field) {
@@ -4320,7 +4323,10 @@ Cell.prototype._configureCell = function () {
 	}
 
 	if (self.column.definition.cssClass) {
-		element.classList.add(self.column.definition.cssClass);
+		var classNames = self.column.definition.cssClass.split(" ");
+		classNames.forEach(function (className) {
+			element.classList.add(className);
+		});
 	}
 
 	//set event bindings
@@ -6140,9 +6146,11 @@ Tabulator.prototype.setMaxPage = function (max) {
 
 Tabulator.prototype.setPage = function (page) {
 	if (this.options.pagination && this.modExists("page")) {
-		this.modules.page.setPage(page);
+		return this.modules.page.setPage(page);
 	} else {
-		return false;
+		return new Promise(function (resolve, reject) {
+			reject();
+		});
 	}
 };
 

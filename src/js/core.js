@@ -1288,7 +1288,7 @@ Tabulator.prototype.setPage = function(page){
 	if(this.options.pagination && this.modExists("page")){
 		return this.modules.page.setPage(page);
 	}else{
-		return Promise.reject();
+		return new Promise((resolve, reject) => { reject() });
 	}
 };
 
