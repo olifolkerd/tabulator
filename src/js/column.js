@@ -1033,7 +1033,7 @@ Column.prototype.fitToData = function(){
 	var self = this;
 
 	if(!this.widthFixed){
-		this.element.width = "";
+		this.element.style.width = "";
 
 		self.cells.forEach(function(cell){
 			cell.setWidth("");

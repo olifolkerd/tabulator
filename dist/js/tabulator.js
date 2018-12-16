@@ -2279,7 +2279,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (!this.widthFixed) {
 
-			this.element.width = "";
+			this.element.style.width = "";
 
 			self.cells.forEach(function (cell) {
 
