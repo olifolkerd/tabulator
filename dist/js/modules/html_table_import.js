@@ -89,7 +89,7 @@ HtmlTableImport.prototype._extractOptions = function (element, options) {
 		var attrib = attributes[index];
 		var name;
 
-		if ((typeof attrib === "undefined" ? "undefined" : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+		if (attrib && (typeof attrib === "undefined" ? "undefined" : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
 			name = attrib.name.replace("tabulator-", "");
 
 			for (var key in options) {
@@ -158,7 +158,7 @@ HtmlTableImport.prototype._extractHeaders = function (headers, rows) {
 			var attrib = attributes[i],
 			    name;
 
-			if ((typeof attrib === "undefined" ? "undefined" : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+			if (attrib && (typeof attrib === "undefined" ? "undefined" : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
 
 				name = attrib.name.replace("tabulator-", "");
 

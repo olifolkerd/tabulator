@@ -16242,7 +16242,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var attrib = attributes[index];
 			var name;
 
-			if ((typeof attrib === 'undefined' ? 'undefined' : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+			if (attrib && (typeof attrib === 'undefined' ? 'undefined' : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
 				name = attrib.name.replace("tabulator-", "");
 
 				for (var key in options) {
@@ -16311,7 +16311,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var attrib = attributes[i],
 				    name;
 
-				if ((typeof attrib === 'undefined' ? 'undefined' : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
+				if (attrib && (typeof attrib === 'undefined' ? 'undefined' : _typeof(attrib)) == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0) {
 
 					name = attrib.name.replace("tabulator-", "");
 
