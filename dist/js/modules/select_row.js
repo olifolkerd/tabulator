@@ -159,12 +159,12 @@ SelectRow.prototype.selectRows = function (rows) {
 		default:
 			if (Array.isArray(rows)) {
 				rows.forEach(function (row) {
-					self._selectRow(row);
+					self._selectRow(row, true, true);
 				});
 
 				self._rowSelectionChanged();
 			} else {
-				self._selectRow(rows);
+				self._selectRow(rows, false, true);
 			}
 			break;
 	}
