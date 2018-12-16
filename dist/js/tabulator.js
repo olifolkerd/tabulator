@@ -1876,6 +1876,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.element.style.minHeight = "";
 
+		this.groupElement.style.minHeight = "";
+
 		this.columns.forEach(function (column) {
 
 			column.clearVerticalAlign();
