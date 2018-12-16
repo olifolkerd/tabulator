@@ -5685,7 +5685,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (val instanceof Node) {
 
-					this.element.appendChild(val);
+					//clear previous cell contents
+
+					while (this.element.firstChild) {
+						this.element.removeChild(this.element.firstChild);
+					}this.element.appendChild(val);
 				} else {
 
 					this.element.innerHTML = "";

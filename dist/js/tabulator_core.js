@@ -4475,7 +4475,11 @@ Cell.prototype._generateContents = function () {
 	switch (typeof val === 'undefined' ? 'undefined' : _typeof(val)) {
 		case "object":
 			if (val instanceof Node) {
-				this.element.appendChild(val);
+
+				//clear previous cell contents
+				while (this.element.firstChild) {
+					this.element.removeChild(this.element.firstChild);
+				}this.element.appendChild(val);
 			} else {
 				this.element.innerHTML = "";
 				console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);

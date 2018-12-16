@@ -285,6 +285,10 @@ Cell.prototype._generateContents = function(){
 	switch(typeof val){
 		case "object":
 		if(val instanceof Node){
+
+			//clear previous cell contents
+			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+
 			this.element.appendChild(val);
 		}else{
 			this.element.innerHTML = "";
