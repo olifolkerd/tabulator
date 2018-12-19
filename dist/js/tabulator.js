@@ -3358,7 +3358,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				table.modules.page.reset(true);
 
-				table.modules.page.setPage(1);
+				table.modules.page.setPage(1).then(function () {}).catch(function () {});
 			} else if (options.ajaxProgressiveLoad) {
 
 				table.modules.ajax.loadData();
@@ -3390,7 +3390,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				table.modules.page.reset(true);
 
-				table.modules.page.setPage(1);
+				table.modules.page.setPage(1).then(function () {}).catch(function () {});
 			} else if (options.ajaxProgressiveLoad) {
 
 				table.modules.ajax.loadData();
@@ -6976,7 +6976,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			} else {
 
-				self.modules.page.setPage(1);
+				self.modules.page.setPage(1).then(function () {}).catch(function () {});
 			}
 		} else {
 
@@ -8034,7 +8034,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.modules.page.setPageSize(size);
 
-			this.modules.page.setPage(1);
+			this.modules.page.setPage(1).then(function () {}).catch(function () {});
 		} else {
 
 			return false;

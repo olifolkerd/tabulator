@@ -797,7 +797,7 @@ RowManager.prototype.filterRefresh = function(){
 	if(options.ajaxFiltering){
 		if(options.pagination == "remote" && table.modExists("page")){
 			table.modules.page.reset(true);
-			table.modules.page.setPage(1);
+			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
 		}else if(options.ajaxProgressiveLoad){
 			table.modules.ajax.loadData();
 		}else{
@@ -820,7 +820,7 @@ RowManager.prototype.sorterRefresh = function(){
 	if(options.ajaxSorting){
 		if((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")){
 			table.modules.page.reset(true);
-			table.modules.page.setPage(1);
+			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
 		}else if(options.ajaxProgressiveLoad){
 			table.modules.ajax.loadData();
 		}else{

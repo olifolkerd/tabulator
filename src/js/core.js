@@ -516,7 +516,7 @@ Tabulator.prototype._loadInitialData = function(){
 				}
 			}
 		}else{
-			self.modules.page.setPage(1);
+			self.modules.page.setPage(1).then(()=>{}).catch(()=>{});
 		}
 	}else{
 		if(self.options.data.length){
@@ -1295,7 +1295,7 @@ Tabulator.prototype.setPage = function(page){
 Tabulator.prototype.setPageSize = function(size){
 	if(this.options.pagination && this.modExists("page")){
 		this.modules.page.setPageSize(size);
-		this.modules.page.setPage(1);
+		this.modules.page.setPage(1).then(()=>{}).catch(()=>{});
 	}else{
 		return false;
 	}

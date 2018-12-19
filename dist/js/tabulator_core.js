@@ -2693,7 +2693,7 @@ RowManager.prototype.filterRefresh = function () {
 	if (options.ajaxFiltering) {
 		if (options.pagination == "remote" && table.modExists("page")) {
 			table.modules.page.reset(true);
-			table.modules.page.setPage(1);
+			table.modules.page.setPage(1).then(function () {}).catch(function () {});
 		} else if (options.ajaxProgressiveLoad) {
 			table.modules.ajax.loadData();
 		} else {
@@ -2716,7 +2716,7 @@ RowManager.prototype.sorterRefresh = function () {
 	if (options.ajaxSorting) {
 		if ((options.pagination == "remote" || options.progressiveLoad) && table.modExists("page")) {
 			table.modules.page.reset(true);
-			table.modules.page.setPage(1);
+			table.modules.page.setPage(1).then(function () {}).catch(function () {});
 		} else if (options.ajaxProgressiveLoad) {
 			table.modules.ajax.loadData();
 		} else {
@@ -5384,7 +5384,7 @@ Tabulator.prototype._loadInitialData = function () {
 				}
 			}
 		} else {
-			self.modules.page.setPage(1);
+			self.modules.page.setPage(1).then(function () {}).catch(function () {});
 		}
 	} else {
 		if (self.options.data.length) {
@@ -6157,7 +6157,7 @@ Tabulator.prototype.setPage = function (page) {
 Tabulator.prototype.setPageSize = function (size) {
 	if (this.options.pagination && this.modExists("page")) {
 		this.modules.page.setPageSize(size);
-		this.modules.page.setPage(1);
+		this.modules.page.setPage(1).then(function () {}).catch(function () {});
 	} else {
 		return false;
 	}
