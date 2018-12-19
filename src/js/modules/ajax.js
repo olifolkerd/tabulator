@@ -314,10 +314,13 @@ Ajax.prototype.defaultConfig = {
 };
 
 Ajax.prototype.defaultURLGenerator = function(url, config, params){
-	if(params && Object.keys(params).length){
-		if(!config.method || config.method.toLowerCase() == "get"){
-			config.method = "get";
-			url += "?" + this.serializeParams(params);
+
+	if(url){
+		if(params && Object.keys(params).length){
+			if(!config.method || config.method.toLowerCase() == "get"){
+				config.method = "get";
+				url += "?" + this.serializeParams(params);
+			}
 		}
 	}
 
@@ -394,7 +397,8 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 				reject(error);
 			});
 		}else{
-			reject("No URL Set");
+			console.warn("Ajax Load Error - No URL Set");
+			resolve([]);
 		}
 
 	});
