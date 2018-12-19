@@ -6976,7 +6976,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			} else {
 
-				self.modules.page.setPage(1).then(function () {}).catch(function () {});
+				if (self.options.ajaxURL) {
+
+					self.modules.page.setPage(1).then(function () {}).catch(function () {});
+				} else {
+
+					self.rowManager.setData([]);
+				}
 			}
 		} else {
 

@@ -516,7 +516,11 @@ Tabulator.prototype._loadInitialData = function(){
 				}
 			}
 		}else{
-			self.modules.page.setPage(1).then(()=>{}).catch(()=>{});
+			if(self.options.ajaxURL){
+				self.modules.page.setPage(1).then(()=>{}).catch(()=>{});
+			}else{
+				self.rowManager.setData([]);
+			}
 		}
 	}else{
 		if(self.options.data.length){

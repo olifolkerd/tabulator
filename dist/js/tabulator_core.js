@@ -5384,7 +5384,11 @@ Tabulator.prototype._loadInitialData = function () {
 				}
 			}
 		} else {
-			self.modules.page.setPage(1).then(function () {}).catch(function () {});
+			if (self.options.ajaxURL) {
+				self.modules.page.setPage(1).then(function () {}).catch(function () {});
+			} else {
+				self.rowManager.setData([]);
+			}
 		}
 	} else {
 		if (self.options.data.length) {
