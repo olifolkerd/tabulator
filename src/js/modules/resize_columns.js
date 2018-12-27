@@ -44,6 +44,9 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 		handle.addEventListener("dblclick", function(e){
 			if(self._checkResizability(column)){
 				column.reinitializeWidth(true);
+				if(self.table.options.persistentLayout && self.table.modExists("persistence", true)){
+					self.table.modules.persistence.save("columns");
+				}
 			}
 		});
 
