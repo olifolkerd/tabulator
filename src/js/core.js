@@ -57,6 +57,7 @@ Tabulator.prototype.defaultOptions = {
 	initialFilter:false, //initial filtering criteria
 
 	columnHeaderSortMulti: true, //multiple or single column sorting
+	threeStateSortMode: false, //three state sorting (asc, desc, none)
 
 	sortOrderReverse:false, //reverse internal sort ordering
 
