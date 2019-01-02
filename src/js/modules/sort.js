@@ -51,8 +51,12 @@ Sort.prototype.initializeColumn = function(column, content){
 			match = false;
 
 			if(column.modules.sort){
-				dir = column.modules.sort.dir == "asc" ? "desc" : (column.modules.sort.dir == "desc" ? "asc" : column.modules.sort.startingDir);
-
+				if(self.table.options.threeStateSortMode && column.modules.sort.dir === "desc") {
+					dir = "none";
+				}else{
+					dir = column.modules.sort.dir == "asc" ? "desc" : (column.modules.sort.dir == "desc" ? "asc" : column.modules.sort.startingDir);
+				}
+				
 				if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
 					sorters = self.getSort();
 
@@ -62,7 +66,11 @@ Sort.prototype.initializeColumn = function(column, content){
 					});
 
 					if(match > -1){
-						sorters[match].dir = sorters[match].dir == "asc" ? "desc" : "asc";
+						if(self.table.options.threeStateSortMode && sorters[match].dir == "desc"){
+							sorters[match].dir = "none";
+						}else{
+							sorters[match].dir = sorters[match].dir == "asc" ? "desc" : "asc";
+						}
 
 						if(match != sorters.length -1){
 							sorters.push(sorters.splice(match, 1)[0]);
@@ -115,16 +123,18 @@ Sort.prototype.setSort = function(sortList, dir){
 	}
 
 	sortList.forEach(function(item){
-		var column;
+		if(item.dir !== "none") {
+			var column;
 
-		column = self.table.columnManager.findColumn(item.column);
+			column = self.table.columnManager.findColumn(item.column);
 
-		if(column){
-			item.column = column;
-			newSortList.push(item);
-			self.changed = true;
-		}else{
-			console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
+			if(column){
+				item.column = column;
+				newSortList.push(item);
+				self.changed = true;
+			}else{
+				console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
+			}
 		}
 
 	});
