@@ -189,7 +189,8 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 	var rowIndex = this.getDisplayRows().indexOf(row),
 	rowEl = row.getElement(),
 	rowTop,
-	offset = 0;
+	offset = 0,
+	scrollOffset = 0;
 
 	return new Promise((resolve, reject) => {
 		if(rowIndex > -1){
@@ -232,7 +233,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 				this.element.scrollTop = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top + this.element.scrollTop;
 				break;
 				case"virtual":
-				this._virtualRenderFill(rowIndex, true);
+				scrollOffset = this._virtualRenderFill(rowIndex, true);
 				break;
 			}
 
@@ -240,11 +241,11 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 			switch(position){
 				case "middle":
 				case "center":
-				this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
+				this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2) + scrollOffset;
 				break;
 
 				case "bottom":
-				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
+				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight + scrollOffset;
 				break;
 			}
 
@@ -1253,6 +1254,7 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 	topPadHeight = 0,
 	i = 0,
 	onlyGroupHeaders = true,
+	scrollOffset = 0,
 	rows = self.getDisplayRows();
 
 	position = position || 0;
@@ -1266,10 +1268,14 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 		while(element.firstChild) element.removeChild(element.firstChild);
 
 		//check if position is too close to bottom of table
-		let heightOccpied = (self.displayRowsCount - position + 1) * self.vDomRowHeight;
+		let heightOccupied = (self.displayRowsCount - position + 1) * self.vDomRowHeight;
 
-		if(heightOccpied < self.height){
-			position -= Math.ceil((self.height - heightOccpied) / self.vDomRowHeight);
+		if ((heightOccupied - self.vDomRowHeight) < self.height) {
+			scrollOffset = (self.height - heightOccupied) + self.vDomRowHeight;
+		}
+
+		if(heightOccupied < self.height){
+			position -= Math.ceil((self.height - heightOccupied) / self.vDomRowHeight);
 
 			if(position < 0){
 				position = 0;
@@ -1358,6 +1364,8 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 	}else{
 		this.renderEmptyScroll();
 	}
+
+	return scrollOffset;
 };
 
 //handle vertical scrolling
