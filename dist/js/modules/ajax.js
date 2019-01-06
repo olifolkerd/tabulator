@@ -24,10 +24,18 @@ var Ajax = function Ajax(table) {
 
 //initialize setup options
 Ajax.prototype.initialize = function () {
+	var template;
+
 	this.loaderElement.appendChild(this.msgElement);
 
 	if (this.table.options.ajaxLoaderLoading) {
-		this.loadingElement = this.table.options.ajaxLoaderLoading;
+		if (typeof this.table.options.ajaxLoaderLoading == "string") {
+			template = document.createElement('template');
+			template.innerHTML = this.table.options.ajaxLoaderLoading.trim();
+			this.loadingElement = template.content.firstChild;
+		} else {
+			this.loadingElement = this.table.options.ajaxLoaderLoading;
+		}
 	}
 
 	this.loaderPromise = this.table.options.ajaxRequestFunc || this.defaultLoaderPromise;
