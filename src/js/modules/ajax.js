@@ -176,10 +176,17 @@ Ajax.prototype._loadDataStandard = function(inPosition){
 	return new Promise((resolve, reject)=>{
 		this.sendRequest(inPosition)
 		.then((data)=>{
-			this.table.rowManager.setData(data, inPosition);
-			resolve();
+			this.table.rowManager.setData(data, inPosition)
+			.then(()=>{
+				resolve();
+			})
+			.catch((e)=>{
+				reject(e)
+			});
 		})
-		.catch((e)=>{reject()});
+		.catch((e)=>{
+			reject(e)
+		});
 	});
 };
 

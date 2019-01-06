@@ -799,7 +799,7 @@ RowManager.prototype.filterRefresh = function(){
 			table.modules.page.reset(true);
 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
 		}else if(options.ajaxProgressiveLoad){
-			table.modules.ajax.loadData();
+			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 		}else{
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -822,7 +822,7 @@ RowManager.prototype.sorterRefresh = function(){
 			table.modules.page.reset(true);
 			table.modules.page.setPage(1).then(()=>{}).catch(()=>{});
 		}else if(options.ajaxProgressiveLoad){
-			table.modules.ajax.loadData();
+			table.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 		}else{
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();

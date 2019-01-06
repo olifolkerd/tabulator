@@ -2697,7 +2697,7 @@ RowManager.prototype.filterRefresh = function () {
 			table.modules.page.reset(true);
 			table.modules.page.setPage(1).then(function () {}).catch(function () {});
 		} else if (options.ajaxProgressiveLoad) {
-			table.modules.ajax.loadData();
+			table.modules.ajax.loadData().then(function () {}).catch(function () {});
 		} else {
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -2720,7 +2720,7 @@ RowManager.prototype.sorterRefresh = function () {
 			table.modules.page.reset(true);
 			table.modules.page.setPage(1).then(function () {}).catch(function () {});
 		} else if (options.ajaxProgressiveLoad) {
-			table.modules.ajax.loadData();
+			table.modules.ajax.loadData().then(function () {}).catch(function () {});
 		} else {
 			//assume data is url, make ajax call to url to get data
 			this._genRemoteRequest();
@@ -5392,7 +5392,7 @@ Tabulator.prototype._loadInitialData = function () {
 				self.rowManager.setData(self.options.data);
 			} else {
 				if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
-					self.modules.ajax.loadData();
+					self.modules.ajax.loadData().then(function () {}).catch(function () {});
 				} else {
 					self.rowManager.setData(self.options.data);
 				}
@@ -5409,7 +5409,7 @@ Tabulator.prototype._loadInitialData = function () {
 			self.rowManager.setData(self.options.data);
 		} else {
 			if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
-				self.modules.ajax.loadData();
+				self.modules.ajax.loadData().then(function () {}).catch(function () {});
 			} else {
 				self.rowManager.setData(self.options.data);
 			}

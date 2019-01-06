@@ -510,7 +510,7 @@ Tabulator.prototype._loadInitialData = function(){
 				self.rowManager.setData(self.options.data);
 			}else{
 				if((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")){
-					self.modules.ajax.loadData();
+					self.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 				}else{
 					self.rowManager.setData(self.options.data);
 				}
@@ -527,7 +527,7 @@ Tabulator.prototype._loadInitialData = function(){
 			self.rowManager.setData(self.options.data);
 		}else{
 			if((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")){
-				self.modules.ajax.loadData();
+				self.modules.ajax.loadData().then(()=>{}).catch(()=>{});
 			}else{
 				self.rowManager.setData(self.options.data);
 			}

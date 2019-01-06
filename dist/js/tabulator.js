@@ -3364,7 +3364,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				table.modules.page.setPage(1).then(function () {}).catch(function () {});
 			} else if (options.ajaxProgressiveLoad) {
 
-				table.modules.ajax.loadData();
+				table.modules.ajax.loadData().then(function () {}).catch(function () {});
 			} else {
 
 				//assume data is url, make ajax call to url to get data
@@ -3396,7 +3396,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				table.modules.page.setPage(1).then(function () {}).catch(function () {});
 			} else if (options.ajaxProgressiveLoad) {
 
-				table.modules.ajax.loadData();
+				table.modules.ajax.loadData().then(function () {}).catch(function () {});
 			} else {
 
 				//assume data is url, make ajax call to url to get data
@@ -6987,7 +6987,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
 
-						self.modules.ajax.loadData();
+						self.modules.ajax.loadData().then(function () {}).catch(function () {});
 					} else {
 
 						self.rowManager.setData(self.options.data);
@@ -7012,7 +7012,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
 
-					self.modules.ajax.loadData();
+					self.modules.ajax.loadData().then(function () {}).catch(function () {});
 				} else {
 
 					self.rowManager.setData(self.options.data);
@@ -9512,10 +9512,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		return new Promise(function (resolve, reject) {
 			_this16.sendRequest(inPosition).then(function (data) {
-				_this16.table.rowManager.setData(data, inPosition);
-				resolve();
+				_this16.table.rowManager.setData(data, inPosition).then(function () {
+					resolve();
+				}).catch(function (e) {
+					reject(e);
+				});
 			}).catch(function (e) {
-				reject();
+				reject(e);
 			});
 		});
 	};
