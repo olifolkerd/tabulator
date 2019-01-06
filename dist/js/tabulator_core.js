@@ -3968,7 +3968,8 @@ Row.prototype.setData = function (data) {
 Row.prototype.updateData = function (data) {
 	var _this5 = this;
 
-	var self = this;
+	var self = this,
+	    visible = Tabulator.prototype.helpers.elVisible(this.element);
 
 	return new Promise(function (resolve, reject) {
 
@@ -3993,12 +3994,16 @@ Row.prototype.updateData = function (data) {
 			if (cell) {
 				if (cell.getValue() != data[attrname]) {
 					cell.setValueProcessData(data[attrname]);
+
+					if (visible) {
+						cell.cellRendered();
+					}
 				}
 			}
 		}
 
 		//Partial reinitialization if visible
-		if (Tabulator.prototype.helpers.elVisible(_this5.element)) {
+		if (visible) {
 			self.normalizeHeight();
 
 			if (self.table.options.rowFormatter) {
