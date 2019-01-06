@@ -3061,30 +3061,34 @@ RowManager.prototype.renderTable = function () {
 
 //simple render on heightless table
 RowManager.prototype._simpleRender = function () {
-	var self = this,
-	    element = this.tableElement;
+	this._clearVirtualDom();
 
-	self._clearVirtualDom();
-
-	if (self.displayRowsCount) {
-
-		var onlyGroupHeaders = true;
-
-		self.getDisplayRows().forEach(function (row, index) {
-			self.styleRow(row, index);
-			element.appendChild(row.getElement());
-			row.initialize(true);
-
-			if (row.type !== "group") {
-				onlyGroupHeaders = false;
-			}
-		});
-
-		if (onlyGroupHeaders) {
-			element.style.minWidth = self.table.columnManager.getWidth() + "px";
-		}
+	if (this.displayRowsCount) {
+		this.checkClassicModeGroupHeaderWidth();
 	} else {
-		self.renderEmptyScroll();
+		this.renderEmptyScroll();
+	}
+};
+
+RowManager.prototype.checkClassicModeGroupHeaderWidth = function () {
+	var self = this,
+	    element = this.tableElement,
+	    onlyGroupHeaders = true;
+
+	self.getDisplayRows().forEach(function (row, index) {
+		self.styleRow(row, index);
+		element.appendChild(row.getElement());
+		row.initialize(true);
+
+		if (row.type !== "group") {
+			onlyGroupHeaders = false;
+		}
+	});
+
+	if (onlyGroupHeaders) {
+		element.style.minWidth = self.table.columnManager.getWidth() + "px";
+	} else {
+		element.style.minWidth = "";
 	}
 };
 

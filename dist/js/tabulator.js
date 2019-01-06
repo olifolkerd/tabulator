@@ -3844,36 +3844,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype._simpleRender = function () {
 
-		var self = this,
-		    element = this.tableElement;
+		this._clearVirtualDom();
 
-		self._clearVirtualDom();
+		if (this.displayRowsCount) {
 
-		if (self.displayRowsCount) {
-
-			var onlyGroupHeaders = true;
-
-			self.getDisplayRows().forEach(function (row, index) {
-
-				self.styleRow(row, index);
-
-				element.appendChild(row.getElement());
-
-				row.initialize(true);
-
-				if (row.type !== "group") {
-
-					onlyGroupHeaders = false;
-				}
-			});
-
-			if (onlyGroupHeaders) {
-
-				element.style.minWidth = self.table.columnManager.getWidth() + "px";
-			}
+			this.checkClassicModeGroupHeaderWidth();
 		} else {
 
-			self.renderEmptyScroll();
+			this.renderEmptyScroll();
+		}
+	};
+
+	RowManager.prototype.checkClassicModeGroupHeaderWidth = function () {
+
+		var self = this,
+		    element = this.tableElement,
+		    onlyGroupHeaders = true;
+
+		self.getDisplayRows().forEach(function (row, index) {
+
+			self.styleRow(row, index);
+
+			element.appendChild(row.getElement());
+
+			row.initialize(true);
+
+			if (row.type !== "group") {
+
+				onlyGroupHeaders = false;
+			}
+		});
+
+		if (onlyGroupHeaders) {
+
+			element.style.minWidth = self.table.columnManager.getWidth() + "px";
+		} else {
+
+			element.style.minWidth = "";
 		}
 	};
 
@@ -15571,6 +15578,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
+
+			this.groupManager.table.rowManager.checkClassicModeGroupHeaderWidth();
 		} else {
 			this.groupManager.updateGroupRows(true);
 		}
@@ -15610,6 +15619,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
+
+			this.groupManager.table.rowManager.checkClassicModeGroupHeaderWidth();
 		} else {
 			this.groupManager.updateGroupRows(true);
 		}
