@@ -13722,7 +13722,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		function cancel() {}
 
 		if (column.modules.filter.headerElement && column.modules.filter.headerElement.parentNode) {
-			column.modules.filter.headerElement.parentNode.removeChild(column.modules.filter.headerElement);
+			var oldFilterElement = column.modules.filter.headerElement.parentNode;
+			var oldFilterElementIndex = self.headerFilterElements.indexOf(oldFilterElement);
+			if (oldFilterElementIndex >= 0) {
+				self.headerFilterElements.splice(oldFilterElementIndex, 1);
+			}
+
+			var oldColumnIndex = self.headerFilterColumns.indexOf(oldColumnIndex);
+			if (oldColumnIndex >= 0) {
+				self.headerFilterColumns.splice(oldColumnIndex, 1);
+			}
+
+			column.contentElement.removeChild(oldFilterElement);
 		}
 
 		if (field) {
