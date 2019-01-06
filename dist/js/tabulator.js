@@ -18894,7 +18894,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 			case "undefined":
 				self.table.rowManager.rows.forEach(function (row) {
-					self._selectRow(row, false, true);
+					self._selectRow(row, true, true);
 				});
 
 				self._rowSelectionChanged();
@@ -18903,7 +18903,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			case "boolean":
 				if (rows === true) {
 					self.table.rowManager.activeRows.forEach(function (row) {
-						self._selectRow(row, false, true);
+						self._selectRow(row, true, true);
 					});
 
 					self._rowSelectionChanged();
@@ -18974,14 +18974,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			rowCount = self.selectedRows.length;
 
 			for (var i = 0; i < rowCount; i++) {
-				self._deselectRow(self.selectedRows[0], false);
+				self._deselectRow(self.selectedRows[0], true);
 			}
 
 			self._rowSelectionChanged();
 		} else {
 			if (Array.isArray(rows)) {
 				rows.forEach(function (row) {
-					self._deselectRow(row);
+					self._deselectRow(row, true);
 				});
 
 				self._rowSelectionChanged();
