@@ -260,6 +260,9 @@ ColumnCalcs.prototype.generateRow = function (pos, data) {
 					};
 				}
 
+				//ensure css class defintion is replicated to calculation cell
+				self.genColumn.definition.cssClass = column.definition.cssClass;
+
 				//generate cell and assign to correct column
 				var cell = new Cell(self.genColumn, row);
 				cell.column = column;
