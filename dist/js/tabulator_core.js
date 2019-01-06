@@ -4498,7 +4498,10 @@ Cell.prototype._generateContents = function () {
 				}this.element.appendChild(val);
 			} else {
 				this.element.innerHTML = "";
-				console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+
+				if (val != null) {
+					console.warn("Format Error - Formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", val);
+				}
 			}
 			break;
 		case "undefined":
