@@ -18400,7 +18400,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self.table.modules.persistence.save("columns");
 			}
 
-			self.table.options.columnResized.call(self.table, self.startColumn.getComponent());
+			self.table.options.columnResized.call(self.table, column.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
