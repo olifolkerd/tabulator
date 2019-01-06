@@ -1789,7 +1789,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Column.prototype._setFlatData = function (data, value) {
 
-		data[this.field] = value;
+		if (this.field) {
+
+			data[this.field] = value;
+		}
 	};
 
 	//nested field set

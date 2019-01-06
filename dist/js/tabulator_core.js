@@ -1495,7 +1495,9 @@ Column.prototype._getNestedData = function (data) {
 
 //flat field set
 Column.prototype._setFlatData = function (data, value) {
-	data[this.field] = value;
+	if (this.field) {
+		data[this.field] = value;
+	}
 };
 
 //nested field set
