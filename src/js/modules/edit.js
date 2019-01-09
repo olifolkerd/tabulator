@@ -764,7 +764,7 @@ Edit.prototype.editors = {
 		input.style.padding = "4px";
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
-		input.readonly = true;
+		input.readOnly = true;
 
 		//allow key based navigation
 		input.addEventListener("keydown", function(e){
