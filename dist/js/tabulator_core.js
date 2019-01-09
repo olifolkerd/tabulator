@@ -6189,7 +6189,7 @@ Tabulator.prototype.getPageSize = function () {
 
 Tabulator.prototype.previousPage = function () {
 	if (this.options.pagination && this.modExists("page")) {
-		this.modules.page.previousPage();
+		return this.modules.page.previousPage();
 	} else {
 		return false;
 	}
@@ -6197,7 +6197,7 @@ Tabulator.prototype.previousPage = function () {
 
 Tabulator.prototype.nextPage = function () {
 	if (this.options.pagination && this.modExists("page")) {
-		this.modules.page.nextPage();
+		return this.modules.page.nextPage();
 	} else {
 		return false;
 	}
