@@ -24,7 +24,7 @@ ReactiveData.prototype.watchData = function(data){
 	  	var args = Array.from(arguments);
 
 	  	args.forEach(function (arg){
-	  		self.table.addRow(arg, false);
+	  		self.table.rowManager.addRowActual(arg, false);
 	  	});
 
 	    return self.origFuncs.push.apply(data, arguments);
@@ -42,7 +42,7 @@ ReactiveData.prototype.watchData = function(data){
 	  	var args = Array.from(arguments);
 
 	  	args.forEach(function (arg){
-	  		self.table.addRow(arg, true);
+	  		self.table.rowManager.addRowActual(arg, true);
 	  	});
 
 	    return self.origFuncs.unshift.apply(data, arguments);
@@ -64,7 +64,7 @@ ReactiveData.prototype.watchData = function(data){
 		  	row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
 		  	if(row){
-		  		row.delete();
+		  		row.deleteActual();
 		  	}
 		  }
 
@@ -86,7 +86,7 @@ ReactiveData.prototype.watchData = function(data){
 		  	row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
 		  	if(row){
-		  		row.delete();
+		  		row.deleteActual();
 		  	}
 		  }
 

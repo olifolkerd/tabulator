@@ -18353,7 +18353,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var args = Array.from(arguments);
 
 				args.forEach(function (arg) {
-					self.table.addRow(arg, false);
+					self.table.rowManager.addRowActual(arg, false);
 				});
 
 				return self.origFuncs.push.apply(data, arguments);
@@ -18371,7 +18371,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var args = Array.from(arguments);
 
 				args.forEach(function (arg) {
-					self.table.addRow(arg, true);
+					self.table.rowManager.addRowActual(arg, true);
 				});
 
 				return self.origFuncs.unshift.apply(data, arguments);
@@ -18392,7 +18392,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
 					if (row) {
-						row.delete();
+						row.deleteActual();
 					}
 				}
 
@@ -18414,7 +18414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
 					if (row) {
-						row.delete();
+						row.deleteActual();
 					}
 				}
 
