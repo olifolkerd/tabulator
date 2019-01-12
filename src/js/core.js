@@ -344,7 +344,10 @@ Tabulator.prototype._create = function(){
 //clear pointers to objects in default config object
 Tabulator.prototype._clearObjectPointers = function(){
 	this.options.columns = this.options.columns.slice(0);
-	this.options.data = this.options.data.slice(0);
+
+	if(!this.options.reactiveData){
+		this.options.data = this.options.data.slice(0);
+	}
 };
 
 
@@ -542,6 +545,10 @@ Tabulator.prototype.destroy = function(){
 	var element = this.element;
 
 	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication
+
+	if(self.table.options.reactiveData && this.table.modExists("reactiveData", true)){
+		this.table.modules.reactiveData.unwatchData();
+	}
 
 	//clear row data
 	this.rowManager.rows.forEach(function(row){

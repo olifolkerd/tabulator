@@ -2091,6 +2091,14 @@ RowManager.prototype.findRow = function (subject) {
 	return false;
 };
 
+RowManager.prototype.getRowFromDataObject = function (data) {
+	var match = this.rows.find(function (row) {
+		return row.data === data;
+	});
+
+	return match || false;
+};
+
 RowManager.prototype.getRowFromPosition = function (position, active) {
 	if (active) {
 		return this.activeRows[position];
@@ -2215,6 +2223,10 @@ RowManager.prototype._setDataActual = function (data, renderInPosition) {
 
 		if (this.table.modExists("selectRow")) {
 			this.table.modules.selectRow.clearSelectionData();
+		}
+
+		if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+			this.table.modules.reactiveData.watchData(data);
 		}
 
 		data.forEach(function (def, i) {
@@ -5246,7 +5258,10 @@ Tabulator.prototype._create = function () {
 //clear pointers to objects in default config object
 Tabulator.prototype._clearObjectPointers = function () {
 	this.options.columns = this.options.columns.slice(0);
-	this.options.data = this.options.data.slice(0);
+
+	if (!this.options.reactiveData) {
+		this.options.data = this.options.data.slice(0);
+	}
 };
 
 //build tabulator element
@@ -5441,6 +5456,10 @@ Tabulator.prototype.destroy = function () {
 	var element = this.element;
 
 	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication
+
+	if (self.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+		this.table.modules.reactiveData.unwatchData();
+	}
 
 	//clear row data
 	this.rowManager.rows.forEach(function (row) {

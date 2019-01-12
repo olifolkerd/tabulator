@@ -177,6 +177,15 @@ RowManager.prototype.findRow = function(subject){
 	return false;
 };
 
+
+RowManager.prototype.getRowFromDataObject = function(data){
+	var match = this.rows.find(function(row){
+		return row.data === data;
+	});
+
+	return match || false;
+};
+
 RowManager.prototype.getRowFromPosition = function(position, active){
 	if(active){
 		return this.activeRows[position];
@@ -300,6 +309,10 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 
 		if(this.table.modExists("selectRow")){
 			this.table.modules.selectRow.clearSelectionData();
+		}
+
+		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
+			this.table.modules.reactiveData.watchData(data);
 		}
 
 		data.forEach(function(def, i){

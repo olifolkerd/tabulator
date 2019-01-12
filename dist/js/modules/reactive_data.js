@@ -2,13 +2,110 @@
 
 var ReactiveData = function ReactiveData(table) {
 	this.table = table; //hold Tabulator object
-
+	this.data = false;
 	this.blocked = false; //block reactivity while performing update
+	this.origFuncs = {}; // hold original data array functions to allow replacement after data is done with
 };
 
-ReactiveData.prototype.watchData = function (data) {};
+ReactiveData.prototype.watchData = function (data) {
+	var self = this,
+	    pushFunc;
 
-ReactiveData.prototype.unwatchData = function (data) {};
+	self.unwatchData();
+
+	self.data = data;
+
+	//override array push function
+	self.origFuncs.push = data.push;
+
+	Object.defineProperty(self.data, "push", {
+		enumerable: false,
+		configurable: false, // prevent further meddling...
+		writable: false, // see above ^
+		value: function value() {
+			var args = Array.from(arguments);
+
+			args.forEach(function (arg) {
+				self.table.addRow(arg, false);
+			});
+
+			return self.origFuncs.push.apply(data, arguments);
+		}
+	});
+
+	//override array unshift function
+	self.origFuncs.unshift = data.unshift;
+
+	Object.defineProperty(self.data, "unshift", {
+		enumerable: false,
+		configurable: false, // prevent further meddling...
+		writable: false, // see above ^
+		value: function value() {
+			var args = Array.from(arguments);
+
+			args.forEach(function (arg) {
+				self.table.addRow(arg, true);
+			});
+
+			return self.origFuncs.unshift.apply(data, arguments);
+		}
+	});
+
+	//override array shift function
+	self.origFuncs.shift = data.shift;
+
+	Object.defineProperty(self.data, "shift", {
+		enumerable: false,
+		configurable: false, // prevent further meddling...
+		writable: false, // see above ^
+		value: function value() {
+			var row;
+
+			if (self.data.length) {
+				row = self.table.rowManager.getRowFromDataObject(self.data[0]);
+
+				if (row) {
+					row.delete();
+				}
+			}
+
+			return self.origFuncs.shift.call(data);
+		}
+	});
+
+	//override array pop function
+	self.origFuncs.pop = data.pop;
+
+	Object.defineProperty(self.data, "pop", {
+		enumerable: false,
+		configurable: false, // prevent further meddling...
+		writable: false, // see above ^
+		value: function value() {
+			var row;
+
+			if (self.data.length) {
+				row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
+
+				if (row) {
+					row.delete();
+				}
+			}
+
+			return self.origFuncs.pop.call(data);
+		}
+	});
+};
+
+ReactiveData.prototype.unwatchData = function () {
+	if (this.data !== false) {
+		for (var key in this.origFuncs) {
+			Object.defineProperty(self.data, key, {
+				enumerable: false,
+				value: origFuncs.push
+			});
+		}
+	}
+};
 
 ReactiveData.prototype.watchRow = function (row) {
 	var self = this,
@@ -20,8 +117,6 @@ ReactiveData.prototype.watchRow = function (row) {
 		this.watchKey(row, data, key);
 	}
 
-	console.log("data", data);
-
 	this.blocked = false;
 };
 
@@ -31,7 +126,6 @@ ReactiveData.prototype.watchKey = function (row, data, key) {
 
 	Object.defineProperty(data, key, {
 		set: function set(newValue) {
-			console.log("set", newValue);
 			value = newValue;
 
 			if (!self.blocked) {
