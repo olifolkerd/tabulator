@@ -47,7 +47,7 @@ GroupComponent.prototype._getSelf = function(){
 };
 
 GroupComponent.prototype.getTable = function(){
-	return this._group.table;
+	return this._group.groupManager.table;
 };
 
 //////////////////////////////////////////////////

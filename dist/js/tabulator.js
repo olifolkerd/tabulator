@@ -15177,7 +15177,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupComponent.prototype.getTable = function () {
-		return this._group.table;
+		return this._group.groupManager.table;
 	};
 
 	//////////////////////////////////////////////////
