@@ -18347,14 +18347,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		Object.defineProperty(self.data, "push", {
 			enumerable: false,
-			configurable: false, // prevent further meddling...
-			writable: false, // see above ^
 			value: function value() {
 				var args = Array.from(arguments);
 
-				args.forEach(function (arg) {
-					self.table.rowManager.addRowActual(arg, false);
-				});
+				if (!self.blocked) {
+					args.forEach(function (arg) {
+						self.table.rowManager.addRowActual(arg, false);
+					});
+				}
 
 				return self.origFuncs.push.apply(data, arguments);
 			}
@@ -18365,14 +18365,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		Object.defineProperty(self.data, "unshift", {
 			enumerable: false,
-			configurable: false, // prevent further meddling...
-			writable: false, // see above ^
 			value: function value() {
 				var args = Array.from(arguments);
 
-				args.forEach(function (arg) {
-					self.table.rowManager.addRowActual(arg, true);
-				});
+				if (!self.blocked) {
+					args.forEach(function (arg) {
+						self.table.rowManager.addRowActual(arg, true);
+					});
+				}
 
 				return self.origFuncs.unshift.apply(data, arguments);
 			}
@@ -18383,16 +18383,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		Object.defineProperty(self.data, "shift", {
 			enumerable: false,
-			configurable: false, // prevent further meddling...
-			writable: false, // see above ^
 			value: function value() {
 				var row;
 
-				if (self.data.length) {
-					row = self.table.rowManager.getRowFromDataObject(self.data[0]);
+				if (!self.blocked) {
+					if (self.data.length) {
+						row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
-					if (row) {
-						row.deleteActual();
+						if (row) {
+							row.deleteActual();
+						}
 					}
 				}
 
@@ -18405,19 +18405,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		Object.defineProperty(self.data, "pop", {
 			enumerable: false,
-			configurable: false, // prevent further meddling...
-			writable: false, // see above ^
 			value: function value() {
 				var row;
+				if (!self.blocked) {
+					if (self.data.length) {
+						row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
-				if (self.data.length) {
-					row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
-
-					if (row) {
-						row.deleteActual();
+						if (row) {
+							row.deleteActual();
+						}
 					}
 				}
-
 				return self.origFuncs.pop.call(data);
 			}
 		});
