@@ -47,6 +47,8 @@ Tabulator.prototype.defaultOptions = {
 
 	data:[], //default starting data
 
+	reactiveData:false, //enable data reactivity
+
 	nestedFieldSeparator:".", //seperatpr for nested data
 
 	tooltips: false, //Tool tip value

@@ -414,7 +414,15 @@ Cell.prototype.setValueActual = function(value){
 
 	this.value = value;
 
+	if(this.table.options.reactiveData && this.table.modExists("reactiveData")){
+		this.table.modules.reactiveData.block();
+	}
+
 	this.column.setFieldValue(this.row.data, value);
+
+	if(this.table.options.reactiveData && this.table.modExists("reactiveData")){
+		this.table.modules.reactiveData.unblock();
+	}
 
 	this._generateContents();
 	this._generateTooltip();

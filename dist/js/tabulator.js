@@ -5025,10 +5025,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (self.table.modExists("mutator")) {
 
-			self.data = self.table.modules.mutator.transformRow(data, "data");
-		} else {
+			data = self.table.modules.mutator.transformRow(data, "data");
+		}
 
-			self.data = data;
+		self.data = data;
+
+		if (self.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+
+			this.table.modules.reactiveData.watchRow(this);
 		}
 	};
 
@@ -5270,6 +5274,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// }
 
+
+		//remove any reactive data watchers from row object
+
+		if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+
+			this.table.modules.reactiveData.unwatchRow(this);
+		}
 
 		this.table.rowManager.deleteRow(this);
 
@@ -5878,7 +5889,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.value = value;
 
+		if (this.table.options.reactiveData && this.table.modExists("reactiveData")) {
+
+			this.table.modules.reactiveData.block();
+		}
+
 		this.column.setFieldValue(this.row.data, value);
+
+		if (this.table.options.reactiveData && this.table.modExists("reactiveData")) {
+
+			this.table.modules.reactiveData.unblock();
+		}
 
 		this._generateContents();
 
@@ -6304,6 +6325,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 		data: [], //default starting data
+
+
+		reactiveData: false, //enable data reactivity
 
 
 		nestedFieldSeparator: ".", //seperatpr for nested data
@@ -18279,6 +18303,72 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("persistence", Persistence);
+
+	var ReactiveData = function ReactiveData(table) {
+		this.table = table; //hold Tabulator object
+
+		this.blocked = false; //block reactivity while performing update
+	};
+
+	ReactiveData.prototype.watchData = function (data) {};
+
+	ReactiveData.prototype.unwatchData = function (data) {};
+
+	ReactiveData.prototype.watchRow = function (row) {
+		var self = this,
+		    data = row.getData();
+
+		this.blocked = true;
+
+		for (var key in data) {
+			this.watchKey(row, data, key);
+		}
+
+		console.log("data", data);
+
+		this.blocked = false;
+	};
+
+	ReactiveData.prototype.watchKey = function (row, data, key) {
+		var self = this,
+		    value = data[key];
+
+		Object.defineProperty(data, key, {
+			set: function set(newValue) {
+				console.log("set", newValue);
+				value = newValue;
+
+				if (!self.blocked) {
+					var update = {};
+					update[key] = newValue;
+					row.updateData(update);
+				}
+			},
+			get: function get() {
+				return value;
+			}
+		});
+	};
+
+	ReactiveData.prototype.unwatchRow = function (row) {
+		var data = row.getData();
+
+		for (var key in data) {
+			Object.defineProperty(data, key, {
+				value: data[key]
+			});
+		}
+	};
+
+	ReactiveData.prototype.block = function () {
+		this.blocked = true;
+	};
+
+	ReactiveData.prototype.unblock = function () {
+		this.blocked = false;
+	};
+
+	Tabulator.prototype.registerModule("reactiveData", ReactiveData);
 
 	var ResizeColumns = function ResizeColumns(table) {
 		this.table = table; //hold Tabulator object

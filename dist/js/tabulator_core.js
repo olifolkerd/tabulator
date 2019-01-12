@@ -3964,9 +3964,13 @@ Row.prototype.setData = function (data) {
 	var self = this;
 
 	if (self.table.modExists("mutator")) {
-		self.data = self.table.modules.mutator.transformRow(data, "data");
-	} else {
-		self.data = data;
+		data = self.table.modules.mutator.transformRow(data, "data");
+	}
+
+	self.data = data;
+
+	if (self.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+		this.table.modules.reactiveData.watchRow(this);
 	}
 };
 
@@ -4156,6 +4160,11 @@ Row.prototype.deleteActual = function () {
 	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
 	// 	this.table.modules.dataTree.collapseRow(this, true);
 	// }
+
+	//remove any reactive data watchers from row object
+	if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+		this.table.modules.reactiveData.unwatchRow(this);
+	}
 
 	this.table.rowManager.deleteRow(this);
 
@@ -4621,7 +4630,15 @@ Cell.prototype.setValueActual = function (value) {
 
 	this.value = value;
 
+	if (this.table.options.reactiveData && this.table.modExists("reactiveData")) {
+		this.table.modules.reactiveData.block();
+	}
+
 	this.column.setFieldValue(this.row.data, value);
+
+	if (this.table.options.reactiveData && this.table.modExists("reactiveData")) {
+		this.table.modules.reactiveData.unblock();
+	}
 
 	this._generateContents();
 	this._generateTooltip();
@@ -4931,6 +4948,8 @@ Tabulator.prototype.defaultOptions = {
 	columns: [], //store for colum header info
 
 	data: [], //default starting data
+
+	reactiveData: false, //enable data reactivity
 
 	nestedFieldSeparator: ".", //seperatpr for nested data
 
