@@ -4130,7 +4130,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this._addTopRow(-topDiff);
 				}
 
-				if (topDiff < 0) {
+				if (bottomDiff < 0) {
 
 					//hide bottom row if needed
 

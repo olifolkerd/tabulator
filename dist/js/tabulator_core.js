@@ -3272,7 +3272,7 @@ RowManager.prototype.scrollVertical = function (dir) {
 				this._addTopRow(-topDiff);
 			}
 
-			if (topDiff < 0) {
+			if (bottomDiff < 0) {
 
 				//hide bottom row if needed
 				if (this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer) {
