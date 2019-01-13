@@ -5069,6 +5069,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				data = JSON.parse(data);
 			}
 
+			if (_this5.table.options.reactiveData && _this5.table.modExists("reactiveData", true)) {
+
+				_this5.table.modules.reactiveData.block();
+			}
+
 			//mutate incomming data if needed
 
 			if (self.table.modExists("mutator")) {
@@ -5081,6 +5086,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			for (var attrname in data) {
 
 				self.data[attrname] = data[attrname];
+			}
+
+			if (_this5.table.options.reactiveData && _this5.table.modExists("reactiveData", true)) {
+
+				_this5.table.modules.reactiveData.unblock();
 			}
 
 			//update affected cells only

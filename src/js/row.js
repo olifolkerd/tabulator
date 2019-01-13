@@ -461,6 +461,10 @@ Row.prototype.updateData = function(data){
 			data = JSON.parse(data);
 		}
 
+		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
+			this.table.modules.reactiveData.block();
+		}
+
 		//mutate incomming data if needed
 		if(self.table.modExists("mutator")){
 			data = self.table.modules.mutator.transformRow(data, "data", true);
@@ -469,6 +473,10 @@ Row.prototype.updateData = function(data){
 		//set data
 		for (var attrname in data) {
 			self.data[attrname] = data[attrname];
+		}
+
+		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
+			this.table.modules.reactiveData.unblock();
 		}
 
 		//update affected cells only
