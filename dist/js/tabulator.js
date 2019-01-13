@@ -2799,7 +2799,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	RowManager.prototype.deleteRow = function (row) {
+	RowManager.prototype.deleteRow = function (row, blockRedraw) {
 
 		var allIndex = this.rows.indexOf(row),
 		    activeIndex = this.activeRows.indexOf(row);
@@ -2826,7 +2826,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		});
 
-		this.reRenderInPosition();
+		if (!blockRedraw) {
+
+			this.reRenderInPosition();
+		}
 
 		this.table.options.rowDeleted.call(this.table, row.getComponent());
 
@@ -5272,7 +5275,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	};
 
-	Row.prototype.deleteActual = function () {
+	Row.prototype.deleteActual = function (blockRedraw) {
 
 		var index = this.table.rowManager.getRowIndex(this);
 
@@ -5297,7 +5300,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.reactiveData.unwatchRow(this);
 		}
 
-		this.table.rowManager.deleteRow(this);
+		this.table.rowManager.deleteRow(this, blockRedraw);
 
 		this.deleteCells();
 
@@ -18351,6 +18354,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var args = Array.from(arguments);
 
 				if (!self.blocked) {
+					console.log("push");
 					args.forEach(function (arg) {
 						self.table.rowManager.addRowActual(arg, false);
 					});
@@ -18369,6 +18373,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var args = Array.from(arguments);
 
 				if (!self.blocked) {
+					console.log("unshift");
 					args.forEach(function (arg) {
 						self.table.rowManager.addRowActual(arg, true);
 					});
@@ -18387,6 +18392,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var row;
 
 				if (!self.blocked) {
+					console.log("shift");
 					if (self.data.length) {
 						row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
@@ -18408,6 +18414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			value: function value() {
 				var row;
 				if (!self.blocked) {
+					console.log("pop");
 					if (self.data.length) {
 						row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
@@ -18417,6 +18424,59 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 				return self.origFuncs.pop.call(data);
+			}
+		});
+
+		//override array splice function
+		self.origFuncs.splice = data.splice;
+
+		Object.defineProperty(self.data, "splice", {
+			enumerable: false,
+			value: function value() {
+				var args = Array.from(arguments),
+				    start = args[0] < 0 ? data.length + args[0] : args[0],
+				    end = args[1],
+				    newRows = args[2] ? args.slice(2) : false,
+				    startRow;
+
+				if (!self.blocked) {
+
+					//add new rows
+					if (newRows) {
+						startRow = data[start] ? self.table.rowManager.getRowFromDataObject(data[start]) : false;
+
+						if (startRow) {
+							newRows.forEach(function (rowData) {
+								self.table.rowManager.addRowActual(rowData, true, startRow, true);
+							});
+						} else {
+							newRows = newRows.slice().reverse();
+
+							newRows.forEach(function (rowData) {
+								self.table.rowManager.addRowActual(rowData, true, false, true);
+							});
+						}
+					}
+
+					//delete removed rows
+					if (end !== 0) {
+						var oldRows = data.slice(start, typeof args[1] === "undefined" ? args[1] : start + end);
+
+						oldRows.forEach(function (rowData) {
+							var row = self.table.rowManager.getRowFromDataObject(rowData);
+
+							if (row) {
+								row.deleteActual(true);
+							}
+						});
+					}
+
+					if (newRows || end !== 0) {
+						self.table.rowManager.reRenderInPosition();
+					}
+				}
+
+				return self.origFuncs.splice.apply(data, arguments);
 			}
 		});
 	};

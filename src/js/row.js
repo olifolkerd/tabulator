@@ -624,7 +624,7 @@ Row.prototype.delete = function(){
 };
 
 
-Row.prototype.deleteActual = function(){
+Row.prototype.deleteActual = function(blockRedraw){
 
 	var index = this.table.rowManager.getRowIndex(this);
 
@@ -642,7 +642,7 @@ Row.prototype.deleteActual = function(){
 		this.table.modules.reactiveData.unwatchRow(this);
 	}
 
-	this.table.rowManager.deleteRow(this);
+	this.table.rowManager.deleteRow(this, blockRedraw);
 
 	this.deleteCells();
 

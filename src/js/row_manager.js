@@ -332,7 +332,7 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 	}
 };
 
-RowManager.prototype.deleteRow = function(row){
+RowManager.prototype.deleteRow = function(row, blockRedraw){
 	var allIndex = this.rows.indexOf(row),
 	activeIndex = this.activeRows.indexOf(row);
 
@@ -354,7 +354,9 @@ RowManager.prototype.deleteRow = function(row){
 		}
 	});
 
-	this.reRenderInPosition();
+	if(!blockRedraw){
+		this.reRenderInPosition();
+	}
 
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
