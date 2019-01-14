@@ -290,10 +290,12 @@ Sort.prototype.sorters = {
 	//sort numbers
 	number:function(a, b, aRow, bRow, column, dir, params){
 		var alignEmptyValues = params.alignEmptyValues;
+		var decimal = params.decimalSeparator || ".";
+		var separator = params.thousandsSeparator || ",";
 		var emptyAlign = 0;
 
-		a = parseFloat(String(a).replace(",",""));
-		b = parseFloat(String(b).replace(",",""));
+		a = parseFloat(String(a).split(separator).join("").split(decimal).join("."));
+		b = parseFloat(String(b).split(separator).join("").split(decimal).join("."));
 
 		//handle non numeric values
 		if(isNaN(a)){
