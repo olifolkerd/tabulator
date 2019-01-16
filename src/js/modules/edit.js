@@ -650,8 +650,6 @@ Edit.prototype.editors = {
 
 			dataItems = dataList;
 			displayItems = displayList;
-
-			fillList();
 		}
 
 		function fillList(){
@@ -732,15 +730,20 @@ Edit.prototype.editors = {
 			cancel();
 		}
 
+		function parseFromEditorParamsOrColumnValues () {
+			if (editorParams.values === true) {
+				parseItems(getUniqueColumnValues(), initialValue);
+			}
+			else {
+				parseItems(editorParams.values || [], initialValue);
+			}
+		}
+
 		function showList(){
 			if(!listEl.parentNode){
 
-				if(editorParams.values === true){
-					parseItems(getUniqueColumnValues(), initialValue);
-				}else{
-					parseItems(editorParams.values || [], initialValue);
-				}
-
+				parseFromEditorParamsOrColumnValues();
+				fillList();
 
 				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
 
@@ -750,6 +753,7 @@ Edit.prototype.editors = {
 				listEl.style.left = offset.left + "px";
 				document.body.appendChild(listEl);
 			}
+
 		}
 
 		function hideList(){
@@ -820,6 +824,8 @@ Edit.prototype.editors = {
 		//style list element
 		listEl = document.createElement("div");
 		listEl.classList.add("tabulator-edit-select-list");
+
+		parseFromEditorParamsOrColumnValues();
 
 		onRendered(function(){
 			input.style.height = "100%";
