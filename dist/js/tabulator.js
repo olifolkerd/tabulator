@@ -17823,6 +17823,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set the maxmum page
 	Page.prototype.setMaxPage = function (max) {
+
+		max = parseInt(max);
+
 		this.max = max || 1;
 
 		if (this.page > this.max) {
@@ -17836,6 +17839,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var _this34 = this;
 
 		return new Promise(function (resolve, reject) {
+
+			page = parseInt(page);
+
 			if (page > 0 && page <= _this34.max) {
 				_this34.page = page;
 				_this34.trigger().then(function () {
@@ -17851,6 +17857,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.setPageSize = function (size) {
+		size = parseInt(size);
+
 		if (size > 0) {
 			this.size = size;
 		}

@@ -174,6 +174,9 @@ Page.prototype.reset = function (force) {
 
 //set the maxmum page
 Page.prototype.setMaxPage = function (max) {
+
+	max = parseInt(max);
+
 	this.max = max || 1;
 
 	if (this.page > this.max) {
@@ -187,6 +190,9 @@ Page.prototype.setPage = function (page) {
 	var _this = this;
 
 	return new Promise(function (resolve, reject) {
+
+		page = parseInt(page);
+
 		if (page > 0 && page <= _this.max) {
 			_this.page = page;
 			_this.trigger().then(function () {
@@ -202,6 +208,8 @@ Page.prototype.setPage = function (page) {
 };
 
 Page.prototype.setPageSize = function (size) {
+	size = parseInt(size);
+
 	if (size > 0) {
 		this.size = size;
 	}
