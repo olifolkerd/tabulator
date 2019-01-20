@@ -664,6 +664,13 @@
   display: none;
 }
 
+.tabulator-row .tabulator-cell .tabulator-traffic-light {
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+  border-radius: 14px;
+}
+
 .tabulator-row.tabulator-group {
   box-sizing: border-box;
   border-right: 1px solid #aaa;

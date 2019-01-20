@@ -867,6 +867,14 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 				display:none;
 			}
 		}
+
+		.tabulator-traffic-light{
+			display: inline-block;
+			height:14px;
+			width:14px;
+
+			border-radius:14px;
+		}
 	}
 
 	//row grouping element

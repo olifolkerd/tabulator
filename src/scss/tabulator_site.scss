@@ -833,6 +833,14 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 				display:none;
 			}
 		}
+
+		.tabulator-traffic-light{
+			display: inline-block;
+			height:14px;
+			width:14px;
+
+			border-radius:14px;
+		}
 	}
 
 	//row grouping element

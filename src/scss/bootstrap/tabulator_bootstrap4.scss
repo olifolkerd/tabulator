@@ -1090,6 +1090,14 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 				display:none;
 			}
 		}
+
+		.tabulator-traffic-light{
+			display: inline-block;
+			height:14px;
+			width:14px;
+
+			border-radius:14px;
+		}
 	}
 
 	//row grouping element
