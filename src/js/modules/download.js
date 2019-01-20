@@ -254,7 +254,7 @@ Download.prototype.downloaders = {
 		titles = [],
 		fields = [],
 		delimiter = options && options.delimiter ? options.delimiter : ",",
-		fileContents;
+		fileContents, output;
 
 		//build column headers
 		function parseSimpleTitles(){
@@ -339,7 +339,13 @@ Download.prototype.downloaders = {
 			parseRows(data);
 		}
 
-		setFileContents(fileContents.join("\n"), "text/csv");
+		output = fileContents.join("\n");
+
+		if(options.bom){
+			output = "\ufeff" + output;
+		}
+
+		setFileContents(output, "text/csv");
 	},
 
 	json:function(columns, data, options, setFileContents, config){

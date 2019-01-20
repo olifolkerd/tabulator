@@ -11764,7 +11764,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    titles = [],
 			    fields = [],
 			    delimiter = options && options.delimiter ? options.delimiter : ",",
-			    fileContents;
+			    fileContents,
+			    output;
 
 			//build column headers
 			function parseSimpleTitles() {
@@ -11848,7 +11849,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				parseRows(data);
 			}
 
-			setFileContents(fileContents.join("\n"), "text/csv");
+			output = fileContents.join("\n");
+
+			if (options.bom) {
+				output = '\uFEFF' + output;
+			}
+
+			setFileContents(output, "text/csv");
 		},
 
 		json: function json(columns, data, options, setFileContents, config) {
