@@ -57,6 +57,7 @@ Tabulator.prototype.defaultOptions = {
 
 	initialSort:false, //initial sorting criteria
 	initialFilter:false, //initial filtering criteria
+	initialHeaderFilter:false, //initial header filtering criteria
 
 	columnHeaderSortMulti: true, //multiple or single column sorting
 
@@ -470,8 +471,22 @@ Tabulator.prototype._buildElement = function(){
 		}
 
 		mod.filter.setFilter(filters);
-		// this.setFilter(filters);
 	}
+
+	if(options.initialHeaderFilter && this.modExists("filter", true)){
+		options.initialHeaderFilter.forEach((item) => {
+
+			var column = this.columnManager.findColumn(item.field);
+
+			if(column){
+				mod.filter.setHeaderFilterValue(column, item.value);
+			}else{
+				console.warn("Column Filter Error - No matching column found:", item.field);
+				return false;
+			}
+		});
+	}
+
 
 	if(this.modExists("ajax")){
 		mod.ajax.initialize();
