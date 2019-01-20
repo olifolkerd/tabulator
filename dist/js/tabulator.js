@@ -8465,6 +8465,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Tabulator.prototype.downloadToTab = function (type, filename, options) {
+
+		if (this.modExists("download", true)) {
+
+			this.modules.download.download(type, filename, options, true);
+		}
+	};
+
 	/////////// Inter Table Communications ///////////
 
 
@@ -11542,7 +11550,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		function buildLink(data, mime) {
 			if (interceptCallback) {
-				interceptCallback(data);
+				if (interceptCallback === true) {
+					self.triggerDownload(data, mime, type, filename, true);
+				} else {
+					interceptCallback(data);
+				}
 			} else {
 				self.triggerDownload(data, mime, type, filename);
 			}
@@ -11725,7 +11737,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return groupData;
 	};
 
-	Download.prototype.triggerDownload = function (data, mime, type, filename) {
+	Download.prototype.triggerDownload = function (data, mime, type, filename, newTab) {
 		var element = document.createElement('a'),
 		    blob = new Blob([data], { type: mime }),
 		    filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
@@ -11734,21 +11746,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (blob) {
 
-			if (navigator.msSaveOrOpenBlob) {
-				navigator.msSaveOrOpenBlob(blob, filename);
+			if (newTab) {
+				window.open(window.URL.createObjectURL(blob));
 			} else {
-				element.setAttribute('href', window.URL.createObjectURL(blob));
+				if (navigator.msSaveOrOpenBlob) {
+					navigator.msSaveOrOpenBlob(blob, filename);
+				} else {
+					element.setAttribute('href', window.URL.createObjectURL(blob));
 
-				//set file title
-				element.setAttribute('download', filename);
+					//set file title
+					element.setAttribute('download', filename);
 
-				//trigger download
-				element.style.display = 'none';
-				document.body.appendChild(element);
-				element.click();
+					//trigger download
+					element.style.display = 'none';
+					document.body.appendChild(element);
+					element.click();
 
-				//remove temporary link element
-				document.body.removeChild(element);
+					//remove temporary link element
+					document.body.removeChild(element);
+				}
 			}
 
 			if (this.table.options.downloadComplete) {

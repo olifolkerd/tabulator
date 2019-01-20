@@ -6480,6 +6480,12 @@ Tabulator.prototype.download = function (type, filename, options) {
 	}
 };
 
+Tabulator.prototype.downloadToTab = function (type, filename, options) {
+	if (this.modExists("download", true)) {
+		this.modules.download.download(type, filename, options, true);
+	}
+};
+
 /////////// Inter Table Communications ///////////
 
 Tabulator.prototype.tableComms = function (table, module, action, data) {
