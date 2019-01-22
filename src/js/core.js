@@ -1320,6 +1320,29 @@ Tabulator.prototype.setPage = function(page){
 	}
 };
 
+Tabulator.prototype.setPageToRow = function(row){
+	return new Promise((resolve, reject) => {
+		if(this.options.pagination && this.modExists("page")){
+			row = this.rowManager.findRow(row);
+
+			if(row){
+				this.modules.page.setPageToRow(row)
+				.then(()=>{
+					resolve();
+				})
+				.catch(()=>{
+					reject();
+				});
+			}else{
+				reject();
+			}
+		}else{
+			reject();
+		}
+	});
+};
+
+
 Tabulator.prototype.setPageSize = function(size){
 	if(this.options.pagination && this.modExists("page")){
 		this.modules.page.setPageSize(size);
@@ -1419,7 +1442,7 @@ Tabulator.prototype.getGroups = function(values){
 Tabulator.prototype.getGroupedData = function(){
 	if (this.modExists("groupRows", true)){
 		return this.options.groupBy ?
-				this.modules.groupRows.getGroupedData() : this.getData()
+		this.modules.groupRows.getGroupedData() : this.getData()
 	}
 }
 

@@ -207,6 +207,29 @@ Page.prototype.setPage = function (page) {
 	});
 };
 
+Page.prototype.setPageToRow = function (row) {
+	var _this2 = this;
+
+	return new Promise(function (resolve, reject) {
+
+		var rows = _this2.table.rowManager.getDisplayRows(_this2.displayIndex - 1);
+		var index = rows.indexOf(row);
+
+		if (index > -1) {
+			var page = Math.ceil((index + 1) / _this2.size);
+
+			_this2.setPage(page).then(function () {
+				resolve();
+			}).catch(function () {
+				reject();
+			});
+		} else {
+			console.warn("Pagination Error - Requested row is not visible");
+			reject();
+		}
+	});
+};
+
 Page.prototype.setPageSize = function (size) {
 	size = parseInt(size);
 
@@ -276,12 +299,12 @@ Page.prototype._generatePageButton = function (page) {
 
 //previous page
 Page.prototype.previousPage = function () {
-	var _this2 = this;
+	var _this3 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this2.page > 1) {
-			_this2.page--;
-			_this2.trigger().then(function () {
+		if (_this3.page > 1) {
+			_this3.page--;
+			_this3.trigger().then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
@@ -295,19 +318,19 @@ Page.prototype.previousPage = function () {
 
 //next page
 Page.prototype.nextPage = function () {
-	var _this3 = this;
+	var _this4 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this3.page < _this3.max) {
-			_this3.page++;
-			_this3.trigger().then(function () {
+		if (_this4.page < _this4.max) {
+			_this4.page++;
+			_this4.trigger().then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
 			});
 		} else {
-			if (!_this3.progressiveLoad) {
-				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this3.max + ":", _this3.max + 1);
+			if (!_this4.progressiveLoad) {
+				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this4.max + ":", _this4.max + 1);
 			}
 			reject();
 		}
@@ -359,28 +382,28 @@ Page.prototype.getRows = function (data) {
 };
 
 Page.prototype.trigger = function () {
-	var _this4 = this;
+	var _this5 = this;
 
 	var left;
 
 	return new Promise(function (resolve, reject) {
 
-		switch (_this4.mode) {
+		switch (_this5.mode) {
 			case "local":
-				left = _this4.table.rowManager.scrollLeft;
+				left = _this5.table.rowManager.scrollLeft;
 
-				_this4.table.rowManager.refreshActiveData("page");
-				_this4.table.rowManager.scrollHorizontal(left);
+				_this5.table.rowManager.refreshActiveData("page");
+				_this5.table.rowManager.scrollHorizontal(left);
 
-				_this4.table.options.pageLoaded.call(_this4.table, _this4.getPage());
+				_this5.table.options.pageLoaded.call(_this5.table, _this5.getPage());
 				resolve();
 				break;
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-				_this4.table.modules.ajax.blockActiveRequest();
-				_this4._getRemotePage().then(function () {
+				_this5.table.modules.ajax.blockActiveRequest();
+				_this5._getRemotePage().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -388,14 +411,14 @@ Page.prototype.trigger = function () {
 				break;
 
 			default:
-				console.warn("Pagination Error - no such pagination mode:", _this4.mode);
+				console.warn("Pagination Error - no such pagination mode:", _this5.mode);
 				reject();
 		}
 	});
 };
 
 Page.prototype._getRemotePage = function () {
-	var _this5 = this;
+	var _this6 = this;
 
 	var self = this,
 	    oldParams,
@@ -412,33 +435,33 @@ Page.prototype._getRemotePage = function () {
 		pageParams = self.table.modules.ajax.getParams();
 
 		//configure request params
-		pageParams[_this5.paginationDataSentNames.page] = self.page;
+		pageParams[_this6.paginationDataSentNames.page] = self.page;
 
 		//set page size if defined
-		if (_this5.size) {
-			pageParams[_this5.paginationDataSentNames.size] = _this5.size;
+		if (_this6.size) {
+			pageParams[_this6.paginationDataSentNames.size] = _this6.size;
 		}
 
 		//set sort data if defined
-		if (_this5.table.options.ajaxSorting && _this5.table.modExists("sort")) {
+		if (_this6.table.options.ajaxSorting && _this6.table.modExists("sort")) {
 			var sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function (item) {
 				delete item.column;
 			});
 
-			pageParams[_this5.paginationDataSentNames.sorters] = sorters;
+			pageParams[_this6.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
-		if (_this5.table.options.ajaxFiltering && _this5.table.modExists("filter")) {
+		if (_this6.table.options.ajaxFiltering && _this6.table.modExists("filter")) {
 			var filters = self.table.modules.filter.getFilters(true, true);
-			pageParams[_this5.paginationDataSentNames.filters] = filters;
+			pageParams[_this6.paginationDataSentNames.filters] = filters;
 		}
 
 		self.table.modules.ajax.setParams(pageParams);
 
-		self.table.modules.ajax.sendRequest(_this5.progressiveLoad).then(function (data) {
+		self.table.modules.ajax.sendRequest(_this6.progressiveLoad).then(function (data) {
 			self._parseRemoteData(data);
 			resolve();
 		}).catch(function (e) {

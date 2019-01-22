@@ -206,6 +206,31 @@ Page.prototype.setPage = function(page){
 	});
 };
 
+Page.prototype.setPageToRow = function(row){
+
+	return new Promise((resolve, reject)=>{
+
+		var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
+		var index = rows.indexOf(row);
+
+		if(index > -1){
+			var page = Math.ceil((index + 1) / this.size);
+
+			this.setPage(page)
+			.then(()=>{
+				resolve();
+			})
+			.catch(()=>{
+				reject();
+			});
+		}else{
+			console.warn("Pagination Error - Requested row is not visible");
+			reject();
+		}
+	});
+};
+
+
 Page.prototype.setPageSize = function(size){
 	size = parseInt(size);
 

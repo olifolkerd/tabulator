@@ -6236,6 +6236,28 @@ Tabulator.prototype.setPage = function (page) {
 	}
 };
 
+Tabulator.prototype.setPageToRow = function (row) {
+	var _this17 = this;
+
+	return new Promise(function (resolve, reject) {
+		if (_this17.options.pagination && _this17.modExists("page")) {
+			row = _this17.rowManager.findRow(row);
+
+			if (row) {
+				_this17.modules.page.setPageToRow(row).then(function () {
+					resolve();
+				}).catch(function () {
+					reject();
+				});
+			} else {
+				reject();
+			}
+		} else {
+			reject();
+		}
+	});
+};
+
 Tabulator.prototype.setPageSize = function (size) {
 	if (this.options.pagination && this.modExists("page")) {
 		this.modules.page.setPageSize(size);
