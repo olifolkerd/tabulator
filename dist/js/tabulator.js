@@ -4532,6 +4532,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._row.table.rowManager.scrollToRow(this._row);
 	};
 
+	RowComponent.prototype.pageTo = function () {
+
+		if (this._row.table.modExists("page", true)) {
+
+			return this._row.table.modules.page.setPageToRow(this._row);
+		}
+	};
+
 	RowComponent.prototype.update = function (data) {
 
 		return this._row.updateData(data);
