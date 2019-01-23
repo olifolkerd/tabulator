@@ -49,6 +49,10 @@ RowComponent.prototype.pageTo = function(){
 	}
 };
 
+RowComponent.prototype.move = function(to, after){
+	this._row.moveToRow(to, after);
+};
+
 RowComponent.prototype.update = function(data){
 	return this._row.updateData(data);
 };
@@ -601,7 +605,6 @@ Row.prototype.findPrevEditableCell = function(index){
 	return prevCell;
 };
 
-
 Row.prototype.getCells = function(){
 	return this.cells;
 };
@@ -615,6 +618,18 @@ Row.prototype.prevRow = function(){
 	var row = this.table.rowManager.prevDisplayRow(this, true);
 	return row ? row.getComponent() : false;
 };
+
+Row.prototype.moveToRow = function(to, before){
+	var toRow = this.table.rowManager.findRow(to);
+
+	if(toRow){
+		this.table.rowManager.moveRowActual(this, toRow, !before);
+		this.table.rowManager.refreshActiveData("display", false, true);
+	}else{
+		console.warn("Move Error - No matching row found:", to);
+	}
+};
+
 
 ///////////////////// Actions  /////////////////////
 

@@ -989,6 +989,16 @@ Tabulator.prototype.scrollToRow = function(index, position, ifVisible){
 	});
 };
 
+Tabulator.prototype.moveRow = function(from, to, after){
+	var fromRow = this.rowManager.findRow(from);
+
+	if(fromRow){
+		fromRow.moveToRow(to, after);
+	}else{
+		console.warn("Move Error - No matching row found:", from);
+	}
+};
+
 Tabulator.prototype.getRows = function(active){
 	return this.rowManager.getComponents(active);
 };

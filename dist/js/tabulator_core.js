@@ -3591,6 +3591,10 @@ RowComponent.prototype.pageTo = function () {
 	}
 };
 
+RowComponent.prototype.move = function (to, after) {
+	this._row.moveToRow(to, after);
+};
+
 RowComponent.prototype.update = function (data) {
 	return this._row.updateData(data);
 };
@@ -4151,6 +4155,17 @@ Row.prototype.nextRow = function () {
 Row.prototype.prevRow = function () {
 	var row = this.table.rowManager.prevDisplayRow(this, true);
 	return row ? row.getComponent() : false;
+};
+
+Row.prototype.moveToRow = function (to, before) {
+	var toRow = this.table.rowManager.findRow(to);
+
+	if (toRow) {
+		this.table.rowManager.moveRowActual(this, toRow, !before);
+		this.table.rowManager.refreshActiveData("display", false, true);
+	} else {
+		console.warn("Move Error - No matching row found:", to);
+	}
 };
 
 ///////////////////// Actions  /////////////////////
@@ -5914,6 +5929,16 @@ Tabulator.prototype.scrollToRow = function (index, position, ifVisible) {
 			reject("Scroll Error - No matching row found");
 		}
 	});
+};
+
+Tabulator.prototype.moveRow = function (from, to, after) {
+	var fromRow = this.rowManager.findRow(from);
+
+	if (fromRow) {
+		fromRow.moveToRow(to, after);
+	} else {
+		console.warn("Move Error - No matching row found:", from);
+	}
 };
 
 Tabulator.prototype.getRows = function (active) {
