@@ -47,6 +47,8 @@ Tabulator.prototype.defaultOptions = {
 
 	data:[], //default starting data
 
+	autoColumns:true, //build columns from data row structure
+
 	reactiveData:false, //enable data reactivity
 
 	nestedFieldSeparator:".", //seperatpr for nested data

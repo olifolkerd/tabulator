@@ -282,6 +282,9 @@ RowManager.prototype.setData = function(data, renderInPosition){
 				});
 			}
 		}else{
+			if(this.table.options.autoColumns){
+				this.table.columnManager.generateColumnsFromRowData(data);
+			}
 			this.resetScroll();
 			this._setDataActual(data);
 		}
