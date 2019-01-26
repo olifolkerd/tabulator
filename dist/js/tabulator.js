@@ -2817,8 +2817,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			} else {
 
-				console.log("cols", _this3.table.options, _this3.table.options.autoColumns);
-
 				if (_this3.table.options.autoColumns) {
 
 					_this3.table.columnManager.generateColumnsFromRowData(data);
@@ -6469,7 +6467,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		data: [], //default starting data
 
 
-		autoColumns: true, //build columns from data row structure
+		autoColumns: false, //build columns from data row structure
 
 
 		reactiveData: false, //enable data reactivity
