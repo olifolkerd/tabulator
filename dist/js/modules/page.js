@@ -14,6 +14,8 @@ var Page = function Page(table) {
 
 	this.displayIndex = 0; //index in display pipeline
 
+	this.pageSizes = [];
+
 	this.createElements();
 };
 
@@ -45,11 +47,60 @@ Page.prototype.createElements = function () {
 
 	this.lastBut = button.cloneNode(true);
 	this.lastBut.setAttribute("data-page", "last");
+
+	if (this.table.options.paginationSizeSelector) {
+		this.pageSizeSelect = document.createElement("select");
+		this.pageSizeSelect.classList.add("tabulator-page-size");
+	}
+};
+
+Page.prototype.generatePageSizeSelectList = function () {
+	var _this = this;
+
+	var pageSizes = [];
+
+	if (this.pageSizeSelect) {
+
+		if (Array.isArray(this.table.options.paginationSizeSelector)) {
+			pageSizes = this.table.options.paginationSizeSelector;
+			this.pageSizes = pageSizes;
+
+			if (this.pageSizes.indexOf(this.size) == -1) {
+				pageSizes.unshift(this.size);
+			}
+		} else {
+
+			if (this.pageSizes.indexOf(this.size) == -1) {
+				pageSizes = [];
+
+				for (var i = 1; i < 5; i++) {
+					pageSizes.push(this.size * i);
+				}
+
+				this.pageSizes = pageSizes;
+			} else {
+				pageSizes = this.pageSizes;
+			}
+		}
+
+		while (this.pageSizeSelect.firstChild) {
+			this.pageSizeSelect.removeChild(this.pageSizeSelect.firstChild);
+		}pageSizes.forEach(function (item) {
+			var itemEl = document.createElement("option");
+			itemEl.value = item;
+			itemEl.innerHTML = item;
+
+			_this.pageSizeSelect.appendChild(itemEl);
+		});
+
+		this.pageSizeSelect.value = this.size;
+	}
 };
 
 //setup pageination
 Page.prototype.initialize = function (hidden) {
-	var self = this;
+	var self = this,
+	    pageSelectLabel;
 
 	//update param names
 	for (var key in self.table.options.paginationDataSent) {
@@ -120,6 +171,24 @@ Page.prototype.initialize = function (hidden) {
 		self.element = self.table.options.paginationElement;
 	}
 
+	if (this.pageSizeSelect) {
+		pageSelectLabel = document.createElement("label");
+
+		self.table.modules.localize.bind("pagination|page_size", function (value) {
+			self.pageSizeSelect.setAttribute("aria-label", value);
+			self.pageSizeSelect.setAttribute("title", value);
+			pageSelectLabel.innerHTML = value;
+		});
+
+		self.element.appendChild(pageSelectLabel);
+		self.element.appendChild(self.pageSizeSelect);
+
+		self.pageSizeSelect.addEventListener("change", function (e) {
+			self.setPageSize(self.pageSizeSelect.value);
+			self.setPage(1).then(function () {}).catch(function () {});
+		});
+	}
+
 	//append to DOM
 	self.element.appendChild(self.firstBut);
 	self.element.appendChild(self.prevBut);
@@ -135,6 +204,8 @@ Page.prototype.initialize = function (hidden) {
 	self.mode = self.table.options.pagination;
 	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().clientHeight / 24);
 	self.count = self.table.options.paginationButtonCount;
+
+	self.generatePageSizeSelectList();
 };
 
 Page.prototype.initializeProgressive = function (mode) {
@@ -187,38 +258,38 @@ Page.prototype.setMaxPage = function (max) {
 
 //set current page number
 Page.prototype.setPage = function (page) {
-	var _this = this;
+	var _this2 = this;
 
 	return new Promise(function (resolve, reject) {
 
 		page = parseInt(page);
 
-		if (page > 0 && page <= _this.max) {
-			_this.page = page;
-			_this.trigger().then(function () {
+		if (page > 0 && page <= _this2.max) {
+			_this2.page = page;
+			_this2.trigger().then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
 			});
 		} else {
-			console.warn("Pagination Error - Requested page is out of range of 1 - " + _this.max + ":", page);
+			console.warn("Pagination Error - Requested page is out of range of 1 - " + _this2.max + ":", page);
 			reject();
 		}
 	});
 };
 
 Page.prototype.setPageToRow = function (row) {
-	var _this2 = this;
+	var _this3 = this;
 
 	return new Promise(function (resolve, reject) {
 
-		var rows = _this2.table.rowManager.getDisplayRows(_this2.displayIndex - 1);
+		var rows = _this3.table.rowManager.getDisplayRows(_this3.displayIndex - 1);
 		var index = rows.indexOf(row);
 
 		if (index > -1) {
-			var page = Math.ceil((index + 1) / _this2.size);
+			var page = Math.ceil((index + 1) / _this3.size);
 
-			_this2.setPage(page).then(function () {
+			_this3.setPage(page).then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
@@ -235,6 +306,11 @@ Page.prototype.setPageSize = function (size) {
 
 	if (size > 0) {
 		this.size = size;
+	}
+
+	if (this.pageSizeSelect) {
+		// this.pageSizeSelect.value = size;
+		this.generatePageSizeSelectList();
 	}
 };
 
@@ -299,12 +375,12 @@ Page.prototype._generatePageButton = function (page) {
 
 //previous page
 Page.prototype.previousPage = function () {
-	var _this3 = this;
+	var _this4 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this3.page > 1) {
-			_this3.page--;
-			_this3.trigger().then(function () {
+		if (_this4.page > 1) {
+			_this4.page--;
+			_this4.trigger().then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
@@ -318,19 +394,19 @@ Page.prototype.previousPage = function () {
 
 //next page
 Page.prototype.nextPage = function () {
-	var _this4 = this;
+	var _this5 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this4.page < _this4.max) {
-			_this4.page++;
-			_this4.trigger().then(function () {
+		if (_this5.page < _this5.max) {
+			_this5.page++;
+			_this5.trigger().then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
 			});
 		} else {
-			if (!_this4.progressiveLoad) {
-				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this4.max + ":", _this4.max + 1);
+			if (!_this5.progressiveLoad) {
+				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this5.max + ":", _this5.max + 1);
 			}
 			reject();
 		}
@@ -382,28 +458,28 @@ Page.prototype.getRows = function (data) {
 };
 
 Page.prototype.trigger = function () {
-	var _this5 = this;
+	var _this6 = this;
 
 	var left;
 
 	return new Promise(function (resolve, reject) {
 
-		switch (_this5.mode) {
+		switch (_this6.mode) {
 			case "local":
-				left = _this5.table.rowManager.scrollLeft;
+				left = _this6.table.rowManager.scrollLeft;
 
-				_this5.table.rowManager.refreshActiveData("page");
-				_this5.table.rowManager.scrollHorizontal(left);
+				_this6.table.rowManager.refreshActiveData("page");
+				_this6.table.rowManager.scrollHorizontal(left);
 
-				_this5.table.options.pageLoaded.call(_this5.table, _this5.getPage());
+				_this6.table.options.pageLoaded.call(_this6.table, _this6.getPage());
 				resolve();
 				break;
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-				_this5.table.modules.ajax.blockActiveRequest();
-				_this5._getRemotePage().then(function () {
+				_this6.table.modules.ajax.blockActiveRequest();
+				_this6._getRemotePage().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -411,14 +487,14 @@ Page.prototype.trigger = function () {
 				break;
 
 			default:
-				console.warn("Pagination Error - no such pagination mode:", _this5.mode);
+				console.warn("Pagination Error - no such pagination mode:", _this6.mode);
 				reject();
 		}
 	});
 };
 
 Page.prototype._getRemotePage = function () {
-	var _this6 = this;
+	var _this7 = this;
 
 	var self = this,
 	    oldParams,
@@ -435,33 +511,33 @@ Page.prototype._getRemotePage = function () {
 		pageParams = self.table.modules.ajax.getParams();
 
 		//configure request params
-		pageParams[_this6.paginationDataSentNames.page] = self.page;
+		pageParams[_this7.paginationDataSentNames.page] = self.page;
 
 		//set page size if defined
-		if (_this6.size) {
-			pageParams[_this6.paginationDataSentNames.size] = _this6.size;
+		if (_this7.size) {
+			pageParams[_this7.paginationDataSentNames.size] = _this7.size;
 		}
 
 		//set sort data if defined
-		if (_this6.table.options.ajaxSorting && _this6.table.modExists("sort")) {
+		if (_this7.table.options.ajaxSorting && _this7.table.modExists("sort")) {
 			var sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function (item) {
 				delete item.column;
 			});
 
-			pageParams[_this6.paginationDataSentNames.sorters] = sorters;
+			pageParams[_this7.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
-		if (_this6.table.options.ajaxFiltering && _this6.table.modExists("filter")) {
+		if (_this7.table.options.ajaxFiltering && _this7.table.modExists("filter")) {
 			var filters = self.table.modules.filter.getFilters(true, true);
-			pageParams[_this6.paginationDataSentNames.filters] = filters;
+			pageParams[_this7.paginationDataSentNames.filters] = filters;
 		}
 
 		self.table.modules.ajax.setParams(pageParams);
 
-		self.table.modules.ajax.sendRequest(_this6.progressiveLoad).then(function (data) {
+		self.table.modules.ajax.sendRequest(_this7.progressiveLoad).then(function (data) {
 			self._parseRemoteData(data);
 			resolve();
 		}).catch(function (e) {

@@ -453,6 +453,24 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		}
 
 		//pagination container element
+		.tabulator-paginator{
+			font-family:inherit;
+			font-weight:inherit;
+			font-size:inherit;
+		}
+
+		//page size select element
+		.tabulator-page-size{
+			display:inline-block;
+
+			margin:0 5px;
+			padding:2px 5px;
+
+			border:1px solid $footerBorderColor;
+			border-radius:3px;
+		}
+
+		//pagination container element
 		.tabulator-pages{
 			// margin:0 7px;
 		}
@@ -469,11 +487,6 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 			border-right:none;
 
 			background:rgba(255,255,255,.2);
-
-			color: $pagination-color;
-			font-family:inherit;
-			font-weight:normal;
-			font-size:inherit;
 
 			&[data-page="first"]{
 				border-top-left-radius:4px;

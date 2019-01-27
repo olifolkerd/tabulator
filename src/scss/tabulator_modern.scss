@@ -484,6 +484,25 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 
 		//pagination container element
+		.tabulator-paginator{
+			color: $footerTextColor;
+			font-family:inherit;
+			font-weight:inherit;
+			font-size:inherit;
+		}
+
+		//page size select element
+		.tabulator-page-size{
+			display:inline-block;
+
+			margin:0 5px;
+			padding:2px 5px;
+
+			border:1px solid $footerBorderColor;
+			border-radius:3px;
+		}
+
+		//pagination container element
 		.tabulator-pages{
 			margin:0 7px;
 		}
@@ -491,15 +510,14 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		//pagination button
 		.tabulator-page{
 			display:inline-block;
+
 			margin:0 2px;
+			padding:2px 5px;
+			
 			border:1px solid $footerBorderColor;
 			border-radius:3px;
-			padding:2px 5px;
+			
 			background:rgba(255,255,255,.2);
-			color: $footerTextColor;
-			font-family:inherit;
-			font-weight:inherit;
-			font-size:inherit;
 
 			&.active{
 				color:$footerActiveColor;

@@ -177,6 +177,7 @@ Localize.prototype.langs = {
 			"error":"Error",
 		},
 		"pagination":{
+			"page_size":"Page Size",
 			"first":"First",
 			"first_title":"First Page",
 			"last":"Last",

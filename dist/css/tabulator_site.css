@@ -324,6 +324,21 @@
   border-bottom: none;
 }
 
+.tabulator .tabulator-footer .tabulator-paginator {
+  color: #222;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.tabulator .tabulator-footer .tabulator-page-size {
+  display: inline-block;
+  margin: 0 5px;
+  padding: 2px 5px;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+}
+
 .tabulator .tabulator-footer .tabulator-pages {
   margin: 0 7px;
 }
@@ -335,10 +350,6 @@
   border: 1px solid #aaa;
   border-radius: 3px;
   background: #fff;
-  color: #222;
-  font-family: inherit;
-  font-weight: inherit;
-  font-size: inherit;
 }
 
 .tabulator .tabulator-footer .tabulator-page.active {

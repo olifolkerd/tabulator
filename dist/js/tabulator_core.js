@@ -5161,6 +5161,7 @@ Tabulator.prototype.defaultOptions = {
 	pagination: false, //set pagination type
 	paginationSize: false, //set number of rows to a page
 	paginationButtonCount: 5, // set count of page button
+	paginationSizeSelector: false, //add pagination size selector element
 	paginationElement: false, //element to hold pagination numbers
 	paginationDataSent: {}, //pagination data sent to the server
 	paginationDataReceived: {}, //pagination data received from the server
@@ -7244,6 +7245,7 @@ Localize.prototype.langs = {
 			"error": "Error"
 		},
 		"pagination": {
+			"page_size": "Page Size",
 			"first": "First",
 			"first_title": "First Page",
 			"last": "Last",
