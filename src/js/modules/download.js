@@ -71,7 +71,7 @@ Download.prototype.processColumns = function () {
 
 	self.table.columnManager.columnsByIndex.forEach(function (column) {
 
-		if (column.field && column.visible && column.definition.download !== false) {
+		if (column.field && column.definition.download !== false) {
 			self.columnsByIndex.push(column);
 			self.columnsByField[column.field] = column;
 		}
@@ -127,7 +127,7 @@ Download.prototype.processColumnGroup = function(column){
 			return false;
 		}
 	}else{
-		if(column.field && column.visible && column.definition.download !== false){
+		if(column.field && column.definition.download !== false){
 			groupData.width = 1;
 			groupData.definition = this.processDefinition(column);
 		}else{
