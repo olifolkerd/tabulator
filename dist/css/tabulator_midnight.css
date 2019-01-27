@@ -352,11 +352,8 @@
   border-bottom: none;
 }
 
-.tabulator .tabulator-footer .tabulator-paginator {
-  color: #333;
-  font-family: inherit;
-  font-weight: inherit;
-  font-size: inherit;
+.tabulator .tabulator-footer .tabulator-paginator label {
+  color: #fff;
 }
 
 .tabulator .tabulator-footer .tabulator-page-size {
@@ -378,6 +375,10 @@
   border: 1px solid #aaa;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.2);
+  color: #333;
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
 }
 
 .tabulator .tabulator-footer .tabulator-page.active {

@@ -462,10 +462,9 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 
 		//pagination container element
 		.tabulator-paginator{
-			color: $footerTextColor;
-			font-family:inherit;
-			font-weight:inherit;
-			font-size:inherit;
+			label{
+				color:#fff;
+			}
 		}
 
 		//page size select element
@@ -495,6 +494,11 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 			border-radius:3px;
 			
 			background:rgba(255,255,255,.2);
+
+			color: $footerTextColor;
+			font-family:inherit;
+			font-weight:inherit;
+			font-size:inherit;
 
 			&.active{
 				color:$footerActiveColor;
