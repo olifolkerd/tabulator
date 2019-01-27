@@ -11763,7 +11763,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		self.table.columnManager.columnsByIndex.forEach(function (column) {
 
-			if (column.field && column.definition.download !== false) {
+			if (column.field && column.definition.download !== false && (column.visible || !column.visible && column.definition.download)) {
 				self.columnsByIndex.push(column);
 				self.columnsByField[column.field] = column;
 			}
@@ -11821,7 +11821,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				return false;
 			}
 		} else {
-			if (column.field && column.definition.download !== false) {
+			if (column.field && column.definition.download !== false && (column.visible || !column.visible && column.definition.download)) {
 				groupData.width = 1;
 				groupData.definition = this.processDefinition(column);
 			} else {
