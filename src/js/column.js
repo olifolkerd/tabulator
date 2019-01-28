@@ -149,6 +149,7 @@ var Column = function(def, parent){
 		cellMouseEnter:false,
 		cellMouseLeave:false,
 		cellMouseOver:false,
+		cellMouseOut:false,
 		cellMouseMove:false,
 	};
 
@@ -428,6 +429,10 @@ Column.prototype._bindEvents = function(){
 
 	if(typeof(def.cellMouseOver) == "function"){
 		self.cellEvents.cellMouseOver = def.cellMouseOver;
+	}
+
+	if(typeof(def.cellMouseOut) == "function"){
+		self.cellEvents.cellMouseOut = def.cellMouseOut;
 	}
 
 	if(typeof(def.cellMouseMove) == "function"){

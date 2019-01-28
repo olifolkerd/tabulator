@@ -242,6 +242,12 @@ Row.prototype.generateElement = function(){
 		});
 	}
 
+	if (self.table.options.rowMouseOut){
+		self.element.addEventListener("mouseout", function(e){
+			self.table.options.rowMouseOut(e, self.getComponent());
+		});
+	}
+
 	if (self.table.options.rowMouseMove){
 		self.element.addEventListener("mousemove", function(e){
 			self.table.options.rowMouseMove(e, self.getComponent());

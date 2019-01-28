@@ -251,6 +251,20 @@ Cell.prototype._bindMouseEvents = function(cellEvents){
 		});
 	}
 
+	if (cellEvents.cellMouseOut || self.table.options.cellMouseOut){
+		element.addEventListener("mouseout", function(e){
+			var component = self.getComponent();
+
+			if(cellEvents.cellMouseOut){
+				cellEvents.cellMouseOut.call(self.table, e, component);
+			}
+
+			if(self.table.options.cellMouseOut){
+				self.table.options.cellMouseOut.call(self.table, e, component);
+			}
+		});
+	}
+
 	if (cellEvents.cellMouseMove || self.table.options.cellMouseMove){
 		element.addEventListener("mousemove", function(e){
 			var component = self.getComponent();
@@ -264,6 +278,8 @@ Cell.prototype._bindMouseEvents = function(cellEvents){
 			}
 		});
 	}
+
+
 };
 
 

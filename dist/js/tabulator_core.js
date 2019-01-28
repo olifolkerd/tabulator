@@ -1067,6 +1067,7 @@ var Column = function Column(def, parent) {
 		cellMouseEnter: false,
 		cellMouseLeave: false,
 		cellMouseOver: false,
+		cellMouseOut: false,
 		cellMouseMove: false
 	};
 
@@ -1348,6 +1349,10 @@ Column.prototype._bindEvents = function () {
 
 	if (typeof def.cellMouseOver == "function") {
 		self.cellEvents.cellMouseOver = def.cellMouseOver;
+	}
+
+	if (typeof def.cellMouseOut == "function") {
+		self.cellEvents.cellMouseOut = def.cellMouseOut;
 	}
 
 	if (typeof def.cellMouseMove == "function") {
@@ -3887,6 +3892,12 @@ Row.prototype.generateElement = function () {
 		});
 	}
 
+	if (self.table.options.rowMouseOut) {
+		self.element.addEventListener("mouseout", function (e) {
+			self.table.options.rowMouseOut(e, self.getComponent());
+		});
+	}
+
 	if (self.table.options.rowMouseMove) {
 		self.element.addEventListener("mousemove", function (e) {
 			self.table.options.rowMouseMove(e, self.getComponent());
@@ -4639,6 +4650,20 @@ Cell.prototype._bindMouseEvents = function (cellEvents) {
 		});
 	}
 
+	if (cellEvents.cellMouseOut || self.table.options.cellMouseOut) {
+		element.addEventListener("mouseout", function (e) {
+			var component = self.getComponent();
+
+			if (cellEvents.cellMouseOut) {
+				cellEvents.cellMouseOut.call(self.table, e, component);
+			}
+
+			if (self.table.options.cellMouseOut) {
+				self.table.options.cellMouseOut.call(self.table, e, component);
+			}
+		});
+	}
+
 	if (cellEvents.cellMouseMove || self.table.options.cellMouseMove) {
 		element.addEventListener("mousemove", function (e) {
 			var component = self.getComponent();
@@ -5355,6 +5380,7 @@ Tabulator.prototype.defaultOptions = {
 	rowMouseEnter: false,
 	rowMouseLeave: false,
 	rowMouseOver: false,
+	rowMouseOut: false,
 	rowMouseMove: false,
 	rowAdded: function rowAdded() {},
 	rowDeleted: function rowDeleted() {},
@@ -5376,6 +5402,7 @@ Tabulator.prototype.defaultOptions = {
 	cellMouseEnter: false,
 	cellMouseLeave: false,
 	cellMouseOver: false,
+	cellMouseOut: false,
 	cellMouseMove: false,
 	cellEditing: function cellEditing() {},
 	cellEdited: function cellEdited() {},

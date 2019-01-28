@@ -1197,6 +1197,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			cellMouseOver: false,
 
+			cellMouseOut: false,
+
 			cellMouseMove: false
 
 		};
@@ -1565,6 +1567,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (typeof def.cellMouseOver == "function") {
 
 			self.cellEvents.cellMouseOver = def.cellMouseOver;
+		}
+
+		if (typeof def.cellMouseOut == "function") {
+
+			self.cellEvents.cellMouseOut = def.cellMouseOut;
 		}
 
 		if (typeof def.cellMouseMove == "function") {
@@ -4913,6 +4920,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 
+		if (self.table.options.rowMouseOut) {
+
+			self.element.addEventListener("mouseout", function (e) {
+
+				self.table.options.rowMouseOut(e, self.getComponent());
+			});
+		}
+
 		if (self.table.options.rowMouseMove) {
 
 			self.element.addEventListener("mousemove", function (e) {
@@ -5876,6 +5891,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (self.table.options.cellMouseOver) {
 
 					self.table.options.cellMouseOver.call(self.table, e, component);
+				}
+			});
+		}
+
+		if (cellEvents.cellMouseOut || self.table.options.cellMouseOut) {
+
+			element.addEventListener("mouseout", function (e) {
+
+				var component = self.getComponent();
+
+				if (cellEvents.cellMouseOut) {
+
+					cellEvents.cellMouseOut.call(self.table, e, component);
+				}
+
+				if (self.table.options.cellMouseOut) {
+
+					self.table.options.cellMouseOut.call(self.table, e, component);
 				}
 			});
 		}
@@ -6894,6 +6927,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		rowMouseOver: false,
 
+		rowMouseOut: false,
+
 		rowMouseMove: false,
 
 		rowAdded: function rowAdded() {},
@@ -6933,6 +6968,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		cellMouseLeave: false,
 
 		cellMouseOver: false,
+
+		cellMouseOut: false,
 
 		cellMouseMove: false,
 
