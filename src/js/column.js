@@ -145,7 +145,11 @@ var Column = function(def, parent){
 		cellContext:false,
 		cellTap:false,
 		cellDblTap:false,
-		cellTapHold:false
+		cellTapHold:false,
+		cellMouseEnter:false,
+		cellMouseLeave:false,
+		cellMouseOver:false,
+		cellMouseMove:false,
 	};
 
 	this.width = null; //column width
@@ -411,6 +415,23 @@ Column.prototype._bindEvents = function(){
 
 	if(typeof(def.cellContext) == "function"){
 		self.cellEvents.cellContext = def.cellContext;
+	}
+
+	//store column mouse event bindings
+	if(typeof(def.cellMouseEnter) == "function"){
+		self.cellEvents.cellMouseEnter = def.cellMouseEnter;
+	}
+
+	if(typeof(def.cellMouseLeave) == "function"){
+		self.cellEvents.cellMouseLeave = def.cellMouseLeave;
+	}
+
+	if(typeof(def.cellMouseOver) == "function"){
+		self.cellEvents.cellMouseOver = def.cellMouseOver;
+	}
+
+	if(typeof(def.cellMouseMove) == "function"){
+		self.cellEvents.cellMouseMove = def.cellMouseMove;
 	}
 
 	//setup column cell tap event bindings

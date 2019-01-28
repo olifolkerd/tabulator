@@ -112,8 +112,7 @@ Cell.prototype._configureCell = function(){
 	var self = this,
 	cellEvents = self.column.cellEvents,
 	element = self.element,
-	field = this.column.getField(),
-	dblTap,	tapHold, tap;
+	field = this.column.getField();
 
 	//set text alignment
 	element.style.textAlign = self.column.hozAlign;
@@ -122,6 +121,7 @@ Cell.prototype._configureCell = function(){
 		element.setAttribute("tabulator-field", field);
 	}
 
+	//add class to cell if needed
 	if(self.column.definition.cssClass){
 		var classNames = self.column.definition.cssClass.split(" ")
 		classNames.forEach(function(className) {
@@ -129,9 +129,40 @@ Cell.prototype._configureCell = function(){
 		});
 	}
 
+	//update tooltip on mouse enter
+	if (this.table.options.tooltipGenerationMode === "hover"){
+		element.addEventListener("mouseenter", function(e){
+			self._generateTooltip();
+		});
+	}
+
+	self._bindClickEvents(cellEvents);
+
+	self._bindTouchEvents(cellEvents);
+
+	self._bindMouseEvents(cellEvents);
+
+	if(self.column.modules.edit){
+		self.table.modules.edit.bindEditor(self);
+	}
+
+	if(self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.modExists("moveRow")){
+		self.table.modules.moveRow.initializeCell(self);
+	}
+
+	//hide cell if not visible
+	if(!self.column.visible){
+		self.hide();
+	}
+};
+
+Cell.prototype._bindClickEvents = function(cellEvents){
+	var self = this,
+	element = self.element;
+
 	//set event bindings
 	if (cellEvents.cellClick || self.table.options.cellClick){
-		self.element.addEventListener("click", function(e){
+		element.addEventListener("click", function(e){
 			var component = self.getComponent();
 
 			if(cellEvents.cellClick){
@@ -171,13 +202,75 @@ Cell.prototype._configureCell = function(){
 			}
 		});
 	}
+};
 
-	if (this.table.options.tooltipGenerationMode === "hover"){
-		//update tooltip on mouse enter
+
+Cell.prototype._bindMouseEvents = function(cellEvents){
+	var self = this,
+	element = self.element;
+
+	if (cellEvents.cellMouseEnter || self.table.options.cellMouseEnter){
 		element.addEventListener("mouseenter", function(e){
-			self._generateTooltip();
+			var component = self.getComponent();
+
+			if(cellEvents.cellMouseEnter){
+				cellEvents.cellMouseEnter.call(self.table, e, component);
+			}
+
+			if(self.table.options.cellMouseEnter){
+				self.table.options.cellMouseEnter.call(self.table, e, component);
+			}
 		});
 	}
+
+	if (cellEvents.cellMouseLeave || self.table.options.cellMouseLeave){
+		element.addEventListener("mouseleave", function(e){
+			var component = self.getComponent();
+
+			if(cellEvents.cellMouseLeave){
+				cellEvents.cellMouseLeave.call(self.table, e, component);
+			}
+
+			if(self.table.options.cellMouseLeave){
+				self.table.options.cellMouseLeave.call(self.table, e, component);
+			}
+		});
+	}
+
+	if (cellEvents.cellMouseOver || self.table.options.cellMouseOver){
+		element.addEventListener("mouseover", function(e){
+			var component = self.getComponent();
+
+			if(cellEvents.cellMouseOver){
+				cellEvents.cellMouseOver.call(self.table, e, component);
+			}
+
+			if(self.table.options.cellMouseOver){
+				self.table.options.cellMouseOver.call(self.table, e, component);
+			}
+		});
+	}
+
+	if (cellEvents.cellMouseMove || self.table.options.cellMouseMove){
+		element.addEventListener("mousemove", function(e){
+			var component = self.getComponent();
+
+			if(cellEvents.cellMouseMove){
+				cellEvents.cellMouseMove.call(self.table, e, component);
+			}
+
+			if(self.table.options.cellMouseMove){
+				self.table.options.cellMouseMove.call(self.table, e, component);
+			}
+		});
+	}
+};
+
+
+Cell.prototype._bindTouchEvents = function(cellEvents){
+	var self = this,
+	element = self.element,
+	dblTap,	tapHold, tap;
 
 	if (cellEvents.cellTap || this.table.options.cellTap){
 		tap = false;
@@ -260,20 +353,8 @@ Cell.prototype._configureCell = function(){
 			tapHold = null;
 		});
 	}
-
-	if(self.column.modules.edit){
-		self.table.modules.edit.bindEditor(self);
-	}
-
-	if(self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.modExists("moveRow")){
-		self.table.modules.moveRow.initializeCell(self);
-	}
-
-	//hide cell if not visible
-	if(!self.column.visible){
-		self.hide();
-	}
 };
+
 
 //generate cell contents
 Cell.prototype._generateContents = function(){
