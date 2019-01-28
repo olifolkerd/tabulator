@@ -222,6 +222,33 @@ Row.prototype.generateElement = function(){
 		});
 	}
 
+
+	//handle mouse events
+	if (self.table.options.rowMouseEnter){
+		self.element.addEventListener("mouseenter", function(e){
+			self.table.options.rowMouseEnter(e, self.getComponent());
+		});
+	}
+
+	if (self.table.options.rowMouseLeave){
+		self.element.addEventListener("mouseleave", function(e){
+			self.table.options.rowMouseLeave(e, self.getComponent());
+		});
+	}
+
+	if (self.table.options.rowMouseOver){
+		self.element.addEventListener("mouseover", function(e){
+			self.table.options.rowMouseOver(e, self.getComponent());
+		});
+	}
+
+	if (self.table.options.rowMouseMove){
+		self.element.addEventListener("mousemove", function(e){
+			self.table.options.rowMouseMove(e, self.getComponent());
+		});
+	}
+
+
 	if (self.table.options.rowTap){
 
 		tap = false;
