@@ -46,6 +46,7 @@ Download.prototype.processConfig = function(){
 	var config = {	//download config
 		columnGroups:true,
 		rowGroups:true,
+		columnCalcs:true,
 	};
 
 	if(this.table.options.downloadConfig){
@@ -60,6 +61,10 @@ Download.prototype.processConfig = function(){
 
 	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length){
 		this.config.columnGroups = true;
+	}
+
+	if (config.columnCalcs && this.table.modExists("columnCalcs")){
+		this.config.columnCalcs = true;
 	}
 };
 
@@ -155,7 +160,8 @@ Download.prototype.processDefinition = function(column){
 Download.prototype.processData = function(){
 	var self = this,
 	data = [],
-	groups = [];
+	groups = [],
+	calcs =  {};
 
 	if(this.config.rowGroups){
 		groups = this.table.modules.groupRows.getGroups();
@@ -165,6 +171,15 @@ Download.prototype.processData = function(){
 		});
 	}else{
 		data = self.table.rowManager.getData(true, "download");
+	}
+
+	if(this.config.columnCalcs){
+		calcs = this.table.getCalcResults();
+
+		data = {
+			calcs: calcs,
+			data: data,
+		};
 	}
 
 	//bulk data processing
@@ -337,6 +352,11 @@ Download.prototype.downloaders = {
 			}
 		}
 
+		if(config.columnCalcs){
+			console.warn("Download Warning - CSV downloader cannot process column calculations");
+			data = data.data;
+		}
+
 		if(config.rowGroups){
 			console.warn("Download Warning - CSV downloader cannot process row groups");
 
@@ -357,7 +377,14 @@ Download.prototype.downloaders = {
 	},
 
 	json:function(columns, data, options, setFileContents, config){
-		var fileContents = JSON.stringify(data, null, '\t');
+		var fileContents;
+
+		if(config.columnCalcs){
+			console.warn("Download Warning - CSV downloader cannot process column calculations");
+			data = data.data;
+		}
+
+		fileContents = JSON.stringify(data, null, '\t');
 
 		setFileContents(fileContents, "application/json");
 	},
@@ -367,12 +394,30 @@ Download.prototype.downloaders = {
 		fields = [],
 		header = [],
 		body = [],
+		calcs = {},
 		table = "",
 		groupRowIndexs = [],
+		calcRowIndexs = [],
 		autoTableParams = {},
-		rowGroupStyles = {},
+		rowGroupStyles = options.rowGroupStyles || {
+			fontStyle: "bold",
+			fontSize: 12,
+			cellPadding: 6,
+			fillColor: 220,
+		},
+		rowCalcStyles = options.rowCalcStyles || {
+			fontStyle: "bold",
+			fontSize: 10,
+			cellPadding: 4,
+			fillColor: 232,
+		},
 		jsPDFParams = options.jsPDF || {},
 		title = options && options.title ? options.title : "";
+
+		if(config.columnCalcs){
+			calcs = data.calcs;
+			data = data.data;
+		}
 
 		if(!jsPDFParams.orientation){
 			jsPDFParams.orientation = options.orientation || "landscape";
@@ -434,18 +479,22 @@ Download.prototype.downloaders = {
 		function parseRows(data){
 			//build table rows
 			data.forEach(function(row){
-				var rowData = [];
-
-				fields.forEach(function(field){
-					var value = self.getFieldValue(field, row);
-					rowData.push(parseValue(value));
-				});
-
-				body.push(rowData);
+				body.push(parseRow(row));
 			});
 		}
 
-		function parseGroup(group){
+		function parseRow(row){
+			var rowData = [];
+
+			fields.forEach(function(field){
+				var value = self.getFieldValue(field, row);
+				rowData.push(parseValue(value));
+			});
+
+			return rowData;
+		}
+
+		function parseGroup(group, calcObj){
 			var groupData = [];
 
 			groupData.push(parseValue(group.key));
@@ -454,21 +503,68 @@ Download.prototype.downloaders = {
 
 			body.push(groupData);
 
+			if(config.columnCalcs){
+				addCalcRow(calcObj, group.key, "top");
+			}
+
 			if(group.subGroups){
 				group.subGroups.forEach(function(subGroup){
-					parseGroup(subGroup);
+					parseGroup(subGroup, calcObj[group.key] || {});
 				});
 			}else{
+
 				parseRows(group.rows);
+			}
+
+			if(config.columnCalcs){
+				addCalcRow(calcObj, group.key, "bottom");
 			}
 		}
 
+		function addCalcRow(calcs, selector, pos){
+			var calcData = calcs[selector];
+
+			if(calcData){
+				if(pos){
+					calcData = calcData[pos];
+				}
+
+				if(Object.keys(calcData).length){
+					calcRowIndexs.push(body.length);
+					body.push(parseRow(calcData));
+				}
+			}
+		}
+
+		function createdCell (cell, data){
+			if(groupRowIndexs.indexOf(data.row.index) > -1){
+				for(var key in rowGroupStyles){
+					cell.styles[key] = rowGroupStyles[key];
+				}
+			}
+
+			if(calcRowIndexs.indexOf(data.row.index) > -1){
+				for(var key in rowCalcStyles){
+					cell.styles[key] = rowCalcStyles[key];
+				}
+			}
+		}
+
+
 		if(config.rowGroups){
 			data.forEach(function(group){
-				parseGroup(group);
+				parseGroup(group, calcs);
 			});
 		}else{
+			if(config.columnCalcs){
+				addCalcRow(calcs, "top");
+			}
+
 			parseRows(data);
+
+			if(config.columnCalcs){
+				addCalcRow(calcs, "bottom");
+			}
 		}
 
 		var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
@@ -481,23 +577,7 @@ Download.prototype.downloaders = {
 			}
 		}
 
-		if(config.rowGroups){
-
-			rowGroupStyles = options.rowGroupStyles || {
-				fontStyle: "bold",
-				fontSize: 12,
-				cellPadding: 6,
-				fillColor: 220,
-			};
-
-			function createdCell (cell, data){
-				if(groupRowIndexs.indexOf(data.row.index) > -1){
-					for(var key in rowGroupStyles){
-						cell.styles[key] = rowGroupStyles[key];
-					}
-				}
-			}
-
+		if(config.rowGroups || config.columnCalcs){
 			if(!autoTableParams.createdCell){
 				autoTableParams.createdCell = createdCell;
 			}else{
@@ -525,9 +605,17 @@ Download.prototype.downloaders = {
 		var self = this,
 		sheetName = options.sheetName || "Sheet1",
 		workbook = {SheetNames:[], Sheets:{}},
+		calcs = {},
 		groupRowIndexs = [],
 		groupColumnIndexs = [],
+		calcRowIndexs = [],
+
 		output;
+
+		if(config.columnCalcs){
+			calcs = data.calcs;
+			data = data.data;
+		}
 
 		function generateSheet(){
 			var titles = [],
@@ -658,19 +746,38 @@ Download.prototype.downloaders = {
 			//generate each row of the table
 			function parseRows(data){
 				data.forEach(function(row){
-					var rowData = [];
-
-					fields.forEach(function(field){
-						var value = self.getFieldValue(field, row);
-
-						rowData.push(typeof value === "object" ? JSON.stringify(value) : value);
-					});
-
-					rows.push(rowData);
+					rows.push(parseRow(row));
 				});
 			}
 
-			function parseGroup(group){
+			function parseRow(row){
+				var rowData = [];
+
+				fields.forEach(function(field){
+					var value = self.getFieldValue(field, row);
+					rowData.push(typeof value === "object" ? JSON.stringify(value) : value);
+				});
+
+				return rowData;
+			}
+
+
+			function addCalcRow(calcs, selector, pos){
+				var calcData = calcs[selector];
+
+				if(calcData){
+					if(pos){
+						calcData = calcData[pos];
+					}
+
+					if(Object.keys(calcData).length){
+						calcRowIndexs.push(rows.length);
+						rows.push(parseRow(calcData));
+					}
+				}
+			}
+
+			function parseGroup(group, calcObj){
 				var groupData = [];
 
 				groupData.push(group.key);
@@ -679,21 +786,37 @@ Download.prototype.downloaders = {
 
 				rows.push(groupData);
 
+				if(config.columnCalcs){
+					addCalcRow(calcObj, group.key, "top");
+				}
+
 				if(group.subGroups){
 					group.subGroups.forEach(function(subGroup){
-						parseGroup(subGroup);
+						parseGroup(subGroup, calcObj[group.key] || {});
 					});
 				}else{
 					parseRows(group.rows);
+				}
+
+				if(config.columnCalcs){
+					addCalcRow(calcObj, group.key, "bottom");
 				}
 			}
 
 			if(config.rowGroups){
 				data.forEach(function(group){
-					parseGroup(group);
+					parseGroup(group, calcs);
 				});
 			}else{
+				if(config.columnCalcs){
+					addCalcRow(calcs, "top");
+				}
+
 				parseRows(data);
+
+				if(config.columnCalcs){
+					addCalcRow(calcs, "bottom");
+				}
 			}
 
 			worksheet = rowsToSheet();
