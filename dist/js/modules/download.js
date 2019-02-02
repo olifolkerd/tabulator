@@ -113,11 +113,13 @@ Download.prototype.processDefinitions = function () {
 Download.prototype.processColumnGroup = function (column) {
 	var _this = this;
 
-	var subGroups = column.columns;
+	var subGroups = column.columns,
+	    maxDepth = 0;
 
 	var groupData = {
 		type: "group",
-		title: column.definition.title
+		title: column.definition.title,
+		depth: 1
 	};
 
 	if (subGroups.length) {
@@ -127,11 +129,17 @@ Download.prototype.processColumnGroup = function (column) {
 		subGroups.forEach(function (subGroup) {
 			var subGroupData = _this.processColumnGroup(subGroup);
 
+			if (subGroupData.depth > maxDepth) {
+				maxDepth = subGroupData.depth;
+			}
+
 			if (subGroupData) {
 				groupData.width += subGroupData.width;
 				groupData.subGroups.push(subGroupData);
 			}
 		});
+
+		groupData.depth += maxDepth;
 
 		if (!groupData.width) {
 			return false;
@@ -400,9 +408,8 @@ Download.prototype.downloaders = {
 		    header = [],
 		    body = [],
 		    calcs = {},
+		    headerDepth = 1,
 		    table = "",
-		    groupRowIndexs = [],
-		    calcRowIndexs = [],
 		    autoTableParams = {},
 		    rowGroupStyles = options.rowGroupStyles || {
 			fontStyle: "bold",
@@ -440,21 +447,55 @@ Download.prototype.downloaders = {
 					fields.push(column.field);
 				}
 			});
+
+			header = [header];
 		}
 
 		function parseColumnGroup(column, level) {
+			var colSpan = column.width,
+			    rowSpan = 1,
+			    col = {
+				content: column.title || ""
+			};
+
 			if (column.subGroups) {
 				column.subGroups.forEach(function (subGroup) {
 					parseColumnGroup(subGroup, level + 1);
 				});
+				rowSpan = 1;
 			} else {
-				header.push(column.title || "");
 				fields.push(column.definition.field);
+				rowSpan = headerDepth - level;
+			}
+
+			col.rowSpan = rowSpan;
+			// col.colSpan = colSpan;
+
+			header[level].push(col);
+
+			colSpan--;
+
+			if (rowSpan > 1) {
+				for (var i = level + 1; i < headerDepth; i++) {
+					header[i].push("");
+				}
+			}
+
+			for (var i = 0; i < colSpan; i++) {
+				header[level].push("");
 			}
 		}
 
 		if (config.columnGroups) {
-			console.warn("Download Warning - PDF downloader cannot process column groups");
+			columns.forEach(function (column) {
+				if (column.depth > headerDepth) {
+					headerDepth = column.depth;
+				}
+			});
+
+			for (var i = 0; i < headerDepth; i++) {
+				header.push([]);
+			}
 
 			columns.forEach(function (column) {
 				parseColumnGroup(column, 0);
@@ -488,12 +529,21 @@ Download.prototype.downloaders = {
 			});
 		}
 
-		function parseRow(row) {
+		function parseRow(row, styles) {
 			var rowData = [];
 
 			fields.forEach(function (field) {
 				var value = self.getFieldValue(field, row);
-				rowData.push(parseValue(value));
+				value = parseValue(value);
+
+				if (styles) {
+					rowData.push({
+						content: value,
+						styles: styles
+					});
+				} else {
+					rowData.push(value);
+				}
 			});
 
 			return rowData;
@@ -502,9 +552,7 @@ Download.prototype.downloaders = {
 		function parseGroup(group, calcObj) {
 			var groupData = [];
 
-			groupData.push(parseValue(group.key));
-
-			groupRowIndexs.push(body.length);
+			groupData.push({ content: parseValue(group.key), colSpan: fields.length, styles: rowGroupStyles });
 
 			body.push(groupData);
 
@@ -535,24 +583,7 @@ Download.prototype.downloaders = {
 				}
 
 				if (Object.keys(calcData).length) {
-					calcRowIndexs.push(body.length);
-					body.push(parseRow(calcData));
-				}
-			}
-		}
-
-		function didParseCell(cellObj) {
-			if (cellObj.section == "body") {
-				if (groupRowIndexs.indexOf(cellObj.row.index) > -1) {
-					for (var key in rowGroupStyles) {
-						cellObj.cell.styles[key] = rowGroupStyles[key];
-					}
-				}
-
-				if (calcRowIndexs.indexOf(cellObj.row.index) > -1) {
-					for (var key in rowCalcStyles) {
-						cellObj.cell.styles[key] = rowCalcStyles[key];
-					}
+					body.push(parseRow(calcData, rowCalcStyles));
 				}
 			}
 		}
@@ -583,26 +614,13 @@ Download.prototype.downloaders = {
 			}
 		}
 
-		if (config.rowGroups || config.columnCalcs) {
-			if (!autoTableParams.didParseCell) {
-				autoTableParams.didParseCell = didParseCell;
-			} else {
-				var didParseCellHolder = autoTableParams.didParseCell;
-
-				autoTableParams.didParseCell = function (cell) {
-					didParseCell(cell);
-					didParseCellHolder(cell);
-				};
-			}
-		}
-
 		if (title) {
 			autoTableParams.addPageContent = function (data) {
 				doc.text(title, 40, 30);
 			};
 		}
 
-		autoTableParams.head = [header];
+		autoTableParams.head = header;
 		autoTableParams.body = body;
 
 		doc.autoTable(autoTableParams);
