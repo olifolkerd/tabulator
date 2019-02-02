@@ -621,6 +621,50 @@ Tabulator.prototype._detectBrowser = function(){
 
 ////////////////// Data Handling //////////////////
 
+//loca data from local file
+Tabulator.prototype.setDataFromLocalFile = function(extensions){
+
+	return new Promise((resolve, reject) => {
+		var input = document.createElement("input");
+		input.type = "file";
+		input.accept = extensions || ".json,application/json";
+
+		input.addEventListener("change", (e) => {
+			var file = input.files[0],
+			reader = new FileReader(),
+			data;
+
+			reader.readAsText(file);
+
+			reader.onload = (e) => {
+
+				try {
+			        data = JSON.parse(reader.result);
+			    } catch(e) {
+			        console.warn("File Load Error - File contents is invalid JSON", e);
+			        reject(e);
+			        return;
+			    }
+
+				this._setData(data)
+				.then((data) => {
+					resolve(data);
+				})
+				.catch((err) => {
+					resolve(err);
+				});
+			};
+
+			reader.onerror = (e) => {
+				console.warn("File Load Error - Unable to read file");
+				reject();
+			};
+		});
+
+		input.click();
+	});
+};
+
 
 //load data
 Tabulator.prototype.setData = function(data, params, config){

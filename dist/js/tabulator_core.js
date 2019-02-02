@@ -5796,6 +5796,48 @@ Tabulator.prototype._detectBrowser = function () {
 
 ////////////////// Data Handling //////////////////
 
+//loca data from local file
+Tabulator.prototype.setDataFromLocalFile = function (extensions) {
+	var _this8 = this;
+
+	return new Promise(function (resolve, reject) {
+		var input = document.createElement("input");
+		input.type = "file";
+		input.accept = extensions || ".json,application/json";
+
+		input.addEventListener("change", function (e) {
+			var file = input.files[0],
+			    reader = new FileReader(),
+			    data;
+
+			reader.readAsText(file);
+
+			reader.onload = function (e) {
+
+				try {
+					data = JSON.parse(reader.result);
+				} catch (e) {
+					console.warn("File Load Error - File contents is invalid JSON", e);
+					reject(e);
+					return;
+				}
+
+				_this8._setData(data).then(function (data) {
+					resolve(data);
+				}).catch(function (err) {
+					resolve(err);
+				});
+			};
+
+			reader.onerror = function (e) {
+				console.warn("File Load Error - Unable to read file");
+				reject();
+			};
+		});
+
+		input.click();
+	});
+};
 
 //load data
 Tabulator.prototype.setData = function (data, params, config) {
@@ -5914,14 +5956,14 @@ Tabulator.prototype.replaceData = function (data, params, config) {
 
 //update table data
 Tabulator.prototype.updateData = function (data) {
-	var _this8 = this;
+	var _this9 = this;
 
 	var self = this;
 	var responses = 0;
 
 	return new Promise(function (resolve, reject) {
-		if (_this8.modExists("ajax")) {
-			_this8.modules.ajax.blockActiveRequest();
+		if (_this9.modExists("ajax")) {
+			_this9.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -5952,11 +5994,11 @@ Tabulator.prototype.updateData = function (data) {
 };
 
 Tabulator.prototype.addData = function (data, pos, index) {
-	var _this9 = this;
+	var _this10 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this9.modExists("ajax")) {
-			_this9.modules.ajax.blockActiveRequest();
+		if (_this10.modExists("ajax")) {
+			_this10.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -5964,7 +6006,7 @@ Tabulator.prototype.addData = function (data, pos, index) {
 		}
 
 		if (data) {
-			_this9.rowManager.addRows(data, pos, index).then(function (rows) {
+			_this10.rowManager.addRows(data, pos, index).then(function (rows) {
 				var output = [];
 
 				rows.forEach(function (row) {
@@ -5982,15 +6024,15 @@ Tabulator.prototype.addData = function (data, pos, index) {
 
 //update table data
 Tabulator.prototype.updateOrAddData = function (data) {
-	var _this10 = this;
+	var _this11 = this;
 
 	var self = this,
 	    rows = [],
 	    responses = 0;
 
 	return new Promise(function (resolve, reject) {
-		if (_this10.modExists("ajax")) {
-			_this10.modules.ajax.blockActiveRequest();
+		if (_this11.modExists("ajax")) {
+			_this11.modules.ajax.blockActiveRequest();
 		}
 
 		if (typeof data === "string") {
@@ -6056,10 +6098,10 @@ Tabulator.prototype.getRowFromPosition = function (position, active) {
 
 //delete row from table
 Tabulator.prototype.deleteRow = function (index) {
-	var _this11 = this;
+	var _this12 = this;
 
 	return new Promise(function (resolve, reject) {
-		var row = _this11.rowManager.findRow(index);
+		var row = _this12.rowManager.findRow(index);
 
 		if (row) {
 			row.delete().then(function () {
@@ -6076,17 +6118,17 @@ Tabulator.prototype.deleteRow = function (index) {
 
 //add row to table
 Tabulator.prototype.addRow = function (data, pos, index) {
-	var _this12 = this;
+	var _this13 = this;
 
 	return new Promise(function (resolve, reject) {
 		if (typeof data === "string") {
 			data = JSON.parse(data);
 		}
 
-		_this12.rowManager.addRows(data, pos, index).then(function (rows) {
+		_this13.rowManager.addRows(data, pos, index).then(function (rows) {
 			//recalc column calculations if present
-			if (_this12.modExists("columnCalcs")) {
-				_this12.modules.columnCalcs.recalc(_this12.rowManager.activeRows);
+			if (_this13.modExists("columnCalcs")) {
+				_this13.modules.columnCalcs.recalc(_this13.rowManager.activeRows);
 			}
 
 			resolve(rows[0].getComponent());
@@ -6096,10 +6138,10 @@ Tabulator.prototype.addRow = function (data, pos, index) {
 
 //update a row if it exitsts otherwise create it
 Tabulator.prototype.updateOrAddRow = function (index, data) {
-	var _this13 = this;
+	var _this14 = this;
 
 	return new Promise(function (resolve, reject) {
-		var row = _this13.rowManager.findRow(index);
+		var row = _this14.rowManager.findRow(index);
 
 		if (typeof data === "string") {
 			data = JSON.parse(data);
@@ -6108,8 +6150,8 @@ Tabulator.prototype.updateOrAddRow = function (index, data) {
 		if (row) {
 			row.updateData(data).then(function () {
 				//recalc column calculations if present
-				if (_this13.modExists("columnCalcs")) {
-					_this13.modules.columnCalcs.recalc(_this13.rowManager.activeRows);
+				if (_this14.modExists("columnCalcs")) {
+					_this14.modules.columnCalcs.recalc(_this14.rowManager.activeRows);
 				}
 
 				resolve(row.getComponent());
@@ -6117,10 +6159,10 @@ Tabulator.prototype.updateOrAddRow = function (index, data) {
 				reject(err);
 			});
 		} else {
-			row = _this13.rowManager.addRows(data).then(function (rows) {
+			row = _this14.rowManager.addRows(data).then(function (rows) {
 				//recalc column calculations if present
-				if (_this13.modExists("columnCalcs")) {
-					_this13.modules.columnCalcs.recalc(_this13.rowManager.activeRows);
+				if (_this14.modExists("columnCalcs")) {
+					_this14.modules.columnCalcs.recalc(_this14.rowManager.activeRows);
 				}
 
 				resolve(rows[0].getComponent());
@@ -6133,10 +6175,10 @@ Tabulator.prototype.updateOrAddRow = function (index, data) {
 
 //update row data
 Tabulator.prototype.updateRow = function (index, data) {
-	var _this14 = this;
+	var _this15 = this;
 
 	return new Promise(function (resolve, reject) {
-		var row = _this14.rowManager.findRow(index);
+		var row = _this15.rowManager.findRow(index);
 
 		if (typeof data === "string") {
 			data = JSON.parse(data);
@@ -6157,13 +6199,13 @@ Tabulator.prototype.updateRow = function (index, data) {
 
 //scroll to row in DOM
 Tabulator.prototype.scrollToRow = function (index, position, ifVisible) {
-	var _this15 = this;
+	var _this16 = this;
 
 	return new Promise(function (resolve, reject) {
-		var row = _this15.rowManager.findRow(index);
+		var row = _this16.rowManager.findRow(index);
 
 		if (row) {
-			_this15.rowManager.scrollToRow(row, position, ifVisible).then(function () {
+			_this16.rowManager.scrollToRow(row, position, ifVisible).then(function () {
 				resolve();
 			}).catch(function (err) {
 				reject(err);
@@ -6311,13 +6353,13 @@ Tabulator.prototype.deleteColumn = function (field) {
 
 //scroll to column in DOM
 Tabulator.prototype.scrollToColumn = function (field, position, ifVisible) {
-	var _this16 = this;
+	var _this17 = this;
 
 	return new Promise(function (resolve, reject) {
-		var column = _this16.columnManager.findColumn(field);
+		var column = _this17.columnManager.findColumn(field);
 
 		if (column) {
-			_this16.columnManager.scrollToColumn(column, position, ifVisible).then(function () {
+			_this17.columnManager.scrollToColumn(column, position, ifVisible).then(function () {
 				resolve();
 			}).catch(function (err) {
 				reject(err);
@@ -6512,14 +6554,14 @@ Tabulator.prototype.setPage = function (page) {
 };
 
 Tabulator.prototype.setPageToRow = function (row) {
-	var _this17 = this;
+	var _this18 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this17.options.pagination && _this17.modExists("page")) {
-			row = _this17.rowManager.findRow(row);
+		if (_this18.options.pagination && _this18.modExists("page")) {
+			row = _this18.rowManager.findRow(row);
 
 			if (row) {
-				_this17.modules.page.setPageToRow(row).then(function () {
+				_this18.modules.page.setPageToRow(row).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
