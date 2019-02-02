@@ -536,16 +536,18 @@ Download.prototype.downloaders = {
 			}
 		}
 
-		function createdCell (cell, data){
-			if(groupRowIndexs.indexOf(data.row.index) > -1){
-				for(var key in rowGroupStyles){
-					cell.styles[key] = rowGroupStyles[key];
+		function didParseCell (cellObj){
+			if(cellObj.section == "body"){
+				if(groupRowIndexs.indexOf(cellObj.row.index) > -1){
+					for(var key in rowGroupStyles){
+						cellObj.cell.styles[key] = rowGroupStyles[key];
+					}
 				}
-			}
 
-			if(calcRowIndexs.indexOf(data.row.index) > -1){
-				for(var key in rowCalcStyles){
-					cell.styles[key] = rowCalcStyles[key];
+				if(calcRowIndexs.indexOf(cellObj.row.index) > -1){
+					for(var key in rowCalcStyles){
+						cellObj.cell.styles[key] = rowCalcStyles[key];
+					}
 				}
 			}
 		}
@@ -578,14 +580,14 @@ Download.prototype.downloaders = {
 		}
 
 		if(config.rowGroups || config.columnCalcs){
-			if(!autoTableParams.createdCell){
-				autoTableParams.createdCell = createdCell;
+			if(!autoTableParams.didParseCell){
+				autoTableParams.didParseCell = didParseCell;
 			}else{
-				var createdCellHolder = autoTableParams.createdCell;
+				var didParseCellHolder = autoTableParams.didParseCell;
 
-				autoTableParams.createdCell = function(cell, data){
-					createdCell(cell, data);
-					createdCellHolder(cell, data);
+				autoTableParams.didParseCell = function(cell){
+					didParseCell(cell);
+					didParseCellHolder(cell);
 				};
 			}
 		}
@@ -596,7 +598,10 @@ Download.prototype.downloaders = {
 			};
 		}
 
-		doc.autoTable(header, body, autoTableParams);
+		autoTableParams.head = [header];
+		autoTableParams.body = body;
+
+		doc.autoTable(autoTableParams);
 
 		setFileContents(doc.output("arraybuffer"), "application/pdf");
 	},
