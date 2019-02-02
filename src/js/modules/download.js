@@ -503,21 +503,21 @@ Download.prototype.downloaders = {
 
 			body.push(groupData);
 
-			if(config.columnCalcs){
-				addCalcRow(calcObj, group.key, "top");
-			}
-
 			if(group.subGroups){
 				group.subGroups.forEach(function(subGroup){
-					parseGroup(subGroup, calcObj[group.key] || {});
+					parseGroup(subGroup,  calcObj[group.key] ? calcObj[group.key].groups || {} : {});
 				});
 			}else{
 
-				parseRows(group.rows);
-			}
+				if(config.columnCalcs){
+					addCalcRow(calcObj, group.key, "top");
+				}
 
-			if(config.columnCalcs){
-				addCalcRow(calcObj, group.key, "bottom");
+				parseRows(group.rows);
+
+				if(config.columnCalcs){
+					addCalcRow(calcObj, group.key, "bottom");
+				}
 			}
 		}
 
@@ -786,21 +786,24 @@ Download.prototype.downloaders = {
 
 				rows.push(groupData);
 
-				if(config.columnCalcs){
-					addCalcRow(calcObj, group.key, "top");
-				}
-
 				if(group.subGroups){
 					group.subGroups.forEach(function(subGroup){
-						parseGroup(subGroup, calcObj[group.key] || {});
+						parseGroup(subGroup, calcObj[group.key] ? calcObj[group.key].groups || {} : {});
 					});
 				}else{
+
+					if(config.columnCalcs){
+						addCalcRow(calcObj, group.key, "top");
+					}
+
 					parseRows(group.rows);
+
+					if(config.columnCalcs){
+						addCalcRow(calcObj, group.key, "bottom");
+					}
 				}
 
-				if(config.columnCalcs){
-					addCalcRow(calcObj, group.key, "bottom");
-				}
+
 			}
 
 			if(config.rowGroups){
