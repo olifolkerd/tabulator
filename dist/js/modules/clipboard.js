@@ -67,7 +67,8 @@ Clipboard.prototype.initialize = function () {
 Clipboard.prototype.processConfig = function () {
 	var config = {
 		columnHeaders: "groups",
-		rowGroups: true
+		rowGroups: true,
+		columnCalcs: true
 	};
 
 	if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
@@ -93,6 +94,10 @@ Clipboard.prototype.processConfig = function () {
 		}
 	} else {
 		this.config.columnHeaders = false;
+	}
+
+	if (config.columnCalcs && this.table.modExists("columnCalcs")) {
+		this.config.columnCalcs = true;
 	}
 };
 
@@ -399,7 +404,7 @@ Clipboard.prototype.rowsToData = function (rows, config, params) {
 
 	rows.forEach(function (row) {
 		var rowArray = [],
-		    rowData = row.getData("clipboard");
+		    rowData = row instanceof RowComponent ? row.getData("clipboard") : row;
 
 		columns.forEach(function (column) {
 			var value = column.getFieldValue(rowData);
@@ -463,10 +468,27 @@ Clipboard.prototype.processGroupData = function (group) {
 	return groupData;
 };
 
+Clipboard.prototype.getCalcRow = function (calcs, selector, pos) {
+	var calcData = calcs[selector];
+
+	if (calcData) {
+		if (pos) {
+			calcData = calcData[pos];
+		}
+
+		if (Object.keys(calcData).length) {
+			return this.rowsToData([calcData]);
+		}
+	}
+
+	return {};
+};
+
 Clipboard.prototype.buildOutput = function (rows, config, params) {
 	var _this5 = this;
 
 	var output = [],
+	    calcs,
 	    columns = this.table.columnManager.columnsByIndex;
 
 	if (config.columnHeaders) {
@@ -480,24 +502,36 @@ Clipboard.prototype.buildOutput = function (rows, config, params) {
 		}
 	}
 
+	if (this.config.columnCalcs) {
+		calcs = this.table.getCalcResults();
+	}
+
 	//generate styled content
 	if (this.table.options.clipboardCopyStyled) {
-		this.generateHTML(rows, columns, config, params);
+		this.generateHTML(rows, columns, calcs, config, params);
 	}
 
 	//generate unstyled content
 	if (config.rowGroups) {
 		rows.forEach(function (row) {
-			output = output.concat(_this5.parseRowGroupData(row, config, params));
+			output = output.concat(_this5.parseRowGroupData(row, config, params, calcs));
 		});
 	} else {
+		if (config.columnCalcs) {
+			output = output.concat(this.getCalcRow(calcs, "top"));
+		}
+
 		output = output.concat(this.rowsToData(rows, config, params));
+
+		if (config.columnCalcs) {
+			output = output.concat(this.getCalcRow(calcs, "bottom"));
+		}
 	}
 
 	return output;
 };
 
-Clipboard.prototype.parseRowGroupData = function (group, config, params) {
+Clipboard.prototype.parseRowGroupData = function (group, config, params, calcObj) {
 	var _this6 = this;
 
 	var groupData = [];
@@ -506,23 +540,31 @@ Clipboard.prototype.parseRowGroupData = function (group, config, params) {
 
 	if (group.subGroups) {
 		group.subGroups.forEach(function (subGroup) {
-			groupData = groupData.concat(_this6.parseRowGroupData(subGroup, config, params));
+			groupData = groupData.concat(_this6.parseRowGroupData(subGroup, config, params, calcObj[group.key] || {}));
 		});
 	} else {
+		if (config.columnCalcs) {
+			groupData = groupData.concat(this.getCalcRow(calcObj, group.key, "top"));
+		}
 
 		groupData = groupData.concat(this.rowsToData(group.rows, config, params));
+
+		if (config.columnCalcs) {
+			groupData = groupData.concat(this.getCalcRow(calcObj, group.key, "bottom"));
+		}
 	}
 
 	return groupData;
 };
 
-Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
+Clipboard.prototype.generateHTML = function (rows, columns, calcs, config, params) {
 	var self = this,
 	    data = [],
 	    headers = [],
 	    body,
 	    oddRow,
 	    evenRow,
+	    calcRow,
 	    firstRow,
 	    firstCell,
 	    firstGroup,
@@ -614,6 +656,21 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 		});
 	}
 
+	function addCalcRow(calcs, selector, pos) {
+		var calcData = calcs[selector];
+
+		if (calcData) {
+			if (pos) {
+				calcData = calcData[pos];
+			}
+
+			if (Object.keys(calcData).length) {
+				// calcRowIndexs.push(body.length);
+				processRows([calcData]);
+			}
+		}
+	}
+
 	//create headers if needed
 	if (config.columnHeaders) {
 		if (config.columnHeaders == "groups") {
@@ -637,6 +694,7 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 	if (window.getComputedStyle) {
 		oddRow = this.table.element.querySelector(".tabulator-row-odd:not(.tabulator-group):not(.tabulator-calcs)");
 		evenRow = this.table.element.querySelector(".tabulator-row-even:not(.tabulator-group):not(.tabulator-calcs)");
+		calcRow = this.table.element.querySelector(".tabulator-row.tabulator-calcs");
 		firstRow = this.table.element.querySelector(".tabulator-row:not(.tabulator-group):not(.tabulator-calcs)");
 		firstGroup = this.table.element.getElementsByClassName("tabulator-group")[0];
 
@@ -651,8 +709,16 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 		//add rows to table
 		rowArray.forEach(function (row, i) {
 			var rowEl = document.createElement("tr"),
-			    rowData = row.getData("clipboard"),
-			    styleRow = firstRow;
+			    styleRow = firstRow,
+			    isCalc = false,
+			    rowData;
+
+			if (row instanceof RowComponent) {
+				rowData = row.getData("clipboard");
+			} else {
+				rowData = row;
+				isCalc = true;
+			}
 
 			columns.forEach(function (column, j) {
 				var cellEl = document.createElement("td"),
@@ -691,12 +757,16 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 				rowEl.appendChild(cellEl);
 			});
 
-			if (!(i % 2) && oddRow) {
-				styleRow = oddRow;
-			}
+			if (isCalc) {
+				styleRow = calcRow;
+			} else {
+				if (!(i % 2) && oddRow) {
+					styleRow = oddRow;
+				}
 
-			if (i % 2 && evenRow) {
-				styleRow = evenRow;
+				if (i % 2 && evenRow) {
+					styleRow = evenRow;
+				}
 			}
 
 			if (styleRow) {
@@ -707,7 +777,7 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 		});
 	}
 
-	function processGroup(group) {
+	function processGroup(group, calcObj) {
 		var groupEl = document.createElement("tr"),
 		    groupCellEl = document.createElement("td");
 
@@ -722,19 +792,35 @@ Clipboard.prototype.generateHTML = function (rows, columns, config, params) {
 
 		if (group.subGroups) {
 			group.subGroups.forEach(function (subGroup) {
-				processGroup(subGroup);
+				processGroup(subGroup, calcObj[group.key] || {});
 			});
 		} else {
+			if (config.columnCalcs) {
+				addCalcRow(calcObj, group.key, "top");
+			}
+
 			processRows(group.rows);
+
+			if (config.columnCalcs) {
+				addCalcRow(calcObj, group.key, "bottom");
+			}
 		}
 	}
 
 	if (config.rowGroups) {
 		rows.forEach(function (group) {
-			processGroup(group);
+			processGroup(group, calcs);
 		});
 	} else {
+		if (config.columnCalcs) {
+			addCalcRow(calcs, "top");
+		}
+
 		processRows(rows);
+
+		if (config.columnCalcs) {
+			addCalcRow(calcs, "bottom");
+		}
 	}
 
 	this.htmlElement.appendChild(body);
@@ -808,6 +894,8 @@ Clipboard.prototype.copyFormatters = {
 	},
 	table: function table(data, params) {
 		var output = [];
+
+		console.log("data", data);
 
 		data.forEach(function (row) {
 			row.forEach(function (value) {
