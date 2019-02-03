@@ -1048,7 +1048,7 @@ Edit.prototype.editors = {
 		}
 
 		//style input
-		input.setAttribute("type", "text");
+		input.setAttribute("type", "search");
 
 		input.style.padding = "4px";
 		input.style.width = "100%";
@@ -1116,6 +1116,10 @@ Edit.prototype.editors = {
 				default:
 					filterList(input.value);
 			}
+		});
+
+		input.addEventListener("search", function (e) {
+			filterList(input.value);
 		});
 
 		input.addEventListener("blur", function (e) {
