@@ -580,7 +580,7 @@ Edit.prototype.editors = {
 					element:false,
 				};
 
-				if(item.value === curentValue){
+				if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
 					setCurrentItem(item);
 				}
 
@@ -623,7 +623,7 @@ Edit.prototype.editors = {
 							element:false,
 						};
 
-						if(item.value === curentValue){
+						if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
 							setCurrentItem(item);
 						}
 
@@ -639,7 +639,7 @@ Edit.prototype.editors = {
 						element:false,
 					};
 
-					if(item.value === curentValue){
+					if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
 						setCurrentItem(item);
 					}
 
@@ -870,7 +870,7 @@ Edit.prototype.editors = {
 						element:false,
 					};
 
-					if(item.value === curentValue){
+					if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
 						setCurrentItem(item);
 					}
 
@@ -884,7 +884,7 @@ Edit.prototype.editors = {
 						element:false,
 					};
 
-					if(item.value === curentValue){
+					if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
 						setCurrentItem(item);
 					}
 
@@ -990,6 +990,8 @@ Edit.prototype.editors = {
 
 		function chooseItem(){
 			hideList();
+
+			console.log("choose", currentItem, initialValue, currentItem.value, input.value);
 
 			if(currentItem){
 				if(initialValue !== currentItem.value){
