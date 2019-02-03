@@ -1031,6 +1031,14 @@ ColumnComponent.prototype.setHeaderFilterValue = function (value) {
 	}
 };
 
+ColumnComponent.prototype.getNextColumn = function () {
+	return this._column.nextColumn();
+};
+
+ColumnComponent.prototype.getPrevColumn = function () {
+	return this._column.prevColumn();
+};
+
 var Column = function Column(def, parent) {
 	var self = this;
 
@@ -1954,6 +1962,16 @@ Column.prototype.generateCell = function (row) {
 	this.cells.push(cell);
 
 	return cell;
+};
+
+Column.prototype.nextColumn = function () {
+	var index = this.table.columnManager.findColumnIndex(this);
+	return index > -1 ? this.table.columnManager.getColumnByIndex(index + 1) : false;
+};
+
+Column.prototype.prevColumn = function () {
+	var index = this.table.columnManager.findColumnIndex(this);
+	return index > -1 ? this.table.columnManager.getColumnByIndex(index - 1) : false;
 };
 
 Column.prototype.reinitializeWidth = function (force) {
