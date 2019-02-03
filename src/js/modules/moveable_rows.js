@@ -41,6 +41,38 @@ MoveRows.prototype.setHandle = function(handle){
 	this.hasHandle = handle;
 };
 
+MoveRows.prototype.initializeGroupHeader = function(group){
+	var self = this,
+	config = {},
+	rowEl;
+
+	//inter table drag drop
+	config.mouseup = function(e){
+		self.tableRowDrop(e, row);
+	}.bind(self);
+
+	//same table drag drop
+	config.mousemove = function(e){
+		if(((e.pageY - Tabulator.prototype.helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
+			if(self.toRow !== group || !self.toRowAfter){
+				var rowEl = group.getElement();
+				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
+				self.moveRow(group, true);
+			}
+		}else{
+			if(self.toRow !== group || self.toRowAfter){
+				var rowEl = group.getElement();
+				if(rowEl.previousSibling){
+					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
+					self.moveRow(group, false);
+				}
+			}
+		}
+	}.bind(self);
+
+	group.modules.moveRow = config;
+};
+
 MoveRows.prototype.initializeRow = function(row){
 	var self = this,
 	config = {},
@@ -118,7 +150,7 @@ MoveRows.prototype._bindMouseMove = function(){
 	var self = this;
 
 	self.table.rowManager.getDisplayRows().forEach(function(row){
-		if(row.type === "row" && row.modules.moveRow.mousemove){
+		if((row.type === "row" || row.type === "group") && row.modules.moveRow.mousemove){
 			row.getElement().addEventListener("mousemove", row.modules.moveRow.mousemove);
 		}
 	});
@@ -128,7 +160,7 @@ MoveRows.prototype._unbindMouseMove = function(){
 	var self = this;
 
 	self.table.rowManager.getDisplayRows().forEach(function(row){
-		if(row.type === "row" && row.modules.moveRow.mousemove){
+		if((row.type === "row" || row.type === "group")  && row.modules.moveRow.mousemove){
 			row.getElement().removeEventListener("mousemove", row.modules.moveRow.mousemove);
 		}
 	});

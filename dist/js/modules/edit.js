@@ -991,8 +991,6 @@ Edit.prototype.editors = {
 		function chooseItem() {
 			hideList();
 
-			console.log("choose", currentItem, initialValue, currentItem.value, input.value);
-
 			if (currentItem) {
 				if (initialValue !== currentItem.value) {
 					initialValue = currentItem.value;
