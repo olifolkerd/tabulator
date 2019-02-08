@@ -2850,7 +2850,7 @@ RowManager.prototype.filterRefresh = function () {
 };
 
 //choose the path to refresh data after a sorter update
-RowManager.prototype.sorterRefresh = function () {
+RowManager.prototype.sorterRefresh = function (loadOrignalData) {
 	var table = this.table,
 	    options = this.table.options,
 	    left = this.scrollLeft;
@@ -2866,7 +2866,7 @@ RowManager.prototype.sorterRefresh = function () {
 			this._genRemoteRequest();
 		}
 	} else {
-		this.refreshActiveData("sort");
+		this.refreshActiveData(loadOrignalData ? "filter" : "sort");
 	}
 
 	this.scrollHorizontal(left);

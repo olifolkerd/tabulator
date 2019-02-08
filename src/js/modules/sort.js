@@ -30,6 +30,7 @@ Sort.prototype.initializeColumn = function(column, content){
 		sorter:sorter, dir:"none",
 		params:column.definition.sorterParams || {},
 		startingDir:column.definition.headerSortStartingDir || "asc",
+		tristate:column.definition.headerSortTristate,
 	};
 
 	if(column.definition.headerSort !== false){
@@ -51,34 +52,67 @@ Sort.prototype.initializeColumn = function(column, content){
 			match = false;
 
 			if(column.modules.sort){
-				dir = column.modules.sort.dir == "asc" ? "desc" : (column.modules.sort.dir == "desc" ? "asc" : column.modules.sort.startingDir);
+				if(column.modules.sort.tristate){
+					if(column.modules.sort.dir == "none"){
+						dir = column.modules.sort.startingDir;
+					}else{
+						if(column.modules.sort.dir == column.modules.sort.startingDir){
+							dir = column.modules.sort.dir == "asc" ? "desc" : "asc";
+						}else{
+							dir = "none";
+						}
+					}
+				}else{
+					switch(column.modules.sort.dir){
+						case "asc":
+						dir = "desc";
+						break;
+
+						case "desc":
+						dir = "asc";
+						break;
+
+						default:
+						dir = column.modules.sort.startingDir;
+					}
+				}
+
 
 				if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
 					sorters = self.getSort();
-
 
 					match = sorters.findIndex(function(sorter){
 						return sorter.field === column.getField();
 					});
 
 					if(match > -1){
-						sorters[match].dir = sorters[match].dir == "asc" ? "desc" : "asc";
+						sorters[match].dir = dir;
 
 						if(match != sorters.length -1){
-							sorters.push(sorters.splice(match, 1)[0]);
+							match = sorters.splice(match, 1)[0];
+							if(dir != "none"){
+								sorters.push(match);
+							}
 						}
 					}else{
-						sorters.push({column:column, dir:dir});
+						if(dir != "none"){
+							sorters.push({column:column, dir:dir});
+						}
 					}
 
 					//add to existing sort
 					self.setSort(sorters);
 				}else{
-					//sort by column only
-					self.setSort(column, dir);
+					if(dir == "none"){
+						self.clear();
+					}else{
+						//sort by column only
+						self.setSort(column, dir);
+					}
+
 				}
 
-				self.table.rowManager.sorterRefresh();
+				self.table.rowManager.sorterRefresh(!self.sortList.length);
 			}
 		});
 	}
