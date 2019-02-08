@@ -302,4 +302,8 @@ DataTree.prototype.checkForRestyle = function (cell) {
 	}
 };
 
+DataTree.prototype.getChildField = function () {
+	return this.field;
+};
+
 Tabulator.prototype.registerModule("dataTree", DataTree);

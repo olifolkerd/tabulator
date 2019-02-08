@@ -80,10 +80,6 @@ DataTree.prototype.initialize = function(){
 		};
 		break;
 	}
-
-
-
-
 };
 
 DataTree.prototype.initializeRow = function(row){
@@ -172,7 +168,7 @@ DataTree.prototype.getRows = function(rows){
 
 		if(row instanceof Row){
 
-			config = row.modules.dataTree.children
+			config = row.modules.dataTree.children;
 
 			if(!config.index && config.children !== false){
 				children = this.getChildren(row);
@@ -301,5 +297,8 @@ DataTree.prototype.checkForRestyle = function(cell){
 	}
 };
 
+DataTree.prototype.getChildField = function(){
+	return this.field;
+};
 
 Tabulator.prototype.registerModule("dataTree", DataTree);

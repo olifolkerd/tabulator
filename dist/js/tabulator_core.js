@@ -4215,6 +4215,11 @@ Row.prototype.updateData = function (data) {
 			_this5.height = 0;
 		}
 
+		if (self.table.options.dataTree !== false && self.table.modExists("dataTree") && typeof data[_this5.table.modules.dataTree.getChildField()] !== "undefined") {
+			_this5.table.modules.dataTree.initializeRow(_this5);
+			_this5.table.rowManager.refreshActiveData("tree", false, true);
+		}
+
 		//self.reinitialize();
 
 		self.table.options.rowUpdated.call(_this5.table, self.getComponent());
