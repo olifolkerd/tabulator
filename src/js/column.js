@@ -111,11 +111,11 @@ ColumnComponent.prototype.setHeaderFilterValue = function(value){
 };
 
 ColumnComponent.prototype.getNextColumn = function(){
-	return this._column.nextColumn();
+	return this._column.nextColumn().getComponent();
 };
 
 ColumnComponent.prototype.getPrevColumn = function(){
-	return this._column.prevColumn();
+	return this._column.prevColumn().getComponent();
 };
 
 
