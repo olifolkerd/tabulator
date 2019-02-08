@@ -140,11 +140,13 @@ RowComponent.prototype.getTable = function(){
 };
 
 RowComponent.prototype.getNextRow = function(){
-	return this._row.nextRow();
+	var row = this._row.nextRow();
+	return row ? row.getComponent() : row;
 };
 
 RowComponent.prototype.getPrevRow = function(){
-	return this._row.prevRow();
+	var row = this._row.prevRow();
+	return row ? row.getComponent() : row;
 };
 
 
@@ -644,12 +646,12 @@ Row.prototype.getCells = function(){
 
 Row.prototype.nextRow = function(){
 	var row = this.table.rowManager.nextDisplayRow(this, true);
-	return row ? row.getComponent() : false;
+	return row || false;
 };
 
 Row.prototype.prevRow = function(){
 	var row = this.table.rowManager.prevDisplayRow(this, true);
-	return row ? row.getComponent() : false;
+	return row || false;
 };
 
 Row.prototype.moveToRow = function(to, before){
