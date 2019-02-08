@@ -897,7 +897,7 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 		case "sort":
 		if(!skipStage){
 			if(table.modExists("sort")){
-				table.modules.sort.sort();
+				table.modules.sort.sort(this.activeRows);
 			}
 		}else{
 			skipStage = false;
