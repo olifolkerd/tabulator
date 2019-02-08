@@ -186,6 +186,7 @@ DataTree.prototype.getRows = function(rows){
 
 DataTree.prototype.getChildren = function(row){
 	var config = row.modules.dataTree,
+	children = [],
 	output = [];
 
 	if(config.children !== false && config.open){
@@ -193,7 +194,13 @@ DataTree.prototype.getChildren = function(row){
 			config.children = this.generateChildren(row);
 		}
 
-		config.children.forEach((child) => {
+		if(this.table.modExists("filter")){
+			children = this.table.modules.filter.filter(config.children);
+		}else{
+			children = config.children;
+		}
+
+		children.forEach((child) => {
 			output.push(child);
 
 			var subChildren = this.getChildren(child);
