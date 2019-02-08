@@ -20,6 +20,8 @@ var MoveRows = function MoveRows(table) {
 	this.endMove = this.endMove.bind(this);
 	this.tableRowDropEvent = false;
 
+	this.touchMove = false;
+
 	this.connection = false;
 	this.connections = [];
 
@@ -122,6 +124,8 @@ MoveRows.prototype.initializeRow = function (row) {
 				}
 			}
 		});
+
+		this.bindTouchEvents(row, row.getElement());
 	}
 
 	row.modules.moveRow = config;
@@ -144,6 +148,97 @@ MoveRows.prototype.initializeCell = function (cell) {
 			if (self.checkTimeout) {
 				clearTimeout(self.checkTimeout);
 			}
+		}
+	});
+
+	this.bindTouchEvents(cell.row, cell.getElement());
+};
+
+MoveRows.prototype.bindTouchEvents = function (row, element) {
+	var self = this,
+	    startYMove = false,
+	    //shifting center position of the cell
+	dir = false,
+	    currentRow,
+	    nextRow,
+	    prevRow,
+	    nextRowHeight,
+	    prevRowHeight,
+	    nextRowHeightLast,
+	    prevRowHeightLast;
+
+	element.addEventListener("touchstart", function (e) {
+		self.checkTimeout = setTimeout(function () {
+			self.touchMove = true;
+			currentRow = row;
+			nextRow = row.nextRow();
+			nextRowHeight = nextRow ? nextRow.getHeight() / 2 : 0;
+			prevRow = row.prevRow();
+			prevRowHeight = prevRow ? prevRow.getHeight() / 2 : 0;
+			nextRowHeightLast = 0;
+			prevRowHeightLast = 0;
+			startYMove = false;
+
+			self.startMove(e, row);
+		}, self.checkPeriod);
+	});
+	this.moving, this.toRow, this.toRowAfter;
+	element.addEventListener("touchmove", function (e) {
+
+		var halfCol, diff, moveToRow;
+
+		if (self.moving) {
+			e.preventDefault();
+
+			self.moveHover(e);
+
+			if (!startYMove) {
+				startYMove = e.touches[0].pageY;
+			}
+
+			diff = e.touches[0].pageY - startYMove;
+
+			if (diff > 0) {
+				if (nextRow && diff - nextRowHeightLast > nextRowHeight) {
+					moveToRow = nextRow;
+
+					if (moveToRow !== row) {
+						startYMove = e.touches[0].pageY;
+						moveToRow.getElement().parentNode.insertBefore(self.placeholderElement, moveToRow.getElement().nextSibling);
+						self.moveRow(moveToRow, true);
+					}
+				}
+			} else {
+				if (prevRow && -diff - prevRowHeightLast > prevRowHeight) {
+					moveToRow = prevRow;
+
+					if (moveToRow !== row) {
+						startYMove = e.touches[0].pageY;
+						moveToRow.getElement().parentNode.insertBefore(self.placeholderElement, moveToRow.getElement());
+						self.moveRow(moveToRow, false);
+					}
+				}
+			}
+
+			if (moveToRow) {
+				currentRow = moveToRow;
+				nextRow = moveToRow.nextRow();
+				nextRowHeightLast = nextRowHeight;
+				nextRowHeight = nextRow ? nextRow.getHeight() / 2 : 0;
+				prevRow = moveToRow.prevRow();
+				prevRowHeightLast = prevRowHeight;
+				prevRowHeight = prevRow ? prevRow.getHeight() / 2 : 0;
+			}
+		}
+	});
+
+	element.addEventListener("touchend", function (e) {
+		if (self.checkTimeout) {
+			clearTimeout(self.checkTimeout);
+		}
+		if (self.moving) {
+			self.endMove(e);
+			self.touchMove = false;
 		}
 	});
 };
@@ -217,21 +312,24 @@ MoveRows.prototype.startMove = function (e, row) {
 };
 
 MoveRows.prototype.setStartPosition = function (e, row) {
-	var element, position;
+	var pageX = this.touchMove ? e.touches[0].pageX : e.pageX,
+	    pageY = this.touchMove ? e.touches[0].pageY : e.pageY,
+	    element,
+	    position;
 
 	element = row.getElement();
 	if (this.connection) {
 		position = element.getBoundingClientRect();
 
-		this.startX = position.left - e.pageX + window.scrollX;
-		this.startY = position.top - e.pageY + window.scrollY;
+		this.startX = position.left - pageX + window.scrollX;
+		this.startY = position.top - pageY + window.scrollY;
 	} else {
-		this.startY = e.pageY - element.getBoundingClientRect().top;
+		this.startY = pageY - element.getBoundingClientRect().top;
 	}
 };
 
 MoveRows.prototype.endMove = function (e) {
-	if (!e || e.which === 1) {
+	if (!e || e.which === 1 || this.touchMove) {
 		this._unbindMouseMove();
 
 		if (!this.connection) {
@@ -277,15 +375,15 @@ MoveRows.prototype.moveHover = function (e) {
 MoveRows.prototype.moveHoverTable = function (e) {
 	var rowHolder = this.table.rowManager.getElement(),
 	    scrollTop = rowHolder.scrollTop,
-	    yPos = e.pageY - rowHolder.getBoundingClientRect().top + scrollTop,
+	    yPos = (this.touchMove ? e.touches[0].pageY : e.pageY) - rowHolder.getBoundingClientRect().top + scrollTop,
 	    scrollPos;
 
 	this.hoverElement.style.top = yPos - this.startY + "px";
 };
 
 MoveRows.prototype.moveHoverConnections = function (e) {
-	this.hoverElement.style.left = this.startX + e.pageX + "px";
-	this.hoverElement.style.top = this.startY + e.pageY + "px";
+	this.hoverElement.style.left = this.startX + (this.touchMove ? e.touches[0].pageX : e.pageX) + "px";
+	this.hoverElement.style.top = this.startY + (this.touchMove ? e.touches[0].pageY : e.pageY) + "px";
 };
 
 //establish connection with other tables
