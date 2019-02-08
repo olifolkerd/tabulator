@@ -149,7 +149,6 @@ MoveColumns.prototype.bindTouchEvents = function(column){
 			clearTimeout(self.checkTimeout);
 		}
 		if(self.moving){
-			console.log("end");
 			self.endMove(e);
 		}
 	});
