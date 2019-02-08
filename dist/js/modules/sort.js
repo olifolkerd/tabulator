@@ -182,7 +182,7 @@ Sort.prototype.findSorter = function (column) {
 };
 
 //work through sort list sorting data
-Sort.prototype.sort = function () {
+Sort.prototype.sort = function (data) {
 	var self = this,
 	    lastSort,
 	    sortList;
@@ -206,7 +206,7 @@ Sort.prototype.sort = function () {
 					item.column.modules.sort.sorter = self.findSorter(item.column);
 				}
 
-				self._sortItem(item.column, item.dir, sortList, i);
+				self._sortItem(data, item.column, item.dir, sortList, i);
 			}
 
 			self.setColumnHeader(item.column, item.dir);
@@ -239,14 +239,12 @@ Sort.prototype.setColumnHeader = function (column, dir) {
 };
 
 //sort each item in sort list
-Sort.prototype._sortItem = function (column, dir, sortList, i) {
+Sort.prototype._sortItem = function (data, column, dir, sortList, i) {
 	var self = this;
-
-	var activeRows = self.table.rowManager.activeRows;
 
 	var params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
 
-	activeRows.sort(function (a, b) {
+	data.sort(function (a, b) {
 
 		var result = self._sortRow(a, b, column, dir, params);
 

@@ -200,6 +200,10 @@ DataTree.prototype.getChildren = function(row){
 			children = config.children;
 		}
 
+		if(this.table.modExists("sort")){
+			this.table.modules.sort.sort(children);
+		}
+
 		children.forEach((child) => {
 			output.push(child);
 
