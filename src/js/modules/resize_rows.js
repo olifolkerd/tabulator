@@ -21,35 +21,42 @@ ResizeRows.prototype.initializeRow = function(row){
 		e.stopPropagation();
 	});
 
-	handle.addEventListener("mousedown", function(e){
+	var handleDown = function(e){
 		self.startRow = row;
-		self._mouseDown(e, row);
-	});
+		self._mouseDown(e, row, handle);
+	};
+
+	handle.addEventListener("mousedown", handleDown);
+	handle.addEventListener("touchstart", handleDown);
 
 	prevHandle.addEventListener("click", function(e){
 		e.stopPropagation();
 	});
 
-	prevHandle.addEventListener("mousedown", function(e){
+
+	var prevHandleDown =  function(e){
 		var prevRow = self.table.rowManager.prevDisplayRow(row);
 
 		if(prevRow){
 			self.startRow = prevRow;
-			self._mouseDown(e, prevRow);
+			self._mouseDown(e, prevRow, prevHandle);
 		}
-	});
+	};
+
+	prevHandle.addEventListener("mousedown",prevHandleDown);
+	prevHandle.addEventListener("touchstart",prevHandleDown);
 
 	rowEl.appendChild(handle);
 	rowEl.appendChild(prevHandle);
 };
 
-ResizeRows.prototype._mouseDown = function(e, row){
+ResizeRows.prototype._mouseDown = function(e, row, handle){
 	var self = this;
 
 	self.table.element.classList.add("tabulator-block-select");
 
 	function mouseMove(e){
-		row.setHeight(self.startHeight + (e.screenY - self.startY));
+		row.setHeight(self.startHeight + ((e instanceof TouchEvent ? e.touches[0].screenY : e.screenY) - self.startY));
 	}
 
 	function mouseUp(e){
@@ -61,6 +68,9 @@ ResizeRows.prototype._mouseDown = function(e, row){
 
 		document.body.removeEventListener("mouseup", mouseMove);
 		document.body.removeEventListener("mousemove", mouseMove);
+
+		handle.removeEventListener("touchmove", mouseMove);
+		handle.removeEventListener("touchend", mouseUp);
 
 		self.table.element.classList.remove("tabulator-block-select");
 
@@ -74,12 +84,14 @@ ResizeRows.prototype._mouseDown = function(e, row){
 	// 	self.startColumn.modules.edit.blocked = true;
 	// }
 
-	self.startY = e.screenY;
+	self.startY = e instanceof TouchEvent ? e.touches[0].screenY : e.screenY;
 	self.startHeight = row.getHeight();
 
 	document.body.addEventListener("mousemove", mouseMove);
-
 	document.body.addEventListener("mouseup", mouseUp);
+
+	handle.addEventListener("touchmove", mouseMove);
+	handle.addEventListener("touchend", mouseUp);
 };
 
 Tabulator.prototype.registerModule("resizeRows", ResizeRows);
