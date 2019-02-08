@@ -6720,7 +6720,6 @@ Tabulator.prototype.navigatePrev = function () {
 		cell = this.modules.edit.currentCell;
 
 		if (cell) {
-			e.preventDefault();
 			return cell.nav().prev();
 		}
 	}
@@ -6735,7 +6734,6 @@ Tabulator.prototype.navigateNext = function () {
 		cell = this.modules.edit.currentCell;
 
 		if (cell) {
-			e.preventDefault();
 			return cell.nav().next();
 		}
 	}
