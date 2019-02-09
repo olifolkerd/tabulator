@@ -133,7 +133,9 @@ Edit.prototype.bindEditor = function (cell) {
 
 Edit.prototype.focusCellNoEvent = function (cell) {
 	this.recursionBlock = true;
-	cell.getElement().focus();
+	if (this.table.browser !== "ie") {
+		cell.getElement().focus();
+	}
 	this.recursionBlock = false;
 };
 
