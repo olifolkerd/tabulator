@@ -162,7 +162,7 @@ Format.prototype.formatters = {
 
 	//clickable anchor tag
 	link:function(cell, formatterParams, onRendered){
-		var value = this.sanitizeHTML(cell.getValue()),
+		var value = cell.getValue(),
 		urlPrefix = formatterParams.urlPrefix || "",
 		label = this.emptyToSpace(value),
 		el = document.createElement("a"),
@@ -208,7 +208,7 @@ Format.prototype.formatters = {
 			el.setAttribute("target", formatterParams.target);
 		}
 
-		el.innerHTML = this.emptyToSpace(label);
+		el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
 
 		return el;
 	},
