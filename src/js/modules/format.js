@@ -561,7 +561,8 @@ Format.prototype.formatters = {
 			open = true;
 		}
 
-		el.addEventListener("click", function(){
+		el.addEventListener("click", function(e){
+			e.stopImmediatePropagation();
 			toggleList(!open);
 		});
 
