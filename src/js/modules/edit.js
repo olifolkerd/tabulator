@@ -619,6 +619,7 @@ Edit.prototype.editors = {
 						}
 
 					}else{
+
 						item = {
 							label:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
 							value:value,
@@ -767,6 +768,14 @@ Edit.prototype.editors = {
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
 		input.readOnly = true;
+
+		input.value = initialValue;
+
+		if(editorParams.values === true){
+			parseItems(getUniqueColumnValues(), initialValue);
+		}else{
+			parseItems(editorParams.values || [], initialValue);
+		}
 
 		//allow key based navigation
 		input.addEventListener("keydown", function(e){
