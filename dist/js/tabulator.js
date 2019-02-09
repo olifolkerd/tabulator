@@ -663,7 +663,10 @@ input.addEventListener("keydown",function(e){var index;switch(e.keyCode){case 38
 e.stopImmediatePropagation();e.stopPropagation();index=displayItems.indexOf(currentItem);if(index>0){setCurrentItem(displayItems[index-1]);}else{setCurrentItem(false);}break;case 40://down arrow
 e.stopImmediatePropagation();e.stopPropagation();index=displayItems.indexOf(currentItem);if(index<displayItems.length-1){if(index==-1){setCurrentItem(displayItems[0]);}else{setCurrentItem(displayItems[index+1]);}}break;case 13://enter
 chooseItem();break;case 27://escape
-cancelItem();break;}});input.addEventListener("keyup",function(e){switch(e.keyCode){case 38://up arrow
+cancelItem();break;case 36://home
+case 35://end
+//prevent table navigation while using input element
+e.stopImmediatePropagation();break;}});input.addEventListener("keyup",function(e){switch(e.keyCode){case 38://up arrow
 case 37://left arrow
 case 39://up arrow
 case 40://right arrow

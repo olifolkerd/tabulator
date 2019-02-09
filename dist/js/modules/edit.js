@@ -1100,6 +1100,13 @@ Edit.prototype.editors = {
 					//escape
 					cancelItem();
 					break;
+
+				case 36: //home
+				case 35:
+					//end
+					//prevent table navigation while using input element
+					e.stopImmediatePropagation();
+					break;
 			}
 		});
 
