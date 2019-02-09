@@ -57,7 +57,7 @@ ResizeRows.prototype._mouseDown = function (e, row, handle) {
 	self.table.element.classList.add("tabulator-block-select");
 
 	function mouseMove(e) {
-		row.setHeight(self.startHeight + ((e instanceof TouchEvent ? e.touches[0].screenY : e.screenY) - self.startY));
+		row.setHeight(self.startHeight + ((typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY) - self.startY));
 	}
 
 	function mouseUp(e) {
@@ -85,7 +85,7 @@ ResizeRows.prototype._mouseDown = function (e, row, handle) {
 	// 	self.startColumn.modules.edit.blocked = true;
 	// }
 
-	self.startY = e instanceof TouchEvent ? e.touches[0].screenY : e.screenY;
+	self.startY = typeof e.screenY === "undefined" ? e.touches[0].screenY : e.screenY;
 	self.startHeight = row.getHeight();
 
 	document.body.addEventListener("mousemove", mouseMove);

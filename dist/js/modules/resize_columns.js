@@ -105,7 +105,7 @@ ResizeColumns.prototype._mouseDown = function (e, column, handle) {
 	self.table.element.classList.add("tabulator-block-select");
 
 	function mouseMove(e) {
-		column.setWidth(self.startWidth + ((e instanceof TouchEvent ? e.touches[0].screenX : e.screenX) - self.startX));
+		column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 
 		if (!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight) {
 			column.checkCellHeights();
@@ -145,7 +145,7 @@ ResizeColumns.prototype._mouseDown = function (e, column, handle) {
 		self.startColumn.modules.edit.blocked = true;
 	}
 
-	self.startX = e instanceof TouchEvent ? e.touches[0].screenX : e.screenX;
+	self.startX = typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX;
 	self.startWidth = column.getWidth();
 
 	document.body.addEventListener("mousemove", mouseMove);
