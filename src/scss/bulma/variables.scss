@@ -1,0 +1,198 @@
+////////// from utilities/initial-variables.sass //////////
+$black:        hsl(0, 0%, 4%) !default
+$black-bis:    hsl(0, 0%, 7%) !default
+$black-ter:    hsl(0, 0%, 14%) !default
+
+$grey-darker:  hsl(0, 0%, 21%) !default
+$grey-dark:    hsl(0, 0%, 29%) !default
+$grey:         hsl(0, 0%, 48%) !default
+$grey-light:   hsl(0, 0%, 71%) !default
+$grey-lighter: hsl(0, 0%, 86%) !default
+
+$white-ter:    hsl(0, 0%, 96%) !default
+$white-bis:    hsl(0, 0%, 98%) !default
+$white:        hsl(0, 0%, 100%) !default
+
+$orange:       hsl(14,  100%, 53%) !default
+$yellow:       hsl(48,  100%, 67%) !default
+$green:        hsl(141, 71%,  48%) !default
+$turquoise:    hsl(171, 100%, 41%) !default
+$cyan:         hsl(204, 86%,  53%) !default
+$blue:         hsl(217, 71%,  53%) !default
+$purple:       hsl(271, 100%, 71%) !default
+$red:          hsl(348, 100%, 61%) !default
+
+// Typography
+
+$family-sans-serif: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif !default
+$family-monospace: monospace !default
+$render-mode: optimizeLegibility !default
+
+$size-1: 3rem !default
+$size-2: 2.5rem !default
+$size-3: 2rem !default
+$size-4: 1.5rem !default
+$size-5: 1.25rem !default
+$size-6: 1rem !default
+$size-7: 0.75rem !default
+
+$weight-light: 300 !default
+$weight-normal: 400 !default
+$weight-medium: 500 !default
+$weight-semibold: 600 !default
+$weight-bold: 700 !default
+
+////////// from utilities/derived-variables.sass //////////
+
+$primary: $turquoise !default
+
+$info: $cyan !default
+$success: $green !default
+$warning: $yellow !default
+$danger: $red !default
+
+$light: $white-ter !default
+$dark: $grey-darker !default
+
+// Invert colors
+
+$orange-invert: findColorInvert($orange) !default
+$yellow-invert: findColorInvert($yellow) !default
+$green-invert: findColorInvert($green) !default
+$turquoise-invert: findColorInvert($turquoise) !default
+$cyan-invert: findColorInvert($cyan) !default
+$blue-invert: findColorInvert($blue) !default
+$purple-invert: findColorInvert($purple) !default
+$red-invert: findColorInvert($red) !default
+
+$primary-invert: $turquoise-invert !default
+$info-invert: $cyan-invert !default
+$success-invert: $green-invert !default
+$warning-invert: $yellow-invert !default
+$danger-invert: $red-invert !default
+$light-invert: $dark !default
+$dark-invert: $light !default
+
+// General colors
+
+$background: $white-ter !default
+
+$border: $grey-lighter !default
+$border-hover: $grey-light !default
+
+// Text colors
+
+$text: $grey-dark !default
+$text-invert: findColorInvert($text) !default
+$text-light: $grey !default
+$text-strong: $grey-darker !default
+
+// Code colors
+
+$code: $red !default
+$code-background: $background !default
+
+$pre: $text !default
+$pre-background: $background !default
+
+// Link colors
+
+$link: $blue !default
+$link-invert: $blue-invert !default
+$link-visited: $purple !default
+
+$link-hover: $grey-darker !default
+$link-hover-border: $grey-light !default
+
+$link-focus: $grey-darker !default
+$link-focus-border: $blue !default
+
+$link-active: $grey-darker !default
+$link-active-border: $grey-dark !default
+
+// Typography
+
+$family-primary: $family-sans-serif !default
+$family-secondary: $family-sans-serif !default
+$family-code: $family-monospace !default
+
+$size-small: $size-7 !default
+$size-normal: $size-6 !default
+$size-medium: $size-5 !default
+$size-large: $size-4 !default
+
+// Lists and maps
+$custom-colors: null !default
+$custom-shades: null !default
+
+$colors: mergeColorMaps(("white": ($white, $black), "black": ($black, $white), "light": ($light, $light-invert), "dark": ($dark, $dark-invert), "primary": ($primary, $primary-invert), "link": ($link, $link-invert), "info": ($info, $info-invert), "success": ($success, $success-invert), "warning": ($warning, $warning-invert), "danger": ($danger, $danger-invert)), $custom-colors) !default
+$shades: mergeColorMaps(("black-bis": $black-bis, "black-ter": $black-ter, "grey-darker": $grey-darker, "grey-dark": $grey-dark, "grey": $grey, "grey-light": $grey-light, "grey-lighter": $grey-lighter, "white-ter": $white-ter, "white-bis": $white-bis), $custom-shades) !default
+
+$sizes: $size-1 $size-2 $size-3 $size-4 $size-5 $size-6 $size-7 !default
+
+
+////////// from elements/button.sass //////////
+
+$control-border-width: 1px !default
+
+$button-color: $grey-darker !default
+$button-background-color: $white !default
+
+$button-border-color: $grey-lighter !default
+$button-border-width: $control-border-width !default
+
+$button-padding-vertical: calc(0.375em - #{$button-border-width}) !default
+$button-padding-horizontal: 0.75em !default
+
+$button-hover-color: $link-hover !default
+$button-hover-border-color: $link-hover-border !default
+
+$button-focus-color: $link-focus !default
+$button-focus-border-color: $link-focus-border !default
+$button-focus-box-shadow-size: 0 0 0 0.125em !default
+$button-focus-box-shadow-color: rgba($link, 0.25) !default
+
+$button-active-color: $link-active !default
+$button-active-border-color: $link-active-border !default
+
+$button-text-color: $text !default
+$button-text-hover-background-color: $background !default
+$button-text-hover-color: $text-strong !default
+
+$button-disabled-background-color: $white !default
+$button-disabled-border-color: $grey-lighter !default
+$button-disabled-shadow: none !default
+$button-disabled-opacity: 0.5 !default
+
+$button-static-color: $grey !default
+$button-static-background-color: $white-ter !default
+$button-static-border-color: $grey-lighter !default
+
+
+
+////////// from elements/table.sass //////////
+
+$table-color: $grey-darker !default
+$table-background-color: $white !default
+
+$table-cell-border: 1px solid $grey-lighter !default
+$table-cell-border-width: 0 0 1px !default
+$table-cell-padding: 0.5em 0.75em !default
+$table-cell-heading-color: $text-strong !default
+
+$table-head-cell-border-width: 0 0 2px !default
+$table-head-cell-color: $text-strong !default
+$table-foot-cell-border-width: 2px 0 0 !default
+$table-foot-cell-color: $text-strong !default
+
+$table-head-background-color: transparent !default
+$table-body-background-color: transparent !default
+$table-foot-background-color: transparent !default
+
+$table-row-hover-background-color: $white-bis !default
+
+$table-row-active-background-color: $primary !default
+$table-row-active-color: $primary-invert !default
+
+$table-striped-row-even-background-color: $white-bis !default
+$table-striped-row-even-hover-background-color: $white-ter !default
