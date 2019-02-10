@@ -182,6 +182,18 @@ ColumnManager.prototype.createHeaderElement = function () {
 	return el;
 };
 
+ColumnManager.prototype.initialize = function () {
+
+	var self = this;
+
+	//scroll body along with header
+
+	self.element.addEventListener("scroll", function () {
+
+		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+	});
+};
+
 //link to row manager
 
 ColumnManager.prototype.setRowManager = function (manager) {
@@ -5590,6 +5602,7 @@ Tabulator.prototype._buildElement = function () {
 		element.style.height = options.height;
 	}
 
+	this.columnManager.initialize();
 	this.rowManager.initialize();
 
 	this._detectBrowser();

@@ -29,6 +29,16 @@ ColumnManager.prototype.createHeaderElement = function (){
 	return el;
 };
 
+ColumnManager.prototype.initialize = function (){
+	var self = this;
+
+	//scroll body along with header
+	self.element.addEventListener("scroll", function(){
+		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+	});
+};
+
+
 //link to row manager
 ColumnManager.prototype.setRowManager = function(manager){
 	this.rowManager = manager;

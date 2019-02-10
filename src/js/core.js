@@ -386,6 +386,7 @@ Tabulator.prototype._buildElement = function(){
 		element.style.height = options.height;
 	}
 
+	this.columnManager.initialize();
 	this.rowManager.initialize();
 
 	this._detectBrowser();
