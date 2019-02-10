@@ -9,6 +9,7 @@ var DataTree = function DataTree(table) {
 	this.collapseEl = null;
 	this.expandEl = null;
 	this.branchEl = null;
+	this.elementField = false;
 
 	this.startOpen = function () {};
 
@@ -21,6 +22,7 @@ DataTree.prototype.initialize = function () {
 
 	this.field = options.dataTreeChildField;
 	this.indent = options.dataTreeChildIndent;
+	this.elementField = options.dataTreeElementColumn;
 
 	if (options.dataTreeBranchElement) {
 
@@ -100,7 +102,7 @@ DataTree.prototype.initializeRow = function (row) {
 };
 
 DataTree.prototype.layoutRow = function (row) {
-	var cell = row.getCells()[0],
+	var cell = this.elementField ? row.getCell(this.elementField) : row.getCells()[0],
 	    el = cell.getElement(),
 	    config = row.modules.dataTree;
 

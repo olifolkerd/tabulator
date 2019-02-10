@@ -89,6 +89,7 @@ Tabulator.prototype.defaultOptions = {
 	downloadConfig:false,	//download config
 
 	dataTree:false, //enable data tree
+	dataTreeElementColumn:false,
 	dataTreeBranchElement: true, //show data tree branch element
 	dataTreeChildIndent:9, //data tree child indent in px
 	dataTreeChildField:"_children", //data tre column field to look for child rows
