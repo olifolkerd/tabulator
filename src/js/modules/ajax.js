@@ -351,7 +351,7 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 		url = self.urlGenerator(url, config, params);
 
 		//set body content if not GET request
-		if(config.method != "get"){
+		if(config.method.toUpperCase() != "GET"){
 			contentType = typeof self.table.options.ajaxContentType === "object" ?  self.table.options.ajaxContentType : self.contentTypeFormatters[self.table.options.ajaxContentType];
 			if(contentType){
 
@@ -375,10 +375,6 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 		if(url){
 
 			//configure headers
-			if(typeof config.credentials === "undefined"){
-				config.credentials = 'include';
-			}
-
 			if(typeof config.headers === "undefined"){
 				config.headers = {};
 			}
@@ -389,6 +385,22 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 
 			if(typeof config.headers["X-Requested-With"] === "undefined"){
 				config.headers["X-Requested-With"] = "XMLHttpRequest";
+			}
+
+			if(typeof config.mode === "undefined"){
+				config.mode = "cors";
+			}
+
+			if(config.mode == "cors"){
+				config.headers["Access-Control-Allow-Origin"] = window.location.origin;
+
+				if(typeof config.credentials === "undefined"){
+					config.credentials = 'same-origin';
+				}
+			}else{
+				if(typeof config.credentials === "undefined"){
+					config.credentials = 'include';
+				}
 			}
 
 			//send request
