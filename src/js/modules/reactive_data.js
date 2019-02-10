@@ -22,7 +22,6 @@ ReactiveData.prototype.watchData = function(data){
 			var args = Array.from(arguments);
 
 			if(!self.blocked){
-				console.log("push")
 				args.forEach(function (arg){
 					self.table.rowManager.addRowActual(arg, false);
 				});
@@ -41,7 +40,6 @@ ReactiveData.prototype.watchData = function(data){
 			var args = Array.from(arguments);
 
 			if(!self.blocked){
-				console.log("unshift")
 				args.forEach(function (arg){
 					self.table.rowManager.addRowActual(arg, true);
 				});
@@ -61,7 +59,6 @@ ReactiveData.prototype.watchData = function(data){
 			var row;
 
 			if(!self.blocked){
-				console.log("shift")
 				if(self.data.length){
 					row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
@@ -83,7 +80,6 @@ ReactiveData.prototype.watchData = function(data){
 		value: function () {
 			var row;
 			if(!self.blocked){
-				console.log("pop")
 				if(self.data.length){
 					row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
@@ -177,6 +173,7 @@ ReactiveData.prototype.watchRow = function(row){
 
 ReactiveData.prototype.watchKey = function(row, data, key){
 	var self = this,
+	props = Object.getOwnPropertyDescriptor(data, key),
 	value = data[key];
 
 	Object.defineProperty(data, key, {
@@ -188,8 +185,17 @@ ReactiveData.prototype.watchKey = function(row, data, key){
 				update[key] = newValue;
 				row.updateData(update);
 			}
+
+			if(props.set){
+				props.set(newValue);
+			}
 		},
 		get:function(){
+
+			if(props.get){
+				props.get();
+			}
+
 			return value;
 		}
 	});
