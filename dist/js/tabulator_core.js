@@ -3345,7 +3345,8 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 
 		while ((rowsHeight <= self.height + self.vDomWindowBuffer || i < self.vDomWindowMinTotalRows) && self.vDomBottom < self.displayRowsCount - 1) {
 			var index = self.vDomBottom + 1,
-			    row = rows[index];
+			    row = rows[index],
+			    rowHeight = 0;
 
 			self.styleRow(row, index);
 
@@ -3358,10 +3359,16 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 				}
 			}
 
+			rowHeight = row.getHeight();
+
 			if (i < topPad) {
-				topPadHeight += row.getHeight();
+				topPadHeight += rowHeight;
 			} else {
-				rowsHeight += row.getHeight();
+				rowsHeight += rowHeight;
+			}
+
+			if (rowHeight > this.vDomWindowBuffer) {
+				this.vDomWindowBuffer = rowHeight * 2;
 			}
 
 			if (row.type !== "group") {
@@ -3499,6 +3506,10 @@ RowManager.prototype._addTopRow = function (topDiff) {
 
 		topDiff = -(this.scrollTop - this.vDomScrollPosTop);
 
+		if (topRow.getHeight() > this.vDomWindowBuffer) {
+			this.vDomWindowBuffer = topRow.getHeight() * 2;
+		}
+
 		if (i < this.vDomMaxRenderChain && this.vDomTop && topDiff >= (rows[this.vDomTop - 1].getHeight() || this.vDomRowHeight)) {
 			this._addTopRow(topDiff, i + 1);
 		} else {
@@ -3566,6 +3577,10 @@ RowManager.prototype._addBottomRow = function (bottomDiff) {
 		}
 
 		bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
+
+		if (bottomRow.getHeight() > this.vDomWindowBuffer) {
+			this.vDomWindowBuffer = bottomRow.getHeight() * 2;
+		}
 
 		if (i < this.vDomMaxRenderChain && this.vDomBottom < this.displayRowsCount - 1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)) {
 			this._addBottomRow(bottomDiff, i + 1);
