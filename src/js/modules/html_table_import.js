@@ -96,7 +96,6 @@ HtmlTableImport.prototype._extractOptions = function(element, options, defaultOp
 			name = attrib.name.replace("tabulator-", "");
 
 			if(typeof optionsList[name] !== "undefined"){
-				console.log("match", name, optionsList[name], attrib.value)
 				options[optionsList[name]] = this._attribValue(attrib.value);
 			}
 		}
