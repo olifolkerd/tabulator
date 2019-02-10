@@ -1220,21 +1220,31 @@ Edit.prototype.editors = {
 
 		//build stars
 		function buildStar(i) {
+
+			var starHolder = document.createElement("span");
 			var nextStar = star.cloneNode(true);
 
 			stars.push(nextStar);
 
-			nextStar.addEventListener("mouseover", function (e) {
+			starHolder.addEventListener("mouseenter", function (e) {
 				e.stopPropagation();
+				e.stopImmediatePropagation();
 				starChange(i);
 			});
 
-			nextStar.addEventListener("click", function (e) {
+			starHolder.addEventListener("mousemove", function (e) {
 				e.stopPropagation();
+				e.stopImmediatePropagation();
+			});
+
+			starHolder.addEventListener("click", function (e) {
+				e.stopPropagation();
+				e.stopImmediatePropagation();
 				success(i);
 			});
 
-			starsHolder.appendChild(nextStar);
+			starHolder.appendChild(nextStar);
+			starsHolder.appendChild(starHolder);
 		}
 
 		//handle keyboard navigation value change
@@ -1271,7 +1281,7 @@ Edit.prototype.editors = {
 		// set initial styling of stars
 		starChange(value);
 
-		starsHolder.addEventListener("mouseover", function (e) {
+		starsHolder.addEventListener("mousemove", function (e) {
 			starChange(0);
 		});
 
