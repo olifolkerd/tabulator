@@ -36,7 +36,12 @@ Filter.prototype.initializeColumn = function(column, value){
 					if(self.filters[column.definition.headerFilterFunc]){
 						type = column.definition.headerFilterFunc;
 						filterFunc = function(data){
-							return self.filters[column.definition.headerFilterFunc](value, column.getFieldValue(data));
+							var params = column.definition.headerFilterFuncParams || {};
+							var fieldVal = column.getFieldValue(data);
+
+							params = typeof params === "function" ? params(value, fieldVal, data) : params;
+
+							return self.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
 						};
 					}else{
 						console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
@@ -656,36 +661,36 @@ Filter.prototype.filterRecurse = function(filter, data){
 Filter.prototype.filters ={
 
 	//equal to
-	"=":function(filterVal, rowVal){
+	"=":function(filterVal, rowVal, rowData, filterParams){
 		return rowVal == filterVal ? true : false;
 	},
 
 	//less than
-	"<":function(filterVal, rowVal){
+	"<":function(filterVal, rowVal, rowData, filterParams){
 		return rowVal < filterVal ? true : false;
 	},
 
 	//less than or equal to
-	"<=":function(filterVal, rowVal){
+	"<=":function(filterVal, rowVal, rowData, filterParams){
 		return rowVal <= filterVal ? true : false;
 	},
 
 	//greater than
-	">":function(filterVal, rowVal){
+	">":function(filterVal, rowVal, rowData, filterParams){
 		return rowVal > filterVal ? true : false;
 	},
 
 	//greater than or equal to
-	">=":function(filterVal, rowVal){
+	">=":function(filterVal, rowVal, rowData, filterParams){
 		return rowVal >= filterVal ? true : false;
 	},
 
 	//not equal to
-	"!=":function(filterVal, rowVal){
+	"!=":function(filterVal, rowVal, rowData, filterParams){
 		return rowVal != filterVal ? true : false;
 	},
 
-	"regex":function(filterVal, rowVal){
+	"regex":function(filterVal, rowVal, rowData, filterParams){
 
 		if(typeof filterVal == "string"){
 			filterVal = new RegExp(filterVal);
@@ -695,7 +700,7 @@ Filter.prototype.filters ={
 	},
 
 	//contains the string
-	"like":function(filterVal, rowVal){
+	"like":function(filterVal, rowVal, rowData, filterParams){
 		if(filterVal === null || typeof filterVal === "undefined"){
 			return rowVal === filterVal ? true : false;
 		}else{
@@ -709,7 +714,7 @@ Filter.prototype.filters ={
 	},
 
 	//in array
-	"in":function(filterVal, rowVal){
+	"in":function(filterVal, rowVal, rowData, filterParams){
 		if(Array.isArray(filterVal)){
 			return filterVal.indexOf(rowVal) > -1;
 		}else{
