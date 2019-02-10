@@ -2905,6 +2905,10 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 	    table = this.table,
 	    displayIndex;
 
+	if (self.table.modExists("edit")) {
+		self.table.modules.edit.cancelEdit();
+	}
+
 	if (!stage) {
 		stage = "all";
 	}
