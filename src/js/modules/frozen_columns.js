@@ -58,7 +58,6 @@ FrozenColumns.prototype.layout = function(){
 	if(self.active){
 
 		//calculate row padding
-
 		self.leftMargin = self._calcSpace(self.leftColumns, self.leftColumns.length);
 		self.table.columnManager.headersElement.style.marginLeft = self.leftMargin + "px";
 
@@ -68,6 +67,12 @@ FrozenColumns.prototype.layout = function(){
 		self.table.rowManager.activeRows.forEach(function(row){
 			self.layoutRow(row);
 		});
+
+		if(self.table.options.dataTree){
+			self.table.rowManager.getDisplayRows().forEach(function(row){
+				self.layoutRow(row);
+			});
+		}
 
 		if(self.table.modExists("columnCalcs")){
 			if(self.table.modules.columnCalcs.topInitialized && self.table.modules.columnCalcs.topRow){
