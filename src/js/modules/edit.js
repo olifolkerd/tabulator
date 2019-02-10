@@ -568,7 +568,17 @@ Edit.prototype.editors = {
 				}
 			});
 
-			return Object.keys(output);
+			if(editorParams.sortValuesList){
+				if(editorParams.sortValuesList == "asc"){
+					output = Object.keys(output).sort();
+				}else{
+					output = Object.keys(output).sort().reverse();
+				}
+			}else{
+				output = Object.keys(output);
+			}
+
+			return output;
 		}
 
 		function parseItems(inputValues, curentValue){
@@ -867,7 +877,18 @@ Edit.prototype.editors = {
 				}
 			});
 
-			return Object.keys(output);
+
+			if(editorParams.sortValuesList){
+				if(editorParams.sortValuesList == "asc"){
+					output = Object.keys(output).sort();
+				}else{
+					output = Object.keys(output).sort().reverse();
+				}
+			}else{
+				output = Object.keys(output);
+			}
+
+			return output;
 		}
 
 		function parseItems(inputValues, curentValue){
