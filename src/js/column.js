@@ -162,7 +162,9 @@ var Column = function(def, parent){
 	};
 
 	this.width = null; //column width
+	this.widthStyled = ""; //column width prestyled to improve render efficiency
 	this.minWidth = null; //column minimum width
+	this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
 	this.widthFixed = false; //user has specified a width for this column
 
 	this.visible = true; //default visible state
@@ -957,12 +959,13 @@ Column.prototype.setWidthActual = function(width){
 	width = Math.max(this.minWidth, width);
 
 	this.width = width;
+	this.widthStyled = width ? width + "px" : "";
 
-	this.element.style.width = width ? width + "px" : "";
+	this.element.style.width = this.widthStyled;
 
 	if(!this.isGroup){
 		this.cells.forEach(function(cell){
-			cell.setWidth(width);
+			cell.setWidth();
 		});
 	}
 
@@ -1011,11 +1014,12 @@ Column.prototype.getHeight = function(){
 
 Column.prototype.setMinWidth = function(minWidth){
 	this.minWidth = minWidth;
+	this.minWidthStyled = minWidth ? minWidth + "px" : "";
 
-	this.element.style.minWidth = minWidth ? minWidth + "px" : "";
+	this.element.style.minWidth = this.minWidthStyled;
 
 	this.cells.forEach(function(cell){
-		cell.setMinWidth(minWidth);
+		cell.setMinWidth();
 	});
 };
 
@@ -1090,7 +1094,7 @@ Column.prototype.fitToData = function(){
 		this.element.style.width = "";
 
 		self.cells.forEach(function(cell){
-			cell.setWidth("");
+			cell.clearWidth();
 		});
 	}
 

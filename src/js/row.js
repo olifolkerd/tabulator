@@ -159,6 +159,7 @@ var Row = function(data, parent){
 	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
+	this.heightStyled = ""; //hold element height prestyled to improve render efficiency
 	this.outerHeight = 0; //holde lements outer height
 	this.initialized = false; //element has been rendered
 	this.heightInitialized = false; //element has resized cells to fit
@@ -386,6 +387,7 @@ Row.prototype.reinitialize = function(){
 	this.initialized = false;
 	this.heightInitialized = false;
 	this.height = 0;
+	this.heightStyled = "";
 
 	if(this.element.offsetParent !== null){
 		this.initialize(true);
@@ -406,15 +408,14 @@ Row.prototype.calcHeight = function(){
 	});
 
 	this.height = Math.max(maxHeight, minHeight);
+	this.heightStyled = this.height ? this.height + "px" : "";
 	this.outerHeight = this.element.offsetHeight;
 };
 
 //set of cells
 Row.prototype.setCellHeight = function(){
-	var height = this.height;
-
 	this.cells.forEach(function(cell){
-		cell.setHeight(height);
+		cell.setHeight();
 	});
 
 	this.heightInitialized = true;
@@ -422,7 +423,6 @@ Row.prototype.setCellHeight = function(){
 
 Row.prototype.clearCellHeight = function(){
 	this.cells.forEach(function(cell){
-
 		cell.clearHeight();
 	});
 };
@@ -439,17 +439,18 @@ Row.prototype.normalizeHeight = function(force){
 	this.setCellHeight();
 };
 
-Row.prototype.setHeight = function(height){
-	this.height = height;
+// Row.prototype.setHeight = function(height){
+// 	this.height = height;
 
-	this.setCellHeight();
-};
+// 	this.setCellHeight();
+// };
 
 //set height of rows
 Row.prototype.setHeight = function(height, force){
 	if(this.height != height || force){
 
 		this.height = height;
+		this.heightStyled = height ? height + "px" : "";
 
 		this.setCellHeight();
 
@@ -549,6 +550,7 @@ Row.prototype.updateData = function(data){
 		}else{
 			this.initialized = false;
 			this.height = 0;
+			this.heightStyled = "";
 		}
 
 		if(self.table.options.dataTree !== false && self.table.modExists("dataTree") && typeof data[this.table.modules.dataTree.getChildField()] !== "undefined"){

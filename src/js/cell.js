@@ -93,7 +93,7 @@ var Cell = function(column, row){
 Cell.prototype.build = function(){
 	this.generateElement();
 
-	this.setWidth(this.column.width);
+	this.setWidth();
 
 	this._configureCell();
 
@@ -535,24 +535,27 @@ Cell.prototype.setValueActual = function(value){
 	}
 };
 
-Cell.prototype.setWidth = function(width){
-	this.width = width;
-	// this.element.css("width", width || "");
-	this.element.style.width = (width ? width + "px" : "");
+Cell.prototype.setWidth = function(){
+	this.width = this.column.width;
+	this.element.style.width = this.column.widthStyled;
+};
+
+Cell.prototype.clearWidth = function(){
+	this.width = "";
+	this.element.style.width = "";
 };
 
 Cell.prototype.getWidth = function(){
 	return this.width || this.element.offsetWidth;
 };
 
-Cell.prototype.setMinWidth = function(minWidth){
-	this.minWidth = minWidth;
-	this.element.style.minWidth =  (minWidth ? minWidth + "px" : "");
+Cell.prototype.setMinWidth = function(){
+	this.minWidth = this.column.minWidth;
+	this.element.style.minWidth = this.column.minWidthStyled;
 };
 
 Cell.prototype.checkHeight = function(){
 	// var height = this.element.css("height");
-
 	this.row.reinitializeHeight();
 };
 
@@ -562,9 +565,9 @@ Cell.prototype.clearHeight = function(){
 };
 
 
-Cell.prototype.setHeight = function(height){
-	this.height = height;
-	this.element.style.height = (height ? height + "px" : "");
+Cell.prototype.setHeight = function(){
+	this.height = this.row.height;
+	this.element.style.height =  this.row.heightStyled;
 };
 
 Cell.prototype.getHeight = function(){
