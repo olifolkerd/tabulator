@@ -6661,17 +6661,17 @@ Tabulator.prototype.getPageSize = function () {
 
 Tabulator.prototype.previousPage = function () {
 	if (this.options.pagination && this.modExists("page")) {
-		this.modules.page.previousPage();
+		return this.modules.page.previousPage();
 	} else {
-		return false;
+		return Promise.reject(new Error('Module does not exist'));
 	}
 };
 
 Tabulator.prototype.nextPage = function () {
 	if (this.options.pagination && this.modExists("page")) {
-		this.modules.page.nextPage();
+		return this.modules.page.nextPage();
 	} else {
-		return false;
+		return Promise.reject(new Error('Module does not exist'));
 	}
 };
 
