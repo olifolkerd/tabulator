@@ -322,10 +322,12 @@ Sort.prototype.sorters = {
 	//sort numbers
 	number: function number(a, b, aRow, bRow, column, dir, params) {
 		var alignEmptyValues = params.alignEmptyValues;
+		var decimal = params.decimalSeparator || ".";
+		var thousand = params.thousandSeparator || ",";
 		var emptyAlign = 0;
 
-		a = parseFloat(String(a).replace(",", ""));
-		b = parseFloat(String(b).replace(",", ""));
+		a = parseFloat(String(a).split(thousand).join("").split(decimal).join("."));
+		b = parseFloat(String(b).split(thousand).join("").split(decimal).join("."));
 
 		//handle non numeric values
 		if (isNaN(a)) {

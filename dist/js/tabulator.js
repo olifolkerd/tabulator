@@ -1016,7 +1016,7 @@ if(result===0&&i){for(var j=i-1;j>=0;j--){result=self._sortRow(a,b,sortList[j].c
 Sort.prototype._sortRow=function(a,b,column,dir,params){var el1Comp,el2Comp,colComp;//switch elements depending on search direction
 var el1=dir=="asc"?a:b;var el2=dir=="asc"?b:a;a=column.getFieldValue(el1.getData());b=column.getFieldValue(el2.getData());a=typeof a!=="undefined"?a:"";b=typeof b!=="undefined"?b:"";el1Comp=el1.getComponent();el2Comp=el2.getComponent();return column.modules.sort.sorter.call(this,a,b,el1Comp,el2Comp,column.getComponent(),dir,params);};//default data sorters
 Sort.prototype.sorters={//sort numbers
-number:function number(a,b,aRow,bRow,column,dir,params){var alignEmptyValues=params.alignEmptyValues;var emptyAlign=0;a=parseFloat(String(a).replace(",",""));b=parseFloat(String(b).replace(",",""));//handle non numeric values
+number:function number(a,b,aRow,bRow,column,dir,params){var alignEmptyValues=params.alignEmptyValues;var decimal=params.decimalSeparator||".";var thousand=params.thousandSeparator||",";var emptyAlign=0;a=parseFloat(String(a).split(thousand).join("").split(decimal).join("."));b=parseFloat(String(b).split(thousand).join("").split(decimal).join("."));//handle non numeric values
 if(isNaN(a)){emptyAlign=isNaN(b)?0:-1;}else if(isNaN(b)){emptyAlign=1;}else{//compare valid values
 return a-b;}//fix empty values in position
 if(alignEmptyValues==="top"&&dir==="desc"||alignEmptyValues==="bottom"&&dir==="asc"){emptyAlign*=-1;}return emptyAlign;},//sort strings
