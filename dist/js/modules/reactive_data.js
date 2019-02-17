@@ -5,11 +5,17 @@ var ReactiveData = function ReactiveData(table) {
 	this.data = false;
 	this.blocked = false; //block reactivity while performing update
 	this.origFuncs = {}; // hold original data array functions to allow replacement after data is done with
+	this.currentVersion = 0;
 };
 
 ReactiveData.prototype.watchData = function (data) {
 	var self = this,
-	    pushFunc;
+	    pushFunc,
+	    version;
+
+	this.currentVersion++;
+
+	version = this.currentVersion;
 
 	self.unwatchData();
 
@@ -20,10 +26,11 @@ ReactiveData.prototype.watchData = function (data) {
 
 	Object.defineProperty(self.data, "push", {
 		enumerable: false,
+		configurable: true,
 		value: function value() {
 			var args = Array.from(arguments);
 
-			if (!self.blocked) {
+			if (!self.blocked && version === self.currentVersion) {
 				args.forEach(function (arg) {
 					self.table.rowManager.addRowActual(arg, false);
 				});
@@ -38,10 +45,11 @@ ReactiveData.prototype.watchData = function (data) {
 
 	Object.defineProperty(self.data, "unshift", {
 		enumerable: false,
+		configurable: true,
 		value: function value() {
 			var args = Array.from(arguments);
 
-			if (!self.blocked) {
+			if (!self.blocked && version === self.currentVersion) {
 				args.forEach(function (arg) {
 					self.table.rowManager.addRowActual(arg, true);
 				});
@@ -56,10 +64,11 @@ ReactiveData.prototype.watchData = function (data) {
 
 	Object.defineProperty(self.data, "shift", {
 		enumerable: false,
+		configurable: true,
 		value: function value() {
 			var row;
 
-			if (!self.blocked) {
+			if (!self.blocked && version === self.currentVersion) {
 				if (self.data.length) {
 					row = self.table.rowManager.getRowFromDataObject(self.data[0]);
 
@@ -78,9 +87,10 @@ ReactiveData.prototype.watchData = function (data) {
 
 	Object.defineProperty(self.data, "pop", {
 		enumerable: false,
+		configurable: true,
 		value: function value() {
 			var row;
-			if (!self.blocked) {
+			if (!self.blocked && version === self.currentVersion) {
 				if (self.data.length) {
 					row = self.table.rowManager.getRowFromDataObject(self.data[self.data.length - 1]);
 
@@ -98,6 +108,7 @@ ReactiveData.prototype.watchData = function (data) {
 
 	Object.defineProperty(self.data, "splice", {
 		enumerable: false,
+		configurable: true,
 		value: function value() {
 			var args = Array.from(arguments),
 			    start = args[0] < 0 ? data.length + args[0] : args[0],
@@ -105,7 +116,7 @@ ReactiveData.prototype.watchData = function (data) {
 			    newRows = args[2] ? args.slice(2) : false,
 			    startRow;
 
-			if (!self.blocked) {
+			if (!self.blocked && version === self.currentVersion) {
 
 				//add new rows
 				if (newRows) {
@@ -150,9 +161,9 @@ ReactiveData.prototype.watchData = function (data) {
 ReactiveData.prototype.unwatchData = function () {
 	if (this.data !== false) {
 		for (var key in this.origFuncs) {
-			Object.defineProperty(self.data, key, {
+			Object.defineProperty(this.data, key, {
 				enumerable: false,
-				value: origFuncs.push
+				value: this.origFuncs.key
 			});
 		}
 	}
@@ -174,13 +185,13 @@ ReactiveData.prototype.watchRow = function (row) {
 ReactiveData.prototype.watchKey = function (row, data, key) {
 	var self = this,
 	    props = Object.getOwnPropertyDescriptor(data, key),
-	    value = data[key];
+	    value = data[key],
+	    version = this.currentVersion;
 
 	Object.defineProperty(data, key, {
 		set: function set(newValue) {
 			value = newValue;
-
-			if (!self.blocked) {
+			if (!self.blocked && version === self.currentVersion) {
 				var update = {};
 				update[key] = newValue;
 				row.updateData(update);
