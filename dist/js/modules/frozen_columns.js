@@ -1,4 +1,4 @@
-/* Tabulator v4.2.0 (c) Oliver Folkerd */
+/* Tabulator v4.2.1 (c) Oliver Folkerd */
 
 var FrozenColumns = function FrozenColumns(table) {
 	this.table = table; //hold Tabulator object
