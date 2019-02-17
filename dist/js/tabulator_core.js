@@ -4182,15 +4182,13 @@ Row.prototype.deleteCell = function (cell) {
 //////////////// Data Management /////////////////
 
 Row.prototype.setData = function (data) {
-	var self = this;
-
-	if (self.table.modExists("mutator")) {
-		data = self.table.modules.mutator.transformRow(data, "data");
+	if (this.table.modExists("mutator")) {
+		data = this.table.modules.mutator.transformRow(data, "data");
 	}
 
-	self.data = data;
+	this.data = data;
 
-	if (self.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+	if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
 		this.table.modules.reactiveData.watchRow(this);
 	}
 };
@@ -5817,8 +5815,8 @@ Tabulator.prototype.destroy = function () {
 
 	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication
 
-	if (self.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
-		this.table.modules.reactiveData.unwatchData();
+	if (this.options.reactiveData && this.modExists("reactiveData", true)) {
+		this.modules.reactiveData.unwatchData();
 	}
 
 	//clear row data

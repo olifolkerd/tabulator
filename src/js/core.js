@@ -576,8 +576,8 @@ Tabulator.prototype.destroy = function(){
 
 	Tabulator.prototype.comms.deregister(this); //deregister table from inderdevice communication
 
-	if(self.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-		this.table.modules.reactiveData.unwatchData();
+	if(this.options.reactiveData && this.modExists("reactiveData", true)){
+		this.modules.reactiveData.unwatchData();
 	}
 
 	//clear row data
