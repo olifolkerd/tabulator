@@ -124,7 +124,7 @@ SelectRow.prototype.initializeRow = function(row){
 //toggle row selection
 SelectRow.prototype.toggleRow = function(row){
 	if(this.table.options.selectableCheck.call(this.table, row.getComponent())){
-		if(row.modules.select.selected){
+		if(row.modules.select && row.modules.select.selected){
 			this._deselectRow(row);
 		}else{
 			this._selectRow(row);
@@ -188,6 +188,10 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 
 	if(row){
 		if(this.selectedRows.indexOf(row) == -1){
+			if(!row.modules.select){
+				row.modules.select = {};
+			}
+
 			row.modules.select.selected = true;
 			row.getElement().classList.add("tabulator-selected");
 
@@ -248,6 +252,10 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 		});
 
 		if(index > -1){
+
+			if(!row.modules.select){
+				row.modules.select = {};
+			}
 
 			row.modules.select.selected = false;
 			row.getElement().classList.remove("tabulator-selected");
