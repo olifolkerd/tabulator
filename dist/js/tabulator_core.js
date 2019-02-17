@@ -5686,6 +5686,10 @@ Tabulator.prototype._buildElement = function () {
 		mod.moveRow.initialize();
 	}
 
+	if (options.autoColumns && this.options.data) {
+		this.columnManager.generateColumnsFromRowData(this.options.data);
+	}
+
 	if (this.modExists("columnCalcs")) {
 		mod.columnCalcs.initialize();
 	}
