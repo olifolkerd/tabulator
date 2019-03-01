@@ -1,6 +1,9 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report to help us fix a bug in the system
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
@@ -11,6 +14,9 @@ A clear and concise description of what the bug is.
 **Tabulator Info**
 - Which version of Tabulator are you using?
 - Post a copy of your construct object if possible so we can see how your table is setup
+
+**Working Example**
+Please include a JS Fiddle or Code Pen that demonstrates the problem, it is very hard to diagnose an issue from a simple description
 
 **To Reproduce**
 Steps to reproduce the behavior:

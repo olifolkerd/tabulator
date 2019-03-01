@@ -1,6 +1,9 @@
 ---
 name: Question
 about: Please ask questions on Stack Overflow, NOT on GitHub :)
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
