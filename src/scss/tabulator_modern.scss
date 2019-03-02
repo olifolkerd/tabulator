@@ -210,8 +210,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 				input{
 					&::-ms-clear {
-					  width : 0;
-					  height: 0;
+						width : 0;
+						height: 0;
 					}
 				}
 			}
@@ -513,10 +513,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 			margin:0 2px;
 			padding:2px 5px;
-			
+
 			border:1px solid $footerBorderColor;
 			border-radius:3px;
-			
+
 			background:rgba(255,255,255,.2);
 
 			&.active{
@@ -927,34 +927,25 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 
 		&.tabulator-group-level-1{
-			.tabulator-arrow{
-				margin-left:20px;
-			}
+			padding-left:30px;
 		}
 
 		&.tabulator-group-level-2{
-			.tabulator-arrow{
-				margin-left:40px;
-			}
+			padding-left:50px;
 		}
 
 		&.tabulator-group-level-3{
-			.tabulator-arrow{
-				margin-left:60px;
-			}
+			padding-left:70px;
 		}
 
 		&.tabulator-group-level-4{
-			.tabulator-arrow{
-				margin-left:80px;
-			}
+			padding-left:90px;
 		}
 
 		&.tabulator-group-level-5{
-			.tabulator-arrow{
-				margin-left:100px;
-			}
+			padding-left:110px;
 		}
+
 
 		//sorting arrow
 		.tabulator-arrow{

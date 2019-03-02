@@ -16226,6 +16226,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.calcs = {};
 		this.initialized = false;
 		this.modules = {};
+		this.arrowElement = false;
 
 		this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
 
@@ -16421,6 +16422,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table") {
 			this.groupManager.table.modules.columnCalcs.recalcGroup(this);
 		}
+	};
+
+	Group.prototype.scrollHeader = function (left) {
+		this.arrowElement.style.marginLeft = left;
+
+		this.groupList.forEach(function (child) {
+			child.scrollHeader(left);
+		});
 	};
 
 	Group.prototype.getRowIndex = function (row) {};
@@ -17119,8 +17128,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupRows.prototype.scrollHeaders = function (left) {
+		left = left + "px";
+
 		this.groupList.forEach(function (group) {
-			group.arrowElement.style.marginLeft = left + "px";
+			group.scrollHeader(left);
+			// group.arrowElement.style.marginLeft = left + "px";
 		});
 	};
 

@@ -487,7 +487,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 			border:1px solid $footerBorderColor;
 			border-radius:3px;
-			
+
 			background:rgba(255,255,255,.2);
 
 			&.active{
@@ -881,34 +881,25 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 
 		&.tabulator-group-level-1{
-			.tabulator-arrow{
-				margin-left:20px;
-			}
+			padding-left:30px;
 		}
 
 		&.tabulator-group-level-2{
-			.tabulator-arrow{
-				margin-left:40px;
-			}
+			padding-left:50px;
 		}
 
 		&.tabulator-group-level-3{
-			.tabulator-arrow{
-				margin-left:60px;
-			}
+			padding-left:70px;
 		}
 
 		&.tabulator-group-level-4{
-			.tabulator-arrow{
-				margin-left:80px;
-			}
+			padding-left:90px;
 		}
 
 		&.tabulator-group-level-5{
-			.tabulator-arrow{
-				margin-left:100px;
-			}
+			padding-left:110px;
 		}
+
 
 		//sorting arrow
 		.tabulator-arrow{

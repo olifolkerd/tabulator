@@ -76,6 +76,7 @@ var Group = function Group(groupManager, parent, level, key, field, generator, o
 	this.calcs = {};
 	this.initialized = false;
 	this.modules = {};
+	this.arrowElement = false;
 
 	this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
 
@@ -271,6 +272,14 @@ Group.prototype.insertRow = function (row, to, after) {
 	if (this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table") {
 		this.groupManager.table.modules.columnCalcs.recalcGroup(this);
 	}
+};
+
+Group.prototype.scrollHeader = function (left) {
+	this.arrowElement.style.marginLeft = left;
+
+	this.groupList.forEach(function (child) {
+		child.scrollHeader(left);
+	});
 };
 
 Group.prototype.getRowIndex = function (row) {};
@@ -969,8 +978,10 @@ GroupRows.prototype.updateGroupRows = function (force) {
 };
 
 GroupRows.prototype.scrollHeaders = function (left) {
+	left = left + "px";
+
 	this.groupList.forEach(function (group) {
-		group.arrowElement.style.marginLeft = left + "px";
+		group.scrollHeader(left);
 	});
 };
 
