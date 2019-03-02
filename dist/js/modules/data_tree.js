@@ -89,7 +89,7 @@ DataTree.prototype.initialize = function () {
 
 DataTree.prototype.initializeRow = function (row) {
 
-	var children = typeof row.getData()[this.field] !== "undefined";
+	var children = Array.isArray(row.getData()[this.field]);
 
 	row.modules.dataTree = {
 		index: 0,
