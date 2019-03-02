@@ -244,7 +244,9 @@ DataTree.prototype.generateChildren = function (row) {
 		var childRow = new Row(childData || {}, _this4.table.rowManager);
 		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 		childRow.modules.dataTree.parent = row;
-		childRow.modules.dataTree.open = _this4.startOpen(row, childRow.modules.dataTree.index);
+		if (childRow.modules.dataTree.children) {
+			childRow.modules.dataTree.open = _this4.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
+		}
 		children.push(childRow);
 	});
 
