@@ -63,6 +63,7 @@ gulp.task('tabulator', function() {
     // .pipe(jshint.reporter('default'))
     .pipe(babel({
         //presets:['es2015']
+        compact: false,
         presets: [["env",{
             "targets": {
               "browsers": ["last 4 versions"]
