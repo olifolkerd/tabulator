@@ -88,8 +88,10 @@ DataTree.prototype.initialize = function () {
 };
 
 DataTree.prototype.initializeRow = function (row) {
+	var childArray = row.getData()[this.field];
+	var isArray = Array.isArray(childArray);
 
-	var children = Array.isArray(row.getData()[this.field]);
+	var children = isArray || !isArray && (typeof childArray === "undefined" ? "undefined" : _typeof(childArray)) === "object" && childArray !== null;
 
 	row.modules.dataTree = {
 		index: 0,
@@ -232,7 +234,13 @@ DataTree.prototype.generateChildren = function (row) {
 
 	var children = [];
 
-	row.getData()[this.field].forEach(function (childData) {
+	var childArray = row.getData()[this.field];
+
+	if (!Array.isArray(childArray)) {
+		childArray = [childArray];
+	}
+
+	childArray.forEach(function (childData) {
 		var childRow = new Row(childData || {}, _this4.table.rowManager);
 		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 		childRow.modules.dataTree.parent = row;
