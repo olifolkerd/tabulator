@@ -1,5 +1,6 @@
 var ColumnManager = function(table){
 	this.table = table; //hold parent table
+	this.blockHozScrollEvent = false;
 	this.headersElement = this.createHeadersElement();
 	this.element = this.createHeaderElement(); //containing element
 	this.rowManager = null; //hold row manager object
@@ -33,8 +34,10 @@ ColumnManager.prototype.initialize = function (){
 	var self = this;
 
 	//scroll body along with header
-	self.element.addEventListener("scroll", function(){
-		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+	self.element.addEventListener("scroll", function(e){
+		if(!self.blockHozScrollEvent){
+			self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+		}
 	});
 };
 
@@ -59,6 +62,8 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
 	scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
+	clearTimeout(this.blockHozScrollEvent);
+	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 10);
 	this.element.scrollLeft = left;
 
 	//adjust for vertical scrollbar moving table when present
