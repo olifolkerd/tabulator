@@ -858,6 +858,8 @@ Column.prototype.checkColumnVisibility = function(){
 		}
 	});
 
+
+
 	if(visible){
 		this.show();
 		this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
@@ -899,6 +901,10 @@ Column.prototype.show = function(silent, responsiveToggle){
 		if(!silent){
 			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
 		}
+
+		if(this.parent.isGroup){
+			this.parent.matchChildWidths();
+		}
 	}
 };
 
@@ -930,6 +936,10 @@ Column.prototype.hide = function(silent, responsiveToggle){
 		if(!silent){
 			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 		}
+
+		if(this.parent.isGroup){
+			this.parent.matchChildWidths();
+		}
 	}
 };
 
@@ -938,7 +948,9 @@ Column.prototype.matchChildWidths = function(){
 
 	if(this.contentElement && this.columns.length){
 		this.columns.forEach(function(column){
-			childWidth += column.getWidth();
+			if(column.visible){
+				childWidth += column.getWidth();
+			}
 		});
 
 		this.contentElement.style.maxWidth = (childWidth - 1) + "px";
@@ -1125,91 +1137,91 @@ Column.prototype.deleteCell = function(cell){
 };
 
 Column.prototype.defaultOptionList = [
-	"title",
-	"field",
-	"visible",
-	"align",
-	"width",
-	"minWidth",
-	"widthGrow",
-	"widthShrink",
-	"resizable",
-	"frozen",
-	"responsive",
-	"tooltip",
-	"cssClass",
-	"rowHandle",
-	"hideInHtml",
-	"sorter",
-	"sorterParams",
-	"formatter",
-	"formatterParams",
-	"variableHeight",
-	"editable",
-	"editor",
-	"editorParams",
-	"validator",
-	"mutator",
-	"mutatorParams",
-	"mutatorData",
-	"mutatorDataParams",
-	"mutatorEdit",
-	"mutatorEditParams",
-	"mutatorClipboard",
-	"mutatorClipboardParams",
-	"accessor",
-	"accessorParams",
-	"accessorData",
-	"accessorDataParams",
-	"accessorDownload",
-	"accessorDownloadParams",
-	"accessorClipboard",
-	"accessorClipboardParams",
-	"download",
-	"downloadTitle",
-	"topCalc",
-	"topCalcParams",
-	"topCalcFormatter",
-	"topCalcFormatterParams",
-	"bottomCalc",
-	"bottomCalcParams",
-	"bottomCalcFormatter",
-	"bottomCalcFormatterParams",
-	"cellClick",
-	"cellDblClick",
-	"cellContext",
-	"cellTap",
-	"cellDblTap",
-	"cellTapHold",
-	"cellMouseEnter",
-	"cellMouseLeave",
-	"cellMouseOver",
-	"cellMouseOut",
-	"cellMouseMove",
-	"cellEditing",
-	"cellEdited",
-	"cellEditCancelled",
-	"headerSort",
-	"headerSortStartingDir",
-	"headerSortTristate",
-	"headerClick",
-	"headerDblClick",
-	"headerContext",
-	"headerTap",
-	"headerDblTap",
-	"headerTapHold",
-	"headerTooltip",
-	"headerVertical",
-	"editableTitle",
-	"titleFormatter",
-	"titleFormatterParams",
-	"headerFilter",
-	"headerFilterPlaceholder",
-	"headerFilterParams",
-	"headerFilterEmptyCheck",
-	"headerFilterFunc",
-	"headerFilterFuncParams",
-	"headerFilterLiveFilter",
+"title",
+"field",
+"visible",
+"align",
+"width",
+"minWidth",
+"widthGrow",
+"widthShrink",
+"resizable",
+"frozen",
+"responsive",
+"tooltip",
+"cssClass",
+"rowHandle",
+"hideInHtml",
+"sorter",
+"sorterParams",
+"formatter",
+"formatterParams",
+"variableHeight",
+"editable",
+"editor",
+"editorParams",
+"validator",
+"mutator",
+"mutatorParams",
+"mutatorData",
+"mutatorDataParams",
+"mutatorEdit",
+"mutatorEditParams",
+"mutatorClipboard",
+"mutatorClipboardParams",
+"accessor",
+"accessorParams",
+"accessorData",
+"accessorDataParams",
+"accessorDownload",
+"accessorDownloadParams",
+"accessorClipboard",
+"accessorClipboardParams",
+"download",
+"downloadTitle",
+"topCalc",
+"topCalcParams",
+"topCalcFormatter",
+"topCalcFormatterParams",
+"bottomCalc",
+"bottomCalcParams",
+"bottomCalcFormatter",
+"bottomCalcFormatterParams",
+"cellClick",
+"cellDblClick",
+"cellContext",
+"cellTap",
+"cellDblTap",
+"cellTapHold",
+"cellMouseEnter",
+"cellMouseLeave",
+"cellMouseOver",
+"cellMouseOut",
+"cellMouseMove",
+"cellEditing",
+"cellEdited",
+"cellEditCancelled",
+"headerSort",
+"headerSortStartingDir",
+"headerSortTristate",
+"headerClick",
+"headerDblClick",
+"headerContext",
+"headerTap",
+"headerDblTap",
+"headerTapHold",
+"headerTooltip",
+"headerVertical",
+"editableTitle",
+"titleFormatter",
+"titleFormatterParams",
+"headerFilter",
+"headerFilterPlaceholder",
+"headerFilterParams",
+"headerFilterEmptyCheck",
+"headerFilterFunc",
+"headerFilterFuncParams",
+"headerFilterLiveFilter",
 ];
 
 //////////////// Event Bindings /////////////////

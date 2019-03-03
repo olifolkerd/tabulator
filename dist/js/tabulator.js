@@ -2222,6 +2222,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
 			}
+
+			if (this.parent.isGroup) {
+
+				this.parent.matchChildWidths();
+			}
 		}
 	};
 
@@ -2261,6 +2266,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 			}
+
+			if (this.parent.isGroup) {
+
+				this.parent.matchChildWidths();
+			}
 		}
 	};
 
@@ -2272,7 +2282,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.columns.forEach(function (column) {
 
-				childWidth += column.getWidth();
+				if (column.visible) {
+
+					childWidth += column.getWidth();
+				}
 			});
 
 			this.contentElement.style.maxWidth = childWidth - 1 + "px";

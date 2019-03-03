@@ -1838,6 +1838,10 @@ Column.prototype.show = function (silent, responsiveToggle) {
 		if (!silent) {
 			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
 		}
+
+		if (this.parent.isGroup) {
+			this.parent.matchChildWidths();
+		}
 	}
 };
 
@@ -1869,6 +1873,10 @@ Column.prototype.hide = function (silent, responsiveToggle) {
 		if (!silent) {
 			this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
 		}
+
+		if (this.parent.isGroup) {
+			this.parent.matchChildWidths();
+		}
 	}
 };
 
@@ -1877,7 +1885,9 @@ Column.prototype.matchChildWidths = function () {
 
 	if (this.contentElement && this.columns.length) {
 		this.columns.forEach(function (column) {
-			childWidth += column.getWidth();
+			if (column.visible) {
+				childWidth += column.getWidth();
+			}
 		});
 
 		this.contentElement.style.maxWidth = childWidth - 1 + "px";
