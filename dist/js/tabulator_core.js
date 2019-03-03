@@ -156,7 +156,7 @@ var ColumnManager = function ColumnManager(table) {
 
 	this.columnsByIndex = []; //columns by index
 
-	this.columnsByField = []; //columns by field
+	this.columnsByField = {}; //columns by field
 
 	this.scrollLeft = 0;
 
