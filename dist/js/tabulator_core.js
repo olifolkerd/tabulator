@@ -523,6 +523,16 @@ ColumnManager.prototype.getColumnByIndex = function (index) {
 	return this.columnsByIndex[index];
 };
 
+ColumnManager.prototype.getFirstVisibileColumn = function (index) {
+
+	var index = this.columnsByIndex.findIndex(function (col) {
+
+		return col.visible;
+	});
+
+	return index > -1 ? this.columnsByIndex[index] : false;
+};
+
 ColumnManager.prototype.getColumns = function () {
 
 	return this.columns;
@@ -5707,10 +5717,6 @@ Tabulator.prototype._buildElement = function () {
 		this.footerManager.activate();
 	}
 
-	if (options.dataTree && this.modExists("dataTree", true)) {
-		mod.dataTree.initialize();
-	}
-
 	if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
 		mod.persistence.initialize(options.persistenceMode, options.persistenceID);
 	}
@@ -5732,6 +5738,10 @@ Tabulator.prototype._buildElement = function () {
 	}
 
 	this.columnManager.setColumns(options.columns);
+
+	if (options.dataTree && this.modExists("dataTree", true)) {
+		mod.dataTree.initialize();
+	}
 
 	if (this.modExists("frozenRows")) {
 		this.modules.frozenRows.initialize();

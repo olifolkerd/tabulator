@@ -578,6 +578,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.columnsByIndex[index];
 	};
 
+	ColumnManager.prototype.getFirstVisibileColumn = function (index) {
+
+		var index = this.columnsByIndex.findIndex(function (col) {
+
+			return col.visible;
+		});
+
+		return index > -1 ? this.columnsByIndex[index] : false;
+	};
+
 	ColumnManager.prototype.getColumns = function () {
 
 		return this.columns;
@@ -7389,11 +7399,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.footerManager.activate();
 		}
 
-		if (options.dataTree && this.modExists("dataTree", true)) {
-
-			mod.dataTree.initialize();
-		}
-
 		if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
 
 			mod.persistence.initialize(options.persistenceMode, options.persistenceID);
@@ -7420,6 +7425,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		this.columnManager.setColumns(options.columns);
+
+		if (options.dataTree && this.modExists("dataTree", true)) {
+
+			mod.dataTree.initialize();
+		}
 
 		if (this.modExists("frozenRows")) {
 
@@ -11924,11 +11934,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	DataTree.prototype.initialize = function () {
 		var dummyEl = null,
+		    firstCol = this.table.columnManager.getFirstVisibileColumn(),
 		    options = this.table.options;
 
 		this.field = options.dataTreeChildField;
 		this.indent = options.dataTreeChildIndent;
-		this.elementField = options.dataTreeElementColumn;
+		this.elementField = options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
 
 		if (options.dataTreeBranchElement) {
 

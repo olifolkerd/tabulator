@@ -283,6 +283,14 @@ ColumnManager.prototype.getColumnByIndex = function(index){
 	return this.columnsByIndex[index];
 };
 
+ColumnManager.prototype.getFirstVisibileColumn = function(index){
+	var index = this.columnsByIndex.findIndex(function(col){
+		return col.visible;
+	});
+
+	return index > -1 ? this.columnsByIndex[index] : false;
+};
+
 ColumnManager.prototype.getColumns = function(){
 	return this.columns;
 };

@@ -14,11 +14,12 @@ var DataTree = function(table){
 
 DataTree.prototype.initialize = function(){
 	var dummyEl = null,
+	firstCol = this.table.columnManager.getFirstVisibileColumn(),
 	options = this.table.options;
 
 	this.field = options.dataTreeChildField;
 	this.indent = options.dataTreeChildIndent;
-	this.elementField = options.dataTreeElementColumn;
+	this.elementField = options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
 
 	if(options.dataTreeBranchElement){
 
