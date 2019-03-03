@@ -1351,25 +1351,27 @@ Edit.prototype.editors = {
 
 		//style bar
 		bar.style.display = "inline-block";
-		bar.style.position = "absolute";
-		bar.style.top = "8px";
-		bar.style.bottom = "8px";
-		bar.style.left = "4px";
-		bar.style.marginRight = "4px";
+		bar.style.position = "relative";
+		// bar.style.top = "8px";
+		// bar.style.bottom = "8px";
+		// bar.style.left = "4px";
+		// bar.style.marginRight = "4px";
+		bar.style.height = "100%";
 		bar.style.backgroundColor = "#488CE9";
 		bar.style.maxWidth = "100%";
 		bar.style.minWidth = "0%";
 
 		//style cell
-		element.style.padding = "0 4px";
+		element.style.padding = "4px 4px";
 
 		//make sure value is in range
 		value = Math.min(parseFloat(value), max);
 		value = Math.max(parseFloat(value), min);
 
 		//workout percentage
-		value = 100 - Math.round((value - min) / percent);
-		bar.style.right = value + "%";
+		value = Math.round((value - min) / percent);
+		// bar.style.right = value + "%";
+		bar.style.width = value + "%";
 
 		element.setAttribute("aria-valuemin", min);
 		element.setAttribute("aria-valuemax", max);
