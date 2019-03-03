@@ -779,7 +779,7 @@ Download.prototype.downloaders = {
 
 				fields.forEach(function (field) {
 					var value = self.getFieldValue(field, row);
-					rowData.push((typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? JSON.stringify(value) : value);
+					rowData.push(!(i instanceof Date) && (typeof value === "undefined" ? "undefined" : _typeof(value)) === "object" ? JSON.stringify(value) : value);
 				});
 
 				return rowData;

@@ -1935,9 +1935,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    length = structure.length,
 		    output;
 
-		for (var i = 0; i < length; i++) {
+		for (var _i = 0; _i < length; _i++) {
 
-			dataObj = dataObj[structure[i]];
+			dataObj = dataObj[structure[_i]];
 
 			output = dataObj;
 
@@ -1968,19 +1968,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    structure = this.fieldStructure,
 		    length = structure.length;
 
-		for (var i = 0; i < length; i++) {
+		for (var _i2 = 0; _i2 < length; _i2++) {
 
-			if (i == length - 1) {
+			if (_i2 == length - 1) {
 
-				dataObj[structure[i]] = value;
+				dataObj[structure[_i2]] = value;
 			} else {
 
-				if (!dataObj[structure[i]]) {
+				if (!dataObj[structure[_i2]]) {
 
-					dataObj[structure[i]] = {};
+					dataObj[structure[_i2]] = {};
 				}
 
-				dataObj = dataObj[structure[i]];
+				dataObj = dataObj[structure[_i2]];
 			}
 		}
 	};
@@ -2414,7 +2414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var cellCount = this.cells.length;
 
-		for (var i = 0; i < cellCount; i++) {
+		for (var _i3 = 0; _i3 < cellCount; _i3++) {
 
 			this.cells[0].delete();
 		}
@@ -3359,11 +3359,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				end = toIndex > fromIndex ? toIndex : fromIndex + 1;
 
-				for (var i = start; i <= end; i++) {
+				for (var _i4 = start; _i4 <= end; _i4++) {
 
-					if (rows[i]) {
+					if (rows[_i4]) {
 
-						this.styleRow(rows[i], i);
+						this.styleRow(rows[_i4], _i4);
 					}
 				}
 			}
@@ -5677,7 +5677,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var cellCount = this.cells.length;
 
-		for (var i = 0; i < cellCount; i++) {
+		for (var _i5 = 0; _i5 < cellCount; _i5++) {
 
 			this.cells[0].delete();
 		}
@@ -13026,7 +13026,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					fields.forEach(function (field) {
 						var value = self.getFieldValue(field, row);
-						rowData.push((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object" ? JSON.stringify(value) : value);
+						rowData.push(!(i instanceof Date) && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object" ? JSON.stringify(value) : value);
 					});
 
 					return rowData;
@@ -13141,6 +13141,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("download", Download);
+
 	var Edit = function Edit(table) {
 		this.table = table; //hold Tabulator object
 		this.currentCell = false; //hold currently editing cell
@@ -16099,9 +16100,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	FrozenColumns.prototype._calcSpace = function (columns, index) {
 		var width = 0;
 
-		for (var i = 0; i < index; i++) {
-			if (columns[i].visible) {
-				width += columns[i].getWidth();
+		for (var _i6 = 0; _i6 < index; _i6++) {
+			if (columns[_i6].visible) {
+				width += columns[_i6].getWidth();
 			}
 		}
 
@@ -18939,8 +18940,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (this.pageSizes.indexOf(this.size) == -1) {
 					pageSizes = [];
 
-					for (var i = 1; i < 5; i++) {
-						pageSizes.push(this.size * i);
+					for (var _i7 = 1; _i7 < 5; _i7++) {
+						pageSizes.push(this.size * _i7);
 					}
 
 					this.pageSizes = pageSizes;
@@ -19207,9 +19208,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.nextBut.disabled = false;
 		}
 
-		for (var i = min; i <= max; i++) {
-			if (i > 0 && i <= self.max) {
-				self.pagesElement.appendChild(self._generatePageButton(i));
+		for (var _i8 = min; _i8 <= max; _i8++) {
+			if (_i8 > 0 && _i8 <= self.max) {
+				self.pagesElement.appendChild(self._generatePageButton(_i8));
 			}
 		}
 
@@ -19308,9 +19309,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this._setPageButtons();
 
-			for (var i = start; i < end; i++) {
-				if (data[i]) {
-					output.push(data[i]);
+			for (var _i9 = start; _i9 < end; _i9++) {
+				if (data[_i9]) {
+					output.push(data[_i9]);
 				}
 			}
 
@@ -20688,7 +20689,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rowCount = self.selectedRows.length;
 
-			for (var i = 0; i < rowCount; i++) {
+			for (var _i10 = 0; _i10 < rowCount; _i10++) {
 				self._deselectRow(self.selectedRows[0], true);
 			}
 
