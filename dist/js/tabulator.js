@@ -4910,6 +4910,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.heightStyled = ""; //hold element height prestyled to improve render efficiency
 
+		this.manualHeight = false; //user has manually set row height
+
 		this.outerHeight = 0; //holde lements outer height
 
 		this.initialized = false; //element has been rendered
@@ -5200,9 +5202,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.heightInitialized = false;
 
-		this.height = 0;
+		if (!this.manualHeight) {
 
-		this.heightStyled = "";
+			this.height = 0;
+
+			this.heightStyled = "";
+		}
 
 		if (this.element.offsetParent !== null) {
 
@@ -5212,7 +5217,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//get heights when doing bulk row style calcs in virtual DOM
 
-	Row.prototype.calcHeight = function () {
+	Row.prototype.calcHeight = function (force) {
 
 		var maxHeight = 0,
 		    minHeight = this.table.options.resizableRows ? this.element.clientHeight : 0;
@@ -5227,7 +5232,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		});
 
-		this.height = Math.max(maxHeight, minHeight);
+		if (force) {
+
+			this.height = Math.max(maxHeight, minHeight);
+		} else {
+
+			this.height = this.manualHeight ? this.height : Math.max(maxHeight, minHeight);
+		}
 
 		this.heightStyled = this.height ? this.height + "px" : "";
 
@@ -5263,7 +5274,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.clearCellHeight();
 		}
 
-		this.calcHeight();
+		this.calcHeight(force);
 
 		this.setCellHeight();
 	};
@@ -5283,6 +5294,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Row.prototype.setHeight = function (height, force) {
 
 		if (this.height != height || force) {
+
+			this.manualHeight = true;
 
 			this.height = height;
 
