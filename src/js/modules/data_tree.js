@@ -106,7 +106,6 @@ DataTree.prototype.layoutRow = function(row){
 	el = cell.getElement(),
 	config = row.modules.dataTree;
 
-	el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + (config.index * this.indent) + "px";
 
 	if(config.branchEl){
 		config.branchEl.parentNode.removeChild(config.branchEl);
@@ -114,10 +113,14 @@ DataTree.prototype.layoutRow = function(row){
 
 	this.generateControlElement(row, el);
 
-	if(config.index && this.branchEl){
-		config.branchEl = this.branchEl.cloneNode(true);
-		el.insertBefore(config.branchEl, el.firstChild);
-		el.style.paddingLeft = (parseInt(el.style.paddingLeft) + ((config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1))) + "px";
+	if(config.index){
+		if(this.branchEl){
+			config.branchEl = this.branchEl.cloneNode(true);
+			el.insertBefore(config.branchEl, el.firstChild);
+			config.branchEl.style.marginLeft = (((config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1)) + (config.index * this.indent)) + "px";
+		}else{
+			el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + (config.index * this.indent) + "px";
+		}
 	}
 };
 
