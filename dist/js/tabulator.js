@@ -402,7 +402,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		self.columnsByIndex = [];
 
-		self.columnsByField = [];
+		self.columnsByField = {};
 
 		//reset frozen columns
 
@@ -3969,6 +3969,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else {
 
 			this.renderTable();
+
+			if (callback) {
+
+				callback();
+			}
 		}
 	};
 

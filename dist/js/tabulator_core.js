@@ -353,7 +353,7 @@ ColumnManager.prototype.setColumns = function (cols, row) {
 
 	self.columnsByIndex = [];
 
-	self.columnsByField = [];
+	self.columnsByField = {};
 
 	//reset frozen columns
 
@@ -3176,6 +3176,10 @@ RowManager.prototype.reRenderInPosition = function (callback) {
 		this.scrollHorizontal(left);
 	} else {
 		this.renderTable();
+
+		if (callback) {
+			callback();
+		}
 	}
 };
 
