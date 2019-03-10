@@ -1935,9 +1935,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    length = structure.length,
 		    output;
 
-		for (var _i = 0; _i < length; _i++) {
+		for (var i = 0; i < length; i++) {
 
-			dataObj = dataObj[structure[_i]];
+			dataObj = dataObj[structure[i]];
 
 			output = dataObj;
 
@@ -1968,19 +1968,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    structure = this.fieldStructure,
 		    length = structure.length;
 
-		for (var _i2 = 0; _i2 < length; _i2++) {
+		for (var i = 0; i < length; i++) {
 
-			if (_i2 == length - 1) {
+			if (i == length - 1) {
 
-				dataObj[structure[_i2]] = value;
+				dataObj[structure[i]] = value;
 			} else {
 
-				if (!dataObj[structure[_i2]]) {
+				if (!dataObj[structure[i]]) {
 
-					dataObj[structure[_i2]] = {};
+					dataObj[structure[i]] = {};
 				}
 
-				dataObj = dataObj[structure[_i2]];
+				dataObj = dataObj[structure[i]];
 			}
 		}
 	};
@@ -2414,7 +2414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var cellCount = this.cells.length;
 
-		for (var _i3 = 0; _i3 < cellCount; _i3++) {
+		for (var i = 0; i < cellCount; i++) {
 
 			this.cells[0].delete();
 		}
@@ -3359,11 +3359,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				end = toIndex > fromIndex ? toIndex : fromIndex + 1;
 
-				for (var _i4 = start; _i4 <= end; _i4++) {
+				for (var i = start; i <= end; i++) {
 
-					if (rows[_i4]) {
+					if (rows[i]) {
 
-						this.styleRow(rows[_i4], _i4);
+						this.styleRow(rows[i], i);
 					}
 				}
 			}
@@ -5641,7 +5641,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
 
-			this.table.modules.reactiveData.unwatchRow(this);
+			// this.table.modules.reactiveData.unwatchRow(this);
+
 		}
 
 		this.table.rowManager.deleteRow(this, blockRedraw);
@@ -5677,7 +5678,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var cellCount = this.cells.length;
 
-		for (var _i5 = 0; _i5 < cellCount; _i5++) {
+		for (var i = 0; i < cellCount; i++) {
 
 			this.cells[0].delete();
 		}
@@ -13026,7 +13027,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					fields.forEach(function (field) {
 						var value = self.getFieldValue(field, row);
-						rowData.push(!(i instanceof Date) && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object" ? JSON.stringify(value) : value);
+						rowData.push(!(value instanceof Date) && (typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object" ? JSON.stringify(value) : value);
 					});
 
 					return rowData;
@@ -16100,9 +16101,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	FrozenColumns.prototype._calcSpace = function (columns, index) {
 		var width = 0;
 
-		for (var _i6 = 0; _i6 < index; _i6++) {
-			if (columns[_i6].visible) {
-				width += columns[_i6].getWidth();
+		for (var i = 0; i < index; i++) {
+			if (columns[i].visible) {
+				width += columns[i].getWidth();
 			}
 		}
 
@@ -18940,8 +18941,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (this.pageSizes.indexOf(this.size) == -1) {
 					pageSizes = [];
 
-					for (var _i7 = 1; _i7 < 5; _i7++) {
-						pageSizes.push(this.size * _i7);
+					for (var i = 1; i < 5; i++) {
+						pageSizes.push(this.size * i);
 					}
 
 					this.pageSizes = pageSizes;
@@ -19208,9 +19209,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.nextBut.disabled = false;
 		}
 
-		for (var _i8 = min; _i8 <= max; _i8++) {
-			if (_i8 > 0 && _i8 <= self.max) {
-				self.pagesElement.appendChild(self._generatePageButton(_i8));
+		for (var i = min; i <= max; i++) {
+			if (i > 0 && i <= self.max) {
+				self.pagesElement.appendChild(self._generatePageButton(i));
 			}
 		}
 
@@ -19309,9 +19310,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this._setPageButtons();
 
-			for (var _i9 = start; _i9 < end; _i9++) {
-				if (data[_i9]) {
-					output.push(data[_i9]);
+			for (var i = start; i < end; i++) {
+				if (data[i]) {
+					output.push(data[i]);
 				}
 			}
 
@@ -19869,7 +19870,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.data !== false) {
 			for (var key in this.origFuncs) {
 				Object.defineProperty(this.data, key, {
-					enumerable: false,
+					enumerable: true,
+					configurable: true,
+					writable: true,
 					value: this.origFuncs.key
 				});
 			}
@@ -20689,7 +20692,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rowCount = self.selectedRows.length;
 
-			for (var _i10 = 0; _i10 < rowCount; _i10++) {
+			for (var i = 0; i < rowCount; i++) {
 				self._deselectRow(self.selectedRows[0], true);
 			}
 

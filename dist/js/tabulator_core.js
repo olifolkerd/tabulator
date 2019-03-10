@@ -4454,7 +4454,7 @@ Row.prototype.deleteActual = function (blockRedraw) {
 
 	//remove any reactive data watchers from row object
 	if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
-		this.table.modules.reactiveData.unwatchRow(this);
+		// this.table.modules.reactiveData.unwatchRow(this);
 	}
 
 	this.table.rowManager.deleteRow(this, blockRedraw);
