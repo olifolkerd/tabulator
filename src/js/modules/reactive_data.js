@@ -161,7 +161,9 @@ ReactiveData.prototype.unwatchData = function(){
 	if(this.data !== false){
 		for(var key in this.origFuncs){
 			Object.defineProperty(this.data, key, {
-				enumerable: false,
+				enumerable: true,
+				configurable:true,
+				writable:true,
 				value: this.origFuncs.key,
 			});
 		}
