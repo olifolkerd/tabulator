@@ -1,4 +1,4 @@
-/* Tabulator v4.2.2 (c) Oliver Folkerd */
+/* Tabulator v4.2.3 (c) Oliver Folkerd */
 
 'use strict';
 
