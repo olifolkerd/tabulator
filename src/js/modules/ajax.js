@@ -39,7 +39,13 @@ Ajax.prototype.initialize = function(){
 	this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
 
 	if(this.table.options.ajaxLoaderError){
-		this.errorElement = this.table.options.ajaxLoaderError;
+		if(typeof this.table.options.ajaxLoaderError == "string"){
+			template = document.createElement('template');
+			template.innerHTML = this.table.options.ajaxLoaderError.trim();
+			this.errorElement = template.content.firstChild;
+		}else{
+			this.errorElement = this.table.options.ajaxLoaderError;
+		}
 	}
 
 	if(this.table.options.ajaxParams){
