@@ -1,4 +1,14 @@
+/// Remove the unit of a length
+/// @param {Number} $number - Number to remove unit from
+/// @author Hugo Giraudel
+/// @return {Number} - Unitless number
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
 
+  @return $number;
+}
 
 /*******************************
          Site Settings
@@ -46,15 +56,15 @@ $fontSize : 14px !default;
 */
 
 
-$a1px  : (1 / $emSize) + rem !default;
-$a4px  : (4 / $emSize) + rem !default;
-$a11px  : (11 / $emSize) + rem !default;
-$a14px  : (14 / $emSize) + rem !default;
+$a1px  : strip-unit(1 / $emSize) + rem !default;
+$a4px  : strip-unit(4 / $emSize) + rem !default;
+$a11px  : strip-unit(11 / $emSize) + rem !default;
+$a14px  : strip-unit(14 / $emSize) + rem !default;
 
-$relative1px  : (1 / $emSize) + em !default;
-$relative4px  : (4 / $emSize) + em !default;
-$relative11px  : (11 / $emSize) + em !default;
-$relative14px  : (14 / $emSize) + em !default;
+$relative1px  : strip-unit(1 / $emSize) + em !default;
+$relative4px  : strip-unit(4 / $emSize) + em !default;
+$relative11px  : strip-unit(11 / $emSize) + em !default;
+$relative14px  : strip-unit(14 / $emSize) + em !default;
 
 
 
