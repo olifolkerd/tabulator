@@ -116,6 +116,7 @@ Tabulator.prototype.defaultOptions = {
 	langs:{},
 
 	virtualDom:true, //enable DOM virtualization
+    virtualDomBuffer:0, // set virtual DOM buffer size
 
 	persistentLayout:false, //store column layout in memory
 	persistentSort:false, //store sorting in memory
