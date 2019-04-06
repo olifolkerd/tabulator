@@ -256,7 +256,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 
 			if (column.definition.headerFilterLiveFilter !== false) {
 
-				if (!(column.definition.headerFilter === "autocomplete" || column.definition.editor === "autocomplete" && column.definition.headerFilter === true)) {
+				if (!((column.definition.headerFilter === 'autocomplete' || column.definition.editor === 'autocomplete' || column.definition.headerFilter === 'tickCross' || column.definition.editor === 'tickCross') && column.definition.headerFilter === true)) {
 					editorElement.addEventListener("keyup", searchTrigger);
 					editorElement.addEventListener("search", searchTrigger);
 

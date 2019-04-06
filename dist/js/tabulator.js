@@ -6928,6 +6928,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		virtualDom: true, //enable DOM virtualization
 
+		virtualDomBuffer: 0, // set virtual DOM buffer size
+
 
 		persistentLayout: false, //store column layout in memory
 
@@ -10045,7 +10047,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
 
 		if (this.table.options.ajaxLoaderError) {
-			this.errorElement = this.table.options.ajaxLoaderError;
+			if (typeof this.table.options.ajaxLoaderError == "string") {
+				template = document.createElement('template');
+				template.innerHTML = this.table.options.ajaxLoaderError.trim();
+				this.errorElement = template.content.firstChild;
+			} else {
+				this.errorElement = this.table.options.ajaxLoaderError;
+			}
 		}
 
 		if (this.table.options.ajaxParams) {
@@ -10459,6 +10467,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("ajax", Ajax);
+
 	var ColumnCalcs = function ColumnCalcs(table) {
 		this.table = table; //hold Tabulator object
 		this.topCalcs = [];
@@ -13934,6 +13943,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//up arrow
 						e.stopImmediatePropagation();
 						e.stopPropagation();
+						e.preventDefault();
 
 						index = dataItems.indexOf(currentItem);
 
@@ -13946,6 +13956,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//down arrow
 						e.stopImmediatePropagation();
 						e.stopPropagation();
+						e.preventDefault();
 
 						index = dataItems.indexOf(currentItem);
 
@@ -13956,6 +13967,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								setCurrentItem(dataItems[index + 1]);
 							}
 						}
+						break;
+
+					case 37: //left arrow
+					case 39:
+						//right arrow
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+						e.preventDefault();
 						break;
 
 					case 13:
@@ -14233,6 +14252,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//up arrow
 						e.stopImmediatePropagation();
 						e.stopPropagation();
+						e.preventDefault();
 
 						index = displayItems.indexOf(currentItem);
 
@@ -14247,6 +14267,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//down arrow
 						e.stopImmediatePropagation();
 						e.stopPropagation();
+						e.preventDefault();
 
 						index = displayItems.indexOf(currentItem);
 
@@ -14257,6 +14278,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								setCurrentItem(displayItems[index + 1]);
 							}
 						}
+						break;
+
+					case 37: //left arrow
+					case 39:
+						//right arrow
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+						e.preventDefault();
 						break;
 
 					case 13:
@@ -14907,7 +14936,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (column.definition.headerFilterLiveFilter !== false) {
 
-					if (!(column.definition.headerFilter === "autocomplete" || column.definition.editor === "autocomplete" && column.definition.headerFilter === true)) {
+					if (!((column.definition.headerFilter === 'autocomplete' || column.definition.editor === 'autocomplete' || column.definition.headerFilter === 'tickCross' || column.definition.editor === 'tickCross') && column.definition.headerFilter === true)) {
 						editorElement.addEventListener("keyup", searchTrigger);
 						editorElement.addEventListener("search", searchTrigger);
 

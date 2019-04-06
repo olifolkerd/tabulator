@@ -795,6 +795,7 @@ Edit.prototype.editors = {
 					//up arrow
 					e.stopImmediatePropagation();
 					e.stopPropagation();
+					e.preventDefault();
 
 					index = dataItems.indexOf(currentItem);
 
@@ -807,6 +808,7 @@ Edit.prototype.editors = {
 					//down arrow
 					e.stopImmediatePropagation();
 					e.stopPropagation();
+					e.preventDefault();
 
 					index = dataItems.indexOf(currentItem);
 
@@ -817,6 +819,14 @@ Edit.prototype.editors = {
 							setCurrentItem(dataItems[index + 1]);
 						}
 					}
+					break;
+
+				case 37: //left arrow
+				case 39:
+					//right arrow
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+					e.preventDefault();
 					break;
 
 				case 13:
@@ -1094,6 +1104,7 @@ Edit.prototype.editors = {
 					//up arrow
 					e.stopImmediatePropagation();
 					e.stopPropagation();
+					e.preventDefault();
 
 					index = displayItems.indexOf(currentItem);
 
@@ -1108,6 +1119,7 @@ Edit.prototype.editors = {
 					//down arrow
 					e.stopImmediatePropagation();
 					e.stopPropagation();
+					e.preventDefault();
 
 					index = displayItems.indexOf(currentItem);
 
@@ -1118,6 +1130,14 @@ Edit.prototype.editors = {
 							setCurrentItem(displayItems[index + 1]);
 						}
 					}
+					break;
+
+				case 37: //left arrow
+				case 39:
+					//right arrow
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+					e.preventDefault();
 					break;
 
 				case 13:
