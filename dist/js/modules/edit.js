@@ -935,14 +935,40 @@ Edit.prototype.editors = {
 				}
 			}
 
+			if (editorParams.searchFunc) {
+				itemList.forEach(function (item) {
+					item.search = {
+						title: item.title,
+						value: item.value
+					};
+				});
+			}
+
 			allItems = itemList;
 		}
 
 		function filterList(term, intialLoad) {
-			var matches = [];
+			var matches = [],
+			    searchObjs = [],
+			    searchResults = [];
 
 			if (editorParams.searchFunc) {
-				matches = editorParams.searchFunc(term, values);
+
+				allItems.forEach(function (item) {
+					searchObjs.push(item.search);
+				});
+
+				searchResults = editorParams.searchFunc(term, searchObjs);
+
+				searchResults.forEach(function (result) {
+					var match = allItems.find(function (item) {
+						return item.search === result;
+					});
+
+					if (match) {
+						matches.push(match);
+					}
+				});
 			} else {
 				if (term === "") {
 
@@ -1035,8 +1061,8 @@ Edit.prototype.editors = {
 			if (currentItem) {
 				if (initialValue !== currentItem.value) {
 					initialValue = currentItem.value;
-					input.value = currentItem.value;
-					success(input.value);
+					input.value = currentItem.title;
+					success(currentItem.value);
 				} else {
 					cancel();
 				}
