@@ -19,7 +19,7 @@ gutil = require('gulp-util'),
 insert = require('gulp-insert'),
 fs = require('fs');
 
-var version_no = "4.2.4",
+var version_no = "4.2.5",
 
 version = "/* Tabulator v" + version_no + " (c) Oliver Folkerd */\n";
 
