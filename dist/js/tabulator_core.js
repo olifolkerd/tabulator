@@ -4444,7 +4444,6 @@ Row.prototype.delete = function () {
 };
 
 Row.prototype.deleteActual = function (blockRedraw) {
-
 	var index = this.table.rowManager.getRowIndex(this);
 
 	//deselect row if it is selected
@@ -4457,8 +4456,13 @@ Row.prototype.deleteActual = function (blockRedraw) {
 	// }
 
 	//remove any reactive data watchers from row object
-	if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
-		// this.table.modules.reactiveData.unwatchRow(this);
+	if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {}
+	// this.table.modules.reactiveData.unwatchRow(this);
+
+
+	//remove from group
+	if (this.modules.group) {
+		this.modules.group.removeRow(this);
 	}
 
 	this.table.rowManager.deleteRow(this, blockRedraw);
@@ -4467,11 +4471,6 @@ Row.prototype.deleteActual = function (blockRedraw) {
 
 	this.initialized = false;
 	this.heightInitialized = false;
-
-	//remove from group
-	if (this.modules.group) {
-		this.modules.group.removeRow(this);
-	}
 
 	//recalc column calculations if present
 	if (this.table.modExists("columnCalcs")) {

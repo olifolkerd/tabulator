@@ -308,6 +308,8 @@ Group.prototype.conformRowData = function(data){
 
 Group.prototype.removeRow = function(row){
 	var index = this.rows.indexOf(row);
+	var el = row.getElement();
+
 
 	if(index > -1){
 		this.rows.splice(index, 1);
@@ -322,10 +324,17 @@ Group.prototype.removeRow = function(row){
 
 		this.groupManager.updateGroupRows(true);
 	}else{
+
+		if(el.parentNode){
+			el.parentNode.removeChild(el);
+		}
+
 		this.generateGroupHeaderContents();
+
 		if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 			this.groupManager.table.modules.columnCalcs.recalcGroup(this);
 		}
+
 	}
 };
 

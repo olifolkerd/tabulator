@@ -5642,10 +5642,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//remove any reactive data watchers from row object
 
-		if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {
+		if (this.table.options.reactiveData && this.table.modExists("reactiveData", true)) {}
 
-			// this.table.modules.reactiveData.unwatchRow(this);
+		// this.table.modules.reactiveData.unwatchRow(this);
 
+		//remove from group
+
+		if (this.modules.group) {
+
+			this.modules.group.removeRow(this);
 		}
 
 		this.table.rowManager.deleteRow(this, blockRedraw);
@@ -5655,13 +5660,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.initialized = false;
 
 		this.heightInitialized = false;
-
-		//remove from group
-
-		if (this.modules.group) {
-
-			this.modules.group.removeRow(this);
-		}
 
 		//recalc column calculations if present
 
@@ -16575,6 +16573,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Group.prototype.removeRow = function (row) {
 		var index = this.rows.indexOf(row);
+		var el = row.getElement();
 
 		if (index > -1) {
 			this.rows.splice(index, 1);
@@ -16589,7 +16588,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.groupManager.updateGroupRows(true);
 		} else {
+
+			if (el.parentNode) {
+				el.parentNode.removeChild(el);
+			}
+
 			this.generateGroupHeaderContents();
+
 			if (this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table") {
 				this.groupManager.table.modules.columnCalcs.recalcGroup(this);
 			}
@@ -19913,11 +19918,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (end !== 0) {
 						var oldRows = data.slice(start, typeof args[1] === "undefined" ? args[1] : start + end);
 
-						oldRows.forEach(function (rowData) {
+						oldRows.forEach(function (rowData, i) {
 							var row = self.table.rowManager.getRowFromDataObject(rowData);
 
 							if (row) {
-								row.deleteActual(true);
+								row.deleteActual(i !== oldRows.length - 1);
 							}
 						});
 					}

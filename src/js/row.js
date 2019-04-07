@@ -705,7 +705,6 @@ Row.prototype.delete = function(){
 
 
 Row.prototype.deleteActual = function(blockRedraw){
-
 	var index = this.table.rowManager.getRowIndex(this);
 
 	//deselect row if it is selected
@@ -722,17 +721,17 @@ Row.prototype.deleteActual = function(blockRedraw){
 		// this.table.modules.reactiveData.unwatchRow(this);
 	}
 
+	//remove from group
+	if(this.modules.group){
+		this.modules.group.removeRow(this);
+	}
+
 	this.table.rowManager.deleteRow(this, blockRedraw);
 
 	this.deleteCells();
 
 	this.initialized = false;
 	this.heightInitialized = false;
-
-	//remove from group
-	if(this.modules.group){
-		this.modules.group.removeRow(this);
-	}
 
 	//recalc column calculations if present
 	if(this.table.modExists("columnCalcs")){
