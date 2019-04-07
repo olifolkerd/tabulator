@@ -86,6 +86,18 @@ var Group = function Group(groupManager, parent, level, key, field, generator, o
 	this.createValueGroups();
 };
 
+Group.prototype.wipe = function () {
+	if (this.groupList.length) {
+		this.groupList.forEach(function (group) {
+			group.wipe();
+		});
+	} else {
+		this.element = false;
+		this.arrowElement = false;
+		this.elementContents = false;
+	}
+};
+
 Group.prototype.createElements = function () {
 	this.element = document.createElement("div");
 	this.element.classList.add("tabulator-row");
@@ -834,6 +846,12 @@ GroupRows.prototype.getGroups = function (compoment) {
 	});
 
 	return groupComponents;
+};
+
+GroupRows.prototype.wipe = function () {
+	this.groupList.forEach(function (group) {
+		group.wipe();
+	});
 };
 
 GroupRows.prototype.pullGroupListData = function (groupList) {

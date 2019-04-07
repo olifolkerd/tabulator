@@ -2390,11 +2390,7 @@ RowManager.prototype._setDataActual = function (data, renderInPosition) {
 
 	self.table.options.dataLoading.call(this.table, data);
 
-	self.rows.forEach(function (row) {
-		row.wipe();
-	});
-
-	self.rows = [];
+	this._wipeElements();
 
 	if (this.table.options.history && this.table.modExists("history")) {
 		this.table.modules.history.clear();
@@ -2425,6 +2421,18 @@ RowManager.prototype._setDataActual = function (data, renderInPosition) {
 	} else {
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data === 'undefined' ? 'undefined' : _typeof(data), "\nData:     ", data);
 	}
+};
+
+RowManager.prototype._wipeElements = function () {
+	this.rows.forEach(function (row) {
+		row.wipe();
+	});
+
+	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+		this.table.modules.groupRows.wipe();
+	}
+
+	this.rows = [];
 };
 
 RowManager.prototype.deleteRow = function (row, blockRedraw) {
@@ -4493,14 +4501,11 @@ Row.prototype.deleteCells = function () {
 Row.prototype.wipe = function () {
 	this.deleteCells();
 
-	// this.element.children().each(function(){
-	// 	$(this).remove();
-	// })
-	// this.element.empty();
-
 	while (this.element.firstChild) {
 		this.element.removeChild(this.element.firstChild);
-	} // this.element.remove();
+	}this.element = false;
+	this.modules = {};
+
 	if (this.element.parentNode) {
 		this.element.parentNode.removeChild(this.element);
 	}
@@ -5106,8 +5111,10 @@ Cell.prototype.cancelEdit = function () {
 
 Cell.prototype.delete = function () {
 	this.element.parentNode.removeChild(this.element);
+	this.element = false;
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);
+	this.calcs = {};
 };
 
 //////////////// Navigation /////////////////

@@ -743,7 +743,6 @@ Row.prototype.deleteActual = function(blockRedraw){
 	}
 };
 
-
 Row.prototype.deleteCells = function(){
 	var cellCount = this.cells.length;
 
@@ -755,13 +754,11 @@ Row.prototype.deleteCells = function(){
 Row.prototype.wipe = function(){
 	this.deleteCells();
 
-	// this.element.children().each(function(){
-	// 	$(this).remove();
-	// })
-	// this.element.empty();
-
 	while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
-	// this.element.remove();
+
+	this.element = false;
+	this.modules = {};
+
 	if(this.element.parentNode){
 		this.element.parentNode.removeChild(this.element);
 	}

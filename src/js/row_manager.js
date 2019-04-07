@@ -298,11 +298,7 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 
 	self.table.options.dataLoading.call(this.table, data);
 
-	self.rows.forEach(function(row){
-		row.wipe();
-	});
-
-	self.rows = [];
+	this._wipeElements();
 
 	if(this.table.options.history && this.table.modExists("history")){
 		this.table.modules.history.clear();
@@ -334,6 +330,18 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 	}
 };
+
+RowManager.prototype._wipeElements = function(){
+	this.rows.forEach(function(row){
+		row.wipe();
+	});
+
+	if(this.table.options.groupBy && this.table.modExists("groupRows")){
+		this.table.modules.groupRows.wipe();
+	}
+
+	this.rows = [];
+}
 
 RowManager.prototype.deleteRow = function(row, blockRedraw){
 	var allIndex = this.rows.indexOf(row),
