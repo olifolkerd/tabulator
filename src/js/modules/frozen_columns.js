@@ -13,7 +13,12 @@ FrozenColumns.prototype.reset = function(){
 	this.initializationMode = "left";
 	this.leftColumns = [];
 	this.rightColumns = [];
+	this.leftMargin = 0;
+	this.rightMargin = 0;
 	this.active = false;
+
+	this.table.columnManager.headersElement.style.marginLeft = 0;
+	this.table.columnManager.element.style.paddingRight = 0;
 };
 
 //initialize specific column
