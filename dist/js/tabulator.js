@@ -18578,8 +18578,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.connection) {
 			position = element.getBoundingClientRect();
 
-			this.startX = position.left - pageX + window.scrollX;
-			this.startY = position.top - pageY + window.scrollY;
+			this.startX = position.left - pageX + window.pageXOffset;
+			this.startY = position.top - pageY + window.pageYOffset;
 		} else {
 			this.startY = pageY - element.getBoundingClientRect().top;
 		}
