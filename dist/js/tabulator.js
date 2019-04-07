@@ -20483,7 +20483,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	ResponsiveLayout.prototype.generateCollapsedRowData = function (row) {
 		var self = this,
 		    data = row.getData(),
-		    output = {},
+		    output = [],
 		    mockCellComponent;
 
 		this.hiddenColumns.forEach(function (column) {
@@ -20512,9 +20512,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					};
 
-					output[column.definition.title] = column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params);
+					output.push({
+						title: column.definition.title,
+						value: column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params)
+					});
 				} else {
-					output[column.definition.title] = value;
+					output.push({
+						title: column.definition.title,
+						value: value
+					});
 				}
 			}
 		});
@@ -20526,9 +20532,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var list = document.createElement("table"),
 		    listContents = "";
 
-		for (var key in data) {
-			listContents += "<tr><td><strong>" + key + "</strong></td><td>" + data[key] + "</td></tr>";
-		}
+		data.forEach(function (item) {
+			listContents += "<tr><td><strong>" + item.title + "</strong></td><td>" + item.value + "</td></tr>";
+		});
 
 		list.innerHTML = listContents;
 
