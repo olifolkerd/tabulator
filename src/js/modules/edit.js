@@ -720,6 +720,7 @@ Edit.prototype.editors = {
 				currentItem.element.classList.remove("active");
 			}
 
+
 			currentItem = item;
 			input.value = item.label === "&nbsp;" ? "" : item.label;
 
@@ -779,7 +780,7 @@ Edit.prototype.editors = {
 		input.style.boxSizing = "border-box";
 		input.readOnly = true;
 
-		input.value = initialValue;
+		input.value = typeof initialValue !== "undefined" ? initialValue : "";
 
 		if(editorParams.values === true){
 			parseItems(getUniqueColumnValues(), initialValue);

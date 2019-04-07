@@ -778,7 +778,7 @@ Edit.prototype.editors = {
 		input.style.boxSizing = "border-box";
 		input.readOnly = true;
 
-		input.value = initialValue;
+		input.value = typeof initialValue !== "undefined" ? initialValue : "";
 
 		if (editorParams.values === true) {
 			parseItems(getUniqueColumnValues(), initialValue);
