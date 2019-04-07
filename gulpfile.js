@@ -44,7 +44,7 @@ gulp.task('styles', function() {
     .pipe(autoprefixer('last 4 version'))
     .pipe(gulp.dest('dist/css'))
     .pipe(rename({suffix: '.min'}))
-    .pipe(cssnano())
+    .pipe(cssnano({zindex: false}))
     .pipe(insert.prepend(version))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/css'))
