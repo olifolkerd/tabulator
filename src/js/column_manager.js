@@ -57,13 +57,17 @@ ColumnManager.prototype.getHeadersElement = function(){
 	return this.headersElement;
 };
 
+ColumnManager.prototype.tempScrollBlock = function(){
+	clearTimeout(this.blockHozScrollEvent);
+	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 50);
+}
+
 //scroll horizontally to match table body
 ColumnManager.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
 	scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
-	clearTimeout(this.blockHozScrollEvent);
-	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 10);
+	this.tempScrollBlock();
 	this.element.scrollLeft = left;
 
 	//adjust for vertical scrollbar moving table when present

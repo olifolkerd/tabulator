@@ -266,20 +266,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.headersElement;
 	};
 
-	//scroll horizontally to match table body
-
-
-	ColumnManager.prototype.scrollHorizontal = function (left) {
+	ColumnManager.prototype.tempScrollBlock = function () {
 		var _this = this;
-
-		var hozAdjust = 0,
-		    scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
 		clearTimeout(this.blockHozScrollEvent);
 
 		this.blockHozScrollEvent = setTimeout(function () {
 			_this.blockHozScrollEvent = false;
-		}, 10);
+		}, 50);
+	};
+
+	//scroll horizontally to match table body
+
+
+	ColumnManager.prototype.scrollHorizontal = function (left) {
+
+		var hozAdjust = 0,
+		    scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
+
+		this.tempScrollBlock();
 
 		this.element.scrollLeft = left;
 
@@ -20106,6 +20111,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		self.table.element.classList.add("tabulator-block-select");
 
 		function mouseMove(e) {
+			self.table.columnManager.tempScrollBlock();
+
 			column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 
 			if (!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight) {

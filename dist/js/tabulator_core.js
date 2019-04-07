@@ -220,19 +220,24 @@ ColumnManager.prototype.getHeadersElement = function () {
 	return this.headersElement;
 };
 
-//scroll horizontally to match table body
-
-ColumnManager.prototype.scrollHorizontal = function (left) {
+ColumnManager.prototype.tempScrollBlock = function () {
 	var _this = this;
-
-	var hozAdjust = 0,
-	    scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
 	clearTimeout(this.blockHozScrollEvent);
 
 	this.blockHozScrollEvent = setTimeout(function () {
 		_this.blockHozScrollEvent = false;
-	}, 10);
+	}, 50);
+};
+
+//scroll horizontally to match table body
+
+ColumnManager.prototype.scrollHorizontal = function (left) {
+
+	var hozAdjust = 0,
+	    scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
+
+	this.tempScrollBlock();
 
 	this.element.scrollLeft = left;
 

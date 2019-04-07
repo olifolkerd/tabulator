@@ -106,6 +106,8 @@ ResizeColumns.prototype._mouseDown = function(e, column, handle){
 	self.table.element.classList.add("tabulator-block-select");
 
 	function mouseMove(e){
+		self.table.columnManager.tempScrollBlock();
+
 		column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 
 		if(!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight){
