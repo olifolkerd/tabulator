@@ -10713,34 +10713,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			self.table.columnManager.columnsByIndex.forEach(function (column) {
 
-				if (column.visible) {
-					//set field name of mock column
-					self.genColumn.setField(column.getField());
-					self.genColumn.hozAlign = column.hozAlign;
+				//set field name of mock column
+				self.genColumn.setField(column.getField());
+				self.genColumn.hozAlign = column.hozAlign;
 
-					if (column.definition[pos + "CalcFormatter"] && self.table.modExists("format")) {
+				if (column.definition[pos + "CalcFormatter"] && self.table.modExists("format")) {
 
-						self.genColumn.modules.format = {
-							formatter: self.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
-							params: column.definition[pos + "CalcFormatterParams"]
-						};
-					} else {
-						self.genColumn.modules.format = {
-							formatter: self.table.modules.format.getFormatter("plaintext"),
-							params: {}
-						};
-					}
+					self.genColumn.modules.format = {
+						formatter: self.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+						params: column.definition[pos + "CalcFormatterParams"]
+					};
+				} else {
+					self.genColumn.modules.format = {
+						formatter: self.table.modules.format.getFormatter("plaintext"),
+						params: {}
+					};
+				}
 
-					//ensure css class defintion is replicated to calculation cell
-					self.genColumn.definition.cssClass = column.definition.cssClass;
+				//ensure css class defintion is replicated to calculation cell
+				self.genColumn.definition.cssClass = column.definition.cssClass;
 
-					//generate cell and assign to correct column
-					var cell = new Cell(self.genColumn, row);
-					cell.column = column;
-					cell.setWidth();
+				//generate cell and assign to correct column
+				var cell = new Cell(self.genColumn, row);
+				cell.column = column;
+				cell.setWidth();
 
-					column.cells.push(cell);
-					cells.push(cell);
+				column.cells.push(cell);
+				cells.push(cell);
+
+				if (!column.visible) {
+					cell.hide();
 				}
 			});
 

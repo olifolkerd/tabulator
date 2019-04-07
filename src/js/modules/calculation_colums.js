@@ -242,7 +242,6 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 
 		self.table.columnManager.columnsByIndex.forEach(function(column){
 
-			if(column.visible){
 				//set field name of mock column
 				self.genColumn.setField(column.getField());
 				self.genColumn.hozAlign = column.hozAlign;
@@ -270,7 +269,10 @@ ColumnCalcs.prototype.generateRow = function(pos, data){
 
 				column.cells.push(cell);
 				cells.push(cell);
-			}
+
+				if(!column.visible){
+					cell.hide();
+				}
 		});
 
 		this.cells = cells;
