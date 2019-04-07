@@ -275,6 +275,8 @@ Group.prototype.insertRow = function(row, to, after){
 	if(this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.options.columnCalcs != "table"){
 		this.groupManager.table.modules.columnCalcs.recalcGroup(this);
 	}
+
+	this.groupManager.updateGroupRows(true);
 };
 
 Group.prototype.scrollHeader = function(left){
