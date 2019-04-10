@@ -82,7 +82,7 @@ Format.prototype.sanitizeHTML = function(value){
 };
 
 Format.prototype.emptyToSpace = function(value){
-	return value === null || typeof value === "undefined" ? "&nbsp" : value;
+	return value === null || typeof value === "undefined" ? "\u00a0" : value;
 };
 
 //get formatter for cell

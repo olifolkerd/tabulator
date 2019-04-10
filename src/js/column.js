@@ -593,19 +593,19 @@ Column.prototype._buildColumnHeaderTitle = function(){
 
 		if(def.field){
 			table.modules.localize.bind("columns|" + def.field, function(text){
-				titleElement.value = text || (def.title || "&nbsp");
+				titleElement.value = text || (def.title || "\u00a0");
 			});
 		}else{
-			titleElement.value  = def.title || "&nbsp";
+			titleElement.value  = def.title || "\u00a0";
 		}
 
 	}else{
 		if(def.field){
 			table.modules.localize.bind("columns|" + def.field, function(text){
-				self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp"));
+				self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "\u00a0"));
 			});
 		}else{
-			self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp");
+			self._formatColumnHeaderTitle(titleHolderElement, def.title || "\u00a0");
 		}
 	}
 

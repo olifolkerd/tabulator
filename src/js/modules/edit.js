@@ -679,12 +679,12 @@ Edit.prototype.editors = {
 						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-group");
 						el.tabIndex = 0;
-						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
+						el.innerHTML = item.label === "" ? "\u00a0" : item.label;
 					}else{
 						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-item");
 						el.tabIndex = 0;
-						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
+						el.innerHTML = item.label === "" ? "\u00a0" : item.label;
 
 						el.addEventListener("click", function(){
 							setCurrentItem(item);
@@ -722,7 +722,7 @@ Edit.prototype.editors = {
 
 
 			currentItem = item;
-			input.value = item.label === "&nbsp;" ? "" : item.label;
+			input.value = item.label === "\u00a0" ? "" : item.label;
 
 			if(item.element){
 				item.element.classList.add("active");
