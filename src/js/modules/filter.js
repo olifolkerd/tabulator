@@ -258,12 +258,12 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 
 				if (
 					!(
-						(column.definition.headerFilter === 'autocomplete' ||
-							column.definition.editor === 'autocomplete' ||
-							column.definition.headerFilter === 'tickCross' ||
-							column.definition.editor === 'tickCross') &&
-						column.definition.headerFilter === true
-					)
+                        column.definition.headerFilter === 'autocomplete' ||
+                        column.definition.headerFilter === 'tickCross' ||
+                        ((column.definition.editor === 'autocomplete' ||
+                            column.definition.editor === 'tickCross') &&
+                            column.definition.headerFilter === true)
+                    )
 				) {
 					editorElement.addEventListener("keyup", searchTrigger);
 					editorElement.addEventListener("search", searchTrigger);
