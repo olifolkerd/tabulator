@@ -18172,7 +18172,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           self.table.rowManager.rows.forEach(function (row) {
 
-            self._selectRow(row, false, true);
+            self._selectRow(row, true, true);
           });
 
           self._rowSelectionChanged();
@@ -18185,7 +18185,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             self.table.rowManager.activeRows.forEach(function (row) {
 
-              self._selectRow(row, false, true);
+              self._selectRow(row, true, true);
             });
 
             self._rowSelectionChanged();
@@ -18199,7 +18199,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             rows.forEach(function (row) {
 
-              self._selectRow(row);
+              self._selectRow(row, true);
             });
 
             self._rowSelectionChanged();
@@ -18288,7 +18288,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
           rows.forEach(function (row) {
 
-            self._deselectRow(row);
+            self._deselectRow(row, true);
           });
 
           self._rowSelectionChanged();
