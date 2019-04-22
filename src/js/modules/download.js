@@ -628,7 +628,7 @@ Download.prototype.downloaders = {
 	xlsx:function(columns, data, options, setFileContents, config){
 		var self = this,
 		sheetName = options.sheetName || "Sheet1",
-		workbook = {SheetNames:[], Sheets:{}},
+		workbook = {SheetNames:[], Sheets:{}, Workbook: {Views: []}},
 		calcs = {},
 		groupRowIndexs = [],
 		groupColumnIndexs = [],
@@ -849,6 +849,10 @@ Download.prototype.downloaders = {
 			worksheet = rowsToSheet();
 
 			return worksheet;
+		}
+		
+		if(options.rtl){
+			workbook.Workbook.Views.push({RTL: true});
 		}
 
 		if(options.sheetOnly){
