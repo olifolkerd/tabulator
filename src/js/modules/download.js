@@ -851,7 +851,7 @@ Download.prototype.downloaders = {
 			return worksheet;
 		}
 		
-		if(options.rtl){
+		if(options.RTL){
 			workbook.Workbook.Views.push({RTL: true});
 		}
 
