@@ -31,6 +31,8 @@ var Tabulator = function(element, options){
 //default setup options
 Tabulator.prototype.defaultOptions = {
 
+	RTL:false,
+	
 	height:false, //height of tabulator
 
 	layout:"fitData", ///layout type "fitColumns" | "fitData"
@@ -376,6 +378,9 @@ Tabulator.prototype._buildElement = function(){
 	options.tableBuilding.call(this);
 
 	element.classList.add("tabulator");
+	if(options.RTL) {
+		element.classList.add("tabulator-rtl");
+	}
 	element.setAttribute("role", "grid");
 
 	//empty element
@@ -606,6 +611,7 @@ Tabulator.prototype.destroy = function(){
 	//clear DOM
 	while(element.firstChild) element.removeChild(element.firstChild);
 	element.classList.remove("tabulator");
+	element.classList.remove("tabulator-rtl");
 };
 
 Tabulator.prototype._detectBrowser = function(){
