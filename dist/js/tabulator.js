@@ -3480,56 +3480,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return output;
 	};
 
-	RowManager.prototype.getHtml = function (active) {
-
-		var data = this.getData(active),
-		    columns = [],
-		    header = "",
-		    body = "",
-		    table = "";
-
-		//build header row
-
-		this.table.columnManager.getColumns().forEach(function (column) {
-
-			var def = column.getDefinition();
-
-			if (column.visible && !def.hideInHtml) {
-
-				header += '<th>' + (def.title || "") + '</th>';
-
-				columns.push(column);
-			}
-		});
-
-		//build body rows
-
-		data.forEach(function (rowData) {
-
-			var row = "";
-
-			columns.forEach(function (column) {
-
-				var value = column.getFieldValue(rowData);
-
-				if (typeof value === "undefined" || value === null) {
-
-					value = ":";
-				}
-
-				row += '<td>' + value + '</td>';
-			});
-
-			body += '<tr>' + row + '</tr>';
-		});
-
-		//build table
-
-		table = '<table>\n\n\t\t\t<thead>\n\n\t\t\t<tr>' + header + '</tr>\n\n\t\t\t</thead>\n\n\t\t\t<tbody>' + body + '</tbody>\n\n\t\t\t</table>';
-
-		return table;
-	};
-
 	RowManager.prototype.getComponents = function (active) {
 
 		var self = this,
@@ -7871,7 +7821,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Tabulator.prototype.getHtml = function (active) {
 
-		return this.rowManager.getHtml(active);
+		if (this.modExists("htmlTableExport", true)) {
+
+			return this.modules.htmlTableExport.getHtml(active);
+		}
 	};
 
 	//retrieve Ajax URL
@@ -17653,6 +17606,51 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("htmlTableImport", HtmlTableImport);
+	var HtmlTableExport = function HtmlTableExport(table) {
+		this.table = table; //hold Tabulator object
+	};
+
+	HtmlTableExport.prototype.getHtml = function (active) {
+		var data = this.table.rowManager.getData(active),
+		    columns = [],
+		    header = "",
+		    body = "",
+		    table = "";
+
+		//build header row
+		this.table.columnManager.getColumns().forEach(function (column) {
+			var def = column.getDefinition();
+
+			if (column.visible && !def.hideInHtml) {
+				header += '<th>' + (def.title || "") + '</th>';
+				columns.push(column);
+			}
+		});
+
+		//build body rows
+		data.forEach(function (rowData) {
+			var row = "";
+
+			columns.forEach(function (column) {
+				var value = column.getFieldValue(rowData);
+
+				if (typeof value === "undefined" || value === null) {
+					value = ":";
+				}
+
+				row += '<td>' + value + '</td>';
+			});
+
+			body += '<tr>' + row + '</tr>';
+		});
+
+		//build table
+		table = '<table>\n\t\t<thead>\n\t\t<tr>' + header + '</tr>\n\t\t</thead>\n\t\t<tbody>' + body + '</tbody>\n\t\t</table>';
+
+		return table;
+	};
+
+	Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
 	var Keybindings = function Keybindings(table) {
 		this.table = table; //hold Tabulator object
 		this.watchKeys = null;

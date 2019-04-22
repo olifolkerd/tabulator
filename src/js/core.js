@@ -772,7 +772,9 @@ Tabulator.prototype.searchData = function(field, type, value){
 
 //get table html
 Tabulator.prototype.getHtml = function(active){
-	return this.rowManager.getHtml(active);
+	if(this.modExists("htmlTableExport", true)){
+		return this.modules.htmlTableExport.getHtml(active);
+	}
 };
 
 //retrieve Ajax URL

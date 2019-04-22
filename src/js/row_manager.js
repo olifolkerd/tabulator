@@ -714,75 +714,30 @@ RowManager.prototype.getData = function(active, transform){
 	return output;
 };
 
-RowManager.prototype.getHtml = function(active){
-	var data = this.getData(active),
-	columns = [],
-	header = "",
-	body = "",
-	table = "";
+RowManager.prototype.getComponents = function(active){
+	var self = this,
+	output = [];
 
-		//build header row
-		this.table.columnManager.getColumns().forEach(function(column){
-			var def = column.getDefinition();
+	var rows = active ? self.activeRows : self.rows;
 
-			if(column.visible && !def.hideInHtml){
-				header += `<th>${(def.title || "")}</th>`;
-				columns.push(column);
-			}
-		});
+	rows.forEach(function(row){
+		output.push(row.getComponent());
+	});
 
-		//build body rows
-		data.forEach(function(rowData){
-			var row = "";
+	return output;
+}
 
-			columns.forEach(function(column){
-				var value = column.getFieldValue(rowData);
+RowManager.prototype.getDataCount = function(active){
+	return active ? this.rows.length : this.activeRows.length;
+};
 
-				if(typeof value === "undefined" || value === null){
-					value = ":";
-				}
+RowManager.prototype._genRemoteRequest = function(){
+	var self = this,
+	table = self.table,
+	options = table.options,
+	params = {};
 
-				row += `<td>${value}</td>`;
-			});
-
-			body += `<tr>${row}</tr>`;
-		});
-
-		//build table
-		table = `<table>
-		<thead>
-		<tr>${header}</tr>
-		</thead>
-		<tbody>${body}</tbody>
-		</table>`;
-
-		return table;
-	};
-
-	RowManager.prototype.getComponents = function(active){
-		var self = this,
-		output = [];
-
-		var rows = active ? self.activeRows : self.rows;
-
-		rows.forEach(function(row){
-			output.push(row.getComponent());
-		});
-
-		return output;
-	}
-
-	RowManager.prototype.getDataCount = function(active){
-		return active ? this.rows.length : this.activeRows.length;
-	};
-
-	RowManager.prototype._genRemoteRequest = function(){
-		var self = this,
-		table = self.table,
-		options = table.options,
-		params = {};
-
-		if(table.modExists("page")){
+	if(table.modExists("page")){
 		//set sort data if defined
 		if(options.ajaxSorting){
 			let sorters = self.table.modules.sort.getSort();

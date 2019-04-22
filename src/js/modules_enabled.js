@@ -12,6 +12,7 @@
 /*=include modules/group_rows.js */
 /*=include modules/history.js */
 /*=include modules/html_table_import.js */
+/*=include modules/html_table_export.js */
 /*=include modules/keybindings.js */
 /*=include modules/moveable_columns.js */
 /*=include modules/moveable_rows.js */

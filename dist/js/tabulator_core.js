@@ -2806,46 +2806,6 @@ RowManager.prototype.getData = function (active, transform) {
 	return output;
 };
 
-RowManager.prototype.getHtml = function (active) {
-	var data = this.getData(active),
-	    columns = [],
-	    header = "",
-	    body = "",
-	    table = "";
-
-	//build header row
-	this.table.columnManager.getColumns().forEach(function (column) {
-		var def = column.getDefinition();
-
-		if (column.visible && !def.hideInHtml) {
-			header += '<th>' + (def.title || "") + '</th>';
-			columns.push(column);
-		}
-	});
-
-	//build body rows
-	data.forEach(function (rowData) {
-		var row = "";
-
-		columns.forEach(function (column) {
-			var value = column.getFieldValue(rowData);
-
-			if (typeof value === "undefined" || value === null) {
-				value = ":";
-			}
-
-			row += '<td>' + value + '</td>';
-		});
-
-		body += '<tr>' + row + '</tr>';
-	});
-
-	//build table
-	table = '<table>\n\t\t<thead>\n\t\t<tr>' + header + '</tr>\n\t\t</thead>\n\t\t<tbody>' + body + '</tbody>\n\t\t</table>';
-
-	return table;
-};
-
 RowManager.prototype.getComponents = function (active) {
 	var self = this,
 	    output = [];
@@ -6073,7 +6033,9 @@ Tabulator.prototype.searchData = function (field, type, value) {
 
 //get table html
 Tabulator.prototype.getHtml = function (active) {
-	return this.rowManager.getHtml(active);
+	if (this.modExists("htmlTableExport", true)) {
+		return this.modules.htmlTableExport.getHtml(active);
+	}
 };
 
 //retrieve Ajax URL
