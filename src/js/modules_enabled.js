@@ -19,6 +19,7 @@
 /*=include modules/mutator.js */
 /*=include modules/page.js */
 /*=include modules/persistence.js */
+/*=include modules/print.js */
 /*=include modules/reactive_data.js */
 /*=include modules/resize_columns.js */
 /*=include modules/resize_rows.js */

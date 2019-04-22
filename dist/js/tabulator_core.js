@@ -5366,6 +5366,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
 	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 
+	printStyling: false, //enable print styling
 
 	addRowPos: "bottom", //position to insert blank rows, top|bottom
 
@@ -5799,6 +5800,10 @@ Tabulator.prototype._buildElement = function () {
 
 	if (this.modExists("clipboard")) {
 		mod.clipboard.initialize();
+	}
+
+	if (options.printStyling && this.modExists("print")) {
+		mod.print.initialize();
 	}
 
 	options.tableBuilt.call(this);
