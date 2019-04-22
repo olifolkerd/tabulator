@@ -297,7 +297,7 @@ Edit.prototype.editors = {
 		var cellValue = cell.getValue(),
 		input = document.createElement("input");
 
-		input.setAttribute("type", "text");
+		input.setAttribute("type", editorParams.search ? "search" : "text");
 
 		input.style.padding = "4px";
 		input.style.width = "100%";

@@ -13462,7 +13462,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cellValue = cell.getValue(),
 			    input = document.createElement("input");
 
-			input.setAttribute("type", "text");
+			input.setAttribute("type", editorParams.search ? "search" : "text");
 
 			input.style.padding = "4px";
 			input.style.width = "100%";
