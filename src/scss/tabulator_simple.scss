@@ -83,6 +83,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		-webkit-user-select: none;
 		-o-user-select: none;
 
+		&.tabulator-header-hidden{
+			display:none;
+		}
+
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;

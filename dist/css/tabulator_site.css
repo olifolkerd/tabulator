@@ -41,6 +41,10 @@
   -o-user-select: none;
 }
 
+.tabulator .tabulator-header.tabulator-header-hidden {
+  display: none;
+}
+
 .tabulator .tabulator-header .tabulator-col {
   display: inline-block;
   position: relative;

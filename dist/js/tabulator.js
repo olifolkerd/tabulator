@@ -240,6 +240,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
 			}
 		});
+
+		//hide header if needed
+
+
+		if (!this.table.options.headerVisible) {
+
+			this.element.classList.add("tabulator-header-hidden");
+		}
 	};
 
 	//link to row manager
@@ -6927,6 +6935,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 		headerFilterPlaceholder: false, //placeholder text to display in header filters
+
+
+		headerVisible: true, //hide header
 
 
 		history: false, //enable edit history

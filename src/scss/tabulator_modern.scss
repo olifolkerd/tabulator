@@ -94,6 +94,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		font-size: 1.1em;
 
+		&.tabulator-header-hidden{
+			display:none;
+		}
+
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;

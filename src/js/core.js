@@ -110,6 +110,8 @@ Tabulator.prototype.defaultOptions = {
 
 	headerFilterPlaceholder: false, //placeholder text to display in header filters
 
+	headerVisible:true, //hide header
+
 	history:false, //enable edit history
 
 	locale:false, //current system language

@@ -88,6 +88,10 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 		-webkit-user-select: none;
 		-o-user-select: none;
 
+		&.tabulator-header-hidden{
+			display:none;
+		}
+
 		//individual column header element
 		.tabulator-col{
 			display:inline-block;

@@ -39,6 +39,11 @@ ColumnManager.prototype.initialize = function (){
 			self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
 		}
 	});
+
+	//hide header if needed
+	if(!this.table.options.headerVisible){
+		this.element.classList.add("tabulator-header-hidden");
+	}
 };
 
 
