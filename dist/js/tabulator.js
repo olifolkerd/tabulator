@@ -547,7 +547,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 				return subject._getSelf() || false;
-			} else if (subject instanceof HTMLElement) {
+			} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
 
 				//subject is a HTML element of the column header
 
@@ -2758,7 +2758,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				//subject is public row component
 
 				return subject._getSelf() || false;
-			} else if (subject instanceof HTMLElement) {
+			} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
 
 				//subject is a HTML element of the row
 
@@ -7254,7 +7254,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Tabulator.prototype.initializeElement = function (element) {
 
-		if (element instanceof HTMLElement) {
+		if (typeof HTMLElement !== "undefined" && element instanceof HTMLElement) {
 
 			this.element = element;
 
@@ -9237,7 +9237,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					}
 				}
-			} else if (query instanceof HTMLElement || query instanceof Tabulator) {
+			} else if (typeof HTMLElement !== "undefined" && query instanceof HTMLElement || query instanceof Tabulator) {
 
 				match = Tabulator.prototype.comms.matchElement(query);
 

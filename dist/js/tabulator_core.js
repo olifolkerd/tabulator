@@ -494,7 +494,7 @@ ColumnManager.prototype.findColumn = function (subject) {
 			//subject is public column component
 
 			return subject._getSelf() || false;
-		} else if (subject instanceof HTMLElement) {
+		} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
 
 			//subject is a HTML element of the column header
 
@@ -2245,7 +2245,7 @@ RowManager.prototype.findRow = function (subject) {
 		} else if (subject instanceof RowComponent) {
 			//subject is public row component
 			return subject._getSelf() || false;
-		} else if (subject instanceof HTMLElement) {
+		} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
 			//subject is a HTML element of the row
 			var match = self.rows.find(function (row) {
 				return row.element === subject;
@@ -5608,7 +5608,7 @@ Tabulator.prototype.initializeOptions = function (options) {
 
 Tabulator.prototype.initializeElement = function (element) {
 
-	if (element instanceof HTMLElement) {
+	if (typeof HTMLElement !== "undefined" && element instanceof HTMLElement) {
 		this.element = element;
 		return true;
 	} else if (typeof element === "string") {
@@ -7074,7 +7074,7 @@ Tabulator.prototype.comms = {
 					}
 				}
 			}
-		} else if (query instanceof HTMLElement || query instanceof Tabulator) {
+		} else if (typeof HTMLElement !== "undefined" && query instanceof HTMLElement || query instanceof Tabulator) {
 			match = Tabulator.prototype.comms.matchElement(query);
 
 			if (match) {

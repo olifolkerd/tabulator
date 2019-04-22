@@ -260,7 +260,7 @@ ColumnManager.prototype.findColumn = function(subject){
 		}else if(subject instanceof ColumnComponent){
 			//subject is public column component
 			return subject._getSelf() || false;
-		}else if(subject instanceof HTMLElement){
+		}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
 			//subject is a HTML element of the column header
 			let match = self.columns.find(function(column){
 				return column.element === subject;

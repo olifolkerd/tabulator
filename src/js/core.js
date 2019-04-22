@@ -306,7 +306,7 @@ Tabulator.prototype.initializeOptions = function(options){
 
 Tabulator.prototype.initializeElement = function(element){
 
-	if(element instanceof HTMLElement){
+	if(typeof HTMLElement !== "undefined" && element instanceof HTMLElement){
 		this.element = element;
 		return true;
 	}else if(typeof element === "string"){
@@ -1793,7 +1793,7 @@ Tabulator.prototype.comms = {
 				}
 			}
 
-		}else if(query instanceof HTMLElement || query instanceof Tabulator){
+		}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
 			match = Tabulator.prototype.comms.matchElement(query);
 
 			if(match){
