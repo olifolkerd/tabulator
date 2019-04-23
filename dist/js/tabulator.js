@@ -17616,46 +17616,191 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Tabulator.prototype.registerModule("htmlTableImport", HtmlTableImport);
 	var HtmlTableExport = function HtmlTableExport(table) {
 		this.table = table; //hold Tabulator object
+		this.config = {};
 	};
 
-	HtmlTableExport.prototype.getHtml = function (active) {
-		var data = this.table.rowManager.getData(active),
-		    columns = [],
-		    header = "",
-		    body = "",
-		    table = "";
+	HtmlTableExport.prototype.genereateTable = function (config) {
+		var columns = this.generateHeaderElements();
 
-		//build header row
-		this.table.columnManager.getColumns().forEach(function (column) {
-			var def = column.getDefinition();
+		var table = document.createElement("table");
+		table.appendChild(columns);
+		table.border = 1;
+		document.body.appendChild(table);
 
-			if (column.visible && !def.hideInHtml) {
-				header += '<th>' + (def.title || "") + '</th>';
-				columns.push(column);
+		console.log("cols", columns.innerHTML);
+	};
+
+	HtmlTableExport.prototype.generateColumnGroupHeaders = function () {
+		var _this36 = this;
+
+		var output = [];
+
+		this.table.columnManager.columns.forEach(function (column) {
+			var colData = _this36.processColumnGroup(column);
+
+			if (colData) {
+				output.push(colData);
 			}
 		});
 
-		//build body rows
-		data.forEach(function (rowData) {
-			var row = "";
+		return output;
+	};
 
-			columns.forEach(function (column) {
-				var value = column.getFieldValue(rowData);
+	HtmlTableExport.prototype.processColumnGroup = function (column) {
+		var _this37 = this;
 
-				if (typeof value === "undefined" || value === null) {
-					value = ":";
+		var subGroups = column.columns,
+		    maxDepth = 0;
+
+		var groupData = {
+			title: column.definition.title,
+			column: column,
+			depth: 1
+		};
+
+		if (subGroups.length) {
+			groupData.subGroups = [];
+			groupData.width = 0;
+
+			subGroups.forEach(function (subGroup) {
+				var subGroupData = _this37.processColumnGroup(subGroup);
+
+				if (subGroupData) {
+					groupData.width += subGroupData.width;
+					groupData.subGroups.push(subGroupData);
+
+					if (subGroupData.depth > maxDepth) {
+						maxDepth = subGroupData.depth;
+					}
 				}
-
-				row += '<td>' + value + '</td>';
 			});
 
-			body += '<tr>' + row + '</tr>';
+			groupData.depth += maxDepth;
+
+			if (!groupData.width) {
+				return false;
+			}
+		} else {
+			if (column.field && column.visible) {
+				groupData.width = 1;
+			} else {
+				return false;
+			}
+		}
+
+		return groupData;
+	};
+
+	HtmlTableExport.prototype.groupHeadersToRows = function (columns) {
+
+		var headers = [],
+		    headerDepth = 0;
+
+		function parseColumnGroup(column, level) {
+
+			var depth = headerDepth - level;
+
+			if (typeof headers[level] === "undefined") {
+				headers[level] = [];
+			}
+
+			column.height = column.subGroups ? 1 : depth - column.depth + 1;
+
+			headers[level].push(column);
+
+			if (column.subGroups) {
+				column.subGroups.forEach(function (subGroup) {
+					parseColumnGroup(subGroup, level + 1);
+				});
+			}
+		}
+
+		//calculate maximum header debth
+		columns.forEach(function (column) {
+			if (column.depth > headerDepth) {
+				headerDepth = column.depth;
+			}
 		});
 
-		//build table
-		table = '<table>\n\t\t<thead>\n\t\t<tr>' + header + '</tr>\n\t\t</thead>\n\t\t<tbody>' + body + '</tbody>\n\t\t</table>';
+		columns.forEach(function (column) {
+			parseColumnGroup(column, 0);
+		});
 
-		return table;
+		return headers;
+	};
+
+	HtmlTableExport.prototype.generateHeaderElements = function () {
+
+		var headerEl = document.createElement("thead");
+
+		var rows = this.groupHeadersToRows(this.generateColumnGroupHeaders());
+
+		console.log("headers", rows);
+
+		rows.forEach(function (row) {
+			var rowEl = document.createElement("tr");
+
+			row.forEach(function (column) {
+				var cellEl = document.createElement("th");
+
+				cellEl.colSpan = column.width;
+				cellEl.rowSpan = column.height;
+
+				cellEl.innerHTML = column.column.definition.title;
+
+				rowEl.appendChild(cellEl);
+			});
+
+			headerEl.appendChild(rowEl);
+		});
+
+		return headerEl;
+	};
+
+	HtmlTableExport.prototype.getHtml = function (active) {
+		this.genereateTable();
+		// var data = this.table.rowManager.getData(active),
+		// columns = [],
+		// header = "",
+		// body = "",
+		// table = "";
+
+		// //build header row
+		// this.table.columnManager.getColumns().forEach(function(column){
+		// 	var def = column.getDefinition();
+
+		// 	if(column.visible && !def.hideInHtml){
+		// 		header += `<th>${(def.title || "")}</th>`;
+		// 		columns.push(column);
+		// 	}
+		// });
+
+		// //build body rows
+		// data.forEach(function(rowData){
+		// 	var row = "";
+
+		// 	columns.forEach(function(column){
+		// 		var value = column.getFieldValue(rowData);
+
+		// 		if(typeof value === "undefined" || value === null){
+		// 			value = ":";
+		// 		}
+
+		// 		row += `<td>${value}</td>`;
+		// 	});
+
+		// 	body += `<tr>${row}</tr>`;
+		// });
+
+		// //build table
+		// table = `<table>
+		// <thead>
+		// <tr>${header}</tr>
+		// </thead>
+		// <tbody>${body}</tbody>
+		// </table>`;
+
+		// return table;
 	};
 
 	Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
@@ -17693,13 +17838,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this36 = this;
+		var _this38 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this36.actions[key]) {
+			if (_this38.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -19043,7 +19188,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.generatePageSizeSelectList = function () {
-		var _this37 = this;
+		var _this39 = this;
 
 		var pageSizes = [];
 
@@ -19078,7 +19223,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemEl.value = item;
 				itemEl.innerHTML = item;
 
-				_this37.pageSizeSelect.appendChild(itemEl);
+				_this39.pageSizeSelect.appendChild(itemEl);
 			});
 
 			this.pageSizeSelect.value = this.size;
@@ -19246,38 +19391,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this38 = this;
+		var _this40 = this;
 
 		return new Promise(function (resolve, reject) {
 
 			page = parseInt(page);
 
-			if (page > 0 && page <= _this38.max) {
-				_this38.page = page;
-				_this38.trigger().then(function () {
+			if (page > 0 && page <= _this40.max) {
+				_this40.page = page;
+				_this40.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this38.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this40.max + ":", page);
 				reject();
 			}
 		});
 	};
 
 	Page.prototype.setPageToRow = function (row) {
-		var _this39 = this;
+		var _this41 = this;
 
 		return new Promise(function (resolve, reject) {
 
-			var rows = _this39.table.rowManager.getDisplayRows(_this39.displayIndex - 1);
+			var rows = _this41.table.rowManager.getDisplayRows(_this41.displayIndex - 1);
 			var index = rows.indexOf(row);
 
 			if (index > -1) {
-				var page = Math.ceil((index + 1) / _this39.size);
+				var page = Math.ceil((index + 1) / _this41.size);
 
-				_this39.setPage(page).then(function () {
+				_this41.setPage(page).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -19363,12 +19508,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this40 = this;
+		var _this42 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this40.page > 1) {
-				_this40.page--;
-				_this40.trigger().then(function () {
+			if (_this42.page > 1) {
+				_this42.page--;
+				_this42.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -19382,19 +19527,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this41 = this;
+		var _this43 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this41.page < _this41.max) {
-				_this41.page++;
-				_this41.trigger().then(function () {
+			if (_this43.page < _this43.max) {
+				_this43.page++;
+				_this43.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this41.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this41.max + ":", _this41.max + 1);
+				if (!_this43.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this43.max + ":", _this43.max + 1);
 				}
 				reject();
 			}
@@ -19446,28 +19591,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this42 = this;
+		var _this44 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this42.mode) {
+			switch (_this44.mode) {
 				case "local":
-					left = _this42.table.rowManager.scrollLeft;
+					left = _this44.table.rowManager.scrollLeft;
 
-					_this42.table.rowManager.refreshActiveData("page");
-					_this42.table.rowManager.scrollHorizontal(left);
+					_this44.table.rowManager.refreshActiveData("page");
+					_this44.table.rowManager.scrollHorizontal(left);
 
-					_this42.table.options.pageLoaded.call(_this42.table, _this42.getPage());
+					_this44.table.options.pageLoaded.call(_this44.table, _this44.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this42.table.modules.ajax.blockActiveRequest();
-					_this42._getRemotePage().then(function () {
+					_this44.table.modules.ajax.blockActiveRequest();
+					_this44._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -19475,14 +19620,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this42.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this44.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this43 = this;
+		var _this45 = this;
 
 		var self = this,
 		    oldParams,
@@ -19499,33 +19644,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this43.paginationDataSentNames.page] = self.page;
+			pageParams[_this45.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this43.size) {
-				pageParams[_this43.paginationDataSentNames.size] = _this43.size;
+			if (_this45.size) {
+				pageParams[_this45.paginationDataSentNames.size] = _this45.size;
 			}
 
 			//set sort data if defined
-			if (_this43.table.options.ajaxSorting && _this43.table.modExists("sort")) {
+			if (_this45.table.options.ajaxSorting && _this45.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this43.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this45.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this43.table.options.ajaxFiltering && _this43.table.modExists("filter")) {
+			if (_this45.table.options.ajaxFiltering && _this45.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this43.paginationDataSentNames.filters] = filters;
+				pageParams[_this45.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this43.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this45.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
