@@ -16,7 +16,9 @@ Print.prototype.initialize = function () {
 
 Print.prototype.replaceTable = function () {
 
-	this.element.innerHTML = this.table.modules.htmlTableExport.getHtml();
+	this.element.innerHTML = "";
+
+	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable());
 
 	this.table.element.style.display = "none";
 

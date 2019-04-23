@@ -1,3 +1,5 @@
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 /* Tabulator v4.2.5 (c) Oliver Folkerd */
 
 var HtmlTableExport = function HtmlTableExport(table) {
@@ -6,14 +8,14 @@ var HtmlTableExport = function HtmlTableExport(table) {
 };
 
 HtmlTableExport.prototype.genereateTable = function (config) {
-	var columns = this.generateHeaderElements();
+	var headers = this.generateHeaderElements();
+	var body = this.generateBodyElements();
 
 	var table = document.createElement("table");
-	table.appendChild(columns);
-	table.border = 1;
-	document.body.appendChild(table);
+	table.appendChild(headers);
+	table.appendChild(body);
 
-	console.log("cols", columns.innerHTML);
+	return table;
 };
 
 HtmlTableExport.prototype.generateColumnGroupHeaders = function () {
@@ -121,8 +123,6 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 
 	var rows = this.groupHeadersToRows(this.generateColumnGroupHeaders());
 
-	console.log("headers", rows);
-
 	rows.forEach(function (row) {
 		var rowEl = document.createElement("tr");
 
@@ -143,50 +143,53 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 	return headerEl;
 };
 
+HtmlTableExport.prototype.generateBodyElements = function () {
+
+	var bodyEl = document.createElement("tbody");
+
+	var rows = this.table.rowManager.getDisplayRows();
+	var columns = this.table.columnManager.columnsByIndex;
+
+	rows.forEach(function (row) {
+		var rowEl = document.createElement("tr");
+		var rowData = row.getData();
+
+		columns.forEach(function (column) {
+			var cellEl = document.createElement("td");
+
+			var value = column.getFieldValue(rowData);
+
+			switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
+				case "object":
+					value = JSON.stringify(value);
+					break;
+
+				case "undefined":
+				case "null":
+					value = "";
+					break;
+
+				default:
+					value = value;
+			}
+
+			cellEl.innerHTML = value;
+
+			rowEl.appendChild(cellEl);
+		});
+
+		bodyEl.appendChild(rowEl);
+	});
+
+	return bodyEl;
+};
+
 HtmlTableExport.prototype.getHtml = function (active) {
-	this.genereateTable();
-	// var data = this.table.rowManager.getData(active),
-	// columns = [],
-	// header = "",
-	// body = "",
-	// table = "";
+	var holder = document.createElement("div");
 
-	// //build header row
-	// this.table.columnManager.getColumns().forEach(function(column){
-	// 	var def = column.getDefinition();
+	holder.appendChild(this.genereateTable());
 
-	// 	if(column.visible && !def.hideInHtml){
-	// 		header += `<th>${(def.title || "")}</th>`;
-	// 		columns.push(column);
-	// 	}
-	// });
-
-	// //build body rows
-	// data.forEach(function(rowData){
-	// 	var row = "";
-
-	// 	columns.forEach(function(column){
-	// 		var value = column.getFieldValue(rowData);
-
-	// 		if(typeof value === "undefined" || value === null){
-	// 			value = ":";
-	// 		}
-
-	// 		row += `<td>${value}</td>`;
-	// 	});
-
-	// 	body += `<tr>${row}</tr>`;
-	// });
-
-	// //build table
-	// table = `<table>
-	// <thead>
-	// <tr>${header}</tr>
-	// </thead>
-	// <tbody>${body}</tbody>
-	// </table>`;
-
-	// return table;
+	return holder.innerHTML;
 };
 
 Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
