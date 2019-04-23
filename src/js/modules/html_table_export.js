@@ -149,29 +149,41 @@ HtmlTableExport.prototype.generateBodyElements = function(){
 		var rowEl = document.createElement("tr");
 		var rowData = row.getData();
 
-		columns.forEach(function(column){
+		switch(row.type){
+			case "group":
 			var cellEl = document.createElement("td");
-
-			var value = column.getFieldValue(rowData);
-
-			switch(typeof value){
-				case "object":
-				value = JSON.stringify(value);
-				break;
-
-				case "undefined":
-				case "null":
-				value = "";
-				break;
-
-				default:
-				value = value;
-			}
-
-			cellEl.innerHTML = value;
+			cellEl.colSpan = columns.length;
+			cellEl.innerHTML = row.key;
 
 			rowEl.appendChild(cellEl);
-		});
+			break;
+
+			case "row" :
+			columns.forEach(function(column){
+				var cellEl = document.createElement("td");
+
+				var value = column.getFieldValue(rowData);
+
+				switch(typeof value){
+					case "object":
+					value = JSON.stringify(value);
+					break;
+
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = value;
+				}
+
+				cellEl.innerHTML = value;
+
+				rowEl.appendChild(cellEl);
+			});
+			break;
+		}
 
 		bodyEl.appendChild(rowEl);
 	});
