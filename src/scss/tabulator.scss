@@ -554,7 +554,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 	&.tabulator-rtl{
 		text-align: right;
-		direction: ltr;
+		direction: rtl;
 		
 		.tabulator-header{
 			.tabulator-col{
