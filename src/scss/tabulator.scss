@@ -611,6 +611,18 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				left: auto;
 			}
 		}
+		
+		.tabulator-frozen{
+			&.tabulator-frozen-left{
+				border-left: 2px solid $rowBorderColor;		
+				border-right: none;
+			}
+			
+			&.tabulator-frozen-right{
+				border-left: none;
+				border-right: 2px solid $rowBorderColor;
+			}
+		}
 	}
 }
 
@@ -989,7 +1001,18 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	.tabulator-row{
 		.tabulator-cell {
 			border-right: none;
-			border-left: 1px solid #aaa;
+			border-left: 1px solid $rowBorderColor;
+		}
+		
+		.tabulator-frozen{
+			&.tabulator-frozen-left{
+				border-left: 2px solid $rowBorderColor;
+				border-right: none;
+			}
+			&.tabulator-frozen-right{
+				border-left: none;
+				border-right: 2px solid $rowBorderColor;
+			}
 		}
 	}
 }
