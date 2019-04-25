@@ -48,6 +48,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	font-size:$textSize;
 	text-align: left;
 	overflow:hidden;
+	direction: ltr;
 
 	-webkit-transform: translatez(0);
 	-moz-transform: translatez(0);
@@ -553,6 +554,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	
 	&.tabulator-rtl{
 		text-align: right;
+		direction: ltr;
 		
 		.tabulator-header{
 			.tabulator-col{
