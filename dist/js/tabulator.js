@@ -13613,9 +13613,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			input.value = cellValue;
 
+			var blurFunc = function blurFunc(e) {
+				onChange();
+			};
+
 			onRendered(function () {
+				//submit new value on blur
+				input.removeEventListener("blur", blurFunc);
+
 				input.focus();
 				input.style.height = "100%";
+
+				//submit new value on blur
+				input.addEventListener("blur", blurFunc);
 			});
 
 			function onChange() {
@@ -13631,11 +13641,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					cancel();
 				}
 			}
-
-			//submit new value on blur
-			input.addEventListener("blur", function (e) {
-				onChange();
-			});
 
 			//submit new value on enter
 			input.addEventListener("keydown", function (e) {
@@ -16218,7 +16223,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// if(tableHolder.scrollHeight > tableHolder.clientHeight){
 			// 	rightMargin -= tableHolder.offsetWidth - tableHolder.clientWidth;
 			// }
-
 
 			this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
 		}

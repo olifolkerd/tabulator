@@ -181,7 +181,6 @@ FrozenColumns.prototype.layout = function () {
 		// 	rightMargin -= tableHolder.offsetWidth - tableHolder.clientWidth;
 		// }
 
-
 		this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
 	}
 };

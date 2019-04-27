@@ -429,9 +429,19 @@ Edit.prototype.editors = {
 
 		input.value = cellValue;
 
+		var blurFunc = function(e){
+			onChange();
+		}
+
 		onRendered(function () {
+			//submit new value on blur
+			input.removeEventListener("blur", blurFunc);
+
 			input.focus();
 			input.style.height = "100%";
+
+			//submit new value on blur
+			input.addEventListener("blur", blurFunc);
 		});
 
 		function onChange(){
@@ -447,11 +457,6 @@ Edit.prototype.editors = {
 				cancel();
 			}
 		}
-
-		//submit new value on blur
-		input.addEventListener("blur", function(e){
-			onChange();
-		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){
