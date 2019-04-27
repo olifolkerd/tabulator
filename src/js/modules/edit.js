@@ -785,7 +785,7 @@ Edit.prototype.editors = {
 		input.style.boxSizing = "border-box";
 		input.readOnly = true;
 
-		input.value = typeof initialValue !== "undefined" ? initialValue : "";
+		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
 		if(editorParams.values === true){
 			parseItems(getUniqueColumnValues(), initialValue);
@@ -1214,9 +1214,10 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("focus", function(e){
+			var value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 			showList();
-			input.value = initialValue;
-			filterList(initialValue, true);
+			input.value = value;
+			filterList(value, true);
 		});
 
 		//style list element
