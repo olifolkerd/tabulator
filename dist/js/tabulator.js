@@ -233,13 +233,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		//scroll body along with header
 
 
-		self.element.addEventListener("scroll", function (e) {
+		// self.element.addEventListener("scroll", function(e){
 
-			if (!self.blockHozScrollEvent) {
 
-				self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
-			}
-		});
+		// 	if(!self.blockHozScrollEvent){
+
+
+		// 		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+
+
+		// 	}
+
+
+		// });
+
 	};
 
 	//link to row manager

@@ -190,13 +190,15 @@ ColumnManager.prototype.initialize = function () {
 
 	//scroll body along with header
 
-	self.element.addEventListener("scroll", function (e) {
+	// self.element.addEventListener("scroll", function(e){
 
-		if (!self.blockHozScrollEvent) {
+	// 	if(!self.blockHozScrollEvent){
 
-			self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
-		}
-	});
+	// 		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+
+	// 	}
+
+	// });
 };
 
 //link to row manager

@@ -34,11 +34,11 @@ ColumnManager.prototype.initialize = function (){
 	var self = this;
 
 	//scroll body along with header
-	self.element.addEventListener("scroll", function(e){
-		if(!self.blockHozScrollEvent){
-			self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
-		}
-	});
+	// self.element.addEventListener("scroll", function(e){
+	// 	if(!self.blockHozScrollEvent){
+	// 		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+	// 	}
+	// });
 };
 
 
