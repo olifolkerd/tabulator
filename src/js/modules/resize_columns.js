@@ -45,8 +45,10 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 
 		//reszie column on  double click
 		handle.addEventListener("dblclick", function(e){
-			if(self._checkResizability(column)){
-				column.reinitializeWidth(true);
+			var col = column.getLastColumn();
+
+			if(col && self._checkResizability(col)){
+				col.reinitializeWidth(true);
 			}
 		});
 

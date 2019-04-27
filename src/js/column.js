@@ -963,7 +963,6 @@ Column.prototype.setWidth = function(width){
 };
 
 Column.prototype.setWidthActual = function(width){
-
 	if(isNaN(width)){
 		width = Math.floor((this.table.element.clientWidth/100) * parseInt(width));
 	}
@@ -1077,7 +1076,6 @@ Column.prototype.prevColumn = function(){
 };
 
 Column.prototype.reinitializeWidth = function(force){
-
 	this.widthFixed = false;
 
 	//set width if present
