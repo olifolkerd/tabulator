@@ -8,6 +8,7 @@ var ColumnManager = function(table){
 	this.columnsByIndex = []; //columns by index
 	this.columnsByField = {}; //columns by field
 	this.scrollLeft = 0;
+	this.scrollCount = 0;
 
 	this.element.insertBefore(this.headersElement, this.element.firstChild);
 };
@@ -57,17 +58,17 @@ ColumnManager.prototype.getHeadersElement = function(){
 	return this.headersElement;
 };
 
-ColumnManager.prototype.tempScrollBlock = function(){
-	clearTimeout(this.blockHozScrollEvent);
-	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 50);
-}
+// ColumnManager.prototype.tempScrollBlock = function(){
+// 	clearTimeout(this.blockHozScrollEvent);
+// 	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 50);
+// }
 
 //scroll horizontally to match table body
 ColumnManager.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
 	scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
-	this.tempScrollBlock();
+	// this.tempScrollBlock();
 	this.element.scrollLeft = left;
 
 	//adjust for vertical scrollbar moving table when present
@@ -84,7 +85,7 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 	this.scrollLeft = left;
 
 	if(this.table.modExists("frozenColumns")){
-		this.table.modules.frozenColumns.layout();
+		this.table.modules.frozenColumns.scrollHorizontal();
 	}
 };
 
