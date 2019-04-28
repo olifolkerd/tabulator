@@ -45,8 +45,10 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 
 		//reszie column on  double click
 		handle.addEventListener("dblclick", function(e){
-			if(self._checkResizability(column)){
-				column.reinitializeWidth(true);
+			var col = column.getLastColumn();
+
+			if(col && self._checkResizability(col)){
+				col.reinitializeWidth(true);
 			}
 		});
 
@@ -106,7 +108,7 @@ ResizeColumns.prototype._mouseDown = function(e, column, handle){
 	self.table.element.classList.add("tabulator-block-select");
 
 	function mouseMove(e){
-		self.table.columnManager.tempScrollBlock();
+		// self.table.columnManager.tempScrollBlock();
 
 		column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 

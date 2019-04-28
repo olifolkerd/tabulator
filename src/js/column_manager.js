@@ -34,16 +34,11 @@ ColumnManager.prototype.initialize = function (){
 	var self = this;
 
 	//scroll body along with header
-	self.element.addEventListener("scroll", function(e){
-		if(!self.blockHozScrollEvent){
-			self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
-		}
-	});
-
-	//hide header if needed
-	if(!this.table.options.headerVisible){
-		this.element.classList.add("tabulator-header-hidden");
-	}
+	// self.element.addEventListener("scroll", function(e){
+	// 	if(!self.blockHozScrollEvent){
+	// 		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+	// 	}
+	// });
 };
 
 
@@ -62,17 +57,17 @@ ColumnManager.prototype.getHeadersElement = function(){
 	return this.headersElement;
 };
 
-ColumnManager.prototype.tempScrollBlock = function(){
-	clearTimeout(this.blockHozScrollEvent);
-	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 50);
-}
+// ColumnManager.prototype.tempScrollBlock = function(){
+// 	clearTimeout(this.blockHozScrollEvent);
+// 	this.blockHozScrollEvent = setTimeout(() => {this.blockHozScrollEvent = false;}, 50);
+// }
 
 //scroll horizontally to match table body
 ColumnManager.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
 	scrollWidth = this.element.scrollWidth - this.table.element.clientWidth;
 
-	this.tempScrollBlock();
+	// this.tempScrollBlock();
 	this.element.scrollLeft = left;
 
 	//adjust for vertical scrollbar moving table when present
@@ -89,7 +84,7 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 	this.scrollLeft = left;
 
 	if(this.table.modExists("frozenColumns")){
-		this.table.modules.frozenColumns.layout();
+		this.table.modules.frozenColumns.scrollHorizontal();
 	}
 };
 

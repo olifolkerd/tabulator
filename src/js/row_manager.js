@@ -1026,7 +1026,7 @@ RowManager.prototype.setDisplayRows = function(displayRows, index){
 		this.displayRows[index] = displayRows;
 		output = true;
 	}else{
-		this.displayRows.push(displayRows);
+	this.displayRows.push(displayRows)
 		output = index = this.displayRows.length -1;
 	}
 
@@ -1045,6 +1045,12 @@ RowManager.prototype.getDisplayRows = function(index){
 	}
 
 };
+
+
+RowManager.prototype.getVisibleRows = function(index){
+	return this.getDisplayRows().slice(this.vDomTop, this.vDomBottom + 1);
+};
+
 
 //repeat action accross display rows
 RowManager.prototype.displayRowIterator = function(callback){
@@ -1604,6 +1610,8 @@ RowManager.prototype.redraw = function (force){
 	left = this.scrollLeft;
 
 	this.adjustTableSize();
+
+	this.table.tableWidth = this.table.element.clientWidth;
 
 	if(!force){
 

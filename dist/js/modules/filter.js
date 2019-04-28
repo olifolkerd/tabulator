@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.2.5 (c) Oliver Folkerd */
+/* Tabulator v4.2.6 (c) Oliver Folkerd */
 
 var Filter = function Filter(table) {
 
@@ -110,6 +110,8 @@ Filter.prototype.initializeColumn = function (column, value) {
 };
 
 Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
+	var _this = this;
+
 	var self = this,
 	    success = column.modules.filter.success,
 	    field = column.getField(),
@@ -243,6 +245,15 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 				editorElement.focus();
 			});
 
+			editorElement.addEventListener("focus", function (e) {
+				var left = _this.table.columnManager.element.scrollLeft;
+
+				if (left !== _this.table.rowManager.element.scrollLeft) {
+					_this.table.rowManager.scrollHorizontal(left);
+					_this.table.columnManager.scrollHorizontal(left);
+				}
+			});
+
 			//live update filters as user types
 			typingTimer = false;
 
@@ -262,7 +273,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 
 			if (column.definition.headerFilterLiveFilter !== false) {
 
-				if (!((column.definition.headerFilter === 'autocomplete' || column.definition.editor === 'autocomplete' || column.definition.headerFilter === 'tickCross' || column.definition.editor === 'tickCross') && column.definition.headerFilter === true)) {
+				if (!(column.definition.headerFilter === 'autocomplete' || column.definition.headerFilter === 'tickCross' || (column.definition.editor === 'autocomplete' || column.definition.editor === 'tickCross') && column.definition.headerFilter === true)) {
 					editorElement.addEventListener("keyup", searchTrigger);
 					editorElement.addEventListener("search", searchTrigger);
 

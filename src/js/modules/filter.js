@@ -237,6 +237,15 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 				editorElement.focus();
 			});
 
+			editorElement.addEventListener("focus", (e) => {
+				var left = this.table.columnManager.element.scrollLeft;
+
+				if(left !== this.table.rowManager.element.scrollLeft){
+					this.table.rowManager.scrollHorizontal(left);
+					this.table.columnManager.scrollHorizontal(left);
+				}
+			})
+
 			//live update filters as user types
 			typingTimer = false;
 
@@ -258,12 +267,12 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue){
 
 				if (
 					!(
-						(column.definition.headerFilter === 'autocomplete' ||
-							column.definition.editor === 'autocomplete' ||
-							column.definition.headerFilter === 'tickCross' ||
-							column.definition.editor === 'tickCross') &&
-						column.definition.headerFilter === true
-					)
+                        column.definition.headerFilter === 'autocomplete' ||
+                        column.definition.headerFilter === 'tickCross' ||
+                        ((column.definition.editor === 'autocomplete' ||
+                            column.definition.editor === 'tickCross') &&
+                            column.definition.headerFilter === true)
+                    )
 				) {
 					editorElement.addEventListener("keyup", searchTrigger);
 					editorElement.addEventListener("search", searchTrigger);

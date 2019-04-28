@@ -429,9 +429,19 @@ Edit.prototype.editors = {
 
 		input.value = cellValue;
 
+		var blurFunc = function(e){
+			onChange();
+		}
+
 		onRendered(function () {
+			//submit new value on blur
+			input.removeEventListener("blur", blurFunc);
+
 			input.focus();
 			input.style.height = "100%";
+
+			//submit new value on blur
+			input.addEventListener("blur", blurFunc);
 		});
 
 		function onChange(){
@@ -447,11 +457,6 @@ Edit.prototype.editors = {
 				cancel();
 			}
 		}
-
-		//submit new value on blur
-		input.addEventListener("blur", function(e){
-			onChange();
-		});
 
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){
@@ -780,7 +785,7 @@ Edit.prototype.editors = {
 		input.style.boxSizing = "border-box";
 		input.readOnly = true;
 
-		input.value = typeof initialValue !== "undefined" ? initialValue : "";
+		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
 		if(editorParams.values === true){
 			parseItems(getUniqueColumnValues(), initialValue);
@@ -1209,9 +1214,10 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("focus", function(e){
+			var value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 			showList();
-			input.value = initialValue;
-			filterList(initialValue, true);
+			input.value = value;
+			filterList(value, true);
 		});
 
 		//style list element

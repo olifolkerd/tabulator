@@ -177,7 +177,6 @@ ResponsiveLayout.prototype.generateCollapsedRowContent = function(row){
 		while(el.firstChild) el.removeChild(el.firstChild);
 
 		contents = this.collapseFormatter(this.generateCollapsedRowData(row));
-
 		if(contents){
 			el.appendChild(contents);
 		}
@@ -237,6 +236,13 @@ ResponsiveLayout.prototype.formatCollapsedData = function(data){
 	listContents = "";
 
 	data.forEach(function(item){
+		var div = document.createElement("div");
+
+		if(item.value instanceof Node){
+			div.appendChild(item.value);
+			item.value = div.innerHTML;
+		}
+
 		listContents += "<tr><td><strong>" + item.title + "</strong></td><td>" + item.value + "</td></tr>";
 	});
 
