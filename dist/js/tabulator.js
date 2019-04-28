@@ -14853,6 +14853,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
+		var _this34 = this;
+
 		var self = this,
 		    success = column.modules.filter.success,
 		    field = column.getField(),
@@ -14984,6 +14986,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				editorElement.addEventListener("click", function (e) {
 					e.stopPropagation();
 					editorElement.focus();
+				});
+
+				editorElement.addEventListener("focus", function (e) {
+					var left = _this34.table.columnManager.element.scrollLeft;
+
+					if (left !== _this34.table.rowManager.element.scrollLeft) {
+						_this34.table.rowManager.scrollHorizontal(left);
+						_this34.table.columnManager.scrollHorizontal(left);
+					}
 				});
 
 				//live update filters as user types
@@ -16103,7 +16114,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//quick layout to smooth horizontal scrolling
 	FrozenColumns.prototype.scrollHorizontal = function () {
-		var _this34 = this;
+		var _this35 = this;
 
 		var rows;
 
@@ -16112,7 +16123,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//layout all rows after scroll is complete
 			this.scrollEndTimer = setTimeout(function () {
-				_this34.layout();
+				_this35.layout();
 			}, 100);
 
 			rows = this.table.rowManager.getVisibleRows();
@@ -16124,7 +16135,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.layoutCalcRows();
 
 			rows.forEach(function (row) {
-				_this34.layoutRow(row);
+				_this35.layoutRow(row);
 			});
 
 			this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
@@ -16157,40 +16168,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//calculate column positions and layout headers
 	FrozenColumns.prototype.layoutColumnPosition = function (allCells) {
-		var _this35 = this;
+		var _this36 = this;
 
 		this.leftColumns.forEach(function (column, i) {
-			column.modules.frozen.margin = _this35._calcSpace(_this35.leftColumns, i) + _this35.table.columnManager.scrollLeft + "px";
+			column.modules.frozen.margin = _this36._calcSpace(_this36.leftColumns, i) + _this36.table.columnManager.scrollLeft + "px";
 
-			if (i == _this35.leftColumns.length - 1) {
+			if (i == _this36.leftColumns.length - 1) {
 				column.modules.frozen.edge = true;
 			} else {
 				column.modules.frozen.edge = false;
 			}
 
-			_this35.layoutElement(column.getElement(), column);
+			_this36.layoutElement(column.getElement(), column);
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
-					_this35.layoutElement(cell.getElement(), column);
+					_this36.layoutElement(cell.getElement(), column);
 				});
 			}
 		});
 
 		this.rightColumns.forEach(function (column, i) {
-			column.modules.frozen.margin = _this35.rightPadding - _this35._calcSpace(_this35.rightColumns, i + 1) + "px";
+			column.modules.frozen.margin = _this36.rightPadding - _this36._calcSpace(_this36.rightColumns, i + 1) + "px";
 
-			if (i == _this35.rightColumns.length - 1) {
+			if (i == _this36.rightColumns.length - 1) {
 				column.modules.frozen.edge = true;
 			} else {
 				column.modules.frozen.edge = false;
 			}
 
-			_this35.layoutElement(column.getElement(), column);
+			_this36.layoutElement(column.getElement(), column);
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
-					_this35.layoutElement(cell.getElement(), column);
+					_this36.layoutElement(cell.getElement(), column);
 				});
 			}
 		});
@@ -16230,7 +16241,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	FrozenColumns.prototype.layoutRow = function (row) {
-		var _this36 = this;
+		var _this37 = this;
 
 		var rowEl = row.getElement();
 
@@ -16241,7 +16252,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = row.getCell(column);
 
 			if (cell) {
-				_this36.layoutElement(cell.getElement(), column);
+				_this37.layoutElement(cell.getElement(), column);
 			}
 		});
 
@@ -16249,7 +16260,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = row.getCell(column);
 
 			if (cell) {
-				_this36.layoutElement(cell.getElement(), column);
+				_this37.layoutElement(cell.getElement(), column);
 			}
 		});
 	};
@@ -16493,12 +16504,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Group.prototype.createValueGroups = function () {
-		var _this37 = this;
+		var _this38 = this;
 
 		var level = this.level + 1;
 		if (this.groupManager.allowedValues && this.groupManager.allowedValues[level]) {
 			this.groupManager.allowedValues[level].forEach(function (value) {
-				_this37._createGroup(value, level);
+				_this38._createGroup(value, level);
 			});
 		}
 	};
@@ -17770,13 +17781,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this38 = this;
+		var _this39 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this38.actions[key]) {
+			if (_this39.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -19120,7 +19131,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.generatePageSizeSelectList = function () {
-		var _this39 = this;
+		var _this40 = this;
 
 		var pageSizes = [];
 
@@ -19155,7 +19166,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemEl.value = item;
 				itemEl.innerHTML = item;
 
-				_this39.pageSizeSelect.appendChild(itemEl);
+				_this40.pageSizeSelect.appendChild(itemEl);
 			});
 
 			this.pageSizeSelect.value = this.size;
@@ -19323,38 +19334,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this40 = this;
+		var _this41 = this;
 
 		return new Promise(function (resolve, reject) {
 
 			page = parseInt(page);
 
-			if (page > 0 && page <= _this40.max) {
-				_this40.page = page;
-				_this40.trigger().then(function () {
+			if (page > 0 && page <= _this41.max) {
+				_this41.page = page;
+				_this41.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this40.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this41.max + ":", page);
 				reject();
 			}
 		});
 	};
 
 	Page.prototype.setPageToRow = function (row) {
-		var _this41 = this;
+		var _this42 = this;
 
 		return new Promise(function (resolve, reject) {
 
-			var rows = _this41.table.rowManager.getDisplayRows(_this41.displayIndex - 1);
+			var rows = _this42.table.rowManager.getDisplayRows(_this42.displayIndex - 1);
 			var index = rows.indexOf(row);
 
 			if (index > -1) {
-				var page = Math.ceil((index + 1) / _this41.size);
+				var page = Math.ceil((index + 1) / _this42.size);
 
-				_this41.setPage(page).then(function () {
+				_this42.setPage(page).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -19440,12 +19451,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this42 = this;
+		var _this43 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this42.page > 1) {
-				_this42.page--;
-				_this42.trigger().then(function () {
+			if (_this43.page > 1) {
+				_this43.page--;
+				_this43.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -19459,19 +19470,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this43 = this;
+		var _this44 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this43.page < _this43.max) {
-				_this43.page++;
-				_this43.trigger().then(function () {
+			if (_this44.page < _this44.max) {
+				_this44.page++;
+				_this44.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this43.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this43.max + ":", _this43.max + 1);
+				if (!_this44.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this44.max + ":", _this44.max + 1);
 				}
 				reject();
 			}
@@ -19523,28 +19534,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this44 = this;
+		var _this45 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this44.mode) {
+			switch (_this45.mode) {
 				case "local":
-					left = _this44.table.rowManager.scrollLeft;
+					left = _this45.table.rowManager.scrollLeft;
 
-					_this44.table.rowManager.refreshActiveData("page");
-					_this44.table.rowManager.scrollHorizontal(left);
+					_this45.table.rowManager.refreshActiveData("page");
+					_this45.table.rowManager.scrollHorizontal(left);
 
-					_this44.table.options.pageLoaded.call(_this44.table, _this44.getPage());
+					_this45.table.options.pageLoaded.call(_this45.table, _this45.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this44.table.modules.ajax.blockActiveRequest();
-					_this44._getRemotePage().then(function () {
+					_this45.table.modules.ajax.blockActiveRequest();
+					_this45._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -19552,14 +19563,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this44.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this45.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this45 = this;
+		var _this46 = this;
 
 		var self = this,
 		    oldParams,
@@ -19576,33 +19587,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this45.paginationDataSentNames.page] = self.page;
+			pageParams[_this46.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this45.size) {
-				pageParams[_this45.paginationDataSentNames.size] = _this45.size;
+			if (_this46.size) {
+				pageParams[_this46.paginationDataSentNames.size] = _this46.size;
 			}
 
 			//set sort data if defined
-			if (_this45.table.options.ajaxSorting && _this45.table.modExists("sort")) {
+			if (_this46.table.options.ajaxSorting && _this46.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this45.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this46.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this45.table.options.ajaxFiltering && _this45.table.modExists("filter")) {
+			if (_this46.table.options.ajaxFiltering && _this46.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this45.paginationDataSentNames.filters] = filters;
+				pageParams[_this46.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this45.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this46.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {

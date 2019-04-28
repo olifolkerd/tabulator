@@ -110,6 +110,8 @@ Filter.prototype.initializeColumn = function (column, value) {
 };
 
 Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
+	var _this = this;
+
 	var self = this,
 	    success = column.modules.filter.success,
 	    field = column.getField(),
@@ -241,6 +243,15 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 			editorElement.addEventListener("click", function (e) {
 				e.stopPropagation();
 				editorElement.focus();
+			});
+
+			editorElement.addEventListener("focus", function (e) {
+				var left = _this.table.columnManager.element.scrollLeft;
+
+				if (left !== _this.table.rowManager.element.scrollLeft) {
+					_this.table.rowManager.scrollHorizontal(left);
+					_this.table.columnManager.scrollHorizontal(left);
+				}
 			});
 
 			//live update filters as user types
