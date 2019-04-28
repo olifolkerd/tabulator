@@ -1,7 +1,7 @@
 /* Tabulator v4.2.5 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
-  background-color: transparent;
+  background-color: #fff;
   overflow: hidden;
   font-size: 1rem;
   text-align: left;
@@ -268,14 +268,14 @@
 .tabulator .tabulator-tableHolder .tabulator-table {
   position: relative;
   display: inline-block;
-  background-color: transparent;
+  background-color: #fff;
   white-space: nowrap;
   overflow: visible;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs {
   font-weight: bold;
-  background: rgba(0, 0, 0, 0.05) !important;
+  background: #ececec !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.tabulator-calcs.tabulator-calcs-top {
@@ -322,14 +322,14 @@
   width: calc(100% + 20px);
   margin: -5px -10px 5px -10px;
   text-align: left;
-  background: rgba(13, 13, 13, 0) !important;
+  background: white !important;
   border-bottom: 1px solid #dee2e6;
   border-top: 1px solid #dee2e6;
   overflow: hidden;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row {
-  background: rgba(13, 13, 13, 0) !important;
+  background: white !important;
 }
 
 .tabulator .tabulator-footer .tabulator-calcs-holder .tabulator-row .tabulator-col-resize-handle {
@@ -471,7 +471,7 @@
 }
 
 .tabulator.table-striped .tabulator-row:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #f9f9f9;
 }
 
 .tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selected {
@@ -479,7 +479,7 @@
 }
 
 .tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selectable:hover {
-  background-color: rgba(0, 0, 0, 0.075);
+  background-color: #f5f5f5;
   cursor: pointer;
 }
 
@@ -557,7 +557,7 @@
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.table-active {
-  background: rgba(0, 0, 0, 0.075) !important;
+  background: #f5f5f5 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-primary {
@@ -593,7 +593,7 @@
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row.bg-active {
-  background: rgba(0, 0, 0, 0.075) !important;
+  background: #f5f5f5 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-primary {
@@ -629,7 +629,7 @@
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.table-active {
-  background: rgba(0, 0, 0, 0.075) !important;
+  background: #f5f5f5 !important;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-primary {
@@ -665,19 +665,19 @@
 }
 
 .tabulator .tabulator-tableHolder .tabulator-table .tabulator-row .tabulator-cell.bg-active {
-  background: rgba(0, 0, 0, 0.075) !important;
+  background: #f5f5f5 !important;
 }
 
 .tabulator-row {
   position: relative;
   box-sizing: border-box;
   min-height: 2.5rem;
-  background-color: transparent;
+  background-color: #fff;
   border-bottom: 1px solid #dee2e6;
 }
 
 .tabulator-row.tabulator-selectable:hover {
-  background-color: rgba(0, 0, 0, 0.075);
+  background-color: #f5f5f5;
   cursor: pointer;
 }
 
@@ -899,7 +899,7 @@
   width: 15px;
   border-radius: 20px;
   background: #666;
-  color: transparent;
+  color: #fff;
   font-weight: bold;
   font-size: 1.1em;
 }
