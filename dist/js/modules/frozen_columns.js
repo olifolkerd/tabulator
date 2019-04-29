@@ -80,7 +80,9 @@ FrozenColumns.prototype.scrollHorizontal = function () {
 		this.layoutCalcRows();
 
 		rows.forEach(function (row) {
-			_this.layoutRow(row);
+			if (row.type === "row") {
+				_this.layoutRow(row);
+			}
 		});
 
 		this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
@@ -168,7 +170,9 @@ FrozenColumns.prototype.layout = function () {
 
 		// if(self.table.options.dataTree){
 		self.table.rowManager.getDisplayRows().forEach(function (row) {
-			self.layoutRow(row);
+			if (row.type === "row") {
+				self.layoutRow(row);
+			}
 		});
 		// }
 
