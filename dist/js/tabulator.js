@@ -1894,10 +1894,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (contents instanceof Node) {
 
-						this.element.appendChild(contents);
+						el.appendChild(contents);
 					} else {
 
-						this.element.innerHTML = "";
+						el.innerHTML = "";
 
 						console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
 					}
@@ -1908,13 +1908,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				case "null":
 
-					this.element.innerHTML = "";
+					el.innerHTML = "";
 
 					break;
 
 				default:
 
-					this.element.innerHTML = contents;
+					el.innerHTML = contents;
 
 			}
 		} else {
