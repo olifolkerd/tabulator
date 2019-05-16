@@ -555,6 +555,10 @@ Edit.prototype.editors = {
 		currentItem = {},
 		blurable = true;
 
+		if (_typeof(editorParams) === "string") {
+			editorParams = JSON.parse(editorParams);
+		}
+
 		if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
 			console.warn("DEPRECATION WANRING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
 			editorParams = {values:editorParams};
