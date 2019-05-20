@@ -4,7 +4,7 @@
   "description": "Interactive table generation JavaScript library",
   "main": "dist/js/tabulator.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -59,6 +59,7 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-uglify": "^2.1.2",
     "gulp-util": "^3.0.8",
+    "jest": "^24.8.0",
     "jshint": "^2.9.4"
   }
 }
