@@ -344,6 +344,10 @@ RowManager.prototype._wipeElements = function(){
 }
 
 RowManager.prototype.deleteRow = function(row, blockRedraw){
+	//WJF - Allow global flag to block redraw
+	if( this.table.blockRedraw === true ){
+		blockRedraw = true;
+	}
 	var allIndex = this.rows.indexOf(row),
 	activeIndex = this.activeRows.indexOf(row);
 
@@ -367,25 +371,33 @@ RowManager.prototype.deleteRow = function(row, blockRedraw){
 
 	if(!blockRedraw){
 		this.reRenderInPosition();
-	}
 
-	this.table.options.rowDeleted.call(this.table, row.getComponent());
+		//WJF - Moved other computations into the ignore block for performance
+		this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited.call(this.table, this.getData());
-
-	if(this.table.options.groupBy && this.table.modExists("groupRows")){
-		this.table.modules.groupRows.updateGroupRows(true);
-	}else if(this.table.options.pagination && this.table.modExists("page")){
-		this.refreshActiveData(false, false, true);
-	}else{
-		if(this.table.options.pagination && this.table.modExists("page")){
-			this.refreshActiveData("page");
+		this.table.options.dataEdited.call(this.table, this.getData());
+	
+		if(this.table.options.groupBy && this.table.modExists("groupRows")){
+			this.table.modules.groupRows.updateGroupRows(true);
+		}else if(this.table.options.pagination && this.table.modExists("page")){
+			this.refreshActiveData(false, false, true);
+		}else{
+			if(this.table.options.pagination && this.table.modExists("page")){
+				this.refreshActiveData("page");
+			}
 		}
+
 	}
+
+
 
 };
 
 RowManager.prototype.addRow = function(data, pos, index, blockRedraw){
+	//WJF - Allow global flag to block redraw
+	if( this.table.blockRedraw === true ){
+		blockRedraw = true;
+	}
 
 	var row = this.addRowActual(data, pos, index, blockRedraw);
 
