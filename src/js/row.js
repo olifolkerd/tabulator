@@ -534,20 +534,50 @@ Row.prototype.updateData = function(data){
 			this.table.modules.reactiveData.unblock();
 		}
 
-		//update affected cells only
+		//update affected cells only. First build an array(cellNameArray) of cell
+		//names from the row data, descending down into any nested data and
+		//building cell names for those in dotted notion name.name. Then loop over
+		//the array and find cell for each name. Split cell name, if splits into more
+		//then one value use both names to look up value in row data. Otherwise
+		//use just the single name. Test to see if data has changed, if so update
+		//cell and render.
+		var cellNameArray = [];
+		var found = false;
 		for (var attrname in data) {
-			let cell = this.getCell(attrname);
+			{if (data[attrname].constructor == Object ){
+				for (var nestedAtt in data[attrname]){
+					cellNameArray.push(attrname + "."  + nestedAtt);
+				}
+				found = true;
+			};
+			if (!found) {
+				cellNameArray.push(attrname);
+				}
+			found = false;
+			}
+		}
 
-			if(cell){
-				if(cell.getValue() != data[attrname]){
-					cell.setValueProcessData(data[attrname]);
+		cellNameArray.forEach(function(cellName, idx){
+			var cell = this.getCell(cellName);
 
-					if(visible){
+			if (cell) {
+				let cellV = cellName.split(".");
+				if (cellV.length > 1) {
+					var dataValue = data[cellV[0]][cellV[1]];
+				} else {
+					var dataValue = data[cellV[0]];
+				}
+				if (cell.getValue() != dataValue) {
+					cell.setValueProcessData(dataValue);
+
+					if (visible) {
+
 						cell.cellRendered();
+						}
 					}
 				}
 			}
-		}
+		);
 
 		//Partial reinitialization if visible
 		if(visible){
