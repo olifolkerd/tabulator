@@ -101,6 +101,7 @@ Tabulator.prototype.defaultOptions = {
 
 	printAsHtml:false, //enable print as html
 	printCopyStyle:true, //enable print as html styling
+	printVisibleRows:true, //restrict print to visible rows only
 	printConfig:{}, //print config options
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom

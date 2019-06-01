@@ -1047,8 +1047,42 @@ RowManager.prototype.getDisplayRows = function(index){
 };
 
 
-RowManager.prototype.getVisibleRows = function(index){
-	return this.getDisplayRows().slice(this.vDomTop, this.vDomBottom + 1);
+RowManager.prototype.getVisibleRows = function(viewable){
+	var topEdge = this.element.scrollTop,
+	bottomEdge = this.element.clientHeight + topEdge,
+	topFound = false,
+	topRow = 0,
+	bottomRow = 0,
+	rows = this.getDisplayRows();
+
+	if(viewable){
+
+		this.getDisplayRows();
+
+		for(var i = this.vDomTop; i <= this.vDomBottom; i++){
+
+			if(rows[i]){
+				if(!topFound){
+					if((topEdge - rows[i].getElement().offsetTop) >= 0){
+						topRow = i;
+					}else{
+						topFound = true;
+					}
+				}else{
+					if(bottomEdge - rows[i].getElement().offsetTop >= 0){
+						bottomRow = i;
+					}else{
+						break;
+					}
+				}
+			}
+		}
+	}else{
+		topRow = this.vDomTop;
+		bottomRow = this.vDomBottom;
+	}
+
+	return rows.slice(topRow, bottomRow + 1);
 };
 
 

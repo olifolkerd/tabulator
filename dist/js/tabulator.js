@@ -3903,9 +3903,52 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	RowManager.prototype.getVisibleRows = function (index) {
+	RowManager.prototype.getVisibleRows = function (viewable) {
 
-		return this.getDisplayRows().slice(this.vDomTop, this.vDomBottom + 1);
+		var topEdge = this.element.scrollTop,
+		    bottomEdge = this.element.clientHeight + topEdge,
+		    topFound = false,
+		    topRow = 0,
+		    bottomRow = 0,
+		    rows = this.getDisplayRows();
+
+		if (viewable) {
+
+			this.getDisplayRows();
+
+			for (var i = this.vDomTop; i <= this.vDomBottom; i++) {
+
+				if (rows[i]) {
+
+					if (!topFound) {
+
+						if (topEdge - rows[i].getElement().offsetTop >= 0) {
+
+							topRow = i;
+						} else {
+
+							topFound = true;
+						}
+					} else {
+
+						if (bottomEdge - rows[i].getElement().offsetTop >= 0) {
+
+							bottomRow = i;
+						} else {
+
+							break;
+						}
+					}
+				}
+			}
+		} else {
+
+			topRow = this.vDomTop;
+
+			bottomRow = this.vDomBottom;
+		}
+
+		return rows.slice(topRow, bottomRow + 1);
 	};
 
 	//repeat action accross display rows
@@ -6880,6 +6923,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		printAsHtml: false, //enable print as html
 
 		printCopyStyle: true, //enable print as html styling
+
+		printVisibleRows: true, //restrict print to visible rows only
 
 		printConfig: {}, //print config options
 
@@ -17726,13 +17771,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.cloneTableStyle = true;
 	};
 
-	HtmlTableExport.prototype.genereateTable = function (config, style) {
+	HtmlTableExport.prototype.genereateTable = function (config, style, visible) {
 
 		this.cloneTableStyle = style;
 		this.config = config || {};
 
 		var headers = this.generateHeaderElements();
-		var body = this.generateBodyElements();
+		var body = this.generateBodyElements(visible);
 
 		var table = document.createElement("table");
 		table.classList.add("tabulator-print-table");
@@ -17881,7 +17926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return headerEl;
 	};
 
-	HtmlTableExport.prototype.generateBodyElements = function () {
+	HtmlTableExport.prototype.generateBodyElements = function (visible) {
 		var _this42 = this;
 
 		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow;
@@ -17903,7 +17948,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var bodyEl = document.createElement("tbody");
 
-		var rows = this.table.rowManager.getDisplayRows();
+		var rows = visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows();
 		var columns = this.table.columnManager.columnsByIndex;
 
 		rows = rows.filter(function (row) {
@@ -18015,10 +18060,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return bodyEl;
 	};
 
-	HtmlTableExport.prototype.getHtml = function (active, style, config) {
+	HtmlTableExport.prototype.getHtml = function (visible, style, config) {
 		var holder = document.createElement("div");
 
-		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, active));
+		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible));
 
 		return holder.innerHTML;
 	};
@@ -18029,6 +18074,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var lookup = {
 				"background-color": "backgroundColor",
 				"color": "fontColor",
+				"width": "width",
 				"font-weight": "fontWeight",
 				"font-family": "fontFamily",
 				"font-size": "fontSize",
@@ -20229,7 +20275,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Print.prototype.initialize = function () {
-
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-table");
 
@@ -20238,10 +20283,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Print.prototype.replaceTable = function () {
-
 		this.element.innerHTML = "";
-		console.log("con", this.table.options.printConfig);
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle));
+
+		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows));
 
 		this.table.element.style.display = "none";
 

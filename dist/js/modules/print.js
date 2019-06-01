@@ -6,7 +6,6 @@ var Print = function Print(table) {
 };
 
 Print.prototype.initialize = function () {
-
 	this.element = document.createElement("div");
 	this.element.classList.add("tabulator-print-table");
 
@@ -15,10 +14,9 @@ Print.prototype.initialize = function () {
 };
 
 Print.prototype.replaceTable = function () {
-
 	this.element.innerHTML = "";
-	console.log("con", this.table.options.printConfig);
-	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle));
+
+	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows));
 
 	this.table.element.style.display = "none";
 
