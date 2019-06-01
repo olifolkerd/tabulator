@@ -16,7 +16,7 @@ Print.prototype.replaceTable = function(){
 
 	this.element.innerHTML = "";
 
-	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable());
+	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable({}, this.table.options.printCopyStyle));
 
 	this.table.element.style.display = "none";
 

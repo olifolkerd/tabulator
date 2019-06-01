@@ -1016,3 +1016,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		font-weight:bold;
 	}
 }
+
+.tabulator-print-table{
+	border-collapse: collapse;
+}

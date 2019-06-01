@@ -829,3 +829,7 @@
   color: #363636;
   font-weight: bold;
 }
+
+.tabulator-print-table {
+  border-collapse: collapse;
+}

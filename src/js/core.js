@@ -99,7 +99,8 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeRowExpanded:function(){}, //row has been expanded
 	dataTreeRowCollapsed:function(){}, //row has been collapsed
 
-	printStyling:false, //enable print styling
+	printAsHtml:false, //enable print as html
+	printCopyStyle:true, //enable print as html styling
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
 
@@ -161,6 +162,8 @@ Tabulator.prototype.defaultOptions = {
 	groupValues:false,
 
 	groupHeader:false, //header generation function
+
+	htmlOutputConfig:false, //html outypu config
 
 	movableColumns:false, //enable movable columns
 
@@ -539,7 +542,7 @@ Tabulator.prototype._buildElement = function(){
 		mod.clipboard.initialize();
 	}
 
-	if(options.printStyling && this.modExists("print")){
+	if(options.printAsHtml && this.modExists("print")){
 		mod.print.initialize();
 	}
 

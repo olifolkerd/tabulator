@@ -1052,3 +1052,7 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 		font-weight:bold;
 	}
 }
+
+.tabulator-print-table{
+	border-collapse: collapse;
+}

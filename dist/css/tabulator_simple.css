@@ -786,3 +786,7 @@
   color: #333;
   font-weight: bold;
 }
+
+.tabulator-print-table {
+  border-collapse: collapse;
+}

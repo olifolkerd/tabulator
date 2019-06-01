@@ -981,3 +981,7 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 		font-weight:bold;
 	}
 }
+
+.tabulator-print-table{
+	border-collapse: collapse;
+}

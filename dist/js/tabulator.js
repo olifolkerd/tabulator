@@ -6877,7 +6877,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 
 
-		printStyling: false, //enable print styling
+		printAsHtml: false, //enable print as html
+
+		printCopyStyle: true, //enable print as html styling
 
 
 		addRowPos: "bottom", //position to insert blank rows, top|bottom
@@ -6987,6 +6989,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		groupValues: false,
 
 		groupHeader: false, //header generation function
+
+
+		htmlOutputConfig: false, //html outypu config
 
 
 		movableColumns: false, //enable movable columns
@@ -7513,7 +7518,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			mod.clipboard.initialize();
 		}
 
-		if (options.printStyling && this.modExists("print")) {
+		if (options.printAsHtml && this.modExists("print")) {
 
 			mod.print.initialize();
 		}
@@ -17716,15 +17721,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var HtmlTableExport = function HtmlTableExport(table) {
 		this.table = table; //hold Tabulator object
 		this.config = {};
+		this.cloneTableStyle = true;
 	};
 
-	HtmlTableExport.prototype.genereateTable = function (config) {
+	HtmlTableExport.prototype.genereateTable = function (config, style) {
+
+		this.cloneTableStyle = style;
+
 		var headers = this.generateHeaderElements();
 		var body = this.generateBodyElements();
 
 		var table = document.createElement("table");
+		table.classList.add("tabulator-print-table");
 		table.appendChild(headers);
 		table.appendChild(body);
+
+		this.mapElementStyles(this.table.element, table, ["border-top", "border-left", "border-right", "border-bottom"]);
 
 		return table;
 	};
@@ -17829,6 +17841,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	HtmlTableExport.prototype.generateHeaderElements = function () {
+		var _this41 = this;
 
 		var headerEl = document.createElement("thead");
 
@@ -17837,6 +17850,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		rows.forEach(function (row) {
 			var rowEl = document.createElement("tr");
 
+			_this41.mapElementStyles(_this41.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+
 			row.forEach(function (column) {
 				var cellEl = document.createElement("th");
 
@@ -17844,6 +17859,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				cellEl.rowSpan = column.height;
 
 				cellEl.innerHTML = column.column.definition.title;
+
+				_this41.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+				_this41.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+
+				if (column.column.parent) {
+					_this41.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
+				}
 
 				rowEl.appendChild(cellEl);
 			});
@@ -17855,15 +17877,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	HtmlTableExport.prototype.generateBodyElements = function () {
+		var _this42 = this;
+
+		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow;
+
+		//lookup row styles
+		if (this.cloneTableStyle && window.getComputedStyle) {
+			oddRow = this.table.element.querySelector(".tabulator-row-odd:not(.tabulator-group):not(.tabulator-calcs)");
+			evenRow = this.table.element.querySelector(".tabulator-row-even:not(.tabulator-group):not(.tabulator-calcs)");
+			calcRow = this.table.element.querySelector(".tabulator-row.tabulator-calcs");
+			firstRow = this.table.element.querySelector(".tabulator-row:not(.tabulator-group):not(.tabulator-calcs)");
+			firstGroup = this.table.element.getElementsByClassName("tabulator-group")[0];
+
+			if (firstRow) {
+				styleCells = firstRow.getElementsByClassName("tabulator-cell");
+				firstCell = styleCells[0];
+				lastCell = styleCells[styleCells.length - 1];
+			}
+		}
 
 		var bodyEl = document.createElement("tbody");
 
 		var rows = this.table.rowManager.getDisplayRows();
 		var columns = this.table.columnManager.columnsByIndex;
 
-		rows.forEach(function (row) {
-			var rowEl = document.createElement("tr");
+		rows.forEach(function (row, i) {
 			var rowData = row.getData();
+
+			var rowEl = document.createElement("tr");
+			rowEl.classList.add("tabulator-print-table-row");
 
 			switch (row.type) {
 				case "group":
@@ -17871,33 +17913,78 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					cellEl.colSpan = columns.length;
 					cellEl.innerHTML = row.key;
 
+					rowEl.classList.add("tabulator-print-table-group");
+
+					_this42.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					_this42.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 					rowEl.appendChild(cellEl);
 					break;
 
 				case "row":
+				case "calc":
 					columns.forEach(function (column) {
 						var cellEl = document.createElement("td");
 
 						var value = column.getFieldValue(rowData);
 
-						switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
-							case "object":
-								value = JSON.stringify(value);
-								break;
+						var cellWrapper = {
+							getValue: function getValue() {
+								return value;
+							},
+							getField: function getField() {
+								return column.definition.field;
+							},
+							getElement: function getElement() {
+								return cellEl;
+							},
+							getColumn: function getColumn() {
+								return column.getComponent();
+							},
+							getRow: function getRow() {
+								return {
+									normalizeHeight: function normalizeHeight() {}
+								};
+							},
+							getComponent: function getComponent() {
+								return cellWrapper;
+							},
+							column: column
+						};
 
-							case "undefined":
-							case "null":
-								value = "";
-								break;
+						if (_this42.table.modExists("format")) {
+							value = _this42.table.modules.format.formatValue(cellWrapper);
+						} else {
+							switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
+								case "object":
+									value = JSON.stringify(value);
+									break;
 
-							default:
-								value = value;
+								case "undefined":
+								case "null":
+									value = "";
+									break;
+
+								default:
+									value = value;
+							}
 						}
 
-						cellEl.innerHTML = value;
+						if (value instanceof Node) {
+							cellEl.appendChild(value);
+						} else {
+							cellEl.innerHTML = value;
+						}
+
+						if (firstCell) {
+							_this42.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+						}
 
 						rowEl.appendChild(cellEl);
 					});
+
+					styleRow = row.type == "calc" ? calcRow : i % 2 && evenRow ? evenRow : oddRow;
+
+					_this42.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 					break;
 			}
 
@@ -17913,6 +18000,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		holder.appendChild(this.genereateTable());
 
 		return holder.innerHTML;
+	};
+
+	HtmlTableExport.prototype.mapElementStyles = function (from, to, props) {
+		if (this.cloneTableStyle && from && to) {
+
+			var lookup = {
+				"background-color": "backgroundColor",
+				"color": "fontColor",
+				"font-weight": "fontWeight",
+				"font-family": "fontFamily",
+				"font-size": "fontSize",
+				"text-align": "textAlign",
+				"border-top": "borderTop",
+				"border-left": "borderLeft",
+				"border-right": "borderRight",
+				"border-bottom": "borderBottom",
+				"padding-top": "paddingTop",
+				"padding-left": "paddingLeft",
+				"padding-right": "paddingRight",
+				"padding-bottom": "paddingBottom"
+			};
+
+			if (window.getComputedStyle) {
+				var fromStyle = window.getComputedStyle(from);
+
+				props.forEach(function (prop) {
+					to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
+				});
+			}
+		}
 	};
 
 	Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
@@ -17950,13 +18067,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this41 = this;
+		var _this43 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this41.actions[key]) {
+			if (_this43.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -19300,7 +19417,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.generatePageSizeSelectList = function () {
-		var _this42 = this;
+		var _this44 = this;
 
 		var pageSizes = [];
 
@@ -19335,7 +19452,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemEl.value = item;
 				itemEl.innerHTML = item;
 
-				_this42.pageSizeSelect.appendChild(itemEl);
+				_this44.pageSizeSelect.appendChild(itemEl);
 			});
 
 			this.pageSizeSelect.value = this.size;
@@ -19503,38 +19620,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this43 = this;
+		var _this45 = this;
 
 		return new Promise(function (resolve, reject) {
 
 			page = parseInt(page);
 
-			if (page > 0 && page <= _this43.max) {
-				_this43.page = page;
-				_this43.trigger().then(function () {
+			if (page > 0 && page <= _this45.max) {
+				_this45.page = page;
+				_this45.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this43.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this45.max + ":", page);
 				reject();
 			}
 		});
 	};
 
 	Page.prototype.setPageToRow = function (row) {
-		var _this44 = this;
+		var _this46 = this;
 
 		return new Promise(function (resolve, reject) {
 
-			var rows = _this44.table.rowManager.getDisplayRows(_this44.displayIndex - 1);
+			var rows = _this46.table.rowManager.getDisplayRows(_this46.displayIndex - 1);
 			var index = rows.indexOf(row);
 
 			if (index > -1) {
-				var page = Math.ceil((index + 1) / _this44.size);
+				var page = Math.ceil((index + 1) / _this46.size);
 
-				_this44.setPage(page).then(function () {
+				_this46.setPage(page).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -19620,12 +19737,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this45 = this;
+		var _this47 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this45.page > 1) {
-				_this45.page--;
-				_this45.trigger().then(function () {
+			if (_this47.page > 1) {
+				_this47.page--;
+				_this47.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -19639,19 +19756,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this46 = this;
+		var _this48 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this46.page < _this46.max) {
-				_this46.page++;
-				_this46.trigger().then(function () {
+			if (_this48.page < _this48.max) {
+				_this48.page++;
+				_this48.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this46.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this46.max + ":", _this46.max + 1);
+				if (!_this48.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this48.max + ":", _this48.max + 1);
 				}
 				reject();
 			}
@@ -19703,28 +19820,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this47 = this;
+		var _this49 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this47.mode) {
+			switch (_this49.mode) {
 				case "local":
-					left = _this47.table.rowManager.scrollLeft;
+					left = _this49.table.rowManager.scrollLeft;
 
-					_this47.table.rowManager.refreshActiveData("page");
-					_this47.table.rowManager.scrollHorizontal(left);
+					_this49.table.rowManager.refreshActiveData("page");
+					_this49.table.rowManager.scrollHorizontal(left);
 
-					_this47.table.options.pageLoaded.call(_this47.table, _this47.getPage());
+					_this49.table.options.pageLoaded.call(_this49.table, _this49.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this47.table.modules.ajax.blockActiveRequest();
-					_this47._getRemotePage().then(function () {
+					_this49.table.modules.ajax.blockActiveRequest();
+					_this49._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -19732,14 +19849,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this47.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this49.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this48 = this;
+		var _this50 = this;
 
 		var self = this,
 		    oldParams,
@@ -19756,33 +19873,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this48.paginationDataSentNames.page] = self.page;
+			pageParams[_this50.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this48.size) {
-				pageParams[_this48.paginationDataSentNames.size] = _this48.size;
+			if (_this50.size) {
+				pageParams[_this50.paginationDataSentNames.size] = _this50.size;
 			}
 
 			//set sort data if defined
-			if (_this48.table.options.ajaxSorting && _this48.table.modExists("sort")) {
+			if (_this50.table.options.ajaxSorting && _this50.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this48.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this50.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this48.table.options.ajaxFiltering && _this48.table.modExists("filter")) {
+			if (_this50.table.options.ajaxFiltering && _this50.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this48.paginationDataSentNames.filters] = filters;
+				pageParams[_this50.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this48.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this50.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
@@ -20103,7 +20220,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.element.innerHTML = "";
 
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable());
+		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable({}, this.table.options.printCopyStyle));
 
 		this.table.element.style.display = "none";
 

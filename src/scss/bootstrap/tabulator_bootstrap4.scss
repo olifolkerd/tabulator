@@ -1229,3 +1229,7 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		font-weight:bold;
 	}
 }
+
+.tabulator-print-table{
+	border-collapse: collapse;
+}

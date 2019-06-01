@@ -979,3 +979,7 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 		font-weight:bold;
 	}
 }
+
+.tabulator-print-table{
+	border-collapse: collapse;
+}

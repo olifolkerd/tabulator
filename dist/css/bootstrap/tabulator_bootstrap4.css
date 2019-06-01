@@ -1027,3 +1027,7 @@
   padding-top: 6px;
   font-weight: bold;
 }
+
+.tabulator-print-table {
+  border-collapse: collapse;
+}
