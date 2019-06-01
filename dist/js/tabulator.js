@@ -7843,11 +7843,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//get table html
 
-	Tabulator.prototype.getHtml = function (active) {
+	Tabulator.prototype.getHtml = function (active, style, config) {
 
 		if (this.modExists("htmlTableExport", true)) {
 
-			return this.modules.htmlTableExport.getHtml(active);
+			return this.modules.htmlTableExport.getHtml(active, style, config);
 		}
 	};
 
@@ -18015,10 +18015,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return bodyEl;
 	};
 
-	HtmlTableExport.prototype.getHtml = function (active) {
+	HtmlTableExport.prototype.getHtml = function (active, style, config) {
 		var holder = document.createElement("div");
 
-		holder.appendChild(this.genereateTable());
+		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, active));
 
 		return holder.innerHTML;
 	};

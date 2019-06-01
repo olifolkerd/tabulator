@@ -294,10 +294,10 @@ HtmlTableExport.prototype.generateBodyElements = function(){
 };
 
 
-HtmlTableExport.prototype.getHtml = function(active){
+HtmlTableExport.prototype.getHtml = function(active, style, config){
 	var holder = document.createElement("div");
 
-	holder.appendChild(this.genereateTable());
+	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, active));
 
 	return holder.innerHTML;
 };

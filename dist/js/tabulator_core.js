@@ -6039,9 +6039,9 @@ Tabulator.prototype.searchData = function (field, type, value) {
 };
 
 //get table html
-Tabulator.prototype.getHtml = function (active) {
+Tabulator.prototype.getHtml = function (active, style, config) {
 	if (this.modExists("htmlTableExport", true)) {
-		return this.modules.htmlTableExport.getHtml(active);
+		return this.modules.htmlTableExport.getHtml(active, style, config);
 	}
 };
 
