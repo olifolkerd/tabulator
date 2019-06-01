@@ -5,7 +5,6 @@ var HtmlTableExport = function(table){
 };
 
 HtmlTableExport.prototype.genereateTable = function(config, style, visible){
-
 	this.cloneTableStyle = style;
 	this.config = config || {};
 

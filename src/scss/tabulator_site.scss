@@ -982,6 +982,18 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 	}
 }
 
+// Table print styling
+
+.tabulator-print-fullscreen{
+	position: absolute;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+
+	z-index: 10000;
+}
+
 .tabulator-print-table{
 	border-collapse: collapse;
 }

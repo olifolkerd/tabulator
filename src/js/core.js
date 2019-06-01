@@ -781,9 +781,16 @@ Tabulator.prototype.searchData = function(field, type, value){
 };
 
 //get table html
-Tabulator.prototype.getHtml = function(active, style, config){
+Tabulator.prototype.getHtml = function(visible, style, config){
 	if(this.modExists("htmlTableExport", true)){
-		return this.modules.htmlTableExport.getHtml(active, style, config);
+		return this.modules.htmlTableExport.getHtml(visible, style, config);
+	}
+};
+
+//get print html
+Tabulator.prototype.print = function(visible, style, config){
+	if(this.modExists("print", true)){
+		return this.modules.print.printFullscreen(visible, style, config);
 	}
 };
 
