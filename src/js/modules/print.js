@@ -15,8 +15,8 @@ Print.prototype.initialize = function(){
 Print.prototype.replaceTable = function(){
 
 	this.element.innerHTML = "";
-
-	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable({}, this.table.options.printCopyStyle));
+console.log("con", this.table.options.printConfig)
+	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle));
 
 	this.table.element.style.display = "none";
 

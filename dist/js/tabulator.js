@@ -6881,6 +6881,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		printCopyStyle: true, //enable print as html styling
 
+		printConfig: {}, //print config options
+
 
 		addRowPos: "bottom", //position to insert blank rows, top|bottom
 
@@ -17727,6 +17729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	HtmlTableExport.prototype.genereateTable = function (config, style) {
 
 		this.cloneTableStyle = style;
+		this.config = config || {};
 
 		var headers = this.generateHeaderElements();
 		var body = this.generateBodyElements();
@@ -17746,7 +17749,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var output = [];
 
-		this.table.columnManager.columns.forEach(function (column) {
+		var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+
+		columns.forEach(function (column) {
 			var colData = _this39.processColumnGroup(column);
 
 			if (colData) {
@@ -17901,6 +17906,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var rows = this.table.rowManager.getDisplayRows();
 		var columns = this.table.columnManager.columnsByIndex;
 
+		rows = rows.filter(function (row) {
+			switch (row.type) {
+				case "group":
+					return _this42.config.rowGroups !== false;
+					break;
+
+				case "calc":
+					return _this42.config.columnCalcs !== false;
+					break;
+			}
+
+			return true;
+		});
+
 		rows.forEach(function (row, i) {
 			var rowData = row.getData();
 
@@ -17920,8 +17939,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					rowEl.appendChild(cellEl);
 					break;
 
-				case "row":
 				case "calc":
+					rowEl.classList.add("tabulator-print-table-calcs");
+
+				case "row":
 					columns.forEach(function (column) {
 						var cellEl = document.createElement("td");
 
@@ -20219,8 +20240,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Print.prototype.replaceTable = function () {
 
 		this.element.innerHTML = "";
-
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable({}, this.table.options.printCopyStyle));
+		console.log("con", this.table.options.printConfig);
+		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle));
 
 		this.table.element.style.display = "none";
 

@@ -7,6 +7,7 @@ var HtmlTableExport = function(table){
 HtmlTableExport.prototype.genereateTable = function(config, style){
 
 	this.cloneTableStyle = style;
+	this.config = config || {};
 
 	var headers = this.generateHeaderElements();
 	var body = this.generateBodyElements();
@@ -25,7 +26,9 @@ HtmlTableExport.prototype.genereateTable = function(config, style){
 HtmlTableExport.prototype.generateColumnGroupHeaders = function(){
 	var output = [];
 
-	this.table.columnManager.columns.forEach((column) => {
+	var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+
+	columns.forEach((column) => {
 		var colData = this.processColumnGroup(column);
 
 		if(colData){
@@ -177,6 +180,21 @@ HtmlTableExport.prototype.generateBodyElements = function(){
 	var rows = this.table.rowManager.getDisplayRows();
 	var columns = this.table.columnManager.columnsByIndex;
 
+	rows = rows.filter((row) => {
+		switch(row.type){
+			case "group":
+			return this.config.rowGroups !== false;
+			break;
+
+			case "calc":
+			return this.config.columnCalcs !== false;
+			break;
+		}
+
+		return true;
+	});
+
+
 	rows.forEach((row, i) => {
 		var rowData = row.getData();
 
@@ -198,6 +216,7 @@ HtmlTableExport.prototype.generateBodyElements = function(){
 
 			case "calc" :
 			rowEl.classList.add("tabulator-print-table-calcs");
+
 			case "row" :
 			columns.forEach((column) =>{
 				var cellEl = document.createElement("td");
