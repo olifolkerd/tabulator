@@ -147,7 +147,11 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 
 			cellEl.innerHTML = column.column.definition.title;
 
-			_this3.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			if (_this3.cloneTableStyle) {
+				cellEl.style.boxSizing = "border-box";
+			}
+
+			_this3.mapElementStyles(column.column.getElement(), cellEl, ["width", "text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 			_this3.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 
 			if (column.column.parent) {
@@ -279,7 +283,7 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 					}
 
 					if (firstCell) {
-						_this4.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+						_this4.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
 					}
 
 					rowEl.appendChild(cellEl);
