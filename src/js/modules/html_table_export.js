@@ -196,8 +196,9 @@ HtmlTableExport.prototype.generateBodyElements = function(){
 			rowEl.appendChild(cellEl);
 			break;
 
-			case "row" :
 			case "calc" :
+			rowEl.classList.add("tabulator-print-table-calcs");
+			case "row" :
 			columns.forEach((column) =>{
 				var cellEl = document.createElement("td");
 
