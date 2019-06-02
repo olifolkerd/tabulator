@@ -32,6 +32,9 @@ Print.prototype.cleanup = function(){
 };
 
 Print.prototype.printFullscreen = function(visible, style, config){
+	var scrollX = window.scrollX;
+	var scrollY = window.scrollY;
+
 	this.manualBlock = true;
 
 	this.element = document.createElement("div");
@@ -45,6 +48,8 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	window.print();
 
 	this.cleanup();
+
+	window.scrollTo(scrollX, scrollY);
 
 	this.manualBlock = false;
 };

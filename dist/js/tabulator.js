@@ -20311,6 +20311,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Print.prototype.cleanup = function () {
+		document.body.classList.remove("tabulator-print-fullscreen-hide");
+
 		if (this.element && this.element.parentNode) {
 			this.element.parentNode.removeChild(this.element);
 			this.table.element.style.display = "";
@@ -20318,6 +20320,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Print.prototype.printFullscreen = function (visible, style, config) {
+		var scrollX = window.scrollX;
+		var scrollY = window.scrollY;
+
 		this.manualBlock = true;
 
 		this.element = document.createElement("div");
@@ -20325,11 +20330,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible));
 
+		document.body.classList.add("tabulator-print-fullscreen-hide");
 		document.body.appendChild(this.element);
 
 		window.print();
 
 		this.cleanup();
+
+		window.scrollTo(scrollX, scrollY);
 
 		this.manualBlock = false;
 	};

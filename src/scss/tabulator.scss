@@ -986,6 +986,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	z-index: 10000;
 }
 
+body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
+	display:none !important;
+}
+
 .tabulator-print-table{
 	border-collapse: collapse;
 }
