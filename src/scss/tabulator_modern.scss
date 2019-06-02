@@ -1029,6 +1029,11 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	z-index: 10000;
 }
 
+body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
+	display:none !important;
+}
+
 .tabulator-print-table{
 	border-collapse: collapse;
 }
+

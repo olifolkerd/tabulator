@@ -23,6 +23,8 @@ Print.prototype.replaceTable = function(){
 };
 
 Print.prototype.cleanup = function(){
+	document.body.classList.remove("tabulator-print-fullscreen-hide");
+
 	if(this.element && this.element.parentNode){
 		this.element.parentNode.removeChild(this.element);
 		this.table.element.style.display = "";
@@ -37,6 +39,7 @@ Print.prototype.printFullscreen = function(visible, style, config){
 
 	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible));
 
+	document.body.classList.add("tabulator-print-fullscreen-hide");
 	document.body.appendChild(this.element);
 
 	window.print();

@@ -799,6 +799,10 @@
   z-index: 10000;
 }
 
+body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
+  display: none !important;
+}
+
 .tabulator-print-table {
   border-collapse: collapse;
 }
