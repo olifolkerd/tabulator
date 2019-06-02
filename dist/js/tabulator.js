@@ -1277,6 +1277,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.visible = true; //default visible state
 
 
+		this._mapDepricatedFunctionality();
+
 		//initialize column
 
 		if (def.columns) {
@@ -1364,6 +1366,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else {
 
 			this.registerColumnPosition(this);
+		}
+	};
+
+	Column.prototype._mapDepricatedFunctionality = function () {
+
+		if (typeof this.definition.hideInHtml !== "undefined") {
+
+			this.definition.htmlOutput = !this.definition.hideInHtml;
+
+			console.log("hideInHtml column definition property is depricated, you should now use htmlOutput");
 		}
 	};
 
@@ -2544,7 +2556,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	Column.prototype.defaultOptionList = ["title", "field", "visible", "align", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter"];
+	Column.prototype.defaultOptionList = ["title", "field", "visible", "align", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter"];
 
 	//////////////// Event Bindings /////////////////
 
@@ -17779,11 +17791,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.table = table; //hold Tabulator object
 		this.config = {};
 		this.cloneTableStyle = true;
+		this.colVisProp = "";
 	};
 
-	HtmlTableExport.prototype.genereateTable = function (config, style, visible) {
+	HtmlTableExport.prototype.genereateTable = function (config, style, visible, colVisProp) {
 		this.cloneTableStyle = style;
 		this.config = config || {};
+		this.colVisProp = colVisProp;
 
 		var headers = this.generateHeaderElements();
 		var body = this.generateBodyElements(visible);
@@ -17851,7 +17865,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				return false;
 			}
 		} else {
-			if (column.field && column.visible) {
+			if (column.field && this.columnVisCheck(column)) {
 				groupData.width = 1;
 			} else {
 				return false;
@@ -17906,10 +17920,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var rows = this.groupHeadersToRows(this.generateColumnGroupHeaders());
 
-		if (rows.length > 1000) {
-			console.warn("It may take a long time to render an HTML table with more than 1000 rows");
-		}
-
 		rows.forEach(function (row) {
 			var rowEl = document.createElement("tr");
 
@@ -17927,8 +17937,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					cellEl.style.boxSizing = "border-box";
 				}
 
-				_this41.mapElementStyles(column.column.getElement(), cellEl, ["width", "text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+				_this41.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 				_this41.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+
+				if (column.column.visible) {
+					_this41.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
+				} else {
+					if (column.column.definition.width) {
+						cellEl.style.width = column.column.definition.width + "px";
+					}
+				}
 
 				if (column.column.parent) {
 					_this41.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
@@ -17966,7 +17984,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var bodyEl = document.createElement("tbody");
 
 		var rows = visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows();
-		var columns = this.table.columnManager.columnsByIndex;
+		var columns = [];
+
+		this.table.columnManager.columnsByIndex.forEach(function (column) {
+			if (_this42.columnVisCheck(column)) {
+				columns.push(column);
+			}
+		});
 
 		rows = rows.filter(function (row) {
 			switch (row.type) {
@@ -17981,6 +18005,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			return true;
 		});
+
+		if (rows.length > 1000) {
+			console.warn("It may take a long time to render an HTML table with more than 1000 rows");
+		}
 
 		rows.forEach(function (row, i) {
 			var rowData = row.getData();
@@ -18077,10 +18105,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return bodyEl;
 	};
 
+	HtmlTableExport.prototype.columnVisCheck = function (column) {
+		return column.definition[this.colVisProp] !== false && (column.visible || !column.visible && column.definition[this.colVisProp]);
+	};
+
 	HtmlTableExport.prototype.getHtml = function (visible, style, config) {
 		var holder = document.createElement("div");
 
-		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible));
+		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
 
 		return holder.innerHTML;
 	};
@@ -20302,7 +20334,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.element = document.createElement("div");
 			this.element.classList.add("tabulator-print-table");
 
-			this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows));
+			this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows, "print"));
 
 			this.table.element.style.display = "none";
 
@@ -20328,7 +20360,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-fullscreen");
 
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible));
+		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"));
 
 		document.body.classList.add("tabulator-print-fullscreen-hide");
 		document.body.appendChild(this.element);

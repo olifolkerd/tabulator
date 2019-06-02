@@ -14,7 +14,7 @@ Print.prototype.replaceTable = function(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-table");
 
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows));
+		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows, "print"));
 
 		this.table.element.style.display = "none";
 
@@ -40,7 +40,7 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	this.element = document.createElement("div");
 	this.element.classList.add("tabulator-print-fullscreen");
 
-	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible));
+	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"));
 
 	document.body.classList.add("tabulator-print-fullscreen-hide");
 	document.body.appendChild(this.element);

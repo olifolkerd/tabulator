@@ -169,6 +169,8 @@ var Column = function(def, parent){
 
 	this.visible = true; //default visible state
 
+	this._mapDepricatedFunctionality();
+
 	//initialize column
 	if(def.columns){
 
@@ -234,6 +236,13 @@ Column.prototype.reRegisterPosition = function(){
 		});
 	}else{
 		this.registerColumnPosition(this);
+	}
+};
+
+Column.prototype._mapDepricatedFunctionality = function(){
+	if(typeof this.definition.hideInHtml !== "undefined"){
+		this.definition.htmlOutput = !this.definition.hideInHtml;
+		console.log("hideInHtml column definition property is depricated, you should now use htmlOutput")
 	}
 };
 
@@ -1150,6 +1159,8 @@ Column.prototype.defaultOptionList = [
 "cssClass",
 "rowHandle",
 "hideInHtml",
+"print",
+"htmlOutput",
 "sorter",
 "sorterParams",
 "formatter",
