@@ -126,6 +126,10 @@ HtmlTableExport.prototype.generateHeaderElements = function(){
 
 	var rows = this.groupHeadersToRows(this.generateColumnGroupHeaders());
 
+	if(rows.length > 1000){
+		console.warn("It may take a long time to render an HTML table with more than 1000 rows");
+	}
+
 	rows.forEach((row) => {
 		var rowEl = document.createElement("tr");
 
