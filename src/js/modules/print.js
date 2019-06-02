@@ -22,7 +22,6 @@ Print.prototype.replaceTable = function(){
 	}
 };
 
-
 Print.prototype.cleanup = function(){
 	if(this.element && this.element.parentNode){
 		this.element.parentNode.removeChild(this.element);
@@ -36,7 +35,7 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	this.element = document.createElement("div");
 	this.element.classList.add("tabulator-print-fullscreen");
 
-	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, typeof visible != "undefined" ? visible : this.table.options.printVisibleRows));
+	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible));
 
 	document.body.appendChild(this.element);
 

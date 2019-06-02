@@ -20319,7 +20319,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-fullscreen");
 
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, typeof visible != "undefined" ? visible : this.table.options.printVisibleRows));
+		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible));
 
 		document.body.appendChild(this.element);
 
