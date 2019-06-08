@@ -204,7 +204,7 @@ Clipboard.prototype.getPasteData = function(e){
 
 
 Clipboard.prototype.copy = function(selector, selectorParams, formatter, formatterParams, internal){
-	var range, sel;
+	var range, sel, textRange;
 	this.blocked = false;
 
 	if(this.mode === true || this.mode === "copy"){
