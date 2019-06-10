@@ -864,6 +864,8 @@ RowManager.prototype.scrollHorizontal = function(left){
 	this.scrollLeft = left;
 	this.element.scrollLeft = left;
 
+	this.columnManager.scrollHorizontal(left);
+
 	if(this.table.options.groupBy){
 		this.table.modules.groupRows.scrollHeaders(left);
 	}
