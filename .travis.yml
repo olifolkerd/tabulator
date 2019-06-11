@@ -1,4 +1,4 @@
-anguage: node_js
+language: node_js
 node_js:
   - v8.10.0
 cache:
