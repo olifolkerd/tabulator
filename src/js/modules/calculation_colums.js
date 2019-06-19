@@ -297,7 +297,7 @@ ColumnCalcs.prototype.generateRowData = function(pos, data){
 			});
 
 			paramKey = type + "Params";
-			params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](value, data) : column.modules.columnCalcs[paramKey];
+			params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](values, data) : column.modules.columnCalcs[paramKey];
 
 			column.setFieldValue(rowData, column.modules.columnCalcs[type](values, data, params));
 		}
