@@ -203,7 +203,7 @@ Validate.prototype.validators = {
 
 	//must have a value
 	required:function(cell, value, parameters){
-		return value !== "" & value !== null && typeof value !== "undefined";
+		return value !== "" && value !== null && typeof value !== "undefined";
 	},
 };
 
