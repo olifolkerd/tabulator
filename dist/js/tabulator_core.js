@@ -5408,7 +5408,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 
 	printAsHtml: false, //enable print as html
-	printFormatter: function printFormatter() {}, //printing page formatter
+	printFormatter: false, //printing page formatter
 	printHeader: false, //page header contents
 	printFooter: false, //page footer contents
 	printCopyStyle: true, //enable print as html styling

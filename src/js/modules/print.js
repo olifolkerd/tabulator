@@ -78,7 +78,9 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	document.body.classList.add("tabulator-print-fullscreen-hide");
 	document.body.appendChild(this.element);
 
-	this.table.options.printFormatter(this.element, tableEl);
+	if(this.table.options.printFormatter){
+		this.table.options.printFormatter(this.element, tableEl);
+	}
 
 	window.print();
 

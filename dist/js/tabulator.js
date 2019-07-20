@@ -6934,7 +6934,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		printAsHtml: false, //enable print as html
 
-		printFormatter: function printFormatter() {}, //printing page formatter
+		printFormatter: false, //printing page formatter
 
 		printHeader: false, //page header contents
 
@@ -20404,7 +20404,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		document.body.classList.add("tabulator-print-fullscreen-hide");
 		document.body.appendChild(this.element);
 
-		this.table.options.printFormatter(this.element, tableEl);
+		if (this.table.options.printFormatter) {
+			this.table.options.printFormatter(this.element, tableEl);
+		}
 
 		window.print();
 
