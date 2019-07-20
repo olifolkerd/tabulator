@@ -53,7 +53,7 @@
 
 .tabulator .tabulator-header .tabulator-col.tabulator-moving {
   position: absolute;
-  background: transparent;
+  background: rgba(0, 0, 0, 0);
   pointer-events: none;
 }
 
@@ -145,7 +145,7 @@
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {
   cursor: pointer;
-  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="none"] .tabulator-col-content .tabulator-arrow {
@@ -164,9 +164,8 @@
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-col-vertical .tabulator-col-content .tabulator-col-title {
-  -webkit-writing-mode: vertical-rl;
-      -ms-writing-mode: tb-rl;
-          writing-mode: vertical-rl;
+  -ms-writing-mode: tb-rl;
+      writing-mode: vertical-rl;
   text-orientation: mixed;
   display: -ms-flexbox;
   display: flex;
