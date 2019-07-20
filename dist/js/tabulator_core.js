@@ -5014,7 +5014,14 @@ Cell.prototype.setValueProcessData = function (value, mutate) {
 	if (changed && this.table.modExists("columnCalcs")) {
 		if (this.column.definition.topCalc || this.column.definition.bottomCalc) {
 			if (this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.columnCalcs.recalcRowGroup(this.row);
+
+				if (this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both") {
+					this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
+				}
+
+				if (this.table.options.columnCalcs != "table") {
+					this.table.modules.columnCalcs.recalcRowGroup(this.row);
+				}
 			} else {
 				this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 			}
