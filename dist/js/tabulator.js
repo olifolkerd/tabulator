@@ -16820,7 +16820,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this._visSet();
 
 		if (this.visible) {
-
 			if (this.groupList.length) {
 				this.groupList.forEach(function (group) {
 					output = output.concat(group.getHeadersAndRows(noCalc));
@@ -16849,17 +16848,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 		} else {
+			if (!this.groupList.length && this.groupManager.table.options.columnCalcs != "table") {
 
-			if (!this.groupList.length && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.options.groupClosedShowCalcs) {
 				if (this.groupManager.table.modExists("columnCalcs")) {
+
 					if (!noCalc && this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
 						if (this.calcs.top) {
 							this.calcs.top.detachElement();
 							this.calcs.top.deleteCells();
 						}
 
-						this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
-						output.push(this.calcs.top);
+						if (this.groupManager.table.options.groupClosedShowCalcs) {
+							this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
+							output.push(this.calcs.top);
+						}
 					}
 
 					if (!noCalc && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
@@ -16868,8 +16870,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							this.calcs.bottom.deleteCells();
 						}
 
-						this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
-						output.push(this.calcs.bottom);
+						if (this.groupManager.table.options.groupClosedShowCalcs) {
+							this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
+							output.push(this.calcs.bottom);
+						}
 					}
 				}
 			}
