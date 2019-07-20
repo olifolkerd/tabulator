@@ -110,10 +110,10 @@ Download.prototype.processDefinitions = function(){
 Download.prototype.processColumnGroup = function(column){
 	var subGroups = column.columns,
 	maxDepth = 0;
-
+	var processedColumn = this.processDefinition(column);
 	var groupData = {
 		type:"group",
-		title:column.definition.title,
+		title:processedColumn.title,
 		depth:1,
 	};
 
@@ -143,7 +143,7 @@ Download.prototype.processColumnGroup = function(column){
 	}else{
 		if(column.field && column.definition.download !== false && (column.visible || (!column.visible && column.definition.download))){
 			groupData.width = 1;
-			groupData.definition = this.processDefinition(column);
+			groupData.definition = processedColumn;
 		}else{
 			return false;
 		}
