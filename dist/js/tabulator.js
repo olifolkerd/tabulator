@@ -1185,12 +1185,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	ColumnComponent.prototype.getNextColumn = function () {
 
-		return this._column.nextColumn().getComponent();
+		var nextCol = this._column.nextColumn();
+
+		return nextCol ? nextCol.getComponent() : false;
 	};
 
 	ColumnComponent.prototype.getPrevColumn = function () {
 
-		return this._column.prevColumn().getComponent();
+		var prevCol = this._column.prevColumn();
+
+		return prevCol ? prevCol.getComponent() : false;
 	};
 
 	var Column = function Column(def, parent) {
