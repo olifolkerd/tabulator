@@ -242,7 +242,7 @@ Column.prototype.reRegisterPosition = function(){
 Column.prototype._mapDepricatedFunctionality = function(){
 	if(typeof this.definition.hideInHtml !== "undefined"){
 		this.definition.htmlOutput = !this.definition.hideInHtml;
-		console.log("hideInHtml column definition property is depricated, you should now use htmlOutput")
+		console.warn("hideInHtml column definition property is depricated, you should now use htmlOutput")
 	}
 };
 
