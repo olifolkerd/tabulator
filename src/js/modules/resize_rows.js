@@ -26,7 +26,7 @@ ResizeRows.prototype.initializeRow = function(row){
 		self._mouseDown(e, row, handle);
 	};
 
-	handle.addEventListener("mousedown", handleDown);
+	handle.addEventListener("mousedown", handleDown, {passive: true});
 	handle.addEventListener("touchstart", handleDown);
 
 	prevHandle.addEventListener("click", function(e){
@@ -44,7 +44,7 @@ ResizeRows.prototype.initializeRow = function(row){
 	};
 
 	prevHandle.addEventListener("mousedown",prevHandleDown);
-	prevHandle.addEventListener("touchstart",prevHandleDown);
+	prevHandle.addEventListener("touchstart",prevHandleDown, {passive: true});
 
 	rowEl.appendChild(handle);
 	rowEl.appendChild(prevHandle);
@@ -90,7 +90,7 @@ ResizeRows.prototype._mouseDown = function(e, row, handle){
 	document.body.addEventListener("mousemove", mouseMove);
 	document.body.addEventListener("mouseup", mouseUp);
 
-	handle.addEventListener("touchmove", mouseMove);
+	handle.addEventListener("touchmove", mouseMove, {passive: true});
 	handle.addEventListener("touchend", mouseUp);
 };
 

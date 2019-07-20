@@ -157,7 +157,7 @@ Group.prototype.addBindings = function () {
 
 		self.element.addEventListener("touchstart", function (e) {
 			tap = true;
-		});
+		}, { passive: true });
 
 		self.element.addEventListener("touchend", function (e) {
 			if (tap) {
@@ -202,7 +202,7 @@ Group.prototype.addBindings = function () {
 				tap = false;
 				self.groupManager.table.options.groupTapHold(e, self.getComponent());
 			}, 1000);
-		});
+		}, { passive: true });
 
 		self.element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);

@@ -41,7 +41,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 		};
 
 		handle.addEventListener("mousedown", handleDown);
-		handle.addEventListener("touchstart", handleDown);
+		handle.addEventListener("touchstart", handleDown, {passive: true});
 
 		//reszie column on  double click
 		handle.addEventListener("dblclick", function(e){
@@ -74,7 +74,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 		};
 
 		prevHandle.addEventListener("mousedown", prevHandleDown);
-		prevHandle.addEventListener("touchstart", prevHandleDown);
+		prevHandle.addEventListener("touchstart", prevHandleDown, {passive: true});
 
 		//resize column on double click
 		prevHandle.addEventListener("dblclick", function(e){
@@ -155,7 +155,7 @@ ResizeColumns.prototype._mouseDown = function(e, column, handle){
 
 	document.body.addEventListener("mousemove", mouseMove);
 	document.body.addEventListener("mouseup", mouseUp);
-	handle.addEventListener("touchmove", mouseMove);
+	handle.addEventListener("touchmove", mouseMove, {passive: true});
 	handle.addEventListener("touchend", mouseUp);
 };
 

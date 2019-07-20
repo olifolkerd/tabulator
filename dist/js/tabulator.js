@@ -1545,7 +1545,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.element.addEventListener("touchstart", function (e) {
 
 				tap = true;
-			});
+			}, { passive: true });
 
 			self.element.addEventListener("touchend", function (e) {
 
@@ -1601,7 +1601,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					def.headerTapHold(e, self.getComponent());
 				}, 1000);
-			});
+			}, { passive: true });
 
 			self.element.addEventListener("touchend", function (e) {
 
@@ -5096,7 +5096,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.element.addEventListener("touchstart", function (e) {
 
 				tap = true;
-			});
+			}, { passive: true });
 
 			self.element.addEventListener("touchend", function (e) {
 
@@ -5152,7 +5152,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					self.table.options.rowTapHold(e, self.getComponent());
 				}, 1000);
-			});
+			}, { passive: true });
 
 			self.element.addEventListener("touchend", function (e) {
 
@@ -6117,7 +6117,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			element.addEventListener("touchstart", function (e) {
 
 				tap = true;
-			});
+			}, { passive: true });
 
 			element.addEventListener("touchend", function (e) {
 
@@ -6203,7 +6203,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						self.table.options.cellTapHold.call(self.table, e, component);
 					}
 				}, 1000);
-			});
+			}, { passive: true });
 
 			element.addEventListener("touchend", function (e) {
 
@@ -16595,7 +16595,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			self.element.addEventListener("touchstart", function (e) {
 				tap = true;
-			});
+			}, { passive: true });
 
 			self.element.addEventListener("touchend", function (e) {
 				if (tap) {
@@ -16640,7 +16640,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					tap = false;
 					self.groupManager.table.options.groupTapHold(e, self.getComponent());
 				}, 1000);
-			});
+			}, { passive: true });
 
 			self.element.addEventListener("touchend", function (e) {
 				clearTimeout(tapHold);
@@ -18619,7 +18619,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				self.startMove(e, column);
 			}, self.checkPeriod);
-		});
+		}, { passive: true });
 
 		colEl.addEventListener("touchmove", function (e) {
 			var halfCol, diff, moveToCol;
@@ -18665,7 +18665,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					prevColWidth = prevCol ? prevCol.getWidth() / 2 : 0;
 				}
 			}
-		});
+		}, { passive: true });
 
 		colEl.addEventListener("touchend", function (e) {
 			if (self.checkTimeout) {
@@ -18981,7 +18981,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				self.startMove(e, row);
 			}, self.checkPeriod);
-		});
+		}, { passive: true });
 		this.moving, this.toRow, this.toRowAfter;
 		element.addEventListener("touchmove", function (e) {
 
@@ -20699,7 +20699,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			};
 
 			handle.addEventListener("mousedown", handleDown);
-			handle.addEventListener("touchstart", handleDown);
+			handle.addEventListener("touchstart", handleDown, { passive: true });
 
 			//reszie column on  double click
 			handle.addEventListener("dblclick", function (e) {
@@ -20731,7 +20731,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			};
 
 			prevHandle.addEventListener("mousedown", prevHandleDown);
-			prevHandle.addEventListener("touchstart", prevHandleDown);
+			prevHandle.addEventListener("touchstart", prevHandleDown, { passive: true });
 
 			//resize column on double click
 			prevHandle.addEventListener("dblclick", function (e) {
@@ -20811,7 +20811,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		document.body.addEventListener("mousemove", mouseMove);
 		document.body.addEventListener("mouseup", mouseUp);
-		handle.addEventListener("touchmove", mouseMove);
+		handle.addEventListener("touchmove", mouseMove, { passive: true });
 		handle.addEventListener("touchend", mouseUp);
 	};
 
@@ -20844,7 +20844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self._mouseDown(e, row, handle);
 		};
 
-		handle.addEventListener("mousedown", handleDown);
+		handle.addEventListener("mousedown", handleDown, { passive: true });
 		handle.addEventListener("touchstart", handleDown);
 
 		prevHandle.addEventListener("click", function (e) {
@@ -20861,7 +20861,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		};
 
 		prevHandle.addEventListener("mousedown", prevHandleDown);
-		prevHandle.addEventListener("touchstart", prevHandleDown);
+		prevHandle.addEventListener("touchstart", prevHandleDown, { passive: true });
 
 		rowEl.appendChild(handle);
 		rowEl.appendChild(prevHandle);
@@ -20907,7 +20907,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		document.body.addEventListener("mousemove", mouseMove);
 		document.body.addEventListener("mouseup", mouseUp);
 
-		handle.addEventListener("touchmove", mouseMove);
+		handle.addEventListener("touchmove", mouseMove, { passive: true });
 		handle.addEventListener("touchend", mouseUp);
 	};
 

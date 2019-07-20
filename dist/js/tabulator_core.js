@@ -1333,7 +1333,7 @@ Column.prototype._bindEvents = function () {
 
 		self.element.addEventListener("touchstart", function (e) {
 			tap = true;
-		});
+		}, { passive: true });
 
 		self.element.addEventListener("touchend", function (e) {
 			if (tap) {
@@ -1376,7 +1376,7 @@ Column.prototype._bindEvents = function () {
 				tap = false;
 				def.headerTapHold(e, self.getComponent());
 			}, 1000);
-		});
+		}, { passive: true });
 
 		self.element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);
@@ -4025,7 +4025,7 @@ Row.prototype.generateElement = function () {
 
 		self.element.addEventListener("touchstart", function (e) {
 			tap = true;
-		});
+		}, { passive: true });
 
 		self.element.addEventListener("touchend", function (e) {
 			if (tap) {
@@ -4070,7 +4070,7 @@ Row.prototype.generateElement = function () {
 				tap = false;
 				self.table.options.rowTapHold(e, self.getComponent());
 			}, 1000);
-		});
+		}, { passive: true });
 
 		self.element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);
@@ -4816,7 +4816,7 @@ Cell.prototype._bindTouchEvents = function (cellEvents) {
 
 		element.addEventListener("touchstart", function (e) {
 			tap = true;
-		});
+		}, { passive: true });
 
 		element.addEventListener("touchend", function (e) {
 			if (tap) {
@@ -4883,7 +4883,7 @@ Cell.prototype._bindTouchEvents = function (cellEvents) {
 					self.table.options.cellTapHold.call(self.table, e, component);
 				}
 			}, 1000);
-		});
+		}, { passive: true });
 
 		element.addEventListener("touchend", function (e) {
 			clearTimeout(tapHold);

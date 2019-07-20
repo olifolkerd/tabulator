@@ -104,7 +104,7 @@ MoveColumns.prototype.bindTouchEvents = function (column) {
 
 			self.startMove(e, column);
 		}, self.checkPeriod);
-	});
+	}, { passive: true });
 
 	colEl.addEventListener("touchmove", function (e) {
 		var halfCol, diff, moveToCol;
@@ -150,7 +150,7 @@ MoveColumns.prototype.bindTouchEvents = function (column) {
 				prevColWidth = prevCol ? prevCol.getWidth() / 2 : 0;
 			}
 		}
-	});
+	}, { passive: true });
 
 	colEl.addEventListener("touchend", function (e) {
 		if (self.checkTimeout) {

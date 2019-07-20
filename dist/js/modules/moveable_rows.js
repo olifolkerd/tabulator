@@ -181,7 +181,7 @@ MoveRows.prototype.bindTouchEvents = function (row, element) {
 
 			self.startMove(e, row);
 		}, self.checkPeriod);
-	});
+	}, { passive: true });
 	this.moving, this.toRow, this.toRowAfter;
 	element.addEventListener("touchmove", function (e) {
 

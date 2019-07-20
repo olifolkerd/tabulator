@@ -265,7 +265,7 @@ Row.prototype.generateElement = function(){
 
 		self.element.addEventListener("touchstart", function(e){
 			tap = true;
-		});
+		}, {passive: true});
 
 		self.element.addEventListener("touchend", function(e){
 			if(tap){
@@ -313,7 +313,7 @@ Row.prototype.generateElement = function(){
 				self.table.options.rowTapHold(e, self.getComponent());
 			}, 1000);
 
-		});
+		}, {passive: true});
 
 		self.element.addEventListener("touchend", function(e){
 			clearTimeout(tapHold);

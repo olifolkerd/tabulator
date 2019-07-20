@@ -371,7 +371,7 @@ Column.prototype._bindEvents = function(){
 
 		self.element.addEventListener("touchstart", function(e){
 			tap = true;
-		});
+		}, {passive: true});
 
 		self.element.addEventListener("touchend", function(e){
 			if(tap){
@@ -416,7 +416,7 @@ Column.prototype._bindEvents = function(){
 				def.headerTapHold(e, self.getComponent());
 			}, 1000);
 
-		});
+		}, {passive: true});
 
 		self.element.addEventListener("touchend", function(e){
 			clearTimeout(tapHold);

@@ -293,7 +293,7 @@ Cell.prototype._bindTouchEvents = function(cellEvents){
 
 		element.addEventListener("touchstart", function(e){
 			tap = true;
-		});
+		}, {passive: true});
 
 		element.addEventListener("touchend", function(e){
 			if(tap){
@@ -362,7 +362,7 @@ Cell.prototype._bindTouchEvents = function(cellEvents){
 				}
 			}, 1000);
 
-		});
+		}, {passive: true});
 
 		element.addEventListener("touchend", function(e){
 			clearTimeout(tapHold);
