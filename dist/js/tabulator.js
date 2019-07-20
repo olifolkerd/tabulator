@@ -6934,6 +6934,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		printAsHtml: false, //enable print as html
 
+		printFormatter: function printFormatter() {}, //printing page formatter
+
+		printHeader: false, //page header contents
+
+		printFooter: false, //page footer contents
+
 		printCopyStyle: true, //enable print as html styling
 
 		printVisibleRows: true, //restrict print to visible rows only
@@ -20352,18 +20358,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Print.prototype.printFullscreen = function (visible, style, config) {
-		var scrollX = window.scrollX;
-		var scrollY = window.scrollY;
+		var scrollX = window.scrollX,
+		    scrollY = window.scrollY,
+		    headerEl = document.createElement("div"),
+		    footerEl = document.createElement("div"),
+		    tableEl = this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print");
 
 		this.manualBlock = true;
 
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-fullscreen");
 
-		this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"));
+		if (this.table.options.printPageHeader) {
+			headerEl.classList.add("tabulator-print-header");
+
+			if (typeof this.table.options.printPageHeader == "string") {
+				headerEl.innerHTML = this.table.options.printPageHeader;
+			} else {
+				headerEl.appendChild(this.table.options.printPageHeader);
+			}
+
+			this.element.appendChild(headerEl);
+		}
+
+		this.element.appendChild(tableEl);
+
+		if (this.table.options.printPageFooter) {
+			footerEl.classList.add("tabulator-print-footer");
+
+			if (typeof this.table.options.printPageFooter == "string") {
+				footerEl.innerHTML = this.table.options.printPageFooter;
+			} else {
+				footerEl.appendChild(this.table.options.printPageFooter);
+			}
+
+			this.element.appendChild(footerEl);
+		}
 
 		document.body.classList.add("tabulator-print-fullscreen-hide");
 		document.body.appendChild(this.element);
+
+		this.table.options.printPageFormatter(this.element, tableEl);
 
 		window.print();
 

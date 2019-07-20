@@ -100,6 +100,9 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeRowCollapsed:function(){}, //row has been collapsed
 
 	printAsHtml:false, //enable print as html
+	printFormatter:function(){}, //printing page formatter
+	printHeader:false, //page header contents
+	printFooter:false, //page footer contents
 	printCopyStyle:true, //enable print as html styling
 	printVisibleRows:true, //restrict print to visible rows only
 	printConfig:{}, //print config options

@@ -34,18 +34,47 @@ Print.prototype.cleanup = function () {
 };
 
 Print.prototype.printFullscreen = function (visible, style, config) {
-	var scrollX = window.scrollX;
-	var scrollY = window.scrollY;
+	var scrollX = window.scrollX,
+	    scrollY = window.scrollY,
+	    headerEl = document.createElement("div"),
+	    footerEl = document.createElement("div"),
+	    tableEl = this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print");
 
 	this.manualBlock = true;
 
 	this.element = document.createElement("div");
 	this.element.classList.add("tabulator-print-fullscreen");
 
-	this.element.appendChild(this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"));
+	if (this.table.options.printHeader) {
+		headerEl.classList.add("tabulator-print-header");
+
+		if (typeof this.table.options.printHeader == "string") {
+			headerEl.innerHTML = this.table.options.printHeader;
+		} else {
+			headerEl.appendChild(this.table.options.printHeader);
+		}
+
+		this.element.appendChild(headerEl);
+	}
+
+	this.element.appendChild(tableEl);
+
+	if (this.table.options.printFooter) {
+		footerEl.classList.add("tabulator-print-footer");
+
+		if (typeof this.table.options.printFooter == "string") {
+			footerEl.innerHTML = this.table.options.printFooter;
+		} else {
+			footerEl.appendChild(this.table.options.printFooter);
+		}
+
+		this.element.appendChild(footerEl);
+	}
 
 	document.body.classList.add("tabulator-print-fullscreen-hide");
 	document.body.appendChild(this.element);
+
+	this.table.options.printFormatter(this.element, tableEl);
 
 	window.print();
 
