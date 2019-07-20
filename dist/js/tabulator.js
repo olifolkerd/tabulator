@@ -20362,20 +20362,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    scrollY = window.scrollY,
 		    headerEl = document.createElement("div"),
 		    footerEl = document.createElement("div"),
-		    tableEl = this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print");
+		    tableEl = this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"),
+		    headerContent,
+		    footerContent;
 
 		this.manualBlock = true;
 
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-fullscreen");
 
-		if (this.table.options.printPageHeader) {
+		if (this.table.options.printHeader) {
 			headerEl.classList.add("tabulator-print-header");
 
-			if (typeof this.table.options.printPageHeader == "string") {
-				headerEl.innerHTML = this.table.options.printPageHeader;
+			headerContent = typeof this.table.options.printHeader == "function" ? this.table.options.printHeader.call(this.table) : this.table.options.printHeader;
+
+			if (typeof headerContent == "string") {
+				headerEl.innerHTML = headerContent;
 			} else {
-				headerEl.appendChild(this.table.options.printPageHeader);
+				headerEl.appendChild(headerContent);
 			}
 
 			this.element.appendChild(headerEl);
@@ -20383,13 +20387,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.element.appendChild(tableEl);
 
-		if (this.table.options.printPageFooter) {
+		if (this.table.options.printFooter) {
 			footerEl.classList.add("tabulator-print-footer");
 
-			if (typeof this.table.options.printPageFooter == "string") {
-				footerEl.innerHTML = this.table.options.printPageFooter;
+			footerContent = typeof this.table.options.printFooter == "function" ? this.table.options.printFooter.call(this.table) : this.table.options.printFooter;
+
+			if (typeof footerContent == "string") {
+				footerEl.innerHTML = footerContent;
 			} else {
-				footerEl.appendChild(this.table.options.printPageFooter);
+				footerEl.appendChild(footerContent);
 			}
 
 			this.element.appendChild(footerEl);
@@ -20398,7 +20404,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		document.body.classList.add("tabulator-print-fullscreen-hide");
 		document.body.appendChild(this.element);
 
-		this.table.options.printPageFormatter(this.element, tableEl);
+		this.table.options.printFormatter(this.element, tableEl);
 
 		window.print();
 

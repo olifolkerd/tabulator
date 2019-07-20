@@ -36,7 +36,8 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	scrollY = window.scrollY,
 	headerEl = document.createElement("div"),
 	footerEl = document.createElement("div"),
-	tableEl = this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print");
+	tableEl = this.table.modules.htmlTableExport.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"),
+	headerContent, footerContent;
 
 	this.manualBlock = true;
 
@@ -46,10 +47,12 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	if(this.table.options.printHeader){
 		headerEl.classList.add("tabulator-print-header");
 
-		if(typeof this.table.options.printHeader == "string"){
-			headerEl.innerHTML = this.table.options.printHeader;
+		headerContent = typeof this.table.options.printHeader == "function" ? this.table.options.printHeader.call(this.table) : this.table.options.printHeader;
+
+		if(typeof headerContent == "string"){
+			headerEl.innerHTML = headerContent;
 		}else{
-			headerEl.appendChild(this.table.options.printHeader);
+			headerEl.appendChild(headerContent);
 		}
 
 		this.element.appendChild(headerEl);
@@ -60,10 +63,13 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	if(this.table.options.printFooter){
 		footerEl.classList.add("tabulator-print-footer");
 
-		if(typeof this.table.options.printFooter == "string"){
-			footerEl.innerHTML = this.table.options.printFooter;
+		footerContent = typeof this.table.options.printFooter == "function" ? this.table.options.printFooter.call(this.table) : this.table.options.printFooter;
+
+
+		if(typeof footerContent == "string"){
+			footerEl.innerHTML = footerContent;
 		}else{
-			footerEl.appendChild(this.table.options.printFooter);
+			footerEl.appendChild(footerContent);
 		}
 
 		this.element.appendChild(footerEl);
