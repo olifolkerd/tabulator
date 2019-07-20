@@ -393,6 +393,7 @@ Group.prototype.getHeadersAndRows = function(noCalc){
 			if(!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
 				if(this.calcs.top){
 					this.calcs.top.detachElement();
+					this.calcs.top.deleteCells();
 				}
 
 				this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
@@ -402,9 +403,9 @@ Group.prototype.getHeadersAndRows = function(noCalc){
 			output = output.concat(this.rows);
 
 			if(!noCalc && this.groupManager.table.options.columnCalcs != "table" &&  this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
-
 				if(this.calcs.bottom){
 					this.calcs.bottom.detachElement();
+					this.calcs.bottom.deleteCells();
 				}
 
 				this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
@@ -412,12 +413,15 @@ Group.prototype.getHeadersAndRows = function(noCalc){
 			}
 		}
 	}else{
+
 		if(!this.groupList.length && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.options.groupClosedShowCalcs){
 			if(this.groupManager.table.modExists("columnCalcs")){
 				if(!noCalc && this.groupManager.table.modules.columnCalcs.hasTopCalcs()){
 					if(this.calcs.top){
 						this.calcs.top.detachElement();
+						this.calcs.top.deleteCells();
 					}
+
 					this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 					output.push(this.calcs.top);
 				}
@@ -425,7 +429,9 @@ Group.prototype.getHeadersAndRows = function(noCalc){
 				if(!noCalc && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()){
 					if(this.calcs.bottom){
 						this.calcs.bottom.detachElement();
+						this.calcs.bottom.deleteCells();
 					}
+
 					this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 					output.push(this.calcs.bottom);
 				}
@@ -505,6 +511,7 @@ Group.prototype.hide = function(){
 		this.groupManager.table.rowManager.setDisplayRows(this.groupManager.updateGroupRows(), this.groupManager.getDisplayIndex());
 
 		this.groupManager.table.rowManager.checkClassicModeGroupHeaderWidth();
+
 	}else{
 		this.groupManager.updateGroupRows(true);
 	}

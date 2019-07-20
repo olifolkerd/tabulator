@@ -144,6 +144,10 @@ ColumnCalcs.prototype.recalc = function (rows) {
 		data = this.rowsToData(rows);
 
 		if (this.topInitialized) {
+			if (this.topRow) {
+				this.topRow.deleteCells();
+			}
+
 			row = this.generateRow("top", this.rowsToData(rows));
 			this.topRow = row;
 			while (this.topElement.firstChild) {
@@ -153,6 +157,10 @@ ColumnCalcs.prototype.recalc = function (rows) {
 		}
 
 		if (this.botInitialized) {
+			if (this.botRow) {
+				this.botRow.deleteCells();
+			}
+
 			row = this.generateRow("bottom", this.rowsToData(rows));
 			this.botRow = row;
 			while (this.botElement.firstChild) {

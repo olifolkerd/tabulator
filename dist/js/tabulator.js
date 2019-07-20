@@ -1375,7 +1375,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.definition.htmlOutput = !this.definition.hideInHtml;
 
-			console.log("hideInHtml column definition property is depricated, you should now use htmlOutput");
+			console.warn("hideInHtml column definition property is depricated, you should now use htmlOutput");
 		}
 	};
 
@@ -10681,6 +10681,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			data = this.rowsToData(rows);
 
 			if (this.topInitialized) {
+				if (this.topRow) {
+					this.topRow.deleteCells();
+				}
+
 				row = this.generateRow("top", this.rowsToData(rows));
 				this.topRow = row;
 				while (this.topElement.firstChild) {
@@ -10690,6 +10694,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			if (this.botInitialized) {
+				if (this.botRow) {
+					this.botRow.deleteCells();
+				}
+
 				row = this.generateRow("bottom", this.rowsToData(rows));
 				this.botRow = row;
 				while (this.botElement.firstChild) {
@@ -16821,6 +16829,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
 					if (this.calcs.top) {
 						this.calcs.top.detachElement();
+						this.calcs.top.deleteCells();
 					}
 
 					this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
@@ -16830,9 +16839,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				output = output.concat(this.rows);
 
 				if (!noCalc && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.modExists("columnCalcs") && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
-
 					if (this.calcs.bottom) {
 						this.calcs.bottom.detachElement();
+						this.calcs.bottom.deleteCells();
 					}
 
 					this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
@@ -16840,12 +16849,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 		} else {
+
 			if (!this.groupList.length && this.groupManager.table.options.columnCalcs != "table" && this.groupManager.table.options.groupClosedShowCalcs) {
 				if (this.groupManager.table.modExists("columnCalcs")) {
 					if (!noCalc && this.groupManager.table.modules.columnCalcs.hasTopCalcs()) {
 						if (this.calcs.top) {
 							this.calcs.top.detachElement();
+							this.calcs.top.deleteCells();
 						}
+
 						this.calcs.top = this.groupManager.table.modules.columnCalcs.generateTopRow(this.rows);
 						output.push(this.calcs.top);
 					}
@@ -16853,7 +16865,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (!noCalc && this.groupManager.table.modules.columnCalcs.hasBottomCalcs()) {
 						if (this.calcs.bottom) {
 							this.calcs.bottom.detachElement();
+							this.calcs.bottom.deleteCells();
 						}
+
 						this.calcs.bottom = this.groupManager.table.modules.columnCalcs.generateBottomRow(this.rows);
 						output.push(this.calcs.bottom);
 					}
