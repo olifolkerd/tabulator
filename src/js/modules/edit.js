@@ -783,7 +783,8 @@ Edit.prototype.editors = {
 		input.style.padding = "4px";
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
-		input.readOnly = true;
+		input.style.cursor = "default";
+		input.readOnly = (this.currentCell != false);
 
 		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
