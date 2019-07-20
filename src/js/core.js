@@ -1612,7 +1612,7 @@ Tabulator.prototype.navigateDown = function(){
 
 		if(cell){
 			e.preventDefault();
-			return cell.nav().dpwn();
+			return cell.nav().down();
 		}
 	}
 
