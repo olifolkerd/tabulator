@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.2.6 (c) Oliver Folkerd */
+/* Tabulator v4.2.7 (c) Oliver Folkerd */
 
 ;(function (global, factory) {
 	if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined') {
@@ -348,9 +348,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				};
 
-				var _value = row[key];
+				var value = row[key];
 
-				switch (typeof _value === 'undefined' ? 'undefined' : _typeof(_value)) {
+				switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 
 					case "undefined":
 
@@ -366,7 +366,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					case "object":
 
-						if (Array.isArray(_value)) {
+						if (Array.isArray(value)) {
 
 							sorter = "array";
 						} else {
@@ -378,12 +378,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					default:
 
-						if (!isNaN(_value) && _value !== "") {
+						if (!isNaN(value) && value !== "") {
 
 							sorter = "number";
 						} else {
 
-							if (_value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)) {
+							if (value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)) {
 
 								sorter = "alphanum";
 							} else {
@@ -1904,10 +1904,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (contents instanceof Node) {
 
-						this.element.appendChild(contents);
+						el.appendChild(contents);
 					} else {
 
-						this.element.innerHTML = "";
+						el.innerHTML = "";
 
 						console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
 					}
@@ -1918,13 +1918,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				case "null":
 
-					this.element.innerHTML = "";
+					el.innerHTML = "";
 
 					break;
 
 				default:
 
-					this.element.innerHTML = contents;
+					el.innerHTML = contents;
 
 			}
 		} else {
@@ -3511,7 +3511,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.getDataCount = function (active) {
 
-		return active ? this.rows.length : this.activeRows.length;
+		return active ? this.activeRows.length : this.rows.length;
 	};
 
 	RowManager.prototype._genRemoteRequest = function () {
@@ -9055,7 +9055,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				e.preventDefault();
 
-				return cell.nav().dpwn();
+				return cell.nav().down();
 			}
 		}
 
@@ -10835,7 +10835,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 
 				paramKey = type + "Params";
-				params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](value, data) : column.modules.columnCalcs[paramKey];
+				params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](values, data) : column.modules.columnCalcs[paramKey];
 
 				column.setFieldValue(rowData, column.modules.columnCalcs[type](values, data, params));
 			}
@@ -10993,6 +10993,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("columnCalcs", ColumnCalcs);
+
 	var Clipboard = function Clipboard(table) {
 		this.table = table;
 		this.mode = true;
@@ -11194,7 +11195,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
-		var range, sel;
+		var range, sel, textRange;
 		this.blocked = false;
 
 		if (this.mode === true || this.mode === "copy") {
@@ -12443,10 +12444,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var subGroups = column.columns,
 		    maxDepth = 0;
-
+		var processedColumn = this.processDefinition(column);
 		var groupData = {
 			type: "group",
-			title: column.definition.title,
+			title: processedColumn.title,
 			depth: 1
 		};
 
@@ -12475,7 +12476,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else {
 			if (column.field && column.definition.download !== false && (column.visible || !column.visible && column.definition.download)) {
 				groupData.width = 1;
-				groupData.definition = this.processDefinition(column);
+				groupData.definition = processedColumn;
 			} else {
 				return false;
 			}
@@ -14002,7 +14003,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.padding = "4px";
 			input.style.width = "100%";
 			input.style.boxSizing = "border-box";
-			input.readOnly = true;
+			input.style.cursor = "default";
+			input.readOnly = this.currentCell != false;
 
 			input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
@@ -14787,6 +14789,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("edit", Edit);
+
 	var Filter = function Filter(table) {
 
 		this.table = table; //hold Tabulator object
@@ -21254,7 +21257,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							var rows = self.table.rowManager.getDisplayRows().slice(0);
 							var toggledRows = rows.splice(fromRowIdx, toRowIdx - fromRowIdx + 1);
 
-							if (e.ctrlKey) {
+							if (e.ctrlKey || e.metaKey) {
 								toggledRows.forEach(function (toggledRow) {
 									if (toggledRow !== self.lastClickedRow) {
 										self.toggleRow(toggledRow);
@@ -21265,7 +21268,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								self.deselectRows();
 								self.selectRows(toggledRows);
 							}
-						} else if (e.ctrlKey) {
+						} else if (e.ctrlKey || e.metaKey) {
 							self.toggleRow(row);
 							self.lastClickedRow = row;
 						} else {
@@ -22258,7 +22261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//must have a value
 		required: function required(cell, value, parameters) {
-			return value !== "" & value !== null && typeof value !== "undefined";
+			return value !== "" && value !== null && typeof value !== "undefined";
 		}
 	};
 

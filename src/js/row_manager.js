@@ -728,7 +728,7 @@ RowManager.prototype.getComponents = function(active){
 }
 
 RowManager.prototype.getDataCount = function(active){
-	return active ? this.rows.length : this.activeRows.length;
+	return active ? this.activeRows.length : this.rows.length;
 };
 
 RowManager.prototype._genRemoteRequest = function(){

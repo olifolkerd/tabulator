@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.2.6 (c) Oliver Folkerd */
+/* Tabulator v4.2.7 (c) Oliver Folkerd */
 
 var ColumnCalcs = function ColumnCalcs(table) {
 	this.table = table; //hold Tabulator object
@@ -298,7 +298,7 @@ ColumnCalcs.prototype.generateRowData = function (pos, data) {
 			});
 
 			paramKey = type + "Params";
-			params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](value, data) : column.modules.columnCalcs[paramKey];
+			params = typeof column.modules.columnCalcs[paramKey] === "function" ? column.modules.columnCalcs[paramKey](values, data) : column.modules.columnCalcs[paramKey];
 
 			column.setFieldValue(rowData, column.modules.columnCalcs[type](values, data, params));
 		}

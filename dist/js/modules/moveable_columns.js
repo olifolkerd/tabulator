@@ -1,4 +1,4 @@
-/* Tabulator v4.2.6 (c) Oliver Folkerd */
+/* Tabulator v4.2.7 (c) Oliver Folkerd */
 
 var MoveColumns = function MoveColumns(table) {
 	this.table = table; //hold Tabulator object

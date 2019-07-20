@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.2.6 (c) Oliver Folkerd */
+/* Tabulator v4.2.7 (c) Oliver Folkerd */
 
 var Download = function Download(table) {
 	this.table = table; //hold Tabulator object
@@ -115,10 +115,10 @@ Download.prototype.processColumnGroup = function (column) {
 
 	var subGroups = column.columns,
 	    maxDepth = 0;
-
+	var processedColumn = this.processDefinition(column);
 	var groupData = {
 		type: "group",
-		title: column.definition.title,
+		title: processedColumn.title,
 		depth: 1
 	};
 
@@ -147,7 +147,7 @@ Download.prototype.processColumnGroup = function (column) {
 	} else {
 		if (column.field && column.definition.download !== false && (column.visible || !column.visible && column.definition.download)) {
 			groupData.width = 1;
-			groupData.definition = this.processDefinition(column);
+			groupData.definition = processedColumn;
 		} else {
 			return false;
 		}

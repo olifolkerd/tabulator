@@ -54,7 +54,7 @@ SelectRow.prototype.initializeRow = function(row){
 						var rows = self.table.rowManager.getDisplayRows().slice(0);
 						var toggledRows = rows.splice(fromRowIdx, toRowIdx - fromRowIdx + 1);
 
-						if(e.ctrlKey){
+						if(e.ctrlKey || e.metaKey){
 							toggledRows.forEach(function(toggledRow){
 								if(toggledRow !== self.lastClickedRow){
 									self.toggleRow(toggledRow)
@@ -66,7 +66,7 @@ SelectRow.prototype.initializeRow = function(row){
 							self.selectRows(toggledRows);
 						}
 					}
-					else if(e.ctrlKey){
+					else if(e.ctrlKey || e.metaKey){
 						self.toggleRow(row);
 						self.lastClickedRow = row;
 					}else{

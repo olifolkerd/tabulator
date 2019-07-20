@@ -1,4 +1,4 @@
-/* Tabulator v4.2.6 (c) Oliver Folkerd */
+/* Tabulator v4.2.7 (c) Oliver Folkerd */
 
 'use strict';
 
@@ -1604,18 +1604,18 @@ Column.prototype._formatColumnHeaderTitle = function (el, title) {
 		switch (typeof contents === 'undefined' ? 'undefined' : _typeof(contents)) {
 			case "object":
 				if (contents instanceof Node) {
-					this.element.appendChild(contents);
+					el.appendChild(contents);
 				} else {
-					this.element.innerHTML = "";
+					el.innerHTML = "";
 					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
 				}
 				break;
 			case "undefined":
 			case "null":
-				this.element.innerHTML = "";
+				el.innerHTML = "";
 				break;
 			default:
-				this.element.innerHTML = contents;
+				el.innerHTML = contents;
 		}
 	} else {
 		el.innerHTML = title;
@@ -2821,7 +2821,7 @@ RowManager.prototype.getComponents = function (active) {
 };
 
 RowManager.prototype.getDataCount = function (active) {
-	return active ? this.rows.length : this.activeRows.length;
+	return active ? this.activeRows.length : this.rows.length;
 };
 
 RowManager.prototype._genRemoteRequest = function () {
@@ -6930,7 +6930,7 @@ Tabulator.prototype.navigateDown = function () {
 
 		if (cell) {
 			e.preventDefault();
-			return cell.nav().dpwn();
+			return cell.nav().down();
 		}
 	}
 

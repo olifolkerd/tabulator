@@ -1,4 +1,4 @@
-/* Tabulator v4.2.6 (c) Oliver Folkerd */
+/* Tabulator v4.2.7 (c) Oliver Folkerd */
 
 /*
  * This file is part of the Tabulator package.
@@ -16,13 +16,13 @@
   "use strict";
 
   if (typeof define === 'function' && define.amd) {
-    define(['jquery'], factory);
+    define(['jquery', 'jquery-ui', 'tabulator'], factory);
   } else if (typeof module !== 'undefined' && module.exports) {
-    module.exports = factory(require('jquery'));
+    module.exports = factory(require('jquery'), require('jquery-ui'), require('tabulator'));
   } else {
     factory(jQuery);
   }
-})(function ($, undefined) {
+})(function ($, undefined, Tabulator) {
   $.widget("ui.tabulator", {
     _create: function _create() {
       this.table = new Tabulator(this.element[0], this.options);
