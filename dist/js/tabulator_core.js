@@ -5659,6 +5659,26 @@ Tabulator.prototype.initializeElement = function (element) {
 //convert depricated functionality to new functions
 Tabulator.prototype._mapDepricatedFunctionality = function () {};
 
+Tabulator.prototype._clearSelection = function () {
+
+	this.element.classList.add("tabulator-block-select");
+
+	if (window.getSelection) {
+		if (window.getSelection().empty) {
+			// Chrome
+			window.getSelection().empty();
+		} else if (window.getSelection().removeAllRanges) {
+			// Firefox
+			window.getSelection().removeAllRanges();
+		}
+	} else if (document.selection) {
+		// IE?
+		document.selection.empty();
+	}
+
+	this.element.classList.remove("tabulator-block-select");
+};
+
 //concreate table
 Tabulator.prototype._create = function () {
 	this._clearObjectPointers();
