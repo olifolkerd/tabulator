@@ -1235,6 +1235,7 @@ Column.prototype.defaultOptionList = [
 "headerFilterFunc",
 "headerFilterFuncParams",
 "headerFilterLiveFilter",
+"print",
 ];
 
 //////////////// Event Bindings /////////////////
