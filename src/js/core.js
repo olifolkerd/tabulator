@@ -300,6 +300,15 @@ Tabulator.prototype.defaultOptions = {
 };
 
 Tabulator.prototype.initializeOptions = function(options){
+
+	//warn user if option is not available
+	for (var key in options){
+		if(typeof this.defaultOptions[key] === "undefined"){
+			console.warn("Invalid table constructor option:", key)
+		}
+	}
+
+	//assign options to table
 	for (var key in this.defaultOptions){
 		if(key in options){
 			this.options[key] = options[key];

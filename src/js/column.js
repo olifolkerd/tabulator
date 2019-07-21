@@ -147,7 +147,7 @@ var Column = function(def, parent){
 	this.setFieldValue = "";
 
 	this.setField(this.definition.field);
-
+	this.checkDefinition();
 
 	this.modules = {}; //hold module variables;
 
@@ -214,6 +214,14 @@ Column.prototype.createGroupElement = function (){
 
 	return el;
 };
+
+Column.prototype.checkDefinition = function(){
+	Object.keys(this.definition).forEach((key) => {
+		if(this.defaultOptionList.indexOf(key) === -1){
+			console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key)
+		}
+	});
+}
 
 Column.prototype.setField = function(field){
 	this.field = field;
@@ -1150,6 +1158,7 @@ Column.prototype.deleteCell = function(cell){
 Column.prototype.defaultOptionList = [
 "title",
 "field",
+"columns",
 "visible",
 "align",
 "width",
