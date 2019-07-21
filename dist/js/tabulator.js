@@ -13044,6 +13044,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				};
 			}
 
+			if (options && options.documentProcessing) {
+				options.documentProcessing(doc);
+			}
+
 			autoTableParams.head = header;
 			autoTableParams.body = body;
 

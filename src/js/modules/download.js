@@ -617,6 +617,10 @@ Download.prototype.downloaders = {
 			};
 		}
 
+		if(options && options.documentProcessing){
+			options.documentProcessing(doc);
+		}
+
 		autoTableParams.head = header;
 		autoTableParams.body = body;
 
