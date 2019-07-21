@@ -181,6 +181,11 @@ ColumnManager.prototype.createHeaderElement = function () {
 
 	el.classList.add("tabulator-header");
 
+	if (!this.table.options.headerVisible) {
+
+		el.classList.add("tabulator-header-hidden");
+	}
+
 	return el;
 };
 

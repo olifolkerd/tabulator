@@ -223,6 +223,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		el.classList.add("tabulator-header");
 
+		if (!this.table.options.headerVisible) {
+
+			el.classList.add("tabulator-header-hidden");
+		}
+
 		return el;
 	};
 
