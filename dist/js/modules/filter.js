@@ -456,16 +456,11 @@ Filter.prototype.findSubFilters = function (filters) {
 
 //get all filters
 Filter.prototype.getFilters = function (all, ajax) {
-	var self = this,
-	    output = [];
+	var output = [];
 
 	if (all) {
-		output = self.getHeaderFilters();
+		output = this.getHeaderFilters();
 	}
-
-	self.filterList.forEach(function (filter) {
-		output.push({ field: filter.field, type: filter.type, value: filter.value });
-	});
 
 	if (ajax) {
 		output.forEach(function (item) {
@@ -474,6 +469,35 @@ Filter.prototype.getFilters = function (all, ajax) {
 			}
 		});
 	}
+
+	output = output.concat(this.filtersToArray(this.filterList, ajax));
+
+	return output;
+};
+
+//filter to Object
+Filter.prototype.filtersToArray = function (filterList, ajax) {
+	var _this2 = this;
+
+	var output = [];
+
+	filterList.forEach(function (filter) {
+		var item;
+
+		if (Array.isArray(filter)) {
+			output.push(_this2.filtersToArray(filter, ajax));
+		} else {
+			item = { field: filter.field, type: filter.type, value: filter.value };
+
+			if (ajax) {
+				if (typeof item.type == "function") {
+					item.type = "function";
+				}
+			}
+
+			output.push(item);
+		}
+	});
 
 	return output;
 };
