@@ -5989,6 +5989,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					self.table.options.cellDblClick.call(self.table, e, component);
 				}
 			});
+		} else {
+
+			element.addEventListener("dblclick", function (e) {
+
+				e.preventDefault();
+
+				if (document.selection) {
+					// IE
+
+					var range = document.body.createTextRange();
+
+					range.moveToElementText(self.element);
+
+					range.select();
+				} else if (window.getSelection) {
+
+					var range = document.createRange();
+
+					range.selectNode(self.element);
+
+					window.getSelection().removeAllRanges();
+
+					window.getSelection().addRange(range);
+				}
+			});
 		}
 
 		if (cellEvents.cellContext || this.table.options.cellContext) {
