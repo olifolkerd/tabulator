@@ -76,7 +76,6 @@ SelectRow.prototype.initializeRow = function(row){
 
 							if(self.table.options.selectable !== true){
 								if(toggledRows.length > self.table.options.selectable){
-									console.log("slicy", toggledRows.length > self.table.options.selectable )
 									toggledRows = toggledRows.slice(0, self.table.options.selectable)
 								}
 							}

@@ -21374,7 +21374,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 								if (self.table.options.selectable !== true) {
 									if (toggledRows.length > self.table.options.selectable) {
-										console.log("slicy", toggledRows.length > self.table.options.selectable);
 										toggledRows = toggledRows.slice(0, self.table.options.selectable);
 									}
 								}
