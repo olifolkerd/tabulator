@@ -617,14 +617,14 @@ Download.prototype.downloaders = {
 			};
 		}
 
-		if(options && options.documentProcessing){
-			options.documentProcessing(doc);
-		}
-
 		autoTableParams.head = header;
 		autoTableParams.body = body;
 
 		doc.autoTable(autoTableParams);
+
+		if(options && options.documentProcessing){
+			options.documentProcessing(doc);
+		}
 
 		setFileContents(doc.output("arraybuffer"), "application/pdf");
 	},
