@@ -21273,7 +21273,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			element.classList.remove("tabulator-unselectable");
 
 			if (self.table.options.selectable && self.table.options.selectable != "highlight") {
-				if (self.table.options.selectableRangeMode && self.table.options.selectableRangeMode === "click") {
+				if (self.table.options.selectableRangeMode === "click") {
 					element.addEventListener("click", function (e) {
 						if (e.shiftKey) {
 							self.lastClickedRow = self.lastClickedRow || row;
@@ -21290,12 +21290,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							if (e.ctrlKey || e.metaKey) {
 								toggledRows.forEach(function (toggledRow) {
 									if (toggledRow !== self.lastClickedRow) {
-										self.toggleRow(toggledRow);
+
+										if (self.table.options.selectable !== true && !self.isRowSelected(row)) {
+											if (self.selectedRows.length < self.table.options.selectable) {
+												self.toggleRow(toggledRow);
+											}
+										} else {
+											self.toggleRow(toggledRow);
+										}
 									}
 								});
 								self.lastClickedRow = row;
 							} else {
 								self.deselectRows();
+
+								if (self.table.options.selectable !== true) {
+									if (toggledRows.length > self.table.options.selectable) {
+										console.log("slicy", toggledRows.length > self.table.options.selectable);
+										toggledRows = toggledRows.slice(0, self.table.options.selectable);
+									}
+								}
+
 								self.selectRows(toggledRows);
 							}
 						} else if (e.ctrlKey || e.metaKey) {
