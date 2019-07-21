@@ -1,4 +1,4 @@
-/* Tabulator v4.2.7 (c) Oliver Folkerd */
+/* Tabulator v4.3.0 (c) Oliver Folkerd */
 
 var Print = function Print(table) {
 	this.table = table; //hold Tabulator object
