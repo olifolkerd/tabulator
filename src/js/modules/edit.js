@@ -555,6 +555,9 @@ Edit.prototype.editors = {
 		currentItem = {},
 		blurable = true;
 
+
+		this.table.rowManager.element.addEventListener("scroll", cancelItem);
+
 		if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
 			console.warn("DEPRECATION WANRING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
 			editorParams = {values:editorParams};
@@ -775,6 +778,12 @@ Edit.prototype.editors = {
 			if(listEl.parentNode){
 				listEl.parentNode.removeChild(listEl);
 			}
+
+			removeScrollListener();
+		}
+
+		function removeScrollListener() {
+			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 		}
 
 		//style input
@@ -879,6 +888,8 @@ Edit.prototype.editors = {
 		values = [],
 		currentItem = {},
 		blurable = true;
+
+		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
 		function getUniqueColumnValues(){
 			var output = {},
@@ -1119,6 +1130,12 @@ Edit.prototype.editors = {
 			if(listEl.parentNode){
 				listEl.parentNode.removeChild(listEl);
 			}
+
+			removeScrollListener();
+		}
+
+		function removeScrollListener() {
+			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 		}
 
 		//style input
