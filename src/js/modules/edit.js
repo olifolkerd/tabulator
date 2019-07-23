@@ -303,6 +303,17 @@ Edit.prototype.editors = {
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 		onRendered(function(){
@@ -355,6 +366,17 @@ Edit.prototype.editors = {
         input.style.boxSizing = "border-box";
         input.style.whiteSpace = "pre-wrap";
         input.style.resize = "none";
+
+        if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+        	for (let key in editorParams.elementAttributes){
+        		if(key.charAt(0) == "+"){
+        			key = key.slice(1);
+        			input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+        		}else{
+        			input.setAttribute(key, editorParams.elementAttributes[key]);
+        		}
+        	}
+        }
 
         input.value = value;
 
@@ -426,6 +448,17 @@ Edit.prototype.editors = {
 		input.style.padding = "4px";
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
+
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
 
 		input.value = cellValue;
 
@@ -499,6 +532,17 @@ Edit.prototype.editors = {
     	input.style.padding = "4px";
     	input.style.width = "100%";
     	input.style.boxSizing = "border-box";
+
+    	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+    		for (let key in editorParams.elementAttributes){
+    			if(key.charAt(0) == "+"){
+    				key = key.slice(1);
+    				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+    			}else{
+    				input.setAttribute(key, editorParams.elementAttributes[key]);
+    			}
+    		}
+    	}
 
     	input.value = cellValue;
 
@@ -794,6 +838,17 @@ Edit.prototype.editors = {
 		input.style.boxSizing = "border-box";
 		input.style.cursor = "default";
 		input.readOnly = (this.currentCell != false);
+
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
 
 		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
@@ -1145,6 +1200,17 @@ Edit.prototype.editors = {
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		//allow key based navigation
 		input.addEventListener("keydown", function(e){
 			var index;
@@ -1338,6 +1404,17 @@ Edit.prototype.editors = {
 		star.setAttribute("xml:space", "preserve");
 		star.style.padding = "0 1px";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					starsHolder.setAttribute(key, starsHolder.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					starsHolder.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		//create correct number of stars
 		for(var i=1;i<= maxStars;i++){
 			buildStar(i);
@@ -1424,6 +1501,17 @@ Edit.prototype.editors = {
 		bar.style.maxWidth = "100%";
 		bar.style.minWidth = "0%";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					bar.setAttribute(key, bar.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					bar.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		//style cell
 		element.style.padding = "4px 4px";
 
@@ -1508,6 +1596,17 @@ Edit.prototype.editors = {
 		input.setAttribute("type", "checkbox");
 		input.style.marginTop = "5px";
 		input.style.boxSizing = "border-box";
+
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
 
 		input.value = value;
 

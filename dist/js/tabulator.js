@@ -13634,6 +13634,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.width = "100%";
 			input.style.boxSizing = "border-box";
 
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
+
 			input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 			onRendered(function () {
@@ -13686,6 +13697,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.boxSizing = "border-box";
 			input.style.whiteSpace = "pre-wrap";
 			input.style.resize = "none";
+
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
 
 			input.value = value;
 
@@ -13757,6 +13779,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.padding = "4px";
 			input.style.width = "100%";
 			input.style.boxSizing = "border-box";
+
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
 
 			input.value = cellValue;
 
@@ -13830,6 +13863,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.padding = "4px";
 			input.style.width = "100%";
 			input.style.boxSizing = "border-box";
+
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
 
 			input.value = cellValue;
 
@@ -14117,6 +14161,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.boxSizing = "border-box";
 			input.style.cursor = "default";
 			input.readOnly = this.currentCell != false;
+
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
 
 			input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
@@ -14469,6 +14524,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.style.width = "100%";
 			input.style.boxSizing = "border-box";
 
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
+
 			//allow key based navigation
 			input.addEventListener("keydown", function (e) {
 				var index;
@@ -14665,6 +14731,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			star.setAttribute("xml:space", "preserve");
 			star.style.padding = "0 1px";
 
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						starsHolder.setAttribute(key, starsHolder.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						starsHolder.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
+
 			//create correct number of stars
 			for (var i = 1; i <= maxStars; i++) {
 				buildStar(i);
@@ -14756,6 +14833,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			bar.style.maxWidth = "100%";
 			bar.style.minWidth = "0%";
 
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						bar.setAttribute(key, bar.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						bar.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
+
 			//style cell
 			element.style.padding = "4px 4px";
 
@@ -14844,6 +14932,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.setAttribute("type", "checkbox");
 			input.style.marginTop = "5px";
 			input.style.boxSizing = "border-box";
+
+			if (editorParams.elementAttributes && _typeof(editorParams.elementAttributes) == "object") {
+				for (var key in editorParams.elementAttributes) {
+					if (key.charAt(0) == "+") {
+						key = key.slice(1);
+						input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+					} else {
+						input.setAttribute(key, editorParams.elementAttributes[key]);
+					}
+				}
+			}
 
 			input.value = value;
 
@@ -16169,7 +16268,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			element.setAttribute("aria-label", percentValue);
 
-			return "<div style='position:realtive; height:100%;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
+			return "<div style='position:relative; height:100%;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
 		},
 
 		//background color
