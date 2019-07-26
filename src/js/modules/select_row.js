@@ -218,7 +218,6 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			}
 
 			row.modules.select.selected = true;
-			//TODO validate that way
 			row.modules.select.checkboxEl.checked = true;
 			row.getElement().classList.add("tabulator-selected");
 
@@ -328,11 +327,11 @@ SelectRow.prototype._rowSelectionChanged = function(){
 };
 
 SelectRow.prototype.registerRowSelectChecbox = function (row, element) {
-	if(!row.modules.select){
-		row.modules.select = {};
+	if(!row._row.modules.select){
+		row_row.modules.select = {};
 	}
 
-	row.modules.select.checkboxEl = element;
+	row._row.modules.select.checkboxEl = element;
 }
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);
