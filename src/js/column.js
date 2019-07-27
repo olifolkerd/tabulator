@@ -110,6 +110,16 @@ ColumnComponent.prototype.setHeaderFilterValue = function(value){
 	}
 };
 
+ColumnComponent.prototype.move = function(to, after){
+	var toColumn = this._column.table.columnManager.findColumn(to);
+
+	if(toColumn){
+		this._column.table.columnManager.moveColumn(this._column, toColumn, after)
+	}else{
+		console.warn("Move Error - No matching column found:", toColumn);
+	}
+}
+
 ColumnComponent.prototype.getNextColumn = function(){
 	var nextCol = this._column.nextColumn();
 

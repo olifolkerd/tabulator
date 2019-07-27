@@ -1239,6 +1239,22 @@ Tabulator.prototype.deleteColumn = function(field){
 	}
 };
 
+Tabulator.prototype.moveColumn = function(from, to, after){
+	var fromColumn = this.columnManager.findColumn(from);
+	var toColumn = this.columnManager.findColumn(to);
+
+	if(fromColumn){
+		if(toColumn){
+			console.log("move", fromColumn, toColumn)
+			this.columnManager.moveColumn(fromColumn, toColumn, after)
+		}else{
+			console.warn("Move Error - No matching column found:", toColumn);
+		}
+	}else{
+		console.warn("Move Error - No matching column found:", from);
+	}
+};
+
 //scroll to column in DOM
 Tabulator.prototype.scrollToColumn = function(field, position, ifVisible){
 
