@@ -5456,6 +5456,8 @@ Tabulator.prototype.defaultOptions = {
 
 	keybindings: [], //array for keybindings
 
+	tabEndNewRow: false, //create new row when tab to end of table
+
 	clipboard: false, //enable clipboard
 	clipboardCopyStyled: true, //formatted table data
 	clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard

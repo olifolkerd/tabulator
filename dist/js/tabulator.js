@@ -6973,6 +6973,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		keybindings: [], //array for keybindings
 
 
+		tabEndNewRow: false, //create new row when tab to end of table
+
+
 		clipboard: false, //enable clipboard
 
 		clipboardCopyStyled: true, //formatted table data
@@ -13888,7 +13891,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.addEventListener("keydown", function (e) {
 				switch (e.keyCode) {
 					case 13:
-					case 9:
+						// case 9:
 						onChange();
 						break;
 
@@ -18731,13 +18734,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		navNext: function navNext(e) {
 			var cell = false;
+			var newRow = this.table.options.tabEndNewRow;
 
 			if (this.table.modExists("edit")) {
 				cell = this.table.modules.edit.currentCell;
 
 				if (cell) {
 					e.preventDefault();
-					cell.nav().next();
+					if (!cell.nav().next()) {
+						if (newRow) {
+							if (newRow === true) {
+								newRow = this.table.addRow({});
+							} else {
+								if (typeof newRow == "function") {
+									newRow = this.table.addRow(newRow(cell.row.getComponent()));
+								} else {
+									newRow = this.table.addRow(newRow);
+								}
+							}
+
+							newRow.then(function () {
+								cell.nav().next();
+							});
+						}
+					}
 				}
 			}
 		},

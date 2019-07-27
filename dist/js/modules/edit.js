@@ -500,7 +500,7 @@ Edit.prototype.editors = {
 		input.addEventListener("keydown", function (e) {
 			switch (e.keyCode) {
 				case 13:
-				case 9:
+					// case 9:
 					onChange();
 					break;
 

@@ -253,13 +253,30 @@ Keybindings.prototype.actions = {
 
 	navNext:function(e){
 		var cell = false;
+		var newRow = this.table.options.tabEndNewRow;
 
 		if(this.table.modExists("edit")){
 			cell = this.table.modules.edit.currentCell;
 
 			if(cell){
 				e.preventDefault();
-				cell.nav().next();
+				if(!cell.nav().next()){
+					if(newRow){
+						if(newRow === true){
+							newRow = this.table.addRow({})
+						}else{
+							if(typeof newRow == "function"){
+								newRow = this.table.addRow(newRow(cell.row.getComponent()))
+							}else{
+								newRow = this.table.addRow(newRow)
+							}
+						}
+
+						newRow.then(() => {
+							cell.nav().next()
+						});
+					}
+				}
 			}
 		}
 	},
