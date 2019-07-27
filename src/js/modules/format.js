@@ -572,11 +572,19 @@ Format.prototype.formatters = {
 	},
 	rowSelection:function(cell, formatterParams, onRendered){
 		var row = cell.getRow(),
-		value = row.isSelected(),
+		value = false,
 		checkbox = document.createElement("input");
+		
 		checkbox.type = 'checkbox';
+		checkbox.addEventListener("click", function(e){
+			e.stopPropagation();
+			row.toggleSelect();
+		});
 
-		this.table.modules.selectRow.registerRowSelectChecbox(row, checkbox);
+		if(this.table.modExists("selectRow", true)){
+			value = row.isSelected();
+			this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+		} 
 
 		if(value){
 			checkbox.setAttribute("aria-checked", true);

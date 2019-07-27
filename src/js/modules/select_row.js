@@ -218,7 +218,9 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			}
 
 			row.modules.select.selected = true;
-			row.modules.select.checkboxEl.checked = true;
+			if(row.modules.select.checkboxEl){
+				row.modules.select.checkboxEl.checked = true;
+			}
 			row.getElement().classList.add("tabulator-selected");
 
 			this.selectedRows.push(row);
@@ -285,7 +287,9 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			}
 
 			row.modules.select.selected = false;
-			row.modules.select.checkboxEl.checked = false;
+			if(row.modules.select.checkboxEl){
+				row.modules.select.checkboxEl.checked = false;
+			}
 			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
@@ -326,9 +330,9 @@ SelectRow.prototype._rowSelectionChanged = function(){
 	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
 };
 
-SelectRow.prototype.registerRowSelectChecbox = function (row, element) {
+SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
 	if(!row._row.modules.select){
-		row_row.modules.select = {};
+		row._row.modules.select = {};
 	}
 
 	row._row.modules.select.checkboxEl = element;
