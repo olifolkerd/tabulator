@@ -16756,6 +16756,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._group.key;
 	};
 
+	GroupComponent.prototype.getField = function () {
+		return this._group.field;
+	};
+
 	GroupComponent.prototype.getElement = function () {
 		return this._group.element;
 	};

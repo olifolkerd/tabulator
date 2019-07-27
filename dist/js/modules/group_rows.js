@@ -10,6 +10,10 @@ GroupComponent.prototype.getKey = function () {
 	return this._group.key;
 };
 
+GroupComponent.prototype.getField = function () {
+	return this._group.field;
+};
+
 GroupComponent.prototype.getElement = function () {
 	return this._group.element;
 };
