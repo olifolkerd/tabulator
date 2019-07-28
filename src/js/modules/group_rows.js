@@ -752,6 +752,10 @@ GroupRows.prototype.initialize = function(){
 
 	this.allowedValues = self.table.options.groupValues;
 
+	if(Array.isArray(groupBy) && Array.isArray(groupHeader) && groupBy.length > groupHeader.length){
+		console.warn("Error creating group headers, groupHeader array is shorter than groupBy array");
+	}
+
 	self.headerGenerator = [function(){return "";}];
 	this.startOpen = [function(){return false;}]; //starting state of group
 
