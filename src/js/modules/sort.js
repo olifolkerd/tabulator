@@ -33,7 +33,9 @@ Sort.prototype.initializeColumn = function(column, content){
 		tristate:column.definition.headerSortTristate,
 	};
 
-	if(column.definition.headerSort !== false){
+
+
+	if(typeof column.definition.headerSort === "undefined" ? (this.table.options.headerSort !== false) : column.definition.headerSort !== false){
 
 		colEl = column.getElement();
 

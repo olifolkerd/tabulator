@@ -6964,6 +6964,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		sortOrderReverse: false, //reverse internal sort ordering
 
 
+		headerSort: true, //set default global header sort
+
+
 		footerElement: false, //hold footer element
 
 
@@ -21903,7 +21906,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			tristate: column.definition.headerSortTristate
 		};
 
-		if (column.definition.headerSort !== false) {
+		if (typeof column.definition.headerSort === "undefined" ? this.table.options.headerSort !== false : column.definition.headerSort !== false) {
 
 			colEl = column.getElement();
 

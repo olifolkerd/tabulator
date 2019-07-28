@@ -65,6 +65,8 @@ Tabulator.prototype.defaultOptions = {
 
 	sortOrderReverse:false, //reverse internal sort ordering
 
+	headerSort:true, //set default global header sort
+
 	footerElement:false, //hold footer element
 
 	index:"id", //filed for row index
