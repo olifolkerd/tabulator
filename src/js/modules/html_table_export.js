@@ -202,11 +202,11 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 		switch(row.type){
 			case "group":
 			return this.config.rowGroups !== false;
-			break;
+			//break; unreachable break statement
 
 			case "calc":
 			return this.config.columnCalcs !== false;
-			break;
+			//break; unreachable break statement
 		}
 
 		return true;

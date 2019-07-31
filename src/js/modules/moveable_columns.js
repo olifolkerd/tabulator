@@ -115,7 +115,7 @@ MoveColumns.prototype.bindTouchEvents = function(column){
 					moveToCol = nextCol;
 
 					if(moveToCol !== column){
-						startXMove = e.touches[0].pageX
+						startXMove = e.touches[0].pageX;
 						moveToCol.getElement().parentNode.insertBefore(self.placeholderElement, moveToCol.getElement().nextSibling);
 						self.moveColumn(moveToCol, true);
 					}

@@ -58,13 +58,13 @@ Persistence.prototype.retreiveData = function(type){
 		break;
 
 		default:
-		console.warn("Persistance Load Error - invalid mode selected", this.mode);
+		console.warn("Persistence Load Error - invalid mode selected", this.mode);
 	}
 
 	return data ? JSON.parse(data) : false;
 };
 
-//merge old and new column defintions
+//merge old and new column definitions
 Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 	var self = this,
 	output = [];
@@ -177,11 +177,11 @@ Persistence.prototype.saveData = function(id, data){
 		break;
 
 		default:
-		console.warn("Persistance Save Error - invalid mode selected", this.mode);
+		console.warn("Persistence Save Error - invalid mode selected", this.mode);
 	}
 };
 
-//build premission list
+//build permission list
 Persistence.prototype.parseColumns = function(columns){
 	var self = this,
 	definitions = [];

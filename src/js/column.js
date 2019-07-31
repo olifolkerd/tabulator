@@ -140,7 +140,7 @@ var Column = function(def, parent){
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
 
-	//multi dimentional filed handling
+	//multi dimensional filed handling
 	this.field ="";
 	this.fieldStructure = "";
 	this.getFieldValue = "";
@@ -254,7 +254,7 @@ Column.prototype.reRegisterPosition = function(){
 Column.prototype._mapDepricatedFunctionality = function(){
 	if(typeof this.definition.hideInHtml !== "undefined"){
 		this.definition.htmlOutput = !this.definition.hideInHtml;
-		console.warn("hideInHtml column definition property is depricated, you should now use htmlOutput")
+		console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput")
 	}
 };
 
