@@ -4,6 +4,7 @@ var SelectRow = function(table){
 	this.lastClickedRow = false; //last clicked row
 	this.selectPrev = []; //hold previously selected element for drag drop selection
 	this.selectedRows = []; //hold selected rows
+	this.headerCheckboxElement = null; // hold header select element 
 };
 
 SelectRow.prototype.clearSelectionData = function(silent){
@@ -327,6 +328,17 @@ SelectRow.prototype.getSelectedRows = function(){
 };
 
 SelectRow.prototype._rowSelectionChanged = function(){
+	if(this.headerCheckboxElement){
+		this.headerCheckboxElement.indeterminate = false;
+		if(this.selectedRows.length === 0){
+			this.headerCheckboxElement.checked = false;
+		} else if(this.table.rowManager.rows.length === this.selectedRows.length){
+			this.headerCheckboxElement.checked = true;
+		} else {
+			this.headerCheckboxElement.indeterminate = true;
+			this.headerCheckboxElement.checked = false;
+		}
+	}
 	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
 };
 
@@ -336,6 +348,10 @@ SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
 	}
 
 	row._row.modules.select.checkboxEl = element;
+}
+
+SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
+	this.headerCheckboxElement = element;
 }
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);

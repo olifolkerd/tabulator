@@ -570,30 +570,35 @@ Format.prototype.formatters = {
 
 		return el;
 	},
-	rowSelection:function(cell, formatterParams, onRendered){
-		var row = cell.getRow(),
-		value = false,
-		checkbox = document.createElement("input");
+
+	rowSelection:function(cell){
+		var self = this,
+			checkbox = document.createElement("input");	
+			checkbox.type = 'checkbox';
 		
-		checkbox.type = 'checkbox';
-		checkbox.addEventListener("click", function(e){
-			e.stopPropagation();
-			row.toggleSelect();
-		});
+		if(this.table.modExists("selectRow", true)){	
+			if(typeof cell.getRow == 'function'){
+				var row = cell.getRow();
+				checkbox.addEventListener("click", function checkboxCellToggleSelect(e){
+					e.stopPropagation();
+					row.toggleSelect();
+				});
+	
+				checkbox.checked = row.isSelected();
+				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+			}else {
+				checkbox.addEventListener("click", function checkboxHeaderToggleSelect(e){
+					e.stopPropagation();
+					if(e.target.checked){
+						self.table.selectRow();
+					}else {
+						self.table.deselectRow();
+					}
+				});
 
-		if(this.table.modExists("selectRow", true)){
-			value = row.isSelected();
-			this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
-		} 
-
-		if(value){
-			checkbox.setAttribute("aria-checked", true);
-			checkbox.checked = true;
-		}else{
-			checkbox.setAttribute("aria-checked", false);
-			checkbox.checked = false;
+				this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
+			}
 		}
-
 		return checkbox;
 	},
 };
