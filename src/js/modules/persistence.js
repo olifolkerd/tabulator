@@ -8,7 +8,18 @@ var Persistence = function(table){
 //setup parameters
 Persistence.prototype.initialize = function(mode, id){
 	//determine persistent layout storage type
-	this.mode = mode !== true ?  mode : (typeof window.localStorage !== 'undefined' ? "local" : "cookie");
+	function lsTest(){
+            var test = 'test';
+            try {
+                    localStorage.setItem(test, test);
+                    localStorage.removeItem(test);
+                    return true;
+            } catch(e) {
+                    return false;
+        }
+        }
+        var lStorage = lsTest();
+	this.mode = mode !== true ?  mode : (lStorage ? "local" : "cookie");
 
 	//set storage tag
 	this.id = "tabulator-" + (id || (this.table.element.getAttribute("id") || ""));
