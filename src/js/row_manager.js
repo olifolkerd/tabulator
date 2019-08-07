@@ -1648,7 +1648,7 @@ RowManager.prototype.redraw = function (force){
 	this.table.tableWidth = this.table.element.clientWidth;
 
 	if(!force){
-
+                self = this;
 		if(self.renderMode == "classic"){
 
 			if(self.table.options.groupBy){
