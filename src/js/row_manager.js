@@ -1648,11 +1648,10 @@ RowManager.prototype.redraw = function (force){
 	this.table.tableWidth = this.table.element.clientWidth;
 
 	if(!force){
-                self = this;
-		if(self.renderMode == "classic"){
+		if(this.renderMode == "classic"){
 
-			if(self.table.options.groupBy){
-				self.refreshActiveData("group", false, false);
+			if(this.table.options.groupBy){
+				this.refreshActiveData("group", false, false);
 			}else{
 				this._simpleRender();
 			}
