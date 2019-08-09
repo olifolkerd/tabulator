@@ -9,10 +9,10 @@ var Persistence = function(table){
 Persistence.prototype.initialize = function(mode, id){
 	//determine persistent layout storage type
 	function lsTest(){
-            var test = 'test';
+            var  _tabulator_test =  "test";
             try {
-                    localStorage.setItem(test, test);
-                    localStorage.removeItem(test);
+                    window.localStorage.setItem( _tabulator_test, _tabulator_test);
+                    window.localStorage.removeItem( _tabulator_test);
                     return true;
             } catch(e) {
                     return false;
