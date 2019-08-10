@@ -5,21 +5,25 @@ var Persistence = function(table){
 	this.persistProps = ["field", "width", "visible"];
 };
 
-//setup parameters
-Persistence.prototype.initialize = function(mode, id){
-	//determine persistent layout storage type
-	function lsTest(){
-            var  _tabulator_test =  "test";
+// Test for whether localStorage is available for use.
+Persistence.prototype.localStorageTest = function() {
+    function lsTest(){
+            var  testKey =  "_tabulator_test";
             try {
-                    window.localStorage.setItem( _tabulator_test, _tabulator_test);
-                    window.localStorage.removeItem( _tabulator_test);
+                    window.localStorage.setItem( testKey, testKey);
+                    window.localStorage.removeItem( testKey );
                     return true;
             } catch(e) {
                     return false;
-        }
-        }
-        var lStorage = lsTest();
-	this.mode = mode !== true ?  mode : (lStorage ? "local" : "cookie");
+            }
+        };
+};
+
+//setup parameters
+Persistence.prototype.initialize = function(mode, id){
+	//determine persistent layout storage type
+	
+	this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
 
 	//set storage tag
 	this.id = "tabulator-" + (id || (this.table.element.getAttribute("id") || ""));
