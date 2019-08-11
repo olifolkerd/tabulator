@@ -14021,6 +14021,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var self = this,
 			    cellEl = cell.getElement(),
 			    initialValue = cell.getValue(),
+			    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : "",
 			    input = document.createElement("input"),
 			    listEl = document.createElement("div"),
 			    dataItems = [],
@@ -14224,9 +14225,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (!listEl.parentNode) {
 
 					if (editorParams.values === true) {
-						parseItems(getUniqueColumnValues(), initialValue);
+						parseItems(getUniqueColumnValues(), initialDisplayValue);
 					} else {
-						parseItems(editorParams.values || [], initialValue);
+						parseItems(editorParams.values || [], initialDisplayValue);
 					}
 
 					var offset = Tabulator.prototype.helpers.elOffset(cellEl);
@@ -14250,6 +14251,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function removeScrollListener() {
 				self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 			}
+
+			console.log("initialDisplayValue", initialDisplayValue);
 
 			//style input
 			input.setAttribute("type", "text");
@@ -14361,6 +14364,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var self = this,
 			    cellEl = cell.getElement(),
 			    initialValue = cell.getValue(),
+			    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : "",
 			    input = document.createElement("input"),
 			    listEl = document.createElement("div"),
 			    allItems = [],
@@ -14725,7 +14729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			input.addEventListener("focus", function (e) {
-				var value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
+				var value = initialDisplayValue;
 				showList();
 				input.value = value;
 				filterList(value, true);

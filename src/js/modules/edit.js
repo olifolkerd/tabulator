@@ -592,6 +592,7 @@ Edit.prototype.editors = {
 		var self = this,
 		cellEl = cell.getElement(),
 		initialValue = cell.getValue(),
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
 		input = document.createElement("input"),
 		listEl = document.createElement("div"),
 		dataItems = [],
@@ -802,9 +803,9 @@ Edit.prototype.editors = {
 			if(!listEl.parentNode){
 
 				if(editorParams.values === true){
-					parseItems(getUniqueColumnValues(), initialValue);
+					parseItems(getUniqueColumnValues(), initialDisplayValue);
 				}else{
-					parseItems(editorParams.values || [], initialValue);
+					parseItems(editorParams.values || [], initialDisplayValue);
 				}
 
 
@@ -829,6 +830,8 @@ Edit.prototype.editors = {
 		function removeScrollListener() {
 			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 		}
+
+		console.log("initialDisplayValue", initialDisplayValue)
 
 		//style input
 		input.setAttribute("type", "text");
@@ -936,6 +939,7 @@ Edit.prototype.editors = {
 		var self = this,
 		cellEl = cell.getElement(),
 		initialValue = cell.getValue(),
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
 		input = document.createElement("input"),
 		listEl = document.createElement("div"),
 		allItems = [],
@@ -1298,7 +1302,7 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("focus", function(e){
-			var value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
+			var value = initialDisplayValue;
 			showList();
 			input.value = value;
 			filterList(value, true);

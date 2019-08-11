@@ -2092,7 +2092,6 @@ Column.prototype.nextColumn = function () {
 
 Column.prototype._nextVisibleColumn = function (index) {
 	var column = this.table.columnManager.getColumnByIndex(index);
-
 	return !column || column.visible ? column : this._nextVisibleColumn(index + 1);
 };
 
@@ -2103,7 +2102,6 @@ Column.prototype.prevColumn = function () {
 
 Column.prototype._prevVisibleColumn = function (index) {
 	var column = this.table.columnManager.getColumnByIndex(index);
-
 	return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
 };
 
