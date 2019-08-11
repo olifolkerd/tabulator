@@ -570,6 +570,37 @@ Format.prototype.formatters = {
 
 		return el;
 	},
+
+	rowSelection:function(cell){
+		var self = this,
+			checkbox = document.createElement("input");	
+			checkbox.type = 'checkbox';
+		
+		if(this.table.modExists("selectRow", true)){	
+			if(typeof cell.getRow == 'function'){
+				var row = cell.getRow();
+				checkbox.addEventListener("click", function checkboxCellToggleSelect(e){
+					e.stopPropagation();
+					row.toggleSelect();
+				});
+	
+				checkbox.checked = row.isSelected();
+				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+			}else {
+				checkbox.addEventListener("click", function checkboxHeaderToggleSelect(e){
+					e.stopPropagation();
+					if(e.target.checked){
+						self.table.selectRow();
+					}else {
+						self.table.deselectRow();
+					}
+				});
+
+				this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
+			}
+		}
+		return checkbox;
+	},
 };
 
 Tabulator.prototype.registerModule("format", Format);

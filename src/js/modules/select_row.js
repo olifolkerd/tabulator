@@ -4,6 +4,7 @@ var SelectRow = function(table){
 	this.lastClickedRow = false; //last clicked row
 	this.selectPrev = []; //hold previously selected element for drag drop selection
 	this.selectedRows = []; //hold selected rows
+	this.headerCheckboxElement = null; // hold header select element 
 };
 
 SelectRow.prototype.clearSelectionData = function(silent){
@@ -218,9 +219,13 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			}
 
 			row.modules.select.selected = true;
+			if(row.modules.select.checkboxEl){
+				row.modules.select.checkboxEl.checked = true;
+			}
 			row.getElement().classList.add("tabulator-selected");
 
 			this.selectedRows.push(row);
+			
 
 			if(!silent){
 				this.table.options.rowSelected.call(this.table, row.getComponent());
@@ -283,6 +288,9 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			}
 
 			row.modules.select.selected = false;
+			if(row.modules.select.checkboxEl){
+				row.modules.select.checkboxEl.checked = false;
+			}
 			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
@@ -320,7 +328,30 @@ SelectRow.prototype.getSelectedRows = function(){
 };
 
 SelectRow.prototype._rowSelectionChanged = function(){
+	if(this.headerCheckboxElement){
+		this.headerCheckboxElement.indeterminate = false;
+		if(this.selectedRows.length === 0){
+			this.headerCheckboxElement.checked = false;
+		} else if(this.table.rowManager.rows.length === this.selectedRows.length){
+			this.headerCheckboxElement.checked = true;
+		} else {
+			this.headerCheckboxElement.indeterminate = true;
+			this.headerCheckboxElement.checked = false;
+		}
+	}
 	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
 };
+
+SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
+	if(!row._row.modules.select){
+		row._row.modules.select = {};
+	}
+
+	row._row.modules.select.checkboxEl = element;
+}
+
+SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
+	this.headerCheckboxElement = element;
+}
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);
