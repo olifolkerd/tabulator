@@ -1,4 +1,4 @@
-/* Tabulator v4.3.0 (c) Oliver Folkerd */
+/* Tabulator v4.4.0 (c) Oliver Folkerd */
 
 //public group object
 var GroupComponent = function GroupComponent(group) {
