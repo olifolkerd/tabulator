@@ -157,7 +157,10 @@ var Column = function(def, parent){
 	this.setFieldValue = "";
 
 	this.setField(this.definition.field);
-	this.checkDefinition();
+
+	if(this.table.options.invalidOptionWarnings){
+		this.checkDefinition();
+	}
 
 	this.modules = {}; //hold module variables;
 
@@ -1209,6 +1212,7 @@ Column.prototype.defaultOptionList = [
 "accessorDownloadParams",
 "accessorClipboard",
 "accessorClipboardParams",
+"clipboard",
 "download",
 "downloadTitle",
 "topCalc",

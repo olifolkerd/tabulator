@@ -75,6 +75,8 @@ Tabulator.prototype.defaultOptions = {
 
 	tabEndNewRow:false, //create new row when tab to end of table
 
+	invalidOptionWarnings:true, //allow toggling of invalid option warnings
+
 	clipboard:false, //enable clipboard
 	clipboardCopyStyled:true, //formatted table data
 	clipboardCopySelector:"active", //method of chosing which data is coppied to the clipboard
@@ -306,9 +308,11 @@ Tabulator.prototype.defaultOptions = {
 Tabulator.prototype.initializeOptions = function(options){
 
 	//warn user if option is not available
-	for (var key in options){
-		if(typeof this.defaultOptions[key] === "undefined"){
-			console.warn("Invalid table constructor option:", key)
+	if(options.invalidOptionWarnings !== false){
+		for (var key in options){
+			if(typeof this.defaultOptions[key] === "undefined"){
+				console.warn("Invalid table constructor option:", key)
+			}
 		}
 	}
 
@@ -361,12 +365,12 @@ Tabulator.prototype._clearSelection = function(){
 
 	if (window.getSelection) {
 	  if (window.getSelection().empty) {  // Chrome
-	    window.getSelection().empty();
+	  	window.getSelection().empty();
 	  } else if (window.getSelection().removeAllRanges) {  // Firefox
-	    window.getSelection().removeAllRanges();
+	  	window.getSelection().removeAllRanges();
 	  }
 	} else if (document.selection) {  // IE?
-	  document.selection.empty();
+		document.selection.empty();
 	}
 
 	this.element.classList.remove("tabulator-block-select");
