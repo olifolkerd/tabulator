@@ -2536,14 +2536,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var index = this.table.columnManager.findColumnIndex(this);
 
-		return index > -1 ? this.table.columnManager.getColumnByIndex(index + 1) : false;
+		return index > -1 ? this._nextVisibleColumn(index + 1) : false;
+	};
+
+	Column.prototype._nextVisibleColumn = function (index) {
+
+		var column = this.table.columnManager.getColumnByIndex(index);
+
+		return !column || column.visible ? column : this._nextVisibleColumn(index + 1);
 	};
 
 	Column.prototype.prevColumn = function () {
 
 		var index = this.table.columnManager.findColumnIndex(this);
 
-		return index > -1 ? this.table.columnManager.getColumnByIndex(index - 1) : false;
+		return index > -1 ? this._prevVisibleColumn(index - 1) : false;
+	};
+
+	Column.prototype._prevVisibleColumn = function (index) {
+
+		var column = this.table.columnManager.getColumnByIndex(index);
+
+		return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
 	};
 
 	Column.prototype.reinitializeWidth = function (force) {
