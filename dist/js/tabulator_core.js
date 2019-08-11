@@ -6647,7 +6647,6 @@ Tabulator.prototype.moveColumn = function (from, to, after) {
 
 	if (fromColumn) {
 		if (toColumn) {
-			console.log("move", fromColumn, toColumn);
 			this.columnManager.moveColumn(fromColumn, toColumn, after);
 		} else {
 			console.warn("Move Error - No matching column found:", toColumn);

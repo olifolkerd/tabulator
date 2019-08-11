@@ -8647,8 +8647,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (toColumn) {
 
-				console.log("move", fromColumn, toColumn);
-
 				this.columnManager.moveColumn(fromColumn, toColumn, after);
 			} else {
 
