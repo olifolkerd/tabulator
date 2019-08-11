@@ -18380,6 +18380,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var rows = visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows();
 		var columns = [];
 
+		if (this.config.columnCalcs !== false && this.table.modExists("columnCalcs")) {
+			if (this.table.modules.columnCalcs.topInitialized) {
+				rows.unshift(this.table.modules.columnCalcs.topRow);
+			}
+
+			if (this.table.modules.columnCalcs.botInitialized) {
+				rows.push(this.table.modules.columnCalcs.botRow);
+			}
+		}
+
 		this.table.columnManager.columnsByIndex.forEach(function (column) {
 			if (_this44.columnVisCheck(column)) {
 				columns.push(column);
