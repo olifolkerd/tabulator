@@ -1270,7 +1270,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.hozAlign = ""; //horizontal text alignment
 
 
-		//multi dimentional filed handling
+		//multi dimensional filed handling
 
 		this.field = "";
 
@@ -1440,7 +1440,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.definition.htmlOutput = !this.definition.hideInHtml;
 
-			console.warn("hideInHtml column definition property is depricated, you should now use htmlOutput");
+			console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput");
 		}
 	};
 
@@ -4773,11 +4773,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (!force) {
 
-			if (self.renderMode == "classic") {
+			if (this.renderMode == "classic") {
 
-				if (self.table.options.groupBy) {
+				if (this.table.options.groupBy) {
 
-					self.refreshActiveData("group", false, false);
+					this.refreshActiveData("group", false, false);
 				} else {
 
 					this._simpleRender();
@@ -11258,7 +11258,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
 			config.columnHeaders = this.table.options.clipboardCopyHeader;
-			console.warn("DEPRECATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
+			console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
 		}
 
 		if (this.table.options.clipboardCopyConfig) {
@@ -13450,7 +13450,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (column.definition.editor === "tick") {
 					column.definition.editor = "tickCross";
-					console.warn("DEPRECATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+					console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
 				}
 
 				if (self.editors[column.definition.editor]) {
@@ -13472,7 +13472,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						if (column.definition.formatter === "tick") {
 							column.definition.formatter = "tickCross";
-							console.warn("DEPRECATION WANRING - the tick editor has been depricated, please use the tickCross editor");
+							console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
 						}
 
 						if (self.editors[column.definition.formatter]) {
@@ -15903,7 +15903,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						config.params.crossElement = false;
 					}
 
-					console.warn("DEPRECATION WANRING - the tick formatter has been depricated, please use the tickCross formatter with the crossElement param set to false");
+					console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
 				}
 
 				if (self.formatters[column.definition.formatter]) {
@@ -18556,6 +18556,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
+
 	var Keybindings = function Keybindings(table) {
 		this.table = table; //hold Tabulator object
 		this.watchKeys = null;
@@ -19217,6 +19218,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("moveColumn", MoveColumns);
+
 	var MoveRows = function MoveRows(table) {
 
 		this.table = table; //hold Tabulator object
@@ -20544,10 +20546,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.persistProps = ["field", "width", "visible"];
 	};
 
+	// Test for whether localStorage is available for use.
+	Persistence.prototype.localStorageTest = function () {
+		function lsTest() {
+			var testKey = "_tabulator_test";
+			try {
+				window.localStorage.setItem(testKey, testKey);
+				window.localStorage.removeItem(testKey);
+				return true;
+			} catch (e) {
+				return false;
+			}
+		};
+	};
+
 	//setup parameters
 	Persistence.prototype.initialize = function (mode, id) {
 		//determine persistent layout storage type
-		this.mode = mode !== true ? mode : typeof window.localStorage !== 'undefined' ? "local" : "cookie";
+
+		this.mode = mode !== true ? mode : this.localStorageTest() ? "local" : "cookie";
 
 		//set storage tag
 		this.id = "tabulator-" + (id || this.table.element.getAttribute("id") || "");
@@ -20597,13 +20614,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				break;
 
 			default:
-				console.warn("Persistance Load Error - invalid mode selected", this.mode);
+				console.warn("Persistence Load Error - invalid mode selected", this.mode);
 		}
 
 		return data ? JSON.parse(data) : false;
 	};
 
-	//merge old and new column defintions
+	//merge old and new column definitions
 	Persistence.prototype.mergeDefinition = function (oldCols, newCols) {
 		var self = this,
 		    output = [];
@@ -20714,11 +20731,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				break;
 
 			default:
-				console.warn("Persistance Save Error - invalid mode selected", this.mode);
+				console.warn("Persistence Save Error - invalid mode selected", this.mode);
 		}
 	};
 
-	//build premission list
+	//build permission list
 	Persistence.prototype.parseColumns = function (columns) {
 		var self = this,
 		    definitions = [];

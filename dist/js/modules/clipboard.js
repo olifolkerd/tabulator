@@ -73,7 +73,7 @@ Clipboard.prototype.processConfig = function () {
 
 	if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
 		config.columnHeaders = this.table.options.clipboardCopyHeader;
-		console.warn("DEPRECATION WANRING - clipboardCopyHeader option has been depricated, please use the columnHeaders property on the clipboardCopyConfig option");
+		console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
 	}
 
 	if (this.table.options.clipboardCopyConfig) {

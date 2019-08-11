@@ -1140,7 +1140,7 @@ var Column = function Column(def, parent) {
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
 
-	//multi dimentional filed handling
+	//multi dimensional filed handling
 	this.field = "";
 	this.fieldStructure = "";
 	this.getFieldValue = "";
@@ -1259,7 +1259,7 @@ Column.prototype.reRegisterPosition = function () {
 Column.prototype._mapDepricatedFunctionality = function () {
 	if (typeof this.definition.hideInHtml !== "undefined") {
 		this.definition.htmlOutput = !this.definition.hideInHtml;
-		console.warn("hideInHtml column definition property is depricated, you should now use htmlOutput");
+		console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput");
 	}
 };
 
@@ -2171,6 +2171,7 @@ Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "a
 Column.prototype.getComponent = function () {
 	return new ColumnComponent(this);
 };
+
 var RowManager = function RowManager(table) {
 
 	this.table = table;
@@ -3793,11 +3794,10 @@ RowManager.prototype.redraw = function (force) {
 	this.table.tableWidth = this.table.element.clientWidth;
 
 	if (!force) {
+		if (this.renderMode == "classic") {
 
-		if (self.renderMode == "classic") {
-
-			if (self.table.options.groupBy) {
-				self.refreshActiveData("group", false, false);
+			if (this.table.options.groupBy) {
+				this.refreshActiveData("group", false, false);
 			} else {
 				this._simpleRender();
 			}
