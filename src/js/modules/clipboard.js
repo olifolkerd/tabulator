@@ -338,7 +338,7 @@ Clipboard.prototype.processColumnGroup = function(column){
 			return false;
 		}
 	}else{
-		if(column.field && column.visible){
+		if(column.field && (column.definition.clipboard || (column.visible && column.definition.clipboard !== false))){
 			groupData.width = 1;
 		}else{
 			return false;
@@ -396,9 +396,8 @@ Clipboard.prototype.groupHeadersToRows = function(columns){
 	return headers;
 };
 
-Clipboard.prototype.rowsToData = function(rows, config, params){
-	var columns = this.table.columnManager.columnsByIndex,
-	data = [];
+Clipboard.prototype.rowsToData = function(rows, columns, config, params){
+	var data = [];
 
 	rows.forEach(function(row){
 		var rowArray = [],
@@ -464,7 +463,7 @@ Clipboard.prototype.processGroupData = function(group){
 	return groupData;
 };
 
-Clipboard.prototype.getCalcRow = function (calcs, selector, pos){
+Clipboard.prototype.getCalcRow = function (calcs, columns, selector, pos){
 	var calcData = calcs[selector];
 
 	if(calcData){
@@ -473,7 +472,7 @@ Clipboard.prototype.getCalcRow = function (calcs, selector, pos){
 		}
 
 		if(Object.keys(calcData).length){
-			return this.rowsToData([calcData]);
+			return this.rowsToData([calcData], columns);
 		}
 	}
 
@@ -484,7 +483,7 @@ Clipboard.prototype.getCalcRow = function (calcs, selector, pos){
 Clipboard.prototype.buildOutput = function(rows, config, params){
 	var output = [],
 	calcs,
-	columns = this.table.columnManager.columnsByIndex;
+	columns = [];
 
 	if(config.columnHeaders){
 
@@ -493,6 +492,12 @@ Clipboard.prototype.buildOutput = function(rows, config, params){
 
 			output = output.concat(this.groupHeadersToRows(columns));
 		}else{
+			this.table.columnManager.columnsByIndex.forEach(function(column){
+				if(column.definition.clipboard || (column.visible && column.definition.clipboard !== false)){
+					columns.push(column);
+				}
+			})
+
 			output.push(this.generateSimpleHeaders(columns));
 		}
 
@@ -510,17 +515,17 @@ Clipboard.prototype.buildOutput = function(rows, config, params){
 	//generate unstyled content
 	if(config.rowGroups){
 		rows.forEach((row) => {
-			output = output.concat(this.parseRowGroupData(row, config, params, calcs || {}));
+			output = output.concat(this.parseRowGroupData(row, columns, config, params, calcs || {}));
 		});
 	}else{
 		if(config.columnCalcs){
-			output = output.concat(this.getCalcRow(calcs, "top"));
+			output = output.concat(this.getCalcRow(calcs, columns, "top"));
 		}
 
-		output = output.concat(this.rowsToData(rows, config, params));
+		output = output.concat(this.rowsToData(rows, columns, config, params));
 
 		if(config.columnCalcs){
-			output = output.concat(this.getCalcRow(calcs, "bottom"));
+			output = output.concat(this.getCalcRow(calcs, columns, "bottom"));
 		}
 	}
 
@@ -528,7 +533,7 @@ Clipboard.prototype.buildOutput = function(rows, config, params){
 };
 
 
-Clipboard.prototype.parseRowGroupData = function (group, config, params, calcObj){
+Clipboard.prototype.parseRowGroupData = function (group, columns, config, params, calcObj){
 	var groupData = [];
 
 	groupData.push([group.key]);
@@ -539,13 +544,13 @@ Clipboard.prototype.parseRowGroupData = function (group, config, params, calcObj
 		});
 	}else{
 		if(config.columnCalcs){
-			groupData = groupData.concat(this.getCalcRow(calcObj, group.key, "top"));
+			groupData = groupData.concat(this.getCalcRow(calcObj, columns, group.key, "top"));
 		}
 
-		groupData = groupData.concat(this.rowsToData(group.rows, config, params));
+		groupData = groupData.concat(this.rowsToData(group.rows, columns, config, params));
 
 		if(config.columnCalcs){
-			groupData = groupData.concat(this.getCalcRow(calcObj, group.key, "bottom"));
+			groupData = groupData.concat(this.getCalcRow(calcObj, columns, group.key, "bottom"));
 		}
 	}
 
@@ -674,7 +679,7 @@ Clipboard.prototype.generateHTML = function (rows, columns, calcs, config, param
 		}
 	}
 
-	columns = this.table.columnManager.columnsByIndex;
+	// columns = this.table.columnManager.columnsByIndex;
 
 	//create table body
 	body = document.createElement("tbody");
