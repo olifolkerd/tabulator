@@ -1,6 +1,6 @@
 ![Tabulator Table](http://olifolkerd.github.io/tabulator/images/tabulator.png)
 
-### Version 4.3 Out Now!
+### Version 4.4 Out Now!
 
 An easy to use interactive table generation JavaScript library
 
