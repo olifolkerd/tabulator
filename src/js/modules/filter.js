@@ -522,8 +522,6 @@ Filter.prototype.getHeaderFilters = function(){
 		output.push({field:key, type:this.headerFilters[key].type, value:this.headerFilters[key].value});
 	}
 
-	console.log("header", output)
-
 	return output;
 };
 

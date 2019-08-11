@@ -608,27 +608,37 @@ Edit.prototype.editors = {
 			editorParams = {values:editorParams};
 		}
 
-		function getUniqueColumnValues(){
+		function getUniqueColumnValues(field){
 			var output = {},
-			column = cell.getColumn()._getSelf(),
-			data = self.table.getData();
+			data = self.table.getData(),
+			column;
 
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
+			if(field){
+				column = self.table.columnManager.getColumnByField(field);
+			}else{
+				column = cell.getColumn()._getSelf();
+			}
 
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
+			if(column){
+				data.forEach(function(row){
+					var val = column.getFieldValue(row);
 
-			if(editorParams.sortValuesList){
-				if(editorParams.sortValuesList == "asc"){
-					output = Object.keys(output).sort();
+					if(val !== null && typeof val !== "undefined" && val !== ""){
+						output[val] = true;
+					}
+				});
+
+				if(editorParams.sortValuesList){
+					if(editorParams.sortValuesList == "asc"){
+						output = Object.keys(output).sort();
+					}else{
+						output = Object.keys(output).sort().reverse();
+					}
 				}else{
-					output = Object.keys(output).sort().reverse();
+					output = Object.keys(output);
 				}
 			}else{
-				output = Object.keys(output);
+				console.warn("unable to find matching column to create select lookup list:", field);
 			}
 
 			return output;
@@ -804,6 +814,8 @@ Edit.prototype.editors = {
 
 				if(editorParams.values === true){
 					parseItems(getUniqueColumnValues(), initialDisplayValue);
+				}else if(typeof editorParams.values === "string"){
+					parseItems(getUniqueColumnValues(editorParams.values), initialDisplayValue);
 				}else{
 					parseItems(editorParams.values || [], initialDisplayValue);
 				}
@@ -831,8 +843,6 @@ Edit.prototype.editors = {
 			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 		}
 
-		console.log("initialDisplayValue", initialDisplayValue)
-
 		//style input
 		input.setAttribute("type", "text");
 
@@ -857,6 +867,8 @@ Edit.prototype.editors = {
 
 		if(editorParams.values === true){
 			parseItems(getUniqueColumnValues(), initialValue);
+		}else if(typeof editorParams.values === "string"){
+			parseItems(getUniqueColumnValues(editorParams.values), initialValue);
 		}else{
 			parseItems(editorParams.values || [], initialValue);
 		}
@@ -950,29 +962,39 @@ Edit.prototype.editors = {
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
-		function getUniqueColumnValues(){
+		function getUniqueColumnValues(field){
 			var output = {},
-			column = cell.getColumn()._getSelf(),
-			data = self.table.getData();
+			data = self.table.getData(),
+			column;
 
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
+			if(field){
+				column = self.table.columnManager.getColumnByField(field);
+			}else{
+				column = cell.getColumn()._getSelf();
+			}
 
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
+			if(column){
+				data.forEach(function(row){
+					var val = column.getFieldValue(row);
 
+					if(val !== null && typeof val !== "undefined" && val !== ""){
+						output[val] = true;
+					}
+				});
 
-			if(editorParams.sortValuesList){
-				if(editorParams.sortValuesList == "asc"){
-					output = Object.keys(output).sort();
+				if(editorParams.sortValuesList){
+					if(editorParams.sortValuesList == "asc"){
+						output = Object.keys(output).sort();
+					}else{
+						output = Object.keys(output).sort().reverse();
+					}
 				}else{
-					output = Object.keys(output).sort().reverse();
+					output = Object.keys(output);
 				}
 			}else{
-				output = Object.keys(output);
+				console.warn("unable to find matching column to create autocomplete lookup list:", field);
 			}
+
 
 			return output;
 		}
@@ -1169,6 +1191,8 @@ Edit.prototype.editors = {
 
 				if(editorParams.values === true){
 					values = getUniqueColumnValues();
+				}else if(typeof editorParams.values === "string"){
+					values = getUniqueColumnValues(editorParams.values);
 				}else{
 					values = editorParams.values || [];
 				}
