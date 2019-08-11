@@ -15,7 +15,7 @@ var Filter = function(table){
 Filter.prototype.initializeColumn = function(column, value){
 	var self = this,
 	field = column.getField(),
-	prevSuccess, params;
+	params;
 
 
 	//handle successfull value change
@@ -24,9 +24,9 @@ Filter.prototype.initializeColumn = function(column, value){
 		type = "",
 		filterFunc;
 
-		if(typeof prevSuccess === "undefined" || prevSuccess !== value){
+		if(typeof column.modules.filter.prevSuccess === "undefined" || column.modules.filter.prevSuccess !== value){
 
-			prevSuccess = value;
+			column.modules.filter.prevSuccess = value;
 
 			if(!column.modules.filter.emptyFunc(value)){
 				column.modules.filter.value = value;
@@ -522,6 +522,8 @@ Filter.prototype.getHeaderFilters = function(){
 		output.push({field:key, type:this.headerFilters[key].type, value:this.headerFilters[key].value});
 	}
 
+	console.log("header", output)
+
 	return output;
 };
 
@@ -584,6 +586,7 @@ Filter.prototype.clearHeaderFilter = function(){
 
 	this.headerFilterColumns.forEach(function(column){
 		column.modules.filter.value = null;
+		column.modules.filter.prevSuccess = undefined;
 		self.reloadHeaderFilter(column);
 	});
 
