@@ -18447,6 +18447,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							getColumn: function getColumn() {
 								return column.getComponent();
 							},
+							getData: function getData() {
+								return rowData;
+							},
 							getRow: function getRow() {
 								return {
 									normalizeHeight: function normalizeHeight() {}
