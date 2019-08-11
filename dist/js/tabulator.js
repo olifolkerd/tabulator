@@ -6983,6 +6983,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		headerSort: true, //set default global header sort
 
+		headerSortTristate: false, //set default tristate header sorting
+
 
 		footerElement: false, //hold footer element
 
@@ -18459,9 +18461,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								return rowData;
 							},
 							getRow: function getRow() {
-								return {
-									normalizeHeight: function normalizeHeight() {}
-								};
+								return row.getComponent();
 							},
 							getComponent: function getComponent() {
 								return cellWrapper;
@@ -21972,7 +21972,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			sorter: sorter, dir: "none",
 			params: column.definition.sorterParams || {},
 			startingDir: column.definition.headerSortStartingDir || "asc",
-			tristate: column.definition.headerSortTristate
+			tristate: typeof column.definition.headerSortTristate !== "undefined" ? column.definition.headerSortTristate : this.table.options.headerSortTristate
 		};
 
 		if (typeof column.definition.headerSort === "undefined" ? this.table.options.headerSort !== false : column.definition.headerSort !== false) {

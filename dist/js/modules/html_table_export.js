@@ -280,9 +280,7 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 							return rowData;
 						},
 						getRow: function getRow() {
-							return {
-								normalizeHeight: function normalizeHeight() {}
-							};
+							return row.getComponent();
 						},
 						getComponent: function getComponent() {
 							return cellWrapper;

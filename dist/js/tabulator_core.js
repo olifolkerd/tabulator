@@ -5464,6 +5464,7 @@ Tabulator.prototype.defaultOptions = {
 	sortOrderReverse: false, //reverse internal sort ordering
 
 	headerSort: true, //set default global header sort
+	headerSortTristate: false, //set default tristate header sorting
 
 	footerElement: false, //hold footer element
 
