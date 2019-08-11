@@ -65,11 +65,18 @@ Tabulator.prototype.defaultOptions = {
 
 	sortOrderReverse:false, //reverse internal sort ordering
 
+	headerSort:true, //set default global header sort
+	headerSortTristate:false, //set default tristate header sorting
+
 	footerElement:false, //hold footer element
 
 	index:"id", //filed for row index
 
 	keybindings:[], //array for keybindings
+
+	tabEndNewRow:false, //create new row when tab to end of table
+
+	invalidOptionWarnings:true, //allow toggling of invalid option warnings
 
 	clipboard:false, //enable clipboard
 	clipboardCopyStyled:true, //formatted table data
@@ -302,9 +309,11 @@ Tabulator.prototype.defaultOptions = {
 Tabulator.prototype.initializeOptions = function(options){
 
 	//warn user if option is not available
-	for (var key in options){
-		if(typeof this.defaultOptions[key] === "undefined"){
-			console.warn("Invalid table constructor option:", key)
+	if(options.invalidOptionWarnings !== false){
+		for (var key in options){
+			if(typeof this.defaultOptions[key] === "undefined"){
+				console.warn("Invalid table constructor option:", key)
+			}
 		}
 	}
 
@@ -357,12 +366,12 @@ Tabulator.prototype._clearSelection = function(){
 
 	if (window.getSelection) {
 	  if (window.getSelection().empty) {  // Chrome
-	    window.getSelection().empty();
+	  	window.getSelection().empty();
 	  } else if (window.getSelection().removeAllRanges) {  // Firefox
-	    window.getSelection().removeAllRanges();
+	  	window.getSelection().removeAllRanges();
 	  }
 	} else if (document.selection) {  // IE?
-	  document.selection.empty();
+		document.selection.empty();
 	}
 
 	this.element.classList.remove("tabulator-block-select");
@@ -1236,6 +1245,21 @@ Tabulator.prototype.deleteColumn = function(field){
 	}else{
 		console.warn("Column Delete Error - No matching column found:", field);
 		return false;
+	}
+};
+
+Tabulator.prototype.moveColumn = function(from, to, after){
+	var fromColumn = this.columnManager.findColumn(from);
+	var toColumn = this.columnManager.findColumn(to);
+
+	if(fromColumn){
+		if(toColumn){
+			this.columnManager.moveColumn(fromColumn, toColumn, after)
+		}else{
+			console.warn("Move Error - No matching column found:", toColumn);
+		}
+	}else{
+		console.warn("Move Error - No matching column found:", from);
 	}
 };
 

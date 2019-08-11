@@ -10,6 +10,10 @@ GroupComponent.prototype.getKey = function(){
 	return this._group.key;
 };
 
+GroupComponent.prototype.getField = function(){
+	return this._group.field;
+};
+
 GroupComponent.prototype.getElement = function(){
 	return this._group.element;
 };
@@ -747,6 +751,10 @@ GroupRows.prototype.initialize = function(){
 	groupHeader = self.table.options.groupHeader;
 
 	this.allowedValues = self.table.options.groupValues;
+
+	if(Array.isArray(groupBy) && Array.isArray(groupHeader) && groupBy.length > groupHeader.length){
+		console.warn("Error creating group headers, groupHeader array is shorter than groupBy array");
+	}
 
 	self.headerGenerator = [function(){return "";}];
 	this.startOpen = [function(){return false;}]; //starting state of group

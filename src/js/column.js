@@ -110,6 +110,16 @@ ColumnComponent.prototype.setHeaderFilterValue = function(value){
 	}
 };
 
+ColumnComponent.prototype.move = function(to, after){
+	var toColumn = this._column.table.columnManager.findColumn(to);
+
+	if(toColumn){
+		this._column.table.columnManager.moveColumn(this._column, toColumn, after)
+	}else{
+		console.warn("Move Error - No matching column found:", toColumn);
+	}
+}
+
 ColumnComponent.prototype.getNextColumn = function(){
 	var nextCol = this._column.nextColumn();
 
@@ -147,7 +157,10 @@ var Column = function(def, parent){
 	this.setFieldValue = "";
 
 	this.setField(this.definition.field);
-	this.checkDefinition();
+
+	if(this.table.options.invalidOptionWarnings){
+		this.checkDefinition();
+	}
 
 	this.modules = {}; //hold module variables;
 
@@ -1088,13 +1101,23 @@ Column.prototype.generateCell = function(row){
 
 Column.prototype.nextColumn = function(){
 	var index = this.table.columnManager.findColumnIndex(this);
-	return index > -1 ? this.table.columnManager.getColumnByIndex(index + 1) : false;
+	return index > -1 ? this._nextVisibleColumn(index + 1) : false;
 };
+
+Column.prototype._nextVisibleColumn = function(index){
+	var column = this.table.columnManager.getColumnByIndex(index);
+	return !column || column.visible ? column : this._nextVisibleColumn(index + 1);
+}
 
 Column.prototype.prevColumn = function(){
 	var index = this.table.columnManager.findColumnIndex(this);
-	return index > -1 ? this.table.columnManager.getColumnByIndex(index - 1) : false;
+	return index > -1 ? this._prevVisibleColumn(index - 1) : false;
 };
+
+Column.prototype._prevVisibleColumn = function(index){
+	var column = this.table.columnManager.getColumnByIndex(index);
+	return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
+}
 
 Column.prototype.reinitializeWidth = function(force){
 	this.widthFixed = false;
@@ -1199,6 +1222,7 @@ Column.prototype.defaultOptionList = [
 "accessorDownloadParams",
 "accessorClipboard",
 "accessorClipboardParams",
+"clipboard",
 "download",
 "downloadTitle",
 "topCalc",

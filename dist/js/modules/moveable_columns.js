@@ -242,7 +242,7 @@ MoveColumns.prototype.endMove = function (e) {
 		this.table.element.classList.remove("tabulator-block-select");
 
 		if (this.toCol) {
-			this.table.columnManager.moveColumn(this.moving, this.toCol, this.toColAfter);
+			this.table.columnManager.moveColumnActual(this.moving, this.toCol, this.toColAfter);
 		}
 
 		this.moving = false;

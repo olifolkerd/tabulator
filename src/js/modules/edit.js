@@ -303,6 +303,17 @@ Edit.prototype.editors = {
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 		onRendered(function(){
@@ -355,6 +366,17 @@ Edit.prototype.editors = {
         input.style.boxSizing = "border-box";
         input.style.whiteSpace = "pre-wrap";
         input.style.resize = "none";
+
+        if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+        	for (let key in editorParams.elementAttributes){
+        		if(key.charAt(0) == "+"){
+        			key = key.slice(1);
+        			input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+        		}else{
+        			input.setAttribute(key, editorParams.elementAttributes[key]);
+        		}
+        	}
+        }
 
         input.value = value;
 
@@ -427,6 +449,17 @@ Edit.prototype.editors = {
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		input.value = cellValue;
 
 		var blurFunc = function(e){
@@ -462,7 +495,7 @@ Edit.prototype.editors = {
 		input.addEventListener("keydown", function(e){
 			switch(e.keyCode){
 				case 13:
-				case 9:
+				// case 9:
 				onChange();
 				break;
 
@@ -499,6 +532,17 @@ Edit.prototype.editors = {
     	input.style.padding = "4px";
     	input.style.width = "100%";
     	input.style.boxSizing = "border-box";
+
+    	if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+    		for (let key in editorParams.elementAttributes){
+    			if(key.charAt(0) == "+"){
+    				key = key.slice(1);
+    				input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+    			}else{
+    				input.setAttribute(key, editorParams.elementAttributes[key]);
+    			}
+    		}
+    	}
 
     	input.value = cellValue;
 
@@ -548,6 +592,7 @@ Edit.prototype.editors = {
 		var self = this,
 		cellEl = cell.getElement(),
 		initialValue = cell.getValue(),
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
 		input = document.createElement("input"),
 		listEl = document.createElement("div"),
 		dataItems = [],
@@ -563,27 +608,37 @@ Edit.prototype.editors = {
 			editorParams = {values:editorParams};
 		}
 
-		function getUniqueColumnValues(){
+		function getUniqueColumnValues(field){
 			var output = {},
-			column = cell.getColumn()._getSelf(),
-			data = self.table.getData();
+			data = self.table.getData(),
+			column;
 
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
+			if(field){
+				column = self.table.columnManager.getColumnByField(field);
+			}else{
+				column = cell.getColumn()._getSelf();
+			}
 
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
+			if(column){
+				data.forEach(function(row){
+					var val = column.getFieldValue(row);
 
-			if(editorParams.sortValuesList){
-				if(editorParams.sortValuesList == "asc"){
-					output = Object.keys(output).sort();
+					if(val !== null && typeof val !== "undefined" && val !== ""){
+						output[val] = true;
+					}
+				});
+
+				if(editorParams.sortValuesList){
+					if(editorParams.sortValuesList == "asc"){
+						output = Object.keys(output).sort();
+					}else{
+						output = Object.keys(output).sort().reverse();
+					}
 				}else{
-					output = Object.keys(output).sort().reverse();
+					output = Object.keys(output);
 				}
 			}else{
-				output = Object.keys(output);
+				console.warn("unable to find matching column to create select lookup list:", field);
 			}
 
 			return output;
@@ -758,9 +813,11 @@ Edit.prototype.editors = {
 			if(!listEl.parentNode){
 
 				if(editorParams.values === true){
-					parseItems(getUniqueColumnValues(), initialValue);
+					parseItems(getUniqueColumnValues(), initialDisplayValue);
+				}else if(typeof editorParams.values === "string"){
+					parseItems(getUniqueColumnValues(editorParams.values), initialDisplayValue);
 				}else{
-					parseItems(editorParams.values || [], initialValue);
+					parseItems(editorParams.values || [], initialDisplayValue);
 				}
 
 
@@ -795,10 +852,23 @@ Edit.prototype.editors = {
 		input.style.cursor = "default";
 		input.readOnly = (this.currentCell != false);
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
 		if(editorParams.values === true){
 			parseItems(getUniqueColumnValues(), initialValue);
+		}else if(typeof editorParams.values === "string"){
+			parseItems(getUniqueColumnValues(editorParams.values), initialValue);
 		}else{
 			parseItems(editorParams.values || [], initialValue);
 		}
@@ -881,6 +951,7 @@ Edit.prototype.editors = {
 		var self = this,
 		cellEl = cell.getElement(),
 		initialValue = cell.getValue(),
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
 		input = document.createElement("input"),
 		listEl = document.createElement("div"),
 		allItems = [],
@@ -891,29 +962,39 @@ Edit.prototype.editors = {
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
-		function getUniqueColumnValues(){
+		function getUniqueColumnValues(field){
 			var output = {},
-			column = cell.getColumn()._getSelf(),
-			data = self.table.getData();
+			data = self.table.getData(),
+			column;
 
-			data.forEach(function(row){
-				var val = column.getFieldValue(row);
+			if(field){
+				column = self.table.columnManager.getColumnByField(field);
+			}else{
+				column = cell.getColumn()._getSelf();
+			}
 
-				if(val !== null && typeof val !== "undefined" && val !== ""){
-					output[val] = true;
-				}
-			});
+			if(column){
+				data.forEach(function(row){
+					var val = column.getFieldValue(row);
 
+					if(val !== null && typeof val !== "undefined" && val !== ""){
+						output[val] = true;
+					}
+				});
 
-			if(editorParams.sortValuesList){
-				if(editorParams.sortValuesList == "asc"){
-					output = Object.keys(output).sort();
+				if(editorParams.sortValuesList){
+					if(editorParams.sortValuesList == "asc"){
+						output = Object.keys(output).sort();
+					}else{
+						output = Object.keys(output).sort().reverse();
+					}
 				}else{
-					output = Object.keys(output).sort().reverse();
+					output = Object.keys(output);
 				}
 			}else{
-				output = Object.keys(output);
+				console.warn("unable to find matching column to create autocomplete lookup list:", field);
 			}
+
 
 			return output;
 		}
@@ -1110,6 +1191,8 @@ Edit.prototype.editors = {
 
 				if(editorParams.values === true){
 					values = getUniqueColumnValues();
+				}else if(typeof editorParams.values === "string"){
+					values = getUniqueColumnValues(editorParams.values);
 				}else{
 					values = editorParams.values || [];
 				}
@@ -1144,6 +1227,17 @@ Edit.prototype.editors = {
 		input.style.padding = "4px";
 		input.style.width = "100%";
 		input.style.boxSizing = "border-box";
+
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
 
 		//allow key based navigation
 		input.addEventListener("keydown", function(e){
@@ -1232,7 +1326,7 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("focus", function(e){
-			var value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
+			var value = initialDisplayValue;
 			showList();
 			input.value = value;
 			filterList(value, true);
@@ -1338,6 +1432,17 @@ Edit.prototype.editors = {
 		star.setAttribute("xml:space", "preserve");
 		star.style.padding = "0 1px";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					starsHolder.setAttribute(key, starsHolder.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					starsHolder.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		//create correct number of stars
 		for(var i=1;i<= maxStars;i++){
 			buildStar(i);
@@ -1424,6 +1529,17 @@ Edit.prototype.editors = {
 		bar.style.maxWidth = "100%";
 		bar.style.minWidth = "0%";
 
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					bar.setAttribute(key, bar.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					bar.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
 		//style cell
 		element.style.padding = "4px 4px";
 
@@ -1508,6 +1624,17 @@ Edit.prototype.editors = {
 		input.setAttribute("type", "checkbox");
 		input.style.marginTop = "5px";
 		input.style.boxSizing = "border-box";
+
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
 
 		input.value = value;
 

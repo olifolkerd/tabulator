@@ -33,10 +33,10 @@ Sort.prototype.initializeColumn = function (column, content) {
 		sorter: sorter, dir: "none",
 		params: column.definition.sorterParams || {},
 		startingDir: column.definition.headerSortStartingDir || "asc",
-		tristate: column.definition.headerSortTristate
+		tristate: typeof column.definition.headerSortTristate !== "undefined" ? column.definition.headerSortTristate : this.table.options.headerSortTristate
 	};
 
-	if (column.definition.headerSort !== false) {
+	if (typeof column.definition.headerSort === "undefined" ? this.table.options.headerSort !== false : column.definition.headerSort !== false) {
 
 		colEl = column.getElement();
 

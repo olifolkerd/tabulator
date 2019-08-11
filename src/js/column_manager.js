@@ -373,7 +373,30 @@ ColumnManager.prototype.getWidth = function(){
 	return width;
 };
 
+
 ColumnManager.prototype.moveColumn = function(from, to, after){
+	this.moveColumnActual(from, to, after);
+
+	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+		this.table.modules.responsiveLayout.initialize();
+	}
+
+	if(this.table.modExists("columnCalcs")){
+		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
+	}
+
+	to.element.parentNode.insertBefore(from.element, to.element);
+
+	if(after){
+		to.element.parentNode.insertBefore(to.element, from.element);
+	}
+
+	this._verticalAlignHeaders();
+
+	this.table.rowManager.reinitialize();
+}
+
+ColumnManager.prototype.moveColumnActual = function(from, to, after){
 
 	this._moveColumnInArray(this.columns, from, to, after);
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);

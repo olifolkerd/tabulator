@@ -316,11 +316,11 @@ ColumnCalcs.prototype.generateRowData = function(pos, data){
 
 ColumnCalcs.prototype.hasTopCalcs = function(){
 	return	!!(this.topCalcs.length);
-},
+};
 
 ColumnCalcs.prototype.hasBottomCalcs = function(){
 	return	!!(this.botCalcs.length);
-},
+};
 
 //handle table redraw
 ColumnCalcs.prototype.redraw = function(){
