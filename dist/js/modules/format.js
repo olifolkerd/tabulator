@@ -583,6 +583,43 @@ Format.prototype.formatters = {
 		toggleList(open);
 
 		return el;
+	},
+
+	rowSelection: function rowSelection(cell) {
+		var _this = this;
+
+		var checkbox = document.createElement("input");
+
+		checkbox.type = 'checkbox';
+
+		if (this.table.modExists("selectRow", true)) {
+
+			checkbox.addEventListener("click", function (e) {
+				e.stopPropagation();
+			});
+
+			if (typeof cell.getRow == 'function') {
+				var row = cell.getRow();
+
+				checkbox.addEventListener("change", function (e) {
+					row.toggleSelect();
+				});
+
+				checkbox.checked = row.isSelected();
+				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+			} else {
+				checkbox.addEventListener("change", function (e) {
+					if (_this.table.modules.selectRow.selectedRows.length) {
+						_this.table.deselectRow();
+					} else {
+						_this.table.selectRow();
+					}
+				});
+
+				this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
+			}
+		}
+		return checkbox;
 	}
 };
 

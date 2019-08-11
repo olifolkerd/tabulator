@@ -4,7 +4,7 @@ var SelectRow = function(table){
 	this.lastClickedRow = false; //last clicked row
 	this.selectPrev = []; //hold previously selected element for drag drop selection
 	this.selectedRows = []; //hold selected rows
-	this.headerCheckboxElement = null; // hold header select element 
+	this.headerCheckboxElement = null; // hold header select element
 };
 
 SelectRow.prototype.clearSelectionData = function(silent){
@@ -225,7 +225,7 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 			row.getElement().classList.add("tabulator-selected");
 
 			this.selectedRows.push(row);
-			
+
 
 			if(!silent){
 				this.table.options.rowSelected.call(this.table, row.getComponent());
@@ -329,16 +329,18 @@ SelectRow.prototype.getSelectedRows = function(){
 
 SelectRow.prototype._rowSelectionChanged = function(){
 	if(this.headerCheckboxElement){
-		this.headerCheckboxElement.indeterminate = false;
 		if(this.selectedRows.length === 0){
 			this.headerCheckboxElement.checked = false;
+			this.headerCheckboxElement.indeterminate = false;
 		} else if(this.table.rowManager.rows.length === this.selectedRows.length){
 			this.headerCheckboxElement.checked = true;
+			this.headerCheckboxElement.indeterminate = false;
 		} else {
 			this.headerCheckboxElement.indeterminate = true;
 			this.headerCheckboxElement.checked = false;
 		}
 	}
+
 	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
 };
 

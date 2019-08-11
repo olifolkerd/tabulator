@@ -572,27 +572,31 @@ Format.prototype.formatters = {
 	},
 
 	rowSelection:function(cell){
-		var self = this,
-			checkbox = document.createElement("input");	
-			checkbox.type = 'checkbox';
-		
-		if(this.table.modExists("selectRow", true)){	
+		var checkbox = document.createElement("input");
+
+		checkbox.type = 'checkbox';
+
+		if(this.table.modExists("selectRow", true)){
+
+			checkbox.addEventListener("click", (e) => {
+				e.stopPropagation();
+			});
+
 			if(typeof cell.getRow == 'function'){
 				var row = cell.getRow();
-				checkbox.addEventListener("click", function checkboxCellToggleSelect(e){
-					e.stopPropagation();
+
+				checkbox.addEventListener("change", (e) => {
 					row.toggleSelect();
 				});
-	
+
 				checkbox.checked = row.isSelected();
 				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
 			}else {
-				checkbox.addEventListener("click", function checkboxHeaderToggleSelect(e){
-					e.stopPropagation();
-					if(e.target.checked){
-						self.table.selectRow();
+				checkbox.addEventListener("change", (e) => {
+					if(this.table.modules.selectRow.selectedRows.length){
+						this.table.deselectRow();
 					}else {
-						self.table.deselectRow();
+						this.table.selectRow();
 					}
 				});
 
