@@ -7,22 +7,21 @@ var Persistence = function(table){
 
 // Test for whether localStorage is available for use.
 Persistence.prototype.localStorageTest = function() {
-    function lsTest(){
-            var  testKey =  "_tabulator_test";
-            try {
-                    window.localStorage.setItem( testKey, testKey);
-                    window.localStorage.removeItem( testKey );
-                    return true;
-            } catch(e) {
-                    return false;
-            }
-        };
+	var  testKey =  "_tabulator_test";
+
+	try {
+		window.localStorage.setItem( testKey, testKey);
+		window.localStorage.removeItem( testKey );
+		return true;
+	} catch(e) {
+		return false;
+	}
 };
 
 //setup parameters
 Persistence.prototype.initialize = function(mode, id){
 	//determine persistent layout storage type
-	
+
 	this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
 
 	//set storage tag
