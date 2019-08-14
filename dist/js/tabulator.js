@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.0 (c) Oliver Folkerd */
+/* Tabulator v4.4.1 (c) Oliver Folkerd */
 
 ;(function (global, factory) {
 	if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined') {
@@ -1912,11 +1912,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				table.modules.localize.bind("columns|" + def.field, function (text) {
 
-					titleElement.value = text || def.title || "&nbsp";
+					titleElement.value = text || def.title || "&nbsp;";
 				});
 			} else {
 
-				titleElement.value = def.title || "&nbsp";
+				titleElement.value = def.title || "&nbsp;";
 			}
 		} else {
 
@@ -1924,11 +1924,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				table.modules.localize.bind("columns|" + def.field, function (text) {
 
-					self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp");
+					self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp;");
 				});
 			} else {
 
-				self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp");
+				self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
 			}
 		}
 
@@ -15966,7 +15966,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Format.prototype.emptyToSpace = function (value) {
-		return value === null || typeof value === "undefined" ? "&nbsp" : value;
+		return value === null || typeof value === "undefined" ? "&nbsp;" : value;
 	};
 
 	//get formatter for cell
@@ -20585,16 +20585,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Test for whether localStorage is available for use.
 	Persistence.prototype.localStorageTest = function () {
-		function lsTest() {
-			var testKey = "_tabulator_test";
-			try {
-				window.localStorage.setItem(testKey, testKey);
-				window.localStorage.removeItem(testKey);
-				return true;
-			} catch (e) {
-				return false;
-			}
-		};
+		var testKey = "_tabulator_test";
+
+		try {
+			window.localStorage.setItem(testKey, testKey);
+			window.localStorage.removeItem(testKey);
+			return true;
+		} catch (e) {
+			return false;
+		}
 	};
 
 	//setup parameters

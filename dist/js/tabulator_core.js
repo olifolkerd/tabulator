@@ -1,4 +1,4 @@
-/* Tabulator v4.4.0 (c) Oliver Folkerd */
+/* Tabulator v4.4.1 (c) Oliver Folkerd */
 
 'use strict';
 
@@ -1620,18 +1620,18 @@ Column.prototype._buildColumnHeaderTitle = function () {
 
 		if (def.field) {
 			table.modules.localize.bind("columns|" + def.field, function (text) {
-				titleElement.value = text || def.title || "&nbsp";
+				titleElement.value = text || def.title || "&nbsp;";
 			});
 		} else {
-			titleElement.value = def.title || "&nbsp";
+			titleElement.value = def.title || "&nbsp;";
 		}
 	} else {
 		if (def.field) {
 			table.modules.localize.bind("columns|" + def.field, function (text) {
-				self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp");
+				self._formatColumnHeaderTitle(titleHolderElement, text || def.title || "&nbsp;");
 			});
 		} else {
-			self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp");
+			self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
 		}
 	}
 

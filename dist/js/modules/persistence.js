@@ -1,4 +1,4 @@
-/* Tabulator v4.4.0 (c) Oliver Folkerd */
+/* Tabulator v4.4.1 (c) Oliver Folkerd */
 
 var Persistence = function Persistence(table) {
 	this.table = table; //hold Tabulator object
@@ -9,16 +9,15 @@ var Persistence = function Persistence(table) {
 
 // Test for whether localStorage is available for use.
 Persistence.prototype.localStorageTest = function () {
-	function lsTest() {
-		var testKey = "_tabulator_test";
-		try {
-			window.localStorage.setItem(testKey, testKey);
-			window.localStorage.removeItem(testKey);
-			return true;
-		} catch (e) {
-			return false;
-		}
-	};
+	var testKey = "_tabulator_test";
+
+	try {
+		window.localStorage.setItem(testKey, testKey);
+		window.localStorage.removeItem(testKey);
+		return true;
+	} catch (e) {
+		return false;
+	}
 };
 
 //setup parameters
