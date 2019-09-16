@@ -21718,10 +21718,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (self.table.options.selectable && self.table.options.selectable != "highlight") {
 				if (self.table.options.selectableRangeMode === "click") {
 					element.addEventListener("click", function (e) {
-
-						self.table._clearSelection();
-
 						if (e.shiftKey) {
+							self.table._clearSelection();
 							self.lastClickedRow = self.lastClickedRow || row;
 
 							var lastClickedRowIdx = self.table.rowManager.getDisplayRowIndex(self.lastClickedRow);
@@ -21758,6 +21756,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 								self.selectRows(toggledRows);
 							}
+							self.table._clearSelection();
 						} else if (e.ctrlKey || e.metaKey) {
 							self.toggleRow(row);
 							self.lastClickedRow = row;
@@ -21766,8 +21765,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							self.selectRows(row);
 							self.lastClickedRow = row;
 						}
-
-						self.table._clearSelection();
 					});
 				} else {
 					element.addEventListener("click", function (e) {
