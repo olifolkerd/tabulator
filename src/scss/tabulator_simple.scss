@@ -300,7 +300,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			min-width:400%;
+			min-width:600%;
 
 			background:darken($headerBackgroundColor, 5%) !important;
 
@@ -319,7 +319,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 
 		.tabulator-frozen-rows-holder{
-			min-width:400%;
+			min-width:600%;
 
 			&:empty{
 				display: none;

@@ -207,7 +207,7 @@
 
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
-  min-width: 400%;
+  min-width: 600%;
   background: #f2f2f2 !important;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #999;
@@ -223,7 +223,7 @@
 }
 
 .tabulator .tabulator-header .tabulator-frozen-rows-holder {
-  min-width: 400%;
+  min-width: 600%;
 }
 
 .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {
