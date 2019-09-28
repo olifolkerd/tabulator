@@ -52,6 +52,7 @@ DataTree.prototype.initialize = function () {
 	} else {
 		this.collapseEl = document.createElement("div");
 		this.collapseEl.classList.add("tabulator-data-tree-control");
+		this.collapseEl.tabIndex = 0;
 		this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
 	}
 
@@ -66,6 +67,7 @@ DataTree.prototype.initialize = function () {
 	} else {
 		this.expandEl = document.createElement("div");
 		this.expandEl.classList.add("tabulator-data-tree-control");
+		this.expandEl.tabIndex = 0;
 		this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 	}
 
