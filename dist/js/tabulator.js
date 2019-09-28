@@ -18304,7 +18304,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				return false;
 			}
 		} else {
-			if (column.field && this.columnVisCheck(column)) {
+			if (this.columnVisCheck(column)) {
 				groupData.width = 1;
 			} else {
 				return false;
@@ -18492,7 +18492,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								return value;
 							},
 							getField: function getField() {
-								return column.definition.field;
+								return column.defi;
 							},
 							getElement: function getElement() {
 								return cellEl;

@@ -80,7 +80,7 @@ HtmlTableExport.prototype.processColumnGroup = function (column) {
 			return false;
 		}
 	} else {
-		if (column.field && this.columnVisCheck(column)) {
+		if (this.columnVisCheck(column)) {
 			groupData.width = 1;
 		} else {
 			return false;
@@ -268,7 +268,7 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 							return value;
 						},
 						getField: function getField() {
-							return column.definition.field;
+							return column.defi;
 						},
 						getElement: function getElement() {
 							return cellEl;
