@@ -6070,24 +6070,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				e.preventDefault();
 
-				if (document.selection) {
-					// IE
+				try {
 
-					var range = document.body.createTextRange();
+					if (document.selection) {
+						// IE
 
-					range.moveToElementText(self.element);
+						var range = document.body.createTextRange();
 
-					range.select();
-				} else if (window.getSelection) {
+						range.moveToElementText(self.element);
 
-					var range = document.createRange();
+						range.select();
+					} else if (window.getSelection) {
 
-					range.selectNode(self.element);
+						var range = document.createRange();
 
-					window.getSelection().removeAllRanges();
+						range.selectNode(self.element);
 
-					window.getSelection().addRange(range);
-				}
+						window.getSelection().removeAllRanges();
+
+						window.getSelection().addRange(range);
+					}
+				} catch (e) {}
 			});
 		}
 

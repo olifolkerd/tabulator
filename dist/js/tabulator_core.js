@@ -4785,17 +4785,19 @@ Cell.prototype._bindClickEvents = function (cellEvents) {
 		element.addEventListener("dblclick", function (e) {
 			e.preventDefault();
 
-			if (document.selection) {
-				// IE
-				var range = document.body.createTextRange();
-				range.moveToElementText(self.element);
-				range.select();
-			} else if (window.getSelection) {
-				var range = document.createRange();
-				range.selectNode(self.element);
-				window.getSelection().removeAllRanges();
-				window.getSelection().addRange(range);
-			}
+			try {
+				if (document.selection) {
+					// IE
+					var range = document.body.createTextRange();
+					range.moveToElementText(self.element);
+					range.select();
+				} else if (window.getSelection) {
+					var range = document.createRange();
+					range.selectNode(self.element);
+					window.getSelection().removeAllRanges();
+					window.getSelection().addRange(range);
+				}
+			} catch (e) {}
 		});
 	}
 
