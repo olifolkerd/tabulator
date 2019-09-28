@@ -494,16 +494,16 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 				if(top){
 					if(groupRows[0] !== row){
 						index = groupRows[0];
-						this._moveRowInArray(row.getGroup().rows, row, index, top);
+						this._moveRowInArray(row.getGroup().rows, row, index, !top);
 					}
 				}else{
 					if(groupRows[groupRows.length -1] !== row){
 						index = groupRows[groupRows.length -1];
-						this._moveRowInArray(row.getGroup().rows, row, index, top);
+						this._moveRowInArray(row.getGroup().rows, row, index, !top);
 					}
 				}
 			}else{
-				this._moveRowInArray(row.getGroup().rows, row, index, top);
+				this._moveRowInArray(row.getGroup().rows, row, index, !top);
 			}
 		}
 	}

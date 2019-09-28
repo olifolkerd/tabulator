@@ -687,18 +687,30 @@ Row.prototype.moveToRow = function(to, before){
 
 Row.prototype.delete = function(){
 	return new Promise((resolve, reject) => {
-		var index = this.table.rowManager.getRowIndex(this);
-
-		this.deleteActual();
+		var index, rows;
 
 		if(this.table.options.history && this.table.modExists("history")){
 
-			if(index){
-				index = this.table.rowManager.rows[index-1];
+			if(this.table.options.groupBy && this.table.modExists("groupRows")){
+				rows = this.getGroup().rows
+				index = rows.indexOf(this);
+
+				if(index){
+					index = rows[index-1];
+				}
+			}else{
+				index = this.table.rowManager.getRowIndex(this);
+
+				if(index){
+					index = this.table.rowManager.rows[index-1];
+				}
 			}
 
 			this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 		}
+
+		this.deleteActual();
+
 
 		resolve();
 	});

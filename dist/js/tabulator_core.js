@@ -2664,16 +2664,16 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 				if (top) {
 					if (groupRows[0] !== row) {
 						index = groupRows[0];
-						this._moveRowInArray(row.getGroup().rows, row, index, top);
+						this._moveRowInArray(row.getGroup().rows, row, index, !top);
 					}
 				} else {
 					if (groupRows[groupRows.length - 1] !== row) {
 						index = groupRows[groupRows.length - 1];
-						this._moveRowInArray(row.getGroup().rows, row, index, top);
+						this._moveRowInArray(row.getGroup().rows, row, index, !top);
 					}
 				}
 			} else {
-				this._moveRowInArray(row.getGroup().rows, row, index, top);
+				this._moveRowInArray(row.getGroup().rows, row, index, !top);
 			}
 		}
 	}
@@ -4512,18 +4512,29 @@ Row.prototype.delete = function () {
 	var _this7 = this;
 
 	return new Promise(function (resolve, reject) {
-		var index = _this7.table.rowManager.getRowIndex(_this7);
-
-		_this7.deleteActual();
+		var index, rows;
 
 		if (_this7.table.options.history && _this7.table.modExists("history")) {
 
-			if (index) {
-				index = _this7.table.rowManager.rows[index - 1];
+			if (_this7.table.options.groupBy && _this7.table.modExists("groupRows")) {
+				rows = _this7.getGroup().rows;
+				index = rows.indexOf(_this7);
+
+				if (index) {
+					index = rows[index - 1];
+				}
+			} else {
+				index = _this7.table.rowManager.getRowIndex(_this7);
+
+				if (index) {
+					index = _this7.table.rowManager.rows[index - 1];
+				}
 			}
 
 			_this7.table.modules.history.action("rowDelete", _this7, { data: _this7.getData(), pos: !index, index: index });
 		}
+
+		_this7.deleteActual();
 
 		resolve();
 	});
