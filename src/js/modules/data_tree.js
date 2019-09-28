@@ -328,4 +328,8 @@ DataTree.prototype.getChildField = function(){
 	return this.field;
 };
 
+DataTree.prototype.redrawNeeded = function(data){
+	return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
+};
+
 Tabulator.prototype.registerModule("dataTree", DataTree);

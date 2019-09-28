@@ -5556,9 +5556,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				_this6.heightStyled = "";
 			}
 
-			if (self.table.options.dataTree !== false && self.table.modExists("dataTree") && typeof data[_this6.table.modules.dataTree.getChildField()] !== "undefined") {
+			if (self.table.options.dataTree !== false && self.table.modExists("dataTree") && _this6.table.modules.dataTree.redrawNeeded(data)) {
 
 				_this6.table.modules.dataTree.initializeRow(_this6);
+
+				_this6.table.modules.dataTree.layoutRow(_this6);
 
 				_this6.table.rowManager.refreshActiveData("tree", false, true);
 			}
@@ -12526,6 +12528,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	DataTree.prototype.getChildField = function () {
 		return this.field;
+	};
+
+	DataTree.prototype.redrawNeeded = function (data) {
+		return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 	};
 
 	Tabulator.prototype.registerModule("dataTree", DataTree);

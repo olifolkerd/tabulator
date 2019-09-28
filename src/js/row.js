@@ -562,8 +562,9 @@ Row.prototype.updateData = function(data){
 			this.heightStyled = "";
 		}
 
-		if(self.table.options.dataTree !== false && self.table.modExists("dataTree") && typeof data[this.table.modules.dataTree.getChildField()] !== "undefined"){
+		if(self.table.options.dataTree !== false && self.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(data)){
 			this.table.modules.dataTree.initializeRow(this);
+			this.table.modules.dataTree.layoutRow(this);
 			this.table.rowManager.refreshActiveData("tree", false, true);
 		}
 
