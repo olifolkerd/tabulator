@@ -16237,7 +16237,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			star.setAttribute("xml:space", "preserve");
 			star.style.padding = "0 1px";
 
-			value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+			value = value && !isNaN(value) ? parseInt(value) : 0;
+
+			value = Math.max(0, Math.min(value, maxStars));
 
 			for (var i = 1; i <= maxStars; i++) {
 				var nextStar = star.cloneNode(true);
