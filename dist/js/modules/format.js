@@ -169,7 +169,7 @@ Format.prototype.formatters = {
 	link: function link(cell, formatterParams, onRendered) {
 		var value = cell.getValue(),
 		    urlPrefix = formatterParams.urlPrefix || "",
-		    label = this.emptyToSpace(value),
+		    label = value,
 		    el = document.createElement("a"),
 		    data;
 
@@ -190,32 +190,36 @@ Format.prototype.formatters = {
 			}
 		}
 
-		if (formatterParams.urlField) {
-			data = cell.getData();
-			value = data[formatterParams.urlField];
-		}
-
-		if (formatterParams.url) {
-			switch (_typeof(formatterParams.url)) {
-				case "string":
-					value = formatterParams.url;
-					break;
-
-				case "function":
-					value = formatterParams.url(cell);
-					break;
+		if (label) {
+			if (formatterParams.urlField) {
+				data = cell.getData();
+				value = data[formatterParams.urlField];
 			}
+
+			if (formatterParams.url) {
+				switch (_typeof(formatterParams.url)) {
+					case "string":
+						value = formatterParams.url;
+						break;
+
+					case "function":
+						value = formatterParams.url(cell);
+						break;
+				}
+			}
+
+			el.setAttribute("href", urlPrefix + value);
+
+			if (formatterParams.target) {
+				el.setAttribute("target", formatterParams.target);
+			}
+
+			el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
+
+			return el;
+		} else {
+			return "&nbsp;";
 		}
-
-		el.setAttribute("href", urlPrefix + value);
-
-		if (formatterParams.target) {
-			el.setAttribute("target", formatterParams.target);
-		}
-
-		el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
-
-		return el;
 	},
 
 	//image element
