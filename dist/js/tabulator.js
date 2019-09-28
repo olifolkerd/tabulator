@@ -21537,7 +21537,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			var width = self.table.modules.layout.getMode() == "fitColumns" ? self.table.columnManager.getFlexBaseWidth() : self.table.columnManager.getWidth();
 
-			var diff = self.table.columnManager.element.clientWidth - width;
+			var diff = (self.table.options.headerVisible ? self.table.columnManager.element.clientWidth : self.table.element.clientWidth) - width;
 
 			if (diff < 0) {
 				//table is too wide
