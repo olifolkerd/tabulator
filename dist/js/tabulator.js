@@ -11678,21 +11678,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    calcs,
 		    columns = [];
 
-		if (config.columnHeaders) {
+		if (config.columnHeaders == "groups") {
+			columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
 
-			if (config.columnHeaders == "groups") {
-				columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
+			output = output.concat(this.groupHeadersToRows(columns));
+		} else {
+			this.table.columnManager.columnsByIndex.forEach(function (column) {
+				if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
+					columns.push(column);
+				}
+			});
 
-				output = output.concat(this.groupHeadersToRows(columns));
-			} else {
-				this.table.columnManager.columnsByIndex.forEach(function (column) {
-					if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
-						columns.push(column);
-					}
-				});
-
-				output.push(this.generateSimpleHeaders(columns));
-			}
+			output.push(this.generateSimpleHeaders(columns));
 		}
 
 		if (this.config.columnCalcs) {
