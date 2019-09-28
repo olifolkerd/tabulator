@@ -99,7 +99,9 @@ SelectRow.prototype.initializeRow = function (row) {
 				});
 			} else {
 				element.addEventListener("click", function (e) {
-					self.table._clearSelection();
+					if (!self.table.modExists("edit") || !self.table.modules.edit.getCurrentCell()) {
+						self.table._clearSelection();
+					}
 
 					if (!self.selecting) {
 						self.toggleRow(row);

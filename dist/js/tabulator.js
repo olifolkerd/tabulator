@@ -21781,7 +21781,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					});
 				} else {
 					element.addEventListener("click", function (e) {
-						self.table._clearSelection();
+						if (!self.table.modExists("edit") || !self.table.modules.edit.getCurrentCell()) {
+							self.table._clearSelection();
+						}
 
 						if (!self.selecting) {
 							self.toggleRow(row);
