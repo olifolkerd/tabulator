@@ -628,8 +628,8 @@ Edit.prototype.editors = {
 					}
 				});
 
-				if(editorParams.sortValuesList){
-					if(editorParams.sortValuesList == "asc"){
+				if(editorParams.listSortDir){
+					if(editorParams.listSortDir != "desc"){
 						output = Object.keys(output).sort();
 					}else{
 						output = Object.keys(output).sort().reverse();
@@ -724,18 +724,50 @@ Edit.prototype.editors = {
 				}
 			}
 
-			var sorter = null;
-			if (editorParams.sortValuesList)
-				sorter = editorParams.sortValuesList != "desc"
-					? (a, b) => a.value.localeCompare(b.value)
-					: (a, b) => b.value.localeCompare(a.value);
-			else if (editorParams.sortLabelsList)
-				sorter = editorParams.sortLabelsList != "desc"
-					? (a, b) => a.label.localeCompare(b.label)
-					: (a, b) => b.label.localeCompare(a.label);
-			if (sorter) {
-				dataList.sort(sorter);
-				displayList.sort(sorter);
+			// listSortBy: 'value' or 'label' or false, defaults to false
+			// listSorter: sorter or function, defaults to 'string'
+			// listSorterParams
+			// listSortDir: 'asc' or 'desc', defaults to 'asc'
+			if(editorParams.listSortBy) {
+				if(editorParams.listSortBy == 'value'
+					 || editorParams.listSortBy == 'label') {
+
+					var sorters = self.table.modules.sort.sorters;
+
+					var sorter = null;
+					if(editorParams.listSorter) {
+						if(typeof editorParams.listSorter == "function")
+							sorter = editorParams.listSorter;
+						else {
+							sorter = sorters[editorParams.listSorter];
+							if(!sorter)
+								console.warn("Select editor ignoring unknown sorter: ", editorParams.listSorter);
+						}
+					}
+					if(!sorter)
+						sorter = sorters['string'];
+
+					var dir = 'asc';
+					if(editorParams.listSortDir && editorParams.listSortDir == 'desc')
+						dir = 'desc';
+
+					var params = {};
+					if(editorParams.listSorterParams)
+						params = editorParams.listSorterParams;
+
+					var sorterFunc = editorParams.listSortBy == 'value'
+						? (dir == 'asc'
+								? (a, b) => sorter.call(this, a.value, b.value, null, null, null, dir, params)
+								: (a, b) => sorter.call(this, b.value, a.value, null, null, null, dir, params))
+						: (dir == 'asc'
+								? (a, b) => sorter.call(this, a.label, b.label, null, null, null, dir, params)
+								: (a, b) => sorter.call(this, b.label, a.label, null, null, null, dir, params))
+
+					dataList.sort(sorterFunc);
+					displayList.sort(sorterFunc);
+
+				} else
+					console.warn("Select editor ignoring unknown listSortBy: ", editorParams.listSortBy);
 			}
 
 			dataItems = dataList;
