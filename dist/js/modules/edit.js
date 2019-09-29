@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.2 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var Edit = function Edit(table) {
 	this.table = table; //hold Tabulator object
@@ -178,12 +178,16 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				if (self.table.options.dataTree && self.table.modExists("dataTree")) {
 					self.table.modules.dataTree.checkForRestyle(cell);
 				}
+
+				return true;
 			} else {
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
 				self.focusCellNoEvent(cell);
 				rendered();
 				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
+
+				return false;
 			}
 		} else {
 			// console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
@@ -328,8 +332,10 @@ Edit.prototype.editors = {
 
 		function onChange(e) {
 			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
-				cellValue = input.value;
-				success(input.value);
+
+				if (success(input.value)) {
+					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+				}
 			} else {
 				cancel();
 			}
@@ -343,7 +349,7 @@ Edit.prototype.editors = {
 		input.addEventListener("keydown", function (e) {
 			switch (e.keyCode) {
 				case 13:
-					success(input.value);
+					onChange(e);
 					break;
 
 				case 27:
@@ -394,8 +400,10 @@ Edit.prototype.editors = {
 		function onChange(e) {
 
 			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
-				cellValue = input.value;
-				success(input.value);
+
+				if (success(input.value)) {
+					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+				}
 
 				setTimeout(function () {
 					cell.getRow().normalizeHeight();
@@ -493,8 +501,9 @@ Edit.prototype.editors = {
 			}
 
 			if (value != cellValue) {
-				cellValue = value;
-				success(value);
+				if (success(value)) {
+					cellValue = value; //persist value if successfully validated incase editor is used as header filter
+				}
 			} else {
 				cancel();
 			}
@@ -568,8 +577,9 @@ Edit.prototype.editors = {
 			}
 
 			if (value != cellValue) {
-				cellValue = value;
-				success(value);
+				if (success(value)) {
+					cellValue = value; //persist value if successfully validated incase editor is used as header filter
+				}
 			} else {
 				cancel();
 			}
