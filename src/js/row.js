@@ -536,17 +536,23 @@ Row.prototype.updateData = function(data){
 
 		//update affected cells only
 		for (var attrname in data) {
-			let cell = this.getCell(attrname);
 
-			if(cell){
-				if(cell.getValue() != data[attrname]){
-					cell.setValueProcessData(data[attrname]);
+			let columns = this.table.columnManager.getColumnsByFieldRoot(attrname);
 
-					if(visible){
-						cell.cellRendered();
+			columns.forEach((column) => {
+				let cell = this.getCell(column.getField());
+
+				if(cell){
+					let value = column.getFieldValue(data);
+					if(cell.getValue() != value){
+						cell.setValueProcessData(value);
+
+						if(visible){
+							cell.cellRendered();
+						}
 					}
 				}
-			}
+			});
 		}
 
 		//Partial reinitialization if visible

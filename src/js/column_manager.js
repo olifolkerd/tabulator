@@ -287,6 +287,21 @@ ColumnManager.prototype.getColumnByField = function(field){
 	return this.columnsByField[field];
 };
 
+
+ColumnManager.prototype.getColumnsByFieldRoot = function(root){
+
+	var matches = [];
+
+	Object.keys(this.columnsByField).forEach((field) => {
+		var fieldRoot = field.split(".")[0];
+		if(fieldRoot === root){
+			matches.push(this.columnsByField[field]);
+		}
+	});
+
+	return matches;
+};
+
 ColumnManager.prototype.getColumnByIndex = function(index){
 	return this.columnsByIndex[index];
 };
