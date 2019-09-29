@@ -37,8 +37,15 @@ Validate.prototype._extractValidator = function(value){
 	switch(typeof value){
 		case "string":
 		pos = value.indexOf(':');
-		type = value.substring(0,pos);
-		params = value.substring(pos+1);
+
+		if(pos > -1){
+			type = value.substring(0,pos);
+			params = value.substring(pos+1);
+		}else{
+			type = value;
+		}
+
+		console.log("v", value, type, params)
 
 		return this._buildValidator(type, params);
 		break;
