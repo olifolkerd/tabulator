@@ -13806,6 +13806,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function onChange(e) {
 				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
+					cellValue = input.value;
 					success(input.value);
 				} else {
 					cancel();
@@ -13871,7 +13872,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function onChange(e) {
 
 				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
+					cellValue = input.value;
 					success(input.value);
+
 					setTimeout(function () {
 						cell.getRow().normalizeHeight();
 					}, 300);
@@ -13968,6 +13971,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (value != cellValue) {
+					cellValue = value;
 					success(value);
 				} else {
 					cancel();
@@ -14042,6 +14046,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (value != cellValue) {
+					cellValue = value;
 					success(value);
 				} else {
 					cancel();

@@ -328,6 +328,7 @@ Edit.prototype.editors = {
 
 		function onChange(e) {
 			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
+				cellValue = input.value;
 				success(input.value);
 			} else {
 				cancel();
@@ -393,7 +394,9 @@ Edit.prototype.editors = {
 		function onChange(e) {
 
 			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
+				cellValue = input.value;
 				success(input.value);
+
 				setTimeout(function () {
 					cell.getRow().normalizeHeight();
 				}, 300);
@@ -490,6 +493,7 @@ Edit.prototype.editors = {
 			}
 
 			if (value != cellValue) {
+				cellValue = value;
 				success(value);
 			} else {
 				cancel();
@@ -564,6 +568,7 @@ Edit.prototype.editors = {
 			}
 
 			if (value != cellValue) {
+				cellValue = value;
 				success(value);
 			} else {
 				cancel();
