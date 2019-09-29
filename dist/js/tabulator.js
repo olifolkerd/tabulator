@@ -8763,11 +8763,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Tabulator.prototype.setHeight = function (height) {
 
-		this.options.height = isNaN(height) ? height : height + "px";
+		if (this.rowManager.renderMode !== "classic") {
 
-		this.element.style.height = this.options.height;
+			this.options.height = isNaN(height) ? height : height + "px";
 
-		this.rowManager.redraw();
+			this.element.style.height = this.options.height;
+
+			this.rowManager.redraw();
+		} else {
+
+			console.warn("setHeight function is not available in classic render mode");
+		}
 	};
 
 	///////////////////// Sorting ////////////////////

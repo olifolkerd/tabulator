@@ -1308,9 +1308,15 @@ Tabulator.prototype.redraw = function(force){
 };
 
 Tabulator.prototype.setHeight = function(height){
-	this.options.height = isNaN(height) ? height : height + "px";
-	this.element.style.height = this.options.height;
-	this.rowManager.redraw();
+
+	if(this.rowManager.renderMode !== "classic"){
+		this.options.height = isNaN(height) ? height : height + "px";
+		this.element.style.height = this.options.height;
+		this.rowManager.redraw();
+	}else{
+		console.warn("setHeight function is not available in classic render mode");
+	}
+
 };
 
 ///////////////////// Sorting ////////////////////
