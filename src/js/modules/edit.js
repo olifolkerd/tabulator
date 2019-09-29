@@ -724,6 +724,20 @@ Edit.prototype.editors = {
 				}
 			}
 
+			var sorter = null;
+			if (editorParams.sortValuesList)
+				sorter = editorParams.sortValuesList != "desc"
+					? (a, b) => a.value.localeCompare(b.value)
+					: (a, b) => b.value.localeCompare(a.value);
+			else if (editorParams.sortLabelsList)
+				sorter = editorParams.sortLabelsList != "desc"
+					? (a, b) => a.label.localeCompare(b.label)
+					: (a, b) => b.label.localeCompare(a.label);
+			if (sorter) {
+				dataList.sort(sorter);
+				displayList.sort(sorter);
+			}
+
 			dataItems = dataList;
 			displayItems = displayList;
 
