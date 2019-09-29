@@ -22703,13 +22703,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Validate.prototype._extractValidator = function (value) {
-		var parts, type, params;
+		var type, params, pos;
 
 		switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 			case "string":
-				parts = value.split(":", 2);
-				type = parts.shift();
-				params = parts[0];
+				pos = value.indexOf(':');
+				type = value.substring(0, pos);
+				params = value.substring(pos + 1);
 
 				return this._buildValidator(type, params);
 				break;
