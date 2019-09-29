@@ -3014,13 +3014,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					case "center":
 
-						_this4.element.scrollTop = _this4.element.scrollTop - _this4.element.clientHeight / 2;
+						if (_this4.element.scrollHeight - _this4.element.scrollTop == _this4.element.clientHeight) {
+
+							_this4.element.scrollTop = _this4.element.scrollTop + (rowEl.offsetTop - _this4.element.scrollTop) - (_this4.element.scrollHeight - rowEl.offsetTop) / 2;
+						} else {
+
+							_this4.element.scrollTop = _this4.element.scrollTop - _this4.element.clientHeight / 2;
+						}
 
 						break;
 
 					case "bottom":
 
-						_this4.element.scrollTop = _this4.element.scrollTop - _this4.element.clientHeight + rowEl.offsetHeight;
+						if (_this4.element.scrollHeight - _this4.element.scrollTop == _this4.element.clientHeight) {
+
+							_this4.element.scrollTop = _this4.element.scrollTop - (_this4.element.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+						} else {
+
+							_this4.element.scrollTop = _this4.element.scrollTop - _this4.element.clientHeight + rowEl.offsetHeight;
+						}
 
 						break;
 

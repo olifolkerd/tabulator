@@ -249,11 +249,23 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 			switch(position){
 				case "middle":
 				case "center":
-				this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
+
+				if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
+					this.element.scrollTop = this.element.scrollTop + (rowEl.offsetTop - this.element.scrollTop) - ((this.element.scrollHeight - rowEl.offsetTop) / 2);
+				}else{
+					this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
+				}
+
 				break;
 
 				case "bottom":
-				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
+
+				if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
+					this.element.scrollTop = this.element.scrollTop - (this.element.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+				}else{
+					this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
+				}
+
 				break;
 			}
 
@@ -1026,7 +1038,7 @@ RowManager.prototype.setDisplayRows = function(displayRows, index){
 		this.displayRows[index] = displayRows;
 		output = true;
 	}else{
-	this.displayRows.push(displayRows)
+		this.displayRows.push(displayRows)
 		output = index = this.displayRows.length -1;
 	}
 
