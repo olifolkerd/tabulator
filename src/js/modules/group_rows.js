@@ -135,19 +135,19 @@ Group.prototype.addBindings = function(){
 	//handle group click events
 	if (self.groupManager.table.options.groupClick){
 		self.element.addEventListener("click", function(e){
-			self.groupManager.table.options.groupClick(e, self.getComponent());
+			self.groupManager.table.options.groupClick.call(self.groupManager.table, e, self.getComponent());
 		});
 	}
 
 	if (self.groupManager.table.options.groupDblClick){
 		self.element.addEventListener("dblclick", function(e){
-			self.groupManager.table.options.groupDblClick(e, self.getComponent());
+			self.groupManager.table.options.groupDblClick.call(self.groupManager.table, e, self.getComponent());
 		});
 	}
 
 	if (self.groupManager.table.options.groupContext){
 		self.element.addEventListener("contextmenu", function(e){
-			self.groupManager.table.options.groupContext(e, self.getComponent());
+			self.groupManager.table.options.groupContext.call(self.groupManager.table, e, self.getComponent());
 		});
 	}
 
