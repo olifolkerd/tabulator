@@ -984,16 +984,16 @@ GroupRows.prototype.createGroup = function(groupID, level, oldGroups){
 	this.groupList.push(group);
 };
 
-GroupRows.prototype.assignRowToGroup = function(row, oldGroups){
-	var groupID = this.groupIDLookups[0].func(row.getData()),
-	groupKey = "0_" + groupID;
+// GroupRows.prototype.assignRowToGroup = function(row, oldGroups){
+// 	var groupID = this.groupIDLookups[0].func(row.getData()),
+// 	groupKey = "0_" + groupID;
 
-	if(!this.groups[groupKey]){
-		this.createGroup(groupID, 0, oldGroups);
-	}
+// 	if(!this.groups[groupKey]){
+// 		this.createGroup(groupID, 0, oldGroups);
+// 	}
 
-	this.groups[groupKey].addRow(row);
-};
+// 	this.groups[groupKey].addRow(row);
+// };
 
 GroupRows.prototype.assignRowToExistingGroup = function(row, oldGroups){
 	var groupID = this.groupIDLookups[0].func(row.getData()),
