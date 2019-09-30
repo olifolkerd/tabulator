@@ -582,7 +582,11 @@ Filter.prototype.clearHeaderFilter = function(){
 
 	this.headerFilters = {};
 
-	this.headerFilterColumns.forEach(function(column){
+	var oldHeaderFilterColumns = this.headerFilterColumns;
+	this.headerFilterColumns = [];
+	this.headerFilterElements = [];
+
+	oldHeaderFilterColumns.forEach(function(column){
 		column.modules.filter.value = null;
 		column.modules.filter.prevSuccess = undefined;
 		self.reloadHeaderFilter(column);
