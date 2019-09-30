@@ -1234,7 +1234,7 @@ Tabulator.prototype.toggleColumn = function(field){
 Tabulator.prototype.addColumn = function(definition, before, field){
 	var column = this.columnManager.findColumn(field);
 
-	this.columnManager.addColumn(definition, before, column)
+	return this.columnManager.addColumn(definition, before, column)
 };
 
 Tabulator.prototype.deleteColumn = function(field){

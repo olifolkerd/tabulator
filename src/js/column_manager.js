@@ -575,27 +575,31 @@ ColumnManager.prototype.getFlexBaseWidth = function(){
 };
 
 ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
-	var column = this._addColumn(definition, before, nextToColumn);
+	return new Promise((resolve, reject) => {
+		var column = this._addColumn(definition, before, nextToColumn);
 
-	this._reIndexColumns();
+		this._reIndexColumns();
 
-	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-		this.table.modules.responsiveLayout.initialize();
-	}
+		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.initialize();
+		}
 
-	if(this.table.modExists("columnCalcs")){
-		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-	}
+		if(this.table.modExists("columnCalcs")){
+			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
+		}
 
-	this.redraw();
+		this.redraw();
 
-	if(this.table.modules.layout.getMode() != "fitColumns"){
-		column.reinitializeWidth();
-	}
+		if(this.table.modules.layout.getMode() != "fitColumns"){
+			column.reinitializeWidth();
+		}
 
-	this._verticalAlignHeaders();
+		this._verticalAlignHeaders();
 
-	this.table.rowManager.reinitialize();
+		this.table.rowManager.reinitialize();
+
+		resolve(column);
+	});
 };
 
 //remove column from system
