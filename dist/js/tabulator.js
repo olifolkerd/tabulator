@@ -21717,7 +21717,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						self.table._clearSelection();
 
-						if (e.shiftKey) {							
+						if (e.shiftKey) {
 							self.lastClickedRow = self.lastClickedRow || row;
 
 							var lastClickedRowIdx = self.table.rowManager.getDisplayRowIndex(self.lastClickedRow);
