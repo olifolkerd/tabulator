@@ -60,7 +60,7 @@ ColumnComponent.prototype.toggle = function(){
 };
 
 ColumnComponent.prototype.delete = function(){
-	this._column.delete();
+	return this._column.delete();
 };
 
 ColumnComponent.prototype.getSubColumns = function(){
@@ -1069,21 +1069,26 @@ Column.prototype.setMinWidth = function(minWidth){
 };
 
 Column.prototype.delete = function(){
-	if(this.isGroup){
-		this.columns.forEach(function(column){
-			column.delete();
-		});
-	}
+	return new Promise((resolve, reject) => {
 
-	var cellCount = this.cells.length;
+		if(this.isGroup){
+			this.columns.forEach(function(column){
+				column.delete();
+			});
+		}
 
-	for(let i = 0; i < cellCount; i++){
-		this.cells[0].delete();
-	}
+		var cellCount = this.cells.length;
 
-	this.element.parentNode.removeChild(this.element);
+		for(let i = 0; i < cellCount; i++){
+			this.cells[0].delete();
+		}
 
-	this.table.columnManager.deregisterColumn(this);
+		this.element.parentNode.removeChild(this.element);
+
+		this.table.columnManager.deregisterColumn(this);
+
+		resolve();
+	});
 };
 
 //////////////// Cell Management /////////////////

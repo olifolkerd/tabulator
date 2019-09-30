@@ -1238,14 +1238,21 @@ Tabulator.prototype.addColumn = function(definition, before, field){
 };
 
 Tabulator.prototype.deleteColumn = function(field){
-	var column = this.columnManager.findColumn(field);
+	return new Promise((resolve, reject) => {
+		var column = this.columnManager.findColumn(field);
 
-	if(column){
-		column.delete();
-	}else{
-		console.warn("Column Delete Error - No matching column found:", field);
-		return false;
-	}
+		if(column){
+			column.delete()
+			.then(() => {
+				resolve();
+			}).catch((err) => {
+				reject(err);
+			});
+		}else{
+			console.warn("Column Delete Error - No matching column found:", field);
+			reject();
+		}
+	});
 };
 
 Tabulator.prototype.moveColumn = function(from, to, after){
