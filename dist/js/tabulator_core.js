@@ -6689,16 +6689,24 @@ Tabulator.prototype.toggleColumn = function (field) {
 };
 
 Tabulator.prototype.addColumn = function (definition, before, field) {
-	var column = this.columnManager.findColumn(field);
-
-	return this.columnManager.addColumn(definition, before, column);
-};
-
-Tabulator.prototype.deleteColumn = function (field) {
 	var _this21 = this;
 
 	return new Promise(function (resolve, reject) {
 		var column = _this21.columnManager.findColumn(field);
+
+		_this21.columnManager.addColumn(definition, before, column).then(function (column) {
+			resolve(column.getComponent());
+		}).catch(function (err) {
+			reject(err);
+		});
+	});
+};
+
+Tabulator.prototype.deleteColumn = function (field) {
+	var _this22 = this;
+
+	return new Promise(function (resolve, reject) {
+		var column = _this22.columnManager.findColumn(field);
 
 		if (column) {
 			column.delete().then(function () {
@@ -6730,13 +6738,13 @@ Tabulator.prototype.moveColumn = function (from, to, after) {
 
 //scroll to column in DOM
 Tabulator.prototype.scrollToColumn = function (field, position, ifVisible) {
-	var _this22 = this;
+	var _this23 = this;
 
 	return new Promise(function (resolve, reject) {
-		var column = _this22.columnManager.findColumn(field);
+		var column = _this23.columnManager.findColumn(field);
 
 		if (column) {
-			_this22.columnManager.scrollToColumn(column, position, ifVisible).then(function () {
+			_this23.columnManager.scrollToColumn(column, position, ifVisible).then(function () {
 				resolve();
 			}).catch(function (err) {
 				reject(err);
@@ -6936,14 +6944,14 @@ Tabulator.prototype.setPage = function (page) {
 };
 
 Tabulator.prototype.setPageToRow = function (row) {
-	var _this23 = this;
+	var _this24 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this23.options.pagination && _this23.modExists("page")) {
-			row = _this23.rowManager.findRow(row);
+		if (_this24.options.pagination && _this24.modExists("page")) {
+			row = _this24.rowManager.findRow(row);
 
 			if (row) {
-				_this23.modules.page.setPageToRow(row).then(function () {
+				_this24.modules.page.setPageToRow(row).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();

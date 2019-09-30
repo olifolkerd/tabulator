@@ -1232,9 +1232,15 @@ Tabulator.prototype.toggleColumn = function(field){
 };
 
 Tabulator.prototype.addColumn = function(definition, before, field){
-	var column = this.columnManager.findColumn(field);
+	return new Promise((resolve, reject) => {
+		var column = this.columnManager.findColumn(field);
 
-	return this.columnManager.addColumn(definition, before, column)
+		this.columnManager.addColumn(definition, before, column).then((column) => {
+			resolve(column.getComponent());
+		}).catch((err) => {
+			reject(err);
+		});
+	});
 };
 
 Tabulator.prototype.deleteColumn = function(field){
