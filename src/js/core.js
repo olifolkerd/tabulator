@@ -190,6 +190,7 @@ Tabulator.prototype.defaultOptions = {
 	groupBy:false, //enable table grouping and set field to group by
 	groupStartOpen:true, //starting state of group
 	groupValues:false,
+	groupUpdateOnCellEdit:false,
 
 	groupHeader:false, //header generation function
 
