@@ -342,7 +342,8 @@ Ajax.prototype.defaultURLGenerator = function (url, config, params) {
 		if (params && Object.keys(params).length) {
 			if (!config.method || config.method.toLowerCase() == "get") {
 				config.method = "get";
-				url += "?" + this.serializeParams(params);
+
+				url += (url.includes("?") ? "&" : "?") + this.serializeParams(params);
 			}
 		}
 	}
