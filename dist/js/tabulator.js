@@ -21297,6 +21297,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var col = column.getLastColumn();
 
 				if (col && self._checkResizability(col)) {
+					e.stopPropagation();
 					col.reinitializeWidth(true);
 				}
 			});
@@ -21335,6 +21336,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
 
 					if (prevColumn && self._checkResizability(prevColumn)) {
+						e.stopPropagation();
 						prevColumn.reinitializeWidth(true);
 					}
 				}
