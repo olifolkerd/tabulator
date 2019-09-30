@@ -15701,11 +15701,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.headerFilters = {};
 
-		var oldHeaderFilterColumns = this.headerFilterColumns;
-		this.headerFilterColumns = [];
-		this.headerFilterElements = [];
-
-		oldHeaderFilterColumns.forEach(function (column) {
+		this.headerFilterColumns.forEach(function (column) {
 			column.modules.filter.value = null;
 			column.modules.filter.prevSuccess = undefined;
 			self.reloadHeaderFilter(column);
