@@ -888,21 +888,22 @@ Clipboard.prototype.copyFormatters = {
 	table: function(data, params){
 		var output = [];
 
-		data.forEach(function(row){
-			row.forEach(function(value){
-				if(typeof value == "undefined"){
+		data.forEach(function (row) {
+			var newRow = [];
+			row.forEach(function (value) {
+				if (typeof value == "undefined") {
 					value = "";
 				}
 
 				value = typeof value == "undefined" || value === null ? "" : value.toString();
 
-				if(value.match(/\r|\n/)){
+				if (value.match(/\r|\n/)) {
 					value = value.split('"').join('""');
 					value = '"' + value + '"';
 				}
+				newRow.push(value);
 			});
-
-			output.push(row.join("\t"));
+			output.push(newRow.join("\t"));
 		});
 
 		return output.join("\n");
