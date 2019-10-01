@@ -13519,6 +13519,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			output = XLSX.write(workbook, { bookType: 'xlsx', bookSST: true, type: 'binary' });
 
 			setFileContents(s2ab(output), "application/octet-stream");
+		},
+
+		html: function html(columns, data, options, setFileContents, config) {
+			if (this.table.modExists("htmlTableExport", true)) {
+				setFileContents(this.table.modules.htmlTableExport.getHtml(true, options.style, config), "text/html");
+			}
 		}
 
 	};

@@ -897,6 +897,12 @@ Download.prototype.downloaders = {
 		setFileContents(s2ab(output), "application/octet-stream");
 	},
 
+	html:function(columns, data, options, setFileContents, config){
+		if(this.table.modExists("htmlTableExport", true)){
+			setFileContents(this.table.modules.htmlTableExport.getHtml(true, options.style, config), "text/html");
+		}
+	}
+
 };
 
 
