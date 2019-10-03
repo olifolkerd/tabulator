@@ -63,10 +63,9 @@ Accessor.prototype.transformRow = function(dataIn, type){
 	//clone data object with deep copy to isolate internal data from returned result
 	var data = Tabulator.prototype.helpers.deepClone(dataIn || {});
 
-	self.table.columnManager.traverse(function(column){
-		var value, accessor, params, component;
-
-		if(column.modules.accessor){
+    if (column.modules.accessor){
+	    self.table.columnManager.traverse(function(column){
+		    var value, accessor, params, component;
 
 			accessor = column.modules.accessor[key] || column.modules.accessor.accessor || false;
 
@@ -79,9 +78,8 @@ Accessor.prototype.transformRow = function(dataIn, type){
 					column.setFieldValue(data, accessor.accessor(value, data, type, params, component));
 				}
 			}
-		}
-	});
-
+	    });
+    }
 	return data;
 },
 
