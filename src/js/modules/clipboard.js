@@ -890,19 +890,20 @@ Clipboard.prototype.copyFormatters = {
 
 		data.forEach(function (row) {
 			var newRow = [];
-			row.forEach(function (value) {
-				if (typeof value == "undefined") {
+			row.forEach(function(value){
+				if(typeof value == "undefined"){
 					value = "";
 				}
 
 				value = typeof value == "undefined" || value === null ? "" : value.toString();
 
-				if (value.match(/\r|\n/)) {
+				if(value.match(/\r|\n/)){
 					value = value.split('"').join('""');
 					value = '"' + value + '"';
 				}
 				newRow.push(value);
 			});
+
 			output.push(newRow.join("\t"));
 		});
 
