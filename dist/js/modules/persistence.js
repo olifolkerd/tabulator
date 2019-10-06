@@ -126,8 +126,6 @@ Persistence.prototype.load = function (type, current) {
 		data = data ? this.mergeDefinition(current, data) : current;
 	}
 
-	console.log("P Load", type, data);
-
 	return data;
 };
 
@@ -267,8 +265,6 @@ Persistence.prototype.save = function (type) {
 			};
 			break;
 	}
-
-	console.log("P Save", type, data);
 
 	var id = this.id + (type === "columns" ? "" : "-" + type);
 

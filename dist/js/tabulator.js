@@ -20370,9 +20370,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var self = this;
 
-		console.log("setPage", page);
-		console.trace();
-
 		return new Promise(function (resolve, reject) {
 
 			page = parseInt(page);
@@ -20882,8 +20879,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			data = data ? this.mergeDefinition(current, data) : current;
 		}
 
-		console.log("P Load", type, data);
-
 		return data;
 	};
 
@@ -21023,8 +21018,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				};
 				break;
 		}
-
-		console.log("P Save", type, data);
 
 		var id = this.id + (type === "columns" ? "" : "-" + type);
 
