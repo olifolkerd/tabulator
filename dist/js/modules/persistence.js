@@ -57,6 +57,23 @@ Persistence.prototype.initialize = function () {
 			// }
 		}
 	}
+
+	//load group data if needed
+	if (this.config.group) {
+		retreivedData = this.retreiveData("group");
+
+		if (retreivedData) {
+			if (typeof retreivedData.groupBy !== "undefined") {
+				this.table.options.groupBy = retreivedData.groupBy;
+			}
+			if (typeof retreivedData.groupStartOpen !== "undefined") {
+				this.table.options.groupStartOpen = retreivedData.groupStartOpen;
+			}
+			if (typeof retreivedData.groupHeader !== "undefined") {
+				this.table.options.groupHeader = retreivedData.groupHeader;
+			}
+		}
+	}
 };
 
 Persistence.prototype.initializeColumn = function (column) {
@@ -236,7 +253,11 @@ Persistence.prototype.save = function (type) {
 			break;
 
 		case "group":
-			data = {};
+			data = {
+				groupBy: this.table.options.groupBy,
+				groupStartOpen: this.table.options.groupStartOpen,
+				groupHeader: this.table.options.groupHeader
+			};
 			break;
 
 		case "page":

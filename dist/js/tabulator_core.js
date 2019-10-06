@@ -7026,6 +7026,10 @@ Tabulator.prototype.setGroupBy = function (groups) {
 		this.options.groupBy = groups;
 		this.modules.groupRows.initialize();
 		this.rowManager.refreshActiveData("display");
+
+		if (this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group) {
+			this.modules.persistence.save("group");
+		}
 	} else {
 		return false;
 	}
@@ -7037,6 +7041,10 @@ Tabulator.prototype.setGroupStartOpen = function (values) {
 		this.modules.groupRows.initialize();
 		if (this.options.groupBy) {
 			this.rowManager.refreshActiveData("group");
+
+			if (this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group) {
+				this.modules.persistence.save("group");
+			}
 		} else {
 			console.warn("Grouping Update - cant refresh view, no groups have been set");
 		}
@@ -7051,6 +7059,10 @@ Tabulator.prototype.setGroupHeader = function (values) {
 		this.modules.groupRows.initialize();
 		if (this.options.groupBy) {
 			this.rowManager.refreshActiveData("group");
+
+			if (this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group) {
+				this.modules.persistence.save("group");
+			}
 		} else {
 			console.warn("Grouping Update - cant refresh view, no groups have been set");
 		}

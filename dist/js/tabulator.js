@@ -9155,6 +9155,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.modules.groupRows.initialize();
 
 			this.rowManager.refreshActiveData("display");
+
+			if (this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group) {
+
+				this.modules.persistence.save("group");
+			}
 		} else {
 
 			return false;
@@ -9172,6 +9177,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.options.groupBy) {
 
 				this.rowManager.refreshActiveData("group");
+
+				if (this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group) {
+
+					this.modules.persistence.save("group");
+				}
 			} else {
 
 				console.warn("Grouping Update - cant refresh view, no groups have been set");
@@ -9193,6 +9203,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.options.groupBy) {
 
 				this.rowManager.refreshActiveData("group");
+
+				if (this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group) {
+
+					this.modules.persistence.save("group");
+				}
 			} else {
 
 				console.warn("Grouping Update - cant refresh view, no groups have been set");
@@ -20798,6 +20813,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// }
 			}
 		}
+
+		//load group data if needed
+		if (this.config.group) {
+			retreivedData = this.retreiveData("group");
+
+			if (retreivedData) {
+				if (typeof retreivedData.groupBy !== "undefined") {
+					this.table.options.groupBy = retreivedData.groupBy;
+				}
+				if (typeof retreivedData.groupStartOpen !== "undefined") {
+					this.table.options.groupStartOpen = retreivedData.groupStartOpen;
+				}
+				if (typeof retreivedData.groupHeader !== "undefined") {
+					this.table.options.groupHeader = retreivedData.groupHeader;
+				}
+			}
+		}
 	};
 
 	Persistence.prototype.initializeColumn = function (column) {
@@ -20977,7 +21009,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				break;
 
 			case "group":
-				data = {};
+				data = {
+					groupBy: this.table.options.groupBy,
+					groupStartOpen: this.table.options.groupStartOpen,
+					groupHeader: this.table.options.groupHeader
+				};
 				break;
 
 			case "page":
