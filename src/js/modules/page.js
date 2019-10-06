@@ -260,9 +260,6 @@ Page.prototype.setMaxPage = function(max){
 Page.prototype.setPage = function(page){
 	var self = this;
 
-	console.log("setPage", page);
-	console.trace();
-
 	return new Promise((resolve, reject)=>{
 
 		page = parseInt(page);

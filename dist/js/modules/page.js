@@ -264,9 +264,6 @@ Page.prototype.setPage = function (page) {
 
 	var self = this;
 
-	console.log("setPage", page);
-	console.trace();
-
 	return new Promise(function (resolve, reject) {
 
 		page = parseInt(page);
