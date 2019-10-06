@@ -134,9 +134,9 @@ Tabulator.prototype.defaultOptions = {
 	virtualDom:true, //enable DOM virtualization
     virtualDomBuffer:0, // set virtual DOM buffer size
 
-	// persistentLayout:false, //store column layout in memory
-	// persistentSort:false, //store sorting in memory
-	// persistentFilter:false, //store filters in memory
+    persistentLayout:false, //DEPRICATED - REMOVE in 5.0
+    persistentSort:false, //DEPRICATED - REMOVE in 5.0
+    persistentFilter:false, //DEPRICATED - REMOVE in 5.0
 	persistenceID:"", //key for persistent storage
 	persistenceMode:true, //mode for storing persistence information
 	persistence:false,
@@ -360,6 +360,36 @@ Tabulator.prototype.initializeElement = function(element){
 //convert depricated functionality to new functions
 Tabulator.prototype._mapDepricatedFunctionality = function(){
 
+	//map depricated persistance setup options
+	if(this.options.persistentLayout || this.options.persistentSort || this.options.persistentFilter){
+		if(!this.options.persistence){
+			this.options.persistence = {};
+		}
+	}
+
+	if(this.options.persistentLayout){
+		console.warn("persistentLayout option is deprecated, you should now use persistence option");
+
+		if(this.options.persistence !== true && typeof this.options.persistence.columns === "undefined"){
+			this.options.persistence.columns = true;
+		}
+	}
+
+	if(this.options.persistentSort){
+		console.warn("persistentSort option is deprecated, you should now use persistence option");
+
+		if(this.options.persistence !== true  && typeof this.options.persistence.sort === "undefined"){
+			this.options.persistence.sort = true;
+		}
+	}
+
+	if(this.options.persistentFilter){
+		console.warn("persistentFilter option is deprecated, you should now use persistence option");
+
+		if(this.options.persistence !== true  && typeof this.options.persistence.filter === "undefined"){
+			this.options.persistence.filter = true;
+		}
+	}
 };
 
 Tabulator.prototype._clearSelection = function(){
