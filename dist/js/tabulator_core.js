@@ -5618,6 +5618,7 @@ Tabulator.prototype.defaultOptions = {
 
 	pagination: false, //set pagination type
 	paginationSize: false, //set number of rows to a page
+	// paginationInitialPage:1, //initail page to show on load
 	paginationButtonCount: 5, // set count of page button
 	paginationSizeSelector: false, //add pagination size selector element
 	paginationElement: false, //element to hold pagination numbers
@@ -6075,7 +6076,7 @@ Tabulator.prototype._loadInitialData = function () {
 			}
 		} else {
 			if (self.options.ajaxURL) {
-				self.modules.page.setPage(1).then(function () {}).catch(function () {});
+				self.modules.page.setPage(self.options.paginationInitialPage).then(function () {}).catch(function () {});
 			} else {
 				self.rowManager.setData([]);
 			}

@@ -7205,6 +7205,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		paginationSize: false, //set number of rows to a page
 
+		// paginationInitialPage:1, //initail page to show on load
+
 		paginationButtonCount: 5, // set count of page button
 
 		paginationSizeSelector: false, //add pagination size selector element
@@ -7857,7 +7859,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (self.options.ajaxURL) {
 
-					self.modules.page.setPage(1).then(function () {}).catch(function () {});
+					self.modules.page.setPage(self.options.paginationInitialPage).then(function () {}).catch(function () {});
 				} else {
 
 					self.rowManager.setData([]);
@@ -20291,7 +20293,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//set default values
 		self.mode = self.table.options.pagination;
+
 		self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().clientHeight / 24);
+		// self.page = self.table.options.paginationInitialPage || 1;
 		self.count = self.table.options.paginationButtonCount;
 
 		self.generatePageSizeSelectList();
@@ -20349,6 +20353,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Page.prototype.setPage = function (page) {
 		var _this53 = this;
 
+		var self = this;
+
+		console.log("setPage", page);
+		console.trace();
+
 		return new Promise(function (resolve, reject) {
 
 			page = parseInt(page);
@@ -20360,6 +20369,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}).catch(function () {
 					reject();
 				});
+
+				if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
+					self.table.modules.persistence.save("page");
+				}
 			} else {
 				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this53.max + ":", page);
 				reject();
@@ -20400,6 +20413,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.pageSizeSelect) {
 			// this.pageSizeSelect.value = size;
 			this.generatePageSizeSelectList();
+		}
+
+		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page) {
+			this.table.modules.persistence.save("page");
 		}
 	};
 
@@ -20751,7 +20768,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		//determine persistent layout storage type
 
 		var mode = this.table.options.persistenceMode,
-		    id = this.table.options.persistenceID;
+		    id = this.table.options.persistenceID,
+		    retreivedData;
 
 		this.mode = mode !== true ? mode : this.localStorageTest() ? "local" : "cookie";
 
@@ -20765,6 +20783,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			page: this.table.options.persistence === true || this.table.options.persistence.page,
 			columns: this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns
 		};
+
+		//load pagination data if needed
+		if (this.config.page) {
+			retreivedData = this.retreiveData("page");
+
+			if (retreivedData) {
+				if (typeof retreivedData.paginationSize !== "undefined") {
+					this.table.options.paginationSize = retreivedData.paginationSize;
+				}
+
+				// if(typeof retreivedData.paginationInitialPage !== "undefined"){
+				// 	this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+				// }
+			}
+		}
 	};
 
 	Persistence.prototype.initializeColumn = function (column) {
@@ -20930,8 +20963,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Persistence.prototype.save = function (type) {
 		var data = {};
 
-		console.log("P Save", type);
-
 		switch (type) {
 			case "columns":
 				data = this.parseColumns(this.table.columnManager.getColumns());
@@ -20944,7 +20975,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			case "sort":
 				data = this.validateSorters(this.table.modules.sort.getSort());
 				break;
+
+			case "group":
+				data = {};
+				break;
+
+			case "page":
+				data = {
+					paginationSize: this.table.modules.page.getPageSize()
+					// paginationInitialPage:this.table.modules.page.getPage(),
+				};
+				break;
 		}
+
+		console.log("P Save", type, data);
 
 		var id = this.id + (type === "columns" ? "" : "-" + type);
 

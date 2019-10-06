@@ -27,7 +27,8 @@ Persistence.prototype.initialize = function () {
 	//determine persistent layout storage type
 
 	var mode = this.table.options.persistenceMode,
-	    id = this.table.options.persistenceID;
+	    id = this.table.options.persistenceID,
+	    retreivedData;
 
 	this.mode = mode !== true ? mode : this.localStorageTest() ? "local" : "cookie";
 
@@ -41,6 +42,21 @@ Persistence.prototype.initialize = function () {
 		page: this.table.options.persistence === true || this.table.options.persistence.page,
 		columns: this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns
 	};
+
+	//load pagination data if needed
+	if (this.config.page) {
+		retreivedData = this.retreiveData("page");
+
+		if (retreivedData) {
+			if (typeof retreivedData.paginationSize !== "undefined") {
+				this.table.options.paginationSize = retreivedData.paginationSize;
+			}
+
+			// if(typeof retreivedData.paginationInitialPage !== "undefined"){
+			// 	this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+			// }
+		}
+	}
 };
 
 Persistence.prototype.initializeColumn = function (column) {
@@ -206,8 +222,6 @@ Persistence.prototype._findColumn = function (columns, subject) {
 Persistence.prototype.save = function (type) {
 	var data = {};
 
-	console.log("P Save", type);
-
 	switch (type) {
 		case "columns":
 			data = this.parseColumns(this.table.columnManager.getColumns());
@@ -220,7 +234,20 @@ Persistence.prototype.save = function (type) {
 		case "sort":
 			data = this.validateSorters(this.table.modules.sort.getSort());
 			break;
+
+		case "group":
+			data = {};
+			break;
+
+		case "page":
+			data = {
+				paginationSize: this.table.modules.page.getPageSize()
+				// paginationInitialPage:this.table.modules.page.getPage(),
+			};
+			break;
 	}
+
+	console.log("P Save", type, data);
 
 	var id = this.id + (type === "columns" ? "" : "-" + type);
 
