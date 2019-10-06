@@ -3,6 +3,7 @@ var Persistence = function(table){
 	this.mode = "";
 	this.id = "";
 	// this.persistProps = ["field", "width", "visible"];
+	this.defWatcherBlock = false;
 	this.config = {};
 };
 
@@ -36,12 +37,49 @@ Persistence.prototype.initialize = function(){
 		filter:this.table.options.persistence === true || this.table.options.persistence.filter,
 		group:this.table.options.persistence === true || this.table.options.persistence.group,
 		page:this.table.options.persistence === true || this.table.options.persistence.page,
-		columns:this.table.options.persistence === true ? ["width", "visible"] : this.table.options.persistence.columns,
+		columns:this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns,
 	};
 };
 
 
 Persistence.prototype.initializeColumn = function(column){
+	var self = this,
+	def, keys;
+
+	if(this.config.columns){
+		this.defWatcherBlock = true;
+
+		def = column.getDefinition();
+
+		keys = this.config.columns === true ? Object.keys(def) : this.config.columns;
+
+		keys.forEach((key)=>{
+			var props = Object.getOwnPropertyDescriptor(def, key);
+			var value = def[key];
+
+			Object.defineProperty(def, key, {
+				set: function(newValue){
+					value = newValue;
+
+					if(!self.defWatcherBlock){
+						self.save("columns");
+					}
+
+					if(props.set){
+						props.set(newValue);
+					}
+				},
+				get:function(){
+					if(props.get){
+						props.get();
+					}
+					return value;
+				}
+			});
+		});
+
+		this.defWatcherBlock = false;
+	}
 
 };
 
@@ -49,13 +87,15 @@ Persistence.prototype.initializeColumn = function(column){
 //load saved definitions
 Persistence.prototype.load = function(type, current){
 
-	console.log("P Load", type)
+
 
 	var data = this.retreiveData(type);
 
 	if(current){
 		data = data ? this.mergeDefinition(current, data) : current;
 	}
+
+	console.log("P Load", type, data)
 
 	return data;
 };
@@ -108,12 +148,18 @@ Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 
 	newCols.forEach(function(column, to){
 
-		var from = self._findColumn(oldCols, column);
+		var from = self._findColumn(oldCols, column),
+		keys;
 
 		if(from){
 
-			from.width = column.width;
-			from.visible = column.visible;
+			keys = self.config.columns === true ? Object.keys(from) : self.config.columns;
+
+			keys.forEach((key)=>{
+				if(typeof column[key] !== "undefined"){
+					from[key] = column[key];
+				}
+			});
 
 			if(from.columns){
 				from.columns = self.mergeDefinition(from.columns, column.columns);
@@ -123,6 +169,7 @@ Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 		}
 
 	});
+
 	oldCols.forEach(function (column, i) {
 		var from = self._findColumn(newCols, column);
 		if (!from) {
@@ -222,19 +269,36 @@ Persistence.prototype.parseColumns = function(columns){
 	definitions = [];
 
 	columns.forEach(function(column){
-		var def = {};
+		var defStore = {},
+		colDef = column.getDefinition(),
+		keys;
 
 		if(column.isGroup){
-			def.title = column.getDefinition().title;
-			def.columns = self.parseColumns(column.getColumns());
+			defStore.title = colDef.title;
+			defStore.columns = self.parseColumns(column.getColumns());
 		}else{
-			def.title = column.getDefinition().title;
-			def.field = column.getField();
-			def.width = column.getWidth();
-			def.visible = column.visible;
+			defStore.field = column.getField();
+
+			keys = self.config.columns === true ? Object.keys(colDef) : self.config.columns;
+
+			keys.forEach((key)=>{
+
+				switch(key){
+					case "width":
+					defStore.width = column.getWidth();
+					break;
+					case "visible":
+					defStore.visible = column.visible;
+					break;
+
+					default:
+					defStore[key] = colDef[key];
+				}
+
+			});
 		}
 
-		definitions.push(def);
+		definitions.push(defStore);
 	});
 
 	return definitions;

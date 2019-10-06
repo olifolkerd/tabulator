@@ -138,7 +138,7 @@ ResizeColumns.prototype._mouseDown = function(e, column, handle){
 
 		self.table.element.classList.remove("tabulator-block-select");
 
-		if(self.table.options.persistentLayout && self.table.modExists("persistence", true)){
+		if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.columns){
 			self.table.modules.persistence.save("columns");
 		}
 

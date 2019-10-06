@@ -929,7 +929,7 @@ Column.prototype.show = function(silent, responsiveToggle){
 
 		this.table.columnManager._verticalAlignHeaders();
 
-		if(this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)){
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
 		}
 
@@ -964,7 +964,7 @@ Column.prototype.hide = function(silent, responsiveToggle){
 			cell.hide();
 		});
 
-		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
 		}
 

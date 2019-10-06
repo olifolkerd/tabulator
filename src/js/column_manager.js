@@ -424,7 +424,7 @@ ColumnManager.prototype.moveColumnActual = function(from, to, after){
 		this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
 	}
 
-	if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 		this.table.modules.persistence.save("columns");
 	}
 };
@@ -666,7 +666,7 @@ ColumnManager.prototype.redraw = function(force){
 	}
 
 	if(force){
-		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
 		}
 

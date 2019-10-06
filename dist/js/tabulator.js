@@ -766,7 +766,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
 		}
 
-		if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
+		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
 
 			this.table.modules.persistence.save("columns");
 		}
@@ -1080,7 +1080,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (force) {
 
-			if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
+			if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
 
 				this.table.modules.persistence.save("columns");
 			}
@@ -2341,7 +2341,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.table.columnManager._verticalAlignHeaders();
 
-			if (this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)) {
+			if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
 
 				this.table.modules.persistence.save("columns");
 			}
@@ -2385,7 +2385,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				cell.hide();
 			});
 
-			if (this.table.options.persistentLayout && this.table.modExists("persistence", true)) {
+			if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
 
 				this.table.modules.persistence.save("columns");
 			}
@@ -20729,6 +20729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.mode = "";
 		this.id = "";
 		// this.persistProps = ["field", "width", "visible"];
+		this.defWatcherBlock = false;
 		this.config = {};
 	};
 
@@ -20762,22 +20763,61 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			filter: this.table.options.persistence === true || this.table.options.persistence.filter,
 			group: this.table.options.persistence === true || this.table.options.persistence.group,
 			page: this.table.options.persistence === true || this.table.options.persistence.page,
-			columns: this.table.options.persistence === true ? ["width", "visible"] : this.table.options.persistence.columns
+			columns: this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns
 		};
 	};
 
-	Persistence.prototype.initializeColumn = function (column) {};
+	Persistence.prototype.initializeColumn = function (column) {
+		var self = this,
+		    def,
+		    keys;
+
+		if (this.config.columns) {
+			this.defWatcherBlock = true;
+
+			def = column.getDefinition();
+
+			keys = this.config.columns === true ? Object.keys(def) : this.config.columns;
+
+			keys.forEach(function (key) {
+				var props = Object.getOwnPropertyDescriptor(def, key);
+				var value = def[key];
+
+				Object.defineProperty(def, key, {
+					set: function set(newValue) {
+						value = newValue;
+
+						if (!self.defWatcherBlock) {
+							self.save("columns");
+						}
+
+						if (props.set) {
+							props.set(newValue);
+						}
+					},
+					get: function get() {
+						if (props.get) {
+							props.get();
+						}
+						return value;
+					}
+				});
+			});
+
+			this.defWatcherBlock = false;
+		}
+	};
 
 	//load saved definitions
 	Persistence.prototype.load = function (type, current) {
-
-		console.log("P Load", type);
 
 		var data = this.retreiveData(type);
 
 		if (current) {
 			data = data ? this.mergeDefinition(current, data) : current;
 		}
+
+		console.log("P Load", type, data);
 
 		return data;
 	};
@@ -20830,12 +20870,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		newCols.forEach(function (column, to) {
 
-			var from = self._findColumn(oldCols, column);
+			var from = self._findColumn(oldCols, column),
+			    keys;
 
 			if (from) {
 
-				from.width = column.width;
-				from.visible = column.visible;
+				keys = self.config.columns === true ? Object.keys(from) : self.config.columns;
+
+				keys.forEach(function (key) {
+					if (typeof column[key] !== "undefined") {
+						from[key] = column[key];
+					}
+				});
 
 				if (from.columns) {
 					from.columns = self.mergeDefinition(from.columns, column.columns);
@@ -20844,6 +20890,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				output.push(from);
 			}
 		});
+
 		oldCols.forEach(function (column, i) {
 			var from = self._findColumn(newCols, column);
 			if (!from) {
@@ -20943,19 +20990,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    definitions = [];
 
 		columns.forEach(function (column) {
-			var def = {};
+			var defStore = {},
+			    colDef = column.getDefinition(),
+			    keys;
 
 			if (column.isGroup) {
-				def.title = column.getDefinition().title;
-				def.columns = self.parseColumns(column.getColumns());
+				defStore.title = colDef.title;
+				defStore.columns = self.parseColumns(column.getColumns());
 			} else {
-				def.title = column.getDefinition().title;
-				def.field = column.getField();
-				def.width = column.getWidth();
-				def.visible = column.visible;
+				defStore.field = column.getField();
+
+				keys = self.config.columns === true ? Object.keys(colDef) : self.config.columns;
+
+				keys.forEach(function (key) {
+
+					switch (key) {
+						case "width":
+							defStore.width = column.getWidth();
+							break;
+						case "visible":
+							defStore.visible = column.visible;
+							break;
+
+						default:
+							defStore[key] = colDef[key];
+					}
+				});
 			}
 
-			definitions.push(def);
+			definitions.push(defStore);
 		});
 
 		return definitions;
@@ -21428,7 +21491,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			if (self.table.options.persistentLayout && self.table.modExists("persistence", true)) {
+			if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.columns) {
 				self.table.modules.persistence.save("columns");
 			}
 
