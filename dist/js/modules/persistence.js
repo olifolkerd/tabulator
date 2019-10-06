@@ -4,7 +4,8 @@ var Persistence = function Persistence(table) {
 	this.table = table; //hold Tabulator object
 	this.mode = "";
 	this.id = "";
-	this.persistProps = ["field", "width", "visible"];
+	// this.persistProps = ["field", "width", "visible"];
+	this.config = {};
 };
 
 // Test for whether localStorage is available for use.
@@ -21,17 +22,32 @@ Persistence.prototype.localStorageTest = function () {
 };
 
 //setup parameters
-Persistence.prototype.initialize = function (mode, id) {
+Persistence.prototype.initialize = function () {
 	//determine persistent layout storage type
+
+	var mode = this.table.options.persistenceMode,
+	    id = this.table.options.persistenceID;
 
 	this.mode = mode !== true ? mode : this.localStorageTest() ? "local" : "cookie";
 
 	//set storage tag
 	this.id = "tabulator-" + (id || this.table.element.getAttribute("id") || "");
+
+	this.config = {
+		sort: this.table.options.persistence === true || this.table.options.persistence.sort,
+		filter: this.table.options.persistence === true || this.table.options.persistence.filter,
+		group: this.table.options.persistence === true || this.table.options.persistence.group,
+		page: this.table.options.persistence === true || this.table.options.persistence.page,
+		columns: this.table.options.persistence === true ? ["width", "visible"] : this.table.options.persistence.columns
+	};
 };
+
+Persistence.prototype.initializeColumn = function (column) {};
 
 //load saved definitions
 Persistence.prototype.load = function (type, current) {
+
+	console.log("P Load", type);
 
 	var data = this.retreiveData(type);
 
@@ -142,6 +158,8 @@ Persistence.prototype._findColumn = function (columns, subject) {
 //save data
 Persistence.prototype.save = function (type) {
 	var data = {};
+
+	console.log("P Save", type);
 
 	switch (type) {
 		case "columns":

@@ -134,11 +134,12 @@ Tabulator.prototype.defaultOptions = {
 	virtualDom:true, //enable DOM virtualization
     virtualDomBuffer:0, // set virtual DOM buffer size
 
-	persistentLayout:false, //store column layout in memory
-	persistentSort:false, //store sorting in memory
-	persistentFilter:false, //store filters in memory
+	// persistentLayout:false, //store column layout in memory
+	// persistentSort:false, //store sorting in memory
+	// persistentFilter:false, //store filters in memory
 	persistenceID:"", //key for persistent storage
 	persistenceMode:true, //mode for storing persistence information
+	persistence:false,
 
 	responsiveLayout:false, //responsive layout flags
 	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
@@ -477,11 +478,11 @@ Tabulator.prototype._buildElement = function(){
 		this.footerManager.activate();
 	}
 
-	if( (options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)){
-		mod.persistence.initialize(options.persistenceMode, options.persistenceID);
+	if(options.persistence && this.modExists("persistence", true)){
+		mod.persistence.initialize();
 	}
 
-	if(options.persistentLayout && this.modExists("persistence", true)){
+	if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.columns){
 		options.columns = mod.persistence.load("columns", options.columns) ;
 	}
 
@@ -507,10 +508,10 @@ Tabulator.prototype._buildElement = function(){
 		this.modules.frozenRows.initialize();
 	}
 
-	if((options.persistentSort || options.initialSort) && this.modExists("sort", true)){
+	if(((options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
 		var sorters = [];
 
-		if(options.persistentSort && this.modExists("persistence", true)){
+		if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort){
 			sorters = mod.persistence.load("sort");
 
 			if(sorters === false && options.initialSort){
@@ -523,11 +524,11 @@ Tabulator.prototype._buildElement = function(){
 		mod.sort.setSort(sorters);
 	}
 
-	if((options.persistentFilter || options.initialFilter) && this.modExists("filter", true)){
+	if(((options.persistence && this.modExists("persistence", true) && mod.persistence.config.filter) || options.initialFilter) && this.modExists("filter", true)){
 		var filters = [];
 
 
-		if(options.persistentFilter && this.modExists("persistence", true)){
+		if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.filter){
 			filters = mod.persistence.load("filter");
 
 			if(filters === false && options.initialFilter){
@@ -1235,7 +1236,8 @@ Tabulator.prototype.addColumn = function(definition, before, field){
 	return new Promise((resolve, reject) => {
 		var column = this.columnManager.findColumn(field);
 
-		this.columnManager.addColumn(definition, before, column).then((column) => {
+		this.columnManager.addColumn(definition, before, column)
+		.then((column) => {
 			resolve(column.getComponent());
 		}).catch((err) => {
 			reject(err);

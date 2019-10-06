@@ -1586,6 +1586,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.table.modules.columnCalcs.initializeColumn(self);
 		}
 
+		//handle persistence
+
+		if (self.table.modExists("persistence") && self.table.modules.persistence.config.columns) {
+
+			self.table.modules.persistence.initializeColumn(self);
+		}
+
 		//update header tooltip on mouse enter
 
 		self.element.addEventListener("mouseenter", function (e) {
@@ -7173,16 +7180,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		virtualDomBuffer: 0, // set virtual DOM buffer size
 
 
-		persistentLayout: false, //store column layout in memory
+		// persistentLayout:false, //store column layout in memory
 
-		persistentSort: false, //store sorting in memory
+		// persistentSort:false, //store sorting in memory
 
-		persistentFilter: false, //store filters in memory
+		// persistentFilter:false, //store filters in memory
 
 		persistenceID: "", //key for persistent storage
 
 		persistenceMode: true, //mode for storing persistence information
 
+		persistence: false,
 
 		responsiveLayout: false, //responsive layout flags
 
@@ -7684,12 +7692,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.footerManager.activate();
 		}
 
-		if ((options.persistentLayout || options.persistentSort || options.persistentFilter) && this.modExists("persistence", true)) {
+		if (options.persistence && this.modExists("persistence", true)) {
 
-			mod.persistence.initialize(options.persistenceMode, options.persistenceID);
+			mod.persistence.initialize();
 		}
 
-		if (options.persistentLayout && this.modExists("persistence", true)) {
+		if (options.persistence && this.modExists("persistence", true) && mod.persistence.config.columns) {
 
 			options.columns = mod.persistence.load("columns", options.columns);
 		}
@@ -7721,11 +7729,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.modules.frozenRows.initialize();
 		}
 
-		if ((options.persistentSort || options.initialSort) && this.modExists("sort", true)) {
+		if ((options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort || options.initialSort) && this.modExists("sort", true)) {
 
 			var sorters = [];
 
-			if (options.persistentSort && this.modExists("persistence", true)) {
+			if (options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort) {
 
 				sorters = mod.persistence.load("sort");
 
@@ -7741,11 +7749,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			mod.sort.setSort(sorters);
 		}
 
-		if ((options.persistentFilter || options.initialFilter) && this.modExists("filter", true)) {
+		if ((options.persistence && this.modExists("persistence", true) && mod.persistence.config.filter || options.initialFilter) && this.modExists("filter", true)) {
 
 			var filters = [];
 
-			if (options.persistentFilter && this.modExists("persistence", true)) {
+			if (options.persistence && this.modExists("persistence", true) && mod.persistence.config.filter) {
 
 				filters = mod.persistence.load("filter");
 
@@ -15649,7 +15657,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		});
 
-		if (this.table.options.persistentFilter && this.table.modExists("persistence", true)) {
+		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter) {
 			this.table.modules.persistence.save("filter");
 		}
 	};
@@ -15797,7 +15805,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		});
 
-		if (this.table.options.persistentFilter && this.table.modExists("persistence", true)) {
+		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter) {
 			this.table.modules.persistence.save("filter");
 		}
 	};
@@ -15812,7 +15820,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.changed = true;
 
-		if (this.table.options.persistentFilter && this.table.modExists("persistence", true)) {
+		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter) {
 			this.table.modules.persistence.save("filter");
 		}
 	};
@@ -20720,7 +20728,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.table = table; //hold Tabulator object
 		this.mode = "";
 		this.id = "";
-		this.persistProps = ["field", "width", "visible"];
+		// this.persistProps = ["field", "width", "visible"];
+		this.config = {};
 	};
 
 	// Test for whether localStorage is available for use.
@@ -20737,17 +20746,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//setup parameters
-	Persistence.prototype.initialize = function (mode, id) {
+	Persistence.prototype.initialize = function () {
 		//determine persistent layout storage type
+
+		var mode = this.table.options.persistenceMode,
+		    id = this.table.options.persistenceID;
 
 		this.mode = mode !== true ? mode : this.localStorageTest() ? "local" : "cookie";
 
 		//set storage tag
 		this.id = "tabulator-" + (id || this.table.element.getAttribute("id") || "");
+
+		this.config = {
+			sort: this.table.options.persistence === true || this.table.options.persistence.sort,
+			filter: this.table.options.persistence === true || this.table.options.persistence.filter,
+			group: this.table.options.persistence === true || this.table.options.persistence.group,
+			page: this.table.options.persistence === true || this.table.options.persistence.page,
+			columns: this.table.options.persistence === true ? ["width", "visible"] : this.table.options.persistence.columns
+		};
 	};
+
+	Persistence.prototype.initializeColumn = function (column) {};
 
 	//load saved definitions
 	Persistence.prototype.load = function (type, current) {
+
+		console.log("P Load", type);
 
 		var data = this.retreiveData(type);
 
@@ -20858,6 +20882,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//save data
 	Persistence.prototype.save = function (type) {
 		var data = {};
+
+		console.log("P Save", type);
 
 		switch (type) {
 			case "columns":
@@ -22332,7 +22358,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		self.sortList = newSortList;
 
-		if (this.table.options.persistentSort && this.table.modExists("persistence", true)) {
+		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort) {
 			this.table.modules.persistence.save("sort");
 		}
 	};
@@ -22772,8 +22798,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				} else {
 					type = value;
 				}
-
-				console.log("v", value, type, params);
 
 				return this._buildValidator(type, params);
 				break;

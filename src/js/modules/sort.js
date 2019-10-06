@@ -165,7 +165,7 @@ Sort.prototype.setSort = function(sortList, dir){
 
 	self.sortList = newSortList;
 
-	if(this.table.options.persistentSort && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort){
 		this.table.modules.persistence.save("sort");
 	}
 };

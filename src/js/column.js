@@ -364,6 +364,11 @@ Column.prototype._buildHeader = function(){
 		self.table.modules.columnCalcs.initializeColumn(self);
 	}
 
+	//handle persistence
+	if(self.table.modExists("persistence") && self.table.modules.persistence.config.columns){
+		self.table.modules.persistence.initializeColumn(self);
+	}
+
 
 	//update header tooltip on mouse enter
 	self.element.addEventListener("mouseenter", function(e){

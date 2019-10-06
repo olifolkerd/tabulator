@@ -402,7 +402,7 @@ Filter.prototype.addFilter = function(field, type, value){
 		}
 	});
 
-	if(this.table.options.persistentFilter && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
 		this.table.modules.persistence.save("filter");
 	}
 
@@ -557,7 +557,7 @@ Filter.prototype.removeFilter = function(field, type, value){
 
 	});
 
-	if(this.table.options.persistentFilter && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
 		this.table.modules.persistence.save("filter");
 	}
 
@@ -573,7 +573,7 @@ Filter.prototype.clearFilter = function(all){
 
 	this.changed = true;
 
-	if(this.table.options.persistentFilter && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.filter){
 		this.table.modules.persistence.save("filter");
 	}
 };
