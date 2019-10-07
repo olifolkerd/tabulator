@@ -598,13 +598,24 @@ Format.prototype.formatters = {
 				checkbox.checked = row.isSelected();
 				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
 			}else {
-				checkbox.addEventListener("change", (e) => {
-					if(this.table.modules.selectRow.selectedRows.length){
-						this.table.deselectRow();
-					}else {
-						this.table.selectRow();
-					}
-				});
+				if(formatterParams.hasOwnProperty("visibleOnly") && formatterParams.visibleOnly == true){
+					checkbox.addEventListener("change", (e) => {
+						if(this.table.modules.selectRow.selectedRows.length){
+							this.table.deselectRow();
+						}else {
+							this.table.deselectRow(); // remove invisible selections
+							this.table.selectRow(true);							
+						}
+					});
+				}else {
+					checkbox.addEventListener("change", (e) => {
+						if(this.table.modules.selectRow.selectedRows.length){
+							this.table.deselectRow();
+						}else {
+							this.table.selectRow();
+						}
+					});
+				}
 
 				this.table.modules.selectRow.registerHeaderSelectCheckbox(checkbox);
 			}
