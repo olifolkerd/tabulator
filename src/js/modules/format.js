@@ -598,12 +598,12 @@ Format.prototype.formatters = {
 				checkbox.checked = row.isSelected();
 				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
 			}else {
-				if(formatterParams.hasOwnProperty("visibleOnly") && formatterParams.visibleOnly == true){
+				if(formatterParams.hasOwnProperty("activeOnly") && formatterParams.activeOnly == true){
 					checkbox.addEventListener("change", (e) => {
 						if(this.table.modules.selectRow.selectedRows.length){
 							this.table.deselectRow();
 						}else {
-							this.table.deselectRow(); // remove invisible selections
+							this.table.deselectRow();
 							this.table.selectRow(true);							
 						}
 					});
