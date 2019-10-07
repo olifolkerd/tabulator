@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var DataTree = function DataTree(table) {
 	this.table = table;
@@ -52,6 +52,7 @@ DataTree.prototype.initialize = function () {
 	} else {
 		this.collapseEl = document.createElement("div");
 		this.collapseEl.classList.add("tabulator-data-tree-control");
+		this.collapseEl.tabIndex = 0;
 		this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
 	}
 
@@ -66,6 +67,7 @@ DataTree.prototype.initialize = function () {
 	} else {
 		this.expandEl = document.createElement("div");
 		this.expandEl.classList.add("tabulator-data-tree-control");
+		this.expandEl.tabIndex = 0;
 		this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 	}
 
@@ -330,6 +332,10 @@ DataTree.prototype.checkForRestyle = function (cell) {
 
 DataTree.prototype.getChildField = function () {
 	return this.field;
+};
+
+DataTree.prototype.redrawNeeded = function (data) {
+	return (this.field ? typeof data[this.field] !== "undefined" : false) || (this.elementField ? typeof data[this.elementField] !== "undefined" : false);
 };
 
 Tabulator.prototype.registerModule("dataTree", DataTree);

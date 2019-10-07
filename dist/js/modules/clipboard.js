@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var Clipboard = function Clipboard(table) {
 	this.table = table;
@@ -490,21 +490,18 @@ Clipboard.prototype.buildOutput = function (rows, config, params) {
 	    calcs,
 	    columns = [];
 
-	if (config.columnHeaders) {
+	if (config.columnHeaders == "groups") {
+		columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
 
-		if (config.columnHeaders == "groups") {
-			columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
+		output = output.concat(this.groupHeadersToRows(columns));
+	} else {
+		this.table.columnManager.columnsByIndex.forEach(function (column) {
+			if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
+				columns.push(column);
+			}
+		});
 
-			output = output.concat(this.groupHeadersToRows(columns));
-		} else {
-			this.table.columnManager.columnsByIndex.forEach(function (column) {
-				if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
-					columns.push(column);
-				}
-			});
-
-			output.push(this.generateSimpleHeaders(columns));
-		}
+		output.push(this.generateSimpleHeaders(columns));
 	}
 
 	if (this.config.columnCalcs) {

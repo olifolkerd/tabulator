@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var Format = function Format(table) {
 	this.table = table; //hold Tabulator object
@@ -169,7 +169,7 @@ Format.prototype.formatters = {
 	link: function link(cell, formatterParams, onRendered) {
 		var value = cell.getValue(),
 		    urlPrefix = formatterParams.urlPrefix || "",
-		    label = this.emptyToSpace(value),
+		    label = value,
 		    el = document.createElement("a"),
 		    data;
 
@@ -190,32 +190,36 @@ Format.prototype.formatters = {
 			}
 		}
 
-		if (formatterParams.urlField) {
-			data = cell.getData();
-			value = data[formatterParams.urlField];
-		}
-
-		if (formatterParams.url) {
-			switch (_typeof(formatterParams.url)) {
-				case "string":
-					value = formatterParams.url;
-					break;
-
-				case "function":
-					value = formatterParams.url(cell);
-					break;
+		if (label) {
+			if (formatterParams.urlField) {
+				data = cell.getData();
+				value = data[formatterParams.urlField];
 			}
+
+			if (formatterParams.url) {
+				switch (_typeof(formatterParams.url)) {
+					case "string":
+						value = formatterParams.url;
+						break;
+
+					case "function":
+						value = formatterParams.url(cell);
+						break;
+				}
+			}
+
+			el.setAttribute("href", urlPrefix + value);
+
+			if (formatterParams.target) {
+				el.setAttribute("target", formatterParams.target);
+			}
+
+			el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
+
+			return el;
+		} else {
+			return "&nbsp;";
 		}
-
-		el.setAttribute("href", urlPrefix + value);
-
-		if (formatterParams.target) {
-			el.setAttribute("target", formatterParams.target);
-		}
-
-		el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
-
-		return el;
 	},
 
 	//image element
@@ -356,7 +360,9 @@ Format.prototype.formatters = {
 		star.setAttribute("xml:space", "preserve");
 		star.style.padding = "0 1px";
 
-		value = parseInt(value) < maxStars ? parseInt(value) : maxStars;
+		value = value && !isNaN(value) ? parseInt(value) : 0;
+
+		value = Math.max(0, Math.min(value, maxStars));
 
 		for (var i = 1; i <= maxStars; i++) {
 			var nextStar = star.cloneNode(true);

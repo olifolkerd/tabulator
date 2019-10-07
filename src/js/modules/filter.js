@@ -95,6 +95,8 @@ Filter.prototype.initializeColumn = function(column, value){
 
 			self.table.rowManager.filterRefresh();
 		}
+
+		return true;
 	}
 
 	column.modules.filter = {

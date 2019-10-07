@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var HtmlTableExport = function HtmlTableExport(table) {
 	this.table = table; //hold Tabulator object
@@ -80,7 +80,7 @@ HtmlTableExport.prototype.processColumnGroup = function (column) {
 			return false;
 		}
 	} else {
-		if (column.field && this.columnVisCheck(column)) {
+		if (this.columnVisCheck(column)) {
 			groupData.width = 1;
 		} else {
 			return false;
@@ -268,7 +268,7 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 							return value;
 						},
 						getField: function getField() {
-							return column.definition.field;
+							return column.defi;
 						},
 						getElement: function getElement() {
 							return cellEl;

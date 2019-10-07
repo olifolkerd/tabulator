@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var SelectRow = function SelectRow(table) {
 	this.table = table; //hold Tabulator object
@@ -99,7 +99,9 @@ SelectRow.prototype.initializeRow = function (row) {
 				});
 			} else {
 				element.addEventListener("click", function (e) {
-					self.table._clearSelection();
+					if (!self.table.modExists("edit") || !self.table.modules.edit.getCurrentCell()) {
+						self.table._clearSelection();
+					}
 
 					if (!self.selecting) {
 						self.toggleRow(row);

@@ -1,4 +1,4 @@
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var History = function History(table) {
 	this.table = table; //hold Tabulator object
@@ -81,6 +81,10 @@ History.prototype.undoers = {
 	rowDelete: function rowDelete(action) {
 		var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
 
+		if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.groupRows.updateGroupRows(true);
+		}
+
 		this._rebindRow(action.component, newRow);
 	},
 
@@ -97,6 +101,10 @@ History.prototype.redoers = {
 
 	rowAdd: function rowAdd(action) {
 		var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
+
+		if (this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.groupRows.updateGroupRows(true);
+		}
 
 		this._rebindRow(action.component, newRow);
 	},

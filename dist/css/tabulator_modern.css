@@ -1,4 +1,4 @@
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
   border: 1px solid #fff;
@@ -214,7 +214,7 @@
 
 .tabulator .tabulator-header .tabulator-calcs-holder {
   box-sizing: border-box;
-  min-width: 400%;
+  min-width: 600%;
   border-top: 2px solid #3759D7 !important;
   background: white !important;
   border-top: 1px solid #fff;
@@ -236,7 +236,7 @@
 }
 
 .tabulator .tabulator-header .tabulator-frozen-rows-holder {
-  min-width: 400%;
+  min-width: 600%;
 }
 
 .tabulator .tabulator-header .tabulator-frozen-rows-holder:empty {

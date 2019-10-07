@@ -249,11 +249,23 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 			switch(position){
 				case "middle":
 				case "center":
-				this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
+
+				if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
+					this.element.scrollTop = this.element.scrollTop + (rowEl.offsetTop - this.element.scrollTop) - ((this.element.scrollHeight - rowEl.offsetTop) / 2);
+				}else{
+					this.element.scrollTop = this.element.scrollTop - (this.element.clientHeight / 2);
+				}
+
 				break;
 
 				case "bottom":
-				this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
+
+				if(this.element.scrollHeight - this.element.scrollTop == this.element.clientHeight){
+					this.element.scrollTop = this.element.scrollTop - (this.element.scrollHeight - rowEl.offsetTop) + rowEl.offsetHeight;
+				}else{
+					this.element.scrollTop = this.element.scrollTop - this.element.clientHeight + rowEl.offsetHeight;
+				}
+
 				break;
 			}
 
@@ -494,16 +506,16 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 				if(top){
 					if(groupRows[0] !== row){
 						index = groupRows[0];
-						this._moveRowInArray(row.getGroup().rows, row, index, top);
+						this._moveRowInArray(row.getGroup().rows, row, index, !top);
 					}
 				}else{
 					if(groupRows[groupRows.length -1] !== row){
 						index = groupRows[groupRows.length -1];
-						this._moveRowInArray(row.getGroup().rows, row, index, top);
+						this._moveRowInArray(row.getGroup().rows, row, index, !top);
 					}
 				}
 			}else{
-				this._moveRowInArray(row.getGroup().rows, row, index, top);
+				this._moveRowInArray(row.getGroup().rows, row, index, !top);
 			}
 		}
 	}
@@ -1026,7 +1038,7 @@ RowManager.prototype.setDisplayRows = function(displayRows, index){
 		this.displayRows[index] = displayRows;
 		output = true;
 	}else{
-	this.displayRows.push(displayRows)
+		this.displayRows.push(displayRows)
 		output = index = this.displayRows.length -1;
 	}
 

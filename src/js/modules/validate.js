@@ -32,13 +32,20 @@ Validate.prototype.initializeColumn = function(column){
 };
 
 Validate.prototype._extractValidator = function(value){
-	var parts, type, params;
+	var type, params, pos;
 
 	switch(typeof value){
 		case "string":
-		parts = value.split(":",2);
-		type = parts.shift();
-		params = parts[0];
+		pos = value.indexOf(':');
+
+		if(pos > -1){
+			type = value.substring(0,pos);
+			params = value.substring(pos+1);
+		}else{
+			type = value;
+		}
+
+		console.log("v", value, type, params)
 
 		return this._buildValidator(type, params);
 		break;

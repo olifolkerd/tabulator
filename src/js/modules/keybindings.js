@@ -254,13 +254,17 @@ Keybindings.prototype.actions = {
 	navNext:function(e){
 		var cell = false;
 		var newRow = this.table.options.tabEndNewRow;
+		var nav;
 
 		if(this.table.modExists("edit")){
 			cell = this.table.modules.edit.currentCell;
 
 			if(cell){
 				e.preventDefault();
-				if(!cell.nav().next()){
+
+				nav = cell.nav();
+
+				if(!nav.next()){
 					if(newRow){
 						if(newRow === true){
 							newRow = this.table.addRow({})
@@ -273,7 +277,7 @@ Keybindings.prototype.actions = {
 						}
 
 						newRow.then(() => {
-							cell.nav().next()
+							nav.next();
 						});
 					}
 				}

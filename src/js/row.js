@@ -536,17 +536,23 @@ Row.prototype.updateData = function(data){
 
 		//update affected cells only
 		for (var attrname in data) {
-			let cell = this.getCell(attrname);
 
-			if(cell){
-				if(cell.getValue() != data[attrname]){
-					cell.setValueProcessData(data[attrname]);
+			let columns = this.table.columnManager.getColumnsByFieldRoot(attrname);
 
-					if(visible){
-						cell.cellRendered();
+			columns.forEach((column) => {
+				let cell = this.getCell(column.getField());
+
+				if(cell){
+					let value = column.getFieldValue(data);
+					if(cell.getValue() != value){
+						cell.setValueProcessData(value);
+
+						if(visible){
+							cell.cellRendered();
+						}
 					}
 				}
-			}
+			});
 		}
 
 		//Partial reinitialization if visible
@@ -562,8 +568,9 @@ Row.prototype.updateData = function(data){
 			this.heightStyled = "";
 		}
 
-		if(self.table.options.dataTree !== false && self.table.modExists("dataTree") && typeof data[this.table.modules.dataTree.getChildField()] !== "undefined"){
+		if(self.table.options.dataTree !== false && self.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(data)){
 			this.table.modules.dataTree.initializeRow(this);
+			this.table.modules.dataTree.layoutRow(this);
 			this.table.rowManager.refreshActiveData("tree", false, true);
 		}
 
@@ -686,18 +693,30 @@ Row.prototype.moveToRow = function(to, before){
 
 Row.prototype.delete = function(){
 	return new Promise((resolve, reject) => {
-		var index = this.table.rowManager.getRowIndex(this);
-
-		this.deleteActual();
+		var index, rows;
 
 		if(this.table.options.history && this.table.modExists("history")){
 
-			if(index){
-				index = this.table.rowManager.rows[index-1];
+			if(this.table.options.groupBy && this.table.modExists("groupRows")){
+				rows = this.getGroup().rows
+				index = rows.indexOf(this);
+
+				if(index){
+					index = rows[index-1];
+				}
+			}else{
+				index = this.table.rowManager.getRowIndex(this);
+
+				if(index){
+					index = this.table.rowManager.rows[index-1];
+				}
 			}
 
 			this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
 		}
+
+		this.deleteActual();
+
 
 		resolve();
 	});

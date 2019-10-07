@@ -173,12 +173,16 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 				if(self.table.options.dataTree && self.table.modExists("dataTree")){
 					self.table.modules.dataTree.checkForRestyle(cell);
 				}
+
+				return true;
 			}else{
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
 				self.focusCellNoEvent(cell);
 				rendered();
 				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
+
+				return false;
 			}
 		}else{
 			// console.warn("Edit Success Error - cannot call success on a cell that is no longer being edited");
@@ -323,7 +327,10 @@ Edit.prototype.editors = {
 
 		function onChange(e){
 			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
-				success(input.value);
+
+				if(success(input.value)){
+					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+				}
 			}else{
 				cancel();
 			}
@@ -337,7 +344,7 @@ Edit.prototype.editors = {
 		input.addEventListener("keydown", function(e){
 			switch(e.keyCode){
 				case 13:
-				success(input.value);
+				onChange(e);
 				break;
 
 				case 27:
@@ -388,7 +395,11 @@ Edit.prototype.editors = {
         function onChange(e){
 
         	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
-        		success(input.value);
+
+        		if(success(input.value)){
+        			cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+        		}
+
         		setTimeout(function(){
         			cell.getRow().normalizeHeight();
         		},300)
@@ -485,7 +496,9 @@ Edit.prototype.editors = {
 			}
 
 			if(value != cellValue){
-				success(value);
+				if(success(value)){
+					cellValue = value; //persist value if successfully validated incase editor is used as header filter
+				}
 			}else{
 				cancel();
 			}
@@ -559,7 +572,9 @@ Edit.prototype.editors = {
     		}
 
     		if(value != cellValue){
-    			success(value);
+    			if(success(value)){
+    				cellValue = value; //persist value if successfully validated incase editor is used as header filter
+    			}
     		}else{
     			cancel();
     		}

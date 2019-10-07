@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.4.1 (c) Oliver Folkerd */
+/* Tabulator v4.4.3 (c) Oliver Folkerd */
 
 var Keybindings = function Keybindings(table) {
 	this.table = table; //hold Tabulator object
@@ -261,13 +261,17 @@ Keybindings.prototype.actions = {
 	navNext: function navNext(e) {
 		var cell = false;
 		var newRow = this.table.options.tabEndNewRow;
+		var nav;
 
 		if (this.table.modExists("edit")) {
 			cell = this.table.modules.edit.currentCell;
 
 			if (cell) {
 				e.preventDefault();
-				if (!cell.nav().next()) {
+
+				nav = cell.nav();
+
+				if (!nav.next()) {
 					if (newRow) {
 						if (newRow === true) {
 							newRow = this.table.addRow({});
@@ -280,7 +284,7 @@ Keybindings.prototype.actions = {
 						}
 
 						newRow.then(function () {
-							cell.nav().next();
+							nav.next();
 						});
 					}
 				}
