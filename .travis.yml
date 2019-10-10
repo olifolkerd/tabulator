@@ -5,5 +5,9 @@ cache:
   npm: true
   directories:
     - ~/.cache
+before_script:
+  - npm install -g gulp-cli    
 script:
+  - npm install
+  - gulp
   - npm test
