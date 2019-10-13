@@ -888,7 +888,7 @@ Clipboard.prototype.copyFormatters = {
 	table: function(data, params){
 		var output = [];
 
-		data.forEach(function (row) {
+		data.forEach(function(row){
 			var newRow = [];
 			row.forEach(function(value){
 				if(typeof value == "undefined"){
