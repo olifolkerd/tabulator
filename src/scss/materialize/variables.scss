@@ -1,0 +1,53 @@
+// ==========================================================================
+// Materialize variables
+// ==========================================================================
+//
+// Table of Contents:
+//
+//  1. Colors
+//  2. Badges
+//  3. Buttons
+//  4. Cards
+//  5. Carousel
+//  6. Collapsible
+//  7. Chips
+//  8. Date + Time Picker
+//  9. Dropdown
+//  10. Forms
+//  11. Global
+//  12. Grid
+//  13. Navigation Bar
+//  14. Side Navigation
+//  15. Photo Slider
+//  16. Spinners | Loaders
+//  17. Tabs
+//  18. Tables
+//  19. Toasts
+//  20. Typography
+//  21. Footer
+//  22. Flow Text
+//  23. Collections
+//  24. Progress Bar
+
+
+// 18. Tables
+// ==========================================================================
+
+$materialize-red: (
+  "base":       #e51c23,
+  "lighten-5":  #fdeaeb,
+  "lighten-4":  #f8c1c3,
+  "lighten-3":  #f3989b,
+  "lighten-2":  #ee6e73,
+  "lighten-1":  #ea454b,
+  "darken-1":   #d0181e,
+  "darken-2":   #b9151b,
+  "darken-3":   #a21318,
+  "darken-4":   #8b1014,
+);
+
+$table-border-color: rgba(0,0,0,.12) !default;
+$table-striped-color: rgba(242, 242, 242, 0.5) !default;
+
+
+$primary-color: color("materialize-red", "lighten-2") !default;
