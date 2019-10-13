@@ -5,6 +5,8 @@ var Persistence = function(table){
 	// this.persistProps = ["field", "width", "visible"];
 	this.defWatcherBlock = false;
 	this.config = {};
+	this.readFunc = false;
+	this.writeFunc = false;
 };
 
 // Test for whether localStorage is available for use.
@@ -29,6 +31,42 @@ Persistence.prototype.initialize = function(){
 	retreivedData;
 
 	this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
+
+	if(this.table.options.persistenceReaderFunc){
+		if(typeof this.table.options.persistenceReaderFunc === "function"){
+			this.readFunc = this.table.options.persistenceReaderFunc;
+		}else{
+			if(this.readers[this.table.options.persistenceReaderFunc]){
+				this.readFunc = this.readers[this.table.options.persistenceReaderFunc];
+			}else{
+				console.warn("Persistence Read Error - invalid reader set", this.table.options.persistenceReaderFunc);
+			}
+		}
+	}else{
+		if(this.readers[this.mode]){
+			this.readFunc = this.readers[this.mode];
+		}else{
+			console.warn("Persistence Read Error - invalid reader set", this.mode);
+		}
+	}
+
+	if(this.table.options.persistenceWriterFunc){
+		if(typeof this.table.options.persistenceWriterFunc === "function"){
+			this.writeFunc = this.table.options.persistenceWriterFunc;
+		}else{
+			if(this.readers[this.table.options.persistenceWriterFunc]){
+				this.writeFunc = this.readers[this.table.options.persistenceWriterFunc];
+			}else{
+				console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
+			}
+		}
+	}else{
+		if(this.writers[this.mode]){
+			this.writeFunc = this.writers[this.mode];
+		}else{
+			console.warn("Persistence Write Error - invalid writer set", this.mode);
+		}
+	}
 
 	//set storage tag
 	this.id = "tabulator-" + (id || (this.table.element.getAttribute("id") || ""));
@@ -116,12 +154,8 @@ Persistence.prototype.initializeColumn = function(column){
 
 };
 
-
 //load saved definitions
 Persistence.prototype.load = function(type, current){
-
-
-
 	var data = this.retreiveData(type);
 
 	if(current){
@@ -133,40 +167,7 @@ Persistence.prototype.load = function(type, current){
 
 //retreive data from memory
 Persistence.prototype.retreiveData = function(type){
-	var data = "",
-	id = this.id + (type === "columns" ? "" : "-" + type);
-
-	switch(this.mode){
-		case "local":
-		data = localStorage.getItem(id);
-		break;
-
-		case "cookie":
-
-		//find cookie
-		let cookie = document.cookie,
-		cookiePos = cookie.indexOf(id + "="),
-		end;
-
-		//if cookie exists, decode and load column data into tabulator
-		if(cookiePos > -1){
-			cookie = cookie.substr(cookiePos);
-
-			end = cookie.indexOf(";");
-
-			if(end > -1){
-				cookie = cookie.substr(0, end);
-			}
-
-			data = cookie.replace(id + "=", "");
-		}
-		break;
-
-		default:
-		console.warn("Persistence Load Error - invalid mode selected", this.mode);
-	}
-
-	return data ? JSON.parse(data) : false;
+	return this.readFunc ? this.readFunc(this.id, type) : false;
 };
 
 //merge old and new column definitions
@@ -184,7 +185,12 @@ Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 
 		if(from){
 
-			keys = self.config.columns === true ? Object.keys(from) : self.config.columns;
+			if(self.config.columns === true){
+				keys =  Object.keys(from);
+				keys.push("width");
+			}else{
+				keys = self.config.columns;
+			}
 
 			keys.forEach((key)=>{
 				if(typeof column[key] !== "undefined"){
@@ -195,6 +201,7 @@ Persistence.prototype.mergeDefinition = function(oldCols, newCols){
 			if(from.columns){
 				from.columns = self.mergeDefinition(from.columns, column.columns);
 			}
+
 
 			output.push(from);
 		}
@@ -270,9 +277,10 @@ Persistence.prototype.save = function(type){
 		break;
 	}
 
-	var id = this.id + (type === "columns" ? "" : "-" + type);
+	if(this.writeFunc){
+		this.writeFunc(this.id, type, data);
+	}
 
-	this.saveData(id, data);
 };
 
 //ensure sorters contain no function data
@@ -283,29 +291,6 @@ Persistence.prototype.validateSorters = function(data){
 	});
 
 	return data;
-};
-
-//save data to chosed medium
-Persistence.prototype.saveData = function(id, data){
-
-	data = JSON.stringify(data);
-
-	switch(this.mode){
-		case "local":
-		localStorage.setItem(id, data);
-		break;
-
-		case "cookie":
-		let expireDate = new Date();
-		expireDate.setDate(expireDate.getDate() + 10000);
-
-		//save cookie
-		document.cookie = id + "=" + data + "; expires=" + expireDate.toUTCString();
-		break;
-
-		default:
-		console.warn("Persistence Save Error - invalid mode selected", this.mode);
-	}
 };
 
 //build permission list
@@ -324,7 +309,12 @@ Persistence.prototype.parseColumns = function(columns){
 		}else{
 			defStore.field = column.getField();
 
-			keys = self.config.columns === true ? Object.keys(colDef) : self.config.columns;
+			if(self.config.columns === true){
+				keys =  Object.keys(colDef);
+				keys.push("width");
+			}else{
+				keys = self.config.columns;
+			}
 
 			keys.forEach((key)=>{
 
@@ -348,5 +338,50 @@ Persistence.prototype.parseColumns = function(columns){
 
 	return definitions;
 };
+
+// read peristence information from storage
+Persistence.prototype.readers = {
+	local:function(id, type){
+		var data = localStorage.getItem(id + "-" + type);
+
+		return data ? JSON.parse(data) : false;
+	},
+	cookie:function(id, type){
+		var cookie = document.cookie,
+		key = id + "-" + type,
+		cookiePos = cookie.indexOf(key + "="),
+		end;
+
+		//if cookie exists, decode and load column data into tabulator
+		if(cookiePos > -1){
+			cookie = cookie.substr(cookiePos);
+
+			end = cookie.indexOf(";");
+
+			if(end > -1){
+				cookie = cookie.substr(0, end);
+			}
+
+			data = cookie.replace(key + "=", "");
+		}
+
+		return data ? JSON.parse(data) : false;
+	}
+};
+
+//write persistence information to storage
+Persistence.prototype.writers = {
+	local:function(id, type, data){
+		localStorage.setItem(id + "-" + type, JSON.stringify(data));
+	},
+	cookie:function(id, type, data){
+		var expireDate = new Date();
+
+		expireDate.setDate(expireDate.getDate() + 10000);
+
+		document.cookie = id + "_" + type + "=" + JSON.stringify(data) + "; expires=" + expireDate.toUTCString();
+	}
+};
+
 
 Tabulator.prototype.registerModule("persistence", Persistence);

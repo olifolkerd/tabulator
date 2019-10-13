@@ -5609,6 +5609,9 @@ Tabulator.prototype.defaultOptions = {
 	persistentFilter: false, //DEPRICATED - REMOVE in 5.0
 	persistenceID: "", //key for persistent storage
 	persistenceMode: true, //mode for storing persistence information
+	persistenceReaderFunc: false, //function for handling persistence data reading
+	persistenceWriterFunc: false, //function for handling persistence data writing
+
 	persistence: false,
 
 	responsiveLayout: false, //responsive layout flags
