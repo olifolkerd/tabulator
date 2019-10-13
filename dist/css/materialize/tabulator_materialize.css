@@ -137,7 +137,7 @@
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
-  padding-right: 25px;
+  padding-right: 10px;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable:hover {

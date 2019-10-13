@@ -210,7 +210,7 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 			//styling child elements for sortable columns
 			&.tabulator-sortable{
 				.tabulator-col-title{
-					padding-right:25px;
+					padding-right:10px;
 				}
 
 				&:hover{
