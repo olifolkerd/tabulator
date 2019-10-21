@@ -228,6 +228,9 @@ Sort.prototype.sort = function(data){
 
 	if(!self.table.options.ajaxSorting){
 
+		var lastPossibleIndex = -1;
+
+		// iterate over the sortList to find the last possible sorting column (i.e. column that is actually valid for sorting)
 		sortList.forEach(function(item, i){
 
 			if(item.column && item.column.modules.sort){
@@ -237,11 +240,17 @@ Sort.prototype.sort = function(data){
 					item.column.modules.sort.sorter = self.findSorter(item.column);
 				}
 
-				self._sortItem(data, item.column, item.dir, sortList, i);
+				lastPossibleIndex = i;
 			}
 
 			self.setColumnHeader(item.column, item.dir);
 		});
+
+		// Note: since the sorting-function falls back to previous columns if the result of the given column is equal, we only have to sort the data once
+		if (lastPossibleIndex > -1) {
+			self._sortItem(data, sortList[lastPossibleIndex].column, sortList[lastPossibleIndex].dir, sortList, lastPossibleIndex);
+		}
+
 	}else{
 		sortList.forEach(function(item, i){
 			self.setColumnHeader(item.column, item.dir);
