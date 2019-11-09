@@ -42,8 +42,8 @@ Format.prototype.initializeColumn = function(column){
 };
 
 Format.prototype.cellRendered = function(cell){
-	if(cell.column.modules.format.renderedCallback){
-		cell.column.modules.format.renderedCallback();
+	if(cell.modules.format && cell.modules.format.renderedCallback){
+		cell.modules.format.renderedCallback();
 	}
 };
 
@@ -53,7 +53,11 @@ Format.prototype.formatValue = function(cell){
 	params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
 
 	function onRendered(callback){
-		cell.column.modules.format.renderedCallback = callback;
+		if(!cell.modules.format){
+			cell.modules.format = {};
+		}
+
+		cell.modules.format.renderedCallback = callback;
 	}
 
 	return cell.column.modules.format.formatter.call(this, component, params, onRendered);

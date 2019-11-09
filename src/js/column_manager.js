@@ -205,6 +205,8 @@ ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
 			this.columns.push(column);
 			this.headersElement.appendChild(column.getElement());
 		}
+
+		column.columnRendered();
 	}
 
 	return column;

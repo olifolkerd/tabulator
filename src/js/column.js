@@ -118,7 +118,7 @@ ColumnComponent.prototype.move = function(to, after){
 	}else{
 		console.warn("Move Error - No matching column found:", toColumn);
 	}
-}
+};
 
 ColumnComponent.prototype.getNextColumn = function(){
 	var nextCol = this._column.nextColumn();
@@ -155,6 +155,8 @@ var Column = function(def, parent){
 	this.fieldStructure = "";
 	this.getFieldValue = "";
 	this.setFieldValue = "";
+
+	this.titleFormatterRendered = false;
 
 	this.setField(this.definition.field);
 
@@ -234,7 +236,7 @@ Column.prototype.checkDefinition = function(){
 			console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key)
 		}
 	});
-}
+};
 
 Column.prototype.setField = function(field){
 	this.field = field;
@@ -652,11 +654,15 @@ Column.prototype._buildColumnHeaderTitle = function(){
 };
 
 Column.prototype._formatColumnHeaderTitle = function(el, title){
-	var formatter, contents, params, mockCell;
+	var formatter, contents, params, mockCell, onRendered;
 
 	if(this.definition.titleFormatter && this.table.modExists("format")){
 
 		formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
+
+		onRendered = (callback) => {
+			this.titleFormatterRendered = callback;
+		};
 
 		mockCell = {
 			getValue:function(){
@@ -671,7 +677,7 @@ Column.prototype._formatColumnHeaderTitle = function(el, title){
 
 		params = typeof params === "function" ? params() : params;
 
-		contents = formatter.call(this.table.modules.format, mockCell, params);
+		contents = formatter.call(this.table.modules.format, mockCell, params, onRendered);
 
 		switch(typeof contents){
 			case "object":
@@ -1096,6 +1102,12 @@ Column.prototype.delete = function(){
 	});
 };
 
+Column.prototype.columnRendered = function(){
+	if(this.titleFormatterRendered){
+		this.titleFormatterRendered();
+	}
+};
+
 //////////////// Cell Management /////////////////
 
 //generate cell for this column
@@ -1117,7 +1129,7 @@ Column.prototype.nextColumn = function(){
 Column.prototype._nextVisibleColumn = function(index){
 	var column = this.table.columnManager.getColumnByIndex(index);
 	return !column || column.visible ? column : this._nextVisibleColumn(index + 1);
-}
+};
 
 Column.prototype.prevColumn = function(){
 	var index = this.table.columnManager.findColumnIndex(this);
@@ -1127,7 +1139,7 @@ Column.prototype.prevColumn = function(){
 Column.prototype._prevVisibleColumn = function(index){
 	var column = this.table.columnManager.getColumnByIndex(index);
 	return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
-}
+};
 
 Column.prototype.reinitializeWidth = function(force){
 	this.widthFixed = false;
@@ -1187,6 +1199,7 @@ Column.prototype.deleteCell = function(cell){
 		this.cells.splice(index, 1);
 	}
 };
+
 
 Column.prototype.defaultOptionList = [
 "title",

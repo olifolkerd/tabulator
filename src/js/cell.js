@@ -79,6 +79,7 @@ var Cell = function(column, row){
 	this.element = null;
 	this.value = null;
 	this.oldValue = null;
+	this.modules = {};
 
 	this.height = null;
 	this.width = null;
