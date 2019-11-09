@@ -535,7 +535,36 @@ Format.prototype.formatters = {
 
 		element.setAttribute("aria-label", percentValue);
 
-		return "<div style='position:relative; height:100%;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
+		var barEl = document.createElement("div");
+		barEl.style.display = "inline-block";
+		barEl.style.position = "relative";
+		barEl.style.width = percentValue + "%";
+		barEl.style.backgroundColor = color;
+		barEl.style.height = "100%";
+
+		barEl.setAttribute('data-max', max);
+		barEl.setAttribute('data-min', min);
+
+		if (legend) {
+			var legendEl = document.createElement("div");
+			legendEl.style.position = "absolute";
+			legendEl.style.top = "4px";
+			legendEl.style.left = 0;
+			legendEl.style.textAlign = legendAlign;
+			legendEl.style.width = "100%";
+			legendEl.style.color = legendColor;
+			legendEl.innerHTML = legend;
+		}
+
+		onRendered(function () {
+			element.appendChild(barEl);
+
+			if (legend) {
+				element.appendChild(legendEl);
+			}
+		});
+
+		return "";
 	},
 
 	//background color
