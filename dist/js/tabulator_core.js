@@ -2236,8 +2236,8 @@ Column.prototype.updateDefinition = function (updates) {
 				reject(err);
 			});
 		} else {
-			console.warn("The update defintion function is only available on columns, not column groups");
-			reject("The update defintion function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefintion function is only available on columns, not column groups");
+			reject("Column Update Error - The updateDefintion function is only available on columns, not column groups");
 		}
 	});
 };
@@ -6877,6 +6877,25 @@ Tabulator.prototype.deleteColumn = function (field) {
 	});
 };
 
+Tabulator.prototype.updateColumnDefinition = function (field, definition) {
+	var _this25 = this;
+
+	return new Promise(function (resolve, reject) {
+		var column = _this25.columnManager.findColumn(field);
+
+		if (column) {
+			column.updateDefinition().then(function (col) {
+				resolve(col);
+			}).catch(function (err) {
+				reject(err);
+			});
+		} else {
+			console.warn("Column Update Error - No matching column found:", field);
+			reject();
+		}
+	});
+};
+
 Tabulator.prototype.moveColumn = function (from, to, after) {
 	var fromColumn = this.columnManager.findColumn(from);
 	var toColumn = this.columnManager.findColumn(to);
@@ -6894,13 +6913,13 @@ Tabulator.prototype.moveColumn = function (from, to, after) {
 
 //scroll to column in DOM
 Tabulator.prototype.scrollToColumn = function (field, position, ifVisible) {
-	var _this25 = this;
+	var _this26 = this;
 
 	return new Promise(function (resolve, reject) {
-		var column = _this25.columnManager.findColumn(field);
+		var column = _this26.columnManager.findColumn(field);
 
 		if (column) {
-			_this25.columnManager.scrollToColumn(column, position, ifVisible).then(function () {
+			_this26.columnManager.scrollToColumn(column, position, ifVisible).then(function () {
 				resolve();
 			}).catch(function (err) {
 				reject(err);
@@ -7100,14 +7119,14 @@ Tabulator.prototype.setPage = function (page) {
 };
 
 Tabulator.prototype.setPageToRow = function (row) {
-	var _this26 = this;
+	var _this27 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this26.options.pagination && _this26.modExists("page")) {
-			row = _this26.rowManager.findRow(row);
+		if (_this27.options.pagination && _this27.modExists("page")) {
+			row = _this27.rowManager.findRow(row);
 
 			if (row) {
-				_this26.modules.page.setPageToRow(row).then(function () {
+				_this27.modules.page.setPageToRow(row).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();

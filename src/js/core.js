@@ -1308,6 +1308,25 @@ Tabulator.prototype.deleteColumn = function(field){
 	});
 };
 
+Tabulator.prototype.updateColumnDefinition = function(field, definition){
+	return new Promise((resolve, reject) => {
+		var column = this.columnManager.findColumn(field);
+
+		if(column){
+			column.updateDefinition()
+			.then((col) => {
+				resolve(col);
+			}).catch((err) => {
+				reject(err);
+			});
+		}else{
+			console.warn("Column Update Error - No matching column found:", field);
+			reject();
+		}
+	});
+};
+
+
 Tabulator.prototype.moveColumn = function(from, to, after){
 	var fromColumn = this.columnManager.findColumn(from);
 	var toColumn = this.columnManager.findColumn(to);
