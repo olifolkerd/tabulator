@@ -537,7 +537,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		self.columns.forEach(function (column) {
 
-			column.verticalAlign(self.table.options.columnVertAlign, minHeight);
+			column.verticalAlign(self.table.options.columnHeaderVertAlign, minHeight);
 		});
 
 		self.rowManager.adjustTableSize();
@@ -7114,7 +7114,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		columnMinWidth: 40, //minimum global width for a column
 
-		columnVertAlign: "top", //vertical alignment of column headers
+		columnHeaderVertAlign: "top", //vertical alignment of column headers
+
+		columnVertAlign: false, // DEPRECATED - Left to allow warning
 
 
 		resizableColumns: true, //resizable columns
@@ -7669,7 +7671,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.options.persistentLayout) {
 
-			console.warn("persistentLayout option is deprecated, you should now use persistence option");
+			console.warn("persistentLayout option is deprecated, you should now use the persistence option");
 
 			if (this.options.persistence !== true && typeof this.options.persistence.columns === "undefined") {
 
@@ -7679,7 +7681,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.options.persistentSort) {
 
-			console.warn("persistentSort option is deprecated, you should now use persistence option");
+			console.warn("persistentSort option is deprecated, you should now use the persistence option");
 
 			if (this.options.persistence !== true && typeof this.options.persistence.sort === "undefined") {
 
@@ -7689,12 +7691,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.options.persistentFilter) {
 
-			console.warn("persistentFilter option is deprecated, you should now use persistence option");
+			console.warn("persistentFilter option is deprecated, you should now use the persistence option");
 
 			if (this.options.persistence !== true && typeof this.options.persistence.filter === "undefined") {
 
 				this.options.persistence.filter = true;
 			}
+		}
+
+		if (this.options.columnVertAlign) {
+
+			console.warn("columnVertAlign option is deprecated, you should now use the columnHeaderVertAlign option");
+
+			this.options.columnHeaderVertAlign = this.options.columnVertAlign;
 		}
 	};
 

@@ -247,7 +247,7 @@ ColumnManager.prototype._verticalAlignHeaders = function(){
 	});
 
 	self.columns.forEach(function(column){
-		column.verticalAlign(self.table.options.columnVertAlign, minHeight);
+		column.verticalAlign(self.table.options.columnHeaderVertAlign, minHeight);
 	});
 
 	self.rowManager.adjustTableSize();
