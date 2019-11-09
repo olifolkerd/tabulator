@@ -2700,18 +2700,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				_this7.table.columnManager.addColumn(definition, false, _this7).then(function (column) {
 
-					resolve(column.getComponent());
+					if (definition.field == _this7.field) {
+
+						_this7.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
+
+					_this7.delete().then(function () {
+
+						resolve(column.getComponent());
+					}).catch(function (err) {
+
+						reject(err);
+					});
 				}).catch(function (err) {
 
 					reject(err);
 				});
-
-				if (definition.field == _this7.field) {
-
-					_this7.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-				}
-
-				_this7.delete();
 			} else {
 
 				console.warn("The update defintion function is only available on columns, not column groups");

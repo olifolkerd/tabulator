@@ -1206,15 +1206,21 @@ Column.prototype.updateDefinition = function(updates){
 
 			this.table.columnManager.addColumn(definition, false, this)
 			.then((column) => {
-				resolve(column.getComponent());
+
+				if(definition.field == this.field){
+					this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+				}
+
+				this.delete()
+				.then(() => {
+					resolve(column.getComponent());
+				}).catch((err) => {
+					reject(err);
+				});
+
 			}).catch((err) => {
 				reject(err);
 			});
-
-			if(definition.field == this.field){
-				this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-			}
-			this.delete();
 		}else{
 			console.warn("The update defintion function is only available on columns, not column groups");
 			reject("The update defintion function is only available on columns, not column groups");
