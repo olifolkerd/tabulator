@@ -309,6 +309,10 @@ Tabulator.prototype.defaultOptions = {
 	historyUndo:function(){},
 	historyRedo:function(){},
 
+	//scroll callbacks
+	scrollHorizontal:function(){},
+	scrollVertical:function(){},
+
 };
 
 Tabulator.prototype.initializeOptions = function(options){

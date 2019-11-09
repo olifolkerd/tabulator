@@ -2860,6 +2860,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					self.table.modules.columnCalcs.scrollHorizontal(left);
 				}
+
+				self.table.options.scrollHorizontal(left);
 			}
 
 			self.scrollLeft = left;
@@ -2887,6 +2889,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						self.table.modules.ajax.nextPage(self.element.scrollHeight - self.element.clientHeight - top);
 					}
+
+					self.table.options.scrollVertical(top);
 				} else {
 
 					self.scrollTop = top;
@@ -7573,7 +7577,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		historyUndo: function historyUndo() {},
 
-		historyRedo: function historyRedo() {}
+		historyRedo: function historyRedo() {},
+
+		//scroll callbacks
+
+		scrollHorizontal: function scrollHorizontal() {},
+
+		scrollVertical: function scrollVertical() {}
 
 	};
 

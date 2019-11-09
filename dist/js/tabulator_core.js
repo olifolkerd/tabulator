@@ -2335,6 +2335,8 @@ RowManager.prototype.initialize = function () {
 			if (self.table.modExists("columnCalcs")) {
 				self.table.modules.columnCalcs.scrollHorizontal(left);
 			}
+
+			self.table.options.scrollHorizontal(left);
 		}
 
 		self.scrollLeft = left;
@@ -2355,6 +2357,8 @@ RowManager.prototype.initialize = function () {
 				if (self.table.options.ajaxProgressiveLoad == "scroll") {
 					self.table.modules.ajax.nextPage(self.element.scrollHeight - self.element.clientHeight - top);
 				}
+
+				self.table.options.scrollVertical(top);
 			} else {
 				self.scrollTop = top;
 			}
@@ -5841,7 +5845,11 @@ Tabulator.prototype.defaultOptions = {
 
 	//history callbacks
 	historyUndo: function historyUndo() {},
-	historyRedo: function historyRedo() {}
+	historyRedo: function historyRedo() {},
+
+	//scroll callbacks
+	scrollHorizontal: function scrollHorizontal() {},
+	scrollVertical: function scrollVertical() {}
 
 };
 
