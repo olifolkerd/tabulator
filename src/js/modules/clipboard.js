@@ -874,7 +874,18 @@ Clipboard.prototype.copySelectors = {
 		if(config.rowGroups){
 			rows = this.buildComplexRows(config);
 		}else{
-			rows = this.table.rowManager.getComponents(true);
+			rows = this.table.rowManager.getComponents("active");
+		}
+
+		return this.buildOutput(rows, config, params);
+	},
+	visible: function(config, params){
+		var rows;
+
+		if(config.rowGroups){
+			rows = this.buildComplexRows(config);
+		}else{
+			rows = this.table.rowManager.getComponents("visible");
 		}
 
 		return this.buildOutput(rows, config, params);

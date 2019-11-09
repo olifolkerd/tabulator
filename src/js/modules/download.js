@@ -179,7 +179,7 @@ Download.prototype.processData = function(){
 			data.push(this.processGroupData(group));
 		});
 	}else{
-		data = self.table.rowManager.getData(true, "download");
+		data = self.table.rowManager.getData("active", "download");
 	}
 
 	if(this.config.columnCalcs){

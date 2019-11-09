@@ -251,7 +251,7 @@ Sort.prototype.sort = function (data) {
 	}
 
 	if (self.table.options.dataSorted) {
-		self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents(true));
+		self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents("active"));
 	}
 };
 

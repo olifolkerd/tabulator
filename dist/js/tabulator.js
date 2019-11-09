@@ -3627,10 +3627,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.getData = function (active, transform) {
 
-		var self = this,
-		    output = [];
+		var output = [],
+		    rows;
 
-		var rows = active ? self.activeRows : self.rows;
+		switch (active) {
+
+			case true:
+
+				console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
+
+			case "active":
+
+				rows = this.activeRows;
+
+				break;
+
+			case "visible":
+
+				rows = this.getVisibleRows(true);
+
+				break;
+
+			default:
+
+				rows = this.rows;
+
+		}
 
 		rows.forEach(function (row) {
 
@@ -3642,10 +3664,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.getComponents = function (active) {
 
-		var self = this,
-		    output = [];
+		var output = [],
+		    rows;
 
-		var rows = active ? self.activeRows : self.rows;
+		switch (active) {
+
+			case true:
+
+				console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
+
+			case "active":
+
+				rows = this.activeRows;
+
+				break;
+
+			case "visible":
+
+				rows = this.getVisibleRows(true);
+
+				break;
+
+			default:
+
+				rows = this.rows;
+
+		}
 
 		rows.forEach(function (row) {
 
@@ -3657,7 +3701,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.getDataCount = function (active) {
 
-		return active ? this.activeRows.length : this.rows.length;
+		var rows;
+
+		switch (active) {
+
+			case true:
+
+				console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
+
+			case "active":
+
+				rows = this.activeRows;
+
+				break;
+
+			case "visible":
+
+				rows = this.getVisibleRows(true);
+
+				break;
+
+			default:
+
+				rows = this.rows;
+
+		}
+
+		return rows.length;
 	};
 
 	RowManager.prototype._genRemoteRequest = function () {
@@ -4086,6 +4156,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						} else {
 
 							topFound = true;
+
+							if (bottomEdge - rows[i].getElement().offsetTop >= 0) {
+
+								bottomRow = i;
+							} else {
+
+								break;
+							}
 						}
 					} else {
 
@@ -12255,7 +12333,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (config.rowGroups) {
 				rows = this.buildComplexRows(config);
 			} else {
-				rows = this.table.rowManager.getComponents(true);
+				rows = this.table.rowManager.getComponents("active");
+			}
+
+			return this.buildOutput(rows, config, params);
+		},
+		visible: function visible(config, params) {
+			var rows;
+
+			if (config.rowGroups) {
+				rows = this.buildComplexRows(config);
+			} else {
+				rows = this.table.rowManager.getComponents("visible");
 			}
 
 			return this.buildOutput(rows, config, params);
@@ -12902,7 +12991,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				data.push(_this39.processGroupData(group));
 			});
 		} else {
-			data = self.table.rowManager.getData(true, "download");
+			data = self.table.rowManager.getData("active", "download");
 		}
 
 		if (this.config.columnCalcs) {
@@ -22710,7 +22799,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		if (self.table.options.dataSorted) {
-			self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents(true));
+			self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents("active"));
 		}
 	};
 

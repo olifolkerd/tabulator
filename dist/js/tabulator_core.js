@@ -2929,10 +2929,23 @@ RowManager.prototype.findRowIndex = function (row, list) {
 };
 
 RowManager.prototype.getData = function (active, transform) {
-	var self = this,
-	    output = [];
+	var output = [],
+	    rows;
 
-	var rows = active ? self.activeRows : self.rows;
+	switch (active) {
+		case true:
+			console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
+		case "active":
+			rows = this.activeRows;
+			break;
+
+		case "visible":
+			rows = this.getVisibleRows(true);
+			break;
+
+		default:
+			rows = this.rows;
+	}
 
 	rows.forEach(function (row) {
 		output.push(row.getData(transform || "data"));
@@ -2942,10 +2955,23 @@ RowManager.prototype.getData = function (active, transform) {
 };
 
 RowManager.prototype.getComponents = function (active) {
-	var self = this,
-	    output = [];
+	var output = [],
+	    rows;
 
-	var rows = active ? self.activeRows : self.rows;
+	switch (active) {
+		case true:
+			console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
+		case "active":
+			rows = this.activeRows;
+			break;
+
+		case "visible":
+			rows = this.getVisibleRows(true);
+			break;
+
+		default:
+			rows = this.rows;
+	}
 
 	rows.forEach(function (row) {
 		output.push(row.getComponent());
@@ -2955,7 +2981,24 @@ RowManager.prototype.getComponents = function (active) {
 };
 
 RowManager.prototype.getDataCount = function (active) {
-	return active ? this.activeRows.length : this.rows.length;
+	var rows;
+
+	switch (active) {
+		case true:
+			console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
+		case "active":
+			rows = this.activeRows;
+			break;
+
+		case "visible":
+			rows = this.getVisibleRows(true);
+			break;
+
+		default:
+			rows = this.rows;
+	}
+
+	return rows.length;
 };
 
 RowManager.prototype._genRemoteRequest = function () {
@@ -3273,15 +3316,19 @@ RowManager.prototype.getVisibleRows = function (viewable) {
 	if (viewable) {
 
 		this.getDisplayRows();
-
 		for (var i = this.vDomTop; i <= this.vDomBottom; i++) {
-
 			if (rows[i]) {
 				if (!topFound) {
 					if (topEdge - rows[i].getElement().offsetTop >= 0) {
 						topRow = i;
 					} else {
 						topFound = true;
+
+						if (bottomEdge - rows[i].getElement().offsetTop >= 0) {
+							bottomRow = i;
+						} else {
+							break;
+						}
 					}
 				} else {
 					if (bottomEdge - rows[i].getElement().offsetTop >= 0) {
