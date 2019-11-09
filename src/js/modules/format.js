@@ -168,6 +168,7 @@ Format.prototype.formatters = {
 	link:function(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		urlPrefix = formatterParams.urlPrefix || "",
+		download = formatterParams.download,
 		label = value,
 		el = document.createElement("a"),
 		data;
@@ -211,6 +212,17 @@ Format.prototype.formatters = {
 
 			if(formatterParams.target){
 				el.setAttribute("target", formatterParams.target);
+			}
+
+			if(formatterParams.download){
+
+				if(typeof download == "function"){
+					download = download(cell);
+				}else{
+					download = download === true ? "" : download;
+				}
+
+				el.setAttribute("download", download);
 			}
 
 			el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
