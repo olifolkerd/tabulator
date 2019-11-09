@@ -132,6 +132,10 @@ ColumnComponent.prototype.getPrevColumn = function(){
 	return prevCol ? prevCol.getComponent() : false;
 };
 
+ColumnComponent.prototype.updateDefinition = function(updates){
+	return this._column.updateDefinition(updates);
+};
+
 
 
 var Column = function(def, parent){
@@ -1191,6 +1195,31 @@ Column.prototype.fitToData = function(){
 
 	}
 };
+
+Column.prototype.updateDefinition = function(updates){
+	return new Promise((resolve, reject) => {
+		var definition;
+
+		if(!this.isGroup){
+			definition = Object.assign({}, this.getDefinition());
+			definition = Object.assign(definition, updates);
+
+			this.table.columnManager.addColumn(definition, false, this)
+			.then((column) => {
+				resolve(column.getComponent());
+			}).catch((err) => {
+				reject(err);
+			});
+
+			this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+			this.delete();
+		}else{
+			console.warn("The update defintion function is only available on columns, not column groups");
+			reject("The update defintion function is only available on columns, not column groups");
+		}
+	});
+};
+
 
 Column.prototype.deleteCell = function(cell){
 	var index = this.cells.indexOf(cell);
