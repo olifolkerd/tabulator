@@ -13530,12 +13530,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		xlsx: function xlsx(columns, data, options, setFileContents, config) {
 			var self = this,
 			    sheetName = options.sheetName || "Sheet1",
-			    workbook = { SheetNames: [], Sheets: {} },
+			    workbook = XLSX.utils.book_new(),
 			    calcs = {},
 			    groupRowIndexs = [],
 			    groupColumnIndexs = [],
 			    calcRowIndexs = [],
 			    output;
+
+			workbook.SheetNames = [];
+			workbook.Sheets = {};
 
 			if (config.columnCalcs) {
 				calcs = data.calcs;
@@ -13774,6 +13777,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			} else {
 				workbook.SheetNames.push(sheetName);
 				workbook.Sheets[sheetName] = generateSheet();
+			}
+
+			if (options.documentProcessing) {
+				workbook = options.documentProcessing(workbook);
 			}
 
 			//convert workbook to binary array
