@@ -1211,7 +1211,9 @@ Column.prototype.updateDefinition = function(updates){
 				reject(err);
 			});
 
-			this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+			if(definition.field == this.field){
+				this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+			}
 			this.delete();
 		}else{
 			console.warn("The update defintion function is only available on columns, not column groups");

@@ -2706,7 +2706,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					reject(err);
 				});
 
-				_this7.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+				if (definition.field == _this7.field) {
+
+					_this7.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+				}
 
 				_this7.delete();
 			} else {
