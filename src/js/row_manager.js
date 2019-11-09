@@ -1070,15 +1070,19 @@ RowManager.prototype.getVisibleRows = function(viewable){
 	if(viewable){
 
 		this.getDisplayRows();
-
 		for(var i = this.vDomTop; i <= this.vDomBottom; i++){
-
 			if(rows[i]){
 				if(!topFound){
 					if((topEdge - rows[i].getElement().offsetTop) >= 0){
 						topRow = i;
 					}else{
 						topFound = true;
+
+						if(bottomEdge - rows[i].getElement().offsetTop >= 0){
+							bottomRow = i;
+						}else{
+							break;
+						}
 					}
 				}else{
 					if(bottomEdge - rows[i].getElement().offsetTop >= 0){
