@@ -135,6 +135,7 @@ HtmlTableExport.prototype.generateHeaderElements = function(){
 
 		row.forEach((column) => {
 			var cellEl = document.createElement("th");
+			var classNames = column.column.definition.cssClass ? column.column.definition.cssClass.split(" ") : [];
 
 			cellEl.colSpan = column.width;
 			cellEl.rowSpan = column.height;
@@ -144,6 +145,10 @@ HtmlTableExport.prototype.generateHeaderElements = function(){
 			if(this.cloneTableStyle){
 				cellEl.style.boxSizing = "border-box";
 			}
+
+			classNames.forEach(function(className) {
+				cellEl.classList.add(className);
+			});
 
 			this.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 			this.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
@@ -255,11 +260,13 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 				var value = column.getFieldValue(rowData);
 
 				var cellWrapper = {
+					modules:{},
 					getValue:function(){
 						return value;
 					},
 					getField:function(){
-						return column.defi			},
+						return column.definition.field;
+					},
 					getElement:function(){
 						return cellEl;
 					},
@@ -277,6 +284,12 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 					},
 					column:column,
 				};
+
+				var classNames = column.definition.cssClass ? column.definition.cssClass.split(" ") : [];
+
+				classNames.forEach(function(className) {
+					cellEl.classList.add(className);
+				});
 
 				if(this.table.modExists("format")){
 					value = this.table.modules.format.formatValue(cellWrapper);

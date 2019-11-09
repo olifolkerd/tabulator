@@ -18591,6 +18591,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			row.forEach(function (column) {
 				var cellEl = document.createElement("th");
+				var classNames = column.column.definition.cssClass ? column.column.definition.cssClass.split(" ") : [];
 
 				cellEl.colSpan = column.width;
 				cellEl.rowSpan = column.height;
@@ -18600,6 +18601,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (_this50.cloneTableStyle) {
 					cellEl.style.boxSizing = "border-box";
 				}
+
+				classNames.forEach(function (className) {
+					cellEl.classList.add(className);
+				});
 
 				_this50.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 				_this50.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
@@ -18713,11 +18718,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						var value = column.getFieldValue(rowData);
 
 						var cellWrapper = {
+							modules: {},
 							getValue: function getValue() {
 								return value;
 							},
 							getField: function getField() {
-								return column.defi;
+								return column.definition.field;
 							},
 							getElement: function getElement() {
 								return cellEl;
@@ -18736,6 +18742,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							},
 							column: column
 						};
+
+						var classNames = column.definition.cssClass ? column.definition.cssClass.split(" ") : [];
+
+						classNames.forEach(function (className) {
+							cellEl.classList.add(className);
+						});
 
 						if (_this51.table.modExists("format")) {
 							value = _this51.table.modules.format.formatValue(cellWrapper);
