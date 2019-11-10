@@ -5294,6 +5294,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.table.modules.dataTree.initializeRow(this);
 		}
 
+		//setup column colapse container
+
+		if (self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")) {
+
+			self.table.modules.responsiveLayout.initializeRow(this);
+		}
+
 		//handle row click events
 
 		if (self.table.options.rowClick) {
@@ -5481,7 +5488,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self.table.modules.dataTree.layoutRow(this);
 			}
 
-			//setup movable rows
+			//setup column colapse container
 
 			if (self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")) {
 
@@ -16923,41 +16930,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		responsiveCollapse: function responsiveCollapse(cell, formatterParams, onRendered) {
 			var self = this,
 			    open = false,
-			    el = document.createElement("div");
-
-			function toggleList(isOpen) {
-				var collapse = cell.getRow().getElement().getElementsByClassName("tabulator-responsive-collapse")[0];
-
-				open = isOpen;
-
-				if (open) {
-					el.classList.add("open");
-					if (collapse) {
-						collapse.style.display = '';
-					}
-				} else {
-					el.classList.remove("open");
-					if (collapse) {
-						collapse.style.display = 'none';
-					}
-				}
-			}
+			    el = document.createElement("div"),
+			    config = cell.getRow()._row.modules.responsiveLayout;
 
 			el.classList.add("tabulator-responsive-collapse-toggle");
 			el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
 
 			cell.getElement().classList.add("tabulator-row-handle");
 
-			if (self.table.options.responsiveLayoutCollapseStartOpen) {
-				open = true;
+			function toggleList(isOpen) {
+				var collapseEl = config.element;
+
+				config.open = isOpen;
+
+				if (collapseEl) {
+
+					if (config.open) {
+						el.classList.add("open");
+						collapseEl.style.display = '';
+					} else {
+						el.classList.remove("open");
+						collapseEl.style.display = 'none';
+					}
+				}
 			}
 
 			el.addEventListener("click", function (e) {
 				e.stopImmediatePropagation();
-				toggleList(!open);
+				toggleList(!config.open);
 			});
 
-			toggleList(open);
+			toggleList(config.open);
 
 			return el;
 		},
@@ -22169,23 +22172,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		column.modules.responsive = { order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible: def.visible === false ? false : true };
 	};
 
-	ResponsiveLayout.prototype.layoutRow = function (row) {
-		var rowEl = row.getElement(),
-		    el = document.createElement("div");
+	ResponsiveLayout.prototype.initializeRow = function (row) {
+		var el;
 
-		el.classList.add("tabulator-responsive-collapse");
+		if (row.type !== "calc") {
+			el = document.createElement("div");
+			el.classList.add("tabulator-responsive-collapse");
 
-		if (!rowEl.classList.contains("tabulator-calcs")) {
 			row.modules.responsiveLayout = {
-				element: el
+				element: el,
+				open: this.collapseStartOpen
 			};
 
 			if (!this.collapseStartOpen) {
 				el.style.display = 'none';
 			}
+		}
+	};
 
-			rowEl.appendChild(el);
+	ResponsiveLayout.prototype.layoutRow = function (row) {
+		var rowEl = row.getElement();
 
+		if (row.modules.responsiveLayout) {
+			rowEl.appendChild(row.modules.responsiveLayout.element);
 			this.generateCollapsedRowContent(row);
 		}
 	};

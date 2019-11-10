@@ -4188,6 +4188,11 @@ Row.prototype.generateElement = function () {
 		self.table.modules.dataTree.initializeRow(this);
 	}
 
+	//setup column colapse container
+	if (self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")) {
+		self.table.modules.responsiveLayout.initializeRow(this);
+	}
+
 	//handle row click events
 	if (self.table.options.rowClick) {
 		self.element.addEventListener("click", function (e) {
@@ -4333,7 +4338,7 @@ Row.prototype.initialize = function (force) {
 			self.table.modules.dataTree.layoutRow(this);
 		}
 
-		//setup movable rows
+		//setup column colapse container
 		if (self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")) {
 			self.table.modules.responsiveLayout.layoutRow(this);
 		}

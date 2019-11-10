@@ -11,7 +11,7 @@ var ResponsiveLayout = function(table){
 //generate resposive columns list
 ResponsiveLayout.prototype.initialize = function(){
 	var self = this,
-	    columns = [];
+	columns = [];
 
 	this.mode = this.table.options.responsiveLayout;
 	this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
@@ -53,23 +53,29 @@ ResponsiveLayout.prototype.initializeColumn = function(column){
 	column.modules.responsive = {order: typeof def.responsive === "undefined" ? 1 : def.responsive, visible:def.visible === false ? false : true};
 };
 
-ResponsiveLayout.prototype.layoutRow = function(row){
-	var rowEl = row.getElement(),
-	el = document.createElement("div");
+ResponsiveLayout.prototype.initializeRow = function(row){
+	var el;
 
-	el.classList.add("tabulator-responsive-collapse");
+	if(row.type !== "calc"){
+		el = document.createElement("div");
+		el.classList.add("tabulator-responsive-collapse");
 
-	if(!rowEl.classList.contains("tabulator-calcs")){
 		row.modules.responsiveLayout = {
 			element:el,
+			open:this.collapseStartOpen,
 		};
 
 		if(!this.collapseStartOpen){
 			el.style.display = 'none';
 		}
+	}
+};
 
-		rowEl.appendChild(el);
+ResponsiveLayout.prototype.layoutRow = function(row){
+	var rowEl = row.getElement();
 
+	if(row.modules.responsiveLayout){
+		rowEl.appendChild(row.modules.responsiveLayout.element);
 		this.generateCollapsedRowContent(row);
 	}
 };

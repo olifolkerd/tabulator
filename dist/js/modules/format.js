@@ -597,41 +597,37 @@ Format.prototype.formatters = {
 	responsiveCollapse: function responsiveCollapse(cell, formatterParams, onRendered) {
 		var self = this,
 		    open = false,
-		    el = document.createElement("div");
-
-		function toggleList(isOpen) {
-			var collapse = cell.getRow().getElement().getElementsByClassName("tabulator-responsive-collapse")[0];
-
-			open = isOpen;
-
-			if (open) {
-				el.classList.add("open");
-				if (collapse) {
-					collapse.style.display = '';
-				}
-			} else {
-				el.classList.remove("open");
-				if (collapse) {
-					collapse.style.display = 'none';
-				}
-			}
-		}
+		    el = document.createElement("div"),
+		    config = cell.getRow()._row.modules.responsiveLayout;
 
 		el.classList.add("tabulator-responsive-collapse-toggle");
 		el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
 
 		cell.getElement().classList.add("tabulator-row-handle");
 
-		if (self.table.options.responsiveLayoutCollapseStartOpen) {
-			open = true;
+		function toggleList(isOpen) {
+			var collapseEl = config.element;
+
+			config.open = isOpen;
+
+			if (collapseEl) {
+
+				if (config.open) {
+					el.classList.add("open");
+					collapseEl.style.display = '';
+				} else {
+					el.classList.remove("open");
+					collapseEl.style.display = 'none';
+				}
+			}
 		}
 
 		el.addEventListener("click", function (e) {
 			e.stopImmediatePropagation();
-			toggleList(!open);
+			toggleList(!config.open);
 		});
 
-		toggleList(open);
+		toggleList(config.open);
 
 		return el;
 	},
