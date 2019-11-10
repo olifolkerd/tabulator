@@ -846,11 +846,23 @@ Tabulator.prototype.clearData = function(){
 
 //get table data array
 Tabulator.prototype.getData = function(active){
+
+	if(active === true){
+		console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
+		active = "active";
+	}
+
 	return this.rowManager.getData(active);
 };
 
 //get table data array count
 Tabulator.prototype.getDataCount = function(active){
+
+	if(active === true){
+		console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
+		active = "active";
+	}
+
 	return this.rowManager.getDataCount(active);
 };
 
@@ -1173,6 +1185,12 @@ Tabulator.prototype.moveRow = function(from, to, after){
 };
 
 Tabulator.prototype.getRows = function(active){
+
+	if(active === true){
+		console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
+		active = "active";
+	}
+
 	return this.rowManager.getComponents(active);
 };
 
