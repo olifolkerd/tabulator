@@ -975,7 +975,7 @@ ColumnManager.prototype.redraw = function (force) {
 		this.table.rowManager.reinitialize();
 	}
 
-	if (this.table.modules.layout.getMode() == "fitColumns") {
+	if (["fitColumns", "fitDataStretch"].indexOf(this.table.modules.layout.getMode()) > -1) {
 
 		this.table.modules.layout.layout();
 	} else {
@@ -7622,7 +7622,7 @@ Layout.prototype.modes = {
 		}
 	},
 
-	//resize columns to fit data the contain
+	//resize columns to fit data the contain and stretch row to fill table
 
 	"fitDataFill": function fitDataFill(columns) {
 
@@ -7634,6 +7634,63 @@ Layout.prototype.modes = {
 		if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
 			this.table.modules.responsiveLayout.update();
+		}
+	},
+
+	//resize columns to fit data the contain and stretch last column to fill table
+
+	"fitDataStretch": function fitDataStretch(columns) {
+		var _this29 = this;
+
+		// console.log("fitDataStret")
+
+		var colsWidth = 0,
+		    tableWidth = this.table.rowManager.element.clientWidth,
+		    gap = 0,
+		    lastCol = false;
+
+		columns.forEach(function (column, i) {
+
+			if (!column.widthFixed) {
+
+				column.reinitializeWidth();
+			}
+
+			if (_this29.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible) {
+
+				lastCol = column;
+			}
+
+			if (column.visible) {
+
+				colsWidth += column.getWidth();
+			}
+		});
+
+		if (lastCol) {
+
+			gap = tableWidth - colsWidth + lastCol.getWidth();
+
+			if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+
+				lastCol.setWidth(0);
+
+				this.table.modules.responsiveLayout.update();
+			}
+
+			if (gap > 0) {
+
+				lastCol.setWidth(gap);
+			} else {
+
+				column.reinitializeWidth();
+			}
+		} else {
+
+			if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+
+				this.table.modules.responsiveLayout.update();
+			}
 		}
 	},
 

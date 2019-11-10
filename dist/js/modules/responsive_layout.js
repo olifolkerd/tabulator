@@ -69,10 +69,12 @@ ResponsiveLayout.prototype.initialize = function () {
 		}
 	}
 
-	if (this.hiddenColumns.length) {
-		this.collapseHandleColumn.show();
-	} else {
-		this.collapseHandleColumn.hide();
+	if (this.collapseHandleColumn) {
+		if (this.hiddenColumns.length) {
+			this.collapseHandleColumn.show();
+		} else {
+			this.collapseHandleColumn.hide();
+		}
 	}
 };
 
