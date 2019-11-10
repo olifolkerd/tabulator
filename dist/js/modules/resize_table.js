@@ -12,13 +12,17 @@ ResizeTable.prototype.initialize = function (row) {
 
 	if (typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual") {
 		this.observer = new ResizeObserver(function (entry) {
-			table.redraw();
+			if (!table.browserMobile || browserMobile && !table.modules.edit.currentCell) {
+				table.redraw();
+			}
 		});
 
 		this.observer.observe(table.element);
 	} else {
 		this.binding = function () {
-			table.redraw();
+			if (!table.browserMobile || browserMobile && !table.modules.edit.currentCell) {
+				table.redraw();
+			}
 		};
 
 		window.addEventListener("resize", this.binding);
