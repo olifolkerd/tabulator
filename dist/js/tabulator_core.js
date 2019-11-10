@@ -4130,10 +4130,12 @@ RowComponent.prototype.getPrevRow = function () {
 };
 
 var Row = function Row(data, parent) {
+	var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "row";
+
 	this.table = parent.table;
 	this.parent = parent;
 	this.data = {};
-	this.type = "row"; //type of element
+	this.type = type; //type of element
 	this.element = this.createElement();
 	this.modules = {}; //hold module variables;
 	this.cells = [];

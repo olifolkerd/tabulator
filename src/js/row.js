@@ -150,11 +150,11 @@ RowComponent.prototype.getPrevRow = function(){
 };
 
 
-var Row = function(data, parent){
+var Row = function(data, parent, type = "row"){
 	this.table = parent.table;
 	this.parent = parent;
 	this.data = {};
-	this.type = "row"; //type of element
+	this.type = type; //type of element
 	this.element = this.createElement();
 	this.modules = {}; //hold module variables;
 	this.cells = [];

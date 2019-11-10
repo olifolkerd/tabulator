@@ -5209,6 +5209,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	var Row = function Row(data, parent) {
+		var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "row";
+
 
 		this.table = parent.table;
 
@@ -5216,7 +5218,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.data = {};
 
-		this.type = "row"; //type of element
+		this.type = type; //type of element
 
 		this.element = this.createElement();
 
@@ -11320,14 +11322,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.table.modules.mutator.disable();
 		}
 
-		row = new Row(rowData, this);
+		row = new Row(rowData, this, "calc");
 
 		if (self.table.modExists("mutator")) {
 			self.table.modules.mutator.enable();
 		}
 
 		row.getElement().classList.add("tabulator-calcs", "tabulator-calcs-" + pos);
-		row.type = "calc";
 
 		row.generateCells = function () {
 
