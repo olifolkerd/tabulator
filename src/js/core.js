@@ -1529,6 +1529,10 @@ Tabulator.prototype.clearHeaderFilter = function(){
 ///////////////////// Filtering ////////////////////
 Tabulator.prototype.selectRow = function(rows){
 	if(this.modExists("selectRow", true)){
+		if(rows === true){
+			console.warn("passing a boolean to the selectRowselectRow function is deprecated, you should now pass the string 'active'");
+			rows = "active";
+		}
 		this.modules.selectRow.selectRows(rows);
 	}
 };

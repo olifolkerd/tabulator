@@ -163,36 +163,34 @@ SelectRow.prototype.toggleRow = function (row) {
 
 //select a number of rows
 SelectRow.prototype.selectRows = function (rows) {
-	var self = this;
+	var _this = this;
 
 	switch (typeof rows === "undefined" ? "undefined" : _typeof(rows)) {
 		case "undefined":
-			self.table.rowManager.rows.forEach(function (row) {
-				self._selectRow(row, true, true);
+			this.table.rowManager.rows.forEach(function (row) {
+				_this._selectRow(row, true, true);
 			});
 
-			self._rowSelectionChanged();
+			this._rowSelectionChanged();
 			break;
 
-		case "boolean":
-			if (rows === true) {
-				self.table.rowManager.activeRows.forEach(function (row) {
-					self._selectRow(row, true, true);
-				});
+		case "string":
+			this.table.rowManager.getRows(rows).forEach(function (row) {
+				_this._selectRow(row, true, true);
+			});
 
-				self._rowSelectionChanged();
-			}
+			this._rowSelectionChanged();
 			break;
 
 		default:
 			if (Array.isArray(rows)) {
 				rows.forEach(function (row) {
-					self._selectRow(row, true, true);
+					_this._selectRow(row, true, true);
 				});
 
-				self._rowSelectionChanged();
+				this._rowSelectionChanged();
 			} else {
-				self._selectRow(rows, false, true);
+				this._selectRow(rows, false, true);
 			}
 			break;
 	}

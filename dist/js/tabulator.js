@@ -9234,6 +9234,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.modExists("selectRow", true)) {
 
+			if (rows === true) {
+
+				console.warn("passing a boolean to the selectRowselectRow function is deprecated, you should now pass the string 'active'");
+
+				rows = "active";
+			}
+
 			this.modules.selectRow.selectRows(rows);
 		}
 	};
@@ -22684,36 +22691,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//select a number of rows
 	SelectRow.prototype.selectRows = function (rows) {
-		var self = this;
+		var _this64 = this;
 
 		switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 			case "undefined":
-				self.table.rowManager.rows.forEach(function (row) {
-					self._selectRow(row, true, true);
+				this.table.rowManager.rows.forEach(function (row) {
+					_this64._selectRow(row, true, true);
 				});
 
-				self._rowSelectionChanged();
+				this._rowSelectionChanged();
 				break;
 
-			case "boolean":
-				if (rows === true) {
-					self.table.rowManager.activeRows.forEach(function (row) {
-						self._selectRow(row, true, true);
-					});
+			case "string":
+				this.table.rowManager.getRows(rows).forEach(function (row) {
+					_this64._selectRow(row, true, true);
+				});
 
-					self._rowSelectionChanged();
-				}
+				this._rowSelectionChanged();
 				break;
 
 			default:
 				if (Array.isArray(rows)) {
 					rows.forEach(function (row) {
-						self._selectRow(row, true, true);
+						_this64._selectRow(row, true, true);
 					});
 
-					self._rowSelectionChanged();
+					this._rowSelectionChanged();
 				} else {
-					self._selectRow(rows, false, true);
+					this._selectRow(rows, false, true);
 				}
 				break;
 		}
