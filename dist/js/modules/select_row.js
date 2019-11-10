@@ -165,6 +165,8 @@ SelectRow.prototype.toggleRow = function (row) {
 SelectRow.prototype.selectRows = function (rows) {
 	var _this = this;
 
+	var rowMatch;
+
 	switch (typeof rows === "undefined" ? "undefined" : _typeof(rows)) {
 		case "undefined":
 			this.table.rowManager.rows.forEach(function (row) {
@@ -175,9 +177,16 @@ SelectRow.prototype.selectRows = function (rows) {
 			break;
 
 		case "string":
-			this.table.rowManager.getRows(rows).forEach(function (row) {
-				_this._selectRow(row, true, true);
-			});
+
+			rowMatch = self.table.rowManager.findRow(rows);
+
+			if (rowMatch) {
+				this._selectRow(rowMatch, true, true);
+			} else {
+				this.table.rowManager.getRows(rows).forEach(function (row) {
+					_this._selectRow(row, true, true);
+				});
+			}
 
 			this._rowSelectionChanged();
 			break;

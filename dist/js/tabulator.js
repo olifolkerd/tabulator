@@ -22693,6 +22693,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	SelectRow.prototype.selectRows = function (rows) {
 		var _this64 = this;
 
+		var rowMatch;
+
 		switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 			case "undefined":
 				this.table.rowManager.rows.forEach(function (row) {
@@ -22703,9 +22705,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				break;
 
 			case "string":
-				this.table.rowManager.getRows(rows).forEach(function (row) {
-					_this64._selectRow(row, true, true);
-				});
+
+				rowMatch = self.table.rowManager.findRow(rows);
+
+				if (rowMatch) {
+					this._selectRow(rowMatch, true, true);
+				} else {
+					this.table.rowManager.getRows(rows).forEach(function (row) {
+						_this64._selectRow(row, true, true);
+					});
+				}
 
 				this._rowSelectionChanged();
 				break;
