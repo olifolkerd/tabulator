@@ -3692,31 +3692,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	RowManager.prototype.getData = function (active, transform) {
 
 		var output = [],
-		    rows;
-
-		switch (active) {
-
-			case true:
-
-				console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
-
-			case "active":
-
-				rows = this.activeRows;
-
-				break;
-
-			case "visible":
-
-				rows = this.getVisibleRows(true);
-
-				break;
-
-			default:
-
-				rows = this.rows;
-
-		}
+		    rows = this.getRows(active);
 
 		rows.forEach(function (row) {
 
@@ -3729,31 +3705,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	RowManager.prototype.getComponents = function (active) {
 
 		var output = [],
-		    rows;
-
-		switch (active) {
-
-			case true:
-
-				console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
-
-			case "active":
-
-				rows = this.activeRows;
-
-				break;
-
-			case "visible":
-
-				rows = this.getVisibleRows(true);
-
-				break;
-
-			default:
-
-				rows = this.rows;
-
-		}
+		    rows = this.getRows(active);
 
 		rows.forEach(function (row) {
 
@@ -4278,9 +4230,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//return only actual rows (not group headers etc)
 
-	RowManager.prototype.getRows = function () {
+	RowManager.prototype.getRows = function (active) {
 
-		return this.rows;
+		var rows;
+
+		switch (active) {
+
+			case "active":
+
+				rows = this.activeRows;
+
+				break;
+
+			case "visible":
+
+				rows = this.getVisibleRows(true);
+
+				break;
+
+			default:
+
+				rows = this.rows;
+
+		}
+
+		return rows;
 	};
 
 	///////////////// Table Rendering /////////////////
@@ -8367,12 +8341,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Tabulator.prototype.getData = function (active) {
 
+		if (active === true) {
+
+			console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
+
+			active = "active";
+		}
+
 		return this.rowManager.getData(active);
 	};
 
 	//get table data array count
 
 	Tabulator.prototype.getDataCount = function (active) {
+
+		if (active === true) {
+
+			console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
+
+			active = "active";
+		}
 
 		return this.rowManager.getDataCount(active);
 	};
@@ -8803,6 +8791,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.getRows = function (active) {
+
+		if (active === true) {
+
+			console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
+
+			active = "active";
+		}
 
 		return this.rowManager.getComponents(active);
 	};
@@ -9691,19 +9686,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	/////////////// Download Management //////////////
 
 
-	Tabulator.prototype.download = function (type, filename, options) {
+	Tabulator.prototype.download = function (type, filename, options, active) {
 
 		if (this.modExists("download", true)) {
 
-			this.modules.download.download(type, filename, options);
+			this.modules.download.download(type, filename, options, active);
 		}
 	};
 
-	Tabulator.prototype.downloadToTab = function (type, filename, options) {
+	Tabulator.prototype.downloadToTab = function (type, filename, options, active) {
 
 		if (this.modExists("download", true)) {
 
-			this.modules.download.download(type, filename, options, true);
+			this.modules.download.download(type, filename, options, active, true);
 		}
 	};
 
@@ -12962,7 +12957,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//trigger file download
-	Download.prototype.download = function (type, filename, options, interceptCallback) {
+	Download.prototype.download = function (type, filename, options, active, interceptCallback) {
 		var self = this,
 		    downloadFunc = false;
 		this.processConfig();
@@ -12992,7 +12987,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.processColumns();
 
 		if (downloadFunc) {
-			downloadFunc.call(this, self.processDefinitions(), self.processData(), options || {}, buildLink, this.config);
+			downloadFunc.call(this, self.processDefinitions(), self.processData(active || "active"), options || {}, buildLink, this.config);
 		}
 	};
 
@@ -13121,22 +13116,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return def;
 	};
 
-	Download.prototype.processData = function () {
+	Download.prototype.processData = function (active) {
 		var _this42 = this;
 
 		var self = this,
 		    data = [],
 		    groups = [],
+		    rows = false,
 		    calcs = {};
 
 		if (this.config.rowGroups) {
-			groups = this.table.modules.groupRows.getGroups();
+
+			if (active == "visible") {
+
+				rows = self.table.rowManager.getRows(active);
+
+				rows.forEach(function (row) {
+					if (row.type == "row") {
+						var group = row.getGroup();
+
+						if (groups.indexOf(group) === -1) {
+							groups.push(group);
+						}
+					}
+				});
+			} else {
+				groups = this.table.modules.groupRows.getGroups();
+			}
 
 			groups.forEach(function (group) {
-				data.push(_this42.processGroupData(group));
+				data.push(_this42.processGroupData(group, rows));
 			});
 		} else {
-			data = self.table.rowManager.getData("active", "download");
+			data = self.table.rowManager.getData(active, "download");
 		}
 
 		if (this.config.columnCalcs) {
@@ -13156,7 +13168,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return data;
 	};
 
-	Download.prototype.processGroupData = function (group) {
+	Download.prototype.processGroupData = function (group, visRows) {
 		var _this43 = this;
 
 		var subGroups = group.getSubGroups();
@@ -13170,10 +13182,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groupData.subGroups = [];
 
 			subGroups.forEach(function (subGroup) {
-				groupData.subGroups.push(_this43.processGroupData(subGroup));
+				groupData.subGroups.push(_this43.processGroupData(subGroup, visRows));
 			});
 		} else {
-			groupData.rows = group.getData(true, "download");
+			if (visRows) {
+				groupData.rows = [];
+
+				group.rows.forEach(function (row) {
+					if (visRows.indexOf(row) > -1) {
+						groupData.rows.push(row.getData("download"));
+					}
+				});
+			} else {
+				groupData.rows = group.getData(true, "download");
+			}
 		}
 
 		return groupData;

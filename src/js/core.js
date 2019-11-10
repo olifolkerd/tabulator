@@ -1848,15 +1848,15 @@ Tabulator.prototype.getHistoryRedoSize = function(){
 
 /////////////// Download Management //////////////
 
-Tabulator.prototype.download = function(type, filename, options){
+Tabulator.prototype.download = function(type, filename, options, active){
 	if(this.modExists("download", true)){
-		this.modules.download.download(type, filename, options);
+		this.modules.download.download(type, filename, options, active);
 	}
 };
 
-Tabulator.prototype.downloadToTab = function(type, filename, options){
+Tabulator.prototype.downloadToTab = function(type, filename, options, active){
 	if(this.modExists("download", true)){
-		this.modules.download.download(type, filename, options, true);
+		this.modules.download.download(type, filename, options, active, true);
 	}
 };
 

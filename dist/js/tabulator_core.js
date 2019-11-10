@@ -2980,22 +2980,7 @@ RowManager.prototype.findRowIndex = function (row, list) {
 
 RowManager.prototype.getData = function (active, transform) {
 	var output = [],
-	    rows;
-
-	switch (active) {
-		case true:
-			console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
-		case "active":
-			rows = this.activeRows;
-			break;
-
-		case "visible":
-			rows = this.getVisibleRows(true);
-			break;
-
-		default:
-			rows = this.rows;
-	}
+	    rows = this.getRows(active);
 
 	rows.forEach(function (row) {
 		output.push(row.getData(transform || "data"));
@@ -3006,22 +2991,7 @@ RowManager.prototype.getData = function (active, transform) {
 
 RowManager.prototype.getComponents = function (active) {
 	var output = [],
-	    rows;
-
-	switch (active) {
-		case true:
-			console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
-		case "active":
-			rows = this.activeRows;
-			break;
-
-		case "visible":
-			rows = this.getVisibleRows(true);
-			break;
-
-		default:
-			rows = this.rows;
-	}
+	    rows = this.getRows(active);
 
 	rows.forEach(function (row) {
 		output.push(row.getComponent());
@@ -3031,22 +3001,7 @@ RowManager.prototype.getComponents = function (active) {
 };
 
 RowManager.prototype.getDataCount = function (active) {
-	var rows;
-
-	switch (active) {
-		case true:
-			console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
-		case "active":
-			rows = this.activeRows;
-			break;
-
-		case "visible":
-			rows = this.getVisibleRows(true);
-			break;
-
-		default:
-			rows = this.rows;
-	}
+	var rows = this.getRows(active);
 
 	return rows.length;
 };
@@ -3418,8 +3373,23 @@ RowManager.prototype.displayRowIterator = function (callback) {
 };
 
 //return only actual rows (not group headers etc)
-RowManager.prototype.getRows = function () {
-	return this.rows;
+RowManager.prototype.getRows = function (active) {
+	var rows;
+
+	switch (active) {
+		case "active":
+			rows = this.activeRows;
+			break;
+
+		case "visible":
+			rows = this.getVisibleRows(true);
+			break;
+
+		default:
+			rows = this.rows;
+	}
+
+	return rows;
 };
 
 ///////////////// Table Rendering /////////////////
@@ -6446,11 +6416,23 @@ Tabulator.prototype.clearData = function () {
 
 //get table data array
 Tabulator.prototype.getData = function (active) {
+
+	if (active === true) {
+		console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
+		active = "active";
+	}
+
 	return this.rowManager.getData(active);
 };
 
 //get table data array count
 Tabulator.prototype.getDataCount = function (active) {
+
+	if (active === true) {
+		console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
+		active = "active";
+	}
+
 	return this.rowManager.getDataCount(active);
 };
 
@@ -6772,6 +6754,12 @@ Tabulator.prototype.moveRow = function (from, to, after) {
 };
 
 Tabulator.prototype.getRows = function (active) {
+
+	if (active === true) {
+		console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
+		active = "active";
+	}
+
 	return this.rowManager.getComponents(active);
 };
 
@@ -7422,15 +7410,15 @@ Tabulator.prototype.getHistoryRedoSize = function () {
 
 /////////////// Download Management //////////////
 
-Tabulator.prototype.download = function (type, filename, options) {
+Tabulator.prototype.download = function (type, filename, options, active) {
 	if (this.modExists("download", true)) {
-		this.modules.download.download(type, filename, options);
+		this.modules.download.download(type, filename, options, active);
 	}
 };
 
-Tabulator.prototype.downloadToTab = function (type, filename, options) {
+Tabulator.prototype.downloadToTab = function (type, filename, options, active) {
 	if (this.modExists("download", true)) {
-		this.modules.download.download(type, filename, options, true);
+		this.modules.download.download(type, filename, options, active, true);
 	}
 };
 
