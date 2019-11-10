@@ -6,6 +6,7 @@ var ResponsiveLayout = function(table){
 	this.index = 0;
 	this.collapseFormatter = [];
 	this.collapseStartOpen = true;
+	this.collapseHandleColumn = false;
 };
 
 //generate resposive columns list
@@ -43,6 +44,20 @@ ResponsiveLayout.prototype.initialize = function(){
 
 	if(this.mode === "collapse"){
 		this.generateCollapsedContent();
+	}
+
+	//assign collapse column
+	for (let col of this.table.columnManager.columnsByIndex){
+		if(col.definition.formatter == "responsiveCollapse"){
+			this.collapseHandleColumn = col;
+			break;
+		}
+	}
+
+	if(this.hiddenColumns.length){
+		this.collapseHandleColumn.show();
+	}else{
+		this.collapseHandleColumn.hide();
 	}
 };
 
@@ -90,11 +105,17 @@ ResponsiveLayout.prototype.updateColumnVisibility = function(column, visible){
 };
 
 ResponsiveLayout.prototype.hideColumn = function(column){
+	var colCount = this.hiddenColumns.length;
+
 	column.hide(false, true);
 
 	if(this.mode === "collapse"){
 		this.hiddenColumns.unshift(column);
 		this.generateCollapsedContent();
+
+		if(this.collapseHandleColumn && !colCount){
+			this.collapseHandleColumn.show();
+		}
 	}
 };
 
@@ -113,6 +134,10 @@ ResponsiveLayout.prototype.showColumn = function(column){
 		}
 
 		this.generateCollapsedContent();
+
+		if(this.collapseHandleColumn && !this.hiddenColumns.length){
+			this.collapseHandleColumn.hide();
+		}
 	}
 };
 

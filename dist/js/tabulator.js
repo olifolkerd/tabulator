@@ -22125,6 +22125,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.index = 0;
 		this.collapseFormatter = [];
 		this.collapseStartOpen = true;
+		this.collapseHandleColumn = false;
 	};
 
 	//generate resposive columns list
@@ -22162,6 +22163,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.mode === "collapse") {
 			this.generateCollapsedContent();
+		}
+
+		//assign collapse column
+		for (var _iterator = this.table.columnManager.columnsByIndex, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+			var _ref;
+
+			if (_isArray) {
+				if (_i >= _iterator.length) break;
+				_ref = _iterator[_i++];
+			} else {
+				_i = _iterator.next();
+				if (_i.done) break;
+				_ref = _i.value;
+			}
+
+			var col = _ref;
+
+			if (col.definition.formatter == "responsiveCollapse") {
+				this.collapseHandleColumn = col;
+				break;
+			}
+		}
+
+		if (this.hiddenColumns.length) {
+			this.collapseHandleColumn.show();
+		} else {
+			this.collapseHandleColumn.hide();
 		}
 	};
 
@@ -22209,11 +22237,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	ResponsiveLayout.prototype.hideColumn = function (column) {
+		var colCount = this.hiddenColumns.length;
+
 		column.hide(false, true);
 
 		if (this.mode === "collapse") {
 			this.hiddenColumns.unshift(column);
 			this.generateCollapsedContent();
+
+			if (this.collapseHandleColumn && !colCount) {
+				this.collapseHandleColumn.show();
+			}
 		}
 	};
 
@@ -22232,6 +22266,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			this.generateCollapsedContent();
+
+			if (this.collapseHandleColumn && !this.hiddenColumns.length) {
+				this.collapseHandleColumn.hide();
+			}
 		}
 	};
 
