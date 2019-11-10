@@ -12070,18 +12070,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var output = [],
 		    calcs,
-		    columns = [];
+		    columns = [],
+		    columnsByIndex = [];
+
+		this.table.columnManager.columnsByIndex.forEach(function (column) {
+			if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
+				columnsByIndex.push(column);
+			}
+		});
 
 		if (config.columnHeaders == "groups") {
 			columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
-
 			output = output.concat(this.groupHeadersToRows(columns));
 		} else {
-			this.table.columnManager.columnsByIndex.forEach(function (column) {
-				if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
-					columns.push(column);
-				}
-			});
+			columns = columnsByIndex;
 
 			output.push(this.generateSimpleHeaders(columns));
 		}
@@ -12098,17 +12100,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		//generate unstyled content
 		if (config.rowGroups) {
 			rows.forEach(function (row) {
-				output = output.concat(_this35.parseRowGroupData(row, columns, config, params, calcs || {}));
+				output = output.concat(_this35.parseRowGroupData(row, columnsByIndex, config, params, calcs || {}));
 			});
 		} else {
 			if (config.columnCalcs) {
-				output = output.concat(this.getCalcRow(calcs, columns, "top"));
+				output = output.concat(this.getCalcRow(calcs, columnsByIndex, "top"));
 			}
 
-			output = output.concat(this.rowsToData(rows, columns, config, params));
+			output = output.concat(this.rowsToData(rows, columnsByIndex, config, params));
 
 			if (config.columnCalcs) {
-				output = output.concat(this.getCalcRow(calcs, columns, "bottom"));
+				output = output.concat(this.getCalcRow(calcs, columnsByIndex, "bottom"));
 			}
 		}
 
@@ -12211,6 +12213,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		function parseColumnGroup(column, level) {
 
+			var actualColumns = [];
+
 			if (typeof headers[level] === "undefined") {
 				headers[level] = [];
 			}
@@ -12225,8 +12229,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (column.subGroups) {
 				column.subGroups.forEach(function (subGroup) {
-					parseColumnGroup(subGroup, level + 1);
+					actualColumns = actualColumns.concat(parseColumnGroup(subGroup, level + 1));
 				});
+
+				return actualColumns;
+			} else {
+				return [column.column];
 			}
 		}
 
@@ -12258,9 +12266,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		//create headers if needed
 		if (config.columnHeaders) {
 			if (config.columnHeaders == "groups") {
+
+				var actualColumns = [];
+
 				columns.forEach(function (column) {
-					parseColumnGroup(column, 0);
+					actualColumns = actualColumns.concat(parseColumnGroup(column, 0));
 				});
+
+				columns = actualColumns;
 
 				padVerticalColumnheaders();
 				generateHeaders(headers);
