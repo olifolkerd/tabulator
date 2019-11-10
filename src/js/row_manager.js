@@ -39,6 +39,8 @@ var RowManager = function(table){
 
 	this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
 	this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
+
+	this.rowNumColumn = false; //hold column component for row number column
 };
 
 //////////////// Setup Functions /////////////////
@@ -927,6 +929,17 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			}
 		}else{
 			skipStage = false;
+		}
+
+		//regenerate row numbers for row number formatter if in use
+		if(this.rowNumColumn){
+			this.activeRows.forEach((row) => {
+				var cell = row.getCell(this.rowNumColumn);
+
+				if(cell){
+					cell._generateContents();
+				}
+			});
 		}
 
 		//generic stage to allow for pipeline trigger after the data manipulation stage

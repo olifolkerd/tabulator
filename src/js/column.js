@@ -214,6 +214,8 @@ var Column = function(def, parent){
 	}
 
 	this._buildHeader();
+
+	this.bindModuleColumns();
 };
 
 Column.prototype.createElement = function (){
@@ -818,6 +820,14 @@ Column.prototype.clearVerticalAlign = function(){
 		column.clearVerticalAlign();
 	});
 };
+
+Column.prototype.bindModuleColumns = function (){
+	//check if rownum formatter is being used on a column
+	if(this.definition.formatter == "rownum"){
+		this.table.rowManager.rowNumColumn = this;
+	}
+};
+
 
 //// Retreive Column Information ////
 
