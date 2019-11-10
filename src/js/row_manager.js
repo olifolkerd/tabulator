@@ -1170,8 +1170,23 @@ RowManager.prototype.displayRowIterator = function(callback){
 };
 
 //return only actual rows (not group headers etc)
-RowManager.prototype.getRows = function(){
-	return this.rows;
+RowManager.prototype.getRows = function(active){
+	var rows;
+
+	switch(active){
+		case "active":
+		rows = this.activeRows;
+		break;
+
+		case "visible":
+		rows = this.getVisibleRows(true);
+		break;
+
+		default:
+		rows = this.rows;
+	}
+
+	return rows;
 };
 
 ///////////////// Table Rendering /////////////////
