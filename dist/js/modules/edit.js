@@ -643,6 +643,7 @@ Edit.prototype.editors = {
 		var self = this,
 		    cellEl = cell.getElement(),
 		    initialValue = cell.getValue(),
+		    vertNav = editorParams.verticalNavigation || "editor",
 		    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : "",
 		    input = document.createElement("input"),
 		    listEl = document.createElement("div"),
@@ -923,30 +924,34 @@ Edit.prototype.editors = {
 			switch (e.keyCode) {
 				case 38:
 					//up arrow
-					e.stopImmediatePropagation();
-					e.stopPropagation();
-					e.preventDefault();
-
 					index = dataItems.indexOf(currentItem);
 
-					if (index > 0) {
-						setCurrentItem(dataItems[index - 1]);
+					if (vertNav == "editor" || vertNav == "hybrid" && index) {
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+						e.preventDefault();
+
+						if (index > 0) {
+							setCurrentItem(dataItems[index - 1]);
+						}
 					}
 					break;
 
 				case 40:
 					//down arrow
-					e.stopImmediatePropagation();
-					e.stopPropagation();
-					e.preventDefault();
-
 					index = dataItems.indexOf(currentItem);
 
-					if (index < dataItems.length - 1) {
-						if (index == -1) {
-							setCurrentItem(dataItems[0]);
-						} else {
-							setCurrentItem(dataItems[index + 1]);
+					if (vertNav == "editor" || vertNav == "hybrid" && index < dataItems.length - 1) {
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+						e.preventDefault();
+
+						if (index < dataItems.length - 1) {
+							if (index == -1) {
+								setCurrentItem(dataItems[0]);
+							} else {
+								setCurrentItem(dataItems[index + 1]);
+							}
 						}
 					}
 					break;
@@ -998,6 +1003,7 @@ Edit.prototype.editors = {
 		var self = this,
 		    cellEl = cell.getElement(),
 		    initialValue = cell.getValue(),
+		    vertNav = editorParams.verticalNavigation || "editor",
 		    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : "",
 		    input = document.createElement("input"),
 		    listEl = document.createElement("div"),
@@ -1290,32 +1296,38 @@ Edit.prototype.editors = {
 			switch (e.keyCode) {
 				case 38:
 					//up arrow
-					e.stopImmediatePropagation();
-					e.stopPropagation();
-					e.preventDefault();
-
 					index = displayItems.indexOf(currentItem);
 
-					if (index > 0) {
-						setCurrentItem(displayItems[index - 1]);
-					} else {
-						setCurrentItem(false);
+					if (vertNav == "editor" || vertNav == "hybrid" && index) {
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+						e.preventDefault();
+
+						if (index > 0) {
+							setCurrentItem(displayItems[index - 1]);
+						} else {
+							setCurrentItem(false);
+						}
 					}
 					break;
 
 				case 40:
 					//down arrow
-					e.stopImmediatePropagation();
-					e.stopPropagation();
-					e.preventDefault();
 
 					index = displayItems.indexOf(currentItem);
 
-					if (index < displayItems.length - 1) {
-						if (index == -1) {
-							setCurrentItem(displayItems[0]);
-						} else {
-							setCurrentItem(displayItems[index + 1]);
+					if (vertNav == "editor" || vertNav == "hybrid" && index < displayItems.length - 1) {
+
+						e.stopImmediatePropagation();
+						e.stopPropagation();
+						e.preventDefault();
+
+						if (index < displayItems.length - 1) {
+							if (index == -1) {
+								setCurrentItem(displayItems[0]);
+							} else {
+								setCurrentItem(displayItems[index + 1]);
+							}
 						}
 					}
 					break;
