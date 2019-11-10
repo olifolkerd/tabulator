@@ -14170,6 +14170,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		textarea: function textarea(cell, onRendered, success, cancel, editorParams) {
 			var self = this,
 			    cellValue = cell.getValue(),
+			    vertNav = editorParams.verticalNavigation || "hybrid",
 			    value = String(cellValue !== null && typeof cellValue !== "undefined" ? cellValue : ""),
 			    count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
 			    input = document.createElement("textarea"),
@@ -14237,8 +14238,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			input.addEventListener("keydown", function (e) {
-				if (e.keyCode == 27) {
-					cancel();
+
+				switch (e.keyCode) {
+					case 27:
+						cancel();
+						break;
+
+					case 38:
+						//up arrow
+						if (vertNav == "editor" || vertNav == "hybrid" && input.selectionStart) {
+							e.stopImmediatePropagation();
+							e.stopPropagation();
+						}
+
+						break;
+					case 40:
+						//down arrow
+
+						if (vertNav == "editor" || vertNav == "hybrid" && input.selectionStart !== input.value.length) {
+							e.stopImmediatePropagation();
+							e.stopPropagation();
+						}
+						break;
 				}
 			});
 
@@ -14249,6 +14270,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		number: function number(cell, onRendered, success, cancel, editorParams) {
 
 			var cellValue = cell.getValue(),
+			    vertNav = editorParams.verticalNavigation || "editor",
 			    input = document.createElement("input");
 
 			input.setAttribute("type", "number");
@@ -14324,6 +14346,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					case 27:
 						cancel();
+						break;
+
+					case 38: //up arrow
+					case 40:
+						//down arrow
+						if (vertNav == "editor") {
+							e.stopImmediatePropagation();
+							e.stopPropagation();
+						}
 						break;
 				}
 			});

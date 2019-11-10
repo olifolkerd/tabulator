@@ -458,6 +458,7 @@ Edit.prototype.editors = {
     number:function(cell, onRendered, success, cancel, editorParams){
 
     	var cellValue = cell.getValue(),
+    	vertNav = editorParams.verticalNavigation || "editor",
     	input = document.createElement("input");
 
     	input.setAttribute("type", "number");
@@ -494,7 +495,7 @@ Edit.prototype.editors = {
 
 		var blurFunc = function(e){
 			onChange();
-		}
+		};
 
 		onRendered(function () {
 			//submit new value on blur
@@ -533,6 +534,14 @@ Edit.prototype.editors = {
 
 				case 27:
 				cancel();
+				break;
+
+				case 38: //up arrow
+				case 40: //down arrow
+				if(vertNav == "editor"){
+					e.stopImmediatePropagation();
+					e.stopPropagation();
+				}
 				break;
 			}
 		});
