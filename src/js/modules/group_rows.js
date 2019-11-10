@@ -100,9 +100,12 @@ Group.prototype.wipe = function(){
 		this.arrowElement = false;
 		this.elementContents = false;
 	}
-}
+};
 
 Group.prototype.createElements = function(){
+	var arrow = document.createElement("div");
+	arrow.classList.add("tabulator-arrow");
+
 	this.element = document.createElement("div");
 	this.element.classList.add("tabulator-row");
 	this.element.classList.add("tabulator-group");
@@ -110,7 +113,8 @@ Group.prototype.createElements = function(){
 	this.element.setAttribute("role", "rowgroup");
 
 	this.arrowElement = document.createElement("div");
-	this.arrowElement.classList.add("tabulator-arrow");
+	this.arrowElement.classList.add("tabulator-group-toggle");
+	this.arrowElement.appendChild(arrow);
 
 	//setup movable rows
 	if(this.groupManager.table.options.movableRows !== false && this.groupManager.table.modExists("moveRow")){

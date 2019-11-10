@@ -914,6 +914,9 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 			padding-left:110px;
 		}
 
+		.tabulator-group-toggle{
+			display: inline-block;
+		}
 
 		//sorting arrow
 		.tabulator-arrow{

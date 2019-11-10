@@ -950,6 +950,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			padding-left:110px;
 		}
 
+		.tabulator-group-toggle{
+			display: inline-block;
+		}
+
 
 		//sorting arrow
 		.tabulator-arrow{

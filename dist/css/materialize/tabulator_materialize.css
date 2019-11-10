@@ -749,6 +749,10 @@
   padding-left: 110px;
 }
 
+.tabulator-row.tabulator-group .tabulator-group-toggle {
+  display: inline-block;
+}
+
 .tabulator-row.tabulator-group .tabulator-arrow {
   display: inline-block;
   width: 0;

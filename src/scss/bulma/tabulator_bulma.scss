@@ -985,6 +985,9 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 			padding-left:110px;
 		}
 
+		.tabulator-group-toggle{
+			display: inline-block;
+		}
 
 		//sorting arrow
 		.tabulator-arrow{
