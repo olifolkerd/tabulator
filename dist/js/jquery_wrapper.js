@@ -26,7 +26,12 @@
 
   $.widget("ui.tabulator", {
     _create: function _create() {
-      this.table = new Tabulator(this.element[0], this.options);
+      var options = Object.assign({}, this.options);
+
+      delete options.create;
+      delete options.disabled;
+
+      this.table = new Tabulator(this.element[0], options);
 
       //map tabulator functions to jquery wrapper
       for (var key in Tabulator.prototype) {
