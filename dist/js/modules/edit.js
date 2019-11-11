@@ -909,13 +909,13 @@ Edit.prototype.editors = {
 
 		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
-		if (editorParams.values === true) {
-			parseItems(getUniqueColumnValues(), initialValue);
-		} else if (typeof editorParams.values === "string") {
-			parseItems(getUniqueColumnValues(editorParams.values), initialValue);
-		} else {
-			parseItems(editorParams.values || [], initialValue);
-		}
+		// if(editorParams.values === true){
+		// 	parseItems(getUniqueColumnValues(), initialValue);
+		// }else if(typeof editorParams.values === "string"){
+		// 	parseItems(getUniqueColumnValues(editorParams.values), initialValue);
+		// }else{
+		// 	parseItems(editorParams.values || [], initialValue);
+		// }
 
 		//allow key based navigation
 		input.addEventListener("keydown", function (e) {

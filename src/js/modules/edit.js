@@ -644,7 +644,6 @@ Edit.prototype.editors = {
 		currentItem = {},
 		blurable = true;
 
-
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
 		if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
@@ -909,13 +908,13 @@ Edit.prototype.editors = {
 
 		input.value = typeof initialValue !== "undefined" || initialValue === null ? initialValue : "";
 
-		if(editorParams.values === true){
-			parseItems(getUniqueColumnValues(), initialValue);
-		}else if(typeof editorParams.values === "string"){
-			parseItems(getUniqueColumnValues(editorParams.values), initialValue);
-		}else{
-			parseItems(editorParams.values || [], initialValue);
-		}
+		// if(editorParams.values === true){
+		// 	parseItems(getUniqueColumnValues(), initialValue);
+		// }else if(typeof editorParams.values === "string"){
+		// 	parseItems(getUniqueColumnValues(editorParams.values), initialValue);
+		// }else{
+		// 	parseItems(editorParams.values || [], initialValue);
+		// }
 
 		//allow key based navigation
 		input.addEventListener("keydown", function(e){
