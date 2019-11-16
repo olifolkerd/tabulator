@@ -713,6 +713,14 @@ Column.prototype._buildGroupHeader = function(){
 	this.element.setAttribute("role", "columngroup");
 	this.element.setAttribute("aria-title", this.definition.title);
 
+	//asign additional css classes to column header
+	if(this.definition.cssClass){
+		var classeNames = this.definition.cssClass.split(" ");
+		classeNames.forEach((className) => {
+			this.element.classList.add(className);
+		});
+	}
+
 	this.element.appendChild(this.groupElement);
 };
 
