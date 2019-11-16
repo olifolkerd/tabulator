@@ -128,9 +128,9 @@ Edit.prototype.bindEditor = function(cell){
 	});
 };
 
-Edit.prototype.focusCellNoEvent = function(cell){
+Edit.prototype.focusCellNoEvent = function(cell, block){
 	this.recursionBlock = true;
-	if(this.table.browser !== "ie"){
+	if(!(block && this.table.browser === "ie")){
 		cell.getElement().focus();
 	}
 	this.recursionBlock = false;
@@ -178,7 +178,7 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 			}else{
 				self.invalidEdit = true;
 				element.classList.add("tabulator-validation-fail");
-				self.focusCellNoEvent(cell);
+				self.focusCellNoEvent(cell, true);
 				rendered();
 				self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 
