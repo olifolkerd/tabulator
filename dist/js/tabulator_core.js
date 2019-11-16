@@ -4494,8 +4494,8 @@ Row.prototype.setData = function (data) {
 Row.prototype.updateData = function (data) {
 	var _this13 = this;
 
-	var self = this,
-	    visible = Tabulator.prototype.helpers.elVisible(this.element);
+	var visible = Tabulator.prototype.helpers.elVisible(this.element),
+	    tempData = {};
 
 	return new Promise(function (resolve, reject) {
 
@@ -4508,13 +4508,17 @@ Row.prototype.updateData = function (data) {
 		}
 
 		//mutate incomming data if needed
-		if (self.table.modExists("mutator")) {
-			data = self.table.modules.mutator.transformRow(data, "data", true);
+		if (_this13.table.modExists("mutator")) {
+
+			tempData = Object.assign(tempData, _this13.data);
+			tempData = Object.assign(tempData, data);
+
+			data = _this13.table.modules.mutator.transformRow(tempData, "data", data);
 		}
 
 		//set data
 		for (var attrname in data) {
-			self.data[attrname] = data[attrname];
+			_this13.data[attrname] = data[attrname];
 		}
 
 		if (_this13.table.options.reactiveData && _this13.table.modExists("reactiveData", true)) {
@@ -4544,10 +4548,10 @@ Row.prototype.updateData = function (data) {
 
 		//Partial reinitialization if visible
 		if (visible) {
-			self.normalizeHeight();
+			_this13.normalizeHeight();
 
-			if (self.table.options.rowFormatter) {
-				self.table.options.rowFormatter(self.getComponent());
+			if (_this13.table.options.rowFormatter) {
+				_this13.table.options.rowFormatter(_this13.getComponent());
 			}
 		} else {
 			_this13.initialized = false;
@@ -4555,15 +4559,15 @@ Row.prototype.updateData = function (data) {
 			_this13.heightStyled = "";
 		}
 
-		if (self.table.options.dataTree !== false && self.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(data)) {
+		if (_this13.table.options.dataTree !== false && _this13.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(data)) {
 			_this13.table.modules.dataTree.initializeRow(_this13);
 			_this13.table.modules.dataTree.layoutRow(_this13);
 			_this13.table.rowManager.refreshActiveData("tree", false, true);
 		}
 
-		//self.reinitialize();
+		//this.reinitialize();
 
-		self.table.options.rowUpdated.call(_this13.table, self.getComponent());
+		_this13.table.options.rowUpdated.call(_this13.table, _this13.getComponent());
 
 		resolve();
 	});

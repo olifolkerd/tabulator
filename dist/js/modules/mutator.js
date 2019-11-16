@@ -59,7 +59,7 @@ Mutator.prototype.lookupMutator = function (value) {
 };
 
 //apply mutator to row
-Mutator.prototype.transformRow = function (data, type, update) {
+Mutator.prototype.transformRow = function (data, type, updatedData) {
 	var self = this,
 	    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 	    value;
@@ -73,7 +73,7 @@ Mutator.prototype.transformRow = function (data, type, update) {
 				mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
 				if (mutator) {
-					value = column.getFieldValue(data);
+					value = column.getFieldValue(updatedData);
 
 					if (!update || update && typeof value !== "undefined") {
 						component = column.getComponent();
@@ -90,10 +90,13 @@ Mutator.prototype.transformRow = function (data, type, update) {
 
 //apply mutator to new cell value
 Mutator.prototype.transformCell = function (cell, value) {
-	var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false;
+	var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
+	    tempData = {};
 
 	if (mutator) {
-		return mutator.mutator(value, cell.row.getData(), "edit", mutator.params, cell.getComponent());
+		tempData = Object.assign(tempData, cell.row.getData());
+		cell.column.setFieldValue(tempData, value);
+		return mutator.mutator(value, tempData, "edit", mutator.params, cell.getComponent());
 	} else {
 		return value;
 	}

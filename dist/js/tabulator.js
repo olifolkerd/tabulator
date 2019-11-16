@@ -5680,8 +5680,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Row.prototype.updateData = function (data) {
 		var _this13 = this;
 
-		var self = this,
-		    visible = Tabulator.prototype.helpers.elVisible(this.element);
+		var visible = Tabulator.prototype.helpers.elVisible(this.element),
+		    tempData = {};
 
 		return new Promise(function (resolve, reject) {
 
@@ -5697,16 +5697,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//mutate incomming data if needed
 
-			if (self.table.modExists("mutator")) {
+			if (_this13.table.modExists("mutator")) {
 
-				data = self.table.modules.mutator.transformRow(data, "data", true);
+				tempData = Object.assign(tempData, _this13.data);
+
+				tempData = Object.assign(tempData, data);
+
+				data = _this13.table.modules.mutator.transformRow(tempData, "data", data);
 			}
 
 			//set data
 
 			for (var attrname in data) {
 
-				self.data[attrname] = data[attrname];
+				_this13.data[attrname] = data[attrname];
 			}
 
 			if (_this13.table.options.reactiveData && _this13.table.modExists("reactiveData", true)) {
@@ -5745,11 +5749,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (visible) {
 
-				self.normalizeHeight();
+				_this13.normalizeHeight();
 
-				if (self.table.options.rowFormatter) {
+				if (_this13.table.options.rowFormatter) {
 
-					self.table.options.rowFormatter(self.getComponent());
+					_this13.table.options.rowFormatter(_this13.getComponent());
 				}
 			} else {
 
@@ -5760,7 +5764,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				_this13.heightStyled = "";
 			}
 
-			if (self.table.options.dataTree !== false && self.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(data)) {
+			if (_this13.table.options.dataTree !== false && _this13.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(data)) {
 
 				_this13.table.modules.dataTree.initializeRow(_this13);
 
@@ -5769,10 +5773,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				_this13.table.rowManager.refreshActiveData("tree", false, true);
 			}
 
-			//self.reinitialize();
+			//this.reinitialize();
 
 
-			self.table.options.rowUpdated.call(_this13.table, self.getComponent());
+			_this13.table.options.rowUpdated.call(_this13.table, _this13.getComponent());
 
 			resolve();
 		});
@@ -20538,7 +20542,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//apply mutator to row
-	Mutator.prototype.transformRow = function (data, type, update) {
+	Mutator.prototype.transformRow = function (data, type, updatedData) {
 		var self = this,
 		    key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 		    value;
@@ -20552,7 +20556,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
 					if (mutator) {
-						value = column.getFieldValue(data);
+						value = column.getFieldValue(updatedData);
 
 						if (!update || update && typeof value !== "undefined") {
 							component = column.getComponent();
@@ -20569,10 +20573,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//apply mutator to new cell value
 	Mutator.prototype.transformCell = function (cell, value) {
-		var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false;
+		var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
+		    tempData = {};
 
 		if (mutator) {
-			return mutator.mutator(value, cell.row.getData(), "edit", mutator.params, cell.getComponent());
+			tempData = Object.assign(tempData, cell.row.getData());
+			cell.column.setFieldValue(tempData, value);
+			return mutator.mutator(value, tempData, "edit", mutator.params, cell.getComponent());
 		} else {
 			return value;
 		}

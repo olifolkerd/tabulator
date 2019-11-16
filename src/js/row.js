@@ -512,8 +512,8 @@ Row.prototype.setData = function(data){
 
 //update the rows data
 Row.prototype.updateData = function(data){
-	var self = this,
-	visible = Tabulator.prototype.helpers.elVisible(this.element);
+	var visible = Tabulator.prototype.helpers.elVisible(this.element),
+	tempData = {};
 
 	return new Promise((resolve, reject) => {
 
@@ -526,13 +526,17 @@ Row.prototype.updateData = function(data){
 		}
 
 		//mutate incomming data if needed
-		if(self.table.modExists("mutator")){
-			data = self.table.modules.mutator.transformRow(data, "data", true);
+		if(this.table.modExists("mutator")){
+
+			tempData = Object.assign(tempData, this.data);
+			tempData = Object.assign(tempData, data);
+
+			data = this.table.modules.mutator.transformRow(tempData, "data", data);
 		}
 
 		//set data
 		for (var attrname in data) {
-			self.data[attrname] = data[attrname];
+			this.data[attrname] = data[attrname];
 		}
 
 		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
@@ -562,10 +566,10 @@ Row.prototype.updateData = function(data){
 
 		//Partial reinitialization if visible
 		if(visible){
-			self.normalizeHeight();
+			this.normalizeHeight();
 
-			if(self.table.options.rowFormatter){
-				self.table.options.rowFormatter(self.getComponent());
+			if(this.table.options.rowFormatter){
+				this.table.options.rowFormatter(this.getComponent());
 			}
 		}else{
 			this.initialized = false;
@@ -573,15 +577,15 @@ Row.prototype.updateData = function(data){
 			this.heightStyled = "";
 		}
 
-		if(self.table.options.dataTree !== false && self.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(data)){
+		if(this.table.options.dataTree !== false && this.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(data)){
 			this.table.modules.dataTree.initializeRow(this);
 			this.table.modules.dataTree.layoutRow(this);
 			this.table.rowManager.refreshActiveData("tree", false, true);
 		}
 
-		//self.reinitialize();
+		//this.reinitialize();
 
-		self.table.options.rowUpdated.call(this.table, self.getComponent());
+		this.table.options.rowUpdated.call(this.table, this.getComponent());
 
 		resolve();
 	});
