@@ -1,5 +1,5 @@
 ---
-name: Question
+name: Question (QUESTIONS MUST BE ASKED ON STACK OVERFLOW!!! DO NOT CREATE AN ISSUE!!!)
 about: Please ask questions on Stack Overflow, NOT on GitHub :)
 title: ''
 labels: ''
