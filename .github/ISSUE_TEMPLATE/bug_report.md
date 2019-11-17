@@ -1,25 +1,33 @@
 ---
 name: Bug report
-about: Create a report to help us fix a bug in the system
+about: Report a bug with Tabulator
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
+<!--
+YOUR BUG REPORT MUST CONTAIN A LINK TO A JSFiddle OR Codepen THAT DEMONSTRATES THE ISSUE OR IT WILL BE CLOSED WITHOUT DISCUSSION
+
+Please make sure you fill in all the sections of this template to give us the best chance of helping you
+-->
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-
 **Tabulator Info**
 - Which version of Tabulator are you using?
-- Post a copy of your construct object if possible so we can see how your table is setup
 
 **Working Example**
-Please include a JS Fiddle or Code Pen that demonstrates the problem, it is very hard to diagnose an issue from a simple description
+YOU MUST include a link to a JS Fiddle or Codepen that demonstrates the problem, it is very hard to diagnose an issue from a simple description.
+
+<!--
+ISSUES CREATED WITHOUT THIS EXAMPLE WILL BE CLOSED WITHOUT DISCUSSION
+-->
 
 **To Reproduce**
-Steps to reproduce the behavior:
+A step by step guide to recreate the issue in your JS Fiddle or Codepen:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
