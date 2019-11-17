@@ -2,7 +2,7 @@
 name: Question (QUESTIONS MUST BE ASKED ON STACK OVERFLOW!!! DO NOT CREATE AN ISSUE!!!)
 about: Please ask questions on Stack Overflow, NOT on GitHub
 title: ''
-labels: invalid, question, Ask On Stack Overflow
+labels: Invalid, Question - Ask On Stack Overflow
 assignees: ''
 
 ---

@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a bug with Tabulator
 title: ''
-labels: ''
+labels: Possible Bug
 assignees: ''
 
 ---
