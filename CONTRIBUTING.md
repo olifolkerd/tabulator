@@ -8,7 +8,7 @@ Further help resources can be found in the [Community Help Guide](http://tabulat
 ## Reporting A Bug
 Please read the [Bug Reporting Guide](http://tabulator.info/community#bug) before creating any Bug Report issues on this repo.
 
-**BUG REPORTS WILL NOT BE ACCEPTED WITH OUT A [JS Fiddle](https://jsfiddle.net/) or [Codepen](https://codepen.io/) TO DEMONSTRATE THE ISSUE**
+**BUG REPORTS WILL NOT BE ACCEPTED WITHOUT A [JS Fiddle](https://jsfiddle.net/) or [Codepen](https://codepen.io/) TO DEMONSTRATE THE ISSUE**
 
 
 ## Requesting A New Feature
