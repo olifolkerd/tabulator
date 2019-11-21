@@ -10,6 +10,8 @@ assignees: ''
 <!--
 YOUR BUG REPORT MUST CONTAIN A LINK TO A JSFiddle OR Codepen THAT DEMONSTRATES THE ISSUE OR IT WILL BE CLOSED WITHOUT DISCUSSION
 
+Please read the Bug Reporting Guide before completing this issue: http://tabulator.info/community#bug
+
 Please make sure you fill in all the sections of this template to give us the best chance of helping you
 -->
 

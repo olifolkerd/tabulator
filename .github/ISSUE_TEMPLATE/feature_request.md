@@ -7,7 +7,11 @@ assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
+<!--
+Please read the Feature Requesting Guide before completing this issue: http://tabulator.info/community#feature
+-->
+
+*Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
 **Describe the solution you'd like**
