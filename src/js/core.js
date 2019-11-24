@@ -2037,7 +2037,8 @@ Tabulator.prototype.comms = {
 };
 
 Tabulator.prototype.findTable = function(query){
-	return Tabulator.prototype.comms.lookupTable(query, true);
+	var results = Tabulator.prototype.comms.lookupTable(query, true);
+	return Array.isArray(results) && !results.length ? false : results;
 }
 
 /*=include modules/layout.js */

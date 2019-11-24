@@ -10010,7 +10010,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Tabulator.prototype.findTable = function (query) {
 
-		return Tabulator.prototype.comms.lookupTable(query, true);
+		var results = Tabulator.prototype.comms.lookupTable(query, true);
+
+		return Array.isArray(results) && !results.length ? false : results;
 	};
 
 	var Layout = function Layout(table) {
