@@ -1994,7 +1994,7 @@ Tabulator.prototype.comms = {
 			Tabulator.prototype.comms.tables.splice(index, 1);
 		}
 	},
-	lookupTable:function(query){
+	lookupTable:function(query, silent){
 		var results = [],
 		matches, match;
 
@@ -2022,7 +2022,9 @@ Tabulator.prototype.comms = {
 				results = results.concat(Tabulator.prototype.comms.lookupTable(item));
 			});
 		}else{
-			console.warn("Table Connection Error - Invalid Selector", query);
+			if(!silent){
+				console.warn("Table Connection Error - Invalid Selector", query);
+			}
 		}
 
 		return results;
@@ -2033,6 +2035,10 @@ Tabulator.prototype.comms = {
 		});
 	}
 };
+
+Tabulator.prototype.findTable = function(query){
+	return Tabulator.prototype.comms.lookupTable(query, true);
+}
 
 /*=include modules/layout.js */
 /*=include modules/localize.js */

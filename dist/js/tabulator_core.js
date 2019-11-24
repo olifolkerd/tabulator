@@ -7617,7 +7617,7 @@ Tabulator.prototype.comms = {
 			Tabulator.prototype.comms.tables.splice(index, 1);
 		}
 	},
-	lookupTable: function lookupTable(query) {
+	lookupTable: function lookupTable(query, silent) {
 		var results = [],
 		    matches,
 		    match;
@@ -7645,7 +7645,9 @@ Tabulator.prototype.comms = {
 				results = results.concat(Tabulator.prototype.comms.lookupTable(item));
 			});
 		} else {
-			console.warn("Table Connection Error - Invalid Selector", query);
+			if (!silent) {
+				console.warn("Table Connection Error - Invalid Selector", query);
+			}
 		}
 
 		return results;
@@ -7655,6 +7657,10 @@ Tabulator.prototype.comms = {
 			return element instanceof Tabulator ? table === element : table.element === element;
 		});
 	}
+};
+
+Tabulator.prototype.findTable = function (query) {
+	return Tabulator.prototype.comms.lookupTable(query, true);
 };
 
 var Layout = function Layout(table) {

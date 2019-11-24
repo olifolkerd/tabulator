@@ -9951,7 +9951,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		},
 
-		lookupTable: function lookupTable(query) {
+		lookupTable: function lookupTable(query, silent) {
 
 			var results = [],
 			    matches,
@@ -9989,7 +9989,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 			} else {
 
-				console.warn("Table Connection Error - Invalid Selector", query);
+				if (!silent) {
+
+					console.warn("Table Connection Error - Invalid Selector", query);
+				}
 			}
 
 			return results;
@@ -10003,6 +10006,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 
+	};
+
+	Tabulator.prototype.findTable = function (query) {
+
+		return Tabulator.prototype.comms.lookupTable(query, true);
 	};
 
 	var Layout = function Layout(table) {
