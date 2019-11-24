@@ -1,4 +1,4 @@
-/* Tabulator v4.4.3 (c) Oliver Folkerd */
+/* Tabulator v4.5.0 (c) Oliver Folkerd */
 
 var FrozenRows = function FrozenRows(table) {
 	this.table = table; //hold Tabulator object

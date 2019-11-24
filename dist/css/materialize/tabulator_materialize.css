@@ -1,4 +1,4 @@
-/* Tabulator v4.4.3 (c) Oliver Folkerd */
+/* Tabulator v4.5.0 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
   background-color: #fff;
@@ -379,7 +379,7 @@
 }
 
 .tabulator .tabulator-footer .tabulator-page.active {
-  color: color("materialize-red", "lighten-2");
+  color: #ee6e73;
 }
 
 .tabulator .tabulator-footer .tabulator-page:disabled {
@@ -432,7 +432,7 @@
 }
 
 .tabulator.striped .tabulator-row:nth-child(even).tabulator-selected {
-  background-color: color("materialize-red", "lighten-2");
+  background-color: #ee6e73;
 }
 
 .tabulator.striped .tabulator-row:nth-child(even).tabulator-selectable:hover {
@@ -441,7 +441,7 @@
 }
 
 .tabulator.striped .tabulator-row:nth-child(even).tabulator-selected:hover {
-  background-color: color("materialize-red", "lighten-2");
+  background-color: #ee6e73;
   cursor: pointer;
 }
 
@@ -459,11 +459,11 @@
 }
 
 .tabulator-row.tabulator-selected {
-  background-color: color("materialize-red", "lighten-2");
+  background-color: #ee6e73;
 }
 
 .tabulator-row.tabulator-selected:hover {
-  background-color: color("materialize-red", "lighten-2");
+  background-color: #ee6e73;
   cursor: pointer;
 }
 
@@ -546,7 +546,7 @@
 }
 
 .tabulator-row .tabulator-cell.tabulator-editing {
-  border: 1px solid color("materialize-red", "lighten-2");
+  border: 1px solid #ee6e73;
   padding: 0;
 }
 
@@ -789,13 +789,13 @@
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item.active {
   color: #fff;
-  background: color("materialize-red", "lighten-2");
+  background: #ee6e73;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
   cursor: pointer;
   color: #fff;
-  background: color("materialize-red", "lighten-2");
+  background: #ee6e73;
 }
 
 .tabulator-edit-select-list .tabulator-edit-select-list-group {

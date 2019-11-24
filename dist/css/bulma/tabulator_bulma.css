@@ -1,4 +1,4 @@
-/* Tabulator v4.4.3 (c) Oliver Folkerd */
+/* Tabulator v4.5.0 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
   background-color: white;
@@ -773,6 +773,10 @@
 
 .tabulator-row.tabulator-group.tabulator-group-level-5 {
   padding-left: 110px;
+}
+
+.tabulator-row.tabulator-group .tabulator-group-toggle {
+  display: inline-block;
 }
 
 .tabulator-row.tabulator-group .tabulator-arrow {
