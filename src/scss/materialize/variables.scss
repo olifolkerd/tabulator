@@ -46,6 +46,23 @@ $materialize-red: (
   "darken-4":   #8b1014,
 );
 
+$colors: (
+        "materialize-red": $materialize-red,
+) !default;
+
+// usage: color("name_of_color", "type_of_color")
+// to avoid to repeating map-get($colors, ...)
+@function color($color, $type) {
+  @if map-has-key($colors, $color) {
+    $curr_color: map-get($colors, $color);
+    @if map-has-key($curr_color, $type) {
+      @return map-get($curr_color, $type);
+    }
+  }
+  @warn "Unknown `#{$color}` - `#{$type}` in $colors.";
+  @return null;
+}
+
 $table-border-color: rgba(0,0,0,.12) !default;
 $table-striped-color: rgba(242, 242, 242, 0.5) !default;
 
