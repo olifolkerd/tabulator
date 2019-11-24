@@ -922,6 +922,7 @@ Clipboard.prototype.copyFormatters = {
 		var output = [];
 
 		data.forEach(function (row) {
+			var newRow = [];
 			row.forEach(function (value) {
 				if (typeof value == "undefined") {
 					value = "";
@@ -933,9 +934,10 @@ Clipboard.prototype.copyFormatters = {
 					value = value.split('"').join('""');
 					value = '"' + value + '"';
 				}
+				newRow.push(value);
 			});
 
-			output.push(row.join("\t"));
+			output.push(newRow.join("\t"));
 		});
 
 		return output.join("\n");

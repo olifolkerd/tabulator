@@ -12701,6 +12701,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var output = [];
 
 			data.forEach(function (row) {
+				var newRow = [];
 				row.forEach(function (value) {
 					if (typeof value == "undefined") {
 						value = "";
@@ -12712,9 +12713,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						value = value.split('"').join('""');
 						value = '"' + value + '"';
 					}
+					newRow.push(value);
 				});
 
-				output.push(row.join("\t"));
+				output.push(newRow.join("\t"));
 			});
 
 			return output.join("\n");
@@ -15860,7 +15862,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.filterList = []; //hold filter list
 		this.headerFilters = {}; //hold column filters
-		this.headerFilterElements = []; //hold header filter elements for manipulation
 		this.headerFilterColumns = []; //hold columns that use header filters
 
 		this.changed = false; //has filtering changed since last render
@@ -15962,7 +15963,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.generateHeaderFilterElement(column);
 	};
 
-	Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
+	Filter.prototype.generateHeaderFilterElement = function (column, initialValue, reinitialize) {
 		var _this46 = this;
 
 		var self = this,
@@ -15980,18 +15981,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		function cancel() {}
 
 		if (column.modules.filter.headerElement && column.modules.filter.headerElement.parentNode) {
-			var oldFilterElement = column.modules.filter.headerElement.parentNode;
-			var oldFilterElementIndex = self.headerFilterElements.indexOf(oldFilterElement);
-			if (oldFilterElementIndex >= 0) {
-				self.headerFilterElements.splice(oldFilterElementIndex, 1);
-			}
-
-			var oldColumnIndex = self.headerFilterColumns.indexOf(oldColumnIndex);
-			if (oldColumnIndex >= 0) {
-				self.headerFilterColumns.splice(oldColumnIndex, 1);
-			}
-
-			column.contentElement.removeChild(oldFilterElement);
+			column.contentElement.removeChild(column.modules.filter.headerElement.parentNode);
 		}
 
 		if (field) {
@@ -16156,8 +16146,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				column.contentElement.appendChild(filterElement);
 
-				self.headerFilterElements.push(editorElement);
-				self.headerFilterColumns.push(column);
+				if (!reinitialize) {
+					self.headerFilterColumns.push(column);
+				}
 			}
 		} else {
 			console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
@@ -16166,15 +16157,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 	Filter.prototype.hideHeaderFilterElements = function () {
-		this.headerFilterElements.forEach(function (element) {
-			element.style.display = 'none';
+		this.headerFilterColumns.forEach(function (column) {
+			if (column.modules.filter && column.modules.filter.headerElement) {
+				column.modules.filter.headerElement.style.display = 'none';
+			}
 		});
 	};
 
 	//show all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 	Filter.prototype.showHeaderFilterElements = function () {
-		this.headerFilterElements.forEach(function (element) {
-			element.style.display = '';
+		this.headerFilterColumns.forEach(function (column) {
+			if (column.modules.filter && column.modules.filter.headerElement) {
+				column.modules.filter.headerElement.style.display = '';
+			}
 		});
 	};
 
@@ -16191,7 +16186,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Filter.prototype.setHeaderFilterValue = function (column, value) {
 		if (column) {
 			if (column.modules.filter && column.modules.filter.headerElement) {
-				this.generateHeaderFilterElement(column, value);
+				this.generateHeaderFilterElement(column, value, true);
 				column.modules.filter.success(value);
 			} else {
 				console.warn("Column Filter Error - No header filter set on column:", column.getField());
@@ -16202,7 +16197,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Filter.prototype.reloadHeaderFilter = function (column) {
 		if (column) {
 			if (column.modules.filter && column.modules.filter.headerElement) {
-				this.generateHeaderFilterElement(column, column.modules.filter.value);
+				this.generateHeaderFilterElement(column, column.modules.filter.value, true);
 			} else {
 				console.warn("Column Filter Error - No header filter set on column:", column.getField());
 			}
@@ -22764,10 +22759,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (self.table.options.selectable && self.table.options.selectable != "highlight") {
 				if (self.table.options.selectableRangeMode === "click") {
 					element.addEventListener("click", function (e) {
-
-						self.table._clearSelection();
-
 						if (e.shiftKey) {
+							self.table._clearSelection();
 							self.lastClickedRow = self.lastClickedRow || row;
 
 							var lastClickedRowIdx = self.table.rowManager.getDisplayRowIndex(self.lastClickedRow);
@@ -22804,6 +22797,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 								self.selectRows(toggledRows);
 							}
+							self.table._clearSelection();
 						} else if (e.ctrlKey || e.metaKey) {
 							self.toggleRow(row);
 							self.lastClickedRow = row;
@@ -22812,8 +22806,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							self.selectRows(row);
 							self.lastClickedRow = row;
 						}
-
-						self.table._clearSelection();
 					});
 				} else {
 					element.addEventListener("click", function (e) {

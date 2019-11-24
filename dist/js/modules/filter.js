@@ -8,7 +8,6 @@ var Filter = function Filter(table) {
 
 	this.filterList = []; //hold filter list
 	this.headerFilters = {}; //hold column filters
-	this.headerFilterElements = []; //hold header filter elements for manipulation
 	this.headerFilterColumns = []; //hold columns that use header filters
 
 	this.changed = false; //has filtering changed since last render
@@ -110,7 +109,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 	this.generateHeaderFilterElement(column);
 };
 
-Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
+Filter.prototype.generateHeaderFilterElement = function (column, initialValue, reinitialize) {
 	var _this = this;
 
 	var self = this,
@@ -128,18 +127,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 	function cancel() {}
 
 	if (column.modules.filter.headerElement && column.modules.filter.headerElement.parentNode) {
-		var oldFilterElement = column.modules.filter.headerElement.parentNode;
-		var oldFilterElementIndex = self.headerFilterElements.indexOf(oldFilterElement);
-		if (oldFilterElementIndex >= 0) {
-			self.headerFilterElements.splice(oldFilterElementIndex, 1);
-		}
-
-		var oldColumnIndex = self.headerFilterColumns.indexOf(oldColumnIndex);
-		if (oldColumnIndex >= 0) {
-			self.headerFilterColumns.splice(oldColumnIndex, 1);
-		}
-
-		column.contentElement.removeChild(oldFilterElement);
+		column.contentElement.removeChild(column.modules.filter.headerElement.parentNode);
 	}
 
 	if (field) {
@@ -304,8 +292,9 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 
 			column.contentElement.appendChild(filterElement);
 
-			self.headerFilterElements.push(editorElement);
-			self.headerFilterColumns.push(column);
+			if (!reinitialize) {
+				self.headerFilterColumns.push(column);
+			}
 		}
 	} else {
 		console.warn("Filter Error - Cannot add header filter, column has no field set:", column.definition.title);
@@ -314,15 +303,19 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue) {
 
 //hide all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 Filter.prototype.hideHeaderFilterElements = function () {
-	this.headerFilterElements.forEach(function (element) {
-		element.style.display = 'none';
+	this.headerFilterColumns.forEach(function (column) {
+		if (column.modules.filter && column.modules.filter.headerElement) {
+			column.modules.filter.headerElement.style.display = 'none';
+		}
 	});
 };
 
 //show all header filter elements (used to ensure correct column widths in "fitData" layout mode)
 Filter.prototype.showHeaderFilterElements = function () {
-	this.headerFilterElements.forEach(function (element) {
-		element.style.display = '';
+	this.headerFilterColumns.forEach(function (column) {
+		if (column.modules.filter && column.modules.filter.headerElement) {
+			column.modules.filter.headerElement.style.display = '';
+		}
 	});
 };
 
@@ -339,7 +332,7 @@ Filter.prototype.setHeaderFilterFocus = function (column) {
 Filter.prototype.setHeaderFilterValue = function (column, value) {
 	if (column) {
 		if (column.modules.filter && column.modules.filter.headerElement) {
-			this.generateHeaderFilterElement(column, value);
+			this.generateHeaderFilterElement(column, value, true);
 			column.modules.filter.success(value);
 		} else {
 			console.warn("Column Filter Error - No header filter set on column:", column.getField());
@@ -350,7 +343,7 @@ Filter.prototype.setHeaderFilterValue = function (column, value) {
 Filter.prototype.reloadHeaderFilter = function (column) {
 	if (column) {
 		if (column.modules.filter && column.modules.filter.headerElement) {
-			this.generateHeaderFilterElement(column, column.modules.filter.value);
+			this.generateHeaderFilterElement(column, column.modules.filter.value, true);
 		} else {
 			console.warn("Column Filter Error - No header filter set on column:", column.getField());
 		}
