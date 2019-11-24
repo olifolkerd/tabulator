@@ -21343,11 +21343,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			retreivedData = this.retreiveData("page");
 
 			if (retreivedData) {
-				if (typeof retreivedData.paginationSize !== "undefined") {
+				if (typeof retreivedData.paginationSize !== "undefined" && (this.config.page === true || this.config.page.size)) {
 					this.table.options.paginationSize = retreivedData.paginationSize;
 				}
 
-				if (typeof retreivedData.paginationInitialPage !== "undefined") {
+				if (typeof retreivedData.paginationInitialPage !== "undefined" && (this.config.page === true || this.config.page.page)) {
 					this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
 				}
 			}
@@ -21358,13 +21358,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			retreivedData = this.retreiveData("group");
 
 			if (retreivedData) {
-				if (typeof retreivedData.groupBy !== "undefined") {
+				if (typeof retreivedData.groupBy !== "undefined" && (this.config.group === true || this.config.group.groupBy)) {
 					this.table.options.groupBy = retreivedData.groupBy;
 				}
-				if (typeof retreivedData.groupStartOpen !== "undefined") {
+				if (typeof retreivedData.groupStartOpen !== "undefined" && (this.config.group === true || this.config.group.groupStartOpen)) {
 					this.table.options.groupStartOpen = retreivedData.groupStartOpen;
 				}
-				if (typeof retreivedData.groupHeader !== "undefined") {
+				if (typeof retreivedData.groupHeader !== "undefined" && (this.config.group === true || this.config.group.groupHeader)) {
 					this.table.options.groupHeader = retreivedData.groupHeader;
 				}
 			}
