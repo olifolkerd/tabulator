@@ -6713,18 +6713,42 @@ Tabulator.prototype.deleteRow = function (index) {
 	var _this20 = this;
 
 	return new Promise(function (resolve, reject) {
-		var row = _this20.rowManager.findRow(index);
+		var count = 0,
+		    successCount = 0,
+		    self = _this20;
 
-		if (row) {
-			row.delete().then(function () {
-				resolve();
-			}).catch(function (err) {
-				reject(err);
-			});
-		} else {
-			console.warn("Delete Error - No matching row found:", index);
-			reject("Delete Error - No matching row found");
+		function doneCheck() {
+			count++;
+
+			if (count == index.length) {
+				if (successCount) {
+					self.rowManager.reRenderInPosition();
+					resolve();
+				}
+			}
 		}
+
+		if (!Array.isArray(index)) {
+			index = [index];
+		}
+
+		index.forEach(function (item) {
+			var row = _this20.rowManager.findRow(item, true);
+
+			if (row) {
+				row.delete().then(function () {
+					successCount++;
+					doneCheck();
+				}).catch(function (err) {
+					doneCheck();
+					reject(err);
+				});
+			} else {
+				console.warn("Delete Error - No matching row found:", item);
+				reject("Delete Error - No matching row found");
+				doneCheck();
+			}
+		});
 	});
 };
 

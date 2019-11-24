@@ -1076,21 +1076,45 @@ Tabulator.prototype.getRowFromPosition = function(position, active){
 //delete row from table
 Tabulator.prototype.deleteRow = function(index){
 	return new Promise((resolve, reject) => {
-		var row = this.rowManager.findRow(index);
+		var count = 0,
+		successCount = 0,
+		self = this;
 
-		if(row){
-			row.delete()
-			.then(() => {
-				resolve();
-			})
-			.catch((err) => {
-				reject(err);
-			});
+		function doneCheck(){
+			count++;
 
-		}else{
-			console.warn("Delete Error - No matching row found:", index);
-			reject("Delete Error - No matching row found")
+			if(count == index.length){
+				if(successCount){
+					self.rowManager.reRenderInPosition();
+					resolve();
+				}
+			}
 		}
+
+		if(!Array.isArray(index)){
+			index = [index];
+		}
+
+		index.forEach((item) =>{
+			var row = this.rowManager.findRow(item, true);
+
+			if(row){
+				row.delete()
+				.then(() => {
+					successCount++;
+					doneCheck();
+				})
+				.catch((err) => {
+					doneCheck();
+					reject(err);
+				});
+
+			}else{
+				console.warn("Delete Error - No matching row found:", item);
+				reject("Delete Error - No matching row found")
+				doneCheck();
+			}
+		});
 	});
 };
 
