@@ -7368,7 +7368,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		paginationSize: false, //set number of rows to a page
 
-		// paginationInitialPage:1, //initail page to show on load
+		paginationInitialPage: 1, //initail page to show on load
 
 		paginationButtonCount: 5, // set count of page button
 
@@ -8066,11 +8066,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
 
-						self.modules.ajax.loadData().then(function () {}).catch(function () {});
+						self.modules.ajax.loadData().then(function () {}).catch(function () {
+
+							if (self.options.paginationInitialPage) {
+
+								self.modules.page.setPage(self.options.paginationInitialPage);
+							}
+						});
+
+						return;
 					} else {
 
 						self.rowManager.setData(self.options.data);
 					}
+				}
+
+				if (self.options.paginationInitialPage) {
+
+					self.modules.page.setPage(self.options.paginationInitialPage);
 				}
 			} else {
 
@@ -21334,9 +21347,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this.table.options.paginationSize = retreivedData.paginationSize;
 				}
 
-				// if(typeof retreivedData.paginationInitialPage !== "undefined"){
-				// 	this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
-				// }
+				if (typeof retreivedData.paginationInitialPage !== "undefined") {
+					this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+				}
 			}
 		}
 
@@ -21513,11 +21526,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			case "page":
 				data = {
-					paginationSize: this.table.modules.page.getPageSize()
-					// paginationInitialPage:this.table.modules.page.getPage(),
+					paginationSize: this.table.modules.page.getPageSize(),
+					paginationInitialPage: this.table.modules.page.getPage()
 				};
 				break;
 		}
+
+		console.log("save", type, data);
 
 		if (this.writeFunc) {
 			this.writeFunc(this.id, type, data);

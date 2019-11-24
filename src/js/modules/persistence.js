@@ -88,9 +88,9 @@ Persistence.prototype.initialize = function(){
 				this.table.options.paginationSize = retreivedData.paginationSize;
 			}
 
-			// if(typeof retreivedData.paginationInitialPage !== "undefined"){
-			// 	this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
-			// }
+			if(typeof retreivedData.paginationInitialPage !== "undefined"){
+				this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+			}
 		}
 	}
 
@@ -272,7 +272,7 @@ Persistence.prototype.save = function(type){
 		case "page":
 		data = {
 			paginationSize:this.table.modules.page.getPageSize(),
-			// paginationInitialPage:this.table.modules.page.getPage(),
+			paginationInitialPage:this.table.modules.page.getPage(),
 		};
 		break;
 	}

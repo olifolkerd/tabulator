@@ -5741,7 +5741,7 @@ Tabulator.prototype.defaultOptions = {
 
 	pagination: false, //set pagination type
 	paginationSize: false, //set number of rows to a page
-	// paginationInitialPage:1, //initail page to show on load
+	paginationInitialPage: 1, //initail page to show on load
 	paginationButtonCount: 5, // set count of page button
 	paginationSizeSelector: false, //add pagination size selector element
 	paginationElement: false, //element to hold pagination numbers
@@ -6234,10 +6234,20 @@ Tabulator.prototype._loadInitialData = function () {
 				self.rowManager.setData(self.options.data);
 			} else {
 				if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
-					self.modules.ajax.loadData().then(function () {}).catch(function () {});
+					self.modules.ajax.loadData().then(function () {}).catch(function () {
+						if (self.options.paginationInitialPage) {
+							self.modules.page.setPage(self.options.paginationInitialPage);
+						}
+					});
+
+					return;
 				} else {
 					self.rowManager.setData(self.options.data);
 				}
+			}
+
+			if (self.options.paginationInitialPage) {
+				self.modules.page.setPage(self.options.paginationInitialPage);
 			}
 		} else {
 			if (self.options.ajaxURL) {
