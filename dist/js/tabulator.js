@@ -2841,6 +2841,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 		this.rowNumColumn = false; //hold column component for row number column
+
+
+		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
+
+		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
+
+		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
 	};
 
 	//////////////// Setup Functions /////////////////
@@ -3864,216 +3871,236 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var self = this,
 		    table = this.table,
+		    cascadeOrder = ["all", "filter", "sort", "display", "freeze", "group", "tree", "page"],
 		    displayIndex;
 
-		if (self.table.modExists("edit")) {
+		if (this.redrawBlock) {
 
-			self.table.modules.edit.cancelEdit();
-		}
+			if (!this.redrawBlockRestoreConfig || cascadeOrder.indexOf(stage) < cascadeOrder.indexOf(this.redrawBlockRestoreConfig.stage)) {
 
-		if (!stage) {
+				this.redrawBlockRestoreConfig = {
 
-			stage = "all";
-		}
+					stage: stage,
 
-		if (table.options.selectable && !table.options.selectablePersistence && table.modExists("selectRow")) {
+					skipStage: skipStage,
 
-			table.modules.selectRow.deselectRows();
-		}
+					renderInPosition: renderInPosition
 
-		//cascade through data refresh stages
+				};
+			}
 
-		switch (stage) {
+			return;
+		} else {
 
-			case "all":
+			if (self.table.modExists("edit")) {
 
-			case "filter":
+				self.table.modules.edit.cancelEdit();
+			}
 
-				if (!skipStage) {
+			if (!stage) {
 
-					if (table.modExists("filter")) {
+				stage = "all";
+			}
 
-						self.setActiveRows(table.modules.filter.filter(self.rows));
+			if (table.options.selectable && !table.options.selectablePersistence && table.modExists("selectRow")) {
+
+				table.modules.selectRow.deselectRows();
+			}
+
+			//cascade through data refresh stages
+
+			switch (stage) {
+
+				case "all":
+
+				case "filter":
+
+					if (!skipStage) {
+
+						if (table.modExists("filter")) {
+
+							self.setActiveRows(table.modules.filter.filter(self.rows));
+						} else {
+
+							self.setActiveRows(self.rows.slice(0));
+						}
 					} else {
 
-						self.setActiveRows(self.rows.slice(0));
+						skipStage = false;
 					}
-				} else {
 
-					skipStage = false;
-				}
+				case "sort":
 
-			case "sort":
+					if (!skipStage) {
 
-				if (!skipStage) {
+						if (table.modExists("sort")) {
 
-					if (table.modExists("sort")) {
-
-						table.modules.sort.sort(this.activeRows);
-					}
-				} else {
-
-					skipStage = false;
-				}
-
-				//regenerate row numbers for row number formatter if in use
-
-				if (this.rowNumColumn) {
-
-					this.activeRows.forEach(function (row) {
-
-						var cell = row.getCell(_this12.rowNumColumn);
-
-						if (cell) {
-
-							cell._generateContents();
+							table.modules.sort.sort(this.activeRows);
 						}
-					});
-				}
+					} else {
 
-			//generic stage to allow for pipeline trigger after the data manipulation stage
+						skipStage = false;
+					}
 
-			case "display":
+					//regenerate row numbers for row number formatter if in use
 
-				this.resetDisplayRows();
+					if (this.rowNumColumn) {
 
-			case "freeze":
+						this.activeRows.forEach(function (row) {
 
-				if (!skipStage) {
+							var cell = row.getCell(_this12.rowNumColumn);
 
-					if (this.table.modExists("frozenRows")) {
+							if (cell) {
 
-						if (table.modules.frozenRows.isFrozen()) {
+								cell._generateContents();
+							}
+						});
+					}
 
-							if (!table.modules.frozenRows.getDisplayIndex()) {
+				//generic stage to allow for pipeline trigger after the data manipulation stage
 
-								table.modules.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
+				case "display":
+
+					this.resetDisplayRows();
+
+				case "freeze":
+
+					if (!skipStage) {
+
+						if (this.table.modExists("frozenRows")) {
+
+							if (table.modules.frozenRows.isFrozen()) {
+
+								if (!table.modules.frozenRows.getDisplayIndex()) {
+
+									table.modules.frozenRows.setDisplayIndex(this.getNextDisplayIndex());
+								}
+
+								displayIndex = table.modules.frozenRows.getDisplayIndex();
+
+								displayIndex = self.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+								if (displayIndex !== true) {
+
+									table.modules.frozenRows.setDisplayIndex(displayIndex);
+								}
+							}
+						}
+					} else {
+
+						skipStage = false;
+					}
+
+				case "group":
+
+					if (!skipStage) {
+
+						if (table.options.groupBy && table.modExists("groupRows")) {
+
+							if (!table.modules.groupRows.getDisplayIndex()) {
+
+								table.modules.groupRows.setDisplayIndex(this.getNextDisplayIndex());
 							}
 
-							displayIndex = table.modules.frozenRows.getDisplayIndex();
+							displayIndex = table.modules.groupRows.getDisplayIndex();
 
-							displayIndex = self.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+							displayIndex = self.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 							if (displayIndex !== true) {
 
-								table.modules.frozenRows.setDisplayIndex(displayIndex);
+								table.modules.groupRows.setDisplayIndex(displayIndex);
 							}
 						}
+					} else {
+
+						skipStage = false;
 					}
-				} else {
 
-					skipStage = false;
-				}
+				case "tree":
 
-			case "group":
+					if (!skipStage) {
 
-				if (!skipStage) {
+						if (table.options.dataTree && table.modExists("dataTree")) {
 
-					if (table.options.groupBy && table.modExists("groupRows")) {
+							if (!table.modules.dataTree.getDisplayIndex()) {
 
-						if (!table.modules.groupRows.getDisplayIndex()) {
+								table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
+							}
 
-							table.modules.groupRows.setDisplayIndex(this.getNextDisplayIndex());
+							displayIndex = table.modules.dataTree.getDisplayIndex();
+
+							displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+							if (displayIndex !== true) {
+
+								table.modules.dataTree.setDisplayIndex(displayIndex);
+							}
 						}
+					} else {
 
-						displayIndex = table.modules.groupRows.getDisplayIndex();
-
-						displayIndex = self.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if (displayIndex !== true) {
-
-							table.modules.groupRows.setDisplayIndex(displayIndex);
-						}
+						skipStage = false;
 					}
-				} else {
 
-					skipStage = false;
-				}
-
-			case "tree":
-
-				if (!skipStage) {
-
-					if (table.options.dataTree && table.modExists("dataTree")) {
-
-						if (!table.modules.dataTree.getDisplayIndex()) {
-
-							table.modules.dataTree.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.dataTree.getDisplayIndex();
-
-						displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if (displayIndex !== true) {
-
-							table.modules.dataTree.setDisplayIndex(displayIndex);
-						}
-					}
-				} else {
-
-					skipStage = false;
-				}
-
-				if (table.options.pagination && table.modExists("page") && !renderInPosition) {
-
-					if (table.modules.page.getMode() == "local") {
-
-						table.modules.page.reset();
-					}
-				}
-
-			case "page":
-
-				if (!skipStage) {
-
-					if (table.options.pagination && table.modExists("page")) {
-
-						if (!table.modules.page.getDisplayIndex()) {
-
-							table.modules.page.setDisplayIndex(this.getNextDisplayIndex());
-						}
-
-						displayIndex = table.modules.page.getDisplayIndex();
+					if (table.options.pagination && table.modExists("page") && !renderInPosition) {
 
 						if (table.modules.page.getMode() == "local") {
 
-							table.modules.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
-						}
-
-						displayIndex = self.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
-
-						if (displayIndex !== true) {
-
-							table.modules.page.setDisplayIndex(displayIndex);
+							table.modules.page.reset();
 						}
 					}
+
+				case "page":
+
+					if (!skipStage) {
+
+						if (table.options.pagination && table.modExists("page")) {
+
+							if (!table.modules.page.getDisplayIndex()) {
+
+								table.modules.page.setDisplayIndex(this.getNextDisplayIndex());
+							}
+
+							displayIndex = table.modules.page.getDisplayIndex();
+
+							if (table.modules.page.getMode() == "local") {
+
+								table.modules.page.setMaxRows(this.getDisplayRows(displayIndex - 1).length);
+							}
+
+							displayIndex = self.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+
+							if (displayIndex !== true) {
+
+								table.modules.page.setDisplayIndex(displayIndex);
+							}
+						}
+					} else {
+
+						skipStage = false;
+					}
+
+			}
+
+			if (Tabulator.prototype.helpers.elVisible(self.element)) {
+
+				if (renderInPosition) {
+
+					self.reRenderInPosition();
 				} else {
 
-					skipStage = false;
-				}
+					self.renderTable();
 
-		}
+					if (table.options.layoutColumnsOnNewData) {
 
-		if (Tabulator.prototype.helpers.elVisible(self.element)) {
-
-			if (renderInPosition) {
-
-				self.reRenderInPosition();
-			} else {
-
-				self.renderTable();
-
-				if (table.options.layoutColumnsOnNewData) {
-
-					self.table.columnManager.redraw(true);
+						self.table.columnManager.redraw(true);
+					}
 				}
 			}
-		}
 
-		if (table.modExists("columnCalcs")) {
+			if (table.modExists("columnCalcs")) {
 
-			table.modules.columnCalcs.recalc(this.activeRows);
+				table.modules.columnCalcs.recalc(this.activeRows);
+			}
 		}
 	};
 
@@ -4255,42 +4282,54 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.getRenderMode() == "virtual") {
 
-			var scrollTop = this.element.scrollTop;
+			if (this.redrawBlock) {
 
-			var topRow = false;
+				if (callback) {
 
-			var topOffset = false;
+					callback();
+				} else {
 
-			var left = this.scrollLeft;
+					this.redrawBlockRederInPosition = true;
+				}
+			} else {
 
-			var rows = this.getDisplayRows();
+				var scrollTop = this.element.scrollTop;
 
-			for (var i = this.vDomTop; i <= this.vDomBottom; i++) {
+				var topRow = false;
 
-				if (rows[i]) {
+				var topOffset = false;
 
-					var diff = scrollTop - rows[i].getElement().offsetTop;
+				var left = this.scrollLeft;
 
-					if (topOffset === false || Math.abs(diff) < topOffset) {
+				var rows = this.getDisplayRows();
 
-						topOffset = diff;
+				for (var i = this.vDomTop; i <= this.vDomBottom; i++) {
 
-						topRow = i;
-					} else {
+					if (rows[i]) {
 
-						break;
+						var diff = scrollTop - rows[i].getElement().offsetTop;
+
+						if (topOffset === false || Math.abs(diff) < topOffset) {
+
+							topOffset = diff;
+
+							topRow = i;
+						} else {
+
+							break;
+						}
 					}
 				}
+
+				if (callback) {
+
+					callback();
+				}
+
+				this._virtualRenderFill(topRow === false ? this.displayRowsCount - 1 : topRow, true, topOffset || 0);
+
+				this.scrollHorizontal(left);
 			}
-
-			if (callback) {
-
-				callback();
-			}
-
-			this._virtualRenderFill(topRow === false ? this.displayRowsCount - 1 : topRow, true, topOffset || 0);
-
-			this.scrollHorizontal(left);
 		} else {
 
 			this.renderTable();
@@ -4946,6 +4985,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			row.reinitialize();
 		});
+	};
+
+	//prevent table from being redrawn
+
+	RowManager.prototype.blockRedraw = function () {
+
+		this.redrawBlock = true;
+
+		this.redrawBlockRestoreConfig = false;
+	};
+
+	//restore table redrawing
+
+	RowManager.prototype.restoreRedraw = function () {
+
+		this.redrawBlock = false;
+
+		if (this.redrawBlockRestoreConfig) {
+
+			this.refreshActiveData(this.redrawBlockRestoreConfig.stage, this.redrawBlockRestoreConfig.skipStage, this.redrawBlockRestoreConfig.renderInPosition);
+
+			this.redrawBlockRestoreConfig = false;
+		} else {
+
+			if (this.redrawBlockRederInPosition) {
+
+				this.reRenderInPosition();
+			}
+		}
+
+		this.redrawBlockRederInPosition = false;
 	};
 
 	//redraw table
@@ -6855,7 +6925,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Cell.prototype.delete = function () {
 
-		this.element.parentNode.removeChild(this.element);
+		if (!this.table.rowManager.redrawBlock) {
+
+			this.element.parentNode.removeChild(this.element);
+		}
 
 		this.element = false;
 
@@ -8191,7 +8264,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	////////////////// Data Handling //////////////////
 
 
-	//loca data from local file
+	//block table redrawing
+
+	Tabulator.prototype.blockRedraw = function () {
+
+		return this.rowManager.blockRedraw();
+	};
+
+	//restore table redrawing
+
+	Tabulator.prototype.restoreRedraw = function () {
+
+		return this.rowManager.restoreRedraw();
+	};
+
+	//local data from local file
 
 	Tabulator.prototype.setDataFromLocalFile = function (extensions) {
 		var _this16 = this;

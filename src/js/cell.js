@@ -629,7 +629,9 @@ Cell.prototype.cancelEdit = function(){
 
 
 Cell.prototype.delete = function(){
-	this.element.parentNode.removeChild(this.element);
+	if(!this.table.rowManager.redrawBlock){
+		this.element.parentNode.removeChild(this.element);
+	}
 	this.element = false;
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);

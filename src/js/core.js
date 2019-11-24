@@ -738,7 +738,18 @@ Tabulator.prototype._detectBrowser = function(){
 
 ////////////////// Data Handling //////////////////
 
-//loca data from local file
+//block table redrawing
+Tabulator.prototype.blockRedraw = function(){
+	return this.rowManager.blockRedraw();
+};
+
+//restore table redrawing
+Tabulator.prototype.restoreRedraw = function(){
+	return this.rowManager.restoreRedraw();
+};
+
+
+//local data from local file
 Tabulator.prototype.setDataFromLocalFile = function(extensions){
 
 	return new Promise((resolve, reject) => {
