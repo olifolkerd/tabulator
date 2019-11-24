@@ -1166,6 +1166,9 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 			padding-left:110px;
 		}
 
+		.tabulator-group-toggle{
+			display: inline-block;
+		}
 
 		//sorting arrow
 		.tabulator-arrow{

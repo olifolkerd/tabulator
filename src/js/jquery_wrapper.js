@@ -13,22 +13,28 @@
  (function (factory) {
  	"use strict";
  	if (typeof define === 'function' && define.amd) {
- 		define(['jquery', 'jquery-ui', 'tabulator'], factory);
+ 		define(['jquery', 'tabulator', 'jquery-ui'], factory);
  	}
  	else if(typeof module !== 'undefined' && module.exports) {
  		module.exports = factory(
-    require('jquery'), 
-    require('jquery-ui'), 
-    require('tabulator')
-   );
+ 			require('jquery'),
+ 			require('tabulator'),
+ 			require('jquery-ui')
+ 		);
  	}
  	else {
- 		factory(jQuery);
+ 		factory(jQuery, Tabulator);
  	}
- }(function ($, undefined, Tabulator) {
+ }(function ($, Tabulator) {
+
  	$.widget("ui.tabulator", {
  		_create:function(){
- 			this.table = new Tabulator(this.element[0], this.options);
+ 			var options = Object.assign({}, this.options);
+
+ 			delete options.create;
+ 			delete options.disabled;
+
+ 			this.table = new Tabulator(this.element[0], options);
 
  			//map tabulator functions to jquery wrapper
  			for(var key in Tabulator.prototype){

@@ -205,6 +205,8 @@ ColumnManager.prototype._addColumn = function(definition, before, nextToColumn){
 			this.columns.push(column);
 			this.headersElement.appendChild(column.getElement());
 		}
+
+		column.columnRendered();
 	}
 
 	return column;
@@ -245,7 +247,7 @@ ColumnManager.prototype._verticalAlignHeaders = function(){
 	});
 
 	self.columns.forEach(function(column){
-		column.verticalAlign(self.table.options.columnVertAlign, minHeight);
+		column.verticalAlign(self.table.options.columnHeaderVertAlign, minHeight);
 	});
 
 	self.rowManager.adjustTableSize();
@@ -424,7 +426,7 @@ ColumnManager.prototype.moveColumnActual = function(from, to, after){
 		this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
 	}
 
-	if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 		this.table.modules.persistence.save("columns");
 	}
 };
@@ -575,27 +577,31 @@ ColumnManager.prototype.getFlexBaseWidth = function(){
 };
 
 ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
-	var column = this._addColumn(definition, before, nextToColumn);
+	return new Promise((resolve, reject) => {
+		var column = this._addColumn(definition, before, nextToColumn);
 
-	this._reIndexColumns();
+		this._reIndexColumns();
 
-	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-		this.table.modules.responsiveLayout.initialize();
-	}
+		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.initialize();
+		}
 
-	if(this.table.modExists("columnCalcs")){
-		this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-	}
+		if(this.table.modExists("columnCalcs")){
+			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
+		}
 
-	this.redraw();
+		this.redraw();
 
-	if(this.table.modules.layout.getMode() != "fitColumns"){
-		column.reinitializeWidth();
-	}
+		if(this.table.modules.layout.getMode() != "fitColumns"){
+			column.reinitializeWidth();
+		}
 
-	this._verticalAlignHeaders();
+		this._verticalAlignHeaders();
 
-	this.table.rowManager.reinitialize();
+		this.table.rowManager.reinitialize();
+
+		resolve(column);
+	});
 };
 
 //remove column from system
@@ -641,7 +647,7 @@ ColumnManager.prototype.redraw = function(force){
 		this.table.rowManager.reinitialize();
 	}
 
-	if(this.table.modules.layout.getMode() == "fitColumns"){
+	if(["fitColumns", "fitDataStretch"].indexOf(this.table.modules.layout.getMode()) > -1){
 		this.table.modules.layout.layout();
 	}else{
 		if(force){
@@ -662,7 +668,7 @@ ColumnManager.prototype.redraw = function(force){
 	}
 
 	if(force){
-		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
 		}
 

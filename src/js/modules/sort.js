@@ -165,7 +165,7 @@ Sort.prototype.setSort = function(sortList, dir){
 
 	self.sortList = newSortList;
 
-	if(this.table.options.persistentSort && this.table.modExists("persistence", true)){
+	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort){
 		this.table.modules.persistence.save("sort");
 	}
 };
@@ -249,7 +249,7 @@ Sort.prototype.sort = function(data){
 	}
 
 	if(self.table.options.dataSorted){
-		self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents(true));
+		self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents("active"));
 	}
 
 };

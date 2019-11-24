@@ -1,55 +1,51 @@
+@import "variables.scss";
 
-$primary: #3759D7 !default; //the base text color from which the rest of the theme derives
+// Style conversion file, bootstrap to tabulator
 
 //Main Theme Variables
 $backgroundColor: #fff !default; //background color of tabulator
-$borderColor:#fff !default; //border to tabulator
+$borderColor:$table-border-color !default; //border to tabulator
 $textSize:16px !default; //table text size
 
 //header themeing
 $headerBackgroundColor:#fff !default; //border to tabulator
-$headerTextColor:$primary !default; //header text colour
-$headerBorderColor:#fff !default;  //header border color
-$headerSeperatorColor:$primary !default; //header bottom seperator color
-$headerMargin:4px !default; //padding round header
+$headerSeperatorColor:$table-border-color !default; //header bottom seperator color
+
+$cellPadding:15px !default; //padding round header
 
 //column header arrows
-$sortArrowActive: $primary !default;
-$sortArrowInactive: lighten($primary, 30%) !default;
+$sortArrowActive: #666 !default;
+$sortArrowInactive: #bbb !default;
 
 //row themeing
-$rowBackgroundColor:#f3f3f3 !default; //table row background color
-$rowAltBackgroundColor:#fff !default; //table row background color
-$rowBorderColor:#fff !default; //table border color
-$rowTextColor:#333 !default; //table text color
-$rowHoverBackground:#bbb !default; //row background color on hover
+$rowBackgroundColor:transparent !default; //table row background color
+$rowAltBackgroundColor: $table-striped-color !default; //table row background color
+$rowBorderColor:$table-border-color !default; //table border color
+$rowHoverBackground:$table-striped-color !default; //row background color on hover
 
-$rowSelectedBackground: #9ABCEA !default; //row background color when selected
-$rowSelectedBackgroundHover: #769BCC !default;//row background color when selected and hovered
+$rowSelectedBackground:$primary-color !default; //row background color when selected
+$rowSelectedBackgroundHover: $primary-color !default;//row background color when selected and hovered
 
-$editBoxColor:#1D68CD !default; //border color for edit boxes
+
+$editBoxColor:$primary-color !default; //border color for edit boxes
 $errorColor:#dd0000 !default; //error indication
 
 //footer themeing
-$footerBackgroundColor:#fff !default; //border to tabulator
-$footerTextColor:$primary !default; //footer text colour
-$footerBorderColor:#aaa !default; //footer border color
-$footerSeperatorColor:#999 !default; //footer bottom seperator color
-$footerActiveColor:$primary !default; //footer bottom active text color
-
-$handleWidth:10px !default; //width of the row handle
-$handleColor: $primary !default; //color for odd numbered rows
-$handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
+$footerBorderColor:$table-border-color !default; //footer border color
+$footerSeperatorColor:$table-border-color !default; //footer bottom seperator color
+$footerActiveColor:$primary-color !default; //footer bottom active text color
 
 
 //Tabulator Containing Element
 .tabulator{
 	position: relative;
-	border: 1px solid $borderColor;
 	background-color: $backgroundColor;
 	overflow:hidden;
 	font-size:$textSize;
 	text-align: left;
+	width: 100%;
+	max-width: 100%;
+	// margin-bottom: $line-height-computed;
 
 	-webkit-transform: translatez(0);
 	-moz-transform: translatez(0);
@@ -76,10 +72,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		width:100%;
 
-		border-bottom:3px solid $headerSeperatorColor;
-		margin-bottom:4px;
+		border-bottom:1px solid $headerSeperatorColor;
 		background-color: $headerBackgroundColor;
-		color: $headerTextColor;
 		font-weight:bold;
 
 		white-space: nowrap;
@@ -90,10 +84,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		-webkit-user-select: none;
 		-o-user-select: none;
 
-		padding-left:$handleWidth;
-
-		font-size: 1.1em;
-
 		&.tabulator-header-hidden{
 			display:none;
 		}
@@ -103,7 +93,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			display:inline-block;
 			position:relative;
 			box-sizing:border-box;
-			border-right:2px solid $headerBorderColor;
 			background-color: $headerBackgroundColor;
 			text-align:left;
 			vertical-align: bottom;
@@ -120,7 +109,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			.tabulator-col-content{
 				box-sizing:border-box;
 				position: relative;
-				padding:4px;
+				padding:$cellPadding;
 
 				//hold title of column header
 				.tabulator-col-title{
@@ -137,14 +126,11 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 						box-sizing: border-box;
 						width: 100%;
 
-						border:1px solid $primary;
+						border:1px solid #999;
 
 						padding:1px;
 
 						background: #fff;
-
-						font-size: 1em;
-						color: $primary;
 					}
 				}
 
@@ -152,7 +138,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 				.tabulator-arrow{
 					display: inline-block;
 					position: absolute;
-					top:9px;
+					top:24px;
 					right:8px;
 					width: 0;
 					height: 0;
@@ -171,7 +157,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 					position:relative;
 					display: flex;
 
-					border-top:2px solid $headerSeperatorColor;
+					border-top:1px solid $borderColor;
 					overflow: hidden;
 
 					.tabulator-col:last-child{
@@ -191,8 +177,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			//placeholder element for sortable columns
 			&.ui-sortable-helper{
 				position: absolute;
-				background-color: darken($headerBackgroundColor, 10%) !important;
-				border:1px solid $headerBorderColor;
+				background-color:darken($headerBackgroundColor, 10%) !important;
+				border:1px solid $borderColor;
 			}
 
 			//header filter containing element
@@ -214,23 +200,23 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 				input{
 					&::-ms-clear {
-						width : 0;
-						height: 0;
+					  width : 0;
+					  height: 0;
 					}
 				}
 			}
 
+
 			//styling child elements for sortable columns
 			&.tabulator-sortable{
 				.tabulator-col-title{
-					padding-right:25px;
+					padding-right:10px;
 				}
 
 				&:hover{
 					cursor:pointer;
 					background-color:darken($headerBackgroundColor, 10%);
 				}
-
 
 				&[aria-sort="none"]{
 					.tabulator-col-content .tabulator-arrow{
@@ -303,8 +289,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			z-index: 10;
 
 			&.tabulator-frozen-left{
-				padding-left: $handleWidth;
-
 				border-right:2px solid $rowBorderColor;
 			}
 
@@ -315,28 +299,20 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		.tabulator-calcs-holder{
 			box-sizing:border-box;
-			min-width:600%;
-
-			border-top:2px solid $headerSeperatorColor !important;
+			width:100%;
 
 			background:lighten($headerBackgroundColor, 5%) !important;
 
 			.tabulator-row{
-				padding-left: 0 !important;
-
 				background:lighten($headerBackgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
 				}
-
-				.tabulator-cell{
-					background:none;
-				}
 			}
 
 			border-top:1px solid $rowBorderColor;
-			border-bottom:1px solid $headerBorderColor;
+			border-bottom:1px solid $headerSeperatorColor;
 
 			overflow: hidden;
 		}
@@ -349,6 +325,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			}
 		}
 	}
+
+
 
 	//scrolling element to hold table
 	.tabulator-tableHolder{
@@ -383,7 +361,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 				margin:0 auto;
 				padding:10px;
 
-				color:$primary;
+				color:#000;
 				font-weight: bold;
 				font-size: 20px;
 			}
@@ -396,7 +374,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			background-color:$rowBackgroundColor;
 			white-space: nowrap;
 			overflow:visible;
-			color:$rowTextColor;
 
 			.tabulator-row{
 				&.tabulator-calcs{
@@ -404,11 +381,11 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 					background:darken($rowAltBackgroundColor, 5%) !important;
 
 					&.tabulator-calcs-top{
-						border-bottom:2px solid $headerSeperatorColor;
+						border-bottom:2px solid $rowBorderColor;
 					}
 
 					&.tabulator-calcs-bottom{
-						border-top:2px solid $headerSeperatorColor;
+						border-top:2px solid $rowBorderColor;
 					}
 				}
 			}
@@ -439,9 +416,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	.tabulator-footer{
 		padding:5px 10px;
 		border-top:1px solid $footerSeperatorColor;
-		background-color: $footerBackgroundColor;
 		text-align:right;
-		color: $footerTextColor;
 		font-weight:bold;
 		white-space:nowrap;
 		user-select:none;
@@ -458,20 +433,13 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 			text-align: left;
 
-			background:lighten($footerBackgroundColor, 5%) !important;
-
-			border-top:3px solid $headerSeperatorColor !important;
-			border-bottom:2px solid $headerSeperatorColor !important;
+			background:lighten($backgroundColor, 5%) !important;
 
 			.tabulator-row{
-				background:lighten($footerBackgroundColor, 5%) !important;
+				background:lighten($backgroundColor, 5%) !important;
 
 				.tabulator-col-resize-handle{
 					display: none;
-				}
-
-				.tabulator-cell{
-					background:none;
 				}
 			}
 
@@ -483,13 +451,11 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			&:only-child{
 				margin-bottom:-5px;
 				border-bottom:none;
-				border-bottom:none !important;
 			}
 		}
 
 		//pagination container element
 		.tabulator-paginator{
-			color: $footerTextColor;
 			font-family:inherit;
 			font-weight:inherit;
 			font-size:inherit;
@@ -508,22 +474,36 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		//pagination container element
 		.tabulator-pages{
-			margin:0 7px;
+			// margin:0 7px;
 		}
 
 		//pagination button
 		.tabulator-page{
 			display:inline-block;
 
-			margin:0 2px;
-			padding:2px 5px;
+			margin:0;
+			margin-top:5px;
+			padding:8px 12px;
 
 			border:1px solid $footerBorderColor;
-			border-radius:3px;
+			border-right:none;
 
 			background:rgba(255,255,255,.2);
 
+			&[data-page="first"]{
+				border-top-left-radius:4px;
+				border-bottom-left-radius:4px;
+			}
+
+			&[data-page="last"]{
+				border:1px solid $footerBorderColor;
+				border-top-right-radius:4px;
+				border-bottom-right-radius:4px;
+			}
+
 			&.active{
+				// border-color:$pagination-active-border-color;
+				// background-color:$pagination-active-bg;
 				color:$footerActiveColor;
 			}
 
@@ -582,6 +562,31 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			}
 		}
 	}
+
+
+
+	//materialize theming classes
+	&.striped{
+		.tabulator-row{
+			&:nth-child(even){
+				background-color: $rowAltBackgroundColor;
+
+				&.tabulator-selected{
+					background-color:$rowSelectedBackground;
+				}
+
+				&.tabulator-selectable:hover{
+					background-color:$rowHoverBackground;
+					cursor: pointer;
+				}
+
+				&.tabulator-selected:hover{
+					background-color:$rowSelectedBackgroundHover;
+					cursor: pointer;
+				}
+			}
+		}
+	}
 }
 
 //row element
@@ -589,42 +594,22 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	position: relative;
 	box-sizing: border-box;
 
-	box-sizing: border-box;
-	min-height:$textSize + ($headerMargin * 2);
-
-	background-color: $handleColor;
-
-	padding-left: $handleWidth !important;
-
-	margin-bottom: 2px;
-
-	&:nth-child(even){
-		background-color: $handleColorAlt;
-
-		.tabulator-cell{
-			background-color: $rowAltBackgroundColor;
-		}
-	}
+	min-height:$textSize + ($cellPadding * 2);
+	background-color: $rowBackgroundColor;
+	border-bottom:1px solid $rowBorderColor;
 
 	&.tabulator-selectable:hover{
+		background-color:$rowHoverBackground;
 		cursor: pointer;
-
-		.tabulator-cell{
-			background-color:$rowHoverBackground;
-		}
 	}
 
 	&.tabulator-selected{
-		.tabulator-cell{
-			background-color:$rowSelectedBackground;
-		}
+		background-color:$rowSelectedBackground;
 	}
 
 	&.tabulator-selected:hover{
-		.tabulator-cell{
-			background-color:$rowSelectedBackgroundHover;
-			cursor: pointer;
-		}
+		background-color:$rowSelectedBackgroundHover;
+		cursor: pointer;
 	}
 
 	&.tabulator-moving{
@@ -664,7 +649,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		z-index: 10;
 
 		&.tabulator-frozen-left{
-			padding-left: $handleWidth;
 			border-right:2px solid $rowBorderColor;
 		}
 
@@ -705,14 +689,15 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		display:inline-block;
 		position: relative;
 		box-sizing:border-box;
-		padding:6px 4px;
-		border-right:2px solid $rowBorderColor;
+		padding:$cellPadding;
 		vertical-align:middle;
 		white-space:nowrap;
 		overflow:hidden;
 		text-overflow:ellipsis;
 
-		background-color: $rowBackgroundColor;
+		&:last-of-type{
+			border-right: none;
+		}
 
 		&.tabulator-editing{
 			border:1px solid  $editBoxColor;
@@ -794,7 +779,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 			margin-right:5px;
 
-			border:1px solid $rowTextColor;
+			border:1px solid #ccc;
 			border-radius:2px;
 			background:rgba(0, 0, 0, .1);
 
@@ -823,7 +808,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 					height: 1px;
 					width: 7px;
 
-					background: $rowTextColor;
+					background: #ccc;
 				}
 			}
 
@@ -834,7 +819,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 				height: 7px;
 				width: 1px;
 
-				background: $rowTextColor;
+				background: #ccc;
 
 				&:after {
 					position: absolute;
@@ -845,7 +830,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 					height: 1px;
 					width: 7px;
 
-					background: $rowTextColor;
+					background: #ccc;
 				}
 			}
 
@@ -903,14 +888,13 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	&.tabulator-group{
 
 		box-sizing:border-box;
-		border-bottom:2px solid $primary;
-		border-top:2px solid $primary;
+		border-bottom:1px solid #999;
+		border-right:1px solid $rowBorderColor;
+		border-top:1px solid #999;
 		padding:5px;
 		padding-left:10px;
-		background:lighten($primary, 20%);
+		background:#fafafa;
 		font-weight:bold;
-		color:fff;
-		margin-bottom: 2px;
 
 		min-width: 100%;
 
@@ -918,7 +902,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			cursor:pointer;
 			background-color:rgba(0,0,0,.1);
 		}
-
 
 		&.tabulator-group-visible{
 			.tabulator-arrow{
@@ -954,7 +937,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 			display: inline-block;
 		}
 
-
 		//sorting arrow
 		.tabulator-arrow{
 			display: inline-block;
@@ -970,7 +952,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		span{
 			margin-left:10px;
-			color:$primary;
+			color:#666;
 		}
 	}
 }
@@ -982,8 +964,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 	max-height:200px;
 
-	background:$rowBackgroundColor;
-	border:1px solid $editBoxColor;
+	background:$headerBackgroundColor;
+	border:1px solid $rowBorderColor;
 
 	font-size:$textSize;
 
@@ -995,17 +977,15 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	.tabulator-edit-select-list-item{
 		padding:4px;
 
-		color:$rowTextColor;
-
 		&.active{
-			color:$rowBackgroundColor;
+			color:$headerBackgroundColor;
 			background:$editBoxColor;
 		}
 
 		&:hover{
 			cursor:pointer;
 
-			color:$rowBackgroundColor;
+			color:$headerBackgroundColor;
 			background:$editBoxColor;
 		}
 	}
@@ -1016,7 +996,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		padding:4px;
 		padding-top:6px;
 
-		color:$rowTextColor;
 		font-weight:bold;
 	}
 }

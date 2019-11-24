@@ -45,8 +45,6 @@ Validate.prototype._extractValidator = function(value){
 			type = value;
 		}
 
-		console.log("v", value, type, params)
-
 		return this._buildValidator(type, params);
 		break;
 

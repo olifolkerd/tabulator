@@ -28,8 +28,8 @@ ResizeRows.prototype.initializeRow = function (row) {
 		self._mouseDown(e, row, handle);
 	};
 
-	handle.addEventListener("mousedown", handleDown, { passive: true });
-	handle.addEventListener("touchstart", handleDown);
+	handle.addEventListener("mousedown", handleDown);
+	handle.addEventListener("touchstart", handleDown, { passive: true });
 
 	prevHandle.addEventListener("click", function (e) {
 		e.stopPropagation();

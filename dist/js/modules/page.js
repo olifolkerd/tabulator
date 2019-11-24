@@ -202,7 +202,9 @@ Page.prototype.initialize = function (hidden) {
 
 	//set default values
 	self.mode = self.table.options.pagination;
+
 	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().clientHeight / 24);
+	// self.page = self.table.options.paginationInitialPage || 1;
 	self.count = self.table.options.paginationButtonCount;
 
 	self.generatePageSizeSelectList();
@@ -260,6 +262,8 @@ Page.prototype.setMaxPage = function (max) {
 Page.prototype.setPage = function (page) {
 	var _this2 = this;
 
+	var self = this;
+
 	return new Promise(function (resolve, reject) {
 
 		page = parseInt(page);
@@ -271,6 +275,10 @@ Page.prototype.setPage = function (page) {
 			}).catch(function () {
 				reject();
 			});
+
+			if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
+				self.table.modules.persistence.save("page");
+			}
 		} else {
 			console.warn("Pagination Error - Requested page is out of range of 1 - " + _this2.max + ":", page);
 			reject();
@@ -311,6 +319,10 @@ Page.prototype.setPageSize = function (size) {
 	if (this.pageSizeSelect) {
 		// this.pageSizeSelect.value = size;
 		this.generatePageSizeSelectList();
+	}
+
+	if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page) {
+		this.table.modules.persistence.save("page");
 	}
 };
 

@@ -235,14 +235,13 @@ ColumnCalcs.prototype.generateRow = function (pos, data) {
 		self.table.modules.mutator.disable();
 	}
 
-	row = new Row(rowData, this);
+	row = new Row(rowData, this, "calc");
 
 	if (self.table.modExists("mutator")) {
 		self.table.modules.mutator.enable();
 	}
 
 	row.getElement().classList.add("tabulator-calcs", "tabulator-calcs-" + pos);
-	row.type = "calc";
 
 	row.generateCells = function () {
 

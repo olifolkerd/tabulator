@@ -48,6 +48,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 			var col = column.getLastColumn();
 
 			if(col && self._checkResizability(col)){
+				e.stopPropagation();
 				col.reinitializeWidth(true);
 			}
 		});
@@ -87,6 +88,7 @@ ResizeColumns.prototype.initializeColumn = function(type, column, element){
 				prevColumn = colIndex > 0 ? self.table.columnManager.getColumnByIndex(colIndex - 1) : false;
 
 				if(prevColumn && self._checkResizability(prevColumn)){
+					e.stopPropagation();
 					prevColumn.reinitializeWidth(true);
 				}
 			}
@@ -136,7 +138,7 @@ ResizeColumns.prototype._mouseDown = function(e, column, handle){
 
 		self.table.element.classList.remove("tabulator-block-select");
 
-		if(self.table.options.persistentLayout && self.table.modExists("persistence", true)){
+		if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.columns){
 			self.table.modules.persistence.save("columns");
 		}
 

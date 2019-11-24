@@ -4,7 +4,11 @@ var Persistence = function Persistence(table) {
 	this.table = table; //hold Tabulator object
 	this.mode = "";
 	this.id = "";
-	this.persistProps = ["field", "width", "visible"];
+	// this.persistProps = ["field", "width", "visible"];
+	this.defWatcherBlock = false;
+	this.config = {};
+	this.readFunc = false;
+	this.writeFunc = false;
 };
 
 // Test for whether localStorage is available for use.
@@ -21,18 +25,138 @@ Persistence.prototype.localStorageTest = function () {
 };
 
 //setup parameters
-Persistence.prototype.initialize = function (mode, id) {
+Persistence.prototype.initialize = function () {
 	//determine persistent layout storage type
+
+	var mode = this.table.options.persistenceMode,
+	    id = this.table.options.persistenceID,
+	    retreivedData;
 
 	this.mode = mode !== true ? mode : this.localStorageTest() ? "local" : "cookie";
 
+	if (this.table.options.persistenceReaderFunc) {
+		if (typeof this.table.options.persistenceReaderFunc === "function") {
+			this.readFunc = this.table.options.persistenceReaderFunc;
+		} else {
+			if (this.readers[this.table.options.persistenceReaderFunc]) {
+				this.readFunc = this.readers[this.table.options.persistenceReaderFunc];
+			} else {
+				console.warn("Persistence Read Error - invalid reader set", this.table.options.persistenceReaderFunc);
+			}
+		}
+	} else {
+		if (this.readers[this.mode]) {
+			this.readFunc = this.readers[this.mode];
+		} else {
+			console.warn("Persistence Read Error - invalid reader set", this.mode);
+		}
+	}
+
+	if (this.table.options.persistenceWriterFunc) {
+		if (typeof this.table.options.persistenceWriterFunc === "function") {
+			this.writeFunc = this.table.options.persistenceWriterFunc;
+		} else {
+			if (this.readers[this.table.options.persistenceWriterFunc]) {
+				this.writeFunc = this.readers[this.table.options.persistenceWriterFunc];
+			} else {
+				console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
+			}
+		}
+	} else {
+		if (this.writers[this.mode]) {
+			this.writeFunc = this.writers[this.mode];
+		} else {
+			console.warn("Persistence Write Error - invalid writer set", this.mode);
+		}
+	}
+
 	//set storage tag
 	this.id = "tabulator-" + (id || this.table.element.getAttribute("id") || "");
+
+	this.config = {
+		sort: this.table.options.persistence === true || this.table.options.persistence.sort,
+		filter: this.table.options.persistence === true || this.table.options.persistence.filter,
+		group: this.table.options.persistence === true || this.table.options.persistence.group,
+		page: this.table.options.persistence === true || this.table.options.persistence.page,
+		columns: this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns
+	};
+
+	//load pagination data if needed
+	if (this.config.page) {
+		retreivedData = this.retreiveData("page");
+
+		if (retreivedData) {
+			if (typeof retreivedData.paginationSize !== "undefined" && (this.config.page === true || this.config.page.size)) {
+				this.table.options.paginationSize = retreivedData.paginationSize;
+			}
+
+			if (typeof retreivedData.paginationInitialPage !== "undefined" && (this.config.page === true || this.config.page.page)) {
+				this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+			}
+		}
+	}
+
+	//load group data if needed
+	if (this.config.group) {
+		retreivedData = this.retreiveData("group");
+
+		if (retreivedData) {
+			if (typeof retreivedData.groupBy !== "undefined" && (this.config.group === true || this.config.group.groupBy)) {
+				this.table.options.groupBy = retreivedData.groupBy;
+			}
+			if (typeof retreivedData.groupStartOpen !== "undefined" && (this.config.group === true || this.config.group.groupStartOpen)) {
+				this.table.options.groupStartOpen = retreivedData.groupStartOpen;
+			}
+			if (typeof retreivedData.groupHeader !== "undefined" && (this.config.group === true || this.config.group.groupHeader)) {
+				this.table.options.groupHeader = retreivedData.groupHeader;
+			}
+		}
+	}
+};
+
+Persistence.prototype.initializeColumn = function (column) {
+	var self = this,
+	    def,
+	    keys;
+
+	if (this.config.columns) {
+		this.defWatcherBlock = true;
+
+		def = column.getDefinition();
+
+		keys = this.config.columns === true ? Object.keys(def) : this.config.columns;
+
+		keys.forEach(function (key) {
+			var props = Object.getOwnPropertyDescriptor(def, key);
+			var value = def[key];
+
+			Object.defineProperty(def, key, {
+				set: function set(newValue) {
+					value = newValue;
+
+					if (!self.defWatcherBlock) {
+						self.save("columns");
+					}
+
+					if (props.set) {
+						props.set(newValue);
+					}
+				},
+				get: function get() {
+					if (props.get) {
+						props.get();
+					}
+					return value;
+				}
+			});
+		});
+
+		this.defWatcherBlock = false;
+	}
 };
 
 //load saved definitions
 Persistence.prototype.load = function (type, current) {
-
 	var data = this.retreiveData(type);
 
 	if (current) {
@@ -44,40 +168,7 @@ Persistence.prototype.load = function (type, current) {
 
 //retreive data from memory
 Persistence.prototype.retreiveData = function (type) {
-	var data = "",
-	    id = this.id + (type === "columns" ? "" : "-" + type);
-
-	switch (this.mode) {
-		case "local":
-			data = localStorage.getItem(id);
-			break;
-
-		case "cookie":
-
-			//find cookie
-			var cookie = document.cookie,
-			    cookiePos = cookie.indexOf(id + "="),
-			    end = void 0;
-
-			//if cookie exists, decode and load column data into tabulator
-			if (cookiePos > -1) {
-				cookie = cookie.substr(cookiePos);
-
-				end = cookie.indexOf(";");
-
-				if (end > -1) {
-					cookie = cookie.substr(0, end);
-				}
-
-				data = cookie.replace(id + "=", "");
-			}
-			break;
-
-		default:
-			console.warn("Persistence Load Error - invalid mode selected", this.mode);
-	}
-
-	return data ? JSON.parse(data) : false;
+	return this.readFunc ? this.readFunc(this.id, type) : false;
 };
 
 //merge old and new column definitions
@@ -90,12 +181,23 @@ Persistence.prototype.mergeDefinition = function (oldCols, newCols) {
 
 	newCols.forEach(function (column, to) {
 
-		var from = self._findColumn(oldCols, column);
+		var from = self._findColumn(oldCols, column),
+		    keys;
 
 		if (from) {
 
-			from.width = column.width;
-			from.visible = column.visible;
+			if (self.config.columns === true) {
+				keys = Object.keys(from);
+				keys.push("width");
+			} else {
+				keys = self.config.columns;
+			}
+
+			keys.forEach(function (key) {
+				if (typeof column[key] !== "undefined") {
+					from[key] = column[key];
+				}
+			});
 
 			if (from.columns) {
 				from.columns = self.mergeDefinition(from.columns, column.columns);
@@ -104,6 +206,7 @@ Persistence.prototype.mergeDefinition = function (oldCols, newCols) {
 			output.push(from);
 		}
 	});
+
 	oldCols.forEach(function (column, i) {
 		var from = self._findColumn(newCols, column);
 		if (!from) {
@@ -155,11 +258,19 @@ Persistence.prototype.save = function (type) {
 		case "sort":
 			data = this.validateSorters(this.table.modules.sort.getSort());
 			break;
+
+		case "group":
+			data = this.getGroupConfig();
+			break;
+
+		case "page":
+			data = this.getPageConfig();
+			break;
 	}
 
-	var id = this.id + (type === "columns" ? "" : "-" + type);
-
-	this.saveData(id, data);
+	if (this.writeFunc) {
+		this.writeFunc(this.id, type, data);
+	}
 };
 
 //ensure sorters contain no function data
@@ -172,51 +283,127 @@ Persistence.prototype.validateSorters = function (data) {
 	return data;
 };
 
-//save data to chosed medium
-Persistence.prototype.saveData = function (id, data) {
+Persistence.prototype.getGroupConfig = function () {
+	if (this.config.group) {
+		if (this.config.group === true || this.config.group.groupBy) {
+			data.groupBy = this.table.options.groupBy;
+		}
 
-	data = JSON.stringify(data);
+		if (this.config.group === true || this.config.group.groupStartOpen) {
+			data.groupStartOpen = this.table.options.groupStartOpen;
+		}
 
-	switch (this.mode) {
-		case "local":
-			localStorage.setItem(id, data);
-			break;
-
-		case "cookie":
-			var expireDate = new Date();
-			expireDate.setDate(expireDate.getDate() + 10000);
-
-			//save cookie
-			document.cookie = id + "=" + data + "; expires=" + expireDate.toUTCString();
-			break;
-
-		default:
-			console.warn("Persistence Save Error - invalid mode selected", this.mode);
+		if (this.config.group === true || this.config.group.groupHeader) {
+			data.groupHeader = this.table.options.groupHeader;
+		}
 	}
+
+	return data;
 };
 
-//build permission list
+Persistence.prototype.getPageConfig = function () {
+	var data = {};
+
+	if (this.config.page) {
+		if (this.config.page === true || this.config.page.size) {
+			data.paginationSize = this.table.modules.page.getPageSize();
+		}
+
+		if (this.config.page === true || this.config.page.page) {
+			data.paginationInitialPage = this.table.modules.page.getPage();
+		}
+	}
+
+	return data;
+};
+
+//parse columns for data to store
 Persistence.prototype.parseColumns = function (columns) {
 	var self = this,
 	    definitions = [];
 
 	columns.forEach(function (column) {
-		var def = {};
+		var defStore = {},
+		    colDef = column.getDefinition(),
+		    keys;
 
 		if (column.isGroup) {
-			def.title = column.getDefinition().title;
-			def.columns = self.parseColumns(column.getColumns());
+			defStore.title = colDef.title;
+			defStore.columns = self.parseColumns(column.getColumns());
 		} else {
-			def.title = column.getDefinition().title;
-			def.field = column.getField();
-			def.width = column.getWidth();
-			def.visible = column.visible;
+			defStore.field = column.getField();
+
+			if (self.config.columns === true) {
+				keys = Object.keys(colDef);
+				keys.push("width");
+			} else {
+				keys = self.config.columns;
+			}
+
+			keys.forEach(function (key) {
+
+				switch (key) {
+					case "width":
+						defStore.width = column.getWidth();
+						break;
+					case "visible":
+						defStore.visible = column.visible;
+						break;
+
+					default:
+						defStore[key] = colDef[key];
+				}
+			});
 		}
 
-		definitions.push(def);
+		definitions.push(defStore);
 	});
 
 	return definitions;
+};
+
+// read peristence information from storage
+Persistence.prototype.readers = {
+	local: function local(id, type) {
+		var data = localStorage.getItem(id + "-" + type);
+
+		return data ? JSON.parse(data) : false;
+	},
+	cookie: function cookie(id, type) {
+		var cookie = document.cookie,
+		    key = id + "-" + type,
+		    cookiePos = cookie.indexOf(key + "="),
+		    end;
+
+		//if cookie exists, decode and load column data into tabulator
+		if (cookiePos > -1) {
+			cookie = cookie.substr(cookiePos);
+
+			end = cookie.indexOf(";");
+
+			if (end > -1) {
+				cookie = cookie.substr(0, end);
+			}
+
+			data = cookie.replace(key + "=", "");
+		}
+
+		return data ? JSON.parse(data) : false;
+	}
+};
+
+//write persistence information to storage
+Persistence.prototype.writers = {
+	local: function local(id, type, data) {
+		localStorage.setItem(id + "-" + type, JSON.stringify(data));
+	},
+	cookie: function cookie(id, type, data) {
+		var expireDate = new Date();
+
+		expireDate.setDate(expireDate.getDate() + 10000);
+
+		document.cookie = id + "_" + type + "=" + JSON.stringify(data) + "; expires=" + expireDate.toUTCString();
+	}
 };
 
 Tabulator.prototype.registerModule("persistence", Persistence);

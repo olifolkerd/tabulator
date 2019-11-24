@@ -42,8 +42,8 @@ Format.prototype.initializeColumn = function(column){
 };
 
 Format.prototype.cellRendered = function(cell){
-	if(cell.column.modules.format.renderedCallback){
-		cell.column.modules.format.renderedCallback();
+	if(cell.modules.format && cell.modules.format.renderedCallback){
+		cell.modules.format.renderedCallback();
 	}
 };
 
@@ -53,7 +53,11 @@ Format.prototype.formatValue = function(cell){
 	params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
 
 	function onRendered(callback){
-		cell.column.modules.format.renderedCallback = callback;
+		if(!cell.modules.format){
+			cell.modules.format = {};
+		}
+
+		cell.modules.format.renderedCallback = callback;
 	}
 
 	return cell.column.modules.format.formatter.call(this, component, params, onRendered);
@@ -164,6 +168,7 @@ Format.prototype.formatters = {
 	link:function(cell, formatterParams, onRendered){
 		var value = cell.getValue(),
 		urlPrefix = formatterParams.urlPrefix || "",
+		download = formatterParams.download,
 		label = value,
 		el = document.createElement("a"),
 		data;
@@ -207,6 +212,17 @@ Format.prototype.formatters = {
 
 			if(formatterParams.target){
 				el.setAttribute("target", formatterParams.target);
+			}
+
+			if(formatterParams.download){
+
+				if(typeof download == "function"){
+					download = download(cell);
+				}else{
+					download = download === true ? "" : download;
+				}
+
+				el.setAttribute("download", download);
 			}
 
 			el.innerHTML = this.emptyToSpace(this.sanitizeHTML(label));
@@ -505,7 +521,37 @@ Format.prototype.formatters = {
 
 		element.setAttribute("aria-label", percentValue);
 
-		return "<div style='position:relative; height:100%;'  data-max='" + max + "' data-min='" + min + "'><div style='position:relative; height:100%; width:calc(" + percentValue + "%); background-color:" + color + "; display:inline-block;'></div></div>" + (legend ? "<div style='position:absolute; top:4px; left:0; text-align:" + legendAlign + "; width:100%; color:" + legendColor + ";'>" + legend + "</div>" : "");
+		var barEl = document.createElement("div");
+		barEl.style.display = "inline-block";
+		barEl.style.position = "relative";
+		barEl.style.width = percentValue + "%";
+		barEl.style.backgroundColor = color;
+		barEl.style.height = "100%";
+
+		barEl.setAttribute('data-max', max);
+		barEl.setAttribute('data-min', min);
+
+
+		if(legend){
+			var legendEl = document.createElement("div");
+			legendEl.style.position = "absolute";
+			legendEl.style.top = "4px";
+			legendEl.style.left = 0;
+			legendEl.style.textAlign = legendAlign;
+			legendEl.style.width = "100%";
+			legendEl.style.color = legendColor;
+			legendEl.innerHTML = legend;
+		}
+
+		onRendered(function(){
+			element.appendChild(barEl);
+
+			if(legend){
+				element.appendChild(legendEl);
+			}
+		});
+
+		return "";
 	},
 
 	//background color
@@ -538,41 +584,37 @@ Format.prototype.formatters = {
 	responsiveCollapse:function(cell, formatterParams, onRendered){
 		var self = this,
 		open = false,
-		el = document.createElement("div");
-
-		function toggleList(isOpen){
-			var collapse = cell.getRow().getElement().getElementsByClassName("tabulator-responsive-collapse")[0];
-
-			open = isOpen;
-
-			if(open){
-				el.classList.add("open");
-				if(collapse){
-					collapse.style.display = '';
-				}
-			}else{
-				el.classList.remove("open");
-				if(collapse){
-					collapse.style.display = 'none';
-				}
-			}
-		}
+		el = document.createElement("div"),
+		config = cell.getRow()._row.modules.responsiveLayout;
 
 		el.classList.add("tabulator-responsive-collapse-toggle");
 		el.innerHTML = "<span class='tabulator-responsive-collapse-toggle-open'>+</span><span class='tabulator-responsive-collapse-toggle-close'>-</span>";
 
 		cell.getElement().classList.add("tabulator-row-handle");
 
-		if(self.table.options.responsiveLayoutCollapseStartOpen){
-			open = true;
+		function toggleList(isOpen){
+			var collapseEl = config.element;
+
+			config.open = isOpen;
+
+			if(collapseEl){
+
+				if(config.open){
+					el.classList.add("open");
+					collapseEl.style.display = '';
+				}else{
+					el.classList.remove("open");
+					collapseEl.style.display = 'none';
+				}
+			}
 		}
 
 		el.addEventListener("click", function(e){
 			e.stopImmediatePropagation();
-			toggleList(!open);
+			toggleList(!config.open);
 		});
 
-		toggleList(open);
+		toggleList(config.open);
 
 		return el;
 	},

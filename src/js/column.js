@@ -60,7 +60,7 @@ ColumnComponent.prototype.toggle = function(){
 };
 
 ColumnComponent.prototype.delete = function(){
-	this._column.delete();
+	return this._column.delete();
 };
 
 ColumnComponent.prototype.getSubColumns = function(){
@@ -118,7 +118,7 @@ ColumnComponent.prototype.move = function(to, after){
 	}else{
 		console.warn("Move Error - No matching column found:", toColumn);
 	}
-}
+};
 
 ColumnComponent.prototype.getNextColumn = function(){
 	var nextCol = this._column.nextColumn();
@@ -130,6 +130,10 @@ ColumnComponent.prototype.getPrevColumn = function(){
 	var prevCol = this._column.prevColumn();
 
 	return prevCol ? prevCol.getComponent() : false;
+};
+
+ColumnComponent.prototype.updateDefinition = function(updates){
+	return this._column.updateDefinition(updates);
 };
 
 
@@ -155,6 +159,8 @@ var Column = function(def, parent){
 	this.fieldStructure = "";
 	this.getFieldValue = "";
 	this.setFieldValue = "";
+
+	this.titleFormatterRendered = false;
 
 	this.setField(this.definition.field);
 
@@ -208,6 +214,8 @@ var Column = function(def, parent){
 	}
 
 	this._buildHeader();
+
+	this.bindModuleColumns();
 };
 
 Column.prototype.createElement = function (){
@@ -234,7 +242,7 @@ Column.prototype.checkDefinition = function(){
 			console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key)
 		}
 	});
-}
+};
 
 Column.prototype.setField = function(field){
 	this.field = field;
@@ -362,6 +370,11 @@ Column.prototype._buildHeader = function(){
 	//set calcs column
 	if((def.topCalc || def.bottomCalc) && self.table.modExists("columnCalcs")){
 		self.table.modules.columnCalcs.initializeColumn(self);
+	}
+
+	//handle persistence
+	if(self.table.modExists("persistence") && self.table.modules.persistence.config.columns){
+		self.table.modules.persistence.initializeColumn(self);
 	}
 
 
@@ -647,11 +660,15 @@ Column.prototype._buildColumnHeaderTitle = function(){
 };
 
 Column.prototype._formatColumnHeaderTitle = function(el, title){
-	var formatter, contents, params, mockCell;
+	var formatter, contents, params, mockCell, onRendered;
 
 	if(this.definition.titleFormatter && this.table.modExists("format")){
 
 		formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
+
+		onRendered = (callback) => {
+			this.titleFormatterRendered = callback;
+		};
 
 		mockCell = {
 			getValue:function(){
@@ -666,7 +683,7 @@ Column.prototype._formatColumnHeaderTitle = function(el, title){
 
 		params = typeof params === "function" ? params() : params;
 
-		contents = formatter.call(this.table.modules.format, mockCell, params);
+		contents = formatter.call(this.table.modules.format, mockCell, params, onRendered);
 
 		switch(typeof contents){
 			case "object":
@@ -695,6 +712,14 @@ Column.prototype._buildGroupHeader = function(){
 	this.element.classList.add("tabulator-col-group");
 	this.element.setAttribute("role", "columngroup");
 	this.element.setAttribute("aria-title", this.definition.title);
+
+	//asign additional css classes to column header
+	if(this.definition.cssClass){
+		var classeNames = this.definition.cssClass.split(" ");
+		classeNames.forEach((className) => {
+			this.element.classList.add(className);
+		});
+	}
 
 	this.element.appendChild(this.groupElement);
 };
@@ -803,6 +828,14 @@ Column.prototype.clearVerticalAlign = function(){
 		column.clearVerticalAlign();
 	});
 };
+
+Column.prototype.bindModuleColumns = function (){
+	//check if rownum formatter is being used on a column
+	if(this.definition.formatter == "rownum"){
+		this.table.rowManager.rowNumColumn = this;
+	}
+};
+
 
 //// Retreive Column Information ////
 
@@ -924,7 +957,7 @@ Column.prototype.show = function(silent, responsiveToggle){
 
 		this.table.columnManager._verticalAlignHeaders();
 
-		if(this.table.options.persistentLayout && this.table.modExists("responsiveLayout", true)){
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
 		}
 
@@ -959,7 +992,7 @@ Column.prototype.hide = function(silent, responsiveToggle){
 			cell.hide();
 		});
 
-		if(this.table.options.persistentLayout && this.table.modExists("persistence", true)){
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
 		}
 
@@ -1069,21 +1102,32 @@ Column.prototype.setMinWidth = function(minWidth){
 };
 
 Column.prototype.delete = function(){
-	if(this.isGroup){
-		this.columns.forEach(function(column){
-			column.delete();
-		});
+	return new Promise((resolve, reject) => {
+
+		if(this.isGroup){
+			this.columns.forEach(function(column){
+				column.delete();
+			});
+		}
+
+		var cellCount = this.cells.length;
+
+		for(let i = 0; i < cellCount; i++){
+			this.cells[0].delete();
+		}
+
+		this.element.parentNode.removeChild(this.element);
+
+		this.table.columnManager.deregisterColumn(this);
+
+		resolve();
+	});
+};
+
+Column.prototype.columnRendered = function(){
+	if(this.titleFormatterRendered){
+		this.titleFormatterRendered();
 	}
-
-	var cellCount = this.cells.length;
-
-	for(let i = 0; i < cellCount; i++){
-		this.cells[0].delete();
-	}
-
-	this.element.parentNode.removeChild(this.element);
-
-	this.table.columnManager.deregisterColumn(this);
 };
 
 //////////////// Cell Management /////////////////
@@ -1107,7 +1151,7 @@ Column.prototype.nextColumn = function(){
 Column.prototype._nextVisibleColumn = function(index){
 	var column = this.table.columnManager.getColumnByIndex(index);
 	return !column || column.visible ? column : this._nextVisibleColumn(index + 1);
-}
+};
 
 Column.prototype.prevColumn = function(){
 	var index = this.table.columnManager.findColumnIndex(this);
@@ -1117,7 +1161,7 @@ Column.prototype.prevColumn = function(){
 Column.prototype._prevVisibleColumn = function(index){
 	var column = this.table.columnManager.getColumnByIndex(index);
 	return !column || column.visible ? column : this._prevVisibleColumn(index - 1);
-}
+};
 
 Column.prototype.reinitializeWidth = function(force){
 	this.widthFixed = false;
@@ -1170,6 +1214,39 @@ Column.prototype.fitToData = function(){
 	}
 };
 
+Column.prototype.updateDefinition = function(updates){
+	return new Promise((resolve, reject) => {
+		var definition;
+
+		if(!this.isGroup){
+			definition = Object.assign({}, this.getDefinition());
+			definition = Object.assign(definition, updates);
+
+			this.table.columnManager.addColumn(definition, false, this)
+			.then((column) => {
+
+				if(definition.field == this.field){
+					this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+				}
+
+				this.delete()
+				.then(() => {
+					resolve(column.getComponent());
+				}).catch((err) => {
+					reject(err);
+				});
+
+			}).catch((err) => {
+				reject(err);
+			});
+		}else{
+			console.warn("Column Update Error - The updateDefintion function is only available on columns, not column groups");
+			reject("Column Update Error - The updateDefintion function is only available on columns, not column groups");
+		}
+	});
+};
+
+
 Column.prototype.deleteCell = function(cell){
 	var index = this.cells.indexOf(cell);
 
@@ -1177,6 +1254,7 @@ Column.prototype.deleteCell = function(cell){
 		this.cells.splice(index, 1);
 	}
 };
+
 
 Column.prototype.defaultOptionList = [
 "title",

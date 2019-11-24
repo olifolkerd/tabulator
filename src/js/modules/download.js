@@ -7,7 +7,7 @@ var Download = function(table){
 };
 
 //trigger file download
-Download.prototype.download = function(type, filename, options, interceptCallback){
+Download.prototype.download = function(type, filename, options, active, interceptCallback){
 	var self = this,
 	downloadFunc = false;
 	this.processConfig();
@@ -38,7 +38,7 @@ Download.prototype.download = function(type, filename, options, interceptCallbac
 	this.processColumns();
 
 	if(downloadFunc){
-		downloadFunc.call(this, self.processDefinitions(), self.processData() , options || {}, buildLink, this.config);
+		downloadFunc.call(this, self.processDefinitions(), self.processData(active || "active") , options || {}, buildLink, this.config);
 	}
 };
 
@@ -166,21 +166,40 @@ Download.prototype.processDefinition = function(column){
 	return def;
 };
 
-Download.prototype.processData = function(){
+Download.prototype.processData = function(active){
 	var self = this,
 	data = [],
 	groups = [],
+	rows = false,
 	calcs =  {};
 
 	if(this.config.rowGroups){
-		groups = this.table.modules.groupRows.getGroups();
+
+		if(active == "visible"){
+
+			rows = self.table.rowManager.getRows(active);
+
+			rows.forEach((row) => {
+				if(row.type == "row"){
+					var group = row.getGroup();
+
+					if(groups.indexOf(group) === -1){
+						groups.push(group);
+					}
+				}
+			});
+		}else{
+			groups = this.table.modules.groupRows.getGroups();
+		}
 
 		groups.forEach((group) => {
-			data.push(this.processGroupData(group));
+			data.push(this.processGroupData(group, rows));
 		});
+
 	}else{
-		data = self.table.rowManager.getData(true, "download");
+		data = self.table.rowManager.getData(active, "download");
 	}
+
 
 	if(this.config.columnCalcs){
 		calcs = this.table.getCalcResults();
@@ -199,7 +218,8 @@ Download.prototype.processData = function(){
 	return data;
 };
 
-Download.prototype.processGroupData = function(group){
+
+Download.prototype.processGroupData = function(group, visRows){
 	var subGroups = group.getSubGroups();
 
 	var groupData = {
@@ -211,10 +231,21 @@ Download.prototype.processGroupData = function(group){
 		groupData.subGroups = [];
 
 		subGroups.forEach((subGroup) => {
-			groupData.subGroups.push(this.processGroupData(subGroup));
+			groupData.subGroups.push(this.processGroupData(subGroup, visRows));
 		});
 	}else{
-		groupData.rows = group.getData(true, "download");
+		if(visRows){
+			groupData.rows = [];
+
+			group.rows.forEach(function(row){
+				if(visRows.indexOf(row) > -1){
+					groupData.rows.push(row.getData("download"));
+				}
+			});
+		}else{
+			groupData.rows = group.getData(true, "download");
+		}
+
 	}
 
 	return groupData;
@@ -632,13 +663,15 @@ Download.prototype.downloaders = {
 	xlsx:function(columns, data, options, setFileContents, config){
 		var self = this,
 		sheetName = options.sheetName || "Sheet1",
-		workbook = {SheetNames:[], Sheets:{}},
+		workbook = XLSX.utils.book_new(),
 		calcs = {},
 		groupRowIndexs = [],
 		groupColumnIndexs = [],
 		calcRowIndexs = [],
-
 		output;
+
+		workbook.SheetNames = [];
+		workbook.Sheets = {};
 
 		if(config.columnCalcs){
 			calcs = data.calcs;
@@ -884,6 +917,10 @@ Download.prototype.downloaders = {
 			workbook.Sheets[sheetName] = generateSheet();
 		}
 
+		if(options.documentProcessing){
+			workbook = options.documentProcessing(workbook);
+		}
+
 		//convert workbook to binary array
 		function s2ab(s) {
 			var buf = new ArrayBuffer(s.length);
@@ -896,6 +933,12 @@ Download.prototype.downloaders = {
 
 		setFileContents(s2ab(output), "application/octet-stream");
 	},
+
+	html:function(columns, data, options, setFileContents, config){
+		if(this.table.modExists("htmlTableExport", true)){
+			setFileContents(this.table.modules.htmlTableExport.getHtml(true, options.style, config), "text/html");
+		}
+	}
 
 };
 
