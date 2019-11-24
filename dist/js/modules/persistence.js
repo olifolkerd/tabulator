@@ -260,18 +260,11 @@ Persistence.prototype.save = function (type) {
 			break;
 
 		case "group":
-			data = {
-				groupBy: this.table.options.groupBy,
-				groupStartOpen: this.table.options.groupStartOpen,
-				groupHeader: this.table.options.groupHeader
-			};
+			data = this.getGroupConfig();
 			break;
 
 		case "page":
-			data = {
-				paginationSize: this.table.modules.page.getPageSize(),
-				paginationInitialPage: this.table.modules.page.getPage()
-			};
+			data = this.getPageConfig();
 			break;
 	}
 
@@ -290,7 +283,41 @@ Persistence.prototype.validateSorters = function (data) {
 	return data;
 };
 
-//build permission list
+Persistence.prototype.getGroupConfig = function () {
+	if (this.config.group) {
+		if (this.config.group === true || this.config.group.groupBy) {
+			data.groupBy = this.table.options.groupBy;
+		}
+
+		if (this.config.group === true || this.config.group.groupStartOpen) {
+			data.groupStartOpen = this.table.options.groupStartOpen;
+		}
+
+		if (this.config.group === true || this.config.group.groupHeader) {
+			data.groupHeader = this.table.options.groupHeader;
+		}
+	}
+
+	return data;
+};
+
+Persistence.prototype.getPageConfig = function () {
+	var data = {};
+
+	if (this.config.page) {
+		if (this.config.page === true || this.config.page.size) {
+			data.paginationSize = this.table.modules.page.getPageSize();
+		}
+
+		if (this.config.page === true || this.config.page.page) {
+			data.paginationInitialPage = this.table.modules.page.getPage();
+		}
+	}
+
+	return data;
+};
+
+//parse columns for data to store
 Persistence.prototype.parseColumns = function (columns) {
 	var self = this,
 	    definitions = [];
