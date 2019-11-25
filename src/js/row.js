@@ -500,7 +500,7 @@ Row.prototype.deleteCell = function(cell){
 
 Row.prototype.setData = function(data){
 	if(this.table.modExists("mutator")){
-		data = this.table.modules.mutator.transformRow(data, "data");
+		data = this.table.modules.mutator.transformRow(data, "data", data);
 	}
 
 	this.data = data;

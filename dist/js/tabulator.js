@@ -5734,7 +5734,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.table.modExists("mutator")) {
 
-			data = this.table.modules.mutator.transformRow(data, "data");
+			data = this.table.modules.mutator.transformRow(data, "data", data);
 		}
 
 		this.data = data;
@@ -10128,9 +10128,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		"fitDataStretch": function fitDataStretch(columns) {
 			var _this30 = this;
-
-			// console.log("fitDataStret")
-
 
 			var colsWidth = 0,
 			    tableWidth = this.table.rowManager.element.clientWidth,
@@ -20693,10 +20690,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (column.modules.mutate) {
 					mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
-					if (mutator) {
+					if (mutator && updatedData) {
 						value = column.getFieldValue(updatedData);
 
-						if (!update || update && typeof value !== "undefined") {
+						if (typeof value !== "undefined") {
 							component = column.getComponent();
 							params = typeof mutator.params === "function" ? mutator.params(value, data, type, component) : mutator.params;
 							column.setFieldValue(data, mutator.mutator(value, data, type, params, component));

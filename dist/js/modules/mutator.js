@@ -72,10 +72,10 @@ Mutator.prototype.transformRow = function (data, type, updatedData) {
 			if (column.modules.mutate) {
 				mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
-				if (mutator) {
+				if (mutator && updatedData) {
 					value = column.getFieldValue(updatedData);
 
-					if (!update || update && typeof value !== "undefined") {
+					if (typeof value !== "undefined") {
 						component = column.getComponent();
 						params = typeof mutator.params === "function" ? mutator.params(value, data, type, component) : mutator.params;
 						column.setFieldValue(data, mutator.mutator(value, data, type, params, component));

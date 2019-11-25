@@ -52,7 +52,6 @@ Layout.prototype.modes = {
 
 	//resize columns to fit data the contain and stretch last column to fill table
 	"fitDataStretch": function(columns){
-		// console.log("fitDataStret")
 		var colsWidth = 0,
 		tableWidth = this.table.rowManager.element.clientWidth,
 		gap = 0,
