@@ -129,26 +129,27 @@ Persistence.prototype.initializeColumn = function (column) {
 		keys.forEach(function (key) {
 			var props = Object.getOwnPropertyDescriptor(def, key);
 			var value = def[key];
+			if (props) {
+				Object.defineProperty(def, key, {
+					set: function set(newValue) {
+						value = newValue;
 
-			Object.defineProperty(def, key, {
-				set: function set(newValue) {
-					value = newValue;
+						if (!self.defWatcherBlock) {
+							self.save("columns");
+						}
 
-					if (!self.defWatcherBlock) {
-						self.save("columns");
+						if (props.set) {
+							props.set(newValue);
+						}
+					},
+					get: function get() {
+						if (props.get) {
+							props.get();
+						}
+						return value;
 					}
-
-					if (props.set) {
-						props.set(newValue);
-					}
-				},
-				get: function get() {
-					if (props.get) {
-						props.get();
-					}
-					return value;
-				}
-			});
+				});
+			}
 		});
 
 		this.defWatcherBlock = false;
