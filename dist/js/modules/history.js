@@ -1,4 +1,4 @@
-/* Tabulator v4.5.0 (c) Oliver Folkerd */
+/* Tabulator v4.5.1 (c) Oliver Folkerd */
 
 var History = function History(table) {
 	this.table = table; //hold Tabulator object
