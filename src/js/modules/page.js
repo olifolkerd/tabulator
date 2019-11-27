@@ -474,7 +474,10 @@ Page.prototype.getRows = function(data){
 Page.prototype.trigger = function(){
 	var left;
 
-	return new Promise((resolve, reject)=>{
+	return new Promise((resolve, reject) => {
+		if (!this.table) {
+			throw new Error("we're too early, table not constructed yet!");
+		}
 
 		switch(this.mode){
 			case "local":
