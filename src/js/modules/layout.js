@@ -89,7 +89,6 @@ Layout.prototype.modes = {
 				this.table.modules.responsiveLayout.update();
 			}
 		}
-
 	},
 
 	//resize columns to fit
