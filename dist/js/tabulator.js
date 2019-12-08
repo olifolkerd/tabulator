@@ -22385,7 +22385,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual") {
 			this.observer = new ResizeObserver(function (entry) {
-				if (!table.browserMobile || browserMobile && !table.modules.edit.currentCell) {
+				if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
 					table.redraw();
 				}
 			});
@@ -22393,7 +22393,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.observer.observe(table.element);
 		} else {
 			this.binding = function () {
-				if (!table.browserMobile || browserMobile && !table.modules.edit.currentCell) {
+				if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
 					table.redraw();
 				}
 			};

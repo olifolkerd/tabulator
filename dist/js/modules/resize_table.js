@@ -12,7 +12,7 @@ ResizeTable.prototype.initialize = function (row) {
 
 	if (typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual") {
 		this.observer = new ResizeObserver(function (entry) {
-			if (!table.browserMobile || browserMobile && !table.modules.edit.currentCell) {
+			if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
 				table.redraw();
 			}
 		});
@@ -20,7 +20,7 @@ ResizeTable.prototype.initialize = function (row) {
 		this.observer.observe(table.element);
 	} else {
 		this.binding = function () {
-			if (!table.browserMobile || browserMobile && !table.modules.edit.currentCell) {
+			if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
 				table.redraw();
 			}
 		};
