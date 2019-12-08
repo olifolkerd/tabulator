@@ -10168,7 +10168,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					lastCol.setWidth(gap);
 				} else {
 
-					column.reinitializeWidth();
+					lastCol.reinitializeWidth();
 				}
 			} else {
 
@@ -22584,10 +22584,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (diff < 0) {
 				//table is too wide
-				var _column = self.columns[self.index];
+				var column = self.columns[self.index];
 
-				if (_column) {
-					self.hideColumn(_column);
+				if (column) {
+					self.hideColumn(column);
 					self.index++;
 				} else {
 					working = false;
@@ -22595,12 +22595,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			} else {
 
 				//table has spare space
-				var _column2 = self.columns[self.index - 1];
+				var _column = self.columns[self.index - 1];
 
-				if (_column2) {
+				if (_column) {
 					if (diff > 0) {
-						if (diff >= _column2.getWidth()) {
-							self.showColumn(_column2);
+						if (diff >= _column.getWidth()) {
+							self.showColumn(_column);
 							self.index--;
 						} else {
 							working = false;

@@ -82,7 +82,7 @@ Layout.prototype.modes = {
 			if(gap > 0){
 				lastCol.setWidth(gap);
 			}else{
-				column.reinitializeWidth();
+				lastCol.reinitializeWidth();
 			}
 		}else{
 			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){

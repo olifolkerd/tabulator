@@ -7802,7 +7802,7 @@ Layout.prototype.modes = {
 				lastCol.setWidth(gap);
 			} else {
 
-				column.reinitializeWidth();
+				lastCol.reinitializeWidth();
 			}
 		} else {
 
