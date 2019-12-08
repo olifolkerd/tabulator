@@ -175,7 +175,7 @@ SelectRow.prototype.selectRows = function (rows) {
 
 		case "string":
 
-			rowMatch = self.table.rowManager.findRow(rows);
+			rowMatch = this.table.rowManager.findRow(rows);
 
 			if (rowMatch) {
 				this._selectRow(rowMatch, true, true);
