@@ -107,7 +107,8 @@ DataTree.prototype.initializeRow = function(row){
 DataTree.prototype.layoutRow = function(row){
 	var cell = this.elementField ? row.getCell(this.elementField) : row.getCells()[0],
 	el = cell.getElement(),
-	config = row.modules.dataTree;
+	config = row.modules.dataTree,
+	element = row.element;
 
 
 	if(config.branchEl){
@@ -115,6 +116,8 @@ DataTree.prototype.layoutRow = function(row){
 	}
 
 	this.generateControlElement(row, el);
+
+	element.classList.add("tabulator-tree-level-" + config.index);
 
 	if(config.index){
 		if(this.branchEl){
