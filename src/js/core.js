@@ -124,7 +124,7 @@ Tabulator.prototype.defaultOptions = {
 	selectablePersistence:true, // maintain selection when table view is updated
 	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
 
-	headerFilterTypingTimer: 300, //delay before updating column after user types in header filter
+	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
 	headerFilterPlaceholder: false, //placeholder text to display in header filters
 
 	headerVisible:true, //hide header

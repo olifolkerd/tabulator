@@ -246,7 +246,7 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue, re
 
 				typingTimer = setTimeout(function(){
 					success(editorElement.value);
-				},table.options.headerFilterTypingTimer);
+				},self.table.options.headerFilterLiveFilterDelay);
 			};
 
 			column.modules.filter.headerElement = editorElement;
