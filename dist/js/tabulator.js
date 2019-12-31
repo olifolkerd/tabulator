@@ -13155,6 +13155,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.columnsByIndex = []; //hold columns in their order in the table
 		this.columnsByField = {}; //hold columns with lookup by field name
 		this.config = {};
+		this.active = false;
 	};
 
 	//trigger file download
@@ -13162,6 +13163,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var self = this,
 		    downloadFunc = false;
 		this.processConfig();
+		this.active = active;
 
 		function buildLink(data, mime) {
 			if (interceptCallback) {
@@ -13452,7 +13454,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Download.prototype.commsReceived = function (table, action, data) {
 		switch (action) {
 			case "intercept":
-				this.download(data.type, "", data.options, data.intercept);
+				this.download(data.type, "", data.options, data.active, data.intercept);
 				break;
 		}
 	};
@@ -14047,6 +14049,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						this.table.modules.comms.send(options.sheets[sheet], "download", "intercept", {
 							type: "xlsx",
 							options: { sheetOnly: true },
+							active: self.active,
 							intercept: function intercept(data) {
 								workbook.Sheets[sheet] = data;
 							}

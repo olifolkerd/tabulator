@@ -8,6 +8,7 @@ var Download = function Download(table) {
 	this.columnsByIndex = []; //hold columns in their order in the table
 	this.columnsByField = {}; //hold columns with lookup by field name
 	this.config = {};
+	this.active = false;
 };
 
 //trigger file download
@@ -15,6 +16,7 @@ Download.prototype.download = function (type, filename, options, active, interce
 	var self = this,
 	    downloadFunc = false;
 	this.processConfig();
+	this.active = active;
 
 	function buildLink(data, mime) {
 		if (interceptCallback) {
@@ -305,7 +307,7 @@ Download.prototype.getFieldValue = function (field, data) {
 Download.prototype.commsReceived = function (table, action, data) {
 	switch (action) {
 		case "intercept":
-			this.download(data.type, "", data.options, data.intercept);
+			this.download(data.type, "", data.options, data.active, data.intercept);
 			break;
 	}
 };
@@ -900,6 +902,7 @@ Download.prototype.downloaders = {
 					this.table.modules.comms.send(options.sheets[sheet], "download", "intercept", {
 						type: "xlsx",
 						options: { sheetOnly: true },
+						active: self.active,
 						intercept: function intercept(data) {
 							workbook.Sheets[sheet] = data;
 						}
