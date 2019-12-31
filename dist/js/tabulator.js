@@ -20696,7 +20696,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (mutator && updatedData) {
 						value = column.getFieldValue(updatedData);
 
-						if (typeof value !== "undefined") {
+						if (type == "data" || typeof value !== "undefined") {
 							component = column.getComponent();
 							params = typeof mutator.params === "function" ? mutator.params(value, data, type, component) : mutator.params;
 							column.setFieldValue(data, mutator.mutator(value, data, type, params, component));
@@ -21569,7 +21569,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (from) {
 
-				if (self.config.columns === true) {
+				if (self.config.columns === true || self.config.columns == undefined) {
 					keys = Object.keys(from);
 					keys.push("width");
 				} else {
@@ -21716,7 +21716,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			} else {
 				defStore.field = column.getField();
 
-				if (self.config.columns === true) {
+				if (self.config.columns === true || self.config.columns == undefined) {
 					keys = Object.keys(colDef);
 					keys.push("width");
 				} else {
