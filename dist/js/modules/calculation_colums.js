@@ -182,6 +182,25 @@ ColumnCalcs.prototype.recalcRowGroup = function (row) {
 	this.recalcGroup(this.table.modules.groupRows.getRowGroup(row));
 };
 
+ColumnCalcs.prototype.recalcAll = function () {
+	var _this = this;
+
+	if (this.topCalcs.length || this.botCalcs.length) {
+		if (this.table.options.columnCalcs !== "group") {
+			this.recalc(this.table.rowManager.activeRows);
+		}
+
+		if (this.table.options.groupBy && this.table.options.columnCalcs !== "table") {
+
+			var groups = table.modules.groupRows.getChildGroups();
+
+			groups.forEach(function (group) {
+				_this.recalcGroup(group);
+			});
+		}
+	}
+};
+
 ColumnCalcs.prototype.recalcGroup = function (group) {
 	var data, rowData;
 

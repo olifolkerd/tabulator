@@ -1771,6 +1771,13 @@ Tabulator.prototype.getCalcResults = function(){
 	}
 };
 
+Tabulator.prototype.recalc = function(){
+	if(this.modExists("columnCalcs", true)){
+		this.modules.columnCalcs.recalcAll(this.rowManager.activeRows);
+	}
+};
+
+
 /////////////// Navigation Management //////////////
 
 Tabulator.prototype.navigatePrev = function(){
