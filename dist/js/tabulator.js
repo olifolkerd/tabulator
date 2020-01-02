@@ -2780,6 +2780,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.tableElement = this.createTableElement(); //table element
 
+		this.heightFixer = this.createTableElement(); //table element
+
 		this.columnManager = null; //hold column manager object
 
 		this.height = 0; //hold height of table element
@@ -2787,7 +2789,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.firstRender = false; //handle first render
 
-		this.renderMode = "classic"; //current rendering mode
+		this.renderMode = "virtual"; //current rendering mode
+
+		this.fixedHeight = false; //current rendering mode
 
 
 		this.rows = []; //hold row data objects
@@ -4343,9 +4347,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.setRenderMode = function () {
 
-		if ((this.table.element.clientHeight || this.table.options.height) && this.table.options.virtualDom) {
+		if (this.table.options.virtualDom) {
 
 			this.renderMode = "virtual";
+
+			if (this.table.element.clientHeight || this.table.options.height) {
+
+				this.fixedHeight = true;
+
+				console.log("has height");
+			} else {
+
+				this.fixedHeight = false;
+			}
 		} else {
 
 			this.renderMode = "classic";
@@ -4963,17 +4977,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.renderMode === "virtual") {
 
+			var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
+
+			if (this.fixedHeight) {
+
+				this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
+
+				this.element.style.height = "calc(100% - " + otherHeight + "px)";
+
+				this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
+			} else {
+
+				this.element.style.height = "";
+
+				this.element.style.height = this.table.element.clientHeight - otherHeight + "px";
+
+				this.element.scrollTop = this.scrollTop;
+			}
+
 			this.height = this.element.clientHeight;
 
 			this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
-
-			var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
-
-			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
-
-			this.element.style.height = "calc(100% - " + otherHeight + "px)";
-
-			this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
 		}
 	};
 
@@ -22427,6 +22451,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.table = table; //hold Tabulator object
 		this.binding = false;
 		this.observer = false;
+		this.containerObserver = false;
 	};
 
 	ResizeTable.prototype.initialize = function (row) {
@@ -22441,6 +22466,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			this.observer.observe(table.element);
+
+			if (!this.table.rowManager.fixedHeight) {
+
+				this.containerObserver = new ResizeObserver(function (entry) {
+					if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
+						table.redraw();
+					}
+				});
+
+				this.containerObserver.observe(this.table.element.parentNode);
+			}
 		} else {
 			this.binding = function () {
 				if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
@@ -22459,6 +22495,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.observer) {
 			this.observer.unobserve(this.table.element);
+		}
+
+		if (this.this.containerObserver) {
+			this.this.containerObserver.unobserve(this.table.element.parentNode);
 		}
 	};
 

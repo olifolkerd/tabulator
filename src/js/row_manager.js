@@ -3,11 +3,13 @@ var RowManager = function(table){
 	this.table = table;
 	this.element = this.createHolderElement(); //containing element
 	this.tableElement = this.createTableElement(); //table element
+	this.heightFixer = this.createTableElement(); //table element
 	this.columnManager = null; //hold column manager object
 	this.height = 0; //hold height of table element
 
 	this.firstRender = false; //handle first render
-	this.renderMode = "classic"; //current rendering mode
+	this.renderMode = "virtual"; //current rendering mode
+	this.fixedHeight = false; //current rendering mode
 
 	this.rows = []; //hold row data objects
 	this.activeRows = []; //rows currently available to on display in the table
@@ -1216,8 +1218,18 @@ RowManager.prototype.reRenderInPosition = function(callback){
 };
 
 RowManager.prototype.setRenderMode = function(){
-	if((this.table.element.clientHeight || this.table.options.height) && this.table.options.virtualDom){
+
+
+	if(this.table.options.virtualDom){
+
 		this.renderMode = "virtual";
+
+		if((this.table.element.clientHeight || this.table.options.height)){
+			this.fixedHeight = true;
+			console.log("has height")
+		}else{
+			this.fixedHeight = false;
+		}
 	}else{
 		this.renderMode = "classic";
 	}
@@ -1690,16 +1702,22 @@ RowManager.prototype.normalizeHeight = function(){
 
 //adjust the height of the table holder to fit in the Tabulator element
 RowManager.prototype.adjustTableSize = function(){
-
 	if(this.renderMode === "virtual"){
-		this.height = this.element.clientHeight;
-		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
 		let otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
 
-		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
-		this.element.style.height = "calc(100% - " + otherHeight + "px)";
-		this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
+		if(this.fixedHeight){
+			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
+			this.element.style.height = "calc(100% - " + otherHeight + "px)";
+			this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
+		}else{
+			this.element.style.height = "";
+			this.element.style.height = (this.table.element.clientHeight - otherHeight) + "px";
+			this.element.scrollTop = this.scrollTop;
+		}
+
+		this.height = this.element.clientHeight;
+		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 	}
 };
 
