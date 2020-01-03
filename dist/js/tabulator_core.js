@@ -3483,7 +3483,6 @@ RowManager.prototype.setRenderMode = function () {
 
 		if (this.table.element.clientHeight || this.table.options.height) {
 			this.fixedHeight = true;
-			console.log("has height");
 		} else {
 			this.fixedHeight = false;
 		}
@@ -3736,6 +3735,10 @@ RowManager.prototype._virtualRenderFill = function (position, forceMove, offset)
 	} else {
 		this.renderEmptyScroll();
 	}
+
+	if (!this.fixedHeight) {
+		this.adjustTableSize();
+	}
 };
 
 //handle vertical scrolling
@@ -3956,8 +3959,10 @@ RowManager.prototype.normalizeHeight = function () {
 
 //adjust the height of the table holder to fit in the Tabulator element
 RowManager.prototype.adjustTableSize = function () {
-	if (this.renderMode === "virtual") {
+	var initialHeight = this.element.clientHeight,
+	    modExists;
 
+	if (this.renderMode === "virtual") {
 		var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
 
 		if (this.fixedHeight) {
@@ -3972,6 +3977,15 @@ RowManager.prototype.adjustTableSize = function () {
 
 		this.height = this.element.clientHeight;
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
+
+		//check if the table has changed size when dealing with variable height tables
+		if (!this.fixedHeight && initialHeight != this.element.clientHeight) {
+			modExists = this.table.modExists("resizeTable");
+
+			if (modExists && !this.table.modules.resizeTable.autoResize || !modExists) {
+				this.redraw();
+			}
+		}
 	}
 };
 
