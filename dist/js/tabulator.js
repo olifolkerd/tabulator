@@ -9285,6 +9285,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.element.style.height = this.options.height;
 
+			this.rowManager.setRenderMode();
+
 			this.rowManager.redraw();
 		} else {
 
