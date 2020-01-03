@@ -33,6 +33,8 @@ var Tabulator = function(element, options){
 Tabulator.prototype.defaultOptions = {
 
 	height:false, //height of tabulator
+	minHeight:false, //minimum height of tabulator
+	maxHeight:false, //maximum height of tabulator
 
 	layout:"fitData", ///layout type "fitColumns" | "fitData"
 	layoutColumnsOnNewData:false, //update column widths on setData
@@ -479,6 +481,18 @@ Tabulator.prototype._buildElement = function(){
 	if(options.height){
 		options.height = isNaN(options.height) ? options.height : options.height + "px";
 		element.style.height = options.height;
+	}
+
+	//set table min height
+	if(options.minHeight !== false){
+		options.minHeight = isNaN(options.minHeight) ? options.minHeight : options.minHeight + "px";
+		element.style.minHeight = options.minHeight;
+	}
+
+	//set table maxHeight
+	if(options.maxHeight !== false){
+		options.maxHeight = isNaN(options.maxHeight) ? options.maxHeight : options.maxHeight + "px";
+		element.style.maxHeight = options.maxHeight;
 	}
 
 	this.columnManager.initialize();
