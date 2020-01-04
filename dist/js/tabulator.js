@@ -7407,7 +7407,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
 
-		dataTreeChildColumnCalcs: false,
+		dataTreeChildColumnCalcs: false, //include visible data tree rows in column calculations
+
 
 		printAsHtml: false, //enable print as html
 

@@ -5778,7 +5778,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeStartExpanded: false,
 	dataTreeRowExpanded: function dataTreeRowExpanded() {}, //row has been expanded
 	dataTreeRowCollapsed: function dataTreeRowCollapsed() {}, //row has been collapsed
-	dataTreeChildColumnCalcs: false,
+	dataTreeChildColumnCalcs: false, //include visible data tree rows in column calculations
 
 	printAsHtml: false, //enable print as html
 	printFormatter: false, //printing page formatter
