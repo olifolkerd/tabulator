@@ -13020,6 +13020,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.generateControlElement(row, el);
 
+		row.element.classList.add("tabulator-tree-level-" + config.index);
+
 		if (config.index) {
 			if (this.branchEl) {
 				config.branchEl = this.branchEl.cloneNode(true);
@@ -13242,6 +13244,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("dataTree", DataTree);
+
 	var Download = function Download(table) {
 		this.table = table; //hold Tabulator object
 		this.fields = {}; //hold filed multi dimension arrays
