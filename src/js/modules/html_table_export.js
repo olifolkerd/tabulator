@@ -194,7 +194,7 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 
 	var bodyEl = document.createElement("tbody");
 
-	var rows = visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows();
+	var rows = Object.assign([],  visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows());
 	var columns = [];
 
 	if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
