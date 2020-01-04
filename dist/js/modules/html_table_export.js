@@ -184,7 +184,7 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 HtmlTableExport.prototype.generateBodyElements = function (visible) {
 	var _this4 = this;
 
-	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow;
+	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
 
 	//lookup row styles
 	if (this.cloneTableStyle && window.getComputedStyle) {
@@ -221,6 +221,10 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 			columns.push(column);
 		}
 	});
+
+	if (this.table.options.dataTree && this.config.dataTree !== false && this.table.modExists("columnCalcs")) {
+		treeElementField = this.table.modules.dataTree.elementField;
+	}
 
 	rows = rows.filter(function (row) {
 		switch (row.type) {
@@ -263,7 +267,12 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 				rowEl.classList.add("tabulator-print-table-calcs");
 
 			case "row":
-				columns.forEach(function (column) {
+
+				if (_this4.table.options.dataTree && _this4.config.dataTree === false && row.modules.dataTree.parent) {
+					return;
+				}
+
+				columns.forEach(function (column, i) {
 					var cellEl = document.createElement("td");
 
 					var value = column.getFieldValue(rowData);
@@ -326,6 +335,17 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 
 					if (firstCell) {
 						_this4.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+					}
+
+					if (_this4.table.options.dataTree && _this4.config.dataTree !== false) {
+						if (treeElementField && treeElementField == column.field || !treeElementField && i == 0) {
+							if (row.modules.dataTree.controlEl) {
+								cellEl.insertBefore(row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
+							}
+							if (row.modules.dataTree.branchEl) {
+								cellEl.insertBefore(row.modules.dataTree.branchEl.cloneNode(true), cellEl.firstChild);
+							}
+						}
 					}
 
 					rowEl.appendChild(cellEl);

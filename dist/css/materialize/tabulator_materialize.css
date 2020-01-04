@@ -821,3 +821,73 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 .tabulator-print-table {
   border-collapse: collapse;
 }
+
+.tabulator-print-table .tabulator-data-tree-branch {
+  display: inline-block;
+  vertical-align: middle;
+  height: 9px;
+  width: 7px;
+  margin-top: -9px;
+  margin-right: 5px;
+  border-bottom-left-radius: 1px;
+  border-left: 2px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.12);
+}
+
+.tabulator-print-table .tabulator-data-tree-control {
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center;
+  vertical-align: middle;
+  height: 11px;
+  width: 11px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tabulator-print-table .tabulator-data-tree-control:hover {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.tabulator-print-table .tabulator-data-tree-control .tabulator-data-tree-control-collapse {
+  display: inline-block;
+  position: relative;
+  height: 7px;
+  width: 1px;
+  background: transparent;
+}
+
+.tabulator-print-table .tabulator-data-tree-control .tabulator-data-tree-control-collapse:after {
+  position: absolute;
+  content: "";
+  left: -3px;
+  top: 3px;
+  height: 1px;
+  width: 7px;
+  background: #ccc;
+}
+
+.tabulator-print-table .tabulator-data-tree-control .tabulator-data-tree-control-expand {
+  display: inline-block;
+  position: relative;
+  height: 7px;
+  width: 1px;
+  background: #ccc;
+}
+
+.tabulator-print-table .tabulator-data-tree-control .tabulator-data-tree-control-expand:after {
+  position: absolute;
+  content: "";
+  left: -3px;
+  top: 3px;
+  height: 1px;
+  width: 7px;
+  background: #ccc;
+}

@@ -19331,7 +19331,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	HtmlTableExport.prototype.generateBodyElements = function (visible) {
 		var _this59 = this;
 
-		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow;
+		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
 
 		//lookup row styles
 		if (this.cloneTableStyle && window.getComputedStyle) {
@@ -19368,6 +19368,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				columns.push(column);
 			}
 		});
+
+		if (this.table.options.dataTree && this.config.dataTree !== false && this.table.modExists("columnCalcs")) {
+			treeElementField = this.table.modules.dataTree.elementField;
+		}
 
 		rows = rows.filter(function (row) {
 			switch (row.type) {
@@ -19410,7 +19414,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					rowEl.classList.add("tabulator-print-table-calcs");
 
 				case "row":
-					columns.forEach(function (column) {
+
+					if (_this59.table.options.dataTree && _this59.config.dataTree === false && row.modules.dataTree.parent) {
+						return;
+					}
+
+					columns.forEach(function (column, i) {
 						var cellEl = document.createElement("td");
 
 						var value = column.getFieldValue(rowData);
@@ -19473,6 +19482,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						if (firstCell) {
 							_this59.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+						}
+
+						if (_this59.table.options.dataTree && _this59.config.dataTree !== false) {
+							if (treeElementField && treeElementField == column.field || !treeElementField && i == 0) {
+								if (row.modules.dataTree.controlEl) {
+									cellEl.insertBefore(row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
+								}
+								if (row.modules.dataTree.branchEl) {
+									cellEl.insertBefore(row.modules.dataTree.branchEl.cloneNode(true), cellEl.firstChild);
+								}
+							}
 						}
 
 						rowEl.appendChild(cellEl);
