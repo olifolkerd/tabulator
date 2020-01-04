@@ -109,12 +109,13 @@ DataTree.prototype.layoutRow = function(row){
 	el = cell.getElement(),
 	config = row.modules.dataTree;
 
-
 	if(config.branchEl){
 		config.branchEl.parentNode.removeChild(config.branchEl);
 	}
 
 	this.generateControlElement(row, el);
+
+	row.element.classList.add("tabulator-tree-level-" + config.index);
 
 	if(config.index){
 		if(this.branchEl){
