@@ -109,6 +109,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeStartExpanded:false,
 	dataTreeRowExpanded:function(){}, //row has been expanded
 	dataTreeRowCollapsed:function(){}, //row has been collapsed
+	dataTreeChildColumnCalcs:false,
 
 	printAsHtml:false, //enable print as html
 	printFormatter:false, //printing page formatter

@@ -236,8 +236,15 @@ ColumnCalcs.prototype.generateBottomRow = function(rows){
 ColumnCalcs.prototype.rowsToData = function(rows){
 	var data = [];
 
-	rows.forEach(function(row){
+	rows.forEach((row) => {
 		data.push(row.getData());
+
+		if(this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs){
+			if(row.modules.dataTree.open){
+				var children = this.rowsToData(this.table.modules.dataTree.getFilteredTreeChildren(row));
+				data = data.concat(children);
+			}
+		}
 	});
 
 	return data;

@@ -298,6 +298,33 @@ DataTree.prototype.getTreeParent = function(row){
 	return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
 };
 
+
+DataTree.prototype.getFilteredTreeChildren = function(row){
+	var config = row.modules.dataTree,
+	output = [], children;
+
+	if(config.children){
+
+		if(!Array.isArray(config.children)){
+			config.children = this.generateChildren(row);
+		}
+
+		if(this.table.modExists("filter")){
+			children = this.table.modules.filter.filter(config.children);
+		}else{
+			children = config.children;
+		}
+
+		children.forEach((childRow) => {
+			if(childRow instanceof Row){
+				output.push(childRow);
+			}
+		});
+	}
+
+	return output;
+};
+
 DataTree.prototype.getTreeChildren = function(row){
 	var config = row.modules.dataTree,
 	output = [];

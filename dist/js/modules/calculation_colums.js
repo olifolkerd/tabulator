@@ -235,10 +235,19 @@ ColumnCalcs.prototype.generateBottomRow = function (rows) {
 };
 
 ColumnCalcs.prototype.rowsToData = function (rows) {
+	var _this2 = this;
+
 	var data = [];
 
 	rows.forEach(function (row) {
 		data.push(row.getData());
+
+		if (_this2.table.options.dataTree && _this2.table.options.dataTreeChildColumnCalcs) {
+			if (row.modules.dataTree.open) {
+				var children = _this2.rowsToData(_this2.table.modules.dataTree.getFilteredTreeChildren(row));
+				data = data.concat(children);
+			}
+		}
 	});
 
 	return data;
