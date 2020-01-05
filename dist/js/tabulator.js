@@ -7441,6 +7441,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}, //check wheather row is selectable
 
 
+		headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
+
 		headerFilterPlaceholder: false, //placeholder text to display in header filters
 
 
@@ -16241,7 +16243,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					typingTimer = setTimeout(function () {
 						success(editorElement.value);
-					}, 300);
+					}, self.table.options.headerFilterLiveFilterDelay);
 				};
 
 				column.modules.filter.headerElement = editorElement;
@@ -16733,6 +16735,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Tabulator.prototype.registerModule("filter", Filter);
+
 	var Format = function Format(table) {
 		this.table = table; //hold Tabulator object
 	};

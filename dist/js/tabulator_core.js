@@ -5798,6 +5798,7 @@ Tabulator.prototype.defaultOptions = {
 		return true;
 	}, //check wheather row is selectable
 
+	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
 	headerFilterPlaceholder: false, //placeholder text to display in header filters
 
 	headerVisible: true, //hide header
