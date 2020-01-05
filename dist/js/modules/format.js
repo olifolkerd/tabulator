@@ -557,6 +557,21 @@ Format.prototype.formatters = {
 		}
 
 		onRendered(function () {
+
+			//handle custom element needed if formatter is to be included in printed/downloaded output
+			if (!(cell instanceof CellComponent)) {
+				var holderEl = document.createElement("div");
+				holderEl.style.position = "absolute";
+				holderEl.style.top = "4px";
+				holderEl.style.bottom = "4px";
+				holderEl.style.left = "4px";
+				holderEl.style.right = "4px";
+
+				element.appendChild(holderEl);
+
+				element = holderEl;
+			}
+
 			element.appendChild(barEl);
 
 			if (legend) {

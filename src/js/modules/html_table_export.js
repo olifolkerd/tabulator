@@ -341,6 +341,10 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 				}
 
 				rowEl.appendChild(cellEl);
+
+				if(cellWrapper.modules.format && cellWrapper.modules.format.renderedCallback){
+					cellWrapper.modules.format.renderedCallback();
+				}
 			});
 
 
