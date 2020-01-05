@@ -2567,7 +2567,7 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 
 ////////////////// Data Handling //////////////////
 
-RowManager.prototype.setData = function (data, renderInPosition) {
+RowManager.prototype.setData = function (data, renderInPosition, columnsChanged) {
 	var _this10 = this;
 
 	var self = this;
@@ -2582,7 +2582,7 @@ RowManager.prototype.setData = function (data, renderInPosition) {
 				});
 			}
 		} else {
-			if (_this10.table.options.autoColumns) {
+			if (_this10.table.options.autoColumns && columnsChanged) {
 				_this10.table.columnManager.generateColumnsFromRowData(data);
 			}
 			_this10.resetScroll();
@@ -6325,14 +6325,14 @@ Tabulator.prototype._loadInitialData = function () {
 	var self = this;
 
 	if (self.options.pagination && self.modExists("page")) {
-		self.modules.page.reset(true);
+		self.modules.page.reset(true, true);
 
 		if (self.options.pagination == "local") {
 			if (self.options.data.length) {
-				self.rowManager.setData(self.options.data);
+				self.rowManager.setData(self.options.data, false, true);
 			} else {
 				if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
-					self.modules.ajax.loadData().then(function () {}).catch(function () {
+					self.modules.ajax.loadData(false, true).then(function () {}).catch(function () {
 						if (self.options.paginationInitialPage) {
 							self.modules.page.setPage(self.options.paginationInitialPage);
 						}
@@ -6340,7 +6340,7 @@ Tabulator.prototype._loadInitialData = function () {
 
 					return;
 				} else {
-					self.rowManager.setData(self.options.data);
+					self.rowManager.setData(self.options.data, false, true);
 				}
 			}
 
@@ -6351,7 +6351,7 @@ Tabulator.prototype._loadInitialData = function () {
 			if (self.options.ajaxURL) {
 				self.modules.page.setPage(self.options.paginationInitialPage).then(function () {}).catch(function () {});
 			} else {
-				self.rowManager.setData([]);
+				self.rowManager.setData([], false, true);
 			}
 		}
 	} else {
@@ -6359,9 +6359,9 @@ Tabulator.prototype._loadInitialData = function () {
 			self.rowManager.setData(self.options.data);
 		} else {
 			if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
-				self.modules.ajax.loadData().then(function () {}).catch(function () {});
+				self.modules.ajax.loadData(false, true).then(function () {}).catch(function () {});
 			} else {
-				self.rowManager.setData(self.options.data);
+				self.rowManager.setData(self.options.data, false, true);
 			}
 		}
 	}
@@ -6482,16 +6482,16 @@ Tabulator.prototype.setData = function (data, params, config) {
 		this.modules.ajax.blockActiveRequest();
 	}
 
-	return this._setData(data, params, config);
+	return this._setData(data, params, config, false, true);
 };
 
-Tabulator.prototype._setData = function (data, params, config, inPosition) {
+Tabulator.prototype._setData = function (data, params, config, inPosition, columnsChanged) {
 	var self = this;
 
 	if (typeof data === "string") {
 		if (data.indexOf("{") == 0 || data.indexOf("[") == 0) {
 			//data is a json encoded string
-			return self.rowManager.setData(JSON.parse(data), inPosition);
+			return self.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
 		} else {
 
 			if (self.modExists("ajax", true)) {
@@ -6506,32 +6506,32 @@ Tabulator.prototype._setData = function (data, params, config, inPosition) {
 				self.modules.ajax.setUrl(data);
 
 				if (self.options.pagination == "remote" && self.modExists("page", true)) {
-					self.modules.page.reset(true);
+					self.modules.page.reset(true, true);
 					return self.modules.page.setPage(1);
 				} else {
 					//assume data is url, make ajax call to url to get data
-					return self.modules.ajax.loadData(inPosition);
+					return self.modules.ajax.loadData(inPosition, columnsChanged);
 				}
 			}
 		}
 	} else {
 		if (data) {
 			//asume data is already an object
-			return self.rowManager.setData(data, inPosition);
+			return self.rowManager.setData(data, inPosition, columnsChanged);
 		} else {
 
 			//no data provided, check if ajaxURL is present;
 			if (self.modExists("ajax") && (self.modules.ajax.getUrl || self.options.ajaxURLGenerator)) {
 
 				if (self.options.pagination == "remote" && self.modExists("page", true)) {
-					self.modules.page.reset(true);
+					self.modules.page.reset(true, true);
 					return self.modules.page.setPage(1);
 				} else {
-					return self.modules.ajax.loadData(inPosition);
+					return self.modules.ajax.loadData(inPosition, columnsChanged);
 				}
 			} else {
 				//empty data
-				return self.rowManager.setData([], inPosition);
+				return self.rowManager.setData([], inPosition, columnsChanged);
 			}
 		}
 	}

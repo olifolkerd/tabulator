@@ -3176,7 +3176,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	////////////////// Data Handling //////////////////
 
 
-	RowManager.prototype.setData = function (data, renderInPosition) {
+	RowManager.prototype.setData = function (data, renderInPosition, columnsChanged) {
 		var _this10 = this;
 
 		var self = this;
@@ -3197,7 +3197,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			} else {
 
-				if (_this10.table.options.autoColumns) {
+				if (_this10.table.options.autoColumns && columnsChanged) {
 
 					_this10.table.columnManager.generateColumnsFromRowData(data);
 				}
@@ -8194,18 +8194,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (self.options.pagination && self.modExists("page")) {
 
-			self.modules.page.reset(true);
+			self.modules.page.reset(true, true);
 
 			if (self.options.pagination == "local") {
 
 				if (self.options.data.length) {
 
-					self.rowManager.setData(self.options.data);
+					self.rowManager.setData(self.options.data, false, true);
 				} else {
 
 					if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
 
-						self.modules.ajax.loadData().then(function () {}).catch(function () {
+						self.modules.ajax.loadData(false, true).then(function () {}).catch(function () {
 
 							if (self.options.paginationInitialPage) {
 
@@ -8216,7 +8216,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						return;
 					} else {
 
-						self.rowManager.setData(self.options.data);
+						self.rowManager.setData(self.options.data, false, true);
 					}
 				}
 
@@ -8231,7 +8231,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					self.modules.page.setPage(self.options.paginationInitialPage).then(function () {}).catch(function () {});
 				} else {
 
-					self.rowManager.setData([]);
+					self.rowManager.setData([], false, true);
 				}
 			}
 		} else {
@@ -8243,10 +8243,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if ((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")) {
 
-					self.modules.ajax.loadData().then(function () {}).catch(function () {});
+					self.modules.ajax.loadData(false, true).then(function () {}).catch(function () {});
 				} else {
 
-					self.rowManager.setData(self.options.data);
+					self.rowManager.setData(self.options.data, false, true);
 				}
 			}
 		}
@@ -8409,10 +8409,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.modules.ajax.blockActiveRequest();
 		}
 
-		return this._setData(data, params, config);
+		return this._setData(data, params, config, false, true);
 	};
 
-	Tabulator.prototype._setData = function (data, params, config, inPosition) {
+	Tabulator.prototype._setData = function (data, params, config, inPosition, columnsChanged) {
 
 		var self = this;
 
@@ -8422,7 +8422,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				//data is a json encoded string
 
-				return self.rowManager.setData(JSON.parse(data), inPosition);
+				return self.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
 			} else {
 
 				if (self.modExists("ajax", true)) {
@@ -8441,14 +8441,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (self.options.pagination == "remote" && self.modExists("page", true)) {
 
-						self.modules.page.reset(true);
+						self.modules.page.reset(true, true);
 
 						return self.modules.page.setPage(1);
 					} else {
 
 						//assume data is url, make ajax call to url to get data
 
-						return self.modules.ajax.loadData(inPosition);
+						return self.modules.ajax.loadData(inPosition, columnsChanged);
 					}
 				}
 			}
@@ -8458,7 +8458,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				//asume data is already an object
 
-				return self.rowManager.setData(data, inPosition);
+				return self.rowManager.setData(data, inPosition, columnsChanged);
 			} else {
 
 				//no data provided, check if ajaxURL is present;
@@ -8467,18 +8467,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (self.options.pagination == "remote" && self.modExists("page", true)) {
 
-						self.modules.page.reset(true);
+						self.modules.page.reset(true, true);
 
 						return self.modules.page.setPage(1);
 					} else {
 
-						return self.modules.ajax.loadData(inPosition);
+						return self.modules.ajax.loadData(inPosition, columnsChanged);
 					}
 				} else {
 
 					//empty data
 
-					return self.rowManager.setData([], inPosition);
+					return self.rowManager.setData([], inPosition, columnsChanged);
 				}
 			}
 		}
@@ -11074,13 +11074,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//lstandard loading function
-	Ajax.prototype.loadData = function (inPosition) {
+	Ajax.prototype.loadData = function (inPosition, columnsChanged) {
 		var self = this;
 
 		if (this.progressiveLoad) {
 			return this._loadDataProgressive();
 		} else {
-			return this._loadDataStandard(inPosition);
+			return this._loadDataStandard(inPosition, columnsChanged);
 		}
 	};
 
@@ -11106,12 +11106,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.table.modules.page.setPage(1);
 	};
 
-	Ajax.prototype._loadDataStandard = function (inPosition) {
+	Ajax.prototype._loadDataStandard = function (inPosition, columnsChanged) {
 		var _this31 = this;
 
 		return new Promise(function (resolve, reject) {
 			_this31.sendRequest(inPosition).then(function (data) {
-				_this31.table.rowManager.setData(data, inPosition).then(function () {
+				_this31.table.rowManager.setData(data, inPosition, columnsChanged).then(function () {
 					resolve();
 				}).catch(function (e) {
 					reject(e);
@@ -20923,6 +20923,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.displayIndex = 0; //index in display pipeline
 
+		this.initialLoad = true;
+
 		this.pageSizes = [];
 
 		this.createElements();
@@ -21147,10 +21149,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//reset to first page without triggering action
-	Page.prototype.reset = function (force) {
+	Page.prototype.reset = function (force, columnsChanged) {
 		if (this.mode == "local" || force) {
 			this.page = 1;
 		}
+
+		if (columnsChanged) {
+			this.initialLoad = true;
+		}
+
 		return true;
 	};
 
@@ -21485,7 +21492,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.progressiveLoad) {
 				switch (this.mode) {
 					case "progressive_load":
-						this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+
+						if (this.page == 1) {
+							this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1);
+						} else {
+							this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+						}
+
 						if (this.page < this.max) {
 							setTimeout(function () {
 								self.nextPage().then(function () {}).catch(function () {});
@@ -21496,7 +21509,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					case "progressive_scroll":
 						data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
 
-						this.table.rowManager.setData(data, true);
+						this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
 						margin = this.table.options.ajaxProgressiveLoadScrollMargin || this.table.rowManager.element.clientHeight * 2;
 
@@ -21508,7 +21521,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			} else {
 				left = this.table.rowManager.scrollLeft;
 
-				this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+				this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1);
 
 				this.table.rowManager.scrollHorizontal(left);
 
@@ -21516,6 +21529,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.table.options.pageLoaded.call(this.table, this.getPage());
 			}
+
+			this.initialLoad = false;
 		} else {
 			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
 		}

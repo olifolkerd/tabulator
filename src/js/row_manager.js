@@ -293,7 +293,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 
 ////////////////// Data Handling //////////////////
 
-RowManager.prototype.setData = function(data, renderInPosition){
+RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 	var self = this;
 
 	return new Promise((resolve, reject)=>{
@@ -306,7 +306,7 @@ RowManager.prototype.setData = function(data, renderInPosition){
 				});
 			}
 		}else{
-			if(this.table.options.autoColumns){
+			if(this.table.options.autoColumns && columnsChanged){
 				this.table.columnManager.generateColumnsFromRowData(data);
 			}
 			this.resetScroll();

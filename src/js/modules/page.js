@@ -12,6 +12,8 @@ var Page = function(table){
 
 	this.displayIndex = 0; //index in display pipeline
 
+	this.initialLoad = true;
+
 	this.pageSizes = [];
 
 	this.createElements();
@@ -236,10 +238,15 @@ Page.prototype.setMaxRows = function(rowCount){
 };
 
 //reset to first page without triggering action
-Page.prototype.reset = function(force){
+Page.prototype.reset = function(force, columnsChanged){
 	if(this.mode == "local" || force){
 		this.page = 1;
 	}
+
+	if(columnsChanged){
+		this.initialLoad = true;
+	}
+
 	return true;
 };
 
@@ -576,7 +583,13 @@ Page.prototype._parseRemoteData = function(data){
 		if(this.progressiveLoad){
 			switch(this.mode){
 				case "progressive_load":
-				this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+
+				if(this.page == 1){
+					this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1)
+				}else{
+					this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+				}
+
 				if(this.page < this.max){
 					setTimeout(function(){
 						self.nextPage().then(()=>{}).catch(()=>{});
@@ -587,7 +600,7 @@ Page.prototype._parseRemoteData = function(data){
 				case "progressive_scroll":
 				data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
 
-				this.table.rowManager.setData(data, true);
+				this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
 				margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
@@ -599,7 +612,7 @@ Page.prototype._parseRemoteData = function(data){
 		}else{
 			left = this.table.rowManager.scrollLeft;
 
-			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data]);
+			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1);
 
 			this.table.rowManager.scrollHorizontal(left);
 
@@ -607,6 +620,8 @@ Page.prototype._parseRemoteData = function(data){
 
 			this.table.options.pageLoaded.call(this.table, this.getPage());
 		}
+
+		this.initialLoad = false;
 
 	}else{
 		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
