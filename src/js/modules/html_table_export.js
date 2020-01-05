@@ -326,7 +326,11 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 				}
 
 				if(firstCell){
-					this.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+					this.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+
+					if(column.definition.align){
+						cellEl.style.textAlign = column.definition.align;
+					}
 				}
 
 				if(this.table.options.dataTree && this.config.dataTree !== false){
