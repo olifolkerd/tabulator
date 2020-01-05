@@ -2,14 +2,9 @@ var gulp = require("gulp"),
   sass = require("gulp-sass"),
   autoprefixer = require("gulp-autoprefixer"),
   cssnano = require("gulp-cssnano"),
-  jshint = require("gulp-jshint"),
   uglify = require("gulp-uglify"),
-  imagemin = require("gulp-imagemin"),
   rename = require("gulp-rename"),
   concat = require("gulp-concat"),
-  notify = require("gulp-notify"),
-  cache = require("gulp-cache"),
-  livereload = require("gulp-livereload"),
   del = require("del");
 (include = require("gulp-include")), (sourcemaps = require("gulp-sourcemaps")), (babel = require("gulp-babel")), (plumber = require("gulp-plumber")), (gutil = require("gulp-util")), (insert = require("gulp-insert")), (fs = require("fs"));
 
@@ -213,8 +208,8 @@ gulp.task(
 
 gulp.task("watch", function() {
   // Watch .scss files
-  gulp.watch("src/scss/**/*.scss", ["styles"]);
+  gulp.watch("src/scss/**/*.scss", gulp.series("styles"));
 
   // Watch .js files
-  gulp.watch("src/js/**/*.js", ["scripts"]);
+  gulp.watch("src/js/**/*.js", gulp.series("tabulator", "core", "modules", "jquery"));
 });
