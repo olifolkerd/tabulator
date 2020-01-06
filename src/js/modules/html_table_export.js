@@ -241,7 +241,7 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 			case "group":
 			var cellEl = document.createElement("td");
 			cellEl.colSpan = columns.length;
-			cellEl.innerHTML = row.key;
+			cellEl.innerHTML = row.generator(row.key, rowData.length, rowData, new GroupComponent(row));
 
 			rowEl.classList.add("tabulator-print-table-group");
 
