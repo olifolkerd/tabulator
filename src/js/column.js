@@ -104,6 +104,12 @@ ColumnComponent.prototype.reloadHeaderFilter = function(){
 	}
 };
 
+ColumnComponent.prototype.getHeaderFilterValue = function(){
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.getHeaderFilterValue(this._column);
+	}
+};
+
 ColumnComponent.prototype.setHeaderFilterValue = function(value){
 	if(this._column.table.modExists("filter", true)){
 		this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
