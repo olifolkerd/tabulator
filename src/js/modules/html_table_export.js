@@ -241,7 +241,12 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 			case "group":
 			var cellEl = document.createElement("td");
 			cellEl.colSpan = columns.length;
-			cellEl.innerHTML = row.generator(row.key, rowData.length, rowData, new GroupComponent(row));
+			
+			var groupWrapper = {
+				_group: row
+			};
+			
+			cellEl.innerHTML = row.generator(row.key, rowData.length, rowData, groupWrapper);
 
 			rowEl.classList.add("tabulator-print-table-group");
 
