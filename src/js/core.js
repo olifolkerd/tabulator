@@ -1543,6 +1543,17 @@ Tabulator.prototype.setHeaderFilterFocus = function(field){
 	}
 };
 
+Tabulator.prototype.getHeaderFilterValue = function(field) {
+	if(this.modExists("filter", true)){
+		var column = this.columnManager.findColumn(field);
+
+		if(column){
+			return this.modules.filter.getHeaderFilterValue(column);
+		}else{
+			console.warn("Column Filter Error - No matching column found:", field);
+		}
+	}
+};
 
 Tabulator.prototype.setHeaderFilterValue = function(field, value){
 	if(this.modExists("filter", true)){

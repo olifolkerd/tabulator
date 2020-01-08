@@ -323,12 +323,21 @@ Filter.prototype.showHeaderFilterElements = function(){
 };
 
 
-//programatically set value of header filter
+//programatically set focus of header filter
 Filter.prototype.setHeaderFilterFocus = function(column){
 	if(column.modules.filter && column.modules.filter.headerElement){
 		column.modules.filter.headerElement.focus();
 	}else{
 		console.warn("Column Filter Focus Error - No header filter set on column:", column.getField());
+	}
+};
+
+//programmatically get value of header filter
+Filter.prototype.getHeaderFilterValue = function(column){
+	if(column.modules.filter && column.modules.filter.headerElement){
+		return column.modules.filter.headerElement.value;
+	} else {
+		console.warn("Column Filter Error - No header filter set on column:", column.getField());
 	}
 };
 
