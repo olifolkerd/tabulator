@@ -1122,6 +1122,12 @@ ColumnComponent.prototype.reloadHeaderFilter = function () {
 	}
 };
 
+ColumnComponent.prototype.getHeaderFilterValue = function () {
+	if (this._column.table.modExists("filter", true)) {
+		this._column.table.modules.filter.getHeaderFilterValue(this._column);
+	}
+};
+
 ColumnComponent.prototype.setHeaderFilterValue = function (value) {
 	if (this._column.table.modExists("filter", true)) {
 		this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
@@ -7200,6 +7206,18 @@ Tabulator.prototype.setHeaderFilterFocus = function (field) {
 		} else {
 			console.warn("Column Filter Focus Error - No matching column found:", field);
 			return false;
+		}
+	}
+};
+
+Tabulator.prototype.getHeaderFilterValue = function (field) {
+	if (this.modExists("filter", true)) {
+		var column = this.columnManager.findColumn(field);
+
+		if (column) {
+			return this.modules.filter.getHeaderFilterValue(column);
+		} else {
+			console.warn("Column Filter Error - No matching column found:", field);
 		}
 	}
 };

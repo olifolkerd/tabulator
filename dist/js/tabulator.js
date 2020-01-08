@@ -1232,6 +1232,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	ColumnComponent.prototype.getHeaderFilterValue = function () {
+
+		if (this._column.table.modExists("filter", true)) {
+
+			this._column.table.modules.filter.getHeaderFilterValue(this._column);
+		}
+	};
+
 	ColumnComponent.prototype.setHeaderFilterValue = function (value) {
 
 		if (this._column.table.modExists("filter", true)) {
@@ -9386,6 +9394,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Tabulator.prototype.getHeaderFilterValue = function (field) {
+
+		if (this.modExists("filter", true)) {
+
+			var column = this.columnManager.findColumn(field);
+
+			if (column) {
+
+				return this.modules.filter.getHeaderFilterValue(column);
+			} else {
+
+				console.warn("Column Filter Error - No matching column found:", field);
+			}
+		}
+	};
+
 	Tabulator.prototype.setHeaderFilterValue = function (field, value) {
 
 		if (this.modExists("filter", true)) {
@@ -16309,12 +16333,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	};
 
-	//programatically set value of header filter
+	//programatically set focus of header filter
 	Filter.prototype.setHeaderFilterFocus = function (column) {
 		if (column.modules.filter && column.modules.filter.headerElement) {
 			column.modules.filter.headerElement.focus();
 		} else {
 			console.warn("Column Filter Focus Error - No header filter set on column:", column.getField());
+		}
+	};
+
+	//programmatically get value of header filter
+	Filter.prototype.getHeaderFilterValue = function (column) {
+		if (column.modules.filter && column.modules.filter.headerElement) {
+			return column.modules.filter.headerElement.value;
+		} else {
+			console.warn("Column Filter Error - No header filter set on column:", column.getField());
 		}
 	};
 
