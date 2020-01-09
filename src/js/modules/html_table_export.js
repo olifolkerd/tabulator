@@ -243,7 +243,22 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 			cellEl.colSpan = columns.length;
 			
 			var groupWrapper = {
-				_group: row
+				_group: row,
+				getKey:function(){
+					return this._group.key;
+				},
+				getField:function(){
+					return this._group.field;
+				},
+				getElement:function(){
+					return this._group.element;
+				},
+				getRows:function(){
+					return this._group.getRows(true);
+				},
+				getVisibility:function(){
+					return this._group.visible;
+				}
 			};
 			
 			cellEl.innerHTML = row.generator(row.key, rowData.length, rowData, groupWrapper);
