@@ -226,9 +226,7 @@ Download.prototype.processGroupData = function(group, visRows){
 
 	var groupData = {
 		type:"group",
-		key:group.key,
-		rows: visRows,
-		generator: group.generator
+		key:group.key
 	};
 
 	if(subGroups.length){
@@ -845,26 +843,7 @@ Download.prototype.downloaders = {
 			function parseGroup(group, calcObj){
 				var groupData = [];
 
-				var groupWrapper = {
-					_group: group,
-					getKey:function(){
-						return this._group.key;
-					},
-					getField:function(){
-						return this._group.field;
-					},
-					getElement:function(){
-						return this._group.element;
-					},
-					getRows:function(){
-						return this._group.getRows(true);
-					},
-					getVisibility:function(){
-						return this._group.visible;
-					}
-				};
-
-				groupData.push(group.generator(group.key, group.rows.length, group.rows, groupWrapper));
+				groupData.push(group.key);
 
 				groupRowIndexs.push(rows.length);
 
