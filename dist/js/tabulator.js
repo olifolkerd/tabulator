@@ -5797,17 +5797,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//update the rows data
 
-	Row.prototype.updateData = function (data) {
+	Row.prototype.updateData = function (updatedData) {
 		var _this13 = this;
 
 		var visible = Tabulator.prototype.helpers.elVisible(this.element),
-		    tempData = {};
+		    tempData = {},
+		    newRowData;
 
 		return new Promise(function (resolve, reject) {
 
-			if (typeof data === "string") {
+			if (typeof updatedData === "string") {
 
-				data = JSON.parse(data);
+				updatedData = JSON.parse(updatedData);
 			}
 
 			if (_this13.table.options.reactiveData && _this13.table.modExists("reactiveData", true)) {
@@ -5821,16 +5822,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				tempData = Object.assign(tempData, _this13.data);
 
-				tempData = Object.assign(tempData, data);
+				tempData = Object.assign(tempData, updatedData);
 
-				data = _this13.table.modules.mutator.transformRow(tempData, "data", data);
+				newRowData = _this13.table.modules.mutator.transformRow(tempData, "data", updatedData);
+			} else {
+
+				newRowData = updatedData;
 			}
 
 			//set data
 
-			for (var attrname in data) {
+			for (var attrname in newRowData) {
 
-				_this13.data[attrname] = data[attrname];
+				_this13.data[attrname] = newRowData[attrname];
 			}
 
 			if (_this13.table.options.reactiveData && _this13.table.modExists("reactiveData", true)) {
@@ -5840,7 +5844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//update affected cells only
 
-			for (var attrname in data) {
+			for (var attrname in updatedData) {
 
 				var columns = _this13.table.columnManager.getColumnsByFieldRoot(attrname);
 
@@ -5850,7 +5854,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (cell) {
 
-						var value = column.getFieldValue(data);
+						var value = column.getFieldValue(newRowData);
 
 						if (cell.getValue() != value) {
 
@@ -5884,7 +5888,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				_this13.heightStyled = "";
 			}
 
-			if (_this13.table.options.dataTree !== false && _this13.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(data)) {
+			if (_this13.table.options.dataTree !== false && _this13.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(updatedData)) {
 
 				_this13.table.modules.dataTree.initializeRow(_this13);
 
@@ -13036,11 +13040,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var children = isArray || !isArray && (typeof childArray === 'undefined' ? 'undefined' : _typeof(childArray)) === "object" && childArray !== null;
 
+		if (!children && row.modules.dataTree && row.modules.dataTree.branchEl) {
+			row.modules.dataTree.branchEl.parentNode.removeChild(row.modules.dataTree.branchEl);
+		}
+
+		if (!children && row.modules.dataTree && row.modules.dataTree.controlEl) {
+			row.modules.dataTree.controlEl.parentNode.removeChild(row.modules.dataTree.controlEl);
+		}
+
 		row.modules.dataTree = {
 			index: 0,
-			open: children ? this.startOpen(row.getComponent(), 0) : false,
-			controlEl: false,
-			branchEl: false,
+			open: children ? row.modules.dataTree ? row.modules.dataTree.open : this.startOpen(row.getComponent(), 0) : false,
+			controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
+			branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
 			parent: false,
 			children: children
 		};
@@ -13053,6 +13065,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (config.branchEl) {
 			config.branchEl.parentNode.removeChild(config.branchEl);
+			config.branchEl = false;
+		}
+
+		if (config.controlEl) {
+			config.controlEl.parentNode.removeChild(config.controlEl);
+			config.controlEl = false;
 		}
 
 		this.generateControlElement(row, el);

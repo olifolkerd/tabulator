@@ -4578,16 +4578,17 @@ Row.prototype.setData = function (data) {
 };
 
 //update the rows data
-Row.prototype.updateData = function (data) {
+Row.prototype.updateData = function (updatedData) {
 	var _this13 = this;
 
 	var visible = Tabulator.prototype.helpers.elVisible(this.element),
-	    tempData = {};
+	    tempData = {},
+	    newRowData;
 
 	return new Promise(function (resolve, reject) {
 
-		if (typeof data === "string") {
-			data = JSON.parse(data);
+		if (typeof updatedData === "string") {
+			updatedData = JSON.parse(updatedData);
 		}
 
 		if (_this13.table.options.reactiveData && _this13.table.modExists("reactiveData", true)) {
@@ -4598,14 +4599,16 @@ Row.prototype.updateData = function (data) {
 		if (_this13.table.modExists("mutator")) {
 
 			tempData = Object.assign(tempData, _this13.data);
-			tempData = Object.assign(tempData, data);
+			tempData = Object.assign(tempData, updatedData);
 
-			data = _this13.table.modules.mutator.transformRow(tempData, "data", data);
+			newRowData = _this13.table.modules.mutator.transformRow(tempData, "data", updatedData);
+		} else {
+			newRowData = updatedData;
 		}
 
 		//set data
-		for (var attrname in data) {
-			_this13.data[attrname] = data[attrname];
+		for (var attrname in newRowData) {
+			_this13.data[attrname] = newRowData[attrname];
 		}
 
 		if (_this13.table.options.reactiveData && _this13.table.modExists("reactiveData", true)) {
@@ -4613,7 +4616,7 @@ Row.prototype.updateData = function (data) {
 		}
 
 		//update affected cells only
-		for (var attrname in data) {
+		for (var attrname in updatedData) {
 
 			var columns = _this13.table.columnManager.getColumnsByFieldRoot(attrname);
 
@@ -4621,7 +4624,7 @@ Row.prototype.updateData = function (data) {
 				var cell = _this13.getCell(column.getField());
 
 				if (cell) {
-					var value = column.getFieldValue(data);
+					var value = column.getFieldValue(newRowData);
 					if (cell.getValue() != value) {
 						cell.setValueProcessData(value);
 
@@ -4646,7 +4649,7 @@ Row.prototype.updateData = function (data) {
 			_this13.heightStyled = "";
 		}
 
-		if (_this13.table.options.dataTree !== false && _this13.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(data)) {
+		if (_this13.table.options.dataTree !== false && _this13.table.modExists("dataTree") && _this13.table.modules.dataTree.redrawNeeded(updatedData)) {
 			_this13.table.modules.dataTree.initializeRow(_this13);
 			_this13.table.modules.dataTree.layoutRow(_this13);
 			_this13.table.rowManager.refreshActiveData("tree", false, true);

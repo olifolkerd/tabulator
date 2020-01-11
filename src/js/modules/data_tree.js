@@ -91,13 +91,22 @@ DataTree.prototype.initializeRow = function(row){
 	var childArray = row.getData()[this.field];
 	var isArray = Array.isArray(childArray);
 
-	var children = isArray || (!isArray && typeof childArray === "object" && childArray !== null) ;
+	var children = isArray || (!isArray && typeof childArray === "object" && childArray !== null);
+
+	if(!children && row.modules.dataTree && row.modules.dataTree.branchEl){
+		row.modules.dataTree.branchEl.parentNode.removeChild(row.modules.dataTree.branchEl);
+	}
+
+	if(!children && row.modules.dataTree && row.modules.dataTree.controlEl){
+		row.modules.dataTree.controlEl.parentNode.removeChild(row.modules.dataTree.controlEl);
+	}
+
 
 	row.modules.dataTree = {
 		index:0,
-		open:children ? this.startOpen(row.getComponent(), 0) : false,
-		controlEl:false,
-		branchEl:false,
+		open: children ? (row.modules.dataTree ? row.modules.dataTree.open :this.startOpen(row.getComponent(), 0)) : false,
+		controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
+		branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
 		parent:false,
 		children:children,
 	};
@@ -111,6 +120,12 @@ DataTree.prototype.layoutRow = function(row){
 
 	if(config.branchEl){
 		config.branchEl.parentNode.removeChild(config.branchEl);
+		config.branchEl = false;
+	}
+
+	if(config.controlEl){
+		config.controlEl.parentNode.removeChild(config.controlEl);
+		config.controlEl = false;
 	}
 
 	this.generateControlElement(row, el);
