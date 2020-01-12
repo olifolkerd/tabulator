@@ -2,14 +2,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 /* Tabulator v4.5.3 (c) Oliver Folkerd */
 
-var HtmlTableExport = function HtmlTableExport(table) {
+var Export = function Export(table) {
 	this.table = table; //hold Tabulator object
 	this.config = {};
 	this.cloneTableStyle = true;
 	this.colVisProp = "";
 };
 
-HtmlTableExport.prototype.genereateTable = function (config, style, visible, colVisProp) {
+Export.prototype.genereateTable = function (config, style, visible, colVisProp) {
 	this.cloneTableStyle = style;
 	this.config = config || {};
 	this.colVisProp = colVisProp;
@@ -27,7 +27,7 @@ HtmlTableExport.prototype.genereateTable = function (config, style, visible, col
 	return table;
 };
 
-HtmlTableExport.prototype.generateColumnGroupHeaders = function () {
+Export.prototype.generateColumnGroupHeaders = function () {
 	var _this = this;
 
 	var output = [];
@@ -45,7 +45,7 @@ HtmlTableExport.prototype.generateColumnGroupHeaders = function () {
 	return output;
 };
 
-HtmlTableExport.prototype.processColumnGroup = function (column) {
+Export.prototype.processColumnGroup = function (column) {
 	var _this2 = this;
 
 	var subGroups = column.columns,
@@ -90,7 +90,7 @@ HtmlTableExport.prototype.processColumnGroup = function (column) {
 	return groupData;
 };
 
-HtmlTableExport.prototype.groupHeadersToRows = function (columns) {
+Export.prototype.groupHeadersToRows = function (columns) {
 
 	var headers = [],
 	    headerDepth = 0;
@@ -128,7 +128,7 @@ HtmlTableExport.prototype.groupHeadersToRows = function (columns) {
 	return headers;
 };
 
-HtmlTableExport.prototype.generateHeaderElements = function () {
+Export.prototype.generateHeaderElements = function () {
 	var _this3 = this;
 
 	var headerEl = document.createElement("thead");
@@ -181,7 +181,7 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 	return headerEl;
 };
 
-HtmlTableExport.prototype.generateBodyElements = function (visible) {
+Export.prototype.generateBodyElements = function (visible) {
 	var _this4 = this;
 
 	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
@@ -371,11 +371,11 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 	return bodyEl;
 };
 
-HtmlTableExport.prototype.columnVisCheck = function (column) {
+Export.prototype.columnVisCheck = function (column) {
 	return column.definition[this.colVisProp] !== false && (column.visible || !column.visible && column.definition[this.colVisProp]);
 };
 
-HtmlTableExport.prototype.getHtml = function (visible, style, config) {
+Export.prototype.getHtml = function (visible, style, config) {
 	var holder = document.createElement("div");
 
 	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
@@ -383,7 +383,7 @@ HtmlTableExport.prototype.getHtml = function (visible, style, config) {
 	return holder.innerHTML;
 };
 
-HtmlTableExport.prototype.mapElementStyles = function (from, to, props) {
+Export.prototype.mapElementStyles = function (from, to, props) {
 	if (this.cloneTableStyle && from && to) {
 
 		var lookup = {
@@ -414,4 +414,4 @@ HtmlTableExport.prototype.mapElementStyles = function (from, to, props) {
 	}
 };
 
-Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
+Tabulator.prototype.registerModule("export", Export);

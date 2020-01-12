@@ -919,8 +919,8 @@ Tabulator.prototype.searchData = function(field, type, value){
 
 //get table html
 Tabulator.prototype.getHtml = function(visible, style, config){
-	if(this.modExists("htmlTableExport", true)){
-		return this.modules.htmlTableExport.getHtml(visible, style, config);
+	if(this.modExists("export", true)){
+		return this.modules.export.getHtml(visible, style, config);
 	}
 };
 

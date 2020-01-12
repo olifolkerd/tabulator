@@ -1,11 +1,11 @@
-var HtmlTableExport = function(table){
+var Export = function(table){
 	this.table = table; //hold Tabulator object
 	this.config = {};
 	this.cloneTableStyle = true;
 	this.colVisProp = "";
 };
 
-HtmlTableExport.prototype.genereateTable = function(config, style, visible, colVisProp){
+Export.prototype.genereateTable = function(config, style, visible, colVisProp){
 	this.cloneTableStyle = style;
 	this.config = config || {};
 	this.colVisProp = colVisProp;
@@ -24,7 +24,7 @@ HtmlTableExport.prototype.genereateTable = function(config, style, visible, colV
 };
 
 
-HtmlTableExport.prototype.generateColumnGroupHeaders = function(){
+Export.prototype.generateColumnGroupHeaders = function(){
 	var output = [];
 
 	var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
@@ -40,7 +40,7 @@ HtmlTableExport.prototype.generateColumnGroupHeaders = function(){
 	return output;
 };
 
-HtmlTableExport.prototype.processColumnGroup = function(column){
+Export.prototype.processColumnGroup = function(column){
 	var subGroups = column.columns,
 	maxDepth = 0;
 
@@ -84,7 +84,7 @@ HtmlTableExport.prototype.processColumnGroup = function(column){
 };
 
 
-HtmlTableExport.prototype.groupHeadersToRows = function(columns){
+Export.prototype.groupHeadersToRows = function(columns){
 
 	var headers = [], headerDepth = 0;
 
@@ -122,7 +122,7 @@ HtmlTableExport.prototype.groupHeadersToRows = function(columns){
 };
 
 
-HtmlTableExport.prototype.generateHeaderElements = function(){
+Export.prototype.generateHeaderElements = function(){
 
 	var headerEl = document.createElement("thead");
 
@@ -174,7 +174,7 @@ HtmlTableExport.prototype.generateHeaderElements = function(){
 	return headerEl;
 };
 
-HtmlTableExport.prototype.generateBodyElements = function(visible){
+Export.prototype.generateBodyElements = function(visible){
 	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
 
 	//lookup row styles
@@ -364,12 +364,12 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 	return bodyEl;
 };
 
-HtmlTableExport.prototype.columnVisCheck = function(column){
+Export.prototype.columnVisCheck = function(column){
 	return column.definition[this.colVisProp] !== false && (column.visible || (!column.visible && column.definition[this.colVisProp]));
 };
 
 
-HtmlTableExport.prototype.getHtml = function(visible, style, config){
+Export.prototype.getHtml = function(visible, style, config){
 	var holder = document.createElement("div");
 
 	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
@@ -378,7 +378,7 @@ HtmlTableExport.prototype.getHtml = function(visible, style, config){
 };
 
 
-HtmlTableExport.prototype.mapElementStyles = function(from, to, props){
+Export.prototype.mapElementStyles = function(from, to, props){
 	if(this.cloneTableStyle && from && to){
 
 		var lookup = {
@@ -410,4 +410,4 @@ HtmlTableExport.prototype.mapElementStyles = function(from, to, props){
 };
 
 
-Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
+Tabulator.prototype.registerModule("export", Export);

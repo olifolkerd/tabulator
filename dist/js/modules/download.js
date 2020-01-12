@@ -933,8 +933,8 @@ Download.prototype.downloaders = {
 	},
 
 	html: function html(columns, data, options, setFileContents, config) {
-		if (this.table.modExists("htmlTableExport", true)) {
-			setFileContents(this.table.modules.htmlTableExport.getHtml(true, options.style, config), "text/html");
+		if (this.table.modExists("export", true)) {
+			setFileContents(this.table.modules.export.getHtml(true, options.style, config), "text/html");
 		}
 	}
 

@@ -5,6 +5,7 @@
 /*=include modules/data_tree.js */
 /*=include modules/download.js */
 /*=include modules/edit.js */
+/*=include modules/export.js */
 /*=include modules/filter.js */
 /*=include modules/format.js */
 /*=include modules/frozen_columns.js */
@@ -12,7 +13,6 @@
 /*=include modules/group_rows.js */
 /*=include modules/history.js */
 /*=include modules/html_table_import.js */
-/*=include modules/html_table_export.js */
 /*=include modules/keybindings.js */
 /*=include modules/moveable_columns.js */
 /*=include modules/moveable_rows.js */
