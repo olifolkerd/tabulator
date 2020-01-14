@@ -869,20 +869,20 @@ Download.prototype.downloaders = {
 
 			}
 
+			if(config.columnCalcs){
+				addCalcRow(calcs, "top");
+			}
+
 			if(config.rowGroups){
 				data.forEach(function(group){
 					parseGroup(group, calcs);
 				});
 			}else{
-				if(config.columnCalcs){
-					addCalcRow(calcs, "top");
-				}
-
 				parseRows(data);
+			}
 
-				if(config.columnCalcs){
-					addCalcRow(calcs, "bottom");
-				}
+			if(config.columnCalcs){
+				addCalcRow(calcs, "bottom");
 			}
 
 			worksheet = rowsToSheet();

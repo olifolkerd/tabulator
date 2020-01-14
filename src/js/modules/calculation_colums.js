@@ -334,7 +334,10 @@ ColumnCalcs.prototype.redraw = function(){
 //return the calculated
 ColumnCalcs.prototype.getResults = function(){
 	var self = this,
-	results = {},
+	results = {
+		top: this.topRow ? this.topRow.getData() : {},
+		bottom: this.botRow ? this.botRow.getData() : {},
+	},
 	groups;
 
 	if(this.table.options.groupBy && this.table.modExists("groupRows")){
@@ -343,11 +346,6 @@ ColumnCalcs.prototype.getResults = function(){
 		groups.forEach(function(group){
 			results[group.getKey()] = self.getGroupResults(group);
 		});
-	}else{
-		results = {
-			top: this.topRow ? this.topRow.getData() : {},
-			bottom: this.botRow ? this.botRow.getData() : {},
-		}
 	}
 
 	return results;
