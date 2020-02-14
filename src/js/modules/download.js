@@ -575,9 +575,7 @@ Download.prototype.downloaders = {
                         content:value,
                         styles:styles
                     };
-                    if(!isNaN(value)){
-                        input.styles.halign =  'right';
-                    }
+                   
                     rowData.push(input);
                     
 				}else{
