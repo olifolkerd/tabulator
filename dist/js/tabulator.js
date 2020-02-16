@@ -14561,7 +14561,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	Edit.prototype.maskInput = function (el, mask) {
+	Edit.prototype.maskInput = function (el, options) {
+		var mask = options.mask,
+		    success = false;
+
+		function fillSymbols(index) {
+			var symbol = mask[index];
+			if (typeof symbol !== "undefined" && symbol !== "A" && symbol !== "9") {
+				el.value = el.value + "" + symbol;
+				fillSymbols(index + 1);
+			}
+		}
+
 		el.addEventListener("keydown", function (e) {
 			var index = el.value.length,
 			    char = e.key;
@@ -14570,6 +14581,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (index >= mask.length) {
 					e.preventDefault();
 					e.stopPropagation();
+					success = false;
 					return false;
 				} else {
 					switch (mask[index]) {
@@ -14577,6 +14589,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							if (char.toUpperCase() == char.toLowerCase()) {
 								e.preventDefault();
 								e.stopPropagation();
+								success = false;
 								return false;
 							}
 							break;
@@ -14585,6 +14598,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							if (isNaN(char)) {
 								e.preventDefault();
 								e.stopPropagation();
+								success = false;
 								return false;
 							}
 							break;
@@ -14593,17 +14607,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							if (char !== mask[index]) {
 								e.preventDefault();
 								e.stopPropagation();
+								success = false;
 								return false;
 							}
 					}
 				}
+
+				success = true;
 			}
 
 			return;
 		});
 
+		el.addEventListener("keyup", function (e) {
+			if (e.keyCode > 46) {
+				if (options.maskAutoFill) {
+					fillSymbols(el.value.length);
+				}
+			}
+		});
+
 		if (!el.placeholder) {
 			el.placeholder = mask;
+		}
+
+		if (options.maskAutoFill) {
+			fillSymbols(el.value.length);
 		}
 	};
 
@@ -14670,7 +14699,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			if (editorParams.mask) {
-				this.table.modules.edit.maskInput(input, editorParams.mask);
+				this.table.modules.edit.maskInput(input, editorParams);
 			}
 
 			return input;

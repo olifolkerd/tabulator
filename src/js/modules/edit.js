@@ -291,7 +291,18 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	}
 };
 
-Edit.prototype.maskInput = function(el, mask){
+Edit.prototype.maskInput = function(el, options){
+	var mask = options.mask,
+	success = false;
+
+	function fillSymbols(index){
+		var symbol = mask[index];
+		if(typeof symbol !== "undefined" && symbol !== "A" && symbol !== "9"){
+			el.value = el.value + "" + symbol;
+			fillSymbols(index+1);
+		}
+	}
+
 	el.addEventListener("keydown", (e) => {
 		var index = el.value.length,
 		char = e.key;
@@ -300,6 +311,7 @@ Edit.prototype.maskInput = function(el, mask){
 			if(index >= mask.length){
 				e.preventDefault();
 				e.stopPropagation();
+				success = false;
 				return false;
 			}else{
 				switch(mask[index]){
@@ -307,6 +319,7 @@ Edit.prototype.maskInput = function(el, mask){
 					if(char.toUpperCase() == char.toLowerCase()){
 						e.preventDefault();
 						e.stopPropagation();
+						success = false;
 						return false;
 					}
 					break;
@@ -315,6 +328,7 @@ Edit.prototype.maskInput = function(el, mask){
 					if(isNaN(char)){
 						e.preventDefault();
 						e.stopPropagation();
+						success = false;
 						return false;
 					}
 					break;
@@ -323,17 +337,33 @@ Edit.prototype.maskInput = function(el, mask){
 					if(char !== mask[index]){
 						e.preventDefault();
 						e.stopPropagation();
+						success = false;
 						return false;
 					}
 				}
 			}
+
+			success = true;
 		}
 
 		return;
 	});
 
+	el.addEventListener("keyup", (e) => {
+		if(e.keyCode > 46){
+			if(options.maskAutoFill){
+				fillSymbols(el.value.length);
+			}
+		}
+	});
+
+
 	if(!el.placeholder){
 		el.placeholder = mask;
+	}
+
+	if(options.maskAutoFill){
+		fillSymbols(el.value.length);
 	}
 };
 
@@ -400,7 +430,7 @@ Edit.prototype.editors = {
 		});
 
 		if(editorParams.mask){
-			this.table.modules.edit.maskInput(input, editorParams.mask);
+			this.table.modules.edit.maskInput(input, editorParams);
 		}
 
 		return input;
