@@ -14565,11 +14565,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var mask = options.mask,
 		    maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
 		    maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
+		    maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*",
 		    success = false;
 
 		function fillSymbols(index) {
 			var symbol = mask[index];
-			if (typeof symbol !== "undefined" && symbol !== maskLetter && symbol !== maskNumber) {
+			if (typeof symbol !== "undefined" && symbol !== maskWildcard && symbol !== maskLetter && symbol !== maskNumber) {
 				el.value = el.value + "" + symbol;
 				fillSymbols(index + 1);
 			}
@@ -14603,6 +14604,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								success = false;
 								return false;
 							}
+							break;
+
+						case maskWildcard:
 							break;
 
 						default:
