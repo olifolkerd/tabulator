@@ -14561,6 +14561,52 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Edit.prototype.maskInput = function (el, mask) {
+		el.addEventListener("keydown", function (e) {
+			var index = el.value.length,
+			    char = e.key;
+
+			if (e.keyCode > 46) {
+				if (index >= mask.length) {
+					e.preventDefault();
+					e.stopPropagation();
+					return false;
+				} else {
+					switch (mask[index]) {
+						case "A":
+							if (char.toUpperCase() == char.toLowerCase()) {
+								e.preventDefault();
+								e.stopPropagation();
+								return false;
+							}
+							break;
+
+						case "9":
+							if (isNaN(char)) {
+								e.preventDefault();
+								e.stopPropagation();
+								return false;
+							}
+							break;
+
+						default:
+							if (char !== mask[index]) {
+								e.preventDefault();
+								e.stopPropagation();
+								return false;
+							}
+					}
+				}
+			}
+
+			return;
+		});
+
+		if (!el.placeholder) {
+			el.placeholder = mask;
+		}
+	};
+
 	//default data editors
 	Edit.prototype.editors = {
 
@@ -14622,6 +14668,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						break;
 				}
 			});
+
+			if (editorParams.mask) {
+				this.table.modules.edit.maskInput(input, editorParams.mask);
+			}
 
 			return input;
 		},
@@ -14723,6 +14773,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			});
 
+			if (editorParams.mask) {
+				this.table.modules.edit.maskInput(input, editorParams.mask);
+			}
+
 			return input;
 		},
 
@@ -14818,6 +14872,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						break;
 				}
 			});
+
+			if (editorParams.mask) {
+				this.table.modules.edit.maskInput(input, editorParams.mask);
+			}
 
 			return input;
 		},
@@ -15666,6 +15724,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				input.style.height = "100%";
 				input.focus();
 			});
+
+			if (editorParams.mask) {
+				this.table.modules.edit.maskInput(input, editorParams.mask);
+			}
 
 			return input;
 		},

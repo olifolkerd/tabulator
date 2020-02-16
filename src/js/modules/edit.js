@@ -291,6 +291,52 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	}
 };
 
+Edit.prototype.maskInput = function(el, mask){
+	el.addEventListener("keydown", (e) => {
+		var index = el.value.length,
+		char = e.key;
+
+		if(e.keyCode > 46){
+			if(index >= mask.length){
+				e.preventDefault();
+				e.stopPropagation();
+				return false;
+			}else{
+				switch(mask[index]){
+					case "A":
+					if(char.toUpperCase() == char.toLowerCase()){
+						e.preventDefault();
+						e.stopPropagation();
+						return false;
+					}
+					break;
+
+					case "9":
+					if(isNaN(char)){
+						e.preventDefault();
+						e.stopPropagation();
+						return false;
+					}
+					break;
+
+					default:
+					if(char !== mask[index]){
+						e.preventDefault();
+						e.stopPropagation();
+						return false;
+					}
+				}
+			}
+		}
+
+		return;
+	});
+
+	if(!el.placeholder){
+		el.placeholder = mask;
+	}
+};
+
 //default data editors
 Edit.prototype.editors = {
 
@@ -352,6 +398,10 @@ Edit.prototype.editors = {
 				break;
 			}
 		});
+
+		if(editorParams.mask){
+			this.table.modules.edit.maskInput(input, editorParams.mask);
+		}
 
 		return input;
 	},
@@ -451,6 +501,10 @@ Edit.prototype.editors = {
         	}
         });
 
+        if(editorParams.mask){
+        	this.table.modules.edit.maskInput(input, editorParams.mask);
+        }
+
         return input;
     },
 
@@ -545,6 +599,10 @@ Edit.prototype.editors = {
 				break;
 			}
 		});
+
+		if(editorParams.mask){
+			this.table.modules.edit.maskInput(input, editorParams.mask);
+		}
 
 		return input;
 	},
@@ -1395,6 +1453,10 @@ Edit.prototype.editors = {
 			input.style.height = "100%";
 			input.focus();
 		});
+
+		if(editorParams.mask){
+			this.table.modules.edit.maskInput(input, editorParams.mask);
+		}
 
 		return input;
 	},
