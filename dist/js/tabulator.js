@@ -14563,11 +14563,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Edit.prototype.maskInput = function (el, options) {
 		var mask = options.mask,
+		    maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
+		    maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
 		    success = false;
 
 		function fillSymbols(index) {
 			var symbol = mask[index];
-			if (typeof symbol !== "undefined" && symbol !== "A" && symbol !== "9") {
+			if (typeof symbol !== "undefined" && symbol !== maskLetter && symbol !== maskNumber) {
 				el.value = el.value + "" + symbol;
 				fillSymbols(index + 1);
 			}
@@ -14585,7 +14587,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					return false;
 				} else {
 					switch (mask[index]) {
-						case "A":
+						case maskLetter:
 							if (char.toUpperCase() == char.toLowerCase()) {
 								e.preventDefault();
 								e.stopPropagation();
@@ -14594,7 +14596,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							}
 							break;
 
-						case "9":
+						case maskNumber:
 							if (isNaN(char)) {
 								e.preventDefault();
 								e.stopPropagation();
