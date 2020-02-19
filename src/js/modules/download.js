@@ -256,21 +256,30 @@ Download.prototype.processGroupData = function(group, visRows){
 };
 
 Download.prototype.triggerDownload = function(data, mime, type, filename, newTab){
-	var element = document.createElement('a'),
-	blob = new Blob([data],{type:mime}),
+	let element = document.createElement('a');
+	let blob = new Blob([data],{type:mime});
 	filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
 	blob = this.table.options.downloadReady.call(this.table, data, blob);
 
+    let cleanUpUrl = (blobUrl)=>{
+        setTimeout(()=>{
+            window.URL.revokeObjectURL(blobUrl);
+        }, 100);
+    };
+    
 	if(blob){
-
+        let blobUrl = "";
 		if(newTab){
-			window.open(window.URL.createObjectURL(blob));
+			blobUrl = window.URL.createObjectURL(blob);
+            window.open(blobUrl);
 		}else{
 			if(navigator.msSaveOrOpenBlob){
 				navigator.msSaveOrOpenBlob(blob, filename);
+                cleanUpUrl = (blobUrl) => {};
 			}else{
-				element.setAttribute('href', window.URL.createObjectURL(blob));
+                blobUrl = window.URL.createObjectURL(blob);
+				element.setAttribute('href', blobUrl);
 
 				//set file title
 				element.setAttribute('download', filename);
@@ -285,12 +294,12 @@ Download.prototype.triggerDownload = function(data, mime, type, filename, newTab
 			}
 		}
 
-
 		if(this.table.options.downloadComplete){
 			this.table.options.downloadComplete();
 		}
-	}
 
+        cleanUpUrl(blobUrl);
+	}
 };
 
 //nested field lookup
