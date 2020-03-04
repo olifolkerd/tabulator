@@ -816,7 +816,12 @@ Download.prototype.downloaders = {
 
 				fields.forEach(function(field){
 					var value = self.getFieldValue(field, row);
-					rowData.push(!(value instanceof Date) && typeof value === "object" ? JSON.stringify(value) : value);
+					if(Array.isArray(value)){
+						rowData.push(value);
+					}
+					else{
+						rowData.push(!(value instanceof Date) && typeof value === "object" ? JSON.stringify(value) : value);
+					}
 				});
 
 				return rowData;
