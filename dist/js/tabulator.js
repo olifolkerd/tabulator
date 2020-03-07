@@ -11915,58 +11915,60 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var Clipboard = function Clipboard(table) {
 		this.table = table;
 		this.mode = true;
-		this.copySelector = false;
-		this.copySelectorParams = {};
-		this.copyFormatter = false;
-		this.copyFormatterParams = {};
+
 		this.pasteParser = function () {};
 		this.pasteAction = function () {};
-		this.htmlElement = false;
+		this.customSelection = false;
 		this.config = {};
 
 		this.blocked = true; //block copy actions not originating from this command
 	};
 
 	Clipboard.prototype.initialize = function () {
-		var self = this;
+		var _this35 = this;
 
 		this.mode = this.table.options.clipboard;
 
 		if (this.mode === true || this.mode === "copy") {
 			this.table.element.addEventListener("copy", function (e) {
-				var data;
+				var plain, html;
 
-				self.processConfig();
+				_this35.processConfig();
 
-				if (!self.blocked) {
+				if (!_this35.blocked) {
 					e.preventDefault();
 
-					data = self.generateContent();
+					if (_this35.customSelection) {
+						plain = _this35.customSelection;
+					} else {
+						html = _this35.table.modules.export.getHtml(_this35.table.options.printVisibleRows, _this35.table.options.printCopyStyle, _this35.config, "clipboard");
+						plain = html ? _this35.generatePlainContent(html) : "";
+					}
 
 					if (window.clipboardData && window.clipboardData.setData) {
-						window.clipboardData.setData('Text', data);
+						window.clipboardData.setData('Text', plain);
 					} else if (e.clipboardData && e.clipboardData.setData) {
-						e.clipboardData.setData('text/plain', data);
-						if (self.htmlElement) {
-							e.clipboardData.setData('text/html', self.htmlElement.outerHTML);
+						e.clipboardData.setData('text/plain', plain);
+						if (html) {
+							e.clipboardData.setData('text/html', html);
 						}
 					} else if (e.originalEvent && e.originalEvent.clipboardData.setData) {
-						e.originalEvent.clipboardData.setData('text/plain', data);
-						if (self.htmlElement) {
-							e.originalEvent.clipboardData.setData('text/html', self.htmlElement.outerHTML);
+						e.originalEvent.clipboardData.setData('text/plain', plain);
+						if (html) {
+							e.originalEvent.clipboardData.setData('text/html', html);
 						}
 					}
 
-					self.table.options.clipboardCopied.call(this.table, data);
+					_this35.table.options.clipboardCopied.call(_this35.table, plain);
 
-					self.reset();
+					_this35.reset();
 				}
 			});
 		}
 
 		if (this.mode === true || this.mode === "paste") {
 			this.table.element.addEventListener("paste", function (e) {
-				self.paste(e);
+				this.paste(e);
 			});
 		}
 
@@ -12015,6 +12017,76 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.blocked = false;
 		this.originalSelectionText = "";
 	};
+
+	Clipboard.prototype.generatePlainContent = function (html) {
+		var output = [];
+
+		var holder = document.createElement("div");
+		holder.innerHTML = html;
+
+		var table = holder.getElementsByTagName("table")[0];
+		var rows = Array.prototype.slice.call(table.getElementsByTagName("tr"));
+
+		rows.forEach(function (row) {
+			var rowData = [];
+
+			var headers = Array.prototype.slice.call(row.getElementsByTagName("th"));
+			var cells = Array.prototype.slice.call(row.getElementsByTagName("td"));
+
+			cells = cells.concat(headers);
+
+			cells.forEach(function (cell) {
+				var val = cell.innerHTML;
+
+				val = val == "&nbsp;" ? "" : val;
+
+				rowData.push(val);
+			});
+
+			output.push(rowData.join("\t"));
+		});
+
+		return output.join("\n");
+	};
+
+	Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
+		var range, sel, textRange;
+		this.blocked = false;
+		this.customSelection = false;
+
+		if (this.mode === true || this.mode === "copy") {
+
+			if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+				range = document.createRange();
+				range.selectNodeContents(this.table.element);
+				sel = window.getSelection();
+
+				if (sel.toString() && internal) {
+					this.customSelection = sel.toString();
+				}
+
+				sel.removeAllRanges();
+				sel.addRange(range);
+			} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
+				textRange = document.body.createTextRange();
+				textRange.moveToElementText(this.table.element);
+				textRange.select();
+			}
+
+			// this.setSelector(selector);
+			// this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.config.columnHeaders;
+			// this.setFormatter(formatter);
+			// this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
+
+			document.execCommand('copy');
+
+			if (sel) {
+				sel.removeAllRanges();
+			}
+		}
+	};
+
+	//PASTE EVENT HANDLING
 
 	Clipboard.prototype.setPasteAction = function (action) {
 
@@ -12110,748 +12182,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		return data;
-	};
-
-	Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
-		var range, sel, textRange;
-		this.blocked = false;
-
-		if (this.mode === true || this.mode === "copy") {
-
-			if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
-				range = document.createRange();
-				range.selectNodeContents(this.table.element);
-				sel = window.getSelection();
-
-				if (sel.toString() && internal) {
-					selector = "userSelection";
-					formatter = "raw";
-					selectorParams = sel.toString();
-				}
-
-				sel.removeAllRanges();
-				sel.addRange(range);
-			} else if (typeof document.selection != "undefined" && typeof document.body.createTextRange != "undefined") {
-				textRange = document.body.createTextRange();
-				textRange.moveToElementText(this.table.element);
-				textRange.select();
-			}
-
-			this.setSelector(selector);
-			this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.config.columnHeaders;
-			this.setFormatter(formatter);
-			this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
-
-			document.execCommand('copy');
-
-			if (sel) {
-				sel.removeAllRanges();
-			}
-		}
-	};
-
-	Clipboard.prototype.setSelector = function (selector) {
-		selector = selector || this.table.options.clipboardCopySelector;
-
-		switch (typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) {
-			case "string":
-				if (this.copySelectors[selector]) {
-					this.copySelector = this.copySelectors[selector];
-				} else {
-					console.warn("Clipboard Error - No such selector found:", selector);
-				}
-				break;
-
-			case "function":
-				this.copySelector = selector;
-				break;
-		}
-	};
-
-	Clipboard.prototype.setFormatter = function (formatter) {
-
-		formatter = formatter || this.table.options.clipboardCopyFormatter;
-
-		switch (typeof formatter === 'undefined' ? 'undefined' : _typeof(formatter)) {
-			case "string":
-				if (this.copyFormatters[formatter]) {
-					this.copyFormatter = this.copyFormatters[formatter];
-				} else {
-					console.warn("Clipboard Error - No such formatter found:", formatter);
-				}
-				break;
-
-			case "function":
-				this.copyFormatter = formatter;
-				break;
-		}
-	};
-
-	Clipboard.prototype.generateContent = function () {
-		var data;
-
-		this.htmlElement = false;
-		data = this.copySelector.call(this, this.config, this.copySelectorParams);
-
-		return this.copyFormatter.call(this, data, this.config, this.copyFormatterParams);
-	};
-
-	Clipboard.prototype.generateSimpleHeaders = function (columns) {
-		var headers = [];
-
-		columns.forEach(function (column) {
-			headers.push(column.definition.title);
-		});
-
-		return headers;
-	};
-
-	Clipboard.prototype.generateColumnGroupHeaders = function (columns) {
-		var _this35 = this;
-
-		var output = [];
-
-		this.table.columnManager.columns.forEach(function (column) {
-			var colData = _this35.processColumnGroup(column);
-
-			if (colData) {
-				output.push(colData);
-			}
-		});
-
-		return output;
-	};
-
-	Clipboard.prototype.processColumnGroup = function (column) {
-		var _this36 = this;
-
-		var subGroups = column.columns;
-
-		var groupData = {
-			type: "group",
-			title: column.definition.title,
-			column: column
-		};
-
-		if (subGroups.length) {
-			groupData.subGroups = [];
-			groupData.width = 0;
-
-			subGroups.forEach(function (subGroup) {
-				var subGroupData = _this36.processColumnGroup(subGroup);
-
-				if (subGroupData) {
-					groupData.width += subGroupData.width;
-					groupData.subGroups.push(subGroupData);
-				}
-			});
-
-			if (!groupData.width) {
-				return false;
-			}
-		} else {
-			if (column.field && (column.definition.clipboard || column.visible && column.definition.clipboard !== false)) {
-				groupData.width = 1;
-			} else {
-				return false;
-			}
-		}
-
-		return groupData;
-	};
-
-	Clipboard.prototype.groupHeadersToRows = function (columns) {
-
-		var headers = [];
-
-		function parseColumnGroup(column, level) {
-
-			if (typeof headers[level] === "undefined") {
-				headers[level] = [];
-			}
-
-			headers[level].push(column.title);
-
-			if (column.subGroups) {
-				column.subGroups.forEach(function (subGroup) {
-					parseColumnGroup(subGroup, level + 1);
-				});
-			} else {
-				padColumnheaders();
-			}
-		}
-
-		function padColumnheaders() {
-			var max = 0;
-
-			headers.forEach(function (title) {
-				var len = title.length;
-				if (len > max) {
-					max = len;
-				}
-			});
-
-			headers.forEach(function (title) {
-				var len = title.length;
-				if (len < max) {
-					for (var i = len; i < max; i++) {
-						title.push("");
-					}
-				}
-			});
-		}
-
-		columns.forEach(function (column) {
-			parseColumnGroup(column, 0);
-		});
-
-		return headers;
-	};
-
-	Clipboard.prototype.rowsToData = function (rows, columns, config, params) {
-		var data = [];
-
-		rows.forEach(function (row) {
-			var rowArray = [],
-			    rowData = row instanceof RowComponent ? row.getData("clipboard") : row;
-
-			columns.forEach(function (column) {
-				var value = column.getFieldValue(rowData);
-
-				switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
-					case "object":
-						value = JSON.stringify(value);
-						break;
-
-					case "undefined":
-					case "null":
-						value = "";
-						break;
-
-					default:
-						value = value;
-				}
-
-				rowArray.push(value);
-			});
-
-			data.push(rowArray);
-		});
-
-		return data;
-	};
-
-	Clipboard.prototype.buildComplexRows = function (config) {
-		var _this37 = this;
-
-		var output = [],
-		    groups = this.table.modules.groupRows.getGroups();
-
-		groups.forEach(function (group) {
-			output.push(_this37.processGroupData(group));
-		});
-
-		return output;
-	};
-
-	Clipboard.prototype.processGroupData = function (group) {
-		var _this38 = this;
-
-		var subGroups = group.getSubGroups();
-
-		var groupData = {
-			type: "group",
-			key: group.key
-		};
-
-		if (subGroups.length) {
-			groupData.subGroups = [];
-
-			subGroups.forEach(function (subGroup) {
-				groupData.subGroups.push(_this38.processGroupData(subGroup));
-			});
-		} else {
-			groupData.rows = group.getRows(true);
-		}
-
-		return groupData;
-	};
-
-	Clipboard.prototype.getCalcRow = function (calcs, columns, selector, pos) {
-		var calcData = calcs[selector];
-
-		if (calcData) {
-			if (pos) {
-				calcData = calcData[pos];
-			}
-
-			if (Object.keys(calcData).length) {
-				return this.rowsToData([calcData], columns);
-			}
-		}
-
-		return [];
-	};
-
-	Clipboard.prototype.buildOutput = function (rows, config, params) {
-		var _this39 = this;
-
-		var output = [],
-		    calcs,
-		    columns = [],
-		    columnsByIndex = [];
-
-		this.table.columnManager.columnsByIndex.forEach(function (column) {
-			if (column.definition.clipboard || column.visible && column.definition.clipboard !== false) {
-				columnsByIndex.push(column);
-			}
-		});
-
-		if (config.columnHeaders == "groups") {
-			columns = this.generateColumnGroupHeaders(this.table.columnManager.columns);
-			output = output.concat(this.groupHeadersToRows(columns));
-		} else {
-			columns = columnsByIndex;
-
-			output.push(this.generateSimpleHeaders(columns));
-		}
-
-		if (this.config.columnCalcs) {
-			calcs = this.table.getCalcResults();
-		}
-
-		//generate styled content
-		if (this.table.options.clipboardCopyStyled) {
-			this.generateHTML(rows, columns, calcs, config, params);
-		}
-
-		//generate unstyled content
-		if (config.rowGroups) {
-			rows.forEach(function (row) {
-				output = output.concat(_this39.parseRowGroupData(row, columnsByIndex, config, params, calcs || {}));
-			});
-		} else {
-			if (config.columnCalcs) {
-				output = output.concat(this.getCalcRow(calcs, columnsByIndex, "top"));
-			}
-
-			output = output.concat(this.rowsToData(rows, columnsByIndex, config, params));
-
-			if (config.columnCalcs) {
-				output = output.concat(this.getCalcRow(calcs, columnsByIndex, "bottom"));
-			}
-		}
-
-		return output;
-	};
-
-	Clipboard.prototype.parseRowGroupData = function (group, columns, config, params, calcObj) {
-		var _this40 = this;
-
-		var groupData = [];
-
-		groupData.push([group.key]);
-
-		if (group.subGroups) {
-			group.subGroups.forEach(function (subGroup) {
-				groupData = groupData.concat(_this40.parseRowGroupData(subGroup, config, params, calcObj[group.key] ? calcObj[group.key].groups || {} : {}));
-			});
-		} else {
-			if (config.columnCalcs) {
-				groupData = groupData.concat(this.getCalcRow(calcObj, columns, group.key, "top"));
-			}
-
-			groupData = groupData.concat(this.rowsToData(group.rows, columns, config, params));
-
-			if (config.columnCalcs) {
-				groupData = groupData.concat(this.getCalcRow(calcObj, columns, group.key, "bottom"));
-			}
-		}
-
-		return groupData;
-	};
-
-	Clipboard.prototype.generateHTML = function (rows, columns, calcs, config, params) {
-		var self = this,
-		    data = [],
-		    headers = [],
-		    body,
-		    oddRow,
-		    evenRow,
-		    calcRow,
-		    firstRow,
-		    firstCell,
-		    firstGroup,
-		    lastCell,
-		    styleCells;
-
-		//create table element
-		this.htmlElement = document.createElement("table");
-		self.mapElementStyles(this.table.element, this.htmlElement, ["border-top", "border-left", "border-right", "border-bottom"]);
-
-		function generateSimpleHeaders() {
-			var headerEl = document.createElement("tr");
-
-			columns.forEach(function (column) {
-				var columnEl = document.createElement("th");
-				columnEl.innerHTML = column.definition.title;
-
-				self.mapElementStyles(column.getElement(), columnEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-
-				headerEl.appendChild(columnEl);
-			});
-
-			self.mapElementStyles(self.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-
-			self.htmlElement.appendChild(document.createElement("thead").appendChild(headerEl));
-		}
-
-		function generateHeaders(headers) {
-
-			var headerHolderEl = document.createElement("thead");
-
-			headers.forEach(function (columns) {
-				var headerEl = document.createElement("tr");
-
-				columns.forEach(function (column) {
-					var columnEl = document.createElement("th");
-
-					if (column.width > 1) {
-						columnEl.colSpan = column.width;
-					}
-
-					if (column.height > 1) {
-						columnEl.rowSpan = column.height;
-					}
-
-					columnEl.innerHTML = column.title;
-
-					self.mapElementStyles(column.element, columnEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-
-					headerEl.appendChild(columnEl);
-				});
-
-				self.mapElementStyles(self.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-
-				headerHolderEl.appendChild(headerEl);
-			});
-
-			self.htmlElement.appendChild(headerHolderEl);
-		}
-
-		function parseColumnGroup(column, level) {
-
-			var actualColumns = [];
-
-			if (typeof headers[level] === "undefined") {
-				headers[level] = [];
-			}
-
-			headers[level].push({
-				title: column.title,
-				width: column.width,
-				height: 1,
-				children: !!column.subGroups,
-				element: column.column.getElement()
-			});
-
-			if (column.subGroups) {
-				column.subGroups.forEach(function (subGroup) {
-					actualColumns = actualColumns.concat(parseColumnGroup(subGroup, level + 1));
-				});
-
-				return actualColumns;
-			} else {
-				return [column.column];
-			}
-		}
-
-		function padVerticalColumnheaders() {
-			headers.forEach(function (row, index) {
-				row.forEach(function (header) {
-					if (!header.children) {
-						header.height = headers.length - index;
-					}
-				});
-			});
-		}
-
-		function addCalcRow(calcs, selector, pos) {
-			var calcData = calcs[selector];
-
-			if (calcData) {
-				if (pos) {
-					calcData = calcData[pos];
-				}
-
-				if (Object.keys(calcData).length) {
-					// calcRowIndexs.push(body.length);
-					processRows([calcData]);
-				}
-			}
-		}
-
-		//create headers if needed
-		if (config.columnHeaders) {
-			if (config.columnHeaders == "groups") {
-
-				var actualColumns = [];
-
-				columns.forEach(function (column) {
-					actualColumns = actualColumns.concat(parseColumnGroup(column, 0));
-				});
-
-				columns = actualColumns;
-
-				padVerticalColumnheaders();
-				generateHeaders(headers);
-			} else {
-				generateSimpleHeaders();
-			}
-		}
-
-		// columns = this.table.columnManager.columnsByIndex;
-
-		//create table body
-		body = document.createElement("tbody");
-
-		//lookup row styles
-		if (window.getComputedStyle) {
-			oddRow = this.table.element.querySelector(".tabulator-row-odd:not(.tabulator-group):not(.tabulator-calcs)");
-			evenRow = this.table.element.querySelector(".tabulator-row-even:not(.tabulator-group):not(.tabulator-calcs)");
-			calcRow = this.table.element.querySelector(".tabulator-row.tabulator-calcs");
-			firstRow = this.table.element.querySelector(".tabulator-row:not(.tabulator-group):not(.tabulator-calcs)");
-			firstGroup = this.table.element.getElementsByClassName("tabulator-group")[0];
-
-			if (firstRow) {
-				styleCells = firstRow.getElementsByClassName("tabulator-cell");
-				firstCell = styleCells[0];
-				lastCell = styleCells[styleCells.length - 1];
-			}
-		}
-
-		function processRows(rowArray) {
-			//add rows to table
-			rowArray.forEach(function (row, i) {
-				var rowEl = document.createElement("tr"),
-				    styleRow = firstRow,
-				    isCalc = false,
-				    rowData;
-
-				if (row instanceof RowComponent) {
-					rowData = row.getData("clipboard");
-				} else {
-					rowData = row;
-					isCalc = true;
-				}
-
-				columns.forEach(function (column, j) {
-					var cellEl = document.createElement("td"),
-					    value = column.getFieldValue(rowData);
-
-					switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
-						case "object":
-							value = JSON.stringify(value);
-							break;
-
-						case "undefined":
-						case "null":
-							value = "";
-							break;
-
-						default:
-							value = value;
-					}
-
-					cellEl.innerHTML = value;
-
-					if (column.definition.align) {
-						cellEl.style.textAlign = column.definition.align;
-					}
-
-					if (j < columns.length - 1) {
-						if (firstCell) {
-							self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
-						}
-					} else {
-						if (firstCell) {
-							self.mapElementStyles(firstCell, cellEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
-						}
-					}
-
-					rowEl.appendChild(cellEl);
-				});
-
-				if (isCalc) {
-					styleRow = calcRow;
-				} else {
-					if (!(i % 2) && oddRow) {
-						styleRow = oddRow;
-					}
-
-					if (i % 2 && evenRow) {
-						styleRow = evenRow;
-					}
-				}
-
-				if (styleRow) {
-					self.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				}
-
-				body.appendChild(rowEl);
-			});
-		}
-
-		function processGroup(group, calcObj) {
-			var groupEl = document.createElement("tr"),
-			    groupCellEl = document.createElement("td");
-
-			groupCellEl.colSpan = columns.length;
-
-			groupCellEl.innerHTML = group.key;
-
-			groupEl.appendChild(groupCellEl);
-			body.appendChild(groupEl);
-
-			self.mapElementStyles(firstGroup, groupEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-
-			if (group.subGroups) {
-				group.subGroups.forEach(function (subGroup) {
-					processGroup(subGroup, calcObj[group.key] ? calcObj[group.key].groups || {} : {});
-				});
-			} else {
-				if (config.columnCalcs) {
-					addCalcRow(calcObj, group.key, "top");
-				}
-
-				processRows(group.rows);
-
-				if (config.columnCalcs) {
-					addCalcRow(calcObj, group.key, "bottom");
-				}
-			}
-		}
-
-		if (config.rowGroups) {
-			rows.forEach(function (group) {
-				processGroup(group, calcs || {});
-			});
-		} else {
-			if (config.columnCalcs) {
-				addCalcRow(calcs, "top");
-			}
-
-			processRows(rows);
-
-			if (config.columnCalcs) {
-				addCalcRow(calcs, "bottom");
-			}
-		}
-
-		this.htmlElement.appendChild(body);
-	};
-
-	Clipboard.prototype.mapElementStyles = function (from, to, props) {
-
-		var lookup = {
-			"background-color": "backgroundColor",
-			"color": "fontColor",
-			"font-weight": "fontWeight",
-			"font-family": "fontFamily",
-			"font-size": "fontSize",
-			"border-top": "borderTop",
-			"border-left": "borderLeft",
-			"border-right": "borderRight",
-			"border-bottom": "borderBottom"
-		};
-
-		if (window.getComputedStyle) {
-			var fromStyle = window.getComputedStyle(from);
-
-			props.forEach(function (prop) {
-				to.style[lookup[prop]] = fromStyle.getPropertyValue(prop);
-			});
-		}
-
-		// return window.getComputedStyle ? window.getComputedStyle(element, null).getPropertyValue(property) : element.style[property.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); })];
-	};
-
-	Clipboard.prototype.copySelectors = {
-		userSelection: function userSelection(config, params) {
-			return params;
-		},
-		selected: function selected(config, params) {
-			var rows = [];
-
-			if (this.table.modExists("selectRow", true)) {
-				rows = this.table.modules.selectRow.getSelectedRows();
-			}
-
-			if (config.rowGroups) {
-				console.warn("Clipboard Warning - select coptSelector does not support row groups");
-			}
-
-			return this.buildOutput(rows, config, params);
-		},
-		table: function table(config, params) {
-			if (config.rowGroups) {
-				console.warn("Clipboard Warning - table coptSelector does not support row groups");
-			}
-
-			return this.buildOutput(this.table.rowManager.getComponents(), config, params);
-		},
-		active: function active(config, params) {
-			var rows;
-
-			if (config.rowGroups) {
-				rows = this.buildComplexRows(config);
-			} else {
-				rows = this.table.rowManager.getComponents("active");
-			}
-
-			return this.buildOutput(rows, config, params);
-		},
-		visible: function visible(config, params) {
-			var rows;
-
-			if (config.rowGroups) {
-				rows = this.buildComplexRows(config);
-			} else {
-				rows = this.table.rowManager.getComponents("visible");
-			}
-
-			return this.buildOutput(rows, config, params);
-		}
-	};
-
-	Clipboard.prototype.copyFormatters = {
-		raw: function raw(data, params) {
-			return data;
-		},
-		table: function table(data, params) {
-			var output = [];
-
-			data.forEach(function (row) {
-				var newRow = [];
-				row.forEach(function (value) {
-					if (typeof value == "undefined") {
-						value = "";
-					}
-
-					value = typeof value == "undefined" || value === null ? "" : value.toString();
-
-					if (value.match(/\r|\n/)) {
-						value = value.split('"').join('""');
-						value = '"' + value + '"';
-					}
-					newRow.push(value);
-				});
-
-				output.push(newRow.join("\t"));
-			});
-
-			return output.join("\n");
-		}
 	};
 
 	Clipboard.prototype.pasteParsers = {
@@ -13089,7 +12419,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	DataTree.prototype.generateControlElement = function (row, el) {
-		var _this41 = this;
+		var _this36 = this;
 
 		var config = row.modules.dataTree,
 		    el = el || row.getCells()[0].getElement(),
@@ -13101,13 +12431,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				config.controlEl = this.collapseEl.cloneNode(true);
 				config.controlEl.addEventListener("click", function (e) {
 					e.stopPropagation();
-					_this41.collapseRow(row);
+					_this36.collapseRow(row);
 				});
 			} else {
 				config.controlEl = this.expandEl.cloneNode(true);
 				config.controlEl.addEventListener("click", function (e) {
 					e.stopPropagation();
-					_this41.expandRow(row);
+					_this36.expandRow(row);
 				});
 			}
 
@@ -13132,7 +12462,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	DataTree.prototype.getRows = function (rows) {
-		var _this42 = this;
+		var _this37 = this;
 
 		var output = [];
 
@@ -13146,7 +12476,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				config = row.modules.dataTree.children;
 
 				if (!config.index && config.children !== false) {
-					children = _this42.getChildren(row);
+					children = _this37.getChildren(row);
 
 					children.forEach(function (child) {
 						output.push(child);
@@ -13159,7 +12489,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	DataTree.prototype.getChildren = function (row) {
-		var _this43 = this;
+		var _this38 = this;
 
 		var config = row.modules.dataTree,
 		    children = [],
@@ -13183,7 +12513,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			children.forEach(function (child) {
 				output.push(child);
 
-				var subChildren = _this43.getChildren(child);
+				var subChildren = _this38.getChildren(child);
 
 				subChildren.forEach(function (sub) {
 					output.push(sub);
@@ -13195,7 +12525,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	DataTree.prototype.generateChildren = function (row) {
-		var _this44 = this;
+		var _this39 = this;
 
 		var children = [];
 
@@ -13206,11 +12536,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		childArray.forEach(function (childData) {
-			var childRow = new Row(childData || {}, _this44.table.rowManager);
+			var childRow = new Row(childData || {}, _this39.table.rowManager);
 			childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 			childRow.modules.dataTree.parent = row;
 			if (childRow.modules.dataTree.children) {
-				childRow.modules.dataTree.open = _this44.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
+				childRow.modules.dataTree.open = _this39.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
 			}
 			children.push(childRow);
 		});
@@ -13438,7 +12768,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Download.prototype.processColumnGroup = function (column) {
-		var _this45 = this;
+		var _this40 = this;
 
 		var subGroups = column.columns,
 		    maxDepth = 0;
@@ -13454,7 +12784,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groupData.width = 0;
 
 			subGroups.forEach(function (subGroup) {
-				var subGroupData = _this45.processColumnGroup(subGroup);
+				var subGroupData = _this40.processColumnGroup(subGroup);
 
 				if (subGroupData.depth > maxDepth) {
 					maxDepth = subGroupData.depth;
@@ -13498,7 +12828,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Download.prototype.processData = function (active) {
-		var _this46 = this;
+		var _this41 = this;
 
 		var self = this,
 		    data = [],
@@ -13526,7 +12856,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			groups.forEach(function (group) {
-				data.push(_this46.processGroupData(group, rows));
+				data.push(_this41.processGroupData(group, rows));
 			});
 		} else {
 			data = self.table.rowManager.getData(active, "download");
@@ -13550,7 +12880,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Download.prototype.processGroupData = function (group, visRows) {
-		var _this47 = this;
+		var _this42 = this;
 
 		var subGroups = group.getSubGroups();
 
@@ -13563,7 +12893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groupData.subGroups = [];
 
 			subGroups.forEach(function (subGroup) {
-				groupData.subGroups.push(_this47.processGroupData(subGroup, visRows));
+				groupData.subGroups.push(_this42.processGroupData(subGroup, visRows));
 			});
 		} else {
 			if (visRows) {
@@ -16138,13 +15468,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.colVisProp = "";
 	};
 
-	Export.prototype.genereateTable = function (config, style, visible, colVisProp) {
+	Export.prototype.genereateTable = function (config, style, range, colVisProp) {
 		this.cloneTableStyle = style;
 		this.config = config || {};
 		this.colVisProp = colVisProp;
 
 		var headers = this.generateHeaderElements();
-		var body = this.generateBodyElements(visible);
+		var body = this.generateBodyElements(this.rowLookup(range));
 
 		var table = document.createElement("table");
 		table.classList.add("tabulator-print-table");
@@ -16156,15 +15486,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return table;
 	};
 
+	Export.prototype.rowLookup = function (range) {
+		var rows = [];
+
+		switch (range) {
+			case true:
+			case "visible":
+				rows = this.table.rowManager.getVisibleRows(true);
+				break;
+
+			case "all":
+				rows = this.table.rowManager.rows;
+				break;
+
+			case "selected":
+				rows = this.modules.selectRow.selectedRows;
+				break;
+
+			case "active":
+			default:
+				rows = this.table.rowManager.getDisplayRows();
+		}
+
+		return Object.assign([], rows);
+	};
+
 	Export.prototype.generateColumnGroupHeaders = function () {
-		var _this48 = this;
+		var _this43 = this;
 
 		var output = [];
 
 		var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
 
 		columns.forEach(function (column) {
-			var colData = _this48.processColumnGroup(column);
+			var colData = _this43.processColumnGroup(column);
 
 			if (colData) {
 				output.push(colData);
@@ -16175,7 +15530,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Export.prototype.processColumnGroup = function (column) {
-		var _this49 = this;
+		var _this44 = this;
 
 		var subGroups = column.columns,
 		    maxDepth = 0;
@@ -16191,7 +15546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			groupData.width = 0;
 
 			subGroups.forEach(function (subGroup) {
-				var subGroupData = _this49.processColumnGroup(subGroup);
+				var subGroupData = _this44.processColumnGroup(subGroup);
 
 				if (subGroupData) {
 					groupData.width += subGroupData.width;
@@ -16258,7 +15613,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Export.prototype.generateHeaderElements = function () {
-		var _this50 = this;
+		var _this45 = this;
 
 		var headerEl = document.createElement("thead");
 
@@ -16267,7 +15622,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		rows.forEach(function (row) {
 			var rowEl = document.createElement("tr");
 
-			_this50.mapElementStyles(_this50.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			_this45.mapElementStyles(_this45.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
 			row.forEach(function (column) {
 				var cellEl = document.createElement("th");
@@ -16278,7 +15633,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				cellEl.innerHTML = column.column.definition.title;
 
-				if (_this50.cloneTableStyle) {
+				if (_this45.cloneTableStyle) {
 					cellEl.style.boxSizing = "border-box";
 				}
 
@@ -16286,11 +15641,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					cellEl.classList.add(className);
 				});
 
-				_this50.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-				_this50.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+				_this45.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+				_this45.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 
 				if (column.column.visible) {
-					_this50.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
+					_this45.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
 				} else {
 					if (column.column.definition.width) {
 						cellEl.style.width = column.column.definition.width + "px";
@@ -16298,7 +15653,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (column.column.parent) {
-					_this50.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
+					_this45.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
 				}
 
 				rowEl.appendChild(cellEl);
@@ -16310,8 +15665,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return headerEl;
 	};
 
-	Export.prototype.generateBodyElements = function (visible) {
-		var _this51 = this;
+	Export.prototype.generateBodyElements = function (rows) {
+		var _this46 = this;
 
 		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
 
@@ -16332,7 +15687,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var bodyEl = document.createElement("tbody");
 
-		var rows = Object.assign([], visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows());
 		var columns = [];
 
 		if (this.config.columnCalcs !== false && this.table.modExists("columnCalcs")) {
@@ -16346,7 +15700,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		this.table.columnManager.columnsByIndex.forEach(function (column) {
-			if (_this51.columnVisCheck(column)) {
+			if (_this46.columnVisCheck(column)) {
 				columns.push(column);
 			}
 		});
@@ -16358,11 +15712,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		rows = rows.filter(function (row) {
 			switch (row.type) {
 				case "group":
-					return _this51.config.rowGroups !== false;
+					return _this46.config.rowGroups !== false;
 					break;
 
 				case "calc":
-					return _this51.config.columnCalcs !== false;
+					return _this46.config.columnCalcs !== false;
 					break;
 			}
 
@@ -16387,8 +15741,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					rowEl.classList.add("tabulator-print-table-group");
 
-					_this51.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-					_this51.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+					_this46.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					_this46.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 					rowEl.appendChild(cellEl);
 					break;
 
@@ -16397,7 +15751,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				case "row":
 
-					if (_this51.table.options.dataTree && _this51.config.dataTree === false && row.modules.dataTree.parent) {
+					if (_this46.table.options.dataTree && _this46.config.dataTree === false && row.modules.dataTree.parent) {
 						return;
 					}
 
@@ -16438,8 +15792,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							cellEl.classList.add(className);
 						});
 
-						if (_this51.table.modExists("format")) {
-							value = _this51.table.modules.format.formatValue(cellWrapper);
+						if (_this46.table.modExists("format")) {
+							value = _this46.table.modules.format.formatValue(cellWrapper);
 						} else {
 							switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 								case "object":
@@ -16463,14 +15817,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 
 						if (firstCell) {
-							_this51.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+							_this46.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
 
 							if (column.definition.align) {
 								cellEl.style.textAlign = column.definition.align;
 							}
 						}
 
-						if (_this51.table.options.dataTree && _this51.config.dataTree !== false) {
+						if (_this46.table.options.dataTree && _this46.config.dataTree !== false) {
 							if (treeElementField && treeElementField == column.field || !treeElementField && i == 0) {
 								if (row.modules.dataTree.controlEl) {
 									cellEl.insertBefore(row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
@@ -16490,7 +15844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					styleRow = row.type == "calc" ? calcRow : i % 2 && evenRow ? evenRow : oddRow;
 
-					_this51.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+					_this46.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 					break;
 			}
 
@@ -16504,10 +15858,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return column.definition[this.colVisProp] !== false && (column.visible || !column.visible && column.definition[this.colVisProp]);
 	};
 
-	Export.prototype.getHtml = function (visible, style, config) {
+	Export.prototype.getHtml = function (visible, style, config, colVisProp) {
 		var holder = document.createElement("div");
 
-		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
+		holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput"));
 
 		return holder.innerHTML;
 	};
@@ -16653,7 +16007,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Filter.prototype.generateHeaderFilterElement = function (column, initialValue, reinitialize) {
-		var _this52 = this;
+		var _this47 = this;
 
 		var self = this,
 		    success = column.modules.filter.success,
@@ -16778,11 +16132,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 
 				editorElement.addEventListener("focus", function (e) {
-					var left = _this52.table.columnManager.element.scrollLeft;
+					var left = _this47.table.columnManager.element.scrollLeft;
 
-					if (left !== _this52.table.rowManager.element.scrollLeft) {
-						_this52.table.rowManager.scrollHorizontal(left);
-						_this52.table.columnManager.scrollHorizontal(left);
+					if (left !== _this47.table.rowManager.element.scrollLeft) {
+						_this47.table.rowManager.scrollHorizontal(left);
+						_this47.table.columnManager.scrollHorizontal(left);
 					}
 				});
 
@@ -17023,7 +16377,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//filter to Object
 	Filter.prototype.filtersToArray = function (filterList, ajax) {
-		var _this53 = this;
+		var _this48 = this;
 
 		var output = [];
 
@@ -17031,7 +16385,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var item;
 
 			if (Array.isArray(filter)) {
-				output.push(_this53.filtersToArray(filter, ajax));
+				output.push(_this48.filtersToArray(filter, ajax));
 			} else {
 				item = { field: filter.field, type: filter.type, value: filter.value };
 
@@ -17944,7 +17298,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		},
 
 		rowSelection: function rowSelection(cell) {
-			var _this54 = this;
+			var _this49 = this;
 
 			var checkbox = document.createElement("input");
 
@@ -17967,10 +17321,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
 				} else {
 					checkbox.addEventListener("change", function (e) {
-						if (_this54.table.modules.selectRow.selectedRows.length) {
-							_this54.table.deselectRow();
+						if (_this49.table.modules.selectRow.selectedRows.length) {
+							_this49.table.deselectRow();
 						} else {
-							_this54.table.selectRow();
+							_this49.table.selectRow();
 						}
 					});
 
@@ -18042,7 +17396,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//quick layout to smooth horizontal scrolling
 	FrozenColumns.prototype.scrollHorizontal = function () {
-		var _this55 = this;
+		var _this50 = this;
 
 		var rows;
 
@@ -18051,7 +17405,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//layout all rows after scroll is complete
 			this.scrollEndTimer = setTimeout(function () {
-				_this55.layout();
+				_this50.layout();
 			}, 100);
 
 			rows = this.table.rowManager.getVisibleRows();
@@ -18064,7 +17418,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rows.forEach(function (row) {
 				if (row.type === "row") {
-					_this55.layoutRow(row);
+					_this50.layoutRow(row);
 				}
 			});
 
@@ -18098,40 +17452,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//calculate column positions and layout headers
 	FrozenColumns.prototype.layoutColumnPosition = function (allCells) {
-		var _this56 = this;
+		var _this51 = this;
 
 		this.leftColumns.forEach(function (column, i) {
-			column.modules.frozen.margin = _this56._calcSpace(_this56.leftColumns, i) + _this56.table.columnManager.scrollLeft + "px";
+			column.modules.frozen.margin = _this51._calcSpace(_this51.leftColumns, i) + _this51.table.columnManager.scrollLeft + "px";
 
-			if (i == _this56.leftColumns.length - 1) {
+			if (i == _this51.leftColumns.length - 1) {
 				column.modules.frozen.edge = true;
 			} else {
 				column.modules.frozen.edge = false;
 			}
 
-			_this56.layoutElement(column.getElement(), column);
+			_this51.layoutElement(column.getElement(), column);
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
-					_this56.layoutElement(cell.getElement(), column);
+					_this51.layoutElement(cell.getElement(), column);
 				});
 			}
 		});
 
 		this.rightColumns.forEach(function (column, i) {
-			column.modules.frozen.margin = _this56.rightPadding - _this56._calcSpace(_this56.rightColumns, i + 1) + "px";
+			column.modules.frozen.margin = _this51.rightPadding - _this51._calcSpace(_this51.rightColumns, i + 1) + "px";
 
-			if (i == _this56.rightColumns.length - 1) {
+			if (i == _this51.rightColumns.length - 1) {
 				column.modules.frozen.edge = true;
 			} else {
 				column.modules.frozen.edge = false;
 			}
 
-			_this56.layoutElement(column.getElement(), column);
+			_this51.layoutElement(column.getElement(), column);
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
-					_this56.layoutElement(cell.getElement(), column);
+					_this51.layoutElement(cell.getElement(), column);
 				});
 			}
 		});
@@ -18173,7 +17527,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	FrozenColumns.prototype.layoutRow = function (row) {
-		var _this57 = this;
+		var _this52 = this;
 
 		var rowEl = row.getElement();
 
@@ -18184,7 +17538,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = row.getCell(column);
 
 			if (cell) {
-				_this57.layoutElement(cell.getElement(), column);
+				_this52.layoutElement(cell.getElement(), column);
 			}
 		});
 
@@ -18192,7 +17546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = row.getCell(column);
 
 			if (cell) {
-				_this57.layoutElement(cell.getElement(), column);
+				_this52.layoutElement(cell.getElement(), column);
 			}
 		});
 	};
@@ -18444,12 +17798,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Group.prototype.createValueGroups = function () {
-		var _this58 = this;
+		var _this53 = this;
 
 		var level = this.level + 1;
 		if (this.groupManager.allowedValues && this.groupManager.allowedValues[level]) {
 			this.groupManager.allowedValues[level].forEach(function (value) {
-				_this58._createGroup(value, level);
+				_this53._createGroup(value, level);
 			});
 		}
 	};
@@ -19192,7 +18546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupRows.prototype.getChildGroups = function (group) {
-		var _this59 = this;
+		var _this54 = this;
 
 		var groupComponents = [];
 
@@ -19202,7 +18556,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		group.groupList.forEach(function (child) {
 			if (child.groupList.length) {
-				groupComponents = groupComponents.concat(_this59.getChildGroups(child));
+				groupComponents = groupComponents.concat(_this54.getChildGroups(child));
 			} else {
 				groupComponents.push(child);
 			}
@@ -19763,13 +19117,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Keybindings.prototype.mapBindings = function (bindings) {
-		var _this60 = this;
+		var _this55 = this;
 
 		var self = this;
 
 		var _loop2 = function _loop2(key) {
 
-			if (_this60.actions[key]) {
+			if (_this55.actions[key]) {
 
 				if (bindings[key]) {
 
@@ -21140,7 +20494,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.generatePageSizeSelectList = function () {
-		var _this61 = this;
+		var _this56 = this;
 
 		var pageSizes = [];
 
@@ -21175,7 +20529,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemEl.value = item;
 				itemEl.innerHTML = item;
 
-				_this61.pageSizeSelect.appendChild(itemEl);
+				_this56.pageSizeSelect.appendChild(itemEl);
 			});
 
 			this.pageSizeSelect.value = this.size;
@@ -21350,7 +20704,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this62 = this;
+		var _this57 = this;
 
 		var self = this;
 
@@ -21358,9 +20712,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			page = parseInt(page);
 
-			if (page > 0 && page <= _this62.max) {
-				_this62.page = page;
-				_this62.trigger().then(function () {
+			if (page > 0 && page <= _this57.max) {
+				_this57.page = page;
+				_this57.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -21370,24 +20724,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					self.table.modules.persistence.save("page");
 				}
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this62.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this57.max + ":", page);
 				reject();
 			}
 		});
 	};
 
 	Page.prototype.setPageToRow = function (row) {
-		var _this63 = this;
+		var _this58 = this;
 
 		return new Promise(function (resolve, reject) {
 
-			var rows = _this63.table.rowManager.getDisplayRows(_this63.displayIndex - 1);
+			var rows = _this58.table.rowManager.getDisplayRows(_this58.displayIndex - 1);
 			var index = rows.indexOf(row);
 
 			if (index > -1) {
-				var page = Math.ceil((index + 1) / _this63.size);
+				var page = Math.ceil((index + 1) / _this58.size);
 
-				_this63.setPage(page).then(function () {
+				_this58.setPage(page).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -21477,12 +20831,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this64 = this;
+		var _this59 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this64.page > 1) {
-				_this64.page--;
-				_this64.trigger().then(function () {
+			if (_this59.page > 1) {
+				_this59.page--;
+				_this59.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -21496,19 +20850,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this65 = this;
+		var _this60 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this65.page < _this65.max) {
-				_this65.page++;
-				_this65.trigger().then(function () {
+			if (_this60.page < _this60.max) {
+				_this60.page++;
+				_this60.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this65.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this65.max + ":", _this65.max + 1);
+				if (!_this60.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this60.max + ":", _this60.max + 1);
 				}
 				reject();
 			}
@@ -21560,28 +20914,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this66 = this;
+		var _this61 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this66.mode) {
+			switch (_this61.mode) {
 				case "local":
-					left = _this66.table.rowManager.scrollLeft;
+					left = _this61.table.rowManager.scrollLeft;
 
-					_this66.table.rowManager.refreshActiveData("page");
-					_this66.table.rowManager.scrollHorizontal(left);
+					_this61.table.rowManager.refreshActiveData("page");
+					_this61.table.rowManager.scrollHorizontal(left);
 
-					_this66.table.options.pageLoaded.call(_this66.table, _this66.getPage());
+					_this61.table.options.pageLoaded.call(_this61.table, _this61.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this66.table.modules.ajax.blockActiveRequest();
-					_this66._getRemotePage().then(function () {
+					_this61.table.modules.ajax.blockActiveRequest();
+					_this61._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -21589,14 +20943,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this66.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this61.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this67 = this;
+		var _this62 = this;
 
 		var self = this,
 		    oldParams,
@@ -21613,33 +20967,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this67.paginationDataSentNames.page] = self.page;
+			pageParams[_this62.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this67.size) {
-				pageParams[_this67.paginationDataSentNames.size] = _this67.size;
+			if (_this62.size) {
+				pageParams[_this62.paginationDataSentNames.size] = _this62.size;
 			}
 
 			//set sort data if defined
-			if (_this67.table.options.ajaxSorting && _this67.table.modExists("sort")) {
+			if (_this62.table.options.ajaxSorting && _this62.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this67.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this62.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this67.table.options.ajaxFiltering && _this67.table.modExists("filter")) {
+			if (_this62.table.options.ajaxFiltering && _this62.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this67.paginationDataSentNames.filters] = filters;
+				pageParams[_this62.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this67.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this62.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
@@ -22754,7 +22108,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	ResizeTable.prototype.initialize = function (row) {
-		var _this68 = this;
+		var _this63 = this;
 
 		var table = this.table,
 		    tableStyle;
@@ -22775,11 +22129,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var nodeHeight = Math.floor(entry[0].contentRect.height);
 					var nodeWidth = Math.floor(entry[0].contentRect.width);
 
-					if (_this68.tableHeight != nodeHeight || _this68.tableWidth != nodeWidth) {
-						_this68.tableHeight = nodeHeight;
-						_this68.tableWidth = nodeWidth;
-						_this68.containerHeight = table.element.parentNode.clientHeight;
-						_this68.containerWidth = table.element.parentNode.clientWidth;
+					if (_this63.tableHeight != nodeHeight || _this63.tableWidth != nodeWidth) {
+						_this63.tableHeight = nodeHeight;
+						_this63.tableWidth = nodeWidth;
+						_this63.containerHeight = table.element.parentNode.clientHeight;
+						_this63.containerWidth = table.element.parentNode.clientWidth;
 
 						table.redraw();
 					}
@@ -22798,11 +22152,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						var nodeHeight = Math.floor(entry[0].contentRect.height);
 						var nodeWidth = Math.floor(entry[0].contentRect.width);
 
-						if (_this68.containerHeight != nodeHeight || _this68.containerWidth != nodeWidth) {
-							_this68.containerHeight = nodeHeight;
-							_this68.containerWidth = nodeWidth;
-							_this68.tableHeight = table.element.clientHeight;
-							_this68.tableWidth = table.element.clientWidth;
+						if (_this63.containerHeight != nodeHeight || _this63.containerWidth != nodeWidth) {
+							_this63.containerHeight = nodeHeight;
+							_this63.containerWidth = nodeWidth;
+							_this63.tableHeight = table.element.clientHeight;
+							_this63.tableWidth = table.element.clientWidth;
 
 							table.redraw();
 						}
@@ -23297,14 +22651,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//select a number of rows
 	SelectRow.prototype.selectRows = function (rows) {
-		var _this69 = this;
+		var _this64 = this;
 
 		var rowMatch;
 
 		switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 			case "undefined":
 				this.table.rowManager.rows.forEach(function (row) {
-					_this69._selectRow(row, true, true);
+					_this64._selectRow(row, true, true);
 				});
 
 				this._rowSelectionChanged();
@@ -23318,7 +22672,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this._selectRow(rowMatch, true, true);
 				} else {
 					this.table.rowManager.getRows(rows).forEach(function (row) {
-						_this69._selectRow(row, true, true);
+						_this64._selectRow(row, true, true);
 					});
 				}
 
@@ -23328,7 +22682,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			default:
 				if (Array.isArray(rows)) {
 					rows.forEach(function (row) {
-						_this69._selectRow(row, true, true);
+						_this64._selectRow(row, true, true);
 					});
 
 					this._rowSelectionChanged();

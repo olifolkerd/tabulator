@@ -9,13 +9,13 @@ var Export = function Export(table) {
 	this.colVisProp = "";
 };
 
-Export.prototype.genereateTable = function (config, style, visible, colVisProp) {
+Export.prototype.genereateTable = function (config, style, range, colVisProp) {
 	this.cloneTableStyle = style;
 	this.config = config || {};
 	this.colVisProp = colVisProp;
 
 	var headers = this.generateHeaderElements();
-	var body = this.generateBodyElements(visible);
+	var body = this.generateBodyElements(this.rowLookup(range));
 
 	var table = document.createElement("table");
 	table.classList.add("tabulator-print-table");
@@ -25,6 +25,31 @@ Export.prototype.genereateTable = function (config, style, visible, colVisProp) 
 	this.mapElementStyles(this.table.element, table, ["border-top", "border-left", "border-right", "border-bottom"]);
 
 	return table;
+};
+
+Export.prototype.rowLookup = function (range) {
+	var rows = [];
+
+	switch (range) {
+		case true:
+		case "visible":
+			rows = this.table.rowManager.getVisibleRows(true);
+			break;
+
+		case "all":
+			rows = this.table.rowManager.rows;
+			break;
+
+		case "selected":
+			rows = this.modules.selectRow.selectedRows;
+			break;
+
+		case "active":
+		default:
+			rows = this.table.rowManager.getDisplayRows();
+	}
+
+	return Object.assign([], rows);
 };
 
 Export.prototype.generateColumnGroupHeaders = function () {
@@ -181,7 +206,7 @@ Export.prototype.generateHeaderElements = function () {
 	return headerEl;
 };
 
-Export.prototype.generateBodyElements = function (visible) {
+Export.prototype.generateBodyElements = function (rows) {
 	var _this4 = this;
 
 	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
@@ -203,7 +228,6 @@ Export.prototype.generateBodyElements = function (visible) {
 
 	var bodyEl = document.createElement("tbody");
 
-	var rows = Object.assign([], visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows());
 	var columns = [];
 
 	if (this.config.columnCalcs !== false && this.table.modExists("columnCalcs")) {
@@ -375,10 +399,10 @@ Export.prototype.columnVisCheck = function (column) {
 	return column.definition[this.colVisProp] !== false && (column.visible || !column.visible && column.definition[this.colVisProp]);
 };
 
-Export.prototype.getHtml = function (visible, style, config) {
+Export.prototype.getHtml = function (visible, style, config, colVisProp) {
 	var holder = document.createElement("div");
 
-	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
+	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput"));
 
 	return holder.innerHTML;
 };
