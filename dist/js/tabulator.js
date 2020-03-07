@@ -11997,7 +11997,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.mode === true || this.mode === "paste") {
 			this.table.element.addEventListener("paste", function (e) {
-				this.paste(e);
+				_this35.paste(e);
 			});
 		}
 
@@ -12101,11 +12101,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				textRange.moveToElementText(this.table.element);
 				textRange.select();
 			}
-
-			// this.setSelector(selector);
-			// this.copySelectorParams = typeof selectorParams != "undefined" && selectorParams != null ? selectorParams : this.config.columnHeaders;
-			// this.setFormatter(formatter);
-			// this.copyFormatterParams = typeof formatterParams != "undefined" && formatterParams != null ? formatterParams : {};
 
 			document.execCommand('copy');
 
