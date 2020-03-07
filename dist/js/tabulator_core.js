@@ -5761,9 +5761,9 @@ Tabulator.prototype.defaultOptions = {
 	clipboard: false, //enable clipboard
 	clipboardCopyStyled: true, //formatted table data
 	clipboardCopyConfig: false, //clipboard config
+	clipboardCopyRowRange: "visible", //restrict clipboard to visible rows only
 	clipboardPasteParser: "table", //convert pasted clipboard data to rows
 	clipboardPasteAction: "insert", //how to insert pasted data into the table
-	clipboardRowRange: "visible", //restrict clipboard to visible rows only
 
 	clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
 	clipboardPasted: function clipboardPasted() {}, //data has been pasted into the table
