@@ -25,7 +25,7 @@ Clipboard.prototype.initialize = function(){
 				if(this.customSelection){
 					plain = this.customSelection;
 				}else{
-					html = this.table.modules.export.getHtml(this.table.options.printVisibleRows, this.table.options.printCopyStyle, this.config, "clipboard");
+					html = this.table.modules.export.getHtml(this.table.options.clipboardRowRange, this.table.options.clipboardCopyStyled, this.config, "clipboard");
 					plain = html ? this.generatePlainContent(html) : "";
 				}
 

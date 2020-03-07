@@ -5766,6 +5766,8 @@ Tabulator.prototype.defaultOptions = {
 	clipboardPasteAction: "insert", //how to insert pasted data into the table
 	clipboardCopyConfig: false, //clipboard config
 
+	clipboardRowRange: "visible", //restrict clipboard to visible rows only
+
 	clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
 	clipboardPasted: function clipboardPasted() {}, //data has been pasted into the table
 	clipboardPasteError: function clipboardPasteError() {}, //data has not successfully been pasted into the table
@@ -5793,8 +5795,9 @@ Tabulator.prototype.defaultOptions = {
 	printFormatter: false, //printing page formatter
 	printHeader: false, //page header contents
 	printFooter: false, //page footer contents
-	printCopyStyle: true, //enable print as html styling
-	printVisibleRows: true, //restrict print to visible rows only
+	printCopyStyle: true, //DEPRICATED - REMOVE in 5.0
+	printCopyStyled: true, //enable print as html styling
+	printVisibleRows: true, //DEPRICATED - REMOVE in 5.0
 	printRowRange: "visible", //restrict print to visible rows only
 	printConfig: {}, //print config options
 
@@ -6060,7 +6063,15 @@ Tabulator.prototype._mapDepricatedFunctionality = function () {
 	}
 
 	if (this.options.printVisibleRows !== true) {
+		console.warn("printVisibleRows option is deprecated, you should now use the printRowRange option");
+
 		this.options.persistence.printRowRange = "active";
+	}
+
+	if (this.options.printCopyStyle !== true) {
+		console.warn("printCopyStyle option is deprecated, you should now use the printCopyStyled option");
+
+		this.options.persistence.printCopyStyled = this.options.printCopyStyle;
 	}
 
 	if (this.options.persistentLayout) {

@@ -7381,6 +7381,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		clipboardCopyConfig: false, //clipboard config
 
 
+		clipboardRowRange: "visible", //restrict clipboard to visible rows only
+
+
 		clipboardCopied: function clipboardCopied() {}, //data has been copied to the clipboard
 
 		clipboardPasted: function clipboardPasted() {}, //data has been pasted into the table
@@ -7430,9 +7433,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		printFooter: false, //page footer contents
 
-		printCopyStyle: true, //enable print as html styling
+		printCopyStyle: true, //DEPRICATED - REMOVE in 5.0
 
-		printVisibleRows: true, //restrict print to visible rows only
+		printCopyStyled: true, //enable print as html styling
+
+		printVisibleRows: true, //DEPRICATED - REMOVE in 5.0
 
 		printRowRange: "visible", //restrict print to visible rows only
 
@@ -7862,7 +7867,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.options.printVisibleRows !== true) {
 
+			console.warn("printVisibleRows option is deprecated, you should now use the printRowRange option");
+
 			this.options.persistence.printRowRange = "active";
+		}
+
+		if (this.options.printCopyStyle !== true) {
+
+			console.warn("printCopyStyle option is deprecated, you should now use the printCopyStyled option");
+
+			this.options.persistence.printCopyStyled = this.options.printCopyStyle;
 		}
 
 		if (this.options.persistentLayout) {
@@ -11948,7 +11962,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (_this35.customSelection) {
 						plain = _this35.customSelection;
 					} else {
-						html = _this35.table.modules.export.getHtml(_this35.table.options.printVisibleRows, _this35.table.options.printCopyStyle, _this35.config, "clipboard");
+						html = _this35.table.modules.export.getHtml(_this35.table.options.clipboardRowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
 						plain = html ? _this35.generatePlainContent(html) : "";
 					}
 
@@ -21531,7 +21545,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.element = document.createElement("div");
 			this.element.classList.add("tabulator-print-table");
 
-			this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printRowRange, "print"));
+			this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyled, this.table.options.printRowRange, "print"));
 
 			this.table.element.style.display = "none";
 
@@ -21553,7 +21567,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    scrollY = window.scrollY,
 		    headerEl = document.createElement("div"),
 		    footerEl = document.createElement("div"),
-		    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyle, visible, "print"),
+		    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyled, visible, "print"),
 		    headerContent,
 		    footerContent;
 
