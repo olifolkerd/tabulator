@@ -43,7 +43,7 @@ Clipboard.prototype.initialize = function(){
 					}
 				}
 
-				this.table.options.clipboardCopied.call(this.table, plain);
+				this.table.options.clipboardCopied.call(this.table, plain, html);
 
 				this.reset();
 			}

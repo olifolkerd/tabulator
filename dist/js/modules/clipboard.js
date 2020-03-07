@@ -49,7 +49,7 @@ Clipboard.prototype.initialize = function () {
 					}
 				}
 
-				_this.table.options.clipboardCopied.call(_this.table, plain);
+				_this.table.options.clipboardCopied.call(_this.table, plain, html);
 
 				_this.reset();
 			}

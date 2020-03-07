@@ -11957,7 +11957,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (_this35.customSelection) {
 						plain = _this35.customSelection;
 					} else {
-						html = _this35.table.modules.export.getHtml(_this35.table.options.clipboardRowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
+						html = _this35.table.modules.export.getHtml(_this35.table.options.clipboardCopyRowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
 						plain = html ? _this35.generatePlainContent(html) : "";
 					}
 
@@ -11975,7 +11975,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					}
 
-					_this35.table.options.clipboardCopied.call(_this35.table, plain);
+					_this35.table.options.clipboardCopied.call(_this35.table, plain, html);
 
 					_this35.reset();
 				}
