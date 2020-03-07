@@ -86,7 +86,7 @@ Tabulator.prototype.defaultOptions = {
 	clipboardCopyStyled:true, //formatted table data
 	clipboardCopyConfig:false, //clipboard config
 	clipboardCopyFormatter:false, //DEPRICATED - REMOVE in 5.0
-	clipboardCopyRowRange:"visible", //restrict clipboard to visible rows only
+	clipboardCopyRowRange:"active", //restrict clipboard to visible rows only
 	clipboardPasteParser:"table", //convert pasted clipboard data to rows
 	clipboardPasteAction:"insert", //how to insert pasted data into the table
 

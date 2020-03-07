@@ -7374,7 +7374,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardCopyFormatter: false, //DEPRICATED - REMOVE in 5.0
 
-		clipboardCopyRowRange: "visible", //restrict clipboard to visible rows only
+		clipboardCopyRowRange: "all", //restrict clipboard to visible rows only
 
 		clipboardPasteParser: "table", //convert pasted clipboard data to rows
 
@@ -15527,7 +15527,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (row) {
 					rows.push(row);
-				};
+				}
 			});
 		} else {
 			switch (range) {
