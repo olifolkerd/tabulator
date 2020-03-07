@@ -29,10 +29,18 @@ Export.prototype.genereateTable = function (config, style, range, colVisProp) {
 };
 
 Export.prototype.rowLookup = function (range) {
+	var _this = this;
+
 	var rows = [];
 
 	if (typeof range == "function") {
-		rows = range().call(this.table);
+		range.call(this.table).forEach(function (row) {
+			row = _this.table.rowManager.findRow(row);
+
+			if (row) {
+				rows.push(row);
+			}
+		});
 	} else {
 		switch (range) {
 			case true:
@@ -58,14 +66,14 @@ Export.prototype.rowLookup = function (range) {
 };
 
 Export.prototype.generateColumnGroupHeaders = function () {
-	var _this = this;
+	var _this2 = this;
 
 	var output = [];
 
 	var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
 
 	columns.forEach(function (column) {
-		var colData = _this.processColumnGroup(column);
+		var colData = _this2.processColumnGroup(column);
 
 		if (colData) {
 			output.push(colData);
@@ -76,7 +84,7 @@ Export.prototype.generateColumnGroupHeaders = function () {
 };
 
 Export.prototype.processColumnGroup = function (column) {
-	var _this2 = this;
+	var _this3 = this;
 
 	var subGroups = column.columns,
 	    maxDepth = 0;
@@ -92,7 +100,7 @@ Export.prototype.processColumnGroup = function (column) {
 		groupData.width = 0;
 
 		subGroups.forEach(function (subGroup) {
-			var subGroupData = _this2.processColumnGroup(subGroup);
+			var subGroupData = _this3.processColumnGroup(subGroup);
 
 			if (subGroupData) {
 				groupData.width += subGroupData.width;
@@ -159,7 +167,7 @@ Export.prototype.groupHeadersToRows = function (columns) {
 };
 
 Export.prototype.generateHeaderElements = function () {
-	var _this3 = this;
+	var _this4 = this;
 
 	var headerEl = document.createElement("thead");
 
@@ -168,7 +176,7 @@ Export.prototype.generateHeaderElements = function () {
 	rows.forEach(function (row) {
 		var rowEl = document.createElement("tr");
 
-		_this3.mapElementStyles(_this3.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+		_this4.mapElementStyles(_this4.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
 		row.forEach(function (column) {
 			var cellEl = document.createElement("th");
@@ -179,7 +187,7 @@ Export.prototype.generateHeaderElements = function () {
 
 			cellEl.innerHTML = column.column.definition.title;
 
-			if (_this3.cloneTableStyle) {
+			if (_this4.cloneTableStyle) {
 				cellEl.style.boxSizing = "border-box";
 			}
 
@@ -187,11 +195,11 @@ Export.prototype.generateHeaderElements = function () {
 				cellEl.classList.add(className);
 			});
 
-			_this3.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-			_this3.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+			_this4.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			_this4.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 
 			if (column.column.visible) {
-				_this3.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
+				_this4.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
 			} else {
 				if (column.column.definition.width) {
 					cellEl.style.width = column.column.definition.width + "px";
@@ -199,7 +207,7 @@ Export.prototype.generateHeaderElements = function () {
 			}
 
 			if (column.column.parent) {
-				_this3.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
+				_this4.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
 			}
 
 			rowEl.appendChild(cellEl);
@@ -212,7 +220,7 @@ Export.prototype.generateHeaderElements = function () {
 };
 
 Export.prototype.generateBodyElements = function (rows) {
-	var _this4 = this;
+	var _this5 = this;
 
 	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
 
@@ -246,7 +254,7 @@ Export.prototype.generateBodyElements = function (rows) {
 	}
 
 	this.table.columnManager.columnsByIndex.forEach(function (column) {
-		if (_this4.columnVisCheck(column)) {
+		if (_this5.columnVisCheck(column)) {
 			columns.push(column);
 		}
 	});
@@ -258,11 +266,11 @@ Export.prototype.generateBodyElements = function (rows) {
 	rows = rows.filter(function (row) {
 		switch (row.type) {
 			case "group":
-				return _this4.config.rowGroups !== false;
+				return _this5.config.rowGroups !== false;
 				break;
 
 			case "calc":
-				return _this4.config.columnCalcs !== false;
+				return _this5.config.columnCalcs !== false;
 				break;
 		}
 
@@ -274,7 +282,7 @@ Export.prototype.generateBodyElements = function (rows) {
 	}
 
 	rows.forEach(function (row, i) {
-		var rowData = row.getData(_this4.colVisProp);
+		var rowData = row.getData(_this5.colVisProp);
 
 		var rowEl = document.createElement("tr");
 		rowEl.classList.add("tabulator-print-table-row");
@@ -287,8 +295,8 @@ Export.prototype.generateBodyElements = function (rows) {
 
 				rowEl.classList.add("tabulator-print-table-group");
 
-				_this4.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				_this4.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+				_this5.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+				_this5.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 				rowEl.appendChild(cellEl);
 				break;
 
@@ -297,7 +305,7 @@ Export.prototype.generateBodyElements = function (rows) {
 
 			case "row":
 
-				if (_this4.table.options.dataTree && _this4.config.dataTree === false && row.modules.dataTree.parent) {
+				if (_this5.table.options.dataTree && _this5.config.dataTree === false && row.modules.dataTree.parent) {
 					return;
 				}
 
@@ -338,8 +346,8 @@ Export.prototype.generateBodyElements = function (rows) {
 						cellEl.classList.add(className);
 					});
 
-					if (_this4.table.modExists("format")) {
-						value = _this4.table.modules.format.formatValue(cellWrapper);
+					if (_this5.table.modExists("format")) {
+						value = _this5.table.modules.format.formatValue(cellWrapper);
 					} else {
 						switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
 							case "object":
@@ -363,14 +371,14 @@ Export.prototype.generateBodyElements = function (rows) {
 					}
 
 					if (firstCell) {
-						_this4.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+						_this5.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
 
 						if (column.definition.align) {
 							cellEl.style.textAlign = column.definition.align;
 						}
 					}
 
-					if (_this4.table.options.dataTree && _this4.config.dataTree !== false) {
+					if (_this5.table.options.dataTree && _this5.config.dataTree !== false) {
 						if (treeElementField && treeElementField == column.field || !treeElementField && i == 0) {
 							if (row.modules.dataTree.controlEl) {
 								cellEl.insertBefore(row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
@@ -390,7 +398,7 @@ Export.prototype.generateBodyElements = function (rows) {
 
 				styleRow = row.type == "calc" ? calcRow : i % 2 && evenRow ? evenRow : oddRow;
 
-				_this4.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+				_this5.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 				break;
 		}
 

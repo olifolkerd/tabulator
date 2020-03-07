@@ -28,7 +28,13 @@ Export.prototype.rowLookup = function(range){
 	var rows = [];
 
 	if(typeof range == "function"){
-		rows = range().call(this.table);
+		range.call(this.table).forEach((row) =>{
+			row = this.table.rowManager.findRow(row);
+
+			if(row){
+				rows.push(row);
+			}
+		});
 	}else{
 		switch(range){
 			case true:
