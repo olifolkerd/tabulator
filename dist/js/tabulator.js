@@ -19462,7 +19462,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		copyToClipboard: function copyToClipboard(e) {
 			if (!this.table.modules.edit.currentCell) {
 				if (this.table.modExists("clipboard", true)) {
-					this.table.modules.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true);
+					this.table.modules.clipboard.copy(false, true);
 				}
 			}
 		}
