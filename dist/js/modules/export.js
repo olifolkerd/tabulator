@@ -269,7 +269,7 @@ Export.prototype.generateBodyElements = function (rows) {
 	}
 
 	rows.forEach(function (row, i) {
-		var rowData = row.getData();
+		var rowData = row.getData(_this4.colVisProp);
 
 		var rowEl = document.createElement("tr");
 		rowEl.classList.add("tabulator-print-table-row");
