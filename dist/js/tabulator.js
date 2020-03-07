@@ -7370,16 +7370,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardCopyStyled: true, //formatted table data
 
-		clipboardCopySelector: "active", //method of chosing which data is coppied to the clipboard
-
-		clipboardCopyFormatter: "table", //convert data to a clipboard string
+		clipboardCopyConfig: false, //clipboard config
 
 		clipboardPasteParser: "table", //convert pasted clipboard data to rows
 
 		clipboardPasteAction: "insert", //how to insert pasted data into the table
-
-		clipboardCopyConfig: false, //clipboard config
-
 
 		clipboardRowRange: "visible", //restrict clipboard to visible rows only
 
@@ -7435,7 +7430,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		printCopyStyle: true, //DEPRICATED - REMOVE in 5.0
 
-		printCopyStyled: true, //enable print as html styling
+		printStyled: true, //enable print as html styling
 
 		printVisibleRows: true, //DEPRICATED - REMOVE in 5.0
 
@@ -7874,9 +7869,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.options.printCopyStyle !== true) {
 
-			console.warn("printCopyStyle option is deprecated, you should now use the printCopyStyled option");
+			console.warn("printCopyStyle option is deprecated, you should now use the printStyled option");
 
-			this.options.persistence.printCopyStyled = this.options.printCopyStyle;
+			this.options.persistence.printStyled = this.options.printCopyStyle;
 		}
 
 		if (this.options.persistentLayout) {
@@ -21545,7 +21540,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.element = document.createElement("div");
 			this.element.classList.add("tabulator-print-table");
 
-			this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyled, this.table.options.printRowRange, "print"));
+			this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printStyled, this.table.options.printRowRange, "print"));
 
 			this.table.element.style.display = "none";
 
@@ -21567,7 +21562,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    scrollY = window.scrollY,
 		    headerEl = document.createElement("div"),
 		    footerEl = document.createElement("div"),
-		    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyled, visible, "print"),
+		    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible, "print"),
 		    headerContent,
 		    footerContent;
 

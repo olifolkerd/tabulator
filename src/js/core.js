@@ -84,12 +84,9 @@ Tabulator.prototype.defaultOptions = {
 
 	clipboard:false, //enable clipboard
 	clipboardCopyStyled:true, //formatted table data
-	clipboardCopySelector:"active", //method of chosing which data is coppied to the clipboard
-	clipboardCopyFormatter:"table", //convert data to a clipboard string
+	clipboardCopyConfig:false, //clipboard config
 	clipboardPasteParser:"table", //convert pasted clipboard data to rows
 	clipboardPasteAction:"insert", //how to insert pasted data into the table
-	clipboardCopyConfig:false, //clipboard config
-
 	clipboardRowRange:"visible", //restrict clipboard to visible rows only
 
 	clipboardCopied:function(){}, //data has been copied to the clipboard
@@ -118,7 +115,7 @@ Tabulator.prototype.defaultOptions = {
 	printHeader:false, //page header contents
 	printFooter:false, //page footer contents
 	printCopyStyle:true, //DEPRICATED - REMOVE in 5.0
-	printCopyStyled:true, //enable print as html styling
+	printStyled:true, //enable print as html styling
 	printVisibleRows:true,  //DEPRICATED - REMOVE in 5.0
 	printRowRange:"visible", //restrict print to visible rows only
 	printConfig:{}, //print config options
@@ -391,9 +388,9 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 	}
 
 	if(this.options.printCopyStyle !== true){
-		console.warn("printCopyStyle option is deprecated, you should now use the printCopyStyled option");
+		console.warn("printCopyStyle option is deprecated, you should now use the printStyled option");
 
-		this.options.persistence.printCopyStyled = this.options.printCopyStyle;
+		this.options.persistence.printStyled = this.options.printCopyStyle;
 	}
 
 	if(this.options.persistentLayout){

@@ -16,7 +16,7 @@ Print.prototype.replaceTable = function () {
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-table");
 
-		this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyled, this.table.options.printRowRange, "print"));
+		this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printStyled, this.table.options.printRowRange, "print"));
 
 		this.table.element.style.display = "none";
 
@@ -38,7 +38,7 @@ Print.prototype.printFullscreen = function (visible, style, config) {
 	    scrollY = window.scrollY,
 	    headerEl = document.createElement("div"),
 	    footerEl = document.createElement("div"),
-	    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printCopyStyled, visible, "print"),
+	    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible, "print"),
 	    headerContent,
 	    footerContent;
 
