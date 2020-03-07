@@ -7372,6 +7372,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardCopyConfig: false, //clipboard config
 
+		clipboardCopyFormatter: "table", //DEPRICATED - REMOVE in 5.0
+
 		clipboardCopyRowRange: "visible", //restrict clipboard to visible rows only
 
 		clipboardPasteParser: "table", //convert pasted clipboard data to rows
@@ -11958,9 +11960,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (_this35.customSelection) {
 						plain = _this35.customSelection;
+
+						if (_this35.table.options.clipboardCopyFormatter) {
+							plain = _this35.table.options.clipboardCopyFormatter("plain", plain);
+						}
 					} else {
 						html = _this35.table.modules.export.getHtml(_this35.table.options.clipboardCopyRowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
 						plain = html ? _this35.generatePlainContent(html) : "";
+
+						if (_this35.table.options.clipboardCopyFormatter) {
+							plain = _this35.table.options.clipboardCopyFormatter("plain", plain);
+							html = _this35.table.options.clipboardCopyFormatter("html", html);
+						}
 					}
 
 					if (window.clipboardData && window.clipboardData.setData) {
@@ -15507,23 +15518,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Export.prototype.rowLookup = function (range) {
 		var rows = [];
 
-		switch (range) {
-			case true:
-			case "visible":
-				rows = this.table.rowManager.getVisibleRows(true);
-				break;
+		if (typeof range == "function") {
+			rows = range();
+		}{
+			switch (range) {
+				case true:
+				case "visible":
+					rows = this.table.rowManager.getVisibleRows(true);
+					break;
 
-			case "all":
-				rows = this.table.rowManager.rows;
-				break;
+				case "all":
+					rows = this.table.rowManager.rows;
+					break;
 
-			case "selected":
-				rows = this.modules.selectRow.selectedRows;
-				break;
+				case "selected":
+					rows = this.modules.selectRow.selectedRows;
+					break;
 
-			case "active":
-			default:
-				rows = this.table.rowManager.getDisplayRows();
+				case "active":
+				default:
+					rows = this.table.rowManager.getDisplayRows();
+			}
 		}
 
 		return Object.assign([], rows);

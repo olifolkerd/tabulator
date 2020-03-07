@@ -30,23 +30,27 @@ Export.prototype.genereateTable = function (config, style, range, colVisProp) {
 Export.prototype.rowLookup = function (range) {
 	var rows = [];
 
-	switch (range) {
-		case true:
-		case "visible":
-			rows = this.table.rowManager.getVisibleRows(true);
-			break;
+	if (typeof range == "function") {
+		rows = range();
+	}{
+		switch (range) {
+			case true:
+			case "visible":
+				rows = this.table.rowManager.getVisibleRows(true);
+				break;
 
-		case "all":
-			rows = this.table.rowManager.rows;
-			break;
+			case "all":
+				rows = this.table.rowManager.rows;
+				break;
 
-		case "selected":
-			rows = this.modules.selectRow.selectedRows;
-			break;
+			case "selected":
+				rows = this.modules.selectRow.selectedRows;
+				break;
 
-		case "active":
-		default:
-			rows = this.table.rowManager.getDisplayRows();
+			case "active":
+			default:
+				rows = this.table.rowManager.getDisplayRows();
+		}
 	}
 
 	return Object.assign([], rows);

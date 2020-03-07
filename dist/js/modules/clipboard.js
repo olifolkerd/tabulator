@@ -30,9 +30,18 @@ Clipboard.prototype.initialize = function () {
 
 				if (_this.customSelection) {
 					plain = _this.customSelection;
+
+					if (_this.table.options.clipboardCopyFormatter) {
+						plain = _this.table.options.clipboardCopyFormatter("plain", plain);
+					}
 				} else {
 					html = _this.table.modules.export.getHtml(_this.table.options.clipboardCopyRowRange, _this.table.options.clipboardCopyStyled, _this.config, "clipboard");
 					plain = html ? _this.generatePlainContent(html) : "";
+
+					if (_this.table.options.clipboardCopyFormatter) {
+						plain = _this.table.options.clipboardCopyFormatter("plain", plain);
+						html = _this.table.options.clipboardCopyFormatter("html", html);
+					}
 				}
 
 				if (window.clipboardData && window.clipboardData.setData) {

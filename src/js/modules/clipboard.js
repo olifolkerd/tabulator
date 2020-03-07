@@ -24,9 +24,18 @@ Clipboard.prototype.initialize = function(){
 
 				if(this.customSelection){
 					plain = this.customSelection;
+
+					if(this.table.options.clipboardCopyFormatter){
+						plain = this.table.options.clipboardCopyFormatter("plain", plain);
+					}
 				}else{
 					html = this.table.modules.export.getHtml(this.table.options.clipboardCopyRowRange, this.table.options.clipboardCopyStyled, this.config, "clipboard");
 					plain = html ? this.generatePlainContent(html) : "";
+
+					if(this.table.options.clipboardCopyFormatter){
+						plain = this.table.options.clipboardCopyFormatter("plain", plain);
+						html = this.table.options.clipboardCopyFormatter("html", html);
+					}
 				}
 
 				if (window.clipboardData && window.clipboardData.setData) {
