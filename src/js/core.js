@@ -382,6 +382,11 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 		}
 	}
 
+	if(typeof this.options.clipboardCopyHeader !== "undefined"){
+		this.options.columnHeaders = this.options.clipboardCopyHeader;
+		console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
+	}
+
 	if(this.options.printVisibleRows !== true){
 		console.warn("printVisibleRows option is deprecated, you should now use the printRowRange option");
 

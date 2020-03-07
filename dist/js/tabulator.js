@@ -7374,7 +7374,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardCopyFormatter: false, //DEPRICATED - REMOVE in 5.0
 
-		clipboardCopyRowRange: "all", //restrict clipboard to visible rows only
+		clipboardCopyRowRange: "active", //restrict clipboard to visible rows only
 
 		clipboardPasteParser: "table", //convert pasted clipboard data to rows
 
@@ -7860,6 +7860,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.options.persistence = {};
 			}
+		}
+
+		if (typeof this.options.clipboardCopyHeader !== "undefined") {
+
+			this.options.columnHeaders = this.options.clipboardCopyHeader;
+
+			console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
 		}
 
 		if (this.options.printVisibleRows !== true) {
@@ -11940,8 +11947,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.pasteAction = function () {};
 		this.customSelection = false;
 		this.rowRange = false;
-		this.config = {};
-
 		this.blocked = true; //block copy actions not originating from this command
 	};
 
@@ -11956,8 +11961,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.element.addEventListener("copy", function (e) {
 				var plain, html;
 
-				_this35.processConfig();
-
 				if (!_this35.blocked) {
 					e.preventDefault();
 
@@ -11968,7 +11971,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							plain = _this35.table.options.clipboardCopyFormatter("plain", plain);
 						}
 					} else {
-						html = _this35.table.modules.export.getHtml(_this35.rowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
+						html = _this35.table.modules.export.getHtml(_this35.rowRange, _this35.table.options.clipboardCopyStyled, table.options.clipboardCopyConfig, "clipboard");
 						plain = html ? _this35.generatePlainContent(html) : "";
 
 						if (_this35.table.options.clipboardCopyFormatter) {
@@ -12006,43 +12009,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.setPasteParser(this.table.options.clipboardPasteParser);
 		this.setPasteAction(this.table.options.clipboardPasteAction);
-	};
-
-	Clipboard.prototype.processConfig = function () {
-		var config = {
-			columnHeaders: "groups",
-			rowGroups: true,
-			columnCalcs: true
-		};
-
-		if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
-			config.columnHeaders = this.table.options.clipboardCopyHeader;
-			console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
-		}
-
-		if (this.table.options.clipboardCopyConfig) {
-			for (var key in this.table.options.clipboardCopyConfig) {
-				config[key] = this.table.options.clipboardCopyConfig[key];
-			}
-		}
-
-		if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
-			this.config.rowGroups = true;
-		}
-
-		if (config.columnHeaders) {
-			if ((config.columnHeaders === "groups" || config === true) && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
-				this.config.columnHeaders = "groups";
-			} else {
-				this.config.columnHeaders = "columns";
-			}
-		} else {
-			this.config.columnHeaders = false;
-		}
-
-		if (config.columnCalcs && this.table.modExists("columnCalcs")) {
-			this.config.columnCalcs = true;
-		}
 	};
 
 	Clipboard.prototype.reset = function () {

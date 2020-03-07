@@ -10,8 +10,6 @@ var Clipboard = function Clipboard(table) {
 	this.pasteAction = function () {};
 	this.customSelection = false;
 	this.rowRange = false;
-	this.config = {};
-
 	this.blocked = true; //block copy actions not originating from this command
 };
 
@@ -26,8 +24,6 @@ Clipboard.prototype.initialize = function () {
 		this.table.element.addEventListener("copy", function (e) {
 			var plain, html;
 
-			_this.processConfig();
-
 			if (!_this.blocked) {
 				e.preventDefault();
 
@@ -38,7 +34,7 @@ Clipboard.prototype.initialize = function () {
 						plain = _this.table.options.clipboardCopyFormatter("plain", plain);
 					}
 				} else {
-					html = _this.table.modules.export.getHtml(_this.rowRange, _this.table.options.clipboardCopyStyled, _this.config, "clipboard");
+					html = _this.table.modules.export.getHtml(_this.rowRange, _this.table.options.clipboardCopyStyled, table.options.clipboardCopyConfig, "clipboard");
 					plain = html ? _this.generatePlainContent(html) : "";
 
 					if (_this.table.options.clipboardCopyFormatter) {
@@ -76,43 +72,6 @@ Clipboard.prototype.initialize = function () {
 
 	this.setPasteParser(this.table.options.clipboardPasteParser);
 	this.setPasteAction(this.table.options.clipboardPasteAction);
-};
-
-Clipboard.prototype.processConfig = function () {
-	var config = {
-		columnHeaders: "groups",
-		rowGroups: true,
-		columnCalcs: true
-	};
-
-	if (typeof this.table.options.clipboardCopyHeader !== "undefined") {
-		config.columnHeaders = this.table.options.clipboardCopyHeader;
-		console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
-	}
-
-	if (this.table.options.clipboardCopyConfig) {
-		for (var key in this.table.options.clipboardCopyConfig) {
-			config[key] = this.table.options.clipboardCopyConfig[key];
-		}
-	}
-
-	if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
-		this.config.rowGroups = true;
-	}
-
-	if (config.columnHeaders) {
-		if ((config.columnHeaders === "groups" || config === true) && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
-			this.config.columnHeaders = "groups";
-		} else {
-			this.config.columnHeaders = "columns";
-		}
-	} else {
-		this.config.columnHeaders = false;
-	}
-
-	if (config.columnCalcs && this.table.modExists("columnCalcs")) {
-		this.config.columnCalcs = true;
-	}
 };
 
 Clipboard.prototype.reset = function () {
