@@ -29,7 +29,7 @@ Export.prototype.rowLookup = function(range){
 
 	if(typeof range == "function"){
 		rows = range();
-	}{
+	}else{
 		switch(range){
 			case true:
 			case "visible":

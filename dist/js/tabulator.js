@@ -15521,7 +15521,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (typeof range == "function") {
 			rows = range();
-		}{
+		} else {
 			switch (range) {
 				case true:
 				case "visible":
