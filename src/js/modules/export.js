@@ -10,13 +10,14 @@ Export.prototype.genereateTable = function(config, style, range, colVisProp){
 	this.config = config || {};
 	this.colVisProp = colVisProp;
 
-	var headers = this.generateHeaderElements();
-	var body = this.generateBodyElements(this.rowLookup(range));
-
 	var table = document.createElement("table");
 	table.classList.add("tabulator-print-table");
-	table.appendChild(headers);
-	table.appendChild(body);
+
+	if(this.config.columnHeaders !== false){
+		table.appendChild(this.generateHeaderElements());
+	}
+
+	table.appendChild(this.generateBodyElements(this.rowLookup(range)));
 
 	this.mapElementStyles(this.table.element, table, ["border-top", "border-left", "border-right", "border-bottom"]);
 
