@@ -15520,7 +15520,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var rows = [];
 
 		if (typeof range == "function") {
-			rows = range();
+			rows = range().call(this.table);
 		} else {
 			switch (range) {
 				case true:

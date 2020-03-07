@@ -32,7 +32,7 @@ Export.prototype.rowLookup = function (range) {
 	var rows = [];
 
 	if (typeof range == "function") {
-		rows = range();
+		rows = range().call(this.table);
 	} else {
 		switch (range) {
 			case true:
