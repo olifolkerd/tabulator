@@ -9,6 +9,7 @@ var Clipboard = function Clipboard(table) {
 	this.pasteParser = function () {};
 	this.pasteAction = function () {};
 	this.customSelection = false;
+	this.rowRange = false;
 	this.config = {};
 
 	this.blocked = true; //block copy actions not originating from this command
@@ -18,6 +19,8 @@ Clipboard.prototype.initialize = function () {
 	var _this = this;
 
 	this.mode = this.table.options.clipboard;
+
+	this.rowRange = this.table.options.clipboardCopyRowRange;
 
 	if (this.mode === true || this.mode === "copy") {
 		this.table.element.addEventListener("copy", function (e) {
@@ -35,7 +38,7 @@ Clipboard.prototype.initialize = function () {
 						plain = _this.table.options.clipboardCopyFormatter("plain", plain);
 					}
 				} else {
-					html = _this.table.modules.export.getHtml(_this.table.options.clipboardCopyRowRange, _this.table.options.clipboardCopyStyled, _this.config, "clipboard");
+					html = _this.table.modules.export.getHtml(_this.rowRange, _this.table.options.clipboardCopyStyled, _this.config, "clipboard");
 					plain = html ? _this.generatePlainContent(html) : "";
 
 					if (_this.table.options.clipboardCopyFormatter) {
@@ -148,12 +151,14 @@ Clipboard.prototype.generatePlainContent = function (html) {
 	return output.join("\n");
 };
 
-Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
+Clipboard.prototype.copy = function (range, internal) {
 	var range, sel, textRange;
 	this.blocked = false;
 	this.customSelection = false;
 
 	if (this.mode === true || this.mode === "copy") {
+
+		this.rowRange = range || this.table.options.clipboardCopyRowRange;
 
 		if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 			range = document.createRange();

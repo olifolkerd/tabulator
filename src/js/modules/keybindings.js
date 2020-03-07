@@ -366,7 +366,7 @@ Keybindings.prototype.actions = {
 	copyToClipboard:function(e){
 		if(!this.table.modules.edit.currentCell){
 			if(this.table.modExists("clipboard", true)){
-				this.table.modules.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", null, null, null, true);
+				this.table.modules.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true);
 			}
 		}
 	},

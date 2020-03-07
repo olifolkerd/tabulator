@@ -7372,7 +7372,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		clipboardCopyConfig: false, //clipboard config
 
-		clipboardCopyFormatter: "table", //DEPRICATED - REMOVE in 5.0
+		clipboardCopyFormatter: false, //DEPRICATED - REMOVE in 5.0
 
 		clipboardCopyRowRange: "visible", //restrict clipboard to visible rows only
 
@@ -9045,11 +9045,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//copy table data to clipboard
 
-	Tabulator.prototype.copyToClipboard = function (selector, selectorParams, formatter, formatterParams) {
+	Tabulator.prototype.copyToClipboard = function (selector) {
 
 		if (this.modExists("clipboard", true)) {
 
-			this.modules.clipboard.copy(selector, selectorParams, formatter, formatterParams);
+			this.modules.clipboard.copy(selector);
 		}
 	};
 
@@ -11939,6 +11939,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.pasteParser = function () {};
 		this.pasteAction = function () {};
 		this.customSelection = false;
+		this.rowRange = false;
 		this.config = {};
 
 		this.blocked = true; //block copy actions not originating from this command
@@ -11948,6 +11949,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var _this35 = this;
 
 		this.mode = this.table.options.clipboard;
+
+		this.rowRange = this.table.options.clipboardCopyRowRange;
 
 		if (this.mode === true || this.mode === "copy") {
 			this.table.element.addEventListener("copy", function (e) {
@@ -11965,7 +11968,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							plain = _this35.table.options.clipboardCopyFormatter("plain", plain);
 						}
 					} else {
-						html = _this35.table.modules.export.getHtml(_this35.table.options.clipboardCopyRowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
+						html = _this35.table.modules.export.getHtml(_this35.rowRange, _this35.table.options.clipboardCopyStyled, _this35.config, "clipboard");
 						plain = html ? _this35.generatePlainContent(html) : "";
 
 						if (_this35.table.options.clipboardCopyFormatter) {
@@ -12078,12 +12081,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return output.join("\n");
 	};
 
-	Clipboard.prototype.copy = function (selector, selectorParams, formatter, formatterParams, internal) {
+	Clipboard.prototype.copy = function (range, internal) {
 		var range, sel, textRange;
 		this.blocked = false;
 		this.customSelection = false;
 
 		if (this.mode === true || this.mode === "copy") {
+
+			this.rowRange = range || this.table.options.clipboardCopyRowRange;
 
 			if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
 				range = document.createRange();
@@ -19482,7 +19487,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		copyToClipboard: function copyToClipboard(e) {
 			if (!this.table.modules.edit.currentCell) {
 				if (this.table.modExists("clipboard", true)) {
-					this.table.modules.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", null, null, null, true);
+					this.table.modules.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", true);
 				}
 			}
 		}
