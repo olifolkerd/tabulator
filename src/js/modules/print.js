@@ -14,7 +14,7 @@ Print.prototype.replaceTable = function(){
 		this.element = document.createElement("div");
 		this.element.classList.add("tabulator-print-table");
 
-		this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows, "print"));
+		this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printRowRange, "print"));
 
 		this.table.element.style.display = "none";
 

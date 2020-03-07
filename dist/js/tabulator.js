@@ -7434,6 +7434,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		printVisibleRows: true, //restrict print to visible rows only
 
+		printRowRange: "visible", //restrict print to visible rows only
+
 		printConfig: {}, //print config options
 
 
@@ -7856,6 +7858,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.options.persistence = {};
 			}
+		}
+
+		if (this.options.printVisibleRows !== true) {
+
+			this.options.persistence.printRowRange = "active";
 		}
 
 		if (this.options.persistentLayout) {
@@ -21524,7 +21531,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.element = document.createElement("div");
 			this.element.classList.add("tabulator-print-table");
 
-			this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printVisibleRows, "print"));
+			this.element.appendChild(this.table.modules.export.genereateTable(this.table.options.printConfig, this.table.options.printCopyStyle, this.table.options.printRowRange, "print"));
 
 			this.table.element.style.display = "none";
 

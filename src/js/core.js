@@ -117,6 +117,7 @@ Tabulator.prototype.defaultOptions = {
 	printFooter:false, //page footer contents
 	printCopyStyle:true, //enable print as html styling
 	printVisibleRows:true, //restrict print to visible rows only
+	printRowRange:"visible", //restrict print to visible rows only
 	printConfig:{}, //print config options
 
 	addRowPos:"bottom", //position to insert blank rows, top|bottom
@@ -379,6 +380,11 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 			this.options.persistence = {};
 		}
 	}
+
+	if(this.options.printVisibleRows !== true){
+		this.options.persistence.printRowRange = "active";
+	}
+
 
 	if(this.options.persistentLayout){
 		console.warn("persistentLayout option is deprecated, you should now use the persistence option");
