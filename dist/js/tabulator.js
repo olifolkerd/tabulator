@@ -19612,6 +19612,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Menu.prototype.loadMenu = function (e, component, menu) {
 		var _this60 = this;
 
+		var docHeight = document.body.offsetHeight;
+
 		//abort if no menu set
 		if (!menu || !menu.length) {
 			return;
@@ -19678,6 +19680,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (e.pageX + this.menuEl.offsetWidth >= document.body.offsetWidth) {
 			this.menuEl.style.left = "";
 			this.menuEl.style.right = document.body.offsetWidth - e.pageX + "px";
+		}
+
+		//move menu to start on bottom edge if it is too close to the edge of the screen
+		if (e.pageY + this.menuEl.offsetHeight >= docHeight) {
+			this.menuEl.style.top = "";
+			this.menuEl.style.bottom = docHeight - e.pageY + "px";
 		}
 	};
 

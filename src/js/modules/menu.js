@@ -58,6 +58,8 @@ Menu.prototype.initializeRow = function(row){
 
 Menu.prototype.loadMenu = function(e, component, menu){
 
+	var docHeight = document.body.offsetHeight;
+
 	//abort if no menu set
 	if(!menu || !menu.length){
 		return;
@@ -124,6 +126,12 @@ Menu.prototype.loadMenu = function(e, component, menu){
 	if((e.pageX + this.menuEl.offsetWidth) >= document.body.offsetWidth){
 		this.menuEl.style.left = "";
 		this.menuEl.style.right = (document.body.offsetWidth - e.pageX) + "px";
+	}
+
+	//move menu to start on bottom edge if it is too close to the edge of the screen
+	if((e.pageY + this.menuEl.offsetHeight) >= docHeight){
+		this.menuEl.style.top = "";
+		this.menuEl.style.bottom = (docHeight - e.pageY) + "px";
 	}
 };
 
