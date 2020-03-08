@@ -71,6 +71,7 @@ Menu.prototype.loadMenu = function(e, component, menu){
 	menu.forEach((item) => {
 		var itemEl = document.createElement("div");
 		var label = item.label
+		var disabled = item.disabled;
 
 		if(item.separator){
 			itemEl.classList.add("tabulator-menu-separator");
@@ -87,7 +88,11 @@ Menu.prototype.loadMenu = function(e, component, menu){
 				itemEl.innerHTML = label;
 			}
 
-			if(item.disabled){
+			if(typeof disabled == "function"){
+				disabled = disabled(component.getComponent());
+			}
+
+			if(disabled){
 				itemEl.classList.add("tabulator-menu-item-disabled");
 			}else{
 				itemEl.addEventListener("click", (e) => {
