@@ -47,7 +47,7 @@ Menu.prototype.initializeCell = function(cell){
 
 Menu.prototype.initializeRow = function(row){
 	row.getElement().addEventListener("contextmenu", (e) => {
-		var menu = typeof table.options.rowContextMenu == "function" ? table.options.rowContextMenu() : table.options.rowContextMenu;
+		var menu = typeof this.table.options.rowContextMenu == "function" ? this.table.options.rowContextMenu() : this.table.options.rowContextMenu;
 
 		e.preventDefault();
 

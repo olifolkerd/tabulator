@@ -19601,7 +19601,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var _this59 = this;
 
 		row.getElement().addEventListener("contextmenu", function (e) {
-			var menu = typeof table.options.rowContextMenu == "function" ? table.options.rowContextMenu() : table.options.rowContextMenu;
+			var menu = typeof _this59.table.options.rowContextMenu == "function" ? _this59.table.options.rowContextMenu() : _this59.table.options.rowContextMenu;
 
 			e.preventDefault();
 
