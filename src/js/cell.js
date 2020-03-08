@@ -555,6 +555,11 @@ Cell.prototype.setValueActual = function(value){
 		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
+	//set column menu
+	if(this.column.definition.contextMenu && this.table.modExists("menu")){
+		this.table.modules.menu.initializeColumnCell(this, this.element);
+	}
+
 	//handle frozen cells
 	if(this.table.modExists("frozenColumns")){
 		this.table.modules.frozenColumns.layoutElement(this.element, this.column);

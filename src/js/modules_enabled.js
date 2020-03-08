@@ -14,6 +14,7 @@
 /*=include modules/history.js */
 /*=include modules/html_table_import.js */
 /*=include modules/keybindings.js */
+/*=include modules/menu.js */
 /*=include modules/moveable_columns.js */
 /*=include modules/moveable_rows.js */
 /*=include modules/mutator.js */

@@ -541,6 +541,11 @@ Column.prototype._buildColumnHeader = function(){
 		table.modules.sort.initializeColumn(self, self.contentElement);
 	}
 
+	//set column menu
+	if(def.headerContextMenu && table.modExists("menu")){
+		table.modules.menu.initializeColumnHeader(self, self.contentElement);
+	}
+
 	//set column formatter
 	if(table.modExists("format")){
 		table.modules.format.initializeColumn(self);
@@ -1357,6 +1362,8 @@ Column.prototype.defaultOptionList = [
 "headerFilterFuncParams",
 "headerFilterLiveFilter",
 "print",
+"headerContextMenu",
+"contextMenu",
 ];
 
 //////////////// Event Bindings /////////////////
