@@ -28,33 +28,42 @@ FrozenColumns.prototype.reset = function(){
 FrozenColumns.prototype.initializeColumn = function(column){
 	var config = {margin:0, edge:false};
 
-	if(column.definition.frozen){
+	if(!column.isGroup){
 
-		if(!column.parent.isGroup){
+		if(this.frozenCheck(column)){
 
+			config.position = this.initializationMode;
 
-			if(!column.isGroup){
-				config.position = this.initializationMode;
-
-				if(this.initializationMode == "left"){
-					this.leftColumns.push(column);
-				}else{
-					this.rightColumns.unshift(column);
-				}
-
-				this.active = true;
-
-				column.modules.frozen = config;
+			if(this.initializationMode == "left"){
+				this.leftColumns.push(column);
 			}else{
-				console.warn("Frozen Column Error - Column Groups cannot be frozen");
+				this.rightColumns.unshift(column);
 			}
-		}else{
-			console.warn("Frozen Column Error - Grouped columns cannot be frozen");
-		}
 
-	}else{
-		this.initializationMode = "right";
+			this.active = true;
+
+			column.modules.frozen = config;
+		}else{
+			this.initializationMode = "right";
+		}
 	}
+
+};
+
+FrozenColumns.prototype.frozenCheck = function(column){
+	var frozen = false;
+
+	if(column.parent.isGroup && column.definition.frozen){
+		console.warn("Frozen Column Error - Parent column group must be frozen, not individual columns or sub column groups");
+	}
+
+	if(column.parent.isGroup){
+		return this.frozenCheck(column.parent);
+	}else{
+		return column.definition.frozen;
+	}
+
+	return frozen;
 };
 
 //quick layout to smooth horizontal scrolling
@@ -109,10 +118,13 @@ FrozenColumns.prototype.layoutCalcRows = function(){
 			this.layoutRow(this.table.modules.columnCalcs.botRow);
 		}
 	}
-}
+};
 
 //calculate column positions and layout headers
-FrozenColumns.prototype.layoutColumnPosition = function( allCells){
+FrozenColumns.prototype.layoutColumnPosition = function(allCells){
+
+	var leftParents = [];
+
 	this.leftColumns.forEach((column, i) => {
 		column.modules.frozen.margin = (this._calcSpace(this.leftColumns, i) + this.table.columnManager.scrollLeft) + "px";
 
@@ -122,7 +134,19 @@ FrozenColumns.prototype.layoutColumnPosition = function( allCells){
 			column.modules.frozen.edge = false;
 		}
 
-		this.layoutElement(column.getElement(), column);
+		if(column.parent.isGroup){
+			var parentEl = this.getColGroupParentElement(column);
+			if(!leftParents.includes(parentEl)){
+				this.layoutElement(parentEl, column);
+				leftParents.push(parentEl);
+			}
+
+			if(column.modules.frozen.edge){
+				parentEl.classList.add("tabulator-frozen-" + column.modules.frozen.position);
+			}
+		}else{
+			this.layoutElement(column.getElement(), column);
+		}
 
 		if(allCells){
 			column.cells.forEach((cell) => {
@@ -140,7 +164,12 @@ FrozenColumns.prototype.layoutColumnPosition = function( allCells){
 			column.modules.frozen.edge = false;
 		}
 
-		this.layoutElement(column.getElement(), column);
+
+		if(column.parent.isGroup){
+			this.layoutElement(this.getColGroupParentElement(column), column);
+		}else{
+			this.layoutElement(column.getElement(), column);
+		}
 
 		if(allCells){
 			column.cells.forEach((cell) => {
@@ -148,7 +177,11 @@ FrozenColumns.prototype.layoutColumnPosition = function( allCells){
 			});
 		}
 	});
-}
+};
+
+FrozenColumns.prototype.getColGroupParentElement = function(column){
+	return column.parent.isGroup ? this.getColGroupParentElement(column.parent) : column.getElement();
+};
 
 //layout columns appropropriatly
 FrozenColumns.prototype.layout = function(){

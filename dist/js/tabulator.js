@@ -12868,7 +12868,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				data.push(_this41.processGroupData(group, rows));
 			});
 		} else {
-			console.log("tree", this.config.dataTree);
 			if (this.config.dataTree) {
 				active = active = "active" ? "display" : active;
 			}
@@ -17393,31 +17392,41 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	FrozenColumns.prototype.initializeColumn = function (column) {
 		var config = { margin: 0, edge: false };
 
-		if (column.definition.frozen) {
+		if (!column.isGroup) {
 
-			if (!column.parent.isGroup) {
+			if (this.frozenCheck(column)) {
 
-				if (!column.isGroup) {
-					config.position = this.initializationMode;
+				config.position = this.initializationMode;
 
-					if (this.initializationMode == "left") {
-						this.leftColumns.push(column);
-					} else {
-						this.rightColumns.unshift(column);
-					}
-
-					this.active = true;
-
-					column.modules.frozen = config;
+				if (this.initializationMode == "left") {
+					this.leftColumns.push(column);
 				} else {
-					console.warn("Frozen Column Error - Column Groups cannot be frozen");
+					this.rightColumns.unshift(column);
 				}
+
+				this.active = true;
+
+				column.modules.frozen = config;
 			} else {
-				console.warn("Frozen Column Error - Grouped columns cannot be frozen");
+				this.initializationMode = "right";
 			}
-		} else {
-			this.initializationMode = "right";
 		}
+	};
+
+	FrozenColumns.prototype.frozenCheck = function (column) {
+		var frozen = false;
+
+		if (column.parent.isGroup && column.definition.frozen) {
+			console.warn("Frozen Column Error - Parent column group must be frozen, not individual columns or sub column groups");
+		}
+
+		if (column.parent.isGroup) {
+			return this.frozenCheck(column.parent);
+		} else {
+			return column.definition.frozen;
+		}
+
+		return frozen;
 	};
 
 	//quick layout to smooth horizontal scrolling
@@ -17480,6 +17489,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	FrozenColumns.prototype.layoutColumnPosition = function (allCells) {
 		var _this52 = this;
 
+		var leftParents = [];
+
 		this.leftColumns.forEach(function (column, i) {
 			column.modules.frozen.margin = _this52._calcSpace(_this52.leftColumns, i) + _this52.table.columnManager.scrollLeft + "px";
 
@@ -17489,7 +17500,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				column.modules.frozen.edge = false;
 			}
 
-			_this52.layoutElement(column.getElement(), column);
+			if (column.parent.isGroup) {
+				var parentEl = _this52.getColGroupParentElement(column);
+				if (!leftParents.includes(parentEl)) {
+					_this52.layoutElement(parentEl, column);
+					leftParents.push(parentEl);
+				}
+
+				if (column.modules.frozen.edge) {
+					parentEl.classList.add("tabulator-frozen-" + column.modules.frozen.position);
+				}
+			} else {
+				_this52.layoutElement(column.getElement(), column);
+			}
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
@@ -17507,7 +17530,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				column.modules.frozen.edge = false;
 			}
 
-			_this52.layoutElement(column.getElement(), column);
+			if (column.parent.isGroup) {
+				_this52.layoutElement(_this52.getColGroupParentElement(column), column);
+			} else {
+				_this52.layoutElement(column.getElement(), column);
+			}
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
@@ -17515,6 +17542,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 			}
 		});
+	};
+
+	FrozenColumns.prototype.getColGroupParentElement = function (column) {
+		return column.parent.isGroup ? this.getColGroupParentElement(column.parent) : column.getElement();
 	};
 
 	//layout columns appropropriatly
