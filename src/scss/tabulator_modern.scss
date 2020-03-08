@@ -1005,6 +1005,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		padding:5px 10px;
 
+		user-select: none;
+
 		&.tabulator-menu-item-disabled{
 			opacity: .5;
 		}

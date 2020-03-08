@@ -969,6 +969,8 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 
 		padding:5px 10px;
 
+		user-select: none;
+
 		&.tabulator-menu-item-disabled{
 			opacity: .5;
 		}

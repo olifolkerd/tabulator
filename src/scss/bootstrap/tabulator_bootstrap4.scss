@@ -1220,6 +1220,8 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 		padding:5px 10px;
 
+		user-select: none;
+
 		&.tabulator-menu-item-disabled{
 			opacity: .5;
 		}

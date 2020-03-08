@@ -94,6 +94,9 @@ Menu.prototype.loadMenu = function(e, component, menu){
 
 			if(disabled){
 				itemEl.classList.add("tabulator-menu-item-disabled");
+				itemEl.addEventListener("click", (e) => {
+					e.stopPropagation();
+				});
 			}else{
 				itemEl.addEventListener("click", (e) => {
 					this.hideMenu();

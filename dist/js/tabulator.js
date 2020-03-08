@@ -19648,6 +19648,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (disabled) {
 					itemEl.classList.add("tabulator-menu-item-disabled");
+					itemEl.addEventListener("click", function (e) {
+						e.stopPropagation();
+					});
 				} else {
 					itemEl.addEventListener("click", function (e) {
 						_this60.hideMenu();
