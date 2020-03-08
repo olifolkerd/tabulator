@@ -235,6 +235,7 @@ Tabulator.prototype.defaultOptions = {
 	rowMouseOver:false,
 	rowMouseOut:false,
 	rowMouseMove:false,
+	rowContextMenu:false,
 	rowAdded:function(){},
 	rowDeleted:function(){},
 	rowMoved:function(){},

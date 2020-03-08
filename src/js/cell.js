@@ -557,7 +557,7 @@ Cell.prototype.setValueActual = function(value){
 
 	//set column menu
 	if(this.column.definition.contextMenu && this.table.modExists("menu")){
-		this.table.modules.menu.initializeColumnCell(this, this.element);
+		this.table.modules.menu.initializeCell(this);
 	}
 
 	//handle frozen cells

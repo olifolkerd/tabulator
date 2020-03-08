@@ -35,13 +35,23 @@ Menu.prototype.initializeColumnHeader = function(column){
 	}
 };
 
-Menu.prototype.initializeColumnCell = function(cell){
+Menu.prototype.initializeCell = function(cell){
 	cell.getElement().addEventListener("contextmenu", (e) => {
 		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu() : cell.column.definition.contextMenu;
 
 		e.preventDefault();
 
 		this.loadMenu(e, cell, menu);
+	});
+};
+
+Menu.prototype.initializeRow = function(row){
+	row.getElement().addEventListener("contextmenu", (e) => {
+		var menu = typeof table.options.rowContextMenu == "function" ? table.options.rowContextMenu() : table.options.rowContextMenu;
+
+		e.preventDefault();
+
+		this.loadMenu(e, row, menu);
 	});
 };
 

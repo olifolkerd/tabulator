@@ -5436,6 +5436,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.table.modules.responsiveLayout.initializeRow(this);
 		}
 
+		//set column menu
+
+		if (self.table.options.rowContextMenu && this.table.modExists("menu")) {
+
+			self.table.modules.menu.initializeRow(this);
+		}
+
 		//handle row click events
 
 		if (self.table.options.rowClick) {
@@ -6906,7 +6913,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.column.definition.contextMenu && this.table.modExists("menu")) {
 
-			this.table.modules.menu.initializeColumnCell(this, this.element);
+			this.table.modules.menu.initializeCell(this);
 		}
 
 		//handle frozen cells
@@ -7663,6 +7670,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		rowMouseOut: false,
 
 		rowMouseMove: false,
+
+		rowContextMenu: false,
 
 		rowAdded: function rowAdded() {},
 
@@ -19576,7 +19585,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	Menu.prototype.initializeColumnCell = function (cell) {
+	Menu.prototype.initializeCell = function (cell) {
 		var _this58 = this;
 
 		cell.getElement().addEventListener("contextmenu", function (e) {
@@ -19588,8 +19597,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	};
 
-	Menu.prototype.loadMenu = function (e, component, menu) {
+	Menu.prototype.initializeRow = function (row) {
 		var _this59 = this;
+
+		row.getElement().addEventListener("contextmenu", function (e) {
+			var menu = typeof table.options.rowContextMenu == "function" ? table.options.rowContextMenu() : table.options.rowContextMenu;
+
+			e.preventDefault();
+
+			_this59.loadMenu(e, row, menu);
+		});
+	};
+
+	Menu.prototype.loadMenu = function (e, component, menu) {
+		var _this60 = this;
 
 		//abort if no menu set
 		if (!menu || !menu.length) {
@@ -19624,13 +19645,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					itemEl.classList.add("tabulator-menu-item-disabled");
 				} else {
 					itemEl.addEventListener("click", function (e) {
-						_this59.hideMenu();
+						_this60.hideMenu();
 						item.action(e, component.getComponent());
 					});
 				}
 			}
 
-			_this59.menuEl.appendChild(itemEl);
+			_this60.menuEl.appendChild(itemEl);
 		});
 
 		this.menuEl.style.top = e.pageY + "px";
@@ -19640,7 +19661,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
 
 		setTimeout(function () {
-			document.body.addEventListener("contextmenu", _this59.blurEvent);
+			document.body.addEventListener("contextmenu", _this60.blurEvent);
 		}, 100);
 
 		document.body.appendChild(this.menuEl);
@@ -20695,7 +20716,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.generatePageSizeSelectList = function () {
-		var _this60 = this;
+		var _this61 = this;
 
 		var pageSizes = [];
 
@@ -20730,7 +20751,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemEl.value = item;
 				itemEl.innerHTML = item;
 
-				_this60.pageSizeSelect.appendChild(itemEl);
+				_this61.pageSizeSelect.appendChild(itemEl);
 			});
 
 			this.pageSizeSelect.value = this.size;
@@ -20905,7 +20926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set current page number
 	Page.prototype.setPage = function (page) {
-		var _this61 = this;
+		var _this62 = this;
 
 		var self = this;
 
@@ -20913,9 +20934,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			page = parseInt(page);
 
-			if (page > 0 && page <= _this61.max) {
-				_this61.page = page;
-				_this61.trigger().then(function () {
+			if (page > 0 && page <= _this62.max) {
+				_this62.page = page;
+				_this62.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -20925,24 +20946,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					self.table.modules.persistence.save("page");
 				}
 			} else {
-				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this61.max + ":", page);
+				console.warn("Pagination Error - Requested page is out of range of 1 - " + _this62.max + ":", page);
 				reject();
 			}
 		});
 	};
 
 	Page.prototype.setPageToRow = function (row) {
-		var _this62 = this;
+		var _this63 = this;
 
 		return new Promise(function (resolve, reject) {
 
-			var rows = _this62.table.rowManager.getDisplayRows(_this62.displayIndex - 1);
+			var rows = _this63.table.rowManager.getDisplayRows(_this63.displayIndex - 1);
 			var index = rows.indexOf(row);
 
 			if (index > -1) {
-				var page = Math.ceil((index + 1) / _this62.size);
+				var page = Math.ceil((index + 1) / _this63.size);
 
-				_this62.setPage(page).then(function () {
+				_this63.setPage(page).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -21032,12 +21053,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//previous page
 	Page.prototype.previousPage = function () {
-		var _this63 = this;
+		var _this64 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this63.page > 1) {
-				_this63.page--;
-				_this63.trigger().then(function () {
+			if (_this64.page > 1) {
+				_this64.page--;
+				_this64.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -21051,19 +21072,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//next page
 	Page.prototype.nextPage = function () {
-		var _this64 = this;
+		var _this65 = this;
 
 		return new Promise(function (resolve, reject) {
-			if (_this64.page < _this64.max) {
-				_this64.page++;
-				_this64.trigger().then(function () {
+			if (_this65.page < _this65.max) {
+				_this65.page++;
+				_this65.trigger().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
 				});
 			} else {
-				if (!_this64.progressiveLoad) {
-					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this64.max + ":", _this64.max + 1);
+				if (!_this65.progressiveLoad) {
+					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this65.max + ":", _this65.max + 1);
 				}
 				reject();
 			}
@@ -21115,28 +21136,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.trigger = function () {
-		var _this65 = this;
+		var _this66 = this;
 
 		var left;
 
 		return new Promise(function (resolve, reject) {
 
-			switch (_this65.mode) {
+			switch (_this66.mode) {
 				case "local":
-					left = _this65.table.rowManager.scrollLeft;
+					left = _this66.table.rowManager.scrollLeft;
 
-					_this65.table.rowManager.refreshActiveData("page");
-					_this65.table.rowManager.scrollHorizontal(left);
+					_this66.table.rowManager.refreshActiveData("page");
+					_this66.table.rowManager.scrollHorizontal(left);
 
-					_this65.table.options.pageLoaded.call(_this65.table, _this65.getPage());
+					_this66.table.options.pageLoaded.call(_this66.table, _this66.getPage());
 					resolve();
 					break;
 
 				case "remote":
 				case "progressive_load":
 				case "progressive_scroll":
-					_this65.table.modules.ajax.blockActiveRequest();
-					_this65._getRemotePage().then(function () {
+					_this66.table.modules.ajax.blockActiveRequest();
+					_this66._getRemotePage().then(function () {
 						resolve();
 					}).catch(function () {
 						reject();
@@ -21144,14 +21165,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				default:
-					console.warn("Pagination Error - no such pagination mode:", _this65.mode);
+					console.warn("Pagination Error - no such pagination mode:", _this66.mode);
 					reject();
 			}
 		});
 	};
 
 	Page.prototype._getRemotePage = function () {
-		var _this66 = this;
+		var _this67 = this;
 
 		var self = this,
 		    oldParams,
@@ -21168,33 +21189,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this66.paginationDataSentNames.page] = self.page;
+			pageParams[_this67.paginationDataSentNames.page] = self.page;
 
 			//set page size if defined
-			if (_this66.size) {
-				pageParams[_this66.paginationDataSentNames.size] = _this66.size;
+			if (_this67.size) {
+				pageParams[_this67.paginationDataSentNames.size] = _this67.size;
 			}
 
 			//set sort data if defined
-			if (_this66.table.options.ajaxSorting && _this66.table.modExists("sort")) {
+			if (_this67.table.options.ajaxSorting && _this67.table.modExists("sort")) {
 				var sorters = self.table.modules.sort.getSort();
 
 				sorters.forEach(function (item) {
 					delete item.column;
 				});
 
-				pageParams[_this66.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this67.paginationDataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
-			if (_this66.table.options.ajaxFiltering && _this66.table.modExists("filter")) {
+			if (_this67.table.options.ajaxFiltering && _this67.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this66.paginationDataSentNames.filters] = filters;
+				pageParams[_this67.paginationDataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(_this66.progressiveLoad).then(function (data) {
+			self.table.modules.ajax.sendRequest(_this67.progressiveLoad).then(function (data) {
 				self._parseRemoteData(data);
 				resolve();
 			}).catch(function (e) {
@@ -22309,7 +22330,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	ResizeTable.prototype.initialize = function (row) {
-		var _this67 = this;
+		var _this68 = this;
 
 		var table = this.table,
 		    tableStyle;
@@ -22330,11 +22351,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var nodeHeight = Math.floor(entry[0].contentRect.height);
 					var nodeWidth = Math.floor(entry[0].contentRect.width);
 
-					if (_this67.tableHeight != nodeHeight || _this67.tableWidth != nodeWidth) {
-						_this67.tableHeight = nodeHeight;
-						_this67.tableWidth = nodeWidth;
-						_this67.containerHeight = table.element.parentNode.clientHeight;
-						_this67.containerWidth = table.element.parentNode.clientWidth;
+					if (_this68.tableHeight != nodeHeight || _this68.tableWidth != nodeWidth) {
+						_this68.tableHeight = nodeHeight;
+						_this68.tableWidth = nodeWidth;
+						_this68.containerHeight = table.element.parentNode.clientHeight;
+						_this68.containerWidth = table.element.parentNode.clientWidth;
 
 						table.redraw();
 					}
@@ -22353,11 +22374,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						var nodeHeight = Math.floor(entry[0].contentRect.height);
 						var nodeWidth = Math.floor(entry[0].contentRect.width);
 
-						if (_this67.containerHeight != nodeHeight || _this67.containerWidth != nodeWidth) {
-							_this67.containerHeight = nodeHeight;
-							_this67.containerWidth = nodeWidth;
-							_this67.tableHeight = table.element.clientHeight;
-							_this67.tableWidth = table.element.clientWidth;
+						if (_this68.containerHeight != nodeHeight || _this68.containerWidth != nodeWidth) {
+							_this68.containerHeight = nodeHeight;
+							_this68.containerWidth = nodeWidth;
+							_this68.tableHeight = table.element.clientHeight;
+							_this68.tableWidth = table.element.clientWidth;
 
 							table.redraw();
 						}
@@ -22852,14 +22873,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//select a number of rows
 	SelectRow.prototype.selectRows = function (rows) {
-		var _this68 = this;
+		var _this69 = this;
 
 		var rowMatch;
 
 		switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 			case "undefined":
 				this.table.rowManager.rows.forEach(function (row) {
-					_this68._selectRow(row, true, true);
+					_this69._selectRow(row, true, true);
 				});
 
 				this._rowSelectionChanged();
@@ -22873,7 +22894,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this._selectRow(rowMatch, true, true);
 				} else {
 					this.table.rowManager.getRows(rows).forEach(function (row) {
-						_this68._selectRow(row, true, true);
+						_this69._selectRow(row, true, true);
 					});
 				}
 
@@ -22883,7 +22904,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			default:
 				if (Array.isArray(rows)) {
 					rows.forEach(function (row) {
-						_this68._selectRow(row, true, true);
+						_this69._selectRow(row, true, true);
 					});
 
 					this._rowSelectionChanged();

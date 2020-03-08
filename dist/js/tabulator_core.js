@@ -4299,6 +4299,11 @@ Row.prototype.generateElement = function () {
 		self.table.modules.responsiveLayout.initializeRow(this);
 	}
 
+	//set column menu
+	if (self.table.options.rowContextMenu && this.table.modExists("menu")) {
+		self.table.modules.menu.initializeRow(this);
+	}
+
 	//handle row click events
 	if (self.table.options.rowClick) {
 		self.element.addEventListener("click", function (e) {
@@ -5430,7 +5435,7 @@ Cell.prototype.setValueActual = function (value) {
 
 	//set column menu
 	if (this.column.definition.contextMenu && this.table.modExists("menu")) {
-		this.table.modules.menu.initializeColumnCell(this, this.element);
+		this.table.modules.menu.initializeCell(this);
 	}
 
 	//handle frozen cells
@@ -5933,6 +5938,7 @@ Tabulator.prototype.defaultOptions = {
 	rowMouseOver: false,
 	rowMouseOut: false,
 	rowMouseMove: false,
+	rowContextMenu: false,
 	rowAdded: function rowAdded() {},
 	rowDeleted: function rowDeleted() {},
 	rowMoved: function rowMoved() {},

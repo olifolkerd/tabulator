@@ -39,7 +39,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 	}
 };
 
-Menu.prototype.initializeColumnCell = function (cell) {
+Menu.prototype.initializeCell = function (cell) {
 	var _this2 = this;
 
 	cell.getElement().addEventListener("contextmenu", function (e) {
@@ -51,8 +51,20 @@ Menu.prototype.initializeColumnCell = function (cell) {
 	});
 };
 
-Menu.prototype.loadMenu = function (e, component, menu) {
+Menu.prototype.initializeRow = function (row) {
 	var _this3 = this;
+
+	row.getElement().addEventListener("contextmenu", function (e) {
+		var menu = typeof table.options.rowContextMenu == "function" ? table.options.rowContextMenu() : table.options.rowContextMenu;
+
+		e.preventDefault();
+
+		_this3.loadMenu(e, row, menu);
+	});
+};
+
+Menu.prototype.loadMenu = function (e, component, menu) {
+	var _this4 = this;
 
 	//abort if no menu set
 	if (!menu || !menu.length) {
@@ -87,13 +99,13 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 				itemEl.classList.add("tabulator-menu-item-disabled");
 			} else {
 				itemEl.addEventListener("click", function (e) {
-					_this3.hideMenu();
+					_this4.hideMenu();
 					item.action(e, component.getComponent());
 				});
 			}
 		}
 
-		_this3.menuEl.appendChild(itemEl);
+		_this4.menuEl.appendChild(itemEl);
 	});
 
 	this.menuEl.style.top = e.pageY + "px";
@@ -103,7 +115,7 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 	this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
 
 	setTimeout(function () {
-		document.body.addEventListener("contextmenu", _this3.blurEvent);
+		document.body.addEventListener("contextmenu", _this4.blurEvent);
 	}, 100);
 
 	document.body.appendChild(this.menuEl);

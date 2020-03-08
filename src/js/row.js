@@ -211,6 +211,12 @@ Row.prototype.generateElement = function(){
 		self.table.modules.responsiveLayout.initializeRow(this);
 	}
 
+	//set column menu
+	if(self.table.options.rowContextMenu && this.table.modExists("menu")){
+		self.table.modules.menu.initializeRow(this);
+	}
+
+
 	//handle row click events
 	if (self.table.options.rowClick){
 		self.element.addEventListener("click", function(e){
