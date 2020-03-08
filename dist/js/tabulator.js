@@ -15817,7 +15817,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							cellEl.classList.add(className);
 						});
 
-						if (_this47.table.modExists("format")) {
+						console.log("format", _this47.config.formatCells);
+
+						if (_this47.table.modExists("format") && _this47.config.formatCells !== false) {
 							value = _this47.table.modules.format.formatValue(cellWrapper);
 						} else {
 							switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {

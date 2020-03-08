@@ -346,7 +346,9 @@ Export.prototype.generateBodyElements = function (rows) {
 						cellEl.classList.add(className);
 					});
 
-					if (_this5.table.modExists("format")) {
+					console.log("format", _this5.config.formatCells);
+
+					if (_this5.table.modExists("format") && _this5.config.formatCells !== false) {
 						value = _this5.table.modules.format.formatValue(cellWrapper);
 					} else {
 						switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {

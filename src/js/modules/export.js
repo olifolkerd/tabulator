@@ -336,7 +336,9 @@ Export.prototype.generateBodyElements = function(rows){
 					cellEl.classList.add(className);
 				});
 
-				if(this.table.modExists("format")){
+				console.log("format", this.config.formatCells)
+
+				if(this.table.modExists("format") && this.config.formatCells !== false){
 					value = this.table.modules.format.formatValue(cellWrapper);
 				}else{
 					switch(typeof value){
