@@ -127,6 +127,12 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 	}, 100);
 
 	document.body.appendChild(this.menuEl);
+
+	//move menu to start on right edge if it is too close to the edge of the screen
+	if (e.pageX + this.menuEl.offsetWidth >= document.body.offsetWidth) {
+		this.menuEl.style.left = "";
+		this.menuEl.style.right = document.body.offsetWidth - e.pageX + "px";
+	}
 };
 
 Menu.prototype.hideMenu = function () {
