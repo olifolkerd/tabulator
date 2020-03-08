@@ -39,16 +39,21 @@ Menu.prototype.loadMenu = function(e, component, menu){
 
 	menu.forEach((item) => {
 		var itemEl = document.createElement("div");
+		var label = item.label
 
 		if(item.separator){
 			itemEl.classList.add("tabulator-menu-separator");
 		}else{
 			itemEl.classList.add("tabulator-menu-item");
 
-			if(item.label instanceof Node){
-				itemEl.appendChild(item.label);
+			if(typeof label == "function"){
+				label = label(component.getComponent());
+			}
+
+			if(label instanceof Node){
+				itemEl.appendChild(label);
 			}else{
-				itemEl.innerHTML = item.label;
+				itemEl.innerHTML = label;
 			}
 
 			if(item.disabled){
