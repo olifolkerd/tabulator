@@ -3005,7 +3005,9 @@ RowManager.prototype.getData = function (active, transform) {
 	    rows = this.getRows(active);
 
 	rows.forEach(function (row) {
-		output.push(row.getData(transform || "data"));
+		if (row.type == "row") {
+			output.push(row.getData(transform || "data"));
+		}
 	});
 
 	return output;
@@ -3416,6 +3418,10 @@ RowManager.prototype.getRows = function (active) {
 	switch (active) {
 		case "active":
 			rows = this.activeRows;
+			break;
+
+		case "display":
+			rows = this.table.rowManager.getDisplayRows();
 			break;
 
 		case "visible":

@@ -49,6 +49,7 @@ Download.prototype.processConfig = function(){
 		columnGroups:true,
 		rowGroups:true,
 		columnCalcs:true,
+		dataTree:true,
 	};
 
 	if(this.table.options.downloadConfig){
@@ -67,6 +68,10 @@ Download.prototype.processConfig = function(){
 
 	if (config.columnCalcs && this.table.modExists("columnCalcs")){
 		this.config.columnCalcs = true;
+	}
+
+	if (config.dataTree && this.table.options.dataTree && this.table.modExists("dataTree")){
+		this.config.dataTree = true;
 	}
 };
 
@@ -199,6 +204,9 @@ Download.prototype.processData = function(active){
 		});
 
 	}else{
+		if(this.config.dataTree){
+			active = active = "active" ? "display" : active;
+		}
 		data = self.table.rowManager.getData(active, "download");
 	}
 

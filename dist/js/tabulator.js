@@ -3728,7 +3728,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		rows.forEach(function (row) {
 
-			output.push(row.getData(transform || "data"));
+			if (row.type == "row") {
+
+				output.push(row.getData(transform || "data"));
+			}
 		});
 
 		return output;
@@ -4267,6 +4270,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			case "active":
 
 				rows = this.activeRows;
+
+				break;
+
+			case "display":
+
+				rows = this.table.rowManager.getDisplayRows();
 
 				break;
 
@@ -12701,7 +12710,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var config = { //download config
 			columnGroups: true,
 			rowGroups: true,
-			columnCalcs: true
+			columnCalcs: true,
+			dataTree: true
 		};
 
 		if (this.table.options.downloadConfig) {
@@ -12720,6 +12730,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (config.columnCalcs && this.table.modExists("columnCalcs")) {
 			this.config.columnCalcs = true;
+		}
+
+		if (config.dataTree && this.table.options.dataTree && this.table.modExists("dataTree")) {
+			this.config.dataTree = true;
 		}
 	};
 
@@ -12854,6 +12868,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				data.push(_this41.processGroupData(group, rows));
 			});
 		} else {
+			console.log("tree", this.config.dataTree);
+			if (this.config.dataTree) {
+				active = active = "active" ? "display" : active;
+			}
 			data = self.table.rowManager.getData(active, "download");
 		}
 
