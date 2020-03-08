@@ -1300,6 +1300,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.contentElement = false;
 
+		this.titleElement = false;
+
 		this.groupElement = this.createGroupElement(); //column group holder element
 
 		this.isGroup = false;
@@ -1821,11 +1823,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			table.modules.sort.initializeColumn(self, self.contentElement);
 		}
 
-		//set column menu
+		//set column header context menu
 
-		if (def.headerContextMenu && table.modExists("menu")) {
+		if ((def.headerContextMenu || def.headerMenu) && table.modExists("menu")) {
 
-			table.modules.menu.initializeColumnHeader(self, self.contentElement);
+			table.modules.menu.initializeColumnHeader(self);
 		}
 
 		//set column formatter
@@ -1917,15 +1919,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Column.prototype._buildColumnHeaderContent = function () {
 
-		var self = this,
-		    def = self.definition,
+		var def = self.definition,
 		    table = self.table;
 
 		var contentElement = document.createElement("div");
 
 		contentElement.classList.add("tabulator-col-content");
 
-		contentElement.appendChild(self._buildColumnHeaderTitle());
+		this.titleElement = this._buildColumnHeaderTitle();
+
+		contentElement.appendChild(this.titleElement);
 
 		return contentElement;
 	};
@@ -2775,7 +2778,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "contextMenu"];
+	Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu"];
 
 	//////////////// Event Bindings /////////////////
 
@@ -19543,13 +19546,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Menu.prototype.initializeColumnHeader = function (column) {
 		var _this57 = this;
 
-		column.getElement().addEventListener("contextmenu", function (e) {
-			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
+		var headerMenuEl;
 
-			e.preventDefault();
+		if (column.definition.headerContextMenu) {
+			column.getElement().addEventListener("contextmenu", function (e) {
+				var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
 
-			_this57.loadMenu(e, column, menu);
-		});
+				e.preventDefault();
+
+				_this57.loadMenu(e, column, menu);
+			});
+		}
+
+		if (column.definition.headerMenu) {
+
+			headerMenuEl = document.createElement("span");
+			headerMenuEl.classList.add("tabulator-header-menu-button");
+			headerMenuEl.innerHTML = "&vellip;";
+
+			headerMenuEl.addEventListener("click", function (e) {
+				var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu() : column.definition.headerMenu;
+				e.stopPropagation();
+				e.preventDefault();
+
+				_this57.loadMenu(e, column, menu);
+			});
+
+			column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+		}
 	};
 
 	Menu.prototype.initializeColumnCell = function (cell) {
@@ -19579,24 +19603,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		menu.forEach(function (item) {
 			var itemEl = document.createElement("div");
+			var label = item.label;
 
 			if (item.separator) {
 				itemEl.classList.add("tabulator-menu-separator");
 			} else {
 				itemEl.classList.add("tabulator-menu-item");
 
-				if (item.label instanceof Node) {
-					itemEl.appendChild(item.label);
+				if (typeof label == "function") {
+					label = label(component.getComponent());
+				}
+
+				if (label instanceof Node) {
+					itemEl.appendChild(label);
 				} else {
-					itemEl.innerHTML = item.label;
+					itemEl.innerHTML = label;
 				}
 
 				if (item.disabled) {
 					itemEl.classList.add("tabulator-menu-item-disabled");
 				} else {
-					itemEl.addEventListener("click", function () {
+					itemEl.addEventListener("click", function (e) {
 						_this59.hideMenu();
-						item.action(component.getComponent());
+						item.action(e, component.getComponent());
 					});
 				}
 			}

@@ -115,6 +115,15 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				position: relative;
 				padding:4px;
 
+				.tabulator-header-menu-button{
+					padding: 0 8px;
+
+					&:hover{
+						cursor: pointer;
+						opacity: .6;
+					}
+				}
+
 				//hold title of column header
 				.tabulator-col-title{
 					box-sizing:border-box;

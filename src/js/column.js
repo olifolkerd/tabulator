@@ -155,6 +155,7 @@ var Column = function(def, parent){
 	this.cells = []; //cells bound to this column
 	this.element = this.createElement(); //column header element
 	this.contentElement = false;
+	this.titleElement = false;
 	this.groupElement = this.createGroupElement(); //column group holder element
 	this.isGroup = false;
 	this.tooltip = false; //hold column tooltip
@@ -541,9 +542,9 @@ Column.prototype._buildColumnHeader = function(){
 		table.modules.sort.initializeColumn(self, self.contentElement);
 	}
 
-	//set column menu
-	if(def.headerContextMenu && table.modExists("menu")){
-		table.modules.menu.initializeColumnHeader(self, self.contentElement);
+	//set column header context menu
+	if((def.headerContextMenu || def.headerMenu) && table.modExists("menu")){
+		table.modules.menu.initializeColumnHeader(self);
 	}
 
 	//set column formatter
@@ -611,14 +612,15 @@ Column.prototype._buildColumnHeader = function(){
 };
 
 Column.prototype._buildColumnHeaderContent = function(){
-	var self = this,
-	def = self.definition,
+	var def = self.definition,
 	table = self.table;
 
 	var contentElement = document.createElement("div");
 	contentElement.classList.add("tabulator-col-content");
 
-	contentElement.appendChild(self._buildColumnHeaderTitle());
+	this.titleElement = this._buildColumnHeaderTitle();
+
+	contentElement.appendChild(this.titleElement);
 
 	return contentElement;
 };
@@ -1363,6 +1365,7 @@ Column.prototype.defaultOptionList = [
 "headerFilterLiveFilter",
 "print",
 "headerContextMenu",
+"headerMenu",
 "contextMenu",
 ];
 

@@ -9,13 +9,34 @@ var Menu = function Menu(table) {
 Menu.prototype.initializeColumnHeader = function (column) {
 	var _this = this;
 
-	column.getElement().addEventListener("contextmenu", function (e) {
-		var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
+	var headerMenuEl;
 
-		e.preventDefault();
+	if (column.definition.headerContextMenu) {
+		column.getElement().addEventListener("contextmenu", function (e) {
+			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
 
-		_this.loadMenu(e, column, menu);
-	});
+			e.preventDefault();
+
+			_this.loadMenu(e, column, menu);
+		});
+	}
+
+	if (column.definition.headerMenu) {
+
+		headerMenuEl = document.createElement("span");
+		headerMenuEl.classList.add("tabulator-header-menu-button");
+		headerMenuEl.innerHTML = "&vellip;";
+
+		headerMenuEl.addEventListener("click", function (e) {
+			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu() : column.definition.headerMenu;
+			e.stopPropagation();
+			e.preventDefault();
+
+			_this.loadMenu(e, column, menu);
+		});
+
+		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+	}
 };
 
 Menu.prototype.initializeColumnCell = function (cell) {
@@ -45,24 +66,29 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 
 	menu.forEach(function (item) {
 		var itemEl = document.createElement("div");
+		var label = item.label;
 
 		if (item.separator) {
 			itemEl.classList.add("tabulator-menu-separator");
 		} else {
 			itemEl.classList.add("tabulator-menu-item");
 
-			if (item.label instanceof Node) {
-				itemEl.appendChild(item.label);
+			if (typeof label == "function") {
+				label = label(component.getComponent());
+			}
+
+			if (label instanceof Node) {
+				itemEl.appendChild(label);
 			} else {
-				itemEl.innerHTML = item.label;
+				itemEl.innerHTML = label;
 			}
 
 			if (item.disabled) {
 				itemEl.classList.add("tabulator-menu-item-disabled");
 			} else {
-				itemEl.addEventListener("click", function () {
+				itemEl.addEventListener("click", function (e) {
 					_this3.hideMenu();
-					item.action(component.getComponent());
+					item.action(e, component.getComponent());
 				});
 			}
 		}

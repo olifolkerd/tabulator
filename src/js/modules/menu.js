@@ -5,13 +5,34 @@ var Menu = function(table){
 };
 
 Menu.prototype.initializeColumnHeader = function(column){
-	column.getElement().addEventListener("contextmenu", (e) => {
-		var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
+	var headerMenuEl;
 
-		e.preventDefault();
+	if(column.definition.headerContextMenu){
+		column.getElement().addEventListener("contextmenu", (e) => {
+			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
 
-		this.loadMenu(e, column, menu);
-	});
+			e.preventDefault();
+
+			this.loadMenu(e, column, menu);
+		});
+	}
+
+	if(column.definition.headerMenu){
+
+		headerMenuEl = document.createElement("span");
+		headerMenuEl.classList.add("tabulator-header-menu-button");
+		headerMenuEl.innerHTML = "&vellip;";
+
+		headerMenuEl.addEventListener("click", (e) => {
+			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu() : column.definition.headerMenu;
+			e.stopPropagation();
+			e.preventDefault();
+
+			this.loadMenu(e, column, menu);
+		});
+
+		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
+	}
 };
 
 Menu.prototype.initializeColumnCell = function(cell){
