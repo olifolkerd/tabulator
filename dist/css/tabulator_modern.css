@@ -68,6 +68,15 @@
   padding: 4px;
 }
 
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-menu-button {
+  padding: 0 8px;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-header-menu-button:hover {
+  cursor: pointer;
+  opacity: .6;
+}
+
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
   box-sizing: border-box;
   width: 100%;
@@ -779,6 +788,36 @@
 .tabulator-row.tabulator-group span {
   margin-left: 10px;
   color: #3759D7;
+}
+
+.tabulator-menu {
+  position: absolute;
+  display: inline-block;
+  box-sizing: border-box;
+  background: #f3f3f3;
+  border: 1px solid #fff;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  z-index: 10000;
+}
+
+.tabulator-menu .tabulator-menu-item {
+  padding: 5px 10px;
+}
+
+.tabulator-menu .tabulator-menu-item.tabulator-menu-item-disabled {
+  opacity: .5;
+}
+
+.tabulator-menu .tabulator-menu-item:not(.tabulator-menu-item-disabled):hover {
+  cursor: pointer;
+  background: #fff;
+}
+
+.tabulator-menu .tabulator-menu-separator {
+  border-top: 1px solid #fff;
 }
 
 .tabulator-edit-select-list {
