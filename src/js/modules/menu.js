@@ -59,9 +59,9 @@ Menu.prototype.loadMenu = function(e, component, menu){
 			if(item.disabled){
 				itemEl.classList.add("tabulator-menu-item-disabled");
 			}else{
-				itemEl.addEventListener("click", () => {
+				itemEl.addEventListener("click", (e) => {
 					this.hideMenu();
-					item.action(component.getComponent());
+					item.action(e, component.getComponent());
 				});
 			}
 		}
