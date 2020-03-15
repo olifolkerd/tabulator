@@ -63,6 +63,7 @@ Keybindings.prototype.mapBinding = function(action, symbolsList){
 		keys: [],
 		ctrl: false,
 		shift: false,
+		meta: false,
 	};
 
 	var symbols = symbolsList.toString().toLowerCase().split(" ").join("").split("+");
@@ -75,6 +76,10 @@ Keybindings.prototype.mapBinding = function(action, symbolsList){
 
 			case "shift":
 			binding.shift = true;
+			break;
+
+			case "meta":
+			binding.meta = true;
 			break;
 
 			default:
@@ -141,7 +146,7 @@ Keybindings.prototype.checkBinding = function(e, binding){
 	var self = this,
 	match = true;
 
-	if(e.ctrlKey == binding.ctrl && e.shiftKey == binding.shift){
+	if(e.ctrlKey == binding.ctrl && e.shiftKey == binding.shift && e.metaKey == binding.meta){
 		binding.keys.forEach(function(key){
 			var index = self.pressedKeys.indexOf(key);
 
