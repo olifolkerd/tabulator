@@ -6361,7 +6361,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			bottom: "flex-end",
 
-			center: "center"
+			middle: "center"
 
 		},
 		    hozAligns = {

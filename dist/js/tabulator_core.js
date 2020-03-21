@@ -5009,7 +5009,7 @@ Cell.prototype._configureCell = function () {
 	    vertAligns = {
 		top: "flex-start",
 		bottom: "flex-end",
-		center: "center"
+		middle: "center"
 	},
 	    hozAligns = {
 		left: "flex-start",
