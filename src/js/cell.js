@@ -113,10 +113,30 @@ Cell.prototype._configureCell = function(){
 	var self = this,
 	cellEvents = self.column.cellEvents,
 	element = self.element,
-	field = this.column.getField();
+	field = this.column.getField(),
+	vertAligns = {
+		top:"flex-start",
+		bottom:"flex-end",
+		center:"center",
+	},
+	hozAligns = {
+		left:"flex-start",
+		right:"flex-end",
+		center:"center",
+	};
 
 	//set text alignment
 	element.style.textAlign = self.column.hozAlign;
+
+	if(self.column.vertAlign){
+		element.style.display = "inline-flex";
+
+		element.style.alignItems = vertAligns[self.column.vertAlign] || "";
+
+		if(self.column.hozAlign){
+			element.style.justifyContent = hozAligns[self.column.hozAlign] || "";
+		}
+	}
 
 	if(field){
 		element.setAttribute("tabulator-field", field);

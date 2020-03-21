@@ -49,6 +49,10 @@ Tabulator.prototype.defaultOptions = {
 
 	columns:[],//store for colum header info
 
+	cellHozAlign:"", //horizontal align columns
+	cellVertAlign:"", //certical align columns
+
+
 	data:[], //default starting data
 
 	autoColumns:false, //build columns from data row structure

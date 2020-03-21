@@ -160,6 +160,7 @@ var Column = function(def, parent){
 	this.isGroup = false;
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
+	this.vertAlign = ""; //vert text alignment
 
 	//multi dimensional filed handling
 	this.field ="";
@@ -283,6 +284,11 @@ Column.prototype._mapDepricatedFunctionality = function(){
 	if(typeof this.definition.hideInHtml !== "undefined"){
 		this.definition.htmlOutput = !this.definition.hideInHtml;
 		console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput")
+	}
+
+	if(typeof this.definition.align !== "undefined"){
+		this.definition.hozAlign = this.definition.align;
+		console.warn("align column definition property is deprecated, you should now use hozAlign");
 	}
 };
 
@@ -608,7 +614,8 @@ Column.prototype._buildColumnHeader = function(){
 	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
 
 	//set orizontal text alignment
-	self.hozAlign = typeof(self.definition.align) == "undefined" ? "" : self.definition.align;
+	self.hozAlign = typeof(self.definition.hozAlign) == "undefined" ? self.table.options.cellHozAlign : self.definition.hozAlign;
+	self.vertAlign = typeof(self.definition.vertAlign) == "undefined" ? self.table.options.cellVertAlign : self.definition.vertAlign;
 };
 
 Column.prototype._buildColumnHeaderContent = function(){
@@ -1275,6 +1282,8 @@ Column.prototype.defaultOptionList = [
 "columns",
 "visible",
 "align",
+"hozAlign",
+"vertAlign",
 "width",
 "minWidth",
 "widthGrow",
