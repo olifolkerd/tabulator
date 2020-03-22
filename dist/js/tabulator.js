@@ -15957,8 +15957,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					_this47.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 
-					if (rowFormatter) {
-
+					if (rowFormatter && _this47.config.formatCells !== false) {
 						var rowComponent = row.getComponent();
 
 						rowComponent.getElement = function () {

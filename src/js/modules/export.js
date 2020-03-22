@@ -399,7 +399,7 @@ Export.prototype.generateBodyElements = function(rows){
 
 			this.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 
-			if(rowFormatter){
+			if(rowFormatter && this.config.formatCells !== false){
 				var rowComponent = row.getComponent();
 
 				rowComponent.getElement = function(){
