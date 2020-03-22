@@ -6,15 +6,15 @@ var Format = function(table){
 Format.prototype.initializeColumn = function(column){
 	column.modules.format = this.lookupFormatter(column, "");
 
-	if(column.definition.formatterPrint){
+	if(typeof column.definition.formatterPrint !== "undefined"){
 		column.modules.format.print = this.lookupFormatter(column, "Print");
 	}
 
-	if(column.definition.formatterClipboard){
+	if(typeof column.definition.formatterClipboard !== "undefined"){
 		column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
 	}
 
-	if(column.definition.formatterHtmlOutput){
+	if(typeof column.definition.formatterHtmlOutput !== "undefined"){
 		column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
 	}
 };
