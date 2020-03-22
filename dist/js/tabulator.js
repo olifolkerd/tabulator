@@ -15891,8 +15891,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							cellEl.classList.add(className);
 						});
 
-						console.log("format", _this47.config.formatCells);
-
 						if (_this47.table.modExists("format") && _this47.config.formatCells !== false) {
 							value = _this47.table.modules.format.formatValue(cellWrapper);
 						} else {
