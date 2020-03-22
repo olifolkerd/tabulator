@@ -114,6 +114,7 @@ Tabulator.prototype.defaultOptions = {
 	dataTreeRowExpanded:function(){}, //row has been expanded
 	dataTreeRowCollapsed:function(){}, //row has been collapsed
 	dataTreeChildColumnCalcs:false, //include visible data tree rows in column calculations
+	dataTreeSelectPropagate:false, //seleccting a parent row selects its children
 
 	printAsHtml:false, //enable print as html
 	printFormatter:false, //printing page formatter

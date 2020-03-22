@@ -230,6 +230,9 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 
 			this.selectedRows.push(row);
 
+			if(this.table.options.dataTreeSelectPropagate){
+				this.childRowSelection(row, true);
+			}
 
 			if(!silent){
 				this.table.options.rowSelected.call(this.table, row.getComponent());
@@ -298,6 +301,10 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
+			if(this.table.options.dataTreeSelectPropagate){
+				this.childRowSelection(row, false);
+			}
+
 			if(!silent){
 				self.table.options.rowDeselected.call(this.table, row.getComponent());
 				self._rowSelectionChanged();
@@ -354,10 +361,24 @@ SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
 	}
 
 	row._row.modules.select.checkboxEl = element;
-}
+};
 
 SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 	this.headerCheckboxElement = element;
-}
+};
+
+SelectRow.prototype.childRowSelection = function(row, select){
+	var children = this.table.modules.dataTree.getChildren(row);
+
+	if(select){
+		for(let child of children){
+			this._selectRow(child, true);
+		}
+	}else{
+		for(let child of children){
+			this._deselectRow(child, true);
+		}
+	}
+};
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);

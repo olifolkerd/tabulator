@@ -7500,6 +7500,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		dataTreeChildColumnCalcs: false, //include visible data tree rows in column calculations
 
+		dataTreeSelectPropagate: false, //seleccting a parent row selects its children
+
 
 		printAsHtml: false, //enable print as html
 
@@ -23014,6 +23016,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.selectedRows.push(row);
 
+				if (this.table.options.dataTreeSelectPropagate) {
+					this.childRowSelection(row, true);
+				}
+
 				if (!silent) {
 					this.table.options.rowSelected.call(this.table, row.getComponent());
 					this._rowSelectionChanged();
@@ -23081,6 +23087,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				row.getElement().classList.remove("tabulator-selected");
 				self.selectedRows.splice(index, 1);
 
+				if (this.table.options.dataTreeSelectPropagate) {
+					this.childRowSelection(row, false);
+				}
+
 				if (!silent) {
 					self.table.options.rowDeselected.call(this.table, row.getComponent());
 					self._rowSelectionChanged();
@@ -23141,6 +23151,46 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 		this.headerCheckboxElement = element;
+	};
+
+	SelectRow.prototype.childRowSelection = function (row, select) {
+		var children = this.table.modules.dataTree.getChildren(row);
+
+		if (select) {
+			for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+				var _ref2;
+
+				if (_isArray2) {
+					if (_i2 >= _iterator2.length) break;
+					_ref2 = _iterator2[_i2++];
+				} else {
+					_i2 = _iterator2.next();
+					if (_i2.done) break;
+					_ref2 = _i2.value;
+				}
+
+				var child = _ref2;
+
+				this._selectRow(child, true);
+			}
+		} else {
+			for (var _iterator3 = children, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+				var _ref3;
+
+				if (_isArray3) {
+					if (_i3 >= _iterator3.length) break;
+					_ref3 = _iterator3[_i3++];
+				} else {
+					_i3 = _iterator3.next();
+					if (_i3.done) break;
+					_ref3 = _i3.value;
+				}
+
+				var _child = _ref3;
+
+				this._deselectRow(_child, true);
+			}
+		}
 	};
 
 	Tabulator.prototype.registerModule("selectRow", SelectRow);
