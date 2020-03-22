@@ -7681,6 +7681,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		rowFormatter: false,
 
+		rowFormatterPrint: null,
+
+		rowFormatterClipboard: null,
+
+		rowFormatterHtmlOutput: null,
+
 		placeholder: false,
 
 		//table building callbacks
@@ -7892,7 +7898,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (Array.isArray(this.defaultOptions[key])) {
 
 					this.options[key] = [];
-				} else if (_typeof(this.defaultOptions[key]) === "object") {
+				} else if (_typeof(this.defaultOptions[key]) === "object" && this.defaultOptions[key] !== null) {
 
 					this.options[key] = {};
 				} else {
@@ -15764,10 +15770,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return headerEl;
 	};
 
+	Export.prototype.generateBodyElements = function (rows) {};
+
 	Export.prototype.generateBodyElements = function (rows) {
 		var _this47 = this;
 
-		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
+		var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField, rowFormatter;
+
+		//assign row formatter
+		rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+		rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
 		//lookup row styles
 		if (this.cloneTableStyle && window.getComputedStyle) {
@@ -15944,6 +15956,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					styleRow = row.type == "calc" ? calcRow : i % 2 && evenRow ? evenRow : oddRow;
 
 					_this47.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+
+					if (rowFormatter) {
+
+						var rowComponent = row.getComponent();
+
+						rowComponent.getElement = function () {
+							return rowEl;
+						};
+
+						rowFormatter(rowComponent);
+					}
+
 					break;
 			}
 

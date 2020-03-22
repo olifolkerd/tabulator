@@ -219,10 +219,16 @@ Export.prototype.generateHeaderElements = function () {
 	return headerEl;
 };
 
+Export.prototype.generateBodyElements = function (rows) {};
+
 Export.prototype.generateBodyElements = function (rows) {
 	var _this5 = this;
 
-	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField;
+	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField, rowFormatter;
+
+	//assign row formatter
+	rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+	rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
 	//lookup row styles
 	if (this.cloneTableStyle && window.getComputedStyle) {
@@ -399,6 +405,17 @@ Export.prototype.generateBodyElements = function (rows) {
 				styleRow = row.type == "calc" ? calcRow : i % 2 && evenRow ? evenRow : oddRow;
 
 				_this5.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+
+				if (rowFormatter) {
+					var rowComponent = row.getComponent();
+
+					rowComponent.getElement = function () {
+						return rowEl;
+					};
+
+					rowFormatter(rowComponent);
+				}
+
 				break;
 		}
 

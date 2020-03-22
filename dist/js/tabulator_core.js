@@ -5947,6 +5947,9 @@ Tabulator.prototype.defaultOptions = {
 	scrollToColumnIfVisible: true,
 
 	rowFormatter: false,
+	rowFormatterPrint: null,
+	rowFormatterClipboard: null,
+	rowFormatterHtmlOutput: null,
 
 	placeholder: false,
 
@@ -6077,7 +6080,7 @@ Tabulator.prototype.initializeOptions = function (options) {
 		} else {
 			if (Array.isArray(this.defaultOptions[key])) {
 				this.options[key] = [];
-			} else if (_typeof(this.defaultOptions[key]) === "object") {
+			} else if (_typeof(this.defaultOptions[key]) === "object" && this.defaultOptions[key] !== null) {
 				this.options[key] = {};
 			} else {
 				this.options[key] = this.defaultOptions[key];
