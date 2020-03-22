@@ -1376,6 +1376,12 @@ Column.prototype.defaultOptionList = [
 "headerContextMenu",
 "headerMenu",
 "contextMenu",
+"formatterPrint",
+"formatterPrintParams",
+"formatterClipboard",
+"formatterClipboardParams",
+"formatterHtmlOutput",
+"formatterHtmlOutputParams",
 ];
 
 //////////////// Event Bindings /////////////////

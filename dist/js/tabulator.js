@@ -2789,7 +2789,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu"];
+	Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu", "formatterPrint", "formatterPrintParams", "formatterClipboard", "formatterClipboardParams", "formatterHtmlOutput", "formatterHtmlOutputParams"];
 
 	//////////////// Event Bindings /////////////////
 
@@ -15892,7 +15892,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 
 						if (_this47.table.modExists("format") && _this47.config.formatCells !== false) {
-							value = _this47.table.modules.format.formatValue(cellWrapper);
+							value = _this47.table.modules.format.formatExportValue(cellWrapper, _this47.colVisProp);
 						} else {
 							switch (typeof value === 'undefined' ? 'undefined' : _typeof(value)) {
 								case "object":
@@ -16757,15 +16757,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//initialize column formatter
 	Format.prototype.initializeColumn = function (column) {
-		var self = this,
-		    config = { params: column.definition.formatterParams || {} };
+		column.modules.format = this.lookupFormatter(column, "");
+
+		if (column.definition.formatterPrint) {
+			column.modules.format.print = this.lookupFormatter(column, "Print");
+		}
+
+		if (column.definition.formatterClipboard) {
+			column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
+		}
+
+		if (column.definition.formatterHtmlOutput) {
+			column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
+		}
+	};
+
+	Format.prototype.lookupFormatter = function (column, type) {
+		var config = { params: column.definition["formatter" + type + "Params"] || {} },
+		    formatter = column.definition["formatter" + type];
 
 		//set column formatter
-		switch (_typeof(column.definition.formatter)) {
+		switch (typeof formatter === 'undefined' ? 'undefined' : _typeof(formatter)) {
 			case "string":
 
-				if (column.definition.formatter === "tick") {
-					column.definition.formatter = "tickCross";
+				if (formatter === "tick") {
+					formatter = "tickCross";
 
 					if (typeof config.params.crossElement == "undefined") {
 						config.params.crossElement = false;
@@ -16774,24 +16790,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
 				}
 
-				if (self.formatters[column.definition.formatter]) {
-					config.formatter = self.formatters[column.definition.formatter];
+				if (this.formatters[formatter]) {
+					config.formatter = this.formatters[formatter];
 				} else {
-					console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
-					config.formatter = self.formatters.plaintext;
+					console.warn("Formatter Error - No such formatter found: ", formatter);
+					config.formatter = this.formatters.plaintext;
 				}
 				break;
 
 			case "function":
-				config.formatter = column.definition.formatter;
+				config.formatter = formatter;
 				break;
 
 			default:
-				config.formatter = self.formatters.plaintext;
+				config.formatter = this.formatters.plaintext;
 				break;
 		}
 
-		column.modules.format = config;
+		return config;
 	};
 
 	Format.prototype.cellRendered = function (cell) {
@@ -16814,6 +16830,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		return cell.column.modules.format.formatter.call(this, component, params, onRendered);
+	};
+
+	Format.prototype.formatExportValue = function (cell, type) {
+		var formatter = cell.column.modules.format[type],
+		    params;
+
+		if (formatter) {
+			var onRendered = function onRendered(callback) {
+				if (!cell.modules.format) {
+					cell.modules.format = {};
+				}
+
+				cell.modules.format.renderedCallback = callback;
+			};
+
+			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
+
+			return formatter.formatter.call(this, cell.getComponent(), params, onRendered);
+		} else {
+			return this.formatValue(cell);
+		}
 	};
 
 	Format.prototype.sanitizeHTML = function (value) {

@@ -337,7 +337,7 @@ Export.prototype.generateBodyElements = function(rows){
 				});
 
 				if(this.table.modExists("format") && this.config.formatCells !== false){
-					value = this.table.modules.format.formatValue(cellWrapper);
+					value = this.table.modules.format.formatExportValue(cellWrapper, this.colVisProp);
 				}else{
 					switch(typeof value){
 						case "object":

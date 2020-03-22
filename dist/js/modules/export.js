@@ -347,7 +347,7 @@ Export.prototype.generateBodyElements = function (rows) {
 					});
 
 					if (_this5.table.modExists("format") && _this5.config.formatCells !== false) {
-						value = _this5.table.modules.format.formatValue(cellWrapper);
+						value = _this5.table.modules.format.formatExportValue(cellWrapper, _this5.colVisProp);
 					} else {
 						switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
 							case "object":
