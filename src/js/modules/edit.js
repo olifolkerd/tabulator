@@ -538,7 +538,7 @@ Edit.prototype.editors = {
         });
 
         if(editorParams.mask){
-        	this.table.modules.edit.maskInput(input, editorParams.mask);
+        	this.table.modules.edit.maskInput(input, editorParams);
         }
 
         return input;
@@ -637,7 +637,7 @@ Edit.prototype.editors = {
 		});
 
 		if(editorParams.mask){
-			this.table.modules.edit.maskInput(input, editorParams.mask);
+			this.table.modules.edit.maskInput(input, editorParams);
 		}
 
 		return input;
@@ -1491,7 +1491,7 @@ Edit.prototype.editors = {
 		});
 
 		if(editorParams.mask){
-			this.table.modules.edit.maskInput(input, editorParams.mask);
+			this.table.modules.edit.maskInput(input, editorParams);
 		}
 
 		return input;
