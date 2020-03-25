@@ -1164,7 +1164,7 @@ Edit.prototype.editors = {
 
 		function filterList(term, intialLoad){
 			var matches = [],
-			values, items;
+			values, items, searchEl;
 
 			//lookup base values list
 			if(editorParams.values === true){
@@ -1176,7 +1176,21 @@ Edit.prototype.editors = {
 			}
 
 			if(editorParams.searchFunc){
-				matches = parseItems(editorParams.searchFunc(term, values));
+				matches = editorParams.searchFunc(term, values);
+
+				if(matches instanceof Promise){
+
+					addNotice(typeof editorParams.searchingPlaceholder !== "undefined" ? editorParams.searchingPlaceholder : "Searching...");
+
+					matches.then((result) => {
+						fillListIfNotEmpty(parseItems(result), intialLoad);
+					}).catch((err) => {
+						console.err("error in autocomplete search promise:", err);
+					});
+
+				}else{
+					fillListIfNotEmpty(parseItems(matches), intialLoad);
+				}
 			}else{
 				items = parseItems(values);
 
@@ -1193,11 +1207,28 @@ Edit.prototype.editors = {
 						}
 					});
 				}
+
+				fillListIfNotEmpty(matches, intialLoad);
 			}
+		}
 
-			displayItems = matches;
+		function addNotice(notice){
+			var searchEl = document.createElement("div");
 
-			fillList(intialLoad);
+			clearList();
+
+			if(notice !== false){
+				searchEl.classList.add("tabulator-edit-select-list-notice");
+				searchEl.tabIndex = 0;
+
+				if(notice instanceof Node){
+					searchEl.appendChild(notice);
+				}else{
+					searchEl.innerHTML = notice;
+				}
+
+				listEl.appendChild(searchEl);
+			}
 		}
 
 		function parseItems(inputValues, curentValue){
@@ -1226,10 +1257,26 @@ Edit.prototype.editors = {
 			return itemList;
 		}
 
-		function fillList(intialLoad){
+		function clearList(){
+			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+		}
+
+		function fillListIfNotEmpty(items, intialLoad){
+			if(items.length){
+				fillList(items, intialLoad);
+			}else{
+				if(editorParams.emptyPlaceholder){
+					addNotice(editorParams.emptyPlaceholder);
+				}
+			}
+		}
+
+		function fillList(items, intialLoad){
 			var current = false;
 
-			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+			clearList();
+
+			displayItems = items;
 
 			displayItems.forEach(function(item){
 				var el = item.element;

@@ -853,6 +853,12 @@
   background: #1D68CD;
 }
 
+.tabulator-edit-select-list .tabulator-edit-select-list-notice {
+  padding: 4px;
+  color: #333;
+  text-align: center;
+}
+
 .tabulator-edit-select-list .tabulator-edit-select-list-group {
   border-bottom: 1px solid #fff;
   padding: 4px;

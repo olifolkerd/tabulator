@@ -831,6 +831,12 @@
   background: #666;
 }
 
+.tabulator-edit-select-list .tabulator-edit-select-list-notice {
+  padding: 4px;
+  color: #fff;
+  text-align: center;
+}
+
 .tabulator-edit-select-list .tabulator-edit-select-list-group {
   border-bottom: 1px solid #888;
   padding: 4px;

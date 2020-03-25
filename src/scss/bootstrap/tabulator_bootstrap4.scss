@@ -1270,6 +1270,12 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		}
 	}
 
+	.tabulator-edit-select-list-notice{
+		padding:4px;
+
+		text-align: center;
+	}
+
 	.tabulator-edit-select-list-group{
 		border-bottom:1px solid $rowBorderColor;
 

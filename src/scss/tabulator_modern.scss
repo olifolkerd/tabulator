@@ -1057,6 +1057,13 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 	}
 
+	.tabulator-edit-select-list-notice{
+		padding:4px;
+
+		color:$rowTextColor;
+		text-align: center;
+	}
+
 	.tabulator-edit-select-list-group{
 		border-bottom:1px solid $rowBorderColor;
 

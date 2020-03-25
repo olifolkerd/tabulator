@@ -1080,6 +1080,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
+	.tabulator-edit-select-list-notice{
+		padding:4px;
+
+		text-align: center;
+	}
+
 	.tabulator-edit-select-list-group{
 		border-bottom:1px solid $rowBorderColor;
 

@@ -1021,6 +1021,13 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 		}
 	}
 
+	.tabulator-edit-select-list-notice{
+		padding:4px;
+
+		color:$rowTextColor;
+		text-align: center;
+	}
+
 	.tabulator-edit-select-list-group{
 		border-bottom:1px solid $rowBorderColor;
 
