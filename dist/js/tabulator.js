@@ -9314,7 +9314,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (column) {
 
-				column.updateDefinition().then(function (col) {
+				column.updateDefinition(definition).then(function (col) {
 
 					resolve(col);
 				}).catch(function (err) {

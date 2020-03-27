@@ -1423,7 +1423,7 @@ Tabulator.prototype.updateColumnDefinition = function(field, definition){
 		var column = this.columnManager.findColumn(field);
 
 		if(column){
-			column.updateDefinition()
+			column.updateDefinition(definition)
 			.then((col) => {
 				resolve(col);
 			}).catch((err) => {

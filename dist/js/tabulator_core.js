@@ -7150,7 +7150,7 @@ Tabulator.prototype.updateColumnDefinition = function (field, definition) {
 		var column = _this27.columnManager.findColumn(field);
 
 		if (column) {
-			column.updateDefinition().then(function (col) {
+			column.updateDefinition(definition).then(function (col) {
 				resolve(col);
 			}).catch(function (err) {
 				reject(err);
