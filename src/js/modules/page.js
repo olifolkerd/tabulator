@@ -406,6 +406,11 @@ Page.prototype.previousPage = function(){
 			.catch(()=>{
 				reject();
 			});
+
+			if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page){
+				self.table.modules.persistence.save("page");
+			}
+
 		}else{
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
 			reject()
@@ -425,6 +430,11 @@ Page.prototype.nextPage = function(){
 			.catch(()=>{
 				reject();
 			});
+
+			if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page){
+				self.table.modules.persistence.save("page");
+			}
+
 		}else{
 			if(!this.progressiveLoad){
 				console.warn("Pagination Error - Next page would be greater than maximum page of " + this.max + ":", this.max + 1);

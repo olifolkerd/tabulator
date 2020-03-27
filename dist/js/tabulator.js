@@ -21202,6 +21202,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}).catch(function () {
 					reject();
 				});
+
+				if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
+					self.table.modules.persistence.save("page");
+				}
 			} else {
 				console.warn("Pagination Error - Previous page would be less than page 1:", 0);
 				reject();
@@ -21221,6 +21225,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}).catch(function () {
 					reject();
 				});
+
+				if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
+					self.table.modules.persistence.save("page");
+				}
 			} else {
 				if (!_this65.progressiveLoad) {
 					console.warn("Pagination Error - Next page would be greater than maximum page of " + _this65.max + ":", _this65.max + 1);
