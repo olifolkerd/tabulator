@@ -1274,7 +1274,7 @@ Column.prototype.setField = function (field) {
 	this.field = field;
 	this.fieldStructure = field ? this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field] : [];
 	this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
-	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
+	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNestedData : this._setFlatData;
 };
 
 //register column position with column manager
@@ -1799,7 +1799,7 @@ Column.prototype._setFlatData = function (data, value) {
 };
 
 //nested field set
-Column.prototype._setNesteData = function (data, value) {
+Column.prototype._setNestedData = function (data, value) {
 	var dataObj = data,
 	    structure = this.fieldStructure,
 	    length = structure.length;
