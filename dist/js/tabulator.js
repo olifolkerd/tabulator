@@ -2503,6 +2503,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			this.contentElement.style.maxWidth = childWidth - 1 + "px";
+
+			if (this.parent.isGroup) {
+
+				this.parent.matchChildWidths();
+			}
 		}
 	};
 
@@ -2582,9 +2587,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Column.prototype.getWidth = function () {
 
-		// return this.element.offsetWidth;
+		var width = 0;
 
-		return this.width;
+		if (this.isGroup) {
+
+			this.columns.forEach(function (column) {
+
+				if (column.visible) {
+
+					width += column.getWidth();
+				}
+			});
+		} else {
+
+			width = this.width;
+		}
+
+		return width;
 	};
 
 	Column.prototype.getHeight = function () {

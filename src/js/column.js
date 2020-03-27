@@ -1045,6 +1045,10 @@ Column.prototype.matchChildWidths = function(){
 		});
 
 		this.contentElement.style.maxWidth = (childWidth - 1) + "px";
+
+		if(this.parent.isGroup){
+			this.parent.matchChildWidths();
+		}
 	}
 };
 
@@ -1106,8 +1110,19 @@ Column.prototype.checkCellHeights = function(){
 };
 
 Column.prototype.getWidth = function(){
-	// return this.element.offsetWidth;
-	return this.width;
+	var width = 0;
+
+	if(this.isGroup){
+		this.columns.forEach(function(column){
+			if(column.visible){
+				width += column.getWidth();
+			}
+		});
+	}else{
+		width = this.width;
+	}
+
+	return width;
 };
 
 Column.prototype.getHeight = function(){
