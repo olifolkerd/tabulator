@@ -23101,8 +23101,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (!silent) {
 					this.table.options.rowSelected.call(this.table, row.getComponent());
-					this._rowSelectionChanged();
 				}
+
+				this._rowSelectionChanged(silent);
 			}
 		} else {
 			if (!silent) {
@@ -23128,16 +23129,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self._deselectRow(self.selectedRows[0], true);
 			}
 
-			if (!silent) {
-				self._rowSelectionChanged();
-			}
+			self._rowSelectionChanged(silent);
 		} else {
 			if (Array.isArray(rows)) {
 				rows.forEach(function (row) {
 					self._deselectRow(row, true);
 				});
 
-				self._rowSelectionChanged();
+				self._rowSelectionChanged(silent);
 			} else {
 				self._deselectRow(rows, silent);
 			}
@@ -23174,8 +23173,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (!silent) {
 					self.table.options.rowDeselected.call(this.table, row.getComponent());
-					self._rowSelectionChanged();
 				}
+
+				self._rowSelectionChanged(silent);
 			}
 		} else {
 			if (!silent) {
@@ -23205,7 +23205,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return rows;
 	};
 
-	SelectRow.prototype._rowSelectionChanged = function () {
+	SelectRow.prototype._rowSelectionChanged = function (silent) {
 		if (this.headerCheckboxElement) {
 			if (this.selectedRows.length === 0) {
 				this.headerCheckboxElement.checked = false;
@@ -23219,7 +23219,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		}
 
-		this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+		if (!silent) {
+			this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+		}
 	};
 
 	SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {

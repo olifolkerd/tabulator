@@ -237,8 +237,9 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 
 			if(!silent){
 				this.table.options.rowSelected.call(this.table, row.getComponent());
-				this._rowSelectionChanged();
 			}
+
+			this._rowSelectionChanged(silent);
 		}
 	}else{
 		if(!silent){
@@ -264,16 +265,15 @@ SelectRow.prototype.deselectRows = function(rows, silent){
 			self._deselectRow(self.selectedRows[0], true);
 		}
 
-		if(!silent){
-			self._rowSelectionChanged();
-		}
+		self._rowSelectionChanged(silent);
+
 	}else{
 		if(Array.isArray(rows)){
 			rows.forEach(function(row){
 				self._deselectRow(row, true);
 			});
 
-			self._rowSelectionChanged();
+			self._rowSelectionChanged(silent);
 		}else{
 			self._deselectRow(rows, silent);
 		}
@@ -310,8 +310,9 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 
 			if(!silent){
 				self.table.options.rowDeselected.call(this.table, row.getComponent());
-				self._rowSelectionChanged();
 			}
+
+			self._rowSelectionChanged(silent);
 		}
 	}else{
 		if(!silent){
@@ -341,7 +342,7 @@ SelectRow.prototype.getSelectedRows = function(){
 	return rows;
 };
 
-SelectRow.prototype._rowSelectionChanged = function(){
+SelectRow.prototype._rowSelectionChanged = function(silent){
 	if(this.headerCheckboxElement){
 		if(this.selectedRows.length === 0){
 			this.headerCheckboxElement.checked = false;
@@ -355,7 +356,9 @@ SelectRow.prototype._rowSelectionChanged = function(){
 		}
 	}
 
-	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+	if(!silent){
+		this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+	}
 };
 
 SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
