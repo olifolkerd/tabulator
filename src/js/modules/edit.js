@@ -408,7 +408,7 @@ Edit.prototype.editors = {
 		});
 
 		function onChange(e){
-			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
+			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
 
 				if(success(input.value)){
 					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
@@ -481,7 +481,7 @@ Edit.prototype.editors = {
 
         function onChange(e){
 
-        	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
+        	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
 
         		if(success(input.value)){
         			cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
@@ -605,7 +605,7 @@ Edit.prototype.editors = {
 				value = Number(value);
 			}
 
-			if(value != cellValue){
+			if(value !== cellValue){
 				if(success(value)){
 					cellValue = value; //persist value if successfully validated incase editor is used as header filter
 				}

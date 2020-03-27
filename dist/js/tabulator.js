@@ -14099,7 +14099,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			function onChange(e) {
-				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
+				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value !== cellValue) {
 
 					if (success(input.value)) {
 						cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
@@ -14172,7 +14172,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function onChange(e) {
 
-				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value != cellValue) {
+				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value !== cellValue) {
 
 					if (success(input.value)) {
 						cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
@@ -14298,7 +14298,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					value = Number(value);
 				}
 
-				if (value != cellValue) {
+				if (value !== cellValue) {
 					if (success(value)) {
 						cellValue = value; //persist value if successfully validated incase editor is used as header filter
 					}
