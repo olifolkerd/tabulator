@@ -789,7 +789,11 @@ Column.prototype._setNestedData = function(data, value){
 			dataObj[structure[i]] = value;
 		}else{
 			if(!dataObj[structure[i]]){
-				dataObj[structure[i]] = {};
+				if(typeof value !== "undefined"){
+					dataObj[structure[i]] = {};
+				}else{
+					break;
+				}
 			}
 
 			dataObj = dataObj[structure[i]];

@@ -2159,7 +2159,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (!dataObj[structure[i]]) {
 
-					dataObj[structure[i]] = {};
+					if (typeof value !== "undefined") {
+
+						dataObj[structure[i]] = {};
+					} else {
+
+						break;
+					}
 				}
 
 				dataObj = dataObj[structure[i]];
