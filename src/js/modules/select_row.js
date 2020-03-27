@@ -71,7 +71,7 @@ SelectRow.prototype.initializeRow = function(row){
 							});
 							self.lastClickedRow = row;
 						}else{
-							self.deselectRows();
+							self.deselectRows(undefined, true);
 
 							if(self.table.options.selectable !== true){
 								if(toggledRows.length > self.table.options.selectable){
@@ -87,7 +87,7 @@ SelectRow.prototype.initializeRow = function(row){
 						self.toggleRow(row);
 						self.lastClickedRow = row;
 					}else{
-						self.deselectRows();
+						self.deselectRows(undefined, true);
 						self.selectRows(row);
 						self.lastClickedRow = row;
 					}
@@ -148,6 +148,7 @@ SelectRow.prototype.initializeRow = function(row){
 
 //toggle row selection
 SelectRow.prototype.toggleRow = function(row){
+	console.log("toggle");
 	if(this.table.options.selectableCheck.call(this.table, row.getComponent())){
 		if(row.modules.select && row.modules.select.selected){
 			this._deselectRow(row);
@@ -251,7 +252,7 @@ SelectRow.prototype.isRowSelected = function(row){
 };
 
 //deselect a number of rows
-SelectRow.prototype.deselectRows = function(rows){
+SelectRow.prototype.deselectRows = function(rows, silent){
 	var self = this,
 	rowCount;
 
@@ -263,7 +264,9 @@ SelectRow.prototype.deselectRows = function(rows){
 			self._deselectRow(self.selectedRows[0], true);
 		}
 
-		self._rowSelectionChanged();
+		if(!silent){
+			self._rowSelectionChanged();
+		}
 	}else{
 		if(Array.isArray(rows)){
 			rows.forEach(function(row){
@@ -272,7 +275,7 @@ SelectRow.prototype.deselectRows = function(rows){
 
 			self._rowSelectionChanged();
 		}else{
-			self._deselectRow(rows);
+			self._deselectRow(rows, silent);
 		}
 	}
 };

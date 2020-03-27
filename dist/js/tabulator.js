@@ -22926,7 +22926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								});
 								self.lastClickedRow = row;
 							} else {
-								self.deselectRows();
+								self.deselectRows(undefined, true);
 
 								if (self.table.options.selectable !== true) {
 									if (toggledRows.length > self.table.options.selectable) {
@@ -22941,7 +22941,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							self.toggleRow(row);
 							self.lastClickedRow = row;
 						} else {
-							self.deselectRows();
+							self.deselectRows(undefined, true);
 							self.selectRows(row);
 							self.lastClickedRow = row;
 						}
@@ -23001,6 +23001,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//toggle row selection
 	SelectRow.prototype.toggleRow = function (row) {
+		console.log("toggle");
 		if (this.table.options.selectableCheck.call(this.table, row.getComponent())) {
 			if (row.modules.select && row.modules.select.selected) {
 				this._deselectRow(row);
@@ -23106,7 +23107,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//deselect a number of rows
-	SelectRow.prototype.deselectRows = function (rows) {
+	SelectRow.prototype.deselectRows = function (rows, silent) {
 		var self = this,
 		    rowCount;
 
@@ -23118,7 +23119,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self._deselectRow(self.selectedRows[0], true);
 			}
 
-			self._rowSelectionChanged();
+			if (!silent) {
+				self._rowSelectionChanged();
+			}
 		} else {
 			if (Array.isArray(rows)) {
 				rows.forEach(function (row) {
@@ -23127,7 +23130,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				self._rowSelectionChanged();
 			} else {
-				self._deselectRow(rows);
+				self._deselectRow(rows, silent);
 			}
 		}
 	};
