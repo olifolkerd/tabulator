@@ -374,7 +374,8 @@ Persistence.prototype.readers = {
 		var cookie = document.cookie,
 		    key = id + "-" + type,
 		    cookiePos = cookie.indexOf(key + "="),
-		    end;
+		    end,
+		    data;
 
 		//if cookie exists, decode and load column data into tabulator
 		if (cookiePos > -1) {
@@ -403,7 +404,7 @@ Persistence.prototype.writers = {
 
 		expireDate.setDate(expireDate.getDate() + 10000);
 
-		document.cookie = id + "_" + type + "=" + JSON.stringify(data) + "; expires=" + expireDate.toUTCString();
+		document.cookie = id + "-" + type + "=" + JSON.stringify(data) + "; expires=" + expireDate.toUTCString();
 	}
 };
 
