@@ -171,9 +171,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					border-top:1px solid $borderColor;
 					overflow: hidden;
 
-					.tabulator-col:last-child{
-						margin-right:-1px;
-					}
+					margin-right:-1px;
 				}
 			}
 

@@ -184,9 +184,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 					border-top:2px solid $headerSeperatorColor;
 					overflow: hidden;
 
-					.tabulator-col:last-child{
-						margin-right:-1px;
-					}
+					margin-right:-1px;
 				}
 			}
 
