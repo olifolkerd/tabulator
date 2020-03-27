@@ -754,7 +754,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	ColumnManager.prototype.moveColumnActual = function (from, to, after) {
 
-		this._moveColumnInArray(this.columns, from, to, after);
+		if (from.parent.isGroup) {
+
+			this._moveColumnInArray(from.parent.columns, from, to, after);
+		} else {
+
+			this._moveColumnInArray(this.columns, from, to, after);
+		}
 
 		this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
