@@ -5821,7 +5821,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.table.modExists("mutator")) {
 
-			data = this.table.modules.mutator.transformRow(data, "data", data);
+			data = this.table.modules.mutator.transformRow(data, "data");
 		}
 
 		this.data = data;
@@ -20756,8 +20756,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (column.modules.mutate) {
 					mutator = column.modules.mutate[key] || column.modules.mutate.mutator || false;
 
-					if (mutator && updatedData) {
-						value = column.getFieldValue(updatedData);
+					if (mutator) {
+						value = column.getFieldValue(typeof updatedData !== "undefined" ? updatedData : data);
 
 						if (type == "data" || typeof value !== "undefined") {
 							component = column.getComponent();
