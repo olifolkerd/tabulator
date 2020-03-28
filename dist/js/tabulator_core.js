@@ -2714,6 +2714,8 @@ RowManager.prototype.deleteRow = function (row, blockRedraw) {
 		this.reRenderInPosition();
 	}
 
+	this.regenerateRowNumbers();
+
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
 	this.table.options.dataEdited.call(this.table, this.getData());
@@ -2779,6 +2781,7 @@ RowManager.prototype.addRows = function (data, pos, index) {
 			_this11.table.modules.columnCalcs.recalc(_this11.table.rowManager.activeRows);
 		}
 
+		_this11.regenerateRowNumbers();
 		resolve(rows);
 	});
 };
@@ -2911,6 +2914,8 @@ RowManager.prototype.moveRow = function (from, to, after) {
 	}
 
 	this.moveRowActual(from, to, after);
+
+	this.regenerateRowNumbers();
 
 	this.table.options.rowMoved.call(this.table, from.getComponent());
 };
@@ -3163,8 +3168,6 @@ RowManager.prototype.scrollHorizontal = function (left) {
 
 //set active data set
 RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPosition) {
-	var _this12 = this;
-
 	var self = this,
 	    table = this.table,
 	    cascadeOrder = ["all", "filter", "sort", "display", "freeze", "group", "tree", "page"],
@@ -3220,15 +3223,7 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 				}
 
 				//regenerate row numbers for row number formatter if in use
-				if (this.rowNumColumn) {
-					this.activeRows.forEach(function (row) {
-						var cell = row.getCell(_this12.rowNumColumn);
-
-						if (cell) {
-							cell._generateContents();
-						}
-					});
-				}
+				this.regenerateRowNumbers();
 
 			//generic stage to allow for pipeline trigger after the data manipulation stage
 			case "display":
@@ -3340,6 +3335,21 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 		if (table.modExists("columnCalcs")) {
 			table.modules.columnCalcs.recalc(this.activeRows);
 		}
+	}
+};
+
+//regenerate row numbers for row number formatter if in use
+RowManager.prototype.regenerateRowNumbers = function () {
+	var _this12 = this;
+
+	if (this.rowNumColumn) {
+		this.activeRows.forEach(function (row) {
+			var cell = row.getCell(_this12.rowNumColumn);
+
+			if (cell) {
+				cell._generateContents();
+			}
+		});
 	}
 };
 

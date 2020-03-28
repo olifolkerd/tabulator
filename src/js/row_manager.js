@@ -394,6 +394,8 @@ RowManager.prototype.deleteRow = function(row, blockRedraw){
 		this.reRenderInPosition();
 	}
 
+	this.regenerateRowNumbers();
+
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
 	this.table.options.dataEdited.call(this.table, this.getData());
@@ -458,6 +460,7 @@ RowManager.prototype.addRows = function(data, pos, index){
 			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 
+		this.regenerateRowNumbers();
 		resolve(rows);
 	});
 };
@@ -592,6 +595,8 @@ RowManager.prototype.moveRow = function(from, to, after){
 	}
 
 	this.moveRowActual(from, to, after);
+
+	this.regenerateRowNumbers();
 
 	this.table.options.rowMoved.call(this.table, from.getComponent());
 };
@@ -910,15 +915,7 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			}
 
 			//regenerate row numbers for row number formatter if in use
-			if(this.rowNumColumn){
-				this.activeRows.forEach((row) => {
-					var cell = row.getCell(this.rowNumColumn);
-
-					if(cell){
-						cell._generateContents();
-					}
-				});
-			}
+			this.regenerateRowNumbers();
 
 			//generic stage to allow for pipeline trigger after the data manipulation stage
 			case "display":
@@ -1034,6 +1031,19 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 		if(table.modExists("columnCalcs")){
 			table.modules.columnCalcs.recalc(this.activeRows);
 		}
+	}
+};
+
+//regenerate row numbers for row number formatter if in use
+RowManager.prototype.regenerateRowNumbers = function(){
+	if(this.rowNumColumn){
+		this.activeRows.forEach((row) => {
+			var cell = row.getCell(this.rowNumColumn);
+
+			if(cell){
+				cell._generateContents();
+			}
+		});
 	}
 };
 

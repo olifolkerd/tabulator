@@ -3365,6 +3365,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.reRenderInPosition();
 		}
 
+		this.regenerateRowNumbers();
+
 		this.table.options.rowDeleted.call(this.table, row.getComponent());
 
 		this.table.options.dataEdited.call(this.table, this.getData());
@@ -3445,6 +3447,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				_this11.table.modules.columnCalcs.recalc(_this11.table.rowManager.activeRows);
 			}
+
+			_this11.regenerateRowNumbers();
 
 			resolve(rows);
 		});
@@ -3615,6 +3619,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		this.moveRowActual(from, to, after);
+
+		this.regenerateRowNumbers();
 
 		this.table.options.rowMoved.call(this.table, from.getComponent());
 	};
@@ -3934,7 +3940,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//set active data set
 
 	RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPosition) {
-		var _this12 = this;
 
 		var self = this,
 		    table = this.table,
@@ -4011,18 +4016,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					//regenerate row numbers for row number formatter if in use
 
-					if (this.rowNumColumn) {
-
-						this.activeRows.forEach(function (row) {
-
-							var cell = row.getCell(_this12.rowNumColumn);
-
-							if (cell) {
-
-								cell._generateContents();
-							}
-						});
-					}
+					this.regenerateRowNumbers();
 
 				//generic stage to allow for pipeline trigger after the data manipulation stage
 
@@ -4168,6 +4162,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				table.modules.columnCalcs.recalc(this.activeRows);
 			}
+		}
+	};
+
+	//regenerate row numbers for row number formatter if in use
+
+	RowManager.prototype.regenerateRowNumbers = function () {
+		var _this12 = this;
+
+		if (this.rowNumColumn) {
+
+			this.activeRows.forEach(function (row) {
+
+				var cell = row.getCell(_this12.rowNumColumn);
+
+				if (cell) {
+
+					cell._generateContents();
+				}
+			});
 		}
 	};
 
