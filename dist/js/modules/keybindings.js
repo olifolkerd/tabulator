@@ -273,6 +273,9 @@ Keybindings.prototype.actions = {
 
 				if (!nav.next()) {
 					if (newRow) {
+
+						cell.getElement().firstChild.blur();
+
 						if (newRow === true) {
 							newRow = this.table.addRow({});
 						} else {
@@ -284,7 +287,9 @@ Keybindings.prototype.actions = {
 						}
 
 						newRow.then(function () {
-							nav.next();
+							setTimeout(function () {
+								nav.next();
+							});
 						});
 					}
 				}

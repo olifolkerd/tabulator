@@ -13881,7 +13881,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//handle successfull value change
 		function success(value) {
-
 			if (self.currentCell === cell) {
 				var valid = true;
 
@@ -14147,6 +14146,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			//submit new value on enter
 			input.addEventListener("keydown", function (e) {
 				switch (e.keyCode) {
+					// case 9:
 					case 13:
 						onChange(e);
 						break;
@@ -19587,6 +19587,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (!nav.next()) {
 						if (newRow) {
+
+							cell.getElement().firstChild.blur();
+
 							if (newRow === true) {
 								newRow = this.table.addRow({});
 							} else {
@@ -19598,7 +19601,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							}
 
 							newRow.then(function () {
-								nav.next();
+								setTimeout(function () {
+									nav.next();
+								});
 							});
 						}
 					}
@@ -23041,7 +23046,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//toggle row selection
 	SelectRow.prototype.toggleRow = function (row) {
-		console.log("toggle");
 		if (this.table.options.selectableCheck.call(this.table, row.getComponent())) {
 			if (row.modules.select && row.modules.select.selected) {
 				this._deselectRow(row);

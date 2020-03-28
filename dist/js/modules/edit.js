@@ -163,7 +163,6 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 
 	//handle successfull value change
 	function success(value) {
-
 		if (self.currentCell === cell) {
 			var valid = true;
 
@@ -429,6 +428,7 @@ Edit.prototype.editors = {
 		//submit new value on enter
 		input.addEventListener("keydown", function (e) {
 			switch (e.keyCode) {
+				// case 9:
 				case 13:
 					onChange(e);
 					break;

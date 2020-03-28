@@ -149,7 +149,6 @@ SelectRow.prototype.initializeRow = function (row) {
 
 //toggle row selection
 SelectRow.prototype.toggleRow = function (row) {
-	console.log("toggle");
 	if (this.table.options.selectableCheck.call(this.table, row.getComponent())) {
 		if (row.modules.select && row.modules.select.selected) {
 			this._deselectRow(row);
