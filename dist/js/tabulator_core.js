@@ -3557,47 +3557,45 @@ RowManager.prototype.getRenderMode = function () {
 };
 
 RowManager.prototype.renderTable = function () {
-	var self = this;
 
-	self.table.options.renderStarted.call(this.table);
+	this.table.options.renderStarted.call(this.table);
 
-	self.element.scrollTop = 0;
+	this.element.scrollTop = 0;
 
-	switch (self.renderMode) {
+	switch (this.renderMode) {
 		case "classic":
-			self._simpleRender();
+			this._simpleRender();
 			break;
 
 		case "virtual":
-			self._virtualRenderFill();
+			this._virtualRenderFill();
 			break;
 	}
 
-	if (self.firstRender) {
-		if (self.displayRowsCount) {
-			self.firstRender = false;
-			self.table.modules.layout.layout();
+	if (this.firstRender) {
+		if (this.displayRowsCount) {
+			this.firstRender = false;
+			this.table.modules.layout.layout();
 		} else {
-			self.renderEmptyScroll();
+			this.renderEmptyScroll();
 		}
 	}
 
-	if (self.table.modExists("frozenColumns")) {
-		self.table.modules.frozenColumns.layout();
+	if (this.table.modExists("frozenColumns")) {
+		this.table.modules.frozenColumns.layout();
 	}
 
-	if (!self.displayRowsCount) {
-		if (self.table.options.placeholder) {
+	if (!this.displayRowsCount) {
+		if (this.table.options.placeholder) {
 
-			if (this.renderMode) {
-				self.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-			}
+			this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 
-			self.getElement().appendChild(self.table.options.placeholder);
+			this.getElement().appendChild(this.table.options.placeholder);
+			this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
 		}
 	}
 
-	self.table.options.renderComplete.call(this.table);
+	this.table.options.renderComplete.call(this.table);
 };
 
 //simple render on heightless table
@@ -3635,9 +3633,13 @@ RowManager.prototype.checkClassicModeGroupHeaderWidth = function () {
 
 //show scrollbars on empty table div
 RowManager.prototype.renderEmptyScroll = function () {
-	this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px";
-	this.tableElement.style.minHeight = "1px";
-	this.tableElement.style.visibility = "hidden";
+	if (this.table.options.placeholder) {
+		this.tableElement.style.display = "none";
+	} else {
+		this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px";
+		this.tableElement.style.minHeight = "1px";
+		this.tableElement.style.visibility = "hidden";
+	}
 };
 
 RowManager.prototype._clearVirtualDom = function () {
@@ -3654,7 +3656,8 @@ RowManager.prototype._clearVirtualDom = function () {
 	element.style.paddingBottom = "";
 	element.style.minWidth = "";
 	element.style.minHeight = "";
-	element.style.visibility = "";
+	element.style.display = "";
+	// element.style.visibility = "";
 
 	this.scrollTop = 0;
 	this.scrollLeft = 0;

@@ -4453,60 +4453,57 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.renderTable = function () {
 
-		var self = this;
+		this.table.options.renderStarted.call(this.table);
 
-		self.table.options.renderStarted.call(this.table);
+		this.element.scrollTop = 0;
 
-		self.element.scrollTop = 0;
-
-		switch (self.renderMode) {
+		switch (this.renderMode) {
 
 			case "classic":
 
-				self._simpleRender();
+				this._simpleRender();
 
 				break;
 
 			case "virtual":
 
-				self._virtualRenderFill();
+				this._virtualRenderFill();
 
 				break;
 
 		}
 
-		if (self.firstRender) {
+		if (this.firstRender) {
 
-			if (self.displayRowsCount) {
+			if (this.displayRowsCount) {
 
-				self.firstRender = false;
+				this.firstRender = false;
 
-				self.table.modules.layout.layout();
+				this.table.modules.layout.layout();
 			} else {
 
-				self.renderEmptyScroll();
+				this.renderEmptyScroll();
 			}
 		}
 
-		if (self.table.modExists("frozenColumns")) {
+		if (this.table.modExists("frozenColumns")) {
 
-			self.table.modules.frozenColumns.layout();
+			this.table.modules.frozenColumns.layout();
 		}
 
-		if (!self.displayRowsCount) {
+		if (!this.displayRowsCount) {
 
-			if (self.table.options.placeholder) {
+			if (this.table.options.placeholder) {
 
-				if (this.renderMode) {
+				this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 
-					self.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-				}
+				this.getElement().appendChild(this.table.options.placeholder);
 
-				self.getElement().appendChild(self.table.options.placeholder);
+				this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
 			}
 		}
 
-		self.table.options.renderComplete.call(this.table);
+		this.table.options.renderComplete.call(this.table);
 	};
 
 	//simple render on heightless table
@@ -4557,11 +4554,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	RowManager.prototype.renderEmptyScroll = function () {
 
-		this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px";
+		if (this.table.options.placeholder) {
 
-		this.tableElement.style.minHeight = "1px";
+			this.tableElement.style.display = "none";
+		} else {
 
-		this.tableElement.style.visibility = "hidden";
+			this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px";
+
+			this.tableElement.style.minHeight = "1px";
+
+			this.tableElement.style.visibility = "hidden";
+		}
 	};
 
 	RowManager.prototype._clearVirtualDom = function () {
@@ -4585,7 +4588,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		element.style.minHeight = "";
 
-		element.style.visibility = "";
+		element.style.display = "";
+
+		// element.style.visibility = "";
+
 
 		this.scrollTop = 0;
 

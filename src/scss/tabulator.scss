@@ -356,10 +356,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			align-items:center;
 
 			&[tabulator-render-mode="virtual"]{
-				position: absolute;
-				top:0;
-				left:0;
-				height:100%;
+				min-height:100%;
+				min-width:100%;
 			}
 
 			width:100%;

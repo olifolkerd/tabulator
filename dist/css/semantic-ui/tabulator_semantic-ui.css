@@ -503,10 +503,8 @@
 }
 
 .tabulator .tabulator-tableHolder .tabulator-placeholder[tabulator-render-mode="virtual"] {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
+  min-height: 100%;
+  min-width: 100%;
 }
 
 .tabulator .tabulator-tableHolder .tabulator-placeholder span {
