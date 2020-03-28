@@ -259,13 +259,12 @@ Ajax.prototype.sendRequest = function (silent) {
 						data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
 					}
 					resolve(data);
+
+					self.hideLoader();
+					self.loading = false;
 				} else {
 					console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
 				}
-
-				self.hideLoader();
-
-				self.loading = false;
 			}).catch(function (error) {
 				console.error("Ajax Load Error: ", error);
 				self.table.options.ajaxError.call(self.table, error);
