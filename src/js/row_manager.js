@@ -485,7 +485,8 @@ RowManager.prototype.findAddRowPos = function(pos){
 RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	var row = data instanceof Row ? data : new Row(data || {}, this),
 	top = this.findAddRowPos(pos),
-	dispRows;
+	allIndex = -1,
+	activeIndex, dispRows;
 
 	if(!index && this.table.options.pagination && this.table.options.paginationAddRow == "page"){
 		dispRows = this.getDisplayRows();
@@ -507,7 +508,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 		}
 	}
 
-	if(index){
+	if(typeof index !== "undefined"){
 		index = this.findRow(index);
 	}
 
@@ -537,7 +538,10 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	}
 
 	if(index){
-		let allIndex = this.rows.indexOf(index),
+		allIndex = this.rows.indexOf(index);
+	}
+
+	if(index && allIndex > -1){
 		activeIndex = this.activeRows.indexOf(index);
 
 		this.displayRowIterator(function(rows){
@@ -552,9 +556,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 			this.activeRows.splice((top ? activeIndex : activeIndex + 1), 0, row);
 		}
 
-		if(allIndex > -1){
-			this.rows.splice((top ? allIndex : allIndex + 1), 0, row);
-		}
+		this.rows.splice((top ? allIndex : allIndex + 1), 0, row);
 
 	}else{
 
