@@ -10,6 +10,9 @@ var Filter = function Filter(table) {
 	this.headerFilters = {}; //hold column filters
 	this.headerFilterColumns = []; //hold columns that use header filters
 
+	this.prevHeaderFilterChangeCheck = "";
+	this.prevHeaderFilterChangeCheck = "{}";
+
 	this.changed = false; //has filtering changed since last render
 };
 
@@ -23,6 +26,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 	function success(value) {
 		var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 		    type = "",
+		    filterChangeCheck = "",
 		    filterFunc;
 
 		if (typeof column.modules.filter.prevSuccess === "undefined" || column.modules.filter.prevSuccess !== value) {
@@ -91,9 +95,14 @@ Filter.prototype.initializeColumn = function (column, value) {
 				delete self.headerFilters[field];
 			}
 
-			self.changed = true;
+			filterChangeCheck = JSON.stringify(self.headerFilters);
 
-			self.table.rowManager.filterRefresh();
+			if (self.prevHeaderFilterChangeCheck !== filterChangeCheck) {
+				self.prevHeaderFilterChangeCheck = filterChangeCheck;
+
+				self.changed = true;
+				self.table.rowManager.filterRefresh();
+			}
 		}
 
 		return true;
@@ -571,6 +580,7 @@ Filter.prototype.clearHeaderFilter = function () {
 	var self = this;
 
 	this.headerFilters = {};
+	self.prevHeaderFilterChangeCheck = "{}";
 
 	this.headerFilterColumns.forEach(function (column) {
 		column.modules.filter.value = null;

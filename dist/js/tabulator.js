@@ -16071,6 +16071,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.headerFilters = {}; //hold column filters
 		this.headerFilterColumns = []; //hold columns that use header filters
 
+		this.prevHeaderFilterChangeCheck = "";
+		this.prevHeaderFilterChangeCheck = "{}";
+
 		this.changed = false; //has filtering changed since last render
 	};
 
@@ -16084,6 +16087,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		function success(value) {
 			var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 			    type = "",
+			    filterChangeCheck = "",
 			    filterFunc;
 
 			if (typeof column.modules.filter.prevSuccess === "undefined" || column.modules.filter.prevSuccess !== value) {
@@ -16152,9 +16156,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					delete self.headerFilters[field];
 				}
 
-				self.changed = true;
+				filterChangeCheck = JSON.stringify(self.headerFilters);
 
-				self.table.rowManager.filterRefresh();
+				if (self.prevHeaderFilterChangeCheck !== filterChangeCheck) {
+					self.prevHeaderFilterChangeCheck = filterChangeCheck;
+
+					self.changed = true;
+					self.table.rowManager.filterRefresh();
+				}
 			}
 
 			return true;
@@ -16632,6 +16641,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var self = this;
 
 		this.headerFilters = {};
+		self.prevHeaderFilterChangeCheck = "{}";
 
 		this.headerFilterColumns.forEach(function (column) {
 			column.modules.filter.value = null;
