@@ -593,7 +593,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 
 RowManager.prototype.moveRow = function(from, to, after){
 	if(this.table.options.history && this.table.modExists("history")){
-		this.table.modules.history.action("rowMove", from, {pos:this.getRowPosition(from), to:to, after:after});
+		this.table.modules.history.action("rowMove", from, {posFrom:this.getRowPosition(from), posTo:this.getRowPosition(to), to:to, after:after});
 	}
 
 	this.moveRowActual(from, to, after);

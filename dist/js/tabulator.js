@@ -3618,7 +3618,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.table.options.history && this.table.modExists("history")) {
 
-			this.table.modules.history.action("rowMove", from, { pos: this.getRowPosition(from), to: to, after: after });
+			this.table.modules.history.action("rowMove", from, { posFrom: this.getRowPosition(from), posTo: this.getRowPosition(to), to: to, after: after });
 		}
 
 		this.moveRowActual(from, to, after);
@@ -19049,7 +19049,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.index > -1) {
 			var action = this.history[this.index];
-
+			console.log("u", action);
 			this.undoers[action.type].call(this, action);
 
 			this.index--;
@@ -19067,8 +19067,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.history.length - 1 > this.index) {
 
 			this.index++;
-
 			var action = this.history[this.index];
+			console.log("r", action);
 
 			this.redoers[action.type].call(this, action);
 
@@ -19101,7 +19101,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		},
 
 		rowMove: function rowMove(action) {
-			this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
+			this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom], !action.data.after);
 			this.table.rowManager.redraw();
 		}
 	};
@@ -19126,7 +19126,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		},
 
 		rowMove: function rowMove(action) {
-			this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
+			this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posTo], action.data.after);
 			this.table.rowManager.redraw();
 		}
 	};

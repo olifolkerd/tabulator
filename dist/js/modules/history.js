@@ -37,7 +37,7 @@ History.prototype.undo = function () {
 
 	if (this.index > -1) {
 		var action = this.history[this.index];
-
+		console.log("u", action);
 		this.undoers[action.type].call(this, action);
 
 		this.index--;
@@ -55,8 +55,8 @@ History.prototype.redo = function () {
 	if (this.history.length - 1 > this.index) {
 
 		this.index++;
-
 		var action = this.history[this.index];
+		console.log("r", action);
 
 		this.redoers[action.type].call(this, action);
 
@@ -89,7 +89,7 @@ History.prototype.undoers = {
 	},
 
 	rowMove: function rowMove(action) {
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom], !action.data.after);
 		this.table.rowManager.redraw();
 	}
 };
@@ -114,7 +114,7 @@ History.prototype.redoers = {
 	},
 
 	rowMove: function rowMove(action) {
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.pos], false);
+		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posTo], action.data.after);
 		this.table.rowManager.redraw();
 	}
 };
