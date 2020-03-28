@@ -6528,32 +6528,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		} else {
 
-			element.addEventListener("dblclick", function (e) {
+			// element.addEventListener("dblclick", function(e){
 
-				e.preventDefault();
+			// e.preventDefault();
 
-				try {
+			// try{
 
-					if (document.selection) {
-						// IE
+			// 	if (document.selection) { // IE
 
-						var range = document.body.createTextRange();
+			// 		var range = document.body.createTextRange();
 
-						range.moveToElementText(self.element);
+			// 		range.moveToElementText(self.element);
 
-						range.select();
-					} else if (window.getSelection) {
+			// 		range.select();
 
-						var range = document.createRange();
+			// 	} else if (window.getSelection) {
 
-						range.selectNode(self.element);
+			// 		var range = document.createRange();
 
-						window.getSelection().removeAllRanges();
+			// 		range.selectNode(self.element);
 
-						window.getSelection().addRange(range);
-					}
-				} catch (e) {}
-			});
+			// 		window.getSelection().removeAllRanges();
+
+			// 		window.getSelection().addRange(range);
+
+			// 	}
+
+			// }catch(e){}
+
+			// });
+
 		}
 
 		if (cellEvents.cellContext || this.table.options.cellContext) {
