@@ -4590,8 +4590,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		element.style.display = "";
 
-		// element.style.visibility = "";
-
+		element.style.visibility = "";
 
 		this.scrollTop = 0;
 

@@ -1357,7 +1357,7 @@ RowManager.prototype._clearVirtualDom = function(){
 	element.style.minWidth = "";
 	element.style.minHeight = "";
 	element.style.display = "";
-	// element.style.visibility = "";
+	element.style.visibility = "";
 
 	this.scrollTop = 0;
 	this.scrollLeft = 0;
