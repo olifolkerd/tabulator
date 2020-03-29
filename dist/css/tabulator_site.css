@@ -20,7 +20,6 @@
 
 .tabulator.tabulator-block-select {
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
 }
@@ -773,7 +772,6 @@
 .tabulator-menu .tabulator-menu-item {
   padding: 5px 10px;
   -webkit-user-select: none;
-     -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
 }
