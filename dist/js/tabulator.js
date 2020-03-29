@@ -12115,7 +12115,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							plain = _this36.table.options.clipboardCopyFormatter("plain", plain);
 						}
 					} else {
-						html = _this36.table.modules.export.getHtml(_this36.rowRange, _this36.table.options.clipboardCopyStyled, table.options.clipboardCopyConfig, "clipboard");
+						html = _this36.table.modules.export.getHtml(_this36.rowRange, _this36.table.options.clipboardCopyStyled, _this36.table.options.clipboardCopyConfig, "clipboard");
 						plain = html ? _this36.generatePlainContent(html) : "";
 
 						if (_this36.table.options.clipboardCopyFormatter) {
@@ -19049,7 +19049,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.index > -1) {
 			var action = this.history[this.index];
-			console.log("u", action);
+
 			this.undoers[action.type].call(this, action);
 
 			this.index--;
@@ -19067,8 +19067,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.history.length - 1 > this.index) {
 
 			this.index++;
+
 			var action = this.history[this.index];
-			console.log("r", action);
 
 			this.redoers[action.type].call(this, action);
 
@@ -21266,8 +21266,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					reject();
 				});
 
-				if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
-					self.table.modules.persistence.save("page");
+				if (_this65.table.options.persistence && _this65.table.modExists("persistence", true) && _this65.table.modules.persistence.config.page) {
+					_this65.table.modules.persistence.save("page");
 				}
 			} else {
 				console.warn("Pagination Error - Previous page would be less than page 1:", 0);
@@ -21289,8 +21289,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					reject();
 				});
 
-				if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
-					self.table.modules.persistence.save("page");
+				if (_this66.table.options.persistence && _this66.table.modExists("persistence", true) && _this66.table.modules.persistence.config.page) {
+					_this66.table.modules.persistence.save("page");
 				}
 			} else {
 				if (!_this66.progressiveLoad) {

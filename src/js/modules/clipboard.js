@@ -28,7 +28,7 @@ Clipboard.prototype.initialize = function(){
 						plain = this.table.options.clipboardCopyFormatter("plain", plain);
 					}
 				}else{
-					html = this.table.modules.export.getHtml(this.rowRange, this.table.options.clipboardCopyStyled, table.options.clipboardCopyConfig, "clipboard");
+					html = this.table.modules.export.getHtml(this.rowRange, this.table.options.clipboardCopyStyled, this.table.options.clipboardCopyConfig, "clipboard");
 					plain = html ? this.generatePlainContent(html) : "";
 
 					if(this.table.options.clipboardCopyFormatter){

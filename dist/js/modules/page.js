@@ -405,8 +405,8 @@ Page.prototype.previousPage = function () {
 				reject();
 			});
 
-			if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
-				self.table.modules.persistence.save("page");
+			if (_this4.table.options.persistence && _this4.table.modExists("persistence", true) && _this4.table.modules.persistence.config.page) {
+				_this4.table.modules.persistence.save("page");
 			}
 		} else {
 			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
@@ -428,8 +428,8 @@ Page.prototype.nextPage = function () {
 				reject();
 			});
 
-			if (self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page) {
-				self.table.modules.persistence.save("page");
+			if (_this5.table.options.persistence && _this5.table.modExists("persistence", true) && _this5.table.modules.persistence.config.page) {
+				_this5.table.modules.persistence.save("page");
 			}
 		} else {
 			if (!_this5.progressiveLoad) {

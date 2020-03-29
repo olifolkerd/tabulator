@@ -34,7 +34,7 @@ Clipboard.prototype.initialize = function () {
 						plain = _this.table.options.clipboardCopyFormatter("plain", plain);
 					}
 				} else {
-					html = _this.table.modules.export.getHtml(_this.rowRange, _this.table.options.clipboardCopyStyled, table.options.clipboardCopyConfig, "clipboard");
+					html = _this.table.modules.export.getHtml(_this.rowRange, _this.table.options.clipboardCopyStyled, _this.table.options.clipboardCopyConfig, "clipboard");
 					plain = html ? _this.generatePlainContent(html) : "";
 
 					if (_this.table.options.clipboardCopyFormatter) {

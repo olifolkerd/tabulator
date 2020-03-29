@@ -407,8 +407,8 @@ Page.prototype.previousPage = function(){
 				reject();
 			});
 
-			if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page){
-				self.table.modules.persistence.save("page");
+			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+				this.table.modules.persistence.save("page");
 			}
 
 		}else{
@@ -431,8 +431,8 @@ Page.prototype.nextPage = function(){
 				reject();
 			});
 
-			if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page){
-				self.table.modules.persistence.save("page");
+			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+				this.table.modules.persistence.save("page");
 			}
 
 		}else{
