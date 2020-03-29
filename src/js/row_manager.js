@@ -764,37 +764,36 @@ RowManager.prototype.getDataCount = function(active){
 };
 
 RowManager.prototype._genRemoteRequest = function(){
-	var self = this,
-	table = self.table,
+	var table = this.table,
 	options = table.options,
 	params = {};
 
 	if(table.modExists("page")){
 		//set sort data if defined
 		if(options.ajaxSorting){
-			let sorters = self.table.modules.sort.getSort();
+			let sorters = this.table.modules.sort.getSort();
 
 			sorters.forEach(function(item){
 				delete item.column;
 			});
 
-			params[self.table.modules.page.paginationDataSentNames.sorters] = sorters;
+			params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
 		if(options.ajaxFiltering){
-			let filters = self.table.modules.filter.getFilters(true, true);
+			let filters = this.table.modules.filter.getFilters(true, true);
 
-			params[self.table.modules.page.paginationDataSentNames.filters] = filters;
+			params[this.table.modules.page.paginationDataSentNames.filters] = filters;
 		}
 
 
-		self.table.modules.ajax.setParams(params, true);
+		this.table.modules.ajax.setParams(params, true);
 	}
 
 	table.modules.ajax.sendRequest()
 	.then((data)=>{
-		self.setData(data);
+		this._setDataActual(data, true);
 	})
 	.catch((e)=>{});
 
