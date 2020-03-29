@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.5.3 (c) Oliver Folkerd */
+/* Tabulator v4.6.0 (c) Oliver Folkerd */
 
 var Validate = function Validate(table) {
 	this.table = table;

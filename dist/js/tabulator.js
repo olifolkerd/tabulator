@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.5.3 (c) Oliver Folkerd */
+/* Tabulator v4.6.0 (c) Oliver Folkerd */
 
 ;(function (global, factory) {
 	if ((typeof exports === 'undefined' ? 'undefined' : _typeof(exports)) === 'object' && typeof module !== 'undefined') {
@@ -19407,7 +19407,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			action: this.actions[action],
 			keys: [],
 			ctrl: false,
-			shift: false
+			shift: false,
+			meta: false
 		};
 
 		var symbols = symbolsList.toString().toLowerCase().split(" ").join("").split("+");
@@ -19420,6 +19421,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				case "shift":
 					binding.shift = true;
+					break;
+
+				case "meta":
+					binding.meta = true;
 					break;
 
 				default:
@@ -19485,7 +19490,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var self = this,
 		    match = true;
 
-		if (e.ctrlKey == binding.ctrl && e.shiftKey == binding.shift) {
+		if (e.ctrlKey == binding.ctrl && e.shiftKey == binding.shift && e.metaKey == binding.meta) {
 			binding.keys.forEach(function (key) {
 				var index = self.pressedKeys.indexOf(key);
 
