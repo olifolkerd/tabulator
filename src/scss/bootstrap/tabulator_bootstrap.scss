@@ -112,6 +112,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				position: relative;
 				padding:$cellPadding;
 
+				//header menu button
+				.tabulator-header-menu-button{
+					padding: 0 8px;
+
+					&:hover{
+						cursor: pointer;
+						opacity: .6;
+					}
+				}
+
 				//hold title of column header
 				.tabulator-col-title{
 					box-sizing:border-box;
@@ -161,9 +171,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					border-top:1px solid $borderColor;
 					overflow: hidden;
 
-					.tabulator-col:last-child{
-						margin-right:-1px;
-					}
+					margin-right:-1px;
 				}
 			}
 
@@ -348,10 +356,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			align-items:center;
 
 			&[tabulator-render-mode="virtual"]{
-				position: absolute;
-				top:0;
-				left:0;
-				height:100%;
+				min-height:100%;
+				min-width:100%;
 			}
 
 			width:100%;
@@ -1000,6 +1006,43 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	}
 }
 
+.tabulator-menu{
+	position: absolute;
+	display:inline-block;
+	box-sizing:border-box;
+
+	background:$rowBackgroundColor;
+	border:1px solid $rowBorderColor;
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, .2);
+
+	font-size:$textSize;
+
+	overflow-y:auto;
+	-webkit-overflow-scrolling: touch;
+
+	z-index: 10000;
+
+	.tabulator-menu-item{
+
+		padding:5px 10px;
+
+		user-select: none;
+
+		&.tabulator-menu-item-disabled{
+			opacity: .5;
+		}
+
+		&:not(.tabulator-menu-item-disabled):hover{
+			cursor: pointer;
+			background: $rowAltBackgroundColor;
+		}
+	}
+
+	.tabulator-menu-separator{
+		border-top:1px solid $rowBorderColor;
+	}
+}
+
 .tabulator-edit-select-list{
 	position: absolute;
 	display:inline-block;
@@ -1033,6 +1076,12 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
+	.tabulator-edit-select-list-notice{
+		padding:4px;
+
+		text-align: center;
+	}
+
 	.tabulator-edit-select-list-group{
 		border-bottom:1px solid $rowBorderColor;
 
@@ -1061,5 +1110,89 @@ body.tabulator-print-fullscreen-hide>*:not(.tabulator-print-fullscreen){
 
 .tabulator-print-table{
 	border-collapse: collapse;
+
+	.tabulator-data-tree-branch{
+		display:inline-block;
+		vertical-align:middle;
+
+		height:9px;
+		width:7px;
+
+		margin-top:-9px;
+		margin-right:5px;
+
+		border-bottom-left-radius:1px;
+
+		border-left:2px solid $rowBorderColor;
+		border-bottom:2px solid $rowBorderColor;
+	}
+
+	.tabulator-data-tree-control{
+
+		display:inline-flex;
+		justify-content:center;
+		align-items:center;
+		vertical-align:middle;
+
+		height:11px;
+		width:11px;
+
+		margin-right:5px;
+
+		border:1px solid #333;
+		border-radius:2px;
+		background:rgba(0, 0, 0, .1);
+
+		overflow:hidden;
+
+		&:hover{
+			cursor:pointer;
+			background:rgba(0, 0, 0, .2);
+		}
+
+		.tabulator-data-tree-control-collapse{
+			display:inline-block;
+			position: relative;
+
+			height: 7px;
+			width: 1px;
+
+			background: transparent;
+
+			&:after {
+				position: absolute;
+				content: "";
+				left: -3px;
+				top: 3px;
+
+				height: 1px;
+				width: 7px;
+
+				background: #333;
+			}
+		}
+
+		.tabulator-data-tree-control-expand{
+			display:inline-block;
+			position: relative;
+
+			height: 7px;
+			width: 1px;
+
+			background: #333;
+
+			&:after {
+				position: absolute;
+				content: "";
+				left: -3px;
+				top: 3px;
+
+				height: 1px;
+				width: 7px;
+
+				background: #333;
+			}
+		}
+	}
 }
 

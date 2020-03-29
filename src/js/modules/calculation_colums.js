@@ -180,6 +180,24 @@ ColumnCalcs.prototype.recalcRowGroup = function(row){
 	this.recalcGroup(this.table.modules.groupRows.getRowGroup(row));
 };
 
+ColumnCalcs.prototype.recalcAll = function(){
+	if(this.topCalcs.length || this.botCalcs.length){
+		if(this.table.options.columnCalcs !== "group"){
+			this.recalc(this.table.rowManager.activeRows);
+		}
+
+		if(this.table.options.groupBy && this.table.options.columnCalcs !== "table"){
+
+
+			var groups = table.modules.groupRows.getChildGroups();
+
+			groups.forEach((group) => {
+				this.recalcGroup(group);
+			});
+		}
+	}
+};
+
 ColumnCalcs.prototype.recalcGroup = function(group){
 	var data, rowData;
 
@@ -218,8 +236,15 @@ ColumnCalcs.prototype.generateBottomRow = function(rows){
 ColumnCalcs.prototype.rowsToData = function(rows){
 	var data = [];
 
-	rows.forEach(function(row){
+	rows.forEach((row) => {
 		data.push(row.getData());
+
+		if(this.table.options.dataTree && this.table.options.dataTreeChildColumnCalcs){
+			if(row.modules.dataTree.open){
+				var children = this.rowsToData(this.table.modules.dataTree.getFilteredTreeChildren(row));
+				data = data.concat(children);
+			}
+		}
 	});
 
 	return data;

@@ -886,11 +886,29 @@ GroupRows.prototype.getGroups = function(compoment){
 	return groupComponents;
 };
 
+GroupRows.prototype.getChildGroups = function(group){
+	var groupComponents = [];
+
+	if(!group){
+		group = this;
+	}
+
+	group.groupList.forEach((child) => {
+		if(child.groupList.length){
+			groupComponents = groupComponents.concat(this.getChildGroups(child));
+		}else{
+			groupComponents.push(child);
+		}
+	});
+
+	return groupComponents;
+};
+
 GroupRows.prototype.wipe = function(){
 	this.groupList.forEach(function(group){
 		group.wipe();
 	});
-}
+};
 
 GroupRows.prototype.pullGroupListData = function(groupList) {
 	var self = this;

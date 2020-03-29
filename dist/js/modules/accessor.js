@@ -4,7 +4,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var Accessor = function Accessor(table) {
 	this.table = table; //hold Tabulator object
-	this.allowedTypes = ["", "data", "download", "clipboard"]; //list of accessor types
+	this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"]; //list of accessor types
 };
 
 //initialize column accessor
@@ -34,7 +34,9 @@ Accessor.prototype.initializeColumn = function (column) {
 	if (match) {
 		column.modules.accessor = config;
 	}
-}, Accessor.prototype.lookupAccessor = function (value) {
+};
+
+Accessor.prototype.lookupAccessor = function (value) {
 	var accessor = false;
 
 	//set column accessor

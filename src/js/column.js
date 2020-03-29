@@ -104,6 +104,12 @@ ColumnComponent.prototype.reloadHeaderFilter = function(){
 	}
 };
 
+ColumnComponent.prototype.getHeaderFilterValue = function(){
+	if(this._column.table.modExists("filter", true)){
+		this._column.table.modules.filter.getHeaderFilterValue(this._column);
+	}
+};
+
 ColumnComponent.prototype.setHeaderFilterValue = function(value){
 	if(this._column.table.modExists("filter", true)){
 		this._column.table.modules.filter.setHeaderFilterValue(this._column, value);
@@ -149,10 +155,12 @@ var Column = function(def, parent){
 	this.cells = []; //cells bound to this column
 	this.element = this.createElement(); //column header element
 	this.contentElement = false;
+	this.titleElement = false;
 	this.groupElement = this.createGroupElement(); //column group holder element
 	this.isGroup = false;
 	this.tooltip = false; //hold column tooltip
 	this.hozAlign = ""; //horizontal text alignment
+	this.vertAlign = ""; //vert text alignment
 
 	//multi dimensional filed handling
 	this.field ="";
@@ -248,7 +256,7 @@ Column.prototype.setField = function(field){
 	this.field = field;
 	this.fieldStructure = field ? (this.table.options.nestedFieldSeparator ? field.split(this.table.options.nestedFieldSeparator) : [field]) : [];
 	this.getFieldValue = this.fieldStructure.length > 1 ? this._getNestedData : this._getFlatData;
-	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNesteData : this._setFlatData;
+	this.setFieldValue = this.fieldStructure.length > 1 ? this._setNestedData : this._setFlatData;
 };
 
 //register column position with column manager
@@ -276,6 +284,11 @@ Column.prototype._mapDepricatedFunctionality = function(){
 	if(typeof this.definition.hideInHtml !== "undefined"){
 		this.definition.htmlOutput = !this.definition.hideInHtml;
 		console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput")
+	}
+
+	if(typeof this.definition.align !== "undefined"){
+		this.definition.hozAlign = this.definition.align;
+		console.warn("align column definition property is deprecated, you should now use hozAlign");
 	}
 };
 
@@ -535,6 +548,11 @@ Column.prototype._buildColumnHeader = function(){
 		table.modules.sort.initializeColumn(self, self.contentElement);
 	}
 
+	//set column header context menu
+	if((def.headerContextMenu || def.headerMenu) && table.modExists("menu")){
+		table.modules.menu.initializeColumnHeader(self);
+	}
+
 	//set column formatter
 	if(table.modExists("format")){
 		table.modules.format.initializeColumn(self);
@@ -596,18 +614,20 @@ Column.prototype._buildColumnHeader = function(){
 	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
 
 	//set orizontal text alignment
-	self.hozAlign = typeof(self.definition.align) == "undefined" ? "" : self.definition.align;
+	self.hozAlign = typeof(self.definition.hozAlign) == "undefined" ? self.table.options.cellHozAlign : self.definition.hozAlign;
+	self.vertAlign = typeof(self.definition.vertAlign) == "undefined" ? self.table.options.cellVertAlign : self.definition.vertAlign;
 };
 
 Column.prototype._buildColumnHeaderContent = function(){
-	var self = this,
-	def = self.definition,
+	var def = self.definition,
 	table = self.table;
 
 	var contentElement = document.createElement("div");
 	contentElement.classList.add("tabulator-col-content");
 
-	contentElement.appendChild(self._buildColumnHeaderTitle());
+	this.titleElement = this._buildColumnHeaderTitle();
+
+	contentElement.appendChild(this.titleElement);
 
 	return contentElement;
 };
@@ -758,7 +778,7 @@ Column.prototype._setFlatData = function(data, value){
 };
 
 //nested field set
-Column.prototype._setNesteData = function(data, value){
+Column.prototype._setNestedData = function(data, value){
 	var dataObj = data,
 	structure = this.fieldStructure,
 	length = structure.length;
@@ -769,7 +789,11 @@ Column.prototype._setNesteData = function(data, value){
 			dataObj[structure[i]] = value;
 		}else{
 			if(!dataObj[structure[i]]){
-				dataObj[structure[i]] = {};
+				if(typeof value !== "undefined"){
+					dataObj[structure[i]] = {};
+				}else{
+					break;
+				}
 			}
 
 			dataObj = dataObj[structure[i]];
@@ -1021,6 +1045,10 @@ Column.prototype.matchChildWidths = function(){
 		});
 
 		this.contentElement.style.maxWidth = (childWidth - 1) + "px";
+
+		if(this.parent.isGroup){
+			this.parent.matchChildWidths();
+		}
 	}
 };
 
@@ -1082,8 +1110,19 @@ Column.prototype.checkCellHeights = function(){
 };
 
 Column.prototype.getWidth = function(){
-	// return this.element.offsetWidth;
-	return this.width;
+	var width = 0;
+
+	if(this.isGroup){
+		this.columns.forEach(function(column){
+			if(column.visible){
+				width += column.getWidth();
+			}
+		});
+	}else{
+		width = this.width;
+	}
+
+	return width;
 };
 
 Column.prototype.getHeight = function(){
@@ -1262,6 +1301,8 @@ Column.prototype.defaultOptionList = [
 "columns",
 "visible",
 "align",
+"hozAlign",
+"vertAlign",
 "width",
 "minWidth",
 "widthGrow",
@@ -1300,6 +1341,10 @@ Column.prototype.defaultOptionList = [
 "accessorDownloadParams",
 "accessorClipboard",
 "accessorClipboardParams",
+"accessorPrint",
+"accessorPrintParams",
+"accessorHtmlOutput",
+"accessorHtmlOutputParams",
 "clipboard",
 "download",
 "downloadTitle",
@@ -1347,6 +1392,15 @@ Column.prototype.defaultOptionList = [
 "headerFilterFuncParams",
 "headerFilterLiveFilter",
 "print",
+"headerContextMenu",
+"headerMenu",
+"contextMenu",
+"formatterPrint",
+"formatterPrintParams",
+"formatterClipboard",
+"formatterClipboardParams",
+"formatterHtmlOutput",
+"formatterHtmlOutputParams",
 ];
 
 //////////////// Event Bindings /////////////////

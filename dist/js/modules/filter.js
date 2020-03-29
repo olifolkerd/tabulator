@@ -10,6 +10,9 @@ var Filter = function Filter(table) {
 	this.headerFilters = {}; //hold column filters
 	this.headerFilterColumns = []; //hold columns that use header filters
 
+	this.prevHeaderFilterChangeCheck = "";
+	this.prevHeaderFilterChangeCheck = "{}";
+
 	this.changed = false; //has filtering changed since last render
 };
 
@@ -23,6 +26,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 	function success(value) {
 		var filterType = column.modules.filter.tagType == "input" && column.modules.filter.attrType == "text" || column.modules.filter.tagType == "textarea" ? "partial" : "match",
 		    type = "",
+		    filterChangeCheck = "",
 		    filterFunc;
 
 		if (typeof column.modules.filter.prevSuccess === "undefined" || column.modules.filter.prevSuccess !== value) {
@@ -91,9 +95,14 @@ Filter.prototype.initializeColumn = function (column, value) {
 				delete self.headerFilters[field];
 			}
 
-			self.changed = true;
+			filterChangeCheck = JSON.stringify(self.headerFilters);
 
-			self.table.rowManager.filterRefresh();
+			if (self.prevHeaderFilterChangeCheck !== filterChangeCheck) {
+				self.prevHeaderFilterChangeCheck = filterChangeCheck;
+
+				self.changed = true;
+				self.table.rowManager.filterRefresh();
+			}
 		}
 
 		return true;
@@ -253,7 +262,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue, r
 
 				typingTimer = setTimeout(function () {
 					success(editorElement.value);
-				}, 300);
+				}, self.table.options.headerFilterLiveFilterDelay);
 			};
 
 			column.modules.filter.headerElement = editorElement;
@@ -319,12 +328,21 @@ Filter.prototype.showHeaderFilterElements = function () {
 	});
 };
 
-//programatically set value of header filter
+//programatically set focus of header filter
 Filter.prototype.setHeaderFilterFocus = function (column) {
 	if (column.modules.filter && column.modules.filter.headerElement) {
 		column.modules.filter.headerElement.focus();
 	} else {
 		console.warn("Column Filter Focus Error - No header filter set on column:", column.getField());
+	}
+};
+
+//programmatically get value of header filter
+Filter.prototype.getHeaderFilterValue = function (column) {
+	if (column.modules.filter && column.modules.filter.headerElement) {
+		return column.modules.filter.headerElement.value;
+	} else {
+		console.warn("Column Filter Error - No header filter set on column:", column.getField());
 	}
 };
 
@@ -562,6 +580,7 @@ Filter.prototype.clearHeaderFilter = function () {
 	var self = this;
 
 	this.headerFilters = {};
+	self.prevHeaderFilterChangeCheck = "{}";
 
 	this.headerFilterColumns.forEach(function (column) {
 		column.modules.filter.value = null;

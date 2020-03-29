@@ -113,10 +113,30 @@ Cell.prototype._configureCell = function(){
 	var self = this,
 	cellEvents = self.column.cellEvents,
 	element = self.element,
-	field = this.column.getField();
+	field = this.column.getField(),
+	vertAligns = {
+		top:"flex-start",
+		bottom:"flex-end",
+		middle:"center",
+	},
+	hozAligns = {
+		left:"flex-start",
+		right:"flex-end",
+		center:"center",
+	};
 
 	//set text alignment
 	element.style.textAlign = self.column.hozAlign;
+
+	if(self.column.vertAlign){
+		element.style.display = "inline-flex";
+
+		element.style.alignItems = vertAligns[self.column.vertAlign] || "";
+
+		if(self.column.hozAlign){
+			element.style.justifyContent = hozAligns[self.column.hozAlign] || "";
+		}
+	}
 
 	if(field){
 		element.setAttribute("tabulator-field", field);
@@ -189,22 +209,21 @@ Cell.prototype._bindClickEvents = function(cellEvents){
 			}
 		});
 	}else{
-		element.addEventListener("dblclick", function(e){
-			e.preventDefault();
-
-			try{
-				if (document.selection) { // IE
-					var range = document.body.createTextRange();
-					range.moveToElementText(self.element);
-					range.select();
-				} else if (window.getSelection) {
-					var range = document.createRange();
-					range.selectNode(self.element);
-					window.getSelection().removeAllRanges();
-					window.getSelection().addRange(range);
-				}
-			}catch(e){}
-		});
+		// element.addEventListener("dblclick", function(e){
+			// e.preventDefault();
+			// try{
+			// 	if (document.selection) { // IE
+			// 		var range = document.body.createTextRange();
+			// 		range.moveToElementText(self.element);
+			// 		range.select();
+			// 	} else if (window.getSelection) {
+			// 		var range = document.createRange();
+			// 		range.selectNode(self.element);
+			// 		window.getSelection().removeAllRanges();
+			// 		window.getSelection().addRange(range);
+			// 	}
+			// }catch(e){}
+		// });
 	}
 
 	if (cellEvents.cellContext || this.table.options.cellContext){
@@ -553,6 +572,11 @@ Cell.prototype.setValueActual = function(value){
 	//set resizable handles
 	if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
 		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
+	}
+
+	//set column menu
+	if(this.column.definition.contextMenu && this.table.modExists("menu")){
+		this.table.modules.menu.initializeCell(this);
 	}
 
 	//handle frozen cells

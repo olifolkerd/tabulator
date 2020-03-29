@@ -3,11 +3,13 @@ var RowManager = function(table){
 	this.table = table;
 	this.element = this.createHolderElement(); //containing element
 	this.tableElement = this.createTableElement(); //table element
+	this.heightFixer = this.createTableElement(); //table element
 	this.columnManager = null; //hold column manager object
 	this.height = 0; //hold height of table element
 
 	this.firstRender = false; //handle first render
-	this.renderMode = "classic"; //current rendering mode
+	this.renderMode = "virtual"; //current rendering mode
+	this.fixedHeight = false; //current rendering mode
 
 	this.rows = []; //hold row data objects
 	this.activeRows = []; //rows currently available to on display in the table
@@ -291,7 +293,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 
 ////////////////// Data Handling //////////////////
 
-RowManager.prototype.setData = function(data, renderInPosition){
+RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 	var self = this;
 
 	return new Promise((resolve, reject)=>{
@@ -304,7 +306,7 @@ RowManager.prototype.setData = function(data, renderInPosition){
 				});
 			}
 		}else{
-			if(this.table.options.autoColumns){
+			if(this.table.options.autoColumns && columnsChanged){
 				this.table.columnManager.generateColumnsFromRowData(data);
 			}
 			this.resetScroll();
@@ -348,6 +350,7 @@ RowManager.prototype._setDataActual = function(data, renderInPosition){
 		self.table.options.dataLoaded.call(this.table, data);
 
 		self.refreshActiveData(false, false, renderInPosition);
+
 	}else{
 		console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 	}
@@ -363,7 +366,7 @@ RowManager.prototype._wipeElements = function(){
 	}
 
 	this.rows = [];
-}
+};
 
 RowManager.prototype.deleteRow = function(row, blockRedraw){
 	var allIndex = this.rows.indexOf(row),
@@ -390,6 +393,8 @@ RowManager.prototype.deleteRow = function(row, blockRedraw){
 	if(!blockRedraw){
 		this.reRenderInPosition();
 	}
+
+	this.regenerateRowNumbers();
 
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
@@ -455,6 +460,7 @@ RowManager.prototype.addRows = function(data, pos, index){
 			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
 		}
 
+		this.regenerateRowNumbers();
 		resolve(rows);
 	});
 };
@@ -479,7 +485,8 @@ RowManager.prototype.findAddRowPos = function(pos){
 RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	var row = data instanceof Row ? data : new Row(data || {}, this),
 	top = this.findAddRowPos(pos),
-	dispRows;
+	allIndex = -1,
+	activeIndex, dispRows;
 
 	if(!index && this.table.options.pagination && this.table.options.paginationAddRow == "page"){
 		dispRows = this.getDisplayRows();
@@ -501,7 +508,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 		}
 	}
 
-	if(index){
+	if(typeof index !== "undefined"){
 		index = this.findRow(index);
 	}
 
@@ -531,7 +538,10 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 	}
 
 	if(index){
-		let allIndex = this.rows.indexOf(index),
+		allIndex = this.rows.indexOf(index);
+	}
+
+	if(index && allIndex > -1){
 		activeIndex = this.activeRows.indexOf(index);
 
 		this.displayRowIterator(function(rows){
@@ -546,9 +556,7 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 			this.activeRows.splice((top ? activeIndex : activeIndex + 1), 0, row);
 		}
 
-		if(allIndex > -1){
-			this.rows.splice((top ? allIndex : allIndex + 1), 0, row);
-		}
+		this.rows.splice((top ? allIndex : allIndex + 1), 0, row);
 
 	}else{
 
@@ -585,10 +593,12 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 
 RowManager.prototype.moveRow = function(from, to, after){
 	if(this.table.options.history && this.table.modExists("history")){
-		this.table.modules.history.action("rowMove", from, {pos:this.getRowPosition(from), to:to, after:after});
+		this.table.modules.history.action("rowMove", from, {posFrom:this.getRowPosition(from), posTo:this.getRowPosition(to), to:to, after:after});
 	}
 
 	this.moveRowActual(from, to, after);
+
+	this.regenerateRowNumbers();
 
 	this.table.options.rowMoved.call(this.table, from.getComponent());
 };
@@ -728,7 +738,9 @@ RowManager.prototype.getData = function(active, transform){
 	rows = this.getRows(active);
 
 	rows.forEach(function(row){
-		output.push(row.getData(transform || "data"));
+		if(row.type == "row"){
+			output.push(row.getData(transform || "data"));
+		}
 	});
 
 	return output;
@@ -752,37 +764,36 @@ RowManager.prototype.getDataCount = function(active){
 };
 
 RowManager.prototype._genRemoteRequest = function(){
-	var self = this,
-	table = self.table,
+	var table = this.table,
 	options = table.options,
 	params = {};
 
 	if(table.modExists("page")){
 		//set sort data if defined
 		if(options.ajaxSorting){
-			let sorters = self.table.modules.sort.getSort();
+			let sorters = this.table.modules.sort.getSort();
 
 			sorters.forEach(function(item){
 				delete item.column;
 			});
 
-			params[self.table.modules.page.paginationDataSentNames.sorters] = sorters;
+			params[this.table.modules.page.paginationDataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
 		if(options.ajaxFiltering){
-			let filters = self.table.modules.filter.getFilters(true, true);
+			let filters = this.table.modules.filter.getFilters(true, true);
 
-			params[self.table.modules.page.paginationDataSentNames.filters] = filters;
+			params[this.table.modules.page.paginationDataSentNames.filters] = filters;
 		}
 
 
-		self.table.modules.ajax.setParams(params, true);
+		this.table.modules.ajax.setParams(params, true);
 	}
 
 	table.modules.ajax.sendRequest()
 	.then((data)=>{
-		self.setData(data);
+		this._setDataActual(data, true);
 	})
 	.catch((e)=>{});
 
@@ -905,15 +916,7 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			}
 
 			//regenerate row numbers for row number formatter if in use
-			if(this.rowNumColumn){
-				this.activeRows.forEach((row) => {
-					var cell = row.getCell(this.rowNumColumn);
-
-					if(cell){
-						cell._generateContents();
-					}
-				});
-			}
+			this.regenerateRowNumbers();
 
 			//generic stage to allow for pipeline trigger after the data manipulation stage
 			case "display":
@@ -1029,6 +1032,19 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 		if(table.modExists("columnCalcs")){
 			table.modules.columnCalcs.recalc(this.activeRows);
 		}
+	}
+};
+
+//regenerate row numbers for row number formatter if in use
+RowManager.prototype.regenerateRowNumbers = function(){
+	if(this.rowNumColumn){
+		this.activeRows.forEach((row) => {
+			var cell = row.getCell(this.rowNumColumn);
+
+			if(cell){
+				cell._generateContents();
+			}
+		});
 	}
 };
 
@@ -1152,6 +1168,10 @@ RowManager.prototype.getRows = function(active){
 		rows = this.activeRows;
 		break;
 
+		case "display":
+		rows = this.table.rowManager.getDisplayRows();
+		break;
+
 		case "visible":
 		rows = this.getVisibleRows(true);
 		break;
@@ -1216,8 +1236,16 @@ RowManager.prototype.reRenderInPosition = function(callback){
 };
 
 RowManager.prototype.setRenderMode = function(){
-	if((this.table.element.clientHeight || this.table.options.height) && this.table.options.virtualDom){
+
+	if(this.table.options.virtualDom){
+
 		this.renderMode = "virtual";
+
+		if((this.table.element.clientHeight || this.table.options.height)){
+			this.fixedHeight = true;
+		}else{
+			this.fixedHeight = false;
+		}
 	}else{
 		this.renderMode = "classic";
 	}
@@ -1229,48 +1257,46 @@ RowManager.prototype.getRenderMode = function(){
 };
 
 RowManager.prototype.renderTable = function(){
-	var self = this;
 
-	self.table.options.renderStarted.call(this.table);
+	this.table.options.renderStarted.call(this.table);
 
-	self.element.scrollTop = 0;
+	this.element.scrollTop = 0;
 
-	switch(self.renderMode){
+	switch(this.renderMode){
 		case "classic":
-		self._simpleRender();
+		this._simpleRender();
 		break;
 
 		case "virtual":
-		self._virtualRenderFill();
+		this._virtualRenderFill();
 		break;
 	}
 
-	if(self.firstRender){
-		if(self.displayRowsCount){
-			self.firstRender = false;
-			self.table.modules.layout.layout();
+	if(this.firstRender){
+		if(this.displayRowsCount){
+			this.firstRender = false;
+			this.table.modules.layout.layout();
 		}else{
-			self.renderEmptyScroll();
+			this.renderEmptyScroll();
 		}
 	}
 
-	if(self.table.modExists("frozenColumns")){
-		self.table.modules.frozenColumns.layout();
+	if(this.table.modExists("frozenColumns")){
+		this.table.modules.frozenColumns.layout();
 	}
 
 
-	if(!self.displayRowsCount){
-		if(self.table.options.placeholder){
+	if(!this.displayRowsCount){
+		if(this.table.options.placeholder){
 
-			if(this.renderMode){
-				self.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
-			}
+			this.table.options.placeholder.setAttribute("tabulator-render-mode", this.renderMode);
 
-			self.getElement().appendChild(self.table.options.placeholder);
+			this.getElement().appendChild(this.table.options.placeholder);
+			this.table.options.placeholder.style.width = this.table.columnManager.getWidth() + "px";
 		}
 	}
 
-	self.table.options.renderComplete.call(this.table);
+	this.table.options.renderComplete.call(this.table);
 };
 
 //simple render on heightless table
@@ -1308,9 +1334,13 @@ RowManager.prototype.checkClassicModeGroupHeaderWidth = function(){
 
 //show scrollbars on empty table div
 RowManager.prototype.renderEmptyScroll = function(){
-	this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px";
-	this.tableElement.style.minHeight = "1px";
-	this.tableElement.style.visibility = "hidden";
+	if(this.table.options.placeholder){
+		this.tableElement.style.display = "none";
+	}else{
+		this.tableElement.style.minWidth = this.table.columnManager.getWidth() + "px";
+		this.tableElement.style.minHeight = "1px";
+		this.tableElement.style.visibility = "hidden";
+	}
 };
 
 RowManager.prototype._clearVirtualDom = function(){
@@ -1327,6 +1357,7 @@ RowManager.prototype._clearVirtualDom = function(){
 	element.style.paddingBottom = "";
 	element.style.minWidth = "";
 	element.style.minHeight = "";
+	element.style.display = "";
 	element.style.visibility = "";
 
 	this.scrollTop = 0;
@@ -1470,6 +1501,10 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 
 	}else{
 		this.renderEmptyScroll();
+	}
+
+	if(!this.fixedHeight){
+		this.adjustTableSize();
 	}
 };
 
@@ -1690,16 +1725,34 @@ RowManager.prototype.normalizeHeight = function(){
 
 //adjust the height of the table holder to fit in the Tabulator element
 RowManager.prototype.adjustTableSize = function(){
+	var initialHeight = this.element.clientHeight,
+	modExists;
 
 	if(this.renderMode === "virtual"){
+		let otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
+
+		if(this.fixedHeight){
+			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
+			this.element.style.height = "calc(100% - " + otherHeight + "px)";
+			this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
+		}else{
+			this.element.style.height = "";
+			this.element.style.height = (this.table.element.clientHeight - otherHeight) + "px";
+			this.element.scrollTop = this.scrollTop;
+		}
+
 		this.height = this.element.clientHeight;
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
-		let otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
+		//check if the table has changed size when dealing with variable height tables
+		if(!this.fixedHeight && initialHeight != this.element.clientHeight){
+			modExists = this.table.modExists("resizeTable");
 
-		this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
-		this.element.style.height = "calc(100% - " + otherHeight + "px)";
-		this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
+			if((modExists && !this.table.modules.resizeTable.autoResize) || !modExists){
+				this.redraw();
+			}
+		}
+
 	}
 };
 

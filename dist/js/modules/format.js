@@ -8,15 +8,31 @@ var Format = function Format(table) {
 
 //initialize column formatter
 Format.prototype.initializeColumn = function (column) {
-	var self = this,
-	    config = { params: column.definition.formatterParams || {} };
+	column.modules.format = this.lookupFormatter(column, "");
+
+	if (typeof column.definition.formatterPrint !== "undefined") {
+		column.modules.format.print = this.lookupFormatter(column, "Print");
+	}
+
+	if (typeof column.definition.formatterClipboard !== "undefined") {
+		column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
+	}
+
+	if (typeof column.definition.formatterHtmlOutput !== "undefined") {
+		column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
+	}
+};
+
+Format.prototype.lookupFormatter = function (column, type) {
+	var config = { params: column.definition["formatter" + type + "Params"] || {} },
+	    formatter = column.definition["formatter" + type];
 
 	//set column formatter
-	switch (_typeof(column.definition.formatter)) {
+	switch (typeof formatter === "undefined" ? "undefined" : _typeof(formatter)) {
 		case "string":
 
-			if (column.definition.formatter === "tick") {
-				column.definition.formatter = "tickCross";
+			if (formatter === "tick") {
+				formatter = "tickCross";
 
 				if (typeof config.params.crossElement == "undefined") {
 					config.params.crossElement = false;
@@ -25,24 +41,24 @@ Format.prototype.initializeColumn = function (column) {
 				console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
 			}
 
-			if (self.formatters[column.definition.formatter]) {
-				config.formatter = self.formatters[column.definition.formatter];
+			if (this.formatters[formatter]) {
+				config.formatter = this.formatters[formatter];
 			} else {
-				console.warn("Formatter Error - No such formatter found: ", column.definition.formatter);
-				config.formatter = self.formatters.plaintext;
+				console.warn("Formatter Error - No such formatter found: ", formatter);
+				config.formatter = this.formatters.plaintext;
 			}
 			break;
 
 		case "function":
-			config.formatter = column.definition.formatter;
+			config.formatter = formatter;
 			break;
 
 		default:
-			config.formatter = self.formatters.plaintext;
+			config.formatter = this.formatters.plaintext;
 			break;
 	}
 
-	column.modules.format = config;
+	return config;
 };
 
 Format.prototype.cellRendered = function (cell) {
@@ -65,6 +81,27 @@ Format.prototype.formatValue = function (cell) {
 	}
 
 	return cell.column.modules.format.formatter.call(this, component, params, onRendered);
+};
+
+Format.prototype.formatExportValue = function (cell, type) {
+	var formatter = cell.column.modules.format[type],
+	    params;
+
+	if (formatter) {
+		var onRendered = function onRendered(callback) {
+			if (!cell.modules.format) {
+				cell.modules.format = {};
+			}
+
+			cell.modules.format.renderedCallback = callback;
+		};
+
+		params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
+
+		return formatter.formatter.call(this, cell.getComponent(), params, onRendered);
+	} else {
+		return this.formatValue(cell);
+	}
 };
 
 Format.prototype.sanitizeHTML = function (value) {
@@ -557,6 +594,21 @@ Format.prototype.formatters = {
 		}
 
 		onRendered(function () {
+
+			//handle custom element needed if formatter is to be included in printed/downloaded output
+			if (!(cell instanceof CellComponent)) {
+				var holderEl = document.createElement("div");
+				holderEl.style.position = "absolute";
+				holderEl.style.top = "4px";
+				holderEl.style.bottom = "4px";
+				holderEl.style.left = "4px";
+				holderEl.style.right = "4px";
+
+				element.appendChild(holderEl);
+
+				element = holderEl;
+			}
+
 			element.appendChild(barEl);
 
 			if (legend) {

@@ -149,13 +149,13 @@ Ajax.prototype.getUrl = function () {
 };
 
 //lstandard loading function
-Ajax.prototype.loadData = function (inPosition) {
+Ajax.prototype.loadData = function (inPosition, columnsChanged) {
 	var self = this;
 
 	if (this.progressiveLoad) {
 		return this._loadDataProgressive();
 	} else {
-		return this._loadDataStandard(inPosition);
+		return this._loadDataStandard(inPosition, columnsChanged);
 	}
 };
 
@@ -181,12 +181,12 @@ Ajax.prototype._loadDataProgressive = function () {
 	return this.table.modules.page.setPage(1);
 };
 
-Ajax.prototype._loadDataStandard = function (inPosition) {
+Ajax.prototype._loadDataStandard = function (inPosition, columnsChanged) {
 	var _this = this;
 
 	return new Promise(function (resolve, reject) {
 		_this.sendRequest(inPosition).then(function (data) {
-			_this.table.rowManager.setData(data, inPosition).then(function () {
+			_this.table.rowManager.setData(data, inPosition, columnsChanged).then(function () {
 				resolve();
 			}).catch(function (e) {
 				reject(e);
@@ -259,13 +259,12 @@ Ajax.prototype.sendRequest = function (silent) {
 						data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
 					}
 					resolve(data);
+
+					self.hideLoader();
+					self.loading = false;
 				} else {
 					console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
 				}
-
-				self.hideLoader();
-
-				self.loading = false;
 			}).catch(function (error) {
 				console.error("Ajax Load Error: ", error);
 				self.table.options.ajaxError.call(self.table, error);

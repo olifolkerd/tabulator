@@ -870,6 +870,26 @@ GroupRows.prototype.getGroups = function (compoment) {
 	return groupComponents;
 };
 
+GroupRows.prototype.getChildGroups = function (group) {
+	var _this2 = this;
+
+	var groupComponents = [];
+
+	if (!group) {
+		group = this;
+	}
+
+	group.groupList.forEach(function (child) {
+		if (child.groupList.length) {
+			groupComponents = groupComponents.concat(_this2.getChildGroups(child));
+		} else {
+			groupComponents.push(child);
+		}
+	});
+
+	return groupComponents;
+};
+
 GroupRows.prototype.wipe = function () {
 	this.groupList.forEach(function (group) {
 		group.wipe();

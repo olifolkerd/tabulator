@@ -271,6 +271,9 @@ Keybindings.prototype.actions = {
 
 				if(!nav.next()){
 					if(newRow){
+
+						cell.getElement().firstChild.blur();
+
 						if(newRow === true){
 							newRow = this.table.addRow({})
 						}else{
@@ -282,7 +285,9 @@ Keybindings.prototype.actions = {
 						}
 
 						newRow.then(() => {
-							nav.next();
+							setTimeout(() => {
+								nav.next();
+							})
 						});
 					}
 				}
@@ -371,7 +376,7 @@ Keybindings.prototype.actions = {
 	copyToClipboard:function(e){
 		if(!this.table.modules.edit.currentCell){
 			if(this.table.modExists("clipboard", true)){
-				this.table.modules.clipboard.copy(!this.table.options.selectable || this.table.options.selectable == "highlight" ? "active" : "selected", null, null, null, true);
+				this.table.modules.clipboard.copy(false, true);
 			}
 		}
 	},

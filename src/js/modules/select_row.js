@@ -71,7 +71,7 @@ SelectRow.prototype.initializeRow = function(row){
 							});
 							self.lastClickedRow = row;
 						}else{
-							self.deselectRows();
+							self.deselectRows(undefined, true);
 
 							if(self.table.options.selectable !== true){
 								if(toggledRows.length > self.table.options.selectable){
@@ -87,7 +87,7 @@ SelectRow.prototype.initializeRow = function(row){
 						self.toggleRow(row);
 						self.lastClickedRow = row;
 					}else{
-						self.deselectRows();
+						self.deselectRows(undefined, true);
 						self.selectRows(row);
 						self.lastClickedRow = row;
 					}
@@ -230,11 +230,15 @@ SelectRow.prototype._selectRow = function(rowInfo, silent, force){
 
 			this.selectedRows.push(row);
 
+			if(this.table.options.dataTreeSelectPropagate){
+				this.childRowSelection(row, true);
+			}
 
 			if(!silent){
 				this.table.options.rowSelected.call(this.table, row.getComponent());
-				this._rowSelectionChanged();
 			}
+
+			this._rowSelectionChanged(silent);
 		}
 	}else{
 		if(!silent){
@@ -248,7 +252,7 @@ SelectRow.prototype.isRowSelected = function(row){
 };
 
 //deselect a number of rows
-SelectRow.prototype.deselectRows = function(rows){
+SelectRow.prototype.deselectRows = function(rows, silent){
 	var self = this,
 	rowCount;
 
@@ -260,16 +264,17 @@ SelectRow.prototype.deselectRows = function(rows){
 			self._deselectRow(self.selectedRows[0], true);
 		}
 
-		self._rowSelectionChanged();
+		self._rowSelectionChanged(silent);
+
 	}else{
 		if(Array.isArray(rows)){
 			rows.forEach(function(row){
 				self._deselectRow(row, true);
 			});
 
-			self._rowSelectionChanged();
+			self._rowSelectionChanged(silent);
 		}else{
-			self._deselectRow(rows);
+			self._deselectRow(rows, silent);
 		}
 	}
 };
@@ -298,10 +303,15 @@ SelectRow.prototype._deselectRow = function(rowInfo, silent){
 			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
+			if(this.table.options.dataTreeSelectPropagate){
+				this.childRowSelection(row, false);
+			}
+
 			if(!silent){
 				self.table.options.rowDeselected.call(this.table, row.getComponent());
-				self._rowSelectionChanged();
 			}
+
+			self._rowSelectionChanged(silent);
 		}
 	}else{
 		if(!silent){
@@ -331,7 +341,7 @@ SelectRow.prototype.getSelectedRows = function(){
 	return rows;
 };
 
-SelectRow.prototype._rowSelectionChanged = function(){
+SelectRow.prototype._rowSelectionChanged = function(silent){
 	if(this.headerCheckboxElement){
 		if(this.selectedRows.length === 0){
 			this.headerCheckboxElement.checked = false;
@@ -345,7 +355,9 @@ SelectRow.prototype._rowSelectionChanged = function(){
 		}
 	}
 
-	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+	if(!silent){
+		this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+	}
 };
 
 SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
@@ -354,10 +366,24 @@ SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
 	}
 
 	row._row.modules.select.checkboxEl = element;
-}
+};
 
 SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 	this.headerCheckboxElement = element;
-}
+};
+
+SelectRow.prototype.childRowSelection = function(row, select){
+	var children = this.table.modules.dataTree.getChildren(row);
+
+	if(select){
+		for(let child of children){
+			this._selectRow(child, true);
+		}
+	}else{
+		for(let child of children){
+			this._deselectRow(child, true);
+		}
+	}
+};
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);

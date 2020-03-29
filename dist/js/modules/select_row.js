@@ -74,7 +74,7 @@ SelectRow.prototype.initializeRow = function (row) {
 							});
 							self.lastClickedRow = row;
 						} else {
-							self.deselectRows();
+							self.deselectRows(undefined, true);
 
 							if (self.table.options.selectable !== true) {
 								if (toggledRows.length > self.table.options.selectable) {
@@ -89,7 +89,7 @@ SelectRow.prototype.initializeRow = function (row) {
 						self.toggleRow(row);
 						self.lastClickedRow = row;
 					} else {
-						self.deselectRows();
+						self.deselectRows(undefined, true);
 						self.selectRows(row);
 						self.lastClickedRow = row;
 					}
@@ -233,10 +233,15 @@ SelectRow.prototype._selectRow = function (rowInfo, silent, force) {
 
 			this.selectedRows.push(row);
 
+			if (this.table.options.dataTreeSelectPropagate) {
+				this.childRowSelection(row, true);
+			}
+
 			if (!silent) {
 				this.table.options.rowSelected.call(this.table, row.getComponent());
-				this._rowSelectionChanged();
 			}
+
+			this._rowSelectionChanged(silent);
 		}
 	} else {
 		if (!silent) {
@@ -250,7 +255,7 @@ SelectRow.prototype.isRowSelected = function (row) {
 };
 
 //deselect a number of rows
-SelectRow.prototype.deselectRows = function (rows) {
+SelectRow.prototype.deselectRows = function (rows, silent) {
 	var self = this,
 	    rowCount;
 
@@ -262,16 +267,16 @@ SelectRow.prototype.deselectRows = function (rows) {
 			self._deselectRow(self.selectedRows[0], true);
 		}
 
-		self._rowSelectionChanged();
+		self._rowSelectionChanged(silent);
 	} else {
 		if (Array.isArray(rows)) {
 			rows.forEach(function (row) {
 				self._deselectRow(row, true);
 			});
 
-			self._rowSelectionChanged();
+			self._rowSelectionChanged(silent);
 		} else {
-			self._deselectRow(rows);
+			self._deselectRow(rows, silent);
 		}
 	}
 };
@@ -300,10 +305,15 @@ SelectRow.prototype._deselectRow = function (rowInfo, silent) {
 			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
+			if (this.table.options.dataTreeSelectPropagate) {
+				this.childRowSelection(row, false);
+			}
+
 			if (!silent) {
 				self.table.options.rowDeselected.call(this.table, row.getComponent());
-				self._rowSelectionChanged();
 			}
+
+			self._rowSelectionChanged(silent);
 		}
 	} else {
 		if (!silent) {
@@ -333,7 +343,7 @@ SelectRow.prototype.getSelectedRows = function () {
 	return rows;
 };
 
-SelectRow.prototype._rowSelectionChanged = function () {
+SelectRow.prototype._rowSelectionChanged = function (silent) {
 	if (this.headerCheckboxElement) {
 		if (this.selectedRows.length === 0) {
 			this.headerCheckboxElement.checked = false;
@@ -347,7 +357,9 @@ SelectRow.prototype._rowSelectionChanged = function () {
 		}
 	}
 
-	this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+	if (!silent) {
+		this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+	}
 };
 
 SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
@@ -360,6 +372,46 @@ SelectRow.prototype.registerRowSelectCheckbox = function (row, element) {
 
 SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 	this.headerCheckboxElement = element;
+};
+
+SelectRow.prototype.childRowSelection = function (row, select) {
+	var children = this.table.modules.dataTree.getChildren(row);
+
+	if (select) {
+		for (var _iterator = children, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+			var _ref;
+
+			if (_isArray) {
+				if (_i >= _iterator.length) break;
+				_ref = _iterator[_i++];
+			} else {
+				_i = _iterator.next();
+				if (_i.done) break;
+				_ref = _i.value;
+			}
+
+			var child = _ref;
+
+			this._selectRow(child, true);
+		}
+	} else {
+		for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+			var _ref2;
+
+			if (_isArray2) {
+				if (_i2 >= _iterator2.length) break;
+				_ref2 = _iterator2[_i2++];
+			} else {
+				_i2 = _iterator2.next();
+				if (_i2.done) break;
+				_ref2 = _i2.value;
+			}
+
+			var _child = _ref2;
+
+			this._deselectRow(_child, true);
+		}
+	}
 };
 
 Tabulator.prototype.registerModule("selectRow", SelectRow);

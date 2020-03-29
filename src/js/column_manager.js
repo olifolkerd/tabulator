@@ -415,7 +415,12 @@ ColumnManager.prototype.moveColumn = function(from, to, after){
 
 ColumnManager.prototype.moveColumnActual = function(from, to, after){
 
-	this._moveColumnInArray(this.columns, from, to, after);
+	if(from.parent.isGroup){
+		this._moveColumnInArray(from.parent.columns, from, to, after);
+	}else{
+		this._moveColumnInArray(this.columns, from, to, after);
+	}
+
 	this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
 	if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){

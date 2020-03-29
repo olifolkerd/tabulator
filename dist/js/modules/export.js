@@ -2,40 +2,78 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 /* Tabulator v4.5.3 (c) Oliver Folkerd */
 
-var HtmlTableExport = function HtmlTableExport(table) {
+var Export = function Export(table) {
 	this.table = table; //hold Tabulator object
 	this.config = {};
 	this.cloneTableStyle = true;
 	this.colVisProp = "";
 };
 
-HtmlTableExport.prototype.genereateTable = function (config, style, visible, colVisProp) {
+Export.prototype.genereateTable = function (config, style, range, colVisProp) {
 	this.cloneTableStyle = style;
 	this.config = config || {};
 	this.colVisProp = colVisProp;
 
-	var headers = this.generateHeaderElements();
-	var body = this.generateBodyElements(visible);
-
 	var table = document.createElement("table");
 	table.classList.add("tabulator-print-table");
-	table.appendChild(headers);
-	table.appendChild(body);
+
+	if (this.config.columnHeaders !== false) {
+		table.appendChild(this.generateHeaderElements());
+	}
+
+	table.appendChild(this.generateBodyElements(this.rowLookup(range)));
 
 	this.mapElementStyles(this.table.element, table, ["border-top", "border-left", "border-right", "border-bottom"]);
 
 	return table;
 };
 
-HtmlTableExport.prototype.generateColumnGroupHeaders = function () {
+Export.prototype.rowLookup = function (range) {
 	var _this = this;
+
+	var rows = [];
+
+	if (typeof range == "function") {
+		range.call(this.table).forEach(function (row) {
+			row = _this.table.rowManager.findRow(row);
+
+			if (row) {
+				rows.push(row);
+			}
+		});
+	} else {
+		switch (range) {
+			case true:
+			case "visible":
+				rows = this.table.rowManager.getVisibleRows(true);
+				break;
+
+			case "all":
+				rows = this.table.rowManager.rows;
+				break;
+
+			case "selected":
+				rows = this.modules.selectRow.selectedRows;
+				break;
+
+			case "active":
+			default:
+				rows = this.table.rowManager.getDisplayRows();
+		}
+	}
+
+	return Object.assign([], rows);
+};
+
+Export.prototype.generateColumnGroupHeaders = function () {
+	var _this2 = this;
 
 	var output = [];
 
 	var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
 
 	columns.forEach(function (column) {
-		var colData = _this.processColumnGroup(column);
+		var colData = _this2.processColumnGroup(column);
 
 		if (colData) {
 			output.push(colData);
@@ -45,8 +83,8 @@ HtmlTableExport.prototype.generateColumnGroupHeaders = function () {
 	return output;
 };
 
-HtmlTableExport.prototype.processColumnGroup = function (column) {
-	var _this2 = this;
+Export.prototype.processColumnGroup = function (column) {
+	var _this3 = this;
 
 	var subGroups = column.columns,
 	    maxDepth = 0;
@@ -62,7 +100,7 @@ HtmlTableExport.prototype.processColumnGroup = function (column) {
 		groupData.width = 0;
 
 		subGroups.forEach(function (subGroup) {
-			var subGroupData = _this2.processColumnGroup(subGroup);
+			var subGroupData = _this3.processColumnGroup(subGroup);
 
 			if (subGroupData) {
 				groupData.width += subGroupData.width;
@@ -90,7 +128,7 @@ HtmlTableExport.prototype.processColumnGroup = function (column) {
 	return groupData;
 };
 
-HtmlTableExport.prototype.groupHeadersToRows = function (columns) {
+Export.prototype.groupHeadersToRows = function (columns) {
 
 	var headers = [],
 	    headerDepth = 0;
@@ -128,8 +166,8 @@ HtmlTableExport.prototype.groupHeadersToRows = function (columns) {
 	return headers;
 };
 
-HtmlTableExport.prototype.generateHeaderElements = function () {
-	var _this3 = this;
+Export.prototype.generateHeaderElements = function () {
+	var _this4 = this;
 
 	var headerEl = document.createElement("thead");
 
@@ -138,7 +176,7 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 	rows.forEach(function (row) {
 		var rowEl = document.createElement("tr");
 
-		_this3.mapElementStyles(_this3.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+		_this4.mapElementStyles(_this4.table.columnManager.getHeadersElement(), headerEl, ["border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
 
 		row.forEach(function (column) {
 			var cellEl = document.createElement("th");
@@ -149,7 +187,7 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 
 			cellEl.innerHTML = column.column.definition.title;
 
-			if (_this3.cloneTableStyle) {
+			if (_this4.cloneTableStyle) {
 				cellEl.style.boxSizing = "border-box";
 			}
 
@@ -157,11 +195,11 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 				cellEl.classList.add(className);
 			});
 
-			_this3.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-			_this3.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+			_this4.mapElementStyles(column.column.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			_this4.mapElementStyles(column.column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 
 			if (column.column.visible) {
-				_this3.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
+				_this4.mapElementStyles(column.column.getElement(), cellEl, ["width"]);
 			} else {
 				if (column.column.definition.width) {
 					cellEl.style.width = column.column.definition.width + "px";
@@ -169,7 +207,7 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 			}
 
 			if (column.column.parent) {
-				_this3.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
+				_this4.mapElementStyles(column.column.parent.groupElement, cellEl, ["border-top"]);
 			}
 
 			rowEl.appendChild(cellEl);
@@ -181,10 +219,16 @@ HtmlTableExport.prototype.generateHeaderElements = function () {
 	return headerEl;
 };
 
-HtmlTableExport.prototype.generateBodyElements = function (visible) {
-	var _this4 = this;
+Export.prototype.generateBodyElements = function (rows) {};
 
-	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow;
+Export.prototype.generateBodyElements = function (rows) {
+	var _this5 = this;
+
+	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField, rowFormatter;
+
+	//assign row formatter
+	rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+	rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
 	//lookup row styles
 	if (this.cloneTableStyle && window.getComputedStyle) {
@@ -203,7 +247,6 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 
 	var bodyEl = document.createElement("tbody");
 
-	var rows = visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows();
 	var columns = [];
 
 	if (this.config.columnCalcs !== false && this.table.modExists("columnCalcs")) {
@@ -217,19 +260,23 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 	}
 
 	this.table.columnManager.columnsByIndex.forEach(function (column) {
-		if (_this4.columnVisCheck(column)) {
+		if (_this5.columnVisCheck(column)) {
 			columns.push(column);
 		}
 	});
 
+	if (this.table.options.dataTree && this.config.dataTree !== false && this.table.modExists("columnCalcs")) {
+		treeElementField = this.table.modules.dataTree.elementField;
+	}
+
 	rows = rows.filter(function (row) {
 		switch (row.type) {
 			case "group":
-				return _this4.config.rowGroups !== false;
+				return _this5.config.rowGroups !== false;
 				break;
 
 			case "calc":
-				return _this4.config.columnCalcs !== false;
+				return _this5.config.columnCalcs !== false;
 				break;
 		}
 
@@ -241,7 +288,7 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 	}
 
 	rows.forEach(function (row, i) {
-		var rowData = row.getData();
+		var rowData = row.getData(_this5.colVisProp);
 
 		var rowEl = document.createElement("tr");
 		rowEl.classList.add("tabulator-print-table-row");
@@ -254,8 +301,8 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 
 				rowEl.classList.add("tabulator-print-table-group");
 
-				_this4.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
-				_this4.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+				_this5.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+				_this5.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 				rowEl.appendChild(cellEl);
 				break;
 
@@ -263,7 +310,12 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 				rowEl.classList.add("tabulator-print-table-calcs");
 
 			case "row":
-				columns.forEach(function (column) {
+
+				if (_this5.table.options.dataTree && _this5.config.dataTree === false && row.modules.dataTree.parent) {
+					return;
+				}
+
+				columns.forEach(function (column, i) {
 					var cellEl = document.createElement("td");
 
 					var value = column.getFieldValue(rowData);
@@ -300,8 +352,8 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 						cellEl.classList.add(className);
 					});
 
-					if (_this4.table.modExists("format")) {
-						value = _this4.table.modules.format.formatValue(cellWrapper);
+					if (_this5.table.modExists("format") && _this5.config.formatCells !== false) {
+						value = _this5.table.modules.format.formatExportValue(cellWrapper, _this5.colVisProp);
 					} else {
 						switch (typeof value === "undefined" ? "undefined" : _typeof(value)) {
 							case "object":
@@ -325,15 +377,45 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 					}
 
 					if (firstCell) {
-						_this4.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+						_this5.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+
+						if (column.definition.align) {
+							cellEl.style.textAlign = column.definition.align;
+						}
+					}
+
+					if (_this5.table.options.dataTree && _this5.config.dataTree !== false) {
+						if (treeElementField && treeElementField == column.field || !treeElementField && i == 0) {
+							if (row.modules.dataTree.controlEl) {
+								cellEl.insertBefore(row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
+							}
+							if (row.modules.dataTree.branchEl) {
+								cellEl.insertBefore(row.modules.dataTree.branchEl.cloneNode(true), cellEl.firstChild);
+							}
+						}
 					}
 
 					rowEl.appendChild(cellEl);
+
+					if (cellWrapper.modules.format && cellWrapper.modules.format.renderedCallback) {
+						cellWrapper.modules.format.renderedCallback();
+					}
 				});
 
 				styleRow = row.type == "calc" ? calcRow : i % 2 && evenRow ? evenRow : oddRow;
 
-				_this4.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+				_this5.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+
+				if (rowFormatter && _this5.config.formatCells !== false) {
+					var rowComponent = row.getComponent();
+
+					rowComponent.getElement = function () {
+						return rowEl;
+					};
+
+					rowFormatter(rowComponent);
+				}
+
 				break;
 		}
 
@@ -343,19 +425,19 @@ HtmlTableExport.prototype.generateBodyElements = function (visible) {
 	return bodyEl;
 };
 
-HtmlTableExport.prototype.columnVisCheck = function (column) {
+Export.prototype.columnVisCheck = function (column) {
 	return column.definition[this.colVisProp] !== false && (column.visible || !column.visible && column.definition[this.colVisProp]);
 };
 
-HtmlTableExport.prototype.getHtml = function (visible, style, config) {
+Export.prototype.getHtml = function (visible, style, config, colVisProp) {
 	var holder = document.createElement("div");
 
-	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
+	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput"));
 
 	return holder.innerHTML;
 };
 
-HtmlTableExport.prototype.mapElementStyles = function (from, to, props) {
+Export.prototype.mapElementStyles = function (from, to, props) {
 	if (this.cloneTableStyle && from && to) {
 
 		var lookup = {
@@ -386,4 +468,4 @@ HtmlTableExport.prototype.mapElementStyles = function (from, to, props) {
 	}
 };
 
-Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
+Tabulator.prototype.registerModule("export", Export);

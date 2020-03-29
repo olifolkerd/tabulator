@@ -51,7 +51,8 @@ Download.prototype.processConfig = function () {
 	var config = { //download config
 		columnGroups: true,
 		rowGroups: true,
-		columnCalcs: true
+		columnCalcs: true,
+		dataTree: true
 	};
 
 	if (this.table.options.downloadConfig) {
@@ -70,6 +71,10 @@ Download.prototype.processConfig = function () {
 
 	if (config.columnCalcs && this.table.modExists("columnCalcs")) {
 		this.config.columnCalcs = true;
+	}
+
+	if (config.dataTree && this.table.options.dataTree && this.table.modExists("dataTree")) {
+		this.config.dataTree = true;
 	}
 };
 
@@ -204,6 +209,9 @@ Download.prototype.processData = function (active) {
 			data.push(_this2.processGroupData(group, rows));
 		});
 	} else {
+		if (this.config.dataTree) {
+			active = active = "active" ? "display" : active;
+		}
 		data = self.table.rowManager.getData(active, "download");
 	}
 
@@ -933,8 +941,8 @@ Download.prototype.downloaders = {
 	},
 
 	html: function html(columns, data, options, setFileContents, config) {
-		if (this.table.modExists("htmlTableExport", true)) {
-			setFileContents(this.table.modules.htmlTableExport.getHtml(true, options.style, config), "text/html");
+		if (this.table.modExists("export", true)) {
+			setFileContents(this.table.modules.export.getHtml(true, options.style, config), "text/html");
 		}
 	}
 

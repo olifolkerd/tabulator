@@ -1,6 +1,6 @@
 var Accessor = function(table){
 	this.table = table; //hold Tabulator object
-	this.allowedTypes = ["", "data", "download", "clipboard"] //list of accessor types
+	this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
 };
 
 
@@ -31,7 +31,7 @@ Accessor.prototype.initializeColumn = function(column){
 	if(match){
 		column.modules.accessor = config;
 	}
-},
+};
 
 Accessor.prototype.lookupAccessor = function(value){
 	var accessor = false;
@@ -52,7 +52,7 @@ Accessor.prototype.lookupAccessor = function(value){
 	}
 
 	return accessor;
-}
+};
 
 
 //apply accessor to row

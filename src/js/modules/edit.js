@@ -158,7 +158,6 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 
 	//handle successfull value change
 	function success(value){
-
 		if(self.currentCell === cell){
 			var valid = true;
 
@@ -291,6 +290,88 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 	}
 };
 
+Edit.prototype.maskInput = function(el, options){
+	var mask = options.mask,
+	maskLetter = typeof options.maskLetterChar !== "undefined" ? options.maskLetterChar : "A",
+	maskNumber = typeof options.maskNumberChar !== "undefined" ? options.maskNumberChar : "9",
+	maskWildcard = typeof options.maskWildcardChar !== "undefined" ? options.maskWildcardChar : "*",
+	success = false;
+
+	function fillSymbols(index){
+		var symbol = mask[index];
+		if(typeof symbol !== "undefined" && symbol !== maskWildcard && symbol !== maskLetter && symbol !== maskNumber){
+			el.value = el.value + "" + symbol;
+			fillSymbols(index+1);
+		}
+	}
+
+	el.addEventListener("keydown", (e) => {
+		var index = el.value.length,
+		char = e.key;
+
+		if(e.keyCode > 46){
+			if(index >= mask.length){
+				e.preventDefault();
+				e.stopPropagation();
+				success = false;
+				return false;
+			}else{
+				switch(mask[index]){
+					case maskLetter:
+					if(char.toUpperCase() == char.toLowerCase()){
+						e.preventDefault();
+						e.stopPropagation();
+						success = false;
+						return false;
+					}
+					break;
+
+					case maskNumber:
+					if(isNaN(char)){
+						e.preventDefault();
+						e.stopPropagation();
+						success = false;
+						return false;
+					}
+					break;
+
+					case maskWildcard:
+					break;
+
+					default:
+					if(char !== mask[index]){
+						e.preventDefault();
+						e.stopPropagation();
+						success = false;
+						return false;
+					}
+				}
+			}
+
+			success = true;
+		}
+
+		return;
+	});
+
+	el.addEventListener("keyup", (e) => {
+		if(e.keyCode > 46){
+			if(options.maskAutoFill){
+				fillSymbols(el.value.length);
+			}
+		}
+	});
+
+
+	if(!el.placeholder){
+		el.placeholder = mask;
+	}
+
+	if(options.maskAutoFill){
+		fillSymbols(el.value.length);
+	}
+};
+
 //default data editors
 Edit.prototype.editors = {
 
@@ -326,7 +407,7 @@ Edit.prototype.editors = {
 		});
 
 		function onChange(e){
-			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
+			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
 
 				if(success(input.value)){
 					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
@@ -343,6 +424,7 @@ Edit.prototype.editors = {
 		//submit new value on enter
 		input.addEventListener("keydown", function(e){
 			switch(e.keyCode){
+				// case 9:
 				case 13:
 				onChange(e);
 				break;
@@ -352,6 +434,10 @@ Edit.prototype.editors = {
 				break;
 			}
 		});
+
+		if(editorParams.mask){
+			this.table.modules.edit.maskInput(input, editorParams);
+		}
 
 		return input;
 	},
@@ -395,7 +481,7 @@ Edit.prototype.editors = {
 
         function onChange(e){
 
-        	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value != cellValue){
+        	if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
 
         		if(success(input.value)){
         			cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
@@ -450,6 +536,10 @@ Edit.prototype.editors = {
         		break;
         	}
         });
+
+        if(editorParams.mask){
+        	this.table.modules.edit.maskInput(input, editorParams);
+        }
 
         return input;
     },
@@ -515,7 +605,7 @@ Edit.prototype.editors = {
 				value = Number(value);
 			}
 
-			if(value != cellValue){
+			if(value !== cellValue){
 				if(success(value)){
 					cellValue = value; //persist value if successfully validated incase editor is used as header filter
 				}
@@ -545,6 +635,10 @@ Edit.prototype.editors = {
 				break;
 			}
 		});
+
+		if(editorParams.mask){
+			this.table.modules.edit.maskInput(input, editorParams);
+		}
 
 		return input;
 	},
@@ -1010,6 +1104,27 @@ Edit.prototype.editors = {
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
+		//style input
+		input.setAttribute("type", "search");
+
+		input.style.padding = "4px";
+		input.style.width = "100%";
+		input.style.boxSizing = "border-box";
+
+		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
+			for (let key in editorParams.elementAttributes){
+				if(key.charAt(0) == "+"){
+					key = key.slice(1);
+					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
+				}else{
+					input.setAttribute(key, editorParams.elementAttributes[key]);
+				}
+			}
+		}
+
+		//style list element
+		listEl.classList.add("tabulator-edit-select-list");
+
 		function getUniqueColumnValues(field){
 			var output = {},
 			data = self.table.getData(),
@@ -1047,6 +1162,75 @@ Edit.prototype.editors = {
 			return output;
 		}
 
+		function filterList(term, intialLoad){
+			var matches = [],
+			values, items, searchEl;
+
+			//lookup base values list
+			if(editorParams.values === true){
+				values = getUniqueColumnValues();
+			}else if(typeof editorParams.values === "string"){
+				values = getUniqueColumnValues(editorParams.values);
+			}else{
+				values = editorParams.values || [];
+			}
+
+			if(editorParams.searchFunc){
+				matches = editorParams.searchFunc(term, values);
+
+				if(matches instanceof Promise){
+
+					addNotice(typeof editorParams.searchingPlaceholder !== "undefined" ? editorParams.searchingPlaceholder : "Searching...");
+
+					matches.then((result) => {
+						fillListIfNotEmpty(parseItems(result), intialLoad);
+					}).catch((err) => {
+						console.err("error in autocomplete search promise:", err);
+					});
+
+				}else{
+					fillListIfNotEmpty(parseItems(matches), intialLoad);
+				}
+			}else{
+				items = parseItems(values);
+
+				if(term === ""){
+					if(editorParams.showListOnEmpty){
+						matches = items;
+					}
+				}else{
+					items.forEach(function(item){
+						if(item.value !== null || typeof item.value !== "undefined"){
+							if(String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1 || String(item.title).toLowerCase().indexOf(String(term).toLowerCase()) > -1){
+								matches.push(item);
+							}
+						}
+					});
+				}
+
+				fillListIfNotEmpty(matches, intialLoad);
+			}
+		}
+
+		function addNotice(notice){
+			var searchEl = document.createElement("div");
+
+			clearList();
+
+			if(notice !== false){
+				searchEl.classList.add("tabulator-edit-select-list-notice");
+				searchEl.tabIndex = 0;
+
+				if(notice instanceof Node){
+					searchEl.appendChild(notice);
+				}else{
+					searchEl.innerHTML = notice;
+				}
+
+				listEl.appendChild(searchEl);
+			}
+		}
+
 		function parseItems(inputValues, curentValue){
 			var itemList = [];
 
@@ -1055,12 +1239,7 @@ Edit.prototype.editors = {
 					var item = {
 						title:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
 						value:value,
-						element:false,
 					};
-
-					if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-						setCurrentItem(item);
-					}
 
 					itemList.push(item);
 				});
@@ -1069,80 +1248,35 @@ Edit.prototype.editors = {
 					var item = {
 						title:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
 						value:key,
-						element:false,
 					};
-
-					if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-						setCurrentItem(item);
-					}
 
 					itemList.push(item);
 				}
 			}
 
-			if(editorParams.searchFunc){
-				itemList.forEach(function(item){
-					item.search = {
-						title:item.title,
-						value:item.value,
-					};
-				});
-			}
-
-			allItems = itemList;
+			return itemList;
 		}
 
-		function filterList(term, intialLoad){
-			var matches = [],
-			searchObjs = [],
-			searchResults = [];
+		function clearList(){
+			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+		}
 
-			if(editorParams.searchFunc){
-
-				allItems.forEach(function(item){
-					searchObjs.push(item.search);
-				});
-
-				searchResults = editorParams.searchFunc(term, searchObjs);
-
-				searchResults.forEach(function(result){
-					var match = allItems.find(function(item){
-						return item.search === result;
-					});
-
-					if(match){
-						matches.push(match);
-					}
-				});
+		function fillListIfNotEmpty(items, intialLoad){
+			if(items.length){
+				fillList(items, intialLoad);
 			}else{
-				if(term === ""){
-
-					if(editorParams.showListOnEmpty){
-						allItems.forEach(function(item){
-							matches.push(item);
-						});
-					}
-				}else{
-					allItems.forEach(function(item){
-
-						if(item.value !== null || typeof item.value !== "undefined"){
-							if(String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1 || String(item.title).toLowerCase().indexOf(String(term).toLowerCase()) > -1){
-								matches.push(item);
-							}
-						}
-					});
+				if(editorParams.emptyPlaceholder){
+					addNotice(editorParams.emptyPlaceholder);
 				}
 			}
-
-			displayItems = matches;
-
-			fillList(intialLoad);
 		}
 
-		function fillList(intialLoad){
+		function fillList(items, intialLoad){
 			var current = false;
 
-			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
+			clearList();
+
+			displayItems = items;
 
 			displayItems.forEach(function(item){
 				var el = item.element;
@@ -1188,20 +1322,6 @@ Edit.prototype.editors = {
 			}
 		}
 
-
-		function setCurrentItem(item, showInputValue){
-			if(currentItem && currentItem.element){
-				currentItem.element.classList.remove("active");
-			}
-
-			currentItem = item;
-
-			if(item && item.element){
-				item.element.classList.add("active");
-			}
-		}
-
-
 		function chooseItem(){
 			hideList();
 
@@ -1228,24 +1348,9 @@ Edit.prototype.editors = {
 			}
 		}
 
-		function cancelItem(){
-			hideList();
-			cancel();
-		}
-
 		function showList(){
 			if(!listEl.parentNode){
 				while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
-
-				if(editorParams.values === true){
-					values = getUniqueColumnValues();
-				}else if(typeof editorParams.values === "string"){
-					values = getUniqueColumnValues(editorParams.values);
-				}else{
-					values = editorParams.values || [];
-				}
-
-				parseItems(values, initialValue);
 
 				var offset = Tabulator.prototype.helpers.elOffset(cellEl);
 
@@ -1257,6 +1362,18 @@ Edit.prototype.editors = {
 			}
 		}
 
+		function setCurrentItem(item, showInputValue){
+			if(currentItem && currentItem.element){
+				currentItem.element.classList.remove("active");
+			}
+
+			currentItem = item;
+
+			if(item && item.element){
+				item.element.classList.add("active");
+			}
+		}
+
 		function hideList(){
 			if(listEl.parentNode){
 				listEl.parentNode.removeChild(listEl);
@@ -1265,26 +1382,14 @@ Edit.prototype.editors = {
 			removeScrollListener();
 		}
 
-		function removeScrollListener() {
-			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
+
+		function cancelItem(){
+			hideList();
+			cancel();
 		}
 
-		//style input
-		input.setAttribute("type", "search");
-
-		input.style.padding = "4px";
-		input.style.width = "100%";
-		input.style.boxSizing = "border-box";
-
-		if(editorParams.elementAttributes && typeof editorParams.elementAttributes == "object"){
-			for (let key in editorParams.elementAttributes){
-				if(key.charAt(0) == "+"){
-					key = key.slice(1);
-					input.setAttribute(key, input.getAttribute(key) + editorParams.elementAttributes["+" + key]);
-				}else{
-					input.setAttribute(key, editorParams.elementAttributes[key]);
-				}
-			}
+		function removeScrollListener() {
+			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 		}
 
 		//allow key based navigation
@@ -1299,7 +1404,6 @@ Edit.prototype.editors = {
 					e.stopImmediatePropagation();
 					e.stopPropagation();
 					e.preventDefault();
-
 
 					if(index > 0){
 						setCurrentItem(displayItems[index - 1]);
@@ -1387,14 +1491,15 @@ Edit.prototype.editors = {
 			filterList(value, true);
 		});
 
-		//style list element
-		listEl = document.createElement("div");
-		listEl.classList.add("tabulator-edit-select-list");
 
 		onRendered(function(){
 			input.style.height = "100%";
 			input.focus();
 		});
+
+		if(editorParams.mask){
+			this.table.modules.edit.maskInput(input, editorParams);
+		}
 
 		return input;
 	},

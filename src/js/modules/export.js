@@ -1,30 +1,66 @@
-var HtmlTableExport = function(table){
+var Export = function(table){
 	this.table = table; //hold Tabulator object
 	this.config = {};
 	this.cloneTableStyle = true;
 	this.colVisProp = "";
 };
 
-HtmlTableExport.prototype.genereateTable = function(config, style, visible, colVisProp){
+Export.prototype.genereateTable = function(config, style, range, colVisProp){
 	this.cloneTableStyle = style;
 	this.config = config || {};
 	this.colVisProp = colVisProp;
 
-	var headers = this.generateHeaderElements();
-	var body = this.generateBodyElements(visible);
-
 	var table = document.createElement("table");
 	table.classList.add("tabulator-print-table");
-	table.appendChild(headers);
-	table.appendChild(body);
+
+	if(this.config.columnHeaders !== false){
+		table.appendChild(this.generateHeaderElements());
+	}
+
+	table.appendChild(this.generateBodyElements(this.rowLookup(range)));
 
 	this.mapElementStyles(this.table.element, table, ["border-top", "border-left", "border-right", "border-bottom"]);
 
 	return table;
 };
 
+Export.prototype.rowLookup = function(range){
+	var rows = [];
 
-HtmlTableExport.prototype.generateColumnGroupHeaders = function(){
+	if(typeof range == "function"){
+		range.call(this.table).forEach((row) =>{
+			row = this.table.rowManager.findRow(row);
+
+			if(row){
+				rows.push(row);
+			}
+		});
+	}else{
+		switch(range){
+			case true:
+			case "visible":
+			rows = this.table.rowManager.getVisibleRows(true);
+			break;
+
+			case "all":
+			rows = this.table.rowManager.rows;
+			break;
+
+			case "selected":
+			rows = this.modules.selectRow.selectedRows;
+			break;
+
+			case "active":
+			default:
+			rows = this.table.rowManager.getDisplayRows();
+		}
+	}
+
+	return Object.assign([], rows);
+};
+
+
+Export.prototype.generateColumnGroupHeaders = function(){
 	var output = [];
 
 	var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
@@ -40,7 +76,7 @@ HtmlTableExport.prototype.generateColumnGroupHeaders = function(){
 	return output;
 };
 
-HtmlTableExport.prototype.processColumnGroup = function(column){
+Export.prototype.processColumnGroup = function(column){
 	var subGroups = column.columns,
 	maxDepth = 0;
 
@@ -84,7 +120,7 @@ HtmlTableExport.prototype.processColumnGroup = function(column){
 };
 
 
-HtmlTableExport.prototype.groupHeadersToRows = function(columns){
+Export.prototype.groupHeadersToRows = function(columns){
 
 	var headers = [], headerDepth = 0;
 
@@ -122,7 +158,7 @@ HtmlTableExport.prototype.groupHeadersToRows = function(columns){
 };
 
 
-HtmlTableExport.prototype.generateHeaderElements = function(){
+Export.prototype.generateHeaderElements = function(){
 
 	var headerEl = document.createElement("thead");
 
@@ -174,8 +210,16 @@ HtmlTableExport.prototype.generateHeaderElements = function(){
 	return headerEl;
 };
 
-HtmlTableExport.prototype.generateBodyElements = function(visible){
-	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow;
+Export.prototype.generateBodyElements = function(rows){
+
+};
+
+Export.prototype.generateBodyElements = function(rows){
+	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField, rowFormatter;
+
+	//assign row formatter
+	rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+	rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
 	//lookup row styles
 	if(this.cloneTableStyle && window.getComputedStyle){
@@ -194,7 +238,6 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 
 	var bodyEl = document.createElement("tbody");
 
-	var rows = visible ? this.table.rowManager.getVisibleRows(true) : this.table.rowManager.getDisplayRows();
 	var columns = [];
 
 	if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
@@ -212,6 +255,10 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 			columns.push(column);
 		}
 	});
+
+	if(this.table.options.dataTree &&this.config.dataTree !== false && this.table.modExists("columnCalcs")){
+		treeElementField = this.table.modules.dataTree.elementField;
+	}
 
 	rows = rows.filter((row) => {
 		switch(row.type){
@@ -231,8 +278,9 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 		console.warn("It may take a long time to render an HTML table with more than 1000 rows");
 	}
 
+
 	rows.forEach((row, i) => {
-		var rowData = row.getData();
+		var rowData = row.getData(this.colVisProp);
 
 		var rowEl = document.createElement("tr");
 		rowEl.classList.add("tabulator-print-table-row");
@@ -254,7 +302,12 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 			rowEl.classList.add("tabulator-print-table-calcs");
 
 			case "row" :
-			columns.forEach((column) =>{
+
+			if(this.table.options.dataTree && this.config.dataTree === false && row.modules.dataTree.parent){
+				return;
+			}
+
+			columns.forEach((column, i) =>{
 				var cellEl = document.createElement("td");
 
 				var value = column.getFieldValue(rowData);
@@ -291,8 +344,8 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 					cellEl.classList.add(className);
 				});
 
-				if(this.table.modExists("format")){
-					value = this.table.modules.format.formatValue(cellWrapper);
+				if(this.table.modExists("format") && this.config.formatCells !== false){
+					value = this.table.modules.format.formatExportValue(cellWrapper, this.colVisProp);
 				}else{
 					switch(typeof value){
 						case "object":
@@ -316,16 +369,46 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 				}
 
 				if(firstCell){
-					this.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "text-align"]);
+					this.mapElementStyles(firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+
+					if(column.definition.align){
+						cellEl.style.textAlign = column.definition.align;
+					}
+				}
+
+				if(this.table.options.dataTree && this.config.dataTree !== false){
+					if((treeElementField && treeElementField == column.field) || (!treeElementField && i == 0)){
+						if(row.modules.dataTree.controlEl){
+							cellEl.insertBefore(row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
+						}
+						if(row.modules.dataTree.branchEl){
+							cellEl.insertBefore(row.modules.dataTree.branchEl.cloneNode(true), cellEl.firstChild);
+						}
+					}
 				}
 
 				rowEl.appendChild(cellEl);
+
+				if(cellWrapper.modules.format && cellWrapper.modules.format.renderedCallback){
+					cellWrapper.modules.format.renderedCallback();
+				}
 			});
 
 
 			styleRow = row.type == "calc" ? calcRow : (((i % 2) && evenRow) ? evenRow : oddRow);
 
 			this.mapElementStyles(styleRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
+
+			if(rowFormatter && this.config.formatCells !== false){
+				var rowComponent = row.getComponent();
+
+				rowComponent.getElement = function(){
+					return rowEl;
+				};
+
+				rowFormatter(rowComponent);
+			}
+
 			break;
 		}
 
@@ -335,21 +418,21 @@ HtmlTableExport.prototype.generateBodyElements = function(visible){
 	return bodyEl;
 };
 
-HtmlTableExport.prototype.columnVisCheck = function(column){
+Export.prototype.columnVisCheck = function(column){
 	return column.definition[this.colVisProp] !== false && (column.visible || (!column.visible && column.definition[this.colVisProp]));
 };
 
 
-HtmlTableExport.prototype.getHtml = function(visible, style, config){
+Export.prototype.getHtml = function(visible, style, config, colVisProp){
 	var holder = document.createElement("div");
 
-	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, "htmlOutput"));
+	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput"));
 
 	return holder.innerHTML;
 };
 
 
-HtmlTableExport.prototype.mapElementStyles = function(from, to, props){
+Export.prototype.mapElementStyles = function(from, to, props){
 	if(this.cloneTableStyle && from && to){
 
 		var lookup = {
@@ -381,4 +464,4 @@ HtmlTableExport.prototype.mapElementStyles = function(from, to, props){
 };
 
 
-Tabulator.prototype.registerModule("htmlTableExport", HtmlTableExport);
+Tabulator.prototype.registerModule("export", Export);

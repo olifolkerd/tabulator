@@ -96,11 +96,19 @@ DataTree.prototype.initializeRow = function (row) {
 
 	var children = isArray || !isArray && (typeof childArray === "undefined" ? "undefined" : _typeof(childArray)) === "object" && childArray !== null;
 
+	if (!children && row.modules.dataTree && row.modules.dataTree.branchEl) {
+		row.modules.dataTree.branchEl.parentNode.removeChild(row.modules.dataTree.branchEl);
+	}
+
+	if (!children && row.modules.dataTree && row.modules.dataTree.controlEl) {
+		row.modules.dataTree.controlEl.parentNode.removeChild(row.modules.dataTree.controlEl);
+	}
+
 	row.modules.dataTree = {
 		index: 0,
-		open: children ? this.startOpen(row.getComponent(), 0) : false,
-		controlEl: false,
-		branchEl: false,
+		open: children ? row.modules.dataTree ? row.modules.dataTree.open : this.startOpen(row.getComponent(), 0) : false,
+		controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
+		branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
 		parent: false,
 		children: children
 	};
@@ -113,9 +121,17 @@ DataTree.prototype.layoutRow = function (row) {
 
 	if (config.branchEl) {
 		config.branchEl.parentNode.removeChild(config.branchEl);
+		config.branchEl = false;
+	}
+
+	if (config.controlEl) {
+		config.controlEl.parentNode.removeChild(config.controlEl);
+		config.controlEl = false;
 	}
 
 	this.generateControlElement(row, el);
+
+	row.element.classList.add("tabulator-tree-level-" + config.index);
 
 	if (config.index) {
 		if (this.branchEl) {
@@ -300,6 +316,33 @@ DataTree.prototype.toggleRow = function (row) {
 
 DataTree.prototype.getTreeParent = function (row) {
 	return row.modules.dataTree.parent ? row.modules.dataTree.parent.getComponent() : false;
+};
+
+DataTree.prototype.getFilteredTreeChildren = function (row) {
+	var config = row.modules.dataTree,
+	    output = [],
+	    children;
+
+	if (config.children) {
+
+		if (!Array.isArray(config.children)) {
+			config.children = this.generateChildren(row);
+		}
+
+		if (this.table.modExists("filter")) {
+			children = this.table.modules.filter.filter(config.children);
+		} else {
+			children = config.children;
+		}
+
+		children.forEach(function (childRow) {
+			if (childRow instanceof Row) {
+				output.push(childRow);
+			}
+		});
+	}
+
+	return output;
 };
 
 DataTree.prototype.getTreeChildren = function (row) {

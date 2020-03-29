@@ -2,20 +2,75 @@ var ResizeTable = function(table){
 	this.table = table; //hold Tabulator object
 	this.binding = false;
 	this.observer = false;
+	this.containerObserver = false;
+
+	this.tableHeight = 0;
+	this.tableWidth = 0;
+	this.containerHeight = 0;
+	this.containerWidth = 0;
+
+	this.autoResize = false;
 };
 
 ResizeTable.prototype.initialize = function(row){
 	var table = this.table,
-	observer;
+	tableStyle;
+
+	this.tableHeight = table.element.clientHeight;
+	this.tableWidth = table.element.clientWidth;
+
+	this.containerHeight = table.element.parentNode.clientHeight;
+	this.containerWidth = table.element.parentNode.clientWidth;
 
 	if(typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual"){
-		this.observer = new ResizeObserver(function(entry){
+
+		this.autoResize = true;
+
+		this.observer = new ResizeObserver((entry) => {
 			if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
-				table.redraw();
+
+				var nodeHeight = Math.floor(entry[0].contentRect.height);
+				var nodeWidth = Math.floor(entry[0].contentRect.width);
+
+				if(this.tableHeight != nodeHeight || this.tableWidth != nodeWidth){
+					this.tableHeight = nodeHeight;
+					this.tableWidth = nodeWidth;
+					this.containerHeight = table.element.parentNode.clientHeight;
+					this.containerWidth = table.element.parentNode.clientWidth;
+
+					table.redraw();
+				}
+
 			}
 		});
 
 		this.observer.observe(table.element);
+
+		tableStyle = window.getComputedStyle(table.element);
+
+		if(!this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))){
+
+			this.containerObserver = new ResizeObserver((entry) => {
+				if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
+
+					var nodeHeight = Math.floor(entry[0].contentRect.height);
+					var nodeWidth = Math.floor(entry[0].contentRect.width);
+
+					if(this.containerHeight != nodeHeight || this.containerWidth != nodeWidth){
+						this.containerHeight = nodeHeight;
+						this.containerWidth = nodeWidth;
+						this.tableHeight = table.element.clientHeight;
+						this.tableWidth = table.element.clientWidth;
+
+						table.redraw();
+					}
+
+					table.redraw();
+				}
+			});
+
+			this.containerObserver.observe(this.table.element.parentNode);
+		}
 	}else{
 		this.binding = function(){
 			if(!table.browserMobile || (table.browserMobile &&!table.modules.edit.currentCell)){
@@ -34,6 +89,10 @@ ResizeTable.prototype.clearBindings = function(row){
 
 	if(this.observer){
 		this.observer.unobserve(this.table.element);
+	}
+
+	if(this.containerObserver){
+		this.containerObserver.unobserve(this.table.element.parentNode);
 	}
 };
 
