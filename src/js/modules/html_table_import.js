@@ -154,18 +154,6 @@ HtmlTableImport.prototype._extractHeaders = function(headers, rows){
 		// //check for tablator inline options
 		this._extractOptions(header, col, Column.prototype.defaultOptionList);
 
-		for(var i in attributes){
-			var attrib = attributes[i],
-			name;
-
-			if(attrib && typeof attrib == "object" && attrib.name && attrib.name.indexOf("tabulator-") === 0){
-
-				name = attrib.name.replace("tabulator-", "");
-
-				col[name] = this._attribValue(attrib.value);
-			}
-		}
-
 		this.fieldIndex[index] = col.field;
 
 		if(col.field == this.table.options.index){
