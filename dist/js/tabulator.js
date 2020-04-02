@@ -1539,11 +1539,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
-				self.element.setAttribute("title", tooltip);
+				self.element.setAttribute("data-title", tooltip);
 			}
 		} else {
 
-			self.element.setAttribute("title", "");
+			self.element.setAttribute("data-title", "");
 		}
 	};
 
