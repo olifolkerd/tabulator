@@ -6881,10 +6881,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				tooltip = "";
 			}
 
-			this.element.setAttribute("title", tooltip);
+			this.element.setAttribute("data-title", tooltip);
 		} else {
 
-			this.element.setAttribute("title", "");
+			this.element.setAttribute("data-title", "");
 		}
 	};
 
