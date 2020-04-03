@@ -1521,11 +1521,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					self.table.modules.localize.bind("columns|" + def.field, function (value) {
 
-						self.element.setAttribute("title", value || def.title);
+						self.element.setAttribute("data-title", value || def.title);
 					});
 				} else {
 
-					self.element.setAttribute("title", def.title);
+					self.element.setAttribute("data-title", def.title);
 				}
 			} else {
 
