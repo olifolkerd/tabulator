@@ -1231,7 +1231,7 @@ Edit.prototype.editors = {
 			}
 		}
 
-		function parseItems(inputValues, curentValue){
+		function parseItems(inputValues){
 			var itemList = [];
 
 			if(Array.isArray(inputValues)){

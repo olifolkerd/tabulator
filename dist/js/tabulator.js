@@ -14977,7 +14977,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 
-			function parseItems(inputValues, curentValue) {
+			function parseItems(inputValues) {
 				var itemList = [];
 
 				if (Array.isArray(inputValues)) {
