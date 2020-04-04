@@ -1172,7 +1172,7 @@ Edit.prototype.editors = {
 			}else if(typeof editorParams.values === "string"){
 				values = getUniqueColumnValues(editorParams.values);
 			}else{
-				values = editorParams.values || [];
+				values = parseItems( editorParams.values || [] );
 			}
 
 			if(editorParams.searchFunc){
@@ -1192,14 +1192,12 @@ Edit.prototype.editors = {
 					fillListIfNotEmpty(parseItems(matches), intialLoad);
 				}
 			}else{
-				items = parseItems(values);
-
 				if(term === ""){
 					if(editorParams.showListOnEmpty){
-						matches = items;
+						matches = values;
 					}
 				}else{
-					items.forEach(function(item){
+					values.forEach(function(item){
 						if(item.value !== null || typeof item.value !== "undefined"){
 							if(String(item.value).toLowerCase().indexOf(String(term).toLowerCase()) > -1 || String(item.title).toLowerCase().indexOf(String(term).toLowerCase()) > -1){
 								matches.push(item);
