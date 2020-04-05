@@ -1120,9 +1120,10 @@ Tabulator.prototype.getRowFromPosition = function(position, active){
 //delete row from table
 Tabulator.prototype.deleteRow = function(index){
 	return new Promise((resolve, reject) => {
-		var count = 0,
+		var self = this,
+		count = 0,
 		successCount = 0,
-		self = this;
+		foundRows = [];
 
 		function doneCheck(){
 			count++;
@@ -1139,25 +1140,34 @@ Tabulator.prototype.deleteRow = function(index){
 			index = [index];
 		}
 
+		//find matching rows
 		index.forEach((item) =>{
 			var row = this.rowManager.findRow(item, true);
 
 			if(row){
-				row.delete()
-				.then(() => {
-					successCount++;
-					doneCheck();
-				})
-				.catch((err) => {
-					doneCheck();
-					reject(err);
-				});
-
+				foundRows.push(row);
 			}else{
 				console.warn("Delete Error - No matching row found:", item);
 				reject("Delete Error - No matching row found")
 				doneCheck();
 			}
+		});
+
+		//sort rows into correct order to ensure smooth delete from table
+		foundRows.sort((a, b) => {
+			return this.rowManager.rows.indexOf(a) > this.rowManager.rows.indexOf(b) ? 1 : -1;
+		});
+
+		foundRows.forEach((row) =>{
+			row.delete()
+			.then(() => {
+				successCount++;
+				doneCheck();
+			})
+			.catch((err) => {
+				doneCheck();
+				reject(err);
+			});
 		});
 	});
 };

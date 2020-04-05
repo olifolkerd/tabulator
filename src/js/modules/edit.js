@@ -1099,7 +1099,7 @@ Edit.prototype.editors = {
 		allItems = [],
 		displayItems = [],
 		values = [],
-		currentItem = {},
+		currentItem = false,
 		blurable = true;
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);

@@ -6887,9 +6887,10 @@ Tabulator.prototype.deleteRow = function (index) {
 	var _this21 = this;
 
 	return new Promise(function (resolve, reject) {
-		var count = 0,
+		var self = _this21,
+		    count = 0,
 		    successCount = 0,
-		    self = _this21;
+		    foundRows = [];
 
 		function doneCheck() {
 			count++;
@@ -6906,22 +6907,32 @@ Tabulator.prototype.deleteRow = function (index) {
 			index = [index];
 		}
 
+		//find matching rows
 		index.forEach(function (item) {
 			var row = _this21.rowManager.findRow(item, true);
 
 			if (row) {
-				row.delete().then(function () {
-					successCount++;
-					doneCheck();
-				}).catch(function (err) {
-					doneCheck();
-					reject(err);
-				});
+				foundRows.push(row);
 			} else {
 				console.warn("Delete Error - No matching row found:", item);
 				reject("Delete Error - No matching row found");
 				doneCheck();
 			}
+		});
+
+		//sort rows into correct order to ensure smooth delete from table
+		foundRows.sort(function (a, b) {
+			return _this21.rowManager.rows.indexOf(a) > _this21.rowManager.rows.indexOf(b) ? 1 : -1;
+		});
+
+		foundRows.forEach(function (row) {
+			row.delete().then(function () {
+				successCount++;
+				doneCheck();
+			}).catch(function (err) {
+				doneCheck();
+				reject(err);
+			});
 		});
 	});
 };
