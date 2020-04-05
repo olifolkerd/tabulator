@@ -12855,9 +12855,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		}
 
-		if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")) {
-			this.config.rowGroups = true;
-		}
+		this.config.rowGroups = config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows");
 
 		if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length) {
 			this.config.columnGroups = true;
@@ -22549,8 +22547,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.tableHeight = table.element.clientHeight;
 		this.tableWidth = table.element.clientWidth;
 
-		this.containerHeight = table.element.parentNode.clientHeight;
-		this.containerWidth = table.element.parentNode.clientWidth;
+		if (table.element.parentNode) {
+			this.containerHeight = table.element.parentNode.clientHeight;
+			this.containerWidth = table.element.parentNode.clientWidth;
+		}
 
 		if (typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual") {
 
@@ -22565,8 +22565,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (_this69.tableHeight != nodeHeight || _this69.tableWidth != nodeWidth) {
 						_this69.tableHeight = nodeHeight;
 						_this69.tableWidth = nodeWidth;
-						_this69.containerHeight = table.element.parentNode.clientHeight;
-						_this69.containerWidth = table.element.parentNode.clientWidth;
+
+						if (table.element.parentNode) {
+							_this69.containerHeight = table.element.parentNode.clientHeight;
+							_this69.containerWidth = table.element.parentNode.clientWidth;
+						}
 
 						table.redraw();
 					}
@@ -22577,7 +22580,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			tableStyle = window.getComputedStyle(table.element);
 
-			if (!this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))) {
+			if (this.table.element.parentNode && !this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))) {
 
 				this.containerObserver = new ResizeObserver(function (entry) {
 					if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {

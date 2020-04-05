@@ -23,8 +23,10 @@ ResizeTable.prototype.initialize = function (row) {
 	this.tableHeight = table.element.clientHeight;
 	this.tableWidth = table.element.clientWidth;
 
-	this.containerHeight = table.element.parentNode.clientHeight;
-	this.containerWidth = table.element.parentNode.clientWidth;
+	if (table.element.parentNode) {
+		this.containerHeight = table.element.parentNode.clientHeight;
+		this.containerWidth = table.element.parentNode.clientWidth;
+	}
 
 	if (typeof ResizeObserver !== "undefined" && table.rowManager.getRenderMode() === "virtual") {
 
@@ -39,8 +41,11 @@ ResizeTable.prototype.initialize = function (row) {
 				if (_this.tableHeight != nodeHeight || _this.tableWidth != nodeWidth) {
 					_this.tableHeight = nodeHeight;
 					_this.tableWidth = nodeWidth;
-					_this.containerHeight = table.element.parentNode.clientHeight;
-					_this.containerWidth = table.element.parentNode.clientWidth;
+
+					if (table.element.parentNode) {
+						_this.containerHeight = table.element.parentNode.clientHeight;
+						_this.containerWidth = table.element.parentNode.clientWidth;
+					}
 
 					table.redraw();
 				}
@@ -51,7 +56,7 @@ ResizeTable.prototype.initialize = function (row) {
 
 		tableStyle = window.getComputedStyle(table.element);
 
-		if (!this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))) {
+		if (this.table.element.parentNode && !this.table.rowManager.fixedHeight && (tableStyle.getPropertyValue("max-height") || tableStyle.getPropertyValue("min-height"))) {
 
 			this.containerObserver = new ResizeObserver(function (entry) {
 				if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
