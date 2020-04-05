@@ -58,9 +58,7 @@ Download.prototype.processConfig = function(){
 		}
 	}
 
-	if (config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows")){
-		this.config.rowGroups = true;
-	}
+	this.config.rowGroups = config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows");
 
 	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length){
 		this.config.columnGroups = true;
