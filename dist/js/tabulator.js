@@ -10408,7 +10408,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var colsWidth = 0,
 			    tableWidth = this.table.rowManager.element.clientWidth,
 			    gap = 0,
-			    lastCol = false;
+				lastCol = false,          
+				growthCol = [];
 
 			columns.forEach(function (column, i) {
 
@@ -10422,6 +10423,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					lastCol = column;
 				}
 
+				if(column.definition.widthGrow != null)
+				{
+					growthCol.push(column);
+				}
+
 				if (column.visible) {
 
 					colsWidth += column.getWidth();
@@ -10430,7 +10436,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (lastCol) {
 
-				gap = tableWidth - colsWidth + lastCol.getWidth();
+				gap = tableWidth - colsWidth;
+
+				if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+					lastCol.setWidth(0);
+					this.table.modules.responsiveLayout.update();
+			    }
+		  
+				if (growthCol.length === 0) {
+					gap += lastCol.getWidth();
+				}
+		  
+				else {
+					growthCol.forEach(function (col, i) {
+						gap += col.getWidth();
+					});  
+				}
 
 				if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
@@ -10441,7 +10462,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (gap > 0) {
 
-					lastCol.setWidth(gap);
+					if (growthCol.length === 0) {
+						lastCol.setWidth(gap);
+					}
+			
+					else
+					{
+						growthCol.forEach(function (column, i) {
+							var size = (gap) * (column.definition.widthGrow/5);
+							column.setWidth(size); 
+						});  
+					}
 				} else {
 
 					lastCol.reinitializeWidth();
