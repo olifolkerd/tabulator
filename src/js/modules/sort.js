@@ -216,9 +216,10 @@ Sort.prototype.findSorter = function(column){
 
 //work through sort list sorting data
 Sort.prototype.sort = function(data){
-	var self = this, lastSort, sortList;
-
-	sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList;
+	var self = this,
+	sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
+	sortListActual = [],
+	lastSort;
 
 	if(self.table.options.dataSorting){
 		self.table.options.dataSorting.call(self.table, self.getSort());
@@ -228,27 +229,28 @@ Sort.prototype.sort = function(data){
 
 	if(!self.table.options.ajaxSorting){
 
-		var lastPossibleIndex = -1;
-
-		// iterate over the sortList to find the last possible sorting column (i.e. column that is actually valid for sorting)
+		//build list of valid sorters and trigger column specific callbacks before sort begins
 		sortList.forEach(function(item, i){
+			var sortObj = item.column.modules.sort;
 
-			if(item.column && item.column.modules.sort){
+			if(item.column && sortObj){
 
 				//if no sorter has been defined, take a guess
-				if(!item.column.modules.sort.sorter){
-					item.column.modules.sort.sorter = self.findSorter(item.column);
+				if(!sortObj.sorter){
+					sortObj.sorter = self.findSorter(item.column);
 				}
 
-				lastPossibleIndex = i;
+				item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
+
+				sortListActual.push(item);
 			}
 
 			self.setColumnHeader(item.column, item.dir);
 		});
 
-		// Note: since the sorting-function falls back to previous columns if the result of the given column is equal, we only have to sort the data once
-		if (lastPossibleIndex > -1) {
-			self._sortItem(data, sortList[lastPossibleIndex].column, sortList[lastPossibleIndex].dir, sortList, lastPossibleIndex);
+		//sort data
+		if (sortListActual.length) {
+			self._sortItems(data, sortListActual);
 		}
 
 	}else{
@@ -280,19 +282,20 @@ Sort.prototype.setColumnHeader = function(column, dir){
 };
 
 //sort each item in sort list
-Sort.prototype._sortItem = function(data, column, dir, sortList, i){
-	var self = this;
+Sort.prototype._sortItems = function(data, sortList){
+	var i = sortList.length - 1;
 
-	var params = typeof column.modules.sort.params === "function" ? column.modules.sort.params(column.getComponent(), dir) : column.modules.sort.params;
+	data.sort((a, b) => {
 
-	data.sort(function(a, b){
-
-		var result = self._sortRow(a, b, column, dir, params);
+		var sortItem = sortList[i];
+		var result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
 
 		//if results match recurse through previous searchs to be sure
 		if(result === 0 && i){
 			for(var j = i-1; j>= 0; j--){
-				result = self._sortRow(a, b, sortList[j].column, sortList[j].dir, params);
+				let subSortItem = sortList[j];
+
+				result = this._sortRow(a, b, subSortItem.column, subSortItem.dir, subSortItem.params);
 
 				if(result !== 0){
 					break;
