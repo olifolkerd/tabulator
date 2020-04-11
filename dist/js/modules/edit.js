@@ -964,6 +964,15 @@ Edit.prototype.editors = {
 
 				listEl.style.top = offset.top + cellEl.offsetHeight + "px";
 				listEl.style.left = offset.left + "px";
+
+				listEl.addEventListener("mousedown", function (e) {
+					blurable = false;
+
+					setTimeout(function () {
+						blurable = true;
+					}, 10);
+				});
+
 				document.body.appendChild(listEl);
 			}
 		}
@@ -1070,6 +1079,7 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("blur", function (e) {
+			console.log("blur", e, blurable);
 			if (blurable) {
 				cancelItem();
 			}
@@ -1128,6 +1138,14 @@ Edit.prototype.editors = {
 
 		//style list element
 		listEl.classList.add("tabulator-edit-select-list");
+
+		listEl.addEventListener("mousedown", function (e) {
+			blurable = false;
+
+			setTimeout(function () {
+				blurable = true;
+			}, 10);
+		});
 
 		function getUniqueColumnValues(field) {
 			var output = {},
@@ -1293,12 +1311,12 @@ Edit.prototype.editors = {
 					el.tabIndex = 0;
 					el.innerHTML = item.title;
 
-					el.addEventListener("click", function () {
+					el.addEventListener("click", function (e) {
 						setCurrentItem(item);
 						chooseItem();
 					});
 
-					el.addEventListener("mousedown", function () {
+					el.addEventListener("mousedown", function (e) {
 						blurable = false;
 
 						setTimeout(function () {
