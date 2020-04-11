@@ -19805,7 +19805,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Menu.prototype.loadMenu = function (e, component, menu) {
 		var _this61 = this;
 
-		var docHeight = document.body.offsetHeight;
+		var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
 
 		//abort if no menu set
 		if (!menu || !menu.length) {
@@ -23643,7 +23643,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var i = sortList.length - 1;
 
 		data.sort(function (a, b) {
-
 			var sortItem = sortList[i];
 			var result = _this71._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
 

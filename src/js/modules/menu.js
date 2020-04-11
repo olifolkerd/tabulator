@@ -58,7 +58,7 @@ Menu.prototype.initializeRow = function(row){
 
 Menu.prototype.loadMenu = function(e, component, menu){
 
-	var docHeight = document.body.offsetHeight;
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
 
 	//abort if no menu set
 	if(!menu || !menu.length){
