@@ -16,6 +16,9 @@ var Page = function(table){
 
 	this.pageSizes = [];
 
+	this.dataReceivedNames = {};
+	this.dataSentNames = {};
+
 	this.createElements();
 };
 
@@ -102,13 +105,11 @@ Page.prototype.initialize = function(hidden){
 	pageSelectLabel;
 
 	//update param names
-	for(let key in self.table.options.paginationDataSent){
-		self.paginationDataSentNames[key] = self.table.options.paginationDataSent[key];
-	}
+	this.dataSentNames = Object.assign({}, this.paginationDataSentNames);
+	this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-	for(let key in self.table.options.paginationDataReceived){
-		self.paginationDataReceivedNames[key] = self.table.options.paginationDataReceived[key];
-	}
+	this.dataReceivedNames = Object.assign({}, this.paginationDataReceivedNames);
+	this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
 	//build pagination element
 
@@ -540,11 +541,11 @@ Page.prototype._getRemotePage = function(){
 		pageParams = self.table.modules.ajax.getParams();
 
 		//configure request params
-		pageParams[this.paginationDataSentNames.page] = self.page;
+		pageParams[this.dataSentNames.page] = self.page;
 
 		//set page size if defined
 		if(this.size){
-			pageParams[this.paginationDataSentNames.size] = this.size;
+			pageParams[this.dataSentNames.size] = this.size;
 		}
 
 		//set sort data if defined
@@ -555,13 +556,13 @@ Page.prototype._getRemotePage = function(){
 				delete item.column;
 			});
 
-			pageParams[this.paginationDataSentNames.sorters] = sorters;
+			pageParams[this.dataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
 		if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
 			let filters = self.table.modules.filter.getFilters(true, true);
-			pageParams[this.paginationDataSentNames.filters] = filters;
+			pageParams[this.dataSentNames.filters] = filters;
 		}
 
 		self.table.modules.ajax.setParams(pageParams);
@@ -583,21 +584,21 @@ Page.prototype._parseRemoteData = function(data){
 	var self = this,
 	left, data, margin;
 
-	if(typeof data[this.paginationDataReceivedNames.last_page] === "undefined"){
-		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+	if(typeof data[this.dataReceivedNames.last_page] === "undefined"){
+		console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.last_page + "' property");
 	}
 
-	if(data[this.paginationDataReceivedNames.data]){
-		this.max = parseInt(data[this.paginationDataReceivedNames.last_page]) || 1;
+	if(data[this.dataReceivedNames.data]){
+		this.max = parseInt(data[this.dataReceivedNames.last_page]) || 1;
 
 		if(this.progressiveLoad){
 			switch(this.mode){
 				case "progressive_load":
 
 				if(this.page == 1){
-					this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1)
+					this.table.rowManager.setData(data[this.dataReceivedNames.data], false, this.initialLoad && this.page == 1)
 				}else{
-					this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+					this.table.rowManager.addRows(data[this.dataReceivedNames.data]);
 				}
 
 				if(this.page < this.max){
@@ -608,7 +609,7 @@ Page.prototype._parseRemoteData = function(data){
 				break;
 
 				case "progressive_scroll":
-				data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
+				data = this.table.rowManager.getData().concat(data[this.dataReceivedNames.data]);
 
 				this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
@@ -622,7 +623,7 @@ Page.prototype._parseRemoteData = function(data){
 		}else{
 			left = this.table.rowManager.scrollLeft;
 
-			this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1);
+			this.table.rowManager.setData(data[this.dataReceivedNames.data], false, this.initialLoad && this.page == 1);
 
 			this.table.rowManager.scrollHorizontal(left);
 
@@ -634,7 +635,7 @@ Page.prototype._parseRemoteData = function(data){
 		this.initialLoad = false;
 
 	}else{
-		console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
+		console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.data + "' property");
 	}
 
 };

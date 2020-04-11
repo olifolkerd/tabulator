@@ -20892,6 +20892,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.pageSizes = [];
 
+		this.dataReceivedNames = {};
+		this.dataSentNames = {};
+
 		this.createElements();
 	};
 
@@ -20979,13 +20982,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    pageSelectLabel;
 
 		//update param names
-		for (var key in self.table.options.paginationDataSent) {
-			self.paginationDataSentNames[key] = self.table.options.paginationDataSent[key];
-		}
+		this.dataSentNames = Object.assign({}, this.paginationDataSentNames);
+		this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-		for (var _key2 in self.table.options.paginationDataReceived) {
-			self.paginationDataReceivedNames[_key2] = self.table.options.paginationDataReceived[_key2];
-		}
+		this.dataReceivedNames = Object.assign({}, this.paginationDataReceivedNames);
+		this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
 		//build pagination element
 
@@ -21412,11 +21413,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[_this68.paginationDataSentNames.page] = self.page;
+			pageParams[_this68.dataSentNames.page] = self.page;
 
 			//set page size if defined
 			if (_this68.size) {
-				pageParams[_this68.paginationDataSentNames.size] = _this68.size;
+				pageParams[_this68.dataSentNames.size] = _this68.size;
 			}
 
 			//set sort data if defined
@@ -21427,13 +21428,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					delete item.column;
 				});
 
-				pageParams[_this68.paginationDataSentNames.sorters] = sorters;
+				pageParams[_this68.dataSentNames.sorters] = sorters;
 			}
 
 			//set filter data if defined
 			if (_this68.table.options.ajaxFiltering && _this68.table.modExists("filter")) {
 				var filters = self.table.modules.filter.getFilters(true, true);
-				pageParams[_this68.paginationDataSentNames.filters] = filters;
+				pageParams[_this68.dataSentNames.filters] = filters;
 			}
 
 			self.table.modules.ajax.setParams(pageParams);
@@ -21455,21 +21456,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    data,
 		    margin;
 
-		if (typeof data[this.paginationDataReceivedNames.last_page] === "undefined") {
-			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.last_page + "' property");
+		if (typeof data[this.dataReceivedNames.last_page] === "undefined") {
+			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.last_page + "' property");
 		}
 
-		if (data[this.paginationDataReceivedNames.data]) {
-			this.max = parseInt(data[this.paginationDataReceivedNames.last_page]) || 1;
+		if (data[this.dataReceivedNames.data]) {
+			this.max = parseInt(data[this.dataReceivedNames.last_page]) || 1;
 
 			if (this.progressiveLoad) {
 				switch (this.mode) {
 					case "progressive_load":
 
 						if (this.page == 1) {
-							this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1);
+							this.table.rowManager.setData(data[this.dataReceivedNames.data], false, this.initialLoad && this.page == 1);
 						} else {
-							this.table.rowManager.addRows(data[this.paginationDataReceivedNames.data]);
+							this.table.rowManager.addRows(data[this.dataReceivedNames.data]);
 						}
 
 						if (this.page < this.max) {
@@ -21480,7 +21481,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						break;
 
 					case "progressive_scroll":
-						data = this.table.rowManager.getData().concat(data[this.paginationDataReceivedNames.data]);
+						data = this.table.rowManager.getData().concat(data[this.dataReceivedNames.data]);
 
 						this.table.rowManager.setData(data, true, this.initialLoad && this.page == 1);
 
@@ -21494,7 +21495,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			} else {
 				left = this.table.rowManager.scrollLeft;
 
-				this.table.rowManager.setData(data[this.paginationDataReceivedNames.data], false, this.initialLoad && this.page == 1);
+				this.table.rowManager.setData(data[this.dataReceivedNames.data], false, this.initialLoad && this.page == 1);
 
 				this.table.rowManager.scrollHorizontal(left);
 
@@ -21505,7 +21506,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.initialLoad = false;
 		} else {
-			console.warn("Remote Pagination Error - Server response missing '" + this.paginationDataReceivedNames.data + "' property");
+			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.data + "' property");
 		}
 	};
 
