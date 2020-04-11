@@ -23643,6 +23643,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var i = sortList.length - 1;
 
 		data.sort(function (a, b) {
+
 			var sortItem = sortList[i];
 			var result = _this71._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
 

@@ -478,6 +478,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 				.tabulator-cell{
 					background:none;
+
+					&:first-child{
+						border-left: $handleWidth solid transparent;
+					}
 				}
 			}
 
@@ -598,17 +602,28 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	box-sizing: border-box;
 	min-height:$textSize + ($headerMargin * 2);
 
-	background-color: $handleColor;
+	// background-color: $handleColor;
 
-	padding-left: $handleWidth !important;
+	// padding-left: $handleWidth !important;
 
 	margin-bottom: 2px;
+
+	.tabulator-cell{
+		&:first-child{
+			border-left: $handleWidth solid $handleColor;
+		}
+	}
+
 
 	&:nth-child(even){
 		background-color: $handleColorAlt;
 
 		.tabulator-cell{
 			background-color: $rowAltBackgroundColor;
+
+			&:first-child{
+				border-left: $handleWidth solid $handleColorAlt;
+			}
 		}
 	}
 
@@ -670,7 +685,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		z-index: 10;
 
 		&.tabulator-frozen-left{
-			padding-left: $handleWidth;
+			// padding-left: $handleWidth;
 			border-right:2px solid $rowBorderColor;
 		}
 
@@ -752,6 +767,7 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 			display: inline-flex;
 			align-items:center;
+			justify-content: center;
 
 			-moz-user-select: none;
 			-khtml-user-select: none;
