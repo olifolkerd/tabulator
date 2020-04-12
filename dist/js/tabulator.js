@@ -15560,14 +15560,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				switch (e.keyCode) {
 					case 39:
 						//right arrow
+						e.preventDefault();
 						bar.style.width = bar.clientWidth + element.clientWidth / 100 + "px";
 						break;
 
 					case 37:
 						//left arrow
+						e.preventDefault();
 						bar.style.width = bar.clientWidth - element.clientWidth / 100 + "px";
 						break;
 
+					case 9: //tab
 					case 13:
 						//enter
 						updateValue();
