@@ -1524,6 +1524,7 @@ RowManager.prototype.scrollVertical = function(dir){
 		if(dir){
 			//scrolling up
 			if(topDiff < 0){
+
 				this._addTopRow(-topDiff);
 			}
 
@@ -1532,6 +1533,8 @@ RowManager.prototype.scrollVertical = function(dir){
 				//hide bottom row if needed
 				if(this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer){
 					this._removeBottomRow(-bottomDiff);
+				}else{
+					this.vDomScrollPosBottom = this.scrollTop;
 				}
 			}
 		}else{
@@ -1540,11 +1543,15 @@ RowManager.prototype.scrollVertical = function(dir){
 
 				//hide top row if needed
 				if(this.scrollTop > this.vDomWindowBuffer){
+
 					this._removeTopRow(topDiff);
+				}else{
+					this.vDomScrollPosTop = this.scrollTop;
 				}
 			}
 
 			if(bottomDiff >= 0){
+
 				this._addBottomRow(bottomDiff);
 			}
 		}

@@ -4822,6 +4822,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (this.vDomScrollHeight - this.scrollTop > this.vDomWindowBuffer) {
 
 						this._removeBottomRow(-bottomDiff);
+					} else {
+
+						this.vDomScrollPosBottom = this.scrollTop;
 					}
 				}
 			} else {
@@ -4835,6 +4838,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (this.scrollTop > this.vDomWindowBuffer) {
 
 						this._removeTopRow(topDiff);
+					} else {
+
+						this.vDomScrollPosTop = this.scrollTop;
 					}
 				}
 
@@ -13871,7 +13877,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		element.addEventListener("click", function (e) {
 			if (!element.classList.contains("tabulator-editing")) {
-				element.focus();
+				element.focus({ preventScroll: true });
 			}
 		});
 
@@ -13889,7 +13895,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Edit.prototype.focusCellNoEvent = function (cell, block) {
 		this.recursionBlock = true;
 		if (!(block && this.table.browser === "ie")) {
-			cell.getElement().focus();
+			cell.getElement().focus({ preventScroll: true });
 		}
 		this.recursionBlock = false;
 	};
@@ -13897,6 +13903,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Edit.prototype.editCell = function (cell, forceEdit) {
 		this.focusCellNoEvent(cell);
 		this.edit(cell, false, forceEdit);
+	};
+
+	Edit.prototype.focusScrollAdjust = function (cell) {
+		if (this.table.rowManager.getRenderMode() == "virtual") {
+			var topEdge = this.table.rowManager.element.scrollTop,
+			    bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
+			    rowEl = cell.row.getElement(),
+			    offset = rowEl.offsetTop;
+
+			if (rowEl.offsetTop < topEdge) {
+				this.table.rowManager.element.scrollTop -= topEdge - rowEl.offsetTop;
+			} else {
+				if (rowEl.offsetTop + rowEl.offsetHeight > bottomEdge) {
+					this.table.rowManager.element.scrollTop += rowEl.offsetTop + rowEl.offsetHeight - bottomEdge;
+				}
+			}
+		}
 	};
 
 	Edit.prototype.edit = function (cell, e, forceEdit) {
@@ -13985,6 +14008,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self.cancelEdit();
 
 				self.currentCell = cell;
+
+				this.focusScrollAdjust(cell);
 
 				component = cell.getComponent();
 
@@ -14161,7 +14186,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 			onRendered(function () {
-				input.focus();
+				input.focus({ preventScroll: true });
 				input.style.height = "100%";
 			});
 
@@ -14234,7 +14259,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.value = value;
 
 			onRendered(function () {
-				input.focus();
+				input.focus({ preventScroll: true });
 				input.style.height = "100%";
 			});
 
@@ -14352,7 +14377,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				//submit new value on blur
 				input.removeEventListener("blur", blurFunc);
 
-				input.focus();
+				input.focus({ preventScroll: true });
 				input.style.height = "100%";
 
 				//submit new value on blur
@@ -14444,7 +14469,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.value = cellValue;
 
 			onRendered(function () {
-				input.focus();
+				input.focus({ preventScroll: true });
 				input.style.height = "100%";
 			});
 
@@ -14834,7 +14859,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			input.addEventListener("blur", function (e) {
-				console.log("blur", e, blurable);
 				if (blurable) {
 					cancelItem();
 				}
@@ -14850,7 +14874,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			onRendered(function () {
 				input.style.height = "100%";
-				input.focus();
+				input.focus({ preventScroll: true });
 			});
 
 			return input;
@@ -15276,7 +15300,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			onRendered(function () {
 				input.style.height = "100%";
-				input.focus();
+				input.focus({ preventScroll: true });
 			});
 
 			if (editorParams.mask) {
@@ -15595,7 +15619,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.table.browser != "firefox") {
 				//prevent blur issue on mac firefox
 				onRendered(function () {
-					input.focus();
+					input.focus({ preventScroll: true });
 				});
 			}
 
