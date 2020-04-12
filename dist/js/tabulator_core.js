@@ -5442,6 +5442,8 @@ Cell.prototype.setValue = function (value, mutate) {
 			this.column.cellEvents.cellEdited.call(this.table, component);
 		}
 
+		this.cellRendered();
+
 		this.table.options.cellEdited.call(this.table, component);
 
 		this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());

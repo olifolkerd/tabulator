@@ -98,6 +98,7 @@ Edit.prototype.cancelEdit = function () {
 
 		this.clearEditor();
 		cell.setValueActual(cell.getValue());
+		cell.cellRendered();
 
 		if (cell.column.cellEvents.cellEditCancelled) {
 			cell.column.cellEvents.cellEditCancelled.call(this.table, component);
@@ -431,7 +432,6 @@ Edit.prototype.editors = {
 
 		function onChange(e) {
 			if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value !== cellValue) {
-
 				if (success(input.value)) {
 					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 				}

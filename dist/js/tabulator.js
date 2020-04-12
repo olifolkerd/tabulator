@@ -6933,6 +6933,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				this.column.cellEvents.cellEdited.call(this.table, component);
 			}
 
+			this.cellRendered();
+
 			this.table.options.cellEdited.call(this.table, component);
 
 			this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
@@ -13859,6 +13861,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.clearEditor();
 			cell.setValueActual(cell.getValue());
+			cell.cellRendered();
 
 			if (cell.column.cellEvents.cellEditCancelled) {
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
@@ -14192,7 +14195,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function onChange(e) {
 				if ((cellValue === null || typeof cellValue === "undefined") && input.value !== "" || input.value !== cellValue) {
-
 					if (success(input.value)) {
 						cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
 					}
