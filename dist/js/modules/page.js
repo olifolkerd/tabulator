@@ -105,7 +105,9 @@ Page.prototype.generatePageSizeSelectList = function () {
 //setup pageination
 Page.prototype.initialize = function (hidden) {
 	var self = this,
-	    pageSelectLabel;
+	    pageSelectLabel,
+	    testElRow,
+	    testElCell;
 
 	//update param names
 	this.dataSentNames = Object.assign({}, this.paginationDataSentNames);
@@ -206,7 +208,26 @@ Page.prototype.initialize = function (hidden) {
 	//set default values
 	self.mode = self.table.options.pagination;
 
-	self.size = self.table.options.paginationSize || Math.floor(self.table.rowManager.getElement().clientHeight / 24);
+	if (self.table.options.paginationSize) {
+		self.size = self.table.options.paginationSize;
+	} else {
+		testElRow = document.createElement("div");
+		testElRow.classList.add("tabulator-row");
+		testElRow.style.visibility = hidden;
+
+		testElCell = document.createElement("div");
+		testElCell.classList.add("tabulator-cell");
+		testElCell.innerHTML = "Page Row Test";
+
+		testElRow.appendChild(testElCell);
+
+		self.table.rowManager.getTableElement().appendChild(testElRow);
+
+		self.size = Math.floor(self.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
+
+		self.table.rowManager.getTableElement().removeChild(testElRow);
+	}
+
 	// self.page = self.table.options.paginationInitialPage || 1;
 	self.count = self.table.options.paginationButtonCount;
 
