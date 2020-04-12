@@ -1079,7 +1079,6 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("blur", function (e) {
-			console.log("blur", e, blurable);
 			if (blurable) {
 				cancelItem();
 			}
