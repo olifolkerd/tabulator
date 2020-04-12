@@ -113,7 +113,7 @@ Edit.prototype.bindEditor = function(cell){
 
 	element.addEventListener("click", function(e){
 		if(!element.classList.contains("tabulator-editing")){
-			element.focus();
+			element.focus({preventScroll: true});
 		}
 	});
 
@@ -131,7 +131,7 @@ Edit.prototype.bindEditor = function(cell){
 Edit.prototype.focusCellNoEvent = function(cell, block){
 	this.recursionBlock = true;
 	if(!(block && this.table.browser === "ie")){
-		cell.getElement().focus();
+		cell.getElement().focus({preventScroll: true});
 	}
 	this.recursionBlock = false;
 };
@@ -140,6 +140,25 @@ Edit.prototype.editCell = function(cell, forceEdit){
 	this.focusCellNoEvent(cell);
 	this.edit(cell, false, forceEdit);
 };
+
+
+Edit.prototype.focusScrollAdjust = function(cell){
+	if(this.table.rowManager.getRenderMode() == "virtual"){
+		var topEdge = this.table.rowManager.element.scrollTop,
+		bottomEdge = this.table.rowManager.element.clientHeight + this.table.rowManager.element.scrollTop,
+		rowEl = cell.row.getElement(),
+		offset = rowEl.offsetTop;
+
+		if(rowEl.offsetTop < topEdge){
+			this.table.rowManager.element.scrollTop -= (topEdge - rowEl.offsetTop);
+		}else{
+			if(rowEl.offsetTop + rowEl.offsetHeight  > bottomEdge){
+				this.table.rowManager.element.scrollTop += (rowEl.offsetTop + rowEl.offsetHeight - bottomEdge);
+			}
+		}
+	}
+};
+
 
 Edit.prototype.edit = function(cell, e, forceEdit){
 	var self = this,
@@ -225,6 +244,8 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 			self.cancelEdit();
 
 			self.currentCell = cell;
+
+			this.focusScrollAdjust(cell);
 
 			component = cell.getComponent();
 
@@ -402,7 +423,7 @@ Edit.prototype.editors = {
 		input.value = typeof cellValue !== "undefined" ? cellValue : "";
 
 		onRendered(function(){
-			input.focus();
+			input.focus({preventScroll: true});
 			input.style.height = "100%";
 		});
 
@@ -475,7 +496,7 @@ Edit.prototype.editors = {
         input.value = value;
 
         onRendered(function(){
-        	input.focus();
+        	input.focus({preventScroll: true});
         	input.style.height = "100%";
         });
 
@@ -591,7 +612,7 @@ Edit.prototype.editors = {
 			//submit new value on blur
 			input.removeEventListener("blur", blurFunc);
 
-			input.focus();
+			input.focus({preventScroll: true});
 			input.style.height = "100%";
 
 			//submit new value on blur
@@ -682,7 +703,7 @@ Edit.prototype.editors = {
     	input.value = cellValue;
 
     	onRendered(function () {
-    		input.focus();
+    		input.focus({preventScroll: true});
     		input.style.height = "100%";
     	});
 
@@ -1090,7 +1111,7 @@ Edit.prototype.editors = {
 
 		onRendered(function(){
 			input.style.height = "100%";
-			input.focus();
+			input.focus({preventScroll: true});
 		});
 
 		return input;
@@ -1512,7 +1533,7 @@ Edit.prototype.editors = {
 
 		onRendered(function(){
 			input.style.height = "100%";
-			input.focus();
+			input.focus({preventScroll: true});
 		});
 
 		if(editorParams.mask){
@@ -1823,7 +1844,7 @@ Edit.prototype.editors = {
 
 		if(this.table.browser != "firefox"){ //prevent blur issue on mac firefox
 			onRendered(function(){
-				input.focus();
+				input.focus({preventScroll: true});
 			});
 		}
 
