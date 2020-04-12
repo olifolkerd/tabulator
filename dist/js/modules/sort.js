@@ -283,23 +283,18 @@ Sort.prototype.setColumnHeader = function (column, dir) {
 Sort.prototype._sortItems = function (data, sortList) {
 	var _this = this;
 
-	var i = sortList.length - 1;
+	var sorterCount = sortList.length - 1;
 
 	data.sort(function (a, b) {
+		var result;
 
-		var sortItem = sortList[i];
-		var result = _this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
+		for (var i = sorterCount; i >= 0; i--) {
+			var sortItem = sortList[i];
 
-		//if results match recurse through previous searchs to be sure
-		if (result === 0 && i) {
-			for (var j = i - 1; j >= 0; j--) {
-				var subSortItem = sortList[j];
+			result = _this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
 
-				result = _this._sortRow(a, b, subSortItem.column, subSortItem.dir, subSortItem.params);
-
-				if (result !== 0) {
-					break;
-				}
+			if (result !== 0) {
+				break;
 			}
 		}
 
