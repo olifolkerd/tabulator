@@ -186,13 +186,6 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 				}
 			}
 
-			//placeholder element for sortable columns
-			&.ui-sortable-helper{
-				position: absolute;
-				background-color: $headerBackgroundColor !important;
-				border:1px solid $headerBorderColor;
-			}
-
 			//header filter containing element
 			.tabulator-header-filter{
 				position: relative;

@@ -196,12 +196,6 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 				}
 			}
 
-			//placeholder element for sortable columns
-			&.ui-sortable-helper{
-				position: absolute;
-				background-color: darken($headerBackgroundColor, 10%) !important;
-				border:1px solid $headerBorderColor;
-			}
 
 			//header filter containing element
 			.tabulator-header-filter{

@@ -119,12 +119,6 @@
   display: none;
 }
 
-.tabulator .tabulator-header .tabulator-col.ui-sortable-helper {
-  position: absolute;
-  background-color: #222 !important;
-  border: 1px solid #aaa;
-}
-
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter {
   position: relative;
   box-sizing: border-box;

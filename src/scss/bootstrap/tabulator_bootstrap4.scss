@@ -184,13 +184,6 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 				}
 			}
 
-			//placeholder element for sortable columns
-			&.ui-sortable-helper{
-				position: absolute;
-				background-color:darken($headerBackgroundColor, 10%) !important;
-				border:1px solid $borderColor;
-			}
-
 			//header filter containing element
 			.tabulator-header-filter{
 				position: relative;
