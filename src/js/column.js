@@ -149,7 +149,11 @@ ColumnComponent.prototype.getWidth = function(){
 
 
 ColumnComponent.prototype.setWidth = function(width){
-	return this._column.setWidth(width);
+	if(width === true){
+		return this._column.reinitializeWidth(true);
+	}else{
+		return this._column.setWidth(width);
+	}
 };
 
 

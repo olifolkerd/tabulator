@@ -1293,7 +1293,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	ColumnComponent.prototype.setWidth = function (width) {
 
-		return this._column.setWidth(width);
+		if (width === true) {
+
+			return this._column.reinitializeWidth(true);
+		} else {
+
+			return this._column.setWidth(width);
+		}
 	};
 
 	var Column = function Column(def, parent) {
