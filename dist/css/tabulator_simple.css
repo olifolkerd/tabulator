@@ -843,6 +843,72 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
   border-collapse: collapse;
 }
 
+.tabulator-print-table .tabulator-print-table-group {
+  box-sizing: border-box;
+  border-bottom: 1px solid #999;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #999;
+  padding: 5px;
+  padding-left: 10px;
+  background: #fafafa;
+  font-weight: bold;
+  min-width: 100%;
+}
+
+.tabulator-print-table .tabulator-print-table-group:hover {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.tabulator-print-table .tabulator-print-table-group.tabulator-group-visible .tabulator-arrow {
+  margin-right: 10px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #666;
+  border-bottom: 0;
+}
+
+.tabulator-print-table .tabulator-print-table-group.tabulator-group-level-1 td {
+  padding-left: 30px !important;
+}
+
+.tabulator-print-table .tabulator-print-table-group.tabulator-group-level-2 td {
+  padding-left: 50px !important;
+}
+
+.tabulator-print-table .tabulator-print-table-group.tabulator-group-level-3 td {
+  padding-left: 70px !important;
+}
+
+.tabulator-print-table .tabulator-print-table-group.tabulator-group-level-4 td {
+  padding-left: 90px !important;
+}
+
+.tabulator-print-table .tabulator-print-table-group.tabulator-group-level-5 td {
+  padding-left: 110px !important;
+}
+
+.tabulator-print-table .tabulator-print-table-group .tabulator-group-toggle {
+  display: inline-block;
+}
+
+.tabulator-print-table .tabulator-print-table-group .tabulator-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 16px;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 0;
+  border-left: 6px solid #666;
+  vertical-align: middle;
+}
+
+.tabulator-print-table .tabulator-print-table-group span {
+  margin-left: 10px;
+  color: #666;
+}
+
 .tabulator-print-table .tabulator-data-tree-branch {
   display: inline-block;
   vertical-align: middle;

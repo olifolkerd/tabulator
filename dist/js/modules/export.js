@@ -313,6 +313,12 @@ Export.prototype.generateBodyElements = function (rows) {
 
 				rowEl.classList.add("tabulator-print-table-group");
 
+				rowEl.classList.add("tabulator-group-level-" + row.level);
+
+				if (row.visible) {
+					rowEl.classList.add("tabulator-group-visible");
+				}
+
 				_this5.mapElementStyles(firstGroup, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 				_this5.mapElementStyles(firstGroup, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
 				rowEl.appendChild(cellEl);
