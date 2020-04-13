@@ -62,6 +62,10 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 		}
 	}
 
+	&[tabulator-layout="fitDataTable"]{
+		display: inline-block;
+	}
+
 	&[tabulator-layout="fitColumns"]{
 		.tabulator-row{
 			.tabulator-cell{

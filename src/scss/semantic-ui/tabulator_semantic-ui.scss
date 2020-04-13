@@ -64,6 +64,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		}
 	}
 
+	&[tabulator-layout="fitDataTable"]{
+		display: inline-block;
+	}
+
 	&.tabulator-block-select{
 		user-select: none;
 	}

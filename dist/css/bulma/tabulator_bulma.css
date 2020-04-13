@@ -13,6 +13,10 @@
   min-width: 100%;
 }
 
+.tabulator[tabulator-layout="fitDataTable"] {
+  display: inline-block;
+}
+
 .tabulator.tabulator-block-select {
   -webkit-user-select: none;
       -ms-user-select: none;

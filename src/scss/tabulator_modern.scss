@@ -65,6 +65,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 		}
 	}
 
+	&[tabulator-layout="fitDataTable"]{
+		display: inline-block;
+	}
+
 	&.tabulator-block-select{
 		user-select: none;
 	}

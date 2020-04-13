@@ -10411,7 +10411,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Layout.prototype.modes = {
 
-		//resize columns to fit data the contain
+		//resize columns to fit data they contain
 
 
 		"fitData": function fitData(columns) {
@@ -10427,10 +10427,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		},
 
-		//resize columns to fit data the contain and stretch row to fill table
+		//resize columns to fit data they contain and stretch row to fill table
 
 
 		"fitDataFill": function fitDataFill(columns) {
+
+			columns.forEach(function (column) {
+
+				column.reinitializeWidth();
+			});
+
+			if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+
+				this.table.modules.responsiveLayout.update();
+			}
+		},
+
+		//resize columns to fit data they contain
+
+
+		"fitDataTable": function fitDataTable(columns) {
 
 			columns.forEach(function (column) {
 

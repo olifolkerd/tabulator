@@ -62,6 +62,10 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		}
 	}
 
+	&[tabulator-layout="fitDataTable"]{
+		display: inline-block;
+	}
+
 	&.tabulator-block-select{
 		user-select: none;
 	}
