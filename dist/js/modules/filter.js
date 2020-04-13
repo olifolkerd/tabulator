@@ -752,6 +752,32 @@ Filter.prototype.filters = {
 		}
 	},
 
+	//starts with the string
+	"starts": function starts(filterVal, rowVal, rowData, filterParams) {
+		if (filterVal === null || typeof filterVal === "undefined") {
+			return rowVal === filterVal ? true : false;
+		} else {
+			if (typeof rowVal !== 'undefined' && rowVal !== null) {
+				return String(rowVal).toLowerCase().startsWith(filterVal.toLowerCase());
+			} else {
+				return false;
+			}
+		}
+	},
+
+	//ends with the string
+	"ends": function ends(filterVal, rowVal, rowData, filterParams) {
+		if (filterVal === null || typeof filterVal === "undefined") {
+			return rowVal === filterVal ? true : false;
+		} else {
+			if (typeof rowVal !== 'undefined' && rowVal !== null) {
+				return String(rowVal).toLowerCase().endsWith(filterVal.toLowerCase());
+			} else {
+				return false;
+			}
+		}
+	},
+
 	//in array
 	"in": function _in(filterVal, rowVal, rowData, filterParams) {
 		if (Array.isArray(filterVal)) {
