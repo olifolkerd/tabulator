@@ -1286,6 +1286,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._column.updateDefinition(updates);
 	};
 
+	ColumnComponent.prototype.getWidth = function () {
+
+		return this._column.getWidth();
+	};
+
+	ColumnComponent.prototype.setWidth = function (width) {
+
+		return this._column.setWidth(width);
+	};
+
 	var Column = function Column(def, parent) {
 
 		var self = this;
