@@ -8470,7 +8470,8 @@ Localize.prototype.langs = {
 			"prev": "Prev",
 			"prev_title": "Prev Page",
 			"next": "Next",
-			"next_title": "Next Page"
+			"next_title": "Next Page",
+			"all": "All"
 		},
 		"headerFilters": {
 			"default": "filter column...",

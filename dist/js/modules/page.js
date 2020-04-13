@@ -93,7 +93,14 @@ Page.prototype.generatePageSizeSelectList = function () {
 		}pageSizes.forEach(function (item) {
 			var itemEl = document.createElement("option");
 			itemEl.value = item;
-			itemEl.innerHTML = item;
+
+			if (item === true) {
+				_this.table.modules.localize.bind("pagination|all", function (value) {
+					itemEl.innerHTML = value;
+				});
+			} else {
+				itemEl.innerHTML = item;
+			}
 
 			_this.pageSizeSelect.appendChild(itemEl);
 		});
@@ -189,7 +196,7 @@ Page.prototype.initialize = function (hidden) {
 		self.element.appendChild(self.pageSizeSelect);
 
 		self.pageSizeSelect.addEventListener("change", function (e) {
-			self.setPageSize(self.pageSizeSelect.value);
+			self.setPageSize(self.pageSizeSelect.value == "true" ? true : self.pageSizeSelect.value);
 			self.setPage(1).then(function () {}).catch(function () {});
 		});
 	}
@@ -250,10 +257,12 @@ Page.prototype.getDisplayIndex = function () {
 
 //calculate maximum page from number of rows
 Page.prototype.setMaxRows = function (rowCount) {
+
+	console.log("max", rowCount);
 	if (!rowCount) {
 		this.max = 1;
 	} else {
-		this.max = Math.ceil(rowCount / this.size);
+		this.max = this.size === true ? 1 : Math.ceil(rowCount / this.size);
 	}
 
 	if (this.page > this.max) {
@@ -324,7 +333,7 @@ Page.prototype.setPageToRow = function (row) {
 		var index = rows.indexOf(row);
 
 		if (index > -1) {
-			var page = Math.ceil((index + 1) / _this3.size);
+			var page = _this3.size === true ? 1 : Math.ceil((index + 1) / _this3.size);
 
 			_this3.setPage(page).then(function () {
 				resolve();
@@ -339,7 +348,9 @@ Page.prototype.setPageToRow = function (row) {
 };
 
 Page.prototype.setPageSize = function (size) {
-	size = parseInt(size);
+	if (size !== true) {
+		size = parseInt(size);
+	}
 
 	if (size > 0) {
 		this.size = size;
@@ -486,8 +497,14 @@ Page.prototype.getRows = function (data) {
 
 	if (this.mode == "local") {
 		output = [];
-		start = this.size * (this.page - 1);
-		end = start + parseInt(this.size);
+
+		if (this.size === true) {
+			start = 0;
+			end = data.length - 1;
+		} else {
+			start = this.size * (this.page - 1);
+			end = start + parseInt(this.size);
+		}
 
 		this._setPageButtons();
 

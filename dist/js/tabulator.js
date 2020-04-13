@@ -11029,7 +11029,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				"next": "Next",
 
-				"next_title": "Next Page"
+				"next_title": "Next Page",
+
+				"all": "All"
 
 			},
 
@@ -21101,7 +21103,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}pageSizes.forEach(function (item) {
 				var itemEl = document.createElement("option");
 				itemEl.value = item;
-				itemEl.innerHTML = item;
+
+				if (item === true) {
+					_this62.table.modules.localize.bind("pagination|all", function (value) {
+						itemEl.innerHTML = value;
+					});
+				} else {
+					itemEl.innerHTML = item;
+				}
 
 				_this62.pageSizeSelect.appendChild(itemEl);
 			});
@@ -21197,7 +21206,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.element.appendChild(self.pageSizeSelect);
 
 			self.pageSizeSelect.addEventListener("change", function (e) {
-				self.setPageSize(self.pageSizeSelect.value);
+				self.setPageSize(self.pageSizeSelect.value == "true" ? true : self.pageSizeSelect.value);
 				self.setPage(1).then(function () {}).catch(function () {});
 			});
 		}
@@ -21258,10 +21267,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//calculate maximum page from number of rows
 	Page.prototype.setMaxRows = function (rowCount) {
+
+		console.log("max", rowCount);
 		if (!rowCount) {
 			this.max = 1;
 		} else {
-			this.max = Math.ceil(rowCount / this.size);
+			this.max = this.size === true ? 1 : Math.ceil(rowCount / this.size);
 		}
 
 		if (this.page > this.max) {
@@ -21332,7 +21343,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var index = rows.indexOf(row);
 
 			if (index > -1) {
-				var page = Math.ceil((index + 1) / _this64.size);
+				var page = _this64.size === true ? 1 : Math.ceil((index + 1) / _this64.size);
 
 				_this64.setPage(page).then(function () {
 					resolve();
@@ -21347,7 +21358,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Page.prototype.setPageSize = function (size) {
-		size = parseInt(size);
+		if (size !== true) {
+			size = parseInt(size);
+		}
 
 		if (size > 0) {
 			this.size = size;
@@ -21494,8 +21507,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.mode == "local") {
 			output = [];
-			start = this.size * (this.page - 1);
-			end = start + parseInt(this.size);
+
+			if (this.size === true) {
+				start = 0;
+				end = data.length - 1;
+			} else {
+				start = this.size * (this.page - 1);
+				end = start + parseInt(this.size);
+			}
 
 			this._setPageButtons();
 
