@@ -21267,8 +21267,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//calculate maximum page from number of rows
 	Page.prototype.setMaxRows = function (rowCount) {
-
-		console.log("max", rowCount);
 		if (!rowCount) {
 			this.max = 1;
 		} else {
