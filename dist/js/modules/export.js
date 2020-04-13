@@ -308,7 +308,11 @@ Export.prototype.generateBodyElements = function (rows) {
 				if (groupHeader && groupHeader[row.level]) {
 					cellEl.innerHTML = groupHeader[row.level](row.key, row.getRowCount(), row.getData(), row.getComponent());
 				} else {
-					cellEl.innerHTML = row.element.innerHTML;
+					if (groupHeader === false) {
+						cellEl.innerHTML = row.key;
+					} else {
+						cellEl.innerHTML = row.element.innerHTML;
+					}
 				}
 
 				rowEl.classList.add("tabulator-print-table-group");
