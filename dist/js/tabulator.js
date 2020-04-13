@@ -12556,12 +12556,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    config = row.modules.dataTree;
 
 		if (config.branchEl) {
-			config.branchEl.parentNode.removeChild(config.branchEl);
+			if (config.branchEl.parentNode) {
+				config.branchEl.parentNode.removeChild(config.branchEl);
+			}
 			config.branchEl = false;
 		}
 
 		if (config.controlEl) {
-			config.controlEl.parentNode.removeChild(config.controlEl);
+			if (config.controlEl.parentNode) {
+				config.controlEl.parentNode.removeChild(config.controlEl);
+			}
 			config.controlEl = false;
 		}
 
@@ -12803,9 +12807,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	DataTree.prototype.checkForRestyle = function (cell) {
 		if (!cell.row.cells.indexOf(cell)) {
-			if (cell.row.modules.dataTree.children !== false) {
-				cell.row.reinitialize();
-			}
+			cell.row.reinitialize();
 		}
 	};
 
