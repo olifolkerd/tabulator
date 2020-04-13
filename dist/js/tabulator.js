@@ -24206,6 +24206,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return parseFloat(value) >= parameters;
 		},
 
+		//starts with  value
+		starts: function starts(cell, value, parameters) {
+			if (value === "" || value === null || typeof value === "undefined") {
+				return true;
+			}
+			return String(value).toLowerCase().startsWith(String(parameters).toLowerCase());
+		},
+
+		//ends with  value
+		ends: function ends(cell, value, parameters) {
+			if (value === "" || value === null || typeof value === "undefined") {
+				return true;
+			}
+			return String(value).toLowerCase().endsWith(String(parameters).toLowerCase());
+		},
+
 		//minimum string length
 		minLength: function minLength(cell, value, parameters) {
 			if (value === "" || value === null || typeof value === "undefined") {

@@ -145,6 +145,23 @@ Validate.prototype.validators = {
 		return parseFloat(value) >= parameters;
 	},
 
+	//starts with  value
+	starts: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
+		return String(value).toLowerCase().startsWith(String(parameters).toLowerCase());
+	},
+
+	//ends with  value
+	ends: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
+		return String(value).toLowerCase().endsWith(String(parameters).toLowerCase());
+	},
+
+
 	//minimum string length
 	minLength: function(cell, value, parameters){
 		if(value === "" || value === null || typeof value === "undefined"){
