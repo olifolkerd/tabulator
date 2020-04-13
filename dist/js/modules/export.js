@@ -224,11 +224,18 @@ Export.prototype.generateBodyElements = function (rows) {};
 Export.prototype.generateBodyElements = function (rows) {
 	var _this5 = this;
 
-	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField, rowFormatter;
+	var oddRow, evenRow, calcRow, firstRow, firstCell, firstGroup, lastCell, styleCells, styleRow, treeElementField, rowFormatter, groupHeader;
 
 	//assign row formatter
 	rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
 	rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
+
+	//assign group header formatter
+	groupHeader = this.table.options["groupHeader" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+
+	if (groupHeader && !Array.isArray(groupHeader)) {
+		groupHeader = [groupHeader];
+	}
 
 	//lookup row styles
 	if (this.cloneTableStyle && window.getComputedStyle) {
@@ -297,7 +304,12 @@ Export.prototype.generateBodyElements = function (rows) {
 			case "group":
 				var cellEl = document.createElement("td");
 				cellEl.colSpan = columns.length;
-				cellEl.innerHTML = row.key;
+
+				if (groupHeader && groupHeader[row.level]) {
+					cellEl.innerHTML = groupHeader[row.level](row.key, row.getRowCount(), row.getData(), row.getComponent());
+				} else {
+					cellEl.innerHTML = row.element.innerHTML;
+				}
 
 				rowEl.classList.add("tabulator-print-table-group");
 

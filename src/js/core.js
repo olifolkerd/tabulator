@@ -192,6 +192,9 @@ Tabulator.prototype.defaultOptions = {
 	groupValues:false,
 
 	groupHeader:false, //header generation function
+	groupHeaderPrint:null,
+	groupHeaderClipboard:null,
+	groupHeaderHtmlOutput:null,
 
 	htmlOutputConfig:false, //html outypu config
 
