@@ -1936,8 +1936,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Column.prototype._buildColumnHeaderContent = function () {
 
-		var def = self.definition,
-		    table = self.table;
+		var def = this.definition,
+		    table = this.table;
 
 		var contentElement = document.createElement("div");
 

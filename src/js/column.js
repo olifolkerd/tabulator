@@ -619,8 +619,8 @@ Column.prototype._buildColumnHeader = function(){
 };
 
 Column.prototype._buildColumnHeaderContent = function(){
-	var def = self.definition,
-	table = self.table;
+	var def = this.definition,
+	table = this.table;
 
 	var contentElement = document.createElement("div");
 	contentElement.classList.add("tabulator-col-content");
