@@ -336,7 +336,7 @@ Format.prototype.formatters = {
 		var newDatetime = moment(value, inputFormat);
 
 		if(newDatetime.isValid()){
-			return newDatetime.format(outputFormat);
+			return formatterParams.timezone ? newDatetime.tz(formatterParams.timezone).format(outputFormat) : newDatetime.format(outputFormat);
 		}else{
 
 			if(invalid === true){
