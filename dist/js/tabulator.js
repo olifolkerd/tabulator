@@ -10406,12 +10406,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var _this31 = this;
 
 			var colsWidth = 0,
-				sidebarWidth = $('.main-menu').css('width'),
-			    tableWidth = this.table.rowManager.element.clientWidth - parseInt(sidebarWidth) - 2,
+			    tableWidth = this.table.rowManager.element.clientWidth,
 			    gap = 0,
 				lastCol = false,          
 				growthCol = [];
-			
+
 			columns.forEach(function (column, i) {
 
 				if (!column.widthFixed) {
