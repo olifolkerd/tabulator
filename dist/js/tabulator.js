@@ -1521,11 +1521,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					self.table.modules.localize.bind("columns|" + def.field, function (value) {
 
-						self.element.setAttribute("title", value || def.title);
+						self.element.setAttribute("data-title", value || def.title);
 					});
 				} else {
 
-					self.element.setAttribute("title", def.title);
+					self.element.setAttribute("data-title", def.title);
 				}
 			} else {
 
@@ -1539,11 +1539,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
-				self.element.setAttribute("title", tooltip);
+				self.element.setAttribute("data-title", tooltip);
 			}
 		} else {
 
-			self.element.setAttribute("title", "");
+			self.element.setAttribute("data-title", "");
 		}
 	};
 
@@ -6881,10 +6881,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				tooltip = "";
 			}
 
-			this.element.setAttribute("title", tooltip);
+			this.element.setAttribute("data-title", tooltip);
 		} else {
 
-			this.element.setAttribute("title", "");
+			this.element.setAttribute("data-title", "");
 		}
 	};
 
@@ -10406,7 +10406,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var _this31 = this;
 
 			var colsWidth = 0,
-			    tableWidth = this.table.rowManager.element.clientWidth - 0.01,
+			    tableWidth = this.table.rowManager.element.clientWidth,
 			    gap = 0,
 				lastCol = false,          
 				growthCol = [];
