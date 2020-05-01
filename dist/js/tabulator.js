@@ -1520,12 +1520,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (def.field) {
 
 					self.table.modules.localize.bind("columns|" + def.field, function (value) {
-
-						if(value <> 'false' && value <> '')
-							self.element.setAttribute("data-title", value || def.title);
+						self.element.setAttribute("data-title", value || def.title);
 					});
 				} else {
-
 					self.element.setAttribute("data-title", def.title);
 				}
 			} else {
@@ -6884,10 +6881,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				tooltip = "";
 			}
 
-			this.element.setAttribute("data-title", tooltip);
+			if(tooltip != 'false' && toolip != 'true' && tooltip != null)
+			{
+				this.element.setAttribute("data-title", tooltip);
+			}
 		} else {
 
-			this.element.setAttribute("data-title", "");
+			//this.element.setAttribute("data-title", "");
 		}
 	};
 
