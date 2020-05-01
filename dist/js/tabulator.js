@@ -1537,7 +1537,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
-				if(tooltip != 'false' && tooltip != 'true' && tooltip != null)
+				if(tooltip != false && tooltip != true && tooltip != null)
 				{
 				  this.element.setAttribute("data-title", tooltip);
 				}
@@ -6881,7 +6881,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				tooltip = "";
 			}
 
-			if(tooltip != 'false' && tooltip != 'true' && tooltip != null)
+			if(tooltip != false && tooltip != true && tooltip != null)
 			{
 				this.element.setAttribute("data-title", tooltip);
 			}
