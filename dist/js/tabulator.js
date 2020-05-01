@@ -1546,8 +1546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 		} else {
-
-			self.element.setAttribute("data-title", "");
+			//self.element.setAttribute("data-title", "");
 		}
 	};
 
