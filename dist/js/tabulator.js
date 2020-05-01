@@ -1521,7 +1521,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					self.table.modules.localize.bind("columns|" + def.field, function (value) {
 
-						self.element.setAttribute("data-title", value || def.title);
+						if(value <> 'false' && value <> '')
+							self.element.setAttribute("data-title", value || def.title);
 					});
 				} else {
 
@@ -1539,7 +1540,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
-				self.element.setAttribute("data-title", tooltip);
+				if(tooltip != 'false' && toolip != 'true' && tooltip != null)
+				{
+				  this.element.setAttribute("data-title", tooltip);
+				}
 			}
 		} else {
 
