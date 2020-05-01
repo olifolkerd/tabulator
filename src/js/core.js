@@ -307,6 +307,7 @@ Tabulator.prototype.defaultOptions = {
 	groupClick:false,
 	groupDblClick:false,
 	groupContext:false,
+	groupContextMenu:false,
 	groupTap:false,
 	groupDblTap:false,
 	groupTapHold:false,
