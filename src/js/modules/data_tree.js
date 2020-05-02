@@ -103,11 +103,11 @@ DataTree.prototype.initializeRow = function(row){
 
 
 	row.modules.dataTree = {
-		index:0,
+		index: row.modules.dataTree ? row.modules.dataTree.index : 0,
 		open: children ? (row.modules.dataTree ? row.modules.dataTree.open :this.startOpen(row.getComponent(), 0)) : false,
 		controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
 		branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
-		parent:false,
+		parent: row.modules.dataTree ? row.modules.dataTree.parent : false,
 		children:children,
 	};
 };
