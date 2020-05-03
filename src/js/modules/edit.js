@@ -810,6 +810,7 @@ Edit.prototype.editors = {
 				var item = {
 					label:editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label) : item.label,
 					value:item.value,
+					class:item.class,
 					element:false,
 				};
 
@@ -837,6 +838,7 @@ Edit.prototype.editors = {
 							item = {
 								label:value.label,
 								group:true,
+								class: value.class,
 								element:false,
 							};
 
@@ -916,7 +918,16 @@ Edit.prototype.editors = {
 							el.classList.add("active");
 						}
 					}
-
+				   	if(item.class) {
+						if(typeof item.class === "string") {
+							el.classList.add(item.class);
+						}
+						else if(Array.isArray(item.class)) {
+							item.class.map(function(item) {
+								return el.classList.add(item);
+							});
+						}
+					}
 					el.addEventListener("mousedown", function(){
 						blurable = false;
 
