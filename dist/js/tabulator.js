@@ -6356,6 +6356,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
 	};
 
+	CellComponent.prototype.validate = function (force) {
+
+		if (this._cell.column.modules.validate && self.table.modExists("validate", true)) {
+
+			var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
+
+			return valid === true;
+		} else {
+
+			return true;
+		}
+	};
+
 	CellComponent.prototype.nav = function () {
 
 		return this._cell.nav();
@@ -24217,12 +24230,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (valid === true) {
 			baseCell.modules.validate.invalid = false;
+			cell.getElement().classList.remove("tabulator-validation-fail");
 
 			if (invalidIndex > -1) {
 				this.invalidCells.splice(invalidIndex, 1);
 			}
 		} else {
 			baseCell.modules.validate.invalid = true;
+			cell.getElement().classList.add("tabulator-validation-fail");
 
 			if (invalidIndex == -1) {
 				this.invalidCells.push(baseCell);

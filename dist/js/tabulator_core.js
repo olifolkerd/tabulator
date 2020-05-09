@@ -5013,6 +5013,16 @@ CellComponent.prototype.isValid = function (force) {
 	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
 };
 
+CellComponent.prototype.validate = function (force) {
+	if (this._cell.column.modules.validate && self.table.modExists("validate", true)) {
+		var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
+
+		return valid === true;
+	} else {
+		return true;
+	}
+};
+
 CellComponent.prototype.nav = function () {
 	return this._cell.nav();
 };

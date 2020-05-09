@@ -103,12 +103,14 @@ Validate.prototype.validate = function (validators, cell, value) {
 
 	if (valid === true) {
 		baseCell.modules.validate.invalid = false;
+		cell.getElement().classList.remove("tabulator-validation-fail");
 
 		if (invalidIndex > -1) {
 			this.invalidCells.splice(invalidIndex, 1);
 		}
 	} else {
 		baseCell.modules.validate.invalid = true;
+		cell.getElement().classList.add("tabulator-validation-fail");
 
 		if (invalidIndex == -1) {
 			this.invalidCells.push(baseCell);
