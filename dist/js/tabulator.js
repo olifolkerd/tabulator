@@ -6351,6 +6351,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this._cell.cancelEdit();
 	};
 
+	CellComponent.prototype.isValid = function (force) {
+
+		return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
+	};
+
 	CellComponent.prototype.nav = function () {
 
 		return this._cell.nav();
@@ -9692,7 +9697,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	///////////////////// Filtering ////////////////////
+	///////////////////// select ////////////////////
 
 	Tabulator.prototype.selectRow = function (rows) {
 
@@ -9738,6 +9743,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.modExists("selectRow", true)) {
 
 			return this.modules.selectRow.getSelectedData();
+		}
+	};
+
+	///////////////////// validation  ////////////////////
+
+	Tabulator.prototype.getInvalidCells = function () {
+
+		if (this.modExists("validate", true)) {
+
+			return this.modules.validate.getInvalidCells();
 		}
 	};
 
@@ -24103,6 +24118,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	var Validate = function Validate(table) {
 		this.table = table;
+		this.invalidCells = [];
 	};
 
 	//validate
@@ -24178,7 +24194,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Validate.prototype.validate = function (validators, cell, value) {
 		var self = this,
-		    valid = [];
+		    valid = [],
+		    baseCell = cell._getSelf(),
+		    invalidIndex = this.invalidCells.indexOf(baseCell);
 
 		if (validators) {
 			validators.forEach(function (item) {
@@ -24191,7 +24209,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 
-		return valid.length ? valid : true;
+		valid = valid.length ? valid : true;
+
+		if (!baseCell.modules.validate) {
+			baseCell.modules.validate = {};
+		}
+
+		if (valid === true) {
+			baseCell.modules.validate.invalid = false;
+
+			if (invalidIndex > -1) {
+				this.invalidCells.splice(invalidIndex, 1);
+			}
+		} else {
+			baseCell.modules.validate.invalid = true;
+
+			if (invalidIndex == -1) {
+				this.invalidCells.push(baseCell);
+			}
+		}
+
+		return valid;
+	};
+
+	Validate.prototype.getInvalidCells = function () {
+		var output = [];
+
+		this.invalidCells.forEach(function (cell) {
+			output.push(cell.getComponent());
+		});
+
+		return output;
 	};
 
 	Validate.prototype.validators = {

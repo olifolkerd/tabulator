@@ -1641,7 +1641,7 @@ Tabulator.prototype.clearHeaderFilter = function(){
 	}
 };
 
-///////////////////// Filtering ////////////////////
+///////////////////// select ////////////////////
 Tabulator.prototype.selectRow = function(rows){
 	if(this.modExists("selectRow", true)){
 		if(rows === true){
@@ -1673,6 +1673,13 @@ Tabulator.prototype.getSelectedRows = function(){
 Tabulator.prototype.getSelectedData = function(){
 	if(this.modExists("selectRow", true)){
 		return this.modules.selectRow.getSelectedData();
+	}
+};
+
+///////////////////// validation  ////////////////////
+Tabulator.prototype.getInvalidCells = function(){
+	if(this.modExists("validate", true)){
+		return this.modules.validate.getInvalidCells();
 	}
 };
 

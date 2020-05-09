@@ -5009,6 +5009,10 @@ CellComponent.prototype.cancelEdit = function () {
 	this._cell.cancelEdit();
 };
 
+CellComponent.prototype.isValid = function (force) {
+	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
+};
+
 CellComponent.prototype.nav = function () {
 	return this._cell.nav();
 };
@@ -7422,7 +7426,7 @@ Tabulator.prototype.clearHeaderFilter = function () {
 	}
 };
 
-///////////////////// Filtering ////////////////////
+///////////////////// select ////////////////////
 Tabulator.prototype.selectRow = function (rows) {
 	if (this.modExists("selectRow", true)) {
 		if (rows === true) {
@@ -7454,6 +7458,13 @@ Tabulator.prototype.getSelectedRows = function () {
 Tabulator.prototype.getSelectedData = function () {
 	if (this.modExists("selectRow", true)) {
 		return this.modules.selectRow.getSelectedData();
+	}
+};
+
+///////////////////// validation  ////////////////////
+Tabulator.prototype.getInvalidCells = function () {
+	if (this.modExists("validate", true)) {
+		return this.modules.validate.getInvalidCells();
 	}
 };
 

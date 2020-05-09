@@ -1,5 +1,6 @@
 var Validate = function(table){
 	this.table = table;
+	this.invalidCells = [];
 };
 
 //validate
@@ -77,7 +78,9 @@ Validate.prototype._buildValidator = function(type, params){
 
 Validate.prototype.validate = function(validators, cell, value){
 	var self = this,
-	valid = [];
+	valid = [],
+	baseCell = cell._getSelf(),
+	invalidIndex = this.invalidCells.indexOf(baseCell);
 
 	if(validators){
 		validators.forEach(function(item){
@@ -90,7 +93,38 @@ Validate.prototype.validate = function(validators, cell, value){
 		});
 	}
 
-	return valid.length ? valid : true;
+	valid = valid.length ? valid : true;
+
+	if(!baseCell.modules.validate){
+		baseCell.modules.validate = {};
+	}
+
+	if(valid === true){
+		baseCell.modules.validate.invalid = false;
+
+		if(invalidIndex > -1){
+			this.invalidCells.splice(invalidIndex, 1);
+		}
+	}else{
+		baseCell.modules.validate.invalid = true;
+
+		if(invalidIndex == -1){
+			this.invalidCells.push(baseCell);
+		}
+	}
+
+
+	return valid;
+};
+
+Validate.prototype.getInvalidCells = function(){
+	var output = [];
+
+	this.invalidCells.forEach((cell) => {
+		output.push(cell.getComponent());
+	});
+
+	return output;
 };
 
 Validate.prototype.validators = {
