@@ -209,21 +209,29 @@ Cell.prototype._bindClickEvents = function(cellEvents){
 			}
 		});
 	}else{
-		// element.addEventListener("dblclick", function(e){
-			// e.preventDefault();
-			// try{
-			// 	if (document.selection) { // IE
-			// 		var range = document.body.createTextRange();
-			// 		range.moveToElementText(self.element);
-			// 		range.select();
-			// 	} else if (window.getSelection) {
-			// 		var range = document.createRange();
-			// 		range.selectNode(self.element);
-			// 		window.getSelection().removeAllRanges();
-			// 		window.getSelection().addRange(range);
-			// 	}
-			// }catch(e){}
-		// });
+		element.addEventListener("dblclick", function(e){
+
+			if(self.table.modExists("edit")){
+				if (self.table.modules.edit.currentCell === self){
+					return; //prevent instant selection of editor content
+				}
+			}
+
+			e.preventDefault();
+
+			try{
+				if (document.selection) { // IE
+					var range = document.body.createTextRange();
+					range.moveToElementText(self.element);
+					range.select();
+				} else if (window.getSelection) {
+					var range = document.createRange();
+					range.selectNode(self.element);
+					window.getSelection().removeAllRanges();
+					window.getSelection().addRange(range);
+				}
+			}catch(e){}
+		});
 	}
 
 	if (cellEvents.cellContext || this.table.options.cellContext){

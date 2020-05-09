@@ -6562,36 +6562,40 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		} else {
 
-			// element.addEventListener("dblclick", function(e){
+			element.addEventListener("dblclick", function (e) {
 
-			// e.preventDefault();
+				if (self.table.modExists("edit")) {
 
-			// try{
+					if (self.table.modules.edit.currentCell === self) {
 
-			// 	if (document.selection) { // IE
+						return; //prevent instant selection of editor content
+					}
+				}
 
-			// 		var range = document.body.createTextRange();
+				e.preventDefault();
 
-			// 		range.moveToElementText(self.element);
+				try {
 
-			// 		range.select();
+					if (document.selection) {
+						// IE
 
-			// 	} else if (window.getSelection) {
+						var range = document.body.createTextRange();
 
-			// 		var range = document.createRange();
+						range.moveToElementText(self.element);
 
-			// 		range.selectNode(self.element);
+						range.select();
+					} else if (window.getSelection) {
 
-			// 		window.getSelection().removeAllRanges();
+						var range = document.createRange();
 
-			// 		window.getSelection().addRange(range);
+						range.selectNode(self.element);
 
-			// 	}
+						window.getSelection().removeAllRanges();
 
-			// }catch(e){}
-
-			// });
-
+						window.getSelection().addRange(range);
+					}
+				} catch (e) {}
+			});
 		}
 
 		if (cellEvents.cellContext || this.table.options.cellContext) {
