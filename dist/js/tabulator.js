@@ -7938,7 +7938,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		localized: function localized() {},
 
-		//validation has failed
+		//validation callbacks
+
+		validationBlocking: true,
 
 		validationFailed: function validationFailed() {},
 
@@ -13992,12 +13994,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					valid = self.table.modules.validate.validate(cell.column.modules.validate, cell.getComponent(), value);
 				}
 
-				if (valid === true) {
+				if (valid === true || !self.table.options.validationBlocking) {
 					self.clearEditor();
 					cell.setValue(value, true);
 
 					if (self.table.options.dataTree && self.table.modExists("dataTree")) {
 						self.table.modules.dataTree.checkForRestyle(cell);
+					}
+
+					if (valid !== true) {
+						element.classList.add("tabulator-validation-fail");
+						return false;
 					}
 
 					return true;

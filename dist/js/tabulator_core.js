@@ -6113,7 +6113,8 @@ Tabulator.prototype.defaultOptions = {
 	//localization callbacks
 	localized: function localized() {},
 
-	//validation has failed
+	//validation callbacks
+	validationBlocking: true,
 	validationFailed: function validationFailed() {},
 
 	//history callbacks
