@@ -4719,7 +4719,7 @@ Row.prototype.updateData = function (updatedData) {
 
 		//Partial reinitialization if visible
 		if (visible) {
-			_this14.normalizeHeight();
+			_this14.normalizeHeight(true);
 
 			if (_this14.table.options.rowFormatter) {
 				_this14.table.options.rowFormatter(_this14.getComponent());

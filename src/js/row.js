@@ -574,7 +574,7 @@ Row.prototype.updateData = function(updatedData){
 
 		//Partial reinitialization if visible
 		if(visible){
-			this.normalizeHeight();
+			this.normalizeHeight(true);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
