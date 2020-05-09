@@ -4883,6 +4883,13 @@ Row.prototype.deleteActual = function (blockRedraw) {
 		this.table.modules.selectRow._deselectRow(this, true);
 	}
 
+	//cancel edit if row is currently being edited
+	if (this.table.modExists("edit")) {
+		if (this.table.modules.edit.currentCell.row === this) {
+			this.table.modules.edit.cancelEdit();
+		}
+	}
+
 	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
 	// 	this.table.modules.dataTree.collapseRow(this, true);
 	// }
