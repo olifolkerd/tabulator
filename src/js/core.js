@@ -1683,6 +1683,24 @@ Tabulator.prototype.getInvalidCells = function(){
 	}
 };
 
+Tabulator.prototype.clearCellValidation = function(cells){
+
+	if(this.modExists("validate", true)){
+
+		if(!cells){
+			cells = this.modules.validate.getInvalidCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.modules.validate.clearValidation(cell._getSelf());
+		});
+	}
+};
+
 //////////// Pagination Functions  ////////////
 
 Tabulator.prototype.setMaxPage = function(max){

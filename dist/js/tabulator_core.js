@@ -5009,11 +5009,11 @@ CellComponent.prototype.cancelEdit = function () {
 	this._cell.cancelEdit();
 };
 
-CellComponent.prototype.isValid = function (force) {
+CellComponent.prototype.isValid = function () {
 	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
 };
 
-CellComponent.prototype.validate = function (force) {
+CellComponent.prototype.validate = function () {
 	if (this._cell.column.modules.validate && self.table.modExists("validate", true)) {
 		var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
 
@@ -5023,7 +5023,7 @@ CellComponent.prototype.validate = function (force) {
 	}
 };
 
-CellComponent.prototype.clearValidation = function (force) {
+CellComponent.prototype.clearValidation = function () {
 	if (self.table.modExists("validate", true)) {
 		this._cell.table.modules.validate.clearValidation(this._cell);
 	}
@@ -7484,6 +7484,25 @@ Tabulator.prototype.getInvalidCells = function () {
 	}
 };
 
+Tabulator.prototype.clearCellValidation = function (cells) {
+	var _this30 = this;
+
+	if (this.modExists("validate", true)) {
+
+		if (!cells) {
+			cells = this.modules.validate.getInvalidCells();
+		}
+
+		if (!Array.isArray(cells)) {
+			cells = [cells];
+		}
+
+		cells.forEach(function (cell) {
+			_this30.modules.validate.clearValidation(cell._getSelf());
+		});
+	}
+};
+
 //////////// Pagination Functions  ////////////
 
 Tabulator.prototype.setMaxPage = function (max) {
@@ -7505,14 +7524,14 @@ Tabulator.prototype.setPage = function (page) {
 };
 
 Tabulator.prototype.setPageToRow = function (row) {
-	var _this30 = this;
+	var _this31 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this30.options.pagination && _this30.modExists("page")) {
-			row = _this30.rowManager.findRow(row);
+		if (_this31.options.pagination && _this31.modExists("page")) {
+			row = _this31.rowManager.findRow(row);
 
 			if (row) {
-				_this30.modules.page.setPageToRow(row).then(function () {
+				_this31.modules.page.setPageToRow(row).then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -8032,7 +8051,7 @@ Layout.prototype.modes = {
 	//resize columns to fit data the contain and stretch last column to fill table
 
 	"fitDataStretch": function fitDataStretch(columns) {
-		var _this31 = this;
+		var _this32 = this;
 
 		var colsWidth = 0,
 		    tableWidth = this.table.rowManager.element.clientWidth,
@@ -8046,7 +8065,7 @@ Layout.prototype.modes = {
 				column.reinitializeWidth();
 			}
 
-			if (_this31.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible) {
+			if (_this32.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible) {
 
 				lastCol = column;
 			}

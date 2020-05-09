@@ -52,11 +52,11 @@ CellComponent.prototype.cancelEdit = function(){
 	this._cell.cancelEdit();
 };
 
-CellComponent.prototype.isValid = function(force){
+CellComponent.prototype.isValid = function(){
 	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
 };
 
-CellComponent.prototype.validate = function(force){
+CellComponent.prototype.validate = function(){
 	if(this._cell.column.modules.validate && self.table.modExists("validate", true)){
 		var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
 
@@ -66,7 +66,7 @@ CellComponent.prototype.validate = function(force){
 	}
 };
 
-CellComponent.prototype.clearValidation = function(force){
+CellComponent.prototype.clearValidation = function(){
 	if(self.table.modExists("validate", true)){
 		this._cell.table.modules.validate.clearValidation(this._cell);
 	}
