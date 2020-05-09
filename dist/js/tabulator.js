@@ -6369,6 +6369,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	CellComponent.prototype.clearValidation = function (force) {
+
+		if (self.table.modExists("validate", true)) {
+
+			this._cell.table.modules.validate.clearValidation(this._cell);
+		}
+	};
+
 	CellComponent.prototype.nav = function () {
 
 		return this._cell.nav();
@@ -24255,6 +24263,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 
 		return output;
+	};
+
+	Validate.prototype.clearValidation = function (cell) {
+		var invalidIndex;
+
+		if (cell.modules.validate && cell.modules.validate.invalid) {
+
+			cell.element.classList.remove("tabulator-validation-fail");
+			cell.modules.validate.invalid = false;
+
+			invalidIndex = this.invalidCells.indexOf(cell);
+
+			if (invalidIndex > -1) {
+				this.invalidCells.splice(invalidIndex, 1);
+			}
+		}
 	};
 
 	Validate.prototype.validators = {

@@ -130,6 +130,22 @@ Validate.prototype.getInvalidCells = function () {
 	return output;
 };
 
+Validate.prototype.clearValidation = function (cell) {
+	var invalidIndex;
+
+	if (cell.modules.validate && cell.modules.validate.invalid) {
+
+		cell.element.classList.remove("tabulator-validation-fail");
+		cell.modules.validate.invalid = false;
+
+		invalidIndex = this.invalidCells.indexOf(cell);
+
+		if (invalidIndex > -1) {
+			this.invalidCells.splice(invalidIndex, 1);
+		}
+	}
+};
+
 Validate.prototype.validators = {
 
 	//is integer

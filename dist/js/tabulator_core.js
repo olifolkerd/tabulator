@@ -5023,6 +5023,12 @@ CellComponent.prototype.validate = function (force) {
 	}
 };
 
+CellComponent.prototype.clearValidation = function (force) {
+	if (self.table.modExists("validate", true)) {
+		this._cell.table.modules.validate.clearValidation(this._cell);
+	}
+};
+
 CellComponent.prototype.nav = function () {
 	return this._cell.nav();
 };
