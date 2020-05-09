@@ -2172,6 +2172,13 @@ Column.prototype.delete = function () {
 			});
 		}
 
+		//cancel edit if column is currently being edited
+		if (_this7.table.modExists("edit")) {
+			if (_this7.table.modules.edit.currentCell.column === _this7) {
+				_this7.table.modules.edit.cancelEdit();
+			}
+		}
+
 		var cellCount = _this7.cells.length;
 
 		for (var i = 0; i < cellCount; i++) {

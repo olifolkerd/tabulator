@@ -1149,6 +1149,13 @@ Column.prototype.delete = function(){
 			});
 		}
 
+		//cancel edit if column is currently being edited
+		if(this.table.modExists("edit")){
+			if(this.table.modules.edit.currentCell.column === this){
+				this.table.modules.edit.cancelEdit();
+			}
+		}
+
 		var cellCount = this.cells.length;
 
 		for(let i = 0; i < cellCount; i++){
