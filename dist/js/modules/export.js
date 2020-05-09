@@ -53,7 +53,7 @@ Export.prototype.rowLookup = function (range) {
 				break;
 
 			case "selected":
-				rows = this.modules.selectRow.selectedRows;
+				rows = this.table.modules.selectRow.selectedRows;
 				break;
 
 			case "active":

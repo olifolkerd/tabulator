@@ -1242,7 +1242,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this._column.table.modExists("filter", true)) {
 
-			this._column.table.modules.filter.getHeaderFilterValue(this._column);
+			return this._column.table.modules.filter.getHeaderFilterValue(this._column);
 		}
 	};
 
@@ -12541,11 +12541,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		row.modules.dataTree = {
-			index: 0,
+			index: row.modules.dataTree ? row.modules.dataTree.index : 0,
 			open: children ? row.modules.dataTree ? row.modules.dataTree.open : this.startOpen(row.getComponent(), 0) : false,
 			controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
 			branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
-			parent: false,
+			parent: row.modules.dataTree ? row.modules.dataTree.parent : false,
 			children: children
 		};
 	};
@@ -15732,7 +15732,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					break;
 
 				case "selected":
-					rows = this.modules.selectRow.selectedRows;
+					rows = this.table.modules.selectRow.selectedRows;
 					break;
 
 				case "active":
@@ -19801,7 +19801,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (column.definition.headerContextMenu) {
 			column.getElement().addEventListener("contextmenu", function (e) {
-				var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
+				var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent()) : column.definition.headerContextMenu;
 
 				e.preventDefault();
 
@@ -19816,7 +19816,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			headerMenuEl.innerHTML = "&vellip;";
 
 			headerMenuEl.addEventListener("click", function (e) {
-				var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu() : column.definition.headerMenu;
+				var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent()) : column.definition.headerMenu;
 				e.stopPropagation();
 				e.preventDefault();
 
@@ -19831,7 +19831,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var _this59 = this;
 
 		cell.getElement().addEventListener("contextmenu", function (e) {
-			var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu() : cell.column.definition.contextMenu;
+			var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
 
 			e.preventDefault();
 
@@ -19843,7 +19843,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var _this60 = this;
 
 		row.getElement().addEventListener("contextmenu", function (e) {
-			var menu = typeof _this60.table.options.rowContextMenu == "function" ? _this60.table.options.rowContextMenu() : _this60.table.options.rowContextMenu;
+			var menu = typeof _this60.table.options.rowContextMenu == "function" ? _this60.table.options.rowContextMenu(row.getComponent()) : _this60.table.options.rowContextMenu;
 
 			e.preventDefault();
 

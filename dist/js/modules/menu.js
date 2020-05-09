@@ -13,7 +13,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 
 	if (column.definition.headerContextMenu) {
 		column.getElement().addEventListener("contextmenu", function (e) {
-			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu() : column.definition.headerContextMenu;
+			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent()) : column.definition.headerContextMenu;
 
 			e.preventDefault();
 
@@ -28,7 +28,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 		headerMenuEl.innerHTML = "&vellip;";
 
 		headerMenuEl.addEventListener("click", function (e) {
-			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu() : column.definition.headerMenu;
+			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent()) : column.definition.headerMenu;
 			e.stopPropagation();
 			e.preventDefault();
 
@@ -43,7 +43,7 @@ Menu.prototype.initializeCell = function (cell) {
 	var _this2 = this;
 
 	cell.getElement().addEventListener("contextmenu", function (e) {
-		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu() : cell.column.definition.contextMenu;
+		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
 
 		e.preventDefault();
 
@@ -55,7 +55,7 @@ Menu.prototype.initializeRow = function (row) {
 	var _this3 = this;
 
 	row.getElement().addEventListener("contextmenu", function (e) {
-		var menu = typeof _this3.table.options.rowContextMenu == "function" ? _this3.table.options.rowContextMenu() : _this3.table.options.rowContextMenu;
+		var menu = typeof _this3.table.options.rowContextMenu == "function" ? _this3.table.options.rowContextMenu(row.getComponent()) : _this3.table.options.rowContextMenu;
 
 		e.preventDefault();
 
