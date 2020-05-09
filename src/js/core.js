@@ -1857,6 +1857,30 @@ Tabulator.prototype.getGroupedData = function(){
 	}
 }
 
+Tabulator.prototype.getEditedCells = function(){
+	if(this.modExists("edit", true)){
+		return this.modules.edit.getEditedCells();
+	}
+};
+
+Tabulator.prototype.clearCellEdited = function(cells){
+	if(this.modExists("edit", true)){
+
+		if(!cells){
+			cells = this.modules.edit.getEditedCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+};
+
+
 ///////////////// Column Calculation Functions ///////////////
 Tabulator.prototype.getCalcResults = function(){
 	if(this.modExists("columnCalcs", true)){

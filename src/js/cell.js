@@ -52,6 +52,17 @@ CellComponent.prototype.cancelEdit = function(){
 	this._cell.cancelEdit();
 };
 
+CellComponent.prototype.isEdited = function(){
+	return !! this._cell.modules.edit && this._cell.modules.edit.edited;
+};
+
+CellComponent.prototype.clearEdited = function(){
+	if(self.table.modExists("edit", true)){
+		this._cell.table.modules.edit.clearEdited(this._cell);
+	}
+};
+
+
 CellComponent.prototype.isValid = function(){
 	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
 };

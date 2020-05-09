@@ -5009,6 +5009,16 @@ CellComponent.prototype.cancelEdit = function () {
 	this._cell.cancelEdit();
 };
 
+CellComponent.prototype.isEdited = function () {
+	return !!this._cell.modules.edit && this._cell.modules.edit.edited;
+};
+
+CellComponent.prototype.clearEdited = function () {
+	if (self.table.modExists("edit", true)) {
+		this._cell.table.modules.edit.clearEdited(this._cell);
+	}
+};
+
 CellComponent.prototype.isValid = function () {
 	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
 };
@@ -7659,6 +7669,31 @@ Tabulator.prototype.getGroupedData = function () {
 	}
 };
 
+Tabulator.prototype.getEditedCells = function () {
+	if (this.modExists("edit", true)) {
+		return this.modules.edit.getEditedCells();
+	}
+};
+
+Tabulator.prototype.clearCellEdited = function (cells) {
+	var _this32 = this;
+
+	if (this.modExists("edit", true)) {
+
+		if (!cells) {
+			cells = this.modules.edit.getEditedCells();
+		}
+
+		if (!Array.isArray(cells)) {
+			cells = [cells];
+		}
+
+		cells.forEach(function (cell) {
+			_this32.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+};
+
 ///////////////// Column Calculation Functions ///////////////
 Tabulator.prototype.getCalcResults = function () {
 	if (this.modExists("columnCalcs", true)) {
@@ -8051,7 +8086,7 @@ Layout.prototype.modes = {
 	//resize columns to fit data the contain and stretch last column to fill table
 
 	"fitDataStretch": function fitDataStretch(columns) {
-		var _this32 = this;
+		var _this33 = this;
 
 		var colsWidth = 0,
 		    tableWidth = this.table.rowManager.element.clientWidth,
@@ -8065,7 +8100,7 @@ Layout.prototype.modes = {
 				column.reinitializeWidth();
 			}
 
-			if (_this32.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible) {
+			if (_this33.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible) {
 
 				lastCol = column;
 			}

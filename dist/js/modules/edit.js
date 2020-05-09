@@ -8,6 +8,7 @@ var Edit = function Edit(table) {
 	this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
 	this.recursionBlock = false; //prevent focus recursion
 	this.invalidEdit = false;
+	this.editedCells = [];
 };
 
 //initialize column editor
@@ -191,6 +192,16 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 			if (valid === true || !self.table.options.validationBlocking) {
 				self.clearEditor();
 				cell.setValue(value, true);
+
+				if (!cell.modules.edit) {
+					cell.modules.edit = {};
+				}
+
+				cell.modules.edit.edited = true;
+
+				if (self.editedCells.indexOf(cell) == -1) {
+					self.editedCells.push(cell);
+				}
 
 				if (self.table.options.dataTree && self.table.modExists("dataTree")) {
 					self.table.modules.dataTree.checkForRestyle(cell);
@@ -398,6 +409,30 @@ Edit.prototype.maskInput = function (el, options) {
 
 	if (options.maskAutoFill) {
 		fillSymbols(el.value.length);
+	}
+};
+
+Edit.prototype.getEditedCells = function () {
+	var output = [];
+
+	this.editedCells.forEach(function (cell) {
+		output.push(cell.getComponent());
+	});
+
+	return output;
+};
+
+Edit.prototype.clearEdited = function (cell) {
+	var editIndex;
+
+	if (cell.modules.edit && cell.modules.edit.edited) {
+		cell.modules.validate.invalid = false;
+
+		editIndex = this.editedCells.indexOf(cell);
+
+		if (editIndex > -1) {
+			this.editedCells.splice(editIndex, 1);
+		}
 	}
 };
 
