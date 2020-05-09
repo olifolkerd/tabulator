@@ -203,8 +203,8 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 				input{
 					&::-ms-clear {
-					  width : 0;
-					  height: 0;
+						width : 0;
+						height: 0;
 					}
 				}
 			}
@@ -607,30 +607,42 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 		.tabulator-row{
 			border-color: $table-dark-border-color;
+			background-color: $table-dark-bg;
+			color: $table-dark-color;
 
 			&:hover{
-				background-color: $table-dark-hover-bg !important;
+				background-color: $table-dark-border-color;
+
+				.tabulator-cell{
+					background-color: $table-dark-hover-bg;
+				}
+			}
+
+			&.tabulator-selected{
+				background-color:$rowSelectedBackground;
 			}
 		}
 	}
 
 	&.table-striped{
-		.tabulator-row{
-			&:nth-child(even){
-				background-color: $rowAltBackgroundColor;
+		&:not(.table-dark){
+			.tabulator-row{
+				&:nth-child(even){
+					background-color: $rowAltBackgroundColor;
 
-				&.tabulator-selected{
-					background-color:$rowSelectedBackground;
-				}
+					&.tabulator-selected{
+						background-color:$rowSelectedBackground;
+					}
 
-				&.tabulator-selectable:hover{
-					background-color:$rowHoverBackground;
-					cursor: pointer;
-				}
+					&.tabulator-selectable:hover{
+						background-color:$rowHoverBackground;
+						cursor: pointer;
+					}
 
-				&.tabulator-selected:hover{
-					background-color:$rowSelectedBackgroundHover;
-					cursor: pointer;
+					&.tabulator-selected:hover{
+						background-color:$rowSelectedBackgroundHover;
+						cursor: pointer;
+					}
 				}
 			}
 		}
@@ -638,7 +650,9 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		&.table-dark{
 			.tabulator-row{
 				&:nth-child(even){
-					background-color: $table-dark-accent-bg;
+					.tabulator-cell{
+						background-color: $table-dark-accent-bg;
+					}
 				}
 			}
 		}
