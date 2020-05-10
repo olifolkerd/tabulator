@@ -7222,6 +7222,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.element.parentNode.removeChild(this.element);
 		}
 
+		if (self.table.modExists("validate", true)) {
+
+			this._cell.table.modules.validate.clearValidation(this);
+		}
+
 		this.element = false;
 
 		this.column.deleteCell(this);

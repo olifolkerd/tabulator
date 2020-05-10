@@ -692,6 +692,11 @@ Cell.prototype.delete = function(){
 	if(!this.table.rowManager.redrawBlock){
 		this.element.parentNode.removeChild(this.element);
 	}
+
+	if(self.table.modExists("validate", true)){
+		this._cell.table.modules.validate.clearValidation(this);
+	}
+
 	this.element = false;
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);
