@@ -7222,9 +7222,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.element.parentNode.removeChild(this.element);
 		}
 
-		if (self.table.modExists("validate", true)) {
+		if (this.modules.validate && this.modules.validate.invalid) {
 
-			this._cell.table.modules.validate.clearValidation(this);
+			this.table.modules.validate.clearValidation(this);
+		}
+
+		if (this.modules.edit && this.modules.edit.edited) {
+
+			this.table.modules.edit.clearEdited(this);
 		}
 
 		this.element = false;

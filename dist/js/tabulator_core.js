@@ -5667,8 +5667,12 @@ Cell.prototype.delete = function () {
 		this.element.parentNode.removeChild(this.element);
 	}
 
-	if (self.table.modExists("validate", true)) {
-		this._cell.table.modules.validate.clearValidation(this);
+	if (this.modules.validate && this.modules.validate.invalid) {
+		this.table.modules.validate.clearValidation(this);
+	}
+
+	if (this.modules.edit && this.modules.edit.edited) {
+		this.table.modules.edit.clearEdited(this);
 	}
 
 	this.element = false;
