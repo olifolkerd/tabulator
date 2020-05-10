@@ -605,15 +605,19 @@ RowManager.prototype.moveRow = function(from, to, after){
 
 
 RowManager.prototype.moveRowActual = function(from, to, after){
-	var self = this;
 	this._moveRowInArray(this.rows, from, to, after);
 	this._moveRowInArray(this.activeRows, from, to, after);
 
-	this.displayRowIterator(function(rows){
-		self._moveRowInArray(rows, from, to, after);
+	this.displayRowIterator((rows) => {
+		this._moveRowInArray(rows, from, to, after);
 	});
 
 	if(this.table.options.groupBy && this.table.modExists("groupRows")){
+
+		if(!after && to instanceof Group){
+			to = this.table.rowManager.prevDisplayRow(from) || to;
+		}
+
 		var toGroup = to.getGroup();
 		var fromGroup = from.getGroup();
 
@@ -709,7 +713,7 @@ RowManager.prototype.prevDisplayRow = function(row, rowOnly){
 		prevRow = this.getDisplayRows()[index-1];
 	}
 
-	if(prevRow && (!(prevRow instanceof Row) || prevRow.type != "row")){
+	if(rowOnly && prevRow && (!(prevRow instanceof Row) || prevRow.type != "row")){
 		return this.prevDisplayRow(prevRow, rowOnly);
 	}
 
