@@ -70,7 +70,7 @@ Edit.prototype.getCurrentCell = function(){
 	return this.currentCell ? this.currentCell.getComponent() : false;
 };
 
-Edit.prototype.clearEditor = function(){
+Edit.prototype.clearEditor = function(cancel){
 	var cell = this.currentCell,
 	cellEl;
 
@@ -80,7 +80,13 @@ Edit.prototype.clearEditor = function(){
 		this.currentCell = false;
 
 		cellEl = cell.getElement();
-		cellEl.classList.remove("tabulator-validation-fail");
+
+		if(cancel){
+			cell.validate();
+		}else{
+			cellEl.classList.remove("tabulator-validation-fail");
+		}
+
 		cellEl.classList.remove("tabulator-editing");
 		while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
@@ -94,7 +100,7 @@ Edit.prototype.cancelEdit = function(){
 		var cell = this.currentCell;
 		var component = this.currentCell.getComponent();
 
-		this.clearEditor();
+		this.clearEditor(true);
 		cell.setValueActual(cell.getValue());
 		cell.cellRendered();
 
@@ -182,11 +188,11 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 		if(self.currentCell === cell){
 			var valid = true;
 
-			if(cell.column.modules.validate && self.table.modExists("validate")){
-				valid = self.table.modules.validate.validate(cell.column.modules.validate, cell.getComponent(), value);
+			if(cell.column.modules.validate && self.table.modExists("validate") && self.table.options.validationMode != "manual"){
+				valid = self.table.modules.validate.validate(cell.column.modules.validate, cell, value);
 			}
 
-			if(valid === true || !self.table.options.validationBlocking){
+			if(valid === true || self.table.options.validationMode === "highlight"){
 				self.clearEditor();
 				cell.setValue(value, true);
 

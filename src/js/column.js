@@ -156,6 +156,10 @@ ColumnComponent.prototype.setWidth = function(width){
 	}
 };
 
+ColumnComponent.prototype.validate = function(){
+	return this._column.validate();
+};
+
 
 
 var Column = function(def, parent){
@@ -1182,6 +1186,20 @@ Column.prototype.columnRendered = function(){
 		this.titleFormatterRendered();
 	}
 };
+
+
+Column.prototype.validate = function(){
+	var invalid = [];
+
+	this.cells.forEach(function(cell){
+		if(!cell.validate()){
+			invalid.push(cell.getComponent());
+		}
+	});
+
+	return invalid.length ? invalid : true;
+};
+
 
 //////////////// Cell Management /////////////////
 

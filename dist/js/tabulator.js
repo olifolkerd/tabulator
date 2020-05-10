@@ -1302,6 +1302,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	ColumnComponent.prototype.validate = function () {
+
+		return this._column.validate();
+	};
+
 	var Column = function Column(def, parent) {
 
 		var self = this;
@@ -2675,6 +2680,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.titleFormatterRendered();
 		}
+	};
+
+	Column.prototype.validate = function () {
+
+		var invalid = [];
+
+		this.cells.forEach(function (cell) {
+
+			if (!cell.validate()) {
+
+				invalid.push(cell.getComponent());
+			}
+		});
+
+		return invalid.length ? invalid : true;
 	};
 
 	//////////////// Cell Management /////////////////
@@ -5337,6 +5357,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._row;
 	};
 
+	RowComponent.prototype.validate = function () {
+
+		return this._row.validate();
+	};
+
 	RowComponent.prototype.freeze = function () {
 
 		if (this._row.table.modExists("frozenRows", true)) {
@@ -6152,6 +6177,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Row.prototype.validate = function () {
+
+		var invalid = [];
+
+		this.cells.forEach(function (cell) {
+
+			if (!cell.validate()) {
+
+				invalid.push(cell.getComponent());
+			}
+		});
+
+		return invalid.length ? invalid : true;
+	};
+
 	///////////////////// Actions  /////////////////////
 
 
@@ -6371,15 +6411,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	CellComponent.prototype.validate = function () {
 
-		if (this._cell.column.modules.validate && self.table.modExists("validate", true)) {
-
-			var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
-
-			return valid === true;
-		} else {
-
-			return true;
-		}
+		return this._cell.validate();
 	};
 
 	CellComponent.prototype.clearValidation = function () {
@@ -7167,6 +7199,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				console.warn("Cancel Editor Error - This cell is not currently being edited ");
 			}
+		}
+	};
+
+	Cell.prototype.validate = function () {
+
+		if (this.column.modules.validate && this.table.modExists("validate", true)) {
+
+			var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());
+
+			return valid === true;
+		} else {
+
+			return true;
 		}
 	};
 
@@ -7979,7 +8024,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//validation callbacks
 
-		validationBlocking: true,
+		validationMode: "blocking",
 
 		validationFailed: function validationFailed() {},
 
@@ -9810,6 +9855,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				_this30.modules.validate.clearValidation(cell._getSelf());
 			});
 		}
+	};
+
+	Tabulator.prototype.validate = function (cells) {
+
+		var output = [];
+
+		//clear row data
+
+		this.rowManager.rows.forEach(function (row) {
+
+			var valid = row.validate();
+
+			if (valid !== true) {
+
+				output = output.concat(valid);
+			}
+		});
+
+		return output.length ? output : true;
 	};
 
 	//////////// Pagination Functions  ////////////
@@ -13980,7 +14044,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.currentCell ? this.currentCell.getComponent() : false;
 	};
 
-	Edit.prototype.clearEditor = function () {
+	Edit.prototype.clearEditor = function (cancel) {
 		var cell = this.currentCell,
 		    cellEl;
 
@@ -13990,7 +14054,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.currentCell = false;
 
 			cellEl = cell.getElement();
-			cellEl.classList.remove("tabulator-validation-fail");
+
+			if (cancel) {
+				cell.validate();
+			} else {
+				cellEl.classList.remove("tabulator-validation-fail");
+			}
+
 			cellEl.classList.remove("tabulator-editing");
 			while (cellEl.firstChild) {
 				cellEl.removeChild(cellEl.firstChild);
@@ -14004,7 +14074,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = this.currentCell;
 			var component = this.currentCell.getComponent();
 
-			this.clearEditor();
+			this.clearEditor(true);
 			cell.setValueActual(cell.getValue());
 			cell.cellRendered();
 
@@ -14092,11 +14162,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (self.currentCell === cell) {
 				var valid = true;
 
-				if (cell.column.modules.validate && self.table.modExists("validate")) {
-					valid = self.table.modules.validate.validate(cell.column.modules.validate, cell.getComponent(), value);
+				if (cell.column.modules.validate && self.table.modExists("validate") && self.table.options.validationMode != "manual") {
+					valid = self.table.modules.validate.validate(cell.column.modules.validate, cell, value);
 				}
 
-				if (valid === true || !self.table.options.validationBlocking) {
+				if (valid === true || self.table.options.validationMode === "highlight") {
 					self.clearEditor();
 					cell.setValue(value, true);
 
@@ -24316,12 +24386,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Validate.prototype.validate = function (validators, cell, value) {
 		var self = this,
 		    valid = [],
-		    baseCell = cell._getSelf(),
-		    invalidIndex = this.invalidCells.indexOf(baseCell);
+		    invalidIndex = this.invalidCells.indexOf(cell);
 
 		if (validators) {
 			validators.forEach(function (item) {
-				if (!item.func.call(self, cell, value, item.params)) {
+				if (!item.func.call(self, cell.getComponent(), value, item.params)) {
 					valid.push({
 						type: item.type,
 						parameters: item.params
@@ -24332,23 +24401,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		valid = valid.length ? valid : true;
 
-		if (!baseCell.modules.validate) {
-			baseCell.modules.validate = {};
+		if (!cell.modules.validate) {
+			cell.modules.validate = {};
 		}
 
 		if (valid === true) {
-			baseCell.modules.validate.invalid = false;
+			cell.modules.validate.invalid = false;
 			cell.getElement().classList.remove("tabulator-validation-fail");
 
 			if (invalidIndex > -1) {
 				this.invalidCells.splice(invalidIndex, 1);
 			}
 		} else {
-			baseCell.modules.validate.invalid = true;
-			cell.getElement().classList.add("tabulator-validation-fail");
+			cell.modules.validate.invalid = true;
+
+			if (this.table.options.validationMode !== "manual") {
+				cell.getElement().classList.add("tabulator-validation-fail");
+			}
 
 			if (invalidIndex == -1) {
-				this.invalidCells.push(baseCell);
+				this.invalidCells.push(cell);
 			}
 		}
 

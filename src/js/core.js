@@ -323,7 +323,7 @@ Tabulator.prototype.defaultOptions = {
 	localized:function(){},
 
 	//validation callbacks
-	validationBlocking:true,
+	validationMode:"blocking",
 	validationFailed:function(){},
 
 	//history callbacks
@@ -333,7 +333,6 @@ Tabulator.prototype.defaultOptions = {
 	//scroll callbacks
 	scrollHorizontal:function(){},
 	scrollVertical:function(){},
-
 };
 
 Tabulator.prototype.initializeOptions = function(options){
@@ -1700,6 +1699,21 @@ Tabulator.prototype.clearCellValidation = function(cells){
 		});
 	}
 };
+
+Tabulator.prototype.validate = function(cells){
+	var output = [];
+
+	//clear row data
+	this.rowManager.rows.forEach(function(row){
+		var valid = row.validate();
+
+		if(valid !== true){
+			output = output.concat(valid);
+		}
+	});
+
+	return output.length ? output : true;
+}
 
 //////////// Pagination Functions  ////////////
 

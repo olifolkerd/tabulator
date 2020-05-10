@@ -68,13 +68,7 @@ CellComponent.prototype.isValid = function(){
 };
 
 CellComponent.prototype.validate = function(){
-	if(this._cell.column.modules.validate && self.table.modExists("validate", true)){
-		var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
-
-		return valid === true;
-	}else{
-		return true;
-	}
+	return this._cell.validate();
 };
 
 CellComponent.prototype.clearValidation = function(){
@@ -684,6 +678,15 @@ Cell.prototype.cancelEdit = function(){
 };
 
 
+Cell.prototype.validate = function(){
+	if(this.column.modules.validate && this.table.modExists("validate", true)){
+		var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());
+
+		return valid === true;
+	}else{
+		return true;
+	}
+};
 
 Cell.prototype.delete = function(){
 	if(!this.table.rowManager.redrawBlock){

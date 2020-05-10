@@ -1178,6 +1178,10 @@ ColumnComponent.prototype.setWidth = function (width) {
 	}
 };
 
+ColumnComponent.prototype.validate = function () {
+	return this._column.validate();
+};
+
 var Column = function Column(def, parent) {
 	var self = this;
 
@@ -2202,6 +2206,18 @@ Column.prototype.columnRendered = function () {
 	if (this.titleFormatterRendered) {
 		this.titleFormatterRendered();
 	}
+};
+
+Column.prototype.validate = function () {
+	var invalid = [];
+
+	this.cells.forEach(function (cell) {
+		if (!cell.validate()) {
+			invalid.push(cell.getComponent());
+		}
+	});
+
+	return invalid.length ? invalid : true;
 };
 
 //////////////// Cell Management /////////////////
@@ -4233,6 +4249,10 @@ RowComponent.prototype._getSelf = function () {
 	return this._row;
 };
 
+RowComponent.prototype.validate = function () {
+	return this._row.validate();
+};
+
 RowComponent.prototype.freeze = function () {
 	if (this._row.table.modExists("frozenRows", true)) {
 		this._row.table.modules.frozenRows.freezeRow(this._row);
@@ -4853,6 +4873,18 @@ Row.prototype.moveToRow = function (to, before) {
 	}
 };
 
+Row.prototype.validate = function () {
+	var invalid = [];
+
+	this.cells.forEach(function (cell) {
+		if (!cell.validate()) {
+			invalid.push(cell.getComponent());
+		}
+	});
+
+	return invalid.length ? invalid : true;
+};
+
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function () {
@@ -5024,13 +5056,7 @@ CellComponent.prototype.isValid = function () {
 };
 
 CellComponent.prototype.validate = function () {
-	if (this._cell.column.modules.validate && self.table.modExists("validate", true)) {
-		var valid = this._cell.table.modules.validate.validate(this._cell.column.modules.validate, this, this._cell.getValue());
-
-		return valid === true;
-	} else {
-		return true;
-	}
+	return this._cell.validate();
 };
 
 CellComponent.prototype.clearValidation = function () {
@@ -5626,6 +5652,16 @@ Cell.prototype.cancelEdit = function () {
 	}
 };
 
+Cell.prototype.validate = function () {
+	if (this.column.modules.validate && this.table.modExists("validate", true)) {
+		var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());
+
+		return valid === true;
+	} else {
+		return true;
+	}
+};
+
 Cell.prototype.delete = function () {
 	if (!this.table.rowManager.redrawBlock) {
 		this.element.parentNode.removeChild(this.element);
@@ -6144,7 +6180,7 @@ Tabulator.prototype.defaultOptions = {
 	localized: function localized() {},
 
 	//validation callbacks
-	validationBlocking: true,
+	validationMode: "blocking",
 	validationFailed: function validationFailed() {},
 
 	//history callbacks
@@ -6154,7 +6190,6 @@ Tabulator.prototype.defaultOptions = {
 	//scroll callbacks
 	scrollHorizontal: function scrollHorizontal() {},
 	scrollVertical: function scrollVertical() {}
-
 };
 
 Tabulator.prototype.initializeOptions = function (options) {
@@ -7511,6 +7546,21 @@ Tabulator.prototype.clearCellValidation = function (cells) {
 			_this30.modules.validate.clearValidation(cell._getSelf());
 		});
 	}
+};
+
+Tabulator.prototype.validate = function (cells) {
+	var output = [];
+
+	//clear row data
+	this.rowManager.rows.forEach(function (row) {
+		var valid = row.validate();
+
+		if (valid !== true) {
+			output = output.concat(valid);
+		}
+	});
+
+	return output.length ? output : true;
 };
 
 //////////// Pagination Functions  ////////////

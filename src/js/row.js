@@ -80,6 +80,10 @@ RowComponent.prototype._getSelf = function(){
 	return this._row;
 };
 
+RowComponent.prototype.validate = function(){
+	return this._row.validate();
+};
+
 RowComponent.prototype.freeze = function(){
 	if(this._row.table.modExists("frozenRows", true)){
 		this._row.table.modules.frozenRows.freezeRow(this._row);
@@ -705,6 +709,18 @@ Row.prototype.moveToRow = function(to, before){
 	}
 };
 
+
+Row.prototype.validate = function(){
+	var invalid = [];
+
+	this.cells.forEach(function(cell){
+		if(!cell.validate()){
+			invalid.push(cell.getComponent());
+		}
+	});
+
+	return invalid.length ? invalid : true;
+};
 
 ///////////////////// Actions  /////////////////////
 

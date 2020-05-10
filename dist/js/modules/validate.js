@@ -81,12 +81,11 @@ Validate.prototype._buildValidator = function (type, params) {
 Validate.prototype.validate = function (validators, cell, value) {
 	var self = this,
 	    valid = [],
-	    baseCell = cell._getSelf(),
-	    invalidIndex = this.invalidCells.indexOf(baseCell);
+	    invalidIndex = this.invalidCells.indexOf(cell);
 
 	if (validators) {
 		validators.forEach(function (item) {
-			if (!item.func.call(self, cell, value, item.params)) {
+			if (!item.func.call(self, cell.getComponent(), value, item.params)) {
 				valid.push({
 					type: item.type,
 					parameters: item.params
@@ -97,23 +96,26 @@ Validate.prototype.validate = function (validators, cell, value) {
 
 	valid = valid.length ? valid : true;
 
-	if (!baseCell.modules.validate) {
-		baseCell.modules.validate = {};
+	if (!cell.modules.validate) {
+		cell.modules.validate = {};
 	}
 
 	if (valid === true) {
-		baseCell.modules.validate.invalid = false;
+		cell.modules.validate.invalid = false;
 		cell.getElement().classList.remove("tabulator-validation-fail");
 
 		if (invalidIndex > -1) {
 			this.invalidCells.splice(invalidIndex, 1);
 		}
 	} else {
-		baseCell.modules.validate.invalid = true;
-		cell.getElement().classList.add("tabulator-validation-fail");
+		cell.modules.validate.invalid = true;
+
+		if (this.table.options.validationMode !== "manual") {
+			cell.getElement().classList.add("tabulator-validation-fail");
+		}
 
 		if (invalidIndex == -1) {
-			this.invalidCells.push(baseCell);
+			this.invalidCells.push(cell);
 		}
 	}
 
