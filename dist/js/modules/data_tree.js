@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.6.2 (c) Oliver Folkerd */
+/* Tabulator v4.6.3 (c) Oliver Folkerd */
 
 var DataTree = function DataTree(table) {
 	this.table = table;
@@ -105,11 +105,11 @@ DataTree.prototype.initializeRow = function (row) {
 	}
 
 	row.modules.dataTree = {
-		index: 0,
+		index: row.modules.dataTree ? row.modules.dataTree.index : 0,
 		open: children ? row.modules.dataTree ? row.modules.dataTree.open : this.startOpen(row.getComponent(), 0) : false,
 		controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
 		branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
-		parent: false,
+		parent: row.modules.dataTree ? row.modules.dataTree.parent : false,
 		children: children
 	};
 };

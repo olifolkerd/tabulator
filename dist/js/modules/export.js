@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.6.2 (c) Oliver Folkerd */
+/* Tabulator v4.6.3 (c) Oliver Folkerd */
 
 var Export = function Export(table) {
 	this.table = table; //hold Tabulator object
@@ -53,7 +53,7 @@ Export.prototype.rowLookup = function (range) {
 				break;
 
 			case "selected":
-				rows = this.modules.selectRow.selectedRows;
+				rows = this.table.modules.selectRow.selectedRows;
 				break;
 
 			case "active":

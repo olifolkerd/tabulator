@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.6.2 (c) Oliver Folkerd */
+/* Tabulator v4.6.3 (c) Oliver Folkerd */
 
 var Edit = function Edit(table) {
 	this.table = table; //hold Tabulator object
@@ -813,7 +813,7 @@ Edit.prototype.editors = {
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
 		if (Array.isArray(editorParams) || !Array.isArray(editorParams) && (typeof editorParams === "undefined" ? "undefined" : _typeof(editorParams)) === "object" && !editorParams.values) {
-			console.warn("DEPRECATION WANRING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
+			console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
 			editorParams = { values: editorParams };
 		}
 

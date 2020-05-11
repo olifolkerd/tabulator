@@ -1,4 +1,4 @@
-/* Tabulator v4.6.2 (c) Oliver Folkerd */
+/* Tabulator v4.6.3 (c) Oliver Folkerd */
 .tabulator {
   position: relative;
   background-color: #fff;
@@ -468,31 +468,41 @@
 
 .tabulator.table-dark .tabulator-row {
   border-color: #32383e;
+  background-color: #212529;
+  color: #fff;
 }
 
 .tabulator.table-dark .tabulator-row:hover {
-  background-color: rgba(255, 255, 255, 0.075) !important;
+  background-color: #32383e;
 }
 
-.tabulator.table-striped .tabulator-row:nth-child(even) {
-  background-color: #f9f9f9;
+.tabulator.table-dark .tabulator-row:hover .tabulator-cell {
+  background-color: rgba(255, 255, 255, 0.075);
 }
 
-.tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selected {
+.tabulator.table-dark .tabulator-row.tabulator-selected {
   background-color: #9ABCEA;
 }
 
-.tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selectable:hover {
+.tabulator.table-striped:not(.table-dark) .tabulator-row:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.tabulator.table-striped:not(.table-dark) .tabulator-row:nth-child(even).tabulator-selected {
+  background-color: #9ABCEA;
+}
+
+.tabulator.table-striped:not(.table-dark) .tabulator-row:nth-child(even).tabulator-selectable:hover {
   background-color: #f5f5f5;
   cursor: pointer;
 }
 
-.tabulator.table-striped .tabulator-row:nth-child(even).tabulator-selected:hover {
+.tabulator.table-striped:not(.table-dark) .tabulator-row:nth-child(even).tabulator-selected:hover {
   background-color: #769BCC;
   cursor: pointer;
 }
 
-.tabulator.table-striped.table-dark .tabulator-row:nth-child(even) {
+.tabulator.table-striped.table-dark .tabulator-row:nth-child(even) .tabulator-cell {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
