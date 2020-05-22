@@ -138,8 +138,8 @@ Menu.prototype.loadMenu = function(e, component, menu){
 	}
 };
 
-Menu.prototype.escMenu = function(event){
-	if(event.key === "Escape"){
+Menu.prototype.escMenu = function(e){
+	if(e.keyCode == 27){
 		this.hideMenu();
 	}
 };
