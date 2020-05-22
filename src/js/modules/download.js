@@ -220,6 +220,7 @@ Download.prototype.processData = function(active){
 
 	//bulk data processing
 	if(typeof self.table.options.downloadDataFormatter == "function"){
+		data.table = self.table;
 		data = self.table.options.downloadDataFormatter(data);
 	}
 
