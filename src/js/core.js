@@ -1549,17 +1549,17 @@ Tabulator.prototype.clearSort = function(){
 ///////////////////// Filtering ////////////////////
 
 //set standard filters
-Tabulator.prototype.setFilter = function(field, type, value){
+Tabulator.prototype.setFilter = function(field, type, value, params){
 	if(this.modExists("filter", true)){
-		this.modules.filter.setFilter(field, type, value);
+		this.modules.filter.setFilter(field, type, value, params);
 		this.rowManager.filterRefresh();
 	}
 };
 
 //add filter to array
-Tabulator.prototype.addFilter = function(field, type, value){
+Tabulator.prototype.addFilter = function(field, type, value, params){
 	if(this.modExists("filter", true)){
-		this.modules.filter.addFilter(field, type, value);
+		this.modules.filter.addFilter(field, type, value, params);
 		this.rowManager.filterRefresh();
 	}
 };

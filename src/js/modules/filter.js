@@ -88,7 +88,7 @@ Filter.prototype.initializeColumn = function(column, value){
 					}
 				}
 
-				self.headerFilters[field] = {value:value, func:filterFunc, type:type};
+				self.headerFilters[field] = {value:value, func:filterFunc, type:type, params:params || {}};
 
 			}else{
 				delete self.headerFilters[field];
@@ -380,13 +380,13 @@ Filter.prototype.hasChanged = function(){
 };
 
 //set standard filters
-Filter.prototype.setFilter = function(field, type, value){
+Filter.prototype.setFilter = function(field, type, value, params){
 	var self = this;
 
 	self.filterList = [];
 
 	if(!Array.isArray(field)){
-		field = [{field:field, type:type, value:value}];
+		field = [{field:field, type:type, value:value, params:params}];
 	}
 
 	self.addFilter(field);
@@ -394,11 +394,11 @@ Filter.prototype.setFilter = function(field, type, value){
 };
 
 //add filter to array
-Filter.prototype.addFilter = function(field, type, value){
+Filter.prototype.addFilter = function(field, type, value, params){
 	var self = this;
 
 	if(!Array.isArray(field)){
-		field = [{field:field, type:type, value:value}];
+		field = [{field:field, type:type, value:value, params:params}];
 	}
 
 	field.forEach(function(filter){
@@ -426,13 +426,12 @@ Filter.prototype.findFilter = function(filter){
 		return this.findSubFilters(filter);
 	}
 
-
 	var filterFunc = false;
 
 	if(typeof filter.field == "function"){
 		filterFunc = function(data){
 			return filter.field(data, filter.type || {})// pass params to custom filter function
-		}
+		};
 	}else{
 
 		if(self.filters[filter.type]){
@@ -441,12 +440,12 @@ Filter.prototype.findFilter = function(filter){
 
 			if(column){
 				filterFunc = function(data){
-					return self.filters[filter.type](filter.value, column.getFieldValue(data));
-				}
+					return self.filters[filter.type](filter.value, column.getFieldValue(data), data, filter.params || {});
+				};
 			}else{
 				filterFunc = function(data){
-					return self.filters[filter.type](filter.value, data[filter.field]);
-				}
+					return self.filters[filter.type](filter.value, data[filter.field], data, filter.params || {});
+				};
 			}
 
 
@@ -554,7 +553,7 @@ Filter.prototype.removeFilter = function(field, type, value){
 			});
 		}else{
 			index = self.filterList.findIndex(function(element){
-				return filter.field === element.field && filter.type === element.type  && filter.value === element.value
+				return filter.field === element.field && filter.type === element.type  && filter.value === element.value;
 			});
 		}
 

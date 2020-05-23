@@ -5943,7 +5943,6 @@ Tabulator.prototype.defaultOptions = {
 	cellHozAlign: "", //horizontal align columns
 	cellVertAlign: "", //certical align columns
 
-
 	data: [], //default starting data
 
 	autoColumns: false, //build columns from data row structure
@@ -6107,6 +6106,8 @@ Tabulator.prototype.defaultOptions = {
 	movableRowsReceived: function movableRowsReceived() {},
 	movableRowsReceivedFailed: function movableRowsReceivedFailed() {},
 	movableRowsReceivingStop: function movableRowsReceivingStop() {},
+
+	menuParentElement: document.body, //parent element for menu
 
 	scrollToRowPosition: "top",
 	scrollToRowIfVisible: true,
@@ -7435,17 +7436,17 @@ Tabulator.prototype.clearSort = function () {
 ///////////////////// Filtering ////////////////////
 
 //set standard filters
-Tabulator.prototype.setFilter = function (field, type, value) {
+Tabulator.prototype.setFilter = function (field, type, value, params) {
 	if (this.modExists("filter", true)) {
-		this.modules.filter.setFilter(field, type, value);
+		this.modules.filter.setFilter(field, type, value, params);
 		this.rowManager.filterRefresh();
 	}
 };
 
 //add filter to array
-Tabulator.prototype.addFilter = function (field, type, value) {
+Tabulator.prototype.addFilter = function (field, type, value, params) {
 	if (this.modExists("filter", true)) {
-		this.modules.filter.addFilter(field, type, value);
+		this.modules.filter.addFilter(field, type, value, params);
 		this.rowManager.filterRefresh();
 	}
 };

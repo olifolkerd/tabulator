@@ -7878,6 +7878,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		movableRowsReceivingStop: function movableRowsReceivingStop() {},
 
+		menuParentElement: document.body, //parent element for menu
+
+
 		scrollToRowPosition: "top",
 
 		scrollToRowIfVisible: true,
@@ -9686,11 +9689,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//set standard filters
 
-	Tabulator.prototype.setFilter = function (field, type, value) {
+	Tabulator.prototype.setFilter = function (field, type, value, params) {
 
 		if (this.modExists("filter", true)) {
 
-			this.modules.filter.setFilter(field, type, value);
+			this.modules.filter.setFilter(field, type, value, params);
 
 			this.rowManager.filterRefresh();
 		}
@@ -9698,11 +9701,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//add filter to array
 
-	Tabulator.prototype.addFilter = function (field, type, value) {
+	Tabulator.prototype.addFilter = function (field, type, value, params) {
 
 		if (this.modExists("filter", true)) {
 
-			this.modules.filter.addFilter(field, type, value);
+			this.modules.filter.addFilter(field, type, value, params);
 
 			this.rowManager.filterRefresh();
 		}
@@ -16549,7 +16552,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					}
 
-					self.headerFilters[field] = { value: value, func: filterFunc, type: type };
+					self.headerFilters[field] = { value: value, func: filterFunc, type: type, params: params || {} };
 				} else {
 					delete self.headerFilters[field];
 				}
@@ -16835,24 +16838,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//set standard filters
-	Filter.prototype.setFilter = function (field, type, value) {
+	Filter.prototype.setFilter = function (field, type, value, params) {
 		var self = this;
 
 		self.filterList = [];
 
 		if (!Array.isArray(field)) {
-			field = [{ field: field, type: type, value: value }];
+			field = [{ field: field, type: type, value: value, params: params }];
 		}
 
 		self.addFilter(field);
 	};
 
 	//add filter to array
-	Filter.prototype.addFilter = function (field, type, value) {
+	Filter.prototype.addFilter = function (field, type, value, params) {
 		var self = this;
 
 		if (!Array.isArray(field)) {
-			field = [{ field: field, type: type, value: value }];
+			field = [{ field: field, type: type, value: value, params: params }];
 		}
 
 		field.forEach(function (filter) {
@@ -16893,11 +16896,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (column) {
 					filterFunc = function filterFunc(data) {
-						return self.filters[filter.type](filter.value, column.getFieldValue(data));
+						return self.filters[filter.type](filter.value, column.getFieldValue(data), data, filter.params || {});
 					};
 				} else {
 					filterFunc = function filterFunc(data) {
-						return self.filters[filter.type](filter.value, data[filter.field]);
+						return self.filters[filter.type](filter.value, data[filter.field], data, filter.params || {});
 					};
 				}
 			} else {
