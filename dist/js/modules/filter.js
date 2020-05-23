@@ -752,6 +752,21 @@ Filter.prototype.filters = {
 		}
 	},
 
+	//contains the keywords
+	"keywords": function keywords(filterVal, rowVal, rowData, filterParams) {
+		var keywords = filterVal.toLowerCase().split(typeof filterParams.separator === "undefined" ? " " : filterParams.separator),
+		    value = String(rowVal === null || typeof rowVal === "undefined" ? "" : rowVal).toLowerCase(),
+		    matches = [];
+
+		keywords.forEach(function (keyword) {
+			if (value.includes(keyword)) {
+				matches.push(true);
+			}
+		});
+
+		return filterParams.matchAll ? matches.length === keywords.length : !!matches.length;
+	},
+
 	//starts with the string
 	"starts": function starts(filterVal, rowVal, rowData, filterParams) {
 		if (filterVal === null || typeof filterVal === "undefined") {
