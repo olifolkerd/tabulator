@@ -16171,7 +16171,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Export.prototype.genereateTable = function (config, style, range, colVisProp) {
-
 		var list = this.generateExportList(config, style, range, colVisProp);
 
 		return this.genereateTableElement(list);
@@ -16406,6 +16405,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					columns.forEach(function (col) {
 						exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
 					});
+
+					if (_this50.table.options.dataTree && _this50.config.dataTree !== false) {
+						indent = row.modules.dataTree.index;
+					}
 					break;
 			}
 

@@ -35,7 +35,6 @@ Export.prototype.generateExportList = function (config, style, range, colVisProp
 };
 
 Export.prototype.genereateTable = function (config, style, range, colVisProp) {
-
 	var list = this.generateExportList(config, style, range, colVisProp);
 
 	return this.genereateTableElement(list);
@@ -270,6 +269,10 @@ Export.prototype.bodyToExportRows = function (rows) {
 				columns.forEach(function (col) {
 					exportCols.push(new ExportColumn(col._column.getFieldValue(rowData), col, 1, 1));
 				});
+
+				if (_this4.table.options.dataTree && _this4.config.dataTree !== false) {
+					indent = row.modules.dataTree.index;
+				}
 				break;
 		}
 
