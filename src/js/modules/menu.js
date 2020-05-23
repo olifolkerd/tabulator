@@ -8,7 +8,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 	var headerMenuEl;
 
 	if(column.definition.headerContextMenu){
-		var element = column.columns.length > 0 ? column.contentElement : column.getElement();
+		var element = column.isGroup ? column.contentElement : column.getElement();
 		element.addEventListener("contextmenu", (e) => {
 			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent()) : column.definition.headerContextMenu;
 
