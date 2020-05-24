@@ -1,18 +1,11 @@
 var Download = function(table){
 	this.table = table; //hold Tabulator object
-	this.fields = {}; //hold filed multi dimension arrays
-	this.columnsByIndex = []; //hold columns in their order in the table
-	this.columnsByField = {}; //hold columns with lookup by field name
-	this.config = {};
-	this.active = false;
 };
 
 //trigger file download
 Download.prototype.download = function(type, filename, options, active, interceptCallback){
 	var self = this,
 	downloadFunc = false;
-	this.processConfig();
-	this.active = active;
 
 	function buildLink(data, mime){
 		if(interceptCallback){
@@ -37,226 +30,36 @@ Download.prototype.download = function(type, filename, options, active, intercep
 		}
 	}
 
-	this.processColumns();
-
 	if(downloadFunc){
-		downloadFunc.call(this, self.processDefinitions(), self.processData(active || "active") , options || {}, buildLink, this.config);
+		var list = this.generateExportList();
+
+		downloadFunc.call(this.table, list , options || {}, buildLink);
 	}
 };
 
-Download.prototype.processConfig = function(){
-	var config = {	//download config
-		columnGroups:true,
-		rowGroups:true,
-		columnCalcs:true,
-		dataTree:true,
-	};
+Download.prototype.generateExportList = function(){
+	var list = this.table.modules.export.generateExportList(this.table.options.downloadConfig, false, this.table.options.downloadRowRange, "download");
 
-	if(this.table.options.downloadConfig){
-		for(var key in this.table.options.downloadConfig){
-			config[key] = this.table.options.downloadConfig[key];
-		}
+	//assign group header formatter
+	var groupHeader = this.table.options.groupHeaderDownload;
+
+	if(groupHeader && !Array.isArray(groupHeader)){
+		groupHeader = [groupHeader];
 	}
 
-	this.config.rowGroups = config.rowGroups && this.table.options.groupBy && this.table.modExists("groupRows");
+	list.forEach((row) => {
+		var group;
 
-	if (config.columnGroups && this.table.columnManager.columns.length != this.table.columnManager.columnsByIndex.length){
-		this.config.columnGroups = true;
-	}
+		if(row.type === "group"){
+			group = row.columns[0];
 
-	if (config.columnCalcs && this.table.modExists("columnCalcs")){
-		this.config.columnCalcs = true;
-	}
-
-	if (config.dataTree && this.table.options.dataTree && this.table.modExists("dataTree")){
-		this.config.dataTree = true;
-	}
-};
-
-Download.prototype.processColumns = function () {
-	var self = this;
-
-	self.columnsByIndex = [];
-	self.columnsByField = {};
-
-	self.table.columnManager.columnsByIndex.forEach(function (column) {
-
-		if (column.field && column.definition.download !== false && (column.visible || (!column.visible && column.definition.download))) {
-			self.columnsByIndex.push(column);
-			self.columnsByField[column.field] = column;
+			if(groupHeader && groupHeader[row.indent]){
+				group.value = groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
+			}
 		}
 	});
-};
 
-Download.prototype.processDefinitions = function(){
-	var self = this,
-	processedDefinitions = [];
-
-	if(this.config.columnGroups){
-		self.table.columnManager.columns.forEach(function(column){
-			var colData = self.processColumnGroup(column);
-
-			if(colData){
-				processedDefinitions.push(colData);
-			}
-		});
-	}else{
-		self.columnsByIndex.forEach(function(column){
-			if(column.download !== false){
-				//isolate definiton from defintion object
-				processedDefinitions.push(self.processDefinition(column));
-			}
-		});
-	}
-
-	return  processedDefinitions;
-};
-
-Download.prototype.processColumnGroup = function(column){
-	var subGroups = column.columns,
-	maxDepth = 0;
-	var processedColumn = this.processDefinition(column);
-	var groupData = {
-		type:"group",
-		title:processedColumn.title,
-		depth:1,
-	};
-
-
-	if(subGroups.length){
-		groupData.subGroups = [];
-		groupData.width = 0;
-
-		subGroups.forEach((subGroup) => {
-			var subGroupData = this.processColumnGroup(subGroup);
-
-			if(subGroupData.depth > maxDepth){
-				maxDepth = subGroupData.depth;
-			}
-
-			if(subGroupData){
-				groupData.width += subGroupData.width;
-				groupData.subGroups.push(subGroupData);
-			}
-		});
-
-		groupData.depth += maxDepth;
-
-		if(!groupData.width){
-			return false;
-		}
-	}else{
-		if(column.field && column.definition.download !== false && (column.visible || (!column.visible && column.definition.download))){
-			groupData.width = 1;
-			groupData.definition = processedColumn;
-		}else{
-			return false;
-		}
-	}
-
-	return groupData;
-};
-
-Download.prototype.processDefinition = function(column){
-	var def = {};
-
-	for(var key in column.definition){
-		def[key] = column.definition[key];
-	}
-
-	if(typeof column.definition.downloadTitle != "undefined"){
-		def.title = column.definition.downloadTitle;
-	}
-
-	return def;
-};
-
-Download.prototype.processData = function(active){
-	var self = this,
-	data = [],
-	groups = [],
-	rows = false,
-	calcs =  {};
-
-	if(this.config.rowGroups){
-
-		if(active == "visible"){
-
-			rows = self.table.rowManager.getRows(active);
-
-			rows.forEach((row) => {
-				if(row.type == "row"){
-					var group = row.getGroup();
-
-					if(groups.indexOf(group) === -1){
-						groups.push(group);
-					}
-				}
-			});
-		}else{
-			groups = this.table.modules.groupRows.getGroups();
-		}
-
-		groups.forEach((group) => {
-			data.push(this.processGroupData(group, rows));
-		});
-
-	}else{
-		if(this.config.dataTree){
-			active = active = "active" ? "display" : active;
-		}
-		data = self.table.rowManager.getData(active, "download");
-	}
-
-
-	if(this.config.columnCalcs){
-		calcs = this.table.getCalcResults();
-
-		data = {
-			calcs: calcs,
-			data: data,
-		};
-	}
-
-	//bulk data processing
-	if(typeof self.table.options.downloadDataFormatter == "function"){
-		data = self.table.options.downloadDataFormatter(data);
-	}
-
-	return data;
-};
-
-
-Download.prototype.processGroupData = function(group, visRows){
-	var subGroups = group.getSubGroups();
-
-	var groupData = {
-		type:"group",
-		key:group.key
-	};
-
-	if(subGroups.length){
-		groupData.subGroups = [];
-
-		subGroups.forEach((subGroup) => {
-			groupData.subGroups.push(this.processGroupData(subGroup, visRows));
-		});
-	}else{
-		if(visRows){
-			groupData.rows = [];
-
-			group.rows.forEach(function(row){
-				if(visRows.indexOf(row) > -1){
-					groupData.rows.push(row.getData("download"));
-				}
-			});
-		}else{
-			groupData.rows = group.getData(true, "download");
-		}
-
-	}
-
-	return groupData;
+	return list;
 };
 
 Download.prototype.triggerDownload = function(data, mime, type, filename, newTab){
@@ -297,18 +100,6 @@ Download.prototype.triggerDownload = function(data, mime, type, filename, newTab
 
 };
 
-//nested field lookup
-Download.prototype.getFieldValue = function(field, data){
-	var column = this.columnsByField[field];
-
-	if(column){
-		return	column.getFieldValue(data);
-	}
-
-	return false;
-};
-
-
 Download.prototype.commsReceived = function(table, action, data){
 	switch(action){
 		case "intercept":
@@ -317,134 +108,109 @@ Download.prototype.commsReceived = function(table, action, data){
 	}
 };
 
-
 //downloaders
 Download.prototype.downloaders = {
-	csv:function(columns, data, options, setFileContents, config){
-		var self = this,
-		titles = [],
-		fields = [],
-		delimiter = options && options.delimiter ? options.delimiter : ",",
-		fileContents, output;
+	csv:function(list, options, setFileContents){
+		var delimiter = options && options.delimiter ? options.delimiter : ",",
+		fileContents = [],
+		headers = [];
 
-		//build column headers
-		function parseSimpleTitles(){
-			columns.forEach(function(column){
-				titles.push('"' + String(column.title).split('"').join('""') + '"');
-				fields.push(column.field);
-			});
-		}
+		list.forEach((row) => {
+			var item = [];
 
-		function parseColumnGroup(column, level){
-			if(column.subGroups){
-				column.subGroups.forEach(function(subGroup){
-					parseColumnGroup(subGroup, level+1);
-				});
-			}else{
-				titles.push('"' + String(column.title).split('"').join('""') + '"');
-				fields.push(column.definition.field);
-			}
-		}
+			switch(row.type){
+				case "group":
+				console.warn("Download Warning - CSV downloader cannot process row groups");
+				break;
 
-		if(config.columnGroups){
-			console.warn("Download Warning - CSV downloader cannot process column groups");
+				case "calc":
+				console.warn("Download Warning - CSV downloader cannot process column calculations");
+				break;
 
-			columns.forEach(function(column){
-				parseColumnGroup(column,0);
-			});
-		}else{
-			parseSimpleTitles();
-		}
-
-
-		//generate header row
-		fileContents = [titles.join(delimiter)];
-
-		function parseRows(data){
-			//generate each row of the table
-			data.forEach(function(row){
-				var rowData = [];
-
-				fields.forEach(function(field){
-					var value = self.getFieldValue(field, row);
-
-					switch(typeof value){
-						case "object":
-						value = JSON.stringify(value);
-						break;
-
-						case "undefined":
-						case "null":
-						value = "";
-						break;
-
-						default:
-						value = value;
+				case "header":
+				row.columns.forEach((col, i) => {
+					if(col && col.depth === 1){
+						headers[i] = typeof col.value == "undefined"  || typeof col.value == "null" ? "" : col.value;
 					}
+				});
+				break;
 
-					//escape quotation marks
-					rowData.push('"' + String(value).split('"').join('""') + '"');
+				case "row":
+				row.columns.forEach((col) => {
+
+					if(col){
+
+						switch(typeof col.value){
+							case "object":
+							col.value = JSON.stringify(col.value);
+							break;
+
+							case "undefined":
+							case "null":
+							col.value = "";
+							break;
+						}
+
+						item.push('"' + String(col.value).split('"').join('""') + '"');
+					}
 				});
 
-				fileContents.push(rowData.join(delimiter));
-			});
-		}
-
-		function parseGroup(group){
-			if(group.subGroups){
-				group.subGroups.forEach(function(subGroup){
-					parseGroup(subGroup);
-				});
-			}else{
-				parseRows(group.rows);
+				fileContents.push(item.join(delimiter));
+				break;
 			}
+		});
+
+		if(headers.length){
+			fileContents = [headers].concat(fileContents);
 		}
 
-		if(config.columnCalcs){
-			console.warn("Download Warning - CSV downloader cannot process column calculations");
-			data = data.data;
-		}
-
-		if(config.rowGroups){
-			console.warn("Download Warning - CSV downloader cannot process row groups");
-
-			data.forEach(function(group){
-				parseGroup(group);
-			});
-		}else{
-			parseRows(data);
-		}
-
-		output = fileContents.join("\n");
+		fileContents = fileContents.join("\n");
 
 		if(options.bom){
-			output = "\ufeff" + output;
+			fileContents = "\ufeff" + fileContents;
 		}
 
-		setFileContents(output, "text/csv");
+		setFileContents(fileContents, "text/csv");
 	},
 
-	json:function(columns, data, options, setFileContents, config){
-		var fileContents;
+	json:function(list, options, setFileContents){
+		var fileContents = [];
 
-		if(config.columnCalcs){
-			console.warn("Download Warning - CSV downloader cannot process column calculations");
-			data = data.data;
-		}
+		list.forEach((row) => {
+			var item = {};
 
-		fileContents = JSON.stringify(data, null, '\t');
+			switch(row.type){
+				case "header":
+				break;
+
+				case "group":
+				console.warn("Download Warning - JSON downloader cannot process row groups");
+				break;
+
+				case "calc":
+				console.warn("Download Warning - JSON downloader cannot process column calculations");
+				break;
+
+				case "row":
+				row.columns.forEach((col) => {
+					if(col){
+						item[col.component.getField()] = col.value;
+					}
+				});
+
+				fileContents.push(item);
+				break;
+			}
+		});
+
+		fileContents = JSON.stringify(fileContents, null, '\t');
 
 		setFileContents(fileContents, "application/json");
 	},
 
-	pdf:function(columns, data, options, setFileContents, config){
-		var self = this,
-		fields = [],
-		header = [],
+	pdf:function(list, options, setFileContents){
+		var header = [],
 		body = [],
-		calcs = {},
-		headerDepth = 1,
-		table = "",
 		autoTableParams = {},
 		rowGroupStyles = options.rowGroupStyles || {
 			fontStyle: "bold",
@@ -461,11 +227,6 @@ Download.prototype.downloaders = {
 		jsPDFParams = options.jsPDF || {},
 		title = options && options.title ? options.title : "";
 
-		if(config.columnCalcs){
-			calcs = data.calcs;
-			data = data.data;
-		}
-
 		if(!jsPDFParams.orientation){
 			jsPDFParams.orientation = options.orientation || "landscape";
 		}
@@ -474,172 +235,68 @@ Download.prototype.downloaders = {
 			jsPDFParams.unit = "pt";
 		}
 
-		//build column headers
-		function parseSimpleTitles(){
-			columns.forEach(function(column){
-				if(column.field){
-					header.push(column.title || "");
-					fields.push(column.field);
-				}
-			});
+		//parse row list
+		list.forEach((row) => {
+			var item = {};
 
-			header = [header];
-		}
-
-		function parseColumnGroup(column, level){
-			var colSpan = column.width,
-			rowSpan = 1,
-			col = {
-				content:column.title || "",
-			};
-
-			if(column.subGroups){
-				column.subGroups.forEach(function(subGroup){
-					parseColumnGroup(subGroup, level+1);
-				});
-				rowSpan = 1;
-			}else{
-				fields.push(column.definition.field);
-				rowSpan = headerDepth - level;
-			}
-
-			col.rowSpan = rowSpan;
-			// col.colSpan = colSpan;
-
-			header[level].push(col);
-
-			colSpan--;
-
-			if(rowSpan > 1){
-				for(var i = level + 1; i < headerDepth; i++){
-					header[i].push("");
-				}
-			}
-
-			for(var i = 0; i < colSpan; i++){
-				header[level].push("");
-			}
-		}
-
-		if(config.columnGroups){
-			columns.forEach(function(column){
-				if(column.depth > headerDepth){
-					headerDepth = column.depth;
-				}
-			});
-
-			for(var i=0; i < headerDepth; i++){
-				header.push([]);
-			}
-
-			columns.forEach(function(column){
-				parseColumnGroup(column,0);
-			});
-
-		}else{
-			parseSimpleTitles();
-		}
-
-		function parseValue(value){
-			switch(typeof value){
-				case "object":
-				value = JSON.stringify(value);
+			switch(row.type){
+				case "header":
+				header.push(parseRow(row));
 				break;
 
-				case "undefined":
-				case "null":
-				value = "";
+				case "group":
+				body.push(parseRow(row, rowGroupStyles));
 				break;
 
-				default:
-				value = value;
-			}
+				case "calc":
+				body.push(parseRow(row, rowCalcStyles));
+				break;
 
-			return value;
-		}
-
-		function parseRows(data){
-			//build table rows
-			data.forEach(function(row){
+				case "row":
 				body.push(parseRow(row));
-			});
-		}
+				break;
+			}
+		});
 
 		function parseRow(row, styles){
 			var rowData = [];
 
-			fields.forEach(function(field){
-				var value = self.getFieldValue(field, row);
-				value = parseValue(value);
+			row.columns.forEach((col) =>{
+				var cell;
 
-				if(styles){
-					rowData.push({
-						content:value,
-						styles:styles,
-					});
+				if(col){
+					switch(typeof col.value){
+						case "object":
+						col.value = JSON.stringify(col.value);
+						break;
+
+						case "undefined":
+						case "null":
+						col.value = "";
+						break;
+					}
+
+					cell = {
+						content:col.value,
+						colSpan:col.width,
+						rowSpan:col.height,
+					};
+
+					if(styles){
+						cell.styles = styles;
+					}
+
+					rowData.push(cell);
 				}else{
-					rowData.push(value);
+					rowData.push("");
 				}
 			});
 
 			return rowData;
 		}
 
-		function parseGroup(group, calcObj){
-			var groupData = [];
 
-			groupData.push({content:parseValue(group.key), colSpan:fields.length, styles:rowGroupStyles});
-
-			body.push(groupData);
-
-			if(group.subGroups){
-				group.subGroups.forEach(function(subGroup){
-					parseGroup(subGroup,  calcObj[group.key] ? calcObj[group.key].groups || {} : {});
-				});
-			}else{
-
-				if(config.columnCalcs){
-					addCalcRow(calcObj, group.key, "top");
-				}
-
-				parseRows(group.rows);
-
-				if(config.columnCalcs){
-					addCalcRow(calcObj, group.key, "bottom");
-				}
-			}
-		}
-
-		function addCalcRow(calcs, selector, pos){
-			var calcData = calcs[selector];
-
-			if(calcData){
-				if(pos){
-					calcData = calcData[pos];
-				}
-
-				if(Object.keys(calcData).length){
-					body.push(parseRow(calcData, rowCalcStyles));
-				}
-			}
-		}
-
-		if(config.rowGroups){
-			data.forEach(function(group){
-				parseGroup(group, calcs);
-			});
-		}else{
-			if(config.columnCalcs){
-				addCalcRow(calcs, "top");
-			}
-
-			parseRows(data);
-
-			if(config.columnCalcs){
-				addCalcRow(calcs, "bottom");
-			}
-		}
-
+		//configure PDF
 		var doc = new jsPDF(jsPDFParams); //set document to landscape, better for most tables
 
 		if(options && options.autoTable){
@@ -668,230 +325,50 @@ Download.prototype.downloaders = {
 		setFileContents(doc.output("arraybuffer"), "application/pdf");
 	},
 
-	xlsx:function(columns, data, options, setFileContents, config){
+	xlsx:function(list, options, setFileContents){
 		var self = this,
 		sheetName = options.sheetName || "Sheet1",
 		workbook = XLSX.utils.book_new(),
-		calcs = {},
-		groupRowIndexs = [],
-		groupColumnIndexs = [],
-		calcRowIndexs = [],
 		output;
 
 		workbook.SheetNames = [];
 		workbook.Sheets = {};
 
-		if(config.columnCalcs){
-			calcs = data.calcs;
-			data = data.data;
-		}
-
 		function generateSheet(){
-			var titles = [],
-			fields = [],
-			rows = [],
-			worksheet;
+			var rows = [],
+			merges = [],
+			worksheet = {},
+			range = {s: {c:0, r:0}, e: {c:(list[0] ? list[0].columns.reduce((a, b) => a + (b && b.width ? b.width : 1), 0) : 0), r:list.length }};
 
-			//convert rows to worksheet
-			function rowsToSheet(){
-				var sheet = {};
-				var range = {s: {c:0, r:0}, e: {c:fields.length, r:rows.length }};
-
-				XLSX.utils.sheet_add_aoa(sheet, rows);
-
-				sheet['!ref'] = XLSX.utils.encode_range(range);
-
-				var merges = generateMerges();
-
-				if(merges.length){
-					sheet["!merges"] = merges;
-				}
-
-				return sheet;
-			}
-
-			function parseSimpleTitles(){
-				//get field lists
-				columns.forEach(function(column){
-					titles.push(column.title);
-					fields.push(column.field);
-				});
-
-				rows.push(titles);
-			}
-
-			function parseColumnGroup(column, level){
-
-				if(typeof titles[level] === "undefined"){
-					titles[level] = [];
-				}
-
-				if(typeof groupColumnIndexs[level] === "undefined"){
-					groupColumnIndexs[level] = [];
-				}
-
-				if(column.width > 1){
-
-					groupColumnIndexs[level].push({
-						type:"hoz",
-						start:titles[level].length,
-						end:titles[level].length + column.width - 1,
-					});
-				}
-
-				titles[level].push(column.title);
-
-				if(column.subGroups){
-					column.subGroups.forEach(function(subGroup){
-						parseColumnGroup(subGroup, level+1);
-					});
-				}else{
-					fields.push(column.definition.field);
-					padColumnTitles(fields.length - 1, level);
-
-					groupColumnIndexs[level].push({
-						type:"vert",
-						start:fields.length - 1,
-					});
-
-				}
-			}
-
-
-			function padColumnTitles(){
-				var max = 0;
-
-				titles.forEach(function(title){
-					var len = title.length;
-					if(len > max){
-						max = len;
-					}
-				});
-
-				titles.forEach(function(title){
-					var len = title.length;
-					if(len < max){
-						for(var i = len; i < max; i++){
-							title.push("");
-						}
-					}
-				});
-			}
-
-			if(config.columnGroups){
-				columns.forEach(function(column){
-					parseColumnGroup(column,0);
-				});
-
-				titles.forEach(function(title){
-					rows.push(title);
-				});
-			}else{
-				parseSimpleTitles();
-			}
-
-			function generateMerges(){
-				var output = [];
-
-				groupRowIndexs.forEach(function(index){
-					output.push({s:{r:index,c:0},e:{r:index,c:fields.length - 1}});
-				});
-
-				groupColumnIndexs.forEach(function(merges, level){
-					merges.forEach(function(merge){
-						if(merge.type === "hoz"){
-							output.push({s:{r:level,c:merge.start},e:{r:level,c:merge.end}});
-						}else{
-							if(level != titles.length - 1){
-								output.push({s:{r:level,c:merge.start},e:{r:titles.length - 1,c:merge.start}});
-							}
-						}
-					});
-				});
-
-				return output;
-			}
-
-			//generate each row of the table
-			function parseRows(data){
-				data.forEach(function(row){
-					rows.push(parseRow(row));
-				});
-			}
-
-			function parseRow(row){
+			//parse row list
+			list.forEach((row, i) => {
 				var rowData = [];
 
-				fields.forEach(function(field){
-					var value = self.getFieldValue(field, row);
-					rowData.push(!(value instanceof Date) && typeof value === "object" ? JSON.stringify(value) : value);
+				row.columns.forEach(function(col, j){
+
+					if(col){
+						rowData.push(!(col.value instanceof Date) && typeof col.value === "object" ? JSON.stringify(col.value) : col.value);
+
+						if(col.width > 1 || col.height > -1){
+							merges.push({s:{r:i,c:j},e:{r:i + col.height - 1,c:j + col.width - 1}});
+						}
+					}else{
+						rowData.push("");
+					}
 				});
 
-				return rowData;
+				rows.push(rowData);
+			});
+
+
+			//convert rows to worksheet
+			XLSX.utils.sheet_add_aoa(worksheet, rows);
+
+			worksheet['!ref'] = XLSX.utils.encode_range(range);
+
+			if(merges.length){
+				worksheet["!merges"] = merges;
 			}
-
-
-			function addCalcRow(calcs, selector, pos){
-				var calcData = calcs[selector];
-
-				if(calcData){
-					if(pos){
-						calcData = calcData[pos];
-					}
-
-					if(Object.keys(calcData).length){
-						calcRowIndexs.push(rows.length);
-						rows.push(parseRow(calcData));
-					}
-				}
-			}
-
-			function parseGroup(group, calcObj){
-				var groupData = [];
-
-				groupData.push(group.key);
-
-				groupRowIndexs.push(rows.length);
-
-				rows.push(groupData);
-
-				if(group.subGroups){
-					group.subGroups.forEach(function(subGroup){
-						parseGroup(subGroup, calcObj[group.key] ? calcObj[group.key].groups || {} : {});
-					});
-				}else{
-
-					if(config.columnCalcs){
-						addCalcRow(calcObj, group.key, "top");
-					}
-
-					parseRows(group.rows);
-
-					if(config.columnCalcs){
-						addCalcRow(calcObj, group.key, "bottom");
-					}
-				}
-
-
-			}
-
-			if(config.rowGroups){
-				data.forEach(function(group){
-					parseGroup(group, calcs);
-				});
-			}else{
-				if(config.columnCalcs){
-					addCalcRow(calcs, "top");
-				}
-
-				parseRows(data);
-
-				if(config.columnCalcs){
-					addCalcRow(calcs, "bottom");
-				}
-			}
-
-			worksheet = rowsToSheet();
 
 			return worksheet;
 		}
@@ -943,9 +420,9 @@ Download.prototype.downloaders = {
 		setFileContents(s2ab(output), "application/octet-stream");
 	},
 
-	html:function(columns, data, options, setFileContents, config){
-		if(this.table.modExists("export", true)){
-			setFileContents(this.table.modules.export.getHtml(true, options.style, config), "text/html");
+	html:function(list, options, setFileContents){
+		if(this.modExists("export", true)){
+			setFileContents(this.modules.export.genereateHTMLTable(list), "text/html");
 		}
 	}
 

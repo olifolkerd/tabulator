@@ -101,7 +101,8 @@ Tabulator.prototype.defaultOptions = {
 	downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	downloadComplete:false, //function to manipulate download data
-	downloadConfig:false,	//download config
+	downloadConfig:{},	//download config
+	downloadRowRange:"active", //restrict download to active rows only
 
 	dataTree:false, //enable data tree
 	dataTreeElementColumn:false,
@@ -195,6 +196,7 @@ Tabulator.prototype.defaultOptions = {
 	groupHeaderPrint:null,
 	groupHeaderClipboard:null,
 	groupHeaderHtmlOutput:null,
+	groupHeaderDownload:null,
 
 	htmlOutputConfig:false, //html outypu config
 

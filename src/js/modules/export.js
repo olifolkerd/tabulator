@@ -6,11 +6,12 @@ var ExportRow = function(type, columns, component, indent){
 	this.indent = indent || 0;
 };
 
-var ExportColumn = function(value, component, width, height){
+var ExportColumn = function(value, component, width, height, depth){
 	this.value = value;
 	this.component = component || false;
 	this.width = width;
 	this.height = height;
+	this.depth = depth;
 };
 
 var Export = function(table){
@@ -25,7 +26,7 @@ Export.prototype.generateExportList = function(config, style, range, colVisProp)
 	this.config = config || {};
 	this.colVisProp = colVisProp;
 
-	var headers = this.headersToExportRows(this.generateColumnGroupHeaders());
+	var headers = this.config.columnHeaders !== false ? this.headersToExportRows(this.generateColumnGroupHeaders()) : [];
 	var body = this.bodyToExportRows(this.rowLookup(range));
 
 	return headers.concat(body);
@@ -154,6 +155,23 @@ Export.prototype.headersToExportRows = function(columns){
 
 		headers[level].push(column);
 
+		if(column.height > 1){
+			for(let i = 1; i < column.height; i ++){
+
+				if(typeof headers[level + i] === "undefined"){
+					headers[level + i] = [];
+				}
+
+				headers[level + i].push(false);
+			}
+		}
+
+		if(column.width > 1){
+			for(let i = 1; i < column.width; i ++){
+				headers[level].push(false);
+			}
+		}
+
 		if(column.subGroups){
 			column.subGroups.forEach(function(subGroup){
 				parseColumnGroup(subGroup, level+1);
@@ -176,7 +194,11 @@ Export.prototype.headersToExportRows = function(columns){
 		var columns = [];
 
 		header.forEach((col) => {
-			columns.push(new ExportColumn(col.title, col.column.getComponent(), col.width, col.height));
+			if(col){
+				columns.push(new ExportColumn(col.title, col.column.getComponent(), col.width, col.height, col.depth));
+			}else{
+				columns.push(null);
+			}
 		});
 
 		exportRows.push(new ExportRow("header", columns));
@@ -191,19 +213,11 @@ Export.prototype.bodyToExportRows = function(rows){
 	var columns = [];
 	var exportRows = [];
 
-	//assign group header formatter
-	var groupHeader = this.table.options["groupHeader" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
-
-	if(groupHeader && !Array.isArray(groupHeader)){
-		groupHeader = [groupHeader];
-	}
-
 	this.table.columnManager.columnsByIndex.forEach((column) => {
 		if (this.columnVisCheck(column)) {
 			columns.push(column.getComponent());
 		}
 	});
-
 
 	if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
 		if(this.table.modules.columnCalcs.topInitialized){
@@ -241,22 +255,8 @@ Export.prototype.bodyToExportRows = function(rows){
 
 		switch(row.type){
 			case "group":
-
-			let title = "";
-
-			if(groupHeader && groupHeader[row.level]){
-				title = groupHeader[row.level](row.key, row.getRowCount(), row.getData(), row.getComponent());
-			}else{
-				if(groupHeader === false){
-					title = row.key;
-				}else{
-					title = row.generator(row.key, row.getRowCount(), row.getData(), row.getComponent());
-				}
-			}
-
 			indent = row.level;
-			exportCols.push(new ExportColumn(title, row.getComponent(), columns.length, 1));
-
+			exportCols.push(new ExportColumn(row.key, row.getComponent(), columns.length, 1));
 			break;
 
 			case "calc" :
@@ -286,13 +286,18 @@ Export.prototype.genereateTableElement = function(list){
 	rowFormatter = this.table.options["rowFormatter" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))],
 	setup = {};
 
-
 	setup.rowFormatter = rowFormatter !== null ? rowFormatter : this.table.options.rowFormatter;
 
 	if(this.table.options.dataTree &&this.config.dataTree !== false && this.table.modExists("columnCalcs")){
 		setup.treeElementField = this.table.modules.dataTree.elementField;
 	}
 
+	//assign group header formatter
+	setup.groupHeader = this.table.options["groupHeader" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))];
+
+	if(setup.groupHeader && !Array.isArray(setup.groupHeader)){
+		setup.groupHeader = [setup.groupHeader];
+	}
 
 	table.classList.add("tabulator-print-table");
 
@@ -361,49 +366,62 @@ Export.prototype.genereateHeaderElement = function(row, setup, styles){
 	var rowEl = document.createElement("tr");
 
 	row.columns.forEach((column) => {
-		var cellEl = document.createElement("th");
-		var classNames = column.component._column.definition.cssClass ? column.component._column.definition.cssClass.split(" ") : [];
+		if(column){
+			var cellEl = document.createElement("th");
+			var classNames = column.component._column.definition.cssClass ? column.component._column.definition.cssClass.split(" ") : [];
 
-		cellEl.colSpan = column.width;
-		cellEl.rowSpan = column.height;
+			cellEl.colSpan = column.width;
+			cellEl.rowSpan = column.height;
 
-		cellEl.innerHTML = column.component._column.definition.title;
+			cellEl.innerHTML = column.component._column.definition.title;
 
-		if(this.cloneTableStyle){
-			cellEl.style.boxSizing = "border-box";
-		}
-
-		classNames.forEach(function(className) {
-			cellEl.classList.add(className);
-		});
-
-		this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
-		this.mapElementStyles(column.component._column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
-
-		if(column.component._column.visible){
-			this.mapElementStyles(column.component.getElement(), cellEl, ["width"]);
-		}else{
-			if(column.component._column.definition.width){
-				cellEl.style.width = column.component._column.definition.width + "px";
+			if(this.cloneTableStyle){
+				cellEl.style.boxSizing = "border-box";
 			}
-		}
 
-		if(column.component._column.parent){
-			this.mapElementStyles(column.component._column.parent.groupElement, cellEl, ["border-top"]);
-		}
+			classNames.forEach(function(className) {
+				cellEl.classList.add(className);
+			});
 
-		rowEl.appendChild(cellEl);
+			this.mapElementStyles(column.component.getElement(), cellEl, ["text-align", "border-top", "border-left", "border-right", "border-bottom", "background-color", "color", "font-weight", "font-family", "font-size"]);
+			this.mapElementStyles(column.component._column.contentElement, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom"]);
+
+			if(column.component._column.visible){
+				this.mapElementStyles(column.component.getElement(), cellEl, ["width"]);
+			}else{
+				if(column.component._column.definition.width){
+					cellEl.style.width = column.component._column.definition.width + "px";
+				}
+			}
+
+			if(column.component._column.parent){
+				this.mapElementStyles(column.component._column.parent.groupElement, cellEl, ["border-top"]);
+			}
+
+			rowEl.appendChild(cellEl);
+		}
 	});
 
 	return rowEl;
 };
 
 Export.prototype.genereateGroupElement = function(row, setup, styles){
+
 	var rowEl = document.createElement("tr"),
 	cellEl = document.createElement("td"),
 	group = row.columns[0];
 
 	rowEl.classList.add("tabulator-print-table-row");
+
+	if(setup.groupHeader && setup.groupHeader[row.indent]){
+		group.value = setup.groupHeader[row.indent](group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
+	}else{
+		if(setup.groupHeader === false){
+			group.value = group.value;
+		}else{
+			group.value = row.component._group.generator(group.value, row.component._group.getRowCount(), row.component._group.getData(), row.component);
+		}
+	}
 
 	cellEl.colSpan = group.width;
 	cellEl.innerHTML = group.value;
@@ -437,100 +455,103 @@ Export.prototype.genereateRowElement = function(row, setup, styles){
 
 	rowEl.classList.add("tabulator-print-table-row");
 
-	row.columns.forEach((col, i) => {
-		var cellEl = document.createElement("td"),
-		column = col.component._column,
-		value = col.value;
+	row.columns.forEach((col) => {
 
-		var cellWrapper = {
-			modules:{},
-			getValue:function(){
-				return value;
-			},
-			getField:function(){
-				return column.definition.field;
-			},
-			getElement:function(){
-				return cellEl;
-			},
-			getColumn:function(){
-				return column.getComponent();
-			},
-			getData:function(){
-				return rowData;
-			},
-			getRow:function(){
-				return row.getComponent();
-			},
-			getComponent:function(){
-				return cellWrapper;
-			},
-			column:column,
-		};
+		if(col){
+			var cellEl = document.createElement("td"),
+			column = col.component._column,
+			value = col.value;
 
-		var classNames = column.definition.cssClass ? column.definition.cssClass.split(" ") : [];
-
-		classNames.forEach(function(className) {
-			cellEl.classList.add(className);
-		});
-
-		if(this.table.modExists("format") && this.config.formatCells !== false){
-			value = this.table.modules.format.formatExportValue(cellWrapper, this.colVisProp);
-		}else{
-			switch(typeof value){
-				case "object":
-				value = JSON.stringify(value);
-				break;
-
-				case "undefined":
-				case "null":
-				value = "";
-				break;
-
-				default:
-				value = value;
-			}
-		}
-
-		if(value instanceof Node){
-			cellEl.appendChild(value);
-		}else{
-			cellEl.innerHTML = value;
-		}
-
-		if(styles.firstCell){
-			this.mapElementStyles(styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
-
-			if(column.definition.align){
-				cellEl.style.textAlign = column.definition.align;
-			}
-		}
-
-		if(this.table.options.dataTree && this.config.dataTree !== false){
-			if((setup.treeElementField && setup.treeElementField == column.field) || (!setup.treeElementField && i == 0)){
-				if(row.component._row.modules.dataTree.controlEl){
-					cellEl.insertBefore(row.component._row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
-				}
-				if(row.component._row.modules.dataTree.branchEl){
-					cellEl.insertBefore(row.component._row.modules.dataTree.branchEl.cloneNode(true), cellEl.firstChild);
-				}
-			}
-		}
-
-		rowEl.appendChild(cellEl);
-
-		if(cellWrapper.modules.format && cellWrapper.modules.format.renderedCallback){
-			cellWrapper.modules.format.renderedCallback();
-		}
-
-		if(setup.rowFormatter && this.config.formatCells !== false){
-			var rowComponent = row.getComponent();
-
-			rowComponent.getElement = function(){
-				return rowEl;
+			var cellWrapper = {
+				modules:{},
+				getValue:function(){
+					return value;
+				},
+				getField:function(){
+					return column.definition.field;
+				},
+				getElement:function(){
+					return cellEl;
+				},
+				getColumn:function(){
+					return column.getComponent();
+				},
+				getData:function(){
+					return rowData;
+				},
+				getRow:function(){
+					return row.getComponent();
+				},
+				getComponent:function(){
+					return cellWrapper;
+				},
+				column:column,
 			};
 
-			setup.rowFormatter(rowComponent);
+			var classNames = column.definition.cssClass ? column.definition.cssClass.split(" ") : [];
+
+			classNames.forEach(function(className) {
+				cellEl.classList.add(className);
+			});
+
+			if(this.table.modExists("format") && this.config.formatCells !== false){
+				value = this.table.modules.format.formatExportValue(cellWrapper, this.colVisProp);
+			}else{
+				switch(typeof value){
+					case "object":
+					value = JSON.stringify(value);
+					break;
+
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = value;
+				}
+			}
+
+			if(value instanceof Node){
+				cellEl.appendChild(value);
+			}else{
+				cellEl.innerHTML = value;
+			}
+
+			if(styles.firstCell){
+				this.mapElementStyles(styles.firstCell, cellEl, ["padding-top", "padding-left", "padding-right", "padding-bottom", "border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size"]);
+
+				if(column.definition.align){
+					cellEl.style.textAlign = column.definition.align;
+				}
+			}
+
+			if(this.table.options.dataTree && this.config.dataTree !== false){
+				if((setup.treeElementField && setup.treeElementField == column.field) || (!setup.treeElementField && i == 0)){
+					if(row.component._row.modules.dataTree.controlEl){
+						cellEl.insertBefore(row.component._row.modules.dataTree.controlEl.cloneNode(true), cellEl.firstChild);
+					}
+					if(row.component._row.modules.dataTree.branchEl){
+						cellEl.insertBefore(row.component._row.modules.dataTree.branchEl.cloneNode(true), cellEl.firstChild);
+					}
+				}
+			}
+
+			rowEl.appendChild(cellEl);
+
+			if(cellWrapper.modules.format && cellWrapper.modules.format.renderedCallback){
+				cellWrapper.modules.format.renderedCallback();
+			}
+
+			if(setup.rowFormatter && this.config.formatCells !== false){
+				var rowComponent = row.getComponent();
+
+				rowComponent.getElement = function(){
+					return rowEl;
+				};
+
+				setup.rowFormatter(rowComponent);
+			}
 		}
 	});
 
@@ -538,13 +559,21 @@ Export.prototype.genereateRowElement = function(row, setup, styles){
 };
 
 
-Export.prototype.getHtml = function(visible, style, config, colVisProp){
+Export.prototype.genereateHTMLTable = function(list){
 	var holder = document.createElement("div");
 
-	holder.appendChild(this.genereateTable(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput"));
+	holder.appendChild(this.genereateTableElement(list));
 
 	return holder.innerHTML;
 };
+
+
+Export.prototype.getHtml = function(visible, style, config, colVisProp){
+	var list = this.generateExportList(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput");
+
+	return this.genereateHTMLTable(list);
+};
+
 
 Export.prototype.mapElementStyles = function(from, to, props){
 	if(this.cloneTableStyle && from && to){
