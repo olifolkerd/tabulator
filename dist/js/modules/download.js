@@ -7,7 +7,7 @@ var Download = function Download(table) {
 };
 
 //trigger file download
-Download.prototype.download = function (type, filename, options, active, interceptCallback) {
+Download.prototype.download = function (type, filename, options, range, interceptCallback) {
 	var self = this,
 	    downloadFunc = false;
 
@@ -34,14 +34,14 @@ Download.prototype.download = function (type, filename, options, active, interce
 	}
 
 	if (downloadFunc) {
-		var list = this.generateExportList();
+		var list = this.generateExportList(range);
 
 		downloadFunc.call(this.table, list, options || {}, buildLink);
 	}
 };
 
-Download.prototype.generateExportList = function () {
-	var list = this.table.modules.export.generateExportList(this.table.options.downloadConfig, false, this.table.options.downloadRowRange, "download");
+Download.prototype.generateExportList = function (range) {
+	var list = this.table.modules.export.generateExportList(this.table.options.downloadConfig, false, range || this.table.options.downloadRowRange, "download");
 
 	//assign group header formatter
 	var groupHeader = this.table.options.groupHeaderDownload;
