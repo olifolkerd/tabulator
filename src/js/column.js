@@ -28,6 +28,11 @@ ColumnComponent.prototype.getCells = function(){
 };
 
 ColumnComponent.prototype.getVisibility = function(){
+	console.warn("getVisibility function is deprecated, you should now use the isVisible function");
+	return this._column.visible;
+};
+
+ColumnComponent.prototype.isVisible = function(){
 	return this._column.visible;
 };
 
