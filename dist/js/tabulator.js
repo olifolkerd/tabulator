@@ -18197,6 +18197,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupComponent.prototype.getVisibility = function () {
+		console.warn("getVisibility function is deprecated, you should now use the isVisible function");
+
+		return this._group.visible;
+	};
+
+	GroupComponent.prototype.isVisible = function () {
 		return this._group.visible;
 	};
 
@@ -18879,6 +18885,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (!this.component) {
 			this.component = new GroupComponent(this);
 		}
+
 		return this.component;
 	};
 

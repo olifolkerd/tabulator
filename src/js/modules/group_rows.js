@@ -31,6 +31,11 @@ GroupComponent.prototype.getParentGroup = function(){
 };
 
 GroupComponent.prototype.getVisibility = function(){
+	console.warn("getVisibility function is deprecated, you should now use the isVisible function");
+	return this._group.visible;
+};
+
+GroupComponent.prototype.isVisible = function(){
 	return this._group.visible;
 };
 
