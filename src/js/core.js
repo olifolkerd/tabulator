@@ -396,6 +396,10 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 		}
 	}
 
+	if(this.options.downloadDataFormatter){
+		console.warn("DEPRECATION WARNING - downloadDataFormatter option has been deprecated");
+	}
+
 	if(typeof this.options.clipboardCopyHeader !== "undefined"){
 		this.options.columnHeaders = this.options.clipboardCopyHeader;
 		console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");

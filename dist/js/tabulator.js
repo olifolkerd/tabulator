@@ -8359,6 +8359,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		}
 
+		if (this.options.downloadDataFormatter) {
+
+			console.warn("DEPRECATION WARNING - downloadDataFormatter option has been deprecated");
+		}
+
 		if (typeof this.options.clipboardCopyHeader !== "undefined") {
 
 			this.options.columnHeaders = this.options.clipboardCopyHeader;
