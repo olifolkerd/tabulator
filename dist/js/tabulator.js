@@ -1569,6 +1569,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.visible = true; //default visible state
 
 
+		this.component = null;
+
 		this._mapDepricatedFunctionality();
 
 		//initialize column
@@ -3042,7 +3044,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Column.prototype.getComponent = function () {
 
-		return new ColumnComponent(this);
+		if (!this.component) {
+
+			this.component = new ColumnComponent(this);
+		}
+
+		return this.component;
 	};
 
 	var RowManager = function RowManager(table) {
@@ -5663,6 +5670,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.heightInitialized = false; //element has resized cells to fit
 
 
+		this.component = null;
+
 		this.setData(data);
 
 		this.generateElement();
@@ -6512,7 +6521,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Row.prototype.getComponent = function () {
 
-		return new RowComponent(this);
+		if (!this.component) {
+
+			this.component = new RowComponent(this);
+		}
+
+		return this.component;
 	};
 
 	//public row object
@@ -6654,6 +6668,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.width = null;
 
 		this.minWidth = null;
+
+		this.component = null;
 
 		this.build();
 	};
@@ -7565,7 +7581,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Cell.prototype.getComponent = function () {
 
-		return new CellComponent(this);
+		if (!this.component) {
+
+			this.component = new CellComponent(this);
+		}
+
+		return this.component;
 	};
 
 	var FooterManager = function FooterManager(table) {
@@ -18229,6 +18250,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
 
+		this.component = null;
+
 		this.createElements();
 		this.addBindings();
 
@@ -18853,7 +18876,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//////////////// Object Generation /////////////////
 	Group.prototype.getComponent = function () {
-		return new GroupComponent(this);
+		if (!this.component) {
+			this.component = new GroupComponent(this);
+		}
+		return this.component;
 	};
 
 	//////////////////////////////////////////////////

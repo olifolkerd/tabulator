@@ -110,6 +110,8 @@ var Cell = function(column, row){
 	this.width = null;
 	this.minWidth = null;
 
+	this.component = null;
+
 	this.build();
 };
 
@@ -813,5 +815,10 @@ Cell.prototype.getIndex = function(){
 
 //////////////// Object Generation /////////////////
 Cell.prototype.getComponent = function(){
-	return new CellComponent(this);
+
+	if(!this.component){
+		this.component = new CellComponent(this);
+	}
+
+	return this.component;
 };

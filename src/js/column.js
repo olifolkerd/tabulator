@@ -218,6 +218,8 @@ var Column = function(def, parent){
 
 	this.visible = true; //default visible state
 
+	this.component = null;
+
 	this._mapDepricatedFunctionality();
 
 	//initialize column
@@ -1446,5 +1448,9 @@ Column.prototype.defaultOptionList = [
 
 //////////////// Object Generation /////////////////
 Column.prototype.getComponent = function(){
-	return new ColumnComponent(this);
+	if(!this.component){
+		this.component = new ColumnComponent(this);
+	}
+
+	return this.component;
 };

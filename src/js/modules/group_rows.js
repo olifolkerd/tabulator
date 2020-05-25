@@ -84,6 +84,8 @@ var Group = function(groupManager, parent, level, key, field, generator, oldGrou
 
 	this.visible = oldGroup ? oldGroup.visible : (typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0]);
 
+	this.component = null;
+
 	this.createElements();
 	this.addBindings();
 
@@ -727,7 +729,11 @@ Group.prototype.clearCellHeight = function(){
 
 //////////////// Object Generation /////////////////
 Group.prototype.getComponent = function(){
-	return new GroupComponent(this);
+	if(!this.component){
+		this.component = new GroupComponent(this);
+	}
+
+	return this.component;
 };
 
 //////////////////////////////////////////////////

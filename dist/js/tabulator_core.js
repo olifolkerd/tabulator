@@ -1384,6 +1384,8 @@ var Column = function Column(def, parent) {
 
 	this.visible = true; //default visible state
 
+	this.component = null;
+
 	this._mapDepricatedFunctionality();
 
 	//initialize column
@@ -2501,7 +2503,11 @@ Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "a
 
 //////////////// Object Generation /////////////////
 Column.prototype.getComponent = function () {
-	return new ColumnComponent(this);
+	if (!this.component) {
+		this.component = new ColumnComponent(this);
+	}
+
+	return this.component;
 };
 
 var RowManager = function RowManager(table) {
@@ -4497,6 +4503,8 @@ var Row = function Row(data, parent) {
 	this.initialized = false; //element has been rendered
 	this.heightInitialized = false; //element has resized cells to fit
 
+	this.component = null;
+
 	this.setData(data);
 	this.generateElement();
 };
@@ -5151,7 +5159,11 @@ Row.prototype.getGroup = function () {
 
 //////////////// Object Generation /////////////////
 Row.prototype.getComponent = function () {
-	return new RowComponent(this);
+	if (!this.component) {
+		this.component = new RowComponent(this);
+	}
+
+	return this.component;
 };
 
 //public row object
@@ -5260,6 +5272,8 @@ var Cell = function Cell(column, row) {
 	this.height = null;
 	this.width = null;
 	this.minWidth = null;
+
+	this.component = null;
 
 	this.build();
 };
@@ -5952,7 +5966,12 @@ Cell.prototype.getIndex = function () {
 
 //////////////// Object Generation /////////////////
 Cell.prototype.getComponent = function () {
-	return new CellComponent(this);
+
+	if (!this.component) {
+		this.component = new CellComponent(this);
+	}
+
+	return this.component;
 };
 var FooterManager = function FooterManager(table) {
 	this.table = table;

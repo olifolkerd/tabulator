@@ -168,6 +168,8 @@ var Row = function(data, parent, type = "row"){
 	this.initialized = false; //element has been rendered
 	this.heightInitialized = false; //element has resized cells to fit
 
+	this.component = null;
+
 	this.setData(data);
 	this.generateElement();
 };
@@ -831,5 +833,9 @@ Row.prototype.getGroup = function(){
 
 //////////////// Object Generation /////////////////
 Row.prototype.getComponent = function(){
-	return new RowComponent(this);
+	if(!this.component){
+		this.component = new RowComponent(this);
+	}
+
+	return this.component;
 };
