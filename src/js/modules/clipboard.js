@@ -16,7 +16,7 @@ Clipboard.prototype.initialize = function(){
 
 	if(this.mode === true || this.mode === "copy"){
 		this.table.element.addEventListener("copy", (e) => {
-			var plain, html;
+			var plain, html, list;
 
 			if(!this.blocked){
 				e.preventDefault();
@@ -28,8 +28,11 @@ Clipboard.prototype.initialize = function(){
 						plain = this.table.options.clipboardCopyFormatter("plain", plain);
 					}
 				}else{
-					html = this.table.modules.export.getHtml(this.rowRange, this.table.options.clipboardCopyStyled, this.table.options.clipboardCopyConfig, "clipboard");
-					plain = html ? this.generatePlainContent(html) : "";
+
+					var list = this.table.modules.export.generateExportList(this.rowRange, this.table.options.clipboardCopyStyled, this.table.options.clipboardCopyConfig, "clipboard");
+
+					html = this.table.modules.export.genereateHTMLTable(list);
+					plain = html ? this.generatePlainContent(list) : "";
 
 					if(this.table.options.clipboardCopyFormatter){
 						plain = this.table.options.clipboardCopyFormatter("plain", plain);
@@ -74,29 +77,37 @@ Clipboard.prototype.reset = function(){
 };
 
 
-Clipboard.prototype.generatePlainContent = function (html) {
+Clipboard.prototype.generatePlainContent = function (list) {
 	var output = [];
 
-	var holder = document.createElement("div");
-	holder.innerHTML = html;
-
-	var table = holder.getElementsByTagName("table")[0];
-	var rows = Array.prototype.slice.call(table.getElementsByTagName("tr"));
-
-	rows.forEach((row) => {
+	list.forEach((row) => {
 		var rowData = [];
 
-		var headers = Array.prototype.slice.call(row.getElementsByTagName("th"));
-		var cells = Array.prototype.slice.call(row.getElementsByTagName("td"));
+		row.columns.forEach((col) => {
+			var value = "";
 
-		cells = cells.concat(headers);
+			if(col){
 
-		cells.forEach((cell) => {
-			var val = cell.innerHTML;
+				if(row.type === "group"){
+					col.value = col.component.getKey();
+				}
 
-			val = val == "&nbsp;" ? "" : val;
+				switch(typeof col.value){
+					case "object":
+					value = JSON.stringify(col.value);
+					break;
 
-			rowData.push(val);
+					case "undefined":
+					case "null":
+					value = "";
+					break;
+
+					default:
+					value = col.value;
+				}
+			}
+
+			rowData.push(value);
 		});
 
 		output.push(rowData.join("\t"));
