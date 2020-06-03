@@ -10412,7 +10412,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    tableWidth = this.table.rowManager.element.clientWidth,
 			    gap = 0,
 				lastCol = false,          
-				growthCol = [];
+				growthCol = [],
 				growthValue = 0;
 
 			columns.forEach(function (column, i) {
