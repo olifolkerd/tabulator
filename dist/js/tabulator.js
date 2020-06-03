@@ -10413,6 +10413,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    gap = 0,
 				lastCol = false,          
 				growthCol = [];
+				growthValue = 0;
 
 			columns.forEach(function (column, i) {
 
@@ -10428,6 +10429,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if(column.definition.widthGrow != null)
 				{
+					growthValue += column.definition.widthGrow;
 					growthCol.push(column);
 				}
 
@@ -10472,7 +10474,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					else
 					{
 						growthCol.forEach(function (column, i) {
-							var size = (gap) * (column.definition.widthGrow/5);
+							var size = (gap) * (column.definition.widthGrow/growthValue);
 							column.setWidth(size); 
 						});  
 					}
