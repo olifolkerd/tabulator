@@ -101,10 +101,9 @@ DataTree.prototype.initializeRow = function(row){
 		row.modules.dataTree.controlEl.parentNode.removeChild(row.modules.dataTree.controlEl);
 	}
 
-
 	row.modules.dataTree = {
 		index: row.modules.dataTree ? row.modules.dataTree.index : 0,
-		open: children ? (row.modules.dataTree ? row.modules.dataTree.open :this.startOpen(row.getComponent(), 0)) : false,
+		open: children ? (row.modules.dataTree ? row.modules.dataTree.open : this.startOpen(row.getComponent(), 0)) : false,
 		controlEl: row.modules.dataTree && children ? row.modules.dataTree.controlEl : false,
 		branchEl: row.modules.dataTree && children ? row.modules.dataTree.branchEl : false,
 		parent: row.modules.dataTree ? row.modules.dataTree.parent : false,
@@ -355,6 +354,10 @@ DataTree.prototype.rowDelete = function(row){
 			parent.data[this.field].splice(childIndex, 1);
 		}
 
+		if(!parent.data[this.field].length){
+			delete parent.data[this.field];
+		}
+
 		this.initializeRow(parent);
 		this.layoutRow(parent);
 	}
@@ -368,6 +371,12 @@ DataTree.prototype.addTreeChildRow = function(row, data, top, index){
 
 	if(typeof data === "string"){
 		data = JSON.parse(data);
+	}
+
+	if(!Array.isArray(row.data[this.field])){
+		row.data[this.field] = [];
+
+		row.modules.dataTree.open = this.startOpen(row.getComponent(), row.modules.dataTree.index);
 	}
 
 	if(typeof index !== "undefined"){
@@ -427,7 +436,10 @@ DataTree.prototype.findChildIndex = function(subject, parent){
 	}
 
 	if(match){
-		match = parent.data[this.field].indexOf(match);
+
+		if(Array.isArray(parent.data[this.field])){
+			match = parent.data[this.field].indexOf(match);
+		}
 
 		if(match == -1){
 			match = false;

@@ -360,6 +360,10 @@ DataTree.prototype.rowDelete = function (row) {
 			parent.data[this.field].splice(childIndex, 1);
 		}
 
+		if (!parent.data[this.field].length) {
+			delete parent.data[this.field];
+		}
+
 		this.initializeRow(parent);
 		this.layoutRow(parent);
 	}
@@ -372,6 +376,12 @@ DataTree.prototype.addTreeChildRow = function (row, data, top, index) {
 
 	if (typeof data === "string") {
 		data = JSON.parse(data);
+	}
+
+	if (!Array.isArray(row.data[this.field])) {
+		row.data[this.field] = [];
+
+		row.modules.dataTree.open = this.startOpen(row.getComponent(), row.modules.dataTree.index);
 	}
 
 	if (typeof index !== "undefined") {
@@ -430,7 +440,10 @@ DataTree.prototype.findChildIndex = function (subject, parent) {
 	}
 
 	if (match) {
-		match = parent.data[this.field].indexOf(match);
+
+		if (Array.isArray(parent.data[this.field])) {
+			match = parent.data[this.field].indexOf(match);
+		}
 
 		if (match == -1) {
 			match = false;

@@ -13277,8 +13277,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				parent.data[this.field].splice(childIndex, 1);
 			}
 
+			if (!parent.data[this.field].length) {
+				delete parent.data[this.field];
+			}
+
 			this.initializeRow(parent);
 			this.layoutRow(parent);
+
+			// parent.reinitialize();
 		}
 
 		this.table.rowManager.refreshActiveData("tree", false, true);
@@ -13289,6 +13295,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (typeof data === "string") {
 			data = JSON.parse(data);
+		}
+
+		if (!Array.isArray(row.data[this.field])) {
+			row.data[this.field] = [];
+
+			row.modules.dataTree.open = this.startOpen(row.getComponent(), row.modules.dataTree.index);
 		}
 
 		if (typeof index !== "undefined") {
@@ -13347,7 +13359,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		if (match) {
-			match = parent.data[this.field].indexOf(match);
+
+			if (Array.isArray(parent.data[this.field])) {
+				match = parent.data[this.field].indexOf(match);
+			}
 
 			if (match == -1) {
 				match = false;
