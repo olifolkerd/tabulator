@@ -100,10 +100,11 @@ Export.prototype.processColumnGroup = function (column) {
 	var _this3 = this;
 
 	var subGroups = column.columns,
-	    maxDepth = 0;
+	    maxDepth = 0,
+	    title = column.definition["title" + (this.colVisProp.charAt(0).toUpperCase() + this.colVisProp.slice(1))] || column.definition.title;
 
 	var groupData = {
-		title: column.definition.title,
+		title: title,
 		column: column,
 		depth: 1
 	};
@@ -380,7 +381,7 @@ Export.prototype.genereateHeaderElement = function (row, setup, styles) {
 			cellEl.colSpan = column.width;
 			cellEl.rowSpan = column.height;
 
-			cellEl.innerHTML = column.component._column.definition.title;
+			cellEl.innerHTML = column.value;
 
 			if (_this6.cloneTableStyle) {
 				cellEl.style.boxSizing = "border-box";

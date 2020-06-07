@@ -315,6 +315,11 @@ Column.prototype._mapDepricatedFunctionality = function(){
 		this.definition.hozAlign = this.definition.align;
 		console.warn("align column definition property is deprecated, you should now use hozAlign");
 	}
+
+	if(typeof this.definition.downloadTitle !== "undefined"){
+		this.definition.titleDownload = this.definition.downloadTitle;
+		console.warn("downloadTitle definition property is deprecated, you should now use titleDownload");
+	}
 };
 
 Column.prototype.setTooltip = function(){
@@ -1447,6 +1452,10 @@ Column.prototype.defaultOptionList = [
 "formatterClipboardParams",
 "formatterHtmlOutput",
 "formatterHtmlOutputParams",
+"titlePrint",
+"titleClipboard",
+"titleHtmlOutput",
+"titleDownload",
 ];
 
 //////////////// Event Bindings /////////////////
