@@ -1180,7 +1180,8 @@ Edit.prototype.editors = {
 		displayItems = [],
 		values = [],
 		currentItem = false,
-		blurable = true;
+		blurable = true,
+		uniqueColumnValues = false;
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
@@ -1212,6 +1213,15 @@ Edit.prototype.editors = {
 				blurable = true;
 			}, 10);
 		});
+
+
+		function genUniqueColumnValues(){
+			if(editorParams.values === true){
+				uniqueColumnValues = getUniqueColumnValues();
+			}else if(typeof editorParams.values === "string"){
+				uniqueColumnValues = getUniqueColumnValues(editorParams.values);
+			}
+		}
 
 		function getUniqueColumnValues(field){
 			var output = {},
@@ -1255,10 +1265,8 @@ Edit.prototype.editors = {
 			values, items, searchEl;
 
 			//lookup base values list
-			if(editorParams.values === true){
-				values = getUniqueColumnValues();
-			}else if(typeof editorParams.values === "string"){
-				values = getUniqueColumnValues(editorParams.values);
+			if(uniqueColumnValues){
+				values = uniqueColumnValues;
 			}else{
 				values = editorParams.values || [];
 			}
@@ -1574,6 +1582,7 @@ Edit.prototype.editors = {
 
 		input.addEventListener("focus", function(e){
 			var value = initialDisplayValue;
+			genUniqueColumnValues();
 			showList();
 			input.value = value;
 			filterList(value, true);

@@ -13283,8 +13283,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.initializeRow(parent);
 			this.layoutRow(parent);
-
-			// parent.reinitialize();
 		}
 
 		this.table.rowManager.refreshActiveData("tree", false, true);
@@ -15016,7 +15014,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    displayItems = [],
 			    values = [],
 			    currentItem = false,
-			    blurable = true;
+			    blurable = true,
+			    uniqueColumnValues = false;
 
 			this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
@@ -15048,6 +15047,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					blurable = true;
 				}, 10);
 			});
+
+			function genUniqueColumnValues() {
+				if (editorParams.values === true) {
+					uniqueColumnValues = getUniqueColumnValues();
+				} else if (typeof editorParams.values === "string") {
+					uniqueColumnValues = getUniqueColumnValues(editorParams.values);
+				}
+			}
 
 			function getUniqueColumnValues(field) {
 				var output = {},
@@ -15092,10 +15099,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				    searchEl;
 
 				//lookup base values list
-				if (editorParams.values === true) {
-					values = getUniqueColumnValues();
-				} else if (typeof editorParams.values === "string") {
-					values = getUniqueColumnValues(editorParams.values);
+				if (uniqueColumnValues) {
+					values = uniqueColumnValues;
 				} else {
 					values = editorParams.values || [];
 				}
@@ -15416,6 +15421,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			input.addEventListener("focus", function (e) {
 				var value = initialDisplayValue;
+				genUniqueColumnValues();
 				showList();
 				input.value = value;
 				filterList(value, true);
