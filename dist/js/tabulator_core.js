@@ -4474,6 +4474,14 @@ RowComponent.prototype.getTreeChildren = function () {
 	return false;
 };
 
+RowComponent.prototype.addTreeChild = function (data, pos, index) {
+	if (this._row.table.modExists("dataTree", true)) {
+		return this._row.table.modules.dataTree.addTreeChildRow(this._row, data, pos, index);
+	}
+
+	return false;
+};
+
 RowComponent.prototype.reformat = function () {
 	return this._row.reinitialize();
 };
@@ -5131,6 +5139,10 @@ Row.prototype.deleteActual = function (blockRedraw) {
 
 	this.initialized = false;
 	this.heightInitialized = false;
+
+	if (this.table.modExists("dataTree", true)) {
+		this.table.modules.dataTree.rowDelete(this);
+	}
 
 	//recalc column calculations if present
 	if (this.table.modExists("columnCalcs")) {

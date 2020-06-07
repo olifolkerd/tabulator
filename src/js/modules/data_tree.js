@@ -344,8 +344,26 @@ DataTree.prototype.getFilteredTreeChildren = function(row){
 	return output;
 };
 
+DataTree.prototype.rowDelete = function(row){
+	var parent = row.modules.dataTree.parent,
+	childIndex;
 
-DataTree.prototype.addTreeChild = function(row, data, top, index){
+	if(parent){
+		childIndex = this.findChildIndex(row, parent);
+
+		if(childIndex !== false){
+			parent.data[this.field].splice(childIndex, 1);
+		}
+
+		this.initializeRow(parent);
+		this.layoutRow(parent);
+	}
+
+	this.table.rowManager.refreshActiveData("tree", false, true);
+};
+
+
+DataTree.prototype.addTreeChildRow = function(row, data, top, index){
 	var childIndex = false;
 
 	if(typeof data === "string"){
