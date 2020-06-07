@@ -8,8 +8,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 	var headerMenuEl;
 
 	if(column.definition.headerContextMenu){
-		var element = column.isGroup ? column.contentElement : column.getElement();
-		element.addEventListener("contextmenu", (e) => {
+		column.getElement().addEventListener("contextmenu", (e) => {
 			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent()) : column.definition.headerContextMenu;
 
 			e.preventDefault();
@@ -63,6 +62,11 @@ Menu.prototype.loadMenu = function(e, component, menu){
 
 	//abort if no menu set
 	if(!menu || !menu.length){
+		return;
+	}
+
+	//abort if child menu already open
+	if(this.isOpen()){
 		return;
 	}
 
@@ -134,6 +138,13 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		this.menuEl.style.top = "";
 		this.menuEl.style.bottom = (docHeight - e.pageY) + "px";
 	}
+};
+
+Menu.prototype.isOpen = function(){
+	if(this.menuEl.parentNode){
+		return true;
+	}
+	return false;
 };
 
 Menu.prototype.hideMenu = function(){
