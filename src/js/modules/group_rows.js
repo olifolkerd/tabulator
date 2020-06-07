@@ -54,9 +54,6 @@ GroupComponent.prototype.getTable = function(){
 	return this._group.groupManager.table;
 };
 
-GroupComponent.prototype.getPath = function() {
-	return this._group.getPath();
-}
 //////////////////////////////////////////////////
 //////////////// Group Functions /////////////////
 //////////////////////////////////////////////////
@@ -653,8 +650,9 @@ Group.prototype.generateGroupHeaderContents = function(){
 
 Group.prototype.getPath = function(path = []) {
 	path.unshift(this.key);
-	if(this.parent) this.parent.getPath(path);
-
+	if(this.parent) {
+		this.parent.getPath(path);
+	}
 	return path;
 }
 ////////////// Standard Row Functions //////////////
@@ -1055,7 +1053,6 @@ GroupRows.prototype.reassignRowToGroup = function(row){
 		newGroupPath = this.getExpectedPath(row),
 		samePath = true;
 	// figure out if new group path is the same as old group path
-
 	var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every(function(element, index) {
 		return element === newGroupPath[index]; 
 	});
@@ -1063,7 +1060,7 @@ GroupRows.prototype.reassignRowToGroup = function(row){
 	if(!samePath) {
 		oldRowGroup.removeRow(row);
 		this.assignRowToGroup(row, self.groups);
-		this.updateGroupRows(true);
+		this.table.rowManager.refreshActiveData("group", false, true);
 	}
 };
 
