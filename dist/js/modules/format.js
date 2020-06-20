@@ -331,8 +331,8 @@ Format.prototype.formatters = {
 	},
 
 	datetime: function datetime(cell, formatterParams, onRendered) {
-		var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD HH:mm:ss";
-		var outputFormat = formatterParams.outputFormat || "DD/MM/YYYY HH:mm:ss";
+		var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
+		var outputFormat = formatterParams.outputFormat || "DD/MM/YYYY hh:mm:ss";
 		var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 		var value = cell.getValue();
 
@@ -353,7 +353,7 @@ Format.prototype.formatters = {
 	},
 
 	datetimediff: function datetime(cell, formatterParams, onRendered) {
-		var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD HH:mm:ss";
+		var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
 		var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 		var suffix = typeof formatterParams.suffix !== "undefined" ? formatterParams.suffix : false;
 		var unit = typeof formatterParams.unit !== "undefined" ? formatterParams.unit : undefined;

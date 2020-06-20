@@ -397,10 +397,10 @@ Sort.prototype.sorters = {
 		return this.sorters.datetime.call(this, a, b, aRow, bRow, column, dir, params);
 	},
 
-	//sort hh:mm formatted times
+	//sort HH:mm formatted times
 	time: function time(a, b, aRow, bRow, column, dir, params) {
 		if (!params.format) {
-			params.format = "hh:mm";
+			params.format = "HH:mm";
 		}
 
 		return this.sorters.datetime.call(this, a, b, aRow, bRow, column, dir, params);
@@ -408,7 +408,7 @@ Sort.prototype.sorters = {
 
 	//sort datetime
 	datetime: function datetime(a, b, aRow, bRow, column, dir, params) {
-		var format = params.format || "DD/MM/YYYY hh:mm:ss",
+		var format = params.format || "DD/MM/YYYY HH:mm:ss",
 		    alignEmptyValues = params.alignEmptyValues,
 		    emptyAlign = 0;
 
