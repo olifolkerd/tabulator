@@ -11446,6 +11446,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				"page_size": "Page Size",
 
+				"page_title": "Show Page",
+
 				"first": "First",
 
 				"first_title": "First Page",
@@ -21780,8 +21782,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		button.setAttribute("type", "button");
 		button.setAttribute("role", "button");
-		button.setAttribute("aria-label", "Show Page " + page);
-		button.setAttribute("title", "Show Page " + page);
+
+		self.table.modules.localize.bind("pagination|page_title", function (value) {
+			button.setAttribute("aria-label", value + " " + page);
+			button.setAttribute("title", value + " " + page);
+		});
+
 		button.setAttribute("data-page", page);
 		button.textContent = page;
 

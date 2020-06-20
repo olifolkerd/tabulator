@@ -8826,6 +8826,7 @@ Localize.prototype.langs = {
 		},
 		"pagination": {
 			"page_size": "Page Size",
+			"page_title": "Show Page",
 			"first": "First",
 			"first_title": "First Page",
 			"last": "Last",
