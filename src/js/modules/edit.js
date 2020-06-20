@@ -1451,10 +1451,16 @@ Edit.prototype.editors = {
 
 			if(Array.isArray(inputValues)){
 				inputValues.forEach(function(value){
-					var item = {
-						title:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
-						value:value,
-					};
+
+					var item = {};
+
+					if(typeof value === "object"){
+						item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value.value, value.label) : value.label;
+						item.value = value.value;
+					}else{
+						item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value;
+						item.value = value;
+					}
 
 					itemList.push(item);
 				});
