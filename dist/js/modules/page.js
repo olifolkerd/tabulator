@@ -300,6 +300,24 @@ Page.prototype.setPage = function (page) {
 
 	var self = this;
 
+	switch (page) {
+		case "first":
+			return this.setPage(1);
+			break;
+
+		case "prev":
+			return this.previousPage();
+			break;
+
+		case "next":
+			return this.nextPage();
+			break;
+
+		case "last":
+			return this.setPage(this.max);
+			break;
+	}
+
 	return new Promise(function (resolve, reject) {
 
 		page = parseInt(page);
