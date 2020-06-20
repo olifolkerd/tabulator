@@ -1004,7 +1004,16 @@ $footerActiveColor:$footerSeperatorColor !default; //footer bottom active text c
 		&.active{
 			color:$rowBackgroundColor;
 			background:$editBoxColor;
+
+			&.focused{
+				outline:1px solid rgba($rowBackgroundColor, .5);
+			}
 		}
+
+		&.focused{
+			outline:1px solid $editBoxColor;
+		}
+
 
 		&:hover{
 			cursor:pointer;

@@ -1062,6 +1062,14 @@
   background: #1D68CD;
 }
 
+.tabulator-edit-select-list .tabulator-edit-select-list-item.active.focused {
+  outline: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.tabulator-edit-select-list .tabulator-edit-select-list-item.focused {
+  outline: 1px solid #1D68CD;
+}
+
 .tabulator-edit-select-list .tabulator-edit-select-list-item:hover {
   cursor: pointer;
   color: #fff;

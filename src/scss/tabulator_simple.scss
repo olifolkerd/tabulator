@@ -993,7 +993,16 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&.active{
 			color:$rowBackgroundColor;
 			background:$editBoxColor;
+
+			&.focused{
+				outline:1px solid rgba($rowBackgroundColor, .5);
+			}
 		}
+
+		&.focused{
+			outline:1px solid $editBoxColor;
+		}
+
 
 		&:hover{
 			cursor:pointer;

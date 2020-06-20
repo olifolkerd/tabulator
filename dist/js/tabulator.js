@@ -14638,12 +14638,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    cellEl = cell.getElement(),
 			    initialValue = cell.getValue(),
 			    vertNav = editorParams.verticalNavigation || "editor",
-			    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : "",
+			    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : [],
 			    input = document.createElement("input"),
 			    listEl = document.createElement("div"),
+			    multiselect = editorParams.multiselect,
 			    dataItems = [],
-			    displayItems = [],
 			    currentItem = {},
+			    displayItems = [],
+			    currentItems = [],
 			    blurable = true;
 
 			this.table.rowManager.element.addEventListener("scroll", cancelItem);
@@ -14689,7 +14691,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				return output;
 			}
 
-			function parseItems(inputValues, curentValue) {
+			function parseItems(inputValues, curentValues) {
 				var dataList = [];
 				var displayList = [];
 
@@ -14700,8 +14702,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						element: false
 					};
 
-					if (item.value === curentValue || !isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue)) {
-						setCurrentItem(item);
+					// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
+					// 	setCurrentItem(item);
+					// }
+
+					if (curentValues.indexOf(item.value) > -1) {
+						setItem(item);
 					}
 
 					dataList.push(item);
@@ -14743,8 +14749,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								element: false
 							};
 
-							if (item.value === curentValue || !isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue)) {
-								setCurrentItem(item);
+							// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
+							// 	setCurrentItem(item);
+							// }
+
+							if (curentValues.indexOf(item.value) > -1) {
+								setItem(item);
 							}
 
 							dataList.push(item);
@@ -14759,8 +14769,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							element: false
 						};
 
-						if (item.value === curentValue || !isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue)) {
-							setCurrentItem(item);
+						// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
+						// 	setCurrentItem(item);
+						// }
+
+						if (curentValues.indexOf(item.value) > -1) {
+							setItem(item);
 						}
 
 						dataList.push(item);
@@ -14794,11 +14808,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 							el.addEventListener("click", function () {
-								setCurrentItem(item);
-								chooseItem();
+								// setCurrentItem(item);
+								// chooseItem();
+								if (multiselect) {
+									toggleItem(item);
+									input.focus();
+								} else {
+									chooseItem(item);
+								}
 							});
 
-							if (item === currentItem) {
+							// if(item === currentItem){
+							// 	el.classList.add("active");
+							// }
+
+							if (currentItems.indexOf(item) > -1) {
+								console.log("current", currentItem);
 								el.classList.add("active");
 							}
 						}
@@ -14818,29 +14843,111 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 			}
 
-			function setCurrentItem(item) {
+			function setCurrentItem(item, active) {
 
-				if (currentItem && currentItem.element) {
+				if (!multiselect && currentItem && currentItem.element) {
 					currentItem.element.classList.remove("active");
 				}
 
+				if (currentItem && currentItem.element) {
+					currentItem.element.classList.remove("focused");
+				}
+
 				currentItem = item;
-				input.value = item.label === "&nbsp;" ? "" : item.label;
 
 				if (item.element) {
-					item.element.classList.add("active");
+					item.element.classList.add("focused");
+					if (active) {
+						item.element.classList.add("active");
+					}
 				}
 			}
 
-			function chooseItem() {
+			// function chooseItem(){
+			// 	hideList();
+
+			// 	if(initialValue !== currentItem.value){
+			// 		initialValue = currentItem.value;
+			// 		success(currentItem.value);
+			// 	}else{
+			// 		cancel();
+			// 	}
+			// }
+
+			function setItem(item) {
+				var index = currentItems.indexOf(item);
+
+				if (index == -1) {
+					currentItems.push(item);
+					setCurrentItem(item, true);
+				}
+
+				fillInput();
+			}
+
+			function unsetItem(index) {
+				var item = currentItems[index];
+
+				if (index > -1) {
+					currentItems.splice(index, 1);
+					if (item.element) {
+						item.element.classList.remove("active");
+					}
+				}
+			}
+
+			function toggleItem(item) {
+				if (!item) {
+					item = currentItem;
+				}
+
+				var index = currentItems.indexOf(item);
+
+				if (index > -1) {
+					unsetItem(index);
+				} else {
+					if (multiselect !== true && currentItems.length >= multiselect) {
+						unsetItem(0);
+					}
+
+					setItem(item);
+				}
+
+				fillInput();
+			}
+
+			function chooseItem(item) {
 				hideList();
 
-				if (initialValue !== currentItem.value) {
-					initialValue = currentItem.value;
-					success(currentItem.value);
-				} else {
-					cancel();
+				if (!item) {
+					item = currentItem;
 				}
+
+				if (item) {
+					success(item.value);
+				}
+			}
+
+			function chooseItems() {
+				hideList();
+
+				var output = [];
+
+				currentItems.forEach(function (item) {
+					output.push(item.value);
+				});
+
+				success(output);
+			}
+
+			function fillInput() {
+				var output = [];
+
+				currentItems.forEach(function (item) {
+					output.push(item.label);
+				});
+
+				input.value = output.join(", ");
 			}
 
 			function cancelItem() {
@@ -14935,7 +15042,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							e.preventDefault();
 
 							if (index > 0) {
-								setCurrentItem(dataItems[index - 1]);
+								setCurrentItem(dataItems[index - 1], !multiselect);
 							}
 						}
 						break;
@@ -14951,9 +15058,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 							if (index < dataItems.length - 1) {
 								if (index == -1) {
-									setCurrentItem(dataItems[0]);
+									setCurrentItem(dataItems[0], !multiselect);
 								} else {
-									setCurrentItem(dataItems[index + 1]);
+									setCurrentItem(dataItems[index + 1], !multiselect);
 								}
 							}
 						}
@@ -14969,7 +15076,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					case 13:
 						//enter
-						chooseItem();
+						// chooseItem();
+
+						if (multiselect) {
+							toggleItem();
+						} else {
+							chooseItem();
+						}
+
 						break;
 
 					case 27:
@@ -14981,7 +15095,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			input.addEventListener("blur", function (e) {
 				if (blurable) {
-					cancelItem();
+					if (multiselect) {
+						chooseItems();
+					} else {
+						cancelItem();
+					}
 				}
 			});
 
