@@ -21079,7 +21079,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	MoveRows.prototype.elementRowDrop = function (e, element, row) {
 		if (this.table.options.movableRowsElementDrop) {
-			this.table.options.movableRowsElementDrop(e, element, row.getComponent());
+			this.table.options.movableRowsElementDrop(e, element, row ? row.getComponent() : false);
 		}
 	};
 
@@ -21100,10 +21100,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		if (this.connectionSelectorsElements) {
-			this.connectionElements = Array.prototype.slice.call(document.querySelectorAll(this.connectionSelectorsElements));
+
+			this.connectionElements = [];
+
+			if (!Array.isArray(this.connectionSelectorsElements)) {
+				this.connectionSelectorsElements = [this.connectionSelectorsElements];
+			}
+
+			this.connectionSelectorsElements.forEach(function (query) {
+				if (typeof query === "string") {
+					_this65.connectionElements = _this65.connectionElements.concat(Array.prototype.slice.call(document.querySelectorAll(query)));
+				} else {
+					_this65.connectionElements.push(query);
+				}
+			});
 
 			this.connectionElements.forEach(function (element) {
-
 				var dropEvent = function dropEvent(e) {
 					_this65.elementRowDrop(e, element, _this65.moving);
 				};

@@ -387,7 +387,7 @@ MoveRows.prototype.moveHoverConnections = function(e){
 
 MoveRows.prototype.elementRowDrop = function(e, element, row){
 	if(this.table.options.movableRowsElementDrop){
-		this.table.options.movableRowsElementDrop(e, element, row.getComponent());
+		this.table.options.movableRowsElementDrop(e, element, row ? row.getComponent() : false);
 	}
 };
 
@@ -406,11 +406,23 @@ MoveRows.prototype.connectToTables = function(row){
 	}
 
 	if(this.connectionSelectorsElements){
-		this.connectionElements = Array.prototype.slice.call(document.querySelectorAll(this.connectionSelectorsElements));
+
+		this.connectionElements = [];
+
+		if(!Array.isArray(this.connectionSelectorsElements)){
+			this.connectionSelectorsElements = [this.connectionSelectorsElements];
+		}
+
+		this.connectionSelectorsElements.forEach((query) => {
+			if(typeof query === "string"){
+				this.connectionElements = this.connectionElements.concat(Array.prototype.slice.call(document.querySelectorAll(query)));
+			}else{
+				this.connectionElements.push(query);
+			}
+		});
 
 		this.connectionElements.forEach((element) => {
-
-			let dropEvent = (e) => {
+			var dropEvent = (e) => {
 				this.elementRowDrop(e, element, this.moving);
 			};
 
