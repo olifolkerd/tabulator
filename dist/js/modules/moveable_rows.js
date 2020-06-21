@@ -23,6 +23,9 @@ var MoveRows = function MoveRows(table) {
 	this.touchMove = false;
 
 	this.connection = false;
+	this.connectionSelectorsTables = false;
+	this.connectionSelectorsElements = false;
+	this.connectionElements = [];
 	this.connections = [];
 
 	this.connectedTable = false;
@@ -39,7 +42,10 @@ MoveRows.prototype.createPlaceholderElement = function () {
 };
 
 MoveRows.prototype.initialize = function (handle) {
-	this.connection = this.table.options.movableRowsConnectedTables;
+	this.connectionSelectorsTables = this.table.options.movableRowsConnectedTables;
+	this.connectionSelectorsElements = this.table.options.movableRowsConnectedElements;
+
+	this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
 };
 
 MoveRows.prototype.setHandle = function (handle) {
@@ -386,26 +392,62 @@ MoveRows.prototype.moveHoverConnections = function (e) {
 	this.hoverElement.style.top = this.startY + (this.touchMove ? e.touches[0].pageY : e.pageY) + "px";
 };
 
+MoveRows.prototype.elementRowDrop = function (e, element, row) {
+	if (this.table.options.movableRowsElementDrop) {
+		this.table.options.movableRowsElementDrop(e, element, row.getComponent());
+	}
+};
+
 //establish connection with other tables
 MoveRows.prototype.connectToTables = function (row) {
-	var self = this,
-	    connections = this.table.modules.comms.getConnections(this.connection);
+	var _this = this;
 
-	this.table.options.movableRowsSendingStart.call(this.table, connections);
+	var connectionTables;
 
-	this.table.modules.comms.send(this.connection, "moveRow", "connect", {
-		row: row
-	});
+	if (this.connectionSelectorsTables) {
+		connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
+
+		this.table.options.movableRowsSendingStart.call(this.table, connectionTables);
+
+		this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
+			row: row
+		});
+	}
+
+	if (this.connectionSelectorsElements) {
+		this.connectionElements = Array.prototype.slice.call(document.querySelectorAll(this.connectionSelectorsElements));
+
+		this.connectionElements.forEach(function (element) {
+
+			var dropEvent = function dropEvent(e) {
+				_this.elementRowDrop(e, element, _this.moving);
+			};
+
+			element.addEventListener("mouseup", dropEvent);
+			element.tabulatorElementDropEvent = dropEvent;
+
+			element.classList.add("tabulator-movingrow-receiving");
+		});
+	}
 };
 
 //disconnect from other tables
 MoveRows.prototype.disconnectFromTables = function () {
-	var self = this,
-	    connections = this.table.modules.comms.getConnections(this.connection);
+	var connectionTables;
 
-	this.table.options.movableRowsSendingStop.call(this.table, connections);
+	if (this.connectionSelectorsTables) {
+		connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-	this.table.modules.comms.send(this.connection, "moveRow", "disconnect");
+		this.table.options.movableRowsSendingStop.call(this.table, connectionTables);
+
+		this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
+	}
+
+	this.connectionElements.forEach(function (element) {
+		element.classList.remove("tabulator-movingrow-receiving");
+		element.removeEventListener("mouseup", element.tabulatorElementDropEvent);
+		delete element.tabulatorElementDropEvent;
+	});
 };
 
 //accept incomming connection
@@ -493,6 +535,8 @@ MoveRows.prototype.dropComplete = function (table, row, success) {
 MoveRows.prototype.tableRowDrop = function (e, row) {
 	var receiver = false,
 	    success = false;
+
+	console.trace("drop");
 
 	e.stopImmediatePropagation();
 

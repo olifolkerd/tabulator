@@ -802,7 +802,7 @@ Row.prototype.deleteActual = function(blockRedraw){
 	this.initialized = false;
 	this.heightInitialized = false;
 
-	if(this.table.modExists("dataTree", true)){
+	if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
 		this.table.modules.dataTree.rowDelete(this);
 	}
 

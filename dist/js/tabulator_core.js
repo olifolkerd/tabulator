@@ -5140,7 +5140,7 @@ Row.prototype.deleteActual = function (blockRedraw) {
 	this.initialized = false;
 	this.heightInitialized = false;
 
-	if (this.table.modExists("dataTree", true)) {
+	if (this.table.options.dataTree && this.table.modExists("dataTree", true)) {
 		this.table.modules.dataTree.rowDelete(this);
 	}
 
@@ -6286,6 +6286,7 @@ Tabulator.prototype.defaultOptions = {
 
 	movableRows: false, //enable movable rows
 	movableRowsConnectedTables: false, //tables for movable rows to be connected to
+	movableRowsConnectedElements: false, //other elements for movable rows to be connected to
 	movableRowsSender: false,
 	movableRowsReceiver: "insert",
 	movableRowsSendingStart: function movableRowsSendingStart() {},
@@ -6296,6 +6297,7 @@ Tabulator.prototype.defaultOptions = {
 	movableRowsReceived: function movableRowsReceived() {},
 	movableRowsReceivedFailed: function movableRowsReceivedFailed() {},
 	movableRowsReceivingStop: function movableRowsReceivingStop() {},
+	movableRowsElementDrop: function movableRowsElementDrop() {},
 
 	scrollToRowPosition: "top",
 	scrollToRowIfVisible: true,

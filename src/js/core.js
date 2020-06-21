@@ -204,6 +204,7 @@ Tabulator.prototype.defaultOptions = {
 
 	movableRows:false, //enable movable rows
 	movableRowsConnectedTables:false, //tables for movable rows to be connected to
+	movableRowsConnectedElements:false, //other elements for movable rows to be connected to
 	movableRowsSender:false,
 	movableRowsReceiver:"insert",
 	movableRowsSendingStart:function(){},
@@ -214,6 +215,7 @@ Tabulator.prototype.defaultOptions = {
 	movableRowsReceived:function(){},
 	movableRowsReceivedFailed:function(){},
 	movableRowsReceivingStop:function(){},
+	movableRowsElementDrop:function(){},
 
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
