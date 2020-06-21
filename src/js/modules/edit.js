@@ -808,8 +808,10 @@ Edit.prototype.editors = {
 
 			function processComplexListItem(item){
 				var item = {
-					label:editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label) : item.label,
+					label:item.label,
 					value:item.value,
+					itemParams:item.itemParams,
+					elementAttributes: item.elementAttributes,
 					element:false,
 				};
 
@@ -837,6 +839,8 @@ Edit.prototype.editors = {
 							item = {
 								label:value.label,
 								group:true,
+								itemParams:value.itemParams,
+								elementAttributes:value.elementAttributes,
 								element:false,
 							};
 
@@ -852,7 +856,7 @@ Edit.prototype.editors = {
 					}else{
 
 						item = {
-							label:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
+							label:value,
 							value:value,
 							element:false,
 						};
@@ -868,7 +872,7 @@ Edit.prototype.editors = {
 			}else{
 				for(var key in inputValues){
 					var item = {
-						label:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
+						label:inputValues[key],
 						value:key,
 						element:false,
 					};
@@ -892,17 +896,17 @@ Edit.prototype.editors = {
 			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
 			displayItems.forEach(function(item){
+
 				var el = item.element;
 
 				if(!el){
-
+					el = document.createElement("div");
+					item.label = editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label, cell, el, item.itemParams) : item.label;
 					if(item.group){
-						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-group");
 						el.tabIndex = 0;
 						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 					}else{
-						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-item");
 						el.tabIndex = 0;
 						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
@@ -916,7 +920,17 @@ Edit.prototype.editors = {
 							el.classList.add("active");
 						}
 					}
-
+					
+					if(item.elementAttributes && typeof item.elementAttributes == "object"){
+						for (let key in item.elementAttributes){
+							if(key.charAt(0) == "+"){
+								key = key.slice(1);
+								el.setAttribute(key, input.getAttribute(key) + item.elementAttributes["+" + key]);
+							}else{
+								el.setAttribute(key, item.elementAttributes[key]);
+							}
+						}
+					}
 					el.addEventListener("mousedown", function(){
 						blurable = false;
 
