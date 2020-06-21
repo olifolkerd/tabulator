@@ -219,6 +219,7 @@ Sort.prototype.sort = function(data){
 	var self = this,
 	sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 	sortListActual = [],
+	rowComponents = [],
 	lastSort;
 
 	if(self.table.options.dataSorting){
@@ -260,7 +261,11 @@ Sort.prototype.sort = function(data){
 	}
 
 	if(self.table.options.dataSorted){
-		self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents("active"));
+		data.forEach((row) => {
+			rowComponents.push(row.getComponent());
+		});
+
+		self.table.options.dataSorted.call(self.table, self.getSort(), rowComponents);
 	}
 
 };

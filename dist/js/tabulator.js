@@ -14854,7 +14854,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							// }
 
 							if (currentItems.indexOf(item) > -1) {
-								console.log("current", currentItem);
 								el.classList.add("active");
 							}
 						}
@@ -24265,6 +24264,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var self = this,
 		    sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
 		    sortListActual = [],
+		    rowComponents = [],
 		    lastSort;
 
 		if (self.table.options.dataSorting) {
@@ -24305,7 +24305,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		if (self.table.options.dataSorted) {
-			self.table.options.dataSorted.call(self.table, self.getSort(), self.table.rowManager.getComponents("active"));
+			data.forEach(function (row) {
+				rowComponents.push(row.getComponent());
+			});
+
+			self.table.options.dataSorted.call(self.table, self.getSort(), rowComponents);
 		}
 	};
 

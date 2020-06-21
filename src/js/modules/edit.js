@@ -991,7 +991,6 @@ Edit.prototype.editors = {
 						// }
 
 						if(currentItems.indexOf(item) > -1){
-							console.log("current", currentItem)
 							el.classList.add("active");
 						}
 					}
