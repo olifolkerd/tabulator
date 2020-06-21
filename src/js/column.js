@@ -771,6 +771,11 @@ Column.prototype._buildGroupHeader = function(){
 		});
 	}
 
+	//set column header context menu
+	if ((this.definition.headerContextMenu || this.definition.headerMenu) && this.table.modExists("menu")) {
+		this.table.modules.menu.initializeColumnHeader(this);
+	}
+
 	this.element.appendChild(this.groupElement);
 };
 

@@ -76,6 +76,11 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		return;
 	}
 
+	//abort if child menu already open
+	if(this.isOpen()){
+		return;
+	}
+
 	this.hideMenu();
 
 	this.menuEl = document.createElement("div");
@@ -147,6 +152,10 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		this.menuEl.style.bottom = (docHeight - e.pageY) + "px";
 	}
 };
+
+Menu.prototype.isOpen = function(){
+	return !!this.menuEl.parentNode;
+}
 
 Menu.prototype.escMenu = function(e){
 	if(e.keyCode == 27){
