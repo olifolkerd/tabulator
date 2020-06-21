@@ -2,6 +2,7 @@ var Menu = function(table){
 	this.table = table; //hold Tabulator object
 	this.menuEl = false;
 	this.blurEvent = this.hideMenu.bind(this);
+	this.escEvent = this.escMenu.bind(this);
 };
 
 Menu.prototype.initializeColumnHeader = function(column){
@@ -130,6 +131,8 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		document.body.addEventListener("contextmenu", this.blurEvent);
 	}, 100);
 
+	document.body.addEventListener("keydown", this.escEvent);
+
 	document.body.appendChild(this.menuEl);
 
 	//move menu to start on right edge if it is too close to the edge of the screen
@@ -145,9 +148,19 @@ Menu.prototype.loadMenu = function(e, component, menu){
 	}
 };
 
+Menu.prototype.escMenu = function(e){
+	if(e.keyCode == 27){
+		this.hideMenu();
+	}
+};
+
 Menu.prototype.hideMenu = function(){
 	if(this.menuEl.parentNode){
 		this.menuEl.parentNode.removeChild(this.menuEl);
+	}
+
+	if(this.escEvent){
+		document.body.removeEventListener("keydown", this.escEvent);
 	}
 
 	if(this.blurEvent){
