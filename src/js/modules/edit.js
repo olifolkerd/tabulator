@@ -4,6 +4,7 @@ var Edit = function(table){
 	this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening
 	this.recursionBlock = false; //prevent focus recursion
 	this.invalidEdit = false;
+	this.editedCells = [];
 };
 
 
@@ -69,7 +70,7 @@ Edit.prototype.getCurrentCell = function(){
 	return this.currentCell ? this.currentCell.getComponent() : false;
 };
 
-Edit.prototype.clearEditor = function(){
+Edit.prototype.clearEditor = function(cancel){
 	var cell = this.currentCell,
 	cellEl;
 
@@ -79,7 +80,13 @@ Edit.prototype.clearEditor = function(){
 		this.currentCell = false;
 
 		cellEl = cell.getElement();
-		cellEl.classList.remove("tabulator-validation-fail");
+
+		if(cancel){
+			cell.validate();
+		}else{
+			cellEl.classList.remove("tabulator-validation-fail");
+		}
+
 		cellEl.classList.remove("tabulator-editing");
 		while(cellEl.firstChild) cellEl.removeChild(cellEl.firstChild);
 
@@ -93,7 +100,7 @@ Edit.prototype.cancelEdit = function(){
 		var cell = this.currentCell;
 		var component = this.currentCell.getComponent();
 
-		this.clearEditor();
+		this.clearEditor(true);
 		cell.setValueActual(cell.getValue());
 		cell.cellRendered();
 
@@ -181,16 +188,31 @@ Edit.prototype.edit = function(cell, e, forceEdit){
 		if(self.currentCell === cell){
 			var valid = true;
 
-			if(cell.column.modules.validate && self.table.modExists("validate")){
-				valid = self.table.modules.validate.validate(cell.column.modules.validate, cell.getComponent(), value);
+			if(cell.column.modules.validate && self.table.modExists("validate") && self.table.options.validationMode != "manual"){
+				valid = self.table.modules.validate.validate(cell.column.modules.validate, cell, value);
 			}
 
-			if(valid === true){
+			if(valid === true || self.table.options.validationMode === "highlight"){
 				self.clearEditor();
 				cell.setValue(value, true);
 
+				if(!cell.modules.edit){
+					cell.modules.edit = {};
+				}
+
+				cell.modules.edit.edited = true;
+
+				if(self.editedCells.indexOf(cell) == -1){
+					self.editedCells.push(cell);
+				}
+
 				if(self.table.options.dataTree && self.table.modExists("dataTree")){
 					self.table.modules.dataTree.checkForRestyle(cell);
+				}
+
+				if(valid !== true){
+					element.classList.add("tabulator-validation-fail");
+					return false;
 				}
 
 				return true;
@@ -393,6 +415,33 @@ Edit.prototype.maskInput = function(el, options){
 		fillSymbols(el.value.length);
 	}
 };
+
+
+Edit.prototype.getEditedCells = function(){
+	var output = [];
+
+	this.editedCells.forEach((cell) => {
+		output.push(cell.getComponent());
+	});
+
+	return output;
+};
+
+
+Edit.prototype.clearEdited = function(cell){
+	var editIndex;
+
+	if(cell.modules.edit && cell.modules.edit.edited){
+		cell.modules.validate.invalid = false;
+
+		editIndex = this.editedCells.indexOf(cell);
+
+		if(editIndex > -1){
+			this.editedCells.splice(editIndex, 1);
+		}
+	}
+};
+
 
 //default data editors
 Edit.prototype.editors = {
@@ -732,7 +781,7 @@ Edit.prototype.editors = {
 		input.addEventListener("keydown", function(e){
 			switch(e.keyCode){
 				case 13:
-				case 9:
+				// case 9:
 				onChange();
 				break;
 
@@ -751,12 +800,14 @@ Edit.prototype.editors = {
 		cellEl = cell.getElement(),
 		initialValue = cell.getValue(),
 		vertNav = editorParams.verticalNavigation || "editor",
-		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : ""),
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : []),
 		input = document.createElement("input"),
 		listEl = document.createElement("div"),
+		multiselect = editorParams.multiselect,
 		dataItems = [],
-		displayItems = [],
 		currentItem = {},
+		displayItems = [],
+		currentItems = [],
 		blurable = true;
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
@@ -802,19 +853,25 @@ Edit.prototype.editors = {
 			return output;
 		}
 
-		function parseItems(inputValues, curentValue){
+		function parseItems(inputValues, curentValues){
 			var dataList = [];
 			var displayList = [];
 
 			function processComplexListItem(item){
 				var item = {
-					label:editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label) : item.label,
+					label:item.label,
 					value:item.value,
+					itemParams:item.itemParams,
+					elementAttributes: item.elementAttributes,
 					element:false,
 				};
 
-				if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-					setCurrentItem(item);
+				// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
+				// 	setCurrentItem(item);
+				// }
+
+				if(curentValues.indexOf(item.value) > -1){
+					setItem(item);
 				}
 
 				dataList.push(item);
@@ -837,6 +894,8 @@ Edit.prototype.editors = {
 							item = {
 								label:value.label,
 								group:true,
+								itemParams:value.itemParams,
+								elementAttributes:value.elementAttributes,
 								element:false,
 							};
 
@@ -852,13 +911,17 @@ Edit.prototype.editors = {
 					}else{
 
 						item = {
-							label:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
+							label:value,
 							value:value,
 							element:false,
 						};
 
-						if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-							setCurrentItem(item);
+						// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
+						// 	setCurrentItem(item);
+						// }
+
+						if(curentValues.indexOf(item.value) > -1){
+							setItem(item);
 						}
 
 						dataList.push(item);
@@ -868,13 +931,17 @@ Edit.prototype.editors = {
 			}else{
 				for(var key in inputValues){
 					var item = {
-						label:editorParams.listItemFormatter ? editorParams.listItemFormatter(key, inputValues[key]) : inputValues[key],
+						label:inputValues[key],
 						value:key,
 						element:false,
 					};
 
-					if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
-						setCurrentItem(item);
+					// if(item.value === curentValue || (!isNaN(parseFloat(item.value)) && !isNaN(parseFloat(item.value)) && parseFloat(item.value) === parseFloat(curentValue))){
+					// 	setCurrentItem(item);
+					// }
+
+					if(curentValues.indexOf(item.value) > -1){
+						setItem(item);
 					}
 
 					dataList.push(item);
@@ -892,31 +959,53 @@ Edit.prototype.editors = {
 			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
 			displayItems.forEach(function(item){
+
 				var el = item.element;
 
 				if(!el){
-
+					el = document.createElement("div");
+					item.label = editorParams.listItemFormatter ? editorParams.listItemFormatter(item.value, item.label, cell, el, item.itemParams) : item.label;
 					if(item.group){
-						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-group");
 						el.tabIndex = 0;
 						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 					}else{
-						el = document.createElement("div");
 						el.classList.add("tabulator-edit-select-list-item");
 						el.tabIndex = 0;
 						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 						el.addEventListener("click", function(){
-							setCurrentItem(item);
-							chooseItem();
+							// setCurrentItem(item);
+							// chooseItem();
+							if(multiselect){
+								toggleItem(item);
+								input.focus();
+							}else{
+								chooseItem(item);
+							}
+
 						});
 
-						if(item === currentItem){
+						// if(item === currentItem){
+						// 	el.classList.add("active");
+						// }
+
+						if(currentItems.indexOf(item) > -1){
+							console.log("current", currentItem)
 							el.classList.add("active");
 						}
 					}
-
+					
+					if(item.elementAttributes && typeof item.elementAttributes == "object"){
+						for (let key in item.elementAttributes){
+							if(key.charAt(0) == "+"){
+								key = key.slice(1);
+								el.setAttribute(key, input.getAttribute(key) + item.elementAttributes["+" + key]);
+							}else{
+								el.setAttribute(key, item.elementAttributes[key]);
+							}
+						}
+					}
 					el.addEventListener("mousedown", function(){
 						blurable = false;
 
@@ -935,31 +1024,114 @@ Edit.prototype.editors = {
 		}
 
 
-		function setCurrentItem(item){
+		function setCurrentItem(item, active){
 
-			if(currentItem && currentItem.element){
+			if(!multiselect && currentItem && currentItem.element){
 				currentItem.element.classList.remove("active");
 			}
 
+			if(currentItem && currentItem.element){
+				currentItem.element.classList.remove("focused");
+			}
 
 			currentItem = item;
-			input.value = item.label === "&nbsp;" ? "" : item.label;
 
 			if(item.element){
-				item.element.classList.add("active");
+				item.element.classList.add("focused");
+				if(active){
+					item.element.classList.add("active");
+				}
 			}
 		}
 
 
-		function chooseItem(){
+		// function chooseItem(){
+		// 	hideList();
+
+		// 	if(initialValue !== currentItem.value){
+		// 		initialValue = currentItem.value;
+		// 		success(currentItem.value);
+		// 	}else{
+		// 		cancel();
+		// 	}
+		// }
+
+		function setItem(item) {
+			var index = currentItems.indexOf(item);
+
+			if(index == -1){
+				currentItems.push(item);
+				setCurrentItem(item, true);
+			}
+
+			fillInput();
+		}
+
+		function unsetItem(index) {
+			var item = currentItems[index];
+
+			if(index > -1){
+				currentItems.splice(index, 1);
+				if(item.element){
+					item.element.classList.remove("active");
+				}
+			}
+		}
+
+		function toggleItem(item) {
+			if(!item){
+				item = currentItem;
+			}
+
+			var index = currentItems.indexOf(item);
+
+			if(index > -1){
+				unsetItem(index);
+			}else{
+				if(multiselect !== true && currentItems.length >= multiselect){
+					unsetItem(0);
+				}
+
+				setItem(item);
+			}
+
+			fillInput();
+		}
+
+		function chooseItem(item){
 			hideList();
 
-			if(initialValue !== currentItem.value){
-				initialValue = currentItem.value;
-				success(currentItem.value);
-			}else{
-				cancel();
+			if(!item){
+				item = currentItem;
 			}
+
+			if(item){
+				success(item.value);
+			}
+		}
+
+
+		function chooseItems(){
+			hideList();
+
+			var output = [];
+
+			currentItems.forEach((item) => {
+				output.push(item.value);
+			});
+
+			success(output);
+		}
+
+		function fillInput(){
+			var output = [];
+
+			currentItems.forEach((item) => {
+				output.push(item.label);
+			});
+
+
+			input.value = output.join(", ");
 		}
 
 		function cancelItem(){
@@ -1055,7 +1227,7 @@ Edit.prototype.editors = {
 					e.preventDefault();
 
 					if(index > 0){
-						setCurrentItem(dataItems[index - 1]);
+						setCurrentItem(dataItems[index - 1], !multiselect);
 					}
 				}
 				break;
@@ -1070,9 +1242,9 @@ Edit.prototype.editors = {
 
 					if(index < dataItems.length - 1){
 						if(index == -1){
-							setCurrentItem(dataItems[0]);
+							setCurrentItem(dataItems[0], !multiselect);
 						}else{
-							setCurrentItem(dataItems[index + 1]);
+							setCurrentItem(dataItems[index + 1], !multiselect);
 						}
 					}
 				}
@@ -1086,7 +1258,14 @@ Edit.prototype.editors = {
 				break;
 
 				case 13: //enter
-				chooseItem();
+				// chooseItem();
+
+				if(multiselect){
+					toggleItem();
+				}else{
+					chooseItem();
+				}
+
 				break;
 
 				case 27: //escape
@@ -1097,7 +1276,11 @@ Edit.prototype.editors = {
 
 		input.addEventListener("blur", function(e){
 			if(blurable){
-				cancelItem();
+				if(multiselect){
+					chooseItems();
+				}else{
+					cancelItem();
+				}
 			}
 		});
 
@@ -1117,7 +1300,6 @@ Edit.prototype.editors = {
 		return input;
 	},
 
-
 	//autocomplete
 	autocomplete:function(cell, onRendered, success, cancel, editorParams){
 		var self = this,
@@ -1131,7 +1313,8 @@ Edit.prototype.editors = {
 		displayItems = [],
 		values = [],
 		currentItem = false,
-		blurable = true;
+		blurable = true,
+		uniqueColumnValues = false;
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
@@ -1163,6 +1346,15 @@ Edit.prototype.editors = {
 				blurable = true;
 			}, 10);
 		});
+
+
+		function genUniqueColumnValues(){
+			if(editorParams.values === true){
+				uniqueColumnValues = getUniqueColumnValues();
+			}else if(typeof editorParams.values === "string"){
+				uniqueColumnValues = getUniqueColumnValues(editorParams.values);
+			}
+		}
 
 		function getUniqueColumnValues(field){
 			var output = {},
@@ -1206,10 +1398,8 @@ Edit.prototype.editors = {
 			values, items, searchEl;
 
 			//lookup base values list
-			if(editorParams.values === true){
-				values = getUniqueColumnValues();
-			}else if(typeof editorParams.values === "string"){
-				values = getUniqueColumnValues(editorParams.values);
+			if(uniqueColumnValues){
+				values = uniqueColumnValues;
 			}else{
 				values = editorParams.values || [];
 			}
@@ -1275,10 +1465,16 @@ Edit.prototype.editors = {
 
 			if(Array.isArray(inputValues)){
 				inputValues.forEach(function(value){
-					var item = {
-						title:editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value,
-						value:value,
-					};
+
+					var item = {};
+
+					if(typeof value === "object"){
+						item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value.value, value.label) : value.label;
+						item.value = value.value;
+					}else{
+						item.title = editorParams.listItemFormatter ? editorParams.listItemFormatter(value, value) : value;
+						item.value = value;
+					}
 
 					itemList.push(item);
 				});
@@ -1525,6 +1721,7 @@ Edit.prototype.editors = {
 
 		input.addEventListener("focus", function(e){
 			var value = initialDisplayValue;
+			genUniqueColumnValues();
 			showList();
 			input.value = value;
 			filterList(value, true);

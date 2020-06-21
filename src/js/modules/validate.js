@@ -1,5 +1,6 @@
 var Validate = function(table){
 	this.table = table;
+	this.invalidCells = [];
 };
 
 //validate
@@ -77,11 +78,12 @@ Validate.prototype._buildValidator = function(type, params){
 
 Validate.prototype.validate = function(validators, cell, value){
 	var self = this,
-	valid = [];
+	valid = [],
+	invalidIndex = this.invalidCells.indexOf(cell);
 
 	if(validators){
 		validators.forEach(function(item){
-			if(!item.func.call(self, cell, value, item.params)){
+			if(!item.func.call(self, cell.getComponent(), value, item.params)){
 				valid.push({
 					type:item.type,
 					parameters:item.params
@@ -90,7 +92,59 @@ Validate.prototype.validate = function(validators, cell, value){
 		});
 	}
 
-	return valid.length ? valid : true;
+	valid = valid.length ? valid : true;
+
+	if(!cell.modules.validate){
+		cell.modules.validate = {};
+	}
+
+	if(valid === true){
+		cell.modules.validate.invalid = false;
+		cell.getElement().classList.remove("tabulator-validation-fail");
+
+		if(invalidIndex > -1){
+			this.invalidCells.splice(invalidIndex, 1);
+		}
+	}else{
+		cell.modules.validate.invalid = true;
+
+		if(this.table.options.validationMode !== "manual"){
+			cell.getElement().classList.add("tabulator-validation-fail");
+		}
+
+		if(invalidIndex == -1){
+			this.invalidCells.push(cell);
+		}
+	}
+
+
+	return valid;
+};
+
+Validate.prototype.getInvalidCells = function(){
+	var output = [];
+
+	this.invalidCells.forEach((cell) => {
+		output.push(cell.getComponent());
+	});
+
+	return output;
+};
+
+Validate.prototype.clearValidation = function(cell){
+	var invalidIndex;
+
+	if(cell.modules.validate && cell.modules.validate.invalid){
+
+		cell.element.classList.remove("tabulator-validation-fail");
+		cell.modules.validate.invalid = false;
+
+		invalidIndex = this.invalidCells.indexOf(cell);
+
+		if(invalidIndex > -1){
+			this.invalidCells.splice(invalidIndex, 1);
+		}
+	}
 };
 
 Validate.prototype.validators = {
@@ -144,6 +198,23 @@ Validate.prototype.validators = {
 		}
 		return parseFloat(value) >= parameters;
 	},
+
+	//starts with  value
+	starts: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
+		return String(value).toLowerCase().startsWith(String(parameters).toLowerCase());
+	},
+
+	//ends with  value
+	ends: function(cell, value, parameters){
+		if(value === "" || value === null || typeof value === "undefined"){
+			return true;
+		}
+		return String(value).toLowerCase().endsWith(String(parameters).toLowerCase());
+	},
+
 
 	//minimum string length
 	minLength: function(cell, value, parameters){

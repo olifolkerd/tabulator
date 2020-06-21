@@ -2,14 +2,9 @@ var gulp = require('gulp'),
 sass = require('gulp-sass'),
 autoprefixer = require('gulp-autoprefixer'),
 cssnano = require('gulp-cssnano'),
-jshint = require('gulp-jshint'),
 uglify = require('gulp-uglify'),
-imagemin = require('gulp-imagemin'),
 rename = require('gulp-rename'),
 concat = require('gulp-concat'),
-notify = require('gulp-notify'),
-cache = require('gulp-cache'),
-livereload = require('gulp-livereload'),
 del = require('del');
 include = require('gulp-include'),
 sourcemaps = require('gulp-sourcemaps'),
@@ -36,7 +31,7 @@ gulp.src = function() {
 };
 
 //build css
-gulp.task('styles', function() {
+function styles(){
     return gulp.src('src/scss/**/tabulator*.scss')
     .pipe(sourcemaps.init())
     .pipe(insert.prepend(version + "\n"))
@@ -49,11 +44,10 @@ gulp.task('styles', function() {
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/css'))
     .on('end', function(){ gutil.log('Styles task complete'); })
-    });
-
+}
 
 //build tabulator
-gulp.task('tabulator', function() {
+function tabulator(){
     //return gulp.src('src/js/**/*.js')
     return gulp.src('src/js/core_modules.js')
     .pipe(insert.prepend(version + "\n"))
@@ -82,11 +76,11 @@ gulp.task('tabulator', function() {
     //.pipe(notify({ message: 'Scripts task complete' }));
     .on('end', function(){ gutil.log('Tabulator Complete'); })
     //.on("error", console.log)
-    });
+}
 
 
 //simplified core js
-gulp.task('core', function() {
+function core(){
     return gulp.src('src/js/core.js')
     .pipe(insert.prepend(version + "\n"))
     .pipe(include())
@@ -107,12 +101,10 @@ gulp.task('core', function() {
     .pipe(insert.prepend(version))
     .pipe(gulp.dest('dist/js'))
     .on('end', function(){ gutil.log('Core complete'); })
-    });
+}
 
 
-
-//make jquery wrapper
-gulp.task('modules', function(){
+function modules(){
 
     var path = __dirname + "/src/js/modules/";
 
@@ -142,13 +134,15 @@ gulp.task('modules', function(){
             .pipe(uglify())
             .pipe(insert.prepend(version))
             .pipe(gulp.dest('dist/js/modules/'))
+            .on('end', function(){gutil.log('module ' + file + ' complete')})
         }
         });
 
-    });
+    gutil.log("Modules complete");
+}
 
 //make jquery wrapper
-gulp.task('jquery', function(){
+function jquery(){
     return gulp.src('src/js/jquery_wrapper.js')
     .pipe(insert.prepend(version + "\n"))
     .pipe(include())
@@ -169,33 +163,32 @@ gulp.task('jquery', function(){
     .pipe(insert.prepend(version))
     .pipe(gulp.dest('dist/js'))
     .on('end', function(){ gutil.log('jQuery wrapper complete'); })
+}
 
-    });
+function scripts(){
+    return Promise.all([tabulator(), core(), modules(), jquery()]);
+}
 
-
-gulp.task('scripts', function() {
-    gulp.start('tabulator');
-    gulp.start('core');
-    gulp.start('modules');
-    gulp.start('jquery');
-    });
-
-gulp.task('clean', function() {
+function clean(){
     return del(['dist/css', 'dist/js']);
-    });
+}
 
-
-gulp.task('default', ['clean'], function() {
-    gulp.start('styles', 'scripts');
-    });
-
-
-gulp.task('watch', function() {
-
+function watch(){
+    // May be not necessary to run a clean and build before the watch.
+    gulp.series(clean, gulp.series(styles, scripts));
     // Watch .scss files
-    gulp.watch('src/scss/**/*.scss', ['styles']);
+    gulp.watch('src/scss/**/*.scss', styles);
 
     // Watch .js files
-    gulp.watch('src/js/**/*.js', ['scripts']);
+    gulp.watch('src/js/**/*.js', scripts);
+}
 
-    });
+exports.tabulator = gulp.series(tabulator);
+exports.styles = gulp.series(styles);
+exports.core = gulp.series(core);
+exports.modules = gulp.series(modules);
+exports.jquery = gulp.series(jquery);
+exports.scripts = gulp.series(scripts);
+exports.clean = gulp.series(clean);
+exports.default = gulp.series(clean, gulp.series(styles, scripts));
+exports.watch = gulp.series(watch);

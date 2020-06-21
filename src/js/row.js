@@ -80,6 +80,10 @@ RowComponent.prototype._getSelf = function(){
 	return this._row;
 };
 
+RowComponent.prototype.validate = function(){
+	return this._row.validate();
+};
+
 RowComponent.prototype.freeze = function(){
 	if(this._row.table.modExists("frozenRows", true)){
 		this._row.table.modules.frozenRows.freezeRow(this._row);
@@ -90,6 +94,15 @@ RowComponent.prototype.unfreeze = function(){
 	if(this._row.table.modExists("frozenRows", true)){
 		this._row.table.modules.frozenRows.unfreezeRow(this._row);
 	}
+};
+
+RowComponent.prototype.isFrozen = function(){
+	if(this._row.table.modExists("frozenRows", true)){
+		var index = this._row.table.modules.frozenRows.rows.indexOf(this._row);
+		return index > -1;
+	}
+
+	return false;
 };
 
 RowComponent.prototype.treeCollapse = function(){
@@ -121,6 +134,14 @@ RowComponent.prototype.getTreeParent = function(){
 RowComponent.prototype.getTreeChildren = function(){
 	if(this._row.table.modExists("dataTree", true)){
 		return this._row.table.modules.dataTree.getTreeChildren(this._row);
+	}
+
+	return false;
+};
+
+RowComponent.prototype.addTreeChild = function(data, pos, index){
+	if(this._row.table.modExists("dataTree", true)){
+		return this._row.table.modules.dataTree.addTreeChildRow(this._row, data, pos, index);
 	}
 
 	return false;
@@ -163,6 +184,8 @@ var Row = function(data, parent, type = "row"){
 	this.outerHeight = 0; //holde lements outer height
 	this.initialized = false; //element has been rendered
 	this.heightInitialized = false; //element has resized cells to fit
+
+	this.component = null;
 
 	this.setData(data);
 	this.generateElement();
@@ -706,6 +729,18 @@ Row.prototype.moveToRow = function(to, before){
 };
 
 
+Row.prototype.validate = function(){
+	var invalid = [];
+
+	this.cells.forEach(function(cell){
+		if(!cell.validate()){
+			invalid.push(cell.getComponent());
+		}
+	});
+
+	return invalid.length ? invalid : true;
+};
+
 ///////////////////// Actions  /////////////////////
 
 Row.prototype.delete = function(){
@@ -776,6 +811,10 @@ Row.prototype.deleteActual = function(blockRedraw){
 	this.initialized = false;
 	this.heightInitialized = false;
 
+	if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
+		this.table.modules.dataTree.rowDelete(this);
+	}
+
 	//recalc column calculations if present
 	if(this.table.modExists("columnCalcs")){
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
@@ -815,5 +854,9 @@ Row.prototype.getGroup = function(){
 
 //////////////// Object Generation /////////////////
 Row.prototype.getComponent = function(){
-	return new RowComponent(this);
+	if(!this.component){
+		this.component = new RowComponent(this);
+	}
+
+	return this.component;
 };

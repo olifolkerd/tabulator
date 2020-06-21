@@ -90,7 +90,7 @@ Filter.prototype.initializeColumn = function (column, value) {
 					}
 				}
 
-				self.headerFilters[field] = { value: value, func: filterFunc, type: type };
+				self.headerFilters[field] = { value: value, func: filterFunc, type: type, params: params || {} };
 			} else {
 				delete self.headerFilters[field];
 			}
@@ -376,24 +376,24 @@ Filter.prototype.hasChanged = function () {
 };
 
 //set standard filters
-Filter.prototype.setFilter = function (field, type, value) {
+Filter.prototype.setFilter = function (field, type, value, params) {
 	var self = this;
 
 	self.filterList = [];
 
 	if (!Array.isArray(field)) {
-		field = [{ field: field, type: type, value: value }];
+		field = [{ field: field, type: type, value: value, params: params }];
 	}
 
 	self.addFilter(field);
 };
 
 //add filter to array
-Filter.prototype.addFilter = function (field, type, value) {
+Filter.prototype.addFilter = function (field, type, value, params) {
 	var self = this;
 
 	if (!Array.isArray(field)) {
-		field = [{ field: field, type: type, value: value }];
+		field = [{ field: field, type: type, value: value, params: params }];
 	}
 
 	field.forEach(function (filter) {
@@ -434,11 +434,11 @@ Filter.prototype.findFilter = function (filter) {
 
 			if (column) {
 				filterFunc = function filterFunc(data) {
-					return self.filters[filter.type](filter.value, column.getFieldValue(data));
+					return self.filters[filter.type](filter.value, column.getFieldValue(data), data, filter.params || {});
 				};
 			} else {
 				filterFunc = function filterFunc(data) {
-					return self.filters[filter.type](filter.value, data[filter.field]);
+					return self.filters[filter.type](filter.value, data[filter.field], data, filter.params || {});
 				};
 			}
 		} else {
@@ -746,6 +746,47 @@ Filter.prototype.filters = {
 		} else {
 			if (typeof rowVal !== 'undefined' && rowVal !== null) {
 				return String(rowVal).toLowerCase().indexOf(filterVal.toLowerCase()) > -1;
+			} else {
+				return false;
+			}
+		}
+	},
+
+	//contains the keywords
+	"keywords": function keywords(filterVal, rowVal, rowData, filterParams) {
+		var keywords = filterVal.toLowerCase().split(typeof filterParams.separator === "undefined" ? " " : filterParams.separator),
+		    value = String(rowVal === null || typeof rowVal === "undefined" ? "" : rowVal).toLowerCase(),
+		    matches = [];
+
+		keywords.forEach(function (keyword) {
+			if (value.includes(keyword)) {
+				matches.push(true);
+			}
+		});
+
+		return filterParams.matchAll ? matches.length === keywords.length : !!matches.length;
+	},
+
+	//starts with the string
+	"starts": function starts(filterVal, rowVal, rowData, filterParams) {
+		if (filterVal === null || typeof filterVal === "undefined") {
+			return rowVal === filterVal ? true : false;
+		} else {
+			if (typeof rowVal !== 'undefined' && rowVal !== null) {
+				return String(rowVal).toLowerCase().startsWith(filterVal.toLowerCase());
+			} else {
+				return false;
+			}
+		}
+	},
+
+	//ends with the string
+	"ends": function ends(filterVal, rowVal, rowData, filterParams) {
+		if (filterVal === null || typeof filterVal === "undefined") {
+			return rowVal === filterVal ? true : false;
+		} else {
+			if (typeof rowVal !== 'undefined' && rowVal !== null) {
+				return String(rowVal).toLowerCase().endsWith(filterVal.toLowerCase());
 			} else {
 				return false;
 			}

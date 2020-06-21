@@ -349,6 +349,112 @@ DataTree.prototype.getFilteredTreeChildren = function (row) {
 	return output;
 };
 
+DataTree.prototype.rowDelete = function (row) {
+	var parent = row.modules.dataTree.parent,
+	    childIndex;
+
+	if (parent) {
+		childIndex = this.findChildIndex(row, parent);
+
+		if (childIndex !== false) {
+			parent.data[this.field].splice(childIndex, 1);
+		}
+
+		if (!parent.data[this.field].length) {
+			delete parent.data[this.field];
+		}
+
+		this.initializeRow(parent);
+		this.layoutRow(parent);
+	}
+
+	this.table.rowManager.refreshActiveData("tree", false, true);
+};
+
+DataTree.prototype.addTreeChildRow = function (row, data, top, index) {
+	var childIndex = false;
+
+	if (typeof data === "string") {
+		data = JSON.parse(data);
+	}
+
+	if (!Array.isArray(row.data[this.field])) {
+		row.data[this.field] = [];
+
+		row.modules.dataTree.open = this.startOpen(row.getComponent(), row.modules.dataTree.index);
+	}
+
+	if (typeof index !== "undefined") {
+		childIndex = this.findChildIndex(index, row);
+
+		if (childIndex !== false) {
+			row.data[this.field].splice(top ? childIndex : childIndex + 1, 0, data);
+		}
+	}
+
+	if (childIndex === false) {
+		if (top) {
+			row.data[this.field].unshift(data);
+		} else {
+			row.data[this.field].push(data);
+		}
+	}
+
+	this.initializeRow(row);
+	this.layoutRow(row);
+
+	this.table.rowManager.refreshActiveData("tree", false, true);
+};
+
+DataTree.prototype.findChildIndex = function (subject, parent) {
+	var _this5 = this;
+
+	var match = false;
+
+	if ((typeof subject === "undefined" ? "undefined" : _typeof(subject)) == "object") {
+
+		if (subject instanceof Row) {
+			//subject is row element
+			match = subject.data;
+		} else if (subject instanceof RowComponent) {
+			//subject is public row component
+			match = subject._getSelf().data;
+		} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
+			if (parent.modules.dataTree) {
+				match = parent.modules.dataTree.children.find(function (childRow) {
+					return childRow instanceof Row ? childRow.element === subject : false;
+				});
+
+				if (match) {
+					match = match.data;
+				}
+			}
+		}
+	} else if (typeof subject == "undefined" || subject === null) {
+		match = false;
+	} else {
+		//subject should be treated as the index of the row
+		match = parent.data[this.field].find(function (row) {
+			return row.data[_this5.table.options.index] == subject;
+		});
+	}
+
+	if (match) {
+
+		if (Array.isArray(parent.data[this.field])) {
+			match = parent.data[this.field].indexOf(match);
+		}
+
+		if (match == -1) {
+			match = false;
+		}
+	}
+
+	//catch all for any other type of input
+
+	return match;
+};
+
 DataTree.prototype.getTreeChildren = function (row) {
 	var config = row.modules.dataTree,
 	    output = [];
