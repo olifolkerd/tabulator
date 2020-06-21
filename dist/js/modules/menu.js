@@ -4,6 +4,7 @@ var Menu = function Menu(table) {
 	this.table = table; //hold Tabulator object
 	this.menuEl = false;
 	this.blurEvent = this.hideMenu.bind(this);
+	this.escEvent = this.escMenu.bind(this);
 };
 
 Menu.prototype.initializeColumnHeader = function (column) {
@@ -63,8 +64,20 @@ Menu.prototype.initializeRow = function (row) {
 	});
 };
 
-Menu.prototype.loadMenu = function (e, component, menu) {
+Menu.prototype.initializeGroup = function (group) {
 	var _this4 = this;
+
+	group.getElement().addEventListener("contextmenu", function (e) {
+		var menu = typeof _this4.table.options.groupContextMenu == "function" ? _this4.table.options.groupContextMenu(group.getComponent()) : _this4.table.options.groupContextMenu;
+
+		e.preventDefault();
+
+		_this4.loadMenu(e, group, menu);
+	});
+};
+
+Menu.prototype.loadMenu = function (e, component, menu) {
+	var _this5 = this;
 
 	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
 
@@ -109,13 +122,13 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 				});
 			} else {
 				itemEl.addEventListener("click", function (e) {
-					_this4.hideMenu();
+					_this5.hideMenu();
 					item.action(e, component.getComponent());
 				});
 			}
 		}
 
-		_this4.menuEl.appendChild(itemEl);
+		_this5.menuEl.appendChild(itemEl);
 	});
 
 	this.menuEl.style.top = e.pageY + "px";
@@ -125,8 +138,10 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 	this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
 
 	setTimeout(function () {
-		document.body.addEventListener("contextmenu", _this4.blurEvent);
+		document.body.addEventListener("contextmenu", _this5.blurEvent);
 	}, 100);
+
+	document.body.addEventListener("keydown", this.escEvent);
 
 	document.body.appendChild(this.menuEl);
 
@@ -143,9 +158,19 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 	}
 };
 
+Menu.prototype.escMenu = function (e) {
+	if (e.keyCode == 27) {
+		this.hideMenu();
+	}
+};
+
 Menu.prototype.hideMenu = function () {
 	if (this.menuEl.parentNode) {
 		this.menuEl.parentNode.removeChild(this.menuEl);
+	}
+
+	if (this.escEvent) {
+		document.body.removeEventListener("keydown", this.escEvent);
 	}
 
 	if (this.blurEvent) {

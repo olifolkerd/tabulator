@@ -4440,6 +4440,15 @@ RowComponent.prototype.unfreeze = function () {
 	}
 };
 
+RowComponent.prototype.isFrozen = function () {
+	if (this._row.table.modExists("frozenRows", true)) {
+		var index = this._row.table.modules.frozenRows.rows.indexOf(this._row);
+		return index > -1;
+	}
+
+	return false;
+};
+
 RowComponent.prototype.treeCollapse = function () {
 	if (this._row.table.modExists("dataTree", true)) {
 		this._row.table.modules.dataTree.collapseRow(this._row);
@@ -6396,6 +6405,7 @@ Tabulator.prototype.defaultOptions = {
 	groupClick: false,
 	groupDblClick: false,
 	groupContext: false,
+	groupContextMenu: false,
 	groupTap: false,
 	groupDblTap: false,
 	groupTapHold: false,
