@@ -55,6 +55,16 @@ Menu.prototype.initializeRow = function(row){
 	});
 };
 
+Menu.prototype.initializeGroup = function (group){
+	group.getElement().addEventListener("contextmenu", (e) => {
+		var menu = typeof this.table.options.groupContextMenu == "function" ? this.table.options.groupContextMenu(group.getComponent()) : this.table.options.groupContextMenu;
+
+		e.preventDefault();
+
+		this.loadMenu(e, group, menu);
+	});
+};
+
 
 Menu.prototype.loadMenu = function(e, component, menu){
 
