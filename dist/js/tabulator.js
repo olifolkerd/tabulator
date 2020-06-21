@@ -15604,7 +15604,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return input;
 		},
 
-		//start rating
+		//star rating
 		star: function star(cell, onRendered, success, cancel, editorParams) {
 			var self = this,
 			    element = cell.getElement(),
@@ -15661,6 +15661,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					e.stopPropagation();
 					e.stopImmediatePropagation();
 					success(i);
+					element.blur();
 				});
 
 				starHolder.appendChild(nextStar);

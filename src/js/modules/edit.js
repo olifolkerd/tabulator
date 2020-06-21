@@ -1740,7 +1740,7 @@ Edit.prototype.editors = {
 		return input;
 	},
 
-	//start rating
+	//star rating
 	star:function(cell, onRendered, success, cancel, editorParams){
 		var self = this,
 		element = cell.getElement(),
@@ -1798,6 +1798,7 @@ Edit.prototype.editors = {
 				e.stopPropagation();
 				e.stopImmediatePropagation();
 				success(i);
+				element.blur();
 			});
 
 			starHolder.appendChild(nextStar);
