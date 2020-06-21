@@ -155,7 +155,7 @@ Menu.prototype.loadMenu = function(e, component, menu){
 
 Menu.prototype.isOpen = function(){
 	return !!this.menuEl.parentNode;
-}
+};
 
 Menu.prototype.escMenu = function(e){
 	if(e.keyCode == 27){

@@ -2308,6 +2308,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 
+		//set column header context menu
+
+		if ((this.definition.headerContextMenu || this.definition.headerMenu) && this.table.modExists("menu")) {
+
+			this.table.modules.menu.initializeColumnHeader(this);
+		}
+
 		this.element.appendChild(this.groupElement);
 	};
 
@@ -15528,7 +15535,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//right arrow
 						e.stopImmediatePropagation();
 						e.stopPropagation();
-						e.preventDefault();
+						// e.preventDefault();
 						break;
 
 					case 13:
@@ -20358,6 +20365,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return;
 		}
 
+		//abort if child menu already open
+		if (this.isOpen()) {
+			return;
+		}
+
 		this.hideMenu();
 
 		this.menuEl = document.createElement("div");
@@ -20428,6 +20440,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.menuEl.style.top = "";
 			this.menuEl.style.bottom = docHeight - e.pageY + "px";
 		}
+	};
+
+	Menu.prototype.isOpen = function () {
+		return !!this.menuEl.parentNode;
 	};
 
 	Menu.prototype.escMenu = function (e) {

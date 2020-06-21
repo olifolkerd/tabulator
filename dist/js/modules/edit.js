@@ -1672,7 +1672,7 @@ Edit.prototype.editors = {
 					//right arrow
 					e.stopImmediatePropagation();
 					e.stopPropagation();
-					e.preventDefault();
+					// e.preventDefault();
 					break;
 
 				case 13:

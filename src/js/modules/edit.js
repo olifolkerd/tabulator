@@ -995,7 +995,7 @@ Edit.prototype.editors = {
 							el.classList.add("active");
 						}
 					}
-					
+
 					if(item.elementAttributes && typeof item.elementAttributes == "object"){
 						for (let key in item.elementAttributes){
 							if(key.charAt(0) == "+"){
@@ -1673,7 +1673,7 @@ Edit.prototype.editors = {
 				case 39: //right arrow
 				e.stopImmediatePropagation();
 				e.stopPropagation();
-				e.preventDefault();
+				// e.preventDefault();
 				break;
 
 				case 13: //enter
