@@ -52,6 +52,31 @@ CellComponent.prototype.cancelEdit = function(){
 	this._cell.cancelEdit();
 };
 
+CellComponent.prototype.isEdited = function(){
+	return !! this._cell.modules.edit && this._cell.modules.edit.edited;
+};
+
+CellComponent.prototype.clearEdited = function(){
+	if(self.table.modExists("edit", true)){
+		this._cell.table.modules.edit.clearEdited(this._cell);
+	}
+};
+
+
+CellComponent.prototype.isValid = function(){
+	return this._cell.modules.validate ? !this._cell.modules.validate.invalid : true;
+};
+
+CellComponent.prototype.validate = function(){
+	return this._cell.validate();
+};
+
+CellComponent.prototype.clearValidation = function(){
+	if(self.table.modExists("validate", true)){
+		this._cell.table.modules.validate.clearValidation(this._cell);
+	}
+};
+
 
 CellComponent.prototype.nav = function(){
 	return this._cell.nav();
@@ -84,6 +109,8 @@ var Cell = function(column, row){
 	this.height = null;
 	this.width = null;
 	this.minWidth = null;
+
+	this.component = null;
 
 	this.build();
 };
@@ -661,11 +688,29 @@ Cell.prototype.cancelEdit = function(){
 };
 
 
+Cell.prototype.validate = function(){
+	if(this.column.modules.validate && this.table.modExists("validate", true)){
+		var valid = this.table.modules.validate.validate(this.column.modules.validate, this, this.getValue());
+
+		return valid === true;
+	}else{
+		return true;
+	}
+};
 
 Cell.prototype.delete = function(){
 	if(!this.table.rowManager.redrawBlock){
 		this.element.parentNode.removeChild(this.element);
 	}
+
+	if(this.modules.validate && this.modules.validate.invalid){
+		this.table.modules.validate.clearValidation(this);
+	}
+
+	if(this.modules.edit && this.modules.edit.edited){
+		this.table.modules.edit.clearEdited(this);
+	}
+
 	this.element = false;
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);
@@ -770,5 +815,10 @@ Cell.prototype.getIndex = function(){
 
 //////////////// Object Generation /////////////////
 Cell.prototype.getComponent = function(){
-	return new CellComponent(this);
+
+	if(!this.component){
+		this.component = new CellComponent(this);
+	}
+
+	return this.component;
 };

@@ -101,7 +101,8 @@ Tabulator.prototype.defaultOptions = {
 	downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	downloadComplete:false, //function to manipulate download data
-	downloadConfig:false,	//download config
+	downloadConfig:{},	//download config
+	downloadRowRange:"active", //restrict download to active rows only
 
 	dataTree:false, //enable data tree
 	dataTreeElementColumn:false,
@@ -192,6 +193,10 @@ Tabulator.prototype.defaultOptions = {
 	groupValues:false,
 
 	groupHeader:false, //header generation function
+	groupHeaderPrint:null,
+	groupHeaderClipboard:null,
+	groupHeaderHtmlOutput:null,
+	groupHeaderDownload:null,
 
 	htmlOutputConfig:false, //html outypu config
 
@@ -199,6 +204,7 @@ Tabulator.prototype.defaultOptions = {
 
 	movableRows:false, //enable movable rows
 	movableRowsConnectedTables:false, //tables for movable rows to be connected to
+	movableRowsConnectedElements:false, //other elements for movable rows to be connected to
 	movableRowsSender:false,
 	movableRowsReceiver:"insert",
 	movableRowsSendingStart:function(){},
@@ -209,6 +215,7 @@ Tabulator.prototype.defaultOptions = {
 	movableRowsReceived:function(){},
 	movableRowsReceivedFailed:function(){},
 	movableRowsReceivingStop:function(){},
+	movableRowsElementDrop:function(){},
 
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
@@ -320,7 +327,8 @@ Tabulator.prototype.defaultOptions = {
 	//localization callbacks
 	localized:function(){},
 
-	//validation has failed
+	//validation callbacks
+	validationMode:"blocking",
 	validationFailed:function(){},
 
 	//history callbacks
@@ -330,7 +338,6 @@ Tabulator.prototype.defaultOptions = {
 	//scroll callbacks
 	scrollHorizontal:function(){},
 	scrollVertical:function(){},
-
 };
 
 Tabulator.prototype.initializeOptions = function(options){
@@ -390,6 +397,10 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 		if(!this.options.persistence){
 			this.options.persistence = {};
 		}
+	}
+
+	if(this.options.downloadDataFormatter){
+		console.warn("DEPRECATION WARNING - downloadDataFormatter option has been deprecated");
 	}
 
 	if(typeof this.options.clipboardCopyHeader !== "undefined"){
@@ -1547,17 +1558,17 @@ Tabulator.prototype.clearSort = function(){
 ///////////////////// Filtering ////////////////////
 
 //set standard filters
-Tabulator.prototype.setFilter = function(field, type, value){
+Tabulator.prototype.setFilter = function(field, type, value, params){
 	if(this.modExists("filter", true)){
-		this.modules.filter.setFilter(field, type, value);
+		this.modules.filter.setFilter(field, type, value, params);
 		this.rowManager.filterRefresh();
 	}
 };
 
 //add filter to array
-Tabulator.prototype.addFilter = function(field, type, value){
+Tabulator.prototype.addFilter = function(field, type, value, params){
 	if(this.modExists("filter", true)){
-		this.modules.filter.addFilter(field, type, value);
+		this.modules.filter.addFilter(field, type, value, params);
 		this.rowManager.filterRefresh();
 	}
 };
@@ -1638,7 +1649,7 @@ Tabulator.prototype.clearHeaderFilter = function(){
 	}
 };
 
-///////////////////// Filtering ////////////////////
+///////////////////// select ////////////////////
 Tabulator.prototype.selectRow = function(rows){
 	if(this.modExists("selectRow", true)){
 		if(rows === true){
@@ -1672,6 +1683,46 @@ Tabulator.prototype.getSelectedData = function(){
 		return this.modules.selectRow.getSelectedData();
 	}
 };
+
+///////////////////// validation  ////////////////////
+Tabulator.prototype.getInvalidCells = function(){
+	if(this.modExists("validate", true)){
+		return this.modules.validate.getInvalidCells();
+	}
+};
+
+Tabulator.prototype.clearCellValidation = function(cells){
+
+	if(this.modExists("validate", true)){
+
+		if(!cells){
+			cells = this.modules.validate.getInvalidCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.modules.validate.clearValidation(cell._getSelf());
+		});
+	}
+};
+
+Tabulator.prototype.validate = function(cells){
+	var output = [];
+
+	//clear row data
+	this.rowManager.rows.forEach(function(row){
+		var valid = row.validate();
+
+		if(valid !== true){
+			output = output.concat(valid);
+		}
+	});
+
+	return output.length ? output : true;
+}
 
 //////////// Pagination Functions  ////////////
 
@@ -1828,6 +1879,30 @@ Tabulator.prototype.getGroupedData = function(){
 		this.modules.groupRows.getGroupedData() : this.getData()
 	}
 }
+
+Tabulator.prototype.getEditedCells = function(){
+	if(this.modExists("edit", true)){
+		return this.modules.edit.getEditedCells();
+	}
+};
+
+Tabulator.prototype.clearCellEdited = function(cells){
+	if(this.modExists("edit", true)){
+
+		if(!cells){
+			cells = this.modules.edit.getEditedCells();
+		}
+
+		if(!Array.isArray(cells)){
+			cells = [cells];
+		}
+
+		cells.forEach((cell) => {
+			this.modules.edit.clearEdited(cell._getSelf());
+		});
+	}
+};
+
 
 ///////////////// Column Calculation Functions ///////////////
 Tabulator.prototype.getCalcResults = function(){

@@ -31,6 +31,11 @@ GroupComponent.prototype.getParentGroup = function () {
 };
 
 GroupComponent.prototype.getVisibility = function () {
+	console.warn("getVisibility function is deprecated, you should now use the isVisible function");
+	return this._group.visible;
+};
+
+GroupComponent.prototype.isVisible = function () {
 	return this._group.visible;
 };
 
@@ -83,6 +88,8 @@ var Group = function Group(groupManager, parent, level, key, field, generator, o
 	this.arrowElement = false;
 
 	this.visible = oldGroup ? oldGroup.visible : typeof groupManager.startOpen[level] !== "undefined" ? groupManager.startOpen[level] : groupManager.startOpen[0];
+
+	this.component = null;
 
 	this.createElements();
 	this.addBindings();
@@ -708,7 +715,11 @@ Group.prototype.clearCellHeight = function () {};
 
 //////////////// Object Generation /////////////////
 Group.prototype.getComponent = function () {
-	return new GroupComponent(this);
+	if (!this.component) {
+		this.component = new GroupComponent(this);
+	}
+
+	return this.component;
 };
 
 //////////////////////////////////////////////////

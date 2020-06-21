@@ -19,6 +19,9 @@ var MoveRows = function(table){
 	this.touchMove = false;
 
 	this.connection = false;
+	this.connectionSelectorsTables = false;
+	this.connectionSelectorsElements = false;
+	this.connectionElements = [];
 	this.connections = [];
 
 	this.connectedTable = false;
@@ -36,7 +39,10 @@ MoveRows.prototype.createPlaceholderElement = function(){
 
 
 MoveRows.prototype.initialize = function(handle){
-	this.connection = this.table.options.movableRowsConnectedTables;
+	this.connectionSelectorsTables = this.table.options.movableRowsConnectedTables;
+	this.connectionSelectorsElements = this.table.options.movableRowsConnectedElements;
+
+	this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
 };
 
 MoveRows.prototype.setHandle = function(handle){
@@ -379,27 +385,73 @@ MoveRows.prototype.moveHoverConnections = function(e){
 };
 
 
+MoveRows.prototype.elementRowDrop = function(e, element, row){
+	if(this.table.options.movableRowsElementDrop){
+		this.table.options.movableRowsElementDrop(e, element, row ? row.getComponent() : false);
+	}
+};
+
 //establish connection with other tables
 MoveRows.prototype.connectToTables = function(row){
-	var self = this,
-	connections = this.table.modules.comms.getConnections(this.connection);
+	var connectionTables;
 
-	this.table.options.movableRowsSendingStart.call(this.table, connections);
+	if(this.connectionSelectorsTables){
+		connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-	this.table.modules.comms.send(this.connection, "moveRow", "connect", {
-		row:row,
-	});
+		this.table.options.movableRowsSendingStart.call(this.table, connectionTables);
+
+		this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
+			row:row,
+		});
+	}
+
+	if(this.connectionSelectorsElements){
+
+		this.connectionElements = [];
+
+		if(!Array.isArray(this.connectionSelectorsElements)){
+			this.connectionSelectorsElements = [this.connectionSelectorsElements];
+		}
+
+		this.connectionSelectorsElements.forEach((query) => {
+			if(typeof query === "string"){
+				this.connectionElements = this.connectionElements.concat(Array.prototype.slice.call(document.querySelectorAll(query)));
+			}else{
+				this.connectionElements.push(query);
+			}
+		});
+
+		this.connectionElements.forEach((element) => {
+			var dropEvent = (e) => {
+				this.elementRowDrop(e, element, this.moving);
+			};
+
+			element.addEventListener("mouseup", dropEvent);
+			element.tabulatorElementDropEvent = dropEvent;
+
+			element.classList.add("tabulator-movingrow-receiving");
+		});
+	}
 };
 
 
 //disconnect from other tables
 MoveRows.prototype.disconnectFromTables = function(){
-	var self = this,
-	connections = this.table.modules.comms.getConnections(this.connection);
+	var connectionTables;
 
-	this.table.options.movableRowsSendingStop.call(this.table, connections);
+	if(this.connectionSelectorsTables){
+		connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-	this.table.modules.comms.send(this.connection, "moveRow", "disconnect");
+		this.table.options.movableRowsSendingStop.call(this.table, connectionTables);
+
+		this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
+	}
+
+	this.connectionElements.forEach((element) => {
+		element.classList.remove("tabulator-movingrow-receiving");
+		element.removeEventListener("mouseup", element.tabulatorElementDropEvent);
+		delete element.tabulatorElementDropEvent;
+	});
 };
 
 
@@ -491,6 +543,8 @@ MoveRows.prototype.dropComplete = function(table, row, success){
 MoveRows.prototype.tableRowDrop = function(e, row){
 	var receiver = false,
 	success = false;
+
+	console.trace("drop");
 
 	e.stopImmediatePropagation();
 

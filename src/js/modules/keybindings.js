@@ -280,7 +280,7 @@ Keybindings.prototype.actions = {
 							if(typeof newRow == "function"){
 								newRow = this.table.addRow(newRow(cell.row.getComponent()))
 							}else{
-								newRow = this.table.addRow(newRow)
+								newRow = this.table.addRow(Object.assign({}, newRow));
 							}
 						}
 

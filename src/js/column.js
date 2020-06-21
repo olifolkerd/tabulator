@@ -28,6 +28,11 @@ ColumnComponent.prototype.getCells = function(){
 };
 
 ColumnComponent.prototype.getVisibility = function(){
+	console.warn("getVisibility function is deprecated, you should now use the isVisible function");
+	return this._column.visible;
+};
+
+ColumnComponent.prototype.isVisible = function(){
 	return this._column.visible;
 };
 
@@ -143,6 +148,24 @@ ColumnComponent.prototype.updateDefinition = function(updates){
 };
 
 
+ColumnComponent.prototype.getWidth = function(){
+	return this._column.getWidth();
+};
+
+
+ColumnComponent.prototype.setWidth = function(width){
+	if(width === true){
+		return this._column.reinitializeWidth(true);
+	}else{
+		return this._column.setWidth(width);
+	}
+};
+
+ColumnComponent.prototype.validate = function(){
+	return this._column.validate();
+};
+
+
 
 var Column = function(def, parent){
 	var self = this;
@@ -199,6 +222,8 @@ var Column = function(def, parent){
 	this.widthFixed = false; //user has specified a width for this column
 
 	this.visible = true; //default visible state
+
+	this.component = null;
 
 	this._mapDepricatedFunctionality();
 
@@ -289,6 +314,11 @@ Column.prototype._mapDepricatedFunctionality = function(){
 	if(typeof this.definition.align !== "undefined"){
 		this.definition.hozAlign = this.definition.align;
 		console.warn("align column definition property is deprecated, you should now use hozAlign");
+	}
+
+	if(typeof this.definition.downloadTitle !== "undefined"){
+		this.definition.titleDownload = this.definition.downloadTitle;
+		console.warn("downloadTitle definition property is deprecated, you should now use titleDownload");
 	}
 };
 
@@ -1176,6 +1206,20 @@ Column.prototype.columnRendered = function(){
 	}
 };
 
+
+Column.prototype.validate = function(){
+	var invalid = [];
+
+	this.cells.forEach(function(cell){
+		if(!cell.validate()){
+			invalid.push(cell.getComponent());
+		}
+	});
+
+	return invalid.length ? invalid : true;
+};
+
+
 //////////////// Cell Management /////////////////
 
 //generate cell for this column
@@ -1408,11 +1452,19 @@ Column.prototype.defaultOptionList = [
 "formatterClipboardParams",
 "formatterHtmlOutput",
 "formatterHtmlOutputParams",
+"titlePrint",
+"titleClipboard",
+"titleHtmlOutput",
+"titleDownload",
 ];
 
 //////////////// Event Bindings /////////////////
 
 //////////////// Object Generation /////////////////
 Column.prototype.getComponent = function(){
-	return new ColumnComponent(this);
+	if(!this.component){
+		this.component = new ColumnComponent(this);
+	}
+
+	return this.component;
 };

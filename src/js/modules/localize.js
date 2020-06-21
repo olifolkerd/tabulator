@@ -178,6 +178,7 @@ Localize.prototype.langs = {
 		},
 		"pagination":{
 			"page_size":"Page Size",
+			"page_title":"Show Page",
 			"first":"First",
 			"first_title":"First Page",
 			"last":"Last",
@@ -186,6 +187,7 @@ Localize.prototype.langs = {
 			"prev_title":"Prev Page",
 			"next":"Next",
 			"next_title":"Next Page",
+			"all":"All",
 		},
 		"headerFilters":{
 			"default":"filter column...",
