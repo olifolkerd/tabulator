@@ -20284,6 +20284,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.menuEl = false;
 		this.blurEvent = this.hideMenu.bind(this);
 		this.escEvent = this.escMenu.bind(this);
+		this.nestedMenuBlock = false;
 	};
 
 	Menu.prototype.initializeColumnHeader = function (column) {
@@ -20325,7 +20326,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		cell.getElement().addEventListener("contextmenu", function (e) {
 			var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
 
-			e.preventDefault();
+			e.stopImmediatePropagation();
 
 			_this62.loadMenu(e, cell, menu);
 		});
@@ -20337,8 +20338,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		row.getElement().addEventListener("contextmenu", function (e) {
 			var menu = typeof _this63.table.options.rowContextMenu == "function" ? _this63.table.options.rowContextMenu(row.getComponent()) : _this63.table.options.rowContextMenu;
 
-			e.preventDefault();
-
 			_this63.loadMenu(e, row, menu);
 		});
 	};
@@ -20349,8 +20348,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		group.getElement().addEventListener("contextmenu", function (e) {
 			var menu = typeof _this64.table.options.groupContextMenu == "function" ? _this64.table.options.groupContextMenu(group.getComponent()) : _this64.table.options.groupContextMenu;
 
-			e.preventDefault();
-
 			_this64.loadMenu(e, group, menu);
 		});
 	};
@@ -20360,14 +20357,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
 
+		e.preventDefault();
+
 		//abort if no menu set
 		if (!menu || !menu.length) {
 			return;
 		}
 
-		//abort if child menu already open
-		if (this.isOpen()) {
-			return;
+		if (this.nestedMenuBlock) {
+			//abort if child menu already open
+			if (this.isOpen()) {
+				return;
+			}
+		} else {
+			this.nestedMenuBlock = setTimeout(function () {
+				_this65.nestedMenuBlock = false;
+			}, 100);
 		}
 
 		this.hideMenu();

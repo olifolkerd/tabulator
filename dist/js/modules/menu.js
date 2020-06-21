@@ -5,6 +5,7 @@ var Menu = function Menu(table) {
 	this.menuEl = false;
 	this.blurEvent = this.hideMenu.bind(this);
 	this.escEvent = this.escMenu.bind(this);
+	this.nestedMenuBlock = false;
 };
 
 Menu.prototype.initializeColumnHeader = function (column) {
@@ -46,7 +47,7 @@ Menu.prototype.initializeCell = function (cell) {
 	cell.getElement().addEventListener("contextmenu", function (e) {
 		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
 
-		e.preventDefault();
+		e.stopImmediatePropagation();
 
 		_this2.loadMenu(e, cell, menu);
 	});
@@ -58,8 +59,6 @@ Menu.prototype.initializeRow = function (row) {
 	row.getElement().addEventListener("contextmenu", function (e) {
 		var menu = typeof _this3.table.options.rowContextMenu == "function" ? _this3.table.options.rowContextMenu(row.getComponent()) : _this3.table.options.rowContextMenu;
 
-		e.preventDefault();
-
 		_this3.loadMenu(e, row, menu);
 	});
 };
@@ -70,8 +69,6 @@ Menu.prototype.initializeGroup = function (group) {
 	group.getElement().addEventListener("contextmenu", function (e) {
 		var menu = typeof _this4.table.options.groupContextMenu == "function" ? _this4.table.options.groupContextMenu(group.getComponent()) : _this4.table.options.groupContextMenu;
 
-		e.preventDefault();
-
 		_this4.loadMenu(e, group, menu);
 	});
 };
@@ -81,14 +78,22 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 
 	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
 
+	e.preventDefault();
+
 	//abort if no menu set
 	if (!menu || !menu.length) {
 		return;
 	}
 
-	//abort if child menu already open
-	if (this.isOpen()) {
-		return;
+	if (this.nestedMenuBlock) {
+		//abort if child menu already open
+		if (this.isOpen()) {
+			return;
+		}
+	} else {
+		this.nestedMenuBlock = setTimeout(function () {
+			_this5.nestedMenuBlock = false;
+		}, 100);
 	}
 
 	this.hideMenu();
