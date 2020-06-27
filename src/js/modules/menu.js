@@ -41,7 +41,9 @@ Menu.prototype.initializeCell = function(cell){
 	cell.getElement().addEventListener("contextmenu", (e) => {
 		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
 
-		e.stopImmediatePropagation();
+		if(menu){
+			e.stopImmediatePropagation();
+		}
 
 		this.loadMenu(e, cell, menu);
 	});

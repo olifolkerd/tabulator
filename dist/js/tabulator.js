@@ -20326,7 +20326,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		cell.getElement().addEventListener("contextmenu", function (e) {
 			var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
 
-			e.stopImmediatePropagation();
+			if (menu) {
+				e.stopImmediatePropagation();
+			}
 
 			_this62.loadMenu(e, cell, menu);
 		});
