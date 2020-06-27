@@ -699,7 +699,7 @@ Cell.prototype.validate = function(){
 };
 
 Cell.prototype.delete = function(){
-	if(!this.table.rowManager.redrawBlock){
+	if(!this.table.rowManager.redrawBlock && this.element.parentNode){
 		this.element.parentNode.removeChild(this.element);
 	}
 
