@@ -1113,8 +1113,12 @@ Edit.prototype.editors = {
 			}
 
 			if(item){
+
+				item = input.value = item.label
 				success(item.value);
 			}
+
+			initialDisplayValue = input.value;
 		}
 
 
@@ -1305,6 +1309,11 @@ Edit.prototype.editors = {
 				case 27: //escape
 				cancelItem();
 				break;
+
+				default:
+				if(self.currentCell === false){
+					e.preventDefault();
+				}
 			}
 		});
 

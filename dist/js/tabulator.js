@@ -14971,8 +14971,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (item) {
+
+					item = input.value = item.label;
 					success(item.value);
 				}
+
+				initialDisplayValue = input.value;
 			}
 
 			function chooseItems(silent) {
@@ -15163,6 +15167,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//escape
 						cancelItem();
 						break;
+
+					default:
+						if (self.currentCell === false) {
+							e.preventDefault();
+						}
 				}
 			});
 
