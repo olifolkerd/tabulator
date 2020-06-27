@@ -14990,6 +14990,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				input.value = output.join(", ");
 			}
 
+			function unsetItems() {
+
+				var len = currentItems.length;
+
+				for (var _i6 = 0; _i6 < len; _i6++) {
+					unsetItem(0);
+				}
+			}
+
 			function cancelItem() {
 				hideList();
 				cancel();
@@ -15066,6 +15075,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// }else{
 			// 	parseItems(editorParams.values || [], initialValue);
 			// }
+
+			input.addEventListener("search", function (e) {
+				if (!input.value) {
+					unsetItems();
+					chooseItems();
+				}
+			});
 
 			//allow key based navigation
 			input.addEventListener("keydown", function (e) {
@@ -16133,18 +16149,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			headers[level].push(column);
 
 			if (column.height > 1) {
-				for (var _i6 = 1; _i6 < column.height; _i6++) {
+				for (var _i7 = 1; _i7 < column.height; _i7++) {
 
-					if (typeof headers[level + _i6] === "undefined") {
-						headers[level + _i6] = [];
+					if (typeof headers[level + _i7] === "undefined") {
+						headers[level + _i7] = [];
 					}
 
-					headers[level + _i6].push(false);
+					headers[level + _i7].push(false);
 				}
 			}
 
 			if (column.width > 1) {
-				for (var _i7 = 1; _i7 < column.width; _i7++) {
+				for (var _i8 = 1; _i8 < column.width; _i8++) {
 					headers[level].push(false);
 				}
 			}
@@ -17378,7 +17394,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		//in array
 		"in": function _in(filterVal, rowVal, rowData, filterParams) {
 			if (Array.isArray(filterVal)) {
-				return filterVal.indexOf(rowVal) > -1;
+				return filterVal.length ? filterVal.indexOf(rowVal) > -1 : true;
 			} else {
 				console.warn("Filter Error - filter value is not an array:", filterVal);
 				return false;
@@ -18373,9 +18389,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	FrozenColumns.prototype._calcSpace = function (columns, index) {
 		var width = 0;
 
-		for (var _i8 = 0; _i8 < index; _i8++) {
-			if (columns[_i8].visible) {
-				width += columns[_i8].getWidth();
+		for (var _i9 = 0; _i9 < index; _i9++) {
+			if (columns[_i9].visible) {
+				width += columns[_i9].getWidth();
 			}
 		}
 
@@ -21589,8 +21605,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (this.pageSizes.indexOf(this.size) == -1) {
 					pageSizes = [];
 
-					for (var _i9 = 1; _i9 < 5; _i9++) {
-						pageSizes.push(this.size * _i9);
+					for (var _i10 = 1; _i10 < 5; _i10++) {
+						pageSizes.push(this.size * _i10);
 					}
 
 					this.pageSizes = pageSizes;
@@ -21920,9 +21936,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.nextBut.disabled = false;
 		}
 
-		for (var _i10 = min; _i10 <= max; _i10++) {
-			if (_i10 > 0 && _i10 <= self.max) {
-				self.pagesElement.appendChild(self._generatePageButton(_i10));
+		for (var _i11 = min; _i11 <= max; _i11++) {
+			if (_i11 > 0 && _i11 <= self.max) {
+				self.pagesElement.appendChild(self._generatePageButton(_i11));
 			}
 		}
 
@@ -22039,9 +22055,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this._setPageButtons();
 
-			for (var _i11 = start; _i11 < end; _i11++) {
-				if (data[_i11]) {
-					output.push(data[_i11]);
+			for (var _i12 = start; _i12 < end; _i12++) {
+				if (data[_i12]) {
+					output.push(data[_i12]);
 				}
 			}
 
@@ -23389,16 +23405,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		//assign collapse column
-		for (var _iterator = this.table.columnManager.columnsByIndex, _isArray = Array.isArray(_iterator), _i12 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+		for (var _iterator = this.table.columnManager.columnsByIndex, _isArray = Array.isArray(_iterator), _i13 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
 			var _ref;
 
 			if (_isArray) {
-				if (_i12 >= _iterator.length) break;
-				_ref = _iterator[_i12++];
+				if (_i13 >= _iterator.length) break;
+				_ref = _iterator[_i13++];
 			} else {
-				_i12 = _iterator.next();
-				if (_i12.done) break;
-				_ref = _i12.value;
+				_i13 = _iterator.next();
+				if (_i13.done) break;
+				_ref = _i13.value;
 			}
 
 			var col = _ref;
@@ -23901,7 +23917,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rowCount = self.selectedRows.length;
 
-			for (var _i13 = 0; _i13 < rowCount; _i13++) {
+			for (var _i14 = 0; _i14 < rowCount; _i14++) {
 				self._deselectRow(self.selectedRows[0], true);
 			}
 
@@ -24016,16 +24032,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var children = this.table.modules.dataTree.getChildren(row);
 
 		if (select) {
-			for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i14 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+			for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i15 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
 				var _ref2;
 
 				if (_isArray2) {
-					if (_i14 >= _iterator2.length) break;
-					_ref2 = _iterator2[_i14++];
+					if (_i15 >= _iterator2.length) break;
+					_ref2 = _iterator2[_i15++];
 				} else {
-					_i14 = _iterator2.next();
-					if (_i14.done) break;
-					_ref2 = _i14.value;
+					_i15 = _iterator2.next();
+					if (_i15.done) break;
+					_ref2 = _i15.value;
 				}
 
 				var child = _ref2;
@@ -24033,16 +24049,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				this._selectRow(child, true);
 			}
 		} else {
-			for (var _iterator3 = children, _isArray3 = Array.isArray(_iterator3), _i15 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+			for (var _iterator3 = children, _isArray3 = Array.isArray(_iterator3), _i16 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
 				var _ref3;
 
 				if (_isArray3) {
-					if (_i15 >= _iterator3.length) break;
-					_ref3 = _iterator3[_i15++];
+					if (_i16 >= _iterator3.length) break;
+					_ref3 = _iterator3[_i16++];
 				} else {
-					_i15 = _iterator3.next();
-					if (_i15.done) break;
-					_ref3 = _i15.value;
+					_i16 = _iterator3.next();
+					if (_i16.done) break;
+					_ref3 = _i16.value;
 				}
 
 				var _child = _ref3;

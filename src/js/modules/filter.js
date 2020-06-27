@@ -817,7 +817,7 @@ Filter.prototype.filters ={
 	//in array
 	"in":function(filterVal, rowVal, rowData, filterParams){
 		if(Array.isArray(filterVal)){
-			return filterVal.indexOf(rowVal) > -1;
+			return filterVal.length ? filterVal.indexOf(rowVal) > -1 : true;
 		}else{
 			console.warn("Filter Error - filter value is not an array:", filterVal);
 			return false;

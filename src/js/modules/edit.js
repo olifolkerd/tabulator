@@ -1133,6 +1133,16 @@ Edit.prototype.editors = {
 			input.value = output.join(", ");
 		}
 
+
+		function unsetItems() {
+
+			var len = currentItems.length;
+
+			for(let i = 0; i < len; i++){
+				unsetItem(0);
+			}
+		}
+
 		function cancelItem(){
 			hideList();
 			cancel();
@@ -1211,6 +1221,13 @@ Edit.prototype.editors = {
 		// }else{
 		// 	parseItems(editorParams.values || [], initialValue);
 		// }
+
+		input.addEventListener("search", function(e){
+			if(!input.value){
+				unsetItems();
+				chooseItems();
+			}
+		});
 
 		//allow key based navigation
 		input.addEventListener("keydown", function(e){
