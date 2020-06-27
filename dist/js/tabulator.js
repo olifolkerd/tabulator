@@ -14078,6 +14078,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (valid !== true) {
 						element.classList.add("tabulator-validation-fail");
+						self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 						return false;
 					}
 

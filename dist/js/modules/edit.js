@@ -215,6 +215,7 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 
 				if (valid !== true) {
 					element.classList.add("tabulator-validation-fail");
+					self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
 					return false;
 				}
 
