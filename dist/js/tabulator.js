@@ -14665,7 +14665,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    cellEl = cell.getElement(),
 			    initialValue = cell.getValue(),
 			    vertNav = editorParams.verticalNavigation || "editor",
-			    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : [],
+			    initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? Array.isArray(initialValue) ? initialValue : [initialValue] : typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : [],
 			    input = document.createElement("input"),
 			    listEl = document.createElement("div"),
 			    multiselect = editorParams.multiselect,
@@ -14971,8 +14971,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (item) {
-
-					item = input.value = item.label;
+					input.value = item.label;
 					success(item.value);
 				}
 
@@ -15027,7 +15026,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				currentItems = [];
 
 				if (!listEl.parentNode) {
-
 					if (editorParams.values === true) {
 						parseItems(getUniqueColumnValues(), initialDisplayValue);
 					} else if (typeof editorParams.values === "string") {

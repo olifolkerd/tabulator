@@ -800,7 +800,7 @@ Edit.prototype.editors = {
 		cellEl = cell.getElement(),
 		initialValue = cell.getValue(),
 		vertNav = editorParams.verticalNavigation || "editor",
-		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? initialValue : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : []),
+		initialDisplayValue = typeof initialValue !== "undefined" || initialValue === null ? (Array.isArray(initialValue) ? initialValue : [initialValue]) : (typeof editorParams.defaultValue !== "undefined" ? editorParams.defaultValue : []),
 		input = document.createElement("input"),
 		listEl = document.createElement("div"),
 		multiselect = editorParams.multiselect,
@@ -1113,8 +1113,7 @@ Edit.prototype.editors = {
 			}
 
 			if(item){
-
-				item = input.value = item.label
+				input.value = item.label;
 				success(item.value);
 			}
 
@@ -1126,7 +1125,6 @@ Edit.prototype.editors = {
 			if(!silent){
 				hideList();
 			}
-
 
 			var output = [];
 
@@ -1172,7 +1170,6 @@ Edit.prototype.editors = {
 			currentItems = [];
 
 			if(!listEl.parentNode){
-
 				if(editorParams.values === true){
 					parseItems(getUniqueColumnValues(), initialDisplayValue);
 				}else if(typeof editorParams.values === "string"){
