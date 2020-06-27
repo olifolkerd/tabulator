@@ -808,7 +808,8 @@ Edit.prototype.editors = {
 		currentItem = {},
 		displayItems = [],
 		currentItems = [],
-		blurable = true;
+		blurable = true,
+		blockListShow = false;
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
@@ -975,6 +976,12 @@ Edit.prototype.editors = {
 						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 						el.addEventListener("click", function(){
+							blockListShow = true;
+
+							setTimeout(() => {
+								blockListShow = false;
+							}, 10);
+
 							// setCurrentItem(item);
 							// chooseItem();
 							if(multiselect){
@@ -1095,6 +1102,7 @@ Edit.prototype.editors = {
 			}
 
 			fillInput();
+
 		}
 
 		function chooseItem(item){
@@ -1110,14 +1118,19 @@ Edit.prototype.editors = {
 		}
 
 
-		function chooseItems(){
-			hideList();
+		function chooseItems(silent){
+			if(!silent){
+				hideList();
+			}
+
 
 			var output = [];
 
 			currentItems.forEach((item) => {
 				output.push(item.value);
 			});
+
+			initialDisplayValue = input.value;
 
 			success(output);
 		}
@@ -1129,8 +1142,11 @@ Edit.prototype.editors = {
 				output.push(item.label);
 			});
 
-
 			input.value = output.join(", ");
+
+			if(self.currentCell === false){
+				chooseItems(true);
+			}
 		}
 
 
@@ -1149,6 +1165,8 @@ Edit.prototype.editors = {
 		}
 
 		function showList(){
+			currentItems = [];
+
 			if(!listEl.parentNode){
 
 				if(editorParams.values === true){
@@ -1301,7 +1319,9 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("focus", function(e){
-			showList();
+			if(!blockListShow){
+				showList();
+			}
 		});
 
 		//style list element

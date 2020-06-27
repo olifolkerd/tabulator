@@ -810,7 +810,8 @@ Edit.prototype.editors = {
 		    currentItem = {},
 		    displayItems = [],
 		    currentItems = [],
-		    blurable = true;
+		    blurable = true,
+		    blockListShow = false;
 
 		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
@@ -976,6 +977,12 @@ Edit.prototype.editors = {
 						el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 						el.addEventListener("click", function () {
+							blockListShow = true;
+
+							setTimeout(function () {
+								blockListShow = false;
+							}, 10);
+
 							// setCurrentItem(item);
 							// chooseItem();
 							if (multiselect) {
@@ -1105,14 +1112,18 @@ Edit.prototype.editors = {
 			}
 		}
 
-		function chooseItems() {
-			hideList();
+		function chooseItems(silent) {
+			if (!silent) {
+				hideList();
+			}
 
 			var output = [];
 
 			currentItems.forEach(function (item) {
 				output.push(item.value);
 			});
+
+			initialDisplayValue = input.value;
 
 			success(output);
 		}
@@ -1125,6 +1136,10 @@ Edit.prototype.editors = {
 			});
 
 			input.value = output.join(", ");
+
+			if (self.currentCell === false) {
+				chooseItems(true);
+			}
 		}
 
 		function unsetItems() {
@@ -1142,6 +1157,8 @@ Edit.prototype.editors = {
 		}
 
 		function showList() {
+			currentItems = [];
+
 			if (!listEl.parentNode) {
 
 				if (editorParams.values === true) {
@@ -1297,7 +1314,9 @@ Edit.prototype.editors = {
 		});
 
 		input.addEventListener("focus", function (e) {
-			showList();
+			if (!blockListShow) {
+				showList();
+			}
 		});
 
 		//style list element

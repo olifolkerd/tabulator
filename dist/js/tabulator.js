@@ -14673,7 +14673,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    currentItem = {},
 			    displayItems = [],
 			    currentItems = [],
-			    blurable = true;
+			    blurable = true,
+			    blockListShow = false;
 
 			this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
@@ -14839,6 +14840,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							el.innerHTML = item.label === "" ? "&nbsp;" : item.label;
 
 							el.addEventListener("click", function () {
+								blockListShow = true;
+
+								setTimeout(function () {
+									blockListShow = false;
+								}, 10);
+
 								// setCurrentItem(item);
 								// chooseItem();
 								if (multiselect) {
@@ -14968,14 +14975,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 
-			function chooseItems() {
-				hideList();
+			function chooseItems(silent) {
+				if (!silent) {
+					hideList();
+				}
 
 				var output = [];
 
 				currentItems.forEach(function (item) {
 					output.push(item.value);
 				});
+
+				initialDisplayValue = input.value;
 
 				success(output);
 			}
@@ -14988,6 +14999,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 
 				input.value = output.join(", ");
+
+				if (self.currentCell === false) {
+					chooseItems(true);
+				}
 			}
 
 			function unsetItems() {
@@ -15005,6 +15020,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function showList() {
+				currentItems = [];
+
 				if (!listEl.parentNode) {
 
 					if (editorParams.values === true) {
@@ -15160,7 +15177,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			input.addEventListener("focus", function (e) {
-				showList();
+				if (!blockListShow) {
+					showList();
+				}
 			});
 
 			//style list element
