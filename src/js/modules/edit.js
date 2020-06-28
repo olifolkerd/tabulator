@@ -164,6 +164,24 @@ Edit.prototype.focusScrollAdjust = function(cell){
 				this.table.rowManager.element.scrollTop += (rowEl.offsetTop + rowEl.offsetHeight - bottomEdge);
 			}
 		}
+
+		var leftEdge = this.table.rowManager.element.scrollLeft,
+		rightEdge = this.table.rowManager.element.clientWidth + this.table.rowManager.element.scrollLeft,
+		cellEl = cell.getElement(),
+		offset = cellEl.offsetLeft;
+
+		if(this.table.modExists("frozenColumns")){
+			leftEdge += parseInt(this.table.modules.frozenColumns.leftMargin);
+			rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
+		}
+
+		if(cellEl.offsetLeft < leftEdge){
+			this.table.rowManager.element.scrollLeft -= (leftEdge - cellEl.offsetLeft);
+		}else{
+			if(cellEl.offsetLeft + cellEl.offsetWidth  > rightEdge){
+				this.table.rowManager.element.scrollLeft += (cellEl.offsetLeft + cellEl.offsetWidth - rightEdge);
+			}
+		}
 	}
 };
 
@@ -812,8 +830,6 @@ Edit.prototype.editors = {
 		blurable = true,
 		blockListShow = false;
 
-		this.table.rowManager.element.addEventListener("scroll", cancelItem);
-
 		if(Array.isArray(editorParams) || (!Array.isArray(editorParams) && typeof editorParams === "object" && !editorParams.values)){
 			console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
 			editorParams = {values:editorParams};
@@ -1308,6 +1324,9 @@ Edit.prototype.editors = {
 				cancelItem();
 				break;
 
+				case 9: //tab
+				break;
+
 				default:
 				if(self.currentCell === false){
 					e.preventDefault();
@@ -1340,6 +1359,10 @@ Edit.prototype.editors = {
 			input.focus({preventScroll: true});
 		});
 
+		setTimeout(() => {
+			this.table.rowManager.element.addEventListener("scroll", cancelItem);
+		}, 10);
+
 		return input;
 	},
 
@@ -1358,8 +1381,6 @@ Edit.prototype.editors = {
 		currentItem = false,
 		blurable = true,
 		uniqueColumnValues = false;
-
-		this.table.rowManager.element.addEventListener("scroll", cancelItem);
 
 		//style input
 		input.setAttribute("type", "search");
@@ -1779,6 +1800,10 @@ Edit.prototype.editors = {
 		if(editorParams.mask){
 			this.table.modules.edit.maskInput(input, editorParams);
 		}
+
+		setTimeout(() => {
+			this.table.rowManager.element.addEventListener("scroll", cancelItem);
+		}, 10);
 
 		return input;
 	},
