@@ -778,17 +778,7 @@ Row.prototype.delete = function(){
 Row.prototype.deleteActual = function(blockRedraw){
 	var index = this.table.rowManager.getRowIndex(this);
 
-	//deselect row if it is selected
-	if(this.table.modExists("selectRow")){
-		this.table.modules.selectRow._deselectRow(this, true);
-	}
-
-	//cancel edit if row is currently being edited
-	if(this.table.modExists("edit")){
-		if(this.table.modules.edit.currentCell.row === this){
-			this.table.modules.edit.cancelEdit();
-		}
-	}
+	this.detatchModules();
 
 	// if(this.table.options.dataTree && this.table.modExists("dataTree")){
 	// 	this.table.modules.dataTree.collapseRow(this, true);
@@ -825,6 +815,24 @@ Row.prototype.deleteActual = function(blockRedraw){
 	}
 };
 
+Row.prototype.detatchModules = function(){
+	//deselect row if it is selected
+	if(this.table.modExists("selectRow")){
+		this.table.modules.selectRow._deselectRow(this, true);
+	}
+
+	//cancel edit if row is currently being edited
+	if(this.table.modExists("edit")){
+		if(this.table.modules.edit.currentCell.row === this){
+			this.table.modules.edit.cancelEdit();
+		}
+	}
+
+	if(this.table.modExists("frozenRows")){
+		this.table.modules.frozenRows.detachRow(this);
+	}
+};
+
 Row.prototype.deleteCells = function(){
 	var cellCount = this.cells.length;
 
@@ -834,6 +842,7 @@ Row.prototype.deleteCells = function(){
 };
 
 Row.prototype.wipe = function(){
+	this.detatchModules();
 	this.deleteCells();
 
 	while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
