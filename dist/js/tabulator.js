@@ -8967,7 +8967,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						return;
 					}
 
-					_this18._setData(data).then(function (data) {
+					_this18.setData(data).then(function (data) {
 
 						resolve(data);
 					}).catch(function (err) {

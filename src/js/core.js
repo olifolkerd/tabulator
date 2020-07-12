@@ -830,7 +830,7 @@ Tabulator.prototype.setDataFromLocalFile = function(extensions){
 					return;
 				}
 
-				this._setData(data)
+				this.setData(data)
 				.then((data) => {
 					resolve(data);
 				})
