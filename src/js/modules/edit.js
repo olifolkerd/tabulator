@@ -1805,6 +1805,10 @@ Edit.prototype.editors = {
 			this.table.rowManager.element.addEventListener("scroll", cancelItem);
 		}, 10);
 
+		genUniqueColumnValues();
+		input.value = initialDisplayValue;
+		filterList(initialDisplayValue, true);
+
 		return input;
 	},
 
