@@ -7794,6 +7794,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
 
+		this.rtl = false; //check if the table is in RTL mode
+
 
 		this.modules = {}; //hold all modules bound to this table
 
@@ -8384,12 +8386,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.element = element;
 
+			this.rtlCheck();
+
 			return true;
 		} else if (typeof element === "string") {
 
 			this.element = document.querySelector(element);
 
 			if (this.element) {
+
+				this.rtlCheck();
 
 				return true;
 			} else {
@@ -8403,6 +8409,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			console.error("Tabulator Creation Error - Invalid element provided:", element);
 
 			return false;
+		}
+	};
+
+	Tabulator.prototype.rtlCheck = function () {
+
+		var style = window.getComputedStyle(this.element);
+
+		if (style.direction === "rtl") {
+
+			this.element.classList.add("tabulator-rtl");
+
+			this.rtl = true;
 		}
 	};
 

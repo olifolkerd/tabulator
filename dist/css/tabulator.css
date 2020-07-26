@@ -841,6 +841,10 @@
   font-weight: bold;
 }
 
+.tabulator.tabulator-rtl {
+  text-align: initial;
+}
+
 .tabulator-print-fullscreen {
   position: absolute;
   top: 0;

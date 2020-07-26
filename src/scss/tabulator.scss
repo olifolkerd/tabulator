@@ -1032,6 +1032,14 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	}
 }
 
+
+//RTL Styling
+
+.tabulator.tabulator-rtl{
+	text-align: initial;
+}
+
+
 // Table print styling
 
 .tabulator-print-fullscreen{

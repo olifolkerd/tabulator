@@ -19,6 +19,7 @@ var Tabulator = function(element, options){
 	this.browser = ""; //hold current browser type
 	this.browserSlow = false; //handle reduced functionality for slower browsers
 	this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
+	this.rtl = false; //check if the table is in RTL mode
 
 	this.modules = {}; //hold all modules bound to this table
 
@@ -371,11 +372,17 @@ Tabulator.prototype.initializeElement = function(element){
 
 	if(typeof HTMLElement !== "undefined" && element instanceof HTMLElement){
 		this.element = element;
+
+		this.rtlCheck();
+
 		return true;
 	}else if(typeof element === "string"){
 		this.element = document.querySelector(element);
 
 		if(this.element){
+
+			this.rtlCheck();
+
 			return true;
 		}else{
 			console.error("Tabulator Creation Error - no element found matching selector: ", element);
@@ -386,6 +393,15 @@ Tabulator.prototype.initializeElement = function(element){
 		return false;
 	}
 
+};
+
+Tabulator.prototype.rtlCheck = function(){
+	var style = window.getComputedStyle(this.element);
+
+	if(style.direction === "rtl"){
+		this.element.classList.add("tabulator-rtl");
+		this.rtl = true;
+	}
 };
 
 
