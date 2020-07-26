@@ -1041,6 +1041,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	.tabulator-header {
 		.tabulator-col{
 			text-align: initial;
+			border-left:1px solid $headerBorderColor;
+			border-right:initial;
 
 			&.tabulator-sortable{
 				.tabulator-col-title{
@@ -1055,6 +1057,32 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 					right:initial;
 				}
 			}
+		}
+	}
+
+	.tabulator-row{
+		.tabulator-cell{
+			border-right:initial;
+			border-left:1px solid $rowBorderColor;
+
+			//hide left resize handle on first column
+			// &:first-child{
+			// 	.tabulator-col-resize-handle.prev{
+			// 		display: none;
+			// 	}
+			// }
+		}
+	}
+
+	//column resize handles
+	.tabulator-col-resize-handle{
+		position:absolute;
+		left:0;
+		right:auto;
+
+		&.prev{
+			right:0;
+			left:auto;
 		}
 	}
 }

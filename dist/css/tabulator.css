@@ -847,6 +847,8 @@
 
 .tabulator.tabulator-rtl .tabulator-header .tabulator-col {
   text-align: initial;
+  border-left: 1px solid #aaa;
+  border-right: initial;
 }
 
 .tabulator.tabulator-rtl .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
@@ -857,6 +859,22 @@
 .tabulator.tabulator-rtl .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
   left: 8px;
   right: initial;
+}
+
+.tabulator.tabulator-rtl .tabulator-row .tabulator-cell {
+  border-right: initial;
+  border-left: 1px solid #aaa;
+}
+
+.tabulator.tabulator-rtl .tabulator-col-resize-handle {
+  position: absolute;
+  left: 0;
+  right: auto;
+}
+
+.tabulator.tabulator-rtl .tabulator-col-resize-handle.prev {
+  right: 0;
+  left: auto;
 }
 
 .tabulator-print-fullscreen {

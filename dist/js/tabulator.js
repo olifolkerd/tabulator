@@ -23206,7 +23206,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		function mouseMove(e) {
 			// self.table.columnManager.tempScrollBlock();
 
-			column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
+			if (self.table.rtl) {
+				column.setWidth(self.startWidth - ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
+			} else {
+				column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
+			}
 
 			if (!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight) {
 				column.checkCellHeights();
