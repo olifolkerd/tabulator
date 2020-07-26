@@ -13117,9 +13117,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.branchEl) {
 				config.branchEl = this.branchEl.cloneNode(true);
 				el.insertBefore(config.branchEl, el.firstChild);
-				config.branchEl.style.marginLeft = (config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1) + config.index * this.indent + "px";
+
+				if (this.table.rtl) {
+					config.branchEl.style.marginRight = (config.branchEl.offsetWidth + config.branchEl.style.marginLeft) * (config.index - 1) + config.index * this.indent + "px";
+				} else {
+					config.branchEl.style.marginLeft = (config.branchEl.offsetWidth + config.branchEl.style.marginRight) * (config.index - 1) + config.index * this.indent + "px";
+				}
 			} else {
-				el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + config.index * this.indent + "px";
+
+				if (this.table.rtl) {
+					el.style.paddingRight = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-right')) + config.index * this.indent + "px";
+				} else {
+					el.style.paddingLeft = parseInt(window.getComputedStyle(el, null).getPropertyValue('padding-left')) + config.index * this.indent + "px";
+				}
 			}
 		}
 	};

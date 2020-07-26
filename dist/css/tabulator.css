@@ -866,6 +866,20 @@
   border-left: 1px solid #aaa;
 }
 
+.tabulator.tabulator-rtl .tabulator-row .tabulator-cell .tabulator-data-tree-branch {
+  margin-right: initial;
+  margin-left: 5px;
+  border-bottom-left-radius: initial;
+  border-bottom-right-radius: 1px;
+  border-left: initial;
+  border-right: 2px solid #aaa;
+}
+
+.tabulator.tabulator-rtl .tabulator-row .tabulator-cell .tabulator-data-tree-control {
+  margin-right: initial;
+  margin-left: 5px;
+}
+
 .tabulator.tabulator-rtl .tabulator-col-resize-handle {
   position: absolute;
   left: 0;

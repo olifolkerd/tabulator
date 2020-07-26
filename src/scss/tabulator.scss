@@ -1071,6 +1071,22 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			// 		display: none;
 			// 	}
 			// }
+
+			.tabulator-data-tree-branch{
+				margin-right:initial;
+				margin-left:5px;
+
+				border-bottom-left-radius:initial;
+				border-bottom-right-radius:1px;
+
+				border-left:initial;
+				border-right:2px solid $rowBorderColor;
+			}
+
+			.tabulator-data-tree-control{
+				margin-right:initial;
+				margin-left:5px;
+			}
 		}
 	}
 
