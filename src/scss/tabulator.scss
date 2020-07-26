@@ -1037,6 +1037,26 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 .tabulator.tabulator-rtl{
 	text-align: initial;
+
+	.tabulator-header {
+		.tabulator-col{
+			text-align: initial;
+
+			&.tabulator-sortable{
+				.tabulator-col-title{
+					padding-right:0;
+					padding-left:25px;
+				}
+			}
+
+			.tabulator-col-content{
+				.tabulator-arrow{
+					left:8px;
+					right:initial;
+				}
+			}
+		}
+	}
 }
 
 

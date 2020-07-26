@@ -845,6 +845,20 @@
   text-align: initial;
 }
 
+.tabulator.tabulator-rtl .tabulator-header .tabulator-col {
+  text-align: initial;
+}
+
+.tabulator.tabulator-rtl .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
+  padding-right: 0;
+  padding-left: 25px;
+}
+
+.tabulator.tabulator-rtl .tabulator-header .tabulator-col .tabulator-col-content .tabulator-arrow {
+  left: 8px;
+  right: initial;
+}
+
 .tabulator-print-fullscreen {
   position: absolute;
   top: 0;
