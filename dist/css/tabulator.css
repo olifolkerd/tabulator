@@ -851,6 +851,11 @@
   border-right: initial;
 }
 
+.tabulator.tabulator-rtl .tabulator-header .tabulator-col.tabulator-col-group .tabulator-col-group-cols {
+  margin-right: initial;
+  margin-left: -1px;
+}
+
 .tabulator.tabulator-rtl .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
   padding-right: 0;
   padding-left: 25px;

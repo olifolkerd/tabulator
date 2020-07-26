@@ -1044,6 +1044,13 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			border-left:1px solid $headerBorderColor;
 			border-right:initial;
 
+			&.tabulator-col-group{
+				.tabulator-col-group-cols{
+					margin-right:initial;
+					margin-left:-1px;
+				}
+			}
+
 			&.tabulator-sortable{
 				.tabulator-col-title{
 					padding-right:0;
