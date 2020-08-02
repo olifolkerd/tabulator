@@ -843,6 +843,7 @@
 
 .tabulator.tabulator-rtl {
   text-align: initial;
+  direction: rtl;
 }
 
 .tabulator.tabulator-rtl .tabulator-header .tabulator-col {

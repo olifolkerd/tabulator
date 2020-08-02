@@ -1037,6 +1037,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 .tabulator.tabulator-rtl{
 	text-align: initial;
+	direction: rtl;
 
 	.tabulator-header {
 		.tabulator-col{
