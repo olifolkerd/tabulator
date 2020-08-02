@@ -394,7 +394,6 @@ Tabulator.prototype.initializeElement = function(element){
 
 Tabulator.prototype.rtlCheck = function(){
 	var style = window.getComputedStyle(this.element);
-	console.log("r", this.options.textDirection)
 
 	switch(this.options.textDirection){
 		case"auto":
