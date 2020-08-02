@@ -23,9 +23,10 @@ var Tabulator = function(element, options){
 
 	this.modules = {}; //hold all modules bound to this table
 
-	this.initializeElement(element);
-	this.initializeOptions(options || {});
-	this._create();
+	if(this.initializeElement(element)){
+		this.initializeOptions(options || {});
+		this._create();
+	}
 
 	Tabulator.prototype.comms.register(this); //register table for inderdevice communication
 };
@@ -80,6 +81,8 @@ Tabulator.prototype.defaultOptions = {
 	footerElement:false, //hold footer element
 
 	index:"id", //filed for row index
+
+	textDirection:"auto",
 
 	keybindings:[], //array for keybindings
 
@@ -372,17 +375,11 @@ Tabulator.prototype.initializeElement = function(element){
 
 	if(typeof HTMLElement !== "undefined" && element instanceof HTMLElement){
 		this.element = element;
-
-		this.rtlCheck();
-
 		return true;
 	}else if(typeof element === "string"){
 		this.element = document.querySelector(element);
 
 		if(this.element){
-
-			this.rtlCheck();
-
 			return true;
 		}else{
 			console.error("Tabulator Creation Error - no element found matching selector: ", element);
@@ -397,10 +394,21 @@ Tabulator.prototype.initializeElement = function(element){
 
 Tabulator.prototype.rtlCheck = function(){
 	var style = window.getComputedStyle(this.element);
+	console.log("r", this.options.textDirection)
 
-	if(style.direction === "rtl"){
+	switch(this.options.textDirection){
+		case"auto":
+		if(style.direction !== "rtl"){
+			break;
+		};
+
+		case "rtl":
 		this.element.classList.add("tabulator-rtl");
 		this.rtl = true;
+		break;
+
+		default:
+		this.rtl = false;
 	}
 };
 
@@ -492,6 +500,8 @@ Tabulator.prototype._create = function(){
 	this._mapDepricatedFunctionality();
 
 	this.bindModules();
+
+	this.rtlCheck();
 
 	if(this.element.tagName === "TABLE"){
 		if(this.modExists("htmlTableImport", true)){

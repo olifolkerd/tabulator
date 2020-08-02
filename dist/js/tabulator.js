@@ -7800,11 +7800,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.modules = {}; //hold all modules bound to this table
 
 
-		this.initializeElement(element);
+		if (this.initializeElement(element)) {
 
-		this.initializeOptions(options || {});
+			this.initializeOptions(options || {});
 
-		this._create();
+			this._create();
+		}
 
 		Tabulator.prototype.comms.register(this); //register table for inderdevice communication
 	};
@@ -7889,6 +7890,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		index: "id", //filed for row index
 
+
+		textDirection: "auto",
 
 		keybindings: [], //array for keybindings
 
@@ -8386,16 +8389,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.element = element;
 
-			this.rtlCheck();
-
 			return true;
 		} else if (typeof element === "string") {
 
 			this.element = document.querySelector(element);
 
 			if (this.element) {
-
-				this.rtlCheck();
 
 				return true;
 			} else {
@@ -8416,11 +8415,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var style = window.getComputedStyle(this.element);
 
-		if (style.direction === "rtl") {
+		console.log("r", this.options.textDirection);
 
-			this.element.classList.add("tabulator-rtl");
+		switch (this.options.textDirection) {
 
-			this.rtl = true;
+			case "auto":
+
+				if (style.direction !== "rtl") {
+
+					break;
+				};
+
+			case "rtl":
+
+				this.element.classList.add("tabulator-rtl");
+
+				this.rtl = true;
+
+				break;
+
+			default:
+
+				this.rtl = false;
+
 		}
 	};
 
@@ -8535,6 +8552,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this._mapDepricatedFunctionality();
 
 		this.bindModules();
+
+		this.rtlCheck();
 
 		if (this.element.tagName === "TABLE") {
 
