@@ -8432,6 +8432,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				break;
 
+			case "ltr":
+
+				this.element.classList.add("tabulator-ltr");
+
 			default:
 
 				this.rtl = false;

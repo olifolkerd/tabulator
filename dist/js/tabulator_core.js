@@ -6512,6 +6512,9 @@ Tabulator.prototype.rtlCheck = function () {
 			this.rtl = true;
 			break;
 
+		case "ltr":
+			this.element.classList.add("tabulator-ltr");
+
 		default:
 			this.rtl = false;
 	}
