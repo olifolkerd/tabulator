@@ -8415,8 +8415,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var style = window.getComputedStyle(this.element);
 
-		console.log("r", this.options.textDirection);
-
 		switch (this.options.textDirection) {
 
 			case "auto":

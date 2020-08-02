@@ -1094,6 +1094,90 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 	}
 }
 
+//RTL Styling
+
+.tabulator.tabulator-ltr{
+	direction: ltr;
+}
+
+
+.tabulator.tabulator-rtl{
+	text-align: initial;
+	direction: rtl;
+
+	.tabulator-header {
+		.tabulator-col{
+			text-align: initial;
+			border-left:1px solid $headerBorderColor;
+			border-right:initial;
+
+			&.tabulator-col-group{
+				.tabulator-col-group-cols{
+					margin-right:initial;
+					margin-left:-1px;
+				}
+			}
+
+			&.tabulator-sortable{
+				.tabulator-col-title{
+					padding-right:0;
+					padding-left:25px;
+				}
+			}
+
+			.tabulator-col-content{
+				.tabulator-arrow{
+					left:8px;
+					right:initial;
+				}
+			}
+		}
+	}
+
+	.tabulator-row{
+		.tabulator-cell{
+			border-right:initial;
+			border-left:1px solid $rowBorderColor;
+
+			//hide left resize handle on first column
+			// &:first-child{
+			// 	.tabulator-col-resize-handle.prev{
+			// 		display: none;
+			// 	}
+			// }
+
+			.tabulator-data-tree-branch{
+				margin-right:initial;
+				margin-left:5px;
+
+				border-bottom-left-radius:initial;
+				border-bottom-right-radius:1px;
+
+				border-left:initial;
+				border-right:2px solid $rowBorderColor;
+			}
+
+			.tabulator-data-tree-control{
+				margin-right:initial;
+				margin-left:5px;
+			}
+		}
+	}
+
+	//column resize handles
+	.tabulator-col-resize-handle{
+		position:absolute;
+		left:0;
+		right:auto;
+
+		&.prev{
+			right:0;
+			left:auto;
+		}
+	}
+}
+
+
 // Table print styling
 
 .tabulator-print-fullscreen{

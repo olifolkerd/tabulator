@@ -841,6 +841,10 @@
   font-weight: bold;
 }
 
+.tabulator.tabulator-ltr {
+  direction: ltr;
+}
+
 .tabulator.tabulator-rtl {
   text-align: initial;
   direction: rtl;
