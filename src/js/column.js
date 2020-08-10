@@ -1335,8 +1335,8 @@ Column.prototype.updateDefinition = function(updates){
 				reject(err);
 			});
 		}else{
-			console.warn("Column Update Error - The updateDefintion function is only available on columns, not column groups");
-			reject("Column Update Error - The updateDefintion function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 		}
 	});
 };
