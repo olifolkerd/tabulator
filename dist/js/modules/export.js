@@ -441,7 +441,7 @@ Export.prototype.genereateGroupElement = function (row, setup, styles) {
 	rowEl.classList.add("tabulator-print-table-group");
 	rowEl.classList.add("tabulator-group-level-" + row.indent);
 
-	if (group.component.getVisibility()) {
+	if (group.component.isVisible()) {
 		rowEl.classList.add("tabulator-group-visible");
 	}
 
