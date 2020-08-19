@@ -535,7 +535,7 @@ Edit.prototype.editors = {
 	textarea:function(cell, onRendered, success, cancel, editorParams){
 		var self = this,
 		cellValue = cell.getValue(),
-    vertNav = editorParams.verticalNavigation || "hybrid",
+		vertNav = editorParams.verticalNavigation || "hybrid",
 		value = String(cellValue !== null && typeof cellValue !== "undefined"  ? cellValue : ""),
 		count = (value.match(/(?:\r\n|\r|\n)/g) || []).length + 1,
 		input = document.createElement("textarea"),
@@ -607,8 +607,8 @@ Edit.prototype.editors = {
         	switch(e.keyCode){
         		case 27:
         		cancel();
-            break;
-            
+						break;
+
         		case 38: //up arrow
         		if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart)){
         			e.stopImmediatePropagation();

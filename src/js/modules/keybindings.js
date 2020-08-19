@@ -188,9 +188,9 @@ Keybindings.prototype.actions = {
 	},
 	scrollPageUp:function(e){
 
-    if (this.table.modExists("edit")) {
-      return;
-    }
+		if (this.table.modExists("edit")) {
+			return;
+		}
 
 		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop - rowManager.height,
@@ -210,11 +210,11 @@ Keybindings.prototype.actions = {
 	},
 	scrollPageDown:function(e){
 
-    if (this.table.modExists("edit")) {
-      return;
-    }
+		if (this.table.modExists("edit")) {
+			return;
+		}
 
-    var rowManager = this.table.rowManager,
+		var rowManager = this.table.rowManager,
 		newPos = rowManager.scrollTop + rowManager.height,
 		scrollMax = rowManager.element.scrollHeight;
 
@@ -233,12 +233,12 @@ Keybindings.prototype.actions = {
 	},
 	scrollToStart:function(e){
 
-    if (this.table.modExists("edit")) {
-      return;
-    }
+		if (this.table.modExists("edit")) {
+			return;
+		}
 
 
-    var rowManager = this.table.rowManager;
+		var rowManager = this.table.rowManager;
 
 		e.preventDefault();
 
@@ -250,12 +250,12 @@ Keybindings.prototype.actions = {
 	},
 	scrollToEnd:function(e){
 
-    if (this.table.modExists("edit")) {
-      return;
-    }
+		if (this.table.modExists("edit")) {
+			return;
+		}
 
 
-    var rowManager = this.table.rowManager;
+		var rowManager = this.table.rowManager;
 
 		e.preventDefault();
 
