@@ -673,7 +673,7 @@ Format.prototype.formatters = {
 		return el;
 	},
 
-	rowSelection:function(cell){
+	rowSelection:function(cell, formatterParams, onRendered){
 		var checkbox = document.createElement("input");
 
 		checkbox.type = 'checkbox';
@@ -698,7 +698,7 @@ Format.prototype.formatters = {
 					if(this.table.modules.selectRow.selectedRows.length){
 						this.table.deselectRow();
 					}else {
-						this.table.selectRow();
+						this.table.selectRow(formatterParams.rowRange);
 					}
 				});
 

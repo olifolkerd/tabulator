@@ -684,7 +684,7 @@ Format.prototype.formatters = {
 		return el;
 	},
 
-	rowSelection: function rowSelection(cell) {
+	rowSelection: function rowSelection(cell, formatterParams, onRendered) {
 		var _this = this;
 
 		var checkbox = document.createElement("input");
@@ -711,7 +711,7 @@ Format.prototype.formatters = {
 					if (_this.table.modules.selectRow.selectedRows.length) {
 						_this.table.deselectRow();
 					} else {
-						_this.table.selectRow();
+						_this.table.selectRow(formatterParams.rowRange);
 					}
 				});
 

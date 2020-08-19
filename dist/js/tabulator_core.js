@@ -3691,6 +3691,10 @@ RowManager.prototype.getRows = function (active) {
 			rows = this.getVisibleRows(true);
 			break;
 
+		case "selected":
+			rows = this.table.modules.selectRow.selectedRows;
+			break;
+
 		default:
 			rows = this.rows;
 	}

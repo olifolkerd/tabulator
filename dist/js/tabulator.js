@@ -4600,6 +4600,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				break;
 
+			case "selected":
+
+				rows = this.table.modules.selectRow.selectedRows;
+
+				break;
+
 			default:
 
 				rows = this.rows;
@@ -18208,7 +18214,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return el;
 		},
 
-		rowSelection: function rowSelection(cell) {
+		rowSelection: function rowSelection(cell, formatterParams, onRendered) {
 			var _this56 = this;
 
 			var checkbox = document.createElement("input");
@@ -18235,7 +18241,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						if (_this56.table.modules.selectRow.selectedRows.length) {
 							_this56.table.deselectRow();
 						} else {
-							_this56.table.selectRow();
+							_this56.table.selectRow(formatterParams.rowRange);
 						}
 					});
 
