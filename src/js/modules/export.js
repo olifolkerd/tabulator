@@ -549,13 +549,7 @@ Export.prototype.genereateRowElement = function(row, setup, styles){
 			}
 
 			if(setup.rowFormatter && this.config.formatCells !== false){
-				var rowComponent = row.getComponent();
-
-				rowComponent.getElement = function(){
-					return rowEl;
-				};
-
-				setup.rowFormatter(rowComponent);
+				setup.rowFormatter(row.component);
 			}
 		}
 	});

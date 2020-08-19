@@ -16667,13 +16667,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (setup.rowFormatter && _this53.config.formatCells !== false) {
-					var rowComponent = row.getComponent();
-
-					rowComponent.getElement = function () {
-						return rowEl;
-					};
-
-					setup.rowFormatter(rowComponent);
+					setup.rowFormatter(row.component);
 				}
 			}
 		});
