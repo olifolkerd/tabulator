@@ -607,7 +607,7 @@ Cell.prototype.setValueActual = function(value){
 	this._generateTooltip();
 
 	//set resizable handles
-	if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
+	if(this.table.options.resizableColumns && this.table.modExists("resizeColumns") && this.row.type === "row"){
 		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
