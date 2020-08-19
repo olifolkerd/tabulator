@@ -66,10 +66,10 @@ Export.prototype.rowLookup = function(range){
 
 			case "active":
 			default:
-			if(this.table.options.dataTree && this.config.dataTree !== false){
-				rows = this.table.rowManager.getDisplayRows();
+			if(this.table.options.pagination){
+				rows = this.table.rowManager.getDisplayRows(this.table.rowManager.displayRows.length - 2);
 			}else{
-				rows = this.table.rowManager.activeRows;
+				rows = this.table.rowManager.getDisplayRows();
 			}
 		}
 	}
