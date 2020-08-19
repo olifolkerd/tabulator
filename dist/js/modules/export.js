@@ -71,7 +71,11 @@ Export.prototype.rowLookup = function (range) {
 
 			case "active":
 			default:
-				rows = this.table.rowManager.getDisplayRows();
+				if (this.table.options.dataTree && this.config.dataTree !== false) {
+					rows = this.table.rowManager.getDisplayRows();
+				} else {
+					rows = this.table.rowManager.activeRows;
+				}
 		}
 	}
 
