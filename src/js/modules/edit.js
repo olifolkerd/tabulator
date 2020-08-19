@@ -609,16 +609,6 @@ Edit.prototype.editors = {
         		cancel();
             break;
             
-            case 36: // home
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            break;
-
-            case 35: // end
-            e.stopImmediatePropagation();
-            e.stopPropagation();
-            break;
-
         		case 38: //up arrow
         		if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart)){
         			e.stopImmediatePropagation();
