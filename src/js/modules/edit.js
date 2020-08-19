@@ -607,7 +607,7 @@ Edit.prototype.editors = {
         	switch(e.keyCode){
         		case 27:
         		cancel();
-						break;
+        		break;
 
         		case 38: //up arrow
         		if(vertNav == "editor" || (vertNav == "hybrid" && input.selectionStart)){
