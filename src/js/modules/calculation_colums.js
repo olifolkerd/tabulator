@@ -131,7 +131,7 @@ ColumnCalcs.prototype.scrollHorizontal = function(left){
 	var hozAdjust = 0,
 	scrollWidth = this.table.columnManager.getElement().scrollWidth - this.table.element.clientWidth;
 
-	if(this.botInitialized){
+	if(this.botInitialized && this.botRow){
 		this.botRow.getElement().style.marginLeft = (-left) + "px";
 	}
 };
