@@ -6689,7 +6689,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	CellComponent.prototype.clearValidation = function () {
 
-		if (self.table.modExists("validate", true)) {
+		if (this._cell.table.modExists("validate", true)) {
 
 			this._cell.table.modules.validate.clearValidation(this._cell);
 		}
