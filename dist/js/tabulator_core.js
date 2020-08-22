@@ -4975,15 +4975,13 @@ Row.prototype.updateData = function (updatedData) {
 };
 
 Row.prototype.getData = function (transform) {
-	var self = this;
-
 	if (transform) {
-		if (self.table.modExists("accessor")) {
-			return self.table.modules.accessor.transformRow(self.data, transform);
+		if (this.table.modExists("accessor")) {
+			return this.table.modules.accessor.transformRow(this, transform);
 		}
-	} else {
-		return this.data;
 	}
+
+	return this.data;
 };
 
 Row.prototype.getCell = function (column) {

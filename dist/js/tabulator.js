@@ -6285,18 +6285,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Row.prototype.getData = function (transform) {
 
-		var self = this;
-
 		if (transform) {
 
-			if (self.table.modExists("accessor")) {
+			if (this.table.modExists("accessor")) {
 
-				return self.table.modules.accessor.transformRow(self.data, transform);
+				return this.table.modules.accessor.transformRow(this, transform);
 			}
-		} else {
-
-			return this.data;
 		}
+
+		return this.data;
 	};
 
 	Row.prototype.getCell = function (column) {
@@ -11682,15 +11679,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	//apply accessor to row
-	Accessor.prototype.transformRow = function (dataIn, type) {
-		var self = this,
-		    key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1));
+	Accessor.prototype.transformRow = function (row, type) {
+		var key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1)),
+		    rowComponent = row.getComponent();
 
 		//clone data object with deep copy to isolate internal data from returned result
-		var data = Tabulator.prototype.helpers.deepClone(dataIn || {});
+		var data = Tabulator.prototype.helpers.deepClone(row.data || {});
 
-		self.table.columnManager.traverse(function (column) {
-			var value, accessor, params, component;
+		this.table.columnManager.traverse(function (column) {
+			var value, accessor, params, colCompnent;
 
 			if (column.modules.accessor) {
 
@@ -11700,9 +11697,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					value = column.getFieldValue(data);
 
 					if (value != "undefined") {
-						component = column.getComponent();
-						params = typeof accessor.params === "function" ? accessor.params(value, data, type, component) : accessor.params;
-						column.setFieldValue(data, accessor.accessor(value, data, type, params, component));
+						colCompnent = column.getComponent();
+						params = typeof accessor.params === "function" ? accessor.params(value, data, type, colCompnent, rowComponent) : accessor.params;
+						column.setFieldValue(data, accessor.accessor(value, data, type, params, colCompnent, rowComponent));
 					}
 				}
 			}
