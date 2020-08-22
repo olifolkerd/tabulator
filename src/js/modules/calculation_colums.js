@@ -11,6 +11,10 @@ CalcComponent.prototype.getElement = function(){
 	return this._row.getElement();
 };
 
+RowComponent.prototype.getTable = function(){
+	return this._row.table;
+};
+
 CalcComponent.prototype.getCells = function(){
 	var cells = [];
 
@@ -29,11 +33,6 @@ CalcComponent.prototype.getCell = function(column){
 CalcComponent.prototype._getSelf = function(){
 	return this._row;
 };
-
-CalcComponent.prototype.recalc = function(){
-	return this._row.reinitialize();
-};
-
 
 
 var ColumnCalcs = function(table){

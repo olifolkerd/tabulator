@@ -12187,6 +12187,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._row.getElement();
 	};
 
+	RowComponent.prototype.getTable = function () {
+		return this._row.table;
+	};
+
 	CalcComponent.prototype.getCells = function () {
 		var cells = [];
 
@@ -12204,10 +12208,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	CalcComponent.prototype._getSelf = function () {
 		return this._row;
-	};
-
-	CalcComponent.prototype.recalc = function () {
-		return this._row.reinitialize();
 	};
 
 	var ColumnCalcs = function ColumnCalcs(table) {
