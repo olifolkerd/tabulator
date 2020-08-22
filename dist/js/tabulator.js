@@ -8657,6 +8657,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//set localization
 
+
+		mod.localize.initialize();
+
 		if (options.headerFilterPlaceholder !== false) {
 
 			mod.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
@@ -10776,7 +10779,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		deepClone: function deepClone(obj) {
 
-			var clone = Array.isArray(obj) ? [] : {};
+			var clone = Object.assign(Array.isArray(obj) ? [] : {}, obj);
 
 			for (var i in obj) {
 
@@ -10789,9 +10792,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						clone[i] = this.deepClone(obj[i]);
 					}
-				} else {
-
-					clone[i] = obj[i];
 				}
 			}
 
@@ -11284,20 +11284,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.lang = false; //current language
 
 		this.bindings = {}; //update events to call when locale is changed
+
+		this.langList = {};
+	};
+
+	Localize.prototype.initialize = function () {
+
+		this.langList = Tabulator.prototype.helpers.deepClone(this.langs);
 	};
 
 	//set header placehoder
 
 	Localize.prototype.setHeaderFilterPlaceholder = function (placeholder) {
 
-		this.langs.default.headerFilters.default = placeholder;
+		this.langList.default.headerFilters.default = placeholder;
 	};
 
 	//set header filter placeholder by column
 
 	Localize.prototype.setHeaderFilterColumnPlaceholder = function (column, placeholder) {
 
-		this.langs.default.headerFilters.columns[column] = placeholder;
+		this.langList.default.headerFilters.columns[column] = placeholder;
 
 		if (this.lang && !this.lang.headerFilters.columns[column]) {
 
@@ -11309,12 +11316,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Localize.prototype.installLang = function (locale, lang) {
 
-		if (this.langs[locale]) {
+		if (this.langList[locale]) {
 
-			this._setLangProp(this.langs[locale], lang);
+			this._setLangProp(this.langList[locale], lang);
 		} else {
 
-			this.langs[locale] = lang;
+			this.langList[locale] = lang;
 		}
 	};
 
@@ -11374,11 +11381,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//if locale is not set, check for matching top level locale else use default
 
-			if (!self.langs[desiredLocale]) {
+			if (!self.langList[desiredLocale]) {
 
 				var prefix = desiredLocale.split("-")[0];
 
-				if (self.langs[prefix]) {
+				if (self.langList[prefix]) {
 
 					console.warn("Localization Error - Exact matching locale not found, using closest match: ", desiredLocale, prefix);
 
@@ -11396,11 +11403,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//load default lang template
 
-		self.lang = Tabulator.prototype.helpers.deepClone(self.langs.default || {});
+		self.lang = Tabulator.prototype.helpers.deepClone(self.langList.default || {});
 
 		if (desiredLocale != "default") {
 
-			traverseLang(self.langs[desiredLocale], self.lang);
+			traverseLang(self.langList[desiredLocale], self.lang);
 		}
 
 		self.table.options.localized.call(self.table, self.locale, self.lang);
@@ -11419,7 +11426,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Localize.prototype.getLang = function (locale) {
 
-		return locale ? this.langs[locale] : this.lang;
+		return locale ? this.langList[locale] : this.lang;
 	};
 
 	//get text for current locale

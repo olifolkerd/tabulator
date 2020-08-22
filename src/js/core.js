@@ -575,6 +575,9 @@ Tabulator.prototype._buildElement = function(){
 	}
 
 	//set localization
+
+	mod.localize.initialize();
+
 	if(options.headerFilterPlaceholder !== false){
 		mod.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
 	}

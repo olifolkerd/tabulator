@@ -3,16 +3,21 @@ var Localize = function(table){
 	this.locale = "default"; //current locale
 	this.lang = false; //current language
 	this.bindings = {}; //update events to call when locale is changed
+	this.langList = {};
+};
+
+Localize.prototype.initialize = function(){
+	this.langList = Tabulator.prototype.helpers.deepClone(this.langs);
 };
 
 //set header placehoder
 Localize.prototype.setHeaderFilterPlaceholder = function(placeholder){
-	this.langs.default.headerFilters.default = placeholder;
+	this.langList.default.headerFilters.default = placeholder;
 };
 
 //set header filter placeholder by column
 Localize.prototype.setHeaderFilterColumnPlaceholder = function(column, placeholder){
-	this.langs.default.headerFilters.columns[column] = placeholder;
+	this.langList.default.headerFilters.columns[column] = placeholder;
 
 	if(this.lang && !this.lang.headerFilters.columns[column]){
 		this.lang.headerFilters.columns[column] = placeholder;
@@ -21,10 +26,10 @@ Localize.prototype.setHeaderFilterColumnPlaceholder = function(column, placehold
 
 //setup a lang description object
 Localize.prototype.installLang = function(locale, lang){
-	if(this.langs[locale]){
-		this._setLangProp(this.langs[locale], lang);
+	if(this.langList[locale]){
+		this._setLangProp(this.langList[locale], lang);
 	}else{
-		this.langs[locale] = lang;
+		this.langList[locale] = lang;
 	}
 };
 
@@ -48,7 +53,6 @@ Localize.prototype.setLocale = function(desiredLocale){
 	//fill in any matching languge values
 	function traverseLang(trans, path){
 		for(var prop in trans){
-
 			if(typeof trans[prop] == "object"){
 				if(!path[prop]){
 					path[prop] = {};
@@ -69,10 +73,10 @@ Localize.prototype.setLocale = function(desiredLocale){
 	if(desiredLocale){
 
 		//if locale is not set, check for matching top level locale else use default
-		if(!self.langs[desiredLocale]){
+		if(!self.langList[desiredLocale]){
 			let prefix = desiredLocale.split("-")[0];
 
-			if(self.langs[prefix]){
+			if(self.langList[prefix]){
 				console.warn("Localization Error - Exact matching locale not found, using closest match: ", desiredLocale, prefix);
 				desiredLocale = prefix;
 			}else{
@@ -85,10 +89,10 @@ Localize.prototype.setLocale = function(desiredLocale){
 	self.locale = desiredLocale;
 
 	//load default lang template
-	self.lang = Tabulator.prototype.helpers.deepClone(self.langs.default || {});
+	self.lang = Tabulator.prototype.helpers.deepClone(self.langList.default || {});
 
 	if(desiredLocale != "default"){
-		traverseLang(self.langs[desiredLocale], self.lang);
+		traverseLang(self.langList[desiredLocale], self.lang);
 	}
 
 	self.table.options.localized.call(self.table, self.locale, self.lang);
@@ -103,7 +107,7 @@ Localize.prototype.getLocale = function(locale){
 
 //get lang object for given local or current if none provided
 Localize.prototype.getLang = function(locale){
-	return locale ? this.langs[locale] : this.lang;
+	return locale ? this.langList[locale] : this.lang;
 };
 
 //get text for current locale
