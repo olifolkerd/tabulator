@@ -766,7 +766,6 @@ Row.prototype.delete = function(){
 
 		this.deleteActual();
 
-
 		resolve();
 	});
 };
@@ -797,6 +796,7 @@ Row.prototype.deleteActual = function(blockRedraw){
 
 	this.initialized = false;
 	this.heightInitialized = false;
+	this.element = false;
 
 	if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
 		this.table.modules.dataTree.rowDelete(this);

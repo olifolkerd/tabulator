@@ -2364,7 +2364,14 @@ Column.prototype.delete = function () {
 			_this7.cells[0].delete();
 		}
 
-		_this7.element.parentNode.removeChild(_this7.element);
+		if (_this7.element.parentNode) {
+			_this7.element.parentNode.removeChild(_this7.element);
+		}
+
+		_this7.element = false;
+		_this7.contentElement = false;
+		_this7.titleElement = false;
+		_this7.groupElement = false;
 
 		_this7.table.columnManager.deregisterColumn(_this7);
 
@@ -5147,6 +5154,7 @@ Row.prototype.deleteActual = function (blockRedraw) {
 
 	this.initialized = false;
 	this.heightInitialized = false;
+	this.element = false;
 
 	if (this.table.options.dataTree && this.table.modExists("dataTree", true)) {
 		this.table.modules.dataTree.rowDelete(this);

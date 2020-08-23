@@ -1197,7 +1197,14 @@ Column.prototype.delete = function(){
 			this.cells[0].delete();
 		}
 
-		this.element.parentNode.removeChild(this.element);
+		if(this.element.parentNode){
+			this.element.parentNode.removeChild(this.element);
+		}
+
+		this.element = false;
+		this.contentElement = false;
+		this.titleElement = false;
+		this.groupElement = false;
 
 		this.table.columnManager.deregisterColumn(this);
 
