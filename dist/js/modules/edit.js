@@ -215,7 +215,6 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 
 			if (valid === true || self.table.options.validationMode === "highlight") {
 				self.clearEditor();
-				cell.setValue(value, true);
 
 				if (!cell.modules.edit) {
 					cell.modules.edit = {};
@@ -226,6 +225,8 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				if (self.editedCells.indexOf(cell) == -1) {
 					self.editedCells.push(cell);
 				}
+
+				cell.setValue(value, true);
 
 				if (self.table.options.dataTree && self.table.modExists("dataTree")) {
 					self.table.modules.dataTree.checkForRestyle(cell);
