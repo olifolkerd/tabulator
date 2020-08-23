@@ -16119,6 +16119,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			input.checked = value === true || value === "true" || value === "True" || value === 1;
 
+			onRendered(function () {
+				input.focus();
+			});
+
 			function setValue(blur) {
 				if (tristate) {
 					if (!blur) {

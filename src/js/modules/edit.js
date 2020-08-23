@@ -2125,6 +2125,10 @@ Edit.prototype.editors = {
 
 		input.checked = value === true || value === "true" || value === "True" || value === 1;
 
+		onRendered(function(){
+			input.focus();
+		});
+
 		function setValue(blur){
 			if(tristate){
 				if(!blur){
