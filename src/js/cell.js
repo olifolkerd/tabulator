@@ -711,6 +711,10 @@ Cell.prototype.delete = function(){
 		this.table.modules.edit.clearEdited(this);
 	}
 
+	if(this.table.options.history){
+		this.table.modules.history.clearComponentHistory(this);
+	}
+
 	this.element = false;
 	this.column.deleteCell(this);
 	this.row.deleteCell(this);

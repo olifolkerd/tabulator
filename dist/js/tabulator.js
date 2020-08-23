@@ -7521,6 +7521,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.edit.clearEdited(this);
 		}
 
+		if (this.table.options.history) {
+
+			this.table.modules.history.clearComponentHistory(this);
+		}
+
 		this.element = false;
 
 		this.column.deleteCell(this);
@@ -19816,6 +19821,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	History.prototype.getHistoryRedoSize = function () {
 		return this.history.length - (this.index + 1);
+	};
+
+	History.prototype.clearComponentHistory = function (component) {
+		var index = this.history.findIndex(function (item) {
+			return item.component === component;
+		});
+
+		if (index > -1) {
+			this.history.splice(index, 1);
+			if (index <= this.index) {
+				this.index--;
+			}
+
+			this.clearComponentHistory(component);
+		}
 	};
 
 	History.prototype.undo = function () {
