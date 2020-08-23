@@ -1344,6 +1344,7 @@ var Column = function Column(def, parent) {
 	this.cells = []; //cells bound to this column
 	this.element = this.createElement(); //column header element
 	this.contentElement = false;
+	this.titleHolderElement = false;
 	this.titleElement = false;
 	this.groupElement = this.createGroupElement(); //column group holder element
 	this.isGroup = false;
@@ -1745,7 +1746,7 @@ Column.prototype._buildColumnHeader = function () {
 
 	//set column sorter
 	if (table.modExists("sort")) {
-		table.modules.sort.initializeColumn(self, self.contentElement);
+		table.modules.sort.initializeColumn(self, self.titleHolderElement);
 	}
 
 	//set column header context menu
@@ -1824,9 +1825,14 @@ Column.prototype._buildColumnHeaderContent = function () {
 	var contentElement = document.createElement("div");
 	contentElement.classList.add("tabulator-col-content");
 
+	this.titleHolderElement = document.createElement("div");
+	this.titleHolderElement.classList.add("tabulator-col-title-holder");
+
+	contentElement.appendChild(this.titleHolderElement);
+
 	this.titleElement = this._buildColumnHeaderTitle();
 
-	contentElement.appendChild(this.titleElement);
+	this.titleHolderElement.appendChild(this.titleElement);
 
 	return contentElement;
 };
@@ -6194,6 +6200,7 @@ Tabulator.prototype.defaultOptions = {
 
 	headerSort: true, //set default global header sort
 	headerSortTristate: false, //set default tristate header sorting
+	headerSortElement: "<div class='tabulator-arrow'></div>", //header sort element
 
 	footerElement: false, //hold footer element
 

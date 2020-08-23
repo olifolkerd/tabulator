@@ -77,6 +77,7 @@ Tabulator.prototype.defaultOptions = {
 
 	headerSort:true, //set default global header sort
 	headerSortTristate:false, //set default tristate header sorting
+	headerSortElement:"<div class='tabulator-arrow'></div>", //header sort element
 
 	footerElement:false, //hold footer element
 

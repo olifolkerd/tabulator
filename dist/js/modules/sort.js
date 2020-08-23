@@ -43,9 +43,18 @@ Sort.prototype.initializeColumn = function (column, content) {
 		colEl.classList.add("tabulator-sortable");
 
 		arrowEl = document.createElement("div");
-		arrowEl.classList.add("tabulator-arrow");
+		arrowEl.classList.add("tabulator-col-sorter");
+
+		if (_typeof(this.table.options.headerSortElement) == "object") {
+			arrowEl.appendChild(this.table.options.headerSortElement);
+		} else {
+			arrowEl.innerHTML = this.table.options.headerSortElement;
+		}
+
 		//create sorter arrow
 		content.appendChild(arrowEl);
+
+		column.modules.sort.element = arrowEl;
 
 		//sort on click
 		colEl.addEventListener("click", function (e) {

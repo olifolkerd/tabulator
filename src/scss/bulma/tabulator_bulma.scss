@@ -130,6 +130,11 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 					}
 				}
 
+				//hold title and sort arrow
+				.tabulator-col-title-holder{
+					position: relative;
+				}
+
 				//hold title of column header
 				.tabulator-col-title{
 					box-sizing:border-box;
@@ -154,16 +159,22 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 				}
 
 				//column sorter arrow
-				.tabulator-arrow{
-					display: inline-block;
+				.tabulator-col-sorter{
+					display: flex;
+					align-items: center;
+
 					position: absolute;
-					top:15px;
-					right:8px;
-					width: 0;
-					height: 0;
-					border-left: 6px solid transparent;
-					border-right: 6px solid transparent;
-					border-bottom: 6px solid $sortArrowInactive;
+					top:0;
+					bottom:0;
+					right:0px;
+
+					.tabulator-arrow{
+						width: 0;
+						height: 0;
+						border-left: 6px solid transparent;
+						border-right: 6px solid transparent;
+						border-bottom: 6px solid $sortArrowInactive;
+					}
 				}
 
 			}
@@ -229,23 +240,37 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 				}
 
 				&[aria-sort="none"]{
-					.tabulator-col-content .tabulator-arrow{
-						border-top: none;
-						border-bottom: 6px solid $sortArrowInactive;
+					.tabulator-col-content .tabulator-col-sorter{
+						color: $sortArrowInactive;
+
+						.tabulator-arrow{
+							border-top: none;
+							border-bottom: 6px solid $sortArrowInactive;
+						}
 					}
 				}
 
 				&[aria-sort="asc"]{
-					.tabulator-col-content .tabulator-arrow{
-						border-top: none;
-						border-bottom: 6px solid $sortArrowActive;
+					.tabulator-col-content .tabulator-col-sorter{
+						color: $sortArrowActive;
+
+						.tabulator-arrow{
+							border-top: none;
+							border-bottom: 6px solid $sortArrowActive;
+
+						}
 					}
 				}
 
 				&[aria-sort="desc"]{
-					.tabulator-col-content .tabulator-arrow{
-						border-top: 6px solid $sortArrowActive;
-						border-bottom: none;
+					.tabulator-col-content .tabulator-col-sorter{
+						color: $sortArrowActive;
+
+						.tabulator-arrow{
+							border-bottom: none;
+							border-top: 6px solid $sortArrowActive;
+							color: $sortArrowActive;
+						}
 					}
 				}
 			}
