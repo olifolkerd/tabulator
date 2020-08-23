@@ -109,6 +109,8 @@ Tabulator.prototype.defaultOptions = {
 	downloadRowRange:"active", //restrict download to active rows only
 
 	dataTree:false, //enable data tree
+	dataTreeFilter:true, //filter child rows
+	dataTreeSort:true, //sort child rows
 	dataTreeElementColumn:false,
 	dataTreeBranchElement: true, //show data tree branch element
 	dataTreeChildIndent:9, //data tree child indent in px

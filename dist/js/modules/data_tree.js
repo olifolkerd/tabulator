@@ -240,13 +240,13 @@ DataTree.prototype.getChildren = function (row) {
 			config.children = this.generateChildren(row);
 		}
 
-		if (this.table.modExists("filter")) {
+		if (this.table.modExists("filter") && this.table.options.dataTreeFilter) {
 			children = this.table.modules.filter.filter(config.children);
 		} else {
 			children = config.children;
 		}
 
-		if (this.table.modExists("sort")) {
+		if (this.table.modExists("sort") && this.table.options.dataTreeSort) {
 			this.table.modules.sort.sort(children);
 		}
 
@@ -343,7 +343,7 @@ DataTree.prototype.getFilteredTreeChildren = function (row) {
 			config.children = this.generateChildren(row);
 		}
 
-		if (this.table.modExists("filter")) {
+		if (this.table.modExists("filter") && this.table.options.dataTreeFilter) {
 			children = this.table.modules.filter.filter(config.children);
 		} else {
 			children = config.children;

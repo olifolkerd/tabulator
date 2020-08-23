@@ -7960,6 +7960,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		dataTree: false, //enable data tree
 
+		dataTreeFilter: true, //filter child rows
+
+		dataTreeSort: true, //sort child rows
+
 		dataTreeElementColumn: false,
 
 		dataTreeBranchElement: true, //show data tree branch element
@@ -13311,13 +13315,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				config.children = this.generateChildren(row);
 			}
 
-			if (this.table.modExists("filter")) {
+			if (this.table.modExists("filter") && this.table.options.dataTreeFilter) {
 				children = this.table.modules.filter.filter(config.children);
 			} else {
 				children = config.children;
 			}
 
-			if (this.table.modExists("sort")) {
+			if (this.table.modExists("sort") && this.table.options.dataTreeSort) {
 				this.table.modules.sort.sort(children);
 			}
 
@@ -13414,7 +13418,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				config.children = this.generateChildren(row);
 			}
 
-			if (this.table.modExists("filter")) {
+			if (this.table.modExists("filter") && this.table.options.dataTreeFilter) {
 				children = this.table.modules.filter.filter(config.children);
 			} else {
 				children = config.children;
