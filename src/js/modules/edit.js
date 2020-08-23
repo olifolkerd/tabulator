@@ -126,7 +126,11 @@ Edit.prototype.bindEditor = function(cell){
 	});
 
 	element.addEventListener("mousedown", function(e){
-		self.mouseClick = true;
+		if (e.button === 2) {
+			e.preventDefault();
+		}else{
+			self.mouseClick = true;
+		}
 	});
 
 	element.addEventListener("focus", function(e){
