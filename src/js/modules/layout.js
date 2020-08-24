@@ -69,24 +69,24 @@ Layout.prototype.modes = {
 		lastCol = false,
 		flexibleColumns = [];
 
-		columns.forEach(function (column) {
+		columns.forEach(function (column){
 			column.reinitializeWidth();
 
-			if (this.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible) {
-				if (!column.widthFixed) {
+			if(this.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible){
+				if(!column.widthFixed){
 					flexibleColumns.push(column);
 				}
 				lastCol = column;
 			}
 
-			if (column.visible) {
+			if(column.visible){
 				colsWidth += column.getWidth();
 			}
 		});
 
-		if (lastCol) {
+		if(lastCol){
 			gap = tableWidth - colsWidth + lastCol.getWidth();
-			if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
 				lastCol.setWidth(0);
 				this.table.modules.responsiveLayout.update();
 			}
@@ -97,8 +97,8 @@ Layout.prototype.modes = {
 					column.setWidth(column.getWidth() + extraWidth)
 				});
 			}
-		} else {
-			if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
+		}else{
+			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
 				this.table.modules.responsiveLayout.update();
 			}
 		}
