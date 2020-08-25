@@ -61,8 +61,49 @@ Layout.prototype.modes = {
 		}
 	},
 
-	//resize columns to fit data the contain and stretch the flexible columns to fill table
+	//resize columns to fit data the contain and stretch last column to fill table
 	"fitDataStretch": function(columns){
+		var colsWidth = 0,
+		tableWidth = this.table.rowManager.element.clientWidth,
+		gap = 0,
+		lastCol = false;
+
+		columns.forEach((column, i) => {
+			if(!column.widthFixed){
+				column.reinitializeWidth();
+			}
+
+			if(this.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible){
+				lastCol = column;
+			}
+
+			if(column.visible){
+				colsWidth += column.getWidth();
+			}
+		});
+
+		if(lastCol){
+			gap = tableWidth - colsWidth + lastCol.getWidth();
+
+			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+				lastCol.setWidth(0);
+				this.table.modules.responsiveLayout.update();
+			}
+
+			if(gap > 0){
+				lastCol.setWidth(gap);
+			}else{
+				lastCol.reinitializeWidth();
+			}
+		}else{
+			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+				this.table.modules.responsiveLayout.update();
+			}
+		}
+	},
+
+	//resize columns to fit data they contain and stretch the flexible columns to fill any remaining space
+	"fitDataColumns": function(columns){
 		var colsWidth = 0,
 		tableWidth = this.table.rowManager.element.clientWidth,
 		gap = 0,
@@ -93,8 +134,15 @@ Layout.prototype.modes = {
 
 			if(gap > lastCol.getWidth() && flexibleColumns.length > 0){
 				var extraWidth = (gap - lastCol.getWidth()) / flexibleColumns.length;
+				var roundingError = 0;
 				flexibleColumns.forEach(function (column) {
-					column.setWidth(column.getWidth() + extraWidth)
+					if(lastCol === column){
+						column.setWidth(column.getWidth() + extraWidth + Math.floor(roundingError));
+					}else{
+						var newWidth = column.getWidth() + extraWidth;
+						roundingError += newWidth % 1;
+						column.setWidth(Math.floor(newWidth));
+					}
 				});
 			}
 		}else{
