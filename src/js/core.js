@@ -5,6 +5,7 @@
 /*=include column_manager.js */
 /*=include column.js */
 /*=include row_manager.js */
+/*=include vdom_hoz.js */
 /*=include row.js */
 /*=include cell.js */
 /*=include footer_manager.js */
@@ -16,6 +17,9 @@ var Tabulator = function(element, options){
 	this.columnManager = null; // hold Column Manager
 	this.rowManager = null; //hold Row Manager
 	this.footerManager = null; //holder Footer Manager
+	this.vdomHoz  = null; //holder horizontal virtual dom
+
+
 	this.browser = ""; //hold current browser type
 	this.browserSlow = false; //handle reduced functionality for slower browsers
 	this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
@@ -154,6 +158,7 @@ Tabulator.prototype.defaultOptions = {
 
 	virtualDom:true, //enable DOM virtualization
     virtualDomBuffer:0, // set virtual DOM buffer size
+	virtualDomHoz:false, //enable horizontal DOM virtualization
 
     persistentLayout:false, //DEPRICATED - REMOVE in 5.0
     persistentSort:false, //DEPRICATED - REMOVE in 5.0
@@ -520,6 +525,11 @@ Tabulator.prototype._create = function(){
 
 	this.columnManager.setRowManager(this.rowManager);
 	this.rowManager.setColumnManager(this.columnManager);
+
+	if(this.options.virtualDomHoz){
+		this.vdomHoz = new VDomHoz(this);
+	}
+
 
 	this._buildElement();
 

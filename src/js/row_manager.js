@@ -311,6 +311,10 @@ RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 			}
 			this.resetScroll();
 			this._setDataActual(data);
+
+			if(this.table.options.virtualDomHoz){
+				this.table.vdomHoz.reinitialize();
+			}
 		}
 
 		resolve();
