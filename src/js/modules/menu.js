@@ -11,7 +11,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 
 	if(column.definition.headerContextMenu){
 		column.getElement().addEventListener("contextmenu", (e) => {
-			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent()) : column.definition.headerContextMenu;
+			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent(), e) : column.definition.headerContextMenu;
 
 			e.preventDefault();
 
@@ -26,7 +26,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 		headerMenuEl.innerHTML = "&vellip;";
 
 		headerMenuEl.addEventListener("click", (e) => {
-			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent()) : column.definition.headerMenu;
+			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent(), e) : column.definition.headerMenu;
 			e.stopPropagation();
 			e.preventDefault();
 
@@ -39,7 +39,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 
 Menu.prototype.initializeCell = function(cell){
 	cell.getElement().addEventListener("contextmenu", (e) => {
-		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
+		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent(), e) : cell.column.definition.contextMenu;
 
 		if(menu){
 			e.stopImmediatePropagation();
@@ -51,7 +51,7 @@ Menu.prototype.initializeCell = function(cell){
 
 Menu.prototype.initializeRow = function(row){
 	row.getElement().addEventListener("contextmenu", (e) => {
-		var menu = typeof this.table.options.rowContextMenu == "function" ? this.table.options.rowContextMenu(row.getComponent()) : this.table.options.rowContextMenu;
+		var menu = typeof this.table.options.rowContextMenu == "function" ? this.table.options.rowContextMenu(row.getComponent(), e) : this.table.options.rowContextMenu;
 
 		this.loadMenu(e, row, menu);
 	});
@@ -59,7 +59,7 @@ Menu.prototype.initializeRow = function(row){
 
 Menu.prototype.initializeGroup = function (group){
 	group.getElement().addEventListener("contextmenu", (e) => {
-		var menu = typeof this.table.options.groupContextMenu == "function" ? this.table.options.groupContextMenu(group.getComponent()) : this.table.options.groupContextMenu;
+		var menu = typeof this.table.options.groupContextMenu == "function" ? this.table.options.groupContextMenu(group.getComponent(), e) : this.table.options.groupContextMenu;
 
 		this.loadMenu(e, group, menu);
 	});
