@@ -361,13 +361,11 @@ Row.prototype.generateCells = function(){
 
 //functions to setup on first render
 Row.prototype.initialize = function(force){
-	var self = this;
+	if(!this.initialized || force){
 
-	if(!self.initialized || force){
+		this.deleteCells();
 
-		self.deleteCells();
-
-		while(self.element.firstChild) self.element.removeChild(self.element.firstChild);
+		while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
 		//handle frozen cells
 		if(this.table.modExists("frozenColumns")){
@@ -376,35 +374,43 @@ Row.prototype.initialize = function(force){
 
 		this.generateCells();
 
-		self.cells.forEach(function(cell){
-			self.element.appendChild(cell.getElement());
-			cell.cellRendered();
-		});
+		if(this.table.options.virtualDomHoz && this.table.vdomHoz.initialized){
+			this.table.vdomHoz.initializeRow(this);
+		}else{
+			this.cells.forEach((cell) => {
+				this.element.appendChild(cell.getElement());
+				cell.cellRendered();
+			});
+		}
 
 		if(force){
-			self.normalizeHeight();
+			this.normalizeHeight();
 		}
 
 		//setup movable rows
-		if(self.table.options.dataTree && self.table.modExists("dataTree")){
-			self.table.modules.dataTree.layoutRow(this);
+		if(this.table.options.dataTree && this.table.modExists("dataTree")){
+			this.table.modules.dataTree.layoutRow(this);
 		}
 
 		//setup column colapse container
-		if(self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")){
-			self.table.modules.responsiveLayout.layoutRow(this);
+		if(this.table.options.responsiveLayout === "collapse" && this.table.modExists("responsiveLayout")){
+			this.table.modules.responsiveLayout.layoutRow(this);
 		}
 
-		if(self.table.options.rowFormatter){
-			self.table.options.rowFormatter(self.getComponent());
+		if(this.table.options.rowFormatter){
+			this.table.options.rowFormatter(this.getComponent());
 		}
 
 		//set resizable handles
-		if(self.table.options.resizableRows && self.table.modExists("resizeRows")){
-			self.table.modules.resizeRows.initializeRow(self);
+		if(this.table.options.resizableRows && this.table.modExists("resizeRows")){
+			this.table.modules.resizeRows.initializeRow(this);
 		}
 
-		self.initialized = true;
+		this.initialized = true;
+	}else{
+		if(this.table.options.virtualDomHoz){
+			this.table.vdomHoz.reinitializeRow(this);
+		}
 	}
 };
 

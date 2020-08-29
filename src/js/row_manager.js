@@ -310,6 +310,11 @@ RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 				this.table.columnManager.generateColumnsFromRowData(data);
 			}
 			this.resetScroll();
+
+			if(this.table.options.virtualDomHoz){
+				this.table.vdomHoz.deinitialize();
+			}
+
 			this._setDataActual(data);
 
 			if(this.table.options.virtualDomHoz){
@@ -1445,13 +1450,20 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 			self.styleRow(row, index);
 
 			element.appendChild(row.getElement());
-			if(!row.initialized){
-				row.initialize(true);
-			}else{
-				if(!row.heightInitialized){
-					row.normalizeHeight(true);
-				}
+
+			row.initialize();
+
+			if(!row.heightInitialized){
+				row.normalizeHeight(true);
 			}
+
+			// if(!row.initialized){
+			// 	row.initialize(true);
+			// }else{
+			// 	if(!row.heightInitialized){
+			// 		row.normalizeHeight(true);
+			// 	}
+			// }
 
 			rowHeight = row.getHeight();
 

@@ -11,7 +11,14 @@ var VDomHoz = function(table){
 	this.vDomScrollPosLeft = 0;
 	this.vDomScrollPosRight = 0;
 
+	this.vDomPadLeft = 0;
+	this.vDomPadRight = 0;
+
 	this.window = 50; //pixel margin to make column visible before it is shown on screen
+
+	this.initialized = false;
+
+	this.columns = [];
 
 	this.initialize();
 };
@@ -27,7 +34,13 @@ VDomHoz.prototype.initialize = function(){
 	});
 };
 
+VDomHoz.prototype.deinitialize = function(){
+	this.initialized = false;
+};
+
 VDomHoz.prototype.clear = function(){
+	this.columns = [];
+
 	this.element.style.paddingRight = "";
 	this.element.style.paddingLeft = "";
 
@@ -37,6 +50,8 @@ VDomHoz.prototype.clear = function(){
 
 	this.vDomScrollPosLeft = 0;
 	this.vDomScrollPosRight = 0;
+	this.vDomPadLeft = 0;
+	this.vDomPadRight = 0;
 };
 
 VDomHoz.prototype.reinitialize = function(){
@@ -47,23 +62,24 @@ VDomHoz.prototype.reinitialize = function(){
 
 	var colPos = 0;
 
-    this.table.columnManager.columnsByIndex.forEach((column, index) => {
-    	var config = {};
+	this.table.columnManager.columnsByIndex.forEach((column) => {
+		var config = {};
 
-        if(column.visible){
-        	var width = column.getWidth();
+		if(column.visible){
+			var width = column.getWidth();
 
-        	config.leftPos = colPos;
-        	config.rightPos = colPos + width;
+			config.leftPos = colPos;
+			config.rightPos = colPos + width;
 
-        	if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){
+			if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){
         		//column is visible
 
         		if(this.leftCol == -1){
-        			this.leftCol = index;
+        			this.leftCol = this.columns.length;
+        			this.vDomPadLeft = colPos;
         		}
 
-        		this.rightCol = index;
+        		this.rightCol = this.columns.length;
 
         		config.visible = true;
 
@@ -72,17 +88,34 @@ VDomHoz.prototype.reinitialize = function(){
         		// column is hidden
         		config.visible = false;
 
+        		if(this.leftCol !== -1){
+        			this.vDomPadRight += width;
+        		}
+
         		// console.log("vhoz", column.field, false);
         	}
 
+        	this.columns.push(column);
+
         	column.modules.vdomHoz = config;
 
-			colPos += width;
-
+        	colPos += width;
         }
-
     });
 
+	this.element.style.paddingLeft = this.vDomPadLeft + "px";
+	this.element.style.paddingRight = this.vDomPadRight + "px";
+
+	this.initialized = true;
+
+	this.renitializeRows();
+};
+
+VDomHoz.prototype.renitializeRows = function(){
+	var rows = this.table.rowManager.getVisibleRows();
+	rows.forEach((row) => {
+		this.reinitializeRow(row, true);
+	});
 };
 
 VDomHoz.prototype.scroll = function(diff){
@@ -93,66 +126,130 @@ VDomHoz.prototype.scroll = function(diff){
 
 	if(diff > 0){
 		//scroll right
-
-		column = this.nextColumn();
+		column = this.columns[this.rightCol + 1];
 
 		if(column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight){
-			//show column
-			column.modules.vdomHoz.visible = true;
-			this.rightCol ++;
+			this.addColRight(column);
 		}
 
-
-		column = this.table.columnManager.getColumnByIndex(this.leftCol);
+		column = this.columns[this.leftCol];
 
 		if(column && column.modules.vdomHoz.rightPos < this.vDomScrollPosLeft){
-			//hide column
-			column.modules.vdomHoz.visible = false;
-			this.leftCol ++;
+			this.removeColLeft(column);
 		}
-
-
 	}else{
 		//scroll left
-
-		column = this.prevColumn();
+		column = this.columns[this.leftCol - 1];
 
 		if(column && column.modules.vdomHoz.rightPos >= this.vDomScrollPosLeft){
-			//show column
-			column.modules.vdomHoz.visible = true;
-			this.leftCol --;
+			this.addColLeft(column);
 		}
 
-		column = this.table.columnManager.getColumnByIndex(this.rightCol);
+		column = this.columns[this.rightCol];
 
 		if(column && column.modules.vdomHoz.leftPos > this.vDomScrollPosRight){
-			//hide column
-			column.modules.vdomHoz.visible = false;
-			this.rightCol --;
+			this.removeColRight(column);
 		}
 	}
 };
 
-VDomHoz.prototype.nextColumn = function(index){
-	index = index || 1;
+VDomHoz.prototype.addColRight = function(column){
+	var rows = this.table.rowManager.getVisibleRows();
 
-	var column = this.table.columnManager.getColumnByIndex(this.rightCol + index);
+	// console.log("ar")
 
-	if(column && !column.visible){
-		return this.nextCol(index + 1);
-	}
+	column.modules.vdomHoz.visible = true;
 
-	return column;
+	rows.forEach((row) => {
+		var cell = row.getCell(column);
+		row.getElement().appendChild(cell.getElement());
+		cell.cellRendered();
+	});
+
+	this.vDomPadRight -= column.getWidth();
+	this.element.style.paddingRight = this.vDomPadRight + "px";
+
+	this.rightCol++;
 };
 
-VDomHoz.prototype.prevColumn = function(index){
-	index = index || 1;
+VDomHoz.prototype.addColLeft = function(column){
+	var rows = this.table.rowManager.getVisibleRows();
 
-	var column = this.table.columnManager.getColumnByIndex(this.leftCol - index);
+	// console.log("al")
 
-	if(column && !column.visible){
-		return this.nextCol(index + 1);
+	column.modules.vdomHoz.visible = true;
+
+	rows.forEach((row) => {
+		var cell = row.getCell(column);
+		row.getElement().prepend(cell.getElement());
+		cell.cellRendered();
+	});
+
+	this.vDomPadLeft -= column.getWidth();
+	this.element.style.paddingLeft = this.vDomPadLeft + "px";
+
+	this.leftCol--;
+};
+
+VDomHoz.prototype.removeColRight = function(column){
+	var rows = this.table.rowManager.getVisibleRows();
+
+	// console.log("rr")
+
+	column.modules.vdomHoz.visible = false;
+
+	rows.forEach((row) => {
+		var cell = row.getCell(column);
+		row.getElement().removeChild(cell.getElement());
+	});
+
+	this.vDomPadRight += column.getWidth();
+	this.element.style.paddingRight = this.vDomPadRight + "px";
+
+	this.rightCol --;
+};
+
+VDomHoz.prototype.removeColLeft = function(column){
+	var rows = this.table.rowManager.getVisibleRows();
+
+
+	column.modules.vdomHoz.visible = false;
+
+	rows.forEach((row) => {
+		var cell = row.getCell(column);
+		row.getElement().removeChild(cell.getElement());
+	});
+
+	this.vDomPadLeft += column.getWidth();
+	// console.log("rl", this.vDomPadLeft)
+	this.element.style.paddingLeft = this.vDomPadLeft + "px";
+
+	this.leftCol ++;
+};
+
+VDomHoz.prototype.initializeRow = function(row){
+
+	row.modules.vdomHoz = {
+		leftCol:this.leftCol,
+		rightCol:this.rightCol,
+	};
+
+	for(let i = this.leftCol; i <= this.rightCol; i++){
+		let column = this.table.columnManager.getColumnByIndex(i);
+
+		if(column.visible){
+			let cell = row.getCell(column);
+
+			row.element.appendChild(cell.getElement());
+			cell.cellRendered();
+		}
 	}
+};
 
-	return column;
+VDomHoz.prototype.reinitializeRow = function(row, force){
+	if(force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol){
+		while(row.element.firstChild) row.element.removeChild(row.element.firstChild);
+
+		this.initializeRow(row);
+	}
 };
