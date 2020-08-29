@@ -4443,12 +4443,12 @@ VDomHoz.prototype.reinitialize = function () {
 
 				config.visible = true;
 
-				console.log("vhoz", column.field, true);
+				// console.log("vhoz", column.field, true);
 			} else {
 				// column is hidden
 				config.visible = false;
 
-				console.log("vhoz", column.field, false);
+				// console.log("vhoz", column.field, false);
 			}
 
 			column.modules.vdomHoz = config;
@@ -4467,7 +4467,7 @@ VDomHoz.prototype.scroll = function (diff) {
 	if (diff > 0) {
 		//scroll right
 
-		column = this.table.columnManager.getColumnByIndex(this.rightCol + 1);
+		column = this.nextColumn();
 
 		if (column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight) {
 			//show column
@@ -4485,7 +4485,7 @@ VDomHoz.prototype.scroll = function (diff) {
 	} else {
 		//scroll left
 
-		column = this.table.columnManager.getColumnByIndex(this.leftCol - 1);
+		column = this.prevColumn();
 
 		if (column && column.modules.vdomHoz.rightPos >= this.vDomScrollPosLeft) {
 			//show column
@@ -4501,6 +4501,30 @@ VDomHoz.prototype.scroll = function (diff) {
 			this.rightCol--;
 		}
 	}
+};
+
+VDomHoz.prototype.nextColumn = function (index) {
+	index = index || 1;
+
+	var column = this.table.columnManager.getColumnByIndex(this.rightCol + index);
+
+	if (column && !column.visible) {
+		return this.nextCol(index + 1);
+	}
+
+	return column;
+};
+
+VDomHoz.prototype.prevColumn = function (index) {
+	index = index || 1;
+
+	var column = this.table.columnManager.getColumnByIndex(this.leftCol - index);
+
+	if (column && !column.visible) {
+		return this.nextCol(index + 1);
+	}
+
+	return column;
 };
 //public row object
 var RowComponent = function RowComponent(row) {
