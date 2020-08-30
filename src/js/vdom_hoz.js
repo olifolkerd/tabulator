@@ -168,9 +168,11 @@ VDomHoz.prototype.addColRight = function(){
 		rows = this.table.rowManager.getVisibleRows();
 
 		rows.forEach((row) => {
-			var cell = row.getCell(column);
-			row.getElement().appendChild(cell.getElement());
-			cell.cellRendered();
+			if(row.type !== "group"){
+				var cell = row.getCell(column);
+				row.getElement().appendChild(cell.getElement());
+				cell.cellRendered();
+			}
 		});
 
 		this.vDomPadRight -= column.getWidth();
@@ -190,9 +192,11 @@ VDomHoz.prototype.addColLeft = function(){
 		var rows = this.table.rowManager.getVisibleRows();
 
 		rows.forEach((row) => {
-			var cell = row.getCell(column);
-			row.getElement().prepend(cell.getElement());
-			cell.cellRendered();
+			if(row.type !== "group"){
+				var cell = row.getCell(column);
+				row.getElement().prepend(cell.getElement());
+				cell.cellRendered();
+			}
 		});
 
 		this.vDomPadLeft -= column.getWidth();
@@ -214,8 +218,10 @@ VDomHoz.prototype.removeColRight = function(column){
 		column.modules.vdomHoz.visible = false;
 
 		rows.forEach((row) => {
-			var cell = row.getCell(column);
-			row.getElement().removeChild(cell.getElement());
+			if(row.type !== "group"){
+				var cell = row.getCell(column);
+				row.getElement().removeChild(cell.getElement());
+			}
 		});
 
 		this.vDomPadRight += column.getWidth();
@@ -236,8 +242,10 @@ VDomHoz.prototype.removeColLeft = function(){
 		rows = this.table.rowManager.getVisibleRows();
 
 		rows.forEach((row) => {
-			var cell = row.getCell(column);
-			row.getElement().removeChild(cell.getElement());
+			if(row.type !== "group"){
+				var cell = row.getCell(column);
+				row.getElement().removeChild(cell.getElement());
+			}
 		});
 
 		this.vDomPadLeft += column.getWidth();
@@ -250,27 +258,31 @@ VDomHoz.prototype.removeColLeft = function(){
 };
 
 VDomHoz.prototype.initializeRow = function(row){
-	row.modules.vdomHoz = {
-		leftCol:this.leftCol,
-		rightCol:this.rightCol,
-	};
+	if(row.type !== "group"){
+		row.modules.vdomHoz = {
+			leftCol:this.leftCol,
+			rightCol:this.rightCol,
+		};
 
-	for(let i = this.leftCol; i <= this.rightCol; i++){
-		let column = this.table.columnManager.getColumnByIndex(i);
+		for(let i = this.leftCol; i <= this.rightCol; i++){
+			let column = this.table.columnManager.getColumnByIndex(i);
 
-		if(column.visible){
-			let cell = row.getCell(column);
+			if(column.visible){
+				let cell = row.getCell(column);
 
-			row.element.appendChild(cell.getElement());
-			cell.cellRendered();
+				row.element.appendChild(cell.getElement());
+				cell.cellRendered();
+			}
 		}
 	}
 };
 
 VDomHoz.prototype.reinitializeRow = function(row, force){
-	if(force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol){
-		while(row.element.firstChild) row.element.removeChild(row.element.firstChild);
+	if(row.type !== "group"){
+		if(force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol){
+			while(row.element.firstChild) row.element.removeChild(row.element.firstChild);
 
-		this.initializeRow(row);
+			this.initializeRow(row);
+		}
 	}
 };
