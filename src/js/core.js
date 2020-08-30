@@ -530,7 +530,6 @@ Tabulator.prototype._create = function(){
 		this.vdomHoz = new VDomHoz(this);
 	}
 
-
 	this._buildElement();
 
 	this._loadInitialData();
