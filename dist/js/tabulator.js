@@ -5568,7 +5568,67 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.columns = [];
 
-		this.initialize();
+		if (this.compatabilityCheck()) {
+
+			this.initialize();
+		}
+	};
+
+	VDomHoz.prototype.compatabilityCheck = function () {
+
+		var options = this.table.options,
+		    frozen = false,
+		    ok = true;
+
+		if (options.layout == "fitDataTable") {
+
+			console.warn("Horizontal Vitrual DOM is not compatible with fitDataTable layout mode");
+
+			ok = false;
+		}
+
+		if (options.responsiveLayout) {
+
+			console.warn("Horizontal Vitrual DOM is not compatible with responsive columns");
+
+			ok = false;
+		}
+
+		if (options.groupBy) {
+
+			console.warn("Horizontal Vitrual DOM is not compatible with grouped rows");
+
+			ok = false;
+		}
+
+		if (options.rowFormatter) {
+
+			console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
+
+			ok = false;
+		}
+
+		if (options.columns) {
+
+			frozen = options.columns.find(function (col) {
+
+				return col.frozen;
+			});
+
+			if (frozen) {
+
+				console.warn("Horizontal Vitrual DOM is not compatible with frozen columns");
+
+				ok = false;
+			}
+		}
+
+		if (!ok) {
+
+			options.virtualDomHoz = false;
+		}
+
+		return ok;
 	};
 
 	VDomHoz.prototype.initialize = function () {
@@ -5769,11 +5829,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rows.forEach(function (row) {
 
-				var cell = row.getCell(column);
+				if (row.type !== "group") {
 
-				row.getElement().appendChild(cell.getElement());
+					var cell = row.getCell(column);
 
-				cell.cellRendered();
+					row.getElement().appendChild(cell.getElement());
+
+					cell.cellRendered();
+				}
 			});
 
 			this.vDomPadRight -= column.getWidth();
@@ -5797,11 +5860,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rows.forEach(function (row) {
 
-				var cell = row.getCell(column);
+				if (row.type !== "group") {
 
-				row.getElement().prepend(cell.getElement());
+					var cell = row.getCell(column);
 
-				cell.cellRendered();
+					row.getElement().prepend(cell.getElement());
+
+					cell.cellRendered();
+				}
 			});
 
 			this.vDomPadLeft -= column.getWidth();
@@ -5827,9 +5893,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rows.forEach(function (row) {
 
-				var cell = row.getCell(column);
+				if (row.type !== "group") {
 
-				row.getElement().removeChild(cell.getElement());
+					var cell = row.getCell(column);
+
+					row.getElement().removeChild(cell.getElement());
+				}
 			});
 
 			this.vDomPadRight += column.getWidth();
@@ -5853,9 +5922,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rows.forEach(function (row) {
 
-				var cell = row.getCell(column);
+				if (row.type !== "group") {
 
-				row.getElement().removeChild(cell.getElement());
+					var cell = row.getCell(column);
+
+					row.getElement().removeChild(cell.getElement());
+				}
 			});
 
 			this.vDomPadLeft += column.getWidth();
@@ -5870,36 +5942,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	VDomHoz.prototype.initializeRow = function (row) {
 
-		row.modules.vdomHoz = {
+		if (row.type !== "group") {
 
-			leftCol: this.leftCol,
+			row.modules.vdomHoz = {
 
-			rightCol: this.rightCol
+				leftCol: this.leftCol,
 
-		};
+				rightCol: this.rightCol
 
-		for (var _i5 = this.leftCol; _i5 <= this.rightCol; _i5++) {
+			};
 
-			var column = this.table.columnManager.getColumnByIndex(_i5);
+			for (var _i5 = this.leftCol; _i5 <= this.rightCol; _i5++) {
 
-			if (column.visible) {
+				var column = this.table.columnManager.getColumnByIndex(_i5);
 
-				var cell = row.getCell(column);
+				if (column.visible) {
 
-				row.element.appendChild(cell.getElement());
+					var cell = row.getCell(column);
 
-				cell.cellRendered();
+					row.element.appendChild(cell.getElement());
+
+					cell.cellRendered();
+				}
 			}
 		}
 	};
 
 	VDomHoz.prototype.reinitializeRow = function (row, force) {
 
-		if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
+		if (row.type !== "group") {
 
-			while (row.element.firstChild) {
-				row.element.removeChild(row.element.firstChild);
-			}this.initializeRow(row);
+			if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
+
+				while (row.element.firstChild) {
+					row.element.removeChild(row.element.firstChild);
+				}this.initializeRow(row);
+			}
 		}
 	};
 

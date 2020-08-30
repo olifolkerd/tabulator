@@ -4431,7 +4431,52 @@ var VDomHoz = function VDomHoz(table) {
 
 	this.columns = [];
 
-	this.initialize();
+	if (this.compatabilityCheck()) {
+		this.initialize();
+	}
+};
+
+VDomHoz.prototype.compatabilityCheck = function () {
+	var options = this.table.options,
+	    frozen = false,
+	    ok = true;
+
+	if (options.layout == "fitDataTable") {
+		console.warn("Horizontal Vitrual DOM is not compatible with fitDataTable layout mode");
+		ok = false;
+	}
+
+	if (options.responsiveLayout) {
+		console.warn("Horizontal Vitrual DOM is not compatible with responsive columns");
+		ok = false;
+	}
+
+	if (options.groupBy) {
+		console.warn("Horizontal Vitrual DOM is not compatible with grouped rows");
+		ok = false;
+	}
+
+	if (options.rowFormatter) {
+		console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
+		ok = false;
+	}
+
+	if (options.columns) {
+		frozen = options.columns.find(function (col) {
+			return col.frozen;
+		});
+
+		if (frozen) {
+			console.warn("Horizontal Vitrual DOM is not compatible with frozen columns");
+			ok = false;
+		}
+	}
+
+	if (!ok) {
+		options.virtualDomHoz = false;
+	}
+
+	return ok;
 };
 
 VDomHoz.prototype.initialize = function () {
@@ -4587,9 +4632,11 @@ VDomHoz.prototype.addColRight = function () {
 		rows = this.table.rowManager.getVisibleRows();
 
 		rows.forEach(function (row) {
-			var cell = row.getCell(column);
-			row.getElement().appendChild(cell.getElement());
-			cell.cellRendered();
+			if (row.type !== "group") {
+				var cell = row.getCell(column);
+				row.getElement().appendChild(cell.getElement());
+				cell.cellRendered();
+			}
 		});
 
 		this.vDomPadRight -= column.getWidth();
@@ -4609,9 +4656,11 @@ VDomHoz.prototype.addColLeft = function () {
 		var rows = this.table.rowManager.getVisibleRows();
 
 		rows.forEach(function (row) {
-			var cell = row.getCell(column);
-			row.getElement().prepend(cell.getElement());
-			cell.cellRendered();
+			if (row.type !== "group") {
+				var cell = row.getCell(column);
+				row.getElement().prepend(cell.getElement());
+				cell.cellRendered();
+			}
 		});
 
 		this.vDomPadLeft -= column.getWidth();
@@ -4633,8 +4682,10 @@ VDomHoz.prototype.removeColRight = function (column) {
 		column.modules.vdomHoz.visible = false;
 
 		rows.forEach(function (row) {
-			var cell = row.getCell(column);
-			row.getElement().removeChild(cell.getElement());
+			if (row.type !== "group") {
+				var cell = row.getCell(column);
+				row.getElement().removeChild(cell.getElement());
+			}
 		});
 
 		this.vDomPadRight += column.getWidth();
@@ -4655,8 +4706,10 @@ VDomHoz.prototype.removeColLeft = function () {
 		rows = this.table.rowManager.getVisibleRows();
 
 		rows.forEach(function (row) {
-			var cell = row.getCell(column);
-			row.getElement().removeChild(cell.getElement());
+			if (row.type !== "group") {
+				var cell = row.getCell(column);
+				row.getElement().removeChild(cell.getElement());
+			}
 		});
 
 		this.vDomPadLeft += column.getWidth();
@@ -4669,28 +4722,32 @@ VDomHoz.prototype.removeColLeft = function () {
 };
 
 VDomHoz.prototype.initializeRow = function (row) {
-	row.modules.vdomHoz = {
-		leftCol: this.leftCol,
-		rightCol: this.rightCol
-	};
+	if (row.type !== "group") {
+		row.modules.vdomHoz = {
+			leftCol: this.leftCol,
+			rightCol: this.rightCol
+		};
 
-	for (var i = this.leftCol; i <= this.rightCol; i++) {
-		var column = this.table.columnManager.getColumnByIndex(i);
+		for (var i = this.leftCol; i <= this.rightCol; i++) {
+			var column = this.table.columnManager.getColumnByIndex(i);
 
-		if (column.visible) {
-			var cell = row.getCell(column);
+			if (column.visible) {
+				var cell = row.getCell(column);
 
-			row.element.appendChild(cell.getElement());
-			cell.cellRendered();
+				row.element.appendChild(cell.getElement());
+				cell.cellRendered();
+			}
 		}
 	}
 };
 
 VDomHoz.prototype.reinitializeRow = function (row, force) {
-	if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
-		while (row.element.firstChild) {
-			row.element.removeChild(row.element.firstChild);
-		}this.initializeRow(row);
+	if (row.type !== "group") {
+		if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
+			while (row.element.firstChild) {
+				row.element.removeChild(row.element.firstChild);
+			}this.initializeRow(row);
+		}
 	}
 };
 //public row object

@@ -20,8 +20,53 @@ var VDomHoz = function(table){
 
 	this.columns = [];
 
-	this.initialize();
+	if(this.compatabilityCheck()){
+		this.initialize();
+	}
 };
+
+VDomHoz.prototype.compatabilityCheck = function(){
+	var options = this.table.options,
+	frozen = false,
+	ok = true;
+
+	if(options.layout == "fitDataTable"){
+		console.warn("Horizontal Vitrual DOM is not compatible with fitDataTable layout mode");
+		ok = false;
+	}
+
+	if(options.responsiveLayout){
+		console.warn("Horizontal Vitrual DOM is not compatible with responsive columns");
+		ok = false;
+	}
+
+	if(options.groupBy){
+		console.warn("Horizontal Vitrual DOM is not compatible with grouped rows");
+		ok = false;
+	}
+
+	if(options.rowFormatter){
+		console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
+		ok = false;
+	}
+
+	if(options.columns){
+		frozen = options.columns.find((col) => {
+			return col.frozen;
+		});
+
+		if(frozen){
+			console.warn("Horizontal Vitrual DOM is not compatible with frozen columns");
+			ok = false;
+		}
+	}
+
+	if(!ok){
+		options.virtualDomHoz = false;
+	}
+
+	return ok;
+}
 
 VDomHoz.prototype.initialize = function(){
 	this.holderEl.addEventListener("scroll", () => {
