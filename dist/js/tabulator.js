@@ -2913,6 +2913,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			_this7.table.columnManager.deregisterColumn(_this7);
 
+			if (_this7.table.options.virtualDomHoz) {
+
+				_this7.table.vdomHoz.reinitialize(true);
+			}
+
 			resolve();
 		});
 	};
@@ -5622,8 +5627,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return;
 		}
 
-		console.log("reinit");
-
 		this.clear();
 
 		this.scrollLeft = this.holderEl.scrollLeft;
@@ -5700,8 +5703,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var match = true;
 
 		if (old.cols.length !== this.columns.length || old.leftCol !== this.leftCol || old.rightCol !== this.rightCol) {
-
-			console.log("changed");
 
 			return true;
 		}
@@ -24073,6 +24074,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							_this81.containerWidth = table.element.parentNode.clientWidth;
 						}
 
+						if (table.options.virtualDomHoz) {
+							table.vdomHoz.reinitialize(true);
+						}
+
 						table.redraw();
 					}
 				}
@@ -24095,8 +24100,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							_this81.containerWidth = nodeWidth;
 							_this81.tableHeight = table.element.clientHeight;
 							_this81.tableWidth = table.element.clientWidth;
+						}
 
-							table.redraw();
+						if (table.options.virtualDomHoz) {
+							table.vdomHoz.reinitialize(true);
 						}
 
 						table.redraw();
@@ -24108,6 +24115,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else {
 			this.binding = function () {
 				if (!table.browserMobile || table.browserMobile && !table.modules.edit.currentCell) {
+					if (table.options.virtualDomHoz) {
+						table.vdomHoz.reinitialize(true);
+					}
+
 					table.redraw();
 				}
 			};

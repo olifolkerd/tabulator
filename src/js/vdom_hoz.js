@@ -61,8 +61,6 @@ VDomHoz.prototype.reinitialize = function(update, blockRedraw){
 		return;
 	}
 
-	console.log("reinit")
-
 	this.clear();
 
 	this.scrollLeft = this.holderEl.scrollLeft;
@@ -123,7 +121,6 @@ VDomHoz.prototype.reinitChanged = function(old){
 	var match = true;
 
 	if(old.cols.length !== this.columns.length || old.leftCol !== this.leftCol || old.rightCol !== this.rightCol){
-		console.log("changed")
 		return true;
 	}
 
