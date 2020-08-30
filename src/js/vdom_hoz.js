@@ -57,6 +57,10 @@ VDomHoz.prototype.reinitialize = function(update){
 		rightCol:this.rightCol,
 	};
 
+	if(update && !this.initialized){
+		return;
+	}
+
 	console.log("reinit")
 
 	this.clear();

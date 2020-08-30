@@ -847,6 +847,11 @@ ColumnManager.prototype.moveColumnActual = function (from, to, after) {
 		this.table.modules.responsiveLayout.initialize();
 	}
 
+	if (this.table.options.virtualDomHoz) {
+
+		this.table.vdomHoz.reinitialize(true);
+	}
+
 	if (this.table.options.columnMoved) {
 
 		this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
@@ -855,11 +860,6 @@ ColumnManager.prototype.moveColumnActual = function (from, to, after) {
 	if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
 
 		this.table.modules.persistence.save("columns");
-	}
-
-	if (this.table.options.virtualDomHoz) {
-
-		this.table.vdomHoz.reinitialize(true);
 	}
 };
 
@@ -2294,6 +2294,10 @@ Column.prototype.setWidthActual = function (width) {
 	//set resizable handles
 	if (this.table.modExists("frozenColumns")) {
 		this.table.modules.frozenColumns.layout();
+	}
+
+	if (this.table.options.virtualDomHoz) {
+		this.table.vdomHoz.reinitialize(true);
 	}
 };
 
@@ -4449,6 +4453,10 @@ VDomHoz.prototype.reinitialize = function (update) {
 		leftCol: this.leftCol,
 		rightCol: this.rightCol
 	};
+
+	if (update && !this.initialized) {
+		return;
+	}
 
 	console.log("reinit");
 

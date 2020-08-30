@@ -936,6 +936,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.responsiveLayout.initialize();
 		}
 
+		if (this.table.options.virtualDomHoz) {
+
+			this.table.vdomHoz.reinitialize(true);
+		}
+
 		if (this.table.options.columnMoved) {
 
 			this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
@@ -944,11 +949,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
 
 			this.table.modules.persistence.save("columns");
-		}
-
-		if (this.table.options.virtualDomHoz) {
-
-			this.table.vdomHoz.reinitialize(true);
 		}
 	};
 
@@ -2775,6 +2775,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.table.modExists("frozenColumns")) {
 
 			this.table.modules.frozenColumns.layout();
+		}
+
+		if (this.table.options.virtualDomHoz) {
+
+			this.table.vdomHoz.reinitialize(true);
 		}
 	};
 
@@ -5597,6 +5602,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			rightCol: this.rightCol
 
 		};
+
+		if (update && !this.initialized) {
+
+			return;
+		}
 
 		console.log("reinit");
 

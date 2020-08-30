@@ -1124,6 +1124,10 @@ Column.prototype.setWidthActual = function(width){
 	if(this.table.modExists("frozenColumns")){
 		this.table.modules.frozenColumns.layout();
 	}
+
+	if(this.table.options.virtualDomHoz){
+		this.table.vdomHoz.reinitialize(true);
+	}
 };
 
 
