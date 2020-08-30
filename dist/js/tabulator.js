@@ -15146,6 +15146,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			onRendered(function () {
 				input.focus({ preventScroll: true });
 				input.style.height = "100%";
+
+				input.scrollHeight;
+				input.style.height = input.scrollHeight + "px";
+				cell.getRow().normalizeHeight();
 			});
 
 			function onChange(e) {
