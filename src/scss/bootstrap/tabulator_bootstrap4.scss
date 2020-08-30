@@ -217,9 +217,31 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 				}
 
 				input{
+					padding: .375rem .75rem;
+
+					background-color: #fff;
+					background-clip: padding-box;
+
+					border: 1px solid #ced4da;
+					border-radius: .25rem;
+
+					transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+
+					font-size: 1rem;
+					line-height: 1.5;
+					color: #495057;
+
 					&::-ms-clear {
 						width : 0;
 						height: 0;
+					}
+
+					&:focus {
+					    color: #495057;
+					    background-color: #fff;
+					    border:1px solid  $editBoxColor;
+					    outline: 0;
+					    // box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 					}
 				}
 			}

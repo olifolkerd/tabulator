@@ -146,9 +146,28 @@
   margin-top: 3px;
 }
 
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input {
+  padding: .375rem .75rem;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+}
+
 .tabulator .tabulator-header .tabulator-col .tabulator-header-filter input::-ms-clear {
   width: 0;
   height: 0;
+}
+
+.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input:focus {
+  color: #495057;
+  background-color: #fff;
+  border: 1px solid #1D68CD;
+  outline: 0;
 }
 
 .tabulator .tabulator-header .tabulator-col.tabulator-sortable .tabulator-col-title {
