@@ -112,6 +112,8 @@ var Cell = function(column, row){
 
 	this.component = null;
 
+	this.loaded = false; //track if the cell has been added to the DOM yet
+
 	this.build();
 };
 
@@ -513,6 +515,11 @@ Cell.prototype._generateTooltip = function(){
 
 //////////////////// Getters ////////////////////
 Cell.prototype.getElement = function(){
+	if(!this.loaded){
+		this.layoutElement();
+		this.loaded = true;
+	}
+
 	return this.element;
 };
 
@@ -603,6 +610,13 @@ Cell.prototype.setValueActual = function(value){
 		this.table.modules.reactiveData.unblock();
 	}
 
+	if(this.loaded){
+		this.layoutElement();
+	}
+
+};
+
+Cell.prototype.layoutElement = function(){
 	this._generateContents();
 	this._generateTooltip();
 
@@ -620,7 +634,7 @@ Cell.prototype.setValueActual = function(value){
 	if(this.table.modExists("frozenColumns")){
 		this.table.modules.frozenColumns.layoutElement(this.element, this.column);
 	}
-};
+}
 
 Cell.prototype.setWidth = function(){
 	this.width = this.column.width;

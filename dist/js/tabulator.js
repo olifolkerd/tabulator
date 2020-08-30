@@ -7308,6 +7308,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.component = null;
 
+		this.loaded = false; //track if the cell has been added to the DOM yet
+
+
 		this.build();
 	};
 
@@ -7833,6 +7836,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Cell.prototype.getElement = function () {
 
+		if (!this.loaded) {
+
+			this.layoutElement();
+
+			this.loaded = true;
+		}
+
 		return this.element;
 	};
 
@@ -7937,6 +7947,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.table.modules.reactiveData.unblock();
 		}
+
+		if (this.loaded) {
+
+			this.layoutElement();
+		}
+	};
+
+	Cell.prototype.layoutElement = function () {
 
 		this._generateContents();
 
@@ -25703,7 +25721,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (cell.modules.validate && cell.modules.validate.invalid) {
 
-			cell.element.classList.remove("tabulator-validation-fail");
+			cell.getElement().classList.remove("tabulator-validation-fail");
 			cell.modules.validate.invalid = false;
 
 			invalidIndex = this.invalidCells.indexOf(cell);

@@ -5778,6 +5778,8 @@ var Cell = function Cell(column, row) {
 
 	this.component = null;
 
+	this.loaded = false; //track if the cell has been added to the DOM yet
+
 	this.build();
 };
 
@@ -6173,6 +6175,11 @@ Cell.prototype._generateTooltip = function () {
 
 //////////////////// Getters ////////////////////
 Cell.prototype.getElement = function () {
+	if (!this.loaded) {
+		this.layoutElement();
+		this.loaded = true;
+	}
+
 	return this.element;
 };
 
@@ -6261,6 +6268,12 @@ Cell.prototype.setValueActual = function (value) {
 		this.table.modules.reactiveData.unblock();
 	}
 
+	if (this.loaded) {
+		this.layoutElement();
+	}
+};
+
+Cell.prototype.layoutElement = function () {
 	this._generateContents();
 	this._generateTooltip();
 
