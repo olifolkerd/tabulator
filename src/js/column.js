@@ -1222,6 +1222,10 @@ Column.prototype.delete = function(){
 
 		this.table.columnManager.deregisterColumn(this);
 
+		if(this.table.options.virtualDomHoz){
+			this.table.vdomHoz.reinitialize(true);
+		}
+
 		resolve();
 	});
 };
