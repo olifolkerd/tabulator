@@ -117,6 +117,10 @@ ResizeColumns.prototype._mouseDown = function (e, column, handle) {
 			column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 		}
 
+		if (self.table.options.virtualDomHoz) {
+			self.table.vdomHoz.reinitialize(true);
+		}
+
 		if (!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight) {
 			column.checkCellHeights();
 		}

@@ -1072,6 +1072,11 @@ ColumnManager.prototype.addColumn = function (definition, before, nextToColumn) 
 
 		_this3.table.rowManager.reinitialize();
 
+		if (_this3.table.options.virtualDomHoz) {
+
+			_this3.table.vdomHoz.reinitialize();
+		}
+
 		resolve(column);
 	});
 };
@@ -1327,11 +1332,19 @@ ColumnComponent.prototype.getWidth = function () {
 };
 
 ColumnComponent.prototype.setWidth = function (width) {
+	var result;
+
 	if (width === true) {
-		return this._column.reinitializeWidth(true);
+		result = this._column.reinitializeWidth(true);
 	} else {
-		return this._column.setWidth(width);
+		result = this._column.setWidth(width);
 	}
+
+	if (this._column.table.options.virtualDomHoz) {
+		this._column.table.vdomHoz.reinitialize(true);
+	}
+
+	return result;
 };
 
 ColumnComponent.prototype.validate = function () {
@@ -2208,10 +2221,6 @@ Column.prototype.show = function (silent, responsiveToggle) {
 		if (this.parent.isGroup) {
 			this.parent.matchChildWidths();
 		}
-
-		if (this.table.options.virtualDomHoz) {
-			this.table.vdomHoz.reinitialize(true);
-		}
 	}
 };
 
@@ -2246,10 +2255,6 @@ Column.prototype.hide = function (silent, responsiveToggle) {
 
 		if (this.parent.isGroup) {
 			this.parent.matchChildWidths();
-		}
-
-		if (this.table.options.virtualDomHoz) {
-			this.table.vdomHoz.reinitialize(true);
 		}
 	}
 };
@@ -2302,10 +2307,6 @@ Column.prototype.setWidthActual = function (width) {
 	//set resizable handles
 	if (this.table.modExists("frozenColumns")) {
 		this.table.modules.frozenColumns.layout();
-	}
-
-	if (this.table.options.virtualDomHoz) {
-		this.table.vdomHoz.reinitialize(true);
 	}
 };
 

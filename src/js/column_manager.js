@@ -609,6 +609,10 @@ ColumnManager.prototype.addColumn = function(definition, before, nextToColumn){
 
 		this.table.rowManager.reinitialize();
 
+		if(this.table.options.virtualDomHoz){
+			this.table.vdomHoz.reinitialize();
+		}
+
 		resolve(column);
 	});
 };

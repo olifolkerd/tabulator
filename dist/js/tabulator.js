@@ -1166,6 +1166,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			_this3.table.rowManager.reinitialize();
 
+			if (_this3.table.options.virtualDomHoz) {
+
+				_this3.table.vdomHoz.reinitialize();
+			}
+
 			resolve(column);
 		});
 	};
@@ -1472,13 +1477,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	ColumnComponent.prototype.setWidth = function (width) {
 
+		var result;
+
 		if (width === true) {
 
-			return this._column.reinitializeWidth(true);
+			result = this._column.reinitializeWidth(true);
 		} else {
 
-			return this._column.setWidth(width);
+			result = this._column.setWidth(width);
 		}
+
+		if (this._column.table.options.virtualDomHoz) {
+
+			this._column.table.vdomHoz.reinitialize(true);
+		}
+
+		return result;
 	};
 
 	ColumnComponent.prototype.validate = function () {
@@ -2665,11 +2679,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.parent.matchChildWidths();
 			}
-
-			if (this.table.options.virtualDomHoz) {
-
-				this.table.vdomHoz.reinitialize(true);
-			}
 		}
 	};
 
@@ -2713,11 +2722,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.parent.isGroup) {
 
 				this.parent.matchChildWidths();
-			}
-
-			if (this.table.options.virtualDomHoz) {
-
-				this.table.vdomHoz.reinitialize(true);
 			}
 		}
 	};
@@ -2785,11 +2789,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (this.table.modExists("frozenColumns")) {
 
 			this.table.modules.frozenColumns.layout();
-		}
-
-		if (this.table.options.virtualDomHoz) {
-
-			this.table.vdomHoz.reinitialize(true);
 		}
 	};
 
@@ -23869,6 +23868,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				column.setWidth(self.startWidth - ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
 			} else {
 				column.setWidth(self.startWidth + ((typeof e.screenX === "undefined" ? e.touches[0].screenX : e.screenX) - self.startX));
+			}
+
+			if (self.table.options.virtualDomHoz) {
+				self.table.vdomHoz.reinitialize(true);
 			}
 
 			if (!self.table.browserSlow && column.modules.resize && column.modules.resize.variableHeight) {
