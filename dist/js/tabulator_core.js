@@ -2208,6 +2208,10 @@ Column.prototype.show = function (silent, responsiveToggle) {
 		if (this.parent.isGroup) {
 			this.parent.matchChildWidths();
 		}
+
+		if (this.table.options.virtualDomHoz) {
+			this.table.vdomHoz.reinitialize(true);
+		}
 	}
 };
 
@@ -2242,6 +2246,10 @@ Column.prototype.hide = function (silent, responsiveToggle) {
 
 		if (this.parent.isGroup) {
 			this.parent.matchChildWidths();
+		}
+
+		if (this.table.options.virtualDomHoz) {
+			this.table.vdomHoz.reinitialize(true);
 		}
 	}
 };
