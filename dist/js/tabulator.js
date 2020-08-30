@@ -611,6 +611,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.table.modules.responsiveLayout.initialize();
 		}
 
+		if (this.table.options.virtualDomHoz) {
+
+			this.table.vdomHoz.reinitialize(false, true);
+		}
+
 		self.redraw(true);
 	};
 
@@ -5599,7 +5604,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.vDomPadRight = 0;
 	};
 
-	VDomHoz.prototype.reinitialize = function (update) {
+	VDomHoz.prototype.reinitialize = function (update, blockRedraw) {
 		var _this16 = this;
 
 		var old = {
@@ -5678,9 +5683,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.initialized = true;
 
-		if (!update || this.reinitChanged(old)) {
+		if (!blockRedraw) {
 
-			this.renitializeRows();
+			if (!update || this.reinitChanged(old)) {
+
+				this.renitializeRows();
+			}
 		}
 
 		this.holderEl.scrollLeft = this.scrollLeft;

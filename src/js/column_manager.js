@@ -176,6 +176,10 @@ ColumnManager.prototype.setColumns = function(cols, row){
 		self.table.modules.responsiveLayout.initialize();
 	}
 
+	if(this.table.options.virtualDomHoz){
+		this.table.vdomHoz.reinitialize(false, true);
+	}
+
 	self.redraw(true);
 };
 

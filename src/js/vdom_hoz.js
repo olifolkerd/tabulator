@@ -50,7 +50,7 @@ VDomHoz.prototype.clear = function(){
 	this.vDomPadRight = 0;
 };
 
-VDomHoz.prototype.reinitialize = function(update){
+VDomHoz.prototype.reinitialize = function(update, blockRedraw){
 	var old = {
 		cols:this.columns,
 		leftCol:this.leftCol,
@@ -110,8 +110,10 @@ VDomHoz.prototype.reinitialize = function(update){
 
 	this.initialized = true;
 
-	if(!update || this.reinitChanged(old)){
-		this.renitializeRows();
+	if(!blockRedraw){
+		if(!update || this.reinitChanged(old)){
+			this.renitializeRows();
+		}
 	}
 
 	this.holderEl.scrollLeft = this.scrollLeft;
