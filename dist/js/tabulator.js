@@ -14683,6 +14683,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			cell.setValueActual(cell.getValue());
 			cell.cellRendered();
 
+			if (cell.column.definition.editor == "textarea" || cell.column.definition.variableHeight) {
+				cell.row.normalizeHeight(true);
+			}
+
 			if (cell.column.cellEvents.cellEditCancelled) {
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
