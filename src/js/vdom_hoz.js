@@ -14,7 +14,7 @@ var VDomHoz = function(table){
 	this.vDomPadLeft = 0;
 	this.vDomPadRight = 0;
 
-	this.window = 50; //pixel margin to make column visible before it is shown on screen
+	this.window = 200; //pixel margin to make column visible before it is shown on screen
 
 	this.initialized = false;
 
@@ -50,13 +50,21 @@ VDomHoz.prototype.clear = function(){
 	this.vDomPadRight = 0;
 };
 
-VDomHoz.prototype.reinitialize = function(){
+VDomHoz.prototype.reinitialize = function(update){
+	var old = {
+		cols:this.columns,
+		leftCol:this.leftCol,
+		rightCol:this.rightCol,
+	};
+
+	console.log("reinit")
+
 	this.clear();
 
 	this.scrollLeft = this.holderEl.scrollLeft;
 
 	this.vDomScrollPosLeft = this.scrollLeft - this.window;
-	this.vDomScrollPosRight = this.vDomScrollPosLeft + this.holderEl.clientWidth + this.window;
+	this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
 
 	var colPos = 0;
 
@@ -98,10 +106,29 @@ VDomHoz.prototype.reinitialize = function(){
 
 	this.initialized = true;
 
-	this.renitializeRows();
+	if(!update || this.reinitChanged(old)){
+		this.renitializeRows();
+	}
 
 	this.holderEl.scrollLeft = this.scrollLeft;
 };
+
+VDomHoz.prototype.reinitChanged = function(old){
+	var match = true;
+
+	if(old.cols.length !== this.columns.length || old.leftCol !== this.leftCol || old.rightCol !== this.rightCol){
+		console.log("changed")
+		return true;
+	}
+
+	old.cols.forEach((col, i) => {
+		if(col !== this.columns[i]){
+			match = false;
+		}
+	});
+
+	return !match;
+}
 
 VDomHoz.prototype.renitializeRows = function(){
 	var rows = this.table.rowManager.getVisibleRows();
