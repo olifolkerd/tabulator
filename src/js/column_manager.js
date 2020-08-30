@@ -434,6 +434,10 @@ ColumnManager.prototype.moveColumnActual = function(from, to, after){
 	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 		this.table.modules.persistence.save("columns");
 	}
+
+	if(this.table.options.virtualDomHoz){
+		this.table.vdomHoz.reinitialize(true);
+	}
 };
 
 ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, updateRows){
