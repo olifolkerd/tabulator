@@ -1267,6 +1267,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.responsiveLayout.initialize();
 		}
 
+		this._verticalAlignHeaders();
+
 		this.redraw();
 	};
 

@@ -683,6 +683,8 @@ ColumnManager.prototype.deregisterColumn = function(column){
 		this.table.modules.responsiveLayout.initialize();
 	}
 
+	this._verticalAlignHeaders();
+
 	this.redraw();
 };
 
