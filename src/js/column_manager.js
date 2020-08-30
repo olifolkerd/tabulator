@@ -97,6 +97,7 @@ ColumnManager.prototype.scrollHorizontal = function(left){
 
 ColumnManager.prototype.generateColumnsFromRowData = function(data){
 	var cols = [],
+	definitions = this.table.options.autoColumnsDefinitions,
 	row, sorter;
 
 	if(data && data.length){
@@ -146,7 +147,40 @@ ColumnManager.prototype.generateColumnsFromRowData = function(data){
 			cols.push(col);
 		}
 
-		this.table.options.columns = cols;
+		if(definitions){
+
+			switch(typeof definitions){
+				case "function":
+					this.table.options.columns = definitions.call(this.table, cols);
+				break;
+
+				case "object":
+					if(Array.isArray(definitions)){
+						cols.forEach((col) => {
+							var match = definitions.find((def) => {
+								return def.field === col.field;
+							});
+
+							if(match){
+								Object.assign(col, match);
+							}
+						});
+
+					}else{
+						cols.forEach((col) => {
+							if(definitions[col.field]){
+								Object.assign(col, definitions[col.field]);
+							}
+						});
+					}
+
+					this.table.options.columns = cols;
+				break;
+			}
+		}else{
+			this.table.options.columns = cols;
+		}
+
 		this.setColumns(this.table.options.columns);
 	}
 };

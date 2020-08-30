@@ -503,6 +503,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	ColumnManager.prototype.generateColumnsFromRowData = function (data) {
 
 		var cols = [],
+		    definitions = this.table.options.autoColumnsDefinitions,
 		    row,
 		    sorter;
 
@@ -573,7 +574,52 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				cols.push(col);
 			}
 
-			this.table.options.columns = cols;
+			if (definitions) {
+
+				switch (typeof definitions === 'undefined' ? 'undefined' : _typeof(definitions)) {
+
+					case "function":
+
+						this.table.options.columns = definitions.call(this.table, cols);
+
+						break;
+
+					case "object":
+
+						if (Array.isArray(definitions)) {
+
+							cols.forEach(function (col) {
+
+								var match = definitions.find(function (def) {
+
+									return def.field === col.field;
+								});
+
+								if (match) {
+
+									Object.assign(col, match);
+								}
+							});
+						} else {
+
+							cols.forEach(function (col) {
+
+								if (definitions[col.field]) {
+
+									Object.assign(col, definitions[col.field]);
+								}
+							});
+						}
+
+						this.table.options.columns = cols;
+
+						break;
+
+				}
+			} else {
+
+				this.table.options.columns = cols;
+			}
 
 			this.setColumns(this.table.options.columns);
 		}
@@ -8388,6 +8434,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		autoColumns: false, //build columns from data row structure
 
+		autoColumnsDefinitions: false,
 
 		reactiveData: false, //enable data reactivity
 

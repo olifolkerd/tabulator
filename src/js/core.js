@@ -62,6 +62,7 @@ Tabulator.prototype.defaultOptions = {
 	data:[], //default starting data
 
 	autoColumns:false, //build columns from data row structure
+	autoColumnsDefinitions:false,
 
 	reactiveData:false, //enable data reactivity
 
