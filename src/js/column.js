@@ -588,7 +588,7 @@ Column.prototype._buildColumnHeader = function(){
 	}
 
 	//set column header context menu
-	if((def.headerContextMenu || def.headerMenu) && table.modExists("menu")){
+	if((def.headerContextMenu || def.headerClickMenu || def.headerMenu) && table.modExists("menu")){
 		table.modules.menu.initializeColumnHeader(self);
 	}
 
@@ -1476,6 +1476,8 @@ Column.prototype.defaultOptionList = [
 "headerContextMenu",
 "headerMenu",
 "contextMenu",
+// "headerClickMenu",
+"clickMenu",
 "formatterPrint",
 "formatterPrintParams",
 "formatterClipboard",

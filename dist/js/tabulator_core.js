@@ -1821,7 +1821,7 @@ Column.prototype._buildColumnHeader = function () {
 	}
 
 	//set column header context menu
-	if ((def.headerContextMenu || def.headerMenu) && table.modExists("menu")) {
+	if ((def.headerContextMenu || def.headerClickMenu || def.headerMenu) && table.modExists("menu")) {
 		table.modules.menu.initializeColumnHeader(self);
 	}
 
@@ -2600,7 +2600,9 @@ Column.prototype.deleteCell = function (cell) {
 	}
 };
 
-Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu", "formatterPrint", "formatterPrintParams", "formatterClipboard", "formatterClipboardParams", "formatterHtmlOutput", "formatterHtmlOutputParams", "titlePrint", "titleClipboard", "titleHtmlOutput", "titleDownload"];
+Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu",
+// "headerClickMenu",
+"clickMenu", "formatterPrint", "formatterPrintParams", "formatterClipboard", "formatterClipboardParams", "formatterHtmlOutput", "formatterHtmlOutputParams", "titlePrint", "titleClipboard", "titleHtmlOutput", "titleDownload"];
 
 //////////////// Event Bindings /////////////////
 
@@ -5038,7 +5040,7 @@ Row.prototype.generateElement = function () {
 	}
 
 	//set column menu
-	if (self.table.options.rowContextMenu && this.table.modExists("menu")) {
+	if ((self.table.options.rowContextMenu || self.table.options.rowClickMenu) && this.table.modExists("menu")) {
 		self.table.modules.menu.initializeRow(this);
 	}
 
@@ -6176,8 +6178,8 @@ Cell.prototype._generateTooltip = function () {
 //////////////////// Getters ////////////////////
 Cell.prototype.getElement = function () {
 	if (!this.loaded) {
-		this.layoutElement();
 		this.loaded = true;
+		this.layoutElement();
 	}
 
 	return this.element;
@@ -6282,8 +6284,7 @@ Cell.prototype.layoutElement = function () {
 		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
-	//set column menu
-	if (this.column.definition.contextMenu && this.table.modExists("menu")) {
+	if ((this.column.definition.contextMenu || this.column.definition.clickMenu) && this.table.modExists("menu")) {
 		this.table.modules.menu.initializeCell(this);
 	}
 
@@ -6843,6 +6844,7 @@ Tabulator.prototype.defaultOptions = {
 	rowMouseOut: false,
 	rowMouseMove: false,
 	rowContextMenu: false,
+	rowClickMenu: false,
 	rowAdded: function rowAdded() {},
 	rowDeleted: function rowDeleted() {},
 	rowMoved: function rowMoved() {},
@@ -6907,6 +6909,7 @@ Tabulator.prototype.defaultOptions = {
 	groupDblClick: false,
 	groupContext: false,
 	groupContextMenu: false,
+	groupClickMenu: false,
 	groupTap: false,
 	groupDblTap: false,
 	groupTapHold: false,

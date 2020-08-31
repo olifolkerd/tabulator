@@ -166,7 +166,7 @@ Group.prototype.addBindings = function () {
 		});
 	}
 
-	if (self.groupManager.table.options.groupContextMenu && self.groupManager.table.modExists("menu")) {
+	if ((self.groupManager.table.options.groupContextMenu || self.groupManager.table.options.groupClickMenu) && self.groupManager.table.modExists("menu")) {
 		self.groupManager.table.modules.menu.initializeGroup.call(self.groupManager.table.modules.menu, self);
 	}
 

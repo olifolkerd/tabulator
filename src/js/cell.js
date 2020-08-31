@@ -516,8 +516,8 @@ Cell.prototype._generateTooltip = function(){
 //////////////////// Getters ////////////////////
 Cell.prototype.getElement = function(){
 	if(!this.loaded){
-		this.layoutElement();
 		this.loaded = true;
+		this.layoutElement();
 	}
 
 	return this.element;
@@ -625,8 +625,8 @@ Cell.prototype.layoutElement = function(){
 		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
-	//set column menu
-	if(this.column.definition.contextMenu && this.table.modExists("menu")){
+
+	if((this.column.definition.contextMenu || this.column.definition.clickMenu) && this.table.modExists("menu")){
 		this.table.modules.menu.initializeCell(this);
 	}
 
@@ -634,7 +634,7 @@ Cell.prototype.layoutElement = function(){
 	if(this.table.modExists("frozenColumns")){
 		this.table.modules.frozenColumns.layoutElement(this.element, this.column);
 	}
-}
+};
 
 Cell.prototype.setWidth = function(){
 	this.width = this.column.width;

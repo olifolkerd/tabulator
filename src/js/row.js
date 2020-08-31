@@ -235,7 +235,7 @@ Row.prototype.generateElement = function(){
 	}
 
 	//set column menu
-	if(self.table.options.rowContextMenu && this.table.modExists("menu")){
+	if((self.table.options.rowContextMenu || self.table.options.rowClickMenu) && this.table.modExists("menu")){
 		self.table.modules.menu.initializeRow(this);
 	}
 
