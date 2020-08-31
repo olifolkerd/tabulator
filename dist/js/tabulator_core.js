@@ -5687,8 +5687,8 @@ CellComponent.prototype.getOldValue = function () {
 	return this._cell.getOldValue();
 };
 
-CellComponent.prototype.getOriginalValue = function () {
-	return this._cell.originalValue;
+CellComponent.prototype.getInitialValue = function () {
+	return this._cell.initialValue;
 };
 
 CellComponent.prototype.getElement = function () {
@@ -5723,8 +5723,8 @@ CellComponent.prototype.restoreOldValue = function () {
 	this._cell.setValueActual(this._cell.getOldValue());
 };
 
-CellComponent.prototype.restoreOriginalValue = function () {
-	this._cell.setValueActual(this._cell.originalValue);
+CellComponent.prototype.restoreInitialValue = function () {
+	this._cell.setValueActual(this._cell.initialValue);
 };
 
 CellComponent.prototype.edit = function (force) {
@@ -5782,7 +5782,7 @@ var Cell = function Cell(column, row) {
 	this.row = row;
 	this.element = null;
 	this.value = null;
-	this.originalValue;
+	this.initialValue;
 	this.oldValue = null;
 	this.modules = {};
 
@@ -5809,7 +5809,7 @@ Cell.prototype.build = function () {
 
 	this.setValueActual(this.column.getFieldValue(this.row.data));
 
-	this.originalValue = this.value;
+	this.initialValue = this.value;
 };
 
 Cell.prototype.generateElement = function () {

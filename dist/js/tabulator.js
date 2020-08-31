@@ -7189,9 +7189,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._cell.getOldValue();
 	};
 
-	CellComponent.prototype.getOriginalValue = function () {
+	CellComponent.prototype.getInitialValue = function () {
 
-		return this._cell.originalValue;
+		return this._cell.initialValue;
 	};
 
 	CellComponent.prototype.getElement = function () {
@@ -7234,9 +7234,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this._cell.setValueActual(this._cell.getOldValue());
 	};
 
-	CellComponent.prototype.restoreOriginalValue = function () {
+	CellComponent.prototype.restoreInitialValue = function () {
 
-		this._cell.setValueActual(this._cell.originalValue);
+		this._cell.setValueActual(this._cell.initialValue);
 	};
 
 	CellComponent.prototype.edit = function (force) {
@@ -7312,7 +7312,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.value = null;
 
-		this.originalValue;
+		this.initialValue;
 
 		this.oldValue = null;
 
@@ -7347,7 +7347,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.setValueActual(this.column.getFieldValue(this.row.data));
 
-		this.originalValue = this.value;
+		this.initialValue = this.value;
 	};
 
 	Cell.prototype.generateElement = function () {
