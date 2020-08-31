@@ -7234,6 +7234,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this._cell.setValueActual(this._cell.getOldValue());
 	};
 
+	CellComponent.prototype.restoreOriginalValue = function () {
+
+		this._cell.setValueActual(this._cell.originalValue);
+	};
+
 	CellComponent.prototype.edit = function (force) {
 
 		return this._cell.edit(force);

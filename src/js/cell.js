@@ -48,6 +48,10 @@ CellComponent.prototype.restoreOldValue = function(){
 	this._cell.setValueActual(this._cell.getOldValue());
 };
 
+CellComponent.prototype.restoreOriginalValue = function(){
+	this._cell.setValueActual(this._cell.originalValue);
+};
+
 CellComponent.prototype.edit = function(force){
 	return this._cell.edit(force);
 };
