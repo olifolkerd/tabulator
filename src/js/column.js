@@ -577,66 +577,65 @@ Column.prototype._bindEvents = function(){
 
 //build header element for header
 Column.prototype._buildColumnHeader = function(){
-	var self = this,
-	def = self.definition,
-	table = self.table,
+	var def = this.definition,
+	table = this.table,
 	sortable;
 
 	//set column sorter
 	if(table.modExists("sort")){
-		table.modules.sort.initializeColumn(self, self.titleHolderElement);
+		table.modules.sort.initializeColumn(this, this.titleHolderElement);
 	}
 
 	//set column header context menu
 	if((def.headerContextMenu || def.headerClickMenu || def.headerMenu) && table.modExists("menu")){
-		table.modules.menu.initializeColumnHeader(self);
+		table.modules.menu.initializeColumnHeader(this);
 	}
 
 	//set column formatter
 	if(table.modExists("format")){
-		table.modules.format.initializeColumn(self);
+		table.modules.format.initializeColumn(this);
 	}
 
 	//set column editor
 	if(typeof def.editor != "undefined" && table.modExists("edit")){
-		table.modules.edit.initializeColumn(self);
+		table.modules.edit.initializeColumn(this);
 	}
 
 	//set colum validator
 	if(typeof def.validator != "undefined" && table.modExists("validate")){
-		table.modules.validate.initializeColumn(self);
+		table.modules.validate.initializeColumn(this);
 	}
 
 
 	//set column mutator
 	if(table.modExists("mutator")){
-		table.modules.mutator.initializeColumn(self);
+		table.modules.mutator.initializeColumn(this);
 	}
 
 	//set column accessor
 	if(table.modExists("accessor")){
-		table.modules.accessor.initializeColumn(self);
+		table.modules.accessor.initializeColumn(this);
 	}
 
 	//set respoviveLayout
 	if(typeof table.options.responsiveLayout && table.modExists("responsiveLayout")){
-		table.modules.responsiveLayout.initializeColumn(self);
+		table.modules.responsiveLayout.initializeColumn(this);
 	}
 
 	//set column visibility
 	if(typeof def.visible != "undefined"){
 		if(def.visible){
-			self.show(true);
+			this.show(true);
 		}else{
-			self.hide(true);
+			this.hide(true);
 		}
 	}
 
 	//asign additional css classes to column header
 	if(def.cssClass){
 		var classeNames = def.cssClass.split(" ");
-		classeNames.forEach(function(className) {
-			self.element.classList.add(className)
+		classeNames.forEach((className) => {
+			this.element.classList.add(className);
 		});
 	}
 
@@ -645,16 +644,18 @@ Column.prototype._buildColumnHeader = function(){
 	}
 
 	//set min width if present
-	self.setMinWidth(typeof def.minWidth == "undefined" ? self.table.options.columnMinWidth : parseInt(def.minWidth));
+	this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
 
-	self.reinitializeWidth();
+	this.reinitializeWidth();
 
 	//set tooltip if present
-	self.tooltip = self.definition.tooltip || self.definition.tooltip === false ? self.definition.tooltip : self.table.options.tooltips;
+	this.tooltip = this.definition.tooltip || this.definition.tooltip === false ? this.definition.tooltip : this.table.options.tooltips;
 
 	//set orizontal text alignment
-	self.hozAlign = typeof(self.definition.hozAlign) == "undefined" ? self.table.options.cellHozAlign : self.definition.hozAlign;
-	self.vertAlign = typeof(self.definition.vertAlign) == "undefined" ? self.table.options.cellVertAlign : self.definition.vertAlign;
+	this.hozAlign = typeof(this.definition.hozAlign) == "undefined" ? this.table.options.cellHozAlign : this.definition.hozAlign;
+	this.vertAlign = typeof(this.definition.vertAlign) == "undefined" ? this.table.options.cellVertAlign : this.definition.vertAlign;
+
+	this.titleElement.style.textAlign = this.definition.headerHozAlign || "";
 };
 
 Column.prototype._buildColumnHeaderContent = function(){
@@ -1462,6 +1463,7 @@ Column.prototype.defaultOptionList = [
 "headerTapHold",
 "headerTooltip",
 "headerVertical",
+"headerHozAlign",
 "editableTitle",
 "titleFormatter",
 "titleFormatterParams",
