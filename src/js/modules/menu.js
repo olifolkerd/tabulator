@@ -11,6 +11,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 
 	if(column.definition.headerContextMenu){
 		column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
+		this.tapHold(column, column.definition.headerContextMenu);
 	}
 
 	// if(column.definition.headerClickMenu){
@@ -38,17 +39,47 @@ Menu.prototype.initializeColumnHeader = function(column){
 Menu.prototype.LoadMenuEvent = function(component, menu, e){
 	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
 
-	if(component instanceof Cell){
-		e.stopImmediatePropagation();
-	}
+	// if(component instanceof Cell){
+	// 	e.stopImmediatePropagation();
+	// }
 
 	this.loadMenu(e, component, menu);
+};
+
+Menu.prototype.tapHold = function(component, menu){
+	var element = component.getElement(),
+	tapHold = null,
+	loaded = false;
+
+	element.addEventListener("touchstart", (e) => {
+		clearTimeout(tapHold);
+		loaded = false;
+
+		tapHold = setTimeout(() => {
+			clearTimeout(tapHold);
+			tapHold = null;
+			loaded = true;
+
+			this.LoadMenuEvent(component, menu, e);
+		}, 1000);
+
+	}, {passive: true});
+
+	element.addEventListener("touchend", (e) => {
+		clearTimeout(tapHold);
+		tapHold = null;
+
+		if(loaded){
+			e.preventDefault();
+		}
+	});
 };
 
 
 Menu.prototype.initializeCell = function(cell){
 	if(cell.column.definition.contextMenu){
 		cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+		this.tapHold(cell, cell.column.definition.contextMenu);
 	}
 
 	if(cell.column.definition.clickMenu){
@@ -59,6 +90,7 @@ Menu.prototype.initializeCell = function(cell){
 Menu.prototype.initializeRow = function(row){
 	if(this.table.options.rowContextMenu){
 		row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
+		this.tapHold(row, this.table.options.rowContextMenu);
 	}
 
 	if(this.table.options.rowClickMenu){
@@ -69,6 +101,7 @@ Menu.prototype.initializeRow = function(row){
 Menu.prototype.initializeGroup = function (group){
 	if(this.table.options.groupContextMenu){
 		group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
+		this.tapHold(group, this.table.options.groupContextMenu);
 	}
 
 	if(this.table.options.groupClickMenu){
@@ -79,9 +112,12 @@ Menu.prototype.initializeGroup = function (group){
 
 Menu.prototype.loadMenu = function(e, component, menu){
 
-	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
+	touch = !(e instanceof MouseEvent);
 
-	e.preventDefault();
+	if(!touch){
+		e.preventDefault();
+	}
 
 	//abort if no menu set
 	if(!menu || !menu.length){
@@ -144,8 +180,8 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		this.menuEl.appendChild(itemEl);
 	});
 
-	this.menuEl.style.top = e.pageY + "px";
-	this.menuEl.style.left = e.pageX + "px";
+	this.menuEl.style.top = (touch ? e.touches[0].pageY : e.pageY) + "px";
+	this.menuEl.style.left = (touch ? e.touches[0].pageX : e.pageX) + "px";
 
 	setTimeout(() => {
 		this.table.rowManager.element.addEventListener("scroll", this.blurEvent);

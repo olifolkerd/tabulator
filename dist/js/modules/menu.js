@@ -15,6 +15,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 
 	if (column.definition.headerContextMenu) {
 		column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
+		this.tapHold(column, column.definition.headerContextMenu);
 	}
 
 	// if(column.definition.headerClickMenu){
@@ -42,16 +43,47 @@ Menu.prototype.initializeColumnHeader = function (column) {
 Menu.prototype.LoadMenuEvent = function (component, menu, e) {
 	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
 
-	if (component instanceof Cell) {
-		e.stopImmediatePropagation();
-	}
+	// if(component instanceof Cell){
+	// 	e.stopImmediatePropagation();
+	// }
 
 	this.loadMenu(e, component, menu);
+};
+
+Menu.prototype.tapHold = function (component, menu) {
+	var _this2 = this;
+
+	var element = component.getElement(),
+	    tapHold = null,
+	    loaded = false;
+
+	element.addEventListener("touchstart", function (e) {
+		clearTimeout(tapHold);
+		loaded = false;
+
+		tapHold = setTimeout(function () {
+			clearTimeout(tapHold);
+			tapHold = null;
+			loaded = true;
+
+			_this2.LoadMenuEvent(component, menu, e);
+		}, 1000);
+	}, { passive: true });
+
+	element.addEventListener("touchend", function (e) {
+		clearTimeout(tapHold);
+		tapHold = null;
+
+		if (loaded) {
+			e.preventDefault();
+		}
+	});
 };
 
 Menu.prototype.initializeCell = function (cell) {
 	if (cell.column.definition.contextMenu) {
 		cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+		this.tapHold(cell, cell.column.definition.contextMenu);
 	}
 
 	if (cell.column.definition.clickMenu) {
@@ -62,6 +94,7 @@ Menu.prototype.initializeCell = function (cell) {
 Menu.prototype.initializeRow = function (row) {
 	if (this.table.options.rowContextMenu) {
 		row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
+		this.tapHold(row, this.table.options.rowContextMenu);
 	}
 
 	if (this.table.options.rowClickMenu) {
@@ -72,6 +105,7 @@ Menu.prototype.initializeRow = function (row) {
 Menu.prototype.initializeGroup = function (group) {
 	if (this.table.options.groupContextMenu) {
 		group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
+		this.tapHold(group, this.table.options.groupContextMenu);
 	}
 
 	if (this.table.options.groupClickMenu) {
@@ -80,11 +114,14 @@ Menu.prototype.initializeGroup = function (group) {
 };
 
 Menu.prototype.loadMenu = function (e, component, menu) {
-	var _this2 = this;
+	var _this3 = this;
 
-	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
+	    touch = !(e instanceof MouseEvent);
 
-	e.preventDefault();
+	if (!touch) {
+		e.preventDefault();
+	}
 
 	//abort if no menu set
 	if (!menu || !menu.length) {
@@ -98,7 +135,7 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 		}
 	} else {
 		this.nestedMenuBlock = setTimeout(function () {
-			_this2.nestedMenuBlock = false;
+			_this3.nestedMenuBlock = false;
 		}, 100);
 	}
 
@@ -138,23 +175,23 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 				});
 			} else {
 				itemEl.addEventListener("click", function (e) {
-					_this2.hideMenu();
+					_this3.hideMenu();
 					item.action(e, component.getComponent());
 				});
 			}
 		}
 
-		_this2.menuEl.appendChild(itemEl);
+		_this3.menuEl.appendChild(itemEl);
 	});
 
-	this.menuEl.style.top = e.pageY + "px";
-	this.menuEl.style.left = e.pageX + "px";
+	this.menuEl.style.top = (touch ? e.touches[0].pageY : e.pageY) + "px";
+	this.menuEl.style.left = (touch ? e.touches[0].pageX : e.pageX) + "px";
 
 	setTimeout(function () {
-		_this2.table.rowManager.element.addEventListener("scroll", _this2.blurEvent);
-		document.body.addEventListener("click", _this2.blurEvent);
-		document.body.addEventListener("contextmenu", _this2.blurEvent);
-		document.body.addEventListener("keydown", _this2.escEvent);
+		_this3.table.rowManager.element.addEventListener("scroll", _this3.blurEvent);
+		document.body.addEventListener("click", _this3.blurEvent);
+		document.body.addEventListener("contextmenu", _this3.blurEvent);
+		document.body.addEventListener("keydown", _this3.escEvent);
 	}, 100);
 
 	document.body.appendChild(this.menuEl);

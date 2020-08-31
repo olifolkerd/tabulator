@@ -18345,6 +18345,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 
 	if (column.definition.headerContextMenu) {
 		column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
+		this.tapHold(column, column.definition.headerContextMenu);
 	}
 
 	// if(column.definition.headerClickMenu){
@@ -18372,16 +18373,47 @@ Menu.prototype.initializeColumnHeader = function (column) {
 Menu.prototype.LoadMenuEvent = function (component, menu, e) {
 	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
 
-	if (component instanceof Cell) {
-		e.stopImmediatePropagation();
-	}
+	// if(component instanceof Cell){
+	// 	e.stopImmediatePropagation();
+	// }
 
 	this.loadMenu(e, component, menu);
+};
+
+Menu.prototype.tapHold = function (component, menu) {
+	var _this69 = this;
+
+	var element = component.getElement(),
+	    tapHold = null,
+	    loaded = false;
+
+	element.addEventListener("touchstart", function (e) {
+		clearTimeout(tapHold);
+		loaded = false;
+
+		tapHold = setTimeout(function () {
+			clearTimeout(tapHold);
+			tapHold = null;
+			loaded = true;
+
+			_this69.LoadMenuEvent(component, menu, e);
+		}, 1000);
+	}, { passive: true });
+
+	element.addEventListener("touchend", function (e) {
+		clearTimeout(tapHold);
+		tapHold = null;
+
+		if (loaded) {
+			e.preventDefault();
+		}
+	});
 };
 
 Menu.prototype.initializeCell = function (cell) {
 	if (cell.column.definition.contextMenu) {
 		cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+		this.tapHold(cell, cell.column.definition.contextMenu);
 	}
 
 	if (cell.column.definition.clickMenu) {
@@ -18392,6 +18424,7 @@ Menu.prototype.initializeCell = function (cell) {
 Menu.prototype.initializeRow = function (row) {
 	if (this.table.options.rowContextMenu) {
 		row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
+		this.tapHold(row, this.table.options.rowContextMenu);
 	}
 
 	if (this.table.options.rowClickMenu) {
@@ -18402,6 +18435,7 @@ Menu.prototype.initializeRow = function (row) {
 Menu.prototype.initializeGroup = function (group) {
 	if (this.table.options.groupContextMenu) {
 		group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
+		this.tapHold(group, this.table.options.groupContextMenu);
 	}
 
 	if (this.table.options.groupClickMenu) {
@@ -18410,11 +18444,14 @@ Menu.prototype.initializeGroup = function (group) {
 };
 
 Menu.prototype.loadMenu = function (e, component, menu) {
-	var _this69 = this;
+	var _this70 = this;
 
-	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
+	    touch = !(e instanceof MouseEvent);
 
-	e.preventDefault();
+	if (!touch) {
+		e.preventDefault();
+	}
 
 	//abort if no menu set
 	if (!menu || !menu.length) {
@@ -18428,7 +18465,7 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 		}
 	} else {
 		this.nestedMenuBlock = setTimeout(function () {
-			_this69.nestedMenuBlock = false;
+			_this70.nestedMenuBlock = false;
 		}, 100);
 	}
 
@@ -18468,23 +18505,23 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 				});
 			} else {
 				itemEl.addEventListener("click", function (e) {
-					_this69.hideMenu();
+					_this70.hideMenu();
 					item.action(e, component.getComponent());
 				});
 			}
 		}
 
-		_this69.menuEl.appendChild(itemEl);
+		_this70.menuEl.appendChild(itemEl);
 	});
 
-	this.menuEl.style.top = e.pageY + "px";
-	this.menuEl.style.left = e.pageX + "px";
+	this.menuEl.style.top = (touch ? e.touches[0].pageY : e.pageY) + "px";
+	this.menuEl.style.left = (touch ? e.touches[0].pageX : e.pageX) + "px";
 
 	setTimeout(function () {
-		_this69.table.rowManager.element.addEventListener("scroll", _this69.blurEvent);
-		document.body.addEventListener("click", _this69.blurEvent);
-		document.body.addEventListener("contextmenu", _this69.blurEvent);
-		document.body.addEventListener("keydown", _this69.escEvent);
+		_this70.table.rowManager.element.addEventListener("scroll", _this70.blurEvent);
+		document.body.addEventListener("click", _this70.blurEvent);
+		document.body.addEventListener("contextmenu", _this70.blurEvent);
+		document.body.addEventListener("keydown", _this70.escEvent);
 	}, 100);
 
 	document.body.appendChild(this.menuEl);
@@ -19218,7 +19255,7 @@ MoveRows.prototype.elementRowDrop = function (e, element, row) {
 
 //establish connection with other tables
 MoveRows.prototype.connectToTables = function (row) {
-	var _this70 = this;
+	var _this71 = this;
 
 	var connectionTables;
 
@@ -19242,15 +19279,15 @@ MoveRows.prototype.connectToTables = function (row) {
 
 		this.connectionSelectorsElements.forEach(function (query) {
 			if (typeof query === "string") {
-				_this70.connectionElements = _this70.connectionElements.concat(Array.prototype.slice.call(document.querySelectorAll(query)));
+				_this71.connectionElements = _this71.connectionElements.concat(Array.prototype.slice.call(document.querySelectorAll(query)));
 			} else {
-				_this70.connectionElements.push(query);
+				_this71.connectionElements.push(query);
 			}
 		});
 
 		this.connectionElements.forEach(function (element) {
 			var dropEvent = function dropEvent(e) {
-				_this70.elementRowDrop(e, element, _this70.moving);
+				_this71.elementRowDrop(e, element, _this71.moving);
 			};
 
 			element.addEventListener("mouseup", dropEvent);
@@ -19624,7 +19661,7 @@ Page.prototype.createElements = function () {
 };
 
 Page.prototype.generatePageSizeSelectList = function () {
-	var _this71 = this;
+	var _this72 = this;
 
 	var pageSizes = [];
 
@@ -19659,14 +19696,14 @@ Page.prototype.generatePageSizeSelectList = function () {
 			itemEl.value = item;
 
 			if (item === true) {
-				_this71.table.modules.localize.bind("pagination|all", function (value) {
+				_this72.table.modules.localize.bind("pagination|all", function (value) {
 					itemEl.innerHTML = value;
 				});
 			} else {
 				itemEl.innerHTML = item;
 			}
 
-			_this71.pageSizeSelect.appendChild(itemEl);
+			_this72.pageSizeSelect.appendChild(itemEl);
 		});
 
 		this.pageSizeSelect.value = this.size;
@@ -19860,7 +19897,7 @@ Page.prototype.setMaxPage = function (max) {
 
 //set current page number
 Page.prototype.setPage = function (page) {
-	var _this72 = this;
+	var _this73 = this;
 
 	var self = this;
 
@@ -19886,9 +19923,9 @@ Page.prototype.setPage = function (page) {
 
 		page = parseInt(page);
 
-		if (page > 0 && page <= _this72.max) {
-			_this72.page = page;
-			_this72.trigger().then(function () {
+		if (page > 0 && page <= _this73.max) {
+			_this73.page = page;
+			_this73.trigger().then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
@@ -19898,24 +19935,24 @@ Page.prototype.setPage = function (page) {
 				self.table.modules.persistence.save("page");
 			}
 		} else {
-			console.warn("Pagination Error - Requested page is out of range of 1 - " + _this72.max + ":", page);
+			console.warn("Pagination Error - Requested page is out of range of 1 - " + _this73.max + ":", page);
 			reject();
 		}
 	});
 };
 
 Page.prototype.setPageToRow = function (row) {
-	var _this73 = this;
+	var _this74 = this;
 
 	return new Promise(function (resolve, reject) {
 
-		var rows = _this73.table.rowManager.getDisplayRows(_this73.displayIndex - 1);
+		var rows = _this74.table.rowManager.getDisplayRows(_this74.displayIndex - 1);
 		var index = rows.indexOf(row);
 
 		if (index > -1) {
-			var page = _this73.size === true ? 1 : Math.ceil((index + 1) / _this73.size);
+			var page = _this74.size === true ? 1 : Math.ceil((index + 1) / _this74.size);
 
-			_this73.setPage(page).then(function () {
+			_this74.setPage(page).then(function () {
 				resolve();
 			}).catch(function () {
 				reject();
@@ -20011,34 +20048,11 @@ Page.prototype._generatePageButton = function (page) {
 
 //previous page
 Page.prototype.previousPage = function () {
-	var _this74 = this;
-
-	return new Promise(function (resolve, reject) {
-		if (_this74.page > 1) {
-			_this74.page--;
-			_this74.trigger().then(function () {
-				resolve();
-			}).catch(function () {
-				reject();
-			});
-
-			if (_this74.table.options.persistence && _this74.table.modExists("persistence", true) && _this74.table.modules.persistence.config.page) {
-				_this74.table.modules.persistence.save("page");
-			}
-		} else {
-			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
-			reject();
-		}
-	});
-};
-
-//next page
-Page.prototype.nextPage = function () {
 	var _this75 = this;
 
 	return new Promise(function (resolve, reject) {
-		if (_this75.page < _this75.max) {
-			_this75.page++;
+		if (_this75.page > 1) {
+			_this75.page--;
 			_this75.trigger().then(function () {
 				resolve();
 			}).catch(function () {
@@ -20049,8 +20063,31 @@ Page.prototype.nextPage = function () {
 				_this75.table.modules.persistence.save("page");
 			}
 		} else {
-			if (!_this75.progressiveLoad) {
-				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this75.max + ":", _this75.max + 1);
+			console.warn("Pagination Error - Previous page would be less than page 1:", 0);
+			reject();
+		}
+	});
+};
+
+//next page
+Page.prototype.nextPage = function () {
+	var _this76 = this;
+
+	return new Promise(function (resolve, reject) {
+		if (_this76.page < _this76.max) {
+			_this76.page++;
+			_this76.trigger().then(function () {
+				resolve();
+			}).catch(function () {
+				reject();
+			});
+
+			if (_this76.table.options.persistence && _this76.table.modExists("persistence", true) && _this76.table.modules.persistence.config.page) {
+				_this76.table.modules.persistence.save("page");
+			}
+		} else {
+			if (!_this76.progressiveLoad) {
+				console.warn("Pagination Error - Next page would be greater than maximum page of " + _this76.max + ":", _this76.max + 1);
 			}
 			reject();
 		}
@@ -20108,28 +20145,28 @@ Page.prototype.getRows = function (data) {
 };
 
 Page.prototype.trigger = function () {
-	var _this76 = this;
+	var _this77 = this;
 
 	var left;
 
 	return new Promise(function (resolve, reject) {
 
-		switch (_this76.mode) {
+		switch (_this77.mode) {
 			case "local":
-				left = _this76.table.rowManager.scrollLeft;
+				left = _this77.table.rowManager.scrollLeft;
 
-				_this76.table.rowManager.refreshActiveData("page");
-				_this76.table.rowManager.scrollHorizontal(left);
+				_this77.table.rowManager.refreshActiveData("page");
+				_this77.table.rowManager.scrollHorizontal(left);
 
-				_this76.table.options.pageLoaded.call(_this76.table, _this76.getPage());
+				_this77.table.options.pageLoaded.call(_this77.table, _this77.getPage());
 				resolve();
 				break;
 
 			case "remote":
 			case "progressive_load":
 			case "progressive_scroll":
-				_this76.table.modules.ajax.blockActiveRequest();
-				_this76._getRemotePage().then(function () {
+				_this77.table.modules.ajax.blockActiveRequest();
+				_this77._getRemotePage().then(function () {
 					resolve();
 				}).catch(function () {
 					reject();
@@ -20137,14 +20174,14 @@ Page.prototype.trigger = function () {
 				break;
 
 			default:
-				console.warn("Pagination Error - no such pagination mode:", _this76.mode);
+				console.warn("Pagination Error - no such pagination mode:", _this77.mode);
 				reject();
 		}
 	});
 };
 
 Page.prototype._getRemotePage = function () {
-	var _this77 = this;
+	var _this78 = this;
 
 	var self = this,
 	    oldParams,
@@ -20161,33 +20198,33 @@ Page.prototype._getRemotePage = function () {
 		pageParams = self.table.modules.ajax.getParams();
 
 		//configure request params
-		pageParams[_this77.dataSentNames.page] = self.page;
+		pageParams[_this78.dataSentNames.page] = self.page;
 
 		//set page size if defined
-		if (_this77.size) {
-			pageParams[_this77.dataSentNames.size] = _this77.size;
+		if (_this78.size) {
+			pageParams[_this78.dataSentNames.size] = _this78.size;
 		}
 
 		//set sort data if defined
-		if (_this77.table.options.ajaxSorting && _this77.table.modExists("sort")) {
+		if (_this78.table.options.ajaxSorting && _this78.table.modExists("sort")) {
 			var sorters = self.table.modules.sort.getSort();
 
 			sorters.forEach(function (item) {
 				delete item.column;
 			});
 
-			pageParams[_this77.dataSentNames.sorters] = sorters;
+			pageParams[_this78.dataSentNames.sorters] = sorters;
 		}
 
 		//set filter data if defined
-		if (_this77.table.options.ajaxFiltering && _this77.table.modExists("filter")) {
+		if (_this78.table.options.ajaxFiltering && _this78.table.modExists("filter")) {
 			var filters = self.table.modules.filter.getFilters(true, true);
-			pageParams[_this77.dataSentNames.filters] = filters;
+			pageParams[_this78.dataSentNames.filters] = filters;
 		}
 
 		self.table.modules.ajax.setParams(pageParams);
 
-		self.table.modules.ajax.sendRequest(_this77.progressiveLoad).then(function (data) {
+		self.table.modules.ajax.sendRequest(_this78.progressiveLoad).then(function (data) {
 			self._parseRemoteData(data);
 			resolve();
 		}).catch(function (e) {
@@ -21399,7 +21436,7 @@ var ResizeTable = function ResizeTable(table) {
 };
 
 ResizeTable.prototype.initialize = function (row) {
-	var _this78 = this;
+	var _this79 = this;
 
 	var table = this.table,
 	    tableStyle;
@@ -21422,13 +21459,13 @@ ResizeTable.prototype.initialize = function (row) {
 				var nodeHeight = Math.floor(entry[0].contentRect.height);
 				var nodeWidth = Math.floor(entry[0].contentRect.width);
 
-				if (_this78.tableHeight != nodeHeight || _this78.tableWidth != nodeWidth) {
-					_this78.tableHeight = nodeHeight;
-					_this78.tableWidth = nodeWidth;
+				if (_this79.tableHeight != nodeHeight || _this79.tableWidth != nodeWidth) {
+					_this79.tableHeight = nodeHeight;
+					_this79.tableWidth = nodeWidth;
 
 					if (table.element.parentNode) {
-						_this78.containerHeight = table.element.parentNode.clientHeight;
-						_this78.containerWidth = table.element.parentNode.clientWidth;
+						_this79.containerHeight = table.element.parentNode.clientHeight;
+						_this79.containerWidth = table.element.parentNode.clientWidth;
 					}
 
 					if (table.options.virtualDomHoz) {
@@ -21452,11 +21489,11 @@ ResizeTable.prototype.initialize = function (row) {
 					var nodeHeight = Math.floor(entry[0].contentRect.height);
 					var nodeWidth = Math.floor(entry[0].contentRect.width);
 
-					if (_this78.containerHeight != nodeHeight || _this78.containerWidth != nodeWidth) {
-						_this78.containerHeight = nodeHeight;
-						_this78.containerWidth = nodeWidth;
-						_this78.tableHeight = table.element.clientHeight;
-						_this78.tableWidth = table.element.clientWidth;
+					if (_this79.containerHeight != nodeHeight || _this79.containerWidth != nodeWidth) {
+						_this79.containerHeight = nodeHeight;
+						_this79.containerWidth = nodeWidth;
+						_this79.tableHeight = table.element.clientHeight;
+						_this79.tableWidth = table.element.clientWidth;
 					}
 
 					if (table.options.virtualDomHoz) {
@@ -21957,14 +21994,14 @@ SelectRow.prototype.toggleRow = function (row) {
 
 //select a number of rows
 SelectRow.prototype.selectRows = function (rows) {
-	var _this79 = this;
+	var _this80 = this;
 
 	var rowMatch;
 
 	switch (typeof rows === 'undefined' ? 'undefined' : _typeof(rows)) {
 		case "undefined":
 			this.table.rowManager.rows.forEach(function (row) {
-				_this79._selectRow(row, true, true);
+				_this80._selectRow(row, true, true);
 			});
 
 			this._rowSelectionChanged();
@@ -21978,7 +22015,7 @@ SelectRow.prototype.selectRows = function (rows) {
 				this._selectRow(rowMatch, true, true);
 			} else {
 				this.table.rowManager.getRows(rows).forEach(function (row) {
-					_this79._selectRow(row, true, true);
+					_this80._selectRow(row, true, true);
 				});
 			}
 
@@ -21988,7 +22025,7 @@ SelectRow.prototype.selectRows = function (rows) {
 		default:
 			if (Array.isArray(rows)) {
 				rows.forEach(function (row) {
-					_this79._selectRow(row, true, true);
+					_this80._selectRow(row, true, true);
 				});
 
 				this._rowSelectionChanged();
@@ -22506,7 +22543,7 @@ Sort.prototype.setColumnHeader = function (column, dir) {
 
 //sort each item in sort list
 Sort.prototype._sortItems = function (data, sortList) {
-	var _this80 = this;
+	var _this81 = this;
 
 	var sorterCount = sortList.length - 1;
 
@@ -22516,7 +22553,7 @@ Sort.prototype._sortItems = function (data, sortList) {
 		for (var i = sorterCount; i >= 0; i--) {
 			var sortItem = sortList[i];
 
-			result = _this80._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
+			result = _this81._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
 
 			if (result !== 0) {
 				break;
