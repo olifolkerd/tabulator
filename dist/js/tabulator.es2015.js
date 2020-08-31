@@ -5684,6 +5684,10 @@ CellComponent.prototype.getOldValue = function () {
 	return this._cell.getOldValue();
 };
 
+CellComponent.prototype.getOriginalValue = function () {
+	return this._cell.originalValue;
+};
+
 CellComponent.prototype.getElement = function () {
 	return this._cell.getElement();
 };
@@ -5771,6 +5775,7 @@ var Cell = function Cell(column, row) {
 	this.row = row;
 	this.element = null;
 	this.value = null;
+	this.originalValue;
 	this.oldValue = null;
 	this.modules = {};
 
@@ -5796,6 +5801,8 @@ Cell.prototype.build = function () {
 	this._configureCell();
 
 	this.setValueActual(this.column.getFieldValue(this.row.data));
+
+	this.originalValue = this.value;
 };
 
 Cell.prototype.generateElement = function () {

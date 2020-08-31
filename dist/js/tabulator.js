@@ -7187,6 +7187,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this._cell.getOldValue();
 	};
 
+	CellComponent.prototype.getOriginalValue = function () {
+
+		return this._cell.originalValue;
+	};
+
 	CellComponent.prototype.getElement = function () {
 
 		return this._cell.getElement();
@@ -7300,6 +7305,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.value = null;
 
+		this.originalValue;
+
 		this.oldValue = null;
 
 		this.modules = {};
@@ -7332,6 +7339,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this._configureCell();
 
 		this.setValueActual(this.column.getFieldValue(this.row.data));
+
+		this.originalValue = this.value;
 	};
 
 	Cell.prototype.generateElement = function () {
