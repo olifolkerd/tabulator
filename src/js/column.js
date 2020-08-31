@@ -655,7 +655,7 @@ Column.prototype._buildColumnHeader = function(){
 	this.hozAlign = typeof(this.definition.hozAlign) == "undefined" ? this.table.options.cellHozAlign : this.definition.hozAlign;
 	this.vertAlign = typeof(this.definition.vertAlign) == "undefined" ? this.table.options.cellVertAlign : this.definition.vertAlign;
 
-	this.titleElement.style.textAlign = this.definition.headerHozAlign || "";
+	this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
 };
 
 Column.prototype._buildColumnHeaderContent = function(){

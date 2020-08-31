@@ -2211,7 +2211,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.vertAlign = typeof this.definition.vertAlign == "undefined" ? this.table.options.cellVertAlign : this.definition.vertAlign;
 
-		this.titleElement.style.textAlign = this.definition.headerHozAlign || "";
+		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
 	};
 
 	Column.prototype._buildColumnHeaderContent = function () {
@@ -8459,7 +8459,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		cellHozAlign: "", //horizontal align columns
 
-		cellVertAlign: "", //certical align columns
+		cellVertAlign: "", //vertical align columns
+
+		headerHozAlign: "", //horizontal header alignment
 
 
 		data: [], //default starting data
