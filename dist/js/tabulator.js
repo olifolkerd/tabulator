@@ -21176,8 +21176,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Menu.prototype.LoadMenuEvent = function (component, menu, e) {
 		menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
 
-		console.log("cliiick", component, menu, e);
-
 		if (component instanceof Cell) {
 			e.stopImmediatePropagation();
 		}
@@ -21191,7 +21189,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		if (cell.column.definition.clickMenu) {
-			console.log("bind click");
 			cell.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
 		}
 	};

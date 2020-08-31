@@ -42,8 +42,6 @@ Menu.prototype.initializeColumnHeader = function (column) {
 Menu.prototype.LoadMenuEvent = function (component, menu, e) {
 	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
 
-	console.log("cliiick", component, menu, e);
-
 	if (component instanceof Cell) {
 		e.stopImmediatePropagation();
 	}
@@ -57,7 +55,6 @@ Menu.prototype.initializeCell = function (cell) {
 	}
 
 	if (cell.column.definition.clickMenu) {
-		console.log("bind click");
 		cell.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
 	}
 };
