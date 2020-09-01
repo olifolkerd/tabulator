@@ -161,11 +161,11 @@ Page.prototype.initialize = function(hidden){
 
 	//click bindings
 	self.firstBut.addEventListener("click", function(){
-		self.setPage(1);
+		self.setPage(1).then(()=>{}).catch(()=>{});
 	});
 
 	self.prevBut.addEventListener("click", function(){
-		self.previousPage();
+		self.previousPage().then(()=>{}).catch(()=>{});
 	});
 
 	self.nextBut.addEventListener("click", function(){
@@ -173,7 +173,7 @@ Page.prototype.initialize = function(hidden){
 	});
 
 	self.lastBut.addEventListener("click", function(){
-		self.setPage(self.max);
+		self.setPage(self.max).then(()=>{}).catch(()=>{});
 	});
 
 	if(self.table.options.paginationElement){
@@ -441,7 +441,7 @@ Page.prototype._generatePageButton = function(page){
 	button.textContent = page;
 
 	button.addEventListener("click", function(e){
-		self.setPage(page);
+		self.setPage(page).then(()=>{}).catch(()=>{});
 	});
 
 	return button;
