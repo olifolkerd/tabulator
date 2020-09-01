@@ -389,7 +389,7 @@ Download.prototype.downloaders = {
 
 					workbook.SheetNames.push(sheet);
 
-					this.table.modules.comms.send(options.sheets[sheet], "download", "intercept", {
+					this.modules.comms.send(options.sheets[sheet], "download", "intercept", {
 						type: "xlsx",
 						options: { sheetOnly: true },
 						active: self.active,
