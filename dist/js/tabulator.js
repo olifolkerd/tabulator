@@ -13443,18 +13443,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						col.value = col.component.getKey();
 					}
 
-					switch (_typeof(col.value)) {
-						case "object":
-							value = JSON.stringify(col.value);
-							break;
+					if (col.value === null) {
+						value = "";
+					} else {
+						switch (_typeof(col.value)) {
+							case "object":
+								value = JSON.stringify(col.value);
+								break;
 
-						case "undefined":
-						case "null":
-							value = "";
-							break;
+							case "undefined":
+								value = "";
+								break;
 
-						default:
-							value = col.value;
+							default:
+								value = col.value;
+						}
 					}
 				}
 
@@ -14319,7 +14322,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					case "header":
 						row.columns.forEach(function (col, i) {
 							if (col && col.depth === 1) {
-								headers[i] = typeof col.value == "undefined" || typeof col.value == "null" ? "" : '"' + String(col.value).split('"').join('""') + '"';
+								headers[i] = typeof col.value == "undefined" || col.value === null ? "" : '"' + String(col.value).split('"').join('""') + '"';
 							}
 						});
 						break;

@@ -131,7 +131,7 @@ Download.prototype.downloaders = {
 				case "header":
 					row.columns.forEach(function (col, i) {
 						if (col && col.depth === 1) {
-							headers[i] = typeof col.value == "undefined" || typeof col.value == "null" ? "" : '"' + String(col.value).split('"').join('""') + '"';
+							headers[i] = typeof col.value == "undefined" || col.value === null ? "" : '"' + String(col.value).split('"').join('""') + '"';
 						}
 					});
 					break;
