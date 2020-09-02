@@ -14,6 +14,8 @@ var VDomHoz = function(table){
 	this.vDomPadLeft = 0;
 	this.vDomPadRight = 0;
 
+	this.fitDataColAvg = 0;
+
 	this.window = 200; //pixel margin to make column visible before it is shown on screen
 
 	this.initialized = false;
@@ -95,8 +97,11 @@ VDomHoz.prototype.clear = function(){
 	this.vDomPadRight = 0;
 };
 
-VDomHoz.prototype.widthChange = function(){
-	var change = false;
+VDomHoz.prototype.dataChange = function(){
+	var change = false,
+	collsWidth = 0,
+	colEnd = 0,
+	row, rowEl;
 
 	if(this.table.options.layout === "fitData"){
 		this.table.columnManager.columnsByIndex.forEach((column) => {
@@ -104,9 +109,51 @@ VDomHoz.prototype.widthChange = function(){
 				change = true;
 			}
 		});
-	}
 
-	return change;
+		if(change){
+			if(change && this.table.rowManager.getDisplayRows().length){
+				// this.table.vdomHoz.deinitialize();
+
+				this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
+
+				row = this.table.rowManager.getDisplayRows()[0];
+				rowEl = row.getElement();
+
+				row.generateCells();
+
+				this.element.appendChild(rowEl);
+
+				for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
+					let cell = row.cells[colEnd];
+					rowEl.appendChild(cell.getElement());
+
+					cell.column.reinitializeWidth();
+
+					collsWidth += cell.column.getWidth();
+
+					if(collsWidth > this.vDomScrollPosRight){
+						break;
+					}
+				}
+
+				rowEl.parentNode.removeChild(rowEl);
+
+				this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+
+				for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
+					this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+				}
+
+				this.reinitialize();
+			}
+		}
+	}
+};
+
+VDomHoz.prototype.fitDataLayoutOverride = function(){
+	for(let i = this.leftCol; i <= this.rightCol; i++){
+		this.table.columnManager.getColumnByIndex(i).reinitializeWidth();
+	}
 };
 
 VDomHoz.prototype.reinitialize = function(update, blockRedraw){
@@ -190,7 +237,7 @@ VDomHoz.prototype.reinitChanged = function(old){
 	});
 
 	return !match;
-}
+};
 
 VDomHoz.prototype.renitializeRows = function(){
 	var rows = this.table.rowManager.getVisibleRows();
@@ -218,9 +265,18 @@ VDomHoz.prototype.scroll = function(diff){
 	}
 };
 
+VDomHoz.prototype.colPositionAdjust = function (start, end, diff){
+	for(let i = start; i < end; i++){
+		let column = this.table.columnManager.getColumnByIndex(i);
+
+		column.modules.vdomHoz.leftPos -= diff;
+		column.modules.vdomHoz.rightPos -= diff;
+	}
+};
+
 VDomHoz.prototype.addColRight = function(){
 	var column = this.columns[this.rightCol + 1],
-	rows;
+	rows, oldWidth, widthDiff;
 
 	if(column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight){
 
@@ -233,6 +289,23 @@ VDomHoz.prototype.addColRight = function(){
 				cell.cellRendered();
 			}
 		});
+
+		if(this.fitDataColAvg){
+
+			oldWidth = column.getWidth();
+
+			if(oldWidth === this.fitDataColAvg){
+				column.reinitializeWidth();
+
+				widthDiff = oldWidth - column.getWidth();
+
+				if(widthDiff){
+					column.modules.vdomHoz.rightPos -= widthDiff;
+					this.colPositionAdjust(i, this.table.columnManager.columnsByIndex.length, widthDiff);
+				}
+			}
+
+		}
 
 		this.vDomPadRight -= column.getWidth();
 		this.element.style.paddingRight = this.vDomPadRight + "px";

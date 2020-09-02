@@ -294,8 +294,7 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 ////////////////// Data Handling //////////////////
 
 RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
-	var self = this,
-	vHozUpdate;
+	var self = this;
 
 	return new Promise((resolve, reject)=>{
 		if(renderInPosition && this.getDisplayRows().length){
@@ -312,19 +311,8 @@ RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 			}
 			this.resetScroll();
 
-			if(this.table.options.virtualDomHoz){
-				vHozUpdate = this.table.vdomHoz.widthChange();
-			}
-
-			if(vHozUpdate){
-				this.table.vdomHoz.deinitialize();
-			}
-
 			this._setDataActual(data);
 
-			if(vHozUpdate){
-				this.table.vdomHoz.reinitialize();
-			}
 		}
 
 		resolve();
@@ -1042,7 +1030,13 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			if(renderInPosition){
 				self.reRenderInPosition();
 			}else{
+
+				if(stage === "all" && this.table.options.virtualDomHoz){
+					this.table.vdomHoz.dataChange();
+				}
+
 				self.renderTable();
+
 				if(table.options.layoutColumnsOnNewData){
 					self.table.columnManager.redraw(true);
 				}
@@ -1299,6 +1293,7 @@ RowManager.prototype.renderTable = function(){
 	if(this.firstRender){
 		if(this.displayRowsCount){
 			this.firstRender = false;
+
 			this.table.modules.layout.layout();
 		}else{
 			this.renderEmptyScroll();

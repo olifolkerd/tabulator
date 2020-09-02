@@ -2042,9 +2042,9 @@ Column.prototype._getNestedData = function (data) {
 	    length = structure.length,
 	    output;
 
-	for (var i = 0; i < length; i++) {
+	for (var _i = 0; _i < length; _i++) {
 
-		dataObj = dataObj[structure[i]];
+		dataObj = dataObj[structure[_i]];
 
 		output = dataObj;
 
@@ -2069,20 +2069,20 @@ Column.prototype._setNestedData = function (data, value) {
 	    structure = this.fieldStructure,
 	    length = structure.length;
 
-	for (var i = 0; i < length; i++) {
+	for (var _i2 = 0; _i2 < length; _i2++) {
 
-		if (i == length - 1) {
-			dataObj[structure[i]] = value;
+		if (_i2 == length - 1) {
+			dataObj[structure[_i2]] = value;
 		} else {
-			if (!dataObj[structure[i]]) {
+			if (!dataObj[structure[_i2]]) {
 				if (typeof value !== "undefined") {
-					dataObj[structure[i]] = {};
+					dataObj[structure[_i2]] = {};
 				} else {
 					break;
 				}
 			}
 
-			dataObj = dataObj[structure[i]];
+			dataObj = dataObj[structure[_i2]];
 		}
 	}
 };
@@ -2440,7 +2440,7 @@ Column.prototype.delete = function () {
 
 		var cellCount = _this8.cells.length;
 
-		for (var i = 0; i < cellCount; i++) {
+		for (var _i3 = 0; _i3 < cellCount; _i3++) {
 			_this8.cells[0].delete();
 		}
 
@@ -2910,8 +2910,7 @@ RowManager.prototype.scrollToRow = function (row, position, ifVisible) {
 RowManager.prototype.setData = function (data, renderInPosition, columnsChanged) {
 	var _this11 = this;
 
-	var self = this,
-	    vHozUpdate;
+	var self = this;
 
 	return new Promise(function (resolve, reject) {
 		if (renderInPosition && _this11.getDisplayRows().length) {
@@ -2928,19 +2927,7 @@ RowManager.prototype.setData = function (data, renderInPosition, columnsChanged)
 			}
 			_this11.resetScroll();
 
-			if (_this11.table.options.virtualDomHoz) {
-				vHozUpdate = _this11.table.vdomHoz.widthChange();
-			}
-
-			if (vHozUpdate) {
-				_this11.table.vdomHoz.deinitialize();
-			}
-
 			_this11._setDataActual(data);
-
-			if (vHozUpdate) {
-				_this11.table.vdomHoz.reinitialize();
-			}
 		}
 
 		resolve();
@@ -3296,9 +3283,9 @@ RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
 			start = fromIndex < toIndex ? fromIndex : toIndex;
 			end = toIndex > fromIndex ? toIndex : fromIndex + 1;
 
-			for (var i = start; i <= end; i++) {
-				if (rows[i]) {
-					this.styleRow(rows[i], i);
+			for (var _i4 = start; _i4 <= end; _i4++) {
+				if (rows[_i4]) {
+					this.styleRow(rows[_i4], _i4);
 				}
 			}
 		}
@@ -3646,7 +3633,13 @@ RowManager.prototype.refreshActiveData = function (stage, skipStage, renderInPos
 			if (renderInPosition) {
 				self.reRenderInPosition();
 			} else {
+
+				if (stage === "all" && this.table.options.virtualDomHoz) {
+					this.table.vdomHoz.dataChange();
+				}
+
 				self.renderTable();
+
 				if (table.options.layoutColumnsOnNewData) {
 					self.table.columnManager.redraw(true);
 				}
@@ -3900,6 +3893,7 @@ RowManager.prototype.renderTable = function () {
 	if (this.firstRender) {
 		if (this.displayRowsCount) {
 			this.firstRender = false;
+
 			this.table.modules.layout.layout();
 		} else {
 			this.renderEmptyScroll();
@@ -4483,6 +4477,8 @@ var VDomHoz = function VDomHoz(table) {
 	this.vDomPadLeft = 0;
 	this.vDomPadRight = 0;
 
+	this.fitDataColAvg = 0;
+
 	this.window = 200; //pixel margin to make column visible before it is shown on screen
 
 	this.initialized = false;
@@ -4566,8 +4562,12 @@ VDomHoz.prototype.clear = function () {
 	this.vDomPadRight = 0;
 };
 
-VDomHoz.prototype.widthChange = function () {
-	var change = false;
+VDomHoz.prototype.dataChange = function () {
+	var change = false,
+	    collsWidth = 0,
+	    colEnd = 0,
+	    row,
+	    rowEl;
 
 	if (this.table.options.layout === "fitData") {
 		this.table.columnManager.columnsByIndex.forEach(function (column) {
@@ -4575,9 +4575,51 @@ VDomHoz.prototype.widthChange = function () {
 				change = true;
 			}
 		});
-	}
 
-	return change;
+		if (change) {
+			if (change && this.table.rowManager.getDisplayRows().length) {
+				// this.table.vdomHoz.deinitialize();
+
+				this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
+
+				row = this.table.rowManager.getDisplayRows()[0];
+				rowEl = row.getElement();
+
+				row.generateCells();
+
+				this.element.appendChild(rowEl);
+
+				for (var colEnd = 0; colEnd < row.cells.length; colEnd++) {
+					var cell = row.cells[colEnd];
+					rowEl.appendChild(cell.getElement());
+
+					cell.column.reinitializeWidth();
+
+					collsWidth += cell.column.getWidth();
+
+					if (collsWidth > this.vDomScrollPosRight) {
+						break;
+					}
+				}
+
+				rowEl.parentNode.removeChild(rowEl);
+
+				this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+
+				for (colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++) {
+					this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+				}
+
+				this.reinitialize();
+			}
+		}
+	}
+};
+
+VDomHoz.prototype.fitDataLayoutOverride = function () {
+	for (var _i5 = this.leftCol; _i5 <= this.rightCol; _i5++) {
+		this.table.columnManager.getColumnByIndex(_i5).reinitializeWidth();
+	}
 };
 
 VDomHoz.prototype.reinitialize = function (update, blockRedraw) {
@@ -4695,9 +4737,20 @@ VDomHoz.prototype.scroll = function (diff) {
 	}
 };
 
+VDomHoz.prototype.colPositionAdjust = function (start, end, diff) {
+	for (var _i6 = start; _i6 < end; _i6++) {
+		var column = this.table.columnManager.getColumnByIndex(_i6);
+
+		column.modules.vdomHoz.leftPos -= diff;
+		column.modules.vdomHoz.rightPos -= diff;
+	}
+};
+
 VDomHoz.prototype.addColRight = function () {
 	var column = this.columns[this.rightCol + 1],
-	    rows;
+	    rows,
+	    oldWidth,
+	    widthDiff;
 
 	if (column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight) {
 
@@ -4710,6 +4763,22 @@ VDomHoz.prototype.addColRight = function () {
 				cell.cellRendered();
 			}
 		});
+
+		if (this.fitDataColAvg) {
+
+			oldWidth = column.getWidth();
+
+			if (oldWidth === this.fitDataColAvg) {
+				column.reinitializeWidth();
+
+				widthDiff = oldWidth - column.getWidth();
+
+				if (widthDiff) {
+					column.modules.vdomHoz.rightPos -= widthDiff;
+					this.colPositionAdjust(i, this.table.columnManager.columnsByIndex.length, widthDiff);
+				}
+			}
+		}
 
 		this.vDomPadRight -= column.getWidth();
 		this.element.style.paddingRight = this.vDomPadRight + "px";
@@ -4800,8 +4869,8 @@ VDomHoz.prototype.initializeRow = function (row) {
 			rightCol: this.rightCol
 		};
 
-		for (var i = this.leftCol; i <= this.rightCol; i++) {
-			var column = this.table.columnManager.getColumnByIndex(i);
+		for (var _i7 = this.leftCol; _i7 <= this.rightCol; _i7++) {
+			var column = this.table.columnManager.getColumnByIndex(_i7);
 
 			if (column.visible) {
 				var cell = row.getCell(column);
@@ -5661,7 +5730,7 @@ Row.prototype.detatchModules = function () {
 Row.prototype.deleteCells = function () {
 	var cellCount = this.cells.length;
 
-	for (var i = 0; i < cellCount; i++) {
+	for (var _i8 = 0; _i8 < cellCount; _i8++) {
 		this.cells[0].delete();
 	}
 };
@@ -8902,10 +8971,16 @@ Layout.prototype.modes = {
 
 	"fitData": function fitData(columns) {
 
-		columns.forEach(function (column) {
+		if (this.table.options.virtualDomHoz) {
 
-			column.reinitializeWidth();
-		});
+			this.table.vdomHoz.fitDataLayoutOverride();
+		} else {
+
+			columns.forEach(function (column) {
+
+				column.reinitializeWidth();
+			});
+		}
 
 		if (this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)) {
 
