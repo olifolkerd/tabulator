@@ -144,8 +144,13 @@ VDomHoz.prototype.dataChange = function(){
 					this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
 				}
 
-				this.reinitialize();
+				this.reinitialize(false, true);
 			}
+		}
+	}else{
+		if(this.table.options.layout === "fitColumns"){
+			this.table.modules.layout.layout();
+			this.table.vdomHoz.reinitialize(false, true);
 		}
 	}
 };

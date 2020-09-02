@@ -1293,7 +1293,6 @@ RowManager.prototype.renderTable = function(){
 	if(this.firstRender){
 		if(this.displayRowsCount){
 			this.firstRender = false;
-
 			this.table.modules.layout.layout();
 		}else{
 			this.renderEmptyScroll();
