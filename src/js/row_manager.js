@@ -294,7 +294,8 @@ RowManager.prototype.scrollToRow = function(row, position, ifVisible){
 ////////////////// Data Handling //////////////////
 
 RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
-	var self = this;
+	var self = this,
+	vHozUpdate;
 
 	return new Promise((resolve, reject)=>{
 		if(renderInPosition && this.getDisplayRows().length){
@@ -312,12 +313,16 @@ RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 			this.resetScroll();
 
 			if(this.table.options.virtualDomHoz){
+				vHozUpdate = this.table.vdomHoz.widthChange();
+			}
+
+			if(vHozUpdate){
 				this.table.vdomHoz.deinitialize();
 			}
 
 			this._setDataActual(data);
 
-			if(this.table.options.virtualDomHoz){
+			if(vHozUpdate){
 				this.table.vdomHoz.reinitialize();
 			}
 		}

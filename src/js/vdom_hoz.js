@@ -66,7 +66,7 @@ VDomHoz.prototype.compatabilityCheck = function(){
 	}
 
 	return ok;
-}
+};
 
 VDomHoz.prototype.initialize = function(){
 	this.holderEl.addEventListener("scroll", () => {
@@ -93,6 +93,20 @@ VDomHoz.prototype.clear = function(){
 	this.vDomScrollPosRight = 0;
 	this.vDomPadLeft = 0;
 	this.vDomPadRight = 0;
+};
+
+VDomHoz.prototype.widthChange = function(){
+	var change = false;
+
+	if(this.table.options.layout === "fitData"){
+		this.table.columnManager.columnsByIndex.forEach((column) => {
+			if(!column.definition.width && column.visible){
+				change = true;
+			}
+		});
+	}
+
+	return change;
 };
 
 VDomHoz.prototype.reinitialize = function(update, blockRedraw){
