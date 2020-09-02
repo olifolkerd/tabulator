@@ -2042,9 +2042,9 @@ Column.prototype._getNestedData = function (data) {
 	    length = structure.length,
 	    output;
 
-	for (var _i = 0; _i < length; _i++) {
+	for (var i = 0; i < length; i++) {
 
-		dataObj = dataObj[structure[_i]];
+		dataObj = dataObj[structure[i]];
 
 		output = dataObj;
 
@@ -2069,20 +2069,20 @@ Column.prototype._setNestedData = function (data, value) {
 	    structure = this.fieldStructure,
 	    length = structure.length;
 
-	for (var _i2 = 0; _i2 < length; _i2++) {
+	for (var i = 0; i < length; i++) {
 
-		if (_i2 == length - 1) {
-			dataObj[structure[_i2]] = value;
+		if (i == length - 1) {
+			dataObj[structure[i]] = value;
 		} else {
-			if (!dataObj[structure[_i2]]) {
+			if (!dataObj[structure[i]]) {
 				if (typeof value !== "undefined") {
-					dataObj[structure[_i2]] = {};
+					dataObj[structure[i]] = {};
 				} else {
 					break;
 				}
 			}
 
-			dataObj = dataObj[structure[_i2]];
+			dataObj = dataObj[structure[i]];
 		}
 	}
 };
@@ -2440,7 +2440,7 @@ Column.prototype.delete = function () {
 
 		var cellCount = _this8.cells.length;
 
-		for (var _i3 = 0; _i3 < cellCount; _i3++) {
+		for (var i = 0; i < cellCount; i++) {
 			_this8.cells[0].delete();
 		}
 
@@ -3283,9 +3283,9 @@ RowManager.prototype._moveRowInArray = function (rows, from, to, after) {
 			start = fromIndex < toIndex ? fromIndex : toIndex;
 			end = toIndex > fromIndex ? toIndex : fromIndex + 1;
 
-			for (var _i4 = start; _i4 <= end; _i4++) {
-				if (rows[_i4]) {
-					this.styleRow(rows[_i4], _i4);
+			for (var i = start; i <= end; i++) {
+				if (rows[i]) {
+					this.styleRow(rows[i], i);
 				}
 			}
 		}
@@ -4621,8 +4621,8 @@ VDomHoz.prototype.dataChange = function () {
 };
 
 VDomHoz.prototype.fitDataLayoutOverride = function () {
-	for (var _i5 = this.leftCol; _i5 <= this.rightCol; _i5++) {
-		this.table.columnManager.getColumnByIndex(_i5).reinitializeWidth();
+	for (var i = this.leftCol; i <= this.rightCol; i++) {
+		this.table.columnManager.getColumnByIndex(i).reinitializeWidth();
 	}
 };
 
@@ -4742,8 +4742,8 @@ VDomHoz.prototype.scroll = function (diff) {
 };
 
 VDomHoz.prototype.colPositionAdjust = function (start, end, diff) {
-	for (var _i6 = start; _i6 < end; _i6++) {
-		var column = this.table.columnManager.getColumnByIndex(_i6);
+	for (var i = start; i < end; i++) {
+		var column = this.columns[i];
 
 		column.modules.vdomHoz.leftPos -= diff;
 		column.modules.vdomHoz.rightPos -= diff;
@@ -4779,15 +4779,20 @@ VDomHoz.prototype.addColRight = function () {
 
 				if (widthDiff) {
 					column.modules.vdomHoz.rightPos -= widthDiff;
-					this.colPositionAdjust(i, this.table.columnManager.columnsByIndex.length, widthDiff);
+					this.colPositionAdjust(this.rightCol + 1, this.columns.length, widthDiff);
 				}
 			}
 		}
 
-		this.vDomPadRight -= column.getWidth();
-		this.element.style.paddingRight = this.vDomPadRight + "px";
-
 		this.rightCol++;
+
+		if (this.rightCol >= this.columns.length - 1) {
+			this.vDomPadRight = 0;
+		} else {
+			this.vDomPadRight -= column.getWidth();
+		}
+
+		this.element.style.paddingRight = this.vDomPadRight + "px";
 
 		this.addColRight();
 	}
@@ -4808,7 +4813,12 @@ VDomHoz.prototype.addColLeft = function () {
 			}
 		});
 
-		this.vDomPadLeft -= column.getWidth();
+		if (!this.leftCol) {
+			this.vDomPadLeft = 0;
+		} else {
+			this.vDomPadLeft -= column.getWidth();
+		}
+
 		this.element.style.paddingLeft = this.vDomPadLeft + "px";
 
 		this.leftCol--;
@@ -4873,8 +4883,8 @@ VDomHoz.prototype.initializeRow = function (row) {
 			rightCol: this.rightCol
 		};
 
-		for (var _i7 = this.leftCol; _i7 <= this.rightCol; _i7++) {
-			var column = this.table.columnManager.getColumnByIndex(_i7);
+		for (var i = this.leftCol; i <= this.rightCol; i++) {
+			var column = this.table.columnManager.getColumnByIndex(i);
 
 			if (column.visible) {
 				var cell = row.getCell(column);
@@ -5734,7 +5744,7 @@ Row.prototype.detatchModules = function () {
 Row.prototype.deleteCells = function () {
 	var cellCount = this.cells.length;
 
-	for (var _i8 = 0; _i8 < cellCount; _i8++) {
+	for (var i = 0; i < cellCount; i++) {
 		this.cells[0].delete();
 	}
 };

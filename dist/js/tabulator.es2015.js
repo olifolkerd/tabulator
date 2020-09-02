@@ -4743,7 +4743,7 @@ VDomHoz.prototype.scroll = function (diff) {
 
 VDomHoz.prototype.colPositionAdjust = function (start, end, diff) {
 	for (var _i6 = start; _i6 < end; _i6++) {
-		var column = this.table.columnManager.getColumnByIndex(_i6);
+		var column = this.columns[_i6];
 
 		column.modules.vdomHoz.leftPos -= diff;
 		column.modules.vdomHoz.rightPos -= diff;
@@ -4779,15 +4779,20 @@ VDomHoz.prototype.addColRight = function () {
 
 				if (widthDiff) {
 					column.modules.vdomHoz.rightPos -= widthDiff;
-					this.colPositionAdjust(i, this.table.columnManager.columnsByIndex.length, widthDiff);
+					this.colPositionAdjust(this.rightCol + 1, this.columns.length, widthDiff);
 				}
 			}
 		}
 
-		this.vDomPadRight -= column.getWidth();
-		this.element.style.paddingRight = this.vDomPadRight + "px";
-
 		this.rightCol++;
+
+		if (this.rightCol >= this.columns.length - 1) {
+			this.vDomPadRight = 0;
+		} else {
+			this.vDomPadRight -= column.getWidth();
+		}
+
+		this.element.style.paddingRight = this.vDomPadRight + "px";
 
 		this.addColRight();
 	}
@@ -4808,7 +4813,12 @@ VDomHoz.prototype.addColLeft = function () {
 			}
 		});
 
-		this.vDomPadLeft -= column.getWidth();
+		if (!this.leftCol) {
+			this.vDomPadLeft = 0;
+		} else {
+			this.vDomPadLeft -= column.getWidth();
+		}
+
 		this.element.style.paddingLeft = this.vDomPadLeft + "px";
 
 		this.leftCol--;
