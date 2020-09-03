@@ -1082,6 +1082,10 @@ GroupRows.prototype.updateGroupRows = function(force){
 };
 
 GroupRows.prototype.scrollHeaders = function(left){
+	if(this.table.options.virtualDomHoz){
+		left -= this.table.vdomHoz.vDomPadLeft;
+	}
+
 	left = left + "px";
 
 	this.groupList.forEach(function(group){

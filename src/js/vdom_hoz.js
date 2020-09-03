@@ -42,11 +42,6 @@ VDomHoz.prototype.compatabilityCheck = function(){
 		ok = false;
 	}
 
-	if(options.groupBy){
-		console.warn("Horizontal Vitrual DOM is not compatible with grouped rows");
-		ok = false;
-	}
-
 	if(options.rowFormatter){
 		console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
 		ok = false;
@@ -101,7 +96,7 @@ VDomHoz.prototype.dataChange = function(){
 	var change = false,
 	collsWidth = 0,
 	colEnd = 0,
-	row, rowEl;
+	group, row, rowEl;
 
 	if(this.table.options.layout === "fitData"){
 		this.table.columnManager.columnsByIndex.forEach((column) => {
@@ -116,35 +111,46 @@ VDomHoz.prototype.dataChange = function(){
 
 				this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
 
-				row = this.table.rowManager.getDisplayRows()[0];
-				rowEl = row.getElement();
 
-				row.generateCells();
+				if(this.table.options.groupBy){
+					group = this.table.modules.groupRows.getGroups(false)[0];
 
-				this.element.appendChild(rowEl);
+					row = group.getRows(false)[0];
+				}else{
+					row = this.table.rowManager.getDisplayRows()[0];
+				}
 
-				for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
-					let cell = row.cells[colEnd];
-					rowEl.appendChild(cell.getElement());
+				if(row){
 
-					cell.column.reinitializeWidth();
+					rowEl = row.getElement();
 
-					collsWidth += cell.column.getWidth();
+					row.generateCells();
 
-					if(collsWidth > this.vDomScrollPosRight){
-						break;
+					this.element.appendChild(rowEl);
+
+					for(var colEnd = 0; colEnd < row.cells.length; colEnd++){
+						let cell = row.cells[colEnd];
+						rowEl.appendChild(cell.getElement());
+
+						cell.column.reinitializeWidth();
+
+						collsWidth += cell.column.getWidth();
+
+						if(collsWidth > this.vDomScrollPosRight){
+							break;
+						}
 					}
+
+					rowEl.parentNode.removeChild(rowEl);
+
+					this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+
+					for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
+						this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+					}
+
+					this.reinitialize(false, true);
 				}
-
-				rowEl.parentNode.removeChild(rowEl);
-
-				this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-
-				for(colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++){
-					this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-				}
-
-				this.reinitialize(false, true);
 			}
 		}
 	}else{

@@ -5645,13 +5645,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			ok = false;
 		}
 
-		if (options.groupBy) {
-
-			console.warn("Horizontal Vitrual DOM is not compatible with grouped rows");
-
-			ok = false;
-		}
-
 		if (options.rowFormatter) {
 
 			console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
@@ -5725,6 +5718,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var change = false,
 		    collsWidth = 0,
 		    colEnd = 0,
+		    group,
 		    row,
 		    rowEl;
 
@@ -5747,40 +5741,51 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					this.vDomScrollPosRight = this.scrollLeft + this.holderEl.clientWidth + this.window;
 
-					row = this.table.rowManager.getDisplayRows()[0];
+					if (this.table.options.groupBy) {
 
-					rowEl = row.getElement();
+						group = this.table.modules.groupRows.getGroups(false)[0];
 
-					row.generateCells();
+						row = group.getRows(false)[0];
+					} else {
 
-					this.element.appendChild(rowEl);
+						row = this.table.rowManager.getDisplayRows()[0];
+					}
 
-					for (var colEnd = 0; colEnd < row.cells.length; colEnd++) {
+					if (row) {
 
-						var cell = row.cells[colEnd];
+						rowEl = row.getElement();
 
-						rowEl.appendChild(cell.getElement());
+						row.generateCells();
 
-						cell.column.reinitializeWidth();
+						this.element.appendChild(rowEl);
 
-						collsWidth += cell.column.getWidth();
+						for (var colEnd = 0; colEnd < row.cells.length; colEnd++) {
 
-						if (collsWidth > this.vDomScrollPosRight) {
+							var cell = row.cells[colEnd];
 
-							break;
+							rowEl.appendChild(cell.getElement());
+
+							cell.column.reinitializeWidth();
+
+							collsWidth += cell.column.getWidth();
+
+							if (collsWidth > this.vDomScrollPosRight) {
+
+								break;
+							}
 						}
+
+						rowEl.parentNode.removeChild(rowEl);
+
+						this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
+
+						for (colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++) {
+
+							this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
+						}
+
+						this.reinitialize(false, true);
 					}
-
-					rowEl.parentNode.removeChild(rowEl);
-
-					this.fitDataColAvg = Math.floor(collsWidth / (colEnd + 1));
-
-					for (colEnd; colEnd < this.table.columnManager.columnsByIndex.length; colEnd++) {
-
-						this.table.columnManager.columnsByIndex[colEnd].setWidth(this.fitDataColAvg);
-					}
-
-					this.reinitialize(false, true);
 				}
 			}
 		} else {
@@ -20553,6 +20558,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	GroupRows.prototype.scrollHeaders = function (left) {
+		if (this.table.options.virtualDomHoz) {
+			left -= this.table.vdomHoz.vDomPadLeft;
+		}
+
 		left = left + "px";
 
 		this.groupList.forEach(function (group) {
