@@ -4504,10 +4504,10 @@ VDomHoz.prototype.compatabilityCheck = function () {
 		ok = false;
 	}
 
-	if (options.rowFormatter) {
-		console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
-		ok = false;
-	}
+	// if(options.rowFormatter){
+	// 	console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
+	// 	ok = false;
+	// }
 
 	if (options.columns) {
 		frozen = options.columns.find(function (col) {

@@ -5645,12 +5645,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			ok = false;
 		}
 
-		if (options.rowFormatter) {
+		// if(options.rowFormatter){
 
-			console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
+		// 	console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
 
-			ok = false;
-		}
+		// 	ok = false;
+
+		// }
+
 
 		if (options.columns) {
 
