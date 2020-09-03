@@ -163,7 +163,7 @@ VDomHoz.prototype.dataChange = function(){
 
 VDomHoz.prototype.fitDataLayoutOverride = function(){
 	for(let i = this.leftCol; i <= this.rightCol; i++){
-		this.table.columnManager.getColumnByIndex(i).reinitializeWidth();
+		this.columns[i].reinitializeWidth();
 	}
 };
 
@@ -420,7 +420,7 @@ VDomHoz.prototype.initializeRow = function(row){
 		};
 
 		for(let i = this.leftCol; i <= this.rightCol; i++){
-			let column = this.table.columnManager.getColumnByIndex(i);
+			let column = this.columns[i];
 
 			if(column.visible){
 				let cell = row.getCell(column);
