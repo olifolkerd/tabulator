@@ -1875,6 +1875,21 @@ Tabulator.prototype.setGroupBy = function(groups){
 	}
 };
 
+Tabulator.prototype.setGroupValues = function(groupValues){
+	if(this.modExists("groupRows", true)){
+		this.options.groupValues = groupValues;
+		this.modules.groupRows.initialize();
+		this.rowManager.refreshActiveData("display");
+
+		if(this.options.persistence && this.modExists("persistence", true) && this.modules.persistence.config.group){
+			this.modules.persistence.save("group");
+		}
+	}else{
+		return false;
+	}
+};
+
+
 Tabulator.prototype.setGroupStartOpen = function(values){
 	if(this.modExists("groupRows", true)){
 		this.options.groupStartOpen = values;
