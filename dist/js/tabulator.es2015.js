@@ -2589,8 +2589,8 @@ Column.prototype.updateDefinition = function (updates) {
 				reject(err);
 			});
 		} else {
-			console.warn("Column Update Error - The updateDefintion function is only available on columns, not column groups");
-			reject("Column Update Error - The updateDefintion function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 		}
 	});
 };
@@ -5517,6 +5517,10 @@ Row.prototype.updateData = function (updatedData) {
 			});
 		}
 
+		if (_this21.table.options.groupUpdateOnCellEdit && _this21.table.options.groupBy && _this21.table.modExists("groupRows")) {
+			_this21.table.modules.groupRows.reassignRowToGroup(_this21.row);
+		}
+
 		//Partial reinitialization if visible
 		if (visible) {
 			_this21.normalizeHeight(true);
@@ -6341,6 +6345,10 @@ Cell.prototype.setValue = function (value, mutate) {
 			this.column.cellEvents.cellEdited.call(this.table, component);
 		}
 
+		if (this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.groupRows.reassignRowToGroup(this.row);
+		}
+
 		this.cellRendered();
 
 		this.table.options.cellEdited.call(this.table, component);
@@ -6917,6 +6925,7 @@ Tabulator.prototype.defaultOptions = {
 	groupBy: false, //enable table grouping and set field to group by
 	groupStartOpen: true, //starting state of group
 	groupValues: false,
+	groupUpdateOnCellEdit: false,
 
 	groupHeader: false, //header generation function
 	groupHeaderPrint: null,
@@ -17323,6 +17332,15 @@ Group.prototype.generateGroupHeaderContents = function () {
 	this.element.insertBefore(this.arrowElement, this.element.firstChild);
 };
 
+Group.prototype.getPath = function () {
+	var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+	path.unshift(this.key);
+	if (this.parent) {
+		this.parent.getPath(path);
+	}
+	return path;
+};
 ////////////// Standard Row Functions //////////////
 
 Group.prototype.getElement = function () {
@@ -17713,6 +17731,32 @@ GroupRows.prototype.assignRowToGroup = function (row, oldGroups) {
 	this.groups["0_" + groupID].addRow(row);
 
 	return !newGroupNeeded;
+};
+
+GroupRows.prototype.reassignRowToGroup = function (row) {
+	var oldRowGroup = row.getGroup(),
+	    oldGroupPath = oldRowGroup.getPath(),
+	    newGroupPath = this.getExpectedPath(row),
+	    samePath = true;
+	// figure out if new group path is the same as old group path
+	var samePath = oldGroupPath.length == newGroupPath.length && oldGroupPath.every(function (element, index) {
+		return element === newGroupPath[index];
+	});
+	// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
+	if (!samePath) {
+		oldRowGroup.removeRow(row);
+		this.assignRowToGroup(row, self.groups);
+		this.table.rowManager.refreshActiveData("group", false, true);
+	}
+};
+
+GroupRows.prototype.getExpectedPath = function (row) {
+	var groupPath = [],
+	    rowData = row.getData();
+	this.groupIDLookups.forEach(function (groupId) {
+		groupPath.push(groupId.func(rowData));
+	});
+	return groupPath;
 };
 
 GroupRows.prototype.updateGroupRows = function (force) {
@@ -18525,7 +18569,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 		headerMenuEl.innerHTML = "&vellip;";
 
 		headerMenuEl.addEventListener("click", function (e) {
-			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent()) : column.definition.headerMenu;
+			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent(), e) : column.definition.headerMenu;
 			e.stopPropagation();
 			e.preventDefault();
 
@@ -18537,7 +18581,7 @@ Menu.prototype.initializeColumnHeader = function (column) {
 };
 
 Menu.prototype.LoadMenuEvent = function (component, menu, e) {
-	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
+	menu = typeof menu == "function" ? menu(component.getComponent(), e) : menu;
 
 	// if(component instanceof Cell){
 	// 	e.stopImmediatePropagation();
@@ -19931,11 +19975,11 @@ Page.prototype.initialize = function (hidden) {
 
 	//click bindings
 	self.firstBut.addEventListener("click", function () {
-		self.setPage(1);
+		self.setPage(1).then(function () {}).catch(function () {});
 	});
 
 	self.prevBut.addEventListener("click", function () {
-		self.previousPage();
+		self.previousPage().then(function () {}).catch(function () {});
 	});
 
 	self.nextBut.addEventListener("click", function () {
@@ -19943,7 +19987,7 @@ Page.prototype.initialize = function (hidden) {
 	});
 
 	self.lastBut.addEventListener("click", function () {
-		self.setPage(self.max);
+		self.setPage(self.max).then(function () {}).catch(function () {});
 	});
 
 	if (self.table.options.paginationElement) {
@@ -20206,7 +20250,7 @@ Page.prototype._generatePageButton = function (page) {
 	button.textContent = page;
 
 	button.addEventListener("click", function (e) {
-		self.setPage(page);
+		self.setPage(page).then(function () {}).catch(function () {});
 	});
 
 	return button;
@@ -20781,6 +20825,8 @@ Persistence.prototype.validateSorters = function (data) {
 };
 
 Persistence.prototype.getGroupConfig = function () {
+	var data = {};
+
 	if (this.config.group) {
 		if (this.config.group === true || this.config.group.groupBy) {
 			data.groupBy = this.table.options.groupBy;

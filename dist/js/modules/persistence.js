@@ -285,6 +285,8 @@ Persistence.prototype.validateSorters = function (data) {
 };
 
 Persistence.prototype.getGroupConfig = function () {
+	var data = {};
+
 	if (this.config.group) {
 		if (this.config.group === true || this.config.group.groupBy) {
 			data.groupBy = this.table.options.groupBy;

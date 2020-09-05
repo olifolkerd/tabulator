@@ -2589,8 +2589,8 @@ Column.prototype.updateDefinition = function (updates) {
 				reject(err);
 			});
 		} else {
-			console.warn("Column Update Error - The updateDefintion function is only available on columns, not column groups");
-			reject("Column Update Error - The updateDefintion function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 		}
 	});
 };
@@ -5517,6 +5517,10 @@ Row.prototype.updateData = function (updatedData) {
 			});
 		}
 
+		if (_this21.table.options.groupUpdateOnCellEdit && _this21.table.options.groupBy && _this21.table.modExists("groupRows")) {
+			_this21.table.modules.groupRows.reassignRowToGroup(_this21.row);
+		}
+
 		//Partial reinitialization if visible
 		if (visible) {
 			_this21.normalizeHeight(true);
@@ -6341,6 +6345,10 @@ Cell.prototype.setValue = function (value, mutate) {
 			this.column.cellEvents.cellEdited.call(this.table, component);
 		}
 
+		if (this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.groupRows.reassignRowToGroup(this.row);
+		}
+
 		this.cellRendered();
 
 		this.table.options.cellEdited.call(this.table, component);
@@ -6917,6 +6925,7 @@ Tabulator.prototype.defaultOptions = {
 	groupBy: false, //enable table grouping and set field to group by
 	groupStartOpen: true, //starting state of group
 	groupValues: false,
+	groupUpdateOnCellEdit: false,
 
 	groupHeader: false, //header generation function
 	groupHeaderPrint: null,
