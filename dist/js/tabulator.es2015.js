@@ -4508,6 +4508,11 @@ VDomHoz.prototype.compatabilityCheck = function () {
 		ok = false;
 	}
 
+	if (this.table.rtl) {
+		console.warn("Horizontal Vitrual DOM is not currently compatible with RTL text direction");
+		ok = false;
+	}
+
 	// if(options.rowFormatter){
 	// 	console.warn("Horizontal Vitrual DOM is not compatible with row formatters");
 	// 	ok = false;
