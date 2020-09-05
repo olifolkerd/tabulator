@@ -659,6 +659,13 @@ Group.prototype.generateGroupHeaderContents = function(){
 	this.element.insertBefore(this.arrowElement, this.element.firstChild);
 };
 
+Group.prototype.getPath = function(path = []) {
+	path.unshift(this.key);
+	if(this.parent) {
+		this.parent.getPath(path);
+	}
+	return path;
+}
 ////////////// Standard Row Functions //////////////
 
 Group.prototype.getElement = function(){
@@ -1055,7 +1062,30 @@ GroupRows.prototype.assignRowToGroup = function(row, oldGroups){
 	return !newGroupNeeded;
 };
 
+GroupRows.prototype.reassignRowToGroup = function(row){
+	var oldRowGroup = row.getGroup(),
+		oldGroupPath = oldRowGroup.getPath(),
+		newGroupPath = this.getExpectedPath(row),
+		samePath = true;
+	// figure out if new group path is the same as old group path
+	var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every(function(element, index) {
+		return element === newGroupPath[index]; 
+	});
+	// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
+	if(!samePath) {
+		oldRowGroup.removeRow(row);
+		this.assignRowToGroup(row, self.groups);
+		this.table.rowManager.refreshActiveData("group", false, true);
+	}
+};
 
+GroupRows.prototype.getExpectedPath = function(row) {
+	var groupPath = [], rowData = row.getData();
+	this.groupIDLookups.forEach(function(groupId) {
+		groupPath.push(groupId.func(rowData));
+	});
+	return groupPath;
+}
 
 GroupRows.prototype.updateGroupRows = function(force){
 	var self = this,

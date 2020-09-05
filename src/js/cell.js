@@ -560,6 +560,10 @@ Cell.prototype.setValue = function(value, mutate){
 			this.column.cellEvents.cellEdited.call(this.table, component);
 		}
 
+		if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.groupRows.reassignRowToGroup(this.row);
+		}
+		
 		this.cellRendered();
 
 		this.table.options.cellEdited.call(this.table, component);

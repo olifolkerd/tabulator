@@ -600,6 +600,10 @@ Row.prototype.updateData = function(updatedData){
 				}
 			});
 		}
+		
+		if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			this.table.modules.groupRows.reassignRowToGroup(this.row);
+		}
 
 		//Partial reinitialization if visible
 		if(visible){
