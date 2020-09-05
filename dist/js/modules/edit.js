@@ -107,6 +107,10 @@ Edit.prototype.cancelEdit = function () {
 		cell.setValueActual(cell.getValue());
 		cell.cellRendered();
 
+		if (cell.column.definition.editor == "textarea" || cell.column.definition.variableHeight) {
+			cell.row.normalizeHeight(true);
+		}
+
 		if (cell.column.cellEvents.cellEditCancelled) {
 			cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 		}
@@ -129,7 +133,11 @@ Edit.prototype.bindEditor = function (cell) {
 	});
 
 	element.addEventListener("mousedown", function (e) {
-		self.mouseClick = true;
+		if (e.button === 2) {
+			e.preventDefault();
+		} else {
+			self.mouseClick = true;
+		}
 	});
 
 	element.addEventListener("focus", function (e) {
@@ -215,7 +223,6 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 
 			if (valid === true || self.table.options.validationMode === "highlight") {
 				self.clearEditor();
-				cell.setValue(value, true);
 
 				if (!cell.modules.edit) {
 					cell.modules.edit = {};
@@ -226,6 +233,8 @@ Edit.prototype.edit = function (cell, e, forceEdit) {
 				if (self.editedCells.indexOf(cell) == -1) {
 					self.editedCells.push(cell);
 				}
+
+				cell.setValue(value, true);
 
 				if (self.table.options.dataTree && self.table.modExists("dataTree")) {
 					self.table.modules.dataTree.checkForRestyle(cell);
@@ -565,6 +574,10 @@ Edit.prototype.editors = {
 		onRendered(function () {
 			input.focus({ preventScroll: true });
 			input.style.height = "100%";
+
+			input.scrollHeight;
+			input.style.height = input.scrollHeight + "px";
+			cell.getRow().normalizeHeight();
 		});
 
 		function onChange(e) {
@@ -2135,6 +2148,10 @@ Edit.prototype.editors = {
 		}
 
 		input.checked = value === true || value === "true" || value === "True" || value === 1;
+
+		onRendered(function () {
+			input.focus();
+		});
 
 		function setValue(blur) {
 			if (tristate) {

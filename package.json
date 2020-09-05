@@ -3,6 +3,7 @@
   "version": "4.7.2",
   "description": "Interactive table generation JavaScript library",
   "main": "dist/js/tabulator.js",
+  "module": "dist/js/tabulator.es2015.js",
   "scripts": {
     "build": "gulp",
     "watch": "gulp watch"

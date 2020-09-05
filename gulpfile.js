@@ -78,6 +78,33 @@ function tabulator(){
     //.on("error", console.log)
 }
 
+//build tabulator
+function esm(){
+    //return gulp.src('src/js/**/*.js')
+    return gulp.src('src/js/core_esm.js')
+    .pipe(insert.prepend(version + "\n"))
+    //.pipe(sourcemaps.init())
+    .pipe(include())
+    //.pipe(jshint())
+    // .pipe(jshint.reporter('default'))
+    .pipe(babel({
+        //presets:['es2015']
+        compact: false,
+        presets: [["env",{
+            "targets": {
+              "browsers": ["last 4 versions"]
+            },
+            loose: true,
+            modules: false,
+        }, ], {  }]
+      }))
+    .pipe(concat('tabulator.es2015.js'))
+    .pipe(gulp.dest('dist/js'))
+    //.pipe(notify({ message: 'Scripts task complete' }));
+    .on('end', function(){ gutil.log('ESM Complete'); })
+    //.on("error", console.log)
+}
+
 
 //simplified core js
 function core(){
@@ -166,7 +193,7 @@ function jquery(){
 }
 
 function scripts(){
-    return Promise.all([tabulator(), core(), modules(), jquery()]);
+    return Promise.all([tabulator(), core(), esm(), modules(), jquery()]);
 }
 
 function clean(){
@@ -185,6 +212,7 @@ function watch(){
 
 exports.tabulator = gulp.series(tabulator);
 exports.styles = gulp.series(styles);
+exports.esm = gulp.series(esm);
 exports.core = gulp.series(core);
 exports.modules = gulp.series(modules);
 exports.jquery = gulp.series(jquery);

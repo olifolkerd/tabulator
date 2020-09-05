@@ -125,6 +125,11 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 					}
 				}
 
+				//hold title and sort arrow
+				.tabulator-col-title-holder{
+					position: relative;
+				}
+
 				//hold title of column header
 				.tabulator-col-title{
 					box-sizing:border-box;
@@ -149,16 +154,22 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 				}
 
 				//column sorter arrow
-				.tabulator-arrow{
-					display: inline-block;
+				.tabulator-col-sorter{
+					display: flex;
+					align-items: center;
+
 					position: absolute;
-					top:24px;
-					right:8px;
-					width: 0;
-					height: 0;
-					border-left: 6px solid transparent;
-					border-right: 6px solid transparent;
-					border-bottom: 6px solid $sortArrowInactive;
+					top:0;
+					bottom:0;
+					right:-10px;
+
+					.tabulator-arrow{
+						width: 0;
+						height: 0;
+						border-left: 6px solid transparent;
+						border-right: 6px solid transparent;
+						border-bottom: 6px solid $sortArrowInactive;
+					}
 				}
 
 			}
@@ -205,8 +216,8 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 
 				input{
 					&::-ms-clear {
-					  width : 0;
-					  height: 0;
+						width : 0;
+						height: 0;
 					}
 				}
 			}
@@ -224,23 +235,37 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 				}
 
 				&[aria-sort="none"]{
-					.tabulator-col-content .tabulator-arrow{
-						border-top: none;
-						border-bottom: 6px solid $sortArrowInactive;
+					.tabulator-col-content .tabulator-col-sorter{
+						color: $sortArrowInactive;
+
+						.tabulator-arrow{
+							border-top: none;
+							border-bottom: 6px solid $sortArrowInactive;
+						}
 					}
 				}
 
 				&[aria-sort="asc"]{
-					.tabulator-col-content .tabulator-arrow{
-						border-top: none;
-						border-bottom: 6px solid $sortArrowActive;
+					.tabulator-col-content .tabulator-col-sorter{
+						color: $sortArrowActive;
+
+						.tabulator-arrow{
+							border-top: none;
+							border-bottom: 6px solid $sortArrowActive;
+
+						}
 					}
 				}
 
 				&[aria-sort="desc"]{
-					.tabulator-col-content .tabulator-arrow{
-						border-top: 6px solid $sortArrowActive;
-						border-bottom: none;
+					.tabulator-col-content .tabulator-col-sorter{
+						color: $sortArrowActive;
+
+						.tabulator-arrow{
+							border-bottom: none;
+							border-top: 6px solid $sortArrowActive;
+							color: $sortArrowActive;
+						}
 					}
 				}
 			}
@@ -1053,6 +1078,88 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 		font-weight:bold;
 	}
 }
+
+//RTL Styling
+
+.tabulator.tabulator-ltr{
+	direction: ltr;
+}
+
+
+.tabulator.tabulator-rtl{
+	text-align: initial;
+	direction: rtl;
+
+	.tabulator-header {
+		.tabulator-col{
+			text-align: initial;
+
+			&.tabulator-col-group{
+				.tabulator-col-group-cols{
+					margin-right:initial;
+					margin-left:-1px;
+				}
+			}
+
+			&.tabulator-sortable{
+				.tabulator-col-title{
+					padding-right:0;
+					padding-left:25px;
+				}
+			}
+
+			.tabulator-col-content{
+				.tabulator-arrow{
+					left:8px;
+					right:initial;
+				}
+			}
+		}
+	}
+
+	.tabulator-row{
+		.tabulator-cell{
+			border-right:initial;
+			border-left:1px solid $rowBorderColor;
+
+			//hide left resize handle on first column
+			// &:first-child{
+			// 	.tabulator-col-resize-handle.prev{
+			// 		display: none;
+			// 	}
+			// }
+
+			.tabulator-data-tree-branch{
+				margin-right:initial;
+				margin-left:5px;
+
+				border-bottom-left-radius:initial;
+				border-bottom-right-radius:1px;
+
+				border-left:initial;
+				border-right:2px solid $rowBorderColor;
+			}
+
+			.tabulator-data-tree-control{
+				margin-right:initial;
+				margin-left:5px;
+			}
+		}
+	}
+
+	//column resize handles
+	.tabulator-col-resize-handle{
+		position:absolute;
+		left:0;
+		right:auto;
+
+		&.prev{
+			right:0;
+			left:auto;
+		}
+	}
+}
+
 
 // Table print styling
 

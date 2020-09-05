@@ -171,8 +171,7 @@ ReactiveData.prototype.unwatchData = function(){
 };
 
 ReactiveData.prototype.watchRow = function(row){
-	var self = this,
-	data = row.getData();
+	var data = row.getData();
 
 	this.blocked = true;
 
@@ -180,7 +179,96 @@ ReactiveData.prototype.watchRow = function(row){
 		this.watchKey(row, data, key);
 	}
 
+	if(this.table.options.dataTree){
+		this.watchTreeChildren(row);
+	}
+
 	this.blocked = false;
+};
+
+ReactiveData.prototype.watchTreeChildren = function (row){
+	var self = this,
+	childField = row.getData()[this.table.options.dataTreeChildField],
+	origFuncs = {};
+
+	function rebuildTree(){
+		self.table.modules.dataTree.initializeRow(row);
+		self.table.modules.dataTree.layoutRow(row);
+		self.table.rowManager.refreshActiveData("tree", false, true);
+	}
+
+	if(childField){
+
+		origFuncs.push = childField.push;
+
+		Object.defineProperty(childField, "push", {
+			enumerable: false,
+			configurable: true,
+			value: function value() {
+				var result = origFuncs.push.apply(childField, arguments);
+
+				rebuildTree();
+
+				return result;
+			}
+		});
+
+		origFuncs.unshift = childField.unshift;
+
+		Object.defineProperty(childField, "unshift", {
+			enumerable: false,
+			configurable: true,
+			value: function value() {
+				var result =  origFuncs.unshift.apply(childField, arguments);
+
+				rebuildTree();
+
+				return result;
+			}
+		});
+
+		origFuncs.shift = childField.shift;
+
+		Object.defineProperty(childField, "shift", {
+			enumerable: false,
+			configurable: true,
+			value: function value() {
+				var result =  origFuncs.shift.call(childField);
+
+				rebuildTree();
+
+				return result;
+			}
+		});
+
+		origFuncs.pop = childField.pop;
+
+		Object.defineProperty(childField, "pop", {
+			enumerable: false,
+			configurable: true,
+			value: function value() {
+				var result =  origFuncs.pop.call(childField);
+
+				rebuildTree();
+
+				return result;
+			}
+		});
+
+		origFuncs.splice = childField.splice;
+
+		Object.defineProperty(childField, "splice", {
+			enumerable: false,
+			configurable: true,
+			value: function value() {
+				var result =  origFuncs.splice.apply(childField, arguments);
+
+				rebuildTree();
+
+				return result;
+			}
+		});
+	}
 };
 
 ReactiveData.prototype.watchKey = function(row, data, key){

@@ -14,14 +14,13 @@ Menu.prototype.initializeColumnHeader = function (column) {
 	var headerMenuEl;
 
 	if (column.definition.headerContextMenu) {
-		column.getElement().addEventListener("contextmenu", function (e) {
-			var menu = typeof column.definition.headerContextMenu == "function" ? column.definition.headerContextMenu(column.getComponent()) : column.definition.headerContextMenu;
-
-			e.preventDefault();
-
-			_this.loadMenu(e, column, menu);
-		});
+		column.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, column, column.definition.headerContextMenu));
+		this.tapHold(column, column.definition.headerContextMenu);
 	}
+
+	// if(column.definition.headerClickMenu){
+	// 	column.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, column, column.definition.headerClickMenu));
+	// }
 
 	if (column.definition.headerMenu) {
 
@@ -41,46 +40,88 @@ Menu.prototype.initializeColumnHeader = function (column) {
 	}
 };
 
-Menu.prototype.initializeCell = function (cell) {
+Menu.prototype.LoadMenuEvent = function (component, menu, e) {
+	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
+
+	// if(component instanceof Cell){
+	// 	e.stopImmediatePropagation();
+	// }
+
+	this.loadMenu(e, component, menu);
+};
+
+Menu.prototype.tapHold = function (component, menu) {
 	var _this2 = this;
 
-	cell.getElement().addEventListener("contextmenu", function (e) {
-		var menu = typeof cell.column.definition.contextMenu == "function" ? cell.column.definition.contextMenu(cell.getComponent()) : cell.column.definition.contextMenu;
+	var element = component.getElement(),
+	    tapHold = null,
+	    loaded = false;
 
-		if (menu) {
-			e.stopImmediatePropagation();
+	element.addEventListener("touchstart", function (e) {
+		clearTimeout(tapHold);
+		loaded = false;
+
+		tapHold = setTimeout(function () {
+			clearTimeout(tapHold);
+			tapHold = null;
+			loaded = true;
+
+			_this2.LoadMenuEvent(component, menu, e);
+		}, 1000);
+	}, { passive: true });
+
+	element.addEventListener("touchend", function (e) {
+		clearTimeout(tapHold);
+		tapHold = null;
+
+		if (loaded) {
+			e.preventDefault();
 		}
-
-		_this2.loadMenu(e, cell, menu);
 	});
+};
+
+Menu.prototype.initializeCell = function (cell) {
+	if (cell.column.definition.contextMenu) {
+		cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+		this.tapHold(cell, cell.column.definition.contextMenu);
+	}
+
+	if (cell.column.definition.clickMenu) {
+		cell.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
+	}
 };
 
 Menu.prototype.initializeRow = function (row) {
-	var _this3 = this;
+	if (this.table.options.rowContextMenu) {
+		row.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, row, this.table.options.rowContextMenu));
+		this.tapHold(row, this.table.options.rowContextMenu);
+	}
 
-	row.getElement().addEventListener("contextmenu", function (e) {
-		var menu = typeof _this3.table.options.rowContextMenu == "function" ? _this3.table.options.rowContextMenu(row.getComponent()) : _this3.table.options.rowContextMenu;
-
-		_this3.loadMenu(e, row, menu);
-	});
+	if (this.table.options.rowClickMenu) {
+		row.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, row, this.table.options.rowClickMenu));
+	}
 };
 
 Menu.prototype.initializeGroup = function (group) {
-	var _this4 = this;
+	if (this.table.options.groupContextMenu) {
+		group.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, group, this.table.options.groupContextMenu));
+		this.tapHold(group, this.table.options.groupContextMenu);
+	}
 
-	group.getElement().addEventListener("contextmenu", function (e) {
-		var menu = typeof _this4.table.options.groupContextMenu == "function" ? _this4.table.options.groupContextMenu(group.getComponent()) : _this4.table.options.groupContextMenu;
-
-		_this4.loadMenu(e, group, menu);
-	});
+	if (this.table.options.groupClickMenu) {
+		group.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, group, this.table.options.groupClickMenu));
+	}
 };
 
 Menu.prototype.loadMenu = function (e, component, menu) {
-	var _this5 = this;
+	var _this3 = this;
 
-	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight);
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
+	    touch = !(e instanceof MouseEvent);
 
-	e.preventDefault();
+	if (!touch) {
+		e.preventDefault();
+	}
 
 	//abort if no menu set
 	if (!menu || !menu.length) {
@@ -94,7 +135,7 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 		}
 	} else {
 		this.nestedMenuBlock = setTimeout(function () {
-			_this5.nestedMenuBlock = false;
+			_this3.nestedMenuBlock = false;
 		}, 100);
 	}
 
@@ -134,26 +175,24 @@ Menu.prototype.loadMenu = function (e, component, menu) {
 				});
 			} else {
 				itemEl.addEventListener("click", function (e) {
-					_this5.hideMenu();
+					_this3.hideMenu();
 					item.action(e, component.getComponent());
 				});
 			}
 		}
 
-		_this5.menuEl.appendChild(itemEl);
+		_this3.menuEl.appendChild(itemEl);
 	});
 
-	this.menuEl.style.top = e.pageY + "px";
-	this.menuEl.style.left = e.pageX + "px";
-
-	document.body.addEventListener("click", this.blurEvent);
-	this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
+	this.menuEl.style.top = (touch ? e.touches[0].pageY : e.pageY) + "px";
+	this.menuEl.style.left = (touch ? e.touches[0].pageX : e.pageX) + "px";
 
 	setTimeout(function () {
-		document.body.addEventListener("contextmenu", _this5.blurEvent);
+		_this3.table.rowManager.element.addEventListener("scroll", _this3.blurEvent);
+		document.body.addEventListener("click", _this3.blurEvent);
+		document.body.addEventListener("contextmenu", _this3.blurEvent);
+		document.body.addEventListener("keydown", _this3.escEvent);
 	}, 100);
-
-	document.body.addEventListener("keydown", this.escEvent);
 
 	document.body.appendChild(this.menuEl);
 

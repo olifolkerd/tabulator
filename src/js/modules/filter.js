@@ -243,7 +243,7 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue, re
 					this.table.rowManager.scrollHorizontal(left);
 					this.table.columnManager.scrollHorizontal(left);
 				}
-			})
+			});
 
 			//live update filters as user types
 			typingTimer = false;

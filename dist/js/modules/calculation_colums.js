@@ -2,6 +2,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 /* Tabulator v4.7.2 (c) Oliver Folkerd */
 
+//public calc object
+var CalcComponent = function CalcComponent(row) {
+	this._row = row;
+};
+
+CalcComponent.prototype.getData = function (transform) {
+	return this._row.getData(transform);
+};
+
+CalcComponent.prototype.getElement = function () {
+	return this._row.getElement();
+};
+
+RowComponent.prototype.getTable = function () {
+	return this._row.table;
+};
+
+CalcComponent.prototype.getCells = function () {
+	var cells = [];
+
+	this._row.getCells().forEach(function (cell) {
+		cells.push(cell.getComponent());
+	});
+
+	return cells;
+};
+
+CalcComponent.prototype.getCell = function (column) {
+	var cell = this._row.getCell(column);
+	return cell ? cell.getComponent() : false;
+};
+
+CalcComponent.prototype._getSelf = function () {
+	return this._row;
+};
+
 var ColumnCalcs = function ColumnCalcs(table) {
 	this.table = table; //hold Tabulator object
 	this.topCalcs = [];
@@ -132,7 +168,7 @@ ColumnCalcs.prototype.scrollHorizontal = function (left) {
 	var hozAdjust = 0,
 	    scrollWidth = this.table.columnManager.getElement().scrollWidth - this.table.element.clientWidth;
 
-	if (this.botInitialized) {
+	if (this.botInitialized && this.botRow) {
 		this.botRow.getElement().style.marginLeft = -left + "px";
 	}
 };
@@ -270,6 +306,16 @@ ColumnCalcs.prototype.generateRow = function (pos, data) {
 	}
 
 	row.getElement().classList.add("tabulator-calcs", "tabulator-calcs-" + pos);
+
+	row.component = false;
+
+	row.getComponent = function () {
+		if (!this.component) {
+			this.component = new CalcComponent(this);
+		}
+
+		return this.component;
+	};
 
 	row.generateCells = function () {
 

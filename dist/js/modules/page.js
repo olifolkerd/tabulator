@@ -520,7 +520,7 @@ Page.prototype.getRows = function (data) {
 
 		if (this.size === true) {
 			start = 0;
-			end = data.length - 1;
+			end = data.length;
 		} else {
 			start = this.size * (this.page - 1);
 			end = start + parseInt(this.size);

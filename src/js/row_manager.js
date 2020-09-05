@@ -310,7 +310,9 @@ RowManager.prototype.setData = function(data, renderInPosition, columnsChanged){
 				this.table.columnManager.generateColumnsFromRowData(data);
 			}
 			this.resetScroll();
+
 			this._setDataActual(data);
+
 		}
 
 		resolve();
@@ -400,7 +402,9 @@ RowManager.prototype.deleteRow = function(row, blockRedraw){
 
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited.call(this.table, this.getData());
+	if(this.table.options.dataChanged){
+		this.table.options.dataChanged.call(this.table, this.getData());
+	}
 
 	if(this.table.options.groupBy && this.table.modExists("groupRows")){
 		this.table.modules.groupRows.updateGroupRows(true);
@@ -584,7 +588,9 @@ RowManager.prototype.addRowActual = function(data, pos, index, blockRedraw){
 
 	this.table.options.rowAdded.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited.call(this.table, this.getData());
+	if(this.table.options.dataChanged){
+		this.table.options.dataChanged.call(this.table, this.getData());
+	}
 
 	if(!blockRedraw){
 		this.reRenderInPosition();
@@ -1028,7 +1034,13 @@ RowManager.prototype.refreshActiveData = function(stage, skipStage, renderInPosi
 			if(renderInPosition){
 				self.reRenderInPosition();
 			}else{
+
+				if(stage === "all" && this.table.options.virtualDomHoz){
+					this.table.vdomHoz.dataChange();
+				}
+
 				self.renderTable();
+
 				if(table.options.layoutColumnsOnNewData){
 					self.table.columnManager.redraw(true);
 				}
@@ -1180,6 +1192,10 @@ RowManager.prototype.getRows = function(active){
 
 		case "visible":
 		rows = this.getVisibleRows(true);
+		break;
+
+		case "selected":
+		rows = this.table.modules.selectRow.selectedRows;
 		break;
 
 		default:
@@ -1437,13 +1453,20 @@ RowManager.prototype._virtualRenderFill = function(position, forceMove, offset){
 			self.styleRow(row, index);
 
 			element.appendChild(row.getElement());
-			if(!row.initialized){
-				row.initialize(true);
-			}else{
-				if(!row.heightInitialized){
-					row.normalizeHeight(true);
-				}
+
+			row.initialize();
+
+			if(!row.heightInitialized){
+				row.normalizeHeight(true);
 			}
+
+			// if(!row.initialized){
+			// 	row.initialize(true);
+			// }else{
+			// 	if(!row.heightInitialized){
+			// 		row.normalizeHeight(true);
+			// 	}
+			// }
 
 			rowHeight = row.getHeight();
 

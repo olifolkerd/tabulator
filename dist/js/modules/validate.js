@@ -137,7 +137,7 @@ Validate.prototype.clearValidation = function (cell) {
 
 	if (cell.modules.validate && cell.modules.validate.invalid) {
 
-		cell.element.classList.remove("tabulator-validation-fail");
+		cell.getElement().classList.remove("tabulator-validation-fail");
 		cell.modules.validate.invalid = false;
 
 		invalidIndex = this.invalidCells.indexOf(cell);

@@ -131,7 +131,7 @@ Download.prototype.downloaders = {
 				case "header":
 					row.columns.forEach(function (col, i) {
 						if (col && col.depth === 1) {
-							headers[i] = typeof col.value == "undefined" || typeof col.value == "null" ? "" : col.value;
+							headers[i] = typeof col.value == "undefined" || col.value === null ? "" : '"' + String(col.value).split('"').join('""') + '"';
 						}
 					});
 					break;
@@ -162,7 +162,7 @@ Download.prototype.downloaders = {
 		});
 
 		if (headers.length) {
-			fileContents = [headers].concat(fileContents);
+			fileContents.unshift(headers.join(delimiter));
 		}
 
 		fileContents = fileContents.join("\n");
@@ -389,7 +389,7 @@ Download.prototype.downloaders = {
 
 					workbook.SheetNames.push(sheet);
 
-					this.table.modules.comms.send(options.sheets[sheet], "download", "intercept", {
+					this.modules.comms.send(options.sheets[sheet], "download", "intercept", {
 						type: "xlsx",
 						options: { sheetOnly: true },
 						active: self.active,

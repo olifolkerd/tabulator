@@ -12,6 +12,10 @@ CellComponent.prototype.getOldValue = function(){
 	return this._cell.getOldValue();
 };
 
+CellComponent.prototype.getInitialValue = function(){
+	return this._cell.initialValue;
+};
+
 CellComponent.prototype.getElement = function(){
 	return this._cell.getElement();
 };
@@ -44,6 +48,10 @@ CellComponent.prototype.restoreOldValue = function(){
 	this._cell.setValueActual(this._cell.getOldValue());
 };
 
+CellComponent.prototype.restoreInitialValue = function(){
+	this._cell.setValueActual(this._cell.initialValue);
+};
+
 CellComponent.prototype.edit = function(force){
 	return this._cell.edit(force);
 };
@@ -72,7 +80,7 @@ CellComponent.prototype.validate = function(){
 };
 
 CellComponent.prototype.clearValidation = function(){
-	if(self.table.modExists("validate", true)){
+	if(this._cell.table.modExists("validate", true)){
 		this._cell.table.modules.validate.clearValidation(this._cell);
 	}
 };
@@ -103,6 +111,7 @@ var Cell = function(column, row){
 	this.row = row;
 	this.element = null;
 	this.value = null;
+	this.initialValue;
 	this.oldValue = null;
 	this.modules = {};
 
@@ -111,6 +120,8 @@ var Cell = function(column, row){
 	this.minWidth = null;
 
 	this.component = null;
+
+	this.loaded = false; //track if the cell has been added to the DOM yet
 
 	this.build();
 };
@@ -126,6 +137,8 @@ Cell.prototype.build = function(){
 	this._configureCell();
 
 	this.setValueActual(this.column.getFieldValue(this.row.data));
+
+	this.initialValue = this.value;
 };
 
 Cell.prototype.generateElement = function(){
@@ -513,6 +526,11 @@ Cell.prototype._generateTooltip = function(){
 
 //////////////////// Getters ////////////////////
 Cell.prototype.getElement = function(){
+	if(!this.loaded){
+		this.loaded = true;
+		this.layoutElement();
+	}
+
 	return this.element;
 };
 
@@ -546,7 +564,9 @@ Cell.prototype.setValue = function(value, mutate){
 
 		this.table.options.cellEdited.call(this.table, component);
 
-		this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
+		if(this.table.options.dataChanged){
+			this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+		}
 	}
 
 };
@@ -603,16 +623,22 @@ Cell.prototype.setValueActual = function(value){
 		this.table.modules.reactiveData.unblock();
 	}
 
+	if(this.loaded){
+		this.layoutElement();
+	}
+};
+
+Cell.prototype.layoutElement = function(){
 	this._generateContents();
 	this._generateTooltip();
 
 	//set resizable handles
-	if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
+	if(this.table.options.resizableColumns && this.table.modExists("resizeColumns") && this.row.type === "row"){
 		this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
 	}
 
-	//set column menu
-	if(this.column.definition.contextMenu && this.table.modExists("menu")){
+
+	if((this.column.definition.contextMenu || this.column.definition.clickMenu) && this.table.modExists("menu")){
 		this.table.modules.menu.initializeCell(this);
 	}
 
@@ -709,6 +735,10 @@ Cell.prototype.delete = function(){
 
 	if(this.modules.edit && this.modules.edit.edited){
 		this.table.modules.edit.clearEdited(this);
+	}
+
+	if(this.table.options.history){
+		this.table.modules.history.clearComponentHistory(this);
 	}
 
 	this.element = false;

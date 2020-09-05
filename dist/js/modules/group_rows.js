@@ -166,7 +166,7 @@ Group.prototype.addBindings = function () {
 		});
 	}
 
-	if (self.groupManager.table.options.groupContextMenu && self.groupManager.table.modExists("menu")) {
+	if ((self.groupManager.table.options.groupContextMenu || self.groupManager.table.options.groupClickMenu) && self.groupManager.table.modExists("menu")) {
 		self.groupManager.table.modules.menu.initializeGroup.call(self.groupManager.table.modules.menu, self);
 	}
 
@@ -1062,6 +1062,10 @@ GroupRows.prototype.updateGroupRows = function (force) {
 };
 
 GroupRows.prototype.scrollHeaders = function (left) {
+	if (this.table.options.virtualDomHoz) {
+		left -= this.table.vdomHoz.vDomPadLeft;
+	}
+
 	left = left + "px";
 
 	this.groupList.forEach(function (group) {

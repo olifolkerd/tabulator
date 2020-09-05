@@ -43,6 +43,10 @@ ResizeTable.prototype.initialize = function(row){
 						this.containerWidth = table.element.parentNode.clientWidth;
 					}
 
+					if(table.options.virtualDomHoz){
+						table.vdomHoz.reinitialize(true);
+					}
+
 					table.redraw();
 				}
 
@@ -66,8 +70,10 @@ ResizeTable.prototype.initialize = function(row){
 						this.containerWidth = nodeWidth;
 						this.tableHeight = table.element.clientHeight;
 						this.tableWidth = table.element.clientWidth;
+					}
 
-						table.redraw();
+					if(table.options.virtualDomHoz){
+						table.vdomHoz.reinitialize(true);
 					}
 
 					table.redraw();
@@ -79,6 +85,10 @@ ResizeTable.prototype.initialize = function(row){
 	}else{
 		this.binding = function(){
 			if(!table.browserMobile || (table.browserMobile && !table.modules.edit.currentCell)){
+				if(table.options.virtualDomHoz){
+					table.vdomHoz.reinitialize(true);
+				}
+
 				table.redraw();
 			}
 		};

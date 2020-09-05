@@ -92,18 +92,21 @@ Clipboard.prototype.generatePlainContent = function (list) {
 					col.value = col.component.getKey();
 				}
 
-				switch(typeof col.value){
-					case "object":
-					value = JSON.stringify(col.value);
-					break;
-
-					case "undefined":
-					case "null":
+				if(col.value === null){
 					value = "";
-					break;
+				}else{
+					switch(typeof col.value){
+						case "object":
+						value = JSON.stringify(col.value);
+						break;
 
-					default:
-					value = col.value;
+						case "undefined":
+						value = "";
+						break;
+
+						default:
+						value = col.value;
+					}
 				}
 			}
 

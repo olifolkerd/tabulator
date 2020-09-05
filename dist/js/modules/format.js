@@ -62,8 +62,9 @@ Format.prototype.lookupFormatter = function (column, type) {
 };
 
 Format.prototype.cellRendered = function (cell) {
-	if (cell.modules.format && cell.modules.format.renderedCallback) {
+	if (cell.modules.format && cell.modules.format.renderedCallback && !cell.modules.format.rendered) {
 		cell.modules.format.renderedCallback();
+		cell.modules.format.rendered = true;
 	}
 };
 
@@ -78,6 +79,7 @@ Format.prototype.formatValue = function (cell) {
 		}
 
 		cell.modules.format.renderedCallback = callback;
+		cell.modules.format.rendered = false;
 	}
 
 	return cell.column.modules.format.formatter.call(this, component, params, onRendered);
@@ -94,6 +96,7 @@ Format.prototype.formatExportValue = function (cell, type) {
 			}
 
 			cell.modules.format.renderedCallback = callback;
+			cell.modules.format.rendered = false;
 		};
 
 		params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
@@ -684,7 +687,7 @@ Format.prototype.formatters = {
 		return el;
 	},
 
-	rowSelection: function rowSelection(cell) {
+	rowSelection: function rowSelection(cell, formatterParams, onRendered) {
 		var _this = this;
 
 		var checkbox = document.createElement("input");
@@ -711,7 +714,7 @@ Format.prototype.formatters = {
 					if (_this.table.modules.selectRow.selectedRows.length) {
 						_this.table.deselectRow();
 					} else {
-						_this.table.selectRow();
+						_this.table.selectRow(formatterParams.rowRange);
 					}
 				});
 
