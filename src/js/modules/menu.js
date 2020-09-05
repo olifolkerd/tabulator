@@ -37,7 +37,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 };
 
 Menu.prototype.LoadMenuEvent = function(component, menu, e){
-	menu = typeof menu == "function" ? menu(component.getComponent()) : menu;
+	menu = typeof menu == "function" ? menu(component.getComponent(), e) : menu;
 
 	// if(component instanceof Cell){
 	// 	e.stopImmediatePropagation();
