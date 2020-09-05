@@ -107,56 +107,6 @@ Layout.prototype.modes = {
 		}
 	},
 
-	//resize columns to fit data they contain and stretch the flexible columns to fill any remaining space
-	"fitDataColumns": function(columns){
-		var colsWidth = 0,
-		tableWidth = this.table.rowManager.element.clientWidth,
-		gap = 0,
-		lastCol = false,
-		flexibleColumns = [];
-
-		columns.forEach(function (column){
-			column.reinitializeWidth();
-
-			if(this.table.options.responsiveLayout ? column.modules.responsive.visible : column.visible){
-				if(!column.widthFixed){
-					flexibleColumns.push(column);
-				}
-				lastCol = column;
-			}
-
-			if(column.visible){
-				colsWidth += column.getWidth();
-			}
-		});
-
-		if(lastCol){
-			gap = tableWidth - colsWidth + lastCol.getWidth();
-			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				lastCol.setWidth(0);
-				this.table.modules.responsiveLayout.update();
-			}
-
-			if(gap > lastCol.getWidth() && flexibleColumns.length > 0){
-				var extraWidth = (gap - lastCol.getWidth()) / flexibleColumns.length;
-				var roundingError = 0;
-				flexibleColumns.forEach(function (column) {
-					if(lastCol === column){
-						column.setWidth(column.getWidth() + extraWidth + Math.floor(roundingError));
-					}else{
-						var newWidth = column.getWidth() + extraWidth;
-						roundingError += newWidth % 1;
-						column.setWidth(Math.floor(newWidth));
-					}
-				});
-			}
-		}else{
-			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				this.table.modules.responsiveLayout.update();
-			}
-		}
-	},
-
 	//resize columns to fit
 	"fitColumns": function(columns){
 		var self = this;
