@@ -3016,7 +3016,7 @@ RowManager.prototype.deleteRow = function (row, blockRedraw) {
 
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited.call(this.table, this.getData());
+	this.table.options.dataChanged.call(this.table, this.getData());
 
 	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
 		this.table.modules.groupRows.updateGroupRows(true);
@@ -3200,7 +3200,7 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
 	this.table.options.rowAdded.call(this.table, row.getComponent());
 
-	this.table.options.dataEdited.call(this.table, this.getData());
+	this.table.options.dataChanged.call(this.table, this.getData());
 
 	if (!blockRedraw) {
 		this.reRenderInPosition();
@@ -6337,7 +6337,7 @@ Cell.prototype.setValue = function (value, mutate) {
 
 		this.table.options.cellEdited.call(this.table, component);
 
-		this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
+		this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
 	}
 };
 
@@ -7007,7 +7007,8 @@ Tabulator.prototype.defaultOptions = {
 	//data callbacks
 	dataLoading: function dataLoading() {},
 	dataLoaded: function dataLoaded() {},
-	dataEdited: function dataEdited() {},
+	dataEdited: false, //DEPRECATED
+	dataChanged: function dataChanged() {},
 
 	//ajax callbacks
 	ajaxRequesting: function ajaxRequesting() {},
@@ -7135,6 +7136,11 @@ Tabulator.prototype._mapDepricatedFunctionality = function () {
 		if (!this.options.persistence) {
 			this.options.persistence = {};
 		}
+	}
+
+	if (this.options.dataEdited) {
+		console.warn("DEPRECATION WARNING - dataEdited option has been deprecated, please use the dataChanged option instead");
+		this.options.dataChanged = this.options.dataEdited;
 	}
 
 	if (this.options.downloadDataFormatter) {

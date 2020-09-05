@@ -305,7 +305,8 @@ Tabulator.prototype.defaultOptions = {
 	//data callbacks
 	dataLoading:function(){},
 	dataLoaded:function(){},
-	dataEdited:function(){},
+	dataEdited:false, //DEPRECATED
+	dataChanged:function(){},
 
 	//ajax callbacks
 	ajaxRequesting:function(){},
@@ -435,6 +436,11 @@ Tabulator.prototype._mapDepricatedFunctionality = function(){
 		if(!this.options.persistence){
 			this.options.persistence = {};
 		}
+	}
+
+	if(this.options.dataEdited){
+		console.warn("DEPRECATION WARNING - dataEdited option has been deprecated, please use the dataChanged option instead");
+		this.options.dataChanged = this.options.dataEdited;
 	}
 
 	if(this.options.downloadDataFormatter){

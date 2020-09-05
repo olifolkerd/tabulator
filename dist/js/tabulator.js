@@ -3714,7 +3714,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-		this.table.options.dataEdited.call(this.table, this.getData());
+		this.table.options.dataChanged.call(this.table, this.getData());
 
 		if (this.table.options.groupBy && this.table.modExists("groupRows")) {
 
@@ -3949,7 +3949,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.table.options.rowAdded.call(this.table, row.getComponent());
 
-		this.table.options.dataEdited.call(this.table, this.getData());
+		this.table.options.dataChanged.call(this.table, this.getData());
 
 		if (!blockRedraw) {
 
@@ -8033,7 +8033,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.table.options.cellEdited.call(this.table, component);
 
-			this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
+			this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
 		}
 	};
 
@@ -9030,7 +9030,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		dataLoaded: function dataLoaded() {},
 
-		dataEdited: function dataEdited() {},
+		dataEdited: false, //DEPRECATED
+
+		dataChanged: function dataChanged() {},
 
 		//ajax callbacks
 
@@ -9220,6 +9222,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.options.persistence = {};
 			}
+		}
+
+		if (this.options.dataEdited) {
+
+			console.warn("DEPRECATION WARNING - dataEdited option has been deprecated, please use the dataChanged option instead");
+
+			this.options.dataChanged = this.options.dataEdited;
 		}
 
 		if (this.options.downloadDataFormatter) {

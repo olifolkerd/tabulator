@@ -564,7 +564,7 @@ Cell.prototype.setValue = function(value, mutate){
 
 		this.table.options.cellEdited.call(this.table, component);
 
-		this.table.options.dataEdited.call(this.table, this.table.rowManager.getData());
+		this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
 	}
 
 };
