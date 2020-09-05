@@ -700,7 +700,7 @@ ColumnManager.prototype.redraw = function(force){
 		this.table.rowManager.reinitialize();
 	}
 
-	if(["fitColumns", "fitDataStretch"].indexOf(this.table.modules.layout.getMode()) > -1){
+	if(["fitColumns", "fitDataStretch", "fitDataColumns"].indexOf(this.table.modules.layout.getMode()) > -1){
 		this.table.modules.layout.layout();
 	}else{
 		if(force){
