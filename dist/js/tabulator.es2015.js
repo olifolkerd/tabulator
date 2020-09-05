@@ -3016,7 +3016,9 @@ RowManager.prototype.deleteRow = function (row, blockRedraw) {
 
 	this.table.options.rowDeleted.call(this.table, row.getComponent());
 
-	this.table.options.dataChanged.call(this.table, this.getData());
+	if (this.table.options.dataChanged) {
+		this.table.options.dataChanged.call(this.table, this.getData());
+	}
 
 	if (this.table.options.groupBy && this.table.modExists("groupRows")) {
 		this.table.modules.groupRows.updateGroupRows(true);
@@ -3200,7 +3202,9 @@ RowManager.prototype.addRowActual = function (data, pos, index, blockRedraw) {
 
 	this.table.options.rowAdded.call(this.table, row.getComponent());
 
-	this.table.options.dataChanged.call(this.table, this.getData());
+	if (this.table.options.dataChanged) {
+		this.table.options.dataChanged.call(this.table, this.getData());
+	}
 
 	if (!blockRedraw) {
 		this.reRenderInPosition();
@@ -5536,6 +5540,10 @@ Row.prototype.updateData = function (updatedData) {
 
 		_this21.table.options.rowUpdated.call(_this21.table, _this21.getComponent());
 
+		if (_this21.table.options.dataChanged) {
+			_this21.table.options.dataChanged.call(_this21.table, _this21.table.rowManager.getData());
+		}
+
 		resolve();
 	});
 };
@@ -6337,7 +6345,9 @@ Cell.prototype.setValue = function (value, mutate) {
 
 		this.table.options.cellEdited.call(this.table, component);
 
-		this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+		if (this.table.options.dataChanged) {
+			this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+		}
 	}
 };
 
@@ -7008,7 +7018,7 @@ Tabulator.prototype.defaultOptions = {
 	dataLoading: function dataLoading() {},
 	dataLoaded: function dataLoaded() {},
 	dataEdited: false, //DEPRECATED
-	dataChanged: function dataChanged() {},
+	dataChanged: false,
 
 	//ajax callbacks
 	ajaxRequesting: function ajaxRequesting() {},

@@ -306,7 +306,7 @@ Tabulator.prototype.defaultOptions = {
 	dataLoading:function(){},
 	dataLoaded:function(){},
 	dataEdited:false, //DEPRECATED
-	dataChanged:function(){},
+	dataChanged:false,
 
 	//ajax callbacks
 	ajaxRequesting:function(){},

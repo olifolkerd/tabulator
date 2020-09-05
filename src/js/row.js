@@ -624,6 +624,10 @@ Row.prototype.updateData = function(updatedData){
 
 		this.table.options.rowUpdated.call(this.table, this.getComponent());
 
+		if(this.table.options.dataChanged){
+			this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+		}
+
 		resolve();
 	});
 };
