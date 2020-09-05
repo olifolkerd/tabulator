@@ -2514,15 +2514,15 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
-jshint@^2.9.4:
-  version "2.10.2"
-  resolved "https://registry.yarnpkg.com/jshint/-/jshint-2.10.2.tgz#ed6626c4f8223c98e94aaea62767435427a49a3d"
+jshint@^2.11.1:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/jshint/-/jshint-2.12.0.tgz#52e75bd058d587ef81a0e2f95e5cf18eb5dc5c37"
   dependencies:
     cli "~1.0.0"
     console-browserify "1.1.x"
     exit "0.1.x"
     htmlparser2 "3.8.x"
-    lodash "~4.17.11"
+    lodash "~4.17.19"
     minimatch "~3.0.2"
     shelljs "0.3.x"
     strip-json-comments "1.0.x"
@@ -2731,9 +2731,9 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.11, lodash@^4.17.4, lodash@~4.17.10, lodash@~4.17.11:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+lodash@^4.0.0, lodash@^4.13.1, lodash@^4.17.11, lodash@^4.17.4, lodash@~4.17.10, lodash@~4.17.19:
+  version "4.17.20"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
 
 longest@^1.0.1:
   version "1.0.1"
