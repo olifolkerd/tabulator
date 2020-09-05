@@ -15342,6 +15342,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					case 27:
 						cancel();
 						break;
+
+					case 35:
+					case 36:
+						e.stopPropagation();
+						break;
 				}
 			});
 
@@ -15450,6 +15455,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							e.stopPropagation();
 						}
 						break;
+
+					case 35:
+					case 36:
+						e.stopPropagation();
+						break;
 				}
 			});
 
@@ -15549,6 +15559,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							e.stopImmediatePropagation();
 							e.stopPropagation();
 						}
+						break;
+
+					case 35:
+					case 36:
+						e.stopPropagation();
 						break;
 				}
 			});

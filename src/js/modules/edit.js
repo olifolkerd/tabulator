@@ -531,6 +531,11 @@ Edit.prototype.editors = {
 				case 27:
 				cancel();
 				break;
+
+				case 35:
+				case 36:
+				e.stopPropagation();
+				break;
 			}
 		});
 
@@ -637,6 +642,11 @@ Edit.prototype.editors = {
         			e.stopPropagation();
         		}
         		break;
+
+        		case 35:
+        		case 36:
+        		e.stopPropagation();
+        		break;
         	}
         });
 
@@ -735,6 +745,11 @@ Edit.prototype.editors = {
 					e.stopImmediatePropagation();
 					e.stopPropagation();
 				}
+				break;
+
+				case 35:
+				case 36:
+				e.stopPropagation();
 				break;
 			}
 		});
