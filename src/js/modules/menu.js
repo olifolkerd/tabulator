@@ -25,7 +25,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 		headerMenuEl.innerHTML = "&vellip;";
 
 		headerMenuEl.addEventListener("click", (e) => {
-			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent()) : column.definition.headerMenu;
+			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent(), e) : column.definition.headerMenu;
 			e.stopPropagation();
 			e.preventDefault();
 
