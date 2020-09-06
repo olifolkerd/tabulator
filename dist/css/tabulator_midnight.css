@@ -104,7 +104,6 @@
   display: flex;
   -ms-flex-align: center;
       align-items: center;
-  display: inline-block;
   position: absolute;
   top: 0;
   bottom: 0;
