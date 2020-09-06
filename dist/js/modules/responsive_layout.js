@@ -1,4 +1,4 @@
-/* Tabulator v4.7.2 (c) Oliver Folkerd */
+/* Tabulator v4.8.0 (c) Oliver Folkerd */
 
 var ResponsiveLayout = function ResponsiveLayout(table) {
 	this.table = table; //hold Tabulator object
