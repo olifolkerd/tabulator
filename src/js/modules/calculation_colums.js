@@ -11,7 +11,7 @@ CalcComponent.prototype.getElement = function(){
 	return this._row.getElement();
 };
 
-RowComponent.prototype.getTable = function(){
+CalcComponent.prototype.getTable = function(){
 	return this._row.table;
 };
 
