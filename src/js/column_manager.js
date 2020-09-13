@@ -480,7 +480,7 @@ ColumnManager.prototype.moveColumnActual = function(from, to, after){
 
 ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, updateRows){
 	var	fromIndex = columns.indexOf(from),
-	toIndex;
+	toIndex, rows = [];
 
 	if (fromIndex > -1) {
 
@@ -502,12 +502,21 @@ ColumnManager.prototype._moveColumnInArray = function(columns, from, to, after, 
 
 		if(updateRows){
 
-			this.table.rowManager.rows.forEach(function(row){
+			if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
+				this.table.rowManager.rows.forEach((row) => {
+					rows = rows.concat(this.table.modules.dataTree.getTreeChildren(row, false, true));
+				});
+			}
+
+			rows = rows.concat(this.table.rowManager.rows);
+
+			rows.forEach(function(row){
 				if(row.cells.length){
 					var cell = row.cells.splice(fromIndex, 1)[0];
 					row.cells.splice(toIndex, 0, cell);
 				}
 			});
+
 		}
 	}
 };

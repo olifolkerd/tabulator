@@ -463,7 +463,7 @@ DataTree.prototype.findChildIndex = function(subject, parent){
 
 
 
-DataTree.prototype.getTreeChildren = function(row){
+DataTree.prototype.getTreeChildren = function(row, component, recurse){
 	var config = row.modules.dataTree,
 	output = [];
 
@@ -475,7 +475,11 @@ DataTree.prototype.getTreeChildren = function(row){
 
 		config.children.forEach((childRow) => {
 			if(childRow instanceof Row){
-				output.push(childRow.getComponent());
+				output.push(component ? childRow.getComponent() : childRow);
+
+				if(recurse){
+					output = output.concat(this.getTreeChildren(childRow, component, recurse));
+				}
 			}
 		});
 	}

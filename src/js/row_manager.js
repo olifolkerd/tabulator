@@ -1799,7 +1799,7 @@ RowManager.prototype.adjustTableSize = function(){
 //renitialize all rows
 RowManager.prototype.reinitialize = function(){
 	this.rows.forEach(function(row){
-		row.reinitialize();
+		row.reinitialize(true);
 	});
 };
 

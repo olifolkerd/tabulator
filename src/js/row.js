@@ -133,7 +133,7 @@ RowComponent.prototype.getTreeParent = function(){
 
 RowComponent.prototype.getTreeChildren = function(){
 	if(this._row.table.modExists("dataTree", true)){
-		return this._row.table.modules.dataTree.getTreeChildren(this._row);
+		return this._row.table.modules.dataTree.getTreeChildren(this._row, true);
 	}
 
 	return false;
@@ -423,7 +423,7 @@ Row.prototype.reinitializeHeight = function(){
 };
 
 
-Row.prototype.reinitialize = function(){
+Row.prototype.reinitialize = function(children){
 	this.initialized = false;
 	this.heightInitialized = false;
 
@@ -434,6 +434,12 @@ Row.prototype.reinitialize = function(){
 
 	if(this.element.offsetParent !== null){
 		this.initialize(true);
+	}
+
+	if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
+		this.table.modules.dataTree.getTreeChildren(this, false, true).forEach(function(child){
+			child.reinitialize(true);
+		});
 	}
 };
 
@@ -600,7 +606,7 @@ Row.prototype.updateData = function(updatedData){
 				}
 			});
 		}
-		
+
 		if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
 			this.table.modules.groupRows.reassignRowToGroup(this.row);
 		}
