@@ -1,4 +1,4 @@
-/* Tabulator v4.8.0 (c) Oliver Folkerd */
+/* Tabulator v4.8.1 (c) Oliver Folkerd */
 
 var Page = function Page(table) {
 
