@@ -4395,7 +4395,7 @@ RowManager.prototype.adjustTableSize = function () {
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
 		//check if the table has changed size when dealing with variable height tables
-		if (!this.fixedHeight && initialHeight != this.element.clientHeight) {
+		if (!this.fixedHeight && Math.floor(initialHeight) != Math.floor(this.element.clientHeight)) {
 			modExists = this.table.modExists("resizeTable");
 
 			if (modExists && !this.table.modules.resizeTable.autoResize || !modExists) {

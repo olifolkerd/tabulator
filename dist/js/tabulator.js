@@ -5500,7 +5500,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//check if the table has changed size when dealing with variable height tables
 
-			if (!this.fixedHeight && initialHeight != this.element.clientHeight) {
+			if (!this.fixedHeight && Math.floor(initialHeight) != Math.floor(this.element.clientHeight)) {
 
 				modExists = this.table.modExists("resizeTable");
 
