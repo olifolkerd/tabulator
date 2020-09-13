@@ -2982,6 +2982,10 @@ RowManager.prototype._wipeElements = function () {
 	}
 
 	this.rows = [];
+	this.activeRows = [];
+	this.activeRowsCount = 0;
+	this.displayRows = [];
+	this.displayRowsCount = 0;
 
 	this.adjustTableSize();
 };

@@ -3675,6 +3675,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.rows = [];
 
+		this.activeRows = [];
+
+		this.activeRowsCount = 0;
+
+		this.displayRows = [];
+
+		this.displayRowsCount = 0;
+
 		this.adjustTableSize();
 	};
 
