@@ -20883,7 +20883,8 @@ Persistence.prototype.getPageConfig = function () {
 //parse columns for data to store
 Persistence.prototype.parseColumns = function (columns) {
 	var self = this,
-	    definitions = [];
+	    definitions = [],
+	    excludedKeys = ["headerContextMenu", "headerMenu", "contextMenu", "clickMenu"];
 
 	columns.forEach(function (column) {
 		var defStore = {},
@@ -20914,7 +20915,9 @@ Persistence.prototype.parseColumns = function (columns) {
 						break;
 
 					default:
-						defStore[key] = colDef[key];
+						if (typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1) {
+							defStore[key] = colDef[key];
+						}
 				}
 			});
 		}

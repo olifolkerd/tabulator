@@ -23731,7 +23731,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//parse columns for data to store
 	Persistence.prototype.parseColumns = function (columns) {
 		var self = this,
-		    definitions = [];
+		    definitions = [],
+		    excludedKeys = ["headerContextMenu", "headerMenu", "contextMenu", "clickMenu"];
 
 		columns.forEach(function (column) {
 			var defStore = {},
@@ -23762,7 +23763,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							break;
 
 						default:
-							defStore[key] = colDef[key];
+							if (typeof colDef[key] !== "function" && excludedKeys.indexOf(key) === -1) {
+								defStore[key] = colDef[key];
+							}
 					}
 				});
 			}
