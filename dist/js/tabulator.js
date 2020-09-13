@@ -5476,7 +5476,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.renderMode === "virtual") {
 
-			var otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
+			var otherHeight = Math.floor(this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0));
 
 			if (this.fixedHeight) {
 
@@ -5489,7 +5489,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.element.style.height = "";
 
-				this.element.style.height = this.table.element.clientHeight - otherHeight + "px";
+				this.element.style.height = Math.floor(this.table.element.clientHeight) - otherHeight + "px";
 
 				this.element.scrollTop = this.scrollTop;
 			}

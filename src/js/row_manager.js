@@ -1769,7 +1769,7 @@ RowManager.prototype.adjustTableSize = function(){
 	modExists;
 
 	if(this.renderMode === "virtual"){
-		let otherHeight = this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0);
+		let otherHeight =  Math.floor(this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0));
 
 		if(this.fixedHeight){
 			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
@@ -1777,7 +1777,7 @@ RowManager.prototype.adjustTableSize = function(){
 			this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
 		}else{
 			this.element.style.height = "";
-			this.element.style.height = (this.table.element.clientHeight - otherHeight) + "px";
+			this.element.style.height = (Math.floor(this.table.element.clientHeight) - otherHeight) + "px";
 			this.element.scrollTop = this.scrollTop;
 		}
 
