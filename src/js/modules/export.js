@@ -485,7 +485,7 @@ Export.prototype.genereateRowElement = function(row, setup, styles){
 					return rowData;
 				},
 				getRow:function(){
-					return row.getComponent();
+					return row.component;
 				},
 				getComponent:function(){
 					return cellWrapper;

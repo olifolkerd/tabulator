@@ -17563,7 +17563,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						return rowData;
 					},
 					getRow: function getRow() {
-						return row.getComponent();
+						return row.component;
 					},
 					getComponent: function getComponent() {
 						return cellWrapper;
