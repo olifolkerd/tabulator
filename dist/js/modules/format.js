@@ -703,12 +703,17 @@ Format.prototype.formatters = {
 			if (typeof cell.getRow == 'function') {
 				var row = cell.getRow();
 
-				checkbox.addEventListener("change", function (e) {
-					row.toggleSelect();
-				});
+				if (row instanceof RowComponent) {
 
-				checkbox.checked = row.isSelected();
-				this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+					checkbox.addEventListener("change", function (e) {
+						row.toggleSelect();
+					});
+
+					checkbox.checked = row.isSelected && row.isSelected();
+					this.table.modules.selectRow.registerRowSelectCheckbox(row, checkbox);
+				} else {
+					checkbox = "";
+				}
 			} else {
 				checkbox.addEventListener("change", function (e) {
 					if (_this.table.modules.selectRow.selectedRows.length) {
