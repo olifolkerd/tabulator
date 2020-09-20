@@ -8244,7 +8244,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Cell.prototype.show = function () {
 
-		this.element.style.display = "";
+		this.element.style.display = this.column.vertAlign ? "inline-flex" : "";
 	};
 
 	Cell.prototype.hide = function () {

@@ -6500,7 +6500,7 @@ Cell.prototype.getHeight = function () {
 };
 
 Cell.prototype.show = function () {
-	this.element.style.display = "";
+	this.element.style.display = this.column.vertAlign ? "inline-flex" : "";
 };
 
 Cell.prototype.hide = function () {
