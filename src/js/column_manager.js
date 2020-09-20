@@ -562,7 +562,7 @@ ColumnManager.prototype.scrollToColumn = function(column, position, ifVisible){
 			}
 
 			//calculate scroll position
-			left = colEl.offsetLeft + this.element.scrollLeft + adjust;
+			left = colEl.offsetLeft + adjust;
 
 			left = Math.max(Math.min(left, this.table.rowManager.element.scrollWidth - this.table.rowManager.element.clientWidth),0);
 

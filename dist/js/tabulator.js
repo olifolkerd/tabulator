@@ -1113,7 +1113,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				//calculate scroll position
 
 
-				left = colEl.offsetLeft + _this3.element.scrollLeft + adjust;
+				left = colEl.offsetLeft + adjust;
 
 				left = Math.max(Math.min(left, _this3.table.rowManager.element.scrollWidth - _this3.table.rowManager.element.clientWidth), 0);
 
