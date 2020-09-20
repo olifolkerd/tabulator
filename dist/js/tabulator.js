@@ -17560,7 +17560,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						return column.getComponent();
 					},
 					getData: function getData() {
-						return rowData;
+						return row.component.getData();
 					},
 					getRow: function getRow() {
 						return row.component;

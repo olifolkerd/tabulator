@@ -482,7 +482,7 @@ Export.prototype.genereateRowElement = function(row, setup, styles){
 					return column.getComponent();
 				},
 				getData:function(){
-					return rowData;
+					return row.component.getData();
 				},
 				getRow:function(){
 					return row.component;
