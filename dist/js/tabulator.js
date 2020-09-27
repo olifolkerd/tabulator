@@ -13363,10 +13363,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self.genColumn.hozAlign = column.hozAlign;
 
 				if (column.definition[pos + "CalcFormatter"] && self.table.modExists("format")) {
-
 					self.genColumn.modules.format = {
 						formatter: self.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
-						params: column.definition[pos + "CalcFormatterParams"]
+						params: column.definition[pos + "CalcFormatterParams"] || {}
 					};
 				} else {
 					self.genColumn.modules.format = {
@@ -13380,6 +13379,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				//generate cell and assign to correct column
 				var cell = new Cell(self.genColumn, row);
+				cell.getElement();
 				cell.column = column;
 				cell.setWidth();
 

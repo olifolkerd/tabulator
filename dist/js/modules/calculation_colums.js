@@ -328,10 +328,9 @@ ColumnCalcs.prototype.generateRow = function (pos, data) {
 			self.genColumn.hozAlign = column.hozAlign;
 
 			if (column.definition[pos + "CalcFormatter"] && self.table.modExists("format")) {
-
 				self.genColumn.modules.format = {
 					formatter: self.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
-					params: column.definition[pos + "CalcFormatterParams"]
+					params: column.definition[pos + "CalcFormatterParams"] || {}
 				};
 			} else {
 				self.genColumn.modules.format = {
@@ -345,6 +344,7 @@ ColumnCalcs.prototype.generateRow = function (pos, data) {
 
 			//generate cell and assign to correct column
 			var cell = new Cell(self.genColumn, row);
+			cell.getElement();
 			cell.column = column;
 			cell.setWidth();
 
