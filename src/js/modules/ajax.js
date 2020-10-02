@@ -355,7 +355,7 @@ Ajax.prototype.defaultLoaderPromise = function(url, config, params){
 	return new Promise(function(resolve, reject){
 
 		//set url
-		url = self.urlGenerator(url, config, params);
+		url = self.urlGenerator.call(self.table, url, config, params);
 
 		//set body content if not GET request
 		if(config.method.toUpperCase() != "GET"){
