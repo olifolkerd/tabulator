@@ -1646,7 +1646,11 @@ Edit.prototype.editors = {
 			});
 
 			if(!current){
-				setCurrentItem(false);
+				if (editorParams.autoSelectFirstItem) {
+					setCurrentItem(displayItems[0]);
+				} else {
+					setCurrentItem(false);
+				}
 			}
 		}
 
