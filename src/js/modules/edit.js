@@ -1601,7 +1601,7 @@ Edit.prototype.editors = {
 
 		function fillList(items, intialLoad){
 			var current = false;
-			var autoSelectIndex = -1;
+			var autoSelectIndex = editorParams.autoSelectFirstItem ? 0 : -1;
 
 			clearList();
 
@@ -1647,8 +1647,6 @@ Edit.prototype.editors = {
 			if(!current){
 				if (autoSelectIndex >= 0) {
 					setCurrentItem(displayItems[autoSelectIndex]);
-				} else if (editorParams.autoSelectFirstItem) {
-					setCurrentItem(displayItems[0]);
 				} else {
 					setCurrentItem(false);
 				}
