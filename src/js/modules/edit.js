@@ -1601,12 +1601,13 @@ Edit.prototype.editors = {
 
 		function fillList(items, intialLoad){
 			var current = false;
+			var autoSelectIndex = -1;
 
 			clearList();
 
 			displayItems = items;
 
-			displayItems.forEach(function(item){
+			displayItems.forEach(function(item, idx){
 				var el = item.element;
 
 				if(!el){
@@ -1631,9 +1632,7 @@ Edit.prototype.editors = {
 					item.element = el;
 
 					if(intialLoad && item.value == initialValue){
-						input.value = item.title;
-						item.element.classList.add("active");
-						current = true;
+						autoSelectIndex = idx;
 					}
 
 					if(item === currentItem){
@@ -1646,7 +1645,9 @@ Edit.prototype.editors = {
 			});
 
 			if(!current){
-				if (editorParams.autoSelectFirstItem) {
+				if (autoSelectIndex >= 0) {
+					setCurrentItem(displayItems[autoSelectIndex]);
+				} else if (editorParams.autoSelectFirstItem) {
 					setCurrentItem(displayItems[0]);
 				} else {
 					setCurrentItem(false);
