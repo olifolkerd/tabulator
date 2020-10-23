@@ -249,11 +249,13 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 				};
 
 				output.push({
+					field: column.field,
 					title: column.definition.title,
 					value: column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params)
 				});
 			}else{
 				output.push({
+					field: column.field,
 					title: column.definition.title,
 					value: value
 				});
@@ -267,6 +269,7 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 ResponsiveLayout.prototype.formatCollapsedData = function(data){
 	var list = document.createElement("table"),
 	listContents = "";
+	let columns = this.table.modules.localize.lang.columns;
 
 	data.forEach(function(item){
 		var div = document.createElement("div");
@@ -276,7 +279,7 @@ ResponsiveLayout.prototype.formatCollapsedData = function(data){
 			item.value = div.innerHTML;
 		}
 
-		listContents += "<tr><td><strong>" + item.title + "</strong></td><td>" + item.value + "</td></tr>";
+		listContents += "<tr><td><strong>" + (columns[item.field] || item.title) + "</strong></td><td>" + item.value + "</td></tr>";
 	});
 
 	list.innerHTML = listContents;
