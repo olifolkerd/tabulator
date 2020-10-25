@@ -1092,6 +1092,10 @@ Edit.prototype.editors = {
 					item.element.classList.add("active");
 				}
 			}
+
+			if (item && item.element && item.element.scrollIntoView) {
+				item.element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+			}
 		}
 
 		// function chooseItem(){
@@ -1700,6 +1704,10 @@ Edit.prototype.editors = {
 
 			if (item && item.element) {
 				item.element.classList.add("active");
+			}
+
+			if (item && item.element && item.element.scrollIntoView) {
+				item.element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 			}
 		}
 

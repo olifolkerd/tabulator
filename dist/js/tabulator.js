@@ -15945,6 +15945,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						item.element.classList.add("active");
 					}
 				}
+
+				if (item && item.element && item.element.scrollIntoView) {
+					item.element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+				}
 			}
 
 			// function chooseItem(){
@@ -16553,6 +16557,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				if (item && item.element) {
 					item.element.classList.add("active");
+				}
+
+				if (item && item.element && item.element.scrollIntoView) {
+					item.element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
 				}
 			}
 
