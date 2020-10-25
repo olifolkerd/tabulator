@@ -72,8 +72,8 @@ Clipboard.prototype.initialize = function(){
 };
 
 Clipboard.prototype.reset = function(){
-	this.blocked = false;
-	this.originalSelectionText = "";
+	this.blocked = true;
+	this.customSelection = false;
 };
 
 

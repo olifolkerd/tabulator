@@ -13653,8 +13653,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Clipboard.prototype.reset = function () {
-		this.blocked = false;
-		this.originalSelectionText = "";
+		this.blocked = true;
+		this.customSelection = false;
 	};
 
 	Clipboard.prototype.generatePlainContent = function (list) {
