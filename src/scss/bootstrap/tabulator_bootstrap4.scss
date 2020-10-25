@@ -330,8 +330,12 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 					}
 
-					.tabulator-arrow{
-						right:calc(50% - 6px);
+					.tabulator-col-sorter{
+						justify-content: center;
+						left:0;
+						right:0;
+						top:4px;
+						bottom:auto;
 					}
 				}
 			}

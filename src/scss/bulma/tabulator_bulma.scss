@@ -312,8 +312,12 @@ $footerBorderColor:$grey-lighter !default; //footer border color
 
 					}
 
-					.tabulator-arrow{
-						right:calc(50% - 6px);
+					.tabulator-col-sorter{
+						justify-content: center;
+						left:0;
+						right:0;
+						top:4px;
+						bottom:auto;
 					}
 				}
 			}

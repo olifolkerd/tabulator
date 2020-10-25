@@ -238,8 +238,13 @@
   padding-bottom: 20px;
 }
 
-.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable .tabulator-arrow {
-  right: calc(50% - 6px);
+.tabulator .tabulator-header .tabulator-col.tabulator-col-vertical.tabulator-sortable .tabulator-col-sorter {
+  -ms-flex-pack: center;
+      justify-content: center;
+  left: 0;
+  right: 0;
+  top: 4px;
+  bottom: auto;
 }
 
 .tabulator .tabulator-header .tabulator-frozen {
