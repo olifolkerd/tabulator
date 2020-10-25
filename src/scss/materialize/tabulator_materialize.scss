@@ -151,6 +151,10 @@ $footerActiveColor:$primary-color !default; //footer bottom active text color
 
 						background: #fff;
 					}
+
+					.tabulator-header-menu-button + .tabulator-title-editor{
+						width:calc(100% - 22px);
+					}
 				}
 
 				//column sorter arrow

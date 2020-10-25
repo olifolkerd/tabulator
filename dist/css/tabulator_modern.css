@@ -103,6 +103,10 @@
   color: #3759D7;
 }
 
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title .tabulator-header-menu-button + .tabulator-title-editor {
+  width: calc(100% - 22px);
+}
+
 .tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-sorter {
   display: -ms-flexbox;
   display: flex;

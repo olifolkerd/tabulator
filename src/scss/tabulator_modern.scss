@@ -165,6 +165,10 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 						font-size: 1em;
 						color: $primary;
 					}
+
+					.tabulator-header-menu-button + .tabulator-title-editor{
+						width:calc(100% - 22px);
+					}
 				}
 
 				//column sorter arrow
