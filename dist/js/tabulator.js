@@ -7022,9 +7022,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				_this22.table.modules.dataTree.initializeRow(_this22);
 
-				_this22.table.modules.dataTree.layoutRow(_this22);
+				if (visible) {
 
-				_this22.table.rowManager.refreshActiveData("tree", false, true);
+					_this22.table.modules.dataTree.layoutRow(_this22);
+
+					_this22.table.rowManager.refreshActiveData("tree", false, true);
+				}
 			}
 
 			//this.reinitialize();

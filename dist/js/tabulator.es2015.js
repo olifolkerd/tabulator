@@ -5563,8 +5563,11 @@ Row.prototype.updateData = function (updatedData) {
 
 		if (_this22.table.options.dataTree !== false && _this22.table.modExists("dataTree") && _this22.table.modules.dataTree.redrawNeeded(updatedData)) {
 			_this22.table.modules.dataTree.initializeRow(_this22);
-			_this22.table.modules.dataTree.layoutRow(_this22);
-			_this22.table.rowManager.refreshActiveData("tree", false, true);
+
+			if (visible) {
+				_this22.table.modules.dataTree.layoutRow(_this22);
+				_this22.table.rowManager.refreshActiveData("tree", false, true);
+			}
 		}
 
 		//this.reinitialize();

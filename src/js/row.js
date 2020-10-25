@@ -626,9 +626,13 @@ Row.prototype.updateData = function(updatedData){
 
 		if(this.table.options.dataTree !== false && this.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(updatedData)){
 			this.table.modules.dataTree.initializeRow(this);
-			this.table.modules.dataTree.layoutRow(this);
-			this.table.rowManager.refreshActiveData("tree", false, true);
+
+			if(visible){
+				this.table.modules.dataTree.layoutRow(this);
+				this.table.rowManager.refreshActiveData("tree", false, true);
+			}
 		}
+
 
 		//this.reinitialize();
 
