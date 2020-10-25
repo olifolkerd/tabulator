@@ -10638,8 +10638,7 @@ ColumnCalcs.prototype.calculations = {
 
 		if (values.length) {
 			output = values.reduce(function (sum, value) {
-				value = Number(value);
-				return sum + value;
+				return Number(sum) + Number(value);
 			});
 
 			output = output / values.length;

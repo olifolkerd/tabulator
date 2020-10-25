@@ -13492,8 +13492,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (values.length) {
 				output = values.reduce(function (sum, value) {
-					value = Number(value);
-					return sum + value;
+					return Number(sum) + Number(value);
 				});
 
 				output = output / values.length;
