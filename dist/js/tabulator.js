@@ -15315,14 +15315,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Edit.prototype.clearEdited = function (cell) {
 		var editIndex;
 
-		if (cell.modules.validate && cell.modules.edit && cell.modules.edit.edited) {
-			cell.modules.validate.invalid = false;
+		if (cell.modules.edit && cell.modules.edit.edited) {
+			cell.modules.edit.edited = false;
 
-			editIndex = this.editedCells.indexOf(cell);
-
-			if (editIndex > -1) {
-				this.editedCells.splice(editIndex, 1);
+			if (cell.modules.validate) {
+				cell.modules.validate.invalid = false;
 			}
+		}
+
+		editIndex = this.editedCells.indexOf(cell);
+
+		if (editIndex > -1) {
+			this.editedCells.splice(editIndex, 1);
 		}
 	};
 
