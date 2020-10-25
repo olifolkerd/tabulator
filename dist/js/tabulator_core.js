@@ -7122,9 +7122,9 @@ Tabulator.prototype.initializeOptions = function (options) {
 			this.options[key] = options[key];
 		} else {
 			if (Array.isArray(this.defaultOptions[key])) {
-				this.options[key] = [];
+				this.options[key] = Object.assign([], this.defaultOptions[key]);
 			} else if (_typeof(this.defaultOptions[key]) === "object" && this.defaultOptions[key] !== null) {
-				this.options[key] = {};
+				this.options[key] = Object.assign({}, this.defaultOptions[key]);
 			} else {
 				this.options[key] = this.defaultOptions[key];
 			}
