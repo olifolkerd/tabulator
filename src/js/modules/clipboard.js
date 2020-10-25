@@ -29,7 +29,7 @@ Clipboard.prototype.initialize = function(){
 					}
 				}else{
 
-					var list = this.table.modules.export.generateExportList(this.rowRange, this.table.options.clipboardCopyStyled, this.table.options.clipboardCopyConfig, "clipboard");
+					var list = this.table.modules.export.generateExportList(this.table.options.clipboardCopyConfig, this.table.options.clipboardCopyStyled, this.rowRange, "clipboard");
 
 					html = this.table.modules.export.genereateHTMLTable(list);
 					plain = html ? this.generatePlainContent(list) : "";

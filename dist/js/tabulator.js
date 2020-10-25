@@ -13610,7 +13610,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					} else {
 
-						var list = _this46.table.modules.export.generateExportList(_this46.rowRange, _this46.table.options.clipboardCopyStyled, _this46.table.options.clipboardCopyConfig, "clipboard");
+						var list = _this46.table.modules.export.generateExportList(_this46.table.options.clipboardCopyConfig, _this46.table.options.clipboardCopyStyled, _this46.rowRange, "clipboard");
 
 						html = _this46.table.modules.export.genereateHTMLTable(list);
 						plain = html ? _this46.generatePlainContent(list) : "";

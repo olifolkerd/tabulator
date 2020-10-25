@@ -35,7 +35,7 @@ Clipboard.prototype.initialize = function () {
 					}
 				} else {
 
-					var list = _this.table.modules.export.generateExportList(_this.rowRange, _this.table.options.clipboardCopyStyled, _this.table.options.clipboardCopyConfig, "clipboard");
+					var list = _this.table.modules.export.generateExportList(_this.table.options.clipboardCopyConfig, _this.table.options.clipboardCopyStyled, _this.rowRange, "clipboard");
 
 					html = _this.table.modules.export.genereateHTMLTable(list);
 					plain = html ? _this.generatePlainContent(list) : "";
