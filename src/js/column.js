@@ -999,8 +999,6 @@ Column.prototype.checkColumnVisibility = function(){
 		}
 	});
 
-
-
 	if(visible){
 		this.show();
 		this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
@@ -1046,6 +1044,10 @@ Column.prototype.show = function(silent, responsiveToggle){
 		if(this.parent.isGroup){
 			this.parent.matchChildWidths();
 		}
+
+		if(!this.silent && this.table.options.virtualDomHoz){
+			this.table.vdomHoz.reinitialize();
+		}
 	}
 };
 
@@ -1080,6 +1082,10 @@ Column.prototype.hide = function(silent, responsiveToggle){
 
 		if(this.parent.isGroup){
 			this.parent.matchChildWidths();
+		}
+
+		if(!this.silent && this.table.options.virtualDomHoz){
+			this.table.vdomHoz.reinitialize();
 		}
 	}
 };

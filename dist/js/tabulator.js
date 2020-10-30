@@ -2746,6 +2746,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.parent.matchChildWidths();
 			}
+
+			if (!this.silent && this.table.options.virtualDomHoz) {
+
+				this.table.vdomHoz.reinitialize();
+			}
 		}
 	};
 
@@ -2789,6 +2794,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.parent.isGroup) {
 
 				this.parent.matchChildWidths();
+			}
+
+			if (!this.silent && this.table.options.virtualDomHoz) {
+
+				this.table.vdomHoz.reinitialize();
 			}
 		}
 	};
