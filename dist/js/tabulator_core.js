@@ -1124,7 +1124,7 @@ ColumnManager.prototype.addColumn = function (definition, before, nextToColumn) 
 			_this4.table.modules.columnCalcs.recalc(_this4.table.rowManager.activeRows);
 		}
 
-		_this4.redraw();
+		_this4.redraw(true);
 
 		if (_this4.table.modules.layout.getMode() != "fitColumns") {
 
