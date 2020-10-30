@@ -2826,6 +2826,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Column.prototype.removeChild = function (child) {
+
+		var index = this.columns.indexOf(child);
+
+		if (index > -1) {
+
+			this.columns.splice(index, 1);
+		}
+
+		if (!this.columns.length) {
+
+			this.delete();
+		}
+	};
+
 	Column.prototype.setWidth = function (width) {
 
 		this.widthFixed = true;
@@ -2945,6 +2960,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		return new Promise(function (resolve, reject) {
 
+			var index;
+
 			if (_this9.isGroup) {
 
 				_this9.columns.forEach(function (column) {
@@ -2982,6 +2999,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			_this9.titleElement = false;
 
 			_this9.groupElement = false;
+
+			if (_this9.parent.isGroup) {
+
+				_this9.parent.removeChild(_this9);
+			}
 
 			_this9.table.columnManager.deregisterColumn(_this9);
 

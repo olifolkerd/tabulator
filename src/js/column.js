@@ -1108,6 +1108,19 @@ Column.prototype.matchChildWidths = function(){
 	}
 };
 
+Column.prototype.removeChild = function(child){
+	var index = this.columns.indexOf(child);
+
+	if(index > -1){
+		this.columns.splice(index, 1);
+	}
+
+	if(!this.columns.length){
+		this.delete();
+	}
+};
+
+
 Column.prototype.setWidth = function(width){
 	this.widthFixed = true;
 	this.setWidthActual(width);
@@ -1198,6 +1211,7 @@ Column.prototype.setMinWidth = function(minWidth){
 
 Column.prototype.delete = function(){
 	return new Promise((resolve, reject) => {
+		var index;
 
 		if(this.isGroup){
 			this.columns.forEach(function(column){
@@ -1226,6 +1240,10 @@ Column.prototype.delete = function(){
 		this.contentElement = false;
 		this.titleElement = false;
 		this.groupElement = false;
+
+		if(this.parent.isGroup){
+			this.parent.removeChild(this);
+		}
 
 		this.table.columnManager.deregisterColumn(this);
 
