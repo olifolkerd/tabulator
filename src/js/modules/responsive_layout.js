@@ -267,22 +267,31 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function(row){
 };
 
 ResponsiveLayout.prototype.formatCollapsedData = function(data){
-	var list = document.createElement("table"),
-	listContents = "";
-	let columns = this.table.modules.localize.lang.columns;
+	var list = document.createElement("table");
 
 	data.forEach(function(item){
-		var div = document.createElement("div");
+		var row = document.createElement("tr");
+		var titleData = document.createElement("td");
+		var valueData = document.createElement("td");
+		list.appendChild(row);
+		row.appendChild(titleData);
+		row.appendChild(valueData);
+
+		var titleHighlight = document.createElement("strong");
+		titleData.appendChild(titleHighlight);
+		this.table.modules.localize.bind("columns|" + item.field, function(text){
+			titleHighlight.innerText = text || item.title;
+		});
+
 
 		if(item.value instanceof Node){
+			var div = document.createElement("div");
 			div.appendChild(item.value);
-			item.value = div.innerHTML;
+			valueData.appendChild(div);
+		}else{
+			valueData.innerHTML = item.value;
 		}
-
-		listContents += "<tr><td><strong>" + (columns[item.field] || item.title) + "</strong></td><td>" + item.value + "</td></tr>";
-	});
-
-	list.innerHTML = listContents;
+	}, this);
 
 	return Object.keys(data).length ? list : "";
 };
