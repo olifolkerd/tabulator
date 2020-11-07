@@ -3,6 +3,7 @@ sass = require('gulp-sass'),
 autoprefixer = require('gulp-autoprefixer'),
 cssnano = require('gulp-cssnano'),
 uglify = require('gulp-uglify'),
+uglifyesm = require('gulp-uglify-es').default,
 rename = require('gulp-rename'),
 concat = require('gulp-concat'),
 del = require('del');
@@ -99,6 +100,10 @@ function esm(){
         }, ], {  }]
       }))
     .pipe(concat('tabulator.es2015.js'))
+    .pipe(gulp.dest('dist/js'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(uglifyesm())
+    .pipe(insert.prepend(version))
     .pipe(gulp.dest('dist/js'))
     //.pipe(notify({ message: 'Scripts task complete' }));
     .on('end', function(){ gutil.log('ESM Complete'); })

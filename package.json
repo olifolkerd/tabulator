@@ -55,6 +55,7 @@
     "gulp-sass": "^3.1.0",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-uglify": "^2.1.2",
+    "gulp-uglify-es": "^2.0.0",
     "gulp-util": "^3.0.8",
     "jshint": "^2.11.1"
   }
