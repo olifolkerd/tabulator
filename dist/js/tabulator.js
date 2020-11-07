@@ -2409,6 +2409,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.table.modules.menu.initializeColumnHeader(this);
 		}
 
+		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
+
 		this.element.appendChild(this.groupElement);
 	};
 

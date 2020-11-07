@@ -791,6 +791,8 @@ Column.prototype._buildGroupHeader = function(){
 		this.table.modules.menu.initializeColumnHeader(this);
 	}
 
+	this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
+
 	this.element.appendChild(this.groupElement);
 };
 
