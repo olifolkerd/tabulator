@@ -2821,7 +2821,7 @@ RowManager.prototype.findRow = function (subject) {
 		} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
 			//subject is a HTML element of the row
 			var match = self.rows.find(function (row) {
-				return row.element === subject;
+				return row.getElement() === subject;
 			});
 
 			return match || false;
@@ -4945,7 +4945,7 @@ VDomHoz.prototype.initializeRow = function (row) {
 			if (column.visible) {
 				var cell = row.getCell(column);
 
-				row.element.appendChild(cell.getElement());
+				row.getElement().appendChild(cell.getElement());
 				cell.cellRendered();
 			}
 		}
@@ -4955,8 +4955,9 @@ VDomHoz.prototype.initializeRow = function (row) {
 VDomHoz.prototype.reinitializeRow = function (row, force) {
 	if (row.type !== "group") {
 		if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
-			while (row.element.firstChild) {
-				row.element.removeChild(row.element.firstChild);
+			var rowEl = row.getElement();
+			while (rowEl.firstChild) {
+				rowEl.removeChild(rowEl.firstChild);
 			}this.initializeRow(row);
 		}
 	}
@@ -5139,7 +5140,7 @@ var Row = function Row(data, parent) {
 	this.parent = parent;
 	this.data = {};
 	this.type = type; //type of element
-	this.element = this.createElement();
+	this.element = false;
 	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
@@ -5151,8 +5152,16 @@ var Row = function Row(data, parent) {
 
 	this.component = null;
 
+	this.created = false;
+
 	this.setData(data);
-	this.generateElement();
+};
+
+Row.prototype.create = function () {
+	if (!this.created) {
+		this.created = true;
+		this.generateElement();
+	}
 };
 
 Row.prototype.createElement = function () {
@@ -5161,10 +5170,11 @@ Row.prototype.createElement = function () {
 	el.classList.add("tabulator-row");
 	el.setAttribute("role", "row");
 
-	return el;
+	this.element = el;
 };
 
 Row.prototype.getElement = function () {
+	this.create();
 	return this.element;
 };
 
@@ -5179,6 +5189,8 @@ Row.prototype.generateElement = function () {
 	    dblTap,
 	    tapHold,
 	    tap;
+
+	this.createElement();
 
 	//set row selection characteristics
 	if (self.table.options.selectable !== false && self.table.modExists("selectRow")) {
@@ -5323,6 +5335,8 @@ Row.prototype.generateCells = function () {
 Row.prototype.initialize = function (force) {
 	var _this21 = this;
 
+	this.create();
+
 	if (!this.initialized || force) {
 
 		this.deleteCells();
@@ -5379,7 +5393,7 @@ Row.prototype.initialize = function (force) {
 Row.prototype.reinitializeHeight = function () {
 	this.heightInitialized = false;
 
-	if (this.element.offsetParent !== null) {
+	if (this.element && this.element.offsetParent !== null) {
 		this.normalizeHeight(true);
 	}
 };
@@ -5393,7 +5407,7 @@ Row.prototype.reinitialize = function (children) {
 		this.heightStyled = "";
 	}
 
-	if (this.element.offsetParent !== null) {
+	if (this.element && this.element.offsetParent !== null) {
 		this.initialize(true);
 	}
 
@@ -5514,7 +5528,7 @@ Row.prototype.setData = function (data) {
 Row.prototype.updateData = function (updatedData) {
 	var _this22 = this;
 
-	var visible = Tabulator.prototype.helpers.elVisible(this.element),
+	var visible = this.element && Tabulator.prototype.helpers.elVisible(this.element),
 	    tempData = {},
 	    newRowData;
 
@@ -5826,14 +5840,16 @@ Row.prototype.wipe = function () {
 	this.detatchModules();
 	this.deleteCells();
 
-	while (this.element.firstChild) {
-		this.element.removeChild(this.element.firstChild);
-	}this.element = false;
-	this.modules = {};
-
-	if (this.element.parentNode) {
-		this.element.parentNode.removeChild(this.element);
+	if (this.element) {
+		while (this.element.firstChild) {
+			this.element.removeChild(this.element.firstChild);
+		}if (this.element.parentNode) {
+			this.element.parentNode.removeChild(this.element);
+		}
 	}
+
+	this.element = false;
+	this.modules = {};
 };
 
 Row.prototype.getGroup = function () {
@@ -11227,7 +11243,7 @@ DataTree.prototype.layoutRow = function (row) {
 
 	this.generateControlElement(row, el);
 
-	row.element.classList.add("tabulator-tree-level-" + config.index);
+	row.getElement().classList.add("tabulator-tree-level-" + config.index);
 
 	if (config.index) {
 		if (this.branchEl) {
@@ -19253,15 +19269,15 @@ MoveRows.prototype.initializeRow = function (row) {
 
 	//same table drag drop
 	config.mousemove = function (e) {
-		if (e.pageY - Tabulator.prototype.helpers.elOffset(row.element).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
+		var rowEl = row.getElement();
+
+		if (e.pageY - Tabulator.prototype.helpers.elOffset(rowEl).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
 			if (self.toRow !== row || !self.toRowAfter) {
-				var rowEl = row.getElement();
 				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 				self.moveRow(row, true);
 			}
 		} else {
 			if (self.toRow !== row || self.toRowAfter) {
-				var rowEl = row.getElement();
 				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
 				self.moveRow(row, false);
 			}

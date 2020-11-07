@@ -3455,7 +3455,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				var match = self.rows.find(function (row) {
 
-					return row.element === subject;
+					return row.getElement() === subject;
 				});
 
 				return match || false;
@@ -6210,7 +6210,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					var cell = row.getCell(column);
 
-					row.element.appendChild(cell.getElement());
+					row.getElement().appendChild(cell.getElement());
 
 					cell.cellRendered();
 				}
@@ -6224,8 +6224,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
 
-				while (row.element.firstChild) {
-					row.element.removeChild(row.element.firstChild);
+				var rowEl = row.getElement();
+
+				while (rowEl.firstChild) {
+					rowEl.removeChild(rowEl.firstChild);
 				}this.initializeRow(row);
 			}
 		}
@@ -6463,7 +6465,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.type = type; //type of element
 
-		this.element = this.createElement();
+		this.element = false;
 
 		this.modules = {}; //hold module variables;
 
@@ -6484,9 +6486,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.component = null;
 
-		this.setData(data);
+		this.created = false;
 
-		this.generateElement();
+		this.setData(data);
+	};
+
+	Row.prototype.create = function () {
+
+		if (!this.created) {
+
+			this.created = true;
+
+			this.generateElement();
+		}
 	};
 
 	Row.prototype.createElement = function () {
@@ -6497,10 +6509,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		el.setAttribute("role", "row");
 
-		return el;
+		this.element = el;
 	};
 
 	Row.prototype.getElement = function () {
+
+		this.create();
 
 		return this.element;
 	};
@@ -6519,6 +6533,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    dblTap,
 		    tapHold,
 		    tap;
+
+		this.createElement();
 
 		//set row selection characteristics
 
@@ -6707,6 +6723,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Row.prototype.initialize = function (force) {
 		var _this21 = this;
 
+		this.create();
+
 		if (!this.initialized || force) {
 
 			this.deleteCells();
@@ -6780,7 +6798,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.heightInitialized = false;
 
-		if (this.element.offsetParent !== null) {
+		if (this.element && this.element.offsetParent !== null) {
 
 			this.normalizeHeight(true);
 		}
@@ -6799,7 +6817,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.heightStyled = "";
 		}
 
-		if (this.element.offsetParent !== null) {
+		if (this.element && this.element.offsetParent !== null) {
 
 			this.initialize(true);
 		}
@@ -6957,7 +6975,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Row.prototype.updateData = function (updatedData) {
 		var _this22 = this;
 
-		var visible = Tabulator.prototype.helpers.elVisible(this.element),
+		var visible = this.element && Tabulator.prototype.helpers.elVisible(this.element),
 		    tempData = {},
 		    newRowData;
 
@@ -7360,16 +7378,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.deleteCells();
 
-		while (this.element.firstChild) {
-			this.element.removeChild(this.element.firstChild);
-		}this.element = false;
+		if (this.element) {
+
+			while (this.element.firstChild) {
+				this.element.removeChild(this.element.firstChild);
+			}if (this.element.parentNode) {
+
+				this.element.parentNode.removeChild(this.element);
+			}
+		}
+
+		this.element = false;
 
 		this.modules = {};
-
-		if (this.element.parentNode) {
-
-			this.element.parentNode.removeChild(this.element);
-		}
 	};
 
 	Row.prototype.getGroup = function () {
@@ -14088,7 +14109,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.generateControlElement(row, el);
 
-		row.element.classList.add("tabulator-tree-level-" + config.index);
+		row.getElement().classList.add("tabulator-tree-level-" + config.index);
 
 		if (config.index) {
 			if (this.branchEl) {
@@ -22114,15 +22135,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//same table drag drop
 		config.mousemove = function (e) {
-			if (e.pageY - Tabulator.prototype.helpers.elOffset(row.element).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
+			var rowEl = row.getElement();
+
+			if (e.pageY - Tabulator.prototype.helpers.elOffset(rowEl).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
 				if (self.toRow !== row || !self.toRowAfter) {
-					var rowEl = row.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 					self.moveRow(row, true);
 				}
 			} else {
 				if (self.toRow !== row || self.toRowAfter) {
-					var rowEl = row.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
 					self.moveRow(row, false);
 				}

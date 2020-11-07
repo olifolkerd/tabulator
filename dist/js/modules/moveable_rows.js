@@ -96,15 +96,15 @@ MoveRows.prototype.initializeRow = function (row) {
 
 	//same table drag drop
 	config.mousemove = function (e) {
-		if (e.pageY - Tabulator.prototype.helpers.elOffset(row.element).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
+		var rowEl = row.getElement();
+
+		if (e.pageY - Tabulator.prototype.helpers.elOffset(rowEl).top + self.table.rowManager.element.scrollTop > row.getHeight() / 2) {
 			if (self.toRow !== row || !self.toRowAfter) {
-				var rowEl = row.getElement();
 				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 				self.moveRow(row, true);
 			}
 		} else {
 			if (self.toRow !== row || self.toRowAfter) {
-				var rowEl = row.getElement();
 				rowEl.parentNode.insertBefore(self.placeholderElement, rowEl);
 				self.moveRow(row, false);
 			}

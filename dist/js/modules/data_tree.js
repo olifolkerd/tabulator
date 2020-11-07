@@ -135,7 +135,7 @@ DataTree.prototype.layoutRow = function (row) {
 
 	this.generateControlElement(row, el);
 
-	row.element.classList.add("tabulator-tree-level-" + config.index);
+	row.getElement().classList.add("tabulator-tree-level-" + config.index);
 
 	if (config.index) {
 		if (this.branchEl) {

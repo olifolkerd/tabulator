@@ -430,7 +430,7 @@ VDomHoz.prototype.initializeRow = function(row){
 			if(column.visible){
 				let cell = row.getCell(column);
 
-				row.element.appendChild(cell.getElement());
+				row.getElement().appendChild(cell.getElement());
 				cell.cellRendered();
 			}
 		}
@@ -440,7 +440,8 @@ VDomHoz.prototype.initializeRow = function(row){
 VDomHoz.prototype.reinitializeRow = function(row, force){
 	if(row.type !== "group"){
 		if(force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol){
-			while(row.element.firstChild) row.element.removeChild(row.element.firstChild);
+			var rowEl = row.getElement();
+			while(rowEl.firstChild) rowEl.removeChild(rowEl.firstChild);
 
 			this.initializeRow(row);
 		}
