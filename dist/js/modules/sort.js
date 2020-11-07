@@ -330,8 +330,8 @@ Sort.prototype._sortRow = function (a, b, column, dir, params) {
 	a = typeof a !== "undefined" ? a : "";
 	b = typeof b !== "undefined" ? b : "";
 
-	el1Comp = el1.getComponent();
-	el2Comp = el2.getComponent();
+	// el1Comp = el1.getComponent();
+	// el2Comp = el2.getComponent();
 
 	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 };
@@ -342,12 +342,25 @@ Sort.prototype.sorters = {
 	//sort numbers
 	number: function number(a, b, aRow, bRow, column, dir, params) {
 		var alignEmptyValues = params.alignEmptyValues;
-		var decimal = params.decimalSeparator || ".";
-		var thousand = params.thousandSeparator || ",";
+		var decimal = params.decimalSeparator;
+		var thousand = params.thousandSeparator;
 		var emptyAlign = 0;
 
-		a = parseFloat(String(a).split(thousand).join("").split(decimal).join("."));
-		b = parseFloat(String(b).split(thousand).join("").split(decimal).join("."));
+		a = String(a);
+		b = String(b);
+
+		if (thousand) {
+			a = a.split(thousand).join("");
+			b = b.split(thousand).join("");
+		}
+
+		if (decimal) {
+			a = a.split(decimal).join(".");
+			b = b.split(decimal).join(".");
+		}
+
+		a = parseFloat(a);
+		b = parseFloat(b);
 
 		//handle non numeric values
 		if (isNaN(a)) {
