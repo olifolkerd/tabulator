@@ -6,7 +6,8 @@
   "module": "dist/js/tabulator.es2015.js",
   "scripts": {
     "build": "gulp",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "dev": "gulp dev"
   },
   "repository": {
     "type": "git",

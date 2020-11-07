@@ -201,18 +201,33 @@ function scripts(){
     return Promise.all([tabulator(), core(), esm(), modules(), jquery()]);
 }
 
+function devscripts(){
+    return Promise.all([tabulator()]);
+}
+
 function clean(){
     return del(['dist/css', 'dist/js']);
 }
 
 function watch(){
-    // May be not necessary to run a clean and build before the watch.
     gulp.series(clean, gulp.series(styles, scripts));
     // Watch .scss files
     gulp.watch('src/scss/**/*.scss', styles);
 
     // Watch .js files
     gulp.watch('src/js/**/*.js', scripts);
+}
+
+//a quick series of builds to test functionality while developing
+function dev(){
+    // May be not necessary to run a clean and build before the watch
+    gulp.series(clean, gulp.series(styles, devscripts));
+
+    // Watch .scss files
+    gulp.watch('src/scss/**/*.scss', styles);
+
+    // Watch .js files
+    gulp.watch('src/js/**/*.js', devscripts);
 }
 
 exports.tabulator = gulp.series(tabulator);
@@ -225,3 +240,4 @@ exports.scripts = gulp.series(scripts);
 exports.clean = gulp.series(clean);
 exports.default = gulp.series(clean, gulp.series(styles, scripts));
 exports.watch = gulp.series(watch);
+exports.dev = gulp.series(dev);
