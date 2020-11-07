@@ -2113,6 +2113,15 @@ Tabulator.prototype.getHistoryRedoSize = function(){
 	}
 };
 
+Tabulator.prototype.clearHistory = function(){
+	if(this.options.history && this.modExists("history", true)){
+		return this.modules.history.clear();
+	}else{
+		return false;
+	}
+};
+
+
 /////////////// Download Management //////////////
 
 Tabulator.prototype.download = function(type, filename, options, active){

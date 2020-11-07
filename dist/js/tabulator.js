@@ -11566,6 +11566,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
+	Tabulator.prototype.clearHistory = function () {
+
+		if (this.options.history && this.modExists("history", true)) {
+
+			return this.modules.history.clear();
+		} else {
+
+			return false;
+		}
+	};
+
 	/////////////// Download Management //////////////
 
 
