@@ -241,7 +241,12 @@ Menu.prototype.positionMenu = function(element, parentEl, touch, e){
 	//move menu to start on bottom edge if it is too close to the edge of the screen
 	if((y + element.offsetHeight) >= docHeight){
 		element.style.top = "";
-		element.style.bottom = (docHeight - y) + "px";
+
+		if(parentEl){
+			element.style.bottom = (docHeight - Tabulator.prototype.helpers.elOffset(parentEl).top - parentEl.offsetHeight - 1) + "px";
+		}else{
+			element.style.bottom = (docHeight - y) + "px";
+		}
 	}
 };
 
