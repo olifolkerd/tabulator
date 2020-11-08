@@ -457,8 +457,6 @@ Filter.prototype.findFilter = function(filter){
 
 	filter.func = filterFunc;
 
-
-
 	return filter.func ? filter : false;
 };
 
@@ -475,7 +473,7 @@ Filter.prototype.findSubFilters = function(filters){
 	});
 
 	return output.length ? output : false;
-}
+};
 
 
 //get all filters
@@ -491,7 +489,7 @@ Filter.prototype.getFilters = function(all, ajax){
 			if(typeof item.type == "function"){
 				item.type = "function";
 			}
-		})
+		});
 	}
 
 	output = output.concat(this.filtersToArray(this.filterList, ajax));
@@ -522,7 +520,7 @@ Filter.prototype.filtersToArray = function(filterList, ajax){
 	});
 
 	return output;
-}
+};
 
 //get all filters
 Filter.prototype.getHeaderFilters = function(){

@@ -1619,6 +1619,13 @@ Tabulator.prototype.setFilter = function(field, type, value, params){
 	}
 };
 
+//set standard filters
+Tabulator.prototype.refreshFilter = function(){
+	if(this.modExists("filter", true)){
+		this.rowManager.filterRefresh();
+	}
+};
+
 //add filter to array
 Tabulator.prototype.addFilter = function(field, type, value, params){
 	if(this.modExists("filter", true)){
