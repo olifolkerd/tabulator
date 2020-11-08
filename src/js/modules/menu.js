@@ -175,6 +175,7 @@ Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 				if(item.menu && item.menu.length){
 					itemEl.addEventListener("click", (e) => {
 						e.stopPropagation();
+						this.hideOldSubMenus(menuEl);
 						this.loadMenu(e, component, item.menu, itemEl);
 					});
 				}else{
@@ -199,9 +200,25 @@ Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 	this.positionMenu(menuEl, parentEl, touch, e);
 };
 
+Menu.prototype.hideOldSubMenus = function(menuEl){
+	var index = this.menuElements.indexOf(menuEl);
+
+	if(index > -1){
+		for(let i = this.menuElements.length - 1; i > index; i--){
+			var el = this.menuElements[i];
+
+			if(el.parentNode){
+				el.parentNode.removeChild(el);
+			}
+
+			this.menuElements.pop();
+		}
+	}
+};
+
 Menu.prototype.positionMenu = function(element, parentEl, touch, e){
 	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
-	x, y;
+	x, y, parentOffset;
 
 	if(!parentEl){
 		x = touch ? e.touches[0].pageX : e.pageX;
@@ -209,8 +226,9 @@ Menu.prototype.positionMenu = function(element, parentEl, touch, e){
 
 		this.positionReversedX = false;
 	}else{
-		x = Tabulator.prototype.helpers.elOffset(parentEl).left + parentEl.offsetWidth;
-		y = Tabulator.prototype.helpers.elOffset(parentEl).top - 1;
+		parentOffset = Tabulator.prototype.helpers.elOffset(parentEl);
+		x = parentOffset.left + parentEl.offsetWidth;
+		y = parentOffset.top - 1;
 	}
 
 	element.style.top = y + "px";
@@ -226,28 +244,28 @@ Menu.prototype.positionMenu = function(element, parentEl, touch, e){
 
 	document.body.appendChild(element);
 
-	//move menu to start on right edge if it is too close to the edge of the screen
-	if((x + element.offsetWidth) >= window.innerWidth || this.positionReversedX){
-		element.style.left = "";
-
-		if(parentEl){
-			element.style.right = (window.innerWidth - Tabulator.prototype.helpers.elOffset(parentEl).left) + "px";
-		}else{
-			element.style.right = (window.innerWidth - x) + "px";
-		}
-
-		this.positionReversedX = true;
-	}
-
 	//move menu to start on bottom edge if it is too close to the edge of the screen
 	if((y + element.offsetHeight) >= docHeight){
 		element.style.top = "";
 
 		if(parentEl){
-			element.style.bottom = (docHeight - Tabulator.prototype.helpers.elOffset(parentEl).top - parentEl.offsetHeight - 1) + "px";
+			element.style.bottom = (docHeight - parentOffset.top - parentEl.offsetHeight - 1) + "px";
 		}else{
 			element.style.bottom = (docHeight - y) + "px";
 		}
+	}
+
+	//move menu to start on right edge if it is too close to the edge of the screen
+	if((x + element.offsetWidth) >= document.body.offsetWidth || this.positionReversedX){
+		element.style.left = "";
+
+		if(parentEl){
+			element.style.right = (document.documentElement.offsetWidth - parentOffset.left) + "px";
+		}else{
+			element.style.right = (document.documentElement.offsetWidth - x) + "px";
+		}
+
+		this.positionReversedX = true;
 	}
 };
 

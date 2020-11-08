@@ -21707,6 +21707,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (item.menu && item.menu.length) {
 						itemEl.addEventListener("click", function (e) {
 							e.stopPropagation();
+							_this73.hideOldSubMenus(menuEl);
 							_this73.loadMenu(e, component, item.menu, itemEl);
 						});
 					} else {
@@ -21731,12 +21732,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.positionMenu(menuEl, parentEl, touch, e);
 	};
 
+	Menu.prototype.hideOldSubMenus = function (menuEl) {
+		var index = this.menuElements.indexOf(menuEl);
+
+		if (index > -1) {
+			for (var _i13 = this.menuElements.length - 1; _i13 > index; _i13--) {
+				var el = this.menuElements[_i13];
+
+				if (el.parentNode) {
+					el.parentNode.removeChild(el);
+				}
+
+				this.menuElements.pop();
+			}
+		}
+	};
+
 	Menu.prototype.positionMenu = function (element, parentEl, touch, e) {
 		var _this74 = this;
 
 		var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
 		    x,
-		    y;
+		    y,
+		    parentOffset;
 
 		if (!parentEl) {
 			x = touch ? e.touches[0].pageX : e.pageX;
@@ -21744,8 +21762,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this.positionReversedX = false;
 		} else {
-			x = Tabulator.prototype.helpers.elOffset(parentEl).left + parentEl.offsetWidth;
-			y = Tabulator.prototype.helpers.elOffset(parentEl).top - 1;
+			parentOffset = Tabulator.prototype.helpers.elOffset(parentEl);
+			x = parentOffset.left + parentEl.offsetWidth;
+			y = parentOffset.top - 1;
 		}
 
 		element.style.top = y + "px";
@@ -21761,28 +21780,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		document.body.appendChild(element);
 
-		//move menu to start on right edge if it is too close to the edge of the screen
-		if (x + element.offsetWidth >= window.innerWidth || this.positionReversedX) {
-			element.style.left = "";
-
-			if (parentEl) {
-				element.style.right = window.innerWidth - Tabulator.prototype.helpers.elOffset(parentEl).left + "px";
-			} else {
-				element.style.right = window.innerWidth - x + "px";
-			}
-
-			this.positionReversedX = true;
-		}
-
 		//move menu to start on bottom edge if it is too close to the edge of the screen
 		if (y + element.offsetHeight >= docHeight) {
 			element.style.top = "";
 
 			if (parentEl) {
-				element.style.bottom = docHeight - Tabulator.prototype.helpers.elOffset(parentEl).top - parentEl.offsetHeight - 1 + "px";
+				element.style.bottom = docHeight - parentOffset.top - parentEl.offsetHeight - 1 + "px";
 			} else {
 				element.style.bottom = docHeight - y + "px";
 			}
+		}
+
+		//move menu to start on right edge if it is too close to the edge of the screen
+		if (x + element.offsetWidth >= document.body.offsetWidth || this.positionReversedX) {
+			element.style.left = "";
+
+			if (parentEl) {
+				element.style.right = document.documentElement.offsetWidth - parentOffset.left + "px";
+			} else {
+				element.style.right = document.documentElement.offsetWidth - x + "px";
+			}
+
+			this.positionReversedX = true;
 		}
 	};
 
@@ -22924,8 +22943,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (this.pageSizes.indexOf(this.size) == -1) {
 					pageSizes = [];
 
-					for (var _i13 = 1; _i13 < 5; _i13++) {
-						pageSizes.push(this.size * _i13);
+					for (var _i14 = 1; _i14 < 5; _i14++) {
+						pageSizes.push(this.size * _i14);
 					}
 
 					this.pageSizes = pageSizes;
@@ -23255,9 +23274,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			self.nextBut.disabled = false;
 		}
 
-		for (var _i14 = min; _i14 <= max; _i14++) {
-			if (_i14 > 0 && _i14 <= self.max) {
-				self.pagesElement.appendChild(self._generatePageButton(_i14));
+		for (var _i15 = min; _i15 <= max; _i15++) {
+			if (_i15 > 0 && _i15 <= self.max) {
+				self.pagesElement.appendChild(self._generatePageButton(_i15));
 			}
 		}
 
@@ -23374,9 +23393,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			this._setPageButtons();
 
-			for (var _i15 = start; _i15 < end; _i15++) {
-				if (data[_i15]) {
-					output.push(data[_i15]);
+			for (var _i16 = start; _i16 < end; _i16++) {
+				if (data[_i16]) {
+					output.push(data[_i16]);
 				}
 			}
 
@@ -24835,16 +24854,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		//assign collapse column
-		for (var _iterator = this.table.columnManager.columnsByIndex, _isArray = Array.isArray(_iterator), _i16 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+		for (var _iterator = this.table.columnManager.columnsByIndex, _isArray = Array.isArray(_iterator), _i17 = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
 			var _ref;
 
 			if (_isArray) {
-				if (_i16 >= _iterator.length) break;
-				_ref = _iterator[_i16++];
+				if (_i17 >= _iterator.length) break;
+				_ref = _iterator[_i17++];
 			} else {
-				_i16 = _iterator.next();
-				if (_i16.done) break;
-				_ref = _i16.value;
+				_i17 = _iterator.next();
+				if (_i17.done) break;
+				_ref = _i17.value;
 			}
 
 			var col = _ref;
@@ -25347,7 +25366,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			rowCount = self.selectedRows.length;
 
-			for (var _i17 = 0; _i17 < rowCount; _i17++) {
+			for (var _i18 = 0; _i18 < rowCount; _i18++) {
 				self._deselectRow(self.selectedRows[0], true);
 			}
 
@@ -25462,16 +25481,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var children = this.table.modules.dataTree.getChildren(row);
 
 		if (select) {
-			for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i18 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+			for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i19 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
 				var _ref2;
 
 				if (_isArray2) {
-					if (_i18 >= _iterator2.length) break;
-					_ref2 = _iterator2[_i18++];
+					if (_i19 >= _iterator2.length) break;
+					_ref2 = _iterator2[_i19++];
 				} else {
-					_i18 = _iterator2.next();
-					if (_i18.done) break;
-					_ref2 = _i18.value;
+					_i19 = _iterator2.next();
+					if (_i19.done) break;
+					_ref2 = _i19.value;
 				}
 
 				var child = _ref2;
@@ -25479,16 +25498,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				this._selectRow(child, true);
 			}
 		} else {
-			for (var _iterator3 = children, _isArray3 = Array.isArray(_iterator3), _i19 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
+			for (var _iterator3 = children, _isArray3 = Array.isArray(_iterator3), _i20 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
 				var _ref3;
 
 				if (_isArray3) {
-					if (_i19 >= _iterator3.length) break;
-					_ref3 = _iterator3[_i19++];
+					if (_i20 >= _iterator3.length) break;
+					_ref3 = _iterator3[_i20++];
 				} else {
-					_i19 = _iterator3.next();
-					if (_i19.done) break;
-					_ref3 = _i19.value;
+					_i20 = _iterator3.next();
+					if (_i20.done) break;
+					_ref3 = _i20.value;
 				}
 
 				var _child = _ref3;
