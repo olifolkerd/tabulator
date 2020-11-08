@@ -220,6 +220,7 @@ Menu.prototype.positionMenu = function(element, parentEl, touch, e){
 		this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
 		document.body.addEventListener("click", this.blurEvent);
 		document.body.addEventListener("contextmenu", this.blurEvent);
+		window.addEventListener("resize", this.blurEvent);
 		document.body.addEventListener("keydown", this.escEvent);
 	}, 100);
 
@@ -261,24 +262,17 @@ Menu.prototype.escMenu = function(e){
 };
 
 Menu.prototype.hideMenu = function(){
-
-	console.trace("hide")
-
 	this.menuElements.forEach((menuEl) => {
 		if(menuEl.parentNode){
 			menuEl.parentNode.removeChild(menuEl);
 		}
 	});
 
-	if(this.escEvent){
-		document.body.removeEventListener("keydown", this.escEvent);
-	}
-
-	if(this.blurEvent){
-		document.body.removeEventListener("click", this.blurEvent);
-		document.body.removeEventListener("contextmenu", this.blurEvent);
-		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-	}
+	document.body.removeEventListener("keydown", this.escEvent);
+	document.body.removeEventListener("click", this.blurEvent);
+	document.body.removeEventListener("contextmenu", this.blurEvent);
+	window.removeEventListener("resize", this.blurEvent);
+	this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
 };
 
 //default accessors

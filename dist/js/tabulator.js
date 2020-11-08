@@ -21755,6 +21755,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			_this74.table.rowManager.element.addEventListener("scroll", _this74.blurEvent);
 			document.body.addEventListener("click", _this74.blurEvent);
 			document.body.addEventListener("contextmenu", _this74.blurEvent);
+			window.addEventListener("resize", _this74.blurEvent);
 			document.body.addEventListener("keydown", _this74.escEvent);
 		}, 100);
 
@@ -21796,24 +21797,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Menu.prototype.hideMenu = function () {
-
-		console.trace("hide");
-
 		this.menuElements.forEach(function (menuEl) {
 			if (menuEl.parentNode) {
 				menuEl.parentNode.removeChild(menuEl);
 			}
 		});
 
-		if (this.escEvent) {
-			document.body.removeEventListener("keydown", this.escEvent);
-		}
-
-		if (this.blurEvent) {
-			document.body.removeEventListener("click", this.blurEvent);
-			document.body.removeEventListener("contextmenu", this.blurEvent);
-			this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-		}
+		document.body.removeEventListener("keydown", this.escEvent);
+		document.body.removeEventListener("click", this.blurEvent);
+		document.body.removeEventListener("contextmenu", this.blurEvent);
+		window.removeEventListener("resize", this.blurEvent);
+		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
 	};
 
 	//default accessors
