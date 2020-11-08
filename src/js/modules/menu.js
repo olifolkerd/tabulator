@@ -1,9 +1,10 @@
 var Menu = function(table){
 	this.table = table; //hold Tabulator object
-	this.menuEl = false;
+	this.menuElements = [];
 	this.blurEvent = this.hideMenu.bind(this);
 	this.escEvent = this.escMenu.bind(this);
 	this.nestedMenuBlock = false;
+	this.positionReversedX = false;
 };
 
 Menu.prototype.initializeColumnHeader = function(column){
@@ -109,11 +110,12 @@ Menu.prototype.initializeGroup = function (group){
 	}
 };
 
+Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 
-Menu.prototype.loadMenu = function(e, component, menu){
+	var touch = !(e instanceof MouseEvent);
 
-	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
-	touch = !(e instanceof MouseEvent);
+	var menuEl = document.createElement("div");
+	menuEl.classList.add("tabulator-menu");
 
 	if(!touch){
 		e.preventDefault();
@@ -124,26 +126,26 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		return;
 	}
 
-	if(this.nestedMenuBlock){
-		//abort if child menu already open
-		if(this.isOpen()){
-			return;
+	if(!parentEl){
+		if(this.nestedMenuBlock){
+			//abort if child menu already open
+			if(this.isOpen()){
+				return;
+			}
+		}else{
+			this.nestedMenuBlock = setTimeout(() => {
+				this.nestedMenuBlock = false;
+			}, 100)
 		}
-	}else{
-		this.nestedMenuBlock = setTimeout(() => {
-			this.nestedMenuBlock = false;
-		}, 100)
+
+		this.hideMenu();
+		this.menuElements = [];
 	}
 
-	this.hideMenu();
-
-	this.menuEl = document.createElement("div");
-	this.menuEl.classList.add("tabulator-menu");
-
 	menu.forEach((item) => {
-		var itemEl = document.createElement("div");
-		var label = item.label
-		var disabled = item.disabled;
+		var itemEl = document.createElement("div"),
+		label = item.label,
+		disabled = item.disabled;
 
 		if(item.separator){
 			itemEl.classList.add("tabulator-menu-separator");
@@ -170,18 +172,49 @@ Menu.prototype.loadMenu = function(e, component, menu){
 					e.stopPropagation();
 				});
 			}else{
-				itemEl.addEventListener("click", (e) => {
-					this.hideMenu();
-					item.action(e, component.getComponent());
-				});
+				if(item.menu && item.menu.length){
+					itemEl.addEventListener("click", (e) => {
+						e.stopPropagation();
+						this.loadMenu(e, component, item.menu, itemEl);
+					});
+				}else{
+					if(item.action){
+						itemEl.addEventListener("click", (e) => {
+							this.hideMenu();
+							item.action(e, component.getComponent());
+						});
+					}
+				}
+			}
+
+			if(item.menu && item.menu.length){
+				itemEl.classList.add("tabulator-menu-item-submenu");
 			}
 		}
 
-		this.menuEl.appendChild(itemEl);
+		menuEl.appendChild(itemEl);
 	});
 
-	this.menuEl.style.top = (touch ? e.touches[0].pageY : e.pageY) + "px";
-	this.menuEl.style.left = (touch ? e.touches[0].pageX : e.pageX) + "px";
+	this.menuElements.push(menuEl);
+	this.positionMenu(menuEl, parentEl, touch, e);
+};
+
+Menu.prototype.positionMenu = function(element, parentEl, touch, e){
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
+	x, y;
+
+	if(!parentEl){
+		x = touch ? e.touches[0].pageX : e.pageX;
+		y = touch ? e.touches[0].pageY : e.pageY;
+
+		this.positionReversedX = false;
+	}else{
+		x = Tabulator.prototype.helpers.elOffset(parentEl).left + parentEl.offsetWidth;
+		y = Tabulator.prototype.helpers.elOffset(parentEl).top - 1;
+	}
+
+	element.style.top = y + "px";
+	element.style.left = x + "px";
 
 	setTimeout(() => {
 		this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
@@ -190,23 +223,30 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		document.body.addEventListener("keydown", this.escEvent);
 	}, 100);
 
-	document.body.appendChild(this.menuEl);
+	document.body.appendChild(element);
 
 	//move menu to start on right edge if it is too close to the edge of the screen
-	if((e.pageX + this.menuEl.offsetWidth) >= document.body.offsetWidth){
-		this.menuEl.style.left = "";
-		this.menuEl.style.right = (document.body.offsetWidth - e.pageX) + "px";
+	if((x + element.offsetWidth) >= window.innerWidth || this.positionReversedX){
+		element.style.left = "";
+
+		if(parentEl){
+			element.style.right = (window.innerWidth - Tabulator.prototype.helpers.elOffset(parentEl).left) + "px";
+		}else{
+			element.style.right = (window.innerWidth - x) + "px";
+		}
+
+		this.positionReversedX = true;
 	}
 
 	//move menu to start on bottom edge if it is too close to the edge of the screen
-	if((e.pageY + this.menuEl.offsetHeight) >= docHeight){
-		this.menuEl.style.top = "";
-		this.menuEl.style.bottom = (docHeight - e.pageY) + "px";
+	if((y + element.offsetHeight) >= docHeight){
+		element.style.top = "";
+		element.style.bottom = (docHeight - y) + "px";
 	}
 };
 
 Menu.prototype.isOpen = function(){
-	return !!this.menuEl.parentNode;
+	return !!this.menuElements.length;
 };
 
 Menu.prototype.escMenu = function(e){
@@ -216,9 +256,14 @@ Menu.prototype.escMenu = function(e){
 };
 
 Menu.prototype.hideMenu = function(){
-	if(this.menuEl.parentNode){
-		this.menuEl.parentNode.removeChild(this.menuEl);
-	}
+
+	console.trace("hide")
+
+	this.menuElements.forEach((menuEl) => {
+		if(menuEl.parentNode){
+			menuEl.parentNode.removeChild(menuEl);
+		}
+	});
 
 	if(this.escEvent){
 		document.body.removeEventListener("keydown", this.escEvent);
