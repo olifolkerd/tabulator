@@ -563,7 +563,7 @@ Cell.prototype.setValue = function(value, mutate){
 		if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
 			this.table.modules.groupRows.reassignRowToGroup(this.row);
 		}
-		
+
 		this.cellRendered();
 
 		this.table.options.cellEdited.call(this.table, component);
@@ -669,6 +669,11 @@ Cell.prototype.getWidth = function(){
 Cell.prototype.setMinWidth = function(){
 	this.minWidth = this.column.minWidth;
 	this.element.style.minWidth = this.column.minWidthStyled;
+};
+
+Cell.prototype.setMaxWidth = function(){
+	this.maxWidth = this.column.maxWidth;
+	this.element.style.maxWidth = this.column.maxWidthStyled;
 };
 
 Cell.prototype.checkHeight = function(){

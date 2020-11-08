@@ -1652,6 +1652,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		this.widthStyled = ""; //column width prestyled to improve render efficiency
 
+		this.maxWidth = null; //column maximum width
+
+		this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
+
 		this.minWidth = null; //column minimum width
 
 		this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
@@ -2210,6 +2214,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		//set min width if present
 
 		this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
+
+		if (def.maxWidth || this.table.options.columnMaxWidth) {
+
+			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+		}
 
 		this.reinitializeWidth();
 
@@ -2859,6 +2868,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		width = Math.max(this.minWidth, width);
 
+		if (this.maxWidth) {
+
+			width = Math.min(this.maxWidth, width);
+		}
+
 		this.width = width;
 
 		this.widthStyled = width ? width + "px" : "";
@@ -2954,6 +2968,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.cells.forEach(function (cell) {
 
 			cell.setMinWidth();
+		});
+	};
+
+	Column.prototype.setMaxWidth = function (maxWidth) {
+
+		this.maxWidth = maxWidth;
+
+		this.maxWidthStyled = maxWidth ? maxWidth + "px" : "";
+
+		this.element.style.maxWidth = this.maxWidthStyled;
+
+		this.cells.forEach(function (cell) {
+
+			cell.setMaxWidth();
 		});
 	};
 
@@ -3200,7 +3228,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	};
 
-	Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "headerHozAlign", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu",
+	Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "maxWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "headerHozAlign", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu",
 
 	// "headerClickMenu",
 
@@ -8274,6 +8302,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		this.element.style.minWidth = this.column.minWidthStyled;
 	};
 
+	Cell.prototype.setMaxWidth = function () {
+
+		this.maxWidth = this.column.maxWidth;
+
+		this.element.style.maxWidth = this.column.maxWidthStyled;
+	};
+
 	Cell.prototype.checkHeight = function () {
 
 		// var height = this.element.css("height");
@@ -8694,6 +8729,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 		columnMinWidth: 40, //minimum global width for a column
+
+		columnMaxWidth: false, //minimum global width for a column
 
 		columnHeaderVertAlign: "top", //vertical alignment of column headers
 
@@ -12036,6 +12073,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				    oversizeSpace = 0,
 				    remainingSpace = 0,
 				    nextColWidth = 0,
+				    remainingFlexGrowUnits = flexGrowUnits,
 				    gap = 0,
 				    changeUnits = 0,
 				    undersizeCols = [];
@@ -12059,9 +12097,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						oversizeCols.push(col);
 					} else {
 
-						undersizeCols.push(col);
+						if (col.column.maxWidth && col.column.maxWidth < width) {
 
-						changeUnits += shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
+							col.width = col.column.maxWidth;
+
+							freeSpace -= col.column.maxWidth;
+
+							remainingFlexGrowUnits -= shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
+
+							if (remainingFlexGrowUnits) {
+
+								colWidth = Math.floor(freeSpace / remainingFlexGrowUnits);
+							}
+						} else {
+
+							undersizeCols.push(col);
+
+							changeUnits += shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
+						}
 					}
 				});
 

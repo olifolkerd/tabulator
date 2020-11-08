@@ -46,6 +46,7 @@ Tabulator.prototype.defaultOptions = {
 	layoutColumnsOnNewData:false, //update column widths on setData
 
 	columnMinWidth:40, //minimum global width for a column
+	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 	columnVertAlign:false, // DEPRECATED - Left to allow warning
 
