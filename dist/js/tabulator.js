@@ -2217,7 +2217,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (def.maxWidth || this.table.options.columnMaxWidth) {
 
-			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+			if (def.maxWidth !== false) {
+
+				this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+			}
 		}
 
 		this.reinitializeWidth();

@@ -649,7 +649,9 @@ Column.prototype._buildColumnHeader = function(){
 	this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
 
 	if(def.maxWidth || this.table.options.columnMaxWidth){
-		this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+		if(def.maxWidth !== false){
+			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+		}
 	}
 
 	this.reinitializeWidth();
