@@ -21779,7 +21779,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					} else {
 						if (item.action) {
 							itemEl.addEventListener("click", function (e) {
-								_this73.hideMenu();
 								item.action(e, component.getComponent());
 							});
 						}
@@ -21792,6 +21791,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			menuEl.appendChild(itemEl);
+		});
+
+		menuEl.addEventListener("click", function (e) {
+			_this73.hideMenu();
 		});
 
 		this.menuElements.push(menuEl);

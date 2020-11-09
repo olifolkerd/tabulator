@@ -181,7 +181,6 @@ Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 				}else{
 					if(item.action){
 						itemEl.addEventListener("click", (e) => {
-							this.hideMenu();
 							item.action(e, component.getComponent());
 						});
 					}
@@ -194,6 +193,10 @@ Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 		}
 
 		menuEl.appendChild(itemEl);
+	});
+
+	menuEl.addEventListener("click", (e) => {
+		this.hideMenu();
 	});
 
 	this.menuElements.push(menuEl);
