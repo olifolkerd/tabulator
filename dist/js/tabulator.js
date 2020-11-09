@@ -15880,16 +15880,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							output[val] = true;
 						}
 					});
-
-					if (editorParams.sortValuesList) {
-						if (editorParams.sortValuesList == "asc") {
-							output = Object.keys(output).sort();
-						} else {
-							output = Object.keys(output).sort().reverse();
-						}
-					} else {
-						output = Object.keys(output);
-					}
 				} else {
 					console.warn("unable to find matching column to create select lookup list:", field);
 				}
@@ -15989,6 +15979,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						dataList.push(item);
 						displayList.push(item);
+					}
+				}
+
+				if (editorParams.sortValuesList) {
+					dataList.sort(function (a, b) {
+						return a.label < b.label ? -1 : a.label > b.label ? 1 : 0;
+					});
+
+					displayList.sort(function (a, b) {
+						return a.label < b.label ? -1 : a.label > b.label ? 1 : 0;
+					});
+
+					if (editorParams.sortValuesList !== "asc") {
+						dataList.reverse();
+						displayList.reverse();
 					}
 				}
 
