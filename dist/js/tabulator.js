@@ -15852,7 +15852,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			    displayItems = [],
 			    currentItems = [],
 			    blurable = true,
-			    blockListShow = false;
+			    blockListShow = false,
+			    searchWord = "",
+			    searchWordTimeout = null;
 
 			if (Array.isArray(editorParams) || !Array.isArray(editorParams) && (typeof editorParams === 'undefined' ? 'undefined' : _typeof(editorParams)) === "object" && !editorParams.values) {
 				console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
@@ -16245,6 +16247,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 			}
 
+			function scrollTovalue(char) {
+
+				clearTimeout(searchWordTimeout);
+
+				var character = String.fromCharCode(event.keyCode).toLowerCase();
+				searchWord += character.toLowerCase();
+
+				var match = dataItems.find(function (item) {
+					return typeof item.label !== "undefined" && item.label.toLowerCase().startsWith(searchWord);
+				});
+
+				if (match) {
+					setCurrentItem(match, !multiselect);
+				}
+
+				searchWordTimeout = setTimeout(function () {
+					searchWord = "";
+				}, 800);
+			}
+
 			//style input
 			input.setAttribute("type", "text");
 
@@ -16353,6 +16375,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					default:
 						if (self.currentCell === false) {
 							e.preventDefault();
+						}
+
+						if (e.keyCode >= 38 && e.keyCode <= 90) {
+							scrollTovalue(e.keyCode);
 						}
 				}
 			});
