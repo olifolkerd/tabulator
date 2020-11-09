@@ -21623,11 +21623,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			headerMenuEl.innerHTML = "&vellip;";
 
 			headerMenuEl.addEventListener("click", function (e) {
-				var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent(), e) : column.definition.headerMenu;
 				e.stopPropagation();
 				e.preventDefault();
 
-				_this71.loadMenu(e, column, menu);
+				_this71.LoadMenuEvent(column, column.definition.headerMenu, e);
 			});
 
 			column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
@@ -21635,7 +21634,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	Menu.prototype.LoadMenuEvent = function (component, menu, e) {
-		menu = typeof menu == "function" ? menu(component.getComponent(), e) : menu;
+		menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
 
 		// if(component instanceof Cell){
 		// 	e.stopImmediatePropagation();
@@ -21751,7 +21750,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemEl.classList.add("tabulator-menu-item");
 
 				if (typeof label == "function") {
-					label = label(component.getComponent());
+					label = label.call(_this73.table, component.getComponent());
 				}
 
 				if (label instanceof Node) {
@@ -21761,7 +21760,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				if (typeof disabled == "function") {
-					disabled = disabled(component.getComponent());
+					disabled = disabled.call(_this73.table, component.getComponent());
 				}
 
 				if (disabled) {

@@ -26,11 +26,10 @@ Menu.prototype.initializeColumnHeader = function(column){
 		headerMenuEl.innerHTML = "&vellip;";
 
 		headerMenuEl.addEventListener("click", (e) => {
-			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent(), e) : column.definition.headerMenu;
 			e.stopPropagation();
 			e.preventDefault();
 
-			this.loadMenu(e, column, menu);
+			this.LoadMenuEvent(column, column.definition.headerMenu, e);
 		});
 
 		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
@@ -38,7 +37,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 };
 
 Menu.prototype.LoadMenuEvent = function(component, menu, e){
-	menu = typeof menu == "function" ? menu(component.getComponent(), e) : menu;
+	menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
 
 	// if(component instanceof Cell){
 	// 	e.stopImmediatePropagation();
@@ -153,7 +152,7 @@ Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 			itemEl.classList.add("tabulator-menu-item");
 
 			if(typeof label == "function"){
-				label = label(component.getComponent());
+				label = label.call(this.table, component.getComponent());
 			}
 
 			if(label instanceof Node){
@@ -163,7 +162,7 @@ Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 			}
 
 			if(typeof disabled == "function"){
-				disabled = disabled(component.getComponent());
+				disabled = disabled.call(this.table, component.getComponent());
 			}
 
 			if(disabled){
