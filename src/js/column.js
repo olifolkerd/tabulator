@@ -1353,7 +1353,7 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			self.setWidthActual(maxWidth + 1);
+			self.setWidthActual(maxWidth);
 		}
 
 	}

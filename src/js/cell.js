@@ -663,7 +663,7 @@ Cell.prototype.clearWidth = function(){
 };
 
 Cell.prototype.getWidth = function(){
-	return this.width || this.element.offsetWidth;
+	return this.width || this.element.getBoundingClientRect().width;
 };
 
 Cell.prototype.setMinWidth = function(){
