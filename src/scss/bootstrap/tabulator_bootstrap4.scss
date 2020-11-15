@@ -241,10 +241,10 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 					}
 
 					&:focus {
-					    color: #495057;
-					    background-color: #fff;
-					    border:1px solid  $editBoxColor;
-					    outline: 0;
+						color: #495057;
+						background-color: #fff;
+						border:1px solid  $editBoxColor;
+						outline: 0;
 					    // box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 					}
 				}
@@ -679,6 +679,21 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 			&.tabulator-selected{
 				background-color:$rowSelectedBackground;
+			}
+		}
+
+		.tabulator-footer{
+			border-color: $table-dark-border-color !important;
+
+			.tabulator-calcs-holder{
+				border-color: $table-dark-border-color !important;
+				background:$table-dark-bg !important;
+
+				.tabulator-row{
+					border-color: $table-dark-border-color !important;
+					background-color: $table-dark-bg !important;
+					color: $table-dark-color !important;
+				}
 			}
 		}
 	}

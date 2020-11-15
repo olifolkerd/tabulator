@@ -536,6 +536,21 @@
   background-color: #9ABCEA;
 }
 
+.tabulator.table-dark .tabulator-footer {
+  border-color: #32383e !important;
+}
+
+.tabulator.table-dark .tabulator-footer .tabulator-calcs-holder {
+  border-color: #32383e !important;
+  background: #212529 !important;
+}
+
+.tabulator.table-dark .tabulator-footer .tabulator-calcs-holder .tabulator-row {
+  border-color: #32383e !important;
+  background-color: #212529 !important;
+  color: #fff !important;
+}
+
 .tabulator.table-striped:not(.table-dark) .tabulator-row:nth-child(even) {
   background-color: #f9f9f9;
 }
