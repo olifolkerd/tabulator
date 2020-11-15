@@ -273,9 +273,7 @@ ResponsiveLayout.prototype.formatCollapsedData = function(data){
 		var row = document.createElement("tr");
 		var titleData = document.createElement("td");
 		var valueData = document.createElement("td");
-		list.appendChild(row);
-		row.appendChild(titleData);
-		row.appendChild(valueData);
+		var node_content;
 
 		var titleHighlight = document.createElement("strong");
 		titleData.appendChild(titleHighlight);
@@ -283,14 +281,17 @@ ResponsiveLayout.prototype.formatCollapsedData = function(data){
 			titleHighlight.innerText = text || item.title;
 		});
 
-
 		if(item.value instanceof Node){
-			var div = document.createElement("div");
-			div.appendChild(item.value);
-			valueData.appendChild(div);
+			node_content = document.createElement("div");
+			node_content.appendChild(item.value);
+			valueData.appendChild(node_content);
 		}else{
 			valueData.innerHTML = item.value;
 		}
+
+		row.appendChild(titleData);
+		row.appendChild(valueData);
+		list.appendChild(row);
 	}, this);
 
 	return Object.keys(data).length ? list : "";
