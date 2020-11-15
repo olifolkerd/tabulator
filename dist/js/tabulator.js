@@ -5541,7 +5541,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (this.renderMode === "virtual") {
 
-			var otherHeight = Math.floor(this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0));
+			var otherHeight = Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 			if (this.fixedHeight) {
 
@@ -5554,7 +5554,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				this.element.style.height = "";
 
-				this.element.style.height = Math.floor(this.table.element.clientHeight) - otherHeight + "px";
+				this.element.style.height = this.table.element.clientHeight - otherHeight + "px";
 
 				this.element.scrollTop = this.scrollTop;
 			}
@@ -5565,7 +5565,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//check if the table has changed size when dealing with variable height tables
 
-			if (!this.fixedHeight && Math.floor(initialHeight) != Math.floor(this.element.clientHeight)) {
+			if (!this.fixedHeight && initialHeight != this.element.clientHeight) {
 
 				modExists = this.table.modExists("resizeTable");
 
