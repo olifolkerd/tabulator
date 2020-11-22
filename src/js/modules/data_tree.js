@@ -207,12 +207,15 @@ DataTree.prototype.getRows = function(rows){
 
 		if(row instanceof Row){
 
+			row.create();
+
 			config = row.modules.dataTree.children;
 
 			if(!config.index && config.children !== false){
 				children = this.getChildren(row);
 
 				children.forEach((child) => {
+					child.create();
 					output.push(child);
 				});
 			}
@@ -269,8 +272,12 @@ DataTree.prototype.generateChildren = function(row){
 
 	childArray.forEach((childData) => {
 		var childRow = new Row(childData || {}, this.table.rowManager);
+
+		childRow.create();
+
 		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 		childRow.modules.dataTree.parent = row;
+
 		if(childRow.modules.dataTree.children){
 			childRow.modules.dataTree.open = this.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
 		}
