@@ -10170,7 +10170,7 @@ Ajax.prototype.defaultURLGenerator = function (url, config, params) {
 			if (!config.method || config.method.toLowerCase() == "get") {
 				config.method = "get";
 
-				url += (url.includes("?") ? "&" : "?") + this.serializeParams(params);
+				url += (url.includes("?") ? "&" : "?") + this.modules.ajax.serializeParams(params);
 			}
 		}
 	}
@@ -11382,12 +11382,15 @@ DataTree.prototype.getRows = function (rows) {
 
 		if (row instanceof Row) {
 
+			row.create();
+
 			config = row.modules.dataTree.children;
 
 			if (!config.index && config.children !== false) {
 				children = _this48.getChildren(row);
 
 				children.forEach(function (child) {
+					child.create();
 					output.push(child);
 				});
 			}
@@ -11446,8 +11449,12 @@ DataTree.prototype.generateChildren = function (row) {
 
 	childArray.forEach(function (childData) {
 		var childRow = new Row(childData || {}, _this50.table.rowManager);
+
+		childRow.create();
+
 		childRow.modules.dataTree.index = row.modules.dataTree.index + 1;
 		childRow.modules.dataTree.parent = row;
+
 		if (childRow.modules.dataTree.children) {
 			childRow.modules.dataTree.open = _this50.startOpen(childRow.getComponent(), childRow.modules.dataTree.index);
 		}
