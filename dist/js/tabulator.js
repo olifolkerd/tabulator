@@ -12985,7 +12985,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					self.loading = false;
 
-					reject();
+					reject(error);
 				});
 			} else {
 				reject();
