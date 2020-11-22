@@ -13053,7 +13053,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (!config.method || config.method.toLowerCase() == "get") {
 					config.method = "get";
 
-					url += (url.includes("?") ? "&" : "?") + this.serializeParams(params);
+					url += (url.includes("?") ? "&" : "?") + this.modules.ajax.serializeParams(params);
 				}
 			}
 		}

@@ -341,7 +341,7 @@ Ajax.prototype.defaultURLGenerator = function(url, config, params){
 			if(!config.method || config.method.toLowerCase() == "get"){
 				config.method = "get";
 
-				url += (url.includes("?") ? "&" : "?") + this.serializeParams(params);
+				url += (url.includes("?") ? "&" : "?") + this.modules.ajax.serializeParams(params);
 			}
 		}
 	}
