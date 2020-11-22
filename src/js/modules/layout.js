@@ -23,6 +23,10 @@ Layout.prototype.getMode = function(){
 //trigger table layout
 Layout.prototype.layout = function(){
 	this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+
+	if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
+		this.table.modules.persistence.save("columns");
+	}
 };
 
 //layout render functions
@@ -30,7 +34,6 @@ Layout.prototype.modes = {
 
 	//resize columns to fit data they contain
 	"fitData": function(columns){
-
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.fitDataLayoutOverride();
 		}else{

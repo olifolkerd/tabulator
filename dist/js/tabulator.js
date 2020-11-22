@@ -11895,6 +11895,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	Layout.prototype.layout = function () {
 
 		this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+
+		if (this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
+
+			this.table.modules.persistence.save("columns");
+		}
 	};
 
 	//layout render functions
