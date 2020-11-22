@@ -9640,11 +9640,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			mod.persistence.initialize();
 		}
 
-		if (options.persistence && this.modExists("persistence", true) && mod.persistence.config.columns) {
-
-			options.columns = mod.persistence.load("columns", options.columns);
-		}
-
 		if (options.movableRows && this.modExists("moveRow")) {
 
 			mod.moveRow.initialize();
@@ -23811,6 +23806,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 		}
+
+		if (this.config.columns) {
+			this.load("columns", this.table.options.columns);
+		}
 	};
 
 	Persistence.prototype.initializeColumn = function (column) {
@@ -23894,7 +23893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 
 				keys.forEach(function (key) {
-					if (typeof column[key] !== "undefined") {
+					if (key !== "columns" && typeof column[key] !== "undefined") {
 						from[key] = column[key];
 					}
 				});

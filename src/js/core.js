@@ -639,10 +639,6 @@ Tabulator.prototype._buildElement = function(){
 		mod.persistence.initialize();
 	}
 
-	if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.columns){
-		options.columns = mod.persistence.load("columns", options.columns) ;
-	}
-
 	if(options.movableRows && this.modExists("moveRow")){
 		mod.moveRow.initialize();
 	}
