@@ -175,7 +175,7 @@ var Row = function(data, parent, type = "row"){
 	this.parent = parent;
 	this.data = {};
 	this.type = type; //type of element
-	this.element = this.createElement();
+	this.element = false;
 	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
@@ -187,8 +187,17 @@ var Row = function(data, parent, type = "row"){
 
 	this.component = null;
 
+	this.created = false;
+
 	this.setData(data);
-	this.generateElement();
+};
+
+
+Row.prototype.create = function(){
+	if(!this.created){
+		this.created = true;
+		this.generateElement();
+	}
 };
 
 Row.prototype.createElement = function (){
@@ -197,10 +206,11 @@ Row.prototype.createElement = function (){
 	el.classList.add("tabulator-row");
 	el.setAttribute("role", "row");
 
-	return el;
+	this.element = el;
 };
 
 Row.prototype.getElement = function(){
+	this.create();
 	return this.element;
 };
 
@@ -213,6 +223,8 @@ Row.prototype.detachElement = function(){
 Row.prototype.generateElement = function(){
 	var self = this,
 	dblTap,	tapHold, tap;
+
+	this.createElement();
 
 	//set row selection characteristics
 	if(self.table.options.selectable !== false && self.table.modExists("selectRow")){
@@ -361,6 +373,8 @@ Row.prototype.generateCells = function(){
 
 //functions to setup on first render
 Row.prototype.initialize = function(force){
+	this.create();
+
 	if(!this.initialized || force){
 
 		this.deleteCells();
@@ -417,7 +431,7 @@ Row.prototype.initialize = function(force){
 Row.prototype.reinitializeHeight = function(){
 	this.heightInitialized = false;
 
-	if(this.element.offsetParent !== null){
+	if(this.element && this.element.offsetParent !== null){
 		this.normalizeHeight(true);
 	}
 };
@@ -432,7 +446,7 @@ Row.prototype.reinitialize = function(children){
 		this.heightStyled = "";
 	}
 
-	if(this.element.offsetParent !== null){
+	if(this.element && this.element.offsetParent !== null){
 		this.initialize(true);
 	}
 
@@ -552,7 +566,7 @@ Row.prototype.setData = function(data){
 
 //update the rows data
 Row.prototype.updateData = function(updatedData){
-	var visible = Tabulator.prototype.helpers.elVisible(this.element),
+	var visible = this.element && Tabulator.prototype.helpers.elVisible(this.element),
 	tempData = {},
 	newRowData;
 
@@ -749,7 +763,6 @@ Row.prototype.moveToRow = function(to, before){
 	}
 };
 
-
 Row.prototype.validate = function(){
 	var invalid = [];
 
@@ -866,14 +879,16 @@ Row.prototype.wipe = function(){
 	this.detatchModules();
 	this.deleteCells();
 
-	while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+	if(this.element){
+		while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
+
+		if(this.element.parentNode){
+			this.element.parentNode.removeChild(this.element);
+		}
+	}
 
 	this.element = false;
 	this.modules = {};
-
-	if(this.element.parentNode){
-		this.element.parentNode.removeChild(this.element);
-	}
 };
 
 

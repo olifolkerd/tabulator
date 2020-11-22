@@ -707,6 +707,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 		&.tabulator-editing{
 			border:1px solid  $editBoxColor;
+			outline:none;
+
 			padding: 0;
 
 			input, select{
@@ -980,6 +982,8 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 	z-index: 10000;
 
 	.tabulator-menu-item{
+		position:relative;
+		box-sizing:border-box;
 
 		padding:5px 10px;
 
@@ -992,6 +996,29 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		&:not(.tabulator-menu-item-disabled):hover{
 			cursor: pointer;
 			background: $rowAltBackgroundColor;
+		}
+
+		&.tabulator-menu-item-submenu{
+			padding-right:25px;
+
+			&::after {
+				display: inline-block;
+				position: absolute;
+
+				top: calc(5px + .4em);
+				right: 10px;
+				height: 7px;
+				width: 7px;
+
+				content: '';
+
+				border-width: 1px 1px 0 0;
+				border-style: solid;
+				border-color: $rowBorderColor;
+				vertical-align: top;
+
+				transform: rotate(45deg);
+			}
 		}
 	}
 

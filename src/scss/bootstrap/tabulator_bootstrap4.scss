@@ -241,10 +241,10 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 					}
 
 					&:focus {
-					    color: #495057;
-					    background-color: #fff;
-					    border:1px solid  $editBoxColor;
-					    outline: 0;
+						color: #495057;
+						background-color: #fff;
+						border:1px solid  $editBoxColor;
+						outline: 0;
 					    // box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
 					}
 				}
@@ -681,6 +681,21 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 				background-color:$rowSelectedBackground;
 			}
 		}
+
+		.tabulator-footer{
+			border-color: $table-dark-border-color !important;
+
+			.tabulator-calcs-holder{
+				border-color: $table-dark-border-color !important;
+				background:$table-dark-bg !important;
+
+				.tabulator-row{
+					border-color: $table-dark-border-color !important;
+					background-color: $table-dark-bg !important;
+					color: $table-dark-color !important;
+				}
+			}
+		}
 	}
 
 	&.table-striped{
@@ -1006,6 +1021,8 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 
 		&.tabulator-editing{
 			border:1px solid  $editBoxColor;
+			outline:none;
+
 			padding: 0;
 
 			input, select{
@@ -1279,6 +1296,8 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 	z-index: 10000;
 
 	.tabulator-menu-item{
+		position:relative;
+		box-sizing:border-box;
 
 		padding:5px 10px;
 
@@ -1291,6 +1310,29 @@ $footerActiveColor:$pagination-active-color !default; //footer bottom active tex
 		&:not(.tabulator-menu-item-disabled):hover{
 			cursor: pointer;
 			background: $rowAltBackgroundColor;
+		}
+
+		&.tabulator-menu-item-submenu{
+			padding-right:25px;
+
+			&::after {
+				display: inline-block;
+				position: absolute;
+
+				top: calc(5px + .4em);
+				right: 10px;
+				height: 7px;
+				width: 7px;
+
+				content: '';
+
+				border-width: 1px 1px 0 0;
+				border-style: solid;
+				border-color: $rowBorderColor;
+				vertical-align: top;
+
+				transform: rotate(45deg);
+			}
 		}
 	}
 

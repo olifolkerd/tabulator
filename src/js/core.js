@@ -46,6 +46,7 @@ Tabulator.prototype.defaultOptions = {
 	layoutColumnsOnNewData:false, //update column widths on setData
 
 	columnMinWidth:40, //minimum global width for a column
+	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 	columnVertAlign:false, // DEPRECATED - Left to allow warning
 
@@ -636,10 +637,6 @@ Tabulator.prototype._buildElement = function(){
 
 	if(options.persistence && this.modExists("persistence", true)){
 		mod.persistence.initialize();
-	}
-
-	if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.columns){
-		options.columns = mod.persistence.load("columns", options.columns) ;
 	}
 
 	if(options.movableRows && this.modExists("moveRow")){
@@ -1619,6 +1616,13 @@ Tabulator.prototype.setFilter = function(field, type, value, params){
 	}
 };
 
+//set standard filters
+Tabulator.prototype.refreshFilter = function(){
+	if(this.modExists("filter", true)){
+		this.rowManager.filterRefresh();
+	}
+};
+
 //add filter to array
 Tabulator.prototype.addFilter = function(field, type, value, params){
 	if(this.modExists("filter", true)){
@@ -2112,6 +2116,15 @@ Tabulator.prototype.getHistoryRedoSize = function(){
 		return false;
 	}
 };
+
+Tabulator.prototype.clearHistory = function(){
+	if(this.options.history && this.modExists("history", true)){
+		return this.modules.history.clear();
+	}else{
+		return false;
+	}
+};
+
 
 /////////////// Download Management //////////////
 

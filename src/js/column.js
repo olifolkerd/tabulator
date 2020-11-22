@@ -226,6 +226,8 @@ var Column = function(def, parent){
 
 	this.width = null; //column width
 	this.widthStyled = ""; //column width prestyled to improve render efficiency
+	this.maxWidth = null; //column maximum width
+	this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
 	this.minWidth = null; //column minimum width
 	this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
 	this.widthFixed = false; //user has specified a width for this column
@@ -646,6 +648,12 @@ Column.prototype._buildColumnHeader = function(){
 	//set min width if present
 	this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
 
+	if(def.maxWidth || this.table.options.columnMaxWidth){
+		if(def.maxWidth !== false){
+			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+		}
+	}
+
 	this.reinitializeWidth();
 
 	//set tooltip if present
@@ -790,6 +798,8 @@ Column.prototype._buildGroupHeader = function(){
 	if ((this.definition.headerContextMenu || this.definition.headerMenu) && this.table.modExists("menu")) {
 		this.table.modules.menu.initializeColumnHeader(this);
 	}
+
+	this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
 
 	this.element.appendChild(this.groupElement);
 };
@@ -1133,6 +1143,10 @@ Column.prototype.setWidthActual = function(width){
 
 	width = Math.max(this.minWidth, width);
 
+	if(this.maxWidth){
+		width = Math.min(this.maxWidth, width);
+	}
+
 	this.width = width;
 	this.widthStyled = width ? width + "px" : "";
 
@@ -1206,6 +1220,17 @@ Column.prototype.setMinWidth = function(minWidth){
 
 	this.cells.forEach(function(cell){
 		cell.setMinWidth();
+	});
+};
+
+Column.prototype.setMaxWidth = function(maxWidth){
+	this.maxWidth = maxWidth;
+	this.maxWidthStyled = maxWidth ? maxWidth + "px" : "";
+
+	this.element.style.maxWidth = this.maxWidthStyled;
+
+	this.cells.forEach(function(cell){
+		cell.setMaxWidth();
 	});
 };
 
@@ -1411,6 +1436,7 @@ Column.prototype.defaultOptionList = [
 "vertAlign",
 "width",
 "minWidth",
+"maxWidth",
 "widthGrow",
 "widthShrink",
 "resizable",

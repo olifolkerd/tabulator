@@ -167,7 +167,7 @@ RowManager.prototype.findRow = function(subject){
 		}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
 			//subject is a HTML element of the row
 			let match = self.rows.find(function(row){
-				return row.element === subject;
+				return row.getElement() === subject;
 			});
 
 			return match || false;
@@ -1769,7 +1769,7 @@ RowManager.prototype.adjustTableSize = function(){
 	modExists;
 
 	if(this.renderMode === "virtual"){
-		let otherHeight =  Math.floor(this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0));
+		let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 		if(this.fixedHeight){
 			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
@@ -1777,7 +1777,7 @@ RowManager.prototype.adjustTableSize = function(){
 			this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
 		}else{
 			this.element.style.height = "";
-			this.element.style.height = (Math.floor(this.table.element.clientHeight) - otherHeight) + "px";
+			this.element.style.height = (this.table.element.clientHeight - otherHeight) + "px";
 			this.element.scrollTop = this.scrollTop;
 		}
 
@@ -1785,7 +1785,7 @@ RowManager.prototype.adjustTableSize = function(){
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
 		//check if the table has changed size when dealing with variable height tables
-		if(!this.fixedHeight && Math.floor(initialHeight) != Math.floor(this.element.clientHeight)){
+		if(!this.fixedHeight && initialHeight != this.element.clientHeight){
 			modExists = this.table.modExists("resizeTable");
 
 			if((modExists && !this.table.modules.resizeTable.autoResize) || !modExists){

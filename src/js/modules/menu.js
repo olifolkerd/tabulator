@@ -1,9 +1,10 @@
 var Menu = function(table){
 	this.table = table; //hold Tabulator object
-	this.menuEl = false;
+	this.menuElements = [];
 	this.blurEvent = this.hideMenu.bind(this);
 	this.escEvent = this.escMenu.bind(this);
 	this.nestedMenuBlock = false;
+	this.positionReversedX = false;
 };
 
 Menu.prototype.initializeColumnHeader = function(column){
@@ -25,11 +26,10 @@ Menu.prototype.initializeColumnHeader = function(column){
 		headerMenuEl.innerHTML = "&vellip;";
 
 		headerMenuEl.addEventListener("click", (e) => {
-			var menu = typeof column.definition.headerMenu == "function" ? column.definition.headerMenu(column.getComponent(), e) : column.definition.headerMenu;
 			e.stopPropagation();
 			e.preventDefault();
 
-			this.loadMenu(e, column, menu);
+			this.LoadMenuEvent(column, column.definition.headerMenu, e);
 		});
 
 		column.titleElement.insertBefore(headerMenuEl, column.titleElement.firstChild);
@@ -37,7 +37,7 @@ Menu.prototype.initializeColumnHeader = function(column){
 };
 
 Menu.prototype.LoadMenuEvent = function(component, menu, e){
-	menu = typeof menu == "function" ? menu(component.getComponent(), e) : menu;
+	menu = typeof menu == "function" ? menu.call(this.table, component.getComponent(), e) : menu;
 
 	// if(component instanceof Cell){
 	// 	e.stopImmediatePropagation();
@@ -78,12 +78,12 @@ Menu.prototype.tapHold = function(component, menu){
 
 Menu.prototype.initializeCell = function(cell){
 	if(cell.column.definition.contextMenu){
-		cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+		cell.getElement(true).addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
 		this.tapHold(cell, cell.column.definition.contextMenu);
 	}
 
 	if(cell.column.definition.clickMenu){
-		cell.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
+		cell.getElement(true).addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
 	}
 };
 
@@ -109,11 +109,12 @@ Menu.prototype.initializeGroup = function (group){
 	}
 };
 
+Menu.prototype.loadMenu = function(e, component, menu, parentEl){
 
-Menu.prototype.loadMenu = function(e, component, menu){
+	var touch = !(e instanceof MouseEvent);
 
-	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
-	touch = !(e instanceof MouseEvent);
+	var menuEl = document.createElement("div");
+	menuEl.classList.add("tabulator-menu");
 
 	if(!touch){
 		e.preventDefault();
@@ -124,26 +125,26 @@ Menu.prototype.loadMenu = function(e, component, menu){
 		return;
 	}
 
-	if(this.nestedMenuBlock){
-		//abort if child menu already open
-		if(this.isOpen()){
-			return;
+	if(!parentEl){
+		if(this.nestedMenuBlock){
+			//abort if child menu already open
+			if(this.isOpen()){
+				return;
+			}
+		}else{
+			this.nestedMenuBlock = setTimeout(() => {
+				this.nestedMenuBlock = false;
+			}, 100)
 		}
-	}else{
-		this.nestedMenuBlock = setTimeout(() => {
-			this.nestedMenuBlock = false;
-		}, 100)
+
+		this.hideMenu();
+		this.menuElements = [];
 	}
 
-	this.hideMenu();
-
-	this.menuEl = document.createElement("div");
-	this.menuEl.classList.add("tabulator-menu");
-
 	menu.forEach((item) => {
-		var itemEl = document.createElement("div");
-		var label = item.label
-		var disabled = item.disabled;
+		var itemEl = document.createElement("div"),
+		label = item.label,
+		disabled = item.disabled;
 
 		if(item.separator){
 			itemEl.classList.add("tabulator-menu-separator");
@@ -151,7 +152,7 @@ Menu.prototype.loadMenu = function(e, component, menu){
 			itemEl.classList.add("tabulator-menu-item");
 
 			if(typeof label == "function"){
-				label = label(component.getComponent());
+				label = label.call(this.table, component.getComponent());
 			}
 
 			if(label instanceof Node){
@@ -161,7 +162,7 @@ Menu.prototype.loadMenu = function(e, component, menu){
 			}
 
 			if(typeof disabled == "function"){
-				disabled = disabled(component.getComponent());
+				disabled = disabled.call(this.table, component.getComponent());
 			}
 
 			if(disabled){
@@ -170,43 +171,108 @@ Menu.prototype.loadMenu = function(e, component, menu){
 					e.stopPropagation();
 				});
 			}else{
-				itemEl.addEventListener("click", (e) => {
-					this.hideMenu();
-					item.action(e, component.getComponent());
-				});
+				if(item.menu && item.menu.length){
+					itemEl.addEventListener("click", (e) => {
+						e.stopPropagation();
+						this.hideOldSubMenus(menuEl);
+						this.loadMenu(e, component, item.menu, itemEl);
+					});
+				}else{
+					if(item.action){
+						itemEl.addEventListener("click", (e) => {
+							item.action(e, component.getComponent());
+						});
+					}
+				}
+			}
+
+			if(item.menu && item.menu.length){
+				itemEl.classList.add("tabulator-menu-item-submenu");
 			}
 		}
 
-		this.menuEl.appendChild(itemEl);
+		menuEl.appendChild(itemEl);
 	});
 
-	this.menuEl.style.top = (touch ? e.touches[0].pageY : e.pageY) + "px";
-	this.menuEl.style.left = (touch ? e.touches[0].pageX : e.pageX) + "px";
+	menuEl.addEventListener("click", (e) => {
+		this.hideMenu();
+	});
+
+	this.menuElements.push(menuEl);
+	this.positionMenu(menuEl, parentEl, touch, e);
+};
+
+Menu.prototype.hideOldSubMenus = function(menuEl){
+	var index = this.menuElements.indexOf(menuEl);
+
+	if(index > -1){
+		for(let i = this.menuElements.length - 1; i > index; i--){
+			var el = this.menuElements[i];
+
+			if(el.parentNode){
+				el.parentNode.removeChild(el);
+			}
+
+			this.menuElements.pop();
+		}
+	}
+};
+
+Menu.prototype.positionMenu = function(element, parentEl, touch, e){
+	var docHeight = Math.max(document.body.offsetHeight, window.innerHeight),
+	x, y, parentOffset;
+
+	if(!parentEl){
+		x = touch ? e.touches[0].pageX : e.pageX;
+		y = touch ? e.touches[0].pageY : e.pageY;
+
+		this.positionReversedX = false;
+	}else{
+		parentOffset = Tabulator.prototype.helpers.elOffset(parentEl);
+		x = parentOffset.left + parentEl.offsetWidth;
+		y = parentOffset.top - 1;
+	}
+
+	element.style.top = y + "px";
+	element.style.left = x + "px";
 
 	setTimeout(() => {
 		this.table.rowManager.element.addEventListener("scroll", this.blurEvent);
 		document.body.addEventListener("click", this.blurEvent);
 		document.body.addEventListener("contextmenu", this.blurEvent);
+		window.addEventListener("resize", this.blurEvent);
 		document.body.addEventListener("keydown", this.escEvent);
 	}, 100);
 
-	document.body.appendChild(this.menuEl);
-
-	//move menu to start on right edge if it is too close to the edge of the screen
-	if((e.pageX + this.menuEl.offsetWidth) >= document.body.offsetWidth){
-		this.menuEl.style.left = "";
-		this.menuEl.style.right = (document.body.offsetWidth - e.pageX) + "px";
-	}
+	document.body.appendChild(element);
 
 	//move menu to start on bottom edge if it is too close to the edge of the screen
-	if((e.pageY + this.menuEl.offsetHeight) >= docHeight){
-		this.menuEl.style.top = "";
-		this.menuEl.style.bottom = (docHeight - e.pageY) + "px";
+	if((y + element.offsetHeight) >= docHeight){
+		element.style.top = "";
+
+		if(parentEl){
+			element.style.bottom = (docHeight - parentOffset.top - parentEl.offsetHeight - 1) + "px";
+		}else{
+			element.style.bottom = (docHeight - y) + "px";
+		}
+	}
+
+	//move menu to start on right edge if it is too close to the edge of the screen
+	if((x + element.offsetWidth) >= document.body.offsetWidth || this.positionReversedX){
+		element.style.left = "";
+
+		if(parentEl){
+			element.style.right = (document.documentElement.offsetWidth - parentOffset.left) + "px";
+		}else{
+			element.style.right = (document.documentElement.offsetWidth - x) + "px";
+		}
+
+		this.positionReversedX = true;
 	}
 };
 
 Menu.prototype.isOpen = function(){
-	return !!this.menuEl.parentNode;
+	return !!this.menuElements.length;
 };
 
 Menu.prototype.escMenu = function(e){
@@ -216,19 +282,17 @@ Menu.prototype.escMenu = function(e){
 };
 
 Menu.prototype.hideMenu = function(){
-	if(this.menuEl.parentNode){
-		this.menuEl.parentNode.removeChild(this.menuEl);
-	}
+	this.menuElements.forEach((menuEl) => {
+		if(menuEl.parentNode){
+			menuEl.parentNode.removeChild(menuEl);
+		}
+	});
 
-	if(this.escEvent){
-		document.body.removeEventListener("keydown", this.escEvent);
-	}
-
-	if(this.blurEvent){
-		document.body.removeEventListener("click", this.blurEvent);
-		document.body.removeEventListener("contextmenu", this.blurEvent);
-		this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
-	}
+	document.body.removeEventListener("keydown", this.escEvent);
+	document.body.removeEventListener("click", this.blurEvent);
+	document.body.removeEventListener("contextmenu", this.blurEvent);
+	window.removeEventListener("resize", this.blurEvent);
+	this.table.rowManager.element.removeEventListener("scroll", this.blurEvent);
 };
 
 //default accessors

@@ -23,6 +23,10 @@ Layout.prototype.getMode = function(){
 //trigger table layout
 Layout.prototype.layout = function(){
 	this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+
+	if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
+		this.table.modules.persistence.save("columns");
+	}
 };
 
 //layout render functions
@@ -30,7 +34,6 @@ Layout.prototype.modes = {
 
 	//resize columns to fit data they contain
 	"fitData": function(columns){
-
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.fitDataLayoutOverride();
 		}else{
@@ -145,6 +148,7 @@ Layout.prototype.modes = {
 			oversizeSpace = 0,
 			remainingSpace = 0,
 			nextColWidth = 0,
+			remainingFlexGrowUnits = flexGrowUnits,
 			gap = 0,
 			changeUnits = 0,
 			undersizeCols = [];
@@ -162,8 +166,19 @@ Layout.prototype.modes = {
 				if(col.column.minWidth >= width){
 					oversizeCols.push(col);
 				}else{
-					undersizeCols.push(col);
-					changeUnits += shrinkCols ? (col.column.definition.widthShrink || 1) : (col.column.definition.widthGrow || 1);
+					if(col.column.maxWidth && col.column.maxWidth < width){
+						col.width = col.column.maxWidth;
+						freeSpace -= col.column.maxWidth;
+
+						remainingFlexGrowUnits -= shrinkCols ? (col.column.definition.widthShrink || 1) : (col.column.definition.widthGrow || 1);
+
+						if(remainingFlexGrowUnits){
+							colWidth = Math.floor(freeSpace/remainingFlexGrowUnits);
+						}
+					}else{
+						undersizeCols.push(col);
+						changeUnits += shrinkCols ? (col.column.definition.widthShrink || 1) : (col.column.definition.widthGrow || 1);
+					}
 				}
 			});
 
