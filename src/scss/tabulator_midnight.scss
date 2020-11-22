@@ -715,6 +715,8 @@ $footerActiveColor:#fff !default; //footer bottom active text color
 
 		&.tabulator-editing{
 			border:1px solid  $editBoxColor;
+			outline:none;
+
 			padding: 0;
 
 			input, select{

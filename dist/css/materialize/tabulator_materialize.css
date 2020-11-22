@@ -581,6 +581,7 @@
 
 .tabulator-row .tabulator-cell.tabulator-editing {
   border: 1px solid #ee6e73;
+  outline: none;
   padding: 0;
 }
 

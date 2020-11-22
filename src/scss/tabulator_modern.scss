@@ -768,6 +768,8 @@ $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
 		&.tabulator-editing{
 			border:1px solid  $editBoxColor;
+			outline:none;
+
 			padding: 0;
 
 			input, select{
