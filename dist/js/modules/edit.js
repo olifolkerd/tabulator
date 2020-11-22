@@ -122,7 +122,7 @@ Edit.prototype.cancelEdit = function () {
 //return a formatted value for a cell
 Edit.prototype.bindEditor = function (cell) {
 	var self = this,
-	    element = cell.getElement();
+	    element = cell.getElement(true);
 
 	element.setAttribute("tabindex", 0);
 
@@ -864,7 +864,9 @@ Edit.prototype.editors = {
 		    displayItems = [],
 		    currentItems = [],
 		    blurable = true,
-		    blockListShow = false;
+		    blockListShow = false,
+		    searchWord = "",
+		    searchWordTimeout = null;
 
 		if (Array.isArray(editorParams) || !Array.isArray(editorParams) && (typeof editorParams === "undefined" ? "undefined" : _typeof(editorParams)) === "object" && !editorParams.values) {
 			console.warn("DEPRECATION WARNING - values for the select editor must now be passed into the values property of the editorParams object, not as the editorParams object");
@@ -890,16 +892,6 @@ Edit.prototype.editors = {
 						output[val] = true;
 					}
 				});
-
-				if (editorParams.sortValuesList) {
-					if (editorParams.sortValuesList == "asc") {
-						output = Object.keys(output).sort();
-					} else {
-						output = Object.keys(output).sort().reverse();
-					}
-				} else {
-					output = Object.keys(output);
-				}
 			} else {
 				console.warn("unable to find matching column to create select lookup list:", field);
 			}
@@ -999,6 +991,21 @@ Edit.prototype.editors = {
 
 					dataList.push(item);
 					displayList.push(item);
+				}
+			}
+
+			if (editorParams.sortValuesList) {
+				dataList.sort(function (a, b) {
+					return a.label < b.label ? -1 : a.label > b.label ? 1 : 0;
+				});
+
+				displayList.sort(function (a, b) {
+					return a.label < b.label ? -1 : a.label > b.label ? 1 : 0;
+				});
+
+				if (editorParams.sortValuesList !== "asc") {
+					dataList.reverse();
+					displayList.reverse();
 				}
 			}
 
@@ -1257,6 +1264,26 @@ Edit.prototype.editors = {
 			self.table.rowManager.element.removeEventListener("scroll", cancelItem);
 		}
 
+		function scrollTovalue(char) {
+
+			clearTimeout(searchWordTimeout);
+
+			var character = String.fromCharCode(event.keyCode).toLowerCase();
+			searchWord += character.toLowerCase();
+
+			var match = dataItems.find(function (item) {
+				return typeof item.label !== "undefined" && item.label.toLowerCase().startsWith(searchWord);
+			});
+
+			if (match) {
+				setCurrentItem(match, !multiselect);
+			}
+
+			searchWordTimeout = setTimeout(function () {
+				searchWord = "";
+			}, 800);
+		}
+
 		//style input
 		input.setAttribute("type", "text");
 
@@ -1365,6 +1392,10 @@ Edit.prototype.editors = {
 				default:
 					if (self.currentCell === false) {
 						e.preventDefault();
+					}
+
+					if (e.keyCode >= 38 && e.keyCode <= 90) {
+						scrollTovalue(e.keyCode);
 					}
 			}
 		});
@@ -2020,7 +2051,9 @@ Edit.prototype.editors = {
 
 		//set new value
 		function updateValue() {
-			var calcVal = percent * Math.round(bar.offsetWidth / (element.clientWidth / 100)) + min;
+			var style = window.getComputedStyle(element, null);
+
+			var calcVal = percent * Math.round(bar.offsetWidth / ((element.clientWidth - parseInt(style.getPropertyValue("padding-left")) - parseInt(style.getPropertyValue("padding-right"))) / 100)) + min;
 			success(calcVal);
 			element.setAttribute("aria-valuenow", calcVal);
 			element.setAttribute("aria-label", value);

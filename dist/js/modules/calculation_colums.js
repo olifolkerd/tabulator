@@ -151,7 +151,6 @@ ColumnCalcs.prototype.removeCalcs = function () {
 
 ColumnCalcs.prototype.initializeTopRow = function () {
 	if (!this.topInitialized) {
-		// this.table.columnManager.headersElement.after(this.topElement);
 		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 		this.topInitialized = true;
 	}
@@ -165,9 +164,6 @@ ColumnCalcs.prototype.initializeBottomRow = function () {
 };
 
 ColumnCalcs.prototype.scrollHorizontal = function (left) {
-	var hozAdjust = 0,
-	    scrollWidth = this.table.columnManager.getElement().scrollWidth - this.table.element.clientWidth;
-
 	if (this.botInitialized && this.botRow) {
 		this.botRow.getElement().style.marginLeft = -left + "px";
 	}

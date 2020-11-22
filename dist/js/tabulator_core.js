@@ -1467,6 +1467,8 @@ var Column = function Column(def, parent) {
 
 	this.width = null; //column width
 	this.widthStyled = ""; //column width prestyled to improve render efficiency
+	this.maxWidth = null; //column maximum width
+	this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
 	this.minWidth = null; //column minimum width
 	this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
 	this.widthFixed = false; //user has specified a width for this column
@@ -1892,6 +1894,12 @@ Column.prototype._buildColumnHeader = function () {
 	//set min width if present
 	this.setMinWidth(typeof def.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(def.minWidth));
 
+	if (def.maxWidth || this.table.options.columnMaxWidth) {
+		if (def.maxWidth !== false) {
+			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
+		}
+	}
+
 	this.reinitializeWidth();
 
 	//set tooltip if present
@@ -2038,6 +2046,8 @@ Column.prototype._buildGroupHeader = function () {
 	if ((this.definition.headerContextMenu || this.definition.headerMenu) && this.table.modExists("menu")) {
 		this.table.modules.menu.initializeColumnHeader(this);
 	}
+
+	this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
 
 	this.element.appendChild(this.groupElement);
 };
@@ -2377,6 +2387,10 @@ Column.prototype.setWidthActual = function (width) {
 
 	width = Math.max(this.minWidth, width);
 
+	if (this.maxWidth) {
+		width = Math.min(this.maxWidth, width);
+	}
+
 	this.width = width;
 	this.widthStyled = width ? width + "px" : "";
 
@@ -2449,6 +2463,17 @@ Column.prototype.setMinWidth = function (minWidth) {
 
 	this.cells.forEach(function (cell) {
 		cell.setMinWidth();
+	});
+};
+
+Column.prototype.setMaxWidth = function (maxWidth) {
+	this.maxWidth = maxWidth;
+	this.maxWidthStyled = maxWidth ? maxWidth + "px" : "";
+
+	this.element.style.maxWidth = this.maxWidthStyled;
+
+	this.cells.forEach(function (cell) {
+		cell.setMaxWidth();
 	});
 };
 
@@ -2640,7 +2665,7 @@ Column.prototype.deleteCell = function (cell) {
 	}
 };
 
-Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "headerHozAlign", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu",
+Column.prototype.defaultOptionList = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "maxWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "headerHozAlign", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu",
 // "headerClickMenu",
 "clickMenu", "formatterPrint", "formatterPrintParams", "formatterClipboard", "formatterClipboardParams", "formatterHtmlOutput", "formatterHtmlOutputParams", "titlePrint", "titleClipboard", "titleHtmlOutput", "titleDownload"];
 
@@ -2821,7 +2846,7 @@ RowManager.prototype.findRow = function (subject) {
 		} else if (typeof HTMLElement !== "undefined" && subject instanceof HTMLElement) {
 			//subject is a HTML element of the row
 			var match = self.rows.find(function (row) {
-				return row.element === subject;
+				return row.getElement() === subject;
 			});
 
 			return match || false;
@@ -4404,7 +4429,7 @@ RowManager.prototype.adjustTableSize = function () {
 	    modExists;
 
 	if (this.renderMode === "virtual") {
-		var otherHeight = Math.floor(this.columnManager.getElement().offsetHeight + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().offsetHeight : 0));
+		var otherHeight = Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 		if (this.fixedHeight) {
 			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
@@ -4412,7 +4437,7 @@ RowManager.prototype.adjustTableSize = function () {
 			this.element.style.maxHeight = "calc(100% - " + otherHeight + "px)";
 		} else {
 			this.element.style.height = "";
-			this.element.style.height = Math.floor(this.table.element.clientHeight) - otherHeight + "px";
+			this.element.style.height = this.table.element.clientHeight - otherHeight + "px";
 			this.element.scrollTop = this.scrollTop;
 		}
 
@@ -4420,7 +4445,7 @@ RowManager.prototype.adjustTableSize = function () {
 		this.vDomWindowBuffer = this.table.options.virtualDomBuffer || this.height;
 
 		//check if the table has changed size when dealing with variable height tables
-		if (!this.fixedHeight && Math.floor(initialHeight) != Math.floor(this.element.clientHeight)) {
+		if (!this.fixedHeight && initialHeight != this.element.clientHeight) {
 			modExists = this.table.modExists("resizeTable");
 
 			if (modExists && !this.table.modules.resizeTable.autoResize || !modExists) {
@@ -4945,7 +4970,7 @@ VDomHoz.prototype.initializeRow = function (row) {
 			if (column.visible) {
 				var cell = row.getCell(column);
 
-				row.element.appendChild(cell.getElement());
+				row.getElement().appendChild(cell.getElement());
 				cell.cellRendered();
 			}
 		}
@@ -4955,8 +4980,9 @@ VDomHoz.prototype.initializeRow = function (row) {
 VDomHoz.prototype.reinitializeRow = function (row, force) {
 	if (row.type !== "group") {
 		if (force || !row.modules.vdomHoz || row.modules.vdomHoz.leftCol !== this.leftCol || row.modules.vdomHoz.rightCol !== this.rightCol) {
-			while (row.element.firstChild) {
-				row.element.removeChild(row.element.firstChild);
+			var rowEl = row.getElement();
+			while (rowEl.firstChild) {
+				rowEl.removeChild(rowEl.firstChild);
 			}this.initializeRow(row);
 		}
 	}
@@ -5139,7 +5165,7 @@ var Row = function Row(data, parent) {
 	this.parent = parent;
 	this.data = {};
 	this.type = type; //type of element
-	this.element = this.createElement();
+	this.element = false;
 	this.modules = {}; //hold module variables;
 	this.cells = [];
 	this.height = 0; //hold element height
@@ -5151,8 +5177,16 @@ var Row = function Row(data, parent) {
 
 	this.component = null;
 
+	this.created = false;
+
 	this.setData(data);
-	this.generateElement();
+};
+
+Row.prototype.create = function () {
+	if (!this.created) {
+		this.created = true;
+		this.generateElement();
+	}
 };
 
 Row.prototype.createElement = function () {
@@ -5161,10 +5195,11 @@ Row.prototype.createElement = function () {
 	el.classList.add("tabulator-row");
 	el.setAttribute("role", "row");
 
-	return el;
+	this.element = el;
 };
 
 Row.prototype.getElement = function () {
+	this.create();
 	return this.element;
 };
 
@@ -5179,6 +5214,8 @@ Row.prototype.generateElement = function () {
 	    dblTap,
 	    tapHold,
 	    tap;
+
+	this.createElement();
 
 	//set row selection characteristics
 	if (self.table.options.selectable !== false && self.table.modExists("selectRow")) {
@@ -5323,6 +5360,8 @@ Row.prototype.generateCells = function () {
 Row.prototype.initialize = function (force) {
 	var _this21 = this;
 
+	this.create();
+
 	if (!this.initialized || force) {
 
 		this.deleteCells();
@@ -5379,7 +5418,7 @@ Row.prototype.initialize = function (force) {
 Row.prototype.reinitializeHeight = function () {
 	this.heightInitialized = false;
 
-	if (this.element.offsetParent !== null) {
+	if (this.element && this.element.offsetParent !== null) {
 		this.normalizeHeight(true);
 	}
 };
@@ -5393,7 +5432,7 @@ Row.prototype.reinitialize = function (children) {
 		this.heightStyled = "";
 	}
 
-	if (this.element.offsetParent !== null) {
+	if (this.element && this.element.offsetParent !== null) {
 		this.initialize(true);
 	}
 
@@ -5514,7 +5553,7 @@ Row.prototype.setData = function (data) {
 Row.prototype.updateData = function (updatedData) {
 	var _this22 = this;
 
-	var visible = Tabulator.prototype.helpers.elVisible(this.element),
+	var visible = this.element && Tabulator.prototype.helpers.elVisible(this.element),
 	    tempData = {},
 	    newRowData;
 
@@ -5826,14 +5865,16 @@ Row.prototype.wipe = function () {
 	this.detatchModules();
 	this.deleteCells();
 
-	while (this.element.firstChild) {
-		this.element.removeChild(this.element.firstChild);
-	}this.element = false;
-	this.modules = {};
-
-	if (this.element.parentNode) {
-		this.element.parentNode.removeChild(this.element);
+	if (this.element) {
+		while (this.element.firstChild) {
+			this.element.removeChild(this.element.firstChild);
+		}if (this.element.parentNode) {
+			this.element.parentNode.removeChild(this.element);
+		}
 	}
+
+	this.element = false;
+	this.modules = {};
 };
 
 Row.prototype.getGroup = function () {
@@ -6365,10 +6406,12 @@ Cell.prototype._generateTooltip = function () {
 };
 
 //////////////////// Getters ////////////////////
-Cell.prototype.getElement = function () {
+Cell.prototype.getElement = function (containerOnly) {
 	if (!this.loaded) {
 		this.loaded = true;
-		this.layoutElement();
+		if (!containerOnly) {
+			this.layoutElement();
+		}
 	}
 
 	return this.element;
@@ -6506,6 +6549,11 @@ Cell.prototype.getWidth = function () {
 Cell.prototype.setMinWidth = function () {
 	this.minWidth = this.column.minWidth;
 	this.element.style.minWidth = this.column.minWidthStyled;
+};
+
+Cell.prototype.setMaxWidth = function () {
+	this.maxWidth = this.column.maxWidth;
+	this.element.style.maxWidth = this.column.maxWidthStyled;
 };
 
 Cell.prototype.checkHeight = function () {
@@ -6817,6 +6865,7 @@ Tabulator.prototype.defaultOptions = {
 	layoutColumnsOnNewData: false, //update column widths on setData
 
 	columnMinWidth: 40, //minimum global width for a column
+	columnMaxWidth: false, //minimum global width for a column
 	columnHeaderVertAlign: "top", //vertical alignment of column headers
 	columnVertAlign: false, // DEPRECATED - Left to allow warning
 
@@ -7411,10 +7460,6 @@ Tabulator.prototype._buildElement = function () {
 
 	if (options.persistence && this.modExists("persistence", true)) {
 		mod.persistence.initialize();
-	}
-
-	if (options.persistence && this.modExists("persistence", true) && mod.persistence.config.columns) {
-		options.columns = mod.persistence.load("columns", options.columns);
 	}
 
 	if (options.movableRows && this.modExists("moveRow")) {
@@ -8385,6 +8430,13 @@ Tabulator.prototype.setFilter = function (field, type, value, params) {
 	}
 };
 
+//set standard filters
+Tabulator.prototype.refreshFilter = function () {
+	if (this.modExists("filter", true)) {
+		this.rowManager.filterRefresh();
+	}
+};
+
 //add filter to array
 Tabulator.prototype.addFilter = function (field, type, value, params) {
 	if (this.modExists("filter", true)) {
@@ -8877,6 +8929,14 @@ Tabulator.prototype.getHistoryRedoSize = function () {
 	}
 };
 
+Tabulator.prototype.clearHistory = function () {
+	if (this.options.history && this.modExists("history", true)) {
+		return this.modules.history.clear();
+	} else {
+		return false;
+	}
+};
+
 /////////////// Download Management //////////////
 
 Tabulator.prototype.download = function (type, filename, options, active) {
@@ -9075,6 +9135,11 @@ Layout.prototype.getMode = function () {
 Layout.prototype.layout = function () {
 
 	this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+
+	if (this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns) {
+
+		this.table.modules.persistence.save("columns");
+	}
 };
 
 //layout render functions
@@ -9243,6 +9308,7 @@ Layout.prototype.modes = {
 			    oversizeSpace = 0,
 			    remainingSpace = 0,
 			    nextColWidth = 0,
+			    remainingFlexGrowUnits = flexGrowUnits,
 			    gap = 0,
 			    changeUnits = 0,
 			    undersizeCols = [];
@@ -9266,9 +9332,24 @@ Layout.prototype.modes = {
 					oversizeCols.push(col);
 				} else {
 
-					undersizeCols.push(col);
+					if (col.column.maxWidth && col.column.maxWidth < width) {
 
-					changeUnits += shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
+						col.width = col.column.maxWidth;
+
+						freeSpace -= col.column.maxWidth;
+
+						remainingFlexGrowUnits -= shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
+
+						if (remainingFlexGrowUnits) {
+
+							colWidth = Math.floor(freeSpace / remainingFlexGrowUnits);
+						}
+					} else {
+
+						undersizeCols.push(col);
+
+						changeUnits += shrinkCols ? col.column.definition.widthShrink || 1 : col.column.definition.widthGrow || 1;
+					}
 				}
 			});
 

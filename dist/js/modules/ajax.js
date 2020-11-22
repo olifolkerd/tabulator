@@ -277,7 +277,7 @@ Ajax.prototype.sendRequest = function (silent) {
 
 				self.loading = false;
 
-				reject();
+				reject(error);
 			});
 		} else {
 			reject();

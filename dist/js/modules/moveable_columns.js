@@ -220,12 +220,12 @@ MoveColumns.prototype.moveColumn = function (column, after) {
 
 	if (after) {
 		column.getCells().forEach(function (cell, i) {
-			var cellEl = cell.getElement();
+			var cellEl = cell.getElement(true);
 			cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
 		});
 	} else {
 		column.getCells().forEach(function (cell, i) {
-			var cellEl = cell.getElement();
+			var cellEl = cell.getElement(true);
 			cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
 		});
 	}
