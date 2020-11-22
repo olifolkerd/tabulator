@@ -277,8 +277,18 @@ Format.prototype.formatters = {
 
 	//image element
 	image:function(cell, formatterParams, onRendered){
-		var el = document.createElement("img");
-		el.setAttribute("src", cell.getValue());
+		var el = document.createElement("img"),
+		    src = cell.getValue();
+
+		if(formatterParams.urlPrefix){
+			src = formatterParams.urlPrefix + cell.getValue();
+		}
+
+		if(formatterParams.urlSuffix){
+			src = src + formatterParams.urlSuffix;
+		}
+
+		el.setAttribute("src", src);
 
 		switch(typeof formatterParams.height){
 			case "number":
