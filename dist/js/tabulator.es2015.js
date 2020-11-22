@@ -10104,7 +10104,7 @@ Ajax.prototype.defaultLoaderPromise = function (url, config, params) {
 	return new Promise(function (resolve, reject) {
 
 		//set url
-		url = self.urlGenerator(url, config, params);
+		url = self.urlGenerator.call(self.table, url, config, params);
 
 		//set body content if not GET request
 		if (config.method.toUpperCase() != "GET") {
@@ -15949,8 +15949,18 @@ Format.prototype.formatters = {
 
 	//image element
 	image: function image(cell, formatterParams, onRendered) {
-		var el = document.createElement("img");
-		el.setAttribute("src", cell.getValue());
+		var el = document.createElement("img"),
+		    src = cell.getValue();
+
+		if (formatterParams.urlPrefix) {
+			src = formatterParams.urlPrefix + cell.getValue();
+		}
+
+		if (formatterParams.urlSuffix) {
+			src = src + formatterParams.urlSuffix;
+		}
+
+		el.setAttribute("src", src);
 
 		switch (_typeof(formatterParams.height)) {
 			case "number":
@@ -22106,11 +22116,13 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function (row) {
 				};
 
 				output.push({
+					field: column.field,
 					title: column.definition.title,
 					value: column.modules.format.formatter.call(self.table.modules.format, mockCellComponent, column.modules.format.params)
 				});
 			} else {
 				output.push({
+					field: column.field,
 					title: column.definition.title,
 					value: value
 				});
@@ -22122,21 +22134,32 @@ ResponsiveLayout.prototype.generateCollapsedRowData = function (row) {
 };
 
 ResponsiveLayout.prototype.formatCollapsedData = function (data) {
-	var list = document.createElement("table"),
-	    listContents = "";
+	var list = document.createElement("table");
 
 	data.forEach(function (item) {
-		var div = document.createElement("div");
+		var row = document.createElement("tr");
+		var titleData = document.createElement("td");
+		var valueData = document.createElement("td");
+		var node_content;
+
+		var titleHighlight = document.createElement("strong");
+		titleData.appendChild(titleHighlight);
+		this.table.modules.localize.bind("columns|" + item.field, function (text) {
+			titleHighlight.innerText = text || item.title;
+		});
 
 		if (item.value instanceof Node) {
-			div.appendChild(item.value);
-			item.value = div.innerHTML;
+			node_content = document.createElement("div");
+			node_content.appendChild(item.value);
+			valueData.appendChild(node_content);
+		} else {
+			valueData.innerHTML = item.value;
 		}
 
-		listContents += "<tr><td><strong>" + item.title + "</strong></td><td>" + item.value + "</td></tr>";
-	});
-
-	list.innerHTML = listContents;
+		row.appendChild(titleData);
+		row.appendChild(valueData);
+		list.appendChild(row);
+	}, this);
 
 	return Object.keys(data).length ? list : "";
 };
