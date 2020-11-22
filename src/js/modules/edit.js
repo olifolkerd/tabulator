@@ -119,7 +119,7 @@ Edit.prototype.cancelEdit = function(){
 //return a formatted value for a cell
 Edit.prototype.bindEditor = function(cell){
 	var self = this,
-	element = cell.getElement();
+	element = cell.getElement(true);
 
 	element.setAttribute("tabindex", 0);
 

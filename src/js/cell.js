@@ -525,10 +525,12 @@ Cell.prototype._generateTooltip = function(){
 
 
 //////////////////// Getters ////////////////////
-Cell.prototype.getElement = function(){
+Cell.prototype.getElement = function(containerOnly){
 	if(!this.loaded){
 		this.loaded = true;
-		this.layoutElement();
+		if(!containerOnly){
+			this.layoutElement();
+		}
 	}
 
 	return this.element;

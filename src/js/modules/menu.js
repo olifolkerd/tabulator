@@ -78,12 +78,12 @@ Menu.prototype.tapHold = function(component, menu){
 
 Menu.prototype.initializeCell = function(cell){
 	if(cell.column.definition.contextMenu){
-		cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+		cell.getElement(true).addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
 		this.tapHold(cell, cell.column.definition.contextMenu);
 	}
 
 	if(cell.column.definition.clickMenu){
-		cell.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
+		cell.getElement(true).addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
 	}
 };
 

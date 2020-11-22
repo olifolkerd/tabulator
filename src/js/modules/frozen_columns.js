@@ -150,7 +150,7 @@ FrozenColumns.prototype.layoutColumnPosition = function(allCells){
 
 		if(allCells){
 			column.cells.forEach((cell) => {
-				this.layoutElement(cell.getElement(), column);
+				this.layoutElement(cell.getElement(true), column);
 			});
 		}
 	});
@@ -173,7 +173,7 @@ FrozenColumns.prototype.layoutColumnPosition = function(allCells){
 
 		if(allCells){
 			column.cells.forEach((cell) => {
-				this.layoutElement(cell.getElement(), column);
+				this.layoutElement(cell.getElement(true), column);
 			});
 		}
 	});
@@ -229,7 +229,7 @@ FrozenColumns.prototype.layoutRow = function(row){
 		var cell = row.getCell(column);
 
 		if(cell){
-			this.layoutElement(cell.getElement(), column);
+			this.layoutElement(cell.getElement(true), column);
 		}
 	});
 
@@ -237,7 +237,7 @@ FrozenColumns.prototype.layoutRow = function(row){
 		var cell = row.getCell(column);
 
 		if(cell){
-			this.layoutElement(cell.getElement(), column);
+			this.layoutElement(cell.getElement(true), column);
 		}
 	});
 };

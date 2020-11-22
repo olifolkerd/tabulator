@@ -137,7 +137,7 @@ MoveRows.prototype.initializeRow = function(row){
 
 MoveRows.prototype.initializeCell = function(cell){
 	var self = this,
-	cellEl = cell.getElement();
+	cellEl = cell.getElement(true);
 
 	cellEl.addEventListener("mousedown", function(e){
 		if(e.which === 1){
@@ -155,7 +155,7 @@ MoveRows.prototype.initializeCell = function(cell){
 		}
 	});
 
-	this.bindTouchEvents(cell.row, cell.getElement());
+	this.bindTouchEvents(cell.row, cellEl);
 };
 
 MoveRows.prototype.bindTouchEvents = function(row, element){

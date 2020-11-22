@@ -8125,13 +8125,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	//////////////////// Getters ////////////////////
 
-	Cell.prototype.getElement = function () {
+	Cell.prototype.getElement = function (containerOnly) {
 
 		if (!this.loaded) {
 
 			this.loaded = true;
 
-			this.layoutElement();
+			if (!containerOnly) {
+
+				this.layoutElement();
+			}
 		}
 
 		return this.element;
@@ -15106,7 +15109,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//return a formatted value for a cell
 	Edit.prototype.bindEditor = function (cell) {
 		var self = this,
-		    element = cell.getElement();
+		    element = cell.getElement(true);
 
 		element.setAttribute("tabindex", 0);
 
@@ -19543,7 +19546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
-					_this66.layoutElement(cell.getElement(), column);
+					_this66.layoutElement(cell.getElement(true), column);
 				});
 			}
 		});
@@ -19565,7 +19568,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (allCells) {
 				column.cells.forEach(function (cell) {
-					_this66.layoutElement(cell.getElement(), column);
+					_this66.layoutElement(cell.getElement(true), column);
 				});
 			}
 		});
@@ -19622,7 +19625,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = row.getCell(column);
 
 			if (cell) {
-				_this67.layoutElement(cell.getElement(), column);
+				_this67.layoutElement(cell.getElement(true), column);
 			}
 		});
 
@@ -19630,7 +19633,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var cell = row.getCell(column);
 
 			if (cell) {
-				_this67.layoutElement(cell.getElement(), column);
+				_this67.layoutElement(cell.getElement(true), column);
 			}
 		});
 	};
@@ -21702,12 +21705,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	Menu.prototype.initializeCell = function (cell) {
 		if (cell.column.definition.contextMenu) {
-			cell.getElement().addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
+			cell.getElement(true).addEventListener("contextmenu", this.LoadMenuEvent.bind(this, cell, cell.column.definition.contextMenu));
 			this.tapHold(cell, cell.column.definition.contextMenu);
 		}
 
 		if (cell.column.definition.clickMenu) {
-			cell.getElement().addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
+			cell.getElement(true).addEventListener("click", this.LoadMenuEvent.bind(this, cell, cell.column.definition.clickMenu));
 		}
 	};
 
@@ -22148,12 +22151,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (after) {
 			column.getCells().forEach(function (cell, i) {
-				var cellEl = cell.getElement();
+				var cellEl = cell.getElement(true);
 				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl.nextSibling);
 			});
 		} else {
 			column.getCells().forEach(function (cell, i) {
-				var cellEl = cell.getElement();
+				var cellEl = cell.getElement(true);
 				cellEl.parentNode.insertBefore(movingCells[i].getElement(), cellEl);
 			});
 		}
@@ -22353,7 +22356,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	MoveRows.prototype.initializeCell = function (cell) {
 		var self = this,
-		    cellEl = cell.getElement();
+		    cellEl = cell.getElement(true);
 
 		cellEl.addEventListener("mousedown", function (e) {
 			if (e.which === 1) {
@@ -22371,7 +22374,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		});
 
-		this.bindTouchEvents(cell.row, cell.getElement());
+		this.bindTouchEvents(cell.row, cellEl);
 	};
 
 	MoveRows.prototype.bindTouchEvents = function (row, element) {
