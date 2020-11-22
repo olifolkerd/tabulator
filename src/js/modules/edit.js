@@ -2044,7 +2044,9 @@ Edit.prototype.editors = {
 
 		//set new value
 		function updateValue(){
-			var calcVal = (percent * Math.round(bar.offsetWidth / (element.clientWidth/100))) + min;
+			var style = window.getComputedStyle(element, null);
+
+			var calcVal = (percent * Math.round(bar.offsetWidth / ((element.clientWidth - parseInt(style.getPropertyValue("padding-left")) - parseInt(style.getPropertyValue("padding-right")))/100))) + min;
 			success(calcVal);
 			element.setAttribute("aria-valuenow", calcVal);
 			element.setAttribute("aria-label", value);
