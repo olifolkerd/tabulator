@@ -3,6 +3,7 @@ sass = require('gulp-sass'),
 autoprefixer = require('gulp-autoprefixer'),
 cssnano = require('gulp-cssnano'),
 uglify = require('gulp-uglify'),
+uglifyesm = require('gulp-uglify-es').default,
 rename = require('gulp-rename'),
 concat = require('gulp-concat'),
 del = require('del');
@@ -100,6 +101,10 @@ function esm(){
       }))
     .pipe(concat('tabulator.es2015.js'))
     .pipe(gulp.dest('dist/js'))
+    .pipe(rename({suffix: '.min'}))
+    .pipe(uglifyesm())
+    .pipe(insert.prepend(version))
+    .pipe(gulp.dest('dist/js'))
     //.pipe(notify({ message: 'Scripts task complete' }));
     .on('end', function(){ gutil.log('ESM Complete'); })
     //.on("error", console.log)
@@ -196,18 +201,33 @@ function scripts(){
     return Promise.all([tabulator(), core(), esm(), modules(), jquery()]);
 }
 
+function devscripts(){
+    return Promise.all([tabulator()]);
+}
+
 function clean(){
     return del(['dist/css', 'dist/js']);
 }
 
 function watch(){
-    // May be not necessary to run a clean and build before the watch.
     gulp.series(clean, gulp.series(styles, scripts));
     // Watch .scss files
     gulp.watch('src/scss/**/*.scss', styles);
 
     // Watch .js files
     gulp.watch('src/js/**/*.js', scripts);
+}
+
+//a quick series of builds to test functionality while developing
+function dev(){
+    // May be not necessary to run a clean and build before the watch
+    gulp.series(clean, gulp.series(styles, devscripts));
+
+    // Watch .scss files
+    gulp.watch('src/scss/**/*.scss', styles);
+
+    // Watch .js files
+    gulp.watch('src/js/**/*.js', devscripts);
 }
 
 exports.tabulator = gulp.series(tabulator);
@@ -220,3 +240,4 @@ exports.scripts = gulp.series(scripts);
 exports.clean = gulp.series(clean);
 exports.default = gulp.series(clean, gulp.series(styles, scripts));
 exports.watch = gulp.series(watch);
+exports.dev = gulp.series(dev);
