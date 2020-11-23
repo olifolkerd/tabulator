@@ -896,7 +896,7 @@ Edit.prototype.editors = {
 				console.warn("unable to find matching column to create select lookup list:", field);
 			}
 
-			return output;
+			return Object.keys(output);
 		}
 
 		function parseItems(inputValues, curentValues) {
