@@ -26,6 +26,7 @@
 /*=include modules/resize_rows.js */
 /*=include modules/resize_table.js */
 /*=include modules/responsive_layout.js */
+/*=include modules/select_cell.js */
 /*=include modules/select_row.js */
 /*=include modules/sort.js */
 /*=include modules/validate.js */

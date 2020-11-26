@@ -32,10 +32,10 @@ Export.prototype.generateExportList = function(config, style, range, colVisProp)
 	return headers.concat(body);
 };
 
-Export.prototype.genereateTable = function(config, style, range, colVisProp){
+Export.prototype.generateTable = function(config, style, range, colVisProp){
 	var list = this.generateExportList(config, style, range, colVisProp);
 
-	return this.genereateTableElement(list);
+	return this.generateTableElement(list);
 };
 
 Export.prototype.rowLookup = function(range){
@@ -61,7 +61,12 @@ Export.prototype.rowLookup = function(range){
 			break;
 
 			case "selected":
-			rows = this.table.modules.selectRow.selectedRows;
+				const selectionType = this.table.options.selectionType;
+				if (selectionType === 'row') {
+					rows = this.table.modules.selectRow.selectedRows;
+				} else if (selectionType === 'cell') {
+					rows = this.table.modules.selectCell.selectedRows;
+				}
 			break;
 
 			case "active":
@@ -81,7 +86,13 @@ Export.prototype.rowLookup = function(range){
 Export.prototype.generateColumnGroupHeaders = function(){
 	var output = [];
 
-	var columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+	var columns;
+
+	if (this.table.options.selectionType === 'cell' && this.table.modExists('selectCell')) {
+		columns = this.getSelectedColumns().map((component) => component._column);
+	} else {
+		columns = this.config.columnGroups !== false ? this.table.columnManager.columns : this.table.columnManager.columnsByIndex;
+	}
 
 	columns.forEach((column) => {
 		var colData = this.processColumnGroup(column);
@@ -212,17 +223,24 @@ Export.prototype.headersToExportRows = function(columns){
 	return exportRows;
 };
 
+Export.prototype.getSelectedColumns = function() {
+	if (this.table.options.selectionType === 'cell' && this.table.modExists('selectCell')) {
+		return this.table.modules.selectCell.getSelectedColumns();
+	} else {
+		var columns = [];
+		this.table.columnManager.columnsByIndex.forEach((column) => {
+			if (this.columnVisCheck(column)) {
+				columns.push(column.getComponent());
+			}
+		});
+		return columns;
+	}
+}
 
 Export.prototype.bodyToExportRows = function(rows){
 
-	var columns = [];
+	var columns = this.getSelectedColumns();
 	var exportRows = [];
-
-	this.table.columnManager.columnsByIndex.forEach((column) => {
-		if (this.columnVisCheck(column)) {
-			columns.push(column.getComponent());
-		}
-	});
 
 	if(this.config.columnCalcs !== false && this.table.modExists("columnCalcs")){
 		if(this.table.modules.columnCalcs.topInitialized){
@@ -283,7 +301,7 @@ Export.prototype.bodyToExportRows = function(rows){
 };
 
 
-Export.prototype.genereateTableElement = function(list){
+Export.prototype.generateTableElement = function(list){
 	var table = document.createElement("table"),
 	headerEl = document.createElement("thead"),
 	bodyEl = document.createElement("tbody"),
@@ -316,19 +334,19 @@ Export.prototype.genereateTableElement = function(list){
 	list.forEach((row, i) => {
 		switch(row.type){
 			case "header":
-			headerEl.appendChild(this.genereateHeaderElement(row, setup, styles));
+			headerEl.appendChild(this.generateHeaderElement(row, setup, styles));
 			break;
 
 			case "group":
-			bodyEl.appendChild(this.genereateGroupElement(row, setup, styles));
+			bodyEl.appendChild(this.generateGroupElement(row, setup, styles));
 			break;
 
 			case "calc":
-			bodyEl.appendChild(this.genereateCalcElement(row, setup, styles));
+			bodyEl.appendChild(this.generateCalcElement(row, setup, styles));
 			break;
 
 			case "row":
-			let rowEl = this.genereateRowElement(row, setup, styles);
+			let rowEl = this.generateRowElement(row, setup, styles);
 			this.mapElementStyles(((i % 2) && styles.evenRow) ? styles.evenRow : styles.oddRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
 			bodyEl.appendChild(rowEl);
 			break;
@@ -367,7 +385,7 @@ Export.prototype.lookupTableStyles = function(){
 	return styles;
 };
 
-Export.prototype.genereateHeaderElement = function(row, setup, styles){
+Export.prototype.generateHeaderElement = function(row, setup, styles){
 	var rowEl = document.createElement("tr");
 
 	row.columns.forEach((column) => {
@@ -410,7 +428,7 @@ Export.prototype.genereateHeaderElement = function(row, setup, styles){
 	return rowEl;
 };
 
-Export.prototype.genereateGroupElement = function(row, setup, styles){
+Export.prototype.generateGroupElement = function(row, setup, styles){
 
 	var rowEl = document.createElement("tr"),
 	cellEl = document.createElement("td"),
@@ -446,8 +464,8 @@ Export.prototype.genereateGroupElement = function(row, setup, styles){
 	return rowEl;
 };
 
-Export.prototype.genereateCalcElement = function(row, setup, styles){
-	var rowEl = this.genereateRowElement(row, setup, styles);
+Export.prototype.generateCalcElement = function(row, setup, styles){
+	var rowEl = this.generateRowElement(row, setup, styles);
 
 	rowEl.classList.add("tabulator-print-table-calcs");
 	this.mapElementStyles(styles.calcRow, rowEl, ["border-top", "border-left", "border-right", "border-bottom", "color", "font-weight", "font-family", "font-size", "background-color"]);
@@ -455,7 +473,7 @@ Export.prototype.genereateCalcElement = function(row, setup, styles){
 	return rowEl;
 };
 
-Export.prototype.genereateRowElement = function(row, setup, styles){
+Export.prototype.generateRowElement = function(row, setup, styles){
 	var rowEl = document.createElement("tr");
 
 	rowEl.classList.add("tabulator-print-table-row");
@@ -558,10 +576,10 @@ Export.prototype.genereateRowElement = function(row, setup, styles){
 };
 
 
-Export.prototype.genereateHTMLTable = function(list){
+Export.prototype.generateHTMLTable = function(list){
 	var holder = document.createElement("div");
 
-	holder.appendChild(this.genereateTableElement(list));
+	holder.appendChild(this.generateTableElement(list));
 
 	return holder.innerHTML;
 };
@@ -570,7 +588,7 @@ Export.prototype.genereateHTMLTable = function(list){
 Export.prototype.getHtml = function(visible, style, config, colVisProp){
 	var list = this.generateExportList(config || this.table.options.htmlOutputConfig, style, visible, colVisProp || "htmlOutput");
 
-	return this.genereateHTMLTable(list);
+	return this.generateHTMLTable(list);
 };
 
 

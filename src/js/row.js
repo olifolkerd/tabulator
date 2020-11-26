@@ -227,7 +227,7 @@ Row.prototype.generateElement = function(){
 	this.createElement();
 
 	//set row selection characteristics
-	if(self.table.options.selectable !== false && self.table.modExists("selectRow")){
+	if(self.table.options.selectable !== false && self.table.options.selectionType === 'row' && self.table.modExists("selectRow")){
 		self.table.modules.selectRow.initializeRow(this);
 	}
 

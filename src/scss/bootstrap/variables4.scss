@@ -328,6 +328,10 @@ $table-striped-order:         odd !default;
 
 $table-caption-color:         $text-muted !default;
 
+//** Colors for cell selections
+$table-cell-selection-color: #9ABCEA;
+$table-cell-selection-border-color: #3067fd;
+
 // Buttons + Forms
 //
 // Shared variables that are reassigned to `$input-` and `$btn-` specific variables.

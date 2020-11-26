@@ -35,7 +35,9 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeperatorColor:#999 !default; //footer bottom seperator color
 $footerActiveColor:#d00 !default; //footer bottom active text color
 
-
+/* Table selection */
+$table-cell-selection-color: #9ABCEA;
+$table-cell-selection-border-color: #3067fd;
 
 //Tabulator Containing Element
 .tabulator{
@@ -891,6 +893,26 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			width:14px;
 
 			border-radius:14px;
+		}
+
+		&.selection-top {
+			border-top: 2px solid $table-cell-selection-border-color;
+		}
+		  
+		&.selection-left {
+			border-left: 2px solid $table-cell-selection-border-color;
+		}
+		  
+		&.selection-right {
+			border-right: 2px solid $table-cell-selection-border-color;
+		} 
+		  
+		&.selection-bottom {
+			border-bottom: 2px solid $table-cell-selection-border-color;
+		}
+		  
+		&.tabulator-selected {
+			background-color: $table-cell-selection-color;
 		}
 	}
 

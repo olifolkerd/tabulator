@@ -211,6 +211,12 @@ Cell.prototype._configureCell = function(){
 		self.table.modules.moveRow.initializeCell(self);
 	}
 
+	if (self.table.options.selectable !== false) {
+		if (self.table.options.selectionType === 'cell' && self.table.modExists('selectCell')) {
+			self.table.modules.selectCell.initializeCell(this);
+		}
+	}
+
 	//hide cell if not visible
 	if(!self.column.visible){
 		self.hide();

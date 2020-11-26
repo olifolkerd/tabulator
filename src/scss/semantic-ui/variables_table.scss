@@ -38,6 +38,10 @@ $cellVerticalAlign: inherit !default;
 $cellTextAlign: inherit !default;
 $cellBorder: 1px solid $internalBorderColor !default;
 
+/* Table selection */
+$table-cell-selection-color: #9ABCEA;
+$table-cell-selection-border-color: #3067fd;
+
 /* Table Header */
 $headerBorder: 1px solid $internalBorderColor !default;
 $headerDivider: none !default;

@@ -41,6 +41,9 @@ $handleWidth:10px !default; //width of the row handle
 $handleColor: $primary !default; //color for odd numbered rows
 $handleColorAlt: lighten($primary, 10%) !default; //color for even numbered rows
 
+/* Table selection */
+$table-cell-selection-color: #9ABCEA;
+$table-cell-selection-border-color: #3067fd;
 
 //Tabulator Containing Element
 .tabulator{

@@ -148,6 +148,7 @@ Tabulator.prototype.defaultOptions = {
 	selectableRollingSelection:true, //roll selection once maximum number of selectable rows is reached
 	selectablePersistence:true, // maintain selection when table view is updated
 	selectableCheck:function(data, row){return true;}, //check wheather row is selectable
+	selectionType: "row",
 
 	headerFilterLiveFilterDelay: 300, //delay before updating column after user types in header filter
 	headerFilterPlaceholder: false, //placeholder text to display in header filters
