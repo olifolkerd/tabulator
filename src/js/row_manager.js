@@ -1769,7 +1769,8 @@ RowManager.prototype.adjustTableSize = function(){
 	modExists;
 
 	if(this.renderMode === "virtual"){
-		let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
+
+		let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 		if(this.fixedHeight){
 			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
