@@ -330,8 +330,8 @@ Sort.prototype._sortRow = function(a, b, column, dir, params){
 	a = typeof a !== "undefined" ? a : "";
 	b = typeof b !== "undefined" ? b : "";
 
-	// el1Comp = el1.getComponent();
-	// el2Comp = el2.getComponent();
+	el1Comp = el1.getComponent();
+	el2Comp = el2.getComponent();
 
 	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 };
