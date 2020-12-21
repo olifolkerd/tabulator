@@ -112,7 +112,7 @@ Persistence.prototype.initialize = function(){
 	}
 
 	if(this.config.columns){
-		this.load("columns", this.table.options.columns);
+		this.table.options.columns = this.load("columns", this.table.options.columns);
 	}
 };
 
@@ -251,7 +251,6 @@ Persistence.prototype._findColumn = function(columns, subject){
 //save data
 Persistence.prototype.save = function(type){
 	var data = {};
-
 
 	switch(type){
 		case "columns":

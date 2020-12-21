@@ -23825,7 +23825,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		if (this.config.columns) {
-			this.load("columns", this.table.options.columns);
+			this.table.options.columns = this.load("columns", this.table.options.columns);
 		}
 	};
 
