@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var Edit = function Edit(table) {
 	this.table = table; //hold Tabulator object
@@ -185,7 +185,13 @@ Edit.prototype.focusScrollAdjust = function (cell) {
 			rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
 		}
 
+		if (this.table.options.virtualDomHoz) {
+			leftEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+			rightEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+		}
+
 		if (cellEl.offsetLeft < leftEdge) {
+
 			this.table.rowManager.element.scrollLeft -= leftEdge - cellEl.offsetLeft;
 		} else {
 			if (cellEl.offsetLeft + cellEl.offsetWidth > rightEdge) {
@@ -1174,7 +1180,7 @@ Edit.prototype.editors = {
 				success(item.value);
 			}
 
-			initialDisplayValue = input.value;
+			initialDisplayValue = [item.value];
 		}
 
 		function chooseItems(silent) {
@@ -1188,7 +1194,7 @@ Edit.prototype.editors = {
 				output.push(item.value);
 			});
 
-			initialDisplayValue = input.value;
+			initialDisplayValue = output;
 
 			success(output);
 		}
@@ -1718,6 +1724,8 @@ Edit.prototype.editors = {
 
 		function showList() {
 			if (!listEl.parentNode) {
+
+				console.log("show", initialDisplayValue);
 				while (listEl.firstChild) {
 					listEl.removeChild(listEl.firstChild);
 				}var offset = Tabulator.prototype.helpers.elOffset(cellEl);

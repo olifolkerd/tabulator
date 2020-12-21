@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var Filter = function Filter(table) {
 
@@ -143,7 +143,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue, r
 
 		//set empty value function
 		column.modules.filter.emptyFunc = column.definition.headerFilterEmptyCheck || function (value) {
-			return !value && value !== "0";
+			return !value && value !== "0" && value !== 0;
 		};
 
 		filterElement = document.createElement("div");
@@ -583,7 +583,9 @@ Filter.prototype.clearHeaderFilter = function () {
 	self.prevHeaderFilterChangeCheck = "{}";
 
 	this.headerFilterColumns.forEach(function (column) {
-		column.modules.filter.value = null;
+		if (typeof column.modules.filter.value !== "undefined") {
+			delete column.modules.filter.value;
+		}
 		column.modules.filter.prevSuccess = undefined;
 		self.reloadHeaderFilter(column);
 	});

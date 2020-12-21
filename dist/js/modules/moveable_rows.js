@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var MoveRows = function MoveRows(table) {
 
@@ -547,8 +547,6 @@ MoveRows.prototype.dropComplete = function (table, row, success) {
 MoveRows.prototype.tableRowDrop = function (e, row) {
 	var receiver = false,
 	    success = false;
-
-	console.trace("drop");
 
 	e.stopImmediatePropagation();
 

@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var SelectRow = function SelectRow(table) {
 	this.table = table; //hold Tabulator object
@@ -375,7 +375,7 @@ SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 };
 
 SelectRow.prototype.childRowSelection = function (row, select) {
-	var children = this.table.modules.dataTree.getChildren(row);
+	var children = this.table.modules.dataTree.getChildren(row, true);
 
 	if (select) {
 		for (var _iterator = children, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {

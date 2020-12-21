@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var DataTree = function DataTree(table) {
 	this.table = table;
@@ -231,14 +231,14 @@ DataTree.prototype.getRows = function (rows) {
 	return output;
 };
 
-DataTree.prototype.getChildren = function (row) {
+DataTree.prototype.getChildren = function (row, allChildren) {
 	var _this3 = this;
 
 	var config = row.modules.dataTree,
 	    children = [],
 	    output = [];
 
-	if (config.children !== false && config.open) {
+	if (config.children !== false && (config.open || allChildren)) {
 		if (!Array.isArray(config.children)) {
 			config.children = this.generateChildren(row);
 		}

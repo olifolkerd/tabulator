@@ -1,4 +1,4 @@
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var Persistence = function Persistence(table) {
 	this.table = table; //hold Tabulator object
@@ -114,7 +114,7 @@ Persistence.prototype.initialize = function () {
 	}
 
 	if (this.config.columns) {
-		this.load("columns", this.table.options.columns);
+		this.table.options.columns = this.load("columns", this.table.options.columns);
 	}
 };
 

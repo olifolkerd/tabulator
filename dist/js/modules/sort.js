@@ -1,6 +1,6 @@
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 var Sort = function Sort(table) {
 	this.table = table; //hold Tabulator object
@@ -330,8 +330,8 @@ Sort.prototype._sortRow = function (a, b, column, dir, params) {
 	a = typeof a !== "undefined" ? a : "";
 	b = typeof b !== "undefined" ? b : "";
 
-	// el1Comp = el1.getComponent();
-	// el2Comp = el2.getComponent();
+	el1Comp = el1.getComponent();
+	el2Comp = el2.getComponent();
 
 	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 };

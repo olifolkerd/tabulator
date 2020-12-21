@@ -1,4 +1,4 @@
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 'use strict';
 
@@ -2633,25 +2633,30 @@ Column.prototype.updateDefinition = function (updates) {
 		var definition;
 
 		if (!_this10.isGroup) {
-			definition = Object.assign({}, _this10.getDefinition());
-			definition = Object.assign(definition, updates);
+			if (_this10.parent.isGroup) {
+				definition = Object.assign({}, _this10.getDefinition());
+				definition = Object.assign(definition, updates);
 
-			_this10.table.columnManager.addColumn(definition, false, _this10).then(function (column) {
+				_this10.table.columnManager.addColumn(definition, false, _this10).then(function (column) {
 
-				if (definition.field == _this10.field) {
-					_this10.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-				}
+					if (definition.field == _this10.field) {
+						_this10.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
 
-				_this10.delete().then(function () {
-					resolve(column.getComponent());
+					_this10.delete().then(function () {
+						resolve(column.getComponent());
+					}).catch(function (err) {
+						reject(err);
+					});
 				}).catch(function (err) {
 					reject(err);
 				});
-			}).catch(function (err) {
-				reject(err);
-			});
+			} else {
+				console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+				reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			}
 		} else {
-			console.warn("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 			reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 		}
 	});
@@ -4429,7 +4434,8 @@ RowManager.prototype.adjustTableSize = function () {
 	    modExists;
 
 	if (this.renderMode === "virtual") {
-		var otherHeight = Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
+
+		var otherHeight = Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 		if (this.fixedHeight) {
 			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
@@ -4967,7 +4973,7 @@ VDomHoz.prototype.initializeRow = function (row) {
 		for (var _i7 = this.leftCol; _i7 <= this.rightCol; _i7++) {
 			var column = this.columns[_i7];
 
-			if (column.visible) {
+			if (column && column.visible) {
 				var cell = row.getCell(column);
 
 				row.getElement().appendChild(cell.getElement());
@@ -11400,14 +11406,14 @@ DataTree.prototype.getRows = function (rows) {
 	return output;
 };
 
-DataTree.prototype.getChildren = function (row) {
+DataTree.prototype.getChildren = function (row, allChildren) {
 	var _this49 = this;
 
 	var config = row.modules.dataTree,
 	    children = [],
 	    output = [];
 
-	if (config.children !== false && config.open) {
+	if (config.children !== false && (config.open || allChildren)) {
 		if (!Array.isArray(config.children)) {
 			config.children = this.generateChildren(row);
 		}
@@ -12296,7 +12302,13 @@ Edit.prototype.focusScrollAdjust = function (cell) {
 			rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
 		}
 
+		if (this.table.options.virtualDomHoz) {
+			leftEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+			rightEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+		}
+
 		if (cellEl.offsetLeft < leftEdge) {
+
 			this.table.rowManager.element.scrollLeft -= leftEdge - cellEl.offsetLeft;
 		} else {
 			if (cellEl.offsetLeft + cellEl.offsetWidth > rightEdge) {
@@ -13285,7 +13297,7 @@ Edit.prototype.editors = {
 				success(item.value);
 			}
 
-			initialDisplayValue = input.value;
+			initialDisplayValue = [item.value];
 		}
 
 		function chooseItems(silent) {
@@ -13299,7 +13311,7 @@ Edit.prototype.editors = {
 				output.push(item.value);
 			});
 
-			initialDisplayValue = input.value;
+			initialDisplayValue = output;
 
 			success(output);
 		}
@@ -13829,6 +13841,8 @@ Edit.prototype.editors = {
 
 		function showList() {
 			if (!listEl.parentNode) {
+
+				console.log("show", initialDisplayValue);
 				while (listEl.firstChild) {
 					listEl.removeChild(listEl.firstChild);
 				}var offset = Tabulator.prototype.helpers.elOffset(cellEl);
@@ -15125,7 +15139,7 @@ Filter.prototype.generateHeaderFilterElement = function (column, initialValue, r
 
 		//set empty value function
 		column.modules.filter.emptyFunc = column.definition.headerFilterEmptyCheck || function (value) {
-			return !value && value !== "0";
+			return !value && value !== "0" && value !== 0;
 		};
 
 		filterElement = document.createElement("div");
@@ -15565,7 +15579,9 @@ Filter.prototype.clearHeaderFilter = function () {
 	self.prevHeaderFilterChangeCheck = "{}";
 
 	this.headerFilterColumns.forEach(function (column) {
-		column.modules.filter.value = null;
+		if (typeof column.modules.filter.value !== "undefined") {
+			delete column.modules.filter.value;
+		}
 		column.modules.filter.prevSuccess = undefined;
 		self.reloadHeaderFilter(column);
 	});
@@ -19901,8 +19917,6 @@ MoveRows.prototype.tableRowDrop = function (e, row) {
 	var receiver = false,
 	    success = false;
 
-	console.trace("drop");
-
 	e.stopImmediatePropagation();
 
 	switch (_typeof(this.table.options.movableRowsReceiver)) {
@@ -20421,7 +20435,7 @@ Page.prototype.setPage = function (page) {
 
 		page = parseInt(page);
 
-		if (page > 0 && page <= _this77.max) {
+		if (page > 0 && page <= _this77.max || _this77.mode !== "local") {
 			_this77.page = page;
 			_this77.trigger().then(function () {
 				resolve();
@@ -20942,7 +20956,7 @@ Persistence.prototype.initialize = function () {
 	}
 
 	if (this.config.columns) {
-		this.load("columns", this.table.options.columns);
+		this.table.options.columns = this.load("columns", this.table.options.columns);
 	}
 };
 
@@ -22729,7 +22743,7 @@ SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 };
 
 SelectRow.prototype.childRowSelection = function (row, select) {
-	var children = this.table.modules.dataTree.getChildren(row);
+	var children = this.table.modules.dataTree.getChildren(row, true);
 
 	if (select) {
 		for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i19 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
@@ -23098,8 +23112,8 @@ Sort.prototype._sortRow = function (a, b, column, dir, params) {
 	a = typeof a !== "undefined" ? a : "";
 	b = typeof b !== "undefined" ? b : "";
 
-	// el1Comp = el1.getComponent();
-	// el2Comp = el2.getComponent();
+	el1Comp = el1.getComponent();
+	el2Comp = el2.getComponent();
 
 	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 };

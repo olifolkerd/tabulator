@@ -1,4 +1,4 @@
-/* Tabulator v4.9.1 (c) Oliver Folkerd */
+/* Tabulator v4.9.2 (c) Oliver Folkerd */
 
 'use strict';
 
@@ -2633,25 +2633,30 @@ Column.prototype.updateDefinition = function (updates) {
 		var definition;
 
 		if (!_this10.isGroup) {
-			definition = Object.assign({}, _this10.getDefinition());
-			definition = Object.assign(definition, updates);
+			if (_this10.parent.isGroup) {
+				definition = Object.assign({}, _this10.getDefinition());
+				definition = Object.assign(definition, updates);
 
-			_this10.table.columnManager.addColumn(definition, false, _this10).then(function (column) {
+				_this10.table.columnManager.addColumn(definition, false, _this10).then(function (column) {
 
-				if (definition.field == _this10.field) {
-					_this10.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-				}
+					if (definition.field == _this10.field) {
+						_this10.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
 
-				_this10.delete().then(function () {
-					resolve(column.getComponent());
+					_this10.delete().then(function () {
+						resolve(column.getComponent());
+					}).catch(function (err) {
+						reject(err);
+					});
 				}).catch(function (err) {
 					reject(err);
 				});
-			}).catch(function (err) {
-				reject(err);
-			});
+			} else {
+				console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+				reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			}
 		} else {
-			console.warn("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 			reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 		}
 	});
@@ -4429,7 +4434,8 @@ RowManager.prototype.adjustTableSize = function () {
 	    modExists;
 
 	if (this.renderMode === "virtual") {
-		var otherHeight = Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
+
+		var otherHeight = Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 		if (this.fixedHeight) {
 			this.element.style.minHeight = "calc(100% - " + otherHeight + "px)";
@@ -4967,7 +4973,7 @@ VDomHoz.prototype.initializeRow = function (row) {
 		for (var i = this.leftCol; i <= this.rightCol; i++) {
 			var column = this.columns[i];
 
-			if (column.visible) {
+			if (column && column.visible) {
 				var cell = row.getCell(column);
 
 				row.getElement().appendChild(cell.getElement());
