@@ -318,7 +318,7 @@ Page.prototype.setPage = function(page){
 
 		page = parseInt(page);
 
-		if(page > 0 && page <= this.max){
+		if((page > 0 && page <= this.max) || this.mode !== "local"){
 			this.page = page;
 			this.trigger()
 			.then(()=>{

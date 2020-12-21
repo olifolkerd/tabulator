@@ -23304,7 +23304,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			page = parseInt(page);
 
-			if (page > 0 && page <= _this77.max) {
+			if (page > 0 && page <= _this77.max || _this77.mode !== "local") {
 				_this77.page = page;
 				_this77.trigger().then(function () {
 					resolve();
