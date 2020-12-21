@@ -427,7 +427,7 @@ VDomHoz.prototype.initializeRow = function(row){
 		for(let i = this.leftCol; i <= this.rightCol; i++){
 			let column = this.columns[i];
 
-			if(column.visible){
+			if(column && column.visible){
 				let cell = row.getCell(column);
 
 				row.getElement().appendChild(cell.getElement());

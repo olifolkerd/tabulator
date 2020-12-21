@@ -6247,7 +6247,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				var column = this.columns[_i7];
 
-				if (column.visible) {
+				if (column && column.visible) {
 
 					var cell = row.getCell(column);
 
