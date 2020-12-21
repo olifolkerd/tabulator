@@ -593,7 +593,9 @@ Filter.prototype.clearHeaderFilter = function(){
 	self.prevHeaderFilterChangeCheck = "{}";
 
 	this.headerFilterColumns.forEach(function(column){
-		column.modules.filter.value = null;
+		if(typeof column.modules.filter.value !== "undefined"){
+			delete column.modules.filter.value;
+		}
 		column.modules.filter.prevSuccess = undefined;
 		self.reloadHeaderFilter(column);
 	});
