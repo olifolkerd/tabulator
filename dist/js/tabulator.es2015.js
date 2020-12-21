@@ -22589,6 +22589,7 @@ SelectRow.prototype._selectRow = function (rowInfo, silent, force) {
 
 	if (row) {
 		if (this.selectedRows.indexOf(row) == -1) {
+			row.getElement().classList.add("tabulator-selected");
 			if (!row.modules.select) {
 				row.modules.select = {};
 			}
@@ -22597,7 +22598,6 @@ SelectRow.prototype._selectRow = function (rowInfo, silent, force) {
 			if (row.modules.select.checkboxEl) {
 				row.modules.select.checkboxEl.checked = true;
 			}
-			row.getElement().classList.add("tabulator-selected");
 
 			this.selectedRows.push(row);
 
@@ -22662,6 +22662,7 @@ SelectRow.prototype._deselectRow = function (rowInfo, silent) {
 
 		if (index > -1) {
 
+			row.getElement().classList.remove("tabulator-selected");
 			if (!row.modules.select) {
 				row.modules.select = {};
 			}
@@ -22670,7 +22671,6 @@ SelectRow.prototype._deselectRow = function (rowInfo, silent) {
 			if (row.modules.select.checkboxEl) {
 				row.modules.select.checkboxEl.checked = false;
 			}
-			row.getElement().classList.remove("tabulator-selected");
 			self.selectedRows.splice(index, 1);
 
 			if (this.table.options.dataTreeSelectPropagate) {

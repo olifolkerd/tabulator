@@ -25474,6 +25474,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (row) {
 			if (this.selectedRows.indexOf(row) == -1) {
+				row.getElement().classList.add("tabulator-selected");
 				if (!row.modules.select) {
 					row.modules.select = {};
 				}
@@ -25482,7 +25483,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (row.modules.select.checkboxEl) {
 					row.modules.select.checkboxEl.checked = true;
 				}
-				row.getElement().classList.add("tabulator-selected");
 
 				this.selectedRows.push(row);
 
@@ -25547,6 +25547,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (index > -1) {
 
+				row.getElement().classList.remove("tabulator-selected");
 				if (!row.modules.select) {
 					row.modules.select = {};
 				}
@@ -25555,7 +25556,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (row.modules.select.checkboxEl) {
 					row.modules.select.checkboxEl.checked = false;
 				}
-				row.getElement().classList.remove("tabulator-selected");
 				self.selectedRows.splice(index, 1);
 
 				if (this.table.options.dataTreeSelectPropagate) {
