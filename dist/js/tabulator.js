@@ -22784,8 +22784,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var receiver = false,
 		    success = false;
 
-		console.trace("drop");
-
 		e.stopImmediatePropagation();
 
 		switch (_typeof(this.table.options.movableRowsReceiver)) {

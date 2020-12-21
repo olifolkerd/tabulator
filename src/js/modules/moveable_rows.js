@@ -544,8 +544,6 @@ MoveRows.prototype.tableRowDrop = function(e, row){
 	var receiver = false,
 	success = false;
 
-	console.trace("drop");
-
 	e.stopImmediatePropagation();
 
 	switch(typeof this.table.options.movableRowsReceiver){
