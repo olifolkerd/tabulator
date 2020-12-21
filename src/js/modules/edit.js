@@ -183,7 +183,13 @@ Edit.prototype.focusScrollAdjust = function(cell){
 			rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
 		}
 
+		if(this.table.options.virtualDomHoz){
+			leftEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+			rightEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+		}
+
 		if(cellEl.offsetLeft < leftEdge){
+
 			this.table.rowManager.element.scrollLeft -= (leftEdge - cellEl.offsetLeft);
 		}else{
 			if(cellEl.offsetLeft + cellEl.offsetWidth  > rightEdge){

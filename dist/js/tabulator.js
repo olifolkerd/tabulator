@@ -15187,7 +15187,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				rightEdge -= parseInt(this.table.modules.frozenColumns.rightMargin);
 			}
 
+			if (this.table.options.virtualDomHoz) {
+				leftEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+				rightEdge -= parseInt(this.table.vdomHoz.vDomPadLeft);
+			}
+
 			if (cellEl.offsetLeft < leftEdge) {
+
 				this.table.rowManager.element.scrollLeft -= leftEdge - cellEl.offsetLeft;
 			} else {
 				if (cellEl.offsetLeft + cellEl.offsetWidth > rightEdge) {
