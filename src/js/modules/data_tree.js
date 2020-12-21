@@ -226,12 +226,12 @@ DataTree.prototype.getRows = function(rows){
 };
 
 
-DataTree.prototype.getChildren = function(row){
+DataTree.prototype.getChildren = function(row, allChildren){
 	var config = row.modules.dataTree,
 	children = [],
 	output = [];
 
-	if(config.children !== false && config.open){
+	if(config.children !== false && (config.open || allChildren)){
 		if(!Array.isArray(config.children)){
 			config.children = this.generateChildren(row);
 		}

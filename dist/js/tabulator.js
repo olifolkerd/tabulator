@@ -14291,14 +14291,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return output;
 	};
 
-	DataTree.prototype.getChildren = function (row) {
+	DataTree.prototype.getChildren = function (row, allChildren) {
 		var _this49 = this;
 
 		var config = row.modules.dataTree,
 		    children = [],
 		    output = [];
 
-		if (config.children !== false && config.open) {
+		if (config.children !== false && (config.open || allChildren)) {
 			if (!Array.isArray(config.children)) {
 				config.children = this.generateChildren(row);
 			}
@@ -25622,7 +25622,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	SelectRow.prototype.childRowSelection = function (row, select) {
-		var children = this.table.modules.dataTree.getChildren(row);
+		var children = this.table.modules.dataTree.getChildren(row, true);
 
 		if (select) {
 			for (var _iterator2 = children, _isArray2 = Array.isArray(_iterator2), _i19 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {

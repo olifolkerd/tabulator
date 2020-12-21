@@ -373,7 +373,7 @@ SelectRow.prototype.registerHeaderSelectCheckbox = function (element) {
 };
 
 SelectRow.prototype.childRowSelection = function(row, select){
-	var children = this.table.modules.dataTree.getChildren(row);
+	var children = this.table.modules.dataTree.getChildren(row, true);
 
 	if(select){
 		for(let child of children){
