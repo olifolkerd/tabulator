@@ -134,7 +134,7 @@ Filter.prototype.generateHeaderFilterElement = function(column, initialValue, re
 
 		//set empty value function
 		column.modules.filter.emptyFunc = column.definition.headerFilterEmptyCheck || function(value){
-			return !value && value !== "0";
+			return !value && value !== "0" && value !== 0;
 		};
 
 		filterElement = document.createElement("div");

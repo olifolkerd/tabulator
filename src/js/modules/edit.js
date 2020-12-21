@@ -1717,6 +1717,8 @@ Edit.prototype.editors = {
 
 		function showList(){
 			if(!listEl.parentNode){
+
+				console.log("show", initialDisplayValue)
 				while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
 				var offset = Tabulator.prototype.helpers.elOffset(cellEl);

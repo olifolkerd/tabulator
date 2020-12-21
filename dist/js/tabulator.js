@@ -16712,6 +16712,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function showList() {
 				if (!listEl.parentNode) {
+
+					console.log("show", initialDisplayValue);
 					while (listEl.firstChild) {
 						listEl.removeChild(listEl.firstChild);
 					}var offset = Tabulator.prototype.helpers.elOffset(cellEl);
@@ -18008,7 +18010,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			//set empty value function
 			column.modules.filter.emptyFunc = column.definition.headerFilterEmptyCheck || function (value) {
-				return !value && value !== "0";
+				return !value && value !== "0" && value !== 0;
 			};
 
 			filterElement = document.createElement("div");
