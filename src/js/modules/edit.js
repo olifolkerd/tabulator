@@ -1178,7 +1178,7 @@ Edit.prototype.editors = {
 				success(item.value);
 			}
 
-			initialDisplayValue = input.value;
+			initialDisplayValue = [item.value];
 		}
 
 
@@ -1193,7 +1193,7 @@ Edit.prototype.editors = {
 				output.push(item.value);
 			});
 
-			initialDisplayValue = input.value;
+			initialDisplayValue = output;
 
 			success(output);
 		}

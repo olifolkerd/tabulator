@@ -16168,7 +16168,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					success(item.value);
 				}
 
-				initialDisplayValue = input.value;
+				initialDisplayValue = [item.value];
 			}
 
 			function chooseItems(silent) {
@@ -16182,7 +16182,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					output.push(item.value);
 				});
 
-				initialDisplayValue = input.value;
+				initialDisplayValue = output;
 
 				success(output);
 			}
