@@ -1389,28 +1389,33 @@ Column.prototype.updateDefinition = function(updates){
 		var definition;
 
 		if(!this.isGroup){
-			definition = Object.assign({}, this.getDefinition());
-			definition = Object.assign(definition, updates);
+			if(this.parent.isGroup){
+				definition = Object.assign({}, this.getDefinition());
+				definition = Object.assign(definition, updates);
 
-			this.table.columnManager.addColumn(definition, false, this)
-			.then((column) => {
+				this.table.columnManager.addColumn(definition, false, this)
+				.then((column) => {
 
-				if(definition.field == this.field){
-					this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
-				}
+					if(definition.field == this.field){
+						this.field = false; //cleair field name to prevent deletion of duplicate column from arrays
+					}
 
-				this.delete()
-				.then(() => {
-					resolve(column.getComponent());
+					this.delete()
+					.then(() => {
+						resolve(column.getComponent());
+					}).catch((err) => {
+						reject(err);
+					});
+
 				}).catch((err) => {
 					reject(err);
 				});
-
-			}).catch((err) => {
-				reject(err);
-			});
+			}else{
+				console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
+				reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			}
 		}else{
-			console.warn("Column Update Error - The updateDefinition function is only available on columns, not column groups");
+			console.warn("Column Update Error - The updateDefinition function is only available on ungrouped columns");
 			reject("Column Update Error - The updateDefinition function is only available on columns, not column groups");
 		}
 	});
