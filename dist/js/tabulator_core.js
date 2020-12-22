@@ -2633,7 +2633,7 @@ Column.prototype.updateDefinition = function (updates) {
 		var definition;
 
 		if (!_this10.isGroup) {
-			if (_this10.parent.isGroup) {
+			if (!_this10.parent.isGroup) {
 				definition = Object.assign({}, _this10.getDefinition());
 				definition = Object.assign(definition, updates);
 

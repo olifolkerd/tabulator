@@ -1389,7 +1389,7 @@ Column.prototype.updateDefinition = function(updates){
 		var definition;
 
 		if(!this.isGroup){
-			if(this.parent.isGroup){
+			if(!this.parent.isGroup){
 				definition = Object.assign({}, this.getDefinition());
 				definition = Object.assign(definition, updates);
 

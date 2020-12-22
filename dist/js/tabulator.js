@@ -3190,7 +3190,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (!_this10.isGroup) {
 
-				if (_this10.parent.isGroup) {
+				if (!_this10.parent.isGroup) {
 
 					definition = Object.assign({}, _this10.getDefinition());
 
