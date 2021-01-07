@@ -1,42 +1,13 @@
-//public calc object
-var CalcComponent = function (row){
-	this._row = row;
-};
+import Module from '../../module.js';
 
-CalcComponent.prototype.getData = function(transform){
-	return this._row.getData(transform);
-};
+import CalcComponent from './CalcComponent.js';
 
-CalcComponent.prototype.getElement = function(){
-	return this._row.getElement();
-};
-
-CalcComponent.prototype.getTable = function(){
-	return this._row.table;
-};
-
-CalcComponent.prototype.getCells = function(){
-	var cells = [];
-
-	this._row.getCells().forEach(function(cell){
-		cells.push(cell.getComponent());
-	});
-
-	return cells;
-};
-
-CalcComponent.prototype.getCell = function(column){
-	var cell = this._row.getCell(column);
-	return cell ? cell.getComponent() : false;
-};
-
-CalcComponent.prototype._getSelf = function(){
-	return this._row;
-};
-
-import Module from '../module.js';
+import defaultCalculations from './defaults/calculations.js';
 
 class ColumnCalcs extends Module{
+
+	//load defaults
+	static calculations = defaultCalculations;
 
 	constructor(table){
 		super(table);
@@ -166,13 +137,11 @@ class ColumnCalcs extends Module{
 		}
 	}
 
-
 	scrollHorizontal(left){
 		if(this.botInitialized && this.botRow){
 			this.botRow.getElement().style.marginLeft = (-left) + "px";
 		}
 	}
-
 
 	recalc(rows){
 		var data, row;
@@ -258,8 +227,6 @@ class ColumnCalcs extends Module{
 			}
 		}
 	}
-
-
 
 	//generate top stats row
 	generateTopRow(rows){
@@ -447,94 +414,5 @@ class ColumnCalcs extends Module{
 	}
 }
 
-//default calculations
-ColumnCalcs.prototype.calculations = {
-	"avg":function(values, data, calcParams){
-		var output = 0,
-		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : 2
-
-		if(values.length){
-			output = values.reduce(function(sum, value){
-				return Number(sum) + Number(value);
-			});
-
-			output = output / values.length;
-
-			output = precision !== false ? output.toFixed(precision) : output;
-		}
-
-		return parseFloat(output).toString();
-	},
-	"max":function(values, data, calcParams){
-		var output = null,
-		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
-
-		values.forEach(function(value){
-
-			value = Number(value);
-
-			if(value > output || output === null){
-				output = value;
-			}
-		});
-
-		return output !== null ? (precision !== false ? output.toFixed(precision) : output) : "";
-	},
-	"min":function(values, data, calcParams){
-		var output = null,
-		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
-
-		values.forEach(function(value){
-
-			value = Number(value);
-
-			if(value < output || output === null){
-				output = value;
-			}
-		});
-
-		return output !== null ? (precision !== false ? output.toFixed(precision) : output) : "";
-	},
-	"sum":function(values, data, calcParams){
-		var output = 0,
-		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : false;
-
-		if(values.length){
-			values.forEach(function(value){
-				value = Number(value);
-
-				output += !isNaN(value) ? Number(value) : 0;
-			});
-		}
-
-		return precision !== false ? output.toFixed(precision) : output;
-	},
-	"concat":function(values, data, calcParams){
-		var output = 0;
-
-		if(values.length){
-			output = values.reduce(function(sum, value){
-				return String(sum) + String(value);
-			});
-		}
-
-		return output;
-	},
-	"count":function(values, data, calcParams){
-		var output = 0;
-
-		if(values.length){
-			values.forEach(function(value){
-				if(value){
-					output ++;
-				}
-			});
-		}
-
-		return output;
-	},
-};
-
 // Tabulator.prototype.registerModule("columnCalcs", ColumnCalcs);
-
 module.exports = ColumnCalcs;
