@@ -1,6 +1,13 @@
-import Module from '../module.js';
+import Module from '../../module.js';
+
+import defaultUndoers from './defaults/undoers.js';
+import defaultRedoers from './defaults/redoers.js';
 
 class History extends Module{
+
+	//load defaults
+	static undoers = defaultUndoers;
+	static redoers = defaultRedoers;
 
 	constructor(table){
 		super(table);
@@ -104,58 +111,6 @@ class History extends Module{
 		});
 	}
 }
-
-History.prototype.undoers = {
-	cellEdit: function(action){
-		action.component.setValueProcessData(action.data.oldValue);
-	},
-
-	rowAdd: function(action){
-		action.component.deleteActual();
-	},
-
-	rowDelete: function(action){
-		var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
-
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.updateGroupRows(true);
-		}
-
-		this._rebindRow(action.component, newRow);
-	},
-
-	rowMove: function(action){
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posFrom], !action.data.after);
-		this.table.rowManager.redraw();
-	},
-};
-
-
-History.prototype.redoers = {
-	cellEdit: function(action){
-		action.component.setValueProcessData(action.data.newValue);
-	},
-
-	rowAdd: function(action){
-		var newRow = this.table.rowManager.addRowActual(action.data.data, action.data.pos, action.data.index);
-
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.updateGroupRows(true);
-		}
-
-		this._rebindRow(action.component, newRow);
-	},
-
-	rowDelete:function(action){
-		action.component.deleteActual();
-	},
-
-	rowMove: function(action){
-		this.table.rowManager.moveRowActual(action.component, this.table.rowManager.rows[action.data.posTo], action.data.after);
-		this.table.rowManager.redraw();
-	},
-};
-
 
 // Tabulator.prototype.registerModule("history", History);
 module.exports = History;
