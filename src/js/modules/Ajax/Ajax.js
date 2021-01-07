@@ -1,6 +1,17 @@
-import Module from '../module.js';
+import Module from '../../module.js';
+
+import defaultConfig from './defaults/config.js';
+import defaultURLGenerator from './defaults/contentTypeFormatters.js';
+import defaultLoaderPromise from './defaults/loaderPromise.js';
+import defaultContentTypeFormatters from './defaults/urlGenerator.js';
 
 class Ajax extends Module{
+
+	//load defaults
+	static defaultConfig = defaultConfig;
+	static defaultURLGenerator = defaultURLGenerator;
+	static defaultLoaderPromise = defaultLoaderPromise;
+	static contentTypeFormatters = defaultContentTypeFormatters;
 
 	constructor(table){
 		super(table);
@@ -330,143 +341,5 @@ class Ajax extends Module{
 	}
 }
 
-//default ajax config object
-Ajax.prototype.defaultConfig = {
-	method: "GET",
-};
-
-Ajax.prototype.defaultURLGenerator = function(url, config, params){
-
-	if(url){
-		if(params && Object.keys(params).length){
-			if(!config.method || config.method.toLowerCase() == "get"){
-				config.method = "get";
-
-				url += (url.includes("?") ? "&" : "?") + this.modules.ajax.serializeParams(params);
-			}
-		}
-	}
-
-	return url;
-};
-
-Ajax.prototype.defaultLoaderPromise = function(url, config, params){
-	var self = this, contentType;
-
-	return new Promise(function(resolve, reject){
-
-		//set url
-		url = self.urlGenerator.call(self.table, url, config, params);
-
-		//set body content if not GET request
-		if(config.method.toUpperCase() != "GET"){
-			contentType = typeof self.table.options.ajaxContentType === "object" ?  self.table.options.ajaxContentType : self.contentTypeFormatters[self.table.options.ajaxContentType];
-			if(contentType){
-
-				for(var key in contentType.headers){
-					if(!config.headers){
-						config.headers = {};
-					}
-
-					if(typeof config.headers[key] === "undefined"){
-						config.headers[key] = contentType.headers[key];
-					}
-				}
-
-				config.body = contentType.body.call(self, url, config, params);
-
-			}else{
-				console.warn("Ajax Error - Invalid ajaxContentType value:", self.table.options.ajaxContentType);
-			}
-		}
-
-		if(url){
-
-			//configure headers
-			if(typeof config.headers === "undefined"){
-				config.headers = {};
-			}
-
-			if(typeof config.headers.Accept === "undefined"){
-				config.headers.Accept = "application/json";
-			}
-
-			if(typeof config.headers["X-Requested-With"] === "undefined"){
-				config.headers["X-Requested-With"] = "XMLHttpRequest";
-			}
-
-			if(typeof config.mode === "undefined"){
-				config.mode = "cors";
-			}
-
-			if(config.mode == "cors"){
-
-				if(typeof config.headers["Access-Control-Allow-Origin"] === "undefined"){
-					config.headers["Access-Control-Allow-Origin"] = window.location.origin;
-				}
-
-				if(typeof config.credentials === "undefined"){
-					config.credentials = 'same-origin';
-				}
-			}else{
-				if(typeof config.credentials === "undefined"){
-					config.credentials = 'include';
-				}
-			}
-
-			//send request
-			fetch(url, config)
-			.then((response)=>{
-				if(response.ok) {
-					response.json()
-					.then((data)=>{
-						resolve(data);
-					}).catch((error)=>{
-						reject(error);
-						console.warn("Ajax Load Error - Invalid JSON returned", error);
-					});
-				}else{
-					console.error("Ajax Load Error - Connection Error: " + response.status, response.statusText);
-					reject(response);
-				}
-			})
-			.catch((error)=>{
-				console.error("Ajax Load Error - Connection Error: ", error);
-				reject(error);
-			});
-		}else{
-			console.warn("Ajax Load Error - No URL Set");
-			resolve([]);
-		}
-
-	});
-};
-
-Ajax.prototype.contentTypeFormatters = {
-	"json":{
-		headers:{
-			'Content-Type': 'application/json',
-		},
-		body:function(url, config, params){
-			return JSON.stringify(params);
-		},
-	},
-	"form":{
-		headers:{
-		},
-		body:function(url, config, params){
-			var output = this.generateParamsList(params),
-			form = new FormData();
-
-			output.forEach(function(item){
-				form.append(item.key, item.value);
-			});
-
-			return form;
-		},
-	},
-};
-
 // Tabulator.prototype.registerModule("ajax", Ajax);
-
 module.exports = Ajax;
