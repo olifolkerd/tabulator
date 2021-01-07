@@ -1,6 +1,11 @@
-import Module from './module.js';
+import Module from '../module.js';
+
+import defautlAccessors from './defaults/accessors.js';
 
 class Accessor extends Module{
+
+	//load defaults
+	static accessors = defautlAccessors;
 
 	constructor(table){
 		super(table);
@@ -58,7 +63,6 @@ class Accessor extends Module{
 		return accessor;
 	}
 
-
 	//apply accessor to row
 	transformRow(row, type){
 		var key = "accessor" + (type.charAt(0).toUpperCase() + type.slice(1)),
@@ -88,12 +92,7 @@ class Accessor extends Module{
 
 		return data;
 	}
-
 }
 
-//default accessors
-Accessor.prototype.accessors = {};
-
 // Tabulator.prototype.registerModule("accessor", Accessor);
-
 module.exports = Accessor;
