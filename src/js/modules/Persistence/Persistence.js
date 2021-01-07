@@ -1,6 +1,13 @@
-import Module from '../module.js';
+import Module from '../../module.js';
+
+import defaultReaders from './defaults/readers.js';
+import defaultWriters from './defaults/writers.js';
 
 class Persistence extends Module{
+
+	//load defaults
+	static readers = defaultReaders;
+	static writers = defaultWriters;
 
 	constructor(table){
 		super(table);
@@ -378,50 +385,6 @@ class Persistence extends Module{
 		return definitions;
 	}
 }
-
-// read peristence information from storage
-Persistence.prototype.readers = {
-	local:function(id, type){
-		var data = localStorage.getItem(id + "-" + type);
-
-		return data ? JSON.parse(data) : false;
-	},
-	cookie:function(id, type){
-		var cookie = document.cookie,
-		key = id + "-" + type,
-		cookiePos = cookie.indexOf(key + "="),
-		end, data;
-
-		//if cookie exists, decode and load column data into tabulator
-		if(cookiePos > -1){
-			cookie = cookie.substr(cookiePos);
-
-			end = cookie.indexOf(";");
-
-			if(end > -1){
-				cookie = cookie.substr(0, end);
-			}
-
-			data = cookie.replace(key + "=", "");
-		}
-
-		return data ? JSON.parse(data) : false;
-	}
-};
-
-//write persistence information to storage
-Persistence.prototype.writers = {
-	local:function(id, type, data){
-		localStorage.setItem(id + "-" + type, JSON.stringify(data));
-	},
-	cookie:function(id, type, data){
-		var expireDate = new Date();
-
-		expireDate.setDate(expireDate.getDate() + 10000);
-
-		document.cookie = id + "-" + type + "=" + JSON.stringify(data) + "; expires=" + expireDate.toUTCString();
-	}
-};
 
 // Tabulator.prototype.registerModule("persistence", Persistence);
 module.exports = Persistence;
