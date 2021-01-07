@@ -1,94 +1,73 @@
-var Format = function(table){
-	this.table = table; //hold Tabulator object
-};
+import Module from './module.js';
 
-//initialize column formatter
-Format.prototype.initializeColumn = function(column){
-	column.modules.format = this.lookupFormatter(column, "");
+class Format extends Module{
 
-	if(typeof column.definition.formatterPrint !== "undefined"){
-		column.modules.format.print = this.lookupFormatter(column, "Print");
+	//initialize column formatter
+	initializeColumn(column){
+		column.modules.format = this.lookupFormatter(column, "");
+
+		if(typeof column.definition.formatterPrint !== "undefined"){
+			column.modules.format.print = this.lookupFormatter(column, "Print");
+		}
+
+		if(typeof column.definition.formatterClipboard !== "undefined"){
+			column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
+		}
+
+		if(typeof column.definition.formatterHtmlOutput !== "undefined"){
+			column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
+		}
 	}
 
-	if(typeof column.definition.formatterClipboard !== "undefined"){
-		column.modules.format.clipboard = this.lookupFormatter(column, "Clipboard");
-	}
+	lookupFormatter(column, type){
+		var config = {params:column.definition["formatter" + type + "Params"] || {}},
+		formatter = column.definition["formatter" + type];
 
-	if(typeof column.definition.formatterHtmlOutput !== "undefined"){
-		column.modules.format.htmlOutput = this.lookupFormatter(column, "HtmlOutput");
-	}
-};
+		//set column formatter
+		switch(typeof formatter){
+			case "string":
 
+			if(formatter === "tick"){
+				formatter = "tickCross";
 
-Format.prototype.lookupFormatter = function(column, type){
-	var config = {params:column.definition["formatter" + type + "Params"] || {}},
-	formatter = column.definition["formatter" + type];
+				if(typeof config.params.crossElement == "undefined"){
+					config.params.crossElement = false;
+				}
 
-	//set column formatter
-	switch(typeof formatter){
-		case "string":
-
-		if(formatter === "tick"){
-			formatter = "tickCross";
-
-			if(typeof config.params.crossElement == "undefined"){
-				config.params.crossElement = false;
+				console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
 			}
 
-			console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
-		}
+			if(this.formatters[formatter]){
+				config.formatter = this.formatters[formatter];
+			}else{
+				console.warn("Formatter Error - No such formatter found: ", formatter);
+				config.formatter = this.formatters.plaintext;
+			}
+			break;
 
-		if(this.formatters[formatter]){
-			config.formatter = this.formatters[formatter];
-		}else{
-			console.warn("Formatter Error - No such formatter found: ", formatter);
+			case "function":
+			config.formatter = formatter;
+			break;
+
+			default:
 			config.formatter = this.formatters.plaintext;
-		}
-		break;
-
-		case "function":
-		config.formatter = formatter;
-		break;
-
-		default:
-		config.formatter = this.formatters.plaintext;
-		break;
-	}
-
-	return config;
-};
-
-Format.prototype.cellRendered = function(cell){
-	if(cell.modules.format && cell.modules.format.renderedCallback && !cell.modules.format.rendered){
-		cell.modules.format.renderedCallback();
-		cell.modules.format.rendered = true;
-	}
-};
-
-//return a formatted value for a cell
-Format.prototype.formatValue = function(cell){
-	var component = cell.getComponent(),
-	params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
-
-	function onRendered(callback){
-		if(!cell.modules.format){
-			cell.modules.format = {};
+			break;
 		}
 
-		cell.modules.format.renderedCallback = callback;
-		cell.modules.format.rendered = false;
+		return config;
 	}
 
-	return cell.column.modules.format.formatter.call(this, component, params, onRendered);
-};
+	cellRendered(cell){
+		if(cell.modules.format && cell.modules.format.renderedCallback && !cell.modules.format.rendered){
+			cell.modules.format.renderedCallback();
+			cell.modules.format.rendered = true;
+		}
+	}
 
-
-Format.prototype.formatExportValue = function(cell, type){
-	var formatter = cell.column.modules.format[type],
-	params;
-
-	if(formatter){
-		params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
+	//return a formatted value for a cell
+	formatValue(cell){
+		var component = cell.getComponent(),
+		params = typeof cell.column.modules.format.params === "function" ? cell.column.modules.format.params(component) : cell.column.modules.format.params;
 
 		function onRendered(callback){
 			if(!cell.modules.format){
@@ -99,64 +78,83 @@ Format.prototype.formatExportValue = function(cell, type){
 			cell.modules.format.rendered = false;
 		}
 
-		return formatter.formatter.call(this, cell.getComponent(), params, onRendered);
-
-	}else{
-		return this.formatValue(cell);
+		return cell.column.modules.format.formatter.call(this, component, params, onRendered);
 	}
-};
 
-Format.prototype.sanitizeHTML = function(value){
-	if(value){
-		var entityMap = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#39;',
-			'/': '&#x2F;',
-			'`': '&#x60;',
-			'=': '&#x3D;'
-		};
+	formatExportValue(cell, type){
+		var formatter = cell.column.modules.format[type],
+		params;
 
-		return String(value).replace(/[&<>"'`=\/]/g, function (s) {
-			return entityMap[s];
-		});
-	}else{
-		return value;
-	}
-};
+		if(formatter){
+			params = typeof formatter.params === "function" ? formatter.params(component) : formatter.params;
 
-Format.prototype.emptyToSpace = function(value){
-	return value === null || typeof value === "undefined" || value === "" ? "&nbsp;" : value;
-};
+			function onRendered(callback){
+				if(!cell.modules.format){
+					cell.modules.format = {};
+				}
 
-//get formatter for cell
-Format.prototype.getFormatter = function(formatter){
-	var formatter;
+				cell.modules.format.renderedCallback = callback;
+				cell.modules.format.rendered = false;
+			}
 
-	switch(typeof formatter){
-		case "string":
-		if(this.formatters[formatter]){
-			formatter = this.formatters[formatter]
+			return formatter.formatter.call(this, cell.getComponent(), params, onRendered);
+
 		}else{
-			console.warn("Formatter Error - No such formatter found: ", formatter);
-			formatter = this.formatters.plaintext;
+			return this.formatValue(cell);
 		}
-		break;
-
-		case "function":
-		formatter = formatter;
-		break;
-
-		default:
-		formatter = this.formatters.plaintext;
-		break;
 	}
 
-	return formatter;
+	sanitizeHTML(value){
+		if(value){
+			var entityMap = {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#39;',
+				'/': '&#x2F;',
+				'`': '&#x60;',
+				'=': '&#x3D;'
+			};
 
-};
+			return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+				return entityMap[s];
+			});
+		}else{
+			return value;
+		}
+	}
+
+	emptyToSpace(value){
+		return value === null || typeof value === "undefined" || value === "" ? "&nbsp;" : value;
+	}
+
+	//get formatter for cell
+	getFormatter(formatter){
+		var formatter;
+
+		switch(typeof formatter){
+			case "string":
+			if(this.formatters[formatter]){
+				formatter = this.formatters[formatter]
+			}else{
+				console.warn("Formatter Error - No such formatter found: ", formatter);
+				formatter = this.formatters.plaintext;
+			}
+			break;
+
+			case "function":
+			formatter = formatter;
+			break;
+
+			default:
+			formatter = this.formatters.plaintext;
+			break;
+		}
+
+		return formatter;
+	}
+}
 
 //default data formatters
 Format.prototype.formatters = {

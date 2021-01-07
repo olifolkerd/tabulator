@@ -1,107 +1,113 @@
-var FrozenRows = function(table){
-	this.table = table; //hold Tabulator object
-	this.topElement = document.createElement("div");
-	this.rows = [];
-	this.displayIndex = 0; //index in display pipeline
-};
+import Module from './module.js';
 
-FrozenRows.prototype.initialize = function(){
-	this.rows = [];
+class FrozenRows extends Module{
 
-	this.topElement.classList.add("tabulator-frozen-rows-holder");
+	constructor(table){
+		super(table);
 
-	// this.table.columnManager.element.append(this.topElement);
-	this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
-};
+		this.topElement = document.createElement("div");
+		this.rows = [];
+		this.displayIndex = 0; //index in display pipeline
+	}
 
-FrozenRows.prototype.setDisplayIndex = function(index){
-	this.displayIndex = index;
-};
+	initialize(){
+		this.rows = [];
 
-FrozenRows.prototype.getDisplayIndex = function(){
-	return this.displayIndex;
-};
+		this.topElement.classList.add("tabulator-frozen-rows-holder");
 
-FrozenRows.prototype.isFrozen = function(){
-	return !!this.rows.length;
-};
+		// this.table.columnManager.element.append(this.topElement);
+		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+	}
 
-//filter frozen rows out of display data
-FrozenRows.prototype.getRows = function(rows){
-	var self = this,
-	frozen = [],
-	output = rows.slice(0);
+	setDisplayIndex(index){
+		this.displayIndex = index;
+	}
 
-	this.rows.forEach(function(row){
-		var index = output.indexOf(row);
+	getDisplayIndex(){
+		return this.displayIndex;
+	}
+
+	isFrozen(){
+		return !!this.rows.length;
+	}
+
+	//filter frozen rows out of display data
+	getRows(rows){
+		var self = this,
+		frozen = [],
+		output = rows.slice(0);
+
+		this.rows.forEach(function(row){
+			var index = output.indexOf(row);
+
+			if(index > -1){
+				output.splice(index, 1);
+			}
+		});
+
+		return output;
+	}
+
+	freezeRow(row){
+		if(!row.modules.frozen){
+			row.modules.frozen = true;
+			this.topElement.appendChild(row.getElement());
+			row.initialize();
+			row.normalizeHeight();
+			this.table.rowManager.adjustTableSize();
+
+			this.rows.push(row);
+
+			this.table.rowManager.refreshActiveData("display");
+
+			this.styleRows();
+
+		}else{
+			console.warn("Freeze Error - Row is already frozen");
+		}
+	}
+
+	unfreezeRow(row){
+		var index = this.rows.indexOf(row);
+
+		if(row.modules.frozen){
+
+			row.modules.frozen = false;
+
+			this.detachRow(row);
+
+			this.table.rowManager.adjustTableSize();
+
+			this.table.rowManager.refreshActiveData("display");
+
+			if(this.rows.length){
+				this.styleRows();
+			}
+
+		}else{
+			console.warn("Freeze Error - Row is already unfrozen");
+		}
+	}
+
+	detachRow(row){
+		var index = this.rows.indexOf(row);
 
 		if(index > -1){
-			output.splice(index, 1);
+			var rowEl = row.getElement();
+			rowEl.parentNode.removeChild(rowEl);
+
+			this.rows.splice(index, 1);
 		}
-	});
-
-	return output;
-};
-
-FrozenRows.prototype.freezeRow = function(row){
-	if(!row.modules.frozen){
-		row.modules.frozen = true;
-		this.topElement.appendChild(row.getElement());
-		row.initialize();
-		row.normalizeHeight();
-		this.table.rowManager.adjustTableSize();
-
-		this.rows.push(row);
-
-		this.table.rowManager.refreshActiveData("display");
-
-		this.styleRows();
-
-	}else{
-		console.warn("Freeze Error - Row is already frozen");
 	}
-};
 
-FrozenRows.prototype.unfreezeRow = function(row){
-	var index = this.rows.indexOf(row);
+	styleRows(row){
+		var self = this;
 
-	if(row.modules.frozen){
-
-		row.modules.frozen = false;
-
-		this.detachRow(row);
-
-		this.table.rowManager.adjustTableSize();
-
-		this.table.rowManager.refreshActiveData("display");
-
-		if(this.rows.length){
-			this.styleRows();
-		}
-
-	}else{
-		console.warn("Freeze Error - Row is already unfrozen");
+		this.rows.forEach(function(row, i){
+			self.table.rowManager.styleRow(row, i);
+		});
 	}
-};
-
-FrozenRows.prototype.detachRow = function(row){
-	var index = this.rows.indexOf(row);
-
-	if(index > -1){
-		var rowEl = row.getElement();
-		rowEl.parentNode.removeChild(rowEl);
-
-		this.rows.splice(index, 1);
-	}
-};
-
-FrozenRows.prototype.styleRows = function(row){
-	var self = this;
-
-	this.rows.forEach(function(row, i){
-		self.table.rowManager.styleRow(row, i);
-	});
-};
+}
 
 // Tabulator.prototype.registerModule("frozenRows", FrozenRows);
 module.exports = FrozenRows;

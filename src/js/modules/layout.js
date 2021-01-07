@@ -1,33 +1,38 @@
-var Layout = function(table){
-	this.table = table;
-	this.mode = null;
-};
+import Module from './module.js';
 
-//initialize layout system
-Layout.prototype.initialize = function(layout){
+class Layout extends Module{
 
-	if(this.modes[layout]){
-		this.mode = layout;
-	}else{
-		console.warn("Layout Error - invalid mode set, defaulting to 'fitData' : " + layout);
-		this.mode = 'fitData';
+	constructor(table){
+		super(table);
+
+		this.mode = null;
 	}
 
-	this.table.element.setAttribute("tabulator-layout", this.mode);
-};
+	//initialize layout system
+	initializ(layout){
+		if(this.modes[layout]){
+			this.mode = layout;
+		}else{
+			console.warn("Layout Error - invalid mode set, defaulting to 'fitData' : " + layout);
+			this.mode = 'fitData';
+		}
 
-Layout.prototype.getMode = function(){
-	return this.mode;
-};
-
-//trigger table layout
-Layout.prototype.layout = function(){
-	this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
-
-	if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-		this.table.modules.persistence.save("columns");
+		this.table.element.setAttribute("tabulator-layout", this.mode);
 	}
-};
+
+	getMod(){
+		return this.mode;
+	}
+
+	//trigger table layout
+	layou(){
+		this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+
+		if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
+			this.table.modules.persistence.save("columns");
+		}
+	}
+}
 
 //layout render functions
 Layout.prototype.modes = {

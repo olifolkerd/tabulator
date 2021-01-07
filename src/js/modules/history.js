@@ -1,88 +1,109 @@
-var History = function(table){
-	this.table = table; //hold Tabulator object
+import Module from './module.js';
 
-	this.history = [];
-	this.index = -1;
-};
+class History extends Module{
 
+	constructor(table){
+		super(table);
 
-History.prototype.clear = function(){
-	this.history = [];
-	this.index = -1;
-};
-
-History.prototype.action = function(type, component, data){
-
-	this.history = this.history.slice(0, this.index + 1);
-
-	this.history.push({
-		type:type,
-		component:component,
-		data:data,
-	});
-
-	this.index ++;
-};
-
-History.prototype.getHistoryUndoSize = function(){
-	return this.index + 1;
-};
-
-History.prototype.getHistoryRedoSize = function(){
-	return this.history.length - (this.index + 1);
-};
-
-History.prototype.clearComponentHistory = function(component){
-	var index = this.history.findIndex(function(item){
-		return item.component === component;
-	});
-
-	if(index > -1){
-		this.history.splice(index, 1);
- 		if(index <= this.index){
- 			this.index--;
- 		}
-
- 		this.clearComponentHistory(component);
+		this.history = [];
+		this.index = -1;
 	}
-};
 
-History.prototype.undo = function(){
-
-	if(this.index > -1){
-		let action = this.history[this.index];
-
-		this.undoers[action.type].call(this, action);
-
-		this.index--;
-
-		this.table.options.historyUndo.call(this.table, action.type, action.component.getComponent(), action.data);
-
-		return true;
-	}else{
-		console.warn("History Undo Error - No more history to undo");
-		return false;
+	clear(){
+		this.history = [];
+		this.index = -1;
 	}
-};
 
-History.prototype.redo = function(){
-	if(this.history.length-1 > this.index){
+	action(type, component, data){
+		this.history = this.history.slice(0, this.index + 1);
 
-		this.index++;
+		this.history.push({
+			type:type,
+			component:component,
+			data:data,
+		});
 
-		let action = this.history[this.index];
-
-		this.redoers[action.type].call(this, action);
-
-		this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
-
-		return true;
-	}else{
-		console.warn("History Redo Error - No more history to redo");
-		return false;
+		this.index ++;
 	}
-};
 
+	getHistoryUndoSize(){
+		return this.index + 1;
+	}
+
+	getHistoryRedoSize(){
+		return this.history.length - (this.index + 1);
+	}
+
+	clearComponentHistory(component){
+		var index = this.history.findIndex(function(item){
+			return item.component === component;
+		});
+
+		if(index > -1){
+			this.history.splice(index, 1);
+	 		if(index <= this.index){
+	 			this.index--;
+	 		}
+
+	 		this.clearComponentHistory(component);
+		}
+	}
+
+	undo(){
+		if(this.index > -1){
+			let action = this.history[this.index];
+
+			this.undoers[action.type].call(this, action);
+
+			this.index--;
+
+			this.table.options.historyUndo.call(this.table, action.type, action.component.getComponent(), action.data);
+
+			return true;
+		}else{
+			console.warn("History Undo Error - No more history to undo");
+			return false;
+		}
+	}
+
+	redo(){
+		if(this.history.length-1 > this.index){
+
+			this.index++;
+
+			let action = this.history[this.index];
+
+			this.redoers[action.type].call(this, action);
+
+			this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
+
+			return true;
+		}else{
+			console.warn("History Redo Error - No more history to redo");
+			return false;
+		}
+	}
+
+	//rebind rows to new element after deletion
+	_rebindRow(oldRow, newRow){
+		this.history.forEach(function(action){
+			if(action.component instanceof Row){
+				if(action.component === oldRow){
+					action.component = newRow;
+				}
+			}else if(action.component instanceof Cell){
+				if(action.component.row === oldRow){
+					var field = action.component.column.getField();
+
+					if(field){
+						action.component = newRow.getCell(field);
+					}
+
+				}
+			}
+		});
+	}
+}
 
 History.prototype.undoers = {
 	cellEdit: function(action){
@@ -135,25 +156,6 @@ History.prototype.redoers = {
 	},
 };
 
-//rebind rows to new element after deletion
-History.prototype._rebindRow = function(oldRow, newRow){
-	this.history.forEach(function(action){
-		if(action.component instanceof Row){
-			if(action.component === oldRow){
-				action.component = newRow;
-			}
-		}else if(action.component instanceof Cell){
-			if(action.component.row === oldRow){
-				var field = action.component.column.getField();
-
-				if(field){
-					action.component = newRow.getCell(field);
-				}
-
-			}
-		}
-	});
-};
 
 // Tabulator.prototype.registerModule("history", History);
 module.exports = History;

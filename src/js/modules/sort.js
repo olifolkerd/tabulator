@@ -1,340 +1,345 @@
-var Sort = function(table){
- 	this.table = table; //hold Tabulator object
- 	this.sortList = []; //holder current sort
- 	this.changed = false; //has the sort changed since last render
- };
+import Module from './module.js';
 
-//initialize column header for sorting
-Sort.prototype.initializeColumn = function(column, content){
-	var self = this,
-	sorter = false,
-	colEl,
-	arrowEl;
+class Sort extends Module{
 
+	constructor(table){
+	 	super(table);
 
-	switch(typeof column.definition.sorter){
-		case "string":
-		if(self.sorters[column.definition.sorter]){
-			sorter = self.sorters[column.definition.sorter];
-		}else{
-			console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
-		}
-		break;
-
-		case "function":
-		sorter = column.definition.sorter;
-		break;
+	 	this.sortList = []; //holder current sort
+	 	this.changed = false; //has the sort changed since last render
 	}
 
-	column.modules.sort = {
-		sorter:sorter, dir:"none",
-		params:column.definition.sorterParams || {},
-		startingDir:column.definition.headerSortStartingDir || "asc",
-		tristate: typeof column.definition.headerSortTristate !== "undefined" ? column.definition.headerSortTristate : this.table.options.headerSortTristate,
-	};
-
-	if(typeof column.definition.headerSort === "undefined" ? (this.table.options.headerSort !== false) : column.definition.headerSort !== false){
-
-		colEl = column.getElement();
-
-		colEl.classList.add("tabulator-sortable");
+	//initialize column header for sorting
+	initializeColumn(column, content){
+		var self = this,
+		sorter = false,
+		colEl,
+		arrowEl;
 
 
-		arrowEl = document.createElement("div");
-		arrowEl.classList.add("tabulator-col-sorter");
+		switch(typeof column.definition.sorter){
+			case "string":
+			if(self.sorters[column.definition.sorter]){
+				sorter = self.sorters[column.definition.sorter];
+			}else{
+				console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
+			}
+			break;
 
-		if(typeof this.table.options.headerSortElement == "object"){
-			arrowEl.appendChild(this.table.options.headerSortElement);
-		}else{
-			arrowEl.innerHTML = this.table.options.headerSortElement;
+			case "function":
+			sorter = column.definition.sorter;
+			break;
 		}
 
-		//create sorter arrow
-		content.appendChild(arrowEl);
+		column.modules.sort = {
+			sorter:sorter, dir:"none",
+			params:column.definition.sorterParams || {},
+			startingDir:column.definition.headerSortStartingDir || "asc",
+			tristate: typeof column.definition.headerSortTristate !== "undefined" ? column.definition.headerSortTristate : this.table.options.headerSortTristate,
+		};
 
-		column.modules.sort.element = arrowEl;
+		if(typeof column.definition.headerSort === "undefined" ? (this.table.options.headerSort !== false) : column.definition.headerSort !== false){
 
-		//sort on click
-		colEl.addEventListener("click", function(e){
-			var dir = "",
-			sorters=[],
-			match = false;
+			colEl = column.getElement();
 
-			if(column.modules.sort){
-				if(column.modules.sort.tristate){
-					if(column.modules.sort.dir == "none"){
-						dir = column.modules.sort.startingDir;
-					}else{
-						if(column.modules.sort.dir == column.modules.sort.startingDir){
-							dir = column.modules.sort.dir == "asc" ? "desc" : "asc";
+			colEl.classList.add("tabulator-sortable");
+
+
+			arrowEl = document.createElement("div");
+			arrowEl.classList.add("tabulator-col-sorter");
+
+			if(typeof this.table.options.headerSortElement == "object"){
+				arrowEl.appendChild(this.table.options.headerSortElement);
+			}else{
+				arrowEl.innerHTML = this.table.options.headerSortElement;
+			}
+
+			//create sorter arrow
+			content.appendChild(arrowEl);
+
+			column.modules.sort.element = arrowEl;
+
+			//sort on click
+			colEl.addEventListener("click", function(e){
+				var dir = "",
+				sorters=[],
+				match = false;
+
+				if(column.modules.sort){
+					if(column.modules.sort.tristate){
+						if(column.modules.sort.dir == "none"){
+							dir = column.modules.sort.startingDir;
 						}else{
-							dir = "none";
-						}
-					}
-				}else{
-					switch(column.modules.sort.dir){
-						case "asc":
-						dir = "desc";
-						break;
-
-						case "desc":
-						dir = "asc";
-						break;
-
-						default:
-						dir = column.modules.sort.startingDir;
-					}
-				}
-
-
-				if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
-					sorters = self.getSort();
-
-					match = sorters.findIndex(function(sorter){
-						return sorter.field === column.getField();
-					});
-
-					if(match > -1){
-						sorters[match].dir = dir;
-
-						if(match != sorters.length -1){
-							match = sorters.splice(match, 1)[0];
-							if(dir != "none"){
-								sorters.push(match);
+							if(column.modules.sort.dir == column.modules.sort.startingDir){
+								dir = column.modules.sort.dir == "asc" ? "desc" : "asc";
+							}else{
+								dir = "none";
 							}
 						}
 					}else{
-						if(dir != "none"){
-							sorters.push({column:column, dir:dir});
+						switch(column.modules.sort.dir){
+							case "asc":
+							dir = "desc";
+							break;
+
+							case "desc":
+							dir = "asc";
+							break;
+
+							default:
+							dir = column.modules.sort.startingDir;
 						}
 					}
 
-					//add to existing sort
-					self.setSort(sorters);
-				}else{
-					if(dir == "none"){
-						self.clear();
+
+					if (self.table.options.columnHeaderSortMulti && (e.shiftKey || e.ctrlKey)) {
+						sorters = self.getSort();
+
+						match = sorters.findIndex(function(sorter){
+							return sorter.field === column.getField();
+						});
+
+						if(match > -1){
+							sorters[match].dir = dir;
+
+							if(match != sorters.length -1){
+								match = sorters.splice(match, 1)[0];
+								if(dir != "none"){
+									sorters.push(match);
+								}
+							}
+						}else{
+							if(dir != "none"){
+								sorters.push({column:column, dir:dir});
+							}
+						}
+
+						//add to existing sort
+						self.setSort(sorters);
 					}else{
-						//sort by column only
-						self.setSort(column, dir);
+						if(dir == "none"){
+							self.clear();
+						}else{
+							//sort by column only
+							self.setSort(column, dir);
+						}
+
 					}
 
+					self.table.rowManager.sorterRefresh(!self.sortList.length);
 				}
+			});
+		}
+	}
 
-				self.table.rowManager.sorterRefresh(!self.sortList.length);
+	//check if the sorters have changed since last use
+	hasChanged(){
+		var changed = this.changed;
+		this.changed = false;
+		return changed;
+	}
+
+	//return current sorters
+	getSort(){
+		var self = this,
+		sorters = [];
+
+		self.sortList.forEach(function(item){
+			if(item.column){
+				sorters.push({column:item.column.getComponent(), field:item.column.getField(), dir:item.dir});
 			}
 		});
+
+		return sorters;
 	}
-};
 
-//check if the sorters have changed since last use
-Sort.prototype.hasChanged = function(){
-	var changed = this.changed;
-	this.changed = false;
-	return changed;
-};
+	//change sort list and trigger sort
+	setSort(sortList, dir){
+		var self = this,
+		newSortList = [];
 
-//return current sorters
-Sort.prototype.getSort = function(){
-	var self = this,
-	sorters = [];
-
-	self.sortList.forEach(function(item){
-		if(item.column){
-			sorters.push({column:item.column.getComponent(), field:item.column.getField(), dir:item.dir});
+		if(!Array.isArray(sortList)){
+			sortList = [{column: sortList, dir:dir}];
 		}
-	});
 
-	return sorters;
-};
+		sortList.forEach(function(item){
+			var column;
 
-//change sort list and trigger sort
-Sort.prototype.setSort = function(sortList, dir){
-	var self = this,
-	newSortList = [];
+			column = self.table.columnManager.findColumn(item.column);
 
-	if(!Array.isArray(sortList)){
-		sortList = [{column: sortList, dir:dir}];
+			if(column){
+				item.column = column;
+				newSortList.push(item);
+				self.changed = true;
+			}else{
+				console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
+			}
+
+		});
+
+		self.sortList = newSortList;
+
+		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort){
+			this.table.modules.persistence.save("sort");
+		}
 	}
 
-	sortList.forEach(function(item){
-		var column;
+	//clear sorters
+	clear(){
+		this.setSort([]);
+	}
 
-		column = self.table.columnManager.findColumn(item.column);
+	//find appropriate sorter for column
+	findSorter(column){
+		var row = this.table.rowManager.activeRows[0],
+		sorter = "string",
+		field, value;
 
-		if(column){
-			item.column = column;
-			newSortList.push(item);
-			self.changed = true;
+		if(row){
+			row = row.getData();
+			field = column.getField();
+
+			if(field){
+
+				value = column.getFieldValue(row);
+
+				switch(typeof value){
+					case "undefined":
+					sorter = "string";
+					break;
+
+					case "boolean":
+					sorter = "boolean";
+					break;
+
+					default:
+					if(!isNaN(value) && value !== ""){
+						sorter = "number";
+					}else{
+						if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
+							sorter = "alphanum";
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		return this.sorters[sorter];
+	}
+
+	//work through sort list sorting data
+	sort(data){
+		var self = this,
+		sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
+		sortListActual = [],
+		rowComponents = [],
+		lastSort;
+
+		if(self.table.options.dataSorting){
+			self.table.options.dataSorting.call(self.table, self.getSort());
+		}
+
+		self.clearColumnHeaders();
+
+		if(!self.table.options.ajaxSorting){
+
+			//build list of valid sorters and trigger column specific callbacks before sort begins
+			sortList.forEach(function(item, i){
+				var sortObj = item.column.modules.sort;
+
+				if(item.column && sortObj){
+
+					//if no sorter has been defined, take a guess
+					if(!sortObj.sorter){
+						sortObj.sorter = self.findSorter(item.column);
+					}
+
+					item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
+
+					sortListActual.push(item);
+				}
+
+				self.setColumnHeader(item.column, item.dir);
+			});
+
+			//sort data
+			if (sortListActual.length) {
+				self._sortItems(data, sortListActual);
+			}
+
 		}else{
-			console.warn("Sort Warning - Sort field does not exist and is being ignored: ", item.column);
+			sortList.forEach(function(item, i){
+				self.setColumnHeader(item.column, item.dir);
+			});
 		}
 
-	});
+		if(self.table.options.dataSorted){
+			data.forEach((row) => {
+				rowComponents.push(row.getComponent());
+			});
 
-	self.sortList = newSortList;
-
-	if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.sort){
-		this.table.modules.persistence.save("sort");
+			self.table.options.dataSorted.call(self.table, self.getSort(), rowComponents);
+		}
 	}
-};
 
-//clear sorters
-Sort.prototype.clear = function(){
-	this.setSort([]);
-};
+	//clear sort arrows on columns
+	clearColumnHeaders(){
+		this.table.columnManager.getRealColumns().forEach(function(column){
+			if(column.modules.sort){
+				column.modules.sort.dir = "none";
+				column.getElement().setAttribute("aria-sort", "none");
+			}
+		});
+	}
 
-//find appropriate sorter for column
-Sort.prototype.findSorter = function(column){
-	var row = this.table.rowManager.activeRows[0],
-	sorter = "string",
-	field, value;
+	//set the column header sort direction
+	setColumnHeader(column, dir){
+		column.modules.sort.dir = dir;
+		column.getElement().setAttribute("aria-sort", dir);
+	}
 
-	if(row){
-		row = row.getData();
-		field = column.getField();
+	//sort each item in sort list
+	_sortItems(data, sortList){
+		var sorterCount = sortList.length - 1;
 
-		if(field){
+		data.sort((a, b) => {
+			var result;
 
-			value = column.getFieldValue(row);
+			for(var i = sorterCount; i>= 0; i--){
+				let sortItem = sortList[i];
 
-			switch(typeof value){
-				case "undefined":
-				sorter = "string";
-				break;
+				result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
 
-				case "boolean":
-				sorter = "boolean";
-				break;
-
-				default:
-				if(!isNaN(value) && value !== ""){
-					sorter = "number";
-				}else{
-					if(value.match(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+$/i)){
-						sorter = "alphanum";
-					}
+				if(result !== 0){
+					break;
 				}
-				break;
-			}
-		}
-	}
-
-	return this.sorters[sorter];
-};
-
-//work through sort list sorting data
-Sort.prototype.sort = function(data){
-	var self = this,
-	sortList = this.table.options.sortOrderReverse ? self.sortList.slice().reverse() : self.sortList,
-	sortListActual = [],
-	rowComponents = [],
-	lastSort;
-
-	if(self.table.options.dataSorting){
-		self.table.options.dataSorting.call(self.table, self.getSort());
-	}
-
-	self.clearColumnHeaders();
-
-	if(!self.table.options.ajaxSorting){
-
-		//build list of valid sorters and trigger column specific callbacks before sort begins
-		sortList.forEach(function(item, i){
-			var sortObj = item.column.modules.sort;
-
-			if(item.column && sortObj){
-
-				//if no sorter has been defined, take a guess
-				if(!sortObj.sorter){
-					sortObj.sorter = self.findSorter(item.column);
-				}
-
-				item.params = typeof sortObj.params === "function" ? sortObj.params(item.column.getComponent(), item.dir) : sortObj.params;
-
-				sortListActual.push(item);
 			}
 
-			self.setColumnHeader(item.column, item.dir);
-		});
-
-		//sort data
-		if (sortListActual.length) {
-			self._sortItems(data, sortListActual);
-		}
-
-	}else{
-		sortList.forEach(function(item, i){
-			self.setColumnHeader(item.column, item.dir);
+			return result;
 		});
 	}
 
-	if(self.table.options.dataSorted){
-		data.forEach((row) => {
-			rowComponents.push(row.getComponent());
-		});
+	//process individual rows for a sort function on active data
+	_sortRow(a, b, column, dir, params){
+		var el1Comp, el2Comp, colComp;
 
-		self.table.options.dataSorted.call(self.table, self.getSort(), rowComponents);
+		//switch elements depending on search direction
+		var el1 = dir == "asc" ? a : b;
+		var el2 = dir == "asc" ? b : a;
+
+		a = column.getFieldValue(el1.getData());
+		b = column.getFieldValue(el2.getData());
+
+		a = typeof a !== "undefined" ? a : "";
+		b = typeof b !== "undefined" ? b : "";
+
+		el1Comp = el1.getComponent();
+		el2Comp = el2.getComponent();
+
+		return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
 	}
-
-};
-
-//clear sort arrows on columns
-Sort.prototype.clearColumnHeaders = function(){
-	this.table.columnManager.getRealColumns().forEach(function(column){
-		if(column.modules.sort){
-			column.modules.sort.dir = "none";
-			column.getElement().setAttribute("aria-sort", "none");
-		}
-	});
-};
-
-//set the column header sort direction
-Sort.prototype.setColumnHeader = function(column, dir){
-	column.modules.sort.dir = dir;
-	column.getElement().setAttribute("aria-sort", dir);
-};
-
-//sort each item in sort list
-Sort.prototype._sortItems = function(data, sortList){
-	var sorterCount = sortList.length - 1;
-
-	data.sort((a, b) => {
-		var result;
-
-		for(var i = sorterCount; i>= 0; i--){
-			let sortItem = sortList[i];
-
-			result = this._sortRow(a, b, sortItem.column, sortItem.dir, sortItem.params);
-
-			if(result !== 0){
-				break;
-			}
-		}
-
-		return result;
-	});
-};
-
-//process individual rows for a sort function on active data
-Sort.prototype._sortRow = function(a, b, column, dir, params){
-	var el1Comp, el2Comp, colComp;
-
-	//switch elements depending on search direction
-	var el1 = dir == "asc" ? a : b;
-	var el2 = dir == "asc" ? b : a;
-
-	a = column.getFieldValue(el1.getData());
-	b = column.getFieldValue(el2.getData());
-
-	a = typeof a !== "undefined" ? a : "";
-	b = typeof b !== "undefined" ? b : "";
-
-	el1Comp = el1.getComponent();
-	el2Comp = el2.getComponent();
-
-	return column.modules.sort.sorter.call(this, a, b, el1Comp, el2Comp, column.getComponent(), dir, params);
-};
+}
 
 
 //default data sorters
