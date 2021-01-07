@@ -1,4 +1,4 @@
-import Module from '../module.js';
+import Module from '../../module.js';
 
 class Comms extends Module{
 
@@ -40,6 +40,5 @@ class Comms extends Module{
 	}
 }
 
-Tabulator.prototype.registerModule("comms", Comms);
-
+// Tabulator.prototype.registerModule("comms", Comms);
 module.exports = Comms;
