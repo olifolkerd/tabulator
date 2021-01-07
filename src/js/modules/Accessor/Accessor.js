@@ -1,4 +1,4 @@
-import Module from '../module.js';
+import Module from '../../module.js';
 
 import defautlAccessors from './defaults/accessors.js';
 
