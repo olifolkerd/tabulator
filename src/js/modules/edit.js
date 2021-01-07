@@ -2256,4 +2256,5 @@ Edit.prototype.editors = {
 	},
 };
 
-Tabulator.prototype.registerModule("edit", Edit);
+// Tabulator.prototype.registerModule("edit", Edit);
+module.exports = Edit;

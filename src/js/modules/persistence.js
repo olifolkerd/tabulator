@@ -420,5 +420,5 @@ Persistence.prototype.writers = {
 	}
 };
 
-
-Tabulator.prototype.registerModule("persistence", Persistence);
+// Tabulator.prototype.registerModule("persistence", Persistence);
+module.exports = Persistence;

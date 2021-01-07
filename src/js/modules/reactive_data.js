@@ -319,7 +319,8 @@ ReactiveData.prototype.unblock = function(){
 	this.blocked = false;
 };
 
-Tabulator.prototype.registerModule("reactiveData", ReactiveData);
+// Tabulator.prototype.registerModule("reactiveData", ReactiveData);
+module.exports = ReactiveData;
 
 
 

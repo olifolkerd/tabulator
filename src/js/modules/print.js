@@ -91,4 +91,5 @@ Print.prototype.printFullscreen = function(visible, style, config){
 	this.manualBlock = false;
 };
 
-Tabulator.prototype.registerModule("print", Print);
+// Tabulator.prototype.registerModule("print", Print);
+module.exports = Print;

@@ -293,5 +293,5 @@ Layout.prototype.modes = {
 	},
 };
 
-
-Tabulator.prototype.registerModule("layout", Layout);
+// Tabulator.prototype.registerModule("layout", Layout);
+module.exports = Layout;

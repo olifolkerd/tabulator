@@ -606,4 +606,5 @@ Export.prototype.mapElementStyles = function(from, to, props){
 };
 
 
-Tabulator.prototype.registerModule("export", Export);
+// Tabulator.prototype.registerModule("export", Export);
+module.exports = Export;

@@ -386,4 +386,5 @@ SelectRow.prototype.childRowSelection = function(row, select){
 	}
 };
 
-Tabulator.prototype.registerModule("selectRow", SelectRow);
+// Tabulator.prototype.registerModule("selectRow", SelectRow);
+module.exports = SelectRow;

@@ -110,4 +110,5 @@ Mutator.prototype.disable = function(){
 //default mutators
 Mutator.prototype.mutators = {};
 
-Tabulator.prototype.registerModule("mutator", Mutator);
+// Tabulator.prototype.registerModule("mutator", Mutator);
+module.exports = Mutator;

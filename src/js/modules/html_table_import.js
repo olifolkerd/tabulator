@@ -185,4 +185,5 @@ HtmlTableImport.prototype._generateBlankHeaders = function(headers, rows){
 	}
 };
 
-Tabulator.prototype.registerModule("htmlTableImport", HtmlTableImport);
+// Tabulator.prototype.registerModule("htmlTableImport", HtmlTableImport);
+module.exports = HtmlTableImport;

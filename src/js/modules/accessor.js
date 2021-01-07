@@ -88,6 +88,6 @@ Accessor.prototype.transformRow = function(row, type){
 //default accessors
 Accessor.prototype.accessors = {};
 
+// Tabulator.prototype.registerModule("accessor", Accessor);
 
-
-Tabulator.prototype.registerModule("accessor", Accessor);
+module.exports = Accessor;

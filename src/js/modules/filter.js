@@ -825,4 +825,5 @@ Filter.prototype.filters ={
 	},
 };
 
-Tabulator.prototype.registerModule("filter", Filter);
+// Tabulator.prototype.registerModule("filter", Filter);
+module.exports = Filter;

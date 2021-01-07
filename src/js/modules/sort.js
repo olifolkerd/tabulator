@@ -587,4 +587,5 @@ Sort.prototype.sorters = {
 	},
 };
 
-Tabulator.prototype.registerModule("sort", Sort);
+// Tabulator.prototype.registerModule("sort", Sort);
+module.exports = Sort;

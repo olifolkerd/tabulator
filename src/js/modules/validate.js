@@ -283,5 +283,5 @@ Validate.prototype.validators = {
 	},
 };
 
-
-Tabulator.prototype.registerModule("validate", Validate);
+// Tabulator.prototype.registerModule("validate", Validate);
+module.exports = Validate;

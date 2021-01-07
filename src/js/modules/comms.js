@@ -43,3 +43,5 @@ Comms.prototype.receive = function(table, module, action, data){
 
 
 Tabulator.prototype.registerModule("comms", Comms);
+
+module.exports = Comms;

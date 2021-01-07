@@ -94,4 +94,5 @@ ResizeRows.prototype._mouseDown = function(e, row, handle){
 	handle.addEventListener("touchend", mouseUp);
 };
 
-Tabulator.prototype.registerModule("resizeRows", ResizeRows);
+// Tabulator.prototype.registerModule("resizeRows", ResizeRows);
+module.exports = ResizeRows;

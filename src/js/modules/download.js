@@ -428,5 +428,5 @@ Download.prototype.downloaders = {
 
 };
 
-
-Tabulator.prototype.registerModule("download", Download);
+// Tabulator.prototype.registerModule("download", Download);
+module.exports = Download;

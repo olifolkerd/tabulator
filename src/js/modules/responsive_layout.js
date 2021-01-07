@@ -297,4 +297,5 @@ ResponsiveLayout.prototype.formatCollapsedData = function(data){
 	return Object.keys(data).length ? list : "";
 };
 
-Tabulator.prototype.registerModule("responsiveLayout", ResponsiveLayout);
+// Tabulator.prototype.registerModule("responsiveLayout", ResponsiveLayout);
+module.exports = ResponsiveLayout;

@@ -268,4 +268,5 @@ FrozenColumns.prototype._calcSpace = function(columns, index){
 	return width;
 };
 
-Tabulator.prototype.registerModule("frozenColumns", FrozenColumns);
+// Tabulator.prototype.registerModule("frozenColumns", FrozenColumns);
+module.exports = FrozenColumns;

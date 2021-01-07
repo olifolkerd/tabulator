@@ -298,4 +298,5 @@ Menu.prototype.hideMenu = function(){
 //default accessors
 Menu.prototype.menus = {};
 
-Tabulator.prototype.registerModule("menu", Menu);
+// Tabulator.prototype.registerModule("menu", Menu);
+module.exports = Menu;

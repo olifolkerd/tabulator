@@ -630,5 +630,5 @@ MoveRows.prototype.commsReceived = function(table, action, data){
 	}
 };
 
-
-Tabulator.prototype.registerModule("moveRow", MoveRows);
+// Tabulator.prototype.registerModule("moveRow", MoveRows);
+module.exports = MoveRows;

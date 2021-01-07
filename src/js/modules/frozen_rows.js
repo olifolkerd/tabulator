@@ -103,5 +103,5 @@ FrozenRows.prototype.styleRows = function(row){
 	});
 };
 
-
-Tabulator.prototype.registerModule("frozenRows", FrozenRows);
+// Tabulator.prototype.registerModule("frozenRows", FrozenRows);
+module.exports = FrozenRows;

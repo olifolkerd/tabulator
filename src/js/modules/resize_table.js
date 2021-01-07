@@ -111,4 +111,5 @@ ResizeTable.prototype.clearBindings = function(row){
 	}
 };
 
-Tabulator.prototype.registerModule("resizeTable", ResizeTable);
+// Tabulator.prototype.registerModule("resizeTable", ResizeTable);
+module.exports = ResizeTable;

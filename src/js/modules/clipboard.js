@@ -348,4 +348,5 @@ Clipboard.prototype.pasteActions = {
 
 
 
-Tabulator.prototype.registerModule("clipboard", Clipboard);
+// Tabulator.prototype.registerModule("clipboard", Clipboard);
+module.exports = Clipboard;

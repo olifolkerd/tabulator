@@ -155,4 +155,5 @@ History.prototype._rebindRow = function(oldRow, newRow){
 	});
 };
 
-Tabulator.prototype.registerModule("history", History);
+// Tabulator.prototype.registerModule("history", History);
+module.exports = History;

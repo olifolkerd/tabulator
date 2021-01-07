@@ -200,4 +200,5 @@ Localize.prototype.langs = {
 	},
 };
 
-Tabulator.prototype.registerModule("localize", Localize);
+// Tabulator.prototype.registerModule("localize", Localize);
+module.exports = Localize;

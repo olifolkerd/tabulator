@@ -735,4 +735,5 @@ Page.prototype.paginationDataReceivedNames = {
 	"data":"data",
 };
 
-Tabulator.prototype.registerModule("page", Page);
+// Tabulator.prototype.registerModule("page", Page);
+module.exports = Page;

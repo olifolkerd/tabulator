@@ -727,4 +727,5 @@ Format.prototype.formatters = {
 	},
 };
 
-Tabulator.prototype.registerModule("format", Format);
+// Tabulator.prototype.registerModule("format", Format);
+module.exports = Format;

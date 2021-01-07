@@ -278,4 +278,5 @@ MoveColumns.prototype.moveHover = function(e){
 	}
 };
 
-Tabulator.prototype.registerModule("moveColumn", MoveColumns);
+// Tabulator.prototype.registerModule("moveColumn", MoveColumns);
+module.exports = MoveColumns;

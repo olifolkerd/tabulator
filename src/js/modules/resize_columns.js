@@ -169,4 +169,5 @@ ResizeColumns.prototype._mouseDown = function(e, column, handle){
 	handle.addEventListener("touchend", mouseUp);
 };
 
-Tabulator.prototype.registerModule("resizeColumns", ResizeColumns);
+// Tabulator.prototype.registerModule("resizeColumns", ResizeColumns);
+module.exports = ResizeColumns;

@@ -382,5 +382,5 @@ Keybindings.prototype.actions = {
 	},
 };
 
-
-Tabulator.prototype.registerModule("keybindings", Keybindings);
+// Tabulator.prototype.registerModule("keybindings", Keybindings);
+module.exports = Keybindings;

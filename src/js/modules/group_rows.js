@@ -1,5 +1,3 @@
-
-
 //public group object
 var GroupComponent = function (group){
 	this._group = group;
@@ -1069,7 +1067,7 @@ GroupRows.prototype.reassignRowToGroup = function(row){
 		samePath = true;
 	// figure out if new group path is the same as old group path
 	var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every(function(element, index) {
-		return element === newGroupPath[index]; 
+		return element === newGroupPath[index];
 	});
 	// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
 	if(!samePath) {
@@ -1138,4 +1136,5 @@ GroupRows.prototype.removeGroup = function(group){
 	}
 };
 
-Tabulator.prototype.registerModule("groupRows", GroupRows);
+// Tabulator.prototype.registerModule("groupRows", GroupRows);
+module.exports = GroupRows;
