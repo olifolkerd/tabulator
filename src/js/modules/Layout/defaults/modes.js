@@ -1,7 +1,7 @@
-import fitData from './editors/fitData.js';
-import fitDataGeneral from './editors/fitDataGeneral.js';
-import fitDataStretch from './editors/fitDataStretch.js';
-import fitColumns from './editors/fitColumns.js';
+import fitData from './modes/fitData.js';
+import fitDataGeneral from './modes/fitDataGeneral.js';
+import fitDataStretch from './modes/fitDataStretch.js';
+import fitColumns from './modes/fitColumns.js';
 
 module.exports = {
 	fitData:fitData,
