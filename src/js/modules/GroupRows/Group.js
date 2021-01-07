@@ -652,13 +652,13 @@ class Group{
 		return this;
 	}
 
-	reinitializeHeight(){};
+	reinitializeHeight(){}
 
-	calcHeight(){};
+	calcHeight(){}
 
-	setCellHeight(){};
+	setCellHeight(){}
 
-	clearCellHeight(){};
+	clearCellHeight(){}
 
 	//////////////// Object Generation /////////////////
 	getComponent(){
@@ -668,6 +668,6 @@ class Group{
 
 		return this.component;
 	}
-};
+}
 
 module.exports = Group;
