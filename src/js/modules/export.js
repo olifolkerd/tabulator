@@ -13,7 +13,7 @@ var ExportColumn = function(value, component, width, height, depth){
 	this.depth = depth;
 };
 
-import Module from './module.js';
+import Module from '../module.js';
 
 class Export extends Module{
 

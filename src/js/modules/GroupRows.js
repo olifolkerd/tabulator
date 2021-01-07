@@ -753,7 +753,7 @@ Group.prototype.getComponent = function(){
 //////////////////////////////////////////////////
 ////////////// Group Row Extension ///////////////
 //////////////////////////////////////////////////
-import Module from './module.js';
+import Module from '../module.js';
 
 class GroupRows extends Module{
 

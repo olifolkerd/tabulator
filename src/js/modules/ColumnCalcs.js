@@ -34,7 +34,7 @@ CalcComponent.prototype._getSelf = function(){
 	return this._row;
 };
 
-import Module from './module.js';
+import Module from '../module.js';
 
 class ColumnCalcs extends Module{
 
