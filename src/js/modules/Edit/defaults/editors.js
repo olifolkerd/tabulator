@@ -1,12 +1,12 @@
-import input from './downloaders/input.js';
-import textarea from './downloaders/textarea.js';
-import number from './downloaders/number.js';
-import range from './downloaders/range.js';
-import select from './downloaders/select.js';
-import autocomplete from './downloaders/autocomplete.js';
-import star from './downloaders/star.js';
-import progress from './downloaders/progress.js';
-import tickCross from './downloaders/tickCross.js';
+import input from './editors/input.js';
+import textarea from './editors/textarea.js';
+import number from './editors/number.js';
+import range from './editors/range.js';
+import select from './editors/select.js';
+import autocomplete from './editors/autocomplete.js';
+import star from './editors/star.js';
+import progress from './editors/progress.js';
+import tickCross from './editors/tickCross.js';
 
 module.exports = {
 	input:input,
