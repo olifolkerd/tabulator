@@ -1,19 +1,7 @@
-var ExportRow = function(type, columns, component, indent){
-	this.type = type;
-	this.columns = columns;
-	this.component = component || false;
-	this.indent = indent || 0;
-};
+import Module from '../../module.js';
 
-var ExportColumn = function(value, component, width, height, depth){
-	this.value = value;
-	this.component = component || false;
-	this.width = width;
-	this.height = height;
-	this.depth = depth;
-};
-
-import Module from '../module.js';
+import ExportRow from './ExportRow.js';
+import ExportColumn from './ExportColumn.js';
 
 class Export extends Module{
 
