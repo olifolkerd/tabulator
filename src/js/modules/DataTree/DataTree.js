@@ -1,4 +1,4 @@
-import Module from '../module.js';
+import Module from '../../module.js';
 
 class DataTree extends Module{
 
