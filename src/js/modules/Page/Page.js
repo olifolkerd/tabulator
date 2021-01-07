@@ -1,6 +1,13 @@
-import Module from '../module.js';
+import Module from '../../module.js';
+
+import defaultDataSentNames from './defaults/dataSentNames.js';
+import defaultDataReceivedNames from './defaults/dataReceivedNames.js';
 
 class Page extends Module{
+
+	//load defaults
+	static defaultDataSentNames = defaultDataSentNames;
+	static defaultDataReceivedNames = defaultDataReceivedNames;
 
 	constructor(table){
 		super(table);
@@ -115,10 +122,10 @@ class Page extends Module{
 		pageSelectLabel, testElRow, testElCell;
 
 		//update param names
-		this.dataSentNames = Object.assign({}, this.paginationDataSentNames);
+		this.dataSentNames = Object.assign({}, this.defaultDataSentNames);
 		this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-		this.dataReceivedNames = Object.assign({}, this.paginationDataReceivedNames);
+		this.dataReceivedNames = Object.assign({}, this.defaultDataReceivedNames);
 		this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
 		//build pagination element
@@ -707,24 +714,6 @@ class Page extends Module{
 		}
 	}
 }
-
-//set the paramter names for pagination requests
-Page.prototype.paginationDataSentNames = {
-	"page":"page",
-	"size":"size",
-	"sorters":"sorters",
-	// "sort_dir":"sort_dir",
-	"filters":"filters",
-	// "filter_value":"filter_value",
-	// "filter_type":"filter_type",
-};
-
-//set the property names for pagination responses
-Page.prototype.paginationDataReceivedNames = {
-	"current_page":"current_page",
-	"last_page":"last_page",
-	"data":"data",
-};
 
 // Tabulator.prototype.registerModule("page", Page);
 module.exports = Page;
