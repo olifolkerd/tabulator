@@ -48,14 +48,10 @@ function styles(){
 }
 
 //build tabulator
-function tabulator(){
-    //return gulp.src('src/js/**/*.js')
-    return gulp.src('src/js/core_modules.js')
+function umd(){
+    return gulp.src('src/js/umd.js')
     .pipe(insert.prepend(version + "\n"))
-    //.pipe(sourcemaps.init())
     .pipe(include())
-    //.pipe(jshint())
-    // .pipe(jshint.reporter('default'))
     .pipe(babel({
         //presets:['es2015']
         compact: false,
@@ -67,12 +63,11 @@ function tabulator(){
             modules: false,
         }, ], {  }]
       }))
-    .pipe(concat('tabulator.js'))
+    .pipe(concat('umd.js'))
     .pipe(gulp.dest('dist/js'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify())
     .pipe(insert.prepend(version))
-    // .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('dist/js'))
     //.pipe(notify({ message: 'Scripts task complete' }));
     .on('end', function(){ gutil.log('Tabulator Complete'); })
@@ -84,21 +79,7 @@ function esm(){
     //return gulp.src('src/js/**/*.js')
     return gulp.src('src/js/core_esm.js')
     .pipe(insert.prepend(version + "\n"))
-    //.pipe(sourcemaps.init())
     .pipe(include())
-    //.pipe(jshint())
-    // .pipe(jshint.reporter('default'))
-    .pipe(babel({
-        //presets:['es2015']
-        compact: false,
-        presets: [["env",{
-            "targets": {
-              "browsers": ["last 4 versions"]
-            },
-            loose: true,
-            modules: false,
-        }, ], {  }]
-      }))
     .pipe(concat('tabulator.es2015.js'))
     .pipe(gulp.dest('dist/js'))
     .pipe(rename({suffix: '.min'}))
@@ -230,7 +211,7 @@ function dev(){
     gulp.watch('src/js/**/*.js', devscripts);
 }
 
-exports.tabulator = gulp.series(tabulator);
+exports.umd = gulp.series(umd);
 exports.styles = gulp.series(styles);
 exports.esm = gulp.series(esm);
 exports.core = gulp.series(core);
