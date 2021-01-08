@@ -9,8 +9,6 @@ import FooterManager from './FooterManager.js';
 
 import VirtualDomHorizontal from './renderers/VirtualDomHorizontal.js';
 
-/*=include polyfills.js */
-
 class Tabulator {
 
 	//default setup options
