@@ -5,11 +5,11 @@ import coreModules from '../modules_core.js';
 
 import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
+import FooterManager from './FooterManager.js';
+
+import VirtualDomHorizontal from './renderers/VirtualDomHorizontal.js';
 
 /*=include polyfills.js */
-
-/*=include vdom_hoz.js */
-/*=include footer_manager.js */
 
 class Tabulator {
 
@@ -215,7 +215,7 @@ class Tabulator {
 		this.rowManager.setColumnManager(this.columnManager);
 
 		if(this.options.virtualDomHoz){
-			this.vdomHoz = new VDomHoz(this);
+			this.vdomHoz = new VirtualDomHorizontal(this);
 		}
 
 		this._buildElement();
