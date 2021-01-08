@@ -116,44 +116,6 @@ function core(){
     .on('end', function(){ gutil.log('Core complete'); })
 }
 
-
-function modules(){
-
-    var path = __dirname + "/src/js/modules/";
-
-    var files = fs.readdirSync(path);
-
-    var core = ["layout.js", "localize.js", "comms.js"];
-
-    files.forEach(function(file, index){
-
-        if(!core.includes(file)){
-            return gulp.src('src/js/modules/' + file)
-            .pipe(insert.prepend(version + "\n"))
-            .pipe(include())
-            .pipe(babel({
-                presets: [["env", {
-                  "targets": {
-                    "browsers": ["last 4 versions"]
-                },
-                loose: true,
-                modules: false,
-                }]
-                ]
-                }))
-            .pipe(concat(file))
-            .pipe(gulp.dest('dist/js/modules/'))
-            .pipe(rename({suffix: '.min'}))
-            .pipe(uglify())
-            .pipe(insert.prepend(version))
-            .pipe(gulp.dest('dist/js/modules/'))
-            .on('end', function(){gutil.log('module ' + file + ' complete')})
-        }
-        });
-
-    gutil.log("Modules complete");
-}
-
 //make jquery wrapper
 function jquery(){
     return gulp.src('src/js/jquery_wrapper.js')
@@ -179,7 +141,7 @@ function jquery(){
 }
 
 function scripts(){
-    return Promise.all([tabulator(), core(), esm(), modules(), jquery()]);
+    return Promise.all([tabulator(), core(), esm(), jquery()]);
 }
 
 function devscripts(){
@@ -215,7 +177,6 @@ exports.umd = gulp.series(umd);
 exports.styles = gulp.series(styles);
 exports.esm = gulp.series(esm);
 exports.core = gulp.series(core);
-exports.modules = gulp.series(modules);
 exports.jquery = gulp.series(jquery);
 exports.scripts = gulp.series(scripts);
 exports.clean = gulp.series(clean);
