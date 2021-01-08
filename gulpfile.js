@@ -88,30 +88,6 @@ function esm(){
     //.on("error", console.log)
 }
 
-
-//simplified core js
-function core(){
-    return gulp.src('src/js/core.js')
-    .pipe(insert.prepend(version + "\n"))
-    .pipe(babel({
-        presets: [["env", {
-          "targets": {
-            "browsers": ["last 4 versions"]
-        },
-        loose: true,
-        modules: false,
-        }]
-        ]
-        }))
-    .pipe(concat('tabulator_core.js'))
-    .pipe(gulp.dest('dist/js'))
-    .pipe(rename({suffix: '.min'}))
-    .pipe(uglify())
-    .pipe(insert.prepend(version))
-    .pipe(gulp.dest('dist/js'))
-    .on('end', function(){ gutil.log('Core complete'); })
-}
-
 //make jquery wrapper
 function jquery(){
     return gulp.src('src/js/jquery_wrapper.js')
@@ -136,11 +112,11 @@ function jquery(){
 }
 
 function scripts(){
-    return Promise.all([tabulator(), core(), esm(), jquery()]);
+    return Promise.all([umd(), esm(), jquery()]);
 }
 
 function devscripts(){
-    return Promise.all([tabulator()]);
+    return Promise.all([umd()]);
 }
 
 function clean(){
@@ -171,7 +147,6 @@ function dev(){
 exports.umd = gulp.series(umd);
 exports.styles = gulp.series(styles);
 exports.esm = gulp.series(esm);
-exports.core = gulp.series(core);
 exports.jquery = gulp.series(jquery);
 exports.scripts = gulp.series(scripts);
 exports.clean = gulp.series(clean);
