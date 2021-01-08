@@ -1,5 +1,4 @@
-
-import CellComponent from './options.js';
+import CellComponent from './CellComponent.js';
 
 class Cell {
 	constructor(column, row){
