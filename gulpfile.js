@@ -75,7 +75,7 @@ function umd(){
 //build tabulator
 function esm(){
     //return gulp.src('src/js/**/*.js')
-    return gulp.src('src/js/core_esm.js')
+    return gulp.src('src/js/esm.js')
     .pipe(insert.prepend(version + "\n"))
     .pipe(concat('tabulator.es2015.js'))
     .pipe(gulp.dest('dist/js'))
