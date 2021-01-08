@@ -1,3 +1,5 @@
+import Row from './core/row/Row.js';
+
 var RowManager = function(table){
 
 	this.table = table;

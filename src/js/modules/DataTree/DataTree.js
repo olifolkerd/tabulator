@@ -1,5 +1,7 @@
 import Module from '../../module.js';
 
+import Row from '../../core/row/Row.js';
+
 class DataTree extends Module{
 
 	constructor(table){
