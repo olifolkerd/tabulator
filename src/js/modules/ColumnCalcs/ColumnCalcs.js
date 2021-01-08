@@ -1,6 +1,7 @@
 import Module from '../../module.js';
 
 import CalcComponent from './CalcComponent.js';
+import Cell from '../../core/cell/Cell.js';
 
 import defaultCalculations from './defaults/calculations.js';
 

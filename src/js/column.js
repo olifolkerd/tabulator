@@ -1,3 +1,4 @@
+import Cell from '../cell/Cell.js';
 
 //public column object
 var ColumnComponent = function (column){

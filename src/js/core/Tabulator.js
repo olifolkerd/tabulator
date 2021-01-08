@@ -10,7 +10,6 @@ import coreModules from '../modules_core.js';
 /*=include row_manager.js */
 /*=include vdom_hoz.js */
 /*=include row.js */
-/*=include cell.js */
 /*=include footer_manager.js */
 
 class Tabulator {
