@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class MoveColumns extends Module{
 
+	static moduleName = "moveColumn";
+
 	constructor(table){
-		super(table, "moveColumn");
+		super(table);
 
 		this.placeholderElement = this.createPlaceholderElement();
 		this.hoverElement = false; //floating column header element

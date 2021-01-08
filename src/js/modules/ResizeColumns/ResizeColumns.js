@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class ResizeColumns {
 
+	static moduleName = "resizeColumns";
+
 	constructor(table){
-		super(table, "resizeColumns");
+		super(table);
 
 		this.startColumn = false;
 		this.startX = false;

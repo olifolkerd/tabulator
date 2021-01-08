@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class SelectRow extends Module{
 
+	static moduleName = "selectRow";
+
 	constructor(table){
-		super(table, "selectRow");
+		super(table);
 
 		this.selecting = false; //flag selecting in progress
 		this.lastClickedRow = false; //last clicked row

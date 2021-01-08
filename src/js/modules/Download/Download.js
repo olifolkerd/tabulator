@@ -4,11 +4,13 @@ import defaultDownloaders from './defaults/downloaders.js';
 
 class Download extends Module{
 
+	static moduleName = "download";
+
 	//load defaults
 	static downloaders = defaultDownloaders;
 
 	constructor(table){
-		super(table, "download");
+		super(table);
 	}
 
 	//trigger file download

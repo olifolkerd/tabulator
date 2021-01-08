@@ -5,12 +5,14 @@ import defaultRedoers from './defaults/redoers.js';
 
 class History extends Module{
 
+	static moduleName = "history";
+
 	//load defaults
 	static undoers = defaultUndoers;
 	static redoers = defaultRedoers;
 
 	constructor(table){
-		super(table, "history");
+		super(table);
 
 		this.history = [];
 		this.index = -1;

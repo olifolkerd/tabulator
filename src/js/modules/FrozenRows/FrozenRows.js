@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class FrozenRows extends Module{
 
+	static moduleName = "frozenRows";
+
 	constructor(table){
-		super(table, "frozenRows");
+		super(table);
 
 		this.topElement = document.createElement("div");
 		this.rows = [];

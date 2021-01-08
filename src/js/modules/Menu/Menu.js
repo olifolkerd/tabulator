@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class Menu extends Module{
 
+	static moduleName = "menu";
+
 	constructor(table){
-		super(table, "menu");
+		super(table);
 
 		this.menuElements = [];
 		this.blurEvent = this.hideMenu.bind(this);

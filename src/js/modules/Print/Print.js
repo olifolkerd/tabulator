@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class Print extends Module{
 
+	static moduleName = "print";
+
 	constructor(table){
-		super(table, "print");
+		super(table);
 
 		this.element = false;
 		this.manualBlock = false;

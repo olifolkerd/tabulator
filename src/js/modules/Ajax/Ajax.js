@@ -7,6 +7,8 @@ import defaultContentTypeFormatters from './defaults/urlGenerator.js';
 
 class Ajax extends Module{
 
+	static moduleName = "ajax";
+
 	//load defaults
 	static defaultConfig = defaultConfig;
 	static defaultURLGenerator = defaultURLGenerator;
@@ -14,7 +16,7 @@ class Ajax extends Module{
 	static contentTypeFormatters = defaultContentTypeFormatters;
 
 	constructor(table){
-		super(table, "ajax");
+		super(table);
 
 		this.config = false; //hold config object for ajax request
 		this.url = ""; //request URL

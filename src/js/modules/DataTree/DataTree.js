@@ -4,8 +4,10 @@ import Row from '../../core/row/Row.js';
 
 class DataTree extends Module{
 
+	static moduleName = "dataTree";
+
 	constructor(table){
-		super(table, "dataTree");
+		super(table);
 
 		this.indent = 10;
 		this.field = "";

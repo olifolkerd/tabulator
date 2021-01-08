@@ -5,8 +5,10 @@ import Group from './Group.js';
 
 class GroupRows extends Module{
 
+	static moduleName = "groupRows";
+
 	constructor(table){
-		super(table, "groupRows");
+		super(table);
 
 		this.groupIDLookups = false; //enable table grouping and set field to group by
 		this.startOpen = [function(){return false;}]; //starting state of group

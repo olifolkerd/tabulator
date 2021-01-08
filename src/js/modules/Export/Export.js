@@ -5,8 +5,10 @@ import ExportColumn from './ExportColumn.js';
 
 class Export extends Module{
 
+	static moduleName = "export";
+
 	constructor(table){
-		super(table, "export");
+		super(table);
 
 		this.config = {};
 		this.cloneTableStyle = true;

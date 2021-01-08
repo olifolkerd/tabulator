@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class HtmlTableImport extends Module{
 
+	static moduleName = "htmlTableImport";
+
 	constructor(table){
-		super(table, "htmlTableImport");
+		super(table);
 
 		this.fieldIndex = [];
 		this.hasIndex = false;

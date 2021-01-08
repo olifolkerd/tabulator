@@ -4,6 +4,8 @@ import defaultModes from './defaults/modes.js';
 
 class Layout extends Module{
 
+	static moduleName = "layout";
+
 	//load defaults
 	static modes = defaultModes;
 

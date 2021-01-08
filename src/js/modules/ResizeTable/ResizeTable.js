@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class ResizeTable extends Module{
 
+	static moduleName = "resizeTable";
+
 	constructor(table){
-		super(table, "resizeTable");
+		super(table);
 
 		this.binding = false;
 		this.observer = false;

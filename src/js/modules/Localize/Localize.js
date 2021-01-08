@@ -4,11 +4,13 @@ import defaultLangs from './defaults/langs.js';
 
 class Localize extends Module{
 
+	static moduleName = "localize";
+
 	//load defaults
 	static langs = defaultLangs;
 
 	constructor(table){
-		super(table, "localize");
+		super(table);
 
 		this.locale = "default"; //current locale
 		this.lang = false; //current language

@@ -2,9 +2,7 @@ import Module from '../../module.js';
 
 class Comms extends Module{
 
-	constructor(table){
-		super(table, "comms");
-	}
+	static moduleName = "comms";
 
 	getConnections(selectors){
 		var self = this,

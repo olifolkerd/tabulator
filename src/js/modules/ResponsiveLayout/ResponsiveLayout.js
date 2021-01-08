@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class ResponsiveLayout extends Module{
 
+	static moduleName = "responsiveLayout";
+
 	constructor(table){
-		super(table, "responsiveLayout");
+		super(table);
 
 		this.columns = [];
 		this.hiddenColumns = [];

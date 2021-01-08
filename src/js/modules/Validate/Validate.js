@@ -4,11 +4,13 @@ import defaultValidators from './defaults/validators.js';
 
 class Validate extends Module{
 
+	static moduleName = "validate";
+
 	//load defaults
 	static validators = defaultValidators;
 
 	constructor(table){
-		super(table, "validate");
+		super(table);
 
 		this.invalidCells = [];
 	}

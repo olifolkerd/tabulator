@@ -5,12 +5,14 @@ import defaultActions from './defaults/actions.js';
 
 class Keybindings extends Module{
 
+	static moduleName = "keybindings";
+
 	//load defaults
 	static bindings = defaultBindings;
 	static actions = defaultActions;
 
 	constructor(table){
-		super(table, "keybindings");
+		super(table);
 
 		this.watchKeys = null;
 		this.pressedKeys = null;

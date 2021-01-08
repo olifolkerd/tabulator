@@ -3,12 +3,11 @@ import Module from '../../module.js';
 import defaultFormatters from './defaults/formatters.js';
 
 class Format extends Module{
+
+	static moduleName = "format";
+
 	//load defaults
 	static formatters = defaultFormatters;
-
-	constructor(table){
-		super(table, "format");
-	}
 
 	//initialize column formatter
 	initializeColumn(column){

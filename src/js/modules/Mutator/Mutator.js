@@ -4,11 +4,13 @@ import defaultMutators from './defaults/mutators.js';
 
 class Mutator extends Module{
 
+	static moduleName = "mutator";
+
 	//load defaults
 	static mutators = defaultMutators;
 
 	constructor(table){
-		super(table, "mutator");
+		super(table);
 
 		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
 		this.enabled = true;

@@ -4,11 +4,13 @@ import defautlAccessors from './defaults/accessors.js';
 
 class Accessor extends Module{
 
+	static moduleName = "accessor";
+
 	//load defaults
 	static accessors = defautlAccessors;
 
 	constructor(table){
-		super(table, "accessor");
+		super(table);
 
 		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
 	}

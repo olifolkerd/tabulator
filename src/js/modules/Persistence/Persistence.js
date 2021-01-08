@@ -5,12 +5,14 @@ import defaultWriters from './defaults/writers.js';
 
 class Persistence extends Module{
 
+	static moduleName = "persistence";
+
 	//load defaults
 	static readers = defaultReaders;
 	static writers = defaultWriters;
 
 	constructor(table){
-		super(table, "persistence");
+		super(table);
 
 		this.mode = "";
 		this.id = "";

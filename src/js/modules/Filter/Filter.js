@@ -4,11 +4,13 @@ import defaultFilters from './defaults/filters.js';
 
 class Filter extends Module{
 
+	static moduleName = "filter";
+
 	//load defaults
 	static filters = defaultFilters;
 
 	constructor(table){
-		super(table, "filter");
+		super(table);
 
 		this.filterList = []; //hold filter list
 		this.headerFilters = {}; //hold column filters

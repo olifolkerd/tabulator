@@ -4,11 +4,13 @@ import defaultSorters from './defaults/sorters.js';
 
 class Sort extends Module{
 
+	static moduleName = "sort";
+
 	//load defaults
 	static sorters = defaultSorters;
 
 	constructor(table){
-	 	super(table, "sort");
+	 	super(table);
 
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render

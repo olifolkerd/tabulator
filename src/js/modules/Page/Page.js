@@ -5,12 +5,14 @@ import defaultDataReceivedNames from './defaults/dataReceivedNames.js';
 
 class Page extends Module{
 
+	static moduleName = "page";
+
 	//load defaults
 	static defaultDataSentNames = defaultDataSentNames;
 	static defaultDataReceivedNames = defaultDataReceivedNames;
 
 	constructor(table){
-		super(table, "page");
+		super(table);
 
 		this.mode = "local";
 		this.progressiveLoad = false;

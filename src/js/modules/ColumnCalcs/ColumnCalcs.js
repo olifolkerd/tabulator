@@ -10,11 +10,13 @@ import defaultCalculations from './defaults/calculations.js';
 
 class ColumnCalcs extends Module{
 
+	static moduleName = "columnCalcs";
+
 	//load defaults
 	static calculations = defaultCalculations;
 
 	constructor(table){
-		super(table, "columnCalcs");
+		super(table);
 
 		this.topCalcs = [];
 		this.botCalcs = [];

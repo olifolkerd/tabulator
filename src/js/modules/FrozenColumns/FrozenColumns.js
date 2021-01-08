@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class FrozenColumns extends Module{
 
+	static moduleName = "frozenColumns";
+
 	constructor(table){
-		super(table, "frozenColumns");
+		super(table);
 
 		this.leftColumns = [];
 		this.rightColumns = [];

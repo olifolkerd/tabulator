@@ -4,11 +4,13 @@ import defaultEditors from './defaults/editors.js';
 
 class Edit extends Module{
 
+	static moduleName = "edit";
+
 	//load defaults
 	static editors = defaultEditors;
 
 	constructor(table){
-		super(table, "edit");
+		super(table);
 
 		this.currentCell = false; //hold currently editing cell
 		this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening

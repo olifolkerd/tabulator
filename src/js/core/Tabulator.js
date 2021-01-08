@@ -13,7 +13,7 @@ class Tabulator {
 
 	//default setup options
 	static defaultOptions = defaultOptions;
-	static moduleBindings = coreModules;
+	static moduleBindings = {};
 
 	constructor(element, options){
 
@@ -1831,10 +1831,26 @@ class Tabulator {
 		}
 	};
 
+	static registerModuleImport(modules){
+		var mods = Object.values(modules);
+
+		Tabulator.registerModule(mods);
+	}
+
+	static registerModule(modules){
+		if(!Array.isArray(modules)){
+			modules = [modules];
+		}
+
+		modules.forEach((mod){
+			Tabulator.registerModuleBinding(mod)
+		})
+	}
+
 	//add module to tabulator
-	static registerModule(name, module){
+	static registerModuleBinding(mod){
 		var self = this;
-		Tabulator.prototype.moduleBindings[name] = module;
+		Tabulator.prototype.moduleBindings[mod.moduleName] = mod;
 	};
 
 	static helpers = {
@@ -1927,3 +1943,7 @@ class Tabulator {
 		return Array.isArray(results) && !results.length ? false : results;
 	}
 }
+
+Tabulator.registerModuleImport(coreModules);
+
+module.exports = Tabulator;

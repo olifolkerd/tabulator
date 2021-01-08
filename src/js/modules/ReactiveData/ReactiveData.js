@@ -2,8 +2,10 @@ import Module from '../../module.js';
 
 class ReactiveData extends Module{
 
+	static moduleName = "reactiveData";
+
 	constructor(table){
-		super(table, "reactiveData");
+		super(table);
 
 		this.data = false;
 		this.blocked = false; //block reactivity while performing update
