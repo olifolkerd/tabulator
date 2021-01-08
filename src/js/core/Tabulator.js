@@ -3,10 +3,11 @@
 import defaultOptions from './options.js';
 import coreModules from '../modules_core.js';
 
+import ColumnManager from './ColumnManager.js';
+import RowManager from './RowManager.js';
+
 /*=include polyfills.js */
 
-/*=include column_manager.js */
-/*=include row_manager.js */
 /*=include vdom_hoz.js */
 /*=include footer_manager.js */
 
