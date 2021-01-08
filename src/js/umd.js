@@ -1,4 +1,7 @@
-;(function (global, factory) {
+import Tabulator from './core/Tabulator.js';
+import modules from './modules.js';
+
+(function (global, factory) {
 	if(typeof exports === 'object' && typeof module !== 'undefined'){
 		module.exports = factory();
 	}else if(typeof define === 'function' && define.amd){
@@ -7,10 +10,7 @@
 		global.Tabulator = factory();
 	}
 }(this, (function () {
-
-	/*=include core.js */
-	/*=include modules_enabled.js */
+	Tabulator.registerModule(modules);
 
 	return Tabulator;
-
 })));
