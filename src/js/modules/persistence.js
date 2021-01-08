@@ -54,10 +54,10 @@ Persistence.prototype.initialize = function(){
 		if(typeof this.table.options.persistenceWriterFunc === "function"){
 			this.writeFunc = this.table.options.persistenceWriterFunc;
 		}else{
-			if(this.readers[this.table.options.persistenceWriterFunc]){
-				this.writeFunc = this.readers[this.table.options.persistenceWriterFunc];
+			if(this.writers[this.table.options.persistenceWriterFunc]){
+				this.writeFunc = this.writers[this.table.options.persistenceWriterFunc];
 			}else{
-				console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
+				console.warn("Persistence Write Error - invalid writer set", this.table.options.persistenceWriterFunc);
 			}
 		}
 	}else{
