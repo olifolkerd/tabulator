@@ -1,3 +1,5 @@
+import Column from './column/Column.js';
+
 var ColumnManager = function(table){
 	this.table = table; //hold parent table
 	this.blockHozScrollEvent = false;
