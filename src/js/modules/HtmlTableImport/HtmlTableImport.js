@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class HtmlTableImport extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "htmlTableImport");
 
 		this.fieldIndex = [];
 		this.hasIndex = false;

@@ -10,7 +10,7 @@ class Keybindings extends Module{
 	static actions = defaultActions;
 
 	constructor(table){
-		super(table);
+		super(table, "keybindings");
 
 		this.watchKeys = null;
 		this.pressedKeys = null;

@@ -2,6 +2,10 @@ import Module from '../../module.js';
 
 class Comms extends Module{
 
+	constructor(table){
+		super(table, "comms");
+	}
+
 	getConnections(selectors){
 		var self = this,
 		connections = [],

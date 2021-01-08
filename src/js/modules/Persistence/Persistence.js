@@ -10,7 +10,7 @@ class Persistence extends Module{
 	static writers = defaultWriters;
 
 	constructor(table){
-		super(table);
+		super(table, "persistence");
 
 		this.mode = "";
 		this.id = "";

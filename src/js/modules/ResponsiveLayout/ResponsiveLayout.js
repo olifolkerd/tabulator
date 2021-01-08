@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class ResponsiveLayout extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "responsiveLayout");
 
 		this.columns = [];
 		this.hiddenColumns = [];

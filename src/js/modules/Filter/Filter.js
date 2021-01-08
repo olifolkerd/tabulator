@@ -8,7 +8,7 @@ class Filter extends Module{
 	static filters = defaultFilters;
 
 	constructor(table){
-		super(table);
+		super(table, "filter");
 
 		this.filterList = []; //hold filter list
 		this.headerFilters = {}; //hold column filters

@@ -8,7 +8,7 @@ class Layout extends Module{
 	static modes = defaultModes;
 
 	constructor(table){
-		super(table);
+		super(table, "layout");
 
 		this.mode = null;
 	}

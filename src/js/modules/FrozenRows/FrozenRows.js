@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class FrozenRows extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "frozenRows");
 
 		this.topElement = document.createElement("div");
 		this.rows = [];

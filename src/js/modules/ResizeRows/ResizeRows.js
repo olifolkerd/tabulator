@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class ResizeRows extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "resizeRows");
 
 		this.startColumn = false;
 		this.startY = false;

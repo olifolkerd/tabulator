@@ -6,7 +6,7 @@ import ExportColumn from './ExportColumn.js';
 class Export extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "export");
 
 		this.config = {};
 		this.cloneTableStyle = true;

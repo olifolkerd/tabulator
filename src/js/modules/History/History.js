@@ -10,7 +10,7 @@ class History extends Module{
 	static redoers = defaultRedoers;
 
 	constructor(table){
-		super(table);
+		super(table, "history");
 
 		this.history = [];
 		this.index = -1;

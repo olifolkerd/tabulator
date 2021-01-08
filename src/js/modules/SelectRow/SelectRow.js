@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class SelectRow extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "selectRow");
 
 		this.selecting = false; //flag selecting in progress
 		this.lastClickedRow = false; //last clicked row

@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class DataTree extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "dataTree");
 
 		this.indent = 10;
 		this.field = "";

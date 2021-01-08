@@ -8,7 +8,7 @@ class Validate extends Module{
 	static validators = defaultValidators;
 
 	constructor(table){
-		super(table);
+		super(table, "validate");
 
 		this.invalidCells = [];
 	}

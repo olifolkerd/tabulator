@@ -6,7 +6,7 @@ import Group from './Group.js';
 class GroupRows extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "groupRows");
 
 		this.groupIDLookups = false; //enable table grouping and set field to group by
 		this.startOpen = [function(){return false;}]; //starting state of group

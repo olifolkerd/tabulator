@@ -8,7 +8,7 @@ class Sort extends Module{
 	static sorters = defaultSorters;
 
 	constructor(table){
-	 	super(table);
+	 	super(table, "sort");
 
 	 	this.sortList = []; //holder current sort
 	 	this.changed = false; //has the sort changed since last render
@@ -20,7 +20,6 @@ class Sort extends Module{
 		sorter = false,
 		colEl,
 		arrowEl;
-
 
 		switch(typeof column.definition.sorter){
 			case "string":

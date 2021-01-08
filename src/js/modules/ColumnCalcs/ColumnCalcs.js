@@ -10,7 +10,7 @@ class ColumnCalcs extends Module{
 	static calculations = defaultCalculations;
 
 	constructor(table){
-		super(table);
+		super(table, "columnCalcs");
 
 		this.topCalcs = [];
 		this.botCalcs = [];

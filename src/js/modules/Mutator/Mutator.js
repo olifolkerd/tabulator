@@ -8,7 +8,7 @@ class Mutator extends Module{
 	static mutators = defaultMutators;
 
 	constructor(table){
-		super(table);
+		super(table, "mutator");
 
 		this.allowedTypes = ["", "data", "edit", "clipboard"]; //list of muatation types
 		this.enabled = true;

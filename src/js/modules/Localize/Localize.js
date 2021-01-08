@@ -8,7 +8,7 @@ class Localize extends Module{
 	static langs = defaultLangs;
 
 	constructor(table){
-		super(table);
+		super(table, "localize");
 
 		this.locale = "default"; //current locale
 		this.lang = false; //current language

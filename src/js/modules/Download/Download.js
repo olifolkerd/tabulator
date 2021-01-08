@@ -7,6 +7,10 @@ class Download extends Module{
 	//load defaults
 	static downloaders = defaultDownloaders;
 
+	constructor(table){
+		super(table, "download");
+	}
+
 	//trigger file download
 	download(type, filename, options, range, interceptCallback){
 		var self = this,

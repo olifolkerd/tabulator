@@ -10,7 +10,7 @@ class Page extends Module{
 	static defaultDataReceivedNames = defaultDataReceivedNames;
 
 	constructor(table){
-		super(table);
+		super(table, "page");
 
 		this.mode = "local";
 		this.progressiveLoad = false;

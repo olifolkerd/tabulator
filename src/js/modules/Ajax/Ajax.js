@@ -14,7 +14,7 @@ class Ajax extends Module{
 	static contentTypeFormatters = defaultContentTypeFormatters;
 
 	constructor(table){
-		super(table);
+		super(table, "ajax");
 
 		this.config = false; //hold config object for ajax request
 		this.url = ""; //request URL

@@ -8,7 +8,7 @@ class Accessor extends Module{
 	static accessors = defautlAccessors;
 
 	constructor(table){
-		super(table);
+		super(table, "accessor");
 
 		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
 	}

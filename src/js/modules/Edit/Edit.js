@@ -8,7 +8,7 @@ class Edit extends Module{
 	static editors = defaultEditors;
 
 	constructor(table){
-		super(table);
+		super(table, "edit");
 
 		this.currentCell = false; //hold currently editing cell
 		this.mouseClick = false; //hold mousedown state to prevent click binding being overriden by editor opening

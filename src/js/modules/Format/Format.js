@@ -6,6 +6,10 @@ class Format extends Module{
 	//load defaults
 	static formatters = defaultFormatters;
 
+	constructor(table){
+		super(table, "format");
+	}
+
 	//initialize column formatter
 	initializeColumn(column){
 		column.modules.format = this.lookupFormatter(column, "");

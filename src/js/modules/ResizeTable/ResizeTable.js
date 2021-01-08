@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class ResizeTable extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "resizeTable");
 
 		this.binding = false;
 		this.observer = false;

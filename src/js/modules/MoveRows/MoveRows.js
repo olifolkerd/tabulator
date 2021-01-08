@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class MoveRows extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "moveRow");
 
 		this.placeholderElement = this.createPlaceholderElement();
 		this.hoverElement = false; //floating row header element

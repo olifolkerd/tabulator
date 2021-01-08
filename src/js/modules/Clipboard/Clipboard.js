@@ -10,7 +10,7 @@ class Clipboard extends Module{
 	static pasteParsers = defaultPasteParsers;
 
 	constructor(table){
-		super(table);
+		super(table, "clipboard");
 
 		this.mode = true;
 		this.pasteParser = function(){};

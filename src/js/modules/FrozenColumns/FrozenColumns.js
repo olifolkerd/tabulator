@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class FrozenColumns extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "frozenColumns");
 
 		this.leftColumns = [];
 		this.rightColumns = [];

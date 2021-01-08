@@ -3,7 +3,7 @@ import Module from '../../module.js';
 class Print extends Module{
 
 	constructor(table){
-		super(table);
+		super(table, "print");
 
 		this.element = false;
 		this.manualBlock = false;
