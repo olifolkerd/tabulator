@@ -26,7 +26,6 @@ class Tabulator {
 		this.footerManager = null; //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 
-
 		this.browser = ""; //hold current browser type
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
