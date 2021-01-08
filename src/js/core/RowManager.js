@@ -2,7 +2,6 @@ import Row from './core/row/Row.js';
 
 class RowManager {
 	constructor(table){
-
 		this.table = table;
 		this.element = this.createHolderElement(); //containing element
 		this.tableElement = this.createTableElement(); //table element
@@ -1843,3 +1842,5 @@ class RowManager {
 		}
 	}
 }
+
+module.exports = RowManager;
