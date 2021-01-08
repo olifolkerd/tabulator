@@ -101,3 +101,5 @@ class CellComponent {
 		return this._cell;
 	}
 }
+
+Module.exports = CellComponent;

@@ -741,3 +741,5 @@ class Cell {
 		return this.component;
 	}
 }
+
+Module.exports = Cell;

@@ -170,3 +170,5 @@ class ColumnComponent {
 		return this._column.validate();
 	}
 }
+
+module.exports = ColumnComponent;

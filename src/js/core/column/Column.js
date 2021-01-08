@@ -1259,3 +1259,5 @@ class Column {
 		return this.component;
 	}
 }
+
+module.exports = Column;
