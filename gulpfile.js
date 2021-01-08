@@ -7,7 +7,6 @@ uglifyesm = require('gulp-uglify-es').default,
 rename = require('gulp-rename'),
 concat = require('gulp-concat'),
 del = require('del');
-include = require('gulp-include'),
 sourcemaps = require('gulp-sourcemaps'),
 babel = require('gulp-babel'),
 plumber = require('gulp-plumber'),
@@ -51,7 +50,6 @@ function styles(){
 function umd(){
     return gulp.src('src/js/umd.js')
     .pipe(insert.prepend(version + "\n"))
-    .pipe(include())
     .pipe(babel({
         //presets:['es2015']
         compact: false,
@@ -79,7 +77,6 @@ function esm(){
     //return gulp.src('src/js/**/*.js')
     return gulp.src('src/js/core_esm.js')
     .pipe(insert.prepend(version + "\n"))
-    .pipe(include())
     .pipe(concat('tabulator.es2015.js'))
     .pipe(gulp.dest('dist/js'))
     .pipe(rename({suffix: '.min'}))
@@ -96,7 +93,6 @@ function esm(){
 function core(){
     return gulp.src('src/js/core.js')
     .pipe(insert.prepend(version + "\n"))
-    .pipe(include())
     .pipe(babel({
         presets: [["env", {
           "targets": {
@@ -120,7 +116,6 @@ function core(){
 function jquery(){
     return gulp.src('src/js/jquery_wrapper.js')
     .pipe(insert.prepend(version + "\n"))
-    .pipe(include())
     .pipe(babel({
         presets: [["env", {
           "targets": {
