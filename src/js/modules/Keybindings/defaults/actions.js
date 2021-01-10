@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	keyBlock:function(e){
 		e.stopPropagation();
 		e.preventDefault();

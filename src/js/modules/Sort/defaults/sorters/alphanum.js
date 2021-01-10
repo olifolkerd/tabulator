@@ -1,5 +1,5 @@
 //sort alpha numeric strings
-module.exports = function(as, bs, aRow, bRow, column, dir, params){
+export default function(as, bs, aRow, bRow, column, dir, params){
 	var a, b, a1, b1, i= 0, L, rx = /(\d+)|(\D+)/g, rd = /\d/;
 	var alignEmptyValues = params.alignEmptyValues;
 	var emptyAlign = 0;

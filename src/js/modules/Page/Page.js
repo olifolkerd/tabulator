@@ -124,10 +124,10 @@ class Page extends Module{
 		pageSelectLabel, testElRow, testElCell;
 
 		//update param names
-		this.dataSentNames = Object.assign({}, this.defaultDataSentNames);
+		this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
 		this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-		this.dataReceivedNames = Object.assign({}, this.defaultDataReceivedNames);
+		this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
 		this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
 		//build pagination element
@@ -601,7 +601,7 @@ class Page extends Module{
 			}
 
 			//record old params and restore after request has been made
-			oldParams = Tabulator.prototype.helpers.deepClone(self.table.modules.ajax.getParams() || {});
+			oldParams = Tabulator.helpers.deepClone(self.table.modules.ajax.getParams() || {});
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params
@@ -717,5 +717,5 @@ class Page extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("page", Page);
-module.exports = Page;
+// Tabulator.registerModule("page", Page);
+export default Page;

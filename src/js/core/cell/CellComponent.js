@@ -1,5 +1,5 @@
 //public cell object
-class CellComponent {
+export default class CellComponent {
 
 	constructor (cell){
 		this._cell = cell;
@@ -101,5 +101,3 @@ class CellComponent {
 		return this._cell;
 	}
 }
-
-Module.exports = CellComponent;

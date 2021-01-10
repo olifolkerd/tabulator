@@ -38,8 +38,8 @@ class Edit extends Module{
 				console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
 			}
 
-			if(self.editors[column.definition.editor]){
-				config.editor = self.editors[column.definition.editor];
+			if(Edit.editors[column.definition.editor]){
+				config.editor = Edit.editors[column.definition.editor];
 			}else{
 				console.warn("Editor Error - No such editor found: ", column.definition.editor);
 			}
@@ -60,10 +60,10 @@ class Edit extends Module{
 						console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
 					}
 
-					if(self.editors[column.definition.formatter]){
-						config.editor = self.editors[column.definition.formatter];
+					if(Edit.editors[column.definition.formatter]){
+						config.editor = Edit.editors[column.definition.formatter];
 					}else{
-						config.editor = self.editors["input"];
+						config.editor = Edit.editors["input"];
 					}
 				}else{
 					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
@@ -490,5 +490,5 @@ class Edit extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("edit", Edit);
-module.exports = Edit;
+// Tabulator.registerModule("edit", Edit);
+export default Edit;

@@ -1,5 +1,5 @@
 //dropdown select editor
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
 	cellEl = cell.getElement(),
 	initialValue = cell.getValue(),
@@ -392,7 +392,7 @@ module.exports = function(cell, onRendered, success, cancel, editorParams){
 			}
 
 
-			var offset = Tabulator.prototype.helpers.elOffset(cellEl);
+			var offset = Tabulator.helpers.elOffset(cellEl);
 
 			listEl.style.minWidth = cellEl.offsetWidth + "px";
 

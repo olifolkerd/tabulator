@@ -8,4 +8,4 @@ class ExportColumn{
 	}
 }
 
-module.exports = ExportColumn;
+export default ExportColumn;

@@ -1,4 +1,4 @@
-module.exports = function datetime(cell, formatterParams, onRendered) {
+export default function datetime(cell, formatterParams, onRendered) {
 	var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
 	var invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";
 	var suffix = typeof formatterParams.suffix !== "undefined" ? formatterParams.suffix : false;

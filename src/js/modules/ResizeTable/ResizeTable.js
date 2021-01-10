@@ -119,5 +119,5 @@ class ResizeTable extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("resizeTable", ResizeTable);
-module.exports = ResizeTable;
+// Tabulator.registerModule("resizeTable", ResizeTable);
+export default ResizeTable;

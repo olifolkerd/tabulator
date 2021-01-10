@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	var value = cell.getValue(),
 	urlPrefix = formatterParams.urlPrefix || "",
 	download = formatterParams.download,

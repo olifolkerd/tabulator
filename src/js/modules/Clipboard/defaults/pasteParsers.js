@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	table:function(clipboard){
 		var data = [],
 		success = false,

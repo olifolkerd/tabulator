@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	var inputFormat = formatterParams.inputFormat || "YYYY-MM-DD hh:mm:ss";
 	var	outputFormat = formatterParams.outputFormat || "DD/MM/YYYY hh:mm:ss";
 	var	invalid = typeof formatterParams.invalidPlaceholder !== "undefined" ? formatterParams.invalidPlaceholder : "";

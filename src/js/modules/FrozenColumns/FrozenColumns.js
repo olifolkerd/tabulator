@@ -274,5 +274,5 @@ class FrozenColumns extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("frozenColumns", FrozenColumns);
-module.exports = FrozenColumns;
+// Tabulator.registerModule("frozenColumns", FrozenColumns);
+export default FrozenColumns;

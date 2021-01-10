@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	var self = this,
 	open = false,
 	el = document.createElement("div"),

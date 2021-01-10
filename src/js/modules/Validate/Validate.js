@@ -73,7 +73,7 @@ class Validate extends Module{
 
 	_buildValidator(type, params){
 
-		var func = typeof type == "function" ? type : this.validators[type];
+		var func = typeof type == "function" ? type : Validate.validators[type];
 
 		if(!func){
 			console.warn("Validator Setup Error - No matching validator found:", type);
@@ -158,5 +158,5 @@ class Validate extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("validate", Validate);
-module.exports = Validate;
+// Tabulator.registerModule("validate", Validate);
+export default Validate;

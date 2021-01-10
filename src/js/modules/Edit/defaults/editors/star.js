@@ -1,5 +1,5 @@
 //star rating
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
 	element = cell.getElement(),
 	value = cell.getValue(),

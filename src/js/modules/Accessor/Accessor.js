@@ -50,8 +50,8 @@ class Accessor extends Module{
 		//set column accessor
 		switch(typeof value){
 			case "string":
-			if(this.accessors[value]){
-				accessor = this.accessors[value]
+			if(Accessor.accessors[value]){
+				accessor = Accessor.accessors[value]
 			}else{
 				console.warn("Accessor Error - No such accessor found, ignoring: ", value);
 			}
@@ -71,7 +71,7 @@ class Accessor extends Module{
 		rowComponent = row.getComponent();
 
 		//clone data object with deep copy to isolate internal data from returned result
-		var data = Tabulator.prototype.helpers.deepClone(row.data || {});
+		var data = Tabulator.helpers.deepClone(row.data || {});
 
 		this.table.columnManager.traverse(function(column){
 			var value, accessor, params, colCompnent;
@@ -96,5 +96,5 @@ class Accessor extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("accessor", Accessor);
-module.exports = Accessor;
+// Tabulator.registerModule("accessor", Accessor);
+export default Accessor;

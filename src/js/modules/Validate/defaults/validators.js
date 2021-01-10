@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	//is integer
 	integer: function(cell, value, parameters){
 		if(value === "" || value === null || typeof value === "undefined"){

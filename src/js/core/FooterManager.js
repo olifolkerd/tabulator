@@ -1,4 +1,4 @@
-class FooterManager {
+export default class FooterManager {
 	constructor(table){
 		this.table = table;
 		this.active = false;
@@ -89,5 +89,3 @@ class FooterManager {
 		});
 	}
 }
-
-module.exports = FooterManager;

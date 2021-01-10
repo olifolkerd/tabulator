@@ -1,5 +1,5 @@
 // read peristence information from storage
-module.exports = {
+export default {
 	local:function(id, type){
 		var data = localStorage.getItem(id + "-" + type);
 

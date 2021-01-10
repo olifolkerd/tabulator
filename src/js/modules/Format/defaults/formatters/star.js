@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	var value = cell.getValue(),
 	element = cell.getElement(),
 	maxStars = formatterParams && formatterParams.stars ? formatterParams.stars : 5,

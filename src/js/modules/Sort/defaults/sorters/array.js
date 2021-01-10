@@ -1,5 +1,5 @@
 //sort if element contains any data
-module.exports = function(a, b, aRow, bRow, column, dir, params){
+export default function(a, b, aRow, bRow, column, dir, params){
 	var el1 = 0;
 	var el2 = 0;
 	var type = params.type || "length";

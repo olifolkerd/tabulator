@@ -4,7 +4,7 @@ import pdf from './downloaders/pdf.js';
 import xlsx from './downloaders/xlsx.js';
 import html from './downloaders/html.js';
 
-module.exports = {
+export default {
 	csv:csv,
 	json:json,
 	pdf:pdf,

@@ -1,9 +1,9 @@
 import Module from '../../module.js';
 
 import defaultConfig from './defaults/config.js';
-import defaultURLGenerator from './defaults/contentTypeFormatters.js';
+import defaultURLGenerator from './defaults/urlGenerator.js';
 import defaultLoaderPromise from './defaults/loaderPromise.js';
-import defaultContentTypeFormatters from './defaults/urlGenerator.js';
+import defaultContentTypeFormatters from './defaults/contentTypeFormatters.js';
 
 class Ajax extends Module{
 
@@ -51,9 +51,9 @@ class Ajax extends Module{
 			}
 		}
 
-		this.loaderPromise = this.table.options.ajaxRequestFunc || this.defaultLoaderPromise;
+		this.loaderPromise = this.table.options.ajaxRequestFunc || Ajax.defaultLoaderPromise;
 
-		this.urlGenerator = this.table.options.ajaxURLGenerator || this.defaultURLGenerator;
+		this.urlGenerator = this.table.options.ajaxURLGenerator || Ajax.defaultURLGenerator;
 
 		if(this.table.options.ajaxLoaderError){
 			if(typeof this.table.options.ajaxLoaderError == "string"){
@@ -145,8 +145,8 @@ class Ajax extends Module{
 			self.config = {};
 
 			//load base config from defaults
-			for(let key in self.defaultConfig){
-				self.config[key] = self.defaultConfig[key];
+			for(let key in Ajax.defaultConfig){
+				self.config[key] = Ajax.defaultConfig[key];
 			}
 		}
 	}
@@ -343,5 +343,5 @@ class Ajax extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("ajax", Ajax);
-module.exports = Ajax;
+// Tabulator.registerModule("ajax", Ajax);
+export default Ajax;

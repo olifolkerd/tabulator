@@ -8,7 +8,7 @@ import star from './editors/star.js';
 import progress from './editors/progress.js';
 import tickCross from './editors/tickCross.js';
 
-module.exports = {
+export default {
 	input:input,
 	textarea:textarea,
     number:number,

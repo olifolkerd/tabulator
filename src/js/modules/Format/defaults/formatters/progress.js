@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){ //progress bar
+export default function(cell, formatterParams, onRendered){ //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	element = cell.getElement(),
 	max = formatterParams && formatterParams.max ? formatterParams.max : 100,

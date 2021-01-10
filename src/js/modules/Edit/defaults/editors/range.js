@@ -1,5 +1,5 @@
 //input element with type of number
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
 	var cellValue = cell.getValue(),
 	input = document.createElement("input");
 

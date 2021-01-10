@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	"avg":function(values, data, calcParams){
 		var output = 0,
 		precision = typeof calcParams.precision !== "undefined" ? calcParams.precision : 2

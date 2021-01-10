@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	"page":"page",
 	"size":"size",
 	"sorters":"sorters",

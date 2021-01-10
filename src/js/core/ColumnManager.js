@@ -1,6 +1,6 @@
 import Column from './column/Column.js';
 
-class ColumnManager {
+export default class ColumnManager {
 
 	constructor (table){
 		this.table = table; //hold parent table
@@ -689,7 +689,7 @@ class ColumnManager {
 	//redraw columns
 	redraw(force){
 		if(force){
-			if(Tabulator.prototype.helpers.elVisible(this.element)){
+			if(Tabulator.helpers.elVisible(this.element)){
 				this._verticalAlignHeaders();
 			}
 
@@ -730,5 +730,3 @@ class ColumnManager {
 		this.table.footerManager.redraw();
 	}
 }
-
-module.exports = ColumnManager;

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 
 	//equal to
 	"=":function(filterVal, rowVal, rowData, filterParams){

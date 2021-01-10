@@ -1,5 +1,5 @@
 //public row object
-class RowComponent {
+export default class RowComponent {
 
 	constructor (row){
 		this._row = row;

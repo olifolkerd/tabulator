@@ -35,4 +35,4 @@ class CalcComponent{
 	}
 }
 
-module.exports = CalcComponent;
+export default CalcComponent;

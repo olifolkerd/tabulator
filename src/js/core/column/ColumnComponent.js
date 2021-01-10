@@ -1,5 +1,5 @@
 //public column object
-class ColumnComponent {
+export default class ColumnComponent {
 	constructor (column){
 		this._column = column;
 		this.type = "ColumnComponent";
@@ -170,5 +170,3 @@ class ColumnComponent {
 		return this._column.validate();
 	}
 }
-
-module.exports = ColumnComponent;

@@ -17,7 +17,7 @@ class Layout extends Module{
 
 	//initialize layout system
 	initialize(layout){
-		if(this.modes[layout]){
+		if(Layout.modes[layout]){
 			this.mode = layout;
 		}else{
 			console.warn("Layout Error - invalid mode set, defaulting to 'fitData' : " + layout);
@@ -33,7 +33,7 @@ class Layout extends Module{
 
 	//trigger table layout
 	layout(){
-		this.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
+		Layout.modes[this.mode].call(this, this.table.columnManager.columnsByIndex);
 
 		if(this.mode.indexOf("fitData") === 0 && this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
 			this.table.modules.persistence.save("columns");
@@ -41,5 +41,5 @@ class Layout extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("layout", Layout);
-module.exports = Layout;
+// Tabulator.registerModule("layout", Layout);
+export default Layout;

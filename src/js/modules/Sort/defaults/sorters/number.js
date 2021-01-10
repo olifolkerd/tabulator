@@ -1,5 +1,5 @@
 //sort numbers
-module.exports = function(a, b, aRow, bRow, column, dir, params){
+export default function(a, b, aRow, bRow, column, dir, params){
 	var alignEmptyValues = params.alignEmptyValues;
 	var decimal = params.decimalSeparator;
 	var thousand = params.thousandSeparator;

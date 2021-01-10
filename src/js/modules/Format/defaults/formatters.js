@@ -19,7 +19,7 @@ import handle from './formatters/handle.js';
 import responsiveCollapse from './formatters/responsiveCollapse.js';
 import rowSelection from './formatters/rowSelection.js';
 
-module.exports = {
+export default {
 	plaintext:plaintext,
 	html:html,
 	textarea:textarea,

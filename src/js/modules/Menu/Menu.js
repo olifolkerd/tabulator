@@ -234,7 +234,7 @@ class Menu extends Module{
 
 			this.positionReversedX = false;
 		}else{
-			parentOffset = Tabulator.prototype.helpers.elOffset(parentEl);
+			parentOffset = Tabulator.helpers.elOffset(parentEl);
 			x = parentOffset.left + parentEl.offsetWidth;
 			y = parentOffset.top - 1;
 		}
@@ -305,5 +305,5 @@ class Menu extends Module{
 //default accessors
 Menu.prototype.menus = {};
 
-// Tabulator.prototype.registerModule("menu", Menu);
-module.exports = Menu;
+// Tabulator.registerModule("menu", Menu);
+export default Menu;

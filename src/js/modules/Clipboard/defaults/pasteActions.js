@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	replace:function(rows){
 		return this.table.setData(rows);
 	},

@@ -1,3 +1,3 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	return cell.getValue();
 };

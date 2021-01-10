@@ -29,8 +29,8 @@ class Keybindings extends Module{
 
 		if(bindings !== false){
 
-			for(let key in this.bindings){
-				mergedBindings[key] = this.bindings[key];
+			for(let key in Keybindings.bindings){
+				mergedBindings[key] = Keybindings.bindings[key];
 			}
 
 			if(Object.keys(bindings).length){
@@ -50,7 +50,7 @@ class Keybindings extends Module{
 
 		for(let key in bindings){
 
-			if(this.actions[key]){
+			if(Keybindings.actions[key]){
 
 				if(bindings[key]){
 
@@ -73,7 +73,7 @@ class Keybindings extends Module{
 		var self = this;
 
 		var binding = {
-			action: this.actions[action],
+			action: Keybindings.actions[action],
 			keys: [],
 			ctrl: false,
 			shift: false,
@@ -179,5 +179,5 @@ class Keybindings extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("keybindings", Keybindings);
-module.exports = Keybindings;
+// Tabulator.registerModule("keybindings", Keybindings);
+export default Keybindings;

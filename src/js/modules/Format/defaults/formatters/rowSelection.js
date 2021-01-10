@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	var checkbox = document.createElement("input");
 
 	checkbox.type = 'checkbox';

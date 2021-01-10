@@ -44,7 +44,7 @@ class Filter extends Module{
 
 					switch(typeof column.definition.headerFilterFunc){
 						case "string":
-						if(self.filters[column.definition.headerFilterFunc]){
+						if(Filter.filters[column.definition.headerFilterFunc]){
 							type = column.definition.headerFilterFunc;
 							filterFunc = function(data){
 								var params = column.definition.headerFilterFuncParams || {};
@@ -52,7 +52,7 @@ class Filter extends Module{
 
 								params = typeof params === "function" ? params(value, fieldVal, data) : params;
 
-								return self.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
+								return Filter.filters[column.definition.headerFilterFunc](value, fieldVal, data, params);
 							};
 						}else{
 							console.warn("Header Filter Error - Matching filter function not found: ", column.definition.headerFilterFunc);
@@ -439,17 +439,17 @@ class Filter extends Module{
 			};
 		}else{
 
-			if(self.filters[filter.type]){
+			if(Filter.filters[filter.type]){
 
 				column = self.table.columnManager.getColumnByField(filter.field);
 
 				if(column){
 					filterFunc = function(data){
-						return self.filters[filter.type](filter.value, column.getFieldValue(data), data, filter.params || {});
+						return Filter.filters[filter.type](filter.value, column.getFieldValue(data), data, filter.params || {});
 					};
 				}else{
 					filterFunc = function(data){
-						return self.filters[filter.type](filter.value, data[filter.field], data, filter.params || {});
+						return Filter.filters[filter.type](filter.value, data[filter.field], data, filter.params || {});
 					};
 				}
 
@@ -715,5 +715,5 @@ class Filter extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("filter", Filter);
-module.exports = Filter;
+// Tabulator.registerModule("filter", Filter);
+export default Filter;

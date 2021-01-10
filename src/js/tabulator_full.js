@@ -1,6 +1,6 @@
-import TabulatorCore from './core/Tabulator.js';
-import modules from './modules.js';
+import {default as TabulatorCore} from './core/Tabulator.js';
+import * as modules from './modules.js';
 
 TabulatorCore.registerModuleImport(modules);
 
-modules.export = TabulatorCore;
+export default TabulatorCore;

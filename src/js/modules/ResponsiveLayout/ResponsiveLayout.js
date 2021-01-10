@@ -305,5 +305,5 @@ class ResponsiveLayout extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("responsiveLayout", ResponsiveLayout);
-module.exports = ResponsiveLayout;
+// Tabulator.registerModule("responsiveLayout", ResponsiveLayout);
+export default ResponsiveLayout;

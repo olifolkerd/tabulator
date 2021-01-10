@@ -1,4 +1,4 @@
-module.exports = function(cell, formatterParams, onRendered){
+export default function(cell, formatterParams, onRendered){
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	el = document.createElement("span"),
 	max = formatterParams && formatterParams.max ? formatterParams.max : 100,

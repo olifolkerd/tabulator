@@ -8,7 +8,7 @@ import array from './sorters/array.js';
 import exists from './sorters/exists.js';
 import alphanum from './sorters/alphanum.js';
 
-module.exports = {
+export default {
 	number:number,
 	string:string,
 	date:date,

@@ -1,4 +1,4 @@
-module.exports = function(url, config, params){
+export default function(url, config, params){
 	if(url){
 		if(params && Object.keys(params).length){
 			if(!config.method || config.method.toLowerCase() == "get"){

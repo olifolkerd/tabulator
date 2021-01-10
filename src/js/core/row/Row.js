@@ -1,6 +1,6 @@
 import RowComponent from './RowComponent.js';
 
-class Row {
+export default class Row {
 	constructor (data, parent, type = "row"){
 		this.table = parent.table;
 		this.parent = parent;
@@ -382,7 +382,7 @@ class Row {
 
 	//update the rows data
 	updateData(updatedData){
-		var visible = this.element && Tabulator.prototype.helpers.elVisible(this.element),
+		var visible = this.element && Tabulator.helpers.elVisible(this.element),
 		tempData = {},
 		newRowData;
 
@@ -511,7 +511,7 @@ class Row {
 			for(var i = index+1; i < this.cells.length; i++){
 				let cell = this.cells[i];
 
-				if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())){
+				if(cell.column.modules.edit && Tabulator.helpers.elVisible(cell.getElement())){
 					let allowEdit = true;
 
 					if(typeof cell.column.modules.edit.check == "function"){
@@ -537,7 +537,7 @@ class Row {
 				let cell = this.cells[i],
 				allowEdit = true;
 
-				if(cell.column.modules.edit && Tabulator.prototype.helpers.elVisible(cell.getElement())){
+				if(cell.column.modules.edit && Tabulator.helpers.elVisible(cell.getElement())){
 					if(typeof cell.column.modules.edit.check == "function"){
 						allowEdit = cell.column.modules.edit.check(cell.getComponent());
 					}

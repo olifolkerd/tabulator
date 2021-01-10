@@ -1,4 +1,4 @@
-module.exports = function(list, options, setFileContents){
+export default function(list, options, setFileContents){
 	var self = this,
 	sheetName = options.sheetName || "Sheet1",
 	workbook = XLSX.utils.book_new(),

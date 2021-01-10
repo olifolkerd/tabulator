@@ -44,11 +44,11 @@ class Format extends Module{
 				console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
 			}
 
-			if(this.formatters[formatter]){
-				config.formatter = this.formatters[formatter];
+			if(Format.formatters[formatter]){
+				config.formatter = Format.formatters[formatter];
 			}else{
 				console.warn("Formatter Error - No such formatter found: ", formatter);
-				config.formatter = this.formatters.plaintext;
+				config.formatter = Format.formatters.plaintext;
 			}
 			break;
 
@@ -57,7 +57,7 @@ class Format extends Module{
 			break;
 
 			default:
-			config.formatter = this.formatters.plaintext;
+			config.formatter = Format.formatters.plaintext;
 			break;
 		}
 
@@ -142,11 +142,11 @@ class Format extends Module{
 
 		switch(typeof formatter){
 			case "string":
-			if(this.formatters[formatter]){
-				formatter = this.formatters[formatter]
+			if(Format.formatters[formatter]){
+				formatter = Format.formatters[formatter]
 			}else{
 				console.warn("Formatter Error - No such formatter found: ", formatter);
-				formatter = this.formatters.plaintext;
+				formatter = Format.formatters.plaintext;
 			}
 			break;
 
@@ -155,7 +155,7 @@ class Format extends Module{
 			break;
 
 			default:
-			formatter = this.formatters.plaintext;
+			formatter = Format.formatters.plaintext;
 			break;
 		}
 
@@ -163,5 +163,5 @@ class Format extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("format", Format);
-module.exports = Format;
+// Tabulator.registerModule("format", Format);
+export default Format;

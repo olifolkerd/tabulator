@@ -3,7 +3,7 @@ import defaultOptions from './defaults/options.js';
 
 import Cell from '../cell/Cell.js';
 
-class Column {
+export default class Column {
 
 	static defaultOptionList = defaultOptions;
 
@@ -114,7 +114,7 @@ class Column {
 
 	checkDefinition(){
 		Object.keys(this.definition).forEach((key) => {
-			if(this.defaultOptionList.indexOf(key) === -1){
+			if(Column.defaultOptionList.indexOf(key) === -1){
 				console.warn("Invalid column definition option in '" + (this.field || this.definition.title) + "' column:", key)
 			}
 		});
@@ -1259,5 +1259,3 @@ class Column {
 		return this.component;
 	}
 }
-
-module.exports = Column;

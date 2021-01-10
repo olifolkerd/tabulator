@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	cellEdit: function(action){
 		action.component.setValueProcessData(action.data.newValue);
 	},

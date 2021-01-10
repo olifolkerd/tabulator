@@ -25,8 +25,8 @@ class Sort extends Module{
 
 		switch(typeof column.definition.sorter){
 			case "string":
-			if(self.sorters[column.definition.sorter]){
-				sorter = self.sorters[column.definition.sorter];
+			if(Sort.sorters[column.definition.sorter]){
+				sorter = Sort.sorters[column.definition.sorter];
 			}else{
 				console.warn("Sort Error - No such sorter found: ", column.definition.sorter);
 			}
@@ -231,7 +231,7 @@ class Sort extends Module{
 			}
 		}
 
-		return this.sorters[sorter];
+		return Sort.sorters[sorter];
 	}
 
 	//work through sort list sorting data
@@ -347,5 +347,5 @@ class Sort extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("sort", Sort);
-module.exports = Sort;
+// Tabulator.registerModule("sort", Sort);
+export default Sort;

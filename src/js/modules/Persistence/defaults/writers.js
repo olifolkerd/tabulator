@@ -1,5 +1,5 @@
 //write persistence information to storage
-module.exports = {
+export default {
 	local:function(id, type, data){
 		localStorage.setItem(id + "-" + type, JSON.stringify(data));
 	},

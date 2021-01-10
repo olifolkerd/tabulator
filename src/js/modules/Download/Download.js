@@ -34,8 +34,8 @@ class Download extends Module{
 		if(typeof type == "function"){
 			downloadFunc = type;
 		}else{
-			if(self.downloaders[type]){
-				downloadFunc = self.downloaders[type];
+			if(Download.downloaders[type]){
+				downloadFunc = Download.downloaders[type];
 			}else{
 				console.warn("Download Error - No such download type found: ", type);
 			}
@@ -119,5 +119,5 @@ class Download extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("download", Download);
-module.exports = Download;
+// Tabulator.registerModule("download", Download);
+export default Download;

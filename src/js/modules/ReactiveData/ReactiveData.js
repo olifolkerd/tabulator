@@ -327,8 +327,8 @@ class ReactiveData extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("reactiveData", ReactiveData);
-module.exports = ReactiveData;
+// Tabulator.registerModule("reactiveData", ReactiveData);
+export default ReactiveData;
 
 
 

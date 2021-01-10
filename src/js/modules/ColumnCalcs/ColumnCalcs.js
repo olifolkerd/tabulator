@@ -57,8 +57,8 @@ class ColumnCalcs extends Module{
 
 			switch(typeof def.topCalc){
 				case "string":
-				if(this.calculations[def.topCalc]){
-					config.topCalc = this.calculations[def.topCalc]
+				if(ColumnCalcs.calculations[def.topCalc]){
+					config.topCalc = ColumnCalcs.calculations[def.topCalc]
 				}else{
 					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.topCalc);
 				}
@@ -84,8 +84,8 @@ class ColumnCalcs extends Module{
 		if(def.bottomCalc){
 			switch(typeof def.bottomCalc){
 				case "string":
-				if(this.calculations[def.bottomCalc]){
-					config.botCalc = this.calculations[def.bottomCalc]
+				if(ColumnCalcs.calculations[def.bottomCalc]){
+					config.botCalc = ColumnCalcs.calculations[def.bottomCalc]
 				}else{
 					console.warn("Column Calc Error - No such calculation found, ignoring: ", def.bottomCalc);
 				}
@@ -420,5 +420,5 @@ class ColumnCalcs extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("columnCalcs", ColumnCalcs);
-module.exports = ColumnCalcs;
+// Tabulator.registerModule("columnCalcs", ColumnCalcs);
+export default ColumnCalcs;

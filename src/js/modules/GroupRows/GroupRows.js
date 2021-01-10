@@ -370,5 +370,5 @@ class GroupRows extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("groupRows", GroupRows);
-module.exports = GroupRows;
+// Tabulator.registerModule("groupRows", GroupRows);
+export default GroupRows;

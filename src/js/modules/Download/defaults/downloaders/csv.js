@@ -1,4 +1,4 @@
-module.exports = function(list, options, setFileContents){
+export default function(list, options, setFileContents){
 	var delimiter = options && options.delimiter ? options.delimiter : ",",
 	fileContents = [],
 	headers = [];

@@ -1,6 +1,6 @@
 import CellComponent from './CellComponent.js';
 
-class Cell {
+export default class Cell {
 	constructor(column, row){
 		this.table = column.table;
 		this.column = column;
@@ -741,5 +741,3 @@ class Cell {
 		return this.component;
 	}
 }
-
-Module.exports = Cell;

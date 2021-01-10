@@ -1,6 +1,6 @@
-import Row from './core/row/Row.js';
+import Row from './row/Row.js';
 
-class RowManager {
+export default class RowManager {
 	constructor(table){
 		this.table = table;
 		this.element = this.createHolderElement(); //containing element
@@ -224,7 +224,7 @@ class RowManager {
 				if(position === "nearest"){
 					switch(this.renderMode){
 						case"classic":
-						rowTop = Tabulator.prototype.helpers.elOffset(rowEl).top;
+						rowTop = Tabulator.helpers.elOffset(rowEl).top;
 						position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
 						break;
 						case"virtual":
@@ -235,8 +235,8 @@ class RowManager {
 
 				//check row visibility
 				if(!ifVisible){
-					if(Tabulator.prototype.helpers.elVisible(rowEl)){
-						offset = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top;
+					if(Tabulator.helpers.elVisible(rowEl)){
+						offset = Tabulator.helpers.elOffset(rowEl).top - Tabulator.helpers.elOffset(this.element).top;
 
 						if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
 							return false;
@@ -247,7 +247,7 @@ class RowManager {
 				//scroll to row
 				switch(this.renderMode){
 					case"classic":
-					this.element.scrollTop = Tabulator.prototype.helpers.elOffset(rowEl).top - Tabulator.prototype.helpers.elOffset(this.element).top + this.element.scrollTop;
+					this.element.scrollTop = Tabulator.helpers.elOffset(rowEl).top - Tabulator.helpers.elOffset(this.element).top + this.element.scrollTop;
 					break;
 					case"virtual":
 					this._virtualRenderFill(rowIndex, true);
@@ -1019,7 +1019,7 @@ class RowManager {
 			}
 
 
-			if(Tabulator.prototype.helpers.elVisible(self.element)){
+			if(Tabulator.helpers.elVisible(self.element)){
 				if(renderInPosition){
 					self.reRenderInPosition();
 				}else{
@@ -1422,7 +1422,7 @@ class RowManager {
 			position -= topPad;
 		}
 
-		if(self.displayRowsCount && Tabulator.prototype.helpers.elVisible(self.element)){
+		if(self.displayRowsCount && Tabulator.helpers.elVisible(self.element)){
 
 			self.vDomTop = position;
 
@@ -1842,5 +1842,3 @@ class RowManager {
 		}
 	}
 }
-
-module.exports = RowManager;

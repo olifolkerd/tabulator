@@ -592,5 +592,5 @@ class Export extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("export", Export);
-module.exports = Export;
+// Tabulator.registerModule("export", Export);
+export default Export;

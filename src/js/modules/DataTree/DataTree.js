@@ -507,5 +507,5 @@ class DataTree extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("dataTree", DataTree);
-module.exports = DataTree;
+// Tabulator.registerModule("dataTree", DataTree);
+export default DataTree;

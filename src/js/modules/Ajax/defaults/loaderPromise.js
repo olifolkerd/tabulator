@@ -1,4 +1,4 @@
-module.exports = function(url, config, params){
+export default function(url, config, params){
 	var self = this, contentType;
 
 	return new Promise(function(resolve, reject){

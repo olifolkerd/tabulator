@@ -111,5 +111,5 @@ class FrozenRows extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("frozenRows", FrozenRows);
-module.exports = FrozenRows;
+// Tabulator.registerModule("frozenRows", FrozenRows);
+export default FrozenRows;

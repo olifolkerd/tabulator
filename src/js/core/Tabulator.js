@@ -1,7 +1,7 @@
 'use strict';
 
-import defaultOptions from './options.js';
-import coreModules from '../modules_core.js';
+import defaultOptions from './defaults/options.js';
+import * as coreModules from '../modules_core.js';
 
 import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
@@ -36,30 +36,33 @@ class Tabulator {
 			this._create();
 		}
 
-		Tabulator.prototype.comms.register(this); //register table for inderdevice communication
+		Tabulator.comms.register(this); //register table for inderdevice communication
 	}
 
 	initializeOptions(options){
+
+		var defaults = Tabulator.defaultOptions;
+
 		//warn user if option is not available
 		if(options.invalidOptionWarnings !== false){
 			for (var key in options){
-				if(typeof this.defaultOptions[key] === "undefined"){
+				if(typeof defaults[key] === "undefined"){
 					console.warn("Invalid table constructor option:", key)
 				}
 			}
 		}
 
 		//assign options to table
-		for (var key in this.defaultOptions){
+		for (var key in defaults){
 			if(key in options){
 				this.options[key] = options[key];
 			}else{
-				if(Array.isArray(this.defaultOptions[key])){
-					this.options[key] = Object.assign([], this.defaultOptions[key]);
-				}else if(typeof this.defaultOptions[key] === "object" && this.defaultOptions[key] !== null){
-					this.options[key] = Object.assign({}, this.defaultOptions[key]);
+				if(Array.isArray(defaults[key])){
+					this.options[key] = Object.assign([], defaults[key]);
+				}else if(typeof defaults[key] === "object" && defaults[key] !== null){
+					this.options[key] = Object.assign({}, defaults[key]);
 				}else{
-					this.options[key] = this.defaultOptions[key];
+					this.options[key] = defaults[key];
 				}
 			}
 		}
@@ -1805,15 +1808,15 @@ class Tabulator {
 	bindModules(){
 		this.modules = {};
 
-		for(var name in Tabulator.prototype.moduleBindings){
-			this.modules[name] = new Tabulator.prototype.moduleBindings[name](this);
+		for(var name in Tabulator.moduleBindings){
+			this.modules[name] = new Tabulator.moduleBindings[name](this);
 		}
 	}
 
 	//extend module
 	static extendModule = function(name, property, values){
-		if(Tabulator.prototype.moduleBindings[name]){
-			var source = Tabulator.prototype.moduleBindings[name].prototype[property];
+		if(Tabulator.moduleBindings[name]){
+			var source = Tabulator.moduleBindings[name].prototype[property];
 
 			if(source){
 				if(typeof values == "object"){
@@ -1842,15 +1845,14 @@ class Tabulator {
 			modules = [modules];
 		}
 
-		modules.forEach((mod){
+		modules.forEach((mod) => {
 			Tabulator.registerModuleBinding(mod)
-		})
+		});
 	}
 
 	//add module to tabulator
 	static registerModuleBinding(mod){
-		var self = this;
-		Tabulator.prototype.moduleBindings[mod.moduleName] = mod;
+		Tabulator.moduleBindings[mod.moduleName] = mod;
 	};
 
 	static helpers = {
@@ -1887,13 +1889,13 @@ class Tabulator {
 	static comms = {
 		tables:[],
 		register:function(table){
-			Tabulator.prototype.comms.tables.push(table);
+			Tabulator.comms.tables.push(table);
 		},
 		deregister:function(table){
-			var index = Tabulator.prototype.comms.tables.indexOf(table);
+			var index = Tabulator.comms.tables.indexOf(table);
 
 			if(index > -1){
-				Tabulator.prototype.comms.tables.splice(index, 1);
+				Tabulator.comms.tables.splice(index, 1);
 			}
 		},
 		lookupTable:function(query, silent){
@@ -1905,7 +1907,7 @@ class Tabulator {
 
 				if(matches.length){
 					for(var i = 0; i < matches.length; i++){
-						match = Tabulator.prototype.comms.matchElement(matches[i]);
+						match = Tabulator.comms.matchElement(matches[i]);
 
 						if(match){
 							results.push(match);
@@ -1914,14 +1916,14 @@ class Tabulator {
 				}
 
 			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
-				match = Tabulator.prototype.comms.matchElement(query);
+				match = Tabulator.comms.matchElement(query);
 
 				if(match){
 					results.push(match);
 				}
 			}else if(Array.isArray(query)){
 				query.forEach(function(item){
-					results = results.concat(Tabulator.prototype.comms.lookupTable(item));
+					results = results.concat(Tabulator.comms.lookupTable(item));
 				});
 			}else{
 				if(!silent){
@@ -1932,18 +1934,18 @@ class Tabulator {
 			return results;
 		},
 		matchElement:function(element){
-			return Tabulator.prototype.comms.tables.find(function(table){
+			return Tabulator.comms.tables.find(function(table){
 				return element instanceof Tabulator ? table === element : table.element === element;
 			});
 		}
 	};
 
 	static findTable(query){
-		var results = Tabulator.prototype.comms.lookupTable(query, true);
+		var results = Tabulator.comms.lookupTable(query, true);
 		return Array.isArray(results) && !results.length ? false : results;
 	}
 }
 
 Tabulator.registerModuleImport(coreModules);
 
-module.exports = Tabulator;
+export default Tabulator;

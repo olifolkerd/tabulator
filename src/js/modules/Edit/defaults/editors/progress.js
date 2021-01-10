@@ -1,5 +1,5 @@
 //draggable progress bar
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
 	var element = cell.getElement(),
 	max = typeof editorParams.max === "undefined" ? ( element.getElementsByTagName("div")[0].getAttribute("max") || 100) : editorParams.max,
 	min = typeof editorParams.min === "undefined" ? ( element.getElementsByTagName("div")[0].getAttribute("min") || 0) : editorParams.min,

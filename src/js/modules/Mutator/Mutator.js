@@ -51,8 +51,8 @@ class Mutator extends Module{
 		//set column mutator
 		switch(typeof value){
 			case "string":
-			if(this.mutators[value]){
-				mutator = this.mutators[value];
+			if(Mutator.mutators[value]){
+				mutator = Mutator.mutators[value];
 			}else{
 				console.warn("Mutator Error - No such mutator found, ignoring: ", value);
 			}
@@ -119,5 +119,5 @@ class Mutator extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("mutator", Mutator);
-module.exports = Mutator;
+// Tabulator.registerModule("mutator", Mutator);
+export default Mutator;

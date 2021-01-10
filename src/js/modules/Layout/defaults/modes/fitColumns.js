@@ -1,5 +1,5 @@
 //resize columns to fit
-module.exports = function(columns){
+export default function(columns){
 	var self = this;
 
 	var totalWidth = self.table.element.clientWidth; //table element width

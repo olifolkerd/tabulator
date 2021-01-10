@@ -62,7 +62,7 @@ class History extends Module{
 		if(this.index > -1){
 			let action = this.history[this.index];
 
-			this.undoers[action.type].call(this, action);
+			History.undoers[action.type].call(this, action);
 
 			this.index--;
 
@@ -82,7 +82,7 @@ class History extends Module{
 
 			let action = this.history[this.index];
 
-			this.redoers[action.type].call(this, action);
+			History.redoers[action.type].call(this, action);
 
 			this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
 
@@ -114,5 +114,5 @@ class History extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("history", History);
-module.exports = History;
+// Tabulator.registerModule("history", History);
+export default History;

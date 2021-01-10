@@ -19,7 +19,7 @@ class Localize extends Module{
 	}
 
 	initialize(){
-		this.langList = Tabulator.prototype.helpers.deepClone(this.langs);
+		this.langList = Tabulator.helpers.deepClone(Localize.langs);
 	}
 
 	//set header placehoder
@@ -100,7 +100,7 @@ class Localize extends Module{
 		self.locale = desiredLocale;
 
 		//load default lang template
-		self.lang = Tabulator.prototype.helpers.deepClone(self.langList.default || {});
+		self.lang = Tabulator.helpers.deepClone(self.langList.default || {});
 
 		if(desiredLocale != "default"){
 			traverseLang(self.langList[desiredLocale], self.lang);
@@ -179,5 +179,5 @@ class Localize extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("localize", Localize);
-module.exports = Localize;
+// Tabulator.registerModule("localize", Localize);
+export default Localize;

@@ -1,5 +1,5 @@
 //input element
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
 	//create and style input
 	var cellValue = cell.getValue(),
 	input = document.createElement("input");

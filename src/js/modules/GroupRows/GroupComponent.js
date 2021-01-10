@@ -59,4 +59,4 @@ class GroupComponent {
 	}
 }
 
-module.exports = GroupComponent;
+export default GroupComponent;

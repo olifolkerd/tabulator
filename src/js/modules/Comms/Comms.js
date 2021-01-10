@@ -9,7 +9,7 @@ class Comms extends Module{
 		connections = [],
 		connection;
 
-		connection = Tabulator.prototype.comms.lookupTable(selectors);
+		connection = Tabulator.comms.lookupTable(selectors);
 
 		connection.forEach(function(con){
 			if(self.table !== con){
@@ -42,5 +42,5 @@ class Comms extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("comms", Comms);
-module.exports = Comms;
+// Tabulator.registerModule("comms", Comms);
+export default Comms;

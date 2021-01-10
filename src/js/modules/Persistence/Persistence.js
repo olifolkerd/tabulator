@@ -49,15 +49,15 @@ class Persistence extends Module{
 			if(typeof this.table.options.persistenceReaderFunc === "function"){
 				this.readFunc = this.table.options.persistenceReaderFunc;
 			}else{
-				if(this.readers[this.table.options.persistenceReaderFunc]){
-					this.readFunc = this.readers[this.table.options.persistenceReaderFunc];
+				if(Persistence.readers[this.table.options.persistenceReaderFunc]){
+					this.readFunc = Persistence.readers[this.table.options.persistenceReaderFunc];
 				}else{
 					console.warn("Persistence Read Error - invalid reader set", this.table.options.persistenceReaderFunc);
 				}
 			}
 		}else{
-			if(this.readers[this.mode]){
-				this.readFunc = this.readers[this.mode];
+			if(Persistence.readers[this.mode]){
+				this.readFunc = Persistence.readers[this.mode];
 			}else{
 				console.warn("Persistence Read Error - invalid reader set", this.mode);
 			}
@@ -67,15 +67,15 @@ class Persistence extends Module{
 			if(typeof this.table.options.persistenceWriterFunc === "function"){
 				this.writeFunc = this.table.options.persistenceWriterFunc;
 			}else{
-				if(this.readers[this.table.options.persistenceWriterFunc]){
-					this.writeFunc = this.readers[this.table.options.persistenceWriterFunc];
+				if(Persistence.readers[this.table.options.persistenceWriterFunc]){
+					this.writeFunc = Persistence.readers[this.table.options.persistenceWriterFunc];
 				}else{
 					console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
 				}
 			}
 		}else{
-			if(this.writers[this.mode]){
-				this.writeFunc = this.writers[this.mode];
+			if(Persistence.writers[this.mode]){
+				this.writeFunc = Persistence.writers[this.mode];
 			}else{
 				console.warn("Persistence Write Error - invalid writer set", this.mode);
 			}
@@ -388,5 +388,5 @@ class Persistence extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("persistence", Persistence);
-module.exports = Persistence;
+// Tabulator.registerModule("persistence", Persistence);
+export default Persistence;

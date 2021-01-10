@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	navPrev:"shift + 9",
 	navNext:9,
 	navUp:38,

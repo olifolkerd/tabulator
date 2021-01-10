@@ -66,7 +66,7 @@ class MoveRows extends Module{
 
 		//same table drag drop
 		config.mousemove = function(e){
-			if(((e.pageY - Tabulator.prototype.helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
+			if(((e.pageY - Tabulator.helpers.elOffset(group.element).top) + self.table.rowManager.element.scrollTop) > (group.getHeight() / 2)){
 				if(self.toRow !== group || !self.toRowAfter){
 					var rowEl = group.getElement();
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
@@ -100,7 +100,7 @@ class MoveRows extends Module{
 		config.mousemove = function(e){
 			var rowEl = row.getElement();
 
-			if(((e.pageY - Tabulator.prototype.helpers.elOffset(rowEl).top) + self.table.rowManager.element.scrollTop) > (row.getHeight() / 2)){
+			if(((e.pageY - Tabulator.helpers.elOffset(rowEl).top) + self.table.rowManager.element.scrollTop) > (row.getHeight() / 2)){
 				if(self.toRow !== row || !self.toRowAfter){
 					rowEl.parentNode.insertBefore(self.placeholderElement, rowEl.nextSibling);
 					self.moveRow(row, true);
@@ -626,5 +626,5 @@ MoveRows.prototype.senders = {
 	}
 };
 
-// Tabulator.prototype.registerModule("moveRow", MoveRows);
-module.exports = MoveRows;
+// Tabulator.registerModule("moveRow", MoveRows);
+export default MoveRows;

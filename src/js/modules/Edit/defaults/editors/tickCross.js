@@ -1,5 +1,5 @@
 //checkbox
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
 	var value = cell.getValue(),
 	input = document.createElement("input"),
 	tristate = editorParams.tristate,

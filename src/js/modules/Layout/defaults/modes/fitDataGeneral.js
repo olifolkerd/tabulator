@@ -1,5 +1,5 @@
 //resize columns to fit data they contain and stretch row to fill table, also used for fitDataTable
-module.exports = function(columns){
+export default function(columns){
 	columns.forEach(function(column){
 		column.reinitializeWidth();
 	});

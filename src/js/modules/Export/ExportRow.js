@@ -7,4 +7,4 @@ class ExportRow{
 	}
 }
 
-module.exports = ExportRow;
+export default ExportRow;

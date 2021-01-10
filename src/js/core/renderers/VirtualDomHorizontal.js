@@ -1,4 +1,4 @@
-class VirtualDomHorizontal {
+export default class VirtualDomHorizontal {
 	constructor(table){
 		this.table = table;
 
@@ -442,5 +442,3 @@ class VirtualDomHorizontal {
 		}
 	}
 }
-
-module.exports = VirtualDomHorizontal;

@@ -44,7 +44,7 @@ class MoveColumns extends Module{
 
 			config.mousemove = function(e){
 				if(column.parent === self.moving.parent){
-					if((((self.touchMove ? e.touches[0].pageX : e.pageX) - Tabulator.prototype.helpers.elOffset(colEl).left) + self.table.columnManager.element.scrollLeft) > (column.getWidth() / 2)){
+					if((((self.touchMove ? e.touches[0].pageX : e.pageX) - Tabulator.helpers.elOffset(colEl).left) + self.table.columnManager.element.scrollLeft) > (column.getWidth() / 2)){
 						if(self.toCol !== column || !self.toColAfter){
 							colEl.parentNode.insertBefore(self.placeholderElement, colEl.nextSibling);
 							self.moveColumn(column, true);
@@ -164,7 +164,7 @@ class MoveColumns extends Module{
 		var element = column.getElement();
 
 		this.moving = column;
-		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Tabulator.prototype.helpers.elOffset(element).left;
+		this.startX = (this.touchMove ? e.touches[0].pageX : e.pageX) - Tabulator.helpers.elOffset(element).left;
 
 		this.table.element.classList.add("tabulator-block-select");
 
@@ -258,7 +258,7 @@ class MoveColumns extends Module{
 		var self = this,
 		columnHolder = self.table.columnManager.getElement(),
 		scrollLeft = columnHolder.scrollLeft,
-		xPos = ((self.touchMove ? e.touches[0].pageX : e.pageX) - Tabulator.prototype.helpers.elOffset(columnHolder).left) + scrollLeft,
+		xPos = ((self.touchMove ? e.touches[0].pageX : e.pageX) - Tabulator.helpers.elOffset(columnHolder).left) + scrollLeft,
 		scrollPos;
 
 		self.hoverElement.style.left = (xPos - self.startX) + "px";
@@ -285,5 +285,5 @@ class MoveColumns extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("moveColumn", MoveColumns);
-module.exports = MoveColumns;
+// Tabulator.registerModule("moveColumn", MoveColumns);
+export default MoveColumns;

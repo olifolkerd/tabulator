@@ -1,5 +1,5 @@
 //resize columns to fit data they contain
-module.exports = function(columns){
+export default function(columns){
 	if(this.table.options.virtualDomHoz){
 		this.table.vdomHoz.fitDataLayoutOverride();
 	}else{

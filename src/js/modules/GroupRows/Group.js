@@ -631,7 +631,7 @@ class Group{
 		this.initialized = false;
 		this.height = 0;
 
-		if(Tabulator.prototype.helpers.elVisible(this.element)){
+		if(Tabulator.helpers.elVisible(this.element)){
 			this.initialize(true);
 		}
 	}
@@ -670,4 +670,4 @@ class Group{
 	}
 }
 
-module.exports = Group;
+export default Group;

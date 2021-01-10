@@ -169,7 +169,7 @@ class Clipboard extends Module{
 
 		switch(typeof action){
 			case "string":
-			this.pasteAction = this.pasteActions[action];
+			this.pasteAction = Clipboard.pasteActions[action];
 
 			if(!this.pasteAction){
 				console.warn("Clipboard Error - No such paste action found:", action);
@@ -185,7 +185,7 @@ class Clipboard extends Module{
 	setPasteParser(parser){
 		switch(typeof parser){
 			case "string":
-			this.pasteParser = this.pasteParsers[parser];
+			this.pasteParser = Clipboard.pasteParsers[parser];
 
 			if(!this.pasteParser){
 				console.warn("Clipboard Error - No such paste parser found:", parser);
@@ -263,5 +263,5 @@ class Clipboard extends Module{
 	}
 }
 
-// Tabulator.prototype.registerModule("clipboard", Clipboard);
-module.exports = Clipboard;
+// Tabulator.registerModule("clipboard", Clipboard);
+export default Clipboard;

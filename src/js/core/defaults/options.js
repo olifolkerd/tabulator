@@ -1,4 +1,4 @@
-module.exports = {
+export default {
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator
@@ -20,7 +20,6 @@ module.exports = {
 	cellHozAlign:"", //horizontal align columns
 	cellVertAlign:"", //vertical align columns
 	headerHozAlign:"", //horizontal header alignment
-
 
 	data:[], //default starting data
 

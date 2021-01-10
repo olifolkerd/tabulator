@@ -1,6 +1,6 @@
 import Module from '../../module.js';
 
-class ResizeColumns {
+class ResizeColumns extends Module{
 
 	static moduleName = "resizeColumns";
 
@@ -176,5 +176,5 @@ class ResizeColumns {
 	}
 }
 
-// Tabulator.prototype.registerModule("resizeColumns", ResizeColumns);
-module.exports = ResizeColumns;
+// Tabulator.registerModule("resizeColumns", ResizeColumns);
+export default ResizeColumns;

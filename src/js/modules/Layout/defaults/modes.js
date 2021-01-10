@@ -3,7 +3,7 @@ import fitDataGeneral from './modes/fitDataGeneral.js';
 import fitDataStretch from './modes/fitDataStretch.js';
 import fitColumns from './modes/fitColumns.js';
 
-module.exports = {
+export default {
 	fitData:fitData,
 	fitDataFill:fitDataGeneral,
 	fitDataTable:fitDataGeneral,

@@ -1,5 +1,5 @@
 //resizable text area element
-module.exports = function(cell, onRendered, success, cancel, editorParams){
+export default function(cell, onRendered, success, cancel, editorParams){
     var self = this,
     cellValue = cell.getValue(),
     vertNav = editorParams.verticalNavigation || "hybrid",
