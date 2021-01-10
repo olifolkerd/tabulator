@@ -5,9 +5,8 @@
   "main": "dist/js/tabulator.js",
   "module": "dist/js/tabulator.es2015.js",
   "scripts": {
-    "build": "gulp",
-    "watch": "gulp watch",
-    "dev": "gulp dev"
+    "build": "rollup -c build/rollup.js",
+    "dev": "rollup -c build/rollup.js -w"
   },
   "repository": {
     "type": "git",
@@ -41,10 +40,14 @@
   "homepage": "http://tabulator.info/",
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "rollup": "^2.36.1",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-scss": "^2.6.1",
     "rollup-plugin-terser": "^7.0.2"
-  }
+  },
+  "dependencies": {}
 }
