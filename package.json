@@ -44,9 +44,12 @@
     "@babel/preset-env": "^7.12.11",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-node-resolve": "^11.0.1",
+    "node-sass": "^5.0.0",
+    "postcss": "^8.2.4",
     "rollup": "^2.36.1",
     "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-scss": "^2.6.1",
+    "rollup-plugin-license": "^2.2.0",
+    "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {}
