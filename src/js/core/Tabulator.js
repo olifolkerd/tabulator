@@ -1,13 +1,14 @@
 'use strict';
 
 import defaultOptions from './defaults/options.js';
-import * as coreModules from '../modules_core.js';
+
 
 import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
 import TableRegistry from './TableRegistry.js';
+import ModuleBinder from './ModuleBinder.js';
 
 import VirtualDomHorizontal from './renderers/VirtualDomHorizontal.js';
 
@@ -15,7 +16,6 @@ class Tabulator {
 
 	//default setup options
 	static defaultOptions = defaultOptions;
-	static moduleBindings = {};
 
 	constructor(element, options){
 
@@ -1805,64 +1805,9 @@ class Tabulator {
 			return false;
 		}
 	}
-
-	//ensure that module are bound to instantiated function
-	bindModules(){
-		this.modules = {};
-
-		for(var name in Tabulator.moduleBindings){
-			this.modules[name] = new Tabulator.moduleBindings[name](this);
-		}
-	}
-
-	//extend module
-	static extendModule = function(name, property, values){
-		if(Tabulator.moduleBindings[name]){
-			var source = Tabulator.moduleBindings[name].prototype[property];
-
-			if(source){
-				if(typeof values == "object"){
-					for(let key in values){
-						source[key] = values[key];
-					}
-				}else{
-					console.warn("Module Error - Invalid value type, it must be an object");
-				}
-			}else{
-				console.warn("Module Error - property does not exist:", property);
-			}
-		}else{
-			console.warn("Module Error - module does not exist:", name);
-		}
-	};
-
-	static registerModuleImport(modules){
-		var mods = Object.values(modules);
-
-		Tabulator.registerModule(mods);
-	}
-
-	static registerModule(modules){
-		if(!Array.isArray(modules)){
-			modules = [modules];
-		}
-
-		modules.forEach((mod) => {
-			Tabulator.registerModuleBinding(mod)
-		});
-	}
-
-	//add module to tabulator
-	static registerModuleBinding(mod){
-		Tabulator.moduleBindings[mod.moduleName] = mod;
-	};
-
-	static findTable(query){
-		var results = TableRegistry.lookupTable(query, true);
-		return Array.isArray(results) && !results.length ? false : results;
-	}
 }
 
-Tabulator.registerModuleImport(coreModules);
+//bind modules and static functionality
+new ModuleBinder(Tabulator);
 
 export default Tabulator;
