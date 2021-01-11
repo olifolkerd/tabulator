@@ -2,11 +2,11 @@ import Tabulator from './Tabulator.js';
 
 class TableRegistry {
 
-	register(table){
+	static register(table){
 		TableRegistry.tables.push(table);
 	}
 
-	deregister(table){
+	static deregister(table){
 		var index = TableRegistry.tables.indexOf(table);
 
 		if(index > -1){
@@ -14,7 +14,7 @@ class TableRegistry {
 		}
 	}
 
-	lookupTable(query, silent){
+	static lookupTable(query, silent){
 		var results = [],
 		matches, match;
 
@@ -50,7 +50,7 @@ class TableRegistry {
 		return results;
 	}
 
-	matchElement(element){
+	static matchElement(element){
 		return TableRegistry.tables.find(function(table){
 			return element instanceof Tabulator ? table === element : table.element === element;
 		});
