@@ -1,4 +1,4 @@
-import Module from '../../module.js';
+import Module from '../../core/Module.js';
 
 import ExportRow from './ExportRow.js';
 import ExportColumn from './ExportColumn.js';

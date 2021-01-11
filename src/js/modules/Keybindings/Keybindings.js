@@ -1,4 +1,4 @@
-import Module from '../../module.js';
+import Module from '../../core/Module.js';
 
 import defaultBindings from './defaults/bindings.js';
 import defaultActions from './defaults/actions.js';

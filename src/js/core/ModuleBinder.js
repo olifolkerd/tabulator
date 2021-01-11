@@ -1,4 +1,4 @@
-import * as coreModules from '../modules_core.js';
+import * as coreModules from './modules/core.js';
 import TableRegistry from './TableRegistry.js';
 
 export default class ModuleBinder {

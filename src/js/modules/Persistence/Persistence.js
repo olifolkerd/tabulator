@@ -1,4 +1,4 @@
-import Module from '../../module.js';
+import Module from '../../core/Module.js';
 
 import defaultReaders from './defaults/readers.js';
 import defaultWriters from './defaults/writers.js';

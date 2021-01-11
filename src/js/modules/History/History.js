@@ -1,4 +1,4 @@
-import Module from '../../module.js';
+import Module from '../../core/Module.js';
 
 import defaultUndoers from './defaults/undoers.js';
 import defaultRedoers from './defaults/redoers.js';

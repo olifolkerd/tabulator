@@ -1,4 +1,4 @@
-import Module from '../../module.js';
+import Module from '../../core/Module.js';
 
 import defaultConfig from './defaults/config.js';
 import defaultURLGenerator from './defaults/urlGenerator.js';

@@ -1,4 +1,4 @@
-import Module from '../../module.js';
+import Module from '../../core/Module.js';
 import Helpers from '../../core/Helpers.js';
 
 class MoveRows extends Module{
