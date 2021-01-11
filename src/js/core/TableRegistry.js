@@ -1,4 +1,4 @@
-import Tabulator from './Tabulatorjs';
+import Tabulator from './Tabulator.js';
 
 class TableRegistry {
 
