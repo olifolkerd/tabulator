@@ -1,3 +1,5 @@
+import Helpers from '../../../../core/Helpers.js';
+
 //autocomplete
 export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
@@ -285,7 +287,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			console.log("show", initialDisplayValue)
 			while(listEl.firstChild) listEl.removeChild(listEl.firstChild);
 
-			var offset = Tabulator.helpers.elOffset(cellEl);
+			var offset = Helpers.elOffset(cellEl);
 
 			listEl.style.minWidth = cellEl.offsetWidth + "px";
 

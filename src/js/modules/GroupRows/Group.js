@@ -1,3 +1,5 @@
+import Helpers from '../../core/Helpers.js';
+
 //Group functions
 class Group{
 
@@ -631,7 +633,7 @@ class Group{
 		this.initialized = false;
 		this.height = 0;
 
-		if(Tabulator.helpers.elVisible(this.element)){
+		if(Helpers.elVisible(this.element)){
 			this.initialize(true);
 		}
 	}

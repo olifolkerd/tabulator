@@ -1,4 +1,5 @@
 import Column from './column/Column.js';
+import Helpers from './Helpers.js';
 
 export default class ColumnManager {
 
@@ -689,7 +690,7 @@ export default class ColumnManager {
 	//redraw columns
 	redraw(force){
 		if(force){
-			if(Tabulator.helpers.elVisible(this.element)){
+			if(Helpers.elVisible(this.element)){
 				this._verticalAlignHeaders();
 			}
 

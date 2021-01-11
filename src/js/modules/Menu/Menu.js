@@ -1,4 +1,5 @@
 import Module from '../../module.js';
+import Helpers from '../../core/Helpers.js';
 
 class Menu extends Module{
 
@@ -234,7 +235,7 @@ class Menu extends Module{
 
 			this.positionReversedX = false;
 		}else{
-			parentOffset = Tabulator.helpers.elOffset(parentEl);
+			parentOffset = Helpers.elOffset(parentEl);
 			x = parentOffset.left + parentEl.offsetWidth;
 			y = parentOffset.top - 1;
 		}

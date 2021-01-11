@@ -1,5 +1,7 @@
 import Module from '../../module.js';
 
+import Helpers from '../../core/Helpers.js';
+
 import defaultLangs from './defaults/langs.js';
 
 class Localize extends Module{
@@ -19,7 +21,7 @@ class Localize extends Module{
 	}
 
 	initialize(){
-		this.langList = Tabulator.helpers.deepClone(Localize.langs);
+		this.langList = Helpers.deepClone(Localize.langs);
 	}
 
 	//set header placehoder
@@ -100,7 +102,7 @@ class Localize extends Module{
 		self.locale = desiredLocale;
 
 		//load default lang template
-		self.lang = Tabulator.helpers.deepClone(self.langList.default || {});
+		self.lang = Helpers.deepClone(self.langList.default || {});
 
 		if(desiredLocale != "default"){
 			traverseLang(self.langList[desiredLocale], self.lang);

@@ -1,3 +1,5 @@
+import Helpers from '../../../../core/Helpers.js';
+
 //dropdown select editor
 export default function(cell, onRendered, success, cancel, editorParams){
 	var self = this,
@@ -392,7 +394,7 @@ export default function(cell, onRendered, success, cancel, editorParams){
 			}
 
 
-			var offset = Tabulator.helpers.elOffset(cellEl);
+			var offset = Helpers.elOffset(cellEl);
 
 			listEl.style.minWidth = cellEl.offsetWidth + "px";
 

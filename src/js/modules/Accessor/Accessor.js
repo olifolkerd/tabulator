@@ -1,4 +1,5 @@
 import Module from '../../module.js';
+import Helpers from '../../core/Helpers.js';
 
 import defautlAccessors from './defaults/accessors.js';
 
@@ -71,7 +72,7 @@ class Accessor extends Module{
 		rowComponent = row.getComponent();
 
 		//clone data object with deep copy to isolate internal data from returned result
-		var data = Tabulator.helpers.deepClone(row.data || {});
+		var data = Helpers.deepClone(row.data || {});
 
 		this.table.columnManager.traverse(function(column){
 			var value, accessor, params, colCompnent;

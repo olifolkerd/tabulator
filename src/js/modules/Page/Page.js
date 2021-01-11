@@ -1,5 +1,7 @@
 import Module from '../../module.js';
 
+import Helpers from '../../core/Helpers.js';
+
 import defaultDataSentNames from './defaults/dataSentNames.js';
 import defaultDataReceivedNames from './defaults/dataReceivedNames.js';
 
@@ -601,7 +603,7 @@ class Page extends Module{
 			}
 
 			//record old params and restore after request has been made
-			oldParams = Tabulator.helpers.deepClone(self.table.modules.ajax.getParams() || {});
+			oldParams = Helpers.deepClone(self.table.modules.ajax.getParams() || {});
 			pageParams = self.table.modules.ajax.getParams();
 
 			//configure request params

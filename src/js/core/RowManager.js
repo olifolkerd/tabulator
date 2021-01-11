@@ -1,4 +1,5 @@
 import Row from './row/Row.js';
+import Helpers from './Helpers.js';
 
 export default class RowManager {
 	constructor(table){
@@ -224,7 +225,7 @@ export default class RowManager {
 				if(position === "nearest"){
 					switch(this.renderMode){
 						case"classic":
-						rowTop = Tabulator.helpers.elOffset(rowEl).top;
+						rowTop = Helpers.elOffset(rowEl).top;
 						position = Math.abs(this.element.scrollTop - rowTop) > Math.abs(this.element.scrollTop + this.element.clientHeight - rowTop) ? "bottom" : "top";
 						break;
 						case"virtual":
@@ -235,8 +236,8 @@ export default class RowManager {
 
 				//check row visibility
 				if(!ifVisible){
-					if(Tabulator.helpers.elVisible(rowEl)){
-						offset = Tabulator.helpers.elOffset(rowEl).top - Tabulator.helpers.elOffset(this.element).top;
+					if(Helpers.elVisible(rowEl)){
+						offset = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.element).top;
 
 						if(offset > 0 && offset < this.element.clientHeight - rowEl.offsetHeight){
 							return false;
@@ -247,7 +248,7 @@ export default class RowManager {
 				//scroll to row
 				switch(this.renderMode){
 					case"classic":
-					this.element.scrollTop = Tabulator.helpers.elOffset(rowEl).top - Tabulator.helpers.elOffset(this.element).top + this.element.scrollTop;
+					this.element.scrollTop = Helpers.elOffset(rowEl).top - Helpers.elOffset(this.element).top + this.element.scrollTop;
 					break;
 					case"virtual":
 					this._virtualRenderFill(rowIndex, true);
@@ -1019,7 +1020,7 @@ export default class RowManager {
 			}
 
 
-			if(Tabulator.helpers.elVisible(self.element)){
+			if(Helpers.elVisible(self.element)){
 				if(renderInPosition){
 					self.reRenderInPosition();
 				}else{
@@ -1422,7 +1423,7 @@ export default class RowManager {
 			position -= topPad;
 		}
 
-		if(self.displayRowsCount && Tabulator.helpers.elVisible(self.element)){
+		if(self.displayRowsCount && Helpers.elVisible(self.element)){
 
 			self.vDomTop = position;
 
