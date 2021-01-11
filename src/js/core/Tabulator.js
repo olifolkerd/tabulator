@@ -14,9 +14,6 @@ import VirtualDomHorizontal from './renderers/VirtualDomHorizontal.js';
 
 class Tabulator {
 
-	//default setup options
-	static defaultOptions = defaultOptions;
-
 	constructor(element, options){
 
 		this.options = {};
@@ -1806,6 +1803,9 @@ class Tabulator {
 		}
 	}
 }
+
+//default setup options
+Tabulator.defaultOptions = defaultOptions;
 
 //bind modules and static functionality
 new ModuleBinder(Tabulator);

@@ -7,14 +7,6 @@ import defaultContentTypeFormatters from './defaults/contentTypeFormatters.js';
 
 class Ajax extends Module{
 
-	static moduleName = "ajax";
-
-	//load defaults
-	static defaultConfig = defaultConfig;
-	static defaultURLGenerator = defaultURLGenerator;
-	static defaultLoaderPromise = defaultLoaderPromise;
-	static contentTypeFormatters = defaultContentTypeFormatters;
-
 	constructor(table){
 		super(table);
 
@@ -342,5 +334,13 @@ class Ajax extends Module{
 		}
 	}
 }
+
+Ajax.moduleName = "ajax";
+
+//load defaults
+Ajax.defaultConfig = defaultConfig;
+Ajax.defaultURLGenerator = defaultURLGenerator;
+Ajax.defaultLoaderPromise = defaultLoaderPromise;
+Ajax.contentTypeFormatters = defaultContentTypeFormatters;
 
 export default Ajax;

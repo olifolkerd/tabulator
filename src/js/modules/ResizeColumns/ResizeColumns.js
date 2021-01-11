@@ -2,8 +2,6 @@ import Module from '../../core/Module.js';
 
 class ResizeColumns extends Module{
 
-	static moduleName = "resizeColumns";
-
 	constructor(table){
 		super(table);
 
@@ -175,5 +173,7 @@ class ResizeColumns extends Module{
 		handle.addEventListener("touchend", mouseUp);
 	}
 }
+
+ResizeColumns.moduleName = "resizeColumns";
 
 export default ResizeColumns;

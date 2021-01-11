@@ -5,12 +5,6 @@ import defaultActions from './defaults/actions.js';
 
 class Keybindings extends Module{
 
-	static moduleName = "keybindings";
-
-	//load defaults
-	static bindings = defaultBindings;
-	static actions = defaultActions;
-
 	constructor(table){
 		super(table);
 
@@ -178,5 +172,11 @@ class Keybindings extends Module{
 		return false;
 	}
 }
+
+Keybindings.moduleName = "keybindings";
+
+//load defaults
+Keybindings.bindings = defaultBindings;
+Keybindings.actions = defaultActions;
 
 export default Keybindings;

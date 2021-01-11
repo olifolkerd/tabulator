@@ -4,11 +4,6 @@ import defaultValidators from './defaults/validators.js';
 
 class Validate extends Module{
 
-	static moduleName = "validate";
-
-	//load defaults
-	static validators = defaultValidators;
-
 	constructor(table){
 		super(table);
 
@@ -157,5 +152,10 @@ class Validate extends Module{
 		}
 	}
 }
+
+Validate.moduleName = "validate";
+
+//load defaults
+Validate.validators = defaultValidators;
 
 export default Validate;

@@ -5,8 +5,6 @@ import ExportColumn from './ExportColumn.js';
 
 class Export extends Module{
 
-	static moduleName = "export";
-
 	constructor(table){
 		super(table);
 
@@ -591,5 +589,7 @@ class Export extends Module{
 		}
 	}
 }
+
+Export.moduleName = "export";
 
 export default Export;

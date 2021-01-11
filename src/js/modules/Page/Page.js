@@ -7,12 +7,6 @@ import defaultDataReceivedNames from './defaults/dataReceivedNames.js';
 
 class Page extends Module{
 
-	static moduleName = "page";
-
-	//load defaults
-	static defaultDataSentNames = defaultDataSentNames;
-	static defaultDataReceivedNames = defaultDataReceivedNames;
-
 	constructor(table){
 		super(table);
 
@@ -718,5 +712,11 @@ class Page extends Module{
 		}
 	}
 }
+
+Page.moduleName = "page";
+
+//load defaults
+Page.defaultDataSentNames = defaultDataSentNames;
+Page.defaultDataReceivedNames = defaultDataReceivedNames;
 
 export default Page;

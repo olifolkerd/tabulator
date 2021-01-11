@@ -3,8 +3,6 @@ import TableRegistry from '../../core/TableRegistry.js';
 
 class Comms extends Module{
 
-	static moduleName = "comms";
-
 	getConnections(selectors){
 		var self = this,
 		connections = [],
@@ -42,5 +40,7 @@ class Comms extends Module{
 		}
 	}
 }
+
+Comms.moduleName = "comms";
 
 export default Comms;

@@ -3,8 +3,6 @@ import Helpers from '../../core/Helpers.js';
 
 class MoveRows extends Module{
 
-	static moduleName = "moveRow";
-
 	constructor(table){
 		super(table);
 
@@ -626,5 +624,7 @@ MoveRows.prototype.senders = {
 		fromRow.delete();
 	}
 };
+
+MoveRows.moduleName = "moveRow";
 
 export default MoveRows;

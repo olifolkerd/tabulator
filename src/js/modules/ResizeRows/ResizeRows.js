@@ -2,8 +2,6 @@ import Module from '../../core/Module.js';
 
 class ResizeRows extends Module{
 
-	static moduleName = "resizeRows";
-
 	constructor(table){
 		super(table);
 
@@ -100,5 +98,7 @@ class ResizeRows extends Module{
 		handle.addEventListener("touchend", mouseUp);
 	}
 }
+
+ResizeRows.moduleName = "resizeRows";
 
 export default ResizeRows;

@@ -2,8 +2,6 @@ import Module from '../../core/Module.js';
 
 class FrozenColumns extends Module{
 
-	static moduleName = "frozenColumns";
-
 	constructor(table){
 		super(table);
 
@@ -273,5 +271,7 @@ class FrozenColumns extends Module{
 		return width;
 	}
 }
+
+FrozenColumns.moduleName = "frozenColumns";
 
 export default FrozenColumns;

@@ -5,12 +5,6 @@ import defaultWriters from './defaults/writers.js';
 
 class Persistence extends Module{
 
-	static moduleName = "persistence";
-
-	//load defaults
-	static readers = defaultReaders;
-	static writers = defaultWriters;
-
 	constructor(table){
 		super(table);
 
@@ -387,5 +381,11 @@ class Persistence extends Module{
 		return definitions;
 	}
 }
+
+Persistence.moduleName = "persistence";
+
+//load defaults
+Persistence.readers = defaultReaders;
+Persistence.writers = defaultWriters;
 
 export default Persistence;

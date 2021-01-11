@@ -3,9 +3,7 @@ import defaultOptions from './defaults/options.js';
 
 import Cell from '../cell/Cell.js';
 
-export default class Column {
-
-	static defaultOptionList = defaultOptions;
+class Column {
 
 	constructor(def, parent){
 		var self = this;
@@ -1259,3 +1257,7 @@ export default class Column {
 		return this.component;
 	}
 }
+
+Column.defaultOptionList = defaultOptions;
+
+export default Column;

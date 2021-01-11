@@ -4,11 +4,6 @@ import defaultMutators from './defaults/mutators.js';
 
 class Mutator extends Module{
 
-	static moduleName = "mutator";
-
-	//load defaults
-	static mutators = defaultMutators;
-
 	constructor(table){
 		super(table);
 
@@ -118,5 +113,10 @@ class Mutator extends Module{
 		this.enabled = false;
 	}
 }
+
+Mutator.moduleName = "mutator";
+
+//load defaults
+Mutator.mutators = defaultMutators;
 
 export default Mutator;

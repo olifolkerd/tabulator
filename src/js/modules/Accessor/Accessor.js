@@ -5,11 +5,6 @@ import defautlAccessors from './defaults/accessors.js';
 
 class Accessor extends Module{
 
-	static moduleName = "accessor";
-
-	//load defaults
-	static accessors = defautlAccessors;
-
 	constructor(table){
 		super(table);
 
@@ -96,5 +91,9 @@ class Accessor extends Module{
 		return data;
 	}
 }
+
+//load defaults
+Accessor.moduleName = "accessor";
+Accessor.accessors = defautlAccessors;
 
 export default Accessor;

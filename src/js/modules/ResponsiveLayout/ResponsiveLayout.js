@@ -2,8 +2,6 @@ import Module from '../../core/Module.js';
 
 class ResponsiveLayout extends Module{
 
-	static moduleName = "responsiveLayout";
-
 	constructor(table){
 		super(table);
 
@@ -304,5 +302,7 @@ class ResponsiveLayout extends Module{
 		return Object.keys(data).length ? list : "";
 	}
 }
+
+ResponsiveLayout.moduleName = "responsiveLayout";
 
 export default ResponsiveLayout;

@@ -3,8 +3,6 @@ import Helpers from '../../core/Helpers.js';
 
 class Menu extends Module{
 
-	static moduleName = "menu";
-
 	constructor(table){
 		super(table);
 
@@ -303,7 +301,6 @@ class Menu extends Module{
 	}
 }
 
-//default accessors
-Menu.prototype.menus = {};
+Menu.moduleName = "menu";
 
 export default Menu;

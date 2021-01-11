@@ -4,11 +4,6 @@ import defaultFormatters from './defaults/formatters.js';
 
 class Format extends Module{
 
-	static moduleName = "format";
-
-	//load defaults
-	static formatters = defaultFormatters;
-
 	//initialize column formatter
 	initializeColumn(column){
 		column.modules.format = this.lookupFormatter(column, "");
@@ -162,5 +157,10 @@ class Format extends Module{
 		return formatter;
 	}
 }
+
+Format.moduleName = "format";
+
+//load defaults
+Format.formatters = defaultFormatters;
 
 export default Format;

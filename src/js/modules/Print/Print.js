@@ -2,8 +2,6 @@ import Module from '../../core/Module.js';
 
 class Print extends Module{
 
-	static moduleName = "print";
-
 	constructor(table){
 		super(table);
 
@@ -98,5 +96,7 @@ class Print extends Module{
 		this.manualBlock = false;
 	}
 }
+
+Print.moduleName = "print";
 
 export default Print;

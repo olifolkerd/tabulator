@@ -2,8 +2,6 @@ import Module from '../../core/Module.js';
 
 class SelectRow extends Module{
 
-	static moduleName = "selectRow";
-
 	constructor(table){
 		super(table);
 
@@ -392,5 +390,7 @@ class SelectRow extends Module{
 		}
 	}
 }
+
+SelectRow.moduleName = "selectRow";
 
 export default SelectRow;

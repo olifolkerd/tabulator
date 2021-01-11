@@ -4,11 +4,6 @@ import defaultEditors from './defaults/editors.js';
 
 class Edit extends Module{
 
-	static moduleName = "edit";
-
-	//load defaults
-	static editors = defaultEditors;
-
 	constructor(table){
 		super(table);
 
@@ -489,5 +484,11 @@ class Edit extends Module{
 		}
 	}
 }
+
+Edit.moduleName = "edit";
+
+//load defaults
+Edit.editors = defaultEditors;
+
 
 export default Edit;

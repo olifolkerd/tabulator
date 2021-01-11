@@ -4,11 +4,6 @@ import defaultDownloaders from './defaults/downloaders.js';
 
 class Download extends Module{
 
-	static moduleName = "download";
-
-	//load defaults
-	static downloaders = defaultDownloaders;
-
 	constructor(table){
 		super(table);
 	}
@@ -118,5 +113,10 @@ class Download extends Module{
 		}
 	}
 }
+
+Download.moduleName = "download";
+
+//load defaults
+Download.downloaders = defaultDownloaders;
 
 export default Download;
