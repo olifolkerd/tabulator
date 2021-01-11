@@ -719,5 +719,4 @@ class Page extends Module{
 	}
 }
 
-// Tabulator.registerModule("page", Page);
 export default Page;

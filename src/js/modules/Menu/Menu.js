@@ -306,5 +306,4 @@ class Menu extends Module{
 //default accessors
 Menu.prototype.menus = {};
 
-// Tabulator.registerModule("menu", Menu);
 export default Menu;

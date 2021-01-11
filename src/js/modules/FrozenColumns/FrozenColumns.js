@@ -274,5 +274,4 @@ class FrozenColumns extends Module{
 	}
 }
 
-// Tabulator.registerModule("frozenColumns", FrozenColumns);
 export default FrozenColumns;

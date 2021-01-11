@@ -388,5 +388,4 @@ class Persistence extends Module{
 	}
 }
 
-// Tabulator.registerModule("persistence", Persistence);
 export default Persistence;

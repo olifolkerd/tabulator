@@ -1,4 +1,5 @@
 export default class FooterManager {
+
 	constructor(table){
 		this.table = table;
 		this.active = false;

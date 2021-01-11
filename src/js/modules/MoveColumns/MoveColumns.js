@@ -286,5 +286,4 @@ class MoveColumns extends Module{
 	}
 }
 
-// Tabulator.registerModule("moveColumn", MoveColumns);
 export default MoveColumns;

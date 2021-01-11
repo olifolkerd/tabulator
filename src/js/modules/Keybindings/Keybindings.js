@@ -179,5 +179,4 @@ class Keybindings extends Module{
 	}
 }
 
-// Tabulator.registerModule("keybindings", Keybindings);
 export default Keybindings;

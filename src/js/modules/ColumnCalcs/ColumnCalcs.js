@@ -420,5 +420,4 @@ class ColumnCalcs extends Module{
 	}
 }
 
-// Tabulator.registerModule("columnCalcs", ColumnCalcs);
 export default ColumnCalcs;

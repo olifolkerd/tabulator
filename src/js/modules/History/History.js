@@ -114,5 +114,4 @@ class History extends Module{
 	}
 }
 
-// Tabulator.registerModule("history", History);
 export default History;

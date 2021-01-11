@@ -158,5 +158,4 @@ class Validate extends Module{
 	}
 }
 
-// Tabulator.registerModule("validate", Validate);
 export default Validate;

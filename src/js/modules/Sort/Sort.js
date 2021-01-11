@@ -347,5 +347,4 @@ class Sort extends Module{
 	}
 }
 
-// Tabulator.registerModule("sort", Sort);
 export default Sort;

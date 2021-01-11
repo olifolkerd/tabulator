@@ -715,5 +715,4 @@ class Filter extends Module{
 	}
 }
 
-// Tabulator.registerModule("filter", Filter);
 export default Filter;

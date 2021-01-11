@@ -490,5 +490,4 @@ class Edit extends Module{
 	}
 }
 
-// Tabulator.registerModule("edit", Edit);
 export default Edit;

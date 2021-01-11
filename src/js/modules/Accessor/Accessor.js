@@ -97,5 +97,4 @@ class Accessor extends Module{
 	}
 }
 
-// Tabulator.registerModule("accessor", Accessor);
 export default Accessor;

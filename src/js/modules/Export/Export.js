@@ -592,5 +592,4 @@ class Export extends Module{
 	}
 }
 
-// Tabulator.registerModule("export", Export);
 export default Export;

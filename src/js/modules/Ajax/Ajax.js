@@ -343,5 +343,4 @@ class Ajax extends Module{
 	}
 }
 
-// Tabulator.registerModule("ajax", Ajax);
 export default Ajax;

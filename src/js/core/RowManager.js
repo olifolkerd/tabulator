@@ -2,6 +2,7 @@ import Row from './row/Row.js';
 import Helpers from './Helpers.js';
 
 export default class RowManager {
+
 	constructor(table){
 		this.table = table;
 		this.element = this.createHolderElement(); //containing element

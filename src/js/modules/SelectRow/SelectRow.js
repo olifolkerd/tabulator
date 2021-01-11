@@ -393,5 +393,4 @@ class SelectRow extends Module{
 	}
 }
 
-// Tabulator.registerModule("selectRow", SelectRow);
 export default SelectRow;

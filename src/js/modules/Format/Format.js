@@ -163,5 +163,4 @@ class Format extends Module{
 	}
 }
 
-// Tabulator.registerModule("format", Format);
 export default Format;

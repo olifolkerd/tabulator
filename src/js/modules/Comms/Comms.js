@@ -43,5 +43,4 @@ class Comms extends Module{
 	}
 }
 
-// Tabulator.registerModule("comms", Comms);
 export default Comms;

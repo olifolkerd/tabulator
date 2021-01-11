@@ -193,5 +193,4 @@ class HtmlTableImport extends Module{
 	}
 }
 
-// Tabulator.registerModule("htmlTableImport", HtmlTableImport);
 export default HtmlTableImport;

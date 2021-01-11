@@ -101,5 +101,4 @@ class ResizeRows extends Module{
 	}
 }
 
-// Tabulator.registerModule("resizeRows", ResizeRows);
 export default ResizeRows;

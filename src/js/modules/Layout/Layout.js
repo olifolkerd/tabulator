@@ -41,5 +41,4 @@ class Layout extends Module{
 	}
 }
 
-// Tabulator.registerModule("layout", Layout);
 export default Layout;

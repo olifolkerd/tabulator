@@ -627,5 +627,4 @@ MoveRows.prototype.senders = {
 	}
 };
 
-// Tabulator.registerModule("moveRow", MoveRows);
 export default MoveRows;

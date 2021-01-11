@@ -119,5 +119,4 @@ class ResizeTable extends Module{
 	}
 }
 
-// Tabulator.registerModule("resizeTable", ResizeTable);
 export default ResizeTable;

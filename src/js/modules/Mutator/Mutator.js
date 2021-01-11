@@ -119,5 +119,4 @@ class Mutator extends Module{
 	}
 }
 
-// Tabulator.registerModule("mutator", Mutator);
 export default Mutator;

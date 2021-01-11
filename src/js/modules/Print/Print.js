@@ -99,5 +99,4 @@ class Print extends Module{
 	}
 }
 
-// Tabulator.registerModule("print", Print);
 export default Print;

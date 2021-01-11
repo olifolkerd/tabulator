@@ -507,5 +507,4 @@ class DataTree extends Module{
 	}
 }
 
-// Tabulator.registerModule("dataTree", DataTree);
 export default DataTree;

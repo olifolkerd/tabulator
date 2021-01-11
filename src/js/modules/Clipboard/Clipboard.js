@@ -263,5 +263,4 @@ class Clipboard extends Module{
 	}
 }
 
-// Tabulator.registerModule("clipboard", Clipboard);
 export default Clipboard;

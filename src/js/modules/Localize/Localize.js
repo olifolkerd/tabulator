@@ -181,5 +181,4 @@ class Localize extends Module{
 	}
 }
 
-// Tabulator.registerModule("localize", Localize);
 export default Localize;

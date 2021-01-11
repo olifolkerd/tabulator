@@ -176,5 +176,4 @@ class ResizeColumns extends Module{
 	}
 }
 
-// Tabulator.registerModule("resizeColumns", ResizeColumns);
 export default ResizeColumns;

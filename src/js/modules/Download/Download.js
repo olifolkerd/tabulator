@@ -119,5 +119,4 @@ class Download extends Module{
 	}
 }
 
-// Tabulator.registerModule("download", Download);
 export default Download;
