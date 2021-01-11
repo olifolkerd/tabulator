@@ -1,9 +1,3 @@
-import LayoutModule from './modules/Layout/Layout.js';
-import LocalizeModule from './modules/Localize/Localize.js';
-import CommsModule from './modules/Comms/Comms.js';
-
-export {
-	LayoutModule,
-	LocalizeModule,
-	CommsModule,
-};
+export {default as LayoutModule} from './modules/Layout/Layout.js';
+export {default as LocalizeModule} from './modules/Localize/Localize.js';
+export {default as CommsModule} from './modules/Comms/Comms.js';
