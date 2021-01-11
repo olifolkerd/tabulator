@@ -4,6 +4,7 @@
   "description": "Interactive table generation JavaScript library",
   "main": "dist/js/tabulator.js",
   "module": "dist/js/tabulator.es2015.js",
+  "sideEffects":false,
   "scripts": {
     "build": "rollup -c build/rollup.js",
     "dev": "rollup -c build/rollup.js -w"
