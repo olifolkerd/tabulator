@@ -7,6 +7,8 @@ import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
+import TableRegistry from './TableRegistry.js';
+
 import VirtualDomHorizontal from './renderers/VirtualDomHorizontal.js';
 
 class Tabulator {
@@ -36,7 +38,7 @@ class Tabulator {
 			this._create();
 		}
 
-		Tabulator.comms.register(this); //register table for inderdevice communication
+		TableRegistry.register(this); //register table for inderdevice communication
 	}
 
 	initializeOptions(options){
@@ -1855,62 +1857,8 @@ class Tabulator {
 		Tabulator.moduleBindings[mod.moduleName] = mod;
 	};
 
-	static comms = {
-		tables:[],
-		register:function(table){
-			Tabulator.comms.tables.push(table);
-		},
-		deregister:function(table){
-			var index = Tabulator.comms.tables.indexOf(table);
-
-			if(index > -1){
-				Tabulator.comms.tables.splice(index, 1);
-			}
-		},
-		lookupTable:function(query, silent){
-			var results = [],
-			matches, match;
-
-			if(typeof query === "string"){
-				matches = document.querySelectorAll(query);
-
-				if(matches.length){
-					for(var i = 0; i < matches.length; i++){
-						match = Tabulator.comms.matchElement(matches[i]);
-
-						if(match){
-							results.push(match);
-						}
-					}
-				}
-
-			}else if((typeof HTMLElement !== "undefined" && query instanceof HTMLElement) || query instanceof Tabulator){
-				match = Tabulator.comms.matchElement(query);
-
-				if(match){
-					results.push(match);
-				}
-			}else if(Array.isArray(query)){
-				query.forEach(function(item){
-					results = results.concat(Tabulator.comms.lookupTable(item));
-				});
-			}else{
-				if(!silent){
-					console.warn("Table Connection Error - Invalid Selector", query);
-				}
-			}
-
-			return results;
-		},
-		matchElement:function(element){
-			return Tabulator.comms.tables.find(function(table){
-				return element instanceof Tabulator ? table === element : table.element === element;
-			});
-		}
-	};
-
 	static findTable(query){
-		var results = Tabulator.comms.lookupTable(query, true);
+		var results = TableRegistry.lookupTable(query, true);
 		return Array.isArray(results) && !results.length ? false : results;
 	}
 }
