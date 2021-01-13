@@ -131,14 +131,13 @@ class Ajax extends Module{
 
 	//create config object from default
 	_loadDefaultConfig(force){
-		var self = this;
-		if(!self.config || force){
+		if(!this.config || force){
 
-			self.config = {};
+			this.config = {};
 
 			//load base config from defaults
 			for(let key in Ajax.defaultConfig){
-				self.config[key] = Ajax.defaultConfig[key];
+				this.config[key] = Ajax.defaultConfig[key];
 			}
 		}
 	}
@@ -155,8 +154,6 @@ class Ajax extends Module{
 
 	//lstandard loading function
 	loadData(inPosition, columnsChanged){
-		var self = this;
-
 		if(this.progressiveLoad){
 			return this._loadDataProgressive();
 		}else{
@@ -206,18 +203,17 @@ class Ajax extends Module{
 	}
 
 	generateParamsList(data, prefix){
-		var self = this,
-		output = [];
+		var output = [];
 
 		prefix = prefix || "";
 
-		if ( Array.isArray(data) ) {
-			data.forEach(function(item, i){
-				output = output.concat(self.generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
+		if(Array.isArray(data)){
+			data.forEach((item, i) => {
+				output = output.concat(this.generateParamsList(item, prefix ? prefix + "[" + i + "]" : i));
 			});
 		}else if (typeof data === "object"){
 			for (var key in data){
-				output = output.concat(self.generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
+				output = output.concat(this.generateParamsList(data[key], prefix ? prefix + "[" + key + "]" : key));
 			}
 		}else{
 			output.push({key:prefix, value:data});
@@ -239,33 +235,32 @@ class Ajax extends Module{
 
 	//send ajax request
 	sendRequest(silent){
-		var self = this,
-		url = self.url,
+		var url = this.url,
 		requestNo, esc, query;
 
-		self.requestOrder ++;
-		requestNo = self.requestOrder;
+		this.requestOrder ++;
+		requestNo = this.requestOrder;
 
-		self._loadDefaultConfig();
+		this._loadDefaultConfig();
 
 		return new Promise((resolve, reject)=>{
-			if(self.table.options.ajaxRequesting.call(this.table, self.url, self.params) !== false){
+			if(this.table.options.ajaxRequesting.call(this.table, this.url, this.params) !== false){
 
-				self.loading = true;
+				this.loading = true;
 
 				if(!silent){
-					self.showLoader();
+					this.showLoader();
 				}
 
-				this.loaderPromise(url, self.config, self.params).then((data)=>{
-					if(requestNo === self.requestOrder){
-						if(self.table.options.ajaxResponse){
-							data = self.table.options.ajaxResponse.call(self.table, self.url, self.params, data);
+				this.loaderPromise(url, this.config, this.params).then((data)=>{
+					if(requestNo === this.requestOrder){
+						if(this.table.options.ajaxResponse){
+							data = this.table.options.ajaxResponse.call(this.table, this.url, this.params, data);
 						}
 						resolve(data);
 
-						self.hideLoader();
-						self.loading = false;
+						this.hideLoader();
+						this.loading = false;
 					}else{
 						console.warn("Ajax Response Blocked - An active ajax request was blocked by an attempt to change table data while the request was being made");
 					}
@@ -273,15 +268,15 @@ class Ajax extends Module{
 				})
 				.catch((error)=>{
 					console.error("Ajax Load Error: ", error);
-					self.table.options.ajaxError.call(self.table, error);
+					this.table.options.ajaxError.call(this.table, error);
 
-					self.showError();
+					this.showError();
 
-					setTimeout(function(){
-						self.hideLoader();
+					setTimeout(() => {
+						this.hideLoader();
 					}, 3000);
 
-					self.loading = false;
+					this.loading = false;
 
 					reject(error);
 				});

@@ -218,12 +218,11 @@ class Clipboard extends Module{
 	}
 
 	mutateData(data){
-		var self = this,
-		output = [];
+		var output = [];
 
 		if(Array.isArray(data)){
-			data.forEach(function(row){
-				output.push(self.table.modules.mutator.transformRow(row, "clipboard"));
+			data.forEach((row) => {
+				output.push(this.table.modules.mutator.transformRow(row, "clipboard"));
 			});
 		}else{
 			output = data;

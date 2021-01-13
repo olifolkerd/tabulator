@@ -52,142 +52,139 @@ export default class Row {
 	}
 
 	generateElement(){
-		var self = this,
-		dblTap,	tapHold, tap;
+		var dblTap,	tapHold, tap;
 
 		this.createElement();
 
 		//set row selection characteristics
-		if(self.table.options.selectable !== false && self.table.modExists("selectRow")){
-			self.table.modules.selectRow.initializeRow(this);
+		if(this.table.options.selectable !== false && this.table.modExists("selectRow")){
+			this.table.modules.selectRow.initializeRow(this);
 		}
 
 		//setup movable rows
-		if(self.table.options.movableRows !== false && self.table.modExists("moveRow")){
-			self.table.modules.moveRow.initializeRow(this);
+		if(this.table.options.movableRows !== false && this.table.modExists("moveRow")){
+			this.table.modules.moveRow.initializeRow(this);
 		}
 
 		//setup data tree
-		if(self.table.options.dataTree !== false && self.table.modExists("dataTree")){
-			self.table.modules.dataTree.initializeRow(this);
+		if(this.table.options.dataTree !== false && this.table.modExists("dataTree")){
+			this.table.modules.dataTree.initializeRow(this);
 		}
 
 		//setup column colapse container
-		if(self.table.options.responsiveLayout === "collapse" && self.table.modExists("responsiveLayout")){
-			self.table.modules.responsiveLayout.initializeRow(this);
+		if(this.table.options.responsiveLayout === "collapse" && this.table.modExists("responsiveLayout")){
+			this.table.modules.responsiveLayout.initializeRow(this);
 		}
 
 		//set column menu
-		if((self.table.options.rowContextMenu || self.table.options.rowClickMenu) && this.table.modExists("menu")){
-			self.table.modules.menu.initializeRow(this);
+		if((this.table.options.rowContextMenu || this.table.options.rowClickMenu) && this.table.modExists("menu")){
+			this.table.modules.menu.initializeRow(this);
 		}
 
 		//handle row click events
-		if (self.table.options.rowClick){
-			self.element.addEventListener("click", function(e){
-				self.table.options.rowClick(e, self.getComponent());
+		if (this.table.options.rowClick){
+			this.element.addEventListener("click", (e) => {
+				this.table.options.rowClick(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowDblClick){
-			self.element.addEventListener("dblclick", function(e){
-				self.table.options.rowDblClick(e, self.getComponent());
+		if (this.table.options.rowDblClick){
+			this.element.addEventListener("dblclick", (e) => {
+				this.table.options.rowDblClick(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowContext){
-			self.element.addEventListener("contextmenu", function(e){
-				self.table.options.rowContext(e, self.getComponent());
+		if (this.table.options.rowContext){
+			this.element.addEventListener("contextmenu", (e) => {
+				this.table.options.rowContext(e, this.getComponent());
 			});
 		}
 
 		//handle mouse events
-		if (self.table.options.rowMouseEnter){
-			self.element.addEventListener("mouseenter", function(e){
-				self.table.options.rowMouseEnter(e, self.getComponent());
+		if (this.table.options.rowMouseEnter){
+			this.element.addEventListener("mouseenter", (e) => {
+				this.table.options.rowMouseEnter(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowMouseLeave){
-			self.element.addEventListener("mouseleave", function(e){
-				self.table.options.rowMouseLeave(e, self.getComponent());
+		if (this.table.options.rowMouseLeave){
+			this.element.addEventListener("mouseleave", (e) => {
+				this.table.options.rowMouseLeave(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowMouseOver){
-			self.element.addEventListener("mouseover", function(e){
-				self.table.options.rowMouseOver(e, self.getComponent());
+		if (this.table.options.rowMouseOver){
+			this.element.addEventListener("mouseover", (e) => {
+				this.table.options.rowMouseOver(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowMouseOut){
-			self.element.addEventListener("mouseout", function(e){
-				self.table.options.rowMouseOut(e, self.getComponent());
+		if (this.table.options.rowMouseOut){
+			this.element.addEventListener("mouseout", (e) => {
+				this.table.options.rowMouseOut(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowMouseMove){
-			self.element.addEventListener("mousemove", function(e){
-				self.table.options.rowMouseMove(e, self.getComponent());
+		if (this.table.options.rowMouseMove){
+			this.element.addEventListener("mousemove", (e) => {
+				this.table.options.rowMouseMove(e, this.getComponent());
 			});
 		}
 
-		if (self.table.options.rowTap){
+		if (this.table.options.rowTap){
 
 			tap = false;
 
-			self.element.addEventListener("touchstart", function(e){
+			this.element.addEventListener("touchstart", (e) => {
 				tap = true;
 			}, {passive: true});
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 				if(tap){
-					self.table.options.rowTap(e, self.getComponent());
+					this.table.options.rowTap(e, this.getComponent());
 				}
 
 				tap = false;
 			});
 		}
 
-		if (self.table.options.rowDblTap){
+		if (this.table.options.rowDblTap){
 
 			dblTap = null;
 
-			self.element.addEventListener("touchend", function(e){
-
+			this.element.addEventListener("touchend", (e) => {
 				if(dblTap){
 					clearTimeout(dblTap);
 					dblTap = null;
 
-					self.table.options.rowDblTap(e, self.getComponent());
+					this.table.options.rowDblTap(e, this.getComponent());
 				}else{
 
-					dblTap = setTimeout(function(){
+					dblTap = setTimeout(() => {
 						clearTimeout(dblTap);
 						dblTap = null;
 					}, 300);
 				}
-
 			});
 		}
 
-		if (self.table.options.rowTapHold){
+		if (this.table.options.rowTapHold){
 
 			tapHold = null;
 
-			self.element.addEventListener("touchstart", function(e){
+			this.element.addEventListener("touchstart", (e) => {
 				clearTimeout(tapHold);
 
-				tapHold = setTimeout(function(){
+				tapHold = setTimeout(() => {
 					clearTimeout(tapHold);
 					tapHold = null;
 					tap = false;
-					self.table.options.rowTapHold(e, self.getComponent());
+					this.table.options.rowTapHold(e, this.getComponent());
 				}, 1000);
 
 			}, {passive: true});
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 				clearTimeout(tapHold);
 				tapHold = null;
 			});

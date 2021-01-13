@@ -13,8 +13,7 @@ class Accessor extends Module{
 
 	//initialize column accessor
 	initializeColumn(column){
-		var self = this,
-		match = false,
+		var match = false,
 		config = {};
 
 		this.allowedTypes.forEach(function(type){
@@ -22,7 +21,7 @@ class Accessor extends Module{
 			accessor;
 
 			if(column.definition[key]){
-				accessor = self.lookupAccessor(column.definition[key]);
+				accessor = this.lookupAccessor(column.definition[key]);
 
 				if(accessor){
 					match = true;

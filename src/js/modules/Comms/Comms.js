@@ -4,14 +4,13 @@ import TableRegistry from '../../core/TableRegistry.js';
 class Comms extends Module{
 
 	getConnections(selectors){
-		var self = this,
-		connections = [],
+		var connections = [],
 		connection;
 
 		connection = Tabulator.comms.lookupTable(selectors);
 
-		connection.forEach(function(con){
-			if(self.table !== con){
+		connection.forEach((con) =>{
+			if(this.table !== con){
 				connections.push(con);
 			}
 		});
@@ -20,11 +19,10 @@ class Comms extends Module{
 	}
 
 	send(selectors, module, action, data){
-		var self = this,
-		connections = this.getConnections(selectors);
+		var connections = this.getConnections(selectors);
 
-		connections.forEach(function(connection){
-			connection.tableComms(self.table.element, module, action, data);
+		connections.forEach((connection) => {
+			connection.tableComms(this.table.element, module, action, data);
 		});
 
 		if(!connections.length && selectors){

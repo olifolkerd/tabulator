@@ -6,8 +6,6 @@ import Cell from '../cell/Cell.js';
 class Column {
 
 	constructor(def, parent){
-		var self = this;
-
 		this.table = parent.table;
 		this.definition = def; //column definition
 		this.parent = parent; //hold parent object
@@ -73,12 +71,12 @@ class Column {
 
 			this.isGroup = true;
 
-			def.columns.forEach(function(def, i){
-				var newCol = new Column(def, self);
-				self.attachColumn(newCol);
+			def.columns.forEach((def, i) => {
+				var newCol = new Column(def, this);
+				this.attachColumn(newCol);
 			});
 
-			self.checkColumnVisibility();
+			this.checkColumnVisibility();
 		}else{
 			parent.registerColumnField(this);
 		}
@@ -164,140 +162,136 @@ class Column {
 	}
 
 	setTooltip(){
-		var self = this,
-		def = self.definition;
+		var def = this.definition;
 
 		//set header tooltips
-		var tooltip = def.headerTooltip || def.tooltip === false  ? def.headerTooltip : self.table.options.tooltipsHeader;
+		var tooltip = def.headerTooltip || def.tooltip === false  ? def.headerTooltip : this.table.options.tooltipsHeader;
 
 		if(tooltip){
 			if(tooltip === true){
 				if(def.field){
-					self.table.modules.localize.bind("columns|" + def.field, function(value){
-						self.element.setAttribute("title", value || def.title);
+					this.table.modules.localize.bind("columns|" + def.field, (value) => {
+						this.element.setAttribute("title", value || def.title);
 					});
 				}else{
-					self.element.setAttribute("title", def.title);
+					this.element.setAttribute("title", def.title);
 				}
 
 			}else{
 				if(typeof(tooltip) == "function"){
-					tooltip = tooltip(self.getComponent());
+					tooltip = tooltip(this.getComponent());
 
 					if(tooltip === false){
 						tooltip = "";
 					}
 				}
 
-				self.element.setAttribute("title", tooltip);
+				this.element.setAttribute("title", tooltip);
 			}
 
 		}else{
-			self.element.setAttribute("title", "");
+			this.element.setAttribute("title", "");
 		}
 	}
 
 	//build header element
 	_buildHeader(){
-		var self = this,
-		def = self.definition;
+		var def = this.definition;
 
-		while(self.element.firstChild) self.element.removeChild(self.element.firstChild);
+		while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
 		if(def.headerVertical){
-			self.element.classList.add("tabulator-col-vertical");
+			this.element.classList.add("tabulator-col-vertical");
 
 			if(def.headerVertical === "flip"){
-				self.element.classList.add("tabulator-col-vertical-flip");
+				this.element.classList.add("tabulator-col-vertical-flip");
 			}
 		}
 
-		self.contentElement = self._bindEvents();
+		this.contentElement = this._bindEvents();
 
-		self.contentElement = self._buildColumnHeaderContent();
+		this.contentElement = this._buildColumnHeaderContent();
 
-		self.element.appendChild(self.contentElement);
+		this.element.appendChild(this.contentElement);
 
-		if(self.isGroup){
-			self._buildGroupHeader();
+		if(this.isGroup){
+			this._buildGroupHeader();
 		}else{
-			self._buildColumnHeader();
+			this._buildColumnHeader();
 		}
 
-		self.setTooltip();
+		this.setTooltip();
 
 		//set resizable handles
-		if(self.table.options.resizableColumns && self.table.modExists("resizeColumns")){
-			self.table.modules.resizeColumns.initializeColumn("header", self, self.element);
+		if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
+			this.table.modules.resizeColumns.initializeColumn("header", this, this.element);
 		}
 
 		//set resizable handles
-		if(def.headerFilter && self.table.modExists("filter") && self.table.modExists("edit")){
+		if(def.headerFilter && this.table.modExists("filter") && this.table.modExists("edit")){
 			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-				self.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+				this.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
 			}
 
-			self.table.modules.filter.initializeColumn(self);
+			this.table.modules.filter.initializeColumn(this);
 		}
 
 
 		//set resizable handles
-		if(self.table.modExists("frozenColumns")){
-			self.table.modules.frozenColumns.initializeColumn(self);
+		if(this.table.modExists("frozenColumns")){
+			this.table.modules.frozenColumns.initializeColumn(this);
 		}
 
 		//set movable column
-		if(self.table.options.movableColumns && !self.isGroup && self.table.modExists("moveColumn")){
-			self.table.modules.moveColumn.initializeColumn(self);
+		if(this.table.options.movableColumns && !this.isGroup && this.table.modExists("moveColumn")){
+			this.table.modules.moveColumn.initializeColumn(this);
 		}
 
 		//set calcs column
-		if((def.topCalc || def.bottomCalc) && self.table.modExists("columnCalcs")){
-			self.table.modules.columnCalcs.initializeColumn(self);
+		if((def.topCalc || def.bottomCalc) && this.table.modExists("columnCalcs")){
+			this.table.modules.columnCalcs.initializeColumn(this);
 		}
 
 		//handle persistence
-		if(self.table.modExists("persistence") && self.table.modules.persistence.config.columns){
-			self.table.modules.persistence.initializeColumn(self);
+		if(this.table.modExists("persistence") && this.table.modules.persistence.config.columns){
+			this.table.modules.persistence.initializeColumn(this);
 		}
 
 
 		//update header tooltip on mouse enter
-		self.element.addEventListener("mouseenter", function(e){
-			self.setTooltip();
+		this.element.addEventListener("mouseenter", (e) => {
+			this.setTooltip();
 		});
 	}
 
 	_bindEvents(){
-
-		var self = this,
-		def = self.definition,
+		var def = this.definition,
 		dblTap,	tapHold, tap;
 
 		//setup header click event bindings
 		if(typeof(def.headerClick) == "function"){
-			self.element.addEventListener("click", function(e){def.headerClick(e, self.getComponent());});
+			this.element.addEventListener("click", (e) => {def.headerClick(e, this.getComponent());});
 		}
 
 		if(typeof(def.headerDblClick) == "function"){
-			self.element.addEventListener("dblclick", function(e){def.headerDblClick(e, self.getComponent());});
+			this.element.addEventListener("dblclick", (e) => {def.headerDblClick(e, this.getComponent());});
 		}
 
 		if(typeof(def.headerContext) == "function"){
-			self.element.addEventListener("contextmenu", function(e){def.headerContext(e, self.getComponent());});
+			this.element.addEventListener("contextmenu", (e) => {def.headerContext(e, this.getComponent());});
 		}
 
 		//setup header tap event bindings
 		if(typeof(def.headerTap) == "function"){
 			tap = false;
 
-			self.element.addEventListener("touchstart", function(e){
+			this.element.addEventListener("touchstart", (e) => {
 				tap = true;
 			}, {passive: true});
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 				if(tap){
-					def.headerTap(e, self.getComponent());
+					def.headerTap(e, this.getComponent());
 				}
 
 				tap = false;
@@ -307,16 +301,16 @@ class Column {
 		if(typeof(def.headerDblTap) == "function"){
 			dblTap = null;
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 
 				if(dblTap){
 					clearTimeout(dblTap);
 					dblTap = null;
 
-					def.headerDblTap(e, self.getComponent());
+					def.headerDblTap(e, this.getComponent());
 				}else{
 
-					dblTap = setTimeout(function(){
+					dblTap = setTimeout(() => {
 						clearTimeout(dblTap);
 						dblTap = null;
 					}, 300);
@@ -328,19 +322,19 @@ class Column {
 		if(typeof(def.headerTapHold) == "function"){
 			tapHold = null;
 
-			self.element.addEventListener("touchstart", function(e){
+			this.element.addEventListener("touchstart", (e) => {
 				clearTimeout(tapHold);
 
 				tapHold = setTimeout(function(){
 					clearTimeout(tapHold);
 					tapHold = null;
 					tap = false;
-					def.headerTapHold(e, self.getComponent());
+					def.headerTapHold(e, this.getComponent());
 				}, 1000);
 
 			}, {passive: true});
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 				clearTimeout(tapHold);
 				tapHold = null;
 			});
@@ -348,62 +342,62 @@ class Column {
 
 		//store column cell click event bindings
 		if(typeof(def.cellClick) == "function"){
-			self.cellEvents.cellClick = def.cellClick;
+			this.cellEvents.cellClick = def.cellClick;
 		}
 
 		if(typeof(def.cellDblClick) == "function"){
-			self.cellEvents.cellDblClick = def.cellDblClick;
+			this.cellEvents.cellDblClick = def.cellDblClick;
 		}
 
 		if(typeof(def.cellContext) == "function"){
-			self.cellEvents.cellContext = def.cellContext;
+			this.cellEvents.cellContext = def.cellContext;
 		}
 
 		//store column mouse event bindings
 		if(typeof(def.cellMouseEnter) == "function"){
-			self.cellEvents.cellMouseEnter = def.cellMouseEnter;
+			this.cellEvents.cellMouseEnter = def.cellMouseEnter;
 		}
 
 		if(typeof(def.cellMouseLeave) == "function"){
-			self.cellEvents.cellMouseLeave = def.cellMouseLeave;
+			this.cellEvents.cellMouseLeave = def.cellMouseLeave;
 		}
 
 		if(typeof(def.cellMouseOver) == "function"){
-			self.cellEvents.cellMouseOver = def.cellMouseOver;
+			this.cellEvents.cellMouseOver = def.cellMouseOver;
 		}
 
 		if(typeof(def.cellMouseOut) == "function"){
-			self.cellEvents.cellMouseOut = def.cellMouseOut;
+			this.cellEvents.cellMouseOut = def.cellMouseOut;
 		}
 
 		if(typeof(def.cellMouseMove) == "function"){
-			self.cellEvents.cellMouseMove = def.cellMouseMove;
+			this.cellEvents.cellMouseMove = def.cellMouseMove;
 		}
 
 		//setup column cell tap event bindings
 		if(typeof(def.cellTap) == "function"){
-			self.cellEvents.cellTap = def.cellTap;
+			this.cellEvents.cellTap = def.cellTap;
 		}
 
 		if(typeof(def.cellDblTap) == "function"){
-			self.cellEvents.cellDblTap = def.cellDblTap;
+			this.cellEvents.cellDblTap = def.cellDblTap;
 		}
 
 		if(typeof(def.cellTapHold) == "function"){
-			self.cellEvents.cellTapHold = def.cellTapHold;
+			this.cellEvents.cellTapHold = def.cellTapHold;
 		}
 
 		//setup column cell edit callbacks
 		if(typeof(def.cellEdited) == "function"){
-			self.cellEvents.cellEdited = def.cellEdited;
+			this.cellEvents.cellEdited = def.cellEdited;
 		}
 
 		if(typeof(def.cellEditing) == "function"){
-			self.cellEvents.cellEditing = def.cellEditing;
+			this.cellEvents.cellEditing = def.cellEditing;
 		}
 
 		if(typeof(def.cellEditCancelled) == "function"){
-			self.cellEvents.cellEditCancelled = def.cellEditCancelled;
+			this.cellEvents.cellEditCancelled = def.cellEditCancelled;
 		}
 	}
 
@@ -517,9 +511,8 @@ class Column {
 
 	//build title element of column
 	_buildColumnHeaderTitle(){
-		var self = this,
-		def = self.definition,
-		table = self.table,
+		var def = this.definition,
+		table = this.table,
 		title;
 
 		var titleHolderElement = document.createElement("div");
@@ -529,20 +522,20 @@ class Column {
 			var titleElement = document.createElement("input");
 			titleElement.classList.add("tabulator-title-editor");
 
-			titleElement.addEventListener("click", function(e){
+			titleElement.addEventListener("click", (e) => {
 				e.stopPropagation();
 				titleElement.focus();
 			});
 
-			titleElement.addEventListener("change", function(){
+			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.options.columnTitleChanged.call(self.table, self.getComponent());
+				table.options.columnTitleChanged.call(this.table, this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
 
 			if(def.field){
-				table.modules.localize.bind("columns|" + def.field, function(text){
+				table.modules.localize.bind("columns|" + def.field, (text) => {
 					titleElement.value = text || (def.title || "&nbsp;");
 				});
 			}else{
@@ -551,11 +544,11 @@ class Column {
 
 		}else{
 			if(def.field){
-				table.modules.localize.bind("columns|" + def.field, function(text){
-					self._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp;"));
+				table.modules.localize.bind("columns|" + def.field, (text) => {
+					this._formatColumnHeaderTitle(titleHolderElement, text || (def.title || "&nbsp;"));
 				});
 			}else{
-				self._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
+				this._formatColumnHeaderTitle(titleHolderElement, def.title || "&nbsp;");
 			}
 		}
 
@@ -692,11 +685,9 @@ class Column {
 
 	//attach column to this group
 	attachColumn(column){
-		var self = this;
-
-		if(self.groupElement){
-			self.columns.push(column);
-			self.groupElement.appendChild(column.getElement());
+		if(this.groupElement){
+			this.columns.push(column);
+			this.groupElement.appendChild(column.getElement());
 		}else{
 			console.warn("Column Warning - Column being attached to another column instead of column group");
 		}
@@ -1123,9 +1114,7 @@ class Column {
 	//////////////// Cell Management /////////////////
 	//generate cell for this column
 	generateCell(row){
-		var self = this;
-
-		var cell = new Cell(self, row);
+		var cell = new Cell(this, row);
 
 		this.cells.push(cell);
 
@@ -1175,20 +1164,18 @@ class Column {
 
 	//set column width to maximum cell width
 	fitToData(){
-		var self = this;
-
 		if(!this.widthFixed){
 			this.element.style.width = "";
 
-			self.cells.forEach(function(cell){
+			this.cells.forEach((cell) => {
 				cell.clearWidth();
 			});
 		}
 
 		var maxWidth = this.element.offsetWidth;
 
-		if(!self.width || !this.widthFixed){
-			self.cells.forEach(function(cell){
+		if(!this.width || !this.widthFixed){
+			this.cells.forEach((cell) => {
 				var width = cell.getWidth();
 
 				if(width > maxWidth){
@@ -1197,9 +1184,8 @@ class Column {
 			});
 
 			if(maxWidth){
-				self.setWidthActual(maxWidth + 1);
+				this.setWidthActual(maxWidth + 1);
 			}
-
 		}
 	}
 

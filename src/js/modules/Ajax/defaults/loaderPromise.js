@@ -1,14 +1,13 @@
 export default function(url, config, params){
-	var self = this, contentType;
+	var contentType;
 
-	return new Promise(function(resolve, reject){
-
+	return new Promise((resolve, reject) => {
 		//set url
-		url = self.urlGenerator.call(self.table, url, config, params);
+		url = this.urlGenerator.call(this.table, url, config, params);
 
 		//set body content if not GET request
 		if(config.method.toUpperCase() != "GET"){
-			contentType = typeof self.table.options.ajaxContentType === "object" ?  self.table.options.ajaxContentType : self.contentTypeFormatters[self.table.options.ajaxContentType];
+			contentType = typeof this.table.options.ajaxContentType === "object" ?  this.table.options.ajaxContentType : this.contentTypeFormatters[this.table.options.ajaxContentType];
 			if(contentType){
 
 				for(var key in contentType.headers){
@@ -21,15 +20,14 @@ export default function(url, config, params){
 					}
 				}
 
-				config.body = contentType.body.call(self, url, config, params);
+				config.body = contentType.body.call(this, url, config, params);
 
 			}else{
-				console.warn("Ajax Error - Invalid ajaxContentType value:", self.table.options.ajaxContentType);
+				console.warn("Ajax Error - Invalid ajaxContentType value:", this.table.options.ajaxContentType);
 			}
 		}
 
 		if(url){
-
 			//configure headers
 			if(typeof config.headers === "undefined"){
 				config.headers = {};
@@ -86,6 +84,5 @@ export default function(url, config, params){
 			console.warn("Ajax Load Error - No URL Set");
 			resolve([]);
 		}
-
 	});
 };

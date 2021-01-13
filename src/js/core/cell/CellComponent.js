@@ -66,7 +66,7 @@ export default class CellComponent {
 	}
 
 	clearEdited(){
-		if(self.table.modExists("edit", true)){
+		if(this._cell.table.modExists("edit", true)){
 			this._cell.table.modules.edit.clearEdited(this._cell);
 		}
 	}

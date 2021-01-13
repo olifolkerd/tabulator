@@ -257,25 +257,24 @@ class ColumnCalcs extends Module{
 
 	//generate stats row
 	generateRow(pos, data){
-		var self = this,
-		rowData = this.generateRowData(pos, data),
+		var rowData = this.generateRowData(pos, data),
 		row;
 
-		if(self.table.modExists("mutator")){
-			self.table.modules.mutator.disable();
+		if(this.table.modExists("mutator")){
+			this.table.modules.mutator.disable();
 		}
 
 		row = new Row(rowData, this, "calc");
 
-		if(self.table.modExists("mutator")){
-			self.table.modules.mutator.enable();
+		if(this.table.modExists("mutator")){
+			this.table.modules.mutator.enable();
 		}
 
 		row.getElement().classList.add("tabulator-calcs", "tabulator-calcs-" + pos);
 
 		row.component = false;
 
-		row.getComponent = function(){
+		row.getComponent = () => {
 			if(!this.component){
 				this.component = new CalcComponent(this);
 			}
@@ -283,33 +282,33 @@ class ColumnCalcs extends Module{
 			return this.component;
 		};
 
-		row.generateCells = function(){
+		row.generateCells = () => {
 
 			var cells = [];
 
-			self.table.columnManager.columnsByIndex.forEach(function(column){
+			this.table.columnManager.columnsByIndex.forEach((column) => {
 
 					//set field name of mock column
-					self.genColumn.setField(column.getField());
-					self.genColumn.hozAlign = column.hozAlign;
+					this.genColumn.setField(column.getField());
+					this.genColumn.hozAlign = column.hozAlign;
 
-					if(column.definition[pos + "CalcFormatter"] && self.table.modExists("format")){
-						self.genColumn.modules.format = {
-							formatter: self.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
+					if(column.definition[pos + "CalcFormatter"] && this.table.modExists("format")){
+						this.genColumn.modules.format = {
+							formatter: this.table.modules.format.getFormatter(column.definition[pos + "CalcFormatter"]),
 							params: column.definition[pos + "CalcFormatterParams"] || {},
 						};
 					}else{
-						self.genColumn.modules.format = {
-							formatter: self.table.modules.format.getFormatter("plaintext"),
+						this.genColumn.modules.format = {
+							formatter: this.table.modules.format.getFormatter("plaintext"),
 							params:{}
 						};
 					}
 
 					//ensure css class defintion is replicated to calculation cell
-					self.genColumn.definition.cssClass = column.definition.cssClass;
+					this.genColumn.definition.cssClass = column.definition.cssClass;
 
 					//generate cell and assign to correct column
-					var cell = new Cell(self.genColumn, row);
+					var cell = new Cell(this.genColumn, row);
 					cell.getElement();
 					cell.column = column;
 					cell.setWidth();
@@ -373,15 +372,14 @@ class ColumnCalcs extends Module{
 
 	//return the calculated
 	getResults(){
-		var self = this,
-		results = {},
+		var results = {},
 		groups;
 
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
 			groups = this.table.modules.groupRows.getGroups(true);
 
-			groups.forEach(function(group){
-				results[group.getKey()] = self.getGroupResults(group);
+			groups.forEach((group) => {
+				results[group.getKey()] = this.getGroupResults(group);
 			});
 		}else{
 			results = {
@@ -395,14 +393,13 @@ class ColumnCalcs extends Module{
 
 	//get results from a group
 	getGroupResults(group){
-		var self = this,
-		groupObj = group._getSelf(),
+		var groupObj = group._getSelf(),
 		subGroups = group.getSubGroups(),
 		subGroupResults = {},
 		results = {};
 
-		subGroups.forEach(function(subgroup){
-			subGroupResults[subgroup.getKey()] = self.getGroupResults(subgroup);
+		subGroups.forEach((subgroup) => {
+			subGroupResults[subgroup.getKey()] = this.getGroupResults(subgroup);
 		});
 
 		results = {
@@ -414,7 +411,6 @@ class ColumnCalcs extends Module{
 		return results;
 	}
 }
-
 
 ColumnCalcs.moduleName = "columnCalcs";
 

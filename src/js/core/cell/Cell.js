@@ -44,9 +44,8 @@ export default class Cell {
 	}
 
 	_configureCell(){
-		var self = this,
-		cellEvents = self.column.cellEvents,
-		element = self.element,
+		var cellEvents = this.column.cellEvents,
+		element = this.element,
 		field = this.column.getField(),
 		vertAligns = {
 			top:"flex-start",
@@ -60,15 +59,15 @@ export default class Cell {
 		};
 
 		//set text alignment
-		element.style.textAlign = self.column.hozAlign;
+		element.style.textAlign = this.column.hozAlign;
 
-		if(self.column.vertAlign){
+		if(this.column.vertAlign){
 			element.style.display = "inline-flex";
 
-			element.style.alignItems = vertAligns[self.column.vertAlign] || "";
+			element.style.alignItems = vertAligns[this.column.vertAlign] || "";
 
-			if(self.column.hozAlign){
-				element.style.justifyContent = hozAligns[self.column.hozAlign] || "";
+			if(this.column.hozAlign){
+				element.style.justifyContent = hozAligns[this.column.hozAlign] || "";
 			}
 		}
 
@@ -77,76 +76,74 @@ export default class Cell {
 		}
 
 		//add class to cell if needed
-		if(self.column.definition.cssClass){
-			var classNames = self.column.definition.cssClass.split(" ")
-			classNames.forEach(function(className) {
+		if(this.column.definition.cssClass){
+			var classNames = this.column.definition.cssClass.split(" ")
+			classNames.forEach((className) => {
 				element.classList.add(className)
 			});
 		}
 
 		//update tooltip on mouse enter
 		if (this.table.options.tooltipGenerationMode === "hover"){
-			element.addEventListener("mouseenter", function(e){
-				self._generateTooltip();
+			element.addEventListener("mouseenter", (e) => {
+				this._generateTooltip();
 			});
 		}
 
-		self._bindClickEvents(cellEvents);
+		this._bindClickEvents(cellEvents);
 
-		self._bindTouchEvents(cellEvents);
+		this._bindTouchEvents(cellEvents);
 
-		self._bindMouseEvents(cellEvents);
+		this._bindMouseEvents(cellEvents);
 
-		if(self.column.modules.edit){
-			self.table.modules.edit.bindEditor(self);
+		if(this.column.modules.edit){
+			this.table.modules.edit.bindEditor(this);
 		}
 
-		if(self.column.definition.rowHandle && self.table.options.movableRows !== false && self.table.modExists("moveRow")){
-			self.table.modules.moveRow.initializeCell(self);
+		if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
+			this.table.modules.moveRow.initializeCell(this);
 		}
 
 		//hide cell if not visible
-		if(!self.column.visible){
-			self.hide();
+		if(!this.column.visible){
+			this.hide();
 		}
 	}
 
 	_bindClickEvents(cellEvents){
-		var self = this,
-		element = self.element;
+		var element = this.element;
 
 		//set event bindings
-		if (cellEvents.cellClick || self.table.options.cellClick){
-			element.addEventListener("click", function(e){
-				var component = self.getComponent();
+		if (cellEvents.cellClick || this.table.options.cellClick){
+			element.addEventListener("click", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellClick){
-					cellEvents.cellClick.call(self.table, e, component);
+					cellEvents.cellClick.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellClick){
-					self.table.options.cellClick.call(self.table, e, component);
+				if(this.table.options.cellClick){
+					this.table.options.cellClick.call(this.table, e, component);
 				}
 			});
 		}
 
 		if (cellEvents.cellDblClick || this.table.options.cellDblClick){
-			element.addEventListener("dblclick", function(e){
-				var component = self.getComponent();
+			element.addEventListener("dblclick", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellDblClick){
-					cellEvents.cellDblClick.call(self.table, e, component);
+					cellEvents.cellDblClick.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellDblClick){
-					self.table.options.cellDblClick.call(self.table, e, component);
+				if(this.table.options.cellDblClick){
+					this.table.options.cellDblClick.call(this.table, e, component);
 				}
 			});
 		}else{
-			element.addEventListener("dblclick", function(e){
-
-				if(self.table.modExists("edit")){
-					if (self.table.modules.edit.currentCell === self){
+			element.addEventListener("dblclick", (e) => {
+				if(this.table.modExists("edit")){
+					if (this.table.modules.edit.currentCell === this){
 						return; //prevent instant selection of editor content
 					}
 				}
@@ -156,11 +153,11 @@ export default class Cell {
 				try{
 					if (document.selection) { // IE
 						var range = document.body.createTextRange();
-						range.moveToElementText(self.element);
+						range.moveToElementText(this.element);
 						range.select();
 					} else if (window.getSelection) {
 						var range = document.createRange();
-						range.selectNode(self.element);
+						range.selectNode(this.element);
 						window.getSelection().removeAllRanges();
 						window.getSelection().addRange(range);
 					}
@@ -169,117 +166,115 @@ export default class Cell {
 		}
 
 		if (cellEvents.cellContext || this.table.options.cellContext){
-			element.addEventListener("contextmenu", function(e){
-				var component = self.getComponent();
+			element.addEventListener("contextmenu", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellContext){
-					cellEvents.cellContext.call(self.table, e, component);
+					cellEvents.cellContext.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellContext){
-					self.table.options.cellContext.call(self.table, e, component);
+				if(this.table.options.cellContext){
+					this.table.options.cellContext.call(this.table, e, component);
 				}
 			});
 		}
 	}
 
 	_bindMouseEvents(cellEvents){
-		var self = this,
-		element = self.element;
+		var element = this.element;
 
-		if (cellEvents.cellMouseEnter || self.table.options.cellMouseEnter){
-			element.addEventListener("mouseenter", function(e){
-				var component = self.getComponent();
+		if (cellEvents.cellMouseEnter || this.table.options.cellMouseEnter){
+			element.addEventListener("mouseenter", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellMouseEnter){
-					cellEvents.cellMouseEnter.call(self.table, e, component);
+					cellEvents.cellMouseEnter.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellMouseEnter){
-					self.table.options.cellMouseEnter.call(self.table, e, component);
+				if(this.table.options.cellMouseEnter){
+					this.table.options.cellMouseEnter.call(this.table, e, component);
 				}
 			});
 		}
 
-		if (cellEvents.cellMouseLeave || self.table.options.cellMouseLeave){
-			element.addEventListener("mouseleave", function(e){
-				var component = self.getComponent();
+		if (cellEvents.cellMouseLeave || this.table.options.cellMouseLeave){
+			element.addEventListener("mouseleave", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellMouseLeave){
-					cellEvents.cellMouseLeave.call(self.table, e, component);
+					cellEvents.cellMouseLeave.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellMouseLeave){
-					self.table.options.cellMouseLeave.call(self.table, e, component);
+				if(this.table.options.cellMouseLeave){
+					this.table.options.cellMouseLeave.call(this.table, e, component);
 				}
 			});
 		}
 
-		if (cellEvents.cellMouseOver || self.table.options.cellMouseOver){
-			element.addEventListener("mouseover", function(e){
-				var component = self.getComponent();
+		if (cellEvents.cellMouseOver || this.table.options.cellMouseOver){
+			element.addEventListener("mouseover", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellMouseOver){
-					cellEvents.cellMouseOver.call(self.table, e, component);
+					cellEvents.cellMouseOver.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellMouseOver){
-					self.table.options.cellMouseOver.call(self.table, e, component);
+				if(this.table.options.cellMouseOver){
+					this.table.options.cellMouseOver.call(this.table, e, component);
 				}
 			});
 		}
 
-		if (cellEvents.cellMouseOut || self.table.options.cellMouseOut){
-			element.addEventListener("mouseout", function(e){
-				var component = self.getComponent();
+		if (cellEvents.cellMouseOut || this.table.options.cellMouseOut){
+			element.addEventListener("mouseout", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellMouseOut){
-					cellEvents.cellMouseOut.call(self.table, e, component);
+					cellEvents.cellMouseOut.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellMouseOut){
-					self.table.options.cellMouseOut.call(self.table, e, component);
+				if(this.table.options.cellMouseOut){
+					this.table.options.cellMouseOut.call(this.table, e, component);
 				}
 			});
 		}
 
-		if (cellEvents.cellMouseMove || self.table.options.cellMouseMove){
-			element.addEventListener("mousemove", function(e){
-				var component = self.getComponent();
+		if (cellEvents.cellMouseMove || this.table.options.cellMouseMove){
+			element.addEventListener("mousemove", (e) => {
+				var component = this.getComponent();
 
 				if(cellEvents.cellMouseMove){
-					cellEvents.cellMouseMove.call(self.table, e, component);
+					cellEvents.cellMouseMove.call(this.table, e, component);
 				}
 
-				if(self.table.options.cellMouseMove){
-					self.table.options.cellMouseMove.call(self.table, e, component);
+				if(this.table.options.cellMouseMove){
+					this.table.options.cellMouseMove.call(this.table, e, component);
 				}
 			});
 		}
 	}
 
 	_bindTouchEvents(cellEvents){
-		var self = this,
-		element = self.element,
+		var element = this.element,
 		dblTap,	tapHold, tap;
 
 		if (cellEvents.cellTap || this.table.options.cellTap){
 			tap = false;
 
-			element.addEventListener("touchstart", function(e){
+			element.addEventListener("touchstart", (e) => {
 				tap = true;
 			}, {passive: true});
 
-			element.addEventListener("touchend", function(e){
+			element.addEventListener("touchend", (e) => {
 				if(tap){
-					var component = self.getComponent();
+					var component = this.getComponent();
 
 					if(cellEvents.cellTap){
-						cellEvents.cellTap.call(self.table, e, component);
+						cellEvents.cellTap.call(this.table, e, component);
 					}
 
-					if(self.table.options.cellTap){
-						self.table.options.cellTap.call(self.table, e, component);
+					if(this.table.options.cellTap){
+						this.table.options.cellTap.call(this.table, e, component);
 					}
 				}
 
@@ -290,23 +285,23 @@ export default class Cell {
 		if (cellEvents.cellDblTap || this.table.options.cellDblTap){
 			dblTap = null;
 
-			element.addEventListener("touchend", function(e){
+			element.addEventListener("touchend", (e) => {
 				if(dblTap){
 					clearTimeout(dblTap);
 					dblTap = null;
 
-					var component = self.getComponent();
+					var component = this.getComponent();
 
 					if(cellEvents.cellDblTap){
-						cellEvents.cellDblTap.call(self.table, e, component);
+						cellEvents.cellDblTap.call(this.table, e, component);
 					}
 
-					if(self.table.options.cellDblTap){
-						self.table.options.cellDblTap.call(self.table, e, component);
+					if(this.table.options.cellDblTap){
+						this.table.options.cellDblTap.call(this.table, e, component);
 					}
 				}else{
 
-					dblTap = setTimeout(function(){
+					dblTap = setTimeout(() => {
 						clearTimeout(dblTap);
 						dblTap = null;
 					}, 300);
@@ -317,27 +312,27 @@ export default class Cell {
 		if (cellEvents.cellTapHold || this.table.options.cellTapHold){
 			tapHold = null;
 
-			element.addEventListener("touchstart", function(e){
+			element.addEventListener("touchstart", (e) => {
 				clearTimeout(tapHold);
 
-				tapHold = setTimeout(function(){
+				tapHold = setTimeout(() => {
 					clearTimeout(tapHold);
 					tapHold = null;
 					tap = false;
-					var component = self.getComponent();
+					var component = this.getComponent();
 
 					if(cellEvents.cellTapHold){
-						cellEvents.cellTapHold.call(self.table, e, component);
+						cellEvents.cellTapHold.call(this.table, e, component);
 					}
 
-					if(self.table.options.cellTapHold){
-						self.table.options.cellTapHold.call(self.table, e, component);
+					if(this.table.options.cellTapHold){
+						this.table.options.cellTapHold.call(this.table, e, component);
 					}
 				}, 1000);
 
 			}, {passive: true});
 
-			element.addEventListener("touchend", function(e){
+			element.addEventListener("touchend", (e) => {
 				clearTimeout(tapHold);
 				tapHold = null;
 			});

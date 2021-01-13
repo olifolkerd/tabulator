@@ -97,56 +97,53 @@ export default class RowManager {
 	}
 
 	initialize(){
-		var self = this;
-
-		self.setRenderMode();
+		this.setRenderMode();
 
 		//initialize manager
-		self.element.appendChild(self.tableElement);
+		this.element.appendChild(this.tableElement);
 
-		self.firstRender = true;
+		this.firstRender = true;
 
 		//scroll header along with table body
-		self.element.addEventListener("scroll", function(){
-			var left = self.element.scrollLeft;
+		this.element.addEventListener("scroll", () => {
+			var left = this.element.scrollLeft;
 
 			//handle horizontal scrolling
-			if(self.scrollLeft != left){
-				self.columnManager.scrollHorizontal(left);
+			if(this.scrollLeft != left){
+				this.columnManager.scrollHorizontal(left);
 
-				if(self.table.options.groupBy){
-					self.table.modules.groupRows.scrollHeaders(left);
+				if(this.table.options.groupBy){
+					this.table.modules.groupRows.scrollHeaders(left);
 				}
 
-				if(self.table.modExists("columnCalcs")){
-					self.table.modules.columnCalcs.scrollHorizontal(left);
+				if(this.table.modExists("columnCalcs")){
+					this.table.modules.columnCalcs.scrollHorizontal(left);
 				}
 
-				self.table.options.scrollHorizontal(left);
+				this.table.options.scrollHorizontal(left);
 			}
 
-			self.scrollLeft = left;
+			this.scrollLeft = left;
 		});
 
 		//handle virtual dom scrolling
 		if(this.renderMode === "virtual"){
-
-			self.element.addEventListener("scroll", function(){
-				var top = self.element.scrollTop;
-				var dir = self.scrollTop > top;
+			this.element.addEventListener("scroll", () => {
+				var top = this.element.scrollTop;
+				var dir = this.scrollTop > top;
 
 				//handle verical scrolling
-				if(self.scrollTop != top){
-					self.scrollTop = top;
-					self.scrollVertical(dir);
+				if(this.scrollTop != top){
+					this.scrollTop = top;
+					this.scrollVertical(dir);
 
-					if(self.table.options.ajaxProgressiveLoad == "scroll"){
-						self.table.modules.ajax.nextPage(self.element.scrollHeight - self.element.clientHeight - top);
+					if(this.table.options.ajaxProgressiveLoad == "scroll"){
+						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
 					}
 
-					self.table.options.scrollVertical(top);
+					this.table.options.scrollVertical(top);
 				}else{
-					self.scrollTop = top;
+					this.scrollTop = top;
 				}
 
 			});
@@ -155,10 +152,7 @@ export default class RowManager {
 
 	////////////////// Row Manipulation //////////////////
 	findRow(subject){
-		var self = this;
-
 		if(typeof subject == "object"){
-
 			if(subject instanceof Row){
 				//subject is row element
 				return subject;
@@ -167,19 +161,18 @@ export default class RowManager {
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
 				//subject is a HTML element of the row
-				let match = self.rows.find(function(row){
+				let match = this.rows.find((row) => {
 					return row.getElement() === subject;
 				});
 
 				return match || false;
 			}
-
 		}else if(typeof subject == "undefined" || subject === null){
 			return false;
 		}else{
 			//subject should be treated as the index of the row
-			let match = self.rows.find(function(row){
-				return row.data[self.table.options.index] == subject;
+			let match = this.rows.find((row) => {
+				return row.data[this.table.options.index] == subject;
 			});
 
 			return match || false;
@@ -190,7 +183,7 @@ export default class RowManager {
 	}
 
 	getRowFromDataObject(data){
-		var match = this.rows.find(function(row){
+		var match = this.rows.find((row) => {
 			return row.data === data;
 		});
 
@@ -291,15 +284,13 @@ export default class RowManager {
 
 	////////////////// Data Handling //////////////////
 	setData(data, renderInPosition, columnsChanged){
-		var self = this;
-
 		return new Promise((resolve, reject)=>{
 			if(renderInPosition && this.getDisplayRows().length){
-				if(self.table.options.pagination){
-					self._setDataActual(data, true);
+				if(this.table.options.pagination){
+					this._setDataActual(data, true);
 				}else{
-					this.reRenderInPosition(function(){
-						self._setDataActual(data);
+					this.reRenderInPosition(() => {
+						this._setDataActual(data);
 					});
 				}
 			}else{
@@ -317,9 +308,7 @@ export default class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		var self = this;
-
-		self.table.options.dataLoading.call(this.table, data);
+		this.table.options.dataLoading.call(this.table, data);
 
 		this._wipeElements();
 
@@ -337,26 +326,25 @@ export default class RowManager {
 				this.table.modules.reactiveData.watchData(data);
 			}
 
-			data.forEach(function(def, i){
+			data.forEach((def, i) => {
 				if(def && typeof def === "object"){
-					var row = new Row(def, self);
-					self.rows.push(row);
+					var row = new Row(def, this);
+					this.rows.push(row);
 				}else{
 					console.warn("Data Loading Warning - Invalid row data detected and ignored, expecting object but received:", def);
 				}
 			});
 
-			self.refreshActiveData(false, false, renderInPosition);
+			this.refreshActiveData(false, false, renderInPosition);
 
-			self.table.options.dataLoaded.call(this.table, data);
-
+			this.table.options.dataLoaded.call(this.table, data);
 		}else{
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
 	}
 
 	_wipeElements(){
-		this.rows.forEach(function(row){
+		this.rows.forEach((row) => {
 			row.wipe();
 		});
 
@@ -387,7 +375,7 @@ export default class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.displayRowIterator(function(rows){
+		this.displayRowIterator((rows) => {
 			var displayIndex = rows.indexOf(row);
 
 			if(displayIndex > -1){
@@ -419,7 +407,6 @@ export default class RowManager {
 	}
 
 	addRow(data, pos, index, blockRedraw){
-
 		var row = this.addRowActual(data, pos, index, blockRedraw);
 
 		if(this.table.options.history && this.table.modExists("history")){
@@ -431,8 +418,7 @@ export default class RowManager {
 
 	//add multiple rows
 	addRows(data, pos, index){
-		var self = this,
-		length = 0,
+		var length = 0,
 		rows = [];
 
 		return new Promise((resolve, reject) => {
@@ -448,8 +434,8 @@ export default class RowManager {
 				data.reverse();
 			}
 
-			data.forEach(function(item, i){
-				var row = self.addRow(item, pos, index, true);
+			data.forEach((item, i) => {
+				var row = this.addRow(item, pos, index, true);
 				rows.push(row);
 			});
 
@@ -866,8 +852,7 @@ export default class RowManager {
 
 	//set active data set
 	refreshActiveData(stage, skipStage, renderInPosition){
-		var self = this,
-		table = this.table,
+		var table = this.table,
 		cascadeOrder = ["all", "filter", "sort", "display", "freeze", "group", "tree", "page"],
 		displayIndex;
 
@@ -884,8 +869,8 @@ export default class RowManager {
 			return;
 		}else{
 
-			if(self.table.modExists("edit")){
-				self.table.modules.edit.cancelEdit();
+			if(this.table.modExists("edit")){
+				this.table.modules.edit.cancelEdit();
 			}
 
 			if(!stage){
@@ -903,9 +888,9 @@ export default class RowManager {
 				case "filter":
 				if(!skipStage){
 					if(table.modExists("filter")){
-						self.setActiveRows(table.modules.filter.filter(self.rows));
+						this.setActiveRows(table.modules.filter.filter(this.rows));
 					}else{
-						self.setActiveRows(self.rows.slice(0));
+						this.setActiveRows(this.rows.slice(0));
 					}
 				}else{
 					skipStage = false;
@@ -937,7 +922,7 @@ export default class RowManager {
 
 							displayIndex = table.modules.frozenRows.getDisplayIndex();
 
-							displayIndex = self.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+							displayIndex = this.setDisplayRows(table.modules.frozenRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 							if(displayIndex !== true){
 								table.modules.frozenRows.setDisplayIndex(displayIndex);
@@ -958,7 +943,7 @@ export default class RowManager {
 
 						displayIndex = table.modules.groupRows.getDisplayIndex();
 
-						displayIndex = self.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+						displayIndex = this.setDisplayRows(table.modules.groupRows.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 						if(displayIndex !== true){
 							table.modules.groupRows.setDisplayIndex(displayIndex);
@@ -978,7 +963,7 @@ export default class RowManager {
 
 						displayIndex = table.modules.dataTree.getDisplayIndex();
 
-						displayIndex = self.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+						displayIndex = this.setDisplayRows(table.modules.dataTree.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 						if(displayIndex !== true){
 							table.modules.dataTree.setDisplayIndex(displayIndex);
@@ -1009,7 +994,7 @@ export default class RowManager {
 						}
 
 
-						displayIndex = self.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
+						displayIndex = this.setDisplayRows(table.modules.page.getRows(this.getDisplayRows(displayIndex - 1)), displayIndex);
 
 						if(displayIndex !== true){
 							table.modules.page.setDisplayIndex(displayIndex);
@@ -1021,19 +1006,19 @@ export default class RowManager {
 			}
 
 
-			if(Helpers.elVisible(self.element)){
+			if(Helpers.elVisible(this.element)){
 				if(renderInPosition){
-					self.reRenderInPosition();
+					this.reRenderInPosition();
 				}else{
 
 					if(stage === "all" && this.table.options.virtualDomHoz){
 						this.table.vdomHoz.dataChange();
 					}
 
-					self.renderTable();
+					this.renderTable();
 
 					if(table.options.layoutColumnsOnNewData){
-						self.table.columnManager.redraw(true);
+						this.table.columnManager.redraw(true);
 					}
 				}
 			}
@@ -1318,12 +1303,11 @@ export default class RowManager {
 	}
 
 	checkClassicModeGroupHeaderWidth(){
-		var self = this,
-		element = this.tableElement,
+		var element = this.tableElement,
 		onlyGroupHeaders = true;
 
-		self.getDisplayRows().forEach(function(row, index){
-			self.styleRow(row, index);
+		this.getDisplayRows().forEach((row, index) => {
+			this.styleRow(row, index);
 			element.appendChild(row.getElement());
 			row.initialize(true);
 
@@ -1333,7 +1317,7 @@ export default class RowManager {
 		});
 
 		if(onlyGroupHeaders){
-			element.style.minWidth = self.table.columnManager.getWidth() + "px";
+			element.style.minWidth = this.table.columnManager.getWidth() + "px";
 		}else{
 			element.style.minWidth = "";
 		}
@@ -1389,30 +1373,29 @@ export default class RowManager {
 
 	//full virtual render
 	_virtualRenderFill(position, forceMove, offset){
-		var self = this,
-		element = self.tableElement,
-		holder = self.element,
+		var	element = this.tableElement,
+		holder = this.element,
 		topPad = 0,
 		rowsHeight = 0,
 		topPadHeight = 0,
 		i = 0,
 		onlyGroupHeaders = true,
-		rows = self.getDisplayRows();
+		rows = this.getDisplayRows();
 
 		position = position || 0;
 
 		offset = offset || 0;
 
 		if(!position){
-			self._clearVirtualDom();
+			this._clearVirtualDom();
 		}else{
 			while(element.firstChild) element.removeChild(element.firstChild);
 
 			//check if position is too close to bottom of table
-			let heightOccupied  = (self.displayRowsCount - position + 1) * self.vDomRowHeight;
+			let heightOccupied  = (this.displayRowsCount - position + 1) * this.vDomRowHeight;
 
-			if(heightOccupied  < self.height){
-				position -= Math.ceil((self.height - heightOccupied ) / self.vDomRowHeight);
+			if(heightOccupied  < this.height){
+				position -= Math.ceil((this.height - heightOccupied ) / this.vDomRowHeight);
 
 				if(position < 0){
 					position = 0;
@@ -1420,22 +1403,21 @@ export default class RowManager {
 			}
 
 			//calculate initial pad
-			topPad = Math.min(Math.max(Math.floor(self.vDomWindowBuffer / self.vDomRowHeight),  self.vDomWindowMinMarginRows), position);
+			topPad = Math.min(Math.max(Math.floor(this.vDomWindowBuffer / this.vDomRowHeight),  this.vDomWindowMinMarginRows), position);
 			position -= topPad;
 		}
 
-		if(self.displayRowsCount && Helpers.elVisible(self.element)){
+		if(this.displayRowsCount && Helpers.elVisible(this.element)){
+			this.vDomTop = position;
 
-			self.vDomTop = position;
+			this.vDomBottom = position -1;
 
-			self.vDomBottom = position -1;
-
-			while ((rowsHeight <= self.height + self.vDomWindowBuffer || i < self.vDomWindowMinTotalRows) && self.vDomBottom < self.displayRowsCount -1){
-				var index = self.vDomBottom + 1,
+			while ((rowsHeight <= this.height + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < this.displayRowsCount -1){
+				var index = this.vDomBottom + 1,
 				row = rows[index],
 				rowHeight = 0;
 
-				self.styleRow(row, index);
+				this.styleRow(row, index);
 
 				element.appendChild(row.getElement());
 
@@ -1453,7 +1435,6 @@ export default class RowManager {
 					rowsHeight += rowHeight;
 				}
 
-
 				if(rowHeight > this.vDomWindowBuffer){
 					this.vDomWindowBuffer = rowHeight * 2;
 				}
@@ -1462,27 +1443,27 @@ export default class RowManager {
 					onlyGroupHeaders = false;
 				}
 
-				self.vDomBottom ++;
+				this.vDomBottom ++;
 				i++;
 			}
 
 			if(!position){
 				this.vDomTopPad = 0;
 				//adjust rowheight to match average of rendered elements
-				self.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
-				self.vDomBottomPad = self.vDomRowHeight * (self.displayRowsCount - self.vDomBottom -1);
+				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
+				this.vDomBottomPad = this.vDomRowHeight * (this.displayRowsCount - this.vDomBottom -1);
 
-				self.vDomScrollHeight = topPadHeight + rowsHeight + self.vDomBottomPad - self.height;
+				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - this.height;
 			}else{
-				self.vDomTopPad = !forceMove ? self.scrollTop - topPadHeight : (self.vDomRowHeight * this.vDomTop) + offset;
-				self.vDomBottomPad = self.vDomBottom == self.displayRowsCount-1 ? 0 : Math.max(self.vDomScrollHeight - self.vDomTopPad - rowsHeight - topPadHeight, 0);
+				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
+				this.vDomBottomPad = this.vDomBottom == this.displayRowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
 			}
 
-			element.style.paddingTop = self.vDomTopPad + "px";
-			element.style.paddingBottom = self.vDomBottomPad + "px";
+			element.style.paddingTop = this.vDomTopPad + "px";
+			element.style.paddingBottom = this.vDomBottomPad + "px";
 
 			if(forceMove){
-				this.scrollTop = self.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
+				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
 			}
 
 			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
@@ -1497,14 +1478,13 @@ export default class RowManager {
 
 			holder.scrollTop = this.scrollTop;
 
-			element.style.minWidth = onlyGroupHeaders ? self.table.columnManager.getWidth() + "px" : "";
+			element.style.minWidth = onlyGroupHeaders ? this.table.columnManager.getWidth() + "px" : "";
 
-			if(self.table.options.groupBy){
-				if(self.table.modules.layout.getMode() != "fitDataFill" && self.displayRowsCount == self.table.modules.groupRows.countGroups()){
-					self.tableElement.style.minWidth = self.table.columnManager.getWidth();
+			if(this.table.options.groupBy){
+				if(this.table.modules.layout.getMode() != "fitDataFill" && this.displayRowsCount == this.table.modules.groupRows.countGroups()){
+					this.tableElement.style.minWidth = this.table.columnManager.getWidth();
 				}
 			}
-
 		}else{
 			this.renderEmptyScroll();
 		}

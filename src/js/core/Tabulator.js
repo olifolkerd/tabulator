@@ -418,46 +418,44 @@ class Tabulator {
 	}
 
 	_loadInitialData(){
-		var self = this;
+		if(this.options.pagination && this.modExists("page")){
+			this.modules.page.reset(true, true);
 
-		if(self.options.pagination && self.modExists("page")){
-			self.modules.page.reset(true, true);
-
-			if(self.options.pagination == "local"){
-				if(self.options.data.length){
-					self.rowManager.setData(self.options.data, false, true);
+			if(this.options.pagination == "local"){
+				if(this.options.data.length){
+					this.rowManager.setData(this.options.data, false, true);
 				}else{
-					if((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")){
-						self.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
-							if(self.options.paginationInitialPage){
-								self.modules.page.setPage(self.options.paginationInitialPage);
+					if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
+						this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{
+							if(this.options.paginationInitialPage){
+								this.modules.page.setPage(this.options.paginationInitialPage);
 							}
 						});
 
 						return;
 					}else{
-						self.rowManager.setData(self.options.data, false, true);
+						this.rowManager.setData(this.options.data, false, true);
 					}
 				}
 
-				if(self.options.paginationInitialPage){
-					self.modules.page.setPage(self.options.paginationInitialPage);
+				if(this.options.paginationInitialPage){
+					this.modules.page.setPage(this.options.paginationInitialPage);
 				}
 			}else{
-				if(self.options.ajaxURL){
-					self.modules.page.setPage(self.options.paginationInitialPage).then(()=>{}).catch(()=>{});
+				if(this.options.ajaxURL){
+					this.modules.page.setPage(this.options.paginationInitialPage).then(()=>{}).catch(()=>{});
 				}else{
-					self.rowManager.setData([], false, true);
+					this.rowManager.setData([], false, true);
 				}
 			}
 		}else{
-			if(self.options.data.length){
-				self.rowManager.setData(self.options.data);
+			if(this.options.data.length){
+				this.rowManager.setData(this.options.data);
 			}else{
-				if((self.options.ajaxURL || self.options.ajaxURLGenerator) && self.modExists("ajax")){
-					self.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
+				if((this.options.ajaxURL || this.options.ajaxURLGenerator) && this.modExists("ajax")){
+					this.modules.ajax.loadData(false, true).then(()=>{}).catch(()=>{});
 				}else{
-					self.rowManager.setData(self.options.data, false, true);
+					this.rowManager.setData(this.options.data, false, true);
 				}
 			}
 		}
@@ -581,53 +579,48 @@ class Tabulator {
 	}
 
 	_setData(data, params, config, inPosition, columnsChanged){
-		var self = this;
-
 		if(typeof(data) === "string"){
 			if (data.indexOf("{") == 0 || data.indexOf("[") == 0){
 				//data is a json encoded string
-				return self.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
+				return this.rowManager.setData(JSON.parse(data), inPosition, columnsChanged);
 			}else{
 
-				if(self.modExists("ajax", true)){
+				if(this.modExists("ajax", true)){
 					if(params){
-						self.modules.ajax.setParams(params);
+						this.modules.ajax.setParams(params);
 					}
 
 					if(config){
-						self.modules.ajax.setConfig(config);
+						this.modules.ajax.setConfig(config);
 					}
 
-					self.modules.ajax.setUrl(data);
+					this.modules.ajax.setUrl(data);
 
-					if(self.options.pagination == "remote" && self.modExists("page", true)){
-						self.modules.page.reset(true, true);
-						return self.modules.page.setPage(1);
+					if(this.options.pagination == "remote" && this.modExists("page", true)){
+						this.modules.page.reset(true, true);
+						return this.modules.page.setPage(1);
 					}else{
 						//assume data is url, make ajax call to url to get data
-						return self.modules.ajax.loadData(inPosition, columnsChanged);
+						return this.modules.ajax.loadData(inPosition, columnsChanged);
 					}
 				}
 			}
 		}else{
 			if(data){
 				//asume data is already an object
-				return self.rowManager.setData(data, inPosition, columnsChanged);
+				return this.rowManager.setData(data, inPosition, columnsChanged);
 			}else{
-
 				//no data provided, check if ajaxURL is present;
-				if(self.modExists("ajax") && (self.modules.ajax.getUrl || self.options.ajaxURLGenerator)){
-
-					if(self.options.pagination == "remote" && self.modExists("page", true)){
-						self.modules.page.reset(true, true);
-						return self.modules.page.setPage(1);
+				if(this.modExists("ajax") && (this.modules.ajax.getUrl || this.options.ajaxURLGenerator)){
+					if(this.options.pagination == "remote" && this.modExists("page", true)){
+						this.modules.page.reset(true, true);
+						return this.modules.page.setPage(1);
 					}else{
-						return self.modules.ajax.loadData(inPosition, columnsChanged);
+						return this.modules.ajax.loadData(inPosition, columnsChanged);
 					}
-
 				}else{
 					//empty data
-					return self.rowManager.setData([], inPosition, columnsChanged);
+					return this.rowManager.setData([], inPosition, columnsChanged);
 				}
 			}
 		}
@@ -709,7 +702,6 @@ class Tabulator {
 
 	//update table data
 	updateData(data){
-		var self = this;
 		var responses = 0;
 
 		return new Promise((resolve, reject) => {
@@ -722,8 +714,8 @@ class Tabulator {
 			}
 
 			if(data){
-				data.forEach(function(item){
-					var row = self.rowManager.findRow(item[self.options.index]);
+				data.forEach((item) => {
+					var row = this.rowManager.findRow(item[this.options.index]);
 
 					if(row){
 						responses++;
@@ -775,8 +767,7 @@ class Tabulator {
 
 	//update table data
 	updateOrAddData(data){
-		var self = this,
-		rows = [],
+		var rows = [],
 		responses = 0;
 
 		return new Promise((resolve, reject) => {
@@ -789,8 +780,8 @@ class Tabulator {
 			}
 
 			if(data){
-				data.forEach(function(item){
-					var row = self.rowManager.findRow(item[self.options.index]);
+				data.forEach((item) => {
+					var row = this.rowManager.findRow(item[this.options.index]);
 
 					responses++;
 
@@ -805,7 +796,7 @@ class Tabulator {
 							}
 						});
 					}else{
-						self.rowManager.addRows(item)
+						this.rowManager.addRows(item)
 						.then((newRows)=>{
 							responses--;
 							rows.push(newRows[0].getComponent());
@@ -850,8 +841,7 @@ class Tabulator {
 	//delete row from table
 	deleteRow(index){
 		return new Promise((resolve, reject) => {
-			var self = this,
-			count = 0,
+			var count = 0,
 			successCount = 0,
 			foundRows = [];
 
@@ -860,7 +850,7 @@ class Tabulator {
 
 				if(count == index.length){
 					if(successCount){
-						self.rowManager.reRenderInPosition();
+						this.rowManager.reRenderInPosition();
 						resolve();
 					}
 				}

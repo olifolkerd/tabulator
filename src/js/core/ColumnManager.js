@@ -40,12 +40,10 @@ export default class ColumnManager {
 	}
 
 	initialize (){
-		var self = this;
-
 		//scroll body along with header
-		// self.element.addEventListener("scroll", function(e){
-		// 	if(!self.blockHozScrollEvent){
-		// 		self.table.rowManager.scrollHorizontal(self.element.scrollLeft);
+		// this.element.addEventListener("scroll", (e) => {
+		// 	if(!this.blockHozScrollEvent){
+		// 		this.table.rowManager.scrollHorizontal(this.element.scrollLeft);
 		// 	}
 		// });
 	}
@@ -183,35 +181,32 @@ export default class ColumnManager {
 	}
 
 	setColumns(cols, row){
-		var self = this;
+		while(this.headersElement.firstChild) this.headersElement.removeChild(this.headersElement.firstChild);
 
-		while(self.headersElement.firstChild) self.headersElement.removeChild(self.headersElement.firstChild);
-
-		self.columns = [];
-		self.columnsByIndex = [];
-		self.columnsByField = {};
-
+		this.columns = [];
+		this.columnsByIndex = [];
+		this.columnsByField = {};
 
 		//reset frozen columns
-		if(self.table.modExists("frozenColumns")){
-			self.table.modules.frozenColumns.reset();
+		if(this.table.modExists("frozenColumns")){
+			this.table.modules.frozenColumns.reset();
 		}
 
-		cols.forEach(function(def, i){
-			self._addColumn(def);
+		cols.forEach((def, i) => {
+			this._addColumn(def);
 		});
 
-		self._reIndexColumns();
+		this._reIndexColumns();
 
-		if(self.table.options.responsiveLayout && self.table.modExists("responsiveLayout", true)){
-			self.table.modules.responsiveLayout.initialize();
+		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
+			this.table.modules.responsiveLayout.initialize();
 		}
 
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(false, true);
 		}
 
-		self.redraw(true);
+		this.redraw(true);
 	}
 
 	_addColumn(definition, before, nextToColumn){
@@ -267,9 +262,9 @@ export default class ColumnManager {
 
 	//ensure column headers take up the correct amount of space in column groups
 	_verticalAlignHeaders(){
-		var self = this, minHeight = 0;
+		var minHeight = 0;
 
-		self.columns.forEach(function(column){
+		this.columns.forEach((column) => {
 			var height;
 
 			column.clearVerticalAlign();
@@ -281,17 +276,15 @@ export default class ColumnManager {
 			}
 		});
 
-		self.columns.forEach(function(column){
-			column.verticalAlign(self.table.options.columnHeaderVertAlign, minHeight);
+		this.columns.forEach((column) => {
+			column.verticalAlign(this.table.options.columnHeaderVertAlign, minHeight);
 		});
 
-		self.rowManager.adjustTableSize();
+		this.rowManager.adjustTableSize();
 	}
 
 	//////////////// Column Details /////////////////
 	findColumn(subject){
-		var self = this;
-
 		if(typeof subject == "object"){
 
 			if(subject instanceof Column){
@@ -302,7 +295,7 @@ export default class ColumnManager {
 				return subject._getSelf() || false;
 			}else if(typeof HTMLElement !== "undefined" && subject instanceof HTMLElement){
 				//subject is a HTML element of the column header
-				let match = self.columns.find(function(column){
+				let match = this.columns.find((column) => {
 					return column.element === subject;
 				});
 
@@ -323,7 +316,6 @@ export default class ColumnManager {
 	}
 
 	getColumnsByFieldRoot(root){
-
 		var matches = [];
 
 		Object.keys(this.columnsByField).forEach((field) => {
@@ -341,7 +333,7 @@ export default class ColumnManager {
 	}
 
 	getFirstVisibileColumn(index){
-		var index = this.columnsByIndex.findIndex(function(col){
+		var index = this.columnsByIndex.findIndex((col) => {
 			return col.visible;
 		});
 
@@ -353,7 +345,7 @@ export default class ColumnManager {
 	}
 
 	findColumnIndex(column){
-		return this.columnsByIndex.findIndex(function(col){
+		return this.columnsByIndex.findIndex((col) => {
 			return column === col;
 		});
 	}
@@ -365,19 +357,16 @@ export default class ColumnManager {
 
 	//travers across columns and call action
 	traverse(callback){
-		var self = this;
-
-		self.columnsByIndex.forEach(function(column,i){
+		this.columnsByIndex.forEach((column,i) =>{
 			callback(column, i);
 		});
 	}
 
 	//get defintions of actual columns
 	getDefinitions(active){
-		var self = this,
-		output = [];
+		var output = [];
 
-		self.columnsByIndex.forEach(function(column){
+		this.columnsByIndex.forEach((column) => {
 			if(!active || (active && column.visible)){
 				output.push(column.getDefinition());
 			}
@@ -388,10 +377,9 @@ export default class ColumnManager {
 
 	//get full nested definition tree
 	getDefinitionTree(){
-		var self = this,
-		output = [];
+		var output = [];
 
-		self.columns.forEach(function(column){
+		this.columns.forEach((column) => {
 			output.push(column.getDefinition(true));
 		});
 
@@ -399,11 +387,10 @@ export default class ColumnManager {
 	}
 
 	getComponents(structured){
-		var self = this,
-		output = [],
-		columns = structured ? self.columns : self.columnsByIndex;
+		var output = [],
+		columns = structured ? this.columns : this.columnsByIndex;
 
-		columns.forEach(function(column){
+		columns.forEach((column) => {
 			output.push(column.getComponent());
 		});
 
@@ -413,7 +400,7 @@ export default class ColumnManager {
 	getWidth(){
 		var width = 0;
 
-		this.columnsByIndex.forEach(function(column){
+		this.columnsByIndex.forEach((column) => {
 			if(column.visible){
 				width += column.getWidth();
 			}
@@ -573,11 +560,9 @@ export default class ColumnManager {
 
 	//////////////// Cell Management /////////////////
 	generateCells(row){
-		var self = this;
-
 		var cells = [];
 
-		self.columnsByIndex.forEach(function(column){
+		this.columnsByIndex.forEach((column) => {
 			cells.push(column.generateCell(row));
 		});
 
@@ -586,13 +571,12 @@ export default class ColumnManager {
 
 	//////////////// Column Management /////////////////
 	getFlexBaseWidth(){
-		var self = this,
-		totalWidth = self.table.element.clientWidth, //table element width
+		var totalWidth = this.table.element.clientWidth, //table element width
 		fixedWidth = 0;
 
 		//adjust for vertical scrollbar if present
-		if(self.rowManager.element.scrollHeight > self.rowManager.element.clientHeight){
-			totalWidth -= self.rowManager.element.offsetWidth - self.rowManager.element.clientWidth;
+		if(this.rowManager.element.scrollHeight > this.rowManager.element.clientHeight){
+			totalWidth -= this.rowManager.element.offsetWidth - this.rowManager.element.clientWidth;
 		}
 
 		this.columnsByIndex.forEach(function(column){
@@ -602,7 +586,7 @@ export default class ColumnManager {
 
 				width = column.definition.width || 0;
 
-				minWidth = typeof column.minWidth == "undefined" ? self.table.options.columnMinWidth : parseInt(column.minWidth);
+				minWidth = typeof column.minWidth == "undefined" ? this.table.options.columnMinWidth : parseInt(column.minWidth);
 
 				if(typeof(width) == "string"){
 					if(width.indexOf("%") > -1){
