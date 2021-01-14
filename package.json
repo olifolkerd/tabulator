@@ -4,7 +4,7 @@
   "description": "Interactive table generation JavaScript library",
   "main": "dist/js/tabulator.js",
   "module": "dist/js/tabulator.es2015.js",
-  "sideEffects":false,
+  "sideEffects": false,
   "scripts": {
     "build": "rollup -c build/rollup.js",
     "dev": "rollup -c build/rollup.js -w"
@@ -45,6 +45,7 @@
     "@babel/preset-env": "^7.12.11",
     "@rollup/plugin-babel": "^5.2.2",
     "@rollup/plugin-node-resolve": "^11.0.1",
+    "globby": "^11.0.2",
     "node-sass": "^5.0.0",
     "postcss": "^8.2.4",
     "rollup": "^2.36.1",
