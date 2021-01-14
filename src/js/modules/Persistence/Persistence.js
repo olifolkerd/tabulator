@@ -124,8 +124,7 @@ class Persistence extends Module{
 	}
 
 	initializeColumn(column){
-		var this = this,
-		def, keys;
+		var def, keys;
 
 		if(this.config.columns){
 			this.defWatcherBlock = true;

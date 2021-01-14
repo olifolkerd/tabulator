@@ -163,8 +163,7 @@ class MoveRows extends Module{
 	}
 
 	bindTouchEvents(row, element){
-		var this = this,
-		startYMove = false, //shifting center position of the cell
+		var startYMove = false, //shifting center position of the cell
 		dir = false,
 		currentRow, nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
 

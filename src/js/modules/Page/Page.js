@@ -116,8 +116,7 @@ class Page extends Module{
 
 	//setup pageination
 	initialize(hidden){
-		var this = this,
-		pageSelectLabel, testElRow, testElCell;
+		var pageSelectLabel, testElRow, testElCell;
 
 		//update param names
 		this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
