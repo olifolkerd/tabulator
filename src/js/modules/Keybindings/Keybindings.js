@@ -40,23 +40,17 @@ class Keybindings extends Module{
 	}
 
 	mapBindings(bindings){
-		var self = this;
-
 		for(let key in bindings){
-
 			if(Keybindings.actions[key]){
-
 				if(bindings[key]){
-
 					if(typeof bindings[key] !== "object"){
 						bindings[key] = [bindings[key]];
 					}
 
-					bindings[key].forEach(function(binding){
-						self.mapBinding(key, binding);
+					bindings[key].forEach((binding) => {
+						this.mapBinding(key, binding);
 					});
 				}
-
 			}else{
 				console.warn("Key Binding Error - no such action:", key);
 			}
@@ -64,8 +58,6 @@ class Keybindings extends Module{
 	}
 
 	mapBinding(action, symbolsList){
-		var self = this;
-
 		var binding = {
 			action: Keybindings.actions[action],
 			keys: [],
@@ -76,7 +68,7 @@ class Keybindings extends Module{
 
 		var symbols = symbolsList.toString().toLowerCase().split(" ").join("").split("+");
 
-		symbols.forEach(function(symbol){
+		symbols.forEach((symbol) => {
 			switch(symbol){
 				case "ctrl":
 				binding.ctrl = true;
@@ -94,11 +86,11 @@ class Keybindings extends Module{
 				symbol = parseInt(symbol);
 				binding.keys.push(symbol);
 
-				if(!self.watchKeys[symbol]){
-					self.watchKeys[symbol] = [];
+				if(!this.watchKeys[symbol]){
+					this.watchKeys[symbol] = [];
 				}
 
-				self.watchKeys[symbol].push(binding);
+				this.watchKeys[symbol].push(binding);
 			}
 		});
 	}
@@ -150,12 +142,11 @@ class Keybindings extends Module{
 	}
 
 	checkBinding(e, binding){
-		var self = this,
-		match = true;
+		var match = true;
 
 		if(e.ctrlKey == binding.ctrl && e.shiftKey == binding.shift && e.metaKey == binding.meta){
-			binding.keys.forEach(function(key){
-				var index = self.pressedKeys.indexOf(key);
+			binding.keys.forEach((key) => {
+				var index = this.pressedKeys.indexOf(key);
 
 				if(index == -1){
 					match = false;
@@ -163,7 +154,7 @@ class Keybindings extends Module{
 			});
 
 			if(match){
-				binding.action.call(self, e);
+				binding.action.call(this, e);
 			}
 
 			return true;

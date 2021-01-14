@@ -189,34 +189,23 @@ class FrozenColumns extends Module{
 
 	//layout columns appropropriatly
 	layout(){
-		var self = this,
-		rightMargin = 0;
+		var rightMargin = 0;
 
-		if(self.active){
+		if(this.active){
 
 			//calculate row padding
 			this.calcMargins();
 
-			// self.table.rowManager.activeRows.forEach(function(row){
-			// 	self.layoutRow(row);
-			// });
-
-			// if(self.table.options.dataTree){
-				self.table.rowManager.getDisplayRows().forEach(function(row){
-					if(row.type === "row"){
-						self.layoutRow(row);
-					}
-				});
-			// }
+			this.table.rowManager.getDisplayRows().forEach((row) =>{
+				if(row.type === "row"){
+					this.layoutRow(row);
+				}
+			});
 
 			this.layoutCalcRows();
 
 			//calculate left columns
 			this.layoutColumnPosition(true);
-
-			// if(tableHolder.scrollHeight > tableHolder.clientHeight){
-			// 	rightMargin -= tableHolder.offsetWidth - tableHolder.clientWidth;
-			// }
 
 			this.table.rowManager.tableElement.style.marginRight = this.rightMargin;
 		}
@@ -226,7 +215,6 @@ class FrozenColumns extends Module{
 		var rowEl = row.getElement();
 
 		rowEl.style.paddingLeft = this.leftMargin;
-		// rowEl.style.paddingRight = this.rightMargin + "px";
 
 		this.leftColumns.forEach((column) => {
 			var cell = row.getCell(column);

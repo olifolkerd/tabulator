@@ -163,14 +163,14 @@ class MoveRows extends Module{
 	}
 
 	bindTouchEvents(row, element){
-		var self = this,
+		var this = this,
 		startYMove = false, //shifting center position of the cell
 		dir = false,
 		currentRow, nextRow, prevRow, nextRowHeight, prevRowHeight, nextRowHeightLast, prevRowHeightLast;
 
-		element.addEventListener("touchstart", function(e){
-			self.checkTimeout = setTimeout(function(){
-				self.touchMove = true;
+		element.addEventListener("touchstart", (e) => {
+			this.checkTimeout = setTimeout(() => {
+				this.touchMove = true;
 				currentRow = row;
 				nextRow = row.nextRow();
 				nextRowHeight = nextRow ? nextRow.getHeight()/2 : 0;
@@ -180,18 +180,18 @@ class MoveRows extends Module{
 				prevRowHeightLast = 0;
 				startYMove = false;
 
-				self.startMove(e, row);
-			}, self.checkPeriod);
+				this.startMove(e, row);
+			}, this.checkPeriod);
 		}, {passive: true});
 		this.moving, this.toRow, this.toRowAfter
-		element.addEventListener("touchmove", function(e){
+		element.addEventListener("touchmove", (e) => {
 
 			var halfCol, diff, moveToRow;
 
-			if(self.moving){
+			if(this.moving){
 				e.preventDefault();
 
-				self.moveHover(e);
+				this.moveHover(e);
 
 				if(!startYMove){
 					startYMove = e.touches[0].pageY;
@@ -205,8 +205,8 @@ class MoveRows extends Module{
 
 						if(moveToRow !== row){
 							startYMove = e.touches[0].pageY
-							moveToRow.getElement().parentNode.insertBefore(self.placeholderElement, moveToRow.getElement().nextSibling);
-							self.moveRow(moveToRow, true);
+							moveToRow.getElement().parentNode.insertBefore(this.placeholderElement, moveToRow.getElement().nextSibling);
+							this.moveRow(moveToRow, true);
 						}
 					}
 				}else{
@@ -215,8 +215,8 @@ class MoveRows extends Module{
 
 						if(moveToRow !== row){
 							startYMove = e.touches[0].pageY;
-							moveToRow.getElement().parentNode.insertBefore(self.placeholderElement, moveToRow.getElement());
-							self.moveRow(moveToRow, false);
+							moveToRow.getElement().parentNode.insertBefore(this.placeholderElement, moveToRow.getElement());
+							this.moveRow(moveToRow, false);
 						}
 					}
 				}
@@ -233,21 +233,19 @@ class MoveRows extends Module{
 			}
 		});
 
-		element.addEventListener("touchend", function(e){
-			if(self.checkTimeout){
-				clearTimeout(self.checkTimeout);
+		element.addEventListener("touchend", (e) => {
+			if(this.checkTimeout){
+				clearTimeout(this.checkTimeout);
 			}
-			if(self.moving){
-				self.endMove(e);
-				self.touchMove = false;
+			if(this.moving){
+				this.endMove(e);
+				this.touchMove = false;
 			}
 		});
 	}
 
 	_bindMouseMove(){
-		var self = this;
-
-		self.table.rowManager.getDisplayRows().forEach(function(row){
+		this.table.rowManager.getDisplayRows().forEach((row) => {
 			if((row.type === "row" || row.type === "group") && row.modules.moveRow.mousemove){
 				row.getElement().addEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
@@ -255,9 +253,7 @@ class MoveRows extends Module{
 	}
 
 	_unbindMouseMove(){
-		var self = this;
-
-		self.table.rowManager.getDisplayRows().forEach(function(row){
+		this.table.rowManager.getDisplayRows().forEach((row) => {
 			if((row.type === "row" || row.type === "group")  && row.modules.moveRow.mousemove){
 				row.getElement().removeEventListener("mousemove", row.modules.moveRow.mousemove);
 			}
@@ -456,22 +452,21 @@ class MoveRows extends Module{
 
 	//accept incomming connection
 	connect(table, row){
-		var self = this;
 		if(!this.connectedTable){
 			this.connectedTable = table;
 			this.connectedRow = row;
 
 			this.table.element.classList.add("tabulator-movingrow-receiving");
 
-			self.table.rowManager.getDisplayRows().forEach(function(row){
+			this.table.rowManager.getDisplayRows().forEach((row) => {
 				if(row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup){
 					row.getElement().addEventListener("mouseup", row.modules.moveRow.mouseup);
 				}
 			});
 
-			self.tableRowDropEvent = self.tableRowDrop.bind(self);
+			this.tableRowDropEvent = this.tableRowDrop.bind(this);
 
-			self.table.element.addEventListener("mouseup", self.tableRowDropEvent);
+			this.table.element.addEventListener("mouseup", this.tableRowDropEvent);
 
 			this.table.options.movableRowsReceivingStart.call(this.table, row, table);
 
@@ -484,20 +479,19 @@ class MoveRows extends Module{
 
 	//close incomming connection
 	disconnect(table){
-		var self = this;
 		if(table === this.connectedTable){
 			this.connectedTable = false;
 			this.connectedRow = false;
 
 			this.table.element.classList.remove("tabulator-movingrow-receiving");
 
-			self.table.rowManager.getDisplayRows().forEach(function(row){
+			this.table.rowManager.getDisplayRows().forEach((row) =>{
 				if(row.type === "row" && row.modules.moveRow && row.modules.moveRow.mouseup){
 					row.getElement().removeEventListener("mouseup", row.modules.moveRow.mouseup);
 				}
 			});
 
-			self.table.element.removeEventListener("mouseup", self.tableRowDropEvent);
+			this.table.element.removeEventListener("mouseup", this.tableRowDropEvent);
 
 			this.table.options.movableRowsReceivingStop.call(this.table, table);
 		}else{

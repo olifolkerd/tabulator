@@ -13,16 +13,15 @@ class Mutator extends Module{
 
 	//initialize column mutator
 	initializeColumn(column){
-		var self = this,
-		match = false,
+		var match = false,
 		config = {};
 
-		this.allowedTypes.forEach(function(type){
+		this.allowedTypes.forEach((type) => {
 			var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 			mutator;
 
 			if(column.definition[key]){
-				mutator = self.lookupMutator(column.definition[key]);
+				mutator = this.lookupMutator(column.definition[key]);
 
 				if(mutator){
 					match = true;
@@ -63,13 +62,12 @@ class Mutator extends Module{
 
 	//apply mutator to row
 	transformRow(data, type, updatedData){
-		var self = this,
-		key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
+		var key = "mutator" + (type.charAt(0).toUpperCase() + type.slice(1)),
 		value;
 
 		if(this.enabled){
 
-			self.table.columnManager.traverse(function(column){
+			this.table.columnManager.traverse((column) => {
 				var mutator, params, component;
 
 				if(column.modules.mutate){

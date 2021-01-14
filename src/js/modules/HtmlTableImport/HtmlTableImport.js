@@ -10,30 +10,28 @@ class HtmlTableImport extends Module{
 	}
 
 	parseTable(){
-		var self = this,
-		element = self.table.element,
-		options = self.table.options,
+		var element = this.table.element,
+		options = this.table.options,
 		columns = options.columns,
 		headers = element.getElementsByTagName("th"),
 		rows = element.getElementsByTagName("tbody")[0],
 		data = [],
 		newTable;
 
-		self.hasIndex = false;
+		this.hasIndex = false;
 
-		self.table.options.htmlImporting.call(this.table);
+		this.table.options.htmlImporting.call(this.table);
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
 		//check for tablator inline options
-		self._extractOptions(element, options);
+		this._extractOptions(element, options);
 
 		if(headers.length){
-			self._extractHeaders(headers, rows);
+			this._extractHeaders(headers, rows);
 		}else{
-			self._generateBlankHeaders(headers, rows);
+			this._generateBlankHeaders(headers, rows);
 		}
-
 
 		//iterate through table rows and build data set
 		for(var index = 0; index < rows.length; index++){
@@ -42,7 +40,7 @@ class HtmlTableImport extends Module{
 			item = {};
 
 			//create index if the dont exist in table
-			if(!self.hasIndex){
+			if(!this.hasIndex){
 				item[options.index] = index;
 			}
 
@@ -76,9 +74,7 @@ class HtmlTableImport extends Module{
 
 		options.data = data;
 
-		self.table.options.htmlImported.call(this.table);
-
-		// // newElement.tabulator(options);
+		this.table.options.htmlImported.call(this.table);
 
 		this.table.element = newElement;
 	}
@@ -89,7 +85,7 @@ class HtmlTableImport extends Module{
 		var optionsArr = defaultOptions ? Object.assign([], defaultOptions) : Object.keys(options);
 		var optionsList = {};
 
-		optionsArr.forEach(function(item){
+		optionsArr.forEach((item) => {
 			optionsList[item.toLowerCase()] = item;
 		});
 
@@ -122,7 +118,7 @@ class HtmlTableImport extends Module{
 
 	//find column if it has already been defined
 	_findCol(title){
-		var match = this.table.options.columns.find(function(column){
+		var match = this.table.options.columns.find((column) => {
 			return column.title === title;
 		});
 

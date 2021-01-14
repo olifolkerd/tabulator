@@ -54,8 +54,6 @@ class Localize extends Module{
 
 	//set current locale
 	setLocale(desiredLocale){
-		var self = this;
-
 		desiredLocale = desiredLocale || "default";
 
 		//fill in any matching languge values
@@ -79,12 +77,11 @@ class Localize extends Module{
 		}
 
 		if(desiredLocale){
-
 			//if locale is not set, check for matching top level locale else use default
-			if(!self.langList[desiredLocale]){
+			if(!this.langList[desiredLocale]){
 				let prefix = desiredLocale.split("-")[0];
 
-				if(self.langList[prefix]){
+				if(this.langList[prefix]){
 					console.warn("Localization Error - Exact matching locale not found, using closest match: ", desiredLocale, prefix);
 					desiredLocale = prefix;
 				}else{
@@ -94,23 +91,23 @@ class Localize extends Module{
 			}
 		}
 
-		self.locale = desiredLocale;
+		this.locale = desiredLocale;
 
 		//load default lang template
-		self.lang = Helpers.deepClone(self.langList.default || {});
+		this.lang = Helpers.deepClone(this.langList.default || {});
 
 		if(desiredLocale != "default"){
-			traverseLang(self.langList[desiredLocale], self.lang);
+			traverseLang(this.langList[desiredLocale], this.lang);
 		}
 
-		self.table.options.localized.call(self.table, self.locale, self.lang);
+		this.table.options.localized.call(this.table, this.locale, this.lang);
 
-		self._executeBindings();
+		this._executeBindings();
 	}
 
 	//get current locale
 	getLocale(locale){
-		return self.locale;
+		return this.locale;
 	}
 
 	//get lang object for given local or current if none provided
@@ -133,8 +130,7 @@ class Localize extends Module{
 
 	//traverse langs object and find localized copy
 	_getLangElement(path, locale){
-		var self = this;
-		var root = self.lang;
+		var root = this.lang;
 
 		path.forEach(function(level){
 			var rootPath;
@@ -166,11 +162,9 @@ class Localize extends Module{
 
 	//itterate through bindings and trigger updates
 	_executeBindings(){
-		var self = this;
-
-		for(let path in self.bindings){
-			self.bindings[path].forEach(function(binding){
-				binding(self.getText(path), self.lang);
+		for(let path in this.bindings){
+			this.bindings[path].forEach((binding) => {
+				binding(this.getText(path), this.lang);
 			});
 		}
 	}

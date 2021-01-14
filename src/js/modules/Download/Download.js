@@ -10,19 +10,18 @@ class Download extends Module{
 
 	//trigger file download
 	download(type, filename, options, range, interceptCallback){
-		var self = this,
-		downloadFunc = false;
+		var downloadFunc = false;
 
 		function buildLink(data, mime){
 			if(interceptCallback){
 				if(interceptCallback === true){
-					self.triggerDownload(data, mime, type, filename, true);
+					this.triggerDownload(data, mime, type, filename, true);
 				}else{
 					interceptCallback(data);
 				}
 
 			}else{
-				self.triggerDownload(data, mime, type, filename);
+				this.triggerDownload(data, mime, type, filename);
 			}
 		}
 

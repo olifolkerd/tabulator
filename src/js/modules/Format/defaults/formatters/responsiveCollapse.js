@@ -1,6 +1,5 @@
 export default function(cell, formatterParams, onRendered){
-	var self = this,
-	open = false,
+	var open = false,
 	el = document.createElement("div"),
 	config = cell.getRow()._row.modules.responsiveLayout;
 

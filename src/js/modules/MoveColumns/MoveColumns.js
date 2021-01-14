@@ -81,15 +81,14 @@ class MoveColumns extends Module{
 	}
 
 	bindTouchEvents(column){
-		var self = this,
-		colEl = column.getElement(),
+		var colEl = column.getElement(),
 		startXMove = false, //shifting center position of the cell
 		dir = false,
 		currentCol, nextCol, prevCol, nextColWidth, prevColWidth, nextColWidthLast, prevColWidthLast;
 
-		colEl.addEventListener("touchstart", function(e){
-			self.checkTimeout = setTimeout(function(){
-				self.touchMove = true;
+		colEl.addEventListener("touchstart", (e) => {
+			this.checkTimeout = setTimeout(() => {
+				this.touchMove = true;
 				currentCol = column;
 				nextCol = column.nextColumn();
 				nextColWidth = nextCol ? nextCol.getWidth()/2 : 0;
@@ -99,15 +98,15 @@ class MoveColumns extends Module{
 				prevColWidthLast = 0;
 				startXMove = false;
 
-				self.startMove(e, column);
-			}, self.checkPeriod);
+				this.startMove(e, column);
+			}, this.checkPeriod);
 		}, {passive: true});
 
-		colEl.addEventListener("touchmove", function(e){
+		colEl.addEventListener("touchmove", (e) => {
 			var halfCol, diff, moveToCol;
 
-			if(self.moving){
-				self.moveHover(e);
+			if(this.moving){
+				this.moveHover(e);
 
 				if(!startXMove){
 					startXMove = e.touches[0].pageX;
@@ -121,8 +120,8 @@ class MoveColumns extends Module{
 
 						if(moveToCol !== column){
 							startXMove = e.touches[0].pageX;
-							moveToCol.getElement().parentNode.insertBefore(self.placeholderElement, moveToCol.getElement().nextSibling);
-							self.moveColumn(moveToCol, true);
+							moveToCol.getElement().parentNode.insertBefore(this.placeholderElement, moveToCol.getElement().nextSibling);
+							this.moveColumn(moveToCol, true);
 						}
 					}
 				}else{
@@ -131,8 +130,8 @@ class MoveColumns extends Module{
 
 						if(moveToCol !== column){
 							startXMove = e.touches[0].pageX;
-							moveToCol.getElement().parentNode.insertBefore(self.placeholderElement, moveToCol.getElement());
-							self.moveColumn(moveToCol, false);
+							moveToCol.getElement().parentNode.insertBefore(this.placeholderElement, moveToCol.getElement());
+							this.moveColumn(moveToCol, false);
 						}
 					}
 				}
@@ -149,12 +148,12 @@ class MoveColumns extends Module{
 			}
 		}, {passive: true});
 
-		colEl.addEventListener("touchend", function(e){
-			if(self.checkTimeout){
-				clearTimeout(self.checkTimeout);
+		colEl.addEventListener("touchend", (e) => {
+			if(this.checkTimeout){
+				clearTimeout(this.checkTimeout);
 			}
-			if(self.moving){
-				self.endMove(e);
+			if(this.moving){
+				this.endMove(e);
 			}
 		});
 	}
@@ -254,30 +253,29 @@ class MoveColumns extends Module{
 	}
 
 	moveHover(e){
-		var self = this,
-		columnHolder = self.table.columnManager.getElement(),
+		var columnHolder = this.table.columnManager.getElement(),
 		scrollLeft = columnHolder.scrollLeft,
-		xPos = ((self.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(columnHolder).left) + scrollLeft,
+		xPos = ((this.touchMove ? e.touches[0].pageX : e.pageX) - Helpers.elOffset(columnHolder).left) + scrollLeft,
 		scrollPos;
 
-		self.hoverElement.style.left = (xPos - self.startX) + "px";
+		this.hoverElement.style.left = (xPos - this.startX) + "px";
 
-		if(xPos - scrollLeft < self.autoScrollMargin){
-			if(!self.autoScrollTimeout){
-				self.autoScrollTimeout = setTimeout(function(){
+		if(xPos - scrollLeft < this.autoScrollMargin){
+			if(!this.autoScrollTimeout){
+				this.autoScrollTimeout = setTimeout(() => {
 					scrollPos = Math.max(0,scrollLeft-5);
-					self.table.rowManager.getElement().scrollLeft = scrollPos;
-					self.autoScrollTimeout = false;
+					this.table.rowManager.getElement().scrollLeft = scrollPos;
+					this.autoScrollTimeout = false;
 				}, 1);
 			}
 		}
 
-		if(scrollLeft + columnHolder.clientWidth - xPos < self.autoScrollMargin){
-			if(!self.autoScrollTimeout){
-				self.autoScrollTimeout = setTimeout(function(){
+		if(scrollLeft + columnHolder.clientWidth - xPos < this.autoScrollMargin){
+			if(!this.autoScrollTimeout){
+				this.autoScrollTimeout = setTimeout(() => {
 					scrollPos = Math.min(columnHolder.clientWidth, scrollLeft+5);
-					self.table.rowManager.getElement().scrollLeft = scrollPos;
-					self.autoScrollTimeout = false;
+					this.table.rowManager.getElement().scrollLeft = scrollPos;
+					this.autoScrollTimeout = false;
 				}, 1);
 			}
 		}

@@ -19,22 +19,21 @@ class GroupRows extends Module{
 
 	//initialize group configuration
 	initialize(){
-		var self = this,
-		groupBy = self.table.options.groupBy,
-		startOpen = self.table.options.groupStartOpen,
-		groupHeader = self.table.options.groupHeader;
+		var groupBy = this.table.options.groupBy,
+		startOpen = this.table.options.groupStartOpen,
+		groupHeader = this.table.options.groupHeader;
 
-		this.allowedValues = self.table.options.groupValues;
+		this.allowedValues = this.table.options.groupValues;
 
 		if(Array.isArray(groupBy) && Array.isArray(groupHeader) && groupBy.length > groupHeader.length){
 			console.warn("Error creating group headers, groupHeader array is shorter than groupBy array");
 		}
 
-		self.headerGenerator = [function(){return "";}];
+		this.headerGenerator = [function(){return "";}];
 		this.startOpen = [function(){return false;}]; //starting state of group
 
-		self.table.modules.localize.bind("groups|item", function(langValue, lang){
-			self.headerGenerator[0] = function(value, count, data){ //header layout function
+		this.table.modules.localize.bind("groups|item", (langValue, lang) => {
+			this.headerGenerator[0] = (value, count, data) => { //header layout function
 				return (typeof value === "undefined" ? "" : value) + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
 			};
 		});
@@ -50,31 +49,29 @@ class GroupRows extends Module{
 
 				var cols = this.table.columnManager.getRealColumns();
 
-				cols.forEach(function(col){
+				cols.forEach((col) => {
 					if(col.definition.topCalc){
-						self.table.modules.columnCalcs.initializeTopRow();
+						this.table.modules.columnCalcs.initializeTopRow();
 					}
 
 					if(col.definition.bottomCalc){
-						self.table.modules.columnCalcs.initializeBottomRow();
+						this.table.modules.columnCalcs.initializeBottomRow();
 					}
 				});
 			}
 		}
 
-
-
 		if(!Array.isArray(groupBy)){
 			groupBy = [groupBy];
 		}
 
-		groupBy.forEach(function(group, i){
+		groupBy.forEach((group, i) => {
 			var lookupFunc, column;
 
 			if(typeof group == "function"){
 				lookupFunc = group;
 			}else{
-				column = self.table.columnManager.getColumnByField(group);
+				column = this.table.columnManager.getColumnByField(group);
 
 				if(column){
 					lookupFunc = function(data){
@@ -87,10 +84,10 @@ class GroupRows extends Module{
 				}
 			}
 
-			self.groupIDLookups.push({
+			this.groupIDLookups.push({
 				field: typeof group === "function" ? false : group,
 				func:lookupFunc,
-				values:self.allowedValues ? self.allowedValues[i] : false,
+				values:this.allowedValues ? this.allowedValues[i] : false,
 			});
 		});
 
@@ -99,15 +96,15 @@ class GroupRows extends Module{
 				startOpen = [startOpen];
 			}
 
-			startOpen.forEach(function(level){
+			startOpen.forEach((level) => {
 				level = typeof level == "function" ? level : function(){return true;};
 			});
 
-			self.startOpen = startOpen;
+			this.startOpen = startOpen;
 		}
 
 		if(groupHeader){
-			self.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
+			this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 		}
 
 		this.initialized = true;
@@ -175,10 +172,9 @@ class GroupRows extends Module{
 	}
 
 	pullGroupListData(groupList) {
-		var self = this;
 		var groupListData = [];
 
-		groupList.forEach( function(group) {
+		groupList.forEach((group) => {
 			var groupHeader = {};
 			groupHeader.level = 0;
 			groupHeader.rowCount = 0;
@@ -186,7 +182,7 @@ class GroupRows extends Module{
 			var childData = [];
 
 			if (group.hasSubGroups) {
-				childData = self.pullGroupListData(group.groupList);
+				childData = this.pullGroupListData(group.groupList);
 
 				groupHeader.level = group.level;
 				groupHeader.rowCount = childData.length - group.groupList.length; // data length minus number of sub-headers
@@ -203,7 +199,7 @@ class GroupRows extends Module{
 
 				groupListData.push(groupHeader);
 
-				group.getRows().forEach( function(row) {
+				group.getRows().forEach((row) => {
 					groupListData.push(row.getData("data"));
 				});
 			}
@@ -220,7 +216,7 @@ class GroupRows extends Module{
 	getRowGroup(row){
 		var match = false;
 
-		this.groupList.forEach(function(group){
+		this.groupList.forEach((group) => {
 			var result = group.getRowGroup(row);
 
 			if(result){
@@ -236,23 +232,22 @@ class GroupRows extends Module{
 	}
 
 	generateGroups(rows){
-		var self = this,
-		oldGroups = self.groups;
+		var oldGroups = this.groups;
 
-		self.groups = {};
-		self.groupList =[];
+		this.groups = {};
+		this.groupList =[];
 
 		if(this.allowedValues && this.allowedValues[0]){
-			this.allowedValues[0].forEach(function(value){
-				self.createGroup(value, 0, oldGroups);
+			this.allowedValues[0].forEach((value) => {
+				this.createGroup(value, 0, oldGroups);
 			});
 
-			rows.forEach(function(row){
-				self.assignRowToExistingGroup(row, oldGroups);
+			rows.forEach((row) => {
+				this.assignRowToExistingGroup(row, oldGroups);
 			});
 		}else{
-			rows.forEach(function(row){
-				self.assignRowToGroup(row, oldGroups);
+			rows.forEach((row) => {
+				this.assignRowToGroup(row, oldGroups);
 			});
 		}
 	}
@@ -296,45 +291,47 @@ class GroupRows extends Module{
 			oldGroupPath = oldRowGroup.getPath(),
 			newGroupPath = this.getExpectedPath(row),
 			samePath = true;
+
 		// figure out if new group path is the same as old group path
-		var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every(function(element, index) {
+		var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
 			return element === newGroupPath[index];
 		});
+
 		// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
 		if(!samePath) {
 			oldRowGroup.removeRow(row);
-			this.assignRowToGroup(row, self.groups);
+			this.assignRowToGroup(row, this.groups);
 			this.table.rowManager.refreshActiveData("group", false, true);
 		}
 	}
 
 	getExpectedPath(row) {
 		var groupPath = [], rowData = row.getData();
-		this.groupIDLookups.forEach(function(groupId) {
+
+		this.groupIDLookups.forEach((groupId) => {
 			groupPath.push(groupId.func(rowData));
 		});
+
 		return groupPath;
 	}
 
 	updateGroupRows(force){
-		var self = this,
-		output = [],
+		var output = [],
 		oldRowCount;
 
-		self.groupList.forEach(function(group){
+		this.groupList.forEach((group) => {
 			output = output.concat(group.getHeadersAndRows());
 		});
 
 		//force update of table display
 		if(force){
-
-			var displayIndex = self.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
+			var displayIndex = this.table.rowManager.setDisplayRows(output, this.getDisplayIndex());
 
 			if(displayIndex !== true){
 				this.setDisplayIndex(displayIndex);
 			}
 
-			self.table.rowManager.refreshActiveData("group", true, true);
+			this.table.rowManager.refreshActiveData("group", true, true);
 		}
 
 		return output;
@@ -347,7 +344,7 @@ class GroupRows extends Module{
 
 		left = left + "px";
 
-		this.groupList.forEach(function(group){
+		this.groupList.forEach((group) => {
 			group.scrollHeader(left);
 		});
 	}

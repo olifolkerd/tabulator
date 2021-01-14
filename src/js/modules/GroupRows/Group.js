@@ -78,97 +78,94 @@ class Group{
 	}
 
 	addBindings(){
-		var self = this,
-		dblTap,	tapHold, tap, toggleElement;
+		var dblTap,	tapHold, tap, toggleElement;
 
 		//handle group click events
-		if (self.groupManager.table.options.groupClick){
-			self.element.addEventListener("click", function(e){
-				self.groupManager.table.options.groupClick.call(self.groupManager.table, e, self.getComponent());
+		if (this.groupManager.table.options.groupClick){
+			this.element.addEventListener("click", (e) => {
+				this.groupManager.table.options.groupClick.call(this.groupManager.table, e, this.getComponent());
 			});
 		}
 
-		if (self.groupManager.table.options.groupDblClick){
-			self.element.addEventListener("dblclick", function(e){
-				self.groupManager.table.options.groupDblClick.call(self.groupManager.table, e, self.getComponent());
+		if (this.groupManager.table.options.groupDblClick){
+			this.element.addEventListener("dblclick", (e) => {
+				this.groupManager.table.options.groupDblClick.call(this.groupManager.table, e, this.getComponent());
 			});
 		}
 
-		if (self.groupManager.table.options.groupContext){
-			self.element.addEventListener("contextmenu", function(e){
-				self.groupManager.table.options.groupContext.call(self.groupManager.table, e, self.getComponent());
+		if (this.groupManager.table.options.groupContext){
+			this.element.addEventListener("contextmenu", (e) => {
+				this.groupManager.table.options.groupContext.call(this.groupManager.table, e, this.getComponent());
 			});
 		}
 
-		if ((self.groupManager.table.options.groupContextMenu || self.groupManager.table.options.groupClickMenu) && self.groupManager.table.modExists("menu")){
-			self.groupManager.table.modules.menu.initializeGroup.call(self.groupManager.table.modules.menu, self);
+		if ((this.groupManager.table.options.groupContextMenu || this.groupManager.table.options.groupClickMenu) && this.groupManager.table.modExists("menu")){
+			this.groupManager.table.modules.menu.initializeGroup.call(this.groupManager.table.modules.menu, this);
 		}
 
-		if (self.groupManager.table.options.groupTap){
+		if (this.groupManager.table.options.groupTap){
 			tap = false;
 
-			self.element.addEventListener("touchstart", function(e){
+			this.element.addEventListener("touchstart", (e) => {
 				tap = true;
 			}, {passive: true});
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 				if(tap){
-					self.groupManager.table.options.groupTap(e, self.getComponent());
+					this.groupManager.table.options.groupTap(e, this.getComponent());
 				}
 
 				tap = false;
 			});
 		}
 
-		if (self.groupManager.table.options.groupDblTap){
+		if (this.groupManager.table.options.groupDblTap){
 			dblTap = null;
 
-			self.element.addEventListener("touchend", function(e){
-
+			this.element.addEventListener("touchend", (e) => {
 				if(dblTap){
 					clearTimeout(dblTap);
 					dblTap = null;
 
-					self.groupManager.table.options.groupDblTap(e, self.getComponent());
+					this.groupManager.table.options.groupDblTap(e, this.getComponent());
 				}else{
 
-					dblTap = setTimeout(function(){
+					dblTap = setTimeout(() => {
 						clearTimeout(dblTap);
 						dblTap = null;
 					}, 300);
 				}
-
 			});
 		}
 
-		if (self.groupManager.table.options.groupTapHold){
+		if (this.groupManager.table.options.groupTapHold){
 			tapHold = null;
 
-			self.element.addEventListener("touchstart", function(e){
+			this.element.addEventListener("touchstart", (e) => {
 				clearTimeout(tapHold);
 
-				tapHold = setTimeout(function(){
+				tapHold = setTimeout(() => {
 					clearTimeout(tapHold);
 					tapHold = null;
 					tap = false;
-					self.groupManager.table.options.groupTapHold(e, self.getComponent());
+					this.groupManager.table.options.groupTapHold(e, this.getComponent());
 				}, 1000);
 
 			}, {passive: true});
 
-			self.element.addEventListener("touchend", function(e){
+			this.element.addEventListener("touchend", (e) => {
 				clearTimeout(tapHold);
 				tapHold = null;
 			});
 		}
 
-		if(self.groupManager.table.options.groupToggleElement){
-			toggleElement = self.groupManager.table.options.groupToggleElement == "arrow" ? self.arrowElement : self.element;
+		if(this.groupManager.table.options.groupToggleElement){
+			toggleElement = this.groupManager.table.options.groupToggleElement == "arrow" ? this.arrowElement : this.element;
 
-			toggleElement.addEventListener("click", function(e){
+			toggleElement.addEventListener("click", (e) => {
 				e.stopPropagation();
 				e.stopImmediatePropagation();
-				self.toggleVisibility();
+				this.toggleVisibility();
 			});
 		}
 	}
@@ -393,13 +390,12 @@ class Group{
 	}
 
 	getData(visible, transform){
-		var self = this,
-		output = [];
+		var output = [];
 
 		this._visSet();
 
 		if(!visible || (visible && this.visible)){
-			this.rows.forEach(function(row){
+			this.rows.forEach((row) => {
 				output.push(row.getData(transform || "data"));
 			});
 		}
@@ -411,7 +407,7 @@ class Group{
 		var count = 0;
 
 		if(this.groupList.length){
-			this.groupList.forEach(function(group){
+			this.groupList.forEach((group) => {
 				count += group.getRowCount();
 			});
 		}else{
@@ -436,17 +432,17 @@ class Group{
 			this.element.classList.remove("tabulator-group-visible");
 
 			if(this.groupList.length){
-				this.groupList.forEach(function(group){
+				this.groupList.forEach((group) => {
 
 					var rows = group.getHeadersAndRows();
 
-					rows.forEach(function(row){
+					rows.forEach((row) => {
 						row.detachElement();
 					});
 				});
 
 			}else{
-				this.rows.forEach(function(row){
+				this.rows.forEach((row) => {
 					var rowEl = row.getElement();
 					rowEl.parentNode.removeChild(rowEl);
 				});
@@ -464,21 +460,19 @@ class Group{
 	}
 
 	show(){
-		var self = this;
-
-		self.visible = true;
+		this.visible = true;
 
 		if(this.groupManager.table.rowManager.getRenderMode() == "classic" && !this.groupManager.table.options.pagination){
 
 			this.element.classList.add("tabulator-group-visible");
 
-			var prev = self.getElement();
+			var prev = this.getElement();
 
 			if(this.groupList.length){
-				this.groupList.forEach(function(group){
+				this.groupList.forEach((group) => {
 					var rows = group.getHeadersAndRows();
 
-					rows.forEach(function(row){
+					rows.forEach((row) => {
 						var rowEl = row.getElement();
 						prev.parentNode.insertBefore(rowEl, prev.nextSibling);
 						row.initialize();
@@ -487,7 +481,7 @@ class Group{
 				});
 
 			}else{
-				self.rows.forEach(function(row){
+				this.rows.forEach((row) => {
 					var rowEl = row.getElement();
 					prev.parentNode.insertBefore(rowEl, prev.nextSibling);
 					row.initialize();

@@ -124,7 +124,7 @@ class Persistence extends Module{
 	}
 
 	initializeColumn(column){
-		var self = this,
+		var this = this,
 		def, keys;
 
 		if(this.config.columns){
@@ -142,8 +142,8 @@ class Persistence extends Module{
 						set: function(newValue){
 							value = newValue;
 
-							if(!self.defWatcherBlock){
-								self.save("columns");
+							if(!this.defWatcherBlock){
+								this.save("columns");
 							}
 
 							if(props.set){
@@ -182,24 +182,20 @@ class Persistence extends Module{
 
 	//merge old and new column definitions
 	mergeDefinition(oldCols, newCols){
-		var self = this,
-		output = [];
+		var output = [];
 
-		// oldCols = oldCols || [];
 		newCols = newCols || [];
 
-		newCols.forEach(function(column, to){
-
-			var from = self._findColumn(oldCols, column),
+		newCols.forEach((column, to) => {
+			var from = this._findColumn(oldCols, column),
 			keys;
 
 			if(from){
-
-				if(self.config.columns === true || self.config.columns == undefined){
+				if(this.config.columns === true || this.config.columns == undefined){
 					keys =  Object.keys(from);
 					keys.push("width");
 				}else{
-					keys = self.config.columns;
+					keys = this.config.columns;
 				}
 
 				keys.forEach((key)=>{
@@ -209,17 +205,16 @@ class Persistence extends Module{
 				});
 
 				if(from.columns){
-					from.columns = self.mergeDefinition(from.columns, column.columns);
+					from.columns = this.mergeDefinition(from.columns, column.columns);
 				}
-
 
 				output.push(from);
 			}
-
 		});
 
-		oldCols.forEach(function (column, i) {
-			var from = self._findColumn(newCols, column);
+		oldCols.forEach((column, i) => {
+			var from = this._findColumn(newCols, column);
+
 			if (!from) {
 				if(output.length>i){
 					output.splice(i, 0, column);
@@ -334,30 +329,28 @@ class Persistence extends Module{
 
 	//parse columns for data to store
 	parseColumns(columns){
-		var self = this,
-		definitions = [],
+		var definitions = [],
 		excludedKeys = ["headerContextMenu", "headerMenu", "contextMenu", "clickMenu"];
 
-		columns.forEach(function(column){
+		columns.forEach((column) => {
 			var defStore = {},
 			colDef = column.getDefinition(),
 			keys;
 
 			if(column.isGroup){
 				defStore.title = colDef.title;
-				defStore.columns = self.parseColumns(column.getColumns());
+				defStore.columns = this.parseColumns(column.getColumns());
 			}else{
 				defStore.field = column.getField();
 
-				if(self.config.columns === true || self.config.columns == undefined){
+				if(this.config.columns === true || this.config.columns == undefined){
 					keys =  Object.keys(colDef);
 					keys.push("width");
 				}else{
-					keys = self.config.columns;
+					keys = this.config.columns;
 				}
 
 				keys.forEach((key)=>{
-
 					switch(key){
 						case "width":
 						defStore.width = column.getWidth();
@@ -371,7 +364,6 @@ class Persistence extends Module{
 							defStore[key] = colDef[key];
 						}
 					}
-
 				});
 			}
 

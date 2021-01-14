@@ -116,7 +116,7 @@ class Page extends Module{
 
 	//setup pageination
 	initialize(hidden){
-		var self = this,
+		var this = this,
 		pageSelectLabel, testElRow, testElCell;
 
 		//update param names
@@ -129,97 +129,97 @@ class Page extends Module{
 		//build pagination element
 
 		//bind localizations
-		self.table.modules.localize.bind("pagination|first", function(value){
-			self.firstBut.innerHTML = value;
+		this.table.modules.localize.bind("pagination|first", (value) => {
+			this.firstBut.innerHTML = value;
 		});
 
-		self.table.modules.localize.bind("pagination|first_title", function(value){
-			self.firstBut.setAttribute("aria-label", value);
-			self.firstBut.setAttribute("title", value);
+		this.table.modules.localize.bind("pagination|first_title", (value) => {
+			this.firstBut.setAttribute("aria-label", value);
+			this.firstBut.setAttribute("title", value);
 		});
 
-		self.table.modules.localize.bind("pagination|prev", function(value){
-			self.prevBut.innerHTML = value;
+		this.table.modules.localize.bind("pagination|prev", (value) => {
+			this.prevBut.innerHTML = value;
 		});
 
-		self.table.modules.localize.bind("pagination|prev_title", function(value){
-			self.prevBut.setAttribute("aria-label", value);
-			self.prevBut.setAttribute("title", value);
+		this.table.modules.localize.bind("pagination|prev_title", (value) => {
+			this.prevBut.setAttribute("aria-label", value);
+			this.prevBut.setAttribute("title", value);
 		});
 
-		self.table.modules.localize.bind("pagination|next", function(value){
-			self.nextBut.innerHTML = value;
+		this.table.modules.localize.bind("pagination|next", (value) => {
+			this.nextBut.innerHTML = value;
 		});
 
-		self.table.modules.localize.bind("pagination|next_title", function(value){
-			self.nextBut.setAttribute("aria-label", value);
-			self.nextBut.setAttribute("title", value);
+		this.table.modules.localize.bind("pagination|next_title", (value) => {
+			this.nextBut.setAttribute("aria-label", value);
+			this.nextBut.setAttribute("title", value);
 		});
 
-		self.table.modules.localize.bind("pagination|last", function(value){
-			self.lastBut.innerHTML = value;
+		this.table.modules.localize.bind("pagination|last", (value) => {
+			this.lastBut.innerHTML = value;
 		});
 
-		self.table.modules.localize.bind("pagination|last_title", function(value){
-			self.lastBut.setAttribute("aria-label", value);
-			self.lastBut.setAttribute("title", value);
+		this.table.modules.localize.bind("pagination|last_title", (value) => {
+			this.lastBut.setAttribute("aria-label", value);
+			this.lastBut.setAttribute("title", value);
 		});
 
 		//click bindings
-		self.firstBut.addEventListener("click", function(){
-			self.setPage(1).then(()=>{}).catch(()=>{});
+		this.firstBut.addEventListener("click", () => {
+			this.setPage(1).then(()=>{}).catch(()=>{});
 		});
 
-		self.prevBut.addEventListener("click", function(){
-			self.previousPage().then(()=>{}).catch(()=>{});
+		this.prevBut.addEventListener("click", () => {
+			this.previousPage().then(()=>{}).catch(()=>{});
 		});
 
-		self.nextBut.addEventListener("click", function(){
-			self.nextPage().then(()=>{}).catch(()=>{});
+		this.nextBut.addEventListener("click", () => {
+			this.nextPage().then(()=>{}).catch(()=>{});
 		});
 
-		self.lastBut.addEventListener("click", function(){
-			self.setPage(self.max).then(()=>{}).catch(()=>{});
+		this.lastBut.addEventListener("click", () => {
+			this.setPage(this.max).then(()=>{}).catch(()=>{});
 		});
 
-		if(self.table.options.paginationElement){
-			self.element = self.table.options.paginationElement;
+		if(this.table.options.paginationElement){
+			this.element = this.table.options.paginationElement;
 		}
 
 		if(this.pageSizeSelect){
 			pageSelectLabel = document.createElement("label");
 
-			self.table.modules.localize.bind("pagination|page_size", function(value){
-				self.pageSizeSelect.setAttribute("aria-label", value);
-				self.pageSizeSelect.setAttribute("title", value);
+			this.table.modules.localize.bind("pagination|page_size", (value) => {
+				this.pageSizeSelect.setAttribute("aria-label", value);
+				this.pageSizeSelect.setAttribute("title", value);
 				pageSelectLabel.innerHTML = value;
 			});
 
-			self.element.appendChild(pageSelectLabel);
-			self.element.appendChild(self.pageSizeSelect);
+			this.element.appendChild(pageSelectLabel);
+			this.element.appendChild(this.pageSizeSelect);
 
-			self.pageSizeSelect.addEventListener("change", function(e){
-				self.setPageSize(self.pageSizeSelect.value == "true" ? true : self.pageSizeSelect.value);
-				self.setPage(1).then(()=>{}).catch(()=>{});
+			this.pageSizeSelect.addEventListener("change", (e) => {
+				this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
+				this.setPage(1).then(()=>{}).catch(()=>{});
 			});
 		}
 
 		//append to DOM
-		self.element.appendChild(self.firstBut);
-		self.element.appendChild(self.prevBut);
-		self.element.appendChild(self.pagesElement);
-		self.element.appendChild(self.nextBut);
-		self.element.appendChild(self.lastBut);
+		this.element.appendChild(this.firstBut);
+		this.element.appendChild(this.prevBut);
+		this.element.appendChild(this.pagesElement);
+		this.element.appendChild(this.nextBut);
+		this.element.appendChild(this.lastBut);
 
-		if(!self.table.options.paginationElement && !hidden){
-			self.table.footerManager.append(self.element, self);
+		if(!this.table.options.paginationElement && !hidden){
+			this.table.footerManager.append(this.element, this);
 		}
 
 		//set default values
-		self.mode = self.table.options.pagination;
+		this.mode = this.table.options.pagination;
 
-		if(self.table.options.paginationSize){
-			self.size = self.table.options.paginationSize;
+		if(this.table.options.paginationSize){
+			this.size = this.table.options.paginationSize;
 		}else{
 			testElRow = document.createElement("div");
 			testElRow.classList.add("tabulator-row");
@@ -231,17 +231,17 @@ class Page extends Module{
 
 			testElRow.appendChild(testElCell);
 
-			self.table.rowManager.getTableElement().appendChild(testElRow);
+			this.table.rowManager.getTableElement().appendChild(testElRow);
 
-			self.size =  Math.floor(self.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
+			this.size =  Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
 
-			self.table.rowManager.getTableElement().removeChild(testElRow);
+			this.table.rowManager.getTableElement().removeChild(testElRow);
 		}
 
-		// self.page = self.table.options.paginationInitialPage || 1;
-		self.count = self.table.options.paginationButtonCount;
+		// this.page = this.table.options.paginationInitialPage || 1;
+		this.count = this.table.options.paginationButtonCount;
 
-		self.generatePageSizeSelectList();
+		this.generatePageSizeSelectList();
 	}
 
 	initializeProgressive(mode){
@@ -299,8 +299,6 @@ class Page extends Module{
 
 	//set current page number
 	setPage(page){
-		var self = this;
-
 		switch(page){
 			case "first":
 				return this.setPage(1);
@@ -319,7 +317,7 @@ class Page extends Module{
 			break;
 		}
 
-		return new Promise((resolve, reject)=>{
+		return new Promise((resolve, reject) => {
 
 			page = parseInt(page);
 
@@ -333,8 +331,8 @@ class Page extends Module{
 					reject();
 				});
 
-				if(self.table.options.persistence && self.table.modExists("persistence", true) && self.table.modules.persistence.config.page){
-					self.table.modules.persistence.save("page");
+				if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.page){
+					this.table.modules.persistence.save("page");
 				}
 
 			}else{
@@ -345,7 +343,6 @@ class Page extends Module{
 	}
 
 	setPageToRow(row){
-
 		return new Promise((resolve, reject)=>{
 
 			var rows = this.table.rowManager.getDisplayRows(this.displayIndex - 1);
@@ -389,34 +386,32 @@ class Page extends Module{
 
 	//setup the pagination buttons
 	_setPageButtons(){
-		var self = this;
-
 		let leftSize = Math.floor((this.count-1) / 2);
 		let rightSize = Math.ceil((this.count-1) / 2);
 		let min = this.max - this.page + leftSize + 1 < this.count ? this.max-this.count+1: Math.max(this.page-leftSize,1);
 		let max = this.page <= rightSize? Math.min(this.count, this.max) :Math.min(this.page+rightSize, this.max);
 
-		while(self.pagesElement.firstChild) self.pagesElement.removeChild(self.pagesElement.firstChild);
+		while(this.pagesElement.firstChild) this.pagesElement.removeChild(this.pagesElement.firstChild);
 
-		if(self.page == 1){
-			self.firstBut.disabled = true;
-			self.prevBut.disabled = true;
+		if(this.page == 1){
+			this.firstBut.disabled = true;
+			this.prevBut.disabled = true;
 		}else{
-			self.firstBut.disabled = false;
-			self.prevBut.disabled = false;
+			this.firstBut.disabled = false;
+			this.prevBut.disabled = false;
 		}
 
-		if(self.page == self.max){
-			self.lastBut.disabled = true;
-			self.nextBut.disabled = true;
+		if(this.page == this.max){
+			this.lastBut.disabled = true;
+			this.nextBut.disabled = true;
 		}else{
-			self.lastBut.disabled = false;
-			self.nextBut.disabled = false;
+			this.lastBut.disabled = false;
+			this.nextBut.disabled = false;
 		}
 
 		for(let i = min; i <= max; i++){
-			if(i>0 && i <= self.max){
-				self.pagesElement.appendChild(self._generatePageButton(i));
+			if(i>0 && i <= this.max){
+				this.pagesElement.appendChild(this._generatePageButton(i));
 			}
 		}
 
@@ -424,18 +419,17 @@ class Page extends Module{
 	}
 
 	_generatePageButton(page){
-		var self = this,
-		button = document.createElement("button");
+		var button = document.createElement("button");
 
 		button.classList.add("tabulator-page");
-		if(page == self.page){
+		if(page == this.page){
 			button.classList.add("active");
 		}
 
 		button.setAttribute("type", "button");
 		button.setAttribute("role", "button");
 
-		self.table.modules.localize.bind("pagination|page_title", function(value){
+		this.table.modules.localize.bind("pagination|page_title", (value) => {
 			button.setAttribute("aria-label", value + " " + page);
 			button.setAttribute("title", value + " " + page);
 		});
@@ -443,8 +437,8 @@ class Page extends Module{
 		button.setAttribute("data-page", page);
 		button.textContent = page;
 
-		button.addEventListener("click", function(e){
-			self.setPage(page).then(()=>{}).catch(()=>{});
+		button.addEventListener("click", (e) => {
+			this.setPage(page).then(()=>{}).catch(()=>{});
 		});
 
 		return button;
@@ -587,21 +581,20 @@ class Page extends Module{
 	}
 
 	_getRemotePage(){
-		var self = this,
-		oldParams, pageParams;
+		var oldParams, pageParams;
 
-		return new Promise((resolve, reject)=>{
+		return new Promise((resolve, reject) => {
 
-			if(!self.table.modExists("ajax", true)){
-				reject()
+			if(!this.table.modExists("ajax", true)){
+				reject();
 			}
 
 			//record old params and restore after request has been made
-			oldParams = Helpers.deepClone(self.table.modules.ajax.getParams() || {});
-			pageParams = self.table.modules.ajax.getParams();
+			oldParams = Helpers.deepClone(this.table.modules.ajax.getParams() || {});
+			pageParams = this.table.modules.ajax.getParams();
 
 			//configure request params
-			pageParams[this.dataSentNames.page] = self.page;
+			pageParams[this.dataSentNames.page] = this.page;
 
 			//set page size if defined
 			if(this.size){
@@ -610,9 +603,9 @@ class Page extends Module{
 
 			//set sort data if defined
 			if(this.table.options.ajaxSorting && this.table.modExists("sort")){
-				let sorters = self.table.modules.sort.getSort();
+				let sorters = this.table.modules.sort.getSort();
 
-				sorters.forEach(function(item){
+				sorters.forEach((item) => {
 					delete item.column;
 				});
 
@@ -621,26 +614,25 @@ class Page extends Module{
 
 			//set filter data if defined
 			if(this.table.options.ajaxFiltering && this.table.modExists("filter")){
-				let filters = self.table.modules.filter.getFilters(true, true);
+				let filters = this.table.modules.filter.getFilters(true, true);
 				pageParams[this.dataSentNames.filters] = filters;
 			}
 
-			self.table.modules.ajax.setParams(pageParams);
+			this.table.modules.ajax.setParams(pageParams);
 
-			self.table.modules.ajax.sendRequest(this.progressiveLoad)
+			this.table.modules.ajax.sendRequest(this.progressiveLoad)
 			.then((data)=>{
-				self._parseRemoteData(data);
+				this._parseRemoteData(data);
 				resolve();
 			})
 			.catch((e)=>{reject()});
 
-			self.table.modules.ajax.setParams(oldParams);
+			this.table.modules.ajax.setParams(oldParams);
 		});
 	}
 
 	_parseRemoteData(data){
-		var self = this,
-		left, data, margin;
+		var left, data, margin;
 
 		if(typeof data[this.dataReceivedNames.last_page] === "undefined"){
 			console.warn("Remote Pagination Error - Server response missing '" + this.dataReceivedNames.last_page + "' property");
@@ -660,9 +652,9 @@ class Page extends Module{
 					}
 
 					if(this.page < this.max){
-						setTimeout(function(){
-							self.nextPage().then(()=>{}).catch(()=>{});
-						}, self.table.options.ajaxProgressiveLoadDelay);
+						setTimeout(() => {
+							this.nextPage().then(()=>{}).catch(()=>{});
+						}, this.table.options.ajaxProgressiveLoadDelay);
 					}
 					break;
 
@@ -673,8 +665,8 @@ class Page extends Module{
 
 					margin = this.table.options.ajaxProgressiveLoadScrollMargin || (this.table.rowManager.element.clientHeight * 2);
 
-					if(self.table.rowManager.element.scrollHeight <= (self.table.rowManager.element.clientHeight + margin)){
-						self.nextPage().then(()=>{}).catch(()=>{});
+					if(this.table.rowManager.element.scrollHeight <= (this.table.rowManager.element.clientHeight + margin)){
+						this.nextPage().then(()=>{}).catch(()=>{});
 					}
 					break;
 				}

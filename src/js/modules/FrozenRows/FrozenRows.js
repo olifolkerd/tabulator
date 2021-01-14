@@ -101,10 +101,8 @@ class FrozenRows extends Module{
 	}
 
 	styleRows(row){
-		var self = this;
-
-		this.rows.forEach(function(row, i){
-			self.table.rowManager.styleRow(row, i);
+		this.rows.forEach((row, i) => {
+			this.table.rowManager.styleRow(row, i);
 		});
 	}
 }
