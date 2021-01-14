@@ -22953,4 +22953,4 @@ class TabulatorFull extends Tabulator$1 {}
 new ModuleBinder(TabulatorFull, modules);
 
 export { TabulatorFull as Tabulator, Tabulator$1 as TabulatorCore, modules };
-//# sourceMappingURL=esm.js.map
+//# sourceMappingURL=tabulator_esm.js.map
