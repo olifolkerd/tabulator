@@ -708,7 +708,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 		text-overflow:ellipsis;
 
 		&.tabulator-editing{
-			border:1px solid  $editBoxColor;
+			border:1px solid $editBoxColor;
 			outline:none;
 
 			padding: 0;
