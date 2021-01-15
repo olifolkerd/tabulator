@@ -86,7 +86,7 @@ export default class Bundler{
 		this.bundles = this.bundles.concat(globby.sync("./src/scss/**/tabulator*.scss").map(inputFile => ({
 		    input: inputFile,
 		    output: {
-		        file: inputFile.replace("src", "dist").replace("/scss", "/css").replace(".scss", (minify ? ".min" : "") + ".css"),
+		        file: inputFile.replace("src", "dist").replace("/themes", "").replace("/scss", "/css").replace(".scss", (minify ? ".min" : "") + ".css"),
 		        format: "es",
 		    },
 		    plugins: [

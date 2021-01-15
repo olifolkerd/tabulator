@@ -35,7 +35,7 @@ $footerBorderColor:#aaa !default; //footer border color
 $footerSeperatorColor:#999 !default; //footer bottom seperator color
 $footerActiveColor:#fff !default; //footer bottom active text color
 
-@import "tabulator.scss";
+@import "../tabulator.scss";
 
 //Tabulator Containing Element
 .tabulator{
