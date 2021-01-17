@@ -108,7 +108,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 			&.tabulator-moving{
 				position: absolute;
-				border:1px solid  $headerSeperatorColor;
+				border:1px solid $headerSeperatorColor;
 				background:darken($headerBackgroundColor, 10%);
 				pointer-events: none;
 			}
@@ -458,6 +458,10 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 			text-align: left;
 
 			background:lighten($footerBackgroundColor, 5%) !important;
+			border-bottom:1px solid $rowBorderColor;
+			border-top:1px solid $rowBorderColor;
+
+			overflow: hidden;
 
 			.tabulator-row{
 				background:lighten($footerBackgroundColor, 5%) !important;
@@ -467,10 +471,6 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 				}
 			}
 
-			border-bottom:1px solid $rowBorderColor;
-			border-top:1px solid $rowBorderColor;
-
-			overflow: hidden;
 
 			&:only-child{
 				margin-bottom:-5px;
