@@ -721,6 +721,7 @@ $footerActiveColor:#d00 !default; //footer bottom active text color
 
 		&.tabulator-validation-fail{
 			border:1px solid $errorColor;
+
 			input, select{
 				border:1px;
 				background:transparent;
