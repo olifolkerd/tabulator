@@ -83,21 +83,27 @@ export default class Bundler{
 	}
 
 	bundleCSS(minify){
-		this.bundles = this.bundles.concat(globby.sync("./src/scss/**/tabulator*.scss").map(inputFile => ({
-		    input: inputFile,
-		    output: {
-		        file: inputFile.replace("src", "dist").replace("/themes", "").replace("/scss", "/css").replace(".scss", (minify ? ".min" : "") + ".css"),
-		        format: "es",
-		    },
-		    plugins: [
-		        postcss({
-		            modules: false,
-		            extract: true,
-		            minimize: minify,
-		            sourceMap: true,
-		        }),
-		    ]
-		})));
+		this.bundles = this.bundles.concat(globby.sync("./src/scss/**/tabulator*.scss").map(inputFile => {
+
+			var file = inputFile.split("/");
+			file = file.pop().replace(".scss", (minify ? ".min" : "") + ".css");
+
+			return {
+			    input: inputFile,
+			    output: {
+			        file: "./dist/css/" + file,
+			        format: "es",
+			    },
+			    plugins: [
+			        postcss({
+			            modules: false,
+			            extract: true,
+			            minimize: minify,
+			            sourceMap: true,
+			        }),
+			    ]
+			};
+		}));
 	}
 
 	bundleESM(minify){
