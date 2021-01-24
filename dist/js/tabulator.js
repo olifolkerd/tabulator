@@ -24201,7 +24201,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		    scrollY = window.scrollY,
 		    headerEl = document.createElement("div"),
 		    footerEl = document.createElement("div"),
-		    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible, "print"),
+		    tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible || this.table.options.printRowRange, "print"),
 		    headerContent,
 		    footerContent;
 
