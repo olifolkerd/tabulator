@@ -517,11 +517,15 @@ Edit.prototype.editors = {
 		});
 
 		function onChange(e){
-			if(((cellValue === null || typeof cellValue === "undefined") && input.value !== "") || input.value !== cellValue){
-				if(success(input.value)){
-					cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+			if (input.value !== cellValue) {
+				if ((cellValue === null || typeof cellValue === "undefined") && input.value === "") {
+					cancel();
+				} else {
+					if (success(input.value)) {
+						cellValue = input.value; //persist value if successfully validated incase editor is used as header filter
+					}
 				}
-			}else{
+			} else {
 				cancel();
 			}
 		}
