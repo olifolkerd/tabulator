@@ -1354,9 +1354,13 @@ Column.prototype.reinitializeWidth = function(force){
 	}
 };
 
-//set column width to maximum cell width
+//set column width to maximum cell width for non group columns
 Column.prototype.fitToData = function(){
 	var self = this;
+
+    if (self.isGroup){
+    	return;
+    }
 
 	if(!this.widthFixed){
 		this.element.style.width = "";
