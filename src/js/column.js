@@ -227,6 +227,7 @@ var Column = function(def, parent){
 	this.width = null; //column width
 	this.widthStyled = ""; //column width prestyled to improve render efficiency
 	this.maxWidth = null; //column maximum width
+  this.maxInitialWidth = null;
 	this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
 	this.minWidth = null; //column minimum width
 	this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
@@ -653,6 +654,12 @@ Column.prototype._buildColumnHeader = function(){
 			this.setMaxWidth(typeof def.maxWidth == "undefined" ? this.table.options.columnMaxWidth : parseInt(def.maxWidth));
 		}
 	}
+
+  if(def.maxInitialWidth || this.table.options.columnMaxInitialWidth) {
+    if(def.maxInitialWidth !== false) {
+      this.maxInitialWidth = typeof def.maxInitialWidth == 'undefined' ? this.table.options.columnMaxInitialWidth : parseInt(def.maxInitialWidth);
+    }
+  }
 
 	this.reinitializeWidth();
 
@@ -1147,6 +1154,10 @@ Column.prototype.setWidthActual = function(width){
 		width = Math.min(this.maxWidth, width);
 	}
 
+  if(this.maxInitialWidth) {
+    width = Math.min(this.maxInitialWidth, width)
+  }
+
 	this.width = width;
 	this.widthStyled = width ? width + "px" : "";
 
@@ -1442,6 +1453,7 @@ Column.prototype.defaultOptionList = [
 "width",
 "minWidth",
 "maxWidth",
+"maxInitialWidth",
 "widthGrow",
 "widthShrink",
 "resizable",
