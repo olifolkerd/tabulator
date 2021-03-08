@@ -17,6 +17,10 @@ ColumnComponent.prototype.getField = function(){
 	return this._column.getField();
 };
 
+ColumnComponent.prototype.getTitleDownload = function() {
+	return this._column.titleDownload;
+};
+
 ColumnComponent.prototype.getCells = function(){
 	var cells = [];
 
