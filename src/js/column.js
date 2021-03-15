@@ -1154,10 +1154,6 @@ Column.prototype.setWidthActual = function(width){
 		width = Math.min(this.maxWidth, width);
 	}
 
-  if(this.maxInitialWidth) {
-    width = Math.min(this.maxInitialWidth, width)
-  }
-
 	this.width = width;
 	this.widthStyled = width ? width + "px" : "";
 
@@ -1352,6 +1348,9 @@ Column.prototype.reinitializeWidth = function(force){
 		this.setWidth(this.definition.width);
 	}
 
+  if (typeof this.maxInitialWidth !== 'undefined' && !force) {
+    this.setWidth(this.maxInitialWidth)
+  }
 	//hide header filters to prevent them altering column width
 	if(this.table.modExists("filter")){
 		this.table.modules.filter.hideHeaderFilterElements();
