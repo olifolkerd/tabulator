@@ -227,7 +227,7 @@ var Column = function(def, parent){
 	this.width = null; //column width
 	this.widthStyled = ""; //column width prestyled to improve render efficiency
 	this.maxWidth = null; //column maximum width
-  this.maxInitialWidth = null;
+	this.maxInitialWidth = null;
 	this.maxWidthStyled = ""; //column maximum prestyled to improve render efficiency
 	this.minWidth = null; //column minimum width
 	this.minWidthStyled = ""; //column minimum prestyled to improve render efficiency
@@ -655,11 +655,11 @@ Column.prototype._buildColumnHeader = function(){
 		}
 	}
 
-  if(def.maxInitialWidth || this.table.options.columnMaxInitialWidth) {
-    if(def.maxInitialWidth !== false) {
-      this.maxInitialWidth = typeof def.maxInitialWidth == 'undefined' ? this.table.options.columnMaxInitialWidth : parseInt(def.maxInitialWidth);
-    }
-  }
+	if(def.maxInitialWidth || this.table.options.columnMaxInitialWidth) {
+		if(def.maxInitialWidth !== false) {
+			this.maxInitialWidth = typeof def.maxInitialWidth == 'undefined' ? this.table.options.columnMaxInitialWidth : parseInt(def.maxInitialWidth);
+		}
+	}
 
 	this.reinitializeWidth();
 
@@ -1342,18 +1342,16 @@ Column.prototype._prevVisibleColumn = function(index){
 
 Column.prototype.reinitializeWidth = function(force){
 	this.widthFixed = false;
-  console.log('Reinitializing Width')
-  console.log(this.width, this.maxInitialWidth)
 
 
 	//set width if present
 	if(typeof this.definition.width !== "undefined" && !force){
-    // maxInitialWidth ignored here as width specified
+		// maxInitialWidth ignored here as width specified
 		this.setWidth(this.definition.width);
 	}
 
-  // maxInitialWidth needs to bet set in fitToData.
-  
+	// maxInitialWidth needs to bet set in fitToData.
+
 	//hide header filters to prevent them altering column width
 	if(this.table.modExists("filter")){
 		this.table.modules.filter.hideHeaderFilterElements();
@@ -1390,7 +1388,7 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-      var setTo = Math.min(maxWidth + 1, this.maxInitialWidth);
+			var setTo = Math.min(maxWidth + 1, this.maxInitialWidth);
 			self.setWidthActual(setTo);
 		}
 
