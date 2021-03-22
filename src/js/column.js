@@ -1388,7 +1388,10 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			var setTo = Math.min(maxWidth + 1, this.maxInitialWidth);
+			var setTo = maxWidth + 1;
+			if (this.maxInitialWidth) {
+				setTo = Math.min(setTo, this.maxInitialWidth);
+			}
 			self.setWidthActual(setTo);
 		}
 
