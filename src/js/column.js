@@ -1342,15 +1342,18 @@ Column.prototype._prevVisibleColumn = function(index){
 
 Column.prototype.reinitializeWidth = function(force){
 	this.widthFixed = false;
+  console.log('Reinitializing Width')
+  console.log(this.width, this.maxInitialWidth)
+
 
 	//set width if present
 	if(typeof this.definition.width !== "undefined" && !force){
+    // maxInitialWidth ignored here as width specified
 		this.setWidth(this.definition.width);
 	}
 
-  if (typeof this.maxInitialWidth !== 'undefined' && !force) {
-    this.setWidth(this.maxInitialWidth)
-  }
+  // maxInitialWidth needs to bet set in fitToData.
+  
 	//hide header filters to prevent them altering column width
 	if(this.table.modExists("filter")){
 		this.table.modules.filter.hideHeaderFilterElements();
@@ -1377,7 +1380,6 @@ Column.prototype.fitToData = function(){
 	}
 
 	var maxWidth = this.element.offsetWidth;
-
 	if(!self.width || !this.widthFixed){
 		self.cells.forEach(function(cell){
 			var width = cell.getWidth();
@@ -1388,7 +1390,8 @@ Column.prototype.fitToData = function(){
 		});
 
 		if(maxWidth){
-			self.setWidthActual(maxWidth + 1);
+      var setTo = Math.min(maxWidth + 1, this.maxInitialWidth);
+			self.setWidthActual(setTo);
 		}
 
 	}
