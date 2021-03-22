@@ -47,7 +47,7 @@ Tabulator.prototype.defaultOptions = {
 
 	columnMinWidth:40, //minimum global width for a column
 	columnMaxWidth:false, //minimum global width for a column
-  columnMaxInitialWidth: false, // maximum width to be initially assigned (can grow bigger)
+	columnMaxInitialWidth: false, // maximum width to be initially assigned (can grow bigger)
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
 	columnVertAlign:false, // DEPRECATED - Left to allow warning
 
