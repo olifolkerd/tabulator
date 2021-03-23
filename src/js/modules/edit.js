@@ -1537,6 +1537,10 @@ Edit.prototype.editors = {
 
 			//lookup base values list
 			if(uniqueColumnValues){
+				if(intialLoad !== true && term === "" && initialValue !== term && editorParams.filterValuesList === true){
+					success(term);
+					genUniqueColumnValues();
+				}
 				values = uniqueColumnValues;
 			}else{
 				values = editorParams.values || [];
