@@ -878,7 +878,7 @@ Edit.prototype.editors = {
 
 		function getUniqueColumnValues(field){
 			var output = {},
-			data = self.table.getData(),
+			data = self.table.getData(editorParams.filterValuesList ? 'active' : undefined),
 			column;
 
 			if(field){
@@ -1496,7 +1496,7 @@ Edit.prototype.editors = {
 
 		function getUniqueColumnValues(field){
 			var output = {},
-			data = self.table.getData(),
+			data = self.table.getData(editorParams.filterValuesList ? 'active' : undefined),
 			column;
 
 			if(field){
@@ -1537,6 +1537,10 @@ Edit.prototype.editors = {
 
 			//lookup base values list
 			if(uniqueColumnValues){
+				if(intialLoad !== true && term === "" && initialValue !== term && editorParams.filterValuesList === true){
+					success(term);
+					genUniqueColumnValues();
+				}
 				values = uniqueColumnValues;
 			}else{
 				values = editorParams.values || [];
