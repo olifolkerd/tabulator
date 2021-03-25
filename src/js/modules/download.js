@@ -194,7 +194,7 @@ Download.prototype.downloaders = {
 				case "row":
 				row.columns.forEach((col) => {
 					if(col){
-						item[col.component.getField()] = col.value;
+						item[col.component.getTitleDownload() || col.component.getField()] = col.value;
 					}
 				});
 
