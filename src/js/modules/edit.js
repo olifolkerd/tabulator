@@ -1263,6 +1263,17 @@ Edit.prototype.editors = {
 				});
 
 				document.body.appendChild(listEl);
+
+				if (editorParams.allowDropup === true) {
+					var totalHeight = listEl.offsetHeight + offset.top + cellEl.offsetHeight;
+
+					if (totalHeight > document.body.clientHeight) {
+						var offsetBottom = document.body.clientHeight - offset.top;
+	
+						listEl.style.top = "";
+						listEl.style.bottom = offsetBottom + "px";
+					}
+				}
 			}
 		}
 
