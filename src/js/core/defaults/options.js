@@ -16,6 +16,7 @@ export default {
 	autoResize:true, //auto resize table
 
 	columns:[],//store for colum header info
+	columnDefaults:false, //store column default props
 
 	cellHozAlign:"", //horizontal align columns
 	cellVertAlign:"", //vertical align columns

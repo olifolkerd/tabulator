@@ -30,6 +30,8 @@ class Column {
 
 		this.titleFormatterRendered = false;
 
+		this.mapDefinitionDefaults();
+
 		this.setField(this.definition.field);
 
 		if(this.table.options.invalidOptionWarnings){
@@ -106,6 +108,18 @@ class Column {
 		el.classList.add("tabulator-col-group-cols");
 
 		return el;
+	}
+
+	mapDefinitionDefaults(){
+		var defaults = this.table.options.columnDefaults;
+
+		if(defaults){
+			for(let key in defaults){
+				if(typeof this.definition[key] === "undefined"){
+					this.definition[key] = defaults[key];
+				}
+			}
+		}
 	}
 
 	checkDefinition(){
