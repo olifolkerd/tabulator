@@ -14342,8 +14342,8 @@ class Persistence extends Module{
 			if(typeof this.table.options.persistenceWriterFunc === "function"){
 				this.writeFunc = this.table.options.persistenceWriterFunc;
 			}else {
-				if(Persistence.readers[this.table.options.persistenceWriterFunc]){
-					this.writeFunc = Persistence.readers[this.table.options.persistenceWriterFunc];
+				if(Persistence.writers[this.table.options.persistenceWriterFunc]){
+					this.writeFunc = Persistence.writers[this.table.options.persistenceWriterFunc];
 				}else {
 					console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
 				}
@@ -14698,7 +14698,7 @@ class Print extends Module{
 		scrollY = window.scrollY,
 		headerEl = document.createElement("div"),
 		footerEl = document.createElement("div"),
-		tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible, "print"),
+		tableEl = this.table.modules.export.genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible || this.table.options.printRowRange, "print"),
 		headerContent, footerContent;
 
 		this.manualBlock = true;
@@ -20911,6 +20911,13 @@ class VirtualDomHorizontal {
 				config.leftPos = colPos;
 				config.rightPos = colPos + width;
 
+				config.width = width;
+
+				if (_this18.table.options.layout === "fitData") {
+
+				    config.fitDataCheck = true;
+				}
+
 				if((colPos + width > this.vDomScrollPosLeft) && (colPos < this.vDomScrollPosRight)){
 	        		//column is visible
 
@@ -20995,14 +21002,14 @@ class VirtualDomHorizontal {
 		for(let i = start; i < end; i++){
 			let column = this.columns[i];
 
-			column.modules.vdomHoz.leftPos -= diff;
-			column.modules.vdomHoz.rightPos -= diff;
+			column.modules.vdomHoz.leftPos += diff;
+			column.modules.vdomHoz.rightPos += diff;
 		}
 	}
 
 	addColRight(){
 		var column = this.columns[this.rightCol + 1],
-		rows, oldWidth, widthDiff;
+		rows;
 
 		if(column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight){
 
@@ -21016,24 +21023,9 @@ class VirtualDomHorizontal {
 				}
 			});
 
-			if(this.fitDataColAvg){
-
-				oldWidth = column.getWidth();
-
-				if(oldWidth === this.fitDataColAvg){
-					column.reinitializeWidth();
-
-					widthDiff = oldWidth - column.getWidth();
-
-					if(widthDiff){
-						column.modules.vdomHoz.rightPos -= widthDiff;
-						this.colPositionAdjust(this.rightCol + 1, this.columns.length, widthDiff);
-					}
-				}
-			}
+			this.fitDataColActualWidthCheck(column);
 
 			this.rightCol++;
-
 
 			if(this.rightCol >= (this.columns.length - 1)){
 				this.vDomPadRight = 0;
@@ -21042,8 +21034,6 @@ class VirtualDomHorizontal {
 			}
 
 			this.element.style.paddingRight = this.vDomPadRight + "px";
-
-
 
 			this.addColRight();
 		}
@@ -21063,6 +21053,8 @@ class VirtualDomHorizontal {
 					cell.cellRendered();
 				}
 			});
+
+			this.fitDataColActualWidthCheck(column);
 
 			if(!this.leftCol){
 				this.vDomPadLeft = 0;
@@ -21126,6 +21118,25 @@ class VirtualDomHorizontal {
 			this.removeColLeft();
 		}
 	}
+
+	fitDataColActualWidthCheck(column){
+	    var newWidth, widthDiff;
+
+	    if(column.modules.vdomHoz.fitDataCheck){
+	        column.reinitializeWidth();
+
+	        newWidth = column.getWidth();
+	        widthDiff = newWidth - column.modules.vdomHoz.width;
+
+	        if(widthDiff){
+	            column.modules.vdomHoz.rightPos += widthDiff;
+	            column.modules.vdomHoz.width = newWidth;
+	            this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
+	        }
+
+	        column.modules.vdomHoz.fitDataCheck = false;
+	    }
+	};
 
 	initializeRow(row){
 		if(row.type !== "group"){

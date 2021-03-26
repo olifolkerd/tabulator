@@ -61,8 +61,8 @@ class Persistence extends Module{
 			if(typeof this.table.options.persistenceWriterFunc === "function"){
 				this.writeFunc = this.table.options.persistenceWriterFunc;
 			}else{
-				if(Persistence.readers[this.table.options.persistenceWriterFunc]){
-					this.writeFunc = Persistence.readers[this.table.options.persistenceWriterFunc];
+				if(Persistence.writers[this.table.options.persistenceWriterFunc]){
+					this.writeFunc = Persistence.writers[this.table.options.persistenceWriterFunc];
 				}else{
 					console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
 				}
