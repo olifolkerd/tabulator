@@ -223,6 +223,8 @@
     //auto resize table
     columns: [],
     //store for colum header info
+    columnDefaults: false,
+    //store column default props
     cellHozAlign: "",
     //horizontal align columns
     cellVertAlign: "",
@@ -1735,6 +1737,7 @@
       this.getFieldValue = "";
       this.setFieldValue = "";
       this.titleFormatterRendered = false;
+      this.mapDefinitionDefaults();
       this.setField(this.definition.field);
 
       if (this.table.options.invalidOptionWarnings) {
@@ -1813,6 +1816,19 @@
         var el = document.createElement("div");
         el.classList.add("tabulator-col-group-cols");
         return el;
+      }
+    }, {
+      key: "mapDefinitionDefaults",
+      value: function mapDefinitionDefaults() {
+        var defaults = this.table.options.columnDefaults;
+
+        if (defaults) {
+          for (var key in defaults) {
+            if (typeof this.definition[key] === "undefined") {
+              this.definition[key] = defaults[key];
+            }
+          }
+        }
       }
     }, {
       key: "checkDefinition",
@@ -7584,6 +7600,11 @@
             var width = column.getWidth();
             config.leftPos = colPos;
             config.rightPos = colPos + width;
+            config.width = width;
+
+            if (_this18.table.options.layout === "fitData") {
+              config.fitDataCheck = true;
+            }
 
             if (colPos + width > _this2.vDomScrollPosLeft && colPos < _this2.vDomScrollPosRight) {
               //column is visible
@@ -7671,17 +7692,15 @@
       value: function colPositionAdjust(start, end, diff) {
         for (var i = start; i < end; i++) {
           var column = this.columns[i];
-          column.modules.vdomHoz.leftPos -= diff;
-          column.modules.vdomHoz.rightPos -= diff;
+          column.modules.vdomHoz.leftPos += diff;
+          column.modules.vdomHoz.rightPos += diff;
         }
       }
     }, {
       key: "addColRight",
       value: function addColRight() {
         var column = this.columns[this.rightCol + 1],
-            rows,
-            oldWidth,
-            widthDiff;
+            rows;
 
         if (column && column.modules.vdomHoz.leftPos <= this.vDomScrollPosRight) {
           rows = this.table.rowManager.getVisibleRows();
@@ -7692,21 +7711,7 @@
               cell.cellRendered();
             }
           });
-
-          if (this.fitDataColAvg) {
-            oldWidth = column.getWidth();
-
-            if (oldWidth === this.fitDataColAvg) {
-              column.reinitializeWidth();
-              widthDiff = oldWidth - column.getWidth();
-
-              if (widthDiff) {
-                column.modules.vdomHoz.rightPos -= widthDiff;
-                this.colPositionAdjust(this.rightCol + 1, this.columns.length, widthDiff);
-              }
-            }
-          }
-
+          this.fitDataColActualWidthCheck(column);
           this.rightCol++;
 
           if (this.rightCol >= this.columns.length - 1) {
@@ -7734,6 +7739,7 @@
               cell.cellRendered();
             }
           });
+          this.fitDataColActualWidthCheck(column);
 
           if (!this.leftCol) {
             this.vDomPadLeft = 0;
@@ -7785,6 +7791,25 @@
           this.element.style.paddingLeft = this.vDomPadLeft + "px";
           this.leftCol++;
           this.removeColLeft();
+        }
+      }
+    }, {
+      key: "fitDataColActualWidthCheck",
+      value: function fitDataColActualWidthCheck(column) {
+        var newWidth, widthDiff;
+
+        if (column.modules.vdomHoz.fitDataCheck) {
+          column.reinitializeWidth();
+          newWidth = column.getWidth();
+          widthDiff = newWidth - column.modules.vdomHoz.width;
+
+          if (widthDiff) {
+            column.modules.vdomHoz.rightPos += widthDiff;
+            column.modules.vdomHoz.width = newWidth;
+            this.colPositionAdjust(this.rightCol + 2, this.columns.length, widthDiff);
+          }
+
+          column.modules.vdomHoz.fitDataCheck = false;
         }
       }
     }, {
@@ -20948,8 +20973,8 @@
           if (typeof this.table.options.persistenceWriterFunc === "function") {
             this.writeFunc = this.table.options.persistenceWriterFunc;
           } else {
-            if (Persistence.readers[this.table.options.persistenceWriterFunc]) {
-              this.writeFunc = Persistence.readers[this.table.options.persistenceWriterFunc];
+            if (Persistence.writers[this.table.options.persistenceWriterFunc]) {
+              this.writeFunc = Persistence.writers[this.table.options.persistenceWriterFunc];
             } else {
               console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
             }
@@ -21319,7 +21344,7 @@
             scrollY = window.scrollY,
             headerEl = document.createElement("div"),
             footerEl = document.createElement("div"),
-            tableEl = this.table.modules["export"].genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible, "print"),
+            tableEl = this.table.modules["export"].genereateTable(typeof config != "undefined" ? config : this.table.options.printConfig, typeof style != "undefined" ? style : this.table.options.printStyled, visible || this.table.options.printRowRange, "print"),
             headerContent,
             footerContent;
         this.manualBlock = true;
