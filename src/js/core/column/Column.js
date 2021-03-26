@@ -159,20 +159,7 @@ class Column {
 	}
 
 	_mapDepricatedFunctionality(){
-		if(typeof this.definition.hideInHtml !== "undefined"){
-			this.definition.htmlOutput = !this.definition.hideInHtml;
-			console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput")
-		}
-
-		if(typeof this.definition.align !== "undefined"){
-			this.definition.hozAlign = this.definition.align;
-			console.warn("align column definition property is deprecated, you should now use hozAlign");
-		}
-
-		if(typeof this.definition.downloadTitle !== "undefined"){
-			this.definition.titleDownload = this.definition.downloadTitle;
-			console.warn("downloadTitle definition property is deprecated, you should now use titleDownload");
-		}
+		//all previously deprecated functionality removed in the 5.0 release
 	}
 
 	setTooltip(){

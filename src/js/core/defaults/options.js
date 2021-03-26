@@ -9,7 +9,6 @@ export default {
 	columnMinWidth:40, //minimum global width for a column
 	columnMaxWidth:false, //minimum global width for a column
 	columnHeaderVertAlign:"top", //vertical alignment of column headers
-	columnVertAlign:false, // DEPRECATED - Left to allow warning
 
 	resizableColumns:true, //resizable columns
 	resizableRows:false, //resizable rows
@@ -71,7 +70,6 @@ export default {
 	clipboardPasted:function(){}, //data has been pasted into the table
 	clipboardPasteError:function(){}, //data has not successfully been pasted into the table
 
-	downloadDataFormatter:false, //function to manipulate table data before it is downloaded
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
 	downloadComplete:false, //function to manipulate download data
 	downloadConfig:{},	//download config
@@ -96,9 +94,7 @@ export default {
 	printFormatter:false, //printing page formatter
 	printHeader:false, //page header contents
 	printFooter:false, //page footer contents
-	printCopyStyle:true, //DEPRICATED - REMOVE in 5.0
 	printStyled:true, //enable print as html styling
-	printVisibleRows:true,  //DEPRICATED - REMOVE in 5.0
 	printRowRange:"visible", //restrict print to visible rows only
 	printConfig:{}, //print config options
 
@@ -124,15 +120,12 @@ export default {
     virtualDomBuffer:0, // set virtual DOM buffer size
 	virtualDomHoz:false, //enable horizontal DOM virtualization
 
-    persistentLayout:false, //DEPRICATED - REMOVE in 5.0
-    persistentSort:false, //DEPRICATED - REMOVE in 5.0
-    persistentFilter:false, //DEPRICATED - REMOVE in 5.0
+	persistence:false,
 	persistenceID:"", //key for persistent storage
 	persistenceMode:true, //mode for storing persistence information
 	persistenceReaderFunc:false, //function for handling persistence data reading
 	persistenceWriterFunc:false, //function for handling persistence data writing
 
-	persistence:false,
 
 	responsiveLayout:false, //responsive layout flags
 	responsiveLayoutCollapseStartOpen:true, //start showing collapsed data
@@ -268,7 +261,6 @@ export default {
 	//data callbacks
 	dataLoading:function(){},
 	dataLoaded:function(){},
-	dataEdited:false, //DEPRECATED
 	dataChanged:false,
 
 	//ajax callbacks

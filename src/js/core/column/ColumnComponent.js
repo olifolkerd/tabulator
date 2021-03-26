@@ -27,11 +27,6 @@ export default class ColumnComponent {
 		return cells;
 	}
 
-	getVisibility(){
-		console.warn("getVisibility function is deprecated, you should now use the isVisible function");
-		return this._column.visible;
-	}
-
 	isVisible(){
 		return this._column.visible;
 	}

@@ -28,17 +28,6 @@ class Format extends Module{
 		//set column formatter
 		switch(typeof formatter){
 			case "string":
-
-			if(formatter === "tick"){
-				formatter = "tickCross";
-
-				if(typeof config.params.crossElement == "undefined"){
-					config.params.crossElement = false;
-				}
-
-				console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
-			}
-
 			if(Format.formatters[formatter]){
 				config.formatter = Format.formatters[formatter];
 			}else{

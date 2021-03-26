@@ -213,8 +213,6 @@
     //minimum global width for a column
     columnHeaderVertAlign: "top",
     //vertical alignment of column headers
-    columnVertAlign: false,
-    // DEPRECATED - Left to allow warning
     resizableColumns: true,
     //resizable columns
     resizableRows: false,
@@ -293,8 +291,6 @@
     //data has been pasted into the table
     clipboardPasteError: function clipboardPasteError() {},
     //data has not successfully been pasted into the table
-    downloadDataFormatter: false,
-    //function to manipulate table data before it is downloaded
     downloadReady: function downloadReady(data, blob) {
       return blob;
     },
@@ -339,12 +335,8 @@
     //page header contents
     printFooter: false,
     //page footer contents
-    printCopyStyle: true,
-    //DEPRICATED - REMOVE in 5.0
     printStyled: true,
     //enable print as html styling
-    printVisibleRows: true,
-    //DEPRICATED - REMOVE in 5.0
     printRowRange: "visible",
     //restrict print to visible rows only
     printConfig: {},
@@ -380,12 +372,7 @@
     // set virtual DOM buffer size
     virtualDomHoz: false,
     //enable horizontal DOM virtualization
-    persistentLayout: false,
-    //DEPRICATED - REMOVE in 5.0
-    persistentSort: false,
-    //DEPRICATED - REMOVE in 5.0
-    persistentFilter: false,
-    //DEPRICATED - REMOVE in 5.0
+    persistence: false,
     persistenceID: "",
     //key for persistent storage
     persistenceMode: true,
@@ -394,7 +381,6 @@
     //function for handling persistence data reading
     persistenceWriterFunc: false,
     //function for handling persistence data writing
-    persistence: false,
     responsiveLayout: false,
     //responsive layout flags
     responsiveLayoutCollapseStartOpen: true,
@@ -543,8 +529,6 @@
     //data callbacks
     dataLoading: function dataLoading() {},
     dataLoaded: function dataLoaded() {},
-    dataEdited: false,
-    //DEPRECATED
     dataChanged: false,
     //ajax callbacks
     ajaxRequesting: function ajaxRequesting() {},
@@ -620,12 +604,6 @@
         });
 
         return cells;
-      }
-    }, {
-      key: "getVisibility",
-      value: function getVisibility() {
-        console.warn("getVisibility function is deprecated, you should now use the isVisible function");
-        return this._column.visible;
       }
     }, {
       key: "isVisible",
@@ -791,7 +769,7 @@
     return ColumnComponent;
   }();
 
-  var defaultOptions$1 = ["title", "field", "columns", "visible", "align", "hozAlign", "vertAlign", "width", "minWidth", "maxWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "hideInHtml", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "downloadTitle", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "headerHozAlign", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu", // "headerClickMenu",
+  var defaultOptions$1 = ["title", "field", "columns", "visible", "hozAlign", "vertAlign", "width", "minWidth", "maxWidth", "widthGrow", "widthShrink", "resizable", "frozen", "responsive", "tooltip", "cssClass", "rowHandle", "print", "htmlOutput", "sorter", "sorterParams", "formatter", "formatterParams", "variableHeight", "editable", "editor", "editorParams", "validator", "mutator", "mutatorParams", "mutatorData", "mutatorDataParams", "mutatorEdit", "mutatorEditParams", "mutatorClipboard", "mutatorClipboardParams", "accessor", "accessorParams", "accessorData", "accessorDataParams", "accessorDownload", "accessorDownloadParams", "accessorClipboard", "accessorClipboardParams", "accessorPrint", "accessorPrintParams", "accessorHtmlOutput", "accessorHtmlOutputParams", "clipboard", "download", "topCalc", "topCalcParams", "topCalcFormatter", "topCalcFormatterParams", "bottomCalc", "bottomCalcParams", "bottomCalcFormatter", "bottomCalcFormatterParams", "cellClick", "cellDblClick", "cellContext", "cellTap", "cellDblTap", "cellTapHold", "cellMouseEnter", "cellMouseLeave", "cellMouseOver", "cellMouseOut", "cellMouseMove", "cellEditing", "cellEdited", "cellEditCancelled", "headerSort", "headerSortStartingDir", "headerSortTristate", "headerClick", "headerDblClick", "headerContext", "headerTap", "headerDblTap", "headerTapHold", "headerTooltip", "headerVertical", "headerHozAlign", "editableTitle", "titleFormatter", "titleFormatterParams", "headerFilter", "headerFilterPlaceholder", "headerFilterParams", "headerFilterEmptyCheck", "headerFilterFunc", "headerFilterFuncParams", "headerFilterLiveFilter", "print", "headerContextMenu", "headerMenu", "contextMenu", // "headerClickMenu",
   "clickMenu", "formatterPrint", "formatterPrintParams", "formatterClipboard", "formatterClipboardParams", "formatterHtmlOutput", "formatterHtmlOutputParams", "titlePrint", "titleClipboard", "titleHtmlOutput", "titleDownload"];
 
   //public cell object
@@ -1875,21 +1853,7 @@
       }
     }, {
       key: "_mapDepricatedFunctionality",
-      value: function _mapDepricatedFunctionality() {
-        if (typeof this.definition.hideInHtml !== "undefined") {
-          this.definition.htmlOutput = !this.definition.hideInHtml;
-          console.warn("hideInHtml column definition property is deprecated, you should now use htmlOutput");
-        }
-
-        if (typeof this.definition.align !== "undefined") {
-          this.definition.hozAlign = this.definition.align;
-          console.warn("align column definition property is deprecated, you should now use hozAlign");
-        }
-
-        if (typeof this.definition.downloadTitle !== "undefined") {
-          this.definition.titleDownload = this.definition.downloadTitle;
-          console.warn("downloadTitle definition property is deprecated, you should now use titleDownload");
-        }
+      value: function _mapDepricatedFunctionality() {//all previously deprecated functionality removed in the 5.0 release
       }
     }, {
       key: "setTooltip",
@@ -7958,66 +7922,7 @@
 
     }, {
       key: "_mapDepricatedFunctionality",
-      value: function _mapDepricatedFunctionality() {
-        //map depricated persistance setup options
-        if (this.options.persistentLayout || this.options.persistentSort || this.options.persistentFilter) {
-          if (!this.options.persistence) {
-            this.options.persistence = {};
-          }
-        }
-
-        if (this.options.dataEdited) {
-          console.warn("DEPRECATION WARNING - dataEdited option has been deprecated, please use the dataChanged option instead");
-          this.options.dataChanged = this.options.dataEdited;
-        }
-
-        if (this.options.downloadDataFormatter) {
-          console.warn("DEPRECATION WARNING - downloadDataFormatter option has been deprecated");
-        }
-
-        if (typeof this.options.clipboardCopyHeader !== "undefined") {
-          this.options.columnHeaders = this.options.clipboardCopyHeader;
-          console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
-        }
-
-        if (this.options.printVisibleRows !== true) {
-          console.warn("printVisibleRows option is deprecated, you should now use the printRowRange option");
-          this.options.persistence.printRowRange = "active";
-        }
-
-        if (this.options.printCopyStyle !== true) {
-          console.warn("printCopyStyle option is deprecated, you should now use the printStyled option");
-          this.options.persistence.printStyled = this.options.printCopyStyle;
-        }
-
-        if (this.options.persistentLayout) {
-          console.warn("persistentLayout option is deprecated, you should now use the persistence option");
-
-          if (this.options.persistence !== true && typeof this.options.persistence.columns === "undefined") {
-            this.options.persistence.columns = true;
-          }
-        }
-
-        if (this.options.persistentSort) {
-          console.warn("persistentSort option is deprecated, you should now use the persistence option");
-
-          if (this.options.persistence !== true && typeof this.options.persistence.sort === "undefined") {
-            this.options.persistence.sort = true;
-          }
-        }
-
-        if (this.options.persistentFilter) {
-          console.warn("persistentFilter option is deprecated, you should now use the persistence option");
-
-          if (this.options.persistence !== true && typeof this.options.persistence.filter === "undefined") {
-            this.options.persistence.filter = true;
-          }
-        }
-
-        if (this.options.columnVertAlign) {
-          console.warn("columnVertAlign option is deprecated, you should now use the columnHeaderVertAlign option");
-          this.options.columnHeaderVertAlign = this.options.columnVertAlign;
-        }
+      value: function _mapDepricatedFunctionality() {//all previously deprecated functionality removed in the 5.0 release
       }
     }, {
       key: "_clearSelection",
@@ -8485,22 +8390,12 @@
     }, {
       key: "getData",
       value: function getData(active) {
-        if (active === true) {
-          console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
-          active = "active";
-        }
-
         return this.rowManager.getData(active);
       } //get table data array count
 
     }, {
       key: "getDataCount",
       value: function getDataCount(active) {
-        if (active === true) {
-          console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
-          active = "active";
-        }
-
         return this.rowManager.getDataCount(active);
       } //search for specific row components
 
@@ -8865,11 +8760,6 @@
     }, {
       key: "getRows",
       value: function getRows(active) {
-        if (active === true) {
-          console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
-          active = "active";
-        }
-
         return this.rowManager.getComponents(active);
       } //get position of row in table
 
@@ -9253,11 +9143,6 @@
       key: "selectRow",
       value: function selectRow(rows) {
         if (this.modExists("selectRow", true)) {
-          if (rows === true) {
-            console.warn("passing a boolean to the selectRowselectRow function is deprecated, you should now pass the string 'active'");
-            rows = "active";
-          }
-
           this.modules.selectRow.selectRows(rows);
         }
       }
@@ -13974,11 +13859,6 @@
 
         switch (_typeof(column.definition.editor)) {
           case "string":
-            if (column.definition.editor === "tick") {
-              column.definition.editor = "tickCross";
-              console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
-            }
-
             if (Edit.editors[column.definition.editor]) {
               config.editor = Edit.editors[column.definition.editor];
             } else {
@@ -13994,11 +13874,6 @@
           case "boolean":
             if (column.definition.editor === true) {
               if (typeof column.definition.formatter !== "function") {
-                if (column.definition.formatter === "tick") {
-                  column.definition.formatter = "tickCross";
-                  console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
-                }
-
                 if (Edit.editors[column.definition.formatter]) {
                   config.editor = Edit.editors[column.definition.formatter];
                 } else {
@@ -16450,16 +16325,6 @@
 
         switch (_typeof(formatter)) {
           case "string":
-            if (formatter === "tick") {
-              formatter = "tickCross";
-
-              if (typeof config.params.crossElement == "undefined") {
-                config.params.crossElement = false;
-              }
-
-              console.warn("DEPRECATION WARNING - the tick formatter has been deprecated, please use the tickCross formatter with the crossElement param set to false");
-            }
-
             if (Format.formatters[formatter]) {
               config.formatter = Format.formatters[formatter];
             } else {

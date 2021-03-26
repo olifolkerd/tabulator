@@ -110,68 +110,7 @@ class Tabulator {
 
 	//convert depricated functionality to new functions
 	_mapDepricatedFunctionality(){
-		//map depricated persistance setup options
-		if(this.options.persistentLayout || this.options.persistentSort || this.options.persistentFilter){
-			if(!this.options.persistence){
-				this.options.persistence = {};
-			}
-		}
-
-		if(this.options.dataEdited){
-			console.warn("DEPRECATION WARNING - dataEdited option has been deprecated, please use the dataChanged option instead");
-			this.options.dataChanged = this.options.dataEdited;
-		}
-
-		if(this.options.downloadDataFormatter){
-			console.warn("DEPRECATION WARNING - downloadDataFormatter option has been deprecated");
-		}
-
-		if(typeof this.options.clipboardCopyHeader !== "undefined"){
-			this.options.columnHeaders = this.options.clipboardCopyHeader;
-			console.warn("DEPRECATION WARNING - clipboardCopyHeader option has been deprecated, please use the columnHeaders property on the clipboardCopyConfig option");
-		}
-
-		if(this.options.printVisibleRows !== true){
-			console.warn("printVisibleRows option is deprecated, you should now use the printRowRange option");
-
-			this.options.persistence.printRowRange = "active";
-		}
-
-		if(this.options.printCopyStyle !== true){
-			console.warn("printCopyStyle option is deprecated, you should now use the printStyled option");
-
-			this.options.persistence.printStyled = this.options.printCopyStyle;
-		}
-
-		if(this.options.persistentLayout){
-			console.warn("persistentLayout option is deprecated, you should now use the persistence option");
-
-			if(this.options.persistence !== true && typeof this.options.persistence.columns === "undefined"){
-				this.options.persistence.columns = true;
-			}
-		}
-
-		if(this.options.persistentSort){
-			console.warn("persistentSort option is deprecated, you should now use the persistence option");
-
-			if(this.options.persistence !== true  && typeof this.options.persistence.sort === "undefined"){
-				this.options.persistence.sort = true;
-			}
-		}
-
-		if(this.options.persistentFilter){
-			console.warn("persistentFilter option is deprecated, you should now use the persistence option");
-
-			if(this.options.persistence !== true  && typeof this.options.persistence.filter === "undefined"){
-				this.options.persistence.filter = true;
-			}
-		}
-
-		if(this.options.columnVertAlign){
-			console.warn("columnVertAlign option is deprecated, you should now use the columnHeaderVertAlign option");
-
-			this.options.columnHeaderVertAlign = this.options.columnVertAlign;
-		}
+		//all previously deprecated functionality removed in the 5.0 release
 	}
 
 	_clearSelection(){
@@ -637,22 +576,11 @@ class Tabulator {
 
 	//get table data array
 	getData(active){
-		if(active === true){
-			console.warn("passing a boolean to the getData function is deprecated, you should now pass the string 'active'");
-			active = "active";
-		}
-
 		return this.rowManager.getData(active);
 	}
 
 	//get table data array count
 	getDataCount(active){
-
-		if(active === true){
-			console.warn("passing a boolean to the getDataCount function is deprecated, you should now pass the string 'active'");
-			active = "active";
-		}
-
 		return this.rowManager.getDataCount(active);
 	}
 
@@ -1004,11 +932,6 @@ class Tabulator {
 	}
 
 	getRows(active){
-		if(active === true){
-			console.warn("passing a boolean to the getRows function is deprecated, you should now pass the string 'active'");
-			active = "active";
-		}
-
 		return this.rowManager.getComponents(active);
 	}
 
@@ -1356,10 +1279,6 @@ class Tabulator {
 	///////////////////// select ////////////////////
 	selectRow(rows){
 		if(this.modExists("selectRow", true)){
-			if(rows === true){
-				console.warn("passing a boolean to the selectRowselectRow function is deprecated, you should now pass the string 'active'");
-				rows = "active";
-			}
 			this.modules.selectRow.selectRows(rows);
 		}
 	}

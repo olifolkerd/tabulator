@@ -27,43 +27,29 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-
-			if(column.definition.editor === "tick"){
-				column.definition.editor = "tickCross";
-				console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
-			}
-
-			if(Edit.editors[column.definition.editor]){
-				config.editor = Edit.editors[column.definition.editor];
-			}else{
-				console.warn("Editor Error - No such editor found: ", column.definition.editor);
-			}
+				if(Edit.editors[column.definition.editor]){
+					config.editor = Edit.editors[column.definition.editor];
+				}else{
+					console.warn("Editor Error - No such editor found: ", column.definition.editor);
+				}
 			break;
 
 			case "function":
-			config.editor = column.definition.editor;
+				config.editor = column.definition.editor;
 			break;
 
 			case "boolean":
-
-			if(column.definition.editor === true){
-
-				if(typeof column.definition.formatter !== "function"){
-
-					if(column.definition.formatter === "tick"){
-						column.definition.formatter = "tickCross";
-						console.warn("DEPRECATION WARNING - the tick editor has been deprecated, please use the tickCross editor");
-					}
-
-					if(Edit.editors[column.definition.formatter]){
-						config.editor = Edit.editors[column.definition.formatter];
+				if(column.definition.editor === true){
+					if(typeof column.definition.formatter !== "function"){
+						if(Edit.editors[column.definition.formatter]){
+							config.editor = Edit.editors[column.definition.formatter];
+						}else{
+							config.editor = Edit.editors["input"];
+						}
 					}else{
-						config.editor = Edit.editors["input"];
+						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 					}
-				}else{
-					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
-			}
 			break;
 		}
 

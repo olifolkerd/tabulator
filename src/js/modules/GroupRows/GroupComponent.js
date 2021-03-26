@@ -29,11 +29,6 @@ class GroupComponent {
 		return this._group.parent ? this._group.parent.getComponent() : false;
 	}
 
-	getVisibility(){
-		console.warn("getVisibility function is deprecated, you should now use the isVisible function");
-		return this._group.visible;
-	}
-
 	isVisible(){
 		return this._group.visible;
 	}
