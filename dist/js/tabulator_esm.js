@@ -19340,7 +19340,7 @@ class RowManager {
 
 	renderTable(){
 
-		this.table.options.renderStarted.call(this.table);
+		this.table.eventBus.trigger("renderStarted");
 
 		this.element.scrollTop = 0;
 
@@ -19377,7 +19377,7 @@ class RowManager {
 			}
 		}
 
-		this.table.options.renderComplete.call(this.table);
+		this.table.eventBus.trigger("renderComplete");
 	}
 
 	//simple render on heightless table
@@ -20003,6 +20003,57 @@ class FooterManager {
 		this.links.forEach(function(link){
 			link.footerRedraw();
 		});
+	}
+}
+
+class EventBus {
+
+	constructor(table){
+		this.events = {};
+		this.table = table;
+	}
+
+	on(key, callback){
+		if(!this.events[key]){
+			this.events[key] = [];
+		}
+
+		this.events[key].push(callback);
+	}
+
+	off(key, callback){
+		var index;
+
+		if(this.events[key]){
+			if(callback){
+				index = this.events[key].indexOf(callback);
+
+				if(index > -1){
+					this.events[key].splice(index, 1);
+				}else {
+					console.warn("Cannot remove event, no matching event found:", key, callback);
+				}
+			}else {
+				delete this.events[key];
+			}
+		}else {
+			console.warn("Cannot remove event, no events set on:", key);
+		}
+	}
+
+	trigger(){
+		var args = Array.from(arguments),
+		key = args.shift();
+
+		if(this.events[key]){
+			this.events[key].forEach((callback) => {
+				callback.apply(this, args);
+			});
+		}
+
+		if(typeof this.table.options[key] === "function"){
+			this.table.options[key].apply(this, args);
+		}
 	}
 }
 
@@ -21140,6 +21191,7 @@ class Tabulator$1 {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
+		this.eventBus = new EventBus(this); //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 
 		this.browser = ""; //hold current browser type
@@ -22811,6 +22863,23 @@ class Tabulator$1 {
 		if(this.modExists("download", true)){
 			this.modules.download.download(type, filename, options, active, true);
 		}
+	}
+
+	//////////////////// Event Bus ///////////////////
+
+	on(key, callback){
+		this.eventBus.on(key, callback);
+	}
+
+	off(key, callback){
+		this.eventBus.off(key, callback);
+	}
+
+	triggerEvent(){
+		var args = Array.from(arguments),
+		key = args.shift();
+
+		this.eventBus.trigger(...arguments);
 	}
 
 	/////////// Inter Table Communications ///////////

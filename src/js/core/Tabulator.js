@@ -7,6 +7,8 @@ import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
+import EventBus from './EventBus.js';
+
 import TableRegistry from './TableRegistry.js';
 import ModuleBinder from './ModuleBinder.js';
 
@@ -21,6 +23,7 @@ class Tabulator {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
+		this.eventBus = new EventBus(this); //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 
 		this.browser = ""; //hold current browser type
@@ -1693,6 +1696,23 @@ class Tabulator {
 		if(this.modExists("download", true)){
 			this.modules.download.download(type, filename, options, active, true);
 		}
+	}
+
+	//////////////////// Event Bus ///////////////////
+
+	on(key, callback){
+		this.eventBus.on(key, callback);
+	}
+
+	off(key, callback){
+		this.eventBus.off(key, callback);
+	}
+
+	triggerEvent(){
+		var args = Array.from(arguments),
+		key = args.shift();
+
+		this.eventBus.trigger(...arguments)
 	}
 
 	/////////// Inter Table Communications ///////////
