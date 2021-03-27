@@ -35,16 +35,23 @@ export default class EventBus {
 
 	trigger(){
 		var args = Array.from(arguments),
-		key = args.shift();
+		key = args.shift(),
+		result;
 
 		if(this.events[key]){
-			this.events[key].forEach((callback) => {
-				callback.apply(this, args);
+			this.events[key].forEach((callback, i) => {
+				let callResult = callback.apply(this, args);
+
+				if(!i){
+					result = callResult;
+				}
 			});
 		}
 
 		if(typeof this.table.options[key] === "function"){
-			this.table.options[key].apply(this, args);
+			result = this.table.options[key].apply(this, args);
 		}
+
+		return result;
 	}
 }
