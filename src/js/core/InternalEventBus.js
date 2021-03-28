@@ -60,20 +60,13 @@ export default class InternalEventBus {
 
 	_dispatch(){
 		var args = Array.from(arguments),
-		key = args.shift(),
-		result;
+		key = args.shift();
 
 		if(this.events[key]){
-			this.events[key].forEach((subscriber, i) => {
+			this.events[key].forEach((subscriber) => {
 				let callResult = subscriber.callback.apply(this, args);
-
-				if(!i){
-					result = callResult;
-				}
 			});
 		}
-
-		return result;
 	}
 
 	_debugDispatch(){
