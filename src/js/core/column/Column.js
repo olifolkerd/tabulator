@@ -87,7 +87,7 @@ class Column {
 			this.table.modules.moveRow.setHandle(true);
 		}
 
-		this._buildHeader();
+		this._initialize();
 
 		this.bindModuleColumns();
 	}
@@ -196,7 +196,7 @@ class Column {
 	}
 
 	//build header element
-	_buildHeader(){
+	_initialize(){
 		var def = this.definition;
 
 		while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
@@ -223,41 +223,7 @@ class Column {
 
 		this.setTooltip();
 
-		//set resizable handles
-		if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
-			this.table.modules.resizeColumns.initializeColumn("header", this, this.element);
-		}
-
-		//set resizable handles
-		if(def.headerFilter && this.table.modExists("filter") && this.table.modExists("edit")){
-			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-				this.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
-			}
-
-			this.table.modules.filter.initializeColumn(this);
-		}
-
-
-		//set resizable handles
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.initializeColumn(this);
-		}
-
-		//set movable column
-		if(this.table.options.movableColumns && !this.isGroup && this.table.modExists("moveColumn")){
-			this.table.modules.moveColumn.initializeColumn(this);
-		}
-
-		//set calcs column
-		if((def.topCalc || def.bottomCalc) && this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.initializeColumn(this);
-		}
-
-		//handle persistence
-		if(this.table.modExists("persistence") && this.table.modules.persistence.config.columns){
-			this.table.modules.persistence.initializeColumn(this);
-		}
-
+		this.table.eventBus.dispatch("column-init", this);
 
 		//update header tooltip on mouse enter
 		this.element.addEventListener("mouseenter", (e) => {
@@ -405,49 +371,9 @@ class Column {
 	//build header element for header
 	_buildColumnHeader(){
 		var def = this.definition,
-		table = this.table,
-		sortable;
+		table = this.table;
 
-		//set column sorter
-		if(table.modExists("sort")){
-			table.modules.sort.initializeColumn(this, this.titleHolderElement);
-		}
-
-		//set column header context menu
-		if((def.headerContextMenu || def.headerClickMenu || def.headerMenu) && table.modExists("menu")){
-			table.modules.menu.initializeColumnHeader(this);
-		}
-
-		//set column formatter
-		if(table.modExists("format")){
-			table.modules.format.initializeColumn(this);
-		}
-
-		//set column editor
-		if(typeof def.editor != "undefined" && table.modExists("edit")){
-			table.modules.edit.initializeColumn(this);
-		}
-
-		//set colum validator
-		if(typeof def.validator != "undefined" && table.modExists("validate")){
-			table.modules.validate.initializeColumn(this);
-		}
-
-
-		//set column mutator
-		if(table.modExists("mutator")){
-			table.modules.mutator.initializeColumn(this);
-		}
-
-		//set column accessor
-		if(table.modExists("accessor")){
-			table.modules.accessor.initializeColumn(this);
-		}
-
-		//set respoviveLayout
-		if(typeof table.options.responsiveLayout && table.modExists("responsiveLayout")){
-			table.modules.responsiveLayout.initializeColumn(this);
-		}
+		this.table.eventBus.dispatch("column-layout", this);
 
 		//set column visibility
 		if(typeof def.visible != "undefined"){
@@ -615,11 +541,6 @@ class Column {
 			classeNames.forEach((className) => {
 				this.element.classList.add(className);
 			});
-		}
-
-		//set column header context menu
-		if ((this.definition.headerContextMenu || this.definition.headerMenu) && this.table.modExists("menu")) {
-			this.table.modules.menu.initializeColumnHeader(this);
 		}
 
 		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;

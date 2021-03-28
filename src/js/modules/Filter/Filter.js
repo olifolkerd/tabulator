@@ -17,6 +17,23 @@ class Filter extends Module{
 		this.changed = false; //has filtering changed since last render
 	}
 
+	initialize(){
+		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
+	}
+
+	initializeColumnHeaderFilter(column){
+		var def = column.definition;
+
+		if(def.headerFilter){
+
+			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
+				this.module("localize").setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+			}
+
+			this.initializeColumn(column);
+		}
+	}
+
 	//initialize column header filter
 	initializeColumn(column, value){
 		var self = this,

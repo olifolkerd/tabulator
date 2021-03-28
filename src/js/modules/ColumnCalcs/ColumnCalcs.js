@@ -36,6 +36,7 @@ class ColumnCalcs extends Module{
 		this.genColumn = new Column({field:"value"}, this);
 
 		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
+		this.subscribe("column-init", this.initializeColumnCheck.bind(this));
 	}
 
 	cellValueChanged(cell){
@@ -56,8 +57,11 @@ class ColumnCalcs extends Module{
 		}
 	}
 
-	//dummy functions to handle being mock column manager
-	registerColumnField(){};
+	initializeColumnCheck(column){
+		if(column.definition.topCalc || column.definition.bottomCalc){
+			this.initializeColumn(column);
+		}
+	}
 
 	//initialize column calcs
 	initializeColumn(column){
@@ -123,6 +127,9 @@ class ColumnCalcs extends Module{
 		}
 
 	}
+
+	//dummy functions to handle being mock column manager
+	registerColumnField(){};
 
 	removeCalcs(){
 		var changed = false;

@@ -7,6 +7,7 @@ class Format extends Module{
 	initialize(){
 		this.subscribe("cell-format", this.formatValue.bind(this));
 		this.subscribe("cell-rendered", this.cellRendered.bind(this));
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
 	}
 
 	//initialize column formatter

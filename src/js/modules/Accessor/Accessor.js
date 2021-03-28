@@ -11,6 +11,10 @@ class Accessor extends Module{
 		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"] //list of accessor types
 	}
 
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
+	}
+
 	//initialize column accessor
 	initializeColumn(column){
 		var match = false,

@@ -11,8 +11,12 @@ class Sort extends Module{
 	 	this.changed = false; //has the sort changed since last render
 	}
 
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
+	}
+
 	//initialize column header for sorting
-	initializeColumn(column, content){
+	initializeColumn(column){
 		var self = this,
 		sorter = false,
 		colEl,
@@ -56,7 +60,7 @@ class Sort extends Module{
 			}
 
 			//create sorter arrow
-			content.appendChild(arrowEl);
+			column.titleHolderElement.appendChild(arrowEl);
 
 			column.modules.sort.element = arrowEl;
 

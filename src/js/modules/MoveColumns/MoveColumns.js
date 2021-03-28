@@ -32,6 +32,10 @@ class MoveColumns extends Module{
 		return el;
 	}
 
+	initialize(){
+		this.subscribe("column-init", this.initializeColumn.bind(this));
+	}
+
 	initializeColumn(column){
 		var self = this,
 		config = {},

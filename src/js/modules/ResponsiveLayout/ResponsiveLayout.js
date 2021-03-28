@@ -66,6 +66,11 @@ class ResponsiveLayout extends Module{
 				this.collapseHandleColumn.hide();
 			}
 		}
+
+		if(this.table.options.responsiveLayout){
+			this.subscribe("column-layout", this.initializeColumn.bind(this));
+		}
+
 	}
 
 	//define layout information

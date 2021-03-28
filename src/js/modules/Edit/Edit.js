@@ -16,6 +16,13 @@ class Edit extends Module{
 
 	initialize(){
 		this.subscribe("cell-init", this.bindEditor.bind(this));
+		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+	}
+
+	initializeColumnCheck(column){
+		if(typeof column.definition.editor !== "undefined"){
+			this.initializeColumn(column);
+		}
 	}
 
 	//initialize column editor

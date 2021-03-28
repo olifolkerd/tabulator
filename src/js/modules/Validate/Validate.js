@@ -10,6 +10,17 @@ class Validate extends Module{
 		this.invalidCells = [];
 	}
 
+
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+	}
+
+	initializeColumnCheck(column){
+		if(typeof column.definition.validator !== "undefined"){
+			this.initializeColumn(column);
+		}
+	}
+
 	//validate
 	initializeColumn(column){
 		var self = this,

@@ -15,11 +15,20 @@ class Menu extends Module{
 
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
+		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 
 	layoutCell(cell){
 		if(cell.column.definition.contextMenu || cell.column.definition.clickMenu){
 			this.initializeCell(cell);
+		}
+	}
+
+	initializeColumn(column){
+		var def = column.definition;
+
+		if(def.headerContextMenu || def.headerClickMenu || def.headerMenu){
+			this.initializeColumnHeader(this);
 		}
 	}
 

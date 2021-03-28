@@ -16,6 +16,10 @@ class Module{
 	unsubscribe(){
 		this.table.eventBus.unsubscribe(...arguments);
 	}
+
+	module(key){
+		return this.table.module(key);
+	}
 }
 
 class Helpers{
@@ -57,6 +61,10 @@ class Accessor extends Module{
 		super(table);
 
 		this.allowedTypes = ["", "data", "download", "clipboard", "print", "htmlOutput"]; //list of accessor types
+	}
+
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
 	}
 
 	//initialize column accessor
@@ -2151,7 +2159,7 @@ class Column$1 {
 			this.table.modules.moveRow.setHandle(true);
 		}
 
-		this._buildHeader();
+		this._initialize();
 
 		this.bindModuleColumns();
 	}
@@ -2260,7 +2268,7 @@ class Column$1 {
 	}
 
 	//build header element
-	_buildHeader(){
+	_initialize(){
 		var def = this.definition;
 
 		while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
@@ -2287,41 +2295,7 @@ class Column$1 {
 
 		this.setTooltip();
 
-		//set resizable handles
-		if(this.table.options.resizableColumns && this.table.modExists("resizeColumns")){
-			this.table.modules.resizeColumns.initializeColumn("header", this, this.element);
-		}
-
-		//set resizable handles
-		if(def.headerFilter && this.table.modExists("filter") && this.table.modExists("edit")){
-			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
-				this.table.modules.localize.setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
-			}
-
-			this.table.modules.filter.initializeColumn(this);
-		}
-
-
-		//set resizable handles
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.initializeColumn(this);
-		}
-
-		//set movable column
-		if(this.table.options.movableColumns && !this.isGroup && this.table.modExists("moveColumn")){
-			this.table.modules.moveColumn.initializeColumn(this);
-		}
-
-		//set calcs column
-		if((def.topCalc || def.bottomCalc) && this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.initializeColumn(this);
-		}
-
-		//handle persistence
-		if(this.table.modExists("persistence") && this.table.modules.persistence.config.columns){
-			this.table.modules.persistence.initializeColumn(this);
-		}
-
+		this.table.eventBus.dispatch("column-init", this);
 
 		//update header tooltip on mouse enter
 		this.element.addEventListener("mouseenter", (e) => {
@@ -2469,48 +2443,9 @@ class Column$1 {
 	//build header element for header
 	_buildColumnHeader(){
 		var def = this.definition,
-		table = this.table;
+		table = this.table;
 
-		//set column sorter
-		if(table.modExists("sort")){
-			table.modules.sort.initializeColumn(this, this.titleHolderElement);
-		}
-
-		//set column header context menu
-		if((def.headerContextMenu || def.headerClickMenu || def.headerMenu) && table.modExists("menu")){
-			table.modules.menu.initializeColumnHeader(this);
-		}
-
-		//set column formatter
-		if(table.modExists("format")){
-			table.modules.format.initializeColumn(this);
-		}
-
-		//set column editor
-		if(typeof def.editor != "undefined" && table.modExists("edit")){
-			table.modules.edit.initializeColumn(this);
-		}
-
-		//set colum validator
-		if(typeof def.validator != "undefined" && table.modExists("validate")){
-			table.modules.validate.initializeColumn(this);
-		}
-
-
-		//set column mutator
-		if(table.modExists("mutator")){
-			table.modules.mutator.initializeColumn(this);
-		}
-
-		//set column accessor
-		if(table.modExists("accessor")){
-			table.modules.accessor.initializeColumn(this);
-		}
-
-		//set respoviveLayout
-		if(typeof table.options.responsiveLayout && table.modExists("responsiveLayout")){
-			table.modules.responsiveLayout.initializeColumn(this);
-		}
+		this.table.eventBus.dispatch("column-layout", this);
 
 		//set column visibility
 		if(typeof def.visible != "undefined"){
@@ -2677,11 +2612,6 @@ class Column$1 {
 			classeNames.forEach((className) => {
 				this.element.classList.add(className);
 			});
-		}
-
-		//set column header context menu
-		if ((this.definition.headerContextMenu || this.definition.headerMenu) && this.table.modExists("menu")) {
-			this.table.modules.menu.initializeColumnHeader(this);
 		}
 
 		this.titleElement.style.textAlign = this.definition.headerHozAlign || this.table.options.headerHozAlign;
@@ -4310,6 +4240,7 @@ class ColumnCalcs extends Module{
 		this.genColumn = new Column$1({field:"value"}, this);
 
 		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
+		this.subscribe("column-init", this.initializeColumnCheck.bind(this));
 	}
 
 	cellValueChanged(cell){
@@ -4330,8 +4261,11 @@ class ColumnCalcs extends Module{
 		}
 	}
 
-	//dummy functions to handle being mock column manager
-	registerColumnField(){};
+	initializeColumnCheck(column){
+		if(column.definition.topCalc || column.definition.bottomCalc){
+			this.initializeColumn(column);
+		}
+	}
 
 	//initialize column calcs
 	initializeColumn(column){
@@ -4397,6 +4331,9 @@ class ColumnCalcs extends Module{
 		}
 
 	}
+
+	//dummy functions to handle being mock column manager
+	registerColumnField(){};
 
 	removeCalcs(){
 		var changed = false;
@@ -7444,6 +7381,13 @@ class Edit extends Module{
 
 	initialize(){
 		this.subscribe("cell-init", this.bindEditor.bind(this));
+		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+	}
+
+	initializeColumnCheck(column){
+		if(typeof column.definition.editor !== "undefined"){
+			this.initializeColumn(column);
+		}
 	}
 
 	//initialize column editor
@@ -8624,6 +8568,23 @@ class Filter extends Module{
 		this.prevHeaderFilterChangeCheck = "{}";
 
 		this.changed = false; //has filtering changed since last render
+	}
+
+	initialize(){
+		this.subscribe("column-init", this.initializeColumnHeaderFilter.bind(this));
+	}
+
+	initializeColumnHeaderFilter(column){
+		var def = column.definition;
+
+		if(def.headerFilter){
+
+			if(typeof def.headerFilterPlaceholder !== "undefined" && def.field){
+				this.module("localize").setHeaderFilterColumnPlaceholder(def.field, def.headerFilterPlaceholder);
+			}
+
+			this.initializeColumn(column);
+		}
 	}
 
 	//initialize column header filter
@@ -9897,7 +9858,9 @@ var defaultFormatters = {
 class Format extends Module{
 
 	initialize(){
-		this.subscribe("cell-format", this.formatValue.bind(this), -1);
+		this.subscribe("cell-format", this.formatValue.bind(this));
+		this.subscribe("cell-rendered", this.cellRendered.bind(this));
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
 	}
 
 	//initialize column formatter
@@ -10079,6 +10042,7 @@ class FrozenColumns extends Module{
 
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
+		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 
 	layoutCell(cell){
@@ -12272,11 +12236,20 @@ class Menu extends Module{
 
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
+		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 
 	layoutCell(cell){
 		if(cell.column.definition.contextMenu || cell.column.definition.clickMenu){
 			this.initializeCell(cell);
+		}
+	}
+
+	initializeColumn(column){
+		var def = column.definition;
+
+		if(def.headerContextMenu || def.headerClickMenu || def.headerMenu){
+			this.initializeColumnHeader(this);
 		}
 	}
 
@@ -12599,6 +12572,10 @@ class MoveColumns extends Module{
 		el.classList.add("tabulator-col-placeholder");
 
 		return el;
+	}
+
+	initialize(){
+		this.subscribe("column-init", this.initializeColumn.bind(this));
 	}
 
 	initializeColumn(column){
@@ -13479,6 +13456,7 @@ class Mutator extends Module{
 
 	initialize(){
 		this.subscribe("cell-value-changing", this.transformCell.bind(this));
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
 	}
 
 	//initialize column mutator
@@ -14468,6 +14446,7 @@ class Persistence extends Module{
 
 			if(this.config.columns){
 				this.table.options.columns = this.load("columns", this.table.options.columns);
+				this.subscribe("column-init", this.initializeColumn.bind(this));
 			}
 		}
 	}
@@ -15175,6 +15154,7 @@ class ResizeColumns extends Module{
 	initialize(){
 		if(this.table.options.resizableColumns){
 			this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
+			this.subscribe("column-init", this.layoutColumnHeader.bind(this));
 		}
 	}
 
@@ -15182,6 +15162,10 @@ class ResizeColumns extends Module{
 		if(cell.row.type === "row"){
 			this.initializeColumn("cell", cell.column, cell.element);
 		}
+	}
+
+	layoutColumnHeader(column){
+		this.initializeColumn("header", column, column.element);
 	}
 
 	initializeColumn(type, column, element){
@@ -15636,6 +15620,11 @@ class ResponsiveLayout extends Module{
 				this.collapseHandleColumn.hide();
 			}
 		}
+
+		if(this.table.options.responsiveLayout){
+			this.subscribe("column-layout", this.initializeColumn.bind(this));
+		}
+
 	}
 
 	//define layout information
@@ -16527,8 +16516,12 @@ class Sort extends Module{
 	 	this.changed = false; //has the sort changed since last render
 	}
 
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumn.bind(this));
+	}
+
 	//initialize column header for sorting
-	initializeColumn(column, content){
+	initializeColumn(column){
 		var self = this,
 		sorter = false,
 		colEl,
@@ -16572,7 +16565,7 @@ class Sort extends Module{
 			}
 
 			//create sorter arrow
-			content.appendChild(arrowEl);
+			column.titleHolderElement.appendChild(arrowEl);
 
 			column.modules.sort.element = arrowEl;
 
@@ -17003,6 +16996,17 @@ class Validate extends Module{
 		super(table);
 
 		this.invalidCells = [];
+	}
+
+
+	initialize(){
+		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+	}
+
+	initializeColumnCheck(column){
+		if(typeof column.definition.validator !== "undefined"){
+			this.initializeColumn(column);
+		}
 	}
 
 	//validate
@@ -21698,8 +21702,6 @@ class Tabulator$1 {
 			this.columnManager.generateColumnsFromRowData(this.options.data);
 		}
 
-		this.columnManager.setColumns(options.columns);
-
 		//initialize regular modules
 		for (let key in this.modulesRegular){
 			let mod = this.modulesRegular[key];
@@ -21707,6 +21709,7 @@ class Tabulator$1 {
 			mod.initialize();
 		}
 
+		this.columnManager.setColumns(options.columns);
 
 		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
 			var sorters = [];
@@ -23128,6 +23131,16 @@ class Tabulator$1 {
 			}
 			return false;
 		}
+	}
+
+	module(key){
+		var mod = this.modules[key];
+
+		if(!mod){
+			console.error("Tabulator module not installed: " + key);
+		}
+
+		return mod;
 	}
 }
 

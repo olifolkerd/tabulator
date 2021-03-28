@@ -251,8 +251,6 @@ class Tabulator {
 			this.columnManager.generateColumnsFromRowData(this.options.data);
 		}
 
-		this.columnManager.setColumns(options.columns);
-
 		//initialize regular modules
 		for (let key in this.modulesRegular){
 			let mod = this.modulesRegular[key];
@@ -260,6 +258,7 @@ class Tabulator {
 			mod.initialize();
 		}
 
+		this.columnManager.setColumns(options.columns);
 
 		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
 			var sorters = [];

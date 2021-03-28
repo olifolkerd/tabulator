@@ -15,6 +15,7 @@ class ResizeColumns extends Module{
 	initialize(){
 		if(this.table.options.resizableColumns){
 			this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
+			this.subscribe("column-init", this.layoutColumnHeader.bind(this));
 		}
 	}
 
@@ -22,6 +23,10 @@ class ResizeColumns extends Module{
 		if(cell.row.type === "row"){
 			this.initializeColumn("cell", cell.column, cell.element);
 		}
+	}
+
+	layoutColumnHeader(column){
+		this.initializeColumn("header", column, column.element);
 	}
 
 	initializeColumn(type, column, element){
