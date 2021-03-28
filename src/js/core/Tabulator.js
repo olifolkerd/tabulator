@@ -25,6 +25,7 @@ class Tabulator {
 		this.footerManager = null; //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 		this.externalEvents = null; //handle external event messaging
+		this.internalEvents = null; //handle internal event messaging
 		this.browser = ""; //hold current browser type
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
@@ -37,6 +38,7 @@ class Tabulator {
 		if(this.initializeElement(element)){
 			this.initializeOptions(options || {});
 
+			this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents); //holder Footer Manager
 			this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents); //holder Footer Manager
 
 			this._create();
