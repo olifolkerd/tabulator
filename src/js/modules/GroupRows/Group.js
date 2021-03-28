@@ -1,4 +1,5 @@
 import Helpers from '../../core/Helpers.js';
+import GroupComponent from './GroupComponent.js';
 
 //Group functions
 class Group{
