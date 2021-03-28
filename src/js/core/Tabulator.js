@@ -31,6 +31,8 @@ class Tabulator {
 		this.rtl = false; //check if the table is in RTL mode
 
 		this.modules = {}; //hold all modules bound to this table
+		this.modulesCore = {}; //hold core modules bound to this table (for initialization purposes)
+		this.modulesRegular = {}; //hold regular modules bound to this table (for initialization purposes)
 
 		if(this.initializeElement(element)){
 			this.initializeOptions(options || {});
@@ -213,22 +215,11 @@ class Tabulator {
 
 		this._detectBrowser();
 
-		if(this.modExists("layout", true)){
-			mod.layout.initialize(options.layout);
+		for (let key in this.modulesCore){
+			let modd = this.modulesCore[key];
+
+			modd.initialize();
 		}
-
-		//set localization
-		mod.localize.initialize();
-
-		if(options.headerFilterPlaceholder !== false){
-			mod.localize.setHeaderFilterPlaceholder(options.headerFilterPlaceholder);
-		}
-
-		for(let locale in options.langs){
-			mod.localize.installLang(locale, options.langs[locale]);
-		}
-
-		mod.localize.setLocale(options.locale);
 
 		//configure placeholder element
 		if(typeof options.placeholder == "string"){
@@ -252,31 +243,19 @@ class Tabulator {
 			this.footerManager.activate();
 		}
 
-		if(options.persistence && this.modExists("persistence", true)){
-			mod.persistence.initialize();
-		}
-
-		if(options.movableRows && this.modExists("moveRow")){
-			mod.moveRow.initialize();
-		}
-
 		if(options.autoColumns && this.options.data){
 			this.columnManager.generateColumnsFromRowData(this.options.data);
 		}
 
-		if(this.modExists("columnCalcs")){
-			mod.columnCalcs.initialize();
-		}
-
 		this.columnManager.setColumns(options.columns);
 
-		if(options.dataTree && this.modExists("dataTree", true)){
-			mod.dataTree.initialize();
+
+		for (let key in this.modulesRegular){
+			let modd = this.modulesRegular[key];
+
+			modd.initialize();
 		}
 
-		if(this.modExists("frozenRows")){
-			this.modules.frozenRows.initialize();
-		}
 
 		if(((options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
 			var sorters = [];
@@ -323,39 +302,6 @@ class Tabulator {
 					return false;
 				}
 			});
-		}
-
-
-		if(this.modExists("ajax")){
-			mod.ajax.initialize();
-		}
-
-		if(options.pagination && this.modExists("page", true)){
-			mod.page.initialize();
-		}
-
-		if(options.groupBy && this.modExists("groupRows", true)){
-			mod.groupRows.initialize();
-		}
-
-		if(this.modExists("keybindings")){
-			mod.keybindings.initialize();
-		}
-
-		if(this.modExists("selectRow")){
-			mod.selectRow.clearSelectionData(true);
-		}
-
-		if(options.autoResize && this.modExists("resizeTable")){
-			mod.resizeTable.initialize();
-		}
-
-		if(this.modExists("clipboard")){
-			mod.clipboard.initialize();
-		}
-
-		if(options.printAsHtml && this.modExists("print")){
-			mod.print.initialize();
 		}
 
 		this.eventBus.dispatch("tableBuilt");

@@ -11,7 +11,9 @@ class Layout extends Module{
 	}
 
 	//initialize layout system
-	initialize(layout){
+	initialize(){
+		var layout = this.table.options.layout;
+
 		if(Layout.modes[layout]){
 			this.mode = layout;
 		}else{

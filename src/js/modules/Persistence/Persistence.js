@@ -32,94 +32,96 @@ class Persistence extends Module{
 
 	//setup parameters
 	initialize(){
-		//determine persistent layout storage type
-		var mode = this.table.options.persistenceMode,
-		id = this.table.options.persistenceID,
-		retreivedData;
+		if(this.table.options.persistence){
+			//determine persistent layout storage type
+			var mode = this.table.options.persistenceMode,
+			id = this.table.options.persistenceID,
+			retreivedData;
 
-		this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
+			this.mode = mode !== true ?  mode : (this.localStorageTest() ? "local" : "cookie");
 
-		if(this.table.options.persistenceReaderFunc){
-			if(typeof this.table.options.persistenceReaderFunc === "function"){
-				this.readFunc = this.table.options.persistenceReaderFunc;
-			}else{
-				if(Persistence.readers[this.table.options.persistenceReaderFunc]){
-					this.readFunc = Persistence.readers[this.table.options.persistenceReaderFunc];
+			if(this.table.options.persistenceReaderFunc){
+				if(typeof this.table.options.persistenceReaderFunc === "function"){
+					this.readFunc = this.table.options.persistenceReaderFunc;
 				}else{
-					console.warn("Persistence Read Error - invalid reader set", this.table.options.persistenceReaderFunc);
+					if(Persistence.readers[this.table.options.persistenceReaderFunc]){
+						this.readFunc = Persistence.readers[this.table.options.persistenceReaderFunc];
+					}else{
+						console.warn("Persistence Read Error - invalid reader set", this.table.options.persistenceReaderFunc);
+					}
 				}
-			}
-		}else{
-			if(Persistence.readers[this.mode]){
-				this.readFunc = Persistence.readers[this.mode];
 			}else{
-				console.warn("Persistence Read Error - invalid reader set", this.mode);
-			}
-		}
-
-		if(this.table.options.persistenceWriterFunc){
-			if(typeof this.table.options.persistenceWriterFunc === "function"){
-				this.writeFunc = this.table.options.persistenceWriterFunc;
-			}else{
-				if(Persistence.writers[this.table.options.persistenceWriterFunc]){
-					this.writeFunc = Persistence.writers[this.table.options.persistenceWriterFunc];
+				if(Persistence.readers[this.mode]){
+					this.readFunc = Persistence.readers[this.mode];
 				}else{
-					console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
+					console.warn("Persistence Read Error - invalid reader set", this.mode);
 				}
 			}
-		}else{
-			if(Persistence.writers[this.mode]){
-				this.writeFunc = Persistence.writers[this.mode];
+
+			if(this.table.options.persistenceWriterFunc){
+				if(typeof this.table.options.persistenceWriterFunc === "function"){
+					this.writeFunc = this.table.options.persistenceWriterFunc;
+				}else{
+					if(Persistence.writers[this.table.options.persistenceWriterFunc]){
+						this.writeFunc = Persistence.writers[this.table.options.persistenceWriterFunc];
+					}else{
+						console.warn("Persistence Write Error - invalid reader set", this.table.options.persistenceWriterFunc);
+					}
+				}
 			}else{
-				console.warn("Persistence Write Error - invalid writer set", this.mode);
-			}
-		}
-
-		//set storage tag
-		this.id = "tabulator-" + (id || (this.table.element.getAttribute("id") || ""));
-
-		this.config = {
-			sort:this.table.options.persistence === true || this.table.options.persistence.sort,
-			filter:this.table.options.persistence === true || this.table.options.persistence.filter,
-			group:this.table.options.persistence === true || this.table.options.persistence.group,
-			page:this.table.options.persistence === true || this.table.options.persistence.page,
-			columns:this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns,
-		};
-
-		//load pagination data if needed
-		if(this.config.page){
-			retreivedData = this.retreiveData("page");
-
-			if(retreivedData){
-				if(typeof retreivedData.paginationSize !== "undefined" && (this.config.page === true || this.config.page.size)){
-					this.table.options.paginationSize = retreivedData.paginationSize;
-				}
-
-				if(typeof retreivedData.paginationInitialPage !== "undefined" && (this.config.page === true || this.config.page.page)){
-					this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+				if(Persistence.writers[this.mode]){
+					this.writeFunc = Persistence.writers[this.mode];
+				}else{
+					console.warn("Persistence Write Error - invalid writer set", this.mode);
 				}
 			}
-		}
 
-		//load group data if needed
-		if(this.config.group){
-			retreivedData = this.retreiveData("group");
+			//set storage tag
+			this.id = "tabulator-" + (id || (this.table.element.getAttribute("id") || ""));
 
-			if(retreivedData){
-				if(typeof retreivedData.groupBy !== "undefined" && (this.config.group === true || this.config.group.groupBy)){
-					this.table.options.groupBy = retreivedData.groupBy;
-				}
-				if(typeof retreivedData.groupStartOpen !== "undefined" && (this.config.group === true || this.config.group.groupStartOpen)){
-					this.table.options.groupStartOpen = retreivedData.groupStartOpen;
-				}
-				if(typeof retreivedData.groupHeader !== "undefined" && (this.config.group === true || this.config.group.groupHeader)){
-					this.table.options.groupHeader = retreivedData.groupHeader;
+			this.config = {
+				sort:this.table.options.persistence === true || this.table.options.persistence.sort,
+				filter:this.table.options.persistence === true || this.table.options.persistence.filter,
+				group:this.table.options.persistence === true || this.table.options.persistence.group,
+				page:this.table.options.persistence === true || this.table.options.persistence.page,
+				columns:this.table.options.persistence === true ? ["title", "width", "visible"] : this.table.options.persistence.columns,
+			};
+
+			//load pagination data if needed
+			if(this.config.page){
+				retreivedData = this.retreiveData("page");
+
+				if(retreivedData){
+					if(typeof retreivedData.paginationSize !== "undefined" && (this.config.page === true || this.config.page.size)){
+						this.table.options.paginationSize = retreivedData.paginationSize;
+					}
+
+					if(typeof retreivedData.paginationInitialPage !== "undefined" && (this.config.page === true || this.config.page.page)){
+						this.table.options.paginationInitialPage = retreivedData.paginationInitialPage;
+					}
 				}
 			}
-		}
 
-		if(this.config.columns){
-			this.table.options.columns = this.load("columns", this.table.options.columns);
+			//load group data if needed
+			if(this.config.group){
+				retreivedData = this.retreiveData("group");
+
+				if(retreivedData){
+					if(typeof retreivedData.groupBy !== "undefined" && (this.config.group === true || this.config.group.groupBy)){
+						this.table.options.groupBy = retreivedData.groupBy;
+					}
+					if(typeof retreivedData.groupStartOpen !== "undefined" && (this.config.group === true || this.config.group.groupStartOpen)){
+						this.table.options.groupStartOpen = retreivedData.groupStartOpen;
+					}
+					if(typeof retreivedData.groupHeader !== "undefined" && (this.config.group === true || this.config.group.groupHeader)){
+						this.table.options.groupHeader = retreivedData.groupHeader;
+					}
+				}
+			}
+
+			if(this.config.columns){
+				this.table.options.columns = this.load("columns", this.table.options.columns);
+			}
 		}
 	}
 

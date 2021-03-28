@@ -10,8 +10,10 @@ class Print extends Module{
 	}
 
 	initialize(){
-		window.addEventListener("beforeprint", this.replaceTable.bind(this));
-		window.addEventListener("afterprint", this.cleanup.bind(this));
+		if(this.table.options.printAsHtml){
+			window.addEventListener("beforeprint", this.replaceTable.bind(this));
+			window.addEventListener("afterprint", this.cleanup.bind(this));
+		}
 	}
 
 	replaceTable(){

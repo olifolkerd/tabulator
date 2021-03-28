@@ -17,6 +17,16 @@ class Localize extends Module{
 
 	initialize(){
 		this.langList = Helpers.deepClone(Localize.langs);
+
+		if(this.table.options.headerFilterPlaceholder !== false){
+			this.setHeaderFilterPlaceholder(this.table.options.headerFilterPlaceholder);
+		}
+
+		for(let locale in this.table.options.langs){
+			this.installLang(locale, this.table.options.langs[locale]);
+		}
+
+		this.setLocale(this.table.options.locale);
 	}
 
 	//set header placehoder

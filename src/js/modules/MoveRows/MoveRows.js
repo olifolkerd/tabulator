@@ -42,11 +42,13 @@ class MoveRows extends Module{
 		return el;
 	}
 
-	initialize(handle){
-		this.connectionSelectorsTables = this.table.options.movableRowsConnectedTables;
-		this.connectionSelectorsElements = this.table.options.movableRowsConnectedElements;
+	initialize(){
+		if(this.table.options.movableRows){
+			this.connectionSelectorsTables = this.table.options.movableRowsConnectedTables;
+			this.connectionSelectorsElements = this.table.options.movableRowsConnectedElements;
 
-		this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
+			this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
+		}
 	}
 
 	setHandle(handle){

@@ -5,7 +5,7 @@ export default class ModuleBinder {
 
 	constructor(tabulator, modules){
 		this.bindStaticFuctionality(tabulator);
-		this.bindModules(tabulator, coreModules);
+		this.bindModules(tabulator, coreModules, true);
 
 		if(modules){
 			this.bindModules(tabulator, modules);
@@ -13,7 +13,6 @@ export default class ModuleBinder {
 	}
 
 	bindStaticFuctionality(tabulator){
-
 		tabulator.moduleBindings = {};
 
 		tabulator.extendModule = function(name, property, values){
@@ -60,13 +59,27 @@ export default class ModuleBinder {
 			this.modules = {};
 
 			for(var name in tabulator.moduleBindings){
-				this.modules[name] = new tabulator.moduleBindings[name](this);
+				let mod = tabulator.moduleBindings[name];
+
+				this.modules[name] = new mod(this);
+
+				if(mod.prototype.moduleCore){
+					this.modulesCore[name] = this.modules[name];
+				}else{
+					this.modulesRegular[name] = this.modules[name];
+				}
 			}
 		}
 	}
 
-	bindModules(tabulator, modules){
+	bindModules(tabulator, modules, core){
 		var mods = Object.values(modules);
+
+		if(core){
+			mods.forEach((mod) => {
+				mod.prototype.moduleCore = true;
+			});
+		}
 
 		tabulator.registerModule(mods);
 	}

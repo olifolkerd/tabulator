@@ -116,131 +116,133 @@ class Page extends Module{
 
 	//setup pageination
 	initialize(hidden){
-		var pageSelectLabel, testElRow, testElCell;
+		if(this.table.options.pagination || hidden){
+			var pageSelectLabel, testElRow, testElCell;
 
-		//update param names
-		this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
-		this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
+			//update param names
+			this.dataSentNames = Object.assign({}, Page.defaultDataSentNames);
+			this.dataSentNames = Object.assign(this.dataSentNames, this.table.options.paginationDataSent);
 
-		this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
-		this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
+			this.dataReceivedNames = Object.assign({}, Page.defaultDataReceivedNames);
+			this.dataReceivedNames = Object.assign(this.dataReceivedNames, this.table.options.paginationDataReceived);
 
-		//build pagination element
+			//build pagination element
 
-		//bind localizations
-		this.table.modules.localize.bind("pagination|first", (value) => {
-			this.firstBut.innerHTML = value;
-		});
-
-		this.table.modules.localize.bind("pagination|first_title", (value) => {
-			this.firstBut.setAttribute("aria-label", value);
-			this.firstBut.setAttribute("title", value);
-		});
-
-		this.table.modules.localize.bind("pagination|prev", (value) => {
-			this.prevBut.innerHTML = value;
-		});
-
-		this.table.modules.localize.bind("pagination|prev_title", (value) => {
-			this.prevBut.setAttribute("aria-label", value);
-			this.prevBut.setAttribute("title", value);
-		});
-
-		this.table.modules.localize.bind("pagination|next", (value) => {
-			this.nextBut.innerHTML = value;
-		});
-
-		this.table.modules.localize.bind("pagination|next_title", (value) => {
-			this.nextBut.setAttribute("aria-label", value);
-			this.nextBut.setAttribute("title", value);
-		});
-
-		this.table.modules.localize.bind("pagination|last", (value) => {
-			this.lastBut.innerHTML = value;
-		});
-
-		this.table.modules.localize.bind("pagination|last_title", (value) => {
-			this.lastBut.setAttribute("aria-label", value);
-			this.lastBut.setAttribute("title", value);
-		});
-
-		//click bindings
-		this.firstBut.addEventListener("click", () => {
-			this.setPage(1).then(()=>{}).catch(()=>{});
-		});
-
-		this.prevBut.addEventListener("click", () => {
-			this.previousPage().then(()=>{}).catch(()=>{});
-		});
-
-		this.nextBut.addEventListener("click", () => {
-			this.nextPage().then(()=>{}).catch(()=>{});
-		});
-
-		this.lastBut.addEventListener("click", () => {
-			this.setPage(this.max).then(()=>{}).catch(()=>{});
-		});
-
-		if(this.table.options.paginationElement){
-			this.element = this.table.options.paginationElement;
-		}
-
-		if(this.pageSizeSelect){
-			pageSelectLabel = document.createElement("label");
-
-			this.table.modules.localize.bind("pagination|page_size", (value) => {
-				this.pageSizeSelect.setAttribute("aria-label", value);
-				this.pageSizeSelect.setAttribute("title", value);
-				pageSelectLabel.innerHTML = value;
+			//bind localizations
+			this.table.modules.localize.bind("pagination|first", (value) => {
+				this.firstBut.innerHTML = value;
 			});
 
-			this.element.appendChild(pageSelectLabel);
-			this.element.appendChild(this.pageSizeSelect);
+			this.table.modules.localize.bind("pagination|first_title", (value) => {
+				this.firstBut.setAttribute("aria-label", value);
+				this.firstBut.setAttribute("title", value);
+			});
 
-			this.pageSizeSelect.addEventListener("change", (e) => {
-				this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
+			this.table.modules.localize.bind("pagination|prev", (value) => {
+				this.prevBut.innerHTML = value;
+			});
+
+			this.table.modules.localize.bind("pagination|prev_title", (value) => {
+				this.prevBut.setAttribute("aria-label", value);
+				this.prevBut.setAttribute("title", value);
+			});
+
+			this.table.modules.localize.bind("pagination|next", (value) => {
+				this.nextBut.innerHTML = value;
+			});
+
+			this.table.modules.localize.bind("pagination|next_title", (value) => {
+				this.nextBut.setAttribute("aria-label", value);
+				this.nextBut.setAttribute("title", value);
+			});
+
+			this.table.modules.localize.bind("pagination|last", (value) => {
+				this.lastBut.innerHTML = value;
+			});
+
+			this.table.modules.localize.bind("pagination|last_title", (value) => {
+				this.lastBut.setAttribute("aria-label", value);
+				this.lastBut.setAttribute("title", value);
+			});
+
+			//click bindings
+			this.firstBut.addEventListener("click", () => {
 				this.setPage(1).then(()=>{}).catch(()=>{});
 			});
+
+			this.prevBut.addEventListener("click", () => {
+				this.previousPage().then(()=>{}).catch(()=>{});
+			});
+
+			this.nextBut.addEventListener("click", () => {
+				this.nextPage().then(()=>{}).catch(()=>{});
+			});
+
+			this.lastBut.addEventListener("click", () => {
+				this.setPage(this.max).then(()=>{}).catch(()=>{});
+			});
+
+			if(this.table.options.paginationElement){
+				this.element = this.table.options.paginationElement;
+			}
+
+			if(this.pageSizeSelect){
+				pageSelectLabel = document.createElement("label");
+
+				this.table.modules.localize.bind("pagination|page_size", (value) => {
+					this.pageSizeSelect.setAttribute("aria-label", value);
+					this.pageSizeSelect.setAttribute("title", value);
+					pageSelectLabel.innerHTML = value;
+				});
+
+				this.element.appendChild(pageSelectLabel);
+				this.element.appendChild(this.pageSizeSelect);
+
+				this.pageSizeSelect.addEventListener("change", (e) => {
+					this.setPageSize(this.pageSizeSelect.value == "true" ? true : this.pageSizeSelect.value);
+					this.setPage(1).then(()=>{}).catch(()=>{});
+				});
+			}
+
+			//append to DOM
+			this.element.appendChild(this.firstBut);
+			this.element.appendChild(this.prevBut);
+			this.element.appendChild(this.pagesElement);
+			this.element.appendChild(this.nextBut);
+			this.element.appendChild(this.lastBut);
+
+			if(!this.table.options.paginationElement && !hidden){
+				this.table.footerManager.append(this.element, this);
+			}
+
+			//set default values
+			this.mode = this.table.options.pagination;
+
+			if(this.table.options.paginationSize){
+				this.size = this.table.options.paginationSize;
+			}else{
+				testElRow = document.createElement("div");
+				testElRow.classList.add("tabulator-row");
+				testElRow.style.visibility = hidden;
+
+				testElCell = document.createElement("div");
+				testElCell.classList.add("tabulator-cell");
+				testElCell.innerHTML = "Page Row Test";
+
+				testElRow.appendChild(testElCell);
+
+				this.table.rowManager.getTableElement().appendChild(testElRow);
+
+				this.size =  Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
+
+				this.table.rowManager.getTableElement().removeChild(testElRow);
+			}
+
+			// this.page = this.table.options.paginationInitialPage || 1;
+			this.count = this.table.options.paginationButtonCount;
+
+			this.generatePageSizeSelectList();
 		}
-
-		//append to DOM
-		this.element.appendChild(this.firstBut);
-		this.element.appendChild(this.prevBut);
-		this.element.appendChild(this.pagesElement);
-		this.element.appendChild(this.nextBut);
-		this.element.appendChild(this.lastBut);
-
-		if(!this.table.options.paginationElement && !hidden){
-			this.table.footerManager.append(this.element, this);
-		}
-
-		//set default values
-		this.mode = this.table.options.pagination;
-
-		if(this.table.options.paginationSize){
-			this.size = this.table.options.paginationSize;
-		}else{
-			testElRow = document.createElement("div");
-			testElRow.classList.add("tabulator-row");
-			testElRow.style.visibility = hidden;
-
-			testElCell = document.createElement("div");
-			testElCell.classList.add("tabulator-cell");
-			testElCell.innerHTML = "Page Row Test";
-
-			testElRow.appendChild(testElCell);
-
-			this.table.rowManager.getTableElement().appendChild(testElRow);
-
-			this.size =  Math.floor(this.table.rowManager.getElement().clientHeight / testElRow.offsetHeight);
-
-			this.table.rowManager.getTableElement().removeChild(testElRow);
-		}
-
-		// this.page = this.table.options.paginationInitialPage || 1;
-		this.count = this.table.options.paginationButtonCount;
-
-		this.generatePageSizeSelectList();
 	}
 
 	initializeProgressive(mode){
@@ -300,19 +302,19 @@ class Page extends Module{
 	setPage(page){
 		switch(page){
 			case "first":
-				return this.setPage(1);
+			return this.setPage(1);
 			break;
 
 			case "prev":
-				return this.previousPage();
+			return this.previousPage();
 			break;
 
 			case "next":
-				return this.nextPage();
+			return this.nextPage();
 			break;
 
 			case "last":
-				return this.setPage(this.max);
+			return this.setPage(this.max);
 			break;
 		}
 

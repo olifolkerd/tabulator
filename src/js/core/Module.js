@@ -4,7 +4,8 @@ class Module{
 		this.table = table;
 	}
 
-	register(){
+	initialize(){
+		// setup module when table is initialized, to be overriden in module
 	}
 }
 

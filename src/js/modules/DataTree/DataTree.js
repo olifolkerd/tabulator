@@ -20,77 +20,79 @@ class DataTree extends Module{
 	}
 
 	initialize(){
-		var dummyEl = null,
-		firstCol = this.table.columnManager.getFirstVisibileColumn(),
-		options = this.table.options;
+		if(this.table.options.dataTree){
+			var dummyEl = null,
+			firstCol = this.table.columnManager.getFirstVisibileColumn(),
+			options = this.table.options;
 
-		this.field = options.dataTreeChildField;
-		this.indent = options.dataTreeChildIndent;
-		this.elementField = options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
+			this.field = options.dataTreeChildField;
+			this.indent = options.dataTreeChildIndent;
+			this.elementField = options.dataTreeElementColumn || (firstCol ? firstCol.field : false);
 
-		if(options.dataTreeBranchElement){
+			if(options.dataTreeBranchElement){
 
-			if(options.dataTreeBranchElement === true){
-				this.branchEl = document.createElement("div");
-				this.branchEl.classList.add("tabulator-data-tree-branch");
-			}else{
-				if(typeof options.dataTreeBranchElement === "string"){
-					dummyEl = document.createElement("div");
-					dummyEl.innerHTML = options.dataTreeBranchElement;
-					this.branchEl = dummyEl.firstChild;
+				if(options.dataTreeBranchElement === true){
+					this.branchEl = document.createElement("div");
+					this.branchEl.classList.add("tabulator-data-tree-branch");
 				}else{
-					this.branchEl = options.dataTreeBranchElement;
+					if(typeof options.dataTreeBranchElement === "string"){
+						dummyEl = document.createElement("div");
+						dummyEl.innerHTML = options.dataTreeBranchElement;
+						this.branchEl = dummyEl.firstChild;
+					}else{
+						this.branchEl = options.dataTreeBranchElement;
+					}
 				}
 			}
-		}
 
-		if(options.dataTreeCollapseElement){
-			if(typeof options.dataTreeCollapseElement === "string"){
-				dummyEl = document.createElement("div");
-				dummyEl.innerHTML = options.dataTreeCollapseElement;
-				this.collapseEl = dummyEl.firstChild;
+			if(options.dataTreeCollapseElement){
+				if(typeof options.dataTreeCollapseElement === "string"){
+					dummyEl = document.createElement("div");
+					dummyEl.innerHTML = options.dataTreeCollapseElement;
+					this.collapseEl = dummyEl.firstChild;
+				}else{
+					this.collapseEl = options.dataTreeCollapseElement;
+				}
 			}else{
-				this.collapseEl = options.dataTreeCollapseElement;
+				this.collapseEl = document.createElement("div");
+				this.collapseEl.classList.add("tabulator-data-tree-control");
+				this.collapseEl.tabIndex = 0;
+				this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
 			}
-		}else{
-			this.collapseEl = document.createElement("div");
-			this.collapseEl.classList.add("tabulator-data-tree-control");
-			this.collapseEl.tabIndex = 0;
-			this.collapseEl.innerHTML = "<div class='tabulator-data-tree-control-collapse'></div>";
-		}
 
-		if(options.dataTreeExpandElement){
-			if(typeof options.dataTreeExpandElement === "string"){
-				dummyEl = document.createElement("div");
-				dummyEl.innerHTML = options.dataTreeExpandElement;
-				this.expandEl = dummyEl.firstChild;
+			if(options.dataTreeExpandElement){
+				if(typeof options.dataTreeExpandElement === "string"){
+					dummyEl = document.createElement("div");
+					dummyEl.innerHTML = options.dataTreeExpandElement;
+					this.expandEl = dummyEl.firstChild;
+				}else{
+					this.expandEl = options.dataTreeExpandElement;
+				}
 			}else{
-				this.expandEl = options.dataTreeExpandElement;
+				this.expandEl = document.createElement("div");
+				this.expandEl.classList.add("tabulator-data-tree-control");
+				this.expandEl.tabIndex = 0;
+				this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
 			}
-		}else{
-			this.expandEl = document.createElement("div");
-			this.expandEl.classList.add("tabulator-data-tree-control");
-			this.expandEl.tabIndex = 0;
-			this.expandEl.innerHTML = "<div class='tabulator-data-tree-control-expand'></div>";
-		}
 
 
-		switch(typeof options.dataTreeStartExpanded){
-			case "boolean":
-			this.startOpen = function(row, index){
-				return options.dataTreeStartExpanded;
-			};
-			break;
+			switch(typeof options.dataTreeStartExpanded){
+				case "boolean":
+				this.startOpen = function(row, index){
+					return options.dataTreeStartExpanded;
+				};
+				break;
 
-			case "function":
-			this.startOpen = options.dataTreeStartExpanded;
-			break;
+				case "function":
+				this.startOpen = options.dataTreeStartExpanded;
+				break;
 
-			default:
-			this.startOpen = function(row, index){
-				return options.dataTreeStartExpanded[index];
-			};
-			break;
+				default:
+				this.startOpen = function(row, index){
+					return options.dataTreeStartExpanded[index];
+				};
+				break;
+			}
 		}
 	}
 

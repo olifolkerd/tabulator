@@ -19,104 +19,106 @@ class GroupRows extends Module{
 
 	//initialize group configuration
 	initialize(){
-		var groupBy = this.table.options.groupBy,
-		startOpen = this.table.options.groupStartOpen,
-		groupHeader = this.table.options.groupHeader;
+		if(this.table.options.groupBy){
+			var groupBy = this.table.options.groupBy,
+			startOpen = this.table.options.groupStartOpen,
+			groupHeader = this.table.options.groupHeader;
 
-		this.allowedValues = this.table.options.groupValues;
+			this.allowedValues = this.table.options.groupValues;
 
-		if(Array.isArray(groupBy) && Array.isArray(groupHeader) && groupBy.length > groupHeader.length){
-			console.warn("Error creating group headers, groupHeader array is shorter than groupBy array");
-		}
-
-		this.headerGenerator = [function(){return "";}];
-		this.startOpen = [function(){return false;}]; //starting state of group
-
-		this.table.modules.localize.bind("groups|item", (langValue, lang) => {
-			this.headerGenerator[0] = (value, count, data) => { //header layout function
-				return (typeof value === "undefined" ? "" : value) + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
-			};
-		});
-
-		this.groupIDLookups = [];
-
-		if(Array.isArray(groupBy) || groupBy){
-			if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both"){
-				this.table.modules.columnCalcs.removeCalcs();
+			if(Array.isArray(groupBy) && Array.isArray(groupHeader) && groupBy.length > groupHeader.length){
+				console.warn("Error creating group headers, groupHeader array is shorter than groupBy array");
 			}
-		}else{
-			if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "group"){
 
-				var cols = this.table.columnManager.getRealColumns();
+			this.headerGenerator = [function(){return "";}];
+			this.startOpen = [function(){return false;}]; //starting state of group
 
-				cols.forEach((col) => {
-					if(col.definition.topCalc){
-						this.table.modules.columnCalcs.initializeTopRow();
-					}
+			this.table.modules.localize.bind("groups|item", (langValue, lang) => {
+				this.headerGenerator[0] = (value, count, data) => { //header layout function
+					return (typeof value === "undefined" ? "" : value) + "<span>(" + count + " " + ((count === 1) ? langValue : lang.groups.items) + ")</span>";
+				};
+			});
 
-					if(col.definition.bottomCalc){
-						this.table.modules.columnCalcs.initializeBottomRow();
-					}
-				});
-			}
-		}
+			this.groupIDLookups = [];
 
-		if(!Array.isArray(groupBy)){
-			groupBy = [groupBy];
-		}
-
-		groupBy.forEach((group, i) => {
-			var lookupFunc, column;
-
-			if(typeof group == "function"){
-				lookupFunc = group;
+			if(Array.isArray(groupBy) || groupBy){
+				if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "table" && this.table.options.columnCalcs != "both"){
+					this.table.modules.columnCalcs.removeCalcs();
+				}
 			}else{
-				column = this.table.columnManager.getColumnByField(group);
+				if(this.table.modExists("columnCalcs") && this.table.options.columnCalcs != "group"){
 
-				if(column){
-					lookupFunc = function(data){
-						return column.getFieldValue(data);
-					};
-				}else{
-					lookupFunc = function(data){
-						return data[group];
-					};
+					var cols = this.table.columnManager.getRealColumns();
+
+					cols.forEach((col) => {
+						if(col.definition.topCalc){
+							this.table.modules.columnCalcs.initializeTopRow();
+						}
+
+						if(col.definition.bottomCalc){
+							this.table.modules.columnCalcs.initializeBottomRow();
+						}
+					});
 				}
 			}
 
-			this.groupIDLookups.push({
-				field: typeof group === "function" ? false : group,
-				func:lookupFunc,
-				values:this.allowedValues ? this.allowedValues[i] : false,
-			});
-		});
-
-		if(startOpen){
-			if(!Array.isArray(startOpen)){
-				startOpen = [startOpen];
+			if(!Array.isArray(groupBy)){
+				groupBy = [groupBy];
 			}
 
-			startOpen.forEach((level) => {
-				level = typeof level == "function" ? level : function(){return true;};
+			groupBy.forEach((group, i) => {
+				var lookupFunc, column;
+
+				if(typeof group == "function"){
+					lookupFunc = group;
+				}else{
+					column = this.table.columnManager.getColumnByField(group);
+
+					if(column){
+						lookupFunc = function(data){
+							return column.getFieldValue(data);
+						};
+					}else{
+						lookupFunc = function(data){
+							return data[group];
+						};
+					}
+				}
+
+				this.groupIDLookups.push({
+					field: typeof group === "function" ? false : group,
+					func:lookupFunc,
+					values:this.allowedValues ? this.allowedValues[i] : false,
+				});
 			});
 
-			this.startOpen = startOpen;
+			if(startOpen){
+				if(!Array.isArray(startOpen)){
+					startOpen = [startOpen];
+				}
+
+				startOpen.forEach((level) => {
+					level = typeof level == "function" ? level : function(){return true;};
+				});
+
+				this.startOpen = startOpen;
+			}
+
+			if(groupHeader){
+				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
+			}
+
+			this.initialized = true;
 		}
+}
 
-		if(groupHeader){
-			this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
-		}
+setDisplayIndex(index){
+	this.displayIndex = index;
+}
 
-		this.initialized = true;
-	}
-
-	setDisplayIndex(index){
-		this.displayIndex = index;
-	}
-
-	getDisplayIndex(){
-		return this.displayIndex;
-	}
+getDisplayIndex(){
+	return this.displayIndex;
+}
 
 	//return appropriate rows with group headers
 	getRows(rows){
@@ -288,9 +290,9 @@ class GroupRows extends Module{
 
 	reassignRowToGroup(row){
 		var oldRowGroup = row.getGroup(),
-			oldGroupPath = oldRowGroup.getPath(),
-			newGroupPath = this.getExpectedPath(row),
-			samePath = true;
+		oldGroupPath = oldRowGroup.getPath(),
+		newGroupPath = this.getExpectedPath(row),
+		samePath = true;
 
 		// figure out if new group path is the same as old group path
 		var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
