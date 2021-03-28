@@ -1194,15 +1194,15 @@ class Cell$1 {
 
 		this._bindMouseEvents(cellEvents);
 
-		// this.table.eventBus.dispatch("cell-init", this);
+		this.table.eventBus.dispatch("cell-init", this);
 
-		if(this.column.modules.edit){
-			this.table.modules.edit.bindEditor(this);
-		}
+		// if(this.column.modules.edit){
+		// 	this.table.modules.edit.bindEditor(this);
+		// }
 
-		if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-			this.table.modules.moveRow.initializeCell(this);
-		}
+		// if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
+		// 	this.table.modules.moveRow.initializeCell(this);
+		// }
 
 		//hide cell if not visible
 		if(!this.column.visible){
@@ -7470,6 +7470,10 @@ class Edit extends Module{
 		this.editedCells = [];
 	}
 
+	initialize(){
+		this.subscribe("cell-init", this.bindEditor.bind(this));
+	}
+
 	//initialize column editor
 	initializeColumn(column){
 		var config = {
@@ -7482,29 +7486,29 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-				if(Edit.editors[column.definition.editor]){
-					config.editor = Edit.editors[column.definition.editor];
-				}else {
-					console.warn("Editor Error - No such editor found: ", column.definition.editor);
-				}
+			if(Edit.editors[column.definition.editor]){
+				config.editor = Edit.editors[column.definition.editor];
+			}else {
+				console.warn("Editor Error - No such editor found: ", column.definition.editor);
+			}
 			break;
 
 			case "function":
-				config.editor = column.definition.editor;
+			config.editor = column.definition.editor;
 			break;
 
 			case "boolean":
-				if(column.definition.editor === true){
-					if(typeof column.definition.formatter !== "function"){
-						if(Edit.editors[column.definition.formatter]){
-							config.editor = Edit.editors[column.definition.formatter];
-						}else {
-							config.editor = Edit.editors["input"];
-						}
+			if(column.definition.editor === true){
+				if(typeof column.definition.formatter !== "function"){
+					if(Edit.editors[column.definition.formatter]){
+						config.editor = Edit.editors[column.definition.formatter];
 					}else {
-						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
+						config.editor = Edit.editors["input"];
 					}
+				}else {
+					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
+			}
 			break;
 		}
 
@@ -7564,30 +7568,32 @@ class Edit extends Module{
 
 	//return a formatted value for a cell
 	bindEditor(cell){
-		var self = this,
-		element = cell.getElement(true);
+		if(cell.column.modules.edit){
+			var self = this,
+			element = cell.getElement(true);
 
-		element.setAttribute("tabindex", 0);
+			element.setAttribute("tabindex", 0);
 
-		element.addEventListener("click", function(e){
-			if(!element.classList.contains("tabulator-editing")){
-				element.focus({preventScroll: true});
-			}
-		});
+			element.addEventListener("click", function(e){
+				if(!element.classList.contains("tabulator-editing")){
+					element.focus({preventScroll: true});
+				}
+			});
 
-		element.addEventListener("mousedown", function(e){
-			if (e.button === 2) {
-				e.preventDefault();
-			}else {
-				self.mouseClick = true;
-			}
-		});
+			element.addEventListener("mousedown", function(e){
+				if (e.button === 2) {
+					e.preventDefault();
+				}else {
+					self.mouseClick = true;
+				}
+			});
 
-		element.addEventListener("focus", function(e){
-			if(!self.recursionBlock){
-				self.edit(cell, e, false);
-			}
-		});
+			element.addEventListener("focus", function(e){
+				if(!self.recursionBlock){
+					self.edit(cell, e, false);
+				}
+			});
+		}
 	}
 
 	focusCellNoEvent(cell, block){
@@ -12825,6 +12831,8 @@ class MoveRows extends Module{
 			this.connectionSelectorsElements = this.table.options.movableRowsConnectedElements;
 
 			this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
+
+			this.subscribe("cell-init", this.initializeCell.bind(this));
 		}
 	}
 
@@ -12918,26 +12926,28 @@ class MoveRows extends Module{
 	}
 
 	initializeCell(cell){
-		var self = this,
-		cellEl = cell.getElement(true);
+		if(cell.column.definition.rowHandle && this.table.options.movableRows !== false){
+			var self = this,
+			cellEl = cell.getElement(true);
 
-		cellEl.addEventListener("mousedown", function(e){
-			if(e.which === 1){
-				self.checkTimeout = setTimeout(function(){
-					self.startMove(e, cell.row);
-				}, self.checkPeriod);
-			}
-		});
-
-		cellEl.addEventListener("mouseup", function(e){
-			if(e.which === 1){
-				if(self.checkTimeout){
-					clearTimeout(self.checkTimeout);
+			cellEl.addEventListener("mousedown", function(e){
+				if(e.which === 1){
+					self.checkTimeout = setTimeout(function(){
+						self.startMove(e, cell.row);
+					}, self.checkPeriod);
 				}
-			}
-		});
+			});
 
-		this.bindTouchEvents(cell.row, cellEl);
+			cellEl.addEventListener("mouseup", function(e){
+				if(e.which === 1){
+					if(self.checkTimeout){
+						clearTimeout(self.checkTimeout);
+					}
+				}
+			});
+
+			this.bindTouchEvents(cell.row, cellEl);
+		}
 	}
 
 	bindTouchEvents(row, element){
@@ -20189,20 +20199,13 @@ class InternalEventBus {
 
 	_dispatch(){
 		var args = Array.from(arguments),
-		key = args.shift(),
-		result;
+		key = args.shift();
 
 		if(this.events[key]){
-			this.events[key].forEach((subscriber, i) => {
+			this.events[key].forEach((subscriber) => {
 				let callResult = subscriber.callback.apply(this, args);
-
-				if(!i){
-					result = callResult;
-				}
 			});
 		}
-
-		return result;
 	}
 
 	_debugDispatch(){

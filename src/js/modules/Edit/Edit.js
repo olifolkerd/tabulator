@@ -14,6 +14,10 @@ class Edit extends Module{
 		this.editedCells = [];
 	}
 
+	initialize(){
+		this.subscribe("cell-init", this.bindEditor.bind(this));
+	}
+
 	//initialize column editor
 	initializeColumn(column){
 		var self = this,
@@ -27,29 +31,29 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-				if(Edit.editors[column.definition.editor]){
-					config.editor = Edit.editors[column.definition.editor];
-				}else{
-					console.warn("Editor Error - No such editor found: ", column.definition.editor);
-				}
+			if(Edit.editors[column.definition.editor]){
+				config.editor = Edit.editors[column.definition.editor];
+			}else{
+				console.warn("Editor Error - No such editor found: ", column.definition.editor);
+			}
 			break;
 
 			case "function":
-				config.editor = column.definition.editor;
+			config.editor = column.definition.editor;
 			break;
 
 			case "boolean":
-				if(column.definition.editor === true){
-					if(typeof column.definition.formatter !== "function"){
-						if(Edit.editors[column.definition.formatter]){
-							config.editor = Edit.editors[column.definition.formatter];
-						}else{
-							config.editor = Edit.editors["input"];
-						}
+			if(column.definition.editor === true){
+				if(typeof column.definition.formatter !== "function"){
+					if(Edit.editors[column.definition.formatter]){
+						config.editor = Edit.editors[column.definition.formatter];
 					}else{
-						console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
+						config.editor = Edit.editors["input"];
 					}
+				}else{
+					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
 				}
+			}
 			break;
 		}
 
@@ -109,30 +113,32 @@ class Edit extends Module{
 
 	//return a formatted value for a cell
 	bindEditor(cell){
-		var self = this,
-		element = cell.getElement(true);
+		if(cell.column.modules.edit){
+			var self = this,
+			element = cell.getElement(true);
 
-		element.setAttribute("tabindex", 0);
+			element.setAttribute("tabindex", 0);
 
-		element.addEventListener("click", function(e){
-			if(!element.classList.contains("tabulator-editing")){
-				element.focus({preventScroll: true});
-			}
-		});
+			element.addEventListener("click", function(e){
+				if(!element.classList.contains("tabulator-editing")){
+					element.focus({preventScroll: true});
+				}
+			});
 
-		element.addEventListener("mousedown", function(e){
-			if (e.button === 2) {
-				e.preventDefault();
-			}else{
-				self.mouseClick = true;
-			}
-		});
+			element.addEventListener("mousedown", function(e){
+				if (e.button === 2) {
+					e.preventDefault();
+				}else{
+					self.mouseClick = true;
+				}
+			});
 
-		element.addEventListener("focus", function(e){
-			if(!self.recursionBlock){
-				self.edit(cell, e, false);
-			}
-		});
+			element.addEventListener("focus", function(e){
+				if(!self.recursionBlock){
+					self.edit(cell, e, false);
+				}
+			});
+		}
 	}
 
 	focusCellNoEvent(cell, block){

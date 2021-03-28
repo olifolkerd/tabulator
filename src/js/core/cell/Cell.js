@@ -96,13 +96,15 @@ export default class Cell {
 
 		this._bindMouseEvents(cellEvents);
 
-		if(this.column.modules.edit){
-			this.table.modules.edit.bindEditor(this);
-		}
+		this.table.eventBus.dispatch("cell-init", this);
 
-		if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-			this.table.modules.moveRow.initializeCell(this);
-		}
+		// if(this.column.modules.edit){
+		// 	this.table.modules.edit.bindEditor(this);
+		// }
+
+		// if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
+		// 	this.table.modules.moveRow.initializeCell(this);
+		// }
 
 		//hide cell if not visible
 		if(!this.column.visible){

@@ -48,6 +48,8 @@ class MoveRows extends Module{
 			this.connectionSelectorsElements = this.table.options.movableRowsConnectedElements;
 
 			this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
+
+			this.subscribe("cell-init", this.initializeCell.bind(this));
 		}
 	}
 
@@ -142,26 +144,28 @@ class MoveRows extends Module{
 	}
 
 	initializeCell(cell){
-		var self = this,
-		cellEl = cell.getElement(true);
+		if(cell.column.definition.rowHandle && this.table.options.movableRows !== false){
+			var self = this,
+			cellEl = cell.getElement(true);
 
-		cellEl.addEventListener("mousedown", function(e){
-			if(e.which === 1){
-				self.checkTimeout = setTimeout(function(){
-					self.startMove(e, cell.row);
-				}, self.checkPeriod);
-			}
-		});
-
-		cellEl.addEventListener("mouseup", function(e){
-			if(e.which === 1){
-				if(self.checkTimeout){
-					clearTimeout(self.checkTimeout);
+			cellEl.addEventListener("mousedown", function(e){
+				if(e.which === 1){
+					self.checkTimeout = setTimeout(function(){
+						self.startMove(e, cell.row);
+					}, self.checkPeriod);
 				}
-			}
-		});
+			});
 
-		this.bindTouchEvents(cell.row, cellEl);
+			cellEl.addEventListener("mouseup", function(e){
+				if(e.which === 1){
+					if(self.checkTimeout){
+						clearTimeout(self.checkTimeout);
+					}
+				}
+			});
+
+			this.bindTouchEvents(cell.row, cellEl);
+		}
 	}
 
 	bindTouchEvents(row, element){
