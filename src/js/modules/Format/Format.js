@@ -5,7 +5,8 @@ import defaultFormatters from './defaults/formatters.js';
 class Format extends Module{
 
 	initialize(){
-		this.subscribe("cell-format", this.formatValue.bind(this), -1);
+		this.subscribe("cell-format", this.formatValue.bind(this));
+		this.subscribe("cell-rendered", this.cellRendered.bind(this));
 	}
 
 	//initialize column formatter
