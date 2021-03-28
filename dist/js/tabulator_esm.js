@@ -22919,7 +22919,7 @@ class Tabulator$1 {
 		this.eventBus.unsubscribe(key, callback);
 	}
 
-	triggerEvent(){
+	dispatchEvent(){
 		var args = Array.from(arguments),
 		key = args.shift();
 
