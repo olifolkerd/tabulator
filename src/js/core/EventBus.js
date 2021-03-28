@@ -1,8 +1,8 @@
 export default class EventBus {
 
-	constructor(table){
+	constructor(optionsList){
 		this.events = {};
-		this.table = table;
+		this.optionsList = optionsLis || {};
 	}
 
 	subscribe(key, callback){
@@ -34,7 +34,7 @@ export default class EventBus {
 	}
 
 	subscribed(key){
-		return this.table.options[key] || (this.events[key] && this.events[key].length);
+		return this.optionsList[key] || (this.events[key] && this.events[key].length);
 	}
 
 	dispatch(){
@@ -52,8 +52,8 @@ export default class EventBus {
 			});
 		}
 
-		if(typeof this.table.options[key] === "function"){
-			result = this.table.options[key].apply(this, args);
+		if(typeof this.optionsList[key] === "function"){
+			result = this.optionsList[key].apply(this, args);
 		}
 
 		return result;

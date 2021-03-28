@@ -23,7 +23,7 @@ class Tabulator {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
-		this.eventBus = new EventBus(this); //holder Footer Manager
+		this.eventBus = new EventBus(this.options); //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 
 		this.browser = ""; //hold current browser type

@@ -20025,9 +20025,9 @@ class FooterManager {
 
 class EventBus {
 
-	constructor(table){
+	constructor(optionsList){
 		this.events = {};
-		this.table = table;
+		this.optionsList = optionsLis || {};
 	}
 
 	subscribe(key, callback){
@@ -20059,7 +20059,7 @@ class EventBus {
 	}
 
 	subscribed(key){
-		return this.table.options[key] || (this.events[key] && this.events[key].length);
+		return this.optionsList[key] || (this.events[key] && this.events[key].length);
 	}
 
 	dispatch(){
@@ -20077,8 +20077,8 @@ class EventBus {
 			});
 		}
 
-		if(typeof this.table.options[key] === "function"){
-			result = this.table.options[key].apply(this, args);
+		if(typeof this.optionsList[key] === "function"){
+			result = this.optionsList[key].apply(this, args);
 		}
 
 		return result;
@@ -21219,7 +21219,7 @@ class Tabulator$1 {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
-		this.eventBus = new EventBus(this); //holder Footer Manager
+		this.eventBus = new EventBus(this.options); //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
 
 		this.browser = ""; //hold current browser type
