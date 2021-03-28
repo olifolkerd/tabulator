@@ -42,14 +42,18 @@ export default class InternalEventBus {
 		return this.events[key] && this.events[key].length;
 	}
 
-	chain(key, params, fallback){
+	chain(key, args, fallback){
 		var value;
 
-		// console.log("InternalEvent:" + key, params);
+		// console.log("InternalEvent:" + key, args);
+
+		if(!Array.isArray(args)){
+			args = [args];
+		}
 
 		if(this.subscribed(key)){
 			this.events[key].forEach((subscriber, i) => {
-				value = subscriber.callback(params, value);
+				value = subscriber.callback.apply(this, (i ? args.concat([value]) : args));
 			});
 
 			return value;

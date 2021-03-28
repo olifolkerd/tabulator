@@ -98,14 +98,6 @@ export default class Cell {
 
 		this.table.eventBus.dispatch("cell-init", this);
 
-		// if(this.column.modules.edit){
-		// 	this.table.modules.edit.bindEditor(this);
-		// }
-
-		// if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-		// 	this.table.modules.moveRow.initializeCell(this);
-		// }
-
 		//hide cell if not visible
 		if(!this.column.visible){
 			this.hide();
@@ -375,9 +367,7 @@ export default class Cell {
 	}
 
 	cellRendered(){
-		if(this.table.modExists("format") && this.table.modules.format.cellRendered){
-			this.table.modules.format.cellRendered(this);
-		}
+		this.table.eventBus.dispatch("cell-rendered", this);
 	}
 
 	//generate tooltip text
@@ -431,18 +421,12 @@ export default class Cell {
 		component;
 
 		if(changed){
-			if(this.table.options.history && this.table.modExists("history")){
-				this.table.modules.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
-			}
+			this.table.eventBus.dispatch("cell-value-updated", this);
 
 			component = this.getComponent();
 
 			if(this.column.cellEvents.cellEdited){
 				this.column.cellEvents.cellEdited.call(this.table, component);
-			}
-
-			if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.groupRows.reassignRowToGroup(this.row);
 			}
 
 			this.cellRendered();
@@ -463,30 +447,14 @@ export default class Cell {
 			changed = true;
 
 			if(mutate){
-				if(this.column.modules.mutate){
-					value = this.table.modules.mutator.transformCell(this, value);
-				}
+				value = this.table.eventBus.chain("cell-value-changing", [this, value], value);
 			}
 		}
 
 		this.setValueActual(value);
 
-		if(changed && this.table.modExists("columnCalcs")){
-			if(this.column.definition.topCalc || this.column.definition.bottomCalc){
-				if(this.table.options.groupBy && this.table.modExists("groupRows")){
-
-					if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
-						this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-					}
-
-					if(this.table.options.columnCalcs != "table"){
-						this.table.modules.columnCalcs.recalcRowGroup(this.row);
-					}
-
-				}else{
-					this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-				}
-			}
+		if(changed){
+			this.table.eventBus.dispatch("cell-value-changed", this);
 		}
 
 		return changed;
@@ -497,15 +465,11 @@ export default class Cell {
 
 		this.value = value;
 
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData")){
-			this.table.modules.reactiveData.block();
-		}
+		this.table.eventBus.dispatch("cell-value-save-before", this);
 
 		this.column.setFieldValue(this.row.data, value);
 
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData")){
-			this.table.modules.reactiveData.unblock();
-		}
+		this.table.eventBus.dispatch("cell-value-save-after", this);
 
 		if(this.loaded){
 			this.layoutElement();
@@ -516,20 +480,7 @@ export default class Cell {
 		this._generateContents();
 		this._generateTooltip();
 
-		//set resizable handles
-		if(this.table.options.resizableColumns && this.table.modExists("resizeColumns") && this.row.type === "row"){
-			this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
-		}
-
-
-		if((this.column.definition.contextMenu || this.column.definition.clickMenu) && this.table.modExists("menu")){
-			this.table.modules.menu.initializeCell(this);
-		}
-
-		//handle frozen cells
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layoutElement(this.element, this.column);
-		}
+		this.table.eventBus.dispatch("cell-layout", this);
 	}
 
 	setWidth(){

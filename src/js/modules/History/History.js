@@ -12,6 +12,16 @@ class History extends Module{
 		this.index = -1;
 	}
 
+	initialize(){
+		if(this.table.options.history){
+			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
+		}
+	}
+
+	cellUpdated(cell){
+		this.action("cellEdit", cell, {oldValue:cell.oldValue, newValue:cell.value});
+	}
+
 	clear(){
 		this.history = [];
 		this.index = -1;
@@ -44,11 +54,11 @@ class History extends Module{
 
 		if(index > -1){
 			this.history.splice(index, 1);
-	 		if(index <= this.index){
-	 			this.index--;
-	 		}
+			if(index <= this.index){
+				this.index--;
+			}
 
-	 		this.clearComponentHistory(component);
+			this.clearComponentHistory(component);
 		}
 	}
 

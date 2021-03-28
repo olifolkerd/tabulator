@@ -12,6 +12,18 @@ class ResizeColumns extends Module{
 		this.prevHandle = null;
 	}
 
+	initialize(){
+		if(this.table.options.resizableColumns){
+			this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
+		}
+	}
+
+	layoutCellHandles(cell){
+		if(cell.row.type === "row"){
+			this.initializeColumn("cell", cell.column, cell.element);
+		}
+	}
+
 	initializeColumn(type, column, element){
 		var self = this,
 		variableHeight = false,

@@ -108,17 +108,27 @@ class GroupRows extends Module{
 				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 			}
 
+			if(this.table.options.groupUpdateOnCellEdit){
+				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
+			}
+
+
 			this.initialized = true;
 		}
-}
+	}
 
-setDisplayIndex(index){
-	this.displayIndex = index;
-}
+	cellUpdated(cell){
+		this.reassignRowToGroup(cell.row);
+	}
 
-getDisplayIndex(){
-	return this.displayIndex;
-}
+
+	setDisplayIndex(index){
+		this.displayIndex = index;
+	}
+
+	getDisplayIndex(){
+		return this.displayIndex;
+	}
 
 	//return appropriate rows with group headers
 	getRows(rows){

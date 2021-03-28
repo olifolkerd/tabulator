@@ -1196,14 +1196,6 @@ class Cell$1 {
 
 		this.table.eventBus.dispatch("cell-init", this);
 
-		// if(this.column.modules.edit){
-		// 	this.table.modules.edit.bindEditor(this);
-		// }
-
-		// if(this.column.definition.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-		// 	this.table.modules.moveRow.initializeCell(this);
-		// }
-
 		//hide cell if not visible
 		if(!this.column.visible){
 			this.hide();
@@ -1473,9 +1465,7 @@ class Cell$1 {
 	}
 
 	cellRendered(){
-		if(this.table.modExists("format") && this.table.modules.format.cellRendered){
-			this.table.modules.format.cellRendered(this);
-		}
+		this.table.eventBus.dispatch("cell-rendered", this);
 	}
 
 	//generate tooltip text
@@ -1529,18 +1519,12 @@ class Cell$1 {
 		component;
 
 		if(changed){
-			if(this.table.options.history && this.table.modExists("history")){
-				this.table.modules.history.action("cellEdit", this, {oldValue:this.oldValue, newValue:this.value});
-			}
+			this.table.eventBus.dispatch("cell-value-updated", this);
 
 			component = this.getComponent();
 
 			if(this.column.cellEvents.cellEdited){
 				this.column.cellEvents.cellEdited.call(this.table, component);
-			}
-
-			if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.groupRows.reassignRowToGroup(this.row);
 			}
 
 			this.cellRendered();
@@ -1561,30 +1545,14 @@ class Cell$1 {
 			changed = true;
 
 			if(mutate){
-				if(this.column.modules.mutate){
-					value = this.table.modules.mutator.transformCell(this, value);
-				}
+				value = this.table.eventBus.chain("cell-value-changing", [this, value], value);
 			}
 		}
 
 		this.setValueActual(value);
 
-		if(changed && this.table.modExists("columnCalcs")){
-			if(this.column.definition.topCalc || this.column.definition.bottomCalc){
-				if(this.table.options.groupBy && this.table.modExists("groupRows")){
-
-					if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
-						this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-					}
-
-					if(this.table.options.columnCalcs != "table"){
-						this.table.modules.columnCalcs.recalcRowGroup(this.row);
-					}
-
-				}else {
-					this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-				}
-			}
+		if(changed){
+			this.table.eventBus.dispatch("cell-value-changed", this);
 		}
 
 		return changed;
@@ -1595,15 +1563,11 @@ class Cell$1 {
 
 		this.value = value;
 
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData")){
-			this.table.modules.reactiveData.block();
-		}
+		this.table.eventBus.dispatch("cell-value-save-before", this);
 
 		this.column.setFieldValue(this.row.data, value);
 
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData")){
-			this.table.modules.reactiveData.unblock();
-		}
+		this.table.eventBus.dispatch("cell-value-save-after", this);
 
 		if(this.loaded){
 			this.layoutElement();
@@ -1614,20 +1578,7 @@ class Cell$1 {
 		this._generateContents();
 		this._generateTooltip();
 
-		//set resizable handles
-		if(this.table.options.resizableColumns && this.table.modExists("resizeColumns") && this.row.type === "row"){
-			this.table.modules.resizeColumns.initializeColumn("cell", this.column, this.element);
-		}
-
-
-		if((this.column.definition.contextMenu || this.column.definition.clickMenu) && this.table.modExists("menu")){
-			this.table.modules.menu.initializeCell(this);
-		}
-
-		//handle frozen cells
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layoutElement(this.element, this.column);
-		}
+		this.table.eventBus.dispatch("cell-layout", this);
 	}
 
 	setWidth(){
@@ -3966,7 +3917,7 @@ class Row$1 {
 			}
 
 			if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.groupRows.reassignRowToGroup(this.row);
+				this.table.modules.groupRows.reassignRowToGroup(this);
 			}
 
 			//Partial reinitialization if visible
@@ -4356,6 +4307,26 @@ class ColumnCalcs extends Module{
 
 	initialize(){
 		this.genColumn = new Column$1({field:"value"}, this);
+
+		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
+	}
+
+	cellValueChanged(cell){
+		if(cell.column.definition.topCalc || cell.column.definition.bottomCalc){
+			if(this.table.options.groupBy){
+
+				if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
+					this.recalc(this.table.rowManager.activeRows);
+				}
+
+				if(this.table.options.columnCalcs != "table"){
+					this.recalcRowGroup(this.row);
+				}
+
+			}else {
+				this.recalc(this.table.rowManager.activeRows);
+			}
+		}
 	}
 
 	//dummy functions to handle being mock column manager
@@ -10105,6 +10076,14 @@ class FrozenColumns extends Module{
 		this.table.columnManager.element.style.paddingRight = 0;
 	}
 
+	initialize(){
+		this.subscribe("cell-layout", this.layoutCell.bind(this));
+	}
+
+	layoutCell(cell){
+		this.layoutElement(cell.element, cell.column);
+	}
+
 	//initialize specific column
 	initializeColumn(column){
 		var config = {margin:0, edge:false};
@@ -10440,6 +10419,62 @@ class FrozenRows extends Module{
 }
 
 FrozenRows.moduleName = "frozenRows";
+
+//public group object
+class GroupComponent {
+	constructor (group){
+		this._group = group;
+		this.type = "GroupComponent";
+	}
+
+	getKey(){
+		return this._group.key;
+	}
+
+	getField(){
+		return this._group.field;
+	}
+
+	getElement(){
+		return this._group.element;
+	}
+
+	getRows(){
+		return this._group.getRows(true);
+	}
+
+	getSubGroups(){
+		return this._group.getSubGroups(true);
+	}
+
+	getParentGroup(){
+		return this._group.parent ? this._group.parent.getComponent() : false;
+	}
+
+	isVisible(){
+		return this._group.visible;
+	}
+
+	show(){
+		this._group.show();
+	}
+
+	hide(){
+		this._group.hide();
+	}
+
+	toggle(){
+		this._group.toggleVisibility();
+	}
+
+	_getSelf(){
+		return this._group;
+	}
+
+	getTable(){
+		return this._group.groupManager.table;
+	}
+}
 
 //Group functions
 class Group$1{
@@ -11211,17 +11246,27 @@ class GroupRows extends Module{
 				this.headerGenerator = Array.isArray(groupHeader) ? groupHeader : [groupHeader];
 			}
 
+			if(this.table.options.groupUpdateOnCellEdit){
+				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
+			}
+
+
 			this.initialized = true;
 		}
-}
+	}
 
-setDisplayIndex(index){
-	this.displayIndex = index;
-}
+	cellUpdated(cell){
+		this.reassignRowToGroup(cell.row);
+	}
 
-getDisplayIndex(){
-	return this.displayIndex;
-}
+
+	setDisplayIndex(index){
+		this.displayIndex = index;
+	}
+
+	getDisplayIndex(){
+		return this.displayIndex;
+	}
 
 	//return appropriate rows with group headers
 	getRows(rows){
@@ -11530,6 +11575,16 @@ class History extends Module{
 		this.index = -1;
 	}
 
+	initialize(){
+		if(this.table.options.history){
+			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
+		}
+	}
+
+	cellUpdated(cell){
+		this.action("cellEdit", cell, {oldValue:cell.oldValue, newValue:cell.value});
+	}
+
 	clear(){
 		this.history = [];
 		this.index = -1;
@@ -11562,11 +11617,11 @@ class History extends Module{
 
 		if(index > -1){
 			this.history.splice(index, 1);
-	 		if(index <= this.index){
-	 			this.index--;
-	 		}
+			if(index <= this.index){
+				this.index--;
+			}
 
-	 		this.clearComponentHistory(component);
+			this.clearComponentHistory(component);
 		}
 	}
 
@@ -12212,6 +12267,16 @@ class Menu extends Module{
 		this.escEvent = this.escMenu.bind(this);
 		this.nestedMenuBlock = false;
 		this.positionReversedX = false;
+	}
+
+	initialize(){
+		this.subscribe("cell-layout", this.layoutCell.bind(this));
+	}
+
+	layoutCell(cell){
+		if(cell.column.definition.contextMenu || cell.column.definition.clickMenu){
+			this.initializeCell(cell);
+		}
 	}
 
 	initializeColumnHeader(column){
@@ -13411,6 +13476,10 @@ class Mutator extends Module{
 		this.enabled = true;
 	}
 
+	initialize(){
+		this.subscribe("cell-value-changing", this.transformCell.bind(this));
+	}
+
 	//initialize column mutator
 	initializeColumn(column){
 		var match = false,
@@ -13491,16 +13560,18 @@ class Mutator extends Module{
 
 	//apply mutator to new cell value
 	transformCell(cell, value){
-		var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
-		tempData = {};
+		if(cell.column.modules.mutate){
+			var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
+			tempData = {};
 
-		if(mutator){
-			tempData = Object.assign(tempData, cell.row.getData());
-			cell.column.setFieldValue(tempData, value);
-			return mutator.mutator(value, tempData, "edit", mutator.params, cell.getComponent());
-		}else {
-			return value;
+			if(mutator){
+				tempData = Object.assign(tempData, cell.row.getData());
+				cell.column.setFieldValue(tempData, value);
+				return mutator.mutator(value, tempData, "edit", mutator.params, cell.getComponent());
+			}
 		}
+
+		return value;
 	}
 
 	enable(){
@@ -14765,6 +14836,13 @@ class ReactiveData extends Module{
 		this.currentVersion = 0;
 	}
 
+	initialize(){
+		if(this.table.options.reactiveData){
+			this.subscribe("cell-value-save-before", this.block.bind(this));
+			this.subscribe("cell-value-save-after", this.unblock.bind(this));
+		}
+	}
+
 	watchData(data){
 		var self = this,
 		version;
@@ -15091,6 +15169,18 @@ class ResizeColumns extends Module{
 		this.startWidth = false;
 		this.handle = null;
 		this.prevHandle = null;
+	}
+
+	initialize(){
+		if(this.table.options.resizableColumns){
+			this.subscribe("cell-layout", this.layoutCellHandles.bind(this));
+		}
+	}
+
+	layoutCellHandles(cell){
+		if(cell.row.type === "row"){
+			this.initializeColumn("cell", cell.column, cell.element);
+		}
 	}
 
 	initializeColumn(type, column, element){
@@ -20181,14 +20271,18 @@ class InternalEventBus {
 		return this.events[key] && this.events[key].length;
 	}
 
-	chain(key, params, fallback){
+	chain(key, args, fallback){
 		var value;
 
-		// console.log("InternalEvent:" + key, params);
+		// console.log("InternalEvent:" + key, args);
+
+		if(!Array.isArray(args)){
+			args = [args];
+		}
 
 		if(this.subscribed(key)){
 			this.events[key].forEach((subscriber, i) => {
-				value = subscriber.callback(params, value);
+				value = subscriber.callback.apply(this, (i ? args.concat([value]) : args));
 			});
 
 			return value;

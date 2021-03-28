@@ -11,6 +11,10 @@ class Mutator extends Module{
 		this.enabled = true;
 	}
 
+	initialize(){
+		this.subscribe("cell-value-changing", this.transformCell.bind(this));
+	}
+
 	//initialize column mutator
 	initializeColumn(column){
 		var match = false,
@@ -91,16 +95,18 @@ class Mutator extends Module{
 
 	//apply mutator to new cell value
 	transformCell(cell, value){
-		var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
-		tempData = {};
+		if(cell.column.modules.mutate){
+			var mutator = cell.column.modules.mutate.mutatorEdit || cell.column.modules.mutate.mutator || false,
+			tempData = {};
 
-		if(mutator){
-			tempData = Object.assign(tempData, cell.row.getData());
-			cell.column.setFieldValue(tempData, value);
-			return mutator.mutator(value, tempData, "edit", mutator.params, cell.getComponent());
-		}else{
-			return value;
+			if(mutator){
+				tempData = Object.assign(tempData, cell.row.getData());
+				cell.column.setFieldValue(tempData, value);
+				return mutator.mutator(value, tempData, "edit", mutator.params, cell.getComponent());
+			}
 		}
+
+		return value;
 	}
 
 	enable(){

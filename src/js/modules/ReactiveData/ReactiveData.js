@@ -11,6 +11,13 @@ class ReactiveData extends Module{
 		this.currentVersion = 0;
 	}
 
+	initialize(){
+		if(this.table.options.reactiveData){
+			this.subscribe("cell-value-save-before", this.block.bind(this));
+			this.subscribe("cell-value-save-after", this.unblock.bind(this));
+		}
+	}
+
 	watchData(data){
 		var self = this,
 		pushFunc, version;

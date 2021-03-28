@@ -34,6 +34,26 @@ class ColumnCalcs extends Module{
 
 	initialize(){
 		this.genColumn = new Column({field:"value"}, this);
+
+		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
+	}
+
+	cellValueChanged(cell){
+		if(cell.column.definition.topCalc || cell.column.definition.bottomCalc){
+			if(this.table.options.groupBy){
+
+				if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
+					this.recalc(this.table.rowManager.activeRows);
+				}
+
+				if(this.table.options.columnCalcs != "table"){
+					this.recalcRowGroup(this.row);
+				}
+
+			}else{
+				this.recalc(this.table.rowManager.activeRows);
+			}
+		}
 	}
 
 	//dummy functions to handle being mock column manager

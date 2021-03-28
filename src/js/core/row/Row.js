@@ -436,7 +436,7 @@ export default class Row {
 			}
 
 			if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.groupRows.reassignRowToGroup(this.row);
+				this.table.modules.groupRows.reassignRowToGroup(this);
 			}
 
 			//Partial reinitialization if visible

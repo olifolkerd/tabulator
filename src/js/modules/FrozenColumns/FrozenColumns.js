@@ -29,6 +29,14 @@ class FrozenColumns extends Module{
 		this.table.columnManager.element.style.paddingRight = 0;
 	}
 
+	initialize(){
+		this.subscribe("cell-layout", this.layoutCell.bind(this));
+	}
+
+	layoutCell(cell){
+		this.layoutElement(cell.element, cell.column)
+	}
+
 	//initialize specific column
 	initializeColumn(column){
 		var config = {margin:0, edge:false};

@@ -13,6 +13,16 @@ class Menu extends Module{
 		this.positionReversedX = false;
 	}
 
+	initialize(){
+		this.subscribe("cell-layout", this.layoutCell.bind(this));
+	}
+
+	layoutCell(cell){
+		if(cell.column.definition.contextMenu || cell.column.definition.clickMenu){
+			this.initializeCell(cell);
+		}
+	}
+
 	initializeColumnHeader(column){
 		var headerMenuEl;
 
