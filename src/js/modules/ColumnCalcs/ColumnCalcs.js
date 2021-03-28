@@ -47,7 +47,7 @@ class ColumnCalcs extends Module{
 				}
 
 				if(this.table.options.columnCalcs != "table"){
-					this.recalcRowGroup(this.row);
+					this.recalcRowGroup(cell.row);
 				}
 
 			}else{

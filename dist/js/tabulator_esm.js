@@ -3916,7 +3916,7 @@ class Row$1 {
 				});
 			}
 
-			if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			if(this.type === "row" && this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
 				this.table.modules.groupRows.reassignRowToGroup(this);
 			}
 
@@ -4181,6 +4181,7 @@ class Row$1 {
 	}
 
 	getGroup(){
+		console.log("row", this.modules);
 		return this.modules.group || false;
 	}
 
@@ -4320,7 +4321,7 @@ class ColumnCalcs extends Module{
 				}
 
 				if(this.table.options.columnCalcs != "table"){
-					this.recalcRowGroup(this.row);
+					this.recalcRowGroup(cell.row);
 				}
 
 			}else {

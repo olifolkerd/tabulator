@@ -435,7 +435,7 @@ export default class Row {
 				});
 			}
 
-			if(this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
+			if(this.type === "row" && this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
 				this.table.modules.groupRows.reassignRowToGroup(this);
 			}
 
@@ -702,6 +702,7 @@ export default class Row {
 	}
 
 	getGroup(){
+		console.log("row", this.modules)
 		return this.modules.group || false;
 	}
 
