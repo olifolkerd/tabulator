@@ -295,11 +295,11 @@ class ColumnCalcs extends Module{
 		row.component = false;
 
 		row.getComponent = () => {
-			if(!this.component){
-				this.component = new CalcComponent(this);
+			if(!row.component){
+				row.component = new CalcComponent(this);
 			}
 
-			return this.component;
+			return row.component;
 		};
 
 		row.generateCells = () => {
@@ -341,7 +341,7 @@ class ColumnCalcs extends Module{
 					}
 				});
 
-			this.cells = cells;
+			row.cells = cells;
 		};
 
 		return row;
