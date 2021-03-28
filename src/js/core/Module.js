@@ -15,6 +15,10 @@ class Module{
 	unsubscribe(){
 		this.table.eventBus.unsubscribe(...arguments);
 	}
+
+	module(key){
+		return this.table.module(key);
+	}
 }
 
 export default Module;

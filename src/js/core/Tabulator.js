@@ -1682,6 +1682,16 @@ class Tabulator {
 			return false;
 		}
 	}
+
+	module(key){
+		var mod = this.modules[key];
+
+		if(!mod){
+			console.error("Tabulator module not installed: " + key);
+		}
+
+		return mod;
+	}
 }
 
 //default setup options
