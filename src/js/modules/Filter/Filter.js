@@ -642,7 +642,7 @@ class Filter extends Module{
 		activeRowComponents = [];
 
 		if(this.table.eventBus.subscribed("dataFiltering")){
-			this.table.eventBus.trigger("dataFiltering", this.getFilters());
+			this.table.eventBus.dispatch("dataFiltering", this.getFilters());
 		}
 
 		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
@@ -663,7 +663,7 @@ class Filter extends Module{
 				activeRowComponents.push(row.getComponent());
 			});
 
-			this.table.eventBus.trigger("dataFiltered", this.getFilters(), activeRowComponents);
+			this.table.eventBus.dispatch("dataFiltered", this.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;

@@ -5,7 +5,7 @@ export default class EventBus {
 		this.table = table;
 	}
 
-	on(key, callback){
+	subscribe(key, callback){
 		if(!this.events[key]){
 			this.events[key] = [];
 		}
@@ -13,7 +13,7 @@ export default class EventBus {
 		this.events[key].push(callback)
 	}
 
-	off(key, callback){
+	unsubscribe(key, callback){
 		var index;
 
 		if(this.events[key]){
@@ -37,7 +37,7 @@ export default class EventBus {
 		return this.table.options[key] || (this.events[key] && this.events[key].length);
 	}
 
-	trigger(){
+	dispatch(){
 		var args = Array.from(arguments),
 		key = args.shift(),
 		result;

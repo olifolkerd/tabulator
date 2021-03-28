@@ -238,7 +238,7 @@ class Sort extends Module{
 		lastSort;
 
 		if(this.table.eventBus.subscribed("dataSorting")){
-			this.table.eventBus.trigger("dataSorting", self.getSort());
+			this.table.eventBus.dispatch("dataSorting", self.getSort());
 		}
 
 		self.clearColumnHeaders();
@@ -280,7 +280,7 @@ class Sort extends Module{
 				rowComponents.push(row.getComponent());
 			});
 
-			this.table.eventBus.trigger("dataSorted", self.getSort(), rowComponents);
+			this.table.eventBus.dispatch("dataSorted", self.getSort(), rowComponents);
 		}
 	}
 

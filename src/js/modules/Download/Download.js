@@ -97,7 +97,7 @@ class Download extends Module{
 				}
 			}
 
-			this.table.eventBus.trigger("downloadComplete");
+			this.table.eventBus.dispatch("downloadComplete");
 		}
 	}
 

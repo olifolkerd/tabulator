@@ -154,7 +154,7 @@ class ResizeColumns extends Module{
 				self.table.modules.persistence.save("columns");
 			}
 
-			self.table.eventBus.trigger("columnResized", column.getComponent());
+			self.table.eventBus.dispatch("columnResized", column.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns

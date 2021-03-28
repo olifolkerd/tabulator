@@ -180,7 +180,7 @@ class Tabulator {
 		mod = this.modules,
 		options = this.options;
 
-		this.eventBus.trigger("tableBuilding");
+		this.eventBus.dispatch("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
@@ -356,7 +356,7 @@ class Tabulator {
 			mod.print.initialize();
 		}
 
-		this.eventBus.trigger("tableBuilt");
+		this.eventBus.dispatch("tableBuilt");
 	}
 
 	_loadInitialData(){
@@ -1701,18 +1701,18 @@ class Tabulator {
 	//////////////////// Event Bus ///////////////////
 
 	on(key, callback){
-		this.eventBus.on(key, callback);
+		this.eventBus.subscribe(key, callback);
 	}
 
 	off(key, callback){
-		this.eventBus.off(key, callback);
+		this.eventBus.unsubscribe(key, callback);
 	}
 
 	triggerEvent(){
 		var args = Array.from(arguments),
 		key = args.shift();
 
-		this.eventBus.trigger(...arguments)
+		this.eventBus.dispatch(...arguments)
 	}
 
 	/////////// Inter Table Communications ///////////

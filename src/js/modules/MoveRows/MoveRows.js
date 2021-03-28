@@ -383,7 +383,7 @@ class MoveRows extends Module{
 
 	elementRowDrop(e, element, row){
 		if(this.table.options.movableRowsElementDrop){
-			this.table.eventBus.trigger("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
+			this.table.eventBus.dispatch("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 		}
 	}
 
@@ -394,7 +394,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.eventBus.trigger("movableRowsSendingStart", connectionTables);
+			this.table.eventBus.dispatch("movableRowsSendingStart", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
 				row:row,
@@ -437,7 +437,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.eventBus.trigger("movableRowsSendingStop", connectionTables);
+			this.table.eventBus.dispatch("movableRowsSendingStop", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
 		}
@@ -467,7 +467,7 @@ class MoveRows extends Module{
 
 			this.table.element.addEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.eventBus.trigger("movableRowsReceivingStart", row, table);
+			this.table.eventBus.dispatch("movableRowsReceivingStart", row, table);
 
 			return true;
 		}else{
@@ -492,7 +492,7 @@ class MoveRows extends Module{
 
 			this.table.element.removeEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.eventBus.trigger("movableRowsReceivingStop", table);
+			this.table.eventBus.dispatch("movableRowsReceivingStop", table);
 		}else{
 			console.warn("Move Row Error - trying to disconnect from non connected table")
 		}
@@ -521,9 +521,9 @@ class MoveRows extends Module{
 				}
 			}
 
-			this.table.eventBus.trigger("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.eventBus.dispatch("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}else{
-			this.table.eventBus.trigger("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.eventBus.dispatch("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}
 
 		this.endMove();
@@ -552,9 +552,9 @@ class MoveRows extends Module{
 		}
 
 		if(success){
-			this.table.eventBus.trigger("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.eventBus.dispatch("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else{
-			this.table.eventBus.trigger("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.eventBus.dispatch("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}
 
 		this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {

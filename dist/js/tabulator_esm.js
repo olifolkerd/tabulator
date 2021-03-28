@@ -529,7 +529,7 @@ class Ajax extends Module{
 				})
 				.catch((error)=>{
 					console.error("Ajax Load Error: ", error);
-					this.table.eventBus.trigger("ajaxError", error);
+					this.table.eventBus.dispatch("ajaxError", error);
 
 					this.showError();
 
@@ -745,7 +745,7 @@ class Clipboard extends Module{
 						}
 					}
 
-					this.table.eventBus.trigger("clipboardCopied", plain, html);
+					this.table.eventBus.dispatch("clipboardCopied", plain, html);
 
 					this.reset();
 				}
@@ -895,9 +895,9 @@ class Clipboard extends Module{
 
 				rows = this.pasteAction.call(this, rowData);
 
-				this.table.eventBus.trigger("clipboardPasted", data, rowData, rows);
+				this.table.eventBus.dispatch("clipboardPasted", data, rowData, rows);
 			}else {
-				this.table.eventBus.trigger("clipboardPasteError", data);
+				this.table.eventBus.dispatch("clipboardPasteError", data);
 			}
 		}
 	}
@@ -1536,10 +1536,10 @@ class Cell$1 {
 
 			this.cellRendered();
 
-			this.table.eventBus.trigger("cellEdited", component);
+			this.table.eventBus.dispatch("cellEdited", component);
 
 			if(this.table.eventBus.subscribed("dataChanged")){
-				this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
+				this.table.eventBus.dispatch("dataChanged", this.table.rowManager.getData());
 			}
 		}
 	}
@@ -2632,7 +2632,7 @@ class Column$1 {
 
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.eventBus.trigger("columnTitleChanged", this.getComponent());
+				table.eventBus.dispatch("columnTitleChanged", this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
@@ -2930,7 +2930,7 @@ class Column$1 {
 
 		if(visible){
 			this.show();
-			this.parent.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), false);
+			this.parent.table.eventBus.dispatch("columnVisibilityChanged", this.getComponent(), false);
 		}else {
 			this.hide();
 		}
@@ -2966,7 +2966,7 @@ class Column$1 {
 			}
 
 			if(!silent){
-				this.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), true);
+				this.table.eventBus.dispatch("columnVisibilityChanged", this.getComponent(), true);
 			}
 
 			if(this.parent.isGroup){
@@ -3005,7 +3005,7 @@ class Column$1 {
 			}
 
 			if(!silent){
-				this.parent.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), false);
+				this.parent.table.eventBus.dispatch("columnVisibilityChanged", this.getComponent(), false);
 			}
 
 			if(this.parent.isGroup){
@@ -3984,10 +3984,10 @@ class Row$1 {
 
 			//this.reinitialize();
 
-			this.table.eventBus.trigger("rowUpdated", this.getComponent());
+			this.table.eventBus.dispatch("rowUpdated", this.getComponent());
 
 			if(this.table.eventBus.subscribed("dataChanged")){
-				this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
+				this.table.eventBus.dispatch("dataChanged", this.table.rowManager.getData());
 			}
 
 			resolve();
@@ -5029,7 +5029,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.eventBus.trigger("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
+			this.table.eventBus.dispatch("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -5043,7 +5043,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.eventBus.trigger("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
+			this.table.eventBus.dispatch("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -5653,7 +5653,7 @@ class Download extends Module{
 				}
 			}
 
-			this.table.eventBus.trigger("downloadComplete");
+			this.table.eventBus.dispatch("downloadComplete");
 		}
 	}
 
@@ -7547,7 +7547,7 @@ class Edit extends Module{
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
 
-			this.table.eventBus.trigger("cellEditCancelled", component);
+			this.table.eventBus.dispatch("cellEditCancelled", component);
 		}
 	}
 
@@ -7681,7 +7681,7 @@ class Edit extends Module{
 
 					if(valid !== true){
 						element.classList.add("tabulator-validation-fail");
-						self.table.eventBus.trigger("validationFailed", cell.getComponent(), value, valid);
+						self.table.eventBus.dispatch("validationFailed", cell.getComponent(), value, valid);
 						return false;
 					}
 
@@ -7691,7 +7691,7 @@ class Edit extends Module{
 					element.classList.add("tabulator-validation-fail");
 					self.focusCellNoEvent(cell, true);
 					rendered();
-					self.table.eventBus.trigger("validationFailed", cell.getComponent(), value, valid);
+					self.table.eventBus.dispatch("validationFailed", cell.getComponent(), value, valid);
 					return false;
 				}
 			}
@@ -7749,7 +7749,7 @@ class Edit extends Module{
 					cell.column.cellEvents.cellEditing.call(this.table, component);
 				}
 
-				this.table.eventBus.trigger("cellEditing", component);
+				this.table.eventBus.dispatch("cellEditing", component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 
@@ -9260,7 +9260,7 @@ class Filter extends Module{
 		activeRowComponents = [];
 
 		if(this.table.eventBus.subscribed("dataFiltering")){
-			this.table.eventBus.trigger("dataFiltering", this.getFilters());
+			this.table.eventBus.dispatch("dataFiltering", this.getFilters());
 		}
 
 		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
@@ -9281,7 +9281,7 @@ class Filter extends Module{
 				activeRowComponents.push(row.getComponent());
 			});
 
-			this.table.eventBus.trigger("dataFiltered", this.getFilters(), activeRowComponents);
+			this.table.eventBus.dispatch("dataFiltered", this.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;
@@ -10876,7 +10876,7 @@ class Group$1{
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.eventBus.trigger("groupVisibilityChanged", this.getComponent(), false);
+		this.groupManager.table.eventBus.dispatch("groupVisibilityChanged", this.getComponent(), false);
 	}
 
 	show(){
@@ -10916,7 +10916,7 @@ class Group$1{
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.eventBus.trigger("groupVisibilityChanged", this.getComponent(), true);
+		this.groupManager.table.eventBus.dispatch("groupVisibilityChanged", this.getComponent(), true);
 	}
 
 	_visSet(){
@@ -11204,12 +11204,12 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.table.eventBus.trigger("dataGrouping");
+			this.table.eventBus.dispatch("dataGrouping");
 
 			this.generateGroups(rows);
 
 			if(this.table.eventBus.subscribed("dataGrouped")){
-				this.table.eventBus.trigger("dataGrouped", this.getGroups(true));
+				this.table.eventBus.dispatch("dataGrouped", this.getGroups(true));
 			}
 
 			return this.updateGroupRows();
@@ -11555,7 +11555,7 @@ class History extends Module{
 
 			this.index--;
 
-			this.table.eventBus.trigger("historyUndo", action.type, action.component.getComponent(), action.data);
+			this.table.eventBus.dispatch("historyUndo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else {
@@ -11573,7 +11573,7 @@ class History extends Module{
 
 			History.redoers[action.type].call(this, action);
 
-			this.table.eventBus.trigger("historyRedo", action.type, action.component.getComponent(), action.data);
+			this.table.eventBus.dispatch("historyRedo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else {
@@ -11628,7 +11628,7 @@ class HtmlTableImport extends Module{
 
 		this.hasIndex = false;
 
-		this.table.eventBus.trigger("htmlImporting");
+		this.table.eventBus.dispatch("htmlImporting");
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
@@ -11682,7 +11682,7 @@ class HtmlTableImport extends Module{
 
 		options.data = data;
 
-		this.table.eventBus.trigger("htmlImported");
+		this.table.eventBus.dispatch("htmlImported");
 
 		this.table.element = newElement;
 	}
@@ -13138,7 +13138,7 @@ class MoveRows extends Module{
 
 	elementRowDrop(e, element, row){
 		if(this.table.options.movableRowsElementDrop){
-			this.table.eventBus.trigger("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
+			this.table.eventBus.dispatch("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 		}
 	}
 
@@ -13149,7 +13149,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.eventBus.trigger("movableRowsSendingStart", connectionTables);
+			this.table.eventBus.dispatch("movableRowsSendingStart", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
 				row:row,
@@ -13192,7 +13192,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.eventBus.trigger("movableRowsSendingStop", connectionTables);
+			this.table.eventBus.dispatch("movableRowsSendingStop", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
 		}
@@ -13222,7 +13222,7 @@ class MoveRows extends Module{
 
 			this.table.element.addEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.eventBus.trigger("movableRowsReceivingStart", row, table);
+			this.table.eventBus.dispatch("movableRowsReceivingStart", row, table);
 
 			return true;
 		}else {
@@ -13247,7 +13247,7 @@ class MoveRows extends Module{
 
 			this.table.element.removeEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.eventBus.trigger("movableRowsReceivingStop", table);
+			this.table.eventBus.dispatch("movableRowsReceivingStop", table);
 		}else {
 			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
@@ -13276,9 +13276,9 @@ class MoveRows extends Module{
 				}
 			}
 
-			this.table.eventBus.trigger("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.eventBus.dispatch("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}else {
-			this.table.eventBus.trigger("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.eventBus.dispatch("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}
 
 		this.endMove();
@@ -13307,9 +13307,9 @@ class MoveRows extends Module{
 		}
 
 		if(success){
-			this.table.eventBus.trigger("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.eventBus.dispatch("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else {
-			this.table.eventBus.trigger("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.eventBus.dispatch("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}
 
 		this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
@@ -14047,7 +14047,7 @@ class Page extends Module{
 				this.table.rowManager.refreshActiveData("page");
 				this.table.rowManager.scrollHorizontal(left);
 
-				this.table.eventBus.trigger("pageLoaded", this.getPage());
+				this.table.eventBus.dispatch("pageLoaded", this.getPage());
 
 				resolve();
 				break;
@@ -14171,7 +14171,7 @@ class Page extends Module{
 
 				this.table.columnManager.scrollHorizontal(left);
 
-				this.table.eventBus.trigger("pageLoaded",  this.getPage());
+				this.table.eventBus.dispatch("pageLoaded",  this.getPage());
 			}
 
 			this.initialLoad = false;
@@ -15200,7 +15200,7 @@ class ResizeColumns extends Module{
 				self.table.modules.persistence.save("columns");
 			}
 
-			self.table.eventBus.trigger("columnResized", column.getComponent());
+			self.table.eventBus.dispatch("columnResized", column.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -15300,7 +15300,7 @@ class ResizeRows extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			this.table.eventBus.trigger("rowResized", row.getComponent());
+			this.table.eventBus.dispatch("rowResized", row.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -15984,7 +15984,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.eventBus.trigger("rowSelected", row.getComponent());
+					this.table.eventBus.dispatch("rowSelected", row.getComponent());
 				}
 
 				this._rowSelectionChanged(silent);
@@ -16057,7 +16057,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.eventBus.trigger("rowDeselected", row.getComponent());
+					this.table.eventBus.dispatch("rowDeselected", row.getComponent());
 				}
 
 				self._rowSelectionChanged(silent);
@@ -16105,7 +16105,7 @@ class SelectRow extends Module{
 		}
 
 		if(!silent){
-			this.table.eventBus.trigger("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
+			this.table.eventBus.dispatch("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
 		}
 	}
 
@@ -16625,7 +16625,7 @@ class Sort extends Module{
 		rowComponents = [];
 
 		if(this.table.eventBus.subscribed("dataSorting")){
-			this.table.eventBus.trigger("dataSorting", self.getSort());
+			this.table.eventBus.dispatch("dataSorting", self.getSort());
 		}
 
 		self.clearColumnHeaders();
@@ -16667,7 +16667,7 @@ class Sort extends Module{
 				rowComponents.push(row.getComponent());
 			});
 
-			this.table.eventBus.trigger("dataSorted", self.getSort(), rowComponents);
+			this.table.eventBus.dispatch("dataSorted", self.getSort(), rowComponents);
 		}
 	}
 
@@ -17842,7 +17842,7 @@ class ColumnManager {
 		}
 
 		if(this.table.eventBus.subscribed("columnMoved")){
-			this.table.eventBus.trigger("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
+			this.table.eventBus.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
 		}
 
 		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
@@ -18227,7 +18227,7 @@ class RowManager {
 					this.table.modules.columnCalcs.scrollHorizontal(left);
 				}
 
-				this.table.eventBus.trigger("scrollHorizontal", left);
+				this.table.eventBus.dispatch("scrollHorizontal", left);
 			}
 
 			this.scrollLeft = left;
@@ -18248,7 +18248,7 @@ class RowManager {
 						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
 					}
 
-					this.table.eventBus.trigger("scrollVertical", top);
+					this.table.eventBus.dispatch("scrollVertical", top);
 				}else {
 					this.scrollTop = top;
 				}
@@ -18415,7 +18415,7 @@ class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.table.eventBus.trigger("dataLoading", data);
+		this.table.eventBus.dispatch("dataLoading", data);
 
 		this._wipeElements();
 
@@ -18444,7 +18444,7 @@ class RowManager {
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.table.eventBus.trigger("dataLoaded", data);
+			this.table.eventBus.dispatch("dataLoaded", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -18496,10 +18496,10 @@ class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.eventBus.trigger("rowDeleted", row.getComponent());
+		this.table.eventBus.dispatch("rowDeleted", row.getComponent());
 
 		if(this.table.eventBus.subscribed("dataChanged")){
-			this.table.eventBus.trigger("dataChanged", this.getData());
+			this.table.eventBus.dispatch("dataChanged", this.getData());
 		}
 
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
@@ -18677,10 +18677,10 @@ class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.table.eventBus.trigger("rowAdded", row.getComponent());
+		this.table.eventBus.dispatch("rowAdded", row.getComponent());
 
 		if(this.table.eventBus.subscribed("dataChanged")){
-			this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
+			this.table.eventBus.dispatch("dataChanged", this.table.rowManager.getData());
 		}
 
 		if(!blockRedraw){
@@ -18699,7 +18699,7 @@ class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.eventBus.trigger("rowMoved", from.getComponent());
+		this.table.eventBus.dispatch("rowMoved", from.getComponent());
 	}
 
 	moveRowActual(from, to, after){
@@ -19357,7 +19357,7 @@ class RowManager {
 
 	renderTable(){
 
-		this.table.eventBus.trigger("renderStarted");
+		this.table.eventBus.dispatch("renderStarted");
 
 		this.element.scrollTop = 0;
 
@@ -19394,7 +19394,7 @@ class RowManager {
 			}
 		}
 
-		this.table.eventBus.trigger("renderComplete");
+		this.table.eventBus.dispatch("renderComplete");
 	}
 
 	//simple render on heightless table
@@ -20030,7 +20030,7 @@ class EventBus {
 		this.table = table;
 	}
 
-	on(key, callback){
+	subscribe(key, callback){
 		if(!this.events[key]){
 			this.events[key] = [];
 		}
@@ -20038,7 +20038,7 @@ class EventBus {
 		this.events[key].push(callback);
 	}
 
-	off(key, callback){
+	unsubscribe(key, callback){
 		var index;
 
 		if(this.events[key]){
@@ -20062,7 +20062,7 @@ class EventBus {
 		return this.table.options[key] || (this.events[key] && this.events[key].length);
 	}
 
-	trigger(){
+	dispatch(){
 		var args = Array.from(arguments),
 		key = args.shift(),
 		result;
@@ -20561,7 +20561,7 @@ class Localize extends Module{
 			traverseLang(this.langList[desiredLocale], this.lang);
 		}
 
-		this.table.eventBus.trigger("localized", this.locale, this.lang);
+		this.table.eventBus.dispatch("localized", this.locale, this.lang);
 
 		this._executeBindings();
 	}
@@ -21375,7 +21375,7 @@ class Tabulator$1 {
 		mod = this.modules,
 		options = this.options;
 
-		this.eventBus.trigger("tableBuilding");
+		this.eventBus.dispatch("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
@@ -21551,7 +21551,7 @@ class Tabulator$1 {
 			mod.print.initialize();
 		}
 
-		this.eventBus.trigger("tableBuilt");
+		this.eventBus.dispatch("tableBuilt");
 	}
 
 	_loadInitialData(){
@@ -22896,18 +22896,18 @@ class Tabulator$1 {
 	//////////////////// Event Bus ///////////////////
 
 	on(key, callback){
-		this.eventBus.on(key, callback);
+		this.eventBus.subscribe(key, callback);
 	}
 
 	off(key, callback){
-		this.eventBus.off(key, callback);
+		this.eventBus.unsubscribe(key, callback);
 	}
 
 	triggerEvent(){
 		var args = Array.from(arguments),
 		key = args.shift();
 
-		this.eventBus.trigger(...arguments);
+		this.eventBus.dispatch(...arguments);
 	}
 
 	/////////// Inter Table Communications ///////////

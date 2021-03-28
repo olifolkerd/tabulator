@@ -239,7 +239,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.eventBus.trigger("rowSelected", row.getComponent());
+					this.table.eventBus.dispatch("rowSelected", row.getComponent());
 				}
 
 				this._rowSelectionChanged(silent);
@@ -312,7 +312,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.eventBus.trigger("rowDeselected", row.getComponent());
+					this.table.eventBus.dispatch("rowDeselected", row.getComponent());
 				}
 
 				self._rowSelectionChanged(silent);
@@ -360,7 +360,7 @@ class SelectRow extends Module{
 		}
 
 		if(!silent){
-			this.table.eventBus.trigger("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
+			this.table.eventBus.dispatch("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
 		}
 	}
 

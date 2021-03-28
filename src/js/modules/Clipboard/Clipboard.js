@@ -61,7 +61,7 @@ class Clipboard extends Module{
 						}
 					}
 
-					this.table.eventBus.trigger("clipboardCopied", plain, html);
+					this.table.eventBus.dispatch("clipboardCopied", plain, html);
 
 					this.reset();
 				}
@@ -211,9 +211,9 @@ class Clipboard extends Module{
 
 				rows = this.pasteAction.call(this, rowData);
 
-				this.table.eventBus.trigger("clipboardPasted", data, rowData, rows);
+				this.table.eventBus.dispatch("clipboardPasted", data, rowData, rows);
 			}else{
-				this.table.eventBus.trigger("clipboardPasteError", data);
+				this.table.eventBus.dispatch("clipboardPasteError", data);
 			}
 		}
 	}

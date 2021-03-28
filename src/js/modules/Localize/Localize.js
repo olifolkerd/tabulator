@@ -100,7 +100,7 @@ class Localize extends Module{
 			traverseLang(this.langList[desiredLocale], this.lang);
 		}
 
-		this.table.eventBus.trigger("localized", this.locale, this.lang);
+		this.table.eventBus.dispatch("localized", this.locale, this.lang);
 
 		this._executeBindings();
 	}
