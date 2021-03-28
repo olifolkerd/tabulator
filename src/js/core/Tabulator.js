@@ -181,7 +181,7 @@ class Tabulator {
 	//build tabulator element
 	_buildElement(){
 		var element = this.element,
-		mod = this.modules,
+		mods = this.modules,
 		options = this.options;
 
 		this.eventBus.dispatch("tableBuilding");
@@ -215,10 +215,11 @@ class Tabulator {
 
 		this._detectBrowser();
 
+		//initialize core modules
 		for (let key in this.modulesCore){
-			let modd = this.modulesCore[key];
+			let mod = this.modulesCore[key];
 
-			modd.initialize();
+			mod.initialize();
 		}
 
 		//configure placeholder element
@@ -249,19 +250,19 @@ class Tabulator {
 
 		this.columnManager.setColumns(options.columns);
 
-
+		//initialize regular modules
 		for (let key in this.modulesRegular){
-			let modd = this.modulesRegular[key];
+			let mod = this.modulesRegular[key];
 
-			modd.initialize();
+			mod.initialize();
 		}
 
 
-		if(((options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
+		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort) || options.initialSort) && this.modExists("sort", true)){
 			var sorters = [];
 
-			if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.sort){
-				sorters = mod.persistence.load("sort");
+			if(options.persistence && this.modExists("persistence", true) && mods.persistence.config.sort){
+				sorters = mods.persistence.load("sort");
 
 				if(sorters === false && options.initialSort){
 					sorters = options.initialSort;
@@ -270,15 +271,14 @@ class Tabulator {
 				sorters = options.initialSort;
 			}
 
-			mod.sort.setSort(sorters);
+			mods.sort.setSort(sorters);
 		}
 
-		if(((options.persistence && this.modExists("persistence", true) && mod.persistence.config.filter) || options.initialFilter) && this.modExists("filter", true)){
+		if(((options.persistence && this.modExists("persistence", true) && mods.persistence.config.filter) || options.initialFilter) && this.modExists("filter", true)){
 			var filters = [];
 
-
-			if(options.persistence && this.modExists("persistence", true) && mod.persistence.config.filter){
-				filters = mod.persistence.load("filter");
+			if(options.persistence && this.modExists("persistence", true) && mods.persistence.config.filter){
+				filters = mods.persistence.load("filter");
 
 				if(filters === false && options.initialFilter){
 					filters = options.initialFilter;
@@ -287,7 +287,7 @@ class Tabulator {
 				filters = options.initialFilter;
 			}
 
-			mod.filter.setFilter(filters);
+			mods.filter.setFilter(filters);
 		}
 
 		if(options.initialHeaderFilter && this.modExists("filter", true)){
@@ -296,7 +296,7 @@ class Tabulator {
 				var column = this.columnManager.findColumn(item.field);
 
 				if(column){
-					mod.filter.setHeaderFilterValue(column, item.value);
+					mods.filter.setHeaderFilterValue(column, item.value);
 				}else{
 					console.warn("Column Filter Error - No matching column found:", item.field);
 					return false;
