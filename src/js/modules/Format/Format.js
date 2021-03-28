@@ -4,6 +4,10 @@ import defaultFormatters from './defaults/formatters.js';
 
 class Format extends Module{
 
+	initialize(){
+		this.subscribe("cell-format", this.formatValue.bind(this), -1);
+	}
+
 	//initialize column formatter
 	initializeColumn(column){
 		column.modules.format = this.lookupFormatter(column, "");

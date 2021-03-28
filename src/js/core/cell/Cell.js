@@ -343,11 +343,9 @@ export default class Cell {
 	_generateContents(){
 		var val;
 
-		if(this.table.modExists("format")){
-			val = this.table.modules.format.formatValue(this);
-		}else{
-			val = this.element.innerHTML = this.value;
-		}
+		val = this.table.eventBus.chain("cell-format", this, () => {
+			return this.element.innerHTML = this.value;
+		});
 
 		switch(typeof val){
 			case "object":
