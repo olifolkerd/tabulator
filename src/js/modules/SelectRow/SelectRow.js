@@ -239,7 +239,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.options.rowSelected.call(this.table, row.getComponent());
+					this.table.eventBus.trigger("rowSelected", row.getComponent());
 				}
 
 				this._rowSelectionChanged(silent);
@@ -312,7 +312,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					self.table.options.rowDeselected.call(this.table, row.getComponent());
+					this.table.eventBus.trigger("rowDeselected", row.getComponent());
 				}
 
 				self._rowSelectionChanged(silent);
@@ -360,7 +360,7 @@ class SelectRow extends Module{
 		}
 
 		if(!silent){
-			this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+			this.table.eventBus.trigger("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
 		}
 	}
 

@@ -456,7 +456,7 @@ class Group{
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), false);
+		this.groupManager.table.eventBus.trigger("groupVisibilityChanged", this.getComponent(), false);
 	}
 
 	show(){
@@ -496,7 +496,7 @@ class Group{
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), true);
+		this.groupManager.table.eventBus.trigger("groupVisibilityChanged", this.getComponent(), true);
 	}
 
 	_visSet(){

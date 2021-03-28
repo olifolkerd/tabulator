@@ -66,12 +66,7 @@ export default {
 	clipboardPasteParser:"table", //convert pasted clipboard data to rows
 	clipboardPasteAction:"insert", //how to insert pasted data into the table
 
-	clipboardCopied:function(){}, //data has been copied to the clipboard
-	clipboardPasted:function(){}, //data has been pasted into the table
-	clipboardPasteError:function(){}, //data has not successfully been pasted into the table
-
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
-	downloadComplete:false, //function to manipulate download data
 	downloadConfig:{},	//download config
 	downloadRowRange:"active", //restrict download to active rows only
 
@@ -85,8 +80,6 @@ export default {
 	dataTreeCollapseElement:false, //data tree row collapse element
 	dataTreeExpandElement:false, //data tree row expand element
 	dataTreeStartExpanded:false,
-	dataTreeRowExpanded:function(){}, //row has been expanded
-	dataTreeRowCollapsed:function(){}, //row has been collapsed
 	dataTreeChildColumnCalcs:false, //include visible data tree rows in column calculations
 	dataTreeSelectPropagate:false, //seleccting a parent row selects its children
 
@@ -177,15 +170,6 @@ export default {
 	movableRowsConnectedElements:false, //other elements for movable rows to be connected to
 	movableRowsSender:false,
 	movableRowsReceiver:"insert",
-	movableRowsSendingStart:function(){},
-	movableRowsSent:function(){},
-	movableRowsSentFailed:function(){},
-	movableRowsSendingStop:function(){},
-	movableRowsReceivingStart:function(){},
-	movableRowsReceived:function(){},
-	movableRowsReceivedFailed:function(){},
-	movableRowsReceivingStop:function(){},
-	movableRowsElementDrop:function(){},
 
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
@@ -199,14 +183,6 @@ export default {
 	rowFormatterHtmlOutput:null,
 
 	placeholder:false,
-
-	//table building callbacks
-	tableBuilding:function(){},
-	tableBuilt:function(){},
-
-	//render callbacks
-	renderStarted:function(){},
-	renderComplete:function(){},
 
 	//row callbacks
 	rowClick:false,
@@ -222,17 +198,8 @@ export default {
 	rowMouseMove:false,
 	rowContextMenu:false,
 	rowClickMenu:false,
-	rowAdded:function(){},
-	rowDeleted:function(){},
-	rowMoved:function(){},
-	rowUpdated:function(){},
-	rowSelectionChanged:function(){},
-	rowSelected:function(){},
-	rowDeselected:function(){},
-	rowResized:function(){},
 
 	//cell callbacks
-	//row callbacks
 	cellClick:false,
 	cellDblClick:false,
 	cellContext:false,
@@ -244,44 +211,14 @@ export default {
 	cellMouseOver:false,
 	cellMouseOut:false,
 	cellMouseMove:false,
-	cellEditing:function(){},
-	cellEdited:function(){},
-	cellEditCancelled:function(){},
-
-	//column callbacks
-	columnMoved:false,
-	columnResized:function(){},
-	columnTitleChanged:function(){},
-	columnVisibilityChanged:function(){},
-
-	//HTML iport callbacks
-	htmlImporting:function(){},
-	htmlImported:function(){},
-
-	//data callbacks
-	dataLoading:function(){},
-	dataLoaded:function(){},
-	dataChanged:false,
 
 	//ajax callbacks
 	ajaxRequesting:function(){},
 	ajaxResponse:false,
-	ajaxError:function(){},
-
-	//filtering callbacks
-	dataFiltering:false,
-	dataFiltered:false,
-
-	//sorting callbacks
-	dataSorting:function(){},
-	dataSorted:function(){},
 
 	//grouping callbacks
 	groupToggleElement:"arrow",
 	groupClosedShowCalcs:false,
-	dataGrouping:function(){},
-	dataGrouped:false,
-	groupVisibilityChanged:function(){},
 	groupClick:false,
 	groupDblClick:false,
 	groupContext:false,
@@ -293,21 +230,106 @@ export default {
 
 	columnCalcs:true,
 
-	//pagination callbacks
-	pageLoaded:function(){},
-
-	//localization callbacks
-	localized:function(){},
-
 	//validation callbacks
 	validationMode:"blocking",
-	validationFailed:function(){},
 
-	//history callbacks
-	historyUndo:function(){},
-	historyRedo:function(){},
+	//////////////////////////////////////
+	////////////// Events ////////////////
+	//////////////////////////////////////
 
-	//scroll callbacks
-	scrollHorizontal:function(){},
-	scrollVertical:function(){},
+	//Table Setup
+	tableBuilding:null,
+	tableBuilt:null,
+
+	//Render
+	renderStarted:null,
+	renderComplete:null,
+
+	//Data
+	dataLoading:null,
+	dataLoaded:null,
+	dataChanged:null,
+
+	//Scroll
+	scrollHorizontal:null,
+	scrollVertical:null,
+
+	//Row Manipulation
+	rowAdded:null,
+	rowDeleted:null,
+	rowMoved:null,
+	rowUpdated:null,
+	rowSelectionChanged:null,
+	rowSelected:null,
+	rowDeselected:null,
+	rowResized:null,
+
+	//Cell Manipulation
+	cellEditing:null,
+	cellEdited:null,
+	cellEditCancelled:null,
+
+	//Column Manipulation
+	columnMoved:null,
+	columnResized:null,
+	columnTitleChanged:null,
+	columnVisibilityChanged:null,
+
+	//HTML iport callbacks
+	htmlImporting:null,
+	htmlImported:null,
+
+	//Ajax
+	ajaxError:null,
+
+	//Clipboard
+	clipboardCopied:null, //data has been copied to the clipboard
+	clipboardPasted:null, //data has been pasted into the table
+	clipboardPasteError:null, //data has not successfully been pasted into the table
+
+	//Download
+	downloadComplete:null, //function to manipulate download data
+
+	//Data Tree
+	dataTreeRowExpanded:null, //row has been expanded
+	dataTreeRowCollapsed:null, //row has been collapsed
+
+	//Filtering
+	dataFiltering:null,
+	dataFiltered:null,
+
+	//Sorting
+	dataSorting:null,
+	dataSorted:null,
+
+	//Movable Rows
+	movableRowsSendingStart:null,
+	movableRowsSent:null,
+	movableRowsSentFailed:null,
+	movableRowsSendingStop:null,
+	movableRowsReceivingStart:null,
+	movableRowsReceived:null,
+	movableRowsReceivedFailed:null,
+	movableRowsReceivingStop:null,
+	movableRowsElementDrop:null,
+
+	//Grouped Rows
+	dataGrouping:null,
+	dataGrouped:null,
+	groupVisibilityChanged:null,
+
+	//Pagination
+	pageLoaded:null,
+
+	//Localization
+	localized:null,
+
+	//Validation
+	validationFailed:null,
+
+	//History
+	historyUndo:null,
+	historyRedo:null,
+
+
 };

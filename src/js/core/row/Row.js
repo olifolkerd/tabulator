@@ -461,13 +461,12 @@ export default class Row {
 				}
 			}
 
-
 			//this.reinitialize();
 
-			this.table.options.rowUpdated.call(this.table, this.getComponent());
+			this.table.eventBus.trigger("rowUpdated", this.getComponent());
 
-			if(this.table.options.dataChanged){
-				this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+			if(this.table.eventBus.subscribed("dataChanged")){
+				this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
 			}
 
 			resolve();

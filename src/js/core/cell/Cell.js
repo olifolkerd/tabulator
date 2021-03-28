@@ -447,10 +447,10 @@ export default class Cell {
 
 			this.cellRendered();
 
-			this.table.options.cellEdited.call(this.table, component);
+			this.table.eventBus.trigger("cellEdited", component);
 
-			if(this.table.options.dataChanged){
-				this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+			if(this.table.eventBus.subscribed("dataChanged")){
+				this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
 			}
 		}
 	}

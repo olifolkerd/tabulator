@@ -180,7 +180,7 @@ class Tabulator {
 		mod = this.modules,
 		options = this.options;
 
-		options.tableBuilding.call(this);
+		this.eventBus.trigger("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
@@ -356,7 +356,7 @@ class Tabulator {
 			mod.print.initialize();
 		}
 
-		options.tableBuilt.call(this);
+		this.eventBus.trigger("tableBuilt");
 	}
 
 	_loadInitialData(){

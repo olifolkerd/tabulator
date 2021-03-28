@@ -530,7 +530,7 @@ class Column {
 
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.options.columnTitleChanged.call(this.table, this.getComponent());
+				table.eventBus.trigger("columnTitleChanged", this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
@@ -828,7 +828,7 @@ class Column {
 
 		if(visible){
 			this.show();
-			this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
+			this.parent.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), false);
 		}else{
 			this.hide();
 		}
@@ -864,7 +864,7 @@ class Column {
 			}
 
 			if(!silent){
-				this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
+				this.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), true);
 			}
 
 			if(this.parent.isGroup){
@@ -903,7 +903,7 @@ class Column {
 			}
 
 			if(!silent){
-				this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
+				this.parent.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), false);
 			}
 
 			if(this.parent.isGroup){

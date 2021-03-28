@@ -120,7 +120,7 @@ export default class RowManager {
 					this.table.modules.columnCalcs.scrollHorizontal(left);
 				}
 
-				this.table.options.scrollHorizontal(left);
+				this.table.eventBus.trigger("scrollHorizontal", left);
 			}
 
 			this.scrollLeft = left;
@@ -141,7 +141,7 @@ export default class RowManager {
 						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
 					}
 
-					this.table.options.scrollVertical(top);
+					this.table.eventBus.trigger("scrollVertical", top);
 				}else{
 					this.scrollTop = top;
 				}
@@ -308,7 +308,7 @@ export default class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.table.options.dataLoading.call(this.table, data);
+		this.table.eventBus.trigger("dataLoading", data);
 
 		this._wipeElements();
 
@@ -337,7 +337,7 @@ export default class RowManager {
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.table.options.dataLoaded.call(this.table, data);
+			this.table.eventBus.trigger("dataLoaded", data);
 		}else{
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -389,10 +389,10 @@ export default class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.options.rowDeleted.call(this.table, row.getComponent());
+		this.table.eventBus.trigger("rowDeleted", row.getComponent());
 
-		if(this.table.options.dataChanged){
-			this.table.options.dataChanged.call(this.table, this.getData());
+		if(this.table.eventBus.subscribed("dataChanged")){
+			this.table.eventBus.trigger("dataChanged", this.getData());
 		}
 
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
@@ -571,10 +571,10 @@ export default class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.table.options.rowAdded.call(this.table, row.getComponent());
+		this.table.eventBus.trigger("rowAdded", row.getComponent());
 
-		if(this.table.options.dataChanged){
-			this.table.options.dataChanged.call(this.table, this.getData());
+		if(this.table.eventBus.subscribed("dataChanged")){
+			this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
 		}
 
 		if(!blockRedraw){
@@ -593,7 +593,7 @@ export default class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.options.rowMoved.call(this.table, from.getComponent());
+		this.table.eventBus.trigger("rowMoved", from.getComponent());
 	}
 
 	moveRowActual(from, to, after){
@@ -1251,7 +1251,7 @@ export default class RowManager {
 
 	renderTable(){
 
-		this.table.options.renderStarted.call(this.table);
+		this.table.eventBus.trigger("renderStarted");
 
 		this.element.scrollTop = 0;
 
@@ -1288,7 +1288,7 @@ export default class RowManager {
 			}
 		}
 
-		this.table.options.renderComplete.call(this.table);
+		this.table.eventBus.trigger("renderComplete");
 	}
 
 	//simple render on heightless table

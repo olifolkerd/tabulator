@@ -60,7 +60,7 @@ class History extends Module{
 
 			this.index--;
 
-			this.table.options.historyUndo.call(this.table, action.type, action.component.getComponent(), action.data);
+			this.table.eventBus.trigger("historyUndo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else{
@@ -78,7 +78,7 @@ class History extends Module{
 
 			History.redoers[action.type].call(this, action);
 
-			this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
+			this.table.eventBus.trigger("historyRedo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else{

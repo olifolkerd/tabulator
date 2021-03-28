@@ -268,7 +268,7 @@ class Ajax extends Module{
 				})
 				.catch((error)=>{
 					console.error("Ajax Load Error: ", error);
-					this.table.options.ajaxError.call(this.table, error);
+					this.table.eventBus.trigger("ajaxError", error);
 
 					this.showError();
 

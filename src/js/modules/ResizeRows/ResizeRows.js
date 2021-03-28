@@ -78,7 +78,7 @@ class ResizeRows extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			self.table.options.rowResized.call(this.table, row.getComponent());
+			this.table.eventBus.trigger("rowResized", row.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns

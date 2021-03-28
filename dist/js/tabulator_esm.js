@@ -529,7 +529,7 @@ class Ajax extends Module{
 				})
 				.catch((error)=>{
 					console.error("Ajax Load Error: ", error);
-					this.table.options.ajaxError.call(this.table, error);
+					this.table.eventBus.trigger("ajaxError", error);
 
 					this.showError();
 
@@ -745,7 +745,7 @@ class Clipboard extends Module{
 						}
 					}
 
-					this.table.options.clipboardCopied.call(this.table, plain, html);
+					this.table.eventBus.trigger("clipboardCopied", plain, html);
 
 					this.reset();
 				}
@@ -894,9 +894,10 @@ class Clipboard extends Module{
 				}
 
 				rows = this.pasteAction.call(this, rowData);
-				this.table.options.clipboardPasted.call(this.table, data, rowData, rows);
+
+				this.table.eventBus.trigger("clipboardPasted", data, rowData, rows);
 			}else {
-				this.table.options.clipboardPasteError.call(this.table, data);
+				this.table.eventBus.trigger("clipboardPasteError", data);
 			}
 		}
 	}
@@ -1535,10 +1536,10 @@ class Cell$1 {
 
 			this.cellRendered();
 
-			this.table.options.cellEdited.call(this.table, component);
+			this.table.eventBus.trigger("cellEdited", component);
 
-			if(this.table.options.dataChanged){
-				this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+			if(this.table.eventBus.subscribed("dataChanged")){
+				this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
 			}
 		}
 	}
@@ -2631,7 +2632,7 @@ class Column$1 {
 
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.options.columnTitleChanged.call(this.table, this.getComponent());
+				table.eventBus.trigger("columnTitleChanged", this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
@@ -2929,7 +2930,7 @@ class Column$1 {
 
 		if(visible){
 			this.show();
-			this.parent.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
+			this.parent.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), false);
 		}else {
 			this.hide();
 		}
@@ -2965,7 +2966,7 @@ class Column$1 {
 			}
 
 			if(!silent){
-				this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), true);
+				this.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), true);
 			}
 
 			if(this.parent.isGroup){
@@ -3004,7 +3005,7 @@ class Column$1 {
 			}
 
 			if(!silent){
-				this.table.options.columnVisibilityChanged.call(this.table, this.getComponent(), false);
+				this.parent.table.eventBus.trigger("columnVisibilityChanged", this.getComponent(), false);
 			}
 
 			if(this.parent.isGroup){
@@ -3981,13 +3982,12 @@ class Row$1 {
 				}
 			}
 
-
 			//this.reinitialize();
 
-			this.table.options.rowUpdated.call(this.table, this.getComponent());
+			this.table.eventBus.trigger("rowUpdated", this.getComponent());
 
-			if(this.table.options.dataChanged){
-				this.table.options.dataChanged.call(this.table, this.table.rowManager.getData());
+			if(this.table.eventBus.subscribed("dataChanged")){
+				this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
 			}
 
 			resolve();
@@ -5029,7 +5029,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.options.dataTreeRowExpanded(row.getComponent(), row.modules.dataTree.index);
+			this.table.eventBus.trigger("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -5043,7 +5043,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.options.dataTreeRowCollapsed(row.getComponent(), row.modules.dataTree.index);
+			this.table.eventBus.trigger("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -5628,7 +5628,7 @@ class Download extends Module{
 		blob = new Blob([data],{type:mime}),
 		filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-		blob = this.table.options.downloadReady.call(this.table, data, blob);
+		blob = this.table.options.downloadReady(data, blob);
 
 		if(blob){
 
@@ -5653,10 +5653,7 @@ class Download extends Module{
 				}
 			}
 
-
-			if(this.table.options.downloadComplete){
-				this.table.options.downloadComplete();
-			}
+			this.table.eventBus.trigger("downloadComplete");
 		}
 	}
 
@@ -7550,7 +7547,7 @@ class Edit extends Module{
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
 
-			this.table.options.cellEditCancelled.call(this.table, component);
+			this.table.eventBus.trigger("cellEditCancelled", component);
 		}
 	}
 
@@ -7684,7 +7681,7 @@ class Edit extends Module{
 
 					if(valid !== true){
 						element.classList.add("tabulator-validation-fail");
-						self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
+						self.table.eventBus.trigger("validationFailed", cell.getComponent(), value, valid);
 						return false;
 					}
 
@@ -7694,8 +7691,7 @@ class Edit extends Module{
 					element.classList.add("tabulator-validation-fail");
 					self.focusCellNoEvent(cell, true);
 					rendered();
-					self.table.options.validationFailed.call(self.table, cell.getComponent(), value, valid);
-
+					self.table.eventBus.trigger("validationFailed", cell.getComponent(), value, valid);
 					return false;
 				}
 			}
@@ -7753,7 +7749,7 @@ class Edit extends Module{
 					cell.column.cellEvents.cellEditing.call(this.table, component);
 				}
 
-				self.table.options.cellEditing.call(this.table, component);
+				this.table.eventBus.trigger("cellEditing", component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 
@@ -9260,18 +9256,17 @@ class Filter extends Module{
 
 	//filter row array
 	filter(rowList, filters){
-		var self = this,
-		activeRows = [],
+		var activeRows = [],
 		activeRowComponents = [];
 
-		if(self.table.options.dataFiltering){
-			self.table.options.dataFiltering.call(self.table, self.getFilters());
+		if(this.table.eventBus.subscribed("dataFiltering")){
+			this.table.eventBus.trigger("dataFiltering", this.getFilters());
 		}
 
-		if(!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)){
+		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
 
-			rowList.forEach(function(row){
-				if(self.filterRow(row)){
+			rowList.forEach((row) => {
+				if(this.filterRow(row)){
 					activeRows.push(row);
 				}
 			});
@@ -9280,13 +9275,13 @@ class Filter extends Module{
 			activeRows = rowList.slice(0);
 		}
 
-		if(self.table.options.dataFiltered){
+		if(this.table.eventBus.subscribed("dataFiltered")){
 
-			activeRows.forEach(function(row){
+			activeRows.forEach((row) => {
 				activeRowComponents.push(row.getComponent());
 			});
 
-			self.table.options.dataFiltered.call(self.table, self.getFilters(), activeRowComponents);
+			this.table.eventBus.trigger("dataFiltered", this.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;
@@ -10881,7 +10876,7 @@ class Group$1{
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), false);
+		this.groupManager.table.eventBus.trigger("groupVisibilityChanged", this.getComponent(), false);
 	}
 
 	show(){
@@ -10921,7 +10916,7 @@ class Group$1{
 			this.groupManager.updateGroupRows(true);
 		}
 
-		this.groupManager.table.options.groupVisibilityChanged.call(this.table, this.getComponent(), true);
+		this.groupManager.table.eventBus.trigger("groupVisibilityChanged", this.getComponent(), true);
 	}
 
 	_visSet(){
@@ -11209,12 +11204,12 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.table.options.dataGrouping.call(this.table);
+			this.table.eventBus.trigger("dataGrouping");
 
 			this.generateGroups(rows);
 
-			if(this.table.options.dataGrouped){
-				this.table.options.dataGrouped.call(this.table, this.getGroups(true));
+			if(this.table.eventBus.subscribed("dataGrouped")){
+				this.table.eventBus.trigger("dataGrouped", this.getGroups(true));
 			}
 
 			return this.updateGroupRows();
@@ -11560,7 +11555,7 @@ class History extends Module{
 
 			this.index--;
 
-			this.table.options.historyUndo.call(this.table, action.type, action.component.getComponent(), action.data);
+			this.table.eventBus.trigger("historyUndo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else {
@@ -11578,7 +11573,7 @@ class History extends Module{
 
 			History.redoers[action.type].call(this, action);
 
-			this.table.options.historyRedo.call(this.table, action.type, action.component.getComponent(), action.data);
+			this.table.eventBus.trigger("historyRedo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else {
@@ -11633,7 +11628,7 @@ class HtmlTableImport extends Module{
 
 		this.hasIndex = false;
 
-		this.table.options.htmlImporting.call(this.table);
+		this.table.eventBus.trigger("htmlImporting");
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
@@ -11687,7 +11682,7 @@ class HtmlTableImport extends Module{
 
 		options.data = data;
 
-		this.table.options.htmlImported.call(this.table);
+		this.table.eventBus.trigger("htmlImported");
 
 		this.table.element = newElement;
 	}
@@ -13143,7 +13138,7 @@ class MoveRows extends Module{
 
 	elementRowDrop(e, element, row){
 		if(this.table.options.movableRowsElementDrop){
-			this.table.options.movableRowsElementDrop(e, element, row ? row.getComponent() : false);
+			this.table.eventBus.trigger("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 		}
 	}
 
@@ -13154,7 +13149,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.options.movableRowsSendingStart.call(this.table, connectionTables);
+			this.table.eventBus.trigger("movableRowsSendingStart", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
 				row:row,
@@ -13197,7 +13192,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.options.movableRowsSendingStop.call(this.table, connectionTables);
+			this.table.eventBus.trigger("movableRowsSendingStop", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
 		}
@@ -13227,7 +13222,7 @@ class MoveRows extends Module{
 
 			this.table.element.addEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.options.movableRowsReceivingStart.call(this.table, row, table);
+			this.table.eventBus.trigger("movableRowsReceivingStart", row, table);
 
 			return true;
 		}else {
@@ -13252,7 +13247,7 @@ class MoveRows extends Module{
 
 			this.table.element.removeEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.options.movableRowsReceivingStop.call(this.table, table);
+			this.table.eventBus.trigger("movableRowsReceivingStop", table);
 		}else {
 			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
@@ -13281,10 +13276,9 @@ class MoveRows extends Module{
 				}
 			}
 
-			this.table.options.movableRowsSent.call(this.table, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
-
+			this.table.eventBus.trigger("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}else {
-			this.table.options.movableRowsSentFailed.call(this.table, this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.table.eventBus.trigger("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}
 
 		this.endMove();
@@ -13313,9 +13307,9 @@ class MoveRows extends Module{
 		}
 
 		if(success){
-			this.table.options.movableRowsReceived.call(this.table, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.eventBus.trigger("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else {
-			this.table.options.movableRowsReceivedFailed.call(this.table, this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.table.eventBus.trigger("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}
 
 		this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
@@ -14053,7 +14047,8 @@ class Page extends Module{
 				this.table.rowManager.refreshActiveData("page");
 				this.table.rowManager.scrollHorizontal(left);
 
-				this.table.options.pageLoaded.call(this.table, this.getPage());
+				this.table.eventBus.trigger("pageLoaded", this.getPage());
+
 				resolve();
 				break;
 
@@ -14176,7 +14171,7 @@ class Page extends Module{
 
 				this.table.columnManager.scrollHorizontal(left);
 
-				this.table.options.pageLoaded.call(this.table, this.getPage());
+				this.table.eventBus.trigger("pageLoaded",  this.getPage());
 			}
 
 			this.initialLoad = false;
@@ -15205,7 +15200,7 @@ class ResizeColumns extends Module{
 				self.table.modules.persistence.save("columns");
 			}
 
-			self.table.options.columnResized.call(self.table, column.getComponent());
+			self.table.eventBus.trigger("columnResized", column.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -15305,7 +15300,7 @@ class ResizeRows extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			self.table.options.rowResized.call(this.table, row.getComponent());
+			this.table.eventBus.trigger("rowResized", row.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -15989,7 +15984,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.options.rowSelected.call(this.table, row.getComponent());
+					this.table.eventBus.trigger("rowSelected", row.getComponent());
 				}
 
 				this._rowSelectionChanged(silent);
@@ -16062,7 +16057,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					self.table.options.rowDeselected.call(this.table, row.getComponent());
+					this.table.eventBus.trigger("rowDeselected", row.getComponent());
 				}
 
 				self._rowSelectionChanged(silent);
@@ -16110,7 +16105,7 @@ class SelectRow extends Module{
 		}
 
 		if(!silent){
-			this.table.options.rowSelectionChanged.call(this.table, this.getSelectedData(), this.getSelectedRows());
+			this.table.eventBus.trigger("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
 		}
 	}
 
@@ -16629,8 +16624,8 @@ class Sort extends Module{
 		sortListActual = [],
 		rowComponents = [];
 
-		if(self.table.options.dataSorting){
-			self.table.options.dataSorting.call(self.table, self.getSort());
+		if(this.table.eventBus.subscribed("dataSorting")){
+			this.table.eventBus.trigger("dataSorting", self.getSort());
 		}
 
 		self.clearColumnHeaders();
@@ -16667,12 +16662,12 @@ class Sort extends Module{
 			});
 		}
 
-		if(self.table.options.dataSorted){
+		if(this.table.eventBus.subscribed("dataSorted")){
 			data.forEach((row) => {
 				rowComponents.push(row.getComponent());
 			});
 
-			self.table.options.dataSorted.call(self.table, self.getSort(), rowComponents);
+			this.table.eventBus.trigger("dataSorted", self.getSort(), rowComponents);
 		}
 	}
 
@@ -17130,12 +17125,7 @@ var defaultOptions$1 = {
 	clipboardPasteParser:"table", //convert pasted clipboard data to rows
 	clipboardPasteAction:"insert", //how to insert pasted data into the table
 
-	clipboardCopied:function(){}, //data has been copied to the clipboard
-	clipboardPasted:function(){}, //data has been pasted into the table
-	clipboardPasteError:function(){}, //data has not successfully been pasted into the table
-
 	downloadReady:function(data, blob){return blob;}, //function to manipulate download data
-	downloadComplete:false, //function to manipulate download data
 	downloadConfig:{},	//download config
 	downloadRowRange:"active", //restrict download to active rows only
 
@@ -17149,8 +17139,6 @@ var defaultOptions$1 = {
 	dataTreeCollapseElement:false, //data tree row collapse element
 	dataTreeExpandElement:false, //data tree row expand element
 	dataTreeStartExpanded:false,
-	dataTreeRowExpanded:function(){}, //row has been expanded
-	dataTreeRowCollapsed:function(){}, //row has been collapsed
 	dataTreeChildColumnCalcs:false, //include visible data tree rows in column calculations
 	dataTreeSelectPropagate:false, //seleccting a parent row selects its children
 
@@ -17241,15 +17229,6 @@ var defaultOptions$1 = {
 	movableRowsConnectedElements:false, //other elements for movable rows to be connected to
 	movableRowsSender:false,
 	movableRowsReceiver:"insert",
-	movableRowsSendingStart:function(){},
-	movableRowsSent:function(){},
-	movableRowsSentFailed:function(){},
-	movableRowsSendingStop:function(){},
-	movableRowsReceivingStart:function(){},
-	movableRowsReceived:function(){},
-	movableRowsReceivedFailed:function(){},
-	movableRowsReceivingStop:function(){},
-	movableRowsElementDrop:function(){},
 
 	scrollToRowPosition:"top",
 	scrollToRowIfVisible:true,
@@ -17263,14 +17242,6 @@ var defaultOptions$1 = {
 	rowFormatterHtmlOutput:null,
 
 	placeholder:false,
-
-	//table building callbacks
-	tableBuilding:function(){},
-	tableBuilt:function(){},
-
-	//render callbacks
-	renderStarted:function(){},
-	renderComplete:function(){},
 
 	//row callbacks
 	rowClick:false,
@@ -17286,17 +17257,8 @@ var defaultOptions$1 = {
 	rowMouseMove:false,
 	rowContextMenu:false,
 	rowClickMenu:false,
-	rowAdded:function(){},
-	rowDeleted:function(){},
-	rowMoved:function(){},
-	rowUpdated:function(){},
-	rowSelectionChanged:function(){},
-	rowSelected:function(){},
-	rowDeselected:function(){},
-	rowResized:function(){},
 
 	//cell callbacks
-	//row callbacks
 	cellClick:false,
 	cellDblClick:false,
 	cellContext:false,
@@ -17308,44 +17270,14 @@ var defaultOptions$1 = {
 	cellMouseOver:false,
 	cellMouseOut:false,
 	cellMouseMove:false,
-	cellEditing:function(){},
-	cellEdited:function(){},
-	cellEditCancelled:function(){},
-
-	//column callbacks
-	columnMoved:false,
-	columnResized:function(){},
-	columnTitleChanged:function(){},
-	columnVisibilityChanged:function(){},
-
-	//HTML iport callbacks
-	htmlImporting:function(){},
-	htmlImported:function(){},
-
-	//data callbacks
-	dataLoading:function(){},
-	dataLoaded:function(){},
-	dataChanged:false,
 
 	//ajax callbacks
 	ajaxRequesting:function(){},
 	ajaxResponse:false,
-	ajaxError:function(){},
-
-	//filtering callbacks
-	dataFiltering:false,
-	dataFiltered:false,
-
-	//sorting callbacks
-	dataSorting:function(){},
-	dataSorted:function(){},
 
 	//grouping callbacks
 	groupToggleElement:"arrow",
 	groupClosedShowCalcs:false,
-	dataGrouping:function(){},
-	dataGrouped:false,
-	groupVisibilityChanged:function(){},
 	groupClick:false,
 	groupDblClick:false,
 	groupContext:false,
@@ -17357,23 +17289,108 @@ var defaultOptions$1 = {
 
 	columnCalcs:true,
 
-	//pagination callbacks
-	pageLoaded:function(){},
-
-	//localization callbacks
-	localized:function(){},
-
 	//validation callbacks
 	validationMode:"blocking",
-	validationFailed:function(){},
 
-	//history callbacks
-	historyUndo:function(){},
-	historyRedo:function(){},
+	//////////////////////////////////////
+	////////////// Events ////////////////
+	//////////////////////////////////////
 
-	//scroll callbacks
-	scrollHorizontal:function(){},
-	scrollVertical:function(){},
+	//Table Setup
+	tableBuilding:null,
+	tableBuilt:null,
+
+	//Render
+	renderStarted:null,
+	renderComplete:null,
+
+	//Data
+	dataLoading:null,
+	dataLoaded:null,
+	dataChanged:null,
+
+	//Scroll
+	scrollHorizontal:null,
+	scrollVertical:null,
+
+	//Row Manipulation
+	rowAdded:null,
+	rowDeleted:null,
+	rowMoved:null,
+	rowUpdated:null,
+	rowSelectionChanged:null,
+	rowSelected:null,
+	rowDeselected:null,
+	rowResized:null,
+
+	//Cell Manipulation
+	cellEditing:null,
+	cellEdited:null,
+	cellEditCancelled:null,
+
+	//Column Manipulation
+	columnMoved:null,
+	columnResized:null,
+	columnTitleChanged:null,
+	columnVisibilityChanged:null,
+
+	//HTML iport callbacks
+	htmlImporting:null,
+	htmlImported:null,
+
+	//Ajax
+	ajaxError:null,
+
+	//Clipboard
+	clipboardCopied:null, //data has been copied to the clipboard
+	clipboardPasted:null, //data has been pasted into the table
+	clipboardPasteError:null, //data has not successfully been pasted into the table
+
+	//Download
+	downloadComplete:null, //function to manipulate download data
+
+	//Data Tree
+	dataTreeRowExpanded:null, //row has been expanded
+	dataTreeRowCollapsed:null, //row has been collapsed
+
+	//Filtering
+	dataFiltering:null,
+	dataFiltered:null,
+
+	//Sorting
+	dataSorting:null,
+	dataSorted:null,
+
+	//Movable Rows
+	movableRowsSendingStart:null,
+	movableRowsSent:null,
+	movableRowsSentFailed:null,
+	movableRowsSendingStop:null,
+	movableRowsReceivingStart:null,
+	movableRowsReceived:null,
+	movableRowsReceivedFailed:null,
+	movableRowsReceivingStop:null,
+	movableRowsElementDrop:null,
+
+	//Grouped Rows
+	dataGrouping:null,
+	dataGrouped:null,
+	groupVisibilityChanged:null,
+
+	//Pagination
+	pageLoaded:null,
+
+	//Localization
+	localized:null,
+
+	//Validation
+	validationFailed:null,
+
+	//History
+	historyUndo:null,
+	historyRedo:null,
+
+
 };
 
 class ColumnManager {
@@ -17521,30 +17538,30 @@ class ColumnManager {
 
 				switch(typeof definitions){
 					case "function":
-						this.table.options.columns = definitions.call(this.table, cols);
+					this.table.options.columns = definitions.call(this.table, cols);
 					break;
 
 					case "object":
-						if(Array.isArray(definitions)){
-							cols.forEach((col) => {
-								var match = definitions.find((def) => {
-									return def.field === col.field;
-								});
-
-								if(match){
-									Object.assign(col, match);
-								}
+					if(Array.isArray(definitions)){
+						cols.forEach((col) => {
+							var match = definitions.find((def) => {
+								return def.field === col.field;
 							});
 
-						}else {
-							cols.forEach((col) => {
-								if(definitions[col.field]){
-									Object.assign(col, definitions[col.field]);
-								}
-							});
-						}
+							if(match){
+								Object.assign(col, match);
+							}
+						});
 
-						this.table.options.columns = cols;
+					}else {
+						cols.forEach((col) => {
+							if(definitions[col.field]){
+								Object.assign(col, definitions[col.field]);
+							}
+						});
+					}
+
+					this.table.options.columns = cols;
 					break;
 				}
 			}else {
@@ -17824,8 +17841,8 @@ class ColumnManager {
 			this.table.vdomHoz.reinitialize(true);
 		}
 
-		if(this.table.options.columnMoved){
-			this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
+		if(this.table.eventBus.subscribed("columnMoved")){
+			this.table.eventBus.trigger("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
 		}
 
 		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
@@ -18210,7 +18227,7 @@ class RowManager {
 					this.table.modules.columnCalcs.scrollHorizontal(left);
 				}
 
-				this.table.options.scrollHorizontal(left);
+				this.table.eventBus.trigger("scrollHorizontal", left);
 			}
 
 			this.scrollLeft = left;
@@ -18231,7 +18248,7 @@ class RowManager {
 						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
 					}
 
-					this.table.options.scrollVertical(top);
+					this.table.eventBus.trigger("scrollVertical", top);
 				}else {
 					this.scrollTop = top;
 				}
@@ -18398,7 +18415,7 @@ class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.table.options.dataLoading.call(this.table, data);
+		this.table.eventBus.trigger("dataLoading", data);
 
 		this._wipeElements();
 
@@ -18427,7 +18444,7 @@ class RowManager {
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.table.options.dataLoaded.call(this.table, data);
+			this.table.eventBus.trigger("dataLoaded", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -18479,10 +18496,10 @@ class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.options.rowDeleted.call(this.table, row.getComponent());
+		this.table.eventBus.trigger("rowDeleted", row.getComponent());
 
-		if(this.table.options.dataChanged){
-			this.table.options.dataChanged.call(this.table, this.getData());
+		if(this.table.eventBus.subscribed("dataChanged")){
+			this.table.eventBus.trigger("dataChanged", this.getData());
 		}
 
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
@@ -18660,10 +18677,10 @@ class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.table.options.rowAdded.call(this.table, row.getComponent());
+		this.table.eventBus.trigger("rowAdded", row.getComponent());
 
-		if(this.table.options.dataChanged){
-			this.table.options.dataChanged.call(this.table, this.getData());
+		if(this.table.eventBus.subscribed("dataChanged")){
+			this.table.eventBus.trigger("dataChanged", this.table.rowManager.getData());
 		}
 
 		if(!blockRedraw){
@@ -18682,7 +18699,7 @@ class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.options.rowMoved.call(this.table, from.getComponent());
+		this.table.eventBus.trigger("rowMoved", from.getComponent());
 	}
 
 	moveRowActual(from, to, after){
@@ -20041,19 +20058,30 @@ class EventBus {
 		}
 	}
 
+	subscribed(key){
+		return this.table.options[key] || (this.events[key] && this.events[key].length);
+	}
+
 	trigger(){
 		var args = Array.from(arguments),
-		key = args.shift();
+		key = args.shift(),
+		result;
 
 		if(this.events[key]){
-			this.events[key].forEach((callback) => {
-				callback.apply(this, args);
+			this.events[key].forEach((callback, i) => {
+				let callResult = callback.apply(this, args);
+
+				if(!i){
+					result = callResult;
+				}
 			});
 		}
 
 		if(typeof this.table.options[key] === "function"){
-			this.table.options[key].apply(this, args);
+			result = this.table.options[key].apply(this, args);
 		}
+
+		return result;
 	}
 }
 
@@ -20533,7 +20561,7 @@ class Localize extends Module{
 			traverseLang(this.langList[desiredLocale], this.lang);
 		}
 
-		this.table.options.localized.call(this.table, this.locale, this.lang);
+		this.table.eventBus.trigger("localized", this.locale, this.lang);
 
 		this._executeBindings();
 	}
@@ -21347,7 +21375,7 @@ class Tabulator$1 {
 		mod = this.modules,
 		options = this.options;
 
-		options.tableBuilding.call(this);
+		this.eventBus.trigger("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
@@ -21523,7 +21551,7 @@ class Tabulator$1 {
 			mod.print.initialize();
 		}
 
-		options.tableBuilt.call(this);
+		this.eventBus.trigger("tableBuilt");
 	}
 
 	_loadInitialData(){

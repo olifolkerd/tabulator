@@ -146,30 +146,30 @@ export default class ColumnManager {
 
 				switch(typeof definitions){
 					case "function":
-						this.table.options.columns = definitions.call(this.table, cols);
+					this.table.options.columns = definitions.call(this.table, cols);
 					break;
 
 					case "object":
-						if(Array.isArray(definitions)){
-							cols.forEach((col) => {
-								var match = definitions.find((def) => {
-									return def.field === col.field;
-								});
-
-								if(match){
-									Object.assign(col, match);
-								}
+					if(Array.isArray(definitions)){
+						cols.forEach((col) => {
+							var match = definitions.find((def) => {
+								return def.field === col.field;
 							});
 
-						}else{
-							cols.forEach((col) => {
-								if(definitions[col.field]){
-									Object.assign(col, definitions[col.field]);
-								}
-							});
-						}
+							if(match){
+								Object.assign(col, match);
+							}
+						});
 
-						this.table.options.columns = cols;
+					}else{
+						cols.forEach((col) => {
+							if(definitions[col.field]){
+								Object.assign(col, definitions[col.field]);
+							}
+						});
+					}
+
+					this.table.options.columns = cols;
 					break;
 				}
 			}else{
@@ -449,8 +449,8 @@ export default class ColumnManager {
 			this.table.vdomHoz.reinitialize(true);
 		}
 
-		if(this.table.options.columnMoved){
-			this.table.options.columnMoved.call(this.table, from.getComponent(), this.table.columnManager.getComponents());
+		if(this.table.eventBus.subscribed("columnMoved")){
+			this.table.eventBus.trigger("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
 		}
 
 		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){

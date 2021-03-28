@@ -72,7 +72,7 @@ class Download extends Module{
 		blob = new Blob([data],{type:mime}),
 		filename = filename || "Tabulator." + (typeof type === "function" ? "txt" : type);
 
-		blob = this.table.options.downloadReady.call(this.table, data, blob);
+		blob = this.table.options.downloadReady(data, blob);
 
 		if(blob){
 
@@ -97,10 +97,7 @@ class Download extends Module{
 				}
 			}
 
-
-			if(this.table.options.downloadComplete){
-				this.table.options.downloadComplete();
-			}
+			this.table.eventBus.trigger("downloadComplete");
 		}
 	}
 

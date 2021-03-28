@@ -33,6 +33,10 @@ export default class EventBus {
 		}
 	}
 
+	subscribed(key){
+		return this.table.options[key] || (this.events[key] && this.events[key].length);
+	}
+
 	trigger(){
 		var args = Array.from(arguments),
 		key = args.shift(),

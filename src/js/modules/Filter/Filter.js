@@ -638,18 +638,17 @@ class Filter extends Module{
 
 	//filter row array
 	filter(rowList, filters){
-		var self = this,
-		activeRows = [],
+		var activeRows = [],
 		activeRowComponents = [];
 
-		if(self.table.options.dataFiltering){
-			self.table.options.dataFiltering.call(self.table, self.getFilters());
+		if(this.table.eventBus.subscribed("dataFiltering")){
+			this.table.eventBus.trigger("dataFiltering", this.getFilters());
 		}
 
-		if(!self.table.options.ajaxFiltering && (self.filterList.length || Object.keys(self.headerFilters).length)){
+		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
 
-			rowList.forEach(function(row){
-				if(self.filterRow(row)){
+			rowList.forEach((row) => {
+				if(this.filterRow(row)){
 					activeRows.push(row);
 				}
 			});
@@ -658,13 +657,13 @@ class Filter extends Module{
 			activeRows = rowList.slice(0);
 		}
 
-		if(self.table.options.dataFiltered){
+		if(this.table.eventBus.subscribed("dataFiltered")){
 
-			activeRows.forEach(function(row){
+			activeRows.forEach((row) => {
 				activeRowComponents.push(row.getComponent());
 			});
 
-			self.table.options.dataFiltered.call(self.table, self.getFilters(), activeRowComponents);
+			this.table.eventBus.trigger("dataFiltered", this.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;
