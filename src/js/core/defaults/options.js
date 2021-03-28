@@ -1,4 +1,7 @@
 export default {
+
+	debugEvents:false, //flag to console log events
+
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator

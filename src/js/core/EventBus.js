@@ -1,8 +1,10 @@
 export default class EventBus {
 
-	constructor(optionsList){
+	constructor(optionsList, debug){
 		this.events = {};
-		this.optionsList = optionsLis || {};
+		this.optionsList = optionsList || {};
+
+		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
 	}
 
 	subscribe(key, callback){
@@ -37,7 +39,7 @@ export default class EventBus {
 		return this.optionsList[key] || (this.events[key] && this.events[key].length);
 	}
 
-	dispatch(){
+	_dispatch(){
 		var args = Array.from(arguments),
 		key = args.shift(),
 		result;
@@ -57,5 +59,14 @@ export default class EventBus {
 		}
 
 		return result;
+	}
+
+	_debugDispatch(){
+		var args = Array.from(arguments);
+		args[0] = "Event:" + args[0];
+
+		console.log(...args);
+
+		return this._dispatch(...arguments)
 	}
 }

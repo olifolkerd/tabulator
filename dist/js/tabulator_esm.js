@@ -17058,6 +17058,9 @@ var modules = /*#__PURE__*/Object.freeze({
 });
 
 var defaultOptions$1 = {
+
+	debugEvents:false, //flag to console log events
+
 	height:false, //height of tabulator
 	minHeight:false, //minimum height of tabulator
 	maxHeight:false, //maximum height of tabulator
@@ -20025,9 +20028,11 @@ class FooterManager {
 
 class EventBus {
 
-	constructor(optionsList){
+	constructor(optionsList, debug){
 		this.events = {};
-		this.optionsList = optionsLis || {};
+		this.optionsList = optionsList || {};
+
+		this.dispatch = debug ? this._debugDispatch.bind(this) : this._dispatch.bind(this);
 	}
 
 	subscribe(key, callback){
@@ -20062,7 +20067,7 @@ class EventBus {
 		return this.optionsList[key] || (this.events[key] && this.events[key].length);
 	}
 
-	dispatch(){
+	_dispatch(){
 		var args = Array.from(arguments),
 		key = args.shift(),
 		result;
@@ -20082,6 +20087,15 @@ class EventBus {
 		}
 
 		return result;
+	}
+
+	_debugDispatch(){
+		var args = Array.from(arguments);
+		args[0] = "Event:" + args[0];
+
+		console.log(...args);
+
+		return this._dispatch(...arguments)
 	}
 }
 
@@ -21219,9 +21233,8 @@ class Tabulator$1 {
 		this.columnManager = null; // hold Column Manager
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
-		this.eventBus = new EventBus(this.options); //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
-
+		this.eventBus = null; //handle external event messaging
 		this.browser = ""; //hold current browser type
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
@@ -21231,6 +21244,9 @@ class Tabulator$1 {
 
 		if(this.initializeElement(element)){
 			this.initializeOptions(options || {});
+
+			this.eventBus = new EventBus(this.options, this.options.debugEvents); //holder Footer Manager
+
 			this._create();
 		}
 
