@@ -1,3 +1,5 @@
+import CellComponent from '../../../../core/cell/CellComponent.js';
+
 export default function(cell, formatterParams, onRendered){ //progress bar
 	var value = this.sanitizeHTML(cell.getValue()) || 0,
 	element = cell.getElement(),
