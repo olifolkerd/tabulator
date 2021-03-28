@@ -103,7 +103,7 @@ class Edit extends Module{
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
 
-			this.table.eventBus.dispatch("cellEditCancelled", component);
+			this.table.externalEvents.dispatch("cellEditCancelled", component);
 		}
 	}
 
@@ -237,7 +237,7 @@ class Edit extends Module{
 
 					if(valid !== true){
 						element.classList.add("tabulator-validation-fail");
-						self.table.eventBus.dispatch("validationFailed", cell.getComponent(), value, valid);
+						self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
 						return false;
 					}
 
@@ -247,7 +247,7 @@ class Edit extends Module{
 					element.classList.add("tabulator-validation-fail");
 					self.focusCellNoEvent(cell, true);
 					rendered();
-					self.table.eventBus.dispatch("validationFailed", cell.getComponent(), value, valid);
+					self.table.externalEvents.dispatch("validationFailed", cell.getComponent(), value, valid);
 					return false;
 				}
 			}else{
@@ -309,7 +309,7 @@ class Edit extends Module{
 					cell.column.cellEvents.cellEditing.call(this.table, component);
 				}
 
-				this.table.eventBus.dispatch("cellEditing", component);
+				this.table.externalEvents.dispatch("cellEditing", component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 

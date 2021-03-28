@@ -124,12 +124,12 @@ getDisplayIndex(){
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.table.eventBus.dispatch("dataGrouping");
+			this.table.externalEvents.dispatch("dataGrouping");
 
 			this.generateGroups(rows);
 
-			if(this.table.eventBus.subscribed("dataGrouped")){
-				this.table.eventBus.dispatch("dataGrouped", this.getGroups(true));
+			if(this.table.externalEvents.subscribed("dataGrouped")){
+				this.table.externalEvents.dispatch("dataGrouped", this.getGroups(true));
 			}
 
 			return this.updateGroupRows();

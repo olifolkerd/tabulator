@@ -7,7 +7,7 @@ import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
 
-import EventBus from './EventBus.js';
+import ExternalEventBus from './ExternalEventBus.js';
 
 import TableRegistry from './TableRegistry.js';
 import ModuleBinder from './ModuleBinder.js';
@@ -24,7 +24,7 @@ class Tabulator {
 		this.rowManager = null; //hold Row Manager
 		this.footerManager = null; //holder Footer Manager
 		this.vdomHoz  = null; //holder horizontal virtual dom
-		this.eventBus = null; //handle external event messaging
+		this.externalEvents = null; //handle external event messaging
 		this.browser = ""; //hold current browser type
 		this.browserSlow = false; //handle reduced functionality for slower browsers
 		this.browserMobile = false; //check if running on moble, prevent resize cancelling edit on keyboard appearence
@@ -37,7 +37,7 @@ class Tabulator {
 		if(this.initializeElement(element)){
 			this.initializeOptions(options || {});
 
-			this.eventBus = new EventBus(this.options, this.options.debugEvents); //holder Footer Manager
+			this.externalEvents = new ExternalEventBus(this.options, this.options.debugEvents); //holder Footer Manager
 
 			this._create();
 		}
@@ -184,7 +184,7 @@ class Tabulator {
 		mods = this.modules,
 		options = this.options;
 
-		this.eventBus.dispatch("tableBuilding");
+		this.externalEvents.dispatch("tableBuilding");
 
 		element.classList.add("tabulator");
 		element.setAttribute("role", "grid");
@@ -304,7 +304,7 @@ class Tabulator {
 			});
 		}
 
-		this.eventBus.dispatch("tableBuilt");
+		this.externalEvents.dispatch("tableBuilt");
 	}
 
 	_loadInitialData(){
@@ -1649,18 +1649,18 @@ class Tabulator {
 	//////////////////// Event Bus ///////////////////
 
 	on(key, callback){
-		this.eventBus.subscribe(key, callback);
+		this.externalEvents.subscribe(key, callback);
 	}
 
 	off(key, callback){
-		this.eventBus.unsubscribe(key, callback);
+		this.externalEvents.unsubscribe(key, callback);
 	}
 
 	dispatchEvent(){
 		var args = Array.from(arguments),
 		key = args.shift();
 
-		this.eventBus.dispatch(...arguments)
+		this.externalEvents.dispatch(...arguments)
 	}
 
 	/////////// Inter Table Communications ///////////

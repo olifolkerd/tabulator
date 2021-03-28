@@ -237,8 +237,8 @@ class Sort extends Module{
 		rowComponents = [],
 		lastSort;
 
-		if(this.table.eventBus.subscribed("dataSorting")){
-			this.table.eventBus.dispatch("dataSorting", self.getSort());
+		if(this.table.externalEvents.subscribed("dataSorting")){
+			this.table.externalEvents.dispatch("dataSorting", self.getSort());
 		}
 
 		self.clearColumnHeaders();
@@ -275,12 +275,12 @@ class Sort extends Module{
 			});
 		}
 
-		if(this.table.eventBus.subscribed("dataSorted")){
+		if(this.table.externalEvents.subscribed("dataSorted")){
 			data.forEach((row) => {
 				rowComponents.push(row.getComponent());
 			});
 
-			this.table.eventBus.dispatch("dataSorted", self.getSort(), rowComponents);
+			this.table.externalEvents.dispatch("dataSorted", self.getSort(), rowComponents);
 		}
 	}
 

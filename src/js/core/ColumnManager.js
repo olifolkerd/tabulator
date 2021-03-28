@@ -449,8 +449,8 @@ export default class ColumnManager {
 			this.table.vdomHoz.reinitialize(true);
 		}
 
-		if(this.table.eventBus.subscribed("columnMoved")){
-			this.table.eventBus.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
+		if(this.table.externalEvents.subscribed("columnMoved")){
+			this.table.externalEvents.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
 		}
 
 		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){

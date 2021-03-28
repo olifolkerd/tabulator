@@ -120,7 +120,7 @@ export default class RowManager {
 					this.table.modules.columnCalcs.scrollHorizontal(left);
 				}
 
-				this.table.eventBus.dispatch("scrollHorizontal", left);
+				this.table.externalEvents.dispatch("scrollHorizontal", left);
 			}
 
 			this.scrollLeft = left;
@@ -141,7 +141,7 @@ export default class RowManager {
 						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
 					}
 
-					this.table.eventBus.dispatch("scrollVertical", top);
+					this.table.externalEvents.dispatch("scrollVertical", top);
 				}else{
 					this.scrollTop = top;
 				}
@@ -308,7 +308,7 @@ export default class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.table.eventBus.dispatch("dataLoading", data);
+		this.table.externalEvents.dispatch("dataLoading", data);
 
 		this._wipeElements();
 
@@ -337,7 +337,7 @@ export default class RowManager {
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.table.eventBus.dispatch("dataLoaded", data);
+			this.table.externalEvents.dispatch("dataLoaded", data);
 		}else{
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
@@ -389,10 +389,10 @@ export default class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.eventBus.dispatch("rowDeleted", row.getComponent());
+		this.table.externalEvents.dispatch("rowDeleted", row.getComponent());
 
-		if(this.table.eventBus.subscribed("dataChanged")){
-			this.table.eventBus.dispatch("dataChanged", this.getData());
+		if(this.table.externalEvents.subscribed("dataChanged")){
+			this.table.externalEvents.dispatch("dataChanged", this.getData());
 		}
 
 		if(this.table.options.groupBy && this.table.modExists("groupRows")){
@@ -571,10 +571,10 @@ export default class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.table.eventBus.dispatch("rowAdded", row.getComponent());
+		this.table.externalEvents.dispatch("rowAdded", row.getComponent());
 
-		if(this.table.eventBus.subscribed("dataChanged")){
-			this.table.eventBus.dispatch("dataChanged", this.table.rowManager.getData());
+		if(this.table.externalEvents.subscribed("dataChanged")){
+			this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
 		}
 
 		if(!blockRedraw){
@@ -593,7 +593,7 @@ export default class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.eventBus.dispatch("rowMoved", from.getComponent());
+		this.table.externalEvents.dispatch("rowMoved", from.getComponent());
 	}
 
 	moveRowActual(from, to, after){
@@ -1251,7 +1251,7 @@ export default class RowManager {
 
 	renderTable(){
 
-		this.table.eventBus.dispatch("renderStarted");
+		this.table.externalEvents.dispatch("renderStarted");
 
 		this.element.scrollTop = 0;
 
@@ -1288,7 +1288,7 @@ export default class RowManager {
 			}
 		}
 
-		this.table.eventBus.dispatch("renderComplete");
+		this.table.externalEvents.dispatch("renderComplete");
 	}
 
 	//simple render on heightless table

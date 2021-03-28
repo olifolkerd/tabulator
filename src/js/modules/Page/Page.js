@@ -557,7 +557,7 @@ class Page extends Module{
 				this.table.rowManager.refreshActiveData("page");
 				this.table.rowManager.scrollHorizontal(left);
 
-				this.table.eventBus.dispatch("pageLoaded", this.getPage());
+				this.table.externalEvents.dispatch("pageLoaded", this.getPage());
 
 				resolve();
 				break;
@@ -681,7 +681,7 @@ class Page extends Module{
 
 				this.table.columnManager.scrollHorizontal(left);
 
-				this.table.eventBus.dispatch("pageLoaded",  this.getPage());
+				this.table.externalEvents.dispatch("pageLoaded",  this.getPage());
 			}
 
 			this.initialLoad = false;

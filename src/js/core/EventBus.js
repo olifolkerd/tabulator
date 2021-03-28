@@ -1,4 +1,4 @@
-export default class EventBus {
+export default class ExternalEventBus {
 
 	constructor(optionsList, debug){
 		this.events = {};

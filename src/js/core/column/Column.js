@@ -530,7 +530,7 @@ class Column {
 
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.eventBus.dispatch("columnTitleChanged", this.getComponent());
+				table.externalEvents.dispatch("columnTitleChanged", this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
@@ -828,7 +828,7 @@ class Column {
 
 		if(visible){
 			this.show();
-			this.parent.table.eventBus.dispatch("columnVisibilityChanged", this.getComponent(), false);
+			this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
 		}else{
 			this.hide();
 		}
@@ -864,7 +864,7 @@ class Column {
 			}
 
 			if(!silent){
-				this.table.eventBus.dispatch("columnVisibilityChanged", this.getComponent(), true);
+				this.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), true);
 			}
 
 			if(this.parent.isGroup){
@@ -903,7 +903,7 @@ class Column {
 			}
 
 			if(!silent){
-				this.parent.table.eventBus.dispatch("columnVisibilityChanged", this.getComponent(), false);
+				this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
 			}
 
 			if(this.parent.isGroup){

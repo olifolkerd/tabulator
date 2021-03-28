@@ -303,7 +303,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.eventBus.dispatch("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
+			this.table.externalEvents.dispatch("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -317,7 +317,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.eventBus.dispatch("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
+			this.table.externalEvents.dispatch("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
 	}
 

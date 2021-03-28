@@ -60,7 +60,7 @@ class History extends Module{
 
 			this.index--;
 
-			this.table.eventBus.dispatch("historyUndo", action.type, action.component.getComponent(), action.data);
+			this.table.externalEvents.dispatch("historyUndo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else{
@@ -78,7 +78,7 @@ class History extends Module{
 
 			History.redoers[action.type].call(this, action);
 
-			this.table.eventBus.dispatch("historyRedo", action.type, action.component.getComponent(), action.data);
+			this.table.externalEvents.dispatch("historyRedo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else{

@@ -463,10 +463,10 @@ export default class Row {
 
 			//this.reinitialize();
 
-			this.table.eventBus.dispatch("rowUpdated", this.getComponent());
+			this.table.externalEvents.dispatch("rowUpdated", this.getComponent());
 
-			if(this.table.eventBus.subscribed("dataChanged")){
-				this.table.eventBus.dispatch("dataChanged", this.table.rowManager.getData());
+			if(this.table.externalEvents.subscribed("dataChanged")){
+				this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
 			}
 
 			resolve();
