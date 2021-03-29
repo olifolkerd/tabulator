@@ -1084,8 +1084,12 @@ class Column {
 		}
 	}
 
-	//set column width to maximum cell width
+	//set column width to maximum cell width for non group columns
 	fitToData(){
+		if(this.isGroup){
+			return;
+		}
+		
 		if(!this.widthFixed){
 			this.element.style.width = "";
 
