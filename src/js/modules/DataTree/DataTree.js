@@ -96,6 +96,7 @@ class DataTree extends Module{
 
 			this.subscribe("row-create", this.initializeRow.bind(this));
 			this.subscribe("row-init", this.layoutRow.bind(this));
+			this.subscribe("row-reinit", this.reinitializeRowChildren.bind(this));
 		}
 	}
 
@@ -121,6 +122,14 @@ class DataTree extends Module{
 			parent: row.modules.dataTree ? row.modules.dataTree.parent : false,
 			children:children,
 		};
+	}
+
+	reinitializeRowChildren(row){
+		var children = this.getTreeChildren(row, false, true);
+
+		children.forEach(function(child){
+			child.reinitialize(true);
+		});
 	}
 
 	layoutRow(row){

@@ -236,11 +236,7 @@ export default class Row {
 			this.initialize(true);
 		}
 
-		if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
-			this.table.modules.dataTree.getTreeChildren(this, false, true).forEach(function(child){
-				child.reinitialize(true);
-			});
-		}
+		this.table.eventBus.dispatch("row-reinit", this);
 	}
 
 	//get heights when doing bulk row style calcs in virtual DOM

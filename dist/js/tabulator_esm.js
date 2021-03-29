@@ -3583,11 +3583,7 @@ class Row$1 {
 			this.initialize(true);
 		}
 
-		if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
-			this.table.modules.dataTree.getTreeChildren(this, false, true).forEach(function(child){
-				child.reinitialize(true);
-			});
-		}
+		this.table.eventBus.dispatch("row-reinit", this);
 	}
 
 	//get heights when doing bulk row style calcs in virtual DOM
@@ -4641,6 +4637,7 @@ class DataTree extends Module{
 
 			this.subscribe("row-create", this.initializeRow.bind(this));
 			this.subscribe("row-init", this.layoutRow.bind(this));
+			this.subscribe("row-reinit", this.reinitializeRowChildren.bind(this));
 		}
 	}
 
@@ -4666,6 +4663,14 @@ class DataTree extends Module{
 			parent: row.modules.dataTree ? row.modules.dataTree.parent : false,
 			children:children,
 		};
+	}
+
+	reinitializeRowChildren(row){
+		var children = this.getTreeChildren(row, false, true);
+
+		children.forEach(function(child){
+			child.reinitialize(true);
+		});
 	}
 
 	layoutRow(row){
