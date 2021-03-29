@@ -51,6 +51,7 @@ class MoveRows extends Module{
 
 			this.subscribe("cell-init", this.initializeCell.bind(this));
 			this.subscribe("column-init", this.initializeColumn.bind(this));
+			this.subscribe("row-create", this.initializeRow.bind(this));
 		}
 	}
 

@@ -93,6 +93,8 @@ class DataTree extends Module{
 				};
 				break;
 			}
+
+			this.subscribe("row-create", this.initializeRow.bind(this));
 		}
 	}
 

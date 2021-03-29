@@ -56,30 +56,7 @@ export default class Row {
 
 		this.createElement();
 
-		//set row selection characteristics
-		if(this.table.options.selectable !== false && this.table.modExists("selectRow")){
-			this.table.modules.selectRow.initializeRow(this);
-		}
-
-		//setup movable rows
-		if(this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-			this.table.modules.moveRow.initializeRow(this);
-		}
-
-		//setup data tree
-		if(this.table.options.dataTree !== false && this.table.modExists("dataTree")){
-			this.table.modules.dataTree.initializeRow(this);
-		}
-
-		//setup column colapse container
-		if(this.table.options.responsiveLayout === "collapse" && this.table.modExists("responsiveLayout")){
-			this.table.modules.responsiveLayout.initializeRow(this);
-		}
-
-		//set column menu
-		if((this.table.options.rowContextMenu || this.table.options.rowClickMenu) && this.table.modExists("menu")){
-			this.table.modules.menu.initializeRow(this);
-		}
+		this.table.eventBus.dispatch("row-create", this);
 
 		//handle row click events
 		if (this.table.options.rowClick){

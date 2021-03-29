@@ -3403,30 +3403,7 @@ class Row$1 {
 
 		this.createElement();
 
-		//set row selection characteristics
-		if(this.table.options.selectable !== false && this.table.modExists("selectRow")){
-			this.table.modules.selectRow.initializeRow(this);
-		}
-
-		//setup movable rows
-		if(this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-			this.table.modules.moveRow.initializeRow(this);
-		}
-
-		//setup data tree
-		if(this.table.options.dataTree !== false && this.table.modExists("dataTree")){
-			this.table.modules.dataTree.initializeRow(this);
-		}
-
-		//setup column colapse container
-		if(this.table.options.responsiveLayout === "collapse" && this.table.modExists("responsiveLayout")){
-			this.table.modules.responsiveLayout.initializeRow(this);
-		}
-
-		//set column menu
-		if((this.table.options.rowContextMenu || this.table.options.rowClickMenu) && this.table.modExists("menu")){
-			this.table.modules.menu.initializeRow(this);
-		}
+		this.table.eventBus.dispatch("row-create", this);
 
 		//handle row click events
 		if (this.table.options.rowClick){
@@ -4675,6 +4652,8 @@ class DataTree extends Module{
 				};
 				break;
 			}
+
+			this.subscribe("row-create", this.initializeRow.bind(this));
 		}
 	}
 
@@ -12217,6 +12196,7 @@ class Menu extends Module{
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
+		this.subscribe("row-create", this.initializeRow.bind(this));
 	}
 
 	layoutCell(cell){
@@ -12857,6 +12837,7 @@ class MoveRows extends Module{
 
 			this.subscribe("cell-init", this.initializeCell.bind(this));
 			this.subscribe("column-init", this.initializeColumn.bind(this));
+			this.subscribe("row-create", this.initializeRow.bind(this));
 		}
 	}
 
@@ -15588,6 +15569,7 @@ class ResponsiveLayout extends Module{
 
 		if(this.mode === "collapse"){
 			this.generateCollapsedContent();
+			this.subscribe("row-create", this.initializeRow.bind(this));
 		}
 
 		//assign collapse column
@@ -15861,6 +15843,13 @@ class SelectRow extends Module{
 		this.selectedRows = []; //hold selected rows
 		this.headerCheckboxElement = null; // hold header select element
 	}
+
+	initialize(){
+		if(this.table.options.selectable !== false){
+			this.subscribe("row-create", this.initializeRow.bind(this));
+		}
+	}
+
 
 	clearSelectionData(silent){
 		this.selecting = false;

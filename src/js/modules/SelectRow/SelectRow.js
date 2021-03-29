@@ -12,6 +12,13 @@ class SelectRow extends Module{
 		this.headerCheckboxElement = null; // hold header select element
 	}
 
+	initialize(){
+		if(this.table.options.selectable !== false){
+			this.subscribe("row-create", this.initializeRow.bind(this));
+		}
+	}
+
+
 	clearSelectionData(silent){
 		this.selecting = false;
 		this.lastClickedRow = false;
