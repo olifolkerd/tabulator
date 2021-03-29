@@ -748,13 +748,7 @@ class Column {
 
 			this.table.columnManager._verticalAlignHeaders();
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-				this.table.modules.persistence.save("columns");
-			}
-
-			if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
-			}
+			this.table.eventBus.dispatch("column-show", this, responsiveToggle);
 
 			if(!silent){
 				this.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), true);
@@ -787,13 +781,7 @@ class Column {
 				cell.hide();
 			});
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-				this.table.modules.persistence.save("columns");
-			}
-
-			if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
-			}
+			this.table.eventBus.dispatch("column-hide", this);
 
 			if(!silent){
 				this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);

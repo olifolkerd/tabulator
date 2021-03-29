@@ -69,6 +69,8 @@ class ResponsiveLayout extends Module{
 
 		if(this.table.options.responsiveLayout){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
+			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
+			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
 		}
 
 	}
@@ -108,10 +110,9 @@ class ResponsiveLayout extends Module{
 	}
 
 	//update column visibility
-	updateColumnVisibility(column, visible){
-		var index;
-		if(column.modules.responsive){
-			column.modules.responsive.visible = visible;
+	updateColumnVisibility(column, responsiveToggle){
+		if(!responsiveToggle && column.modules.responsive){
+			column.modules.responsive.visible = column.visible;
 			this.initialize();
 		}
 	}

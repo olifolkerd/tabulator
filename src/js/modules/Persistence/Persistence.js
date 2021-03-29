@@ -122,6 +122,8 @@ class Persistence extends Module{
 			if(this.config.columns){
 				this.table.options.columns = this.load("columns", this.table.options.columns);
 				this.subscribe("column-init", this.initializeColumn.bind(this));
+				this.subscribe("column-show", this.save.bind(this, "columns"));
+				this.subscribe("column-hide", this.save.bind(this, "columns"));
 			}
 		}
 	}

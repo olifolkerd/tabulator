@@ -2809,13 +2809,7 @@ class Column$1 {
 
 			this.table.columnManager._verticalAlignHeaders();
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-				this.table.modules.persistence.save("columns");
-			}
-
-			if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
-			}
+			this.table.eventBus.dispatch("column-show", this, responsiveToggle);
 
 			if(!silent){
 				this.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), true);
@@ -2848,13 +2842,7 @@ class Column$1 {
 				cell.hide();
 			});
 
-			if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-				this.table.modules.persistence.save("columns");
-			}
-
-			if(!responsiveToggle && this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				this.table.modules.responsiveLayout.updateColumnVisibility(this, this.visible);
-			}
+			this.table.eventBus.dispatch("column-hide", this);
 
 			if(!silent){
 				this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
@@ -14448,6 +14436,8 @@ class Persistence extends Module{
 			if(this.config.columns){
 				this.table.options.columns = this.load("columns", this.table.options.columns);
 				this.subscribe("column-init", this.initializeColumn.bind(this));
+				this.subscribe("column-show", this.save.bind(this, "columns"));
+				this.subscribe("column-hide", this.save.bind(this, "columns"));
 			}
 		}
 	}
@@ -15624,6 +15614,8 @@ class ResponsiveLayout extends Module{
 
 		if(this.table.options.responsiveLayout){
 			this.subscribe("column-layout", this.initializeColumn.bind(this));
+			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
+			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
 		}
 
 	}
@@ -15663,9 +15655,9 @@ class ResponsiveLayout extends Module{
 	}
 
 	//update column visibility
-	updateColumnVisibility(column, visible){
-		if(column.modules.responsive){
-			column.modules.responsive.visible = visible;
+	updateColumnVisibility(column, responsiveToggle){
+		if(!responsiveToggle && column.modules.responsive){
+			column.modules.responsive.visible = column.visible;
 			this.initialize();
 		}
 	}
