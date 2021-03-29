@@ -83,10 +83,6 @@ class Column {
 			parent.registerColumnField(this);
 		}
 
-		if(def.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-			this.table.modules.moveRow.setHandle(true);
-		}
-
 		this._initialize();
 
 		this.bindModuleColumns();

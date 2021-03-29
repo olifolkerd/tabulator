@@ -2145,10 +2145,6 @@ class Column$1 {
 			parent.registerColumnField(this);
 		}
 
-		if(def.rowHandle && this.table.options.movableRows !== false && this.table.modExists("moveRow")){
-			this.table.modules.moveRow.setHandle(true);
-		}
-
 		this._initialize();
 
 		this.bindModuleColumns();
@@ -12870,11 +12866,8 @@ class MoveRows extends Module{
 			this.connection = this.connectionSelectorsTables || this.connectionSelectorsElements;
 
 			this.subscribe("cell-init", this.initializeCell.bind(this));
+			this.subscribe("column-init", this.initializeColumn.bind(this));
 		}
-	}
-
-	setHandle(handle){
-		this.hasHandle = handle;
 	}
 
 	initializeGroupHeader(group){
@@ -12960,6 +12953,12 @@ class MoveRows extends Module{
 		}
 
 		row.modules.moveRow = config;
+	}
+
+	initializeColumn(column){
+		if(column.definition.rowHandle && this.table.options.movableRows !== false){
+			this.hasHandle = true;
+		}
 	}
 
 	initializeCell(cell){
