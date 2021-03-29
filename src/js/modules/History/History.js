@@ -15,6 +15,7 @@ class History extends Module{
 	initialize(){
 		if(this.table.options.history){
 			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
+			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 		}
 	}
 

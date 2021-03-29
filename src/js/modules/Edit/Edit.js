@@ -16,6 +16,7 @@ class Edit extends Module{
 
 	initialize(){
 		this.subscribe("cell-init", this.bindEditor.bind(this));
+		this.subscribe("cell-delete", this.clearEdited.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 	}
 

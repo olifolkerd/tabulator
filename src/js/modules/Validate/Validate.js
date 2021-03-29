@@ -12,6 +12,7 @@ class Validate extends Module{
 
 
 	initialize(){
+		this.subscribe("cell-delete", this.clearValidation.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 	}
 

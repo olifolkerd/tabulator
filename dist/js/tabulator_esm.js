@@ -1669,20 +1669,11 @@ class Cell$1 {
 	}
 
 	delete(){
+
+		this.table.eventBus.dispatch("cell-delete", this);
+
 		if(!this.table.rowManager.redrawBlock && this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
-		}
-
-		if(this.modules.validate && this.modules.validate.invalid){
-			this.table.modules.validate.clearValidation(this);
-		}
-
-		if(this.modules.edit && this.modules.edit.edited){
-			this.table.modules.edit.clearEdited(this);
-		}
-
-		if(this.table.options.history){
-			this.table.modules.history.clearComponentHistory(this);
 		}
 
 		this.element = false;
@@ -7381,6 +7372,7 @@ class Edit extends Module{
 
 	initialize(){
 		this.subscribe("cell-init", this.bindEditor.bind(this));
+		this.subscribe("cell-delete", this.clearEdited.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 	}
 
@@ -11543,6 +11535,7 @@ class History extends Module{
 	initialize(){
 		if(this.table.options.history){
 			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
+			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 		}
 	}
 
@@ -17000,6 +16993,7 @@ class Validate extends Module{
 
 
 	initialize(){
+		this.subscribe("cell-delete", this.clearValidation.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 	}
 

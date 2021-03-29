@@ -563,20 +563,11 @@ export default class Cell {
 	}
 
 	delete(){
+
+		this.table.eventBus.dispatch("cell-delete", this);
+
 		if(!this.table.rowManager.redrawBlock && this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
-		}
-
-		if(this.modules.validate && this.modules.validate.invalid){
-			this.table.modules.validate.clearValidation(this);
-		}
-
-		if(this.modules.edit && this.modules.edit.edited){
-			this.table.modules.edit.clearEdited(this);
-		}
-
-		if(this.table.options.history){
-			this.table.modules.history.clearComponentHistory(this);
 		}
 
 		this.element = false;
