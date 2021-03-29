@@ -8,6 +8,7 @@ class Format extends Module{
 		this.subscribe("cell-format", this.formatValue.bind(this));
 		this.subscribe("cell-rendered", this.cellRendered.bind(this));
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("column-format", this.formatHeader.bind(this));
 	}
 
 	//initialize column formatter
@@ -60,6 +61,37 @@ class Format extends Module{
 			cell.modules.format.rendered = true;
 		}
 	}
+
+	//return a formatted value for a column header
+	formatHeader({column, title, el}){
+		var formatter, params, onRendered, mockCell;
+
+		if(column.definition.titleFormatter){
+			formatter = this.getFormatter(column.definition.titleFormatter);
+
+			onRendered = (callback) => {
+				column.titleFormatterRendered = callback;
+			};
+
+			mockCell = {
+				getValue:function(){
+					return title;
+				},
+				getElement:function(){
+					return el;
+				}
+			};
+
+			params = column.definition.titleFormatterParams || {};
+
+			params = typeof params === "function" ? params() : params;
+
+			return formatter.call(this, mockCell, params, onRendered);
+		}else{
+			return title;
+		}
+	}
+
 
 	//return a formatted value for a cell
 	formatValue(cell){

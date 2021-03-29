@@ -479,49 +479,25 @@ class Column {
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var formatter, contents, params, mockCell, onRendered;
+		var contents = this.table.eventBus.chain("column-format", {column:this, title:title, el:el}, () => {
+			return title;
+		});
 
-		if(this.definition.titleFormatter && this.table.modExists("format")){
-
-			formatter = this.table.modules.format.getFormatter(this.definition.titleFormatter);
-
-			onRendered = (callback) => {
-				this.titleFormatterRendered = callback;
-			};
-
-			mockCell = {
-				getValue:function(){
-					return title;
-				},
-				getElement:function(){
-					return el;
-				}
-			};
-
-			params = this.definition.titleFormatterParams || {};
-
-			params = typeof params === "function" ? params() : params;
-
-			contents = formatter.call(this.table.modules.format, mockCell, params, onRendered);
-
-			switch(typeof contents){
-				case "object":
-				if(contents instanceof Node){
-					el.appendChild(contents);
-				}else{
-					el.innerHTML = "";
-					console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
-				}
-				break;
-				case "undefined":
-				case "null":
+		switch(typeof contents){
+			case "object":
+			if(contents instanceof Node){
+				el.appendChild(contents);
+			}else{
 				el.innerHTML = "";
-				break;
-				default:
-				el.innerHTML = contents;
+				console.warn("Format Error - Title formatter has returned a type of object, the only valid formatter object return is an instance of Node, the formatter returned:", contents);
 			}
-		}else{
-			el.innerHTML = title;
+			break;
+			case "undefined":
+			case "null":
+			el.innerHTML = "";
+			break;
+			default:
+			el.innerHTML = contents;
 		}
 	}
 
