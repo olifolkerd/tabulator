@@ -563,7 +563,6 @@ export default class Cell {
 	}
 
 	delete(){
-
 		this.table.eventBus.dispatch("cell-delete", this);
 
 		if(!this.table.rowManager.redrawBlock && this.element.parentNode){

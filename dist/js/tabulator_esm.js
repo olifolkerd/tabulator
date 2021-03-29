@@ -1669,7 +1669,6 @@ class Cell$1 {
 	}
 
 	delete(){
-
 		this.table.eventBus.dispatch("cell-delete", this);
 
 		if(!this.table.rowManager.redrawBlock && this.element.parentNode){
@@ -3040,12 +3039,7 @@ class Column$1 {
 				});
 			}
 
-			//cancel edit if column is currently being edited
-			if(this.table.modExists("edit")){
-				if(this.table.modules.edit.currentCell.column === this){
-					this.table.modules.edit.cancelEdit();
-				}
-			}
+			this.table.eventBus.dispatch("column-delete", this);
 
 			var cellCount = this.cells.length;
 
@@ -7374,11 +7368,18 @@ class Edit extends Module{
 		this.subscribe("cell-init", this.bindEditor.bind(this));
 		this.subscribe("cell-delete", this.clearEdited.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 	}
 
 	initializeColumnCheck(column){
 		if(typeof column.definition.editor !== "undefined"){
 			this.initializeColumn(column);
+		}
+	}
+
+	columnDeleteCheck(column){
+		if(this.currentCell && this.currentCell.column === column){
+			this.cancelEdit();
 		}
 	}
 

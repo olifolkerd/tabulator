@@ -979,12 +979,7 @@ class Column {
 				});
 			}
 
-			//cancel edit if column is currently being edited
-			if(this.table.modExists("edit")){
-				if(this.table.modules.edit.currentCell.column === this){
-					this.table.modules.edit.cancelEdit();
-				}
-			}
+			this.table.eventBus.dispatch("column-delete", this);
 
 			var cellCount = this.cells.length;
 

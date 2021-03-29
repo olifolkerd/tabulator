@@ -18,11 +18,18 @@ class Edit extends Module{
 		this.subscribe("cell-init", this.bindEditor.bind(this));
 		this.subscribe("cell-delete", this.clearEdited.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
+		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
 	}
 
 	initializeColumnCheck(column){
 		if(typeof column.definition.editor !== "undefined"){
 			this.initializeColumn(column);
+		}
+	}
+
+	columnDeleteCheck(column){
+		if(this.currentCell && this.currentCell.column === column){
+			this.cancelEdit();
 		}
 	}
 
