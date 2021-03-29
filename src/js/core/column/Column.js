@@ -858,10 +858,7 @@ class Column {
 			this.parent.matchChildWidths();
 		}
 
-		//set resizable handles
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layout();
-		}
+		this.table.eventBus.dispatch("column-width", this);
 	}
 
 	checkCellHeights(){
@@ -1026,17 +1023,11 @@ class Column {
 			this.setWidth(this.definition.width);
 		}
 
-		//hide header filters to prevent them altering column width
-		if(this.table.modExists("filter")){
-			this.table.modules.filter.hideHeaderFilterElements();
-		}
+		this.table.eventBus.dispatch("column-width-fit-before", this);
 
 		this.fitToData();
 
-		//show header filters again after layout is complete
-		if(this.table.modExists("filter")){
-			this.table.modules.filter.showHeaderFilterElements();
-		}
+		this.table.eventBus.dispatch("column-width-fit-after", this);
 	}
 
 	//set column width to maximum cell width

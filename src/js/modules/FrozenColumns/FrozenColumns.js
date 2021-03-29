@@ -32,6 +32,7 @@ class FrozenColumns extends Module{
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
+		this.subscribe("column-width", this.layout.bind(this));
 	}
 
 	layoutCell(cell){
