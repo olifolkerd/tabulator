@@ -182,10 +182,7 @@ export default class Row {
 
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-			//handle frozen cells
-			if(this.table.modExists("frozenColumns")){
-				this.table.modules.frozenColumns.layoutRow(this);
-			}
+			this.table.eventBus.dispatch("row-init-before", this);
 
 			this.generateCells();
 
@@ -202,24 +199,13 @@ export default class Row {
 				this.normalizeHeight();
 			}
 
-			//setup movable rows
-			if(this.table.options.dataTree && this.table.modExists("dataTree")){
-				this.table.modules.dataTree.layoutRow(this);
-			}
-
-			//setup column colapse container
-			if(this.table.options.responsiveLayout === "collapse" && this.table.modExists("responsiveLayout")){
-				this.table.modules.responsiveLayout.layoutRow(this);
-			}
+			this.table.eventBus.dispatch("row-init", this);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			//set resizable handles
-			if(this.table.options.resizableRows && this.table.modExists("resizeRows")){
-				this.table.modules.resizeRows.initializeRow(this);
-			}
+			this.table.eventBus.dispatch("row-init-after", this);
 
 			this.initialized = true;
 		}else{

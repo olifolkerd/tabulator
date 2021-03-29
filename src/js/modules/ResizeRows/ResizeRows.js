@@ -12,6 +12,12 @@ class ResizeRows extends Module{
 		this.prevHandle = null;
 	}
 
+	initialize(){
+		if(this.table.options.resizableRows){
+			this.subscribe("row-init-after", this.initializeRow.bind(this));
+		}
+	}
+
 	initializeRow(row){
 		var self = this,
 		rowEl = row.getElement();

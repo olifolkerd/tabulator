@@ -3529,10 +3529,7 @@ class Row$1 {
 
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-			//handle frozen cells
-			if(this.table.modExists("frozenColumns")){
-				this.table.modules.frozenColumns.layoutRow(this);
-			}
+			this.table.eventBus.dispatch("row-init-before", this);
 
 			this.generateCells();
 
@@ -3549,24 +3546,13 @@ class Row$1 {
 				this.normalizeHeight();
 			}
 
-			//setup movable rows
-			if(this.table.options.dataTree && this.table.modExists("dataTree")){
-				this.table.modules.dataTree.layoutRow(this);
-			}
-
-			//setup column colapse container
-			if(this.table.options.responsiveLayout === "collapse" && this.table.modExists("responsiveLayout")){
-				this.table.modules.responsiveLayout.layoutRow(this);
-			}
+			this.table.eventBus.dispatch("row-init", this);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			//set resizable handles
-			if(this.table.options.resizableRows && this.table.modExists("resizeRows")){
-				this.table.modules.resizeRows.initializeRow(this);
-			}
+			this.table.eventBus.dispatch("row-init-after", this);
 
 			this.initialized = true;
 		}else {
@@ -4654,6 +4640,7 @@ class DataTree extends Module{
 			}
 
 			this.subscribe("row-create", this.initializeRow.bind(this));
+			this.subscribe("row-init", this.layoutRow.bind(this));
 		}
 	}
 
@@ -10001,6 +9988,7 @@ class FrozenColumns extends Module{
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-width", this.layout.bind(this));
+		this.subscribe("row-init-before", this.layoutRow.bind(this));
 	}
 
 	layoutCell(cell){
@@ -15310,6 +15298,12 @@ class ResizeRows extends Module{
 		this.prevHandle = null;
 	}
 
+	initialize(){
+		if(this.table.options.resizableRows){
+			this.subscribe("row-init-after", this.initializeRow.bind(this));
+		}
+	}
+
 	initializeRow(row){
 		var self = this,
 		rowEl = row.getElement();
@@ -15570,6 +15564,7 @@ class ResponsiveLayout extends Module{
 		if(this.mode === "collapse"){
 			this.generateCollapsedContent();
 			this.subscribe("row-create", this.initializeRow.bind(this));
+			this.subscribe("row-init", this.layoutRow.bind(this));
 		}
 
 		//assign collapse column
