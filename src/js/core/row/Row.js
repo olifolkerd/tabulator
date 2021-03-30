@@ -582,15 +582,6 @@ export default class Row {
 
 		this.detatchModules();
 
-		// if(this.table.options.dataTree && this.table.modExists("dataTree")){
-		// 	this.table.modules.dataTree.collapseRow(this, true);
-		// }
-
-		//remove any reactive data watchers from row object
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-			// this.table.modules.reactiveData.unwatchRow(this);
-		}
-
 		//remove from group
 		if(this.modules.group){
 			this.modules.group.removeRow(this);
@@ -604,36 +595,11 @@ export default class Row {
 		this.heightInitialized = false;
 		this.element = false;
 
-		if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
-			this.table.modules.dataTree.rowDelete(this);
-		}
-
-		//recalc column calculations if present
-		if(this.table.modExists("columnCalcs")){
-			if(this.table.options.groupBy && this.table.modExists("groupRows")){
-				this.table.modules.columnCalcs.recalcRowGroup(this);
-			}else{
-				this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-			}
-		}
+		this.table.eventBus.dispatch("row-deleted", this);
 	}
 
 	detatchModules(){
-		//deselect row if it is selected
-		if(this.table.modExists("selectRow")){
-			this.table.modules.selectRow._deselectRow(this, true);
-		}
-
-		//cancel edit if row is currently being edited
-		if(this.table.modExists("edit")){
-			if(this.table.modules.edit.currentCell.row === this){
-				this.table.modules.edit.cancelEdit();
-			}
-		}
-
-		if(this.table.modExists("frozenRows")){
-			this.table.modules.frozenRows.detachRow(this);
-		}
+		this.table.eventBus.dispatch("row-delete", this);
 	}
 
 	deleteCells(){
@@ -661,7 +627,6 @@ export default class Row {
 	}
 
 	getGroup(){
-		console.log("row", this.modules)
 		return this.modules.group || false;
 	}
 

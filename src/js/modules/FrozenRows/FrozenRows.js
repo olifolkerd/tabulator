@@ -17,6 +17,8 @@ class FrozenRows extends Module{
 
 		// this.table.columnManager.element.append(this.topElement);
 		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
+
+		this.subscribe("row-delete", this.detachRow.bind(this));
 	}
 
 	setDisplayIndex(index){
