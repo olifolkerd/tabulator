@@ -15,7 +15,7 @@ class SelectRow extends Module{
 	initialize(){
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-create", this.initializeRow.bind(this));
-			this.subscribe("row-delete", this.rowDeleted.bind(this));
+			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 		}
 	}
 

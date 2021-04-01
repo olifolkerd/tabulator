@@ -526,27 +526,7 @@ export default class Row {
 	///////////////////// Actions  /////////////////////
 	delete(){
 		return new Promise((resolve, reject) => {
-			var index, rows;
-
-			if(this.table.options.history && this.table.modExists("history")){
-
-				if(this.table.options.groupBy && this.table.modExists("groupRows")){
-					rows = this.getGroup().rows
-					index = rows.indexOf(this);
-
-					if(index){
-						index = rows[index-1];
-					}
-				}else{
-					index = this.table.rowManager.getRowIndex(this);
-
-					if(index){
-						index = this.table.rowManager.rows[index-1];
-					}
-				}
-
-				this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
-			}
+			this.table.eventBus.dispatch("row-delete", this);
 
 			this.deleteActual();
 
@@ -576,7 +556,7 @@ export default class Row {
 	}
 
 	detatchModules(){
-		this.table.eventBus.dispatch("row-delete", this);
+		this.table.eventBus.dispatch("row-deleting", this);
 	}
 
 	deleteCells(){

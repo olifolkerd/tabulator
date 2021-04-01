@@ -19,7 +19,7 @@ class Edit extends Module{
 		this.subscribe("cell-delete", this.clearEdited.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
-		this.subscribe("row-delete", this.rowDeleteCheck.bind(this));
+		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 	}
 
 	initializeColumnCheck(column){

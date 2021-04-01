@@ -3874,27 +3874,7 @@ class Row$1 {
 	///////////////////// Actions  /////////////////////
 	delete(){
 		return new Promise((resolve, reject) => {
-			var index, rows;
-
-			if(this.table.options.history && this.table.modExists("history")){
-
-				if(this.table.options.groupBy && this.table.modExists("groupRows")){
-					rows = this.getGroup().rows;
-					index = rows.indexOf(this);
-
-					if(index){
-						index = rows[index-1];
-					}
-				}else {
-					index = this.table.rowManager.getRowIndex(this);
-
-					if(index){
-						index = this.table.rowManager.rows[index-1];
-					}
-				}
-
-				this.table.modules.history.action("rowDelete", this, {data:this.getData(), pos:!index, index:index});
-			}
+			this.table.eventBus.dispatch("row-delete", this);
 
 			this.deleteActual();
 
@@ -3924,7 +3904,7 @@ class Row$1 {
 	}
 
 	detatchModules(){
-		this.table.eventBus.dispatch("row-delete", this);
+		this.table.eventBus.dispatch("row-deleting", this);
 	}
 
 	deleteCells(){
@@ -7258,7 +7238,7 @@ class Edit extends Module{
 		this.subscribe("cell-delete", this.clearEdited.bind(this));
 		this.subscribe("column-layout", this.initializeColumnCheck.bind(this));
 		this.subscribe("column-delete", this.columnDeleteCheck.bind(this));
-		this.subscribe("row-delete", this.rowDeleteCheck.bind(this));
+		this.subscribe("row-deleting", this.rowDeleteCheck.bind(this));
 	}
 
 	initializeColumnCheck(column){
@@ -10221,7 +10201,7 @@ class FrozenRows extends Module{
 		// this.table.columnManager.element.append(this.topElement);
 		this.table.columnManager.getElement().insertBefore(this.topElement, this.table.columnManager.headersElement.nextSibling);
 
-		this.subscribe("row-delete", this.detachRow.bind(this));
+		this.subscribe("row-deleting", this.detachRow.bind(this));
 	}
 
 	setDisplayIndex(index){
@@ -11474,7 +11454,29 @@ class History extends Module{
 		if(this.table.options.history){
 			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
+			this.subscribe("row-delete", this.rowDeleted.bind(this));
 		}
+	}
+
+	rowDeleted(row){
+		var index, rows;
+
+		if(this.table.options.groupBy){
+			rows = row.getGroup().rows;
+			index = rows.indexOf(row);
+
+			if(index){
+				index = rows[index-1];
+			}
+		}else {
+			index = row.table.rowManager.getRowIndex(row);
+
+			if(index){
+				index = row.table.rowManager.rows[index-1];
+			}
+		}
+
+		this.history.action("rowDelete", row, {data:row.getData(), pos:!index, index:index});
 	}
 
 	cellUpdated(cell){
@@ -15835,7 +15837,7 @@ class SelectRow extends Module{
 	initialize(){
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-create", this.initializeRow.bind(this));
-			this.subscribe("row-delete", this.rowDeleted.bind(this));
+			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 		}
 	}
 

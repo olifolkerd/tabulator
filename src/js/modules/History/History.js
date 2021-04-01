@@ -16,7 +16,29 @@ class History extends Module{
 		if(this.table.options.history){
 			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
+			this.subscribe("row-delete", this.rowDeleted.bind(this));
 		}
+	}
+
+	rowDeleted(row){
+		var index, rows;
+
+		if(this.table.options.groupBy){
+			rows = row.getGroup().rows
+			index = rows.indexOf(row);
+
+			if(index){
+				index = rows[index-1];
+			}
+		}else{
+			index = row.table.rowManager.getRowIndex(row);
+
+			if(index){
+				index = row.table.rowManager.rows[index-1];
+			}
+		}
+
+		this.history.action("rowDelete", row, {data:row.getData(), pos:!index, index:index});
 	}
 
 	cellUpdated(cell){
