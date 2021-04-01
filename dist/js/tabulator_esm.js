@@ -4066,14 +4066,19 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
+		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 	}
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){
 			this.recalcRowGroup(this);
 		}else {
-			this.recalc(this.table.rowManager.activeRows);
+			this.recalcActiveRows();
 		}
+	}
+
+	recalcActiveRows(){
+		this.recalc(this.table.rowManager.activeRows);
 	}
 
 	cellValueChanged(cell){
@@ -4081,7 +4086,7 @@ class ColumnCalcs extends Module{
 			if(this.table.options.groupBy){
 
 				if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
-					this.recalc(this.table.rowManager.activeRows);
+					this.recalcActiveRows();
 				}
 
 				if(this.table.options.columnCalcs != "table"){
@@ -4089,7 +4094,7 @@ class ColumnCalcs extends Module{
 				}
 
 			}else {
-				this.recalc(this.table.rowManager.activeRows);
+				this.recalcActiveRows();
 			}
 		}
 	}
@@ -4254,7 +4259,7 @@ class ColumnCalcs extends Module{
 	recalcAll(){
 		if(this.topCalcs.length || this.botCalcs.length){
 			if(this.table.options.columnCalcs !== "group"){
-				this.recalc(this.table.rowManager.activeRows);
+				this.recalcActiveRows();
 			}
 
 			if(this.table.options.groupBy && this.table.options.columnCalcs !== "table"){
@@ -4578,7 +4583,18 @@ class DataTree extends Module{
 			this.subscribe("row-relayout", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
+			this.subscribe("column-moving-rows", this.columnMoving.bind(this));
 		}
+	}
+
+	columnMoving(){
+		var rows = [];
+
+		this.table.rowManager.rows.forEach((row) => {
+			rows = rows.concat(this.getTreeChildren(row, false, true));
+		});
+
+		return rows;
 	}
 
 	rowDataChanged(row, visible, updatedData){
@@ -14462,6 +14478,7 @@ class Persistence extends Module{
 				this.subscribe("column-init", this.initializeColumn.bind(this));
 				this.subscribe("column-show", this.save.bind(this, "columns"));
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
+				this.subscribe("column-moved", this.save.bind(this, "columns"));
 			}
 		}
 	}
@@ -15607,8 +15624,13 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
 			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
 			this.subscribe("columns-loaded", this.initializeResponsivity.bind(this));
-		}
+			this.subscribe("column-moved", this.initializeResponsivity.bind(this));
 
+			if(this.table.options.responsiveLayout === "collapse"){
+				this.subscribe("row-init", this.initializeRow.bind(this));
+				this.subscribe("row-layout", this.layoutRow.bind(this));
+			}
+		}
 	}
 
 	initializeResponsivity(){
@@ -15642,11 +15664,6 @@ class ResponsiveLayout extends Module{
 
 		if(this.mode === "collapse"){
 			this.generateCollapsedContent();
-			this.subscribe("row-init", this.initializeRow.bind(this));
-			this.subscribe("row-layout", this.layoutRow.bind(this));
-		}else {
-			this.unsubscribe("row-init", this.initializeRow.bind(this));
-			this.unsubscribe("row-layout", this.layoutRow.bind(this));
 		}
 
 		//assign collapse column
@@ -17990,14 +18007,6 @@ class ColumnManager {
 	moveColumn(from, to, after){
 		this.moveColumnActual(from, to, after);
 
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
-		}
-
-		if(this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-		}
-
 		to.element.parentNode.insertBefore(from.element, to.element);
 
 		if(after){
@@ -18010,7 +18019,6 @@ class ColumnManager {
 	}
 
 	moveColumnActual(from, to, after){
-
 		if(from.parent.isGroup){
 			this._moveColumnInArray(from.parent.columns, from, to, after);
 		}else {
@@ -18019,20 +18027,14 @@ class ColumnManager {
 
 		this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
-		}
-
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(true);
 		}
 
+		this.table.eventBus.dispatch("column-moved", from, to, after);
+
 		if(this.table.externalEvents.subscribed("columnMoved")){
 			this.table.externalEvents.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
-		}
-
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-			this.table.modules.persistence.save("columns");
 		}
 	}
 
@@ -18060,11 +18062,15 @@ class ColumnManager {
 
 			if(updateRows){
 
+
+
 				if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
 					this.table.rowManager.rows.forEach((row) => {
 						rows = rows.concat(this.table.modules.dataTree.getTreeChildren(row, false, true));
 					});
 				}
+
+				rows = this.table.eventBus.chain("column-moving-rows", [from, to, after], []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
 

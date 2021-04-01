@@ -124,6 +124,7 @@ class Persistence extends Module{
 				this.subscribe("column-init", this.initializeColumn.bind(this));
 				this.subscribe("column-show", this.save.bind(this, "columns"));
 				this.subscribe("column-hide", this.save.bind(this, "columns"));
+				this.subscribe("column-moved", this.save.bind(this, "columns"));
 			}
 		}
 	}

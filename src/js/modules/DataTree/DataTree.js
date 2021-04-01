@@ -99,7 +99,18 @@ class DataTree extends Module{
 			this.subscribe("row-relayout", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
+			this.subscribe("column-moving-rows", this.columnMoving.bind(this));
 		}
+	}
+
+	columnMoving(){
+		var rows = [];
+
+		this.table.rowManager.rows.forEach((row) => {
+			rows = rows.concat(this.getTreeChildren(row, false, true));
+		});
+
+		return rows;
 	}
 
 	rowDataChanged(row, visible, updatedData){

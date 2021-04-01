@@ -40,14 +40,19 @@ class ColumnCalcs extends Module{
 		this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
+		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
 	}
 
 	rowsUpdated(row){
 		if(this.table.options.groupBy){
 			this.recalcRowGroup(this);
 		}else{
-			this.recalc(this.table.rowManager.activeRows);
+			this.recalcActiveRows();
 		}
+	}
+
+	recalcActiveRows(){
+		this.recalc(this.table.rowManager.activeRows);
 	}
 
 	cellValueChanged(cell){
@@ -55,7 +60,7 @@ class ColumnCalcs extends Module{
 			if(this.table.options.groupBy){
 
 				if(this.table.options.columnCalcs == "table" || this.table.options.columnCalcs == "both"){
-					this.recalc(this.table.rowManager.activeRows);
+					this.recalcActiveRows();
 				}
 
 				if(this.table.options.columnCalcs != "table"){
@@ -63,7 +68,7 @@ class ColumnCalcs extends Module{
 				}
 
 			}else{
-				this.recalc(this.table.rowManager.activeRows);
+				this.recalcActiveRows();
 			}
 		}
 	}
@@ -228,7 +233,7 @@ class ColumnCalcs extends Module{
 	recalcAll(){
 		if(this.topCalcs.length || this.botCalcs.length){
 			if(this.table.options.columnCalcs !== "group"){
-				this.recalc(this.table.rowManager.activeRows);
+				this.recalcActiveRows();
 			}
 
 			if(this.table.options.groupBy && this.table.options.columnCalcs !== "table"){

@@ -404,14 +404,6 @@ export default class ColumnManager {
 	moveColumn(from, to, after){
 		this.moveColumnActual(from, to, after);
 
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
-		}
-
-		if(this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-		}
-
 		to.element.parentNode.insertBefore(from.element, to.element);
 
 		if(after){
@@ -424,7 +416,6 @@ export default class ColumnManager {
 	}
 
 	moveColumnActual(from, to, after){
-
 		if(from.parent.isGroup){
 			this._moveColumnInArray(from.parent.columns, from, to, after);
 		}else{
@@ -433,20 +424,14 @@ export default class ColumnManager {
 
 		this._moveColumnInArray(this.columnsByIndex, from, to, after, true);
 
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
-		}
-
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(true);
 		}
 
+		this.table.eventBus.dispatch("column-moved", from, to, after);
+
 		if(this.table.externalEvents.subscribed("columnMoved")){
 			this.table.externalEvents.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
-		}
-
-		if(this.table.options.persistence && this.table.modExists("persistence", true) && this.table.modules.persistence.config.columns){
-			this.table.modules.persistence.save("columns");
 		}
 	}
 
@@ -474,11 +459,15 @@ export default class ColumnManager {
 
 			if(updateRows){
 
+
+
 				if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
 					this.table.rowManager.rows.forEach((row) => {
 						rows = rows.concat(this.table.modules.dataTree.getTreeChildren(row, false, true));
 					});
 				}
+
+				rows = this.table.eventBus.chain("column-moving-rows", [from, to, after], []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
 

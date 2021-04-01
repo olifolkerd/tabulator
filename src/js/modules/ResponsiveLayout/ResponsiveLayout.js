@@ -24,8 +24,13 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
 			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
 			this.subscribe("columns-loaded", this.initializeResponsivity.bind(this));
-		}
+			this.subscribe("column-moved", this.initializeResponsivity.bind(this));
 
+			if(this.table.options.responsiveLayout === "collapse"){
+				this.subscribe("row-init", this.initializeRow.bind(this));
+				this.subscribe("row-layout", this.layoutRow.bind(this));
+			}
+		}
 	}
 
 	initializeResponsivity(){
@@ -59,11 +64,6 @@ class ResponsiveLayout extends Module{
 
 		if(this.mode === "collapse"){
 			this.generateCollapsedContent();
-			this.subscribe("row-init", this.initializeRow.bind(this));
-			this.subscribe("row-layout", this.layoutRow.bind(this));
-		}else{
-			this.unsubscribe("row-init", this.initializeRow.bind(this));
-			this.unsubscribe("row-layout", this.layoutRow.bind(this));
 		}
 
 		//assign collapse column
