@@ -16,7 +16,7 @@ class Menu extends Module{
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
-		this.subscribe("row-create", this.initializeRow.bind(this));
+		this.subscribe("row-init", this.initializeRow.bind(this));
 	}
 
 	layoutCell(cell){

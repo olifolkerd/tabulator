@@ -56,7 +56,7 @@ export default class Row {
 
 		this.createElement();
 
-		this.table.eventBus.dispatch("row-create", this);
+		this.table.eventBus.dispatch("row-init", this);
 
 		//handle row click events
 		if (this.table.options.rowClick){
@@ -182,7 +182,7 @@ export default class Row {
 
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-			this.table.eventBus.dispatch("row-init-before", this);
+			this.table.eventBus.dispatch("row-layout-before", this);
 
 			this.generateCells();
 
@@ -199,13 +199,13 @@ export default class Row {
 				this.normalizeHeight();
 			}
 
-			this.table.eventBus.dispatch("row-init", this);
+			this.table.eventBus.dispatch("row-layout", this);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.table.eventBus.dispatch("row-init-after", this);
+			this.table.eventBus.dispatch("row-layout-after", this);
 
 			this.initialized = true;
 		}else{
@@ -236,7 +236,7 @@ export default class Row {
 			this.initialize(true);
 		}
 
-		this.table.eventBus.dispatch("row-reinit", this);
+		this.table.eventBus.dispatch("row-relayout", this);
 	}
 
 	//get heights when doing bulk row style calcs in virtual DOM

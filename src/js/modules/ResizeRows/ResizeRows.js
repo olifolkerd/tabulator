@@ -14,7 +14,7 @@ class ResizeRows extends Module{
 
 	initialize(){
 		if(this.table.options.resizableRows){
-			this.subscribe("row-init-after", this.initializeRow.bind(this));
+			this.subscribe("row-layout-after", this.initializeRow.bind(this));
 		}
 	}
 

@@ -3404,7 +3404,7 @@ class Row$1 {
 
 		this.createElement();
 
-		this.table.eventBus.dispatch("row-create", this);
+		this.table.eventBus.dispatch("row-init", this);
 
 		//handle row click events
 		if (this.table.options.rowClick){
@@ -3530,7 +3530,7 @@ class Row$1 {
 
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-			this.table.eventBus.dispatch("row-init-before", this);
+			this.table.eventBus.dispatch("row-layout-before", this);
 
 			this.generateCells();
 
@@ -3547,13 +3547,13 @@ class Row$1 {
 				this.normalizeHeight();
 			}
 
-			this.table.eventBus.dispatch("row-init", this);
+			this.table.eventBus.dispatch("row-layout", this);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.table.eventBus.dispatch("row-init-after", this);
+			this.table.eventBus.dispatch("row-layout-after", this);
 
 			this.initialized = true;
 		}else {
@@ -3584,7 +3584,7 @@ class Row$1 {
 			this.initialize(true);
 		}
 
-		this.table.eventBus.dispatch("row-reinit", this);
+		this.table.eventBus.dispatch("row-relayout", this);
 	}
 
 	//get heights when doing bulk row style calcs in virtual DOM
@@ -4560,9 +4560,9 @@ class DataTree extends Module{
 				break;
 			}
 
-			this.subscribe("row-create", this.initializeRow.bind(this));
-			this.subscribe("row-init", this.layoutRow.bind(this));
-			this.subscribe("row-reinit", this.layoutRow.bind(this));
+			this.subscribe("row-init", this.initializeRow.bind(this));
+			this.subscribe("row-layout", this.layoutRow.bind(this));
+			this.subscribe("row-relayout", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
 		}
@@ -9938,7 +9938,7 @@ class FrozenColumns extends Module{
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-width", this.layout.bind(this));
-		this.subscribe("row-init-before", this.layoutRow.bind(this));
+		this.subscribe("row-layout-before", this.layoutRow.bind(this));
 	}
 
 	layoutCell(cell){
@@ -12169,7 +12169,7 @@ class Menu extends Module{
 	initialize(){
 		this.subscribe("cell-layout", this.layoutCell.bind(this));
 		this.subscribe("column-init", this.initializeColumn.bind(this));
-		this.subscribe("row-create", this.initializeRow.bind(this));
+		this.subscribe("row-init", this.initializeRow.bind(this));
 	}
 
 	layoutCell(cell){
@@ -12810,7 +12810,7 @@ class MoveRows extends Module{
 
 			this.subscribe("cell-init", this.initializeCell.bind(this));
 			this.subscribe("column-init", this.initializeColumn.bind(this));
-			this.subscribe("row-create", this.initializeRow.bind(this));
+			this.subscribe("row-init", this.initializeRow.bind(this));
 		}
 	}
 
@@ -15294,7 +15294,7 @@ class ResizeRows extends Module{
 
 	initialize(){
 		if(this.table.options.resizableRows){
-			this.subscribe("row-init-after", this.initializeRow.bind(this));
+			this.subscribe("row-layout-after", this.initializeRow.bind(this));
 		}
 	}
 
@@ -15557,8 +15557,8 @@ class ResponsiveLayout extends Module{
 
 		if(this.mode === "collapse"){
 			this.generateCollapsedContent();
-			this.subscribe("row-create", this.initializeRow.bind(this));
-			this.subscribe("row-init", this.layoutRow.bind(this));
+			this.subscribe("row-init", this.initializeRow.bind(this));
+			this.subscribe("row-layout", this.layoutRow.bind(this));
 		}
 
 		//assign collapse column
@@ -15835,7 +15835,7 @@ class SelectRow extends Module{
 
 	initialize(){
 		if(this.table.options.selectable !== false){
-			this.subscribe("row-create", this.initializeRow.bind(this));
+			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 		}
 	}

@@ -94,9 +94,9 @@ class DataTree extends Module{
 				break;
 			}
 
-			this.subscribe("row-create", this.initializeRow.bind(this));
-			this.subscribe("row-init", this.layoutRow.bind(this));
-			this.subscribe("row-reinit", this.layoutRow.bind(this));
+			this.subscribe("row-init", this.initializeRow.bind(this));
+			this.subscribe("row-layout", this.layoutRow.bind(this));
+			this.subscribe("row-relayout", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
 			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
 		}

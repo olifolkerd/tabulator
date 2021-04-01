@@ -49,8 +49,8 @@ class ResponsiveLayout extends Module{
 
 		if(this.mode === "collapse"){
 			this.generateCollapsedContent();
-			this.subscribe("row-create", this.initializeRow.bind(this));
-			this.subscribe("row-init", this.layoutRow.bind(this));
+			this.subscribe("row-init", this.initializeRow.bind(this));
+			this.subscribe("row-layout", this.layoutRow.bind(this));
 		}
 
 		//assign collapse column
