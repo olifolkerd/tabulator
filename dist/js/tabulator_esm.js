@@ -4067,6 +4067,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
+		this.subscribe("column-add", this.recalcActiveRows.bind(this));
 	}
 
 	rowsUpdated(row){
@@ -15625,6 +15626,8 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
 			this.subscribe("columns-loaded", this.initializeResponsivity.bind(this));
 			this.subscribe("column-moved", this.initializeResponsivity.bind(this));
+			this.subscribe("column-add", this.initializeResponsivity.bind(this));
+			this.subscribe("column-delete", this.initializeResponsivity.bind(this));
 
 			if(this.table.options.responsiveLayout === "collapse"){
 				this.subscribe("row-init", this.initializeRow.bind(this));
@@ -18062,14 +18065,6 @@ class ColumnManager {
 
 			if(updateRows){
 
-
-
-				if(this.table.options.dataTree && this.table.modExists("dataTree", true)){
-					this.table.rowManager.rows.forEach((row) => {
-						rows = rows.concat(this.table.modules.dataTree.getTreeChildren(row, false, true));
-					});
-				}
-
 				rows = this.table.eventBus.chain("column-moving-rows", [from, to, after], []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
@@ -18196,13 +18191,7 @@ class ColumnManager {
 
 			this._reIndexColumns();
 
-			if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-				this.table.modules.responsiveLayout.initialize();
-			}
-
-			if(this.table.modExists("columnCalcs")){
-				this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-			}
+			this.table.eventBus.dispatch("column-add", definition, before, nextToColumn);
 
 			this.redraw(true);
 
@@ -18244,10 +18233,6 @@ class ColumnManager {
 
 		if(index > -1){
 			this.columns.splice(index, 1);
-		}
-
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
 		}
 
 		this._verticalAlignHeaders();

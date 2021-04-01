@@ -41,6 +41,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 		this.subscribe("row-added", this.rowsUpdated.bind(this));
 		this.subscribe("column-moved", this.recalcActiveRows.bind(this));
+		this.subscribe("column-add", this.recalcActiveRows.bind(this));
 	}
 
 	rowsUpdated(row){

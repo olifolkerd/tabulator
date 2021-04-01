@@ -25,6 +25,8 @@ class ResponsiveLayout extends Module{
 			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
 			this.subscribe("columns-loaded", this.initializeResponsivity.bind(this));
 			this.subscribe("column-moved", this.initializeResponsivity.bind(this));
+			this.subscribe("column-add", this.initializeResponsivity.bind(this));
+			this.subscribe("column-delete", this.initializeResponsivity.bind(this));
 
 			if(this.table.options.responsiveLayout === "collapse"){
 				this.subscribe("row-init", this.initializeRow.bind(this));
