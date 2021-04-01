@@ -2,7 +2,6 @@
 
 import defaultOptions from './defaults/options.js';
 
-
 import ColumnManager from './ColumnManager.js';
 import RowManager from './RowManager.js';
 import FooterManager from './FooterManager.js';
@@ -13,7 +12,7 @@ import InternalEventBus from './InternalEventBus.js';
 import TableRegistry from './TableRegistry.js';
 import ModuleBinder from './ModuleBinder.js';
 
-import VirtualDomHorizontal from './renderers/VirtualDomHorizontal.js';
+import VirtualDomHorizontal from './rendering/renderers/VirtualDomHorizontal.js';
 
 class Tabulator {
 

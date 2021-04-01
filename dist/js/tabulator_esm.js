@@ -20079,10 +20079,11 @@ class RowManager extends CoreFeature{
 	}
 }
 
-class FooterManager {
+class FooterManager extends CoreFeature{
 
 	constructor(table){
-		this.table = table;
+		super(table);
+
 		this.active = false;
 		this.element = this.createElement(); //containing element
 		this.external = false;
