@@ -1,12 +1,14 @@
+import CoreFeature from '../CoreFeature.js';
 import ColumnComponent from './ColumnComponent.js';
 import defaultOptions from './defaults/options.js';
 
 import Cell from '../cell/Cell.js';
 
-class Column {
+class Column extends CoreFeature{
 
 	constructor(def, parent){
-		this.table = parent.table;
+		super(parent.table);
+
 		this.definition = def; //column definition
 		this.parent = parent; //hold parent object
 		this.type = "column"; //type of element
@@ -219,7 +221,7 @@ class Column {
 
 		this.setTooltip();
 
-		this.table.eventBus.dispatch("column-init", this);
+		this.dispatch("column-init", this);
 
 		//update header tooltip on mouse enter
 		this.element.addEventListener("mouseenter", (e) => {
@@ -369,7 +371,7 @@ class Column {
 		var def = this.definition,
 		table = this.table;
 
-		this.table.eventBus.dispatch("column-layout", this);
+		this.dispatch("column-layout", this);
 
 		//set column visibility
 		if(typeof def.visible != "undefined"){
@@ -452,7 +454,7 @@ class Column {
 
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.externalEvents.dispatch("columnTitleChanged", this.getComponent());
+				this.dispatchExternal("columnTitleChanged", this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
@@ -479,7 +481,7 @@ class Column {
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var contents = this.table.eventBus.chain("column-format", [this, title, el], () => {
+		var contents = this.chain("column-format", [this, title, el], () => {
 			return title;
 		});
 
@@ -721,7 +723,7 @@ class Column {
 
 		if(visible){
 			this.show();
-			this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
+			this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
 		}else{
 			this.hide();
 		}
@@ -748,10 +750,10 @@ class Column {
 
 			this.table.columnManager._verticalAlignHeaders();
 
-			this.table.eventBus.dispatch("column-show", this, responsiveToggle);
+			this.dispatch("column-show", this, responsiveToggle);
 
 			if(!silent){
-				this.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), true);
+				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), true);
 			}
 
 			if(this.parent.isGroup){
@@ -781,10 +783,10 @@ class Column {
 				cell.hide();
 			});
 
-			this.table.eventBus.dispatch("column-hide", this);
+			this.dispatch("column-hide", this);
 
 			if(!silent){
-				this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
+				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
 			}
 
 			if(this.parent.isGroup){
@@ -858,7 +860,7 @@ class Column {
 			this.parent.matchChildWidths();
 		}
 
-		this.table.eventBus.dispatch("column-width", this);
+		this.dispatch("column-width", this);
 	}
 
 	checkCellHeights(){
@@ -936,7 +938,7 @@ class Column {
 				});
 			}
 
-			this.table.eventBus.dispatch("column-delete", this);
+			this.dispatch("column-delete", this);
 
 			var cellCount = this.cells.length;
 
@@ -1023,11 +1025,11 @@ class Column {
 			this.setWidth(this.definition.width);
 		}
 
-		this.table.eventBus.dispatch("column-width-fit-before", this);
+		this.dispatch("column-width-fit-before", this);
 
 		this.fitToData();
 
-		this.table.eventBus.dispatch("column-width-fit-after", this);
+		this.dispatch("column-width-fit-after", this);
 	}
 
 	//set column width to maximum cell width

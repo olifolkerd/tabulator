@@ -1,7 +1,10 @@
+import CoreFeature from '../CoreFeature.js';
 import CellComponent from './CellComponent.js';
 
-export default class Cell {
+export default class Cell extends CoreFeature{
 	constructor(column, row){
+		super(column.table);
+
 		this.table = column.table;
 		this.column = column;
 		this.row = row;
@@ -96,7 +99,7 @@ export default class Cell {
 
 		this._bindMouseEvents(cellEvents);
 
-		this.table.eventBus.dispatch("cell-init", this);
+		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
 		if(!this.column.visible){
@@ -337,7 +340,7 @@ export default class Cell {
 	_generateContents(){
 		var val;
 
-		val = this.table.eventBus.chain("cell-format", this, () => {
+		val = this.chain("cell-format", this, () => {
 			return this.element.innerHTML = this.value;
 		});
 
@@ -367,7 +370,7 @@ export default class Cell {
 	}
 
 	cellRendered(){
-		this.table.eventBus.dispatch("cell-rendered", this);
+		this.dispatch("cell-rendered", this);
 	}
 
 	//generate tooltip text
@@ -421,7 +424,7 @@ export default class Cell {
 		component;
 
 		if(changed){
-			this.table.eventBus.dispatch("cell-value-updated", this);
+			this.dispatch("cell-value-updated", this);
 
 			component = this.getComponent();
 
@@ -431,10 +434,10 @@ export default class Cell {
 
 			this.cellRendered();
 
-			this.table.externalEvents.dispatch("cellEdited", component);
+			this.dispatchExternal("cellEdited", component);
 
-			if(this.table.externalEvents.subscribed("dataChanged")){
-				this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
+			if(this.subscribedExternal("dataChanged")){
+				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 		}
 	}
@@ -447,14 +450,14 @@ export default class Cell {
 			changed = true;
 
 			if(mutate){
-				value = this.table.eventBus.chain("cell-value-changing", [this, value], value);
+				value = this.chain("cell-value-changing", [this, value], value);
 			}
 		}
 
 		this.setValueActual(value);
 
 		if(changed){
-			this.table.eventBus.dispatch("cell-value-changed", this);
+			this.dispatch("cell-value-changed", this);
 		}
 
 		return changed;
@@ -465,11 +468,11 @@ export default class Cell {
 
 		this.value = value;
 
-		this.table.eventBus.dispatch("cell-value-save-before", this);
+		this.dispatch("cell-value-save-before", this);
 
 		this.column.setFieldValue(this.row.data, value);
 
-		this.table.eventBus.dispatch("cell-value-save-after", this);
+		this.dispatch("cell-value-save-after", this);
 
 		if(this.loaded){
 			this.layoutElement();
@@ -480,7 +483,7 @@ export default class Cell {
 		this._generateContents();
 		this._generateTooltip();
 
-		this.table.eventBus.dispatch("cell-layout", this);
+		this.dispatch("cell-layout", this);
 	}
 
 	setWidth(){
@@ -563,7 +566,7 @@ export default class Cell {
 	}
 
 	delete(){
-		this.table.eventBus.dispatch("cell-delete", this);
+		this.dispatch("cell-delete", this);
 
 		if(!this.table.rowManager.redrawBlock && this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);

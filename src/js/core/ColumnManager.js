@@ -1,10 +1,12 @@
+import CoreFeature from './CoreFeature.js';
 import Column from './column/Column.js';
 import Helpers from './Helpers.js';
 
-export default class ColumnManager {
+export default class ColumnManager extends CoreFeature {
 
 	constructor (table){
-		this.table = table; //hold parent table
+		super(table);
+
 		this.blockHozScrollEvent = false;
 		this.headersElement = this.createHeadersElement();
 		this.element = this.createHeaderElement(); //containing element
@@ -22,7 +24,7 @@ export default class ColumnManager {
 	////////////// Setup Functions /////////////////
 
 	_bindEvents(){
-		this.table.eventBus.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 	}
 
 	initialize (){
@@ -184,7 +186,7 @@ export default class ColumnManager {
 		this.columnsByField = {};
 
 
-		this.table.eventBus.dispatch("columns-loading");
+		this.dispatch("columns-loading");
 
 		cols.forEach((def, i) => {
 			this._addColumn(def);
@@ -192,7 +194,7 @@ export default class ColumnManager {
 
 		this._reIndexColumns();
 
-		this.table.eventBus.dispatch("columns-loaded");
+		this.dispatch("columns-loaded");
 
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(false, true);
@@ -428,10 +430,10 @@ export default class ColumnManager {
 			this.table.vdomHoz.reinitialize(true);
 		}
 
-		this.table.eventBus.dispatch("column-moved", from, to, after);
+		this.dispatch("column-moved", from, to, after);
 
-		if(this.table.externalEvents.subscribed("columnMoved")){
-			this.table.externalEvents.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
+		if(this.subscribedExternal("columnMoved")){
+			this.dispatchExternal("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
 		}
 	}
 
@@ -459,7 +461,7 @@ export default class ColumnManager {
 
 			if(updateRows){
 
-				rows = this.table.eventBus.chain("column-moving-rows", [from, to, after], []) || [];
+				rows = this.chain("column-moving-rows", [from, to, after], []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
 
@@ -585,7 +587,7 @@ export default class ColumnManager {
 
 			this._reIndexColumns();
 
-			this.table.eventBus.dispatch("column-add", definition, before, nextToColumn);
+			this.dispatch("column-add", definition, before, nextToColumn);
 
 			this.redraw(true);
 

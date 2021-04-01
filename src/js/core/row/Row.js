@@ -1,9 +1,11 @@
+import CoreFeature from '../CoreFeature.js';
 import RowComponent from './RowComponent.js';
 import Helpers from '../Helpers.js';
 
-export default class Row {
+export default class Row extends CoreFeature{
 	constructor (data, parent, type = "row"){
-		this.table = parent.table;
+		super(parent.table);
+
 		this.parent = parent;
 		this.data = {};
 		this.type = type; //type of element
@@ -56,7 +58,7 @@ export default class Row {
 
 		this.createElement();
 
-		this.table.eventBus.dispatch("row-init", this);
+		this.dispatch("row-init", this);
 
 		//handle row click events
 		if (this.table.options.rowClick){
@@ -182,7 +184,7 @@ export default class Row {
 
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-			this.table.eventBus.dispatch("row-layout-before", this);
+			this.dispatch("row-layout-before", this);
 
 			this.generateCells();
 
@@ -199,13 +201,13 @@ export default class Row {
 				this.normalizeHeight();
 			}
 
-			this.table.eventBus.dispatch("row-layout", this);
+			this.dispatch("row-layout", this);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.table.eventBus.dispatch("row-layout-after", this);
+			this.dispatch("row-layout-after", this);
 
 			this.initialized = true;
 		}else{
@@ -236,7 +238,7 @@ export default class Row {
 			this.initialize(true);
 		}
 
-		this.table.eventBus.dispatch("row-relayout", this);
+		this.dispatch("row-relayout", this);
 	}
 
 	//get heights when doing bulk row style calcs in virtual DOM
@@ -326,9 +328,9 @@ export default class Row {
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.table.eventBus.chain("row-data-init-before", [this, data], data);
+		this.data = this.chain("row-data-init-before", [this, data], data);
 
-		this.table.eventBus.dispatch("row-data-init-after", this);
+		this.dispatch("row-data-init-after", this);
 	}
 
 	//update the rows data
@@ -343,21 +345,21 @@ export default class Row {
 				updatedData = JSON.parse(updatedData);
 			}
 
-			this.table.eventBus.dispatch("row-data-save-before", this);
+			this.dispatch("row-data-save-before", this);
 
-			if(this.table.eventBus.subscribed("row-data-changing")){
+			if(this.subscribed("row-data-changing")){
 				tempData = Object.assign(tempData, this.data);
 				tempData = Object.assign(tempData, updatedData);
 			}
 
-			newRowData = this.table.eventBus.chain("row-data-changing", [this, tempData, updatedData], updatedData);
+			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], updatedData);
 
 			//set data
 			for (var attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 
-			this.table.eventBus.dispatch("row-data-save-after", this);
+			this.dispatch("row-data-save-after", this);
 
 			//update affected cells only
 			for (var attrname in updatedData) {
@@ -393,14 +395,14 @@ export default class Row {
 				this.heightStyled = "";
 			}
 
-			this.table.eventBus.dispatch("row-data-changed", this, visible, updatedData);
+			this.dispatch("row-data-changed", this, visible, updatedData);
 
 			//this.reinitialize();
 
-			this.table.externalEvents.dispatch("rowUpdated", this.getComponent());
+			this.dispatchExternal("rowUpdated", this.getComponent());
 
-			if(this.table.externalEvents.subscribed("dataChanged")){
-				this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
+			if(this.subscribedExternal.subscribed("dataChanged")){
+				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 
 			resolve();
@@ -409,7 +411,7 @@ export default class Row {
 
 	getData(transform){
 		if(transform){
-			return this.table.eventBus.chain("row-data-retrieve", [this, transform], this.data);
+			return this.chain("row-data-retrieve", [this, transform], this.data);
 		}
 
 		return this.data;
@@ -522,7 +524,7 @@ export default class Row {
 	///////////////////// Actions  /////////////////////
 	delete(){
 		return new Promise((resolve, reject) => {
-			this.table.eventBus.dispatch("row-delete", this);
+			this.dispatch("row-delete", this);
 
 			this.deleteActual();
 
@@ -543,11 +545,11 @@ export default class Row {
 		this.heightInitialized = false;
 		this.element = false;
 
-		this.table.eventBus.dispatch("row-deleted", this);
+		this.dispatch("row-deleted", this);
 	}
 
 	detatchModules(){
-		this.table.eventBus.dispatch("row-deleting", this);
+		this.dispatch("row-deleting", this);
 	}
 
 	deleteCells(){

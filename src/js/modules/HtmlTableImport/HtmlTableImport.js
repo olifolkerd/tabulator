@@ -20,7 +20,7 @@ class HtmlTableImport extends Module{
 
 		this.hasIndex = false;
 
-		this.table.externalEvents.dispatch("htmlImporting");
+		this.dispatchExternal("htmlImporting");
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
@@ -74,7 +74,7 @@ class HtmlTableImport extends Module{
 
 		options.data = data;
 
-		this.table.externalEvents.dispatch("htmlImported");
+		this.dispatchExternal("htmlImported");
 
 		this.table.element = newElement;
 	}

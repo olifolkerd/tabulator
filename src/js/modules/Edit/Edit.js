@@ -131,7 +131,7 @@ class Edit extends Module{
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
 
-			this.table.externalEvents.dispatch("cellEditCancelled", component);
+			this.dispatchExternal("cellEditCancelled", component);
 		}
 	}
 
@@ -339,7 +339,7 @@ class Edit extends Module{
 					cell.column.cellEvents.cellEditing.call(this.table, component);
 				}
 
-				this.table.externalEvents.dispatch("cellEditing", component);
+				this.dispatchExternal("cellEditing", component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 

@@ -1,10 +1,12 @@
+import CoreFeature from './CoreFeature.js';
 import Row from './row/Row.js';
 import Helpers from './Helpers.js';
 
-export default class RowManager {
+export default class RowManager extends CoreFeature{
 
 	constructor(table){
-		this.table = table;
+		super(table);
+
 		this.element = this.createHolderElement(); //containing element
 		this.tableElement = this.createTableElement(); //table element
 		this.heightFixer = this.createTableElement(); //table element
@@ -122,16 +124,16 @@ export default class RowManager {
 			if(this.scrollLeft != left){
 				this.scrollLeft = left;
 
-				this.table.eventBus.dispatch("scroll-horizontal", left, leftDir);
-				this.table.externalEvents.dispatch("scrollHorizontal", left, leftDir);
+				this.dispatch("scroll-horizontal", left, leftDir);
+				this.dispatchExternal("scrollHorizontal", left, leftDir);
 			}
 
 			//handle verical scrolling
 			if(this.scrollTop != top){
 				this.scrollTop = top;
 
-				this.table.eventBus.dispatch("scroll-vertical", top, topDir);
-				this.table.externalEvents.dispatch("scrollVertical", top, topDir);
+				this.dispatch("scroll-vertical", top, topDir);
+				this.dispatchExternal("scrollVertical", top, topDir);
 			}
 		});
 	}
@@ -294,12 +296,12 @@ export default class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.table.externalEvents.dispatch("dataLoading", data);
+		this.dispatchExternal("dataLoading", data);
 
 		this._wipeElements();
 
 		if(Array.isArray(data)){
-			this.table.eventBus.dispatch("data-loading", data);
+			this.dispatch("data-loading", data);
 
 			data.forEach((def, i) => {
 				if(def && typeof def === "object"){
@@ -312,14 +314,14 @@ export default class RowManager {
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.table.externalEvents.dispatch("dataLoaded", data);
+			this.dispatchExternal("dataLoaded", data);
 		}else{
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
 	}
 
 	_wipeElements(){
-		this.table.eventBus.dispatch("rows-wipe");
+		this.dispatch("rows-wipe");
 
 		this.rows.forEach((row) => {
 			row.wipe();
@@ -362,17 +364,17 @@ export default class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.externalEvents.dispatch("rowDeleted", row.getComponent());
+		this.dispatchExternal("rowDeleted", row.getComponent());
 
-		if(this.table.externalEvents.subscribed("dataChanged")){
-			this.table.externalEvents.dispatch("dataChanged", this.getData());
+		if(this.subscribedExternal("dataChanged")){
+			this.dispatchExternal("dataChanged", this.getData());
 		}
 	}
 
 	addRow(data, pos, index, blockRedraw){
 		var row = this.addRowActual(data, pos, index, blockRedraw);
 
-		this.table.eventBus.dispatch("row-added", row, data, pos, index);
+		this.dispatch("row-added", row, data, pos, index);
 
 		return row;
 	}
@@ -400,8 +402,8 @@ export default class RowManager {
 				rows.push(row);
 			});
 
-			if(this.table.eventBus.subscribed("row-added")){
-				this.table.eventBus.dispatch("row-added", row, data, pos, index);
+			if(this.subscribed("row-added")){
+				this.dispatch("row-added", row, data, pos, index);
 			}else{
 				this.reRenderInPosition();
 			}
@@ -526,10 +528,10 @@ export default class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.table.externalEvents.dispatch("rowAdded", row.getComponent());
+		this.dispatchExternal("rowAdded", row.getComponent());
 
-		if(this.table.externalEvents.subscribed("dataChanged")){
-			this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
+		if(this.subscribedExternal("dataChanged")){
+			this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 		}
 
 		if(!blockRedraw){
@@ -540,14 +542,14 @@ export default class RowManager {
 	}
 
 	moveRow(from, to, after){
-		this.table.eventBus.dispatch("row-move", from, to, after);
+		this.dispatch("row-move", from, to, after);
 
 		this.moveRowActual(from, to, after);
 
 		this.regenerateRowNumbers();
 
-		this.table.eventBus.dispatch("row-moved", from, to, after);
-		this.table.externalEvents.dispatch("rowMoved", from.getComponent());
+		this.dispatch("row-moved", from, to, after);
+		this.dispatchExternal("rowMoved", from.getComponent());
 	}
 
 	moveRowActual(from, to, after){
@@ -558,7 +560,7 @@ export default class RowManager {
 			this._moveRowInArray(rows, from, to, after);
 		});
 
-		this.table.eventBus.dispatch("row-moving", from, to, after);
+		this.dispatch("row-moving", from, to, after);
 	}
 
 	_moveRowInArray(rows, from, to, after){
@@ -777,7 +779,7 @@ export default class RowManager {
 		this.scrollLeft = left;
 		this.element.scrollLeft = left;
 
-		this.table.eventBus.dispatch("scroll-horizontal", left);
+		this.dispatch("scroll-horizontal", left);
 	}
 
 	//set active data set
@@ -1098,7 +1100,7 @@ export default class RowManager {
 			break;
 
 			default:
-			rows = this.table.eventBus.chain("rows-retrieve", type, this.rows) || this.rows;
+			rows = this.chain("rows-retrieve", type, this.rows) || this.rows;
 		}
 
 		return rows;
@@ -1165,13 +1167,13 @@ export default class RowManager {
 				this.fixedHeight = false;
 			}
 
-			if(!this.table.eventBus.subscribed("scroll-vertical")){
-				this.table.eventBus.subscribe("scroll-vertical", this.scrollVertical.bind(this));
+			if(!this.subscribed("scroll-vertical")){
+				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 
 		}else{
 			this.renderMode = "classic";
-			if(this.table.eventBus.subscribed("scroll-vertical")){
+			if(this.subscribed("scroll-vertical")){
 				this.unsubscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 		}
@@ -1183,7 +1185,7 @@ export default class RowManager {
 
 	renderTable(){
 
-		this.table.externalEvents.dispatch("renderStarted");
+		this.dispatchExternal("renderStarted");
 
 		this.element.scrollTop = 0;
 
@@ -1206,7 +1208,7 @@ export default class RowManager {
 			}
 		}
 
-		this.table.eventBus.dispatch("table-layout");
+		this.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
 			if(this.table.options.placeholder){
@@ -1218,7 +1220,7 @@ export default class RowManager {
 			}
 		}
 
-		this.table.externalEvents.dispatch("renderComplete");
+		this.dispatchExternal("renderComplete");
 	}
 
 	//simple render on heightless table
@@ -1666,8 +1668,8 @@ export default class RowManager {
 
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
-				if(this.table.eventBus.subscribed("table-resize")){
-					this.table.eventBus.dispatch("table-resize");
+				if(this.subscribed("table-resize")){
+					this.dispatch("table-resize");
 				}else{
 					this.redraw();
 				}

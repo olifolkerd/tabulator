@@ -1,13 +1,13 @@
 /* Tabulator v4.9.3 (c) Oliver Folkerd 2021 */
-class Module{
+class CoreFeature{
 
-	constructor(table, name){
+	constructor(table){
 		this.table = table;
 	}
 
-	initialize(){
-		// setup module when table is initialized, to be overriden in module
-	}
+	//////////////////////////////////////////
+	/////////////// Event Bus ////////////////
+	//////////////////////////////////////////
 
 	subscribe(){
 		this.table.eventBus.subscribe(...arguments);
@@ -17,9 +17,47 @@ class Module{
 		this.table.eventBus.unsubscribe(...arguments);
 	}
 
+	subscribed(key){
+		this.table.eventBus.subscribed(key);
+	}
+
+	dispatch(){
+		this.table.eventBus.dispatch(...arguments);
+	}
+
+	chain(){
+		return this.table.eventBus.chain(...arguments);
+	}
+
+	dispatchExternal(){
+		this.table.externalEvents.dispatch(...arguments);
+	}
+
+	subscribedExternal(key){
+		this.table.externalEvents.subscribed(key);
+	}
+
+
+	//////////////////////////////////////////
+	//////////////// Modules /////////////////
+	//////////////////////////////////////////
+
 	module(key){
 		return this.table.module(key);
 	}
+}
+
+class Module extends CoreFeature{
+
+	constructor(table, name){
+		super(table);
+	}
+
+	initialize(){
+		// setup module when table is initialized, to be overriden in module
+	}
+
+
 }
 
 class Helpers{
@@ -558,7 +596,7 @@ class Ajax extends Module{
 				})
 				.catch((error)=>{
 					console.error("Ajax Load Error: ", error);
-					this.table.externalEvents.dispatch("ajaxError", error);
+					this.dispatchExternal("ajaxError", error);
 
 					this.showError();
 
@@ -774,7 +812,7 @@ class Clipboard extends Module{
 						}
 					}
 
-					this.table.externalEvents.dispatch("clipboardCopied", plain, html);
+					this.dispatchExternal("clipboardCopied", plain, html);
 
 					this.reset();
 				}
@@ -924,9 +962,9 @@ class Clipboard extends Module{
 
 				rows = this.pasteAction.call(this, rowData);
 
-				this.table.externalEvents.dispatch("clipboardPasted", data, rowData, rows);
+				this.dispatchExternal("clipboardPasted", data, rowData, rows);
 			}else {
-				this.table.externalEvents.dispatch("clipboardPasteError", data);
+				this.dispatchExternal("clipboardPasteError", data);
 			}
 		}
 	}
@@ -1118,8 +1156,10 @@ class CellComponent {
 	}
 }
 
-class Cell$1 {
+class Cell$1 extends CoreFeature{
 	constructor(column, row){
+		super(column.table);
+
 		this.table = column.table;
 		this.column = column;
 		this.row = row;
@@ -1214,7 +1254,7 @@ class Cell$1 {
 
 		this._bindMouseEvents(cellEvents);
 
-		this.table.eventBus.dispatch("cell-init", this);
+		this.dispatch("cell-init", this);
 
 		//hide cell if not visible
 		if(!this.column.visible){
@@ -1455,7 +1495,7 @@ class Cell$1 {
 	_generateContents(){
 		var val;
 
-		val = this.table.eventBus.chain("cell-format", this, () => {
+		val = this.chain("cell-format", this, () => {
 			return this.element.innerHTML = this.value;
 		});
 
@@ -1485,7 +1525,7 @@ class Cell$1 {
 	}
 
 	cellRendered(){
-		this.table.eventBus.dispatch("cell-rendered", this);
+		this.dispatch("cell-rendered", this);
 	}
 
 	//generate tooltip text
@@ -1539,7 +1579,7 @@ class Cell$1 {
 		component;
 
 		if(changed){
-			this.table.eventBus.dispatch("cell-value-updated", this);
+			this.dispatch("cell-value-updated", this);
 
 			component = this.getComponent();
 
@@ -1549,10 +1589,10 @@ class Cell$1 {
 
 			this.cellRendered();
 
-			this.table.externalEvents.dispatch("cellEdited", component);
+			this.dispatchExternal("cellEdited", component);
 
-			if(this.table.externalEvents.subscribed("dataChanged")){
-				this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
+			if(this.subscribedExternal("dataChanged")){
+				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 		}
 	}
@@ -1565,14 +1605,14 @@ class Cell$1 {
 			changed = true;
 
 			if(mutate){
-				value = this.table.eventBus.chain("cell-value-changing", [this, value], value);
+				value = this.chain("cell-value-changing", [this, value], value);
 			}
 		}
 
 		this.setValueActual(value);
 
 		if(changed){
-			this.table.eventBus.dispatch("cell-value-changed", this);
+			this.dispatch("cell-value-changed", this);
 		}
 
 		return changed;
@@ -1583,11 +1623,11 @@ class Cell$1 {
 
 		this.value = value;
 
-		this.table.eventBus.dispatch("cell-value-save-before", this);
+		this.dispatch("cell-value-save-before", this);
 
 		this.column.setFieldValue(this.row.data, value);
 
-		this.table.eventBus.dispatch("cell-value-save-after", this);
+		this.dispatch("cell-value-save-after", this);
 
 		if(this.loaded){
 			this.layoutElement();
@@ -1598,7 +1638,7 @@ class Cell$1 {
 		this._generateContents();
 		this._generateTooltip();
 
-		this.table.eventBus.dispatch("cell-layout", this);
+		this.dispatch("cell-layout", this);
 	}
 
 	setWidth(){
@@ -1681,7 +1721,7 @@ class Cell$1 {
 	}
 
 	delete(){
-		this.table.eventBus.dispatch("cell-delete", this);
+		this.dispatch("cell-delete", this);
 
 		if(!this.table.rowManager.redrawBlock && this.element.parentNode){
 			this.element.parentNode.removeChild(this.element);
@@ -2077,10 +2117,11 @@ var defaultOptions = [
 	"titleDownload",
 ];
 
-class Column$1 {
+class Column$1 extends CoreFeature{
 
 	constructor(def, parent){
-		this.table = parent.table;
+		super(parent.table);
+
 		this.definition = def; //column definition
 		this.parent = parent; //hold parent object
 		this.type = "column"; //type of element
@@ -2293,7 +2334,7 @@ class Column$1 {
 
 		this.setTooltip();
 
-		this.table.eventBus.dispatch("column-init", this);
+		this.dispatch("column-init", this);
 
 		//update header tooltip on mouse enter
 		this.element.addEventListener("mouseenter", (e) => {
@@ -2443,7 +2484,7 @@ class Column$1 {
 		var def = this.definition,
 		table = this.table;
 
-		this.table.eventBus.dispatch("column-layout", this);
+		this.dispatch("column-layout", this);
 
 		//set column visibility
 		if(typeof def.visible != "undefined"){
@@ -2525,7 +2566,7 @@ class Column$1 {
 
 			titleElement.addEventListener("change", () => {
 				def.title = titleElement.value;
-				table.externalEvents.dispatch("columnTitleChanged", this.getComponent());
+				this.dispatchExternal("columnTitleChanged", this.getComponent());
 			});
 
 			titleHolderElement.appendChild(titleElement);
@@ -2552,7 +2593,7 @@ class Column$1 {
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var contents = this.table.eventBus.chain("column-format", [this, title, el], () => {
+		var contents = this.chain("column-format", [this, title, el], () => {
 			return title;
 		});
 
@@ -2794,7 +2835,7 @@ class Column$1 {
 
 		if(visible){
 			this.show();
-			this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
+			this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
 		}else {
 			this.hide();
 		}
@@ -2821,10 +2862,10 @@ class Column$1 {
 
 			this.table.columnManager._verticalAlignHeaders();
 
-			this.table.eventBus.dispatch("column-show", this, responsiveToggle);
+			this.dispatch("column-show", this, responsiveToggle);
 
 			if(!silent){
-				this.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), true);
+				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), true);
 			}
 
 			if(this.parent.isGroup){
@@ -2854,10 +2895,10 @@ class Column$1 {
 				cell.hide();
 			});
 
-			this.table.eventBus.dispatch("column-hide", this);
+			this.dispatch("column-hide", this);
 
 			if(!silent){
-				this.parent.table.externalEvents.dispatch("columnVisibilityChanged", this.getComponent(), false);
+				this.dispatchExternal("columnVisibilityChanged", this.getComponent(), false);
 			}
 
 			if(this.parent.isGroup){
@@ -2931,7 +2972,7 @@ class Column$1 {
 			this.parent.matchChildWidths();
 		}
 
-		this.table.eventBus.dispatch("column-width", this);
+		this.dispatch("column-width", this);
 	}
 
 	checkCellHeights(){
@@ -3008,7 +3049,7 @@ class Column$1 {
 				});
 			}
 
-			this.table.eventBus.dispatch("column-delete", this);
+			this.dispatch("column-delete", this);
 
 			var cellCount = this.cells.length;
 
@@ -3095,11 +3136,11 @@ class Column$1 {
 			this.setWidth(this.definition.width);
 		}
 
-		this.table.eventBus.dispatch("column-width-fit-before", this);
+		this.dispatch("column-width-fit-before", this);
 
 		this.fitToData();
 
-		this.table.eventBus.dispatch("column-width-fit-after", this);
+		this.dispatch("column-width-fit-after", this);
 	}
 
 	//set column width to maximum cell width
@@ -3360,9 +3401,10 @@ class RowComponent$1 {
 	}
 }
 
-class Row$1 {
+class Row$1 extends CoreFeature{
 	constructor (data, parent, type = "row"){
-		this.table = parent.table;
+		super(parent.table);
+
 		this.parent = parent;
 		this.data = {};
 		this.type = type; //type of element
@@ -3415,7 +3457,7 @@ class Row$1 {
 
 		this.createElement();
 
-		this.table.eventBus.dispatch("row-init", this);
+		this.dispatch("row-init", this);
 
 		//handle row click events
 		if (this.table.options.rowClick){
@@ -3541,7 +3583,7 @@ class Row$1 {
 
 			while(this.element.firstChild) this.element.removeChild(this.element.firstChild);
 
-			this.table.eventBus.dispatch("row-layout-before", this);
+			this.dispatch("row-layout-before", this);
 
 			this.generateCells();
 
@@ -3558,13 +3600,13 @@ class Row$1 {
 				this.normalizeHeight();
 			}
 
-			this.table.eventBus.dispatch("row-layout", this);
+			this.dispatch("row-layout", this);
 
 			if(this.table.options.rowFormatter){
 				this.table.options.rowFormatter(this.getComponent());
 			}
 
-			this.table.eventBus.dispatch("row-layout-after", this);
+			this.dispatch("row-layout-after", this);
 
 			this.initialized = true;
 		}else {
@@ -3595,7 +3637,7 @@ class Row$1 {
 			this.initialize(true);
 		}
 
-		this.table.eventBus.dispatch("row-relayout", this);
+		this.dispatch("row-relayout", this);
 	}
 
 	//get heights when doing bulk row style calcs in virtual DOM
@@ -3685,9 +3727,9 @@ class Row$1 {
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		this.data = this.table.eventBus.chain("row-data-init-before", [this, data], data);
+		this.data = this.chain("row-data-init-before", [this, data], data);
 
-		this.table.eventBus.dispatch("row-data-init-after", this);
+		this.dispatch("row-data-init-after", this);
 	}
 
 	//update the rows data
@@ -3702,21 +3744,21 @@ class Row$1 {
 				updatedData = JSON.parse(updatedData);
 			}
 
-			this.table.eventBus.dispatch("row-data-save-before", this);
+			this.dispatch("row-data-save-before", this);
 
-			if(this.table.eventBus.subscribed("row-data-changing")){
+			if(this.subscribed("row-data-changing")){
 				tempData = Object.assign(tempData, this.data);
 				tempData = Object.assign(tempData, updatedData);
 			}
 
-			newRowData = this.table.eventBus.chain("row-data-changing", [this, tempData, updatedData], updatedData);
+			newRowData = this.chain("row-data-changing", [this, tempData, updatedData], updatedData);
 
 			//set data
 			for (var attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 
-			this.table.eventBus.dispatch("row-data-save-after", this);
+			this.dispatch("row-data-save-after", this);
 
 			//update affected cells only
 			for (var attrname in updatedData) {
@@ -3752,14 +3794,14 @@ class Row$1 {
 				this.heightStyled = "";
 			}
 
-			this.table.eventBus.dispatch("row-data-changed", this, visible, updatedData);
+			this.dispatch("row-data-changed", this, visible, updatedData);
 
 			//this.reinitialize();
 
-			this.table.externalEvents.dispatch("rowUpdated", this.getComponent());
+			this.dispatchExternal("rowUpdated", this.getComponent());
 
-			if(this.table.externalEvents.subscribed("dataChanged")){
-				this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
+			if(this.subscribedExternal.subscribed("dataChanged")){
+				this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 			}
 
 			resolve();
@@ -3768,7 +3810,7 @@ class Row$1 {
 
 	getData(transform){
 		if(transform){
-			return this.table.eventBus.chain("row-data-retrieve", [this, transform], this.data);
+			return this.chain("row-data-retrieve", [this, transform], this.data);
 		}
 
 		return this.data;
@@ -3881,7 +3923,7 @@ class Row$1 {
 	///////////////////// Actions  /////////////////////
 	delete(){
 		return new Promise((resolve, reject) => {
-			this.table.eventBus.dispatch("row-delete", this);
+			this.dispatch("row-delete", this);
 
 			this.deleteActual();
 
@@ -3902,11 +3944,11 @@ class Row$1 {
 		this.heightInitialized = false;
 		this.element = false;
 
-		this.table.eventBus.dispatch("row-deleted", this);
+		this.dispatch("row-deleted", this);
 	}
 
 	detatchModules(){
-		this.table.eventBus.dispatch("row-deleting", this);
+		this.dispatch("row-deleting", this);
 	}
 
 	deleteCells(){
@@ -4824,7 +4866,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.externalEvents.dispatch("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
+			this.dispatchExternal("dataTreeRowExpanded", row.getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -4838,7 +4880,7 @@ class DataTree extends Module{
 
 			this.table.rowManager.refreshActiveData("tree", false, true);
 
-			this.table.externalEvents.dispatch("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
+			this.dispatchExternal("dataTreeRowCollapsed", getComponent(), row.modules.dataTree.index);
 		}
 	}
 
@@ -5448,7 +5490,7 @@ class Download extends Module{
 				}
 			}
 
-			this.table.externalEvents.dispatch("downloadComplete");
+			this.dispatchExternal("downloadComplete");
 		}
 	}
 
@@ -7370,7 +7412,7 @@ class Edit extends Module{
 				cell.column.cellEvents.cellEditCancelled.call(this.table, component);
 			}
 
-			this.table.externalEvents.dispatch("cellEditCancelled", component);
+			this.dispatchExternal("cellEditCancelled", component);
 		}
 	}
 
@@ -7574,7 +7616,7 @@ class Edit extends Module{
 					cell.column.cellEvents.cellEditing.call(this.table, component);
 				}
 
-				this.table.externalEvents.dispatch("cellEditing", component);
+				this.dispatchExternal("cellEditing", component);
 
 				params = typeof cell.column.modules.edit.params === "function" ? cell.column.modules.edit.params(component) : cell.column.modules.edit.params;
 
@@ -9103,8 +9145,8 @@ class Filter extends Module{
 		var activeRows = [],
 		activeRowComponents = [];
 
-		if(this.table.externalEvents.subscribed("dataFiltering")){
-			this.table.externalEvents.dispatch("dataFiltering", this.getFilters());
+		if(this.subscribedExternal("dataFiltering")){
+			this.dispatchExternal("dataFiltering", this.getFilters());
 		}
 
 		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
@@ -9119,13 +9161,13 @@ class Filter extends Module{
 			activeRows = rowList.slice(0);
 		}
 
-		if(this.table.externalEvents.subscribed("dataFiltered")){
+		if(this.subscribedExternal("dataFiltered")){
 
 			activeRows.forEach((row) => {
 				activeRowComponents.push(row.getComponent());
 			});
 
-			this.table.externalEvents.dispatch("dataFiltered", this.getFilters(), activeRowComponents);
+			this.dispatchExternal("dataFiltered", this.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;
@@ -11209,12 +11251,12 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.table.externalEvents.dispatch("dataGrouping");
+			this.dispatchExternal("dataGrouping");
 
 			this.generateGroups(rows);
 
-			if(this.table.externalEvents.subscribed("dataGrouped")){
-				this.table.externalEvents.dispatch("dataGrouped", this.getGroups(true));
+			if(this.subscribedExternal("dataGrouped")){
+				this.dispatchExternal("dataGrouped", this.getGroups(true));
 			}
 
 			return this.updateGroupRows();
@@ -11606,7 +11648,7 @@ class History extends Module{
 
 			this.index--;
 
-			this.table.externalEvents.dispatch("historyUndo", action.type, action.component.getComponent(), action.data);
+			this.dispatchExternal("historyUndo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else {
@@ -11624,7 +11666,7 @@ class History extends Module{
 
 			History.redoers[action.type].call(this, action);
 
-			this.table.externalEvents.dispatch("historyRedo", action.type, action.component.getComponent(), action.data);
+			this.dispatchExternal("historyRedo", action.type, action.component.getComponent(), action.data);
 
 			return true;
 		}else {
@@ -11679,7 +11721,7 @@ class HtmlTableImport extends Module{
 
 		this.hasIndex = false;
 
-		this.table.externalEvents.dispatch("htmlImporting");
+		this.dispatchExternal("htmlImporting");
 
 		rows = rows ? rows.getElementsByTagName("tr") : [];
 
@@ -11733,7 +11775,7 @@ class HtmlTableImport extends Module{
 
 		options.data = data;
 
-		this.table.externalEvents.dispatch("htmlImported");
+		this.dispatchExternal("htmlImported");
 
 		this.table.element = newElement;
 	}
@@ -13223,7 +13265,7 @@ class MoveRows extends Module{
 
 	elementRowDrop(e, element, row){
 		if(this.table.options.movableRowsElementDrop){
-			this.table.externalEvents.dispatch("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
+			this.dispatchExternal("movableRowsElementDrop", e, element, row ? row.getComponent() : false);
 		}
 	}
 
@@ -13234,7 +13276,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.externalEvents.dispatch("movableRowsSendingStart", connectionTables);
+			this.dispatchExternal("movableRowsSendingStart", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "connect", {
 				row:row,
@@ -13277,7 +13319,7 @@ class MoveRows extends Module{
 		if(this.connectionSelectorsTables){
 			connectionTables = this.table.modules.comms.getConnections(this.connectionSelectorsTables);
 
-			this.table.externalEvents.dispatch("movableRowsSendingStop", connectionTables);
+			this.dispatchExternal("movableRowsSendingStop", connectionTables);
 
 			this.table.modules.comms.send(this.connectionSelectorsTables, "moveRow", "disconnect");
 		}
@@ -13307,7 +13349,7 @@ class MoveRows extends Module{
 
 			this.table.element.addEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.externalEvents.dispatch("movableRowsReceivingStart", row, table);
+			this.dispatchExternal("movableRowsReceivingStart", row, table);
 
 			return true;
 		}else {
@@ -13332,7 +13374,7 @@ class MoveRows extends Module{
 
 			this.table.element.removeEventListener("mouseup", this.tableRowDropEvent);
 
-			this.table.externalEvents.dispatch("movableRowsReceivingStop", table);
+			this.dispatchExternal("movableRowsReceivingStop", table);
 		}else {
 			console.warn("Move Row Error - trying to disconnect from non connected table");
 		}
@@ -13361,9 +13403,9 @@ class MoveRows extends Module{
 				}
 			}
 
-			this.table.externalEvents.dispatch("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.dispatchExternal("movableRowsSent", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}else {
-			this.table.externalEvents.dispatch("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
+			this.dispatchExternal("movableRowsSentFailed", this.moving.getComponent(), row ? row.getComponent() : undefined, table);
 		}
 
 		this.endMove();
@@ -13392,9 +13434,9 @@ class MoveRows extends Module{
 		}
 
 		if(success){
-			this.table.externalEvents.dispatch("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.dispatchExternal("movableRowsReceived", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}else {
-			this.table.externalEvents.dispatch("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
+			this.dispatchExternal("movableRowsReceivedFailed", this.connectedRow.getComponent(), row ? row.getComponent() : undefined, this.connectedTable);
 		}
 
 		this.table.modules.comms.send(this.connectedTable, "moveRow", "dropcomplete", {
@@ -14158,7 +14200,7 @@ class Page extends Module{
 				this.table.rowManager.refreshActiveData("page");
 				this.table.rowManager.scrollHorizontal(left);
 
-				this.table.externalEvents.dispatch("pageLoaded", this.getPage());
+				this.dispatchExternal("pageLoaded", this.getPage());
 
 				resolve();
 				break;
@@ -14282,7 +14324,7 @@ class Page extends Module{
 
 				this.table.columnManager.scrollHorizontal(left);
 
-				this.table.externalEvents.dispatch("pageLoaded",  this.getPage());
+				this.dispatchExternal("pageLoaded",  this.getPage());
 			}
 
 			this.initialLoad = false;
@@ -14856,6 +14898,7 @@ class ReactiveData extends Module{
 			this.subscribe("row-data-save-before", this.block.bind(this));
 			this.subscribe("row-data-save-after", this.unblock.bind(this));
 			this.subscribe("row-data-init-after", this.watchRow.bind(this));
+			this.subscribe("data-loading", this.watchData.bind(this));
 		}
 	}
 
@@ -15452,7 +15495,7 @@ class ResizeRows extends Module{
 
 			self.table.element.classList.remove("tabulator-block-select");
 
-			this.table.externalEvents.dispatch("rowResized", row.getComponent());
+			this.dispatchExternal("rowResized", row.getComponent());
 		}
 
 		e.stopPropagation(); //prevent resize from interfereing with movable columns
@@ -16178,7 +16221,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.externalEvents.dispatch("rowSelected", row.getComponent());
+					this.dispatchExternal("rowSelected", row.getComponent());
 				}
 
 				this._rowSelectionChanged(silent);
@@ -16251,7 +16294,7 @@ class SelectRow extends Module{
 				}
 
 				if(!silent){
-					this.table.externalEvents.dispatch("rowDeselected", row.getComponent());
+					this.dispatchExternal("rowDeselected", row.getComponent());
 				}
 
 				self._rowSelectionChanged(silent);
@@ -16299,7 +16342,7 @@ class SelectRow extends Module{
 		}
 
 		if(!silent){
-			this.table.externalEvents.dispatch("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
+			this.dispatchExternal("rowSelectionChanged", this.getSelectedData(), this.getSelectedRows());
 		}
 	}
 
@@ -16822,8 +16865,8 @@ class Sort extends Module{
 		sortListActual = [],
 		rowComponents = [];
 
-		if(this.table.externalEvents.subscribed("dataSorting")){
-			this.table.externalEvents.dispatch("dataSorting", self.getSort());
+		if(this.subscribedExternal("dataSorting")){
+			this.dispatchExternal("dataSorting", self.getSort());
 		}
 
 		self.clearColumnHeaders();
@@ -16860,12 +16903,12 @@ class Sort extends Module{
 			});
 		}
 
-		if(this.table.externalEvents.subscribed("dataSorted")){
+		if(this.subscribedExternal("dataSorted")){
 			data.forEach((row) => {
 				rowComponents.push(row.getComponent());
 			});
 
-			this.table.externalEvents.dispatch("dataSorted", self.getSort(), rowComponents);
+			this.dispatchExternal("dataSorted", self.getSort(), rowComponents);
 		}
 	}
 
@@ -17607,10 +17650,11 @@ var defaultOptions$1 = {
 
 };
 
-class ColumnManager {
+class ColumnManager extends CoreFeature {
 
 	constructor (table){
-		this.table = table; //hold parent table
+		super(table);
+
 		this.blockHozScrollEvent = false;
 		this.headersElement = this.createHeadersElement();
 		this.element = this.createHeaderElement(); //containing element
@@ -17628,7 +17672,7 @@ class ColumnManager {
 	////////////// Setup Functions /////////////////
 
 	_bindEvents(){
-		this.table.eventBus.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 	}
 
 	initialize (){
@@ -17790,7 +17834,7 @@ class ColumnManager {
 		this.columnsByField = {};
 
 
-		this.table.eventBus.dispatch("columns-loading");
+		this.dispatch("columns-loading");
 
 		cols.forEach((def, i) => {
 			this._addColumn(def);
@@ -17798,7 +17842,7 @@ class ColumnManager {
 
 		this._reIndexColumns();
 
-		this.table.eventBus.dispatch("columns-loaded");
+		this.dispatch("columns-loaded");
 
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(false, true);
@@ -18034,10 +18078,10 @@ class ColumnManager {
 			this.table.vdomHoz.reinitialize(true);
 		}
 
-		this.table.eventBus.dispatch("column-moved", from, to, after);
+		this.dispatch("column-moved", from, to, after);
 
-		if(this.table.externalEvents.subscribed("columnMoved")){
-			this.table.externalEvents.dispatch("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
+		if(this.subscribedExternal("columnMoved")){
+			this.dispatchExternal("columnMoved", from.getComponent(), this.table.columnManager.getComponents());
 		}
 	}
 
@@ -18065,7 +18109,7 @@ class ColumnManager {
 
 			if(updateRows){
 
-				rows = this.table.eventBus.chain("column-moving-rows", [from, to, after], []) || [];
+				rows = this.chain("column-moving-rows", [from, to, after], []) || [];
 
 				rows = rows.concat(this.table.rowManager.rows);
 
@@ -18191,7 +18235,7 @@ class ColumnManager {
 
 			this._reIndexColumns();
 
-			this.table.eventBus.dispatch("column-add", definition, before, nextToColumn);
+			this.dispatch("column-add", definition, before, nextToColumn);
 
 			this.redraw(true);
 
@@ -18285,10 +18329,11 @@ class ColumnManager {
 	}
 }
 
-class RowManager {
+class RowManager extends CoreFeature{
 
 	constructor(table){
-		this.table = table;
+		super(table);
+
 		this.element = this.createHolderElement(); //containing element
 		this.tableElement = this.createTableElement(); //table element
 		this.heightFixer = this.createTableElement(); //table element
@@ -18406,16 +18451,16 @@ class RowManager {
 			if(this.scrollLeft != left){
 				this.scrollLeft = left;
 
-				this.table.eventBus.dispatch("scroll-horizontal", left, leftDir);
-				this.table.externalEvents.dispatch("scrollHorizontal", left, leftDir);
+				this.dispatch("scroll-horizontal", left, leftDir);
+				this.dispatchExternal("scrollHorizontal", left, leftDir);
 			}
 
 			//handle verical scrolling
 			if(this.scrollTop != top){
 				this.scrollTop = top;
 
-				this.table.eventBus.dispatch("scroll-vertical", top, topDir);
-				this.table.externalEvents.dispatch("scrollVertical", top, topDir);
+				this.dispatch("scroll-vertical", top, topDir);
+				this.dispatchExternal("scrollVertical", top, topDir);
 			}
 		});
 	}
@@ -18578,12 +18623,12 @@ class RowManager {
 	}
 
 	_setDataActual(data, renderInPosition){
-		this.table.externalEvents.dispatch("dataLoading", data);
+		this.dispatchExternal("dataLoading", data);
 
 		this._wipeElements();
 
 		if(Array.isArray(data)){
-			this.table.eventBus.dispatch("data-loading", data);
+			this.dispatch("data-loading", data);
 
 			data.forEach((def, i) => {
 				if(def && typeof def === "object"){
@@ -18596,14 +18641,14 @@ class RowManager {
 
 			this.refreshActiveData(false, false, renderInPosition);
 
-			this.table.externalEvents.dispatch("dataLoaded", data);
+			this.dispatchExternal("dataLoaded", data);
 		}else {
 			console.error("Data Loading Error - Unable to process data due to invalid data type \nExpecting: array \nReceived: ", typeof data, "\nData:     ", data);
 		}
 	}
 
 	_wipeElements(){
-		this.table.eventBus.dispatch("rows-wipe");
+		this.dispatch("rows-wipe");
 
 		this.rows.forEach((row) => {
 			row.wipe();
@@ -18646,17 +18691,17 @@ class RowManager {
 
 		this.regenerateRowNumbers();
 
-		this.table.externalEvents.dispatch("rowDeleted", row.getComponent());
+		this.dispatchExternal("rowDeleted", row.getComponent());
 
-		if(this.table.externalEvents.subscribed("dataChanged")){
-			this.table.externalEvents.dispatch("dataChanged", this.getData());
+		if(this.subscribedExternal("dataChanged")){
+			this.dispatchExternal("dataChanged", this.getData());
 		}
 	}
 
 	addRow(data, pos, index, blockRedraw){
 		var row = this.addRowActual(data, pos, index, blockRedraw);
 
-		this.table.eventBus.dispatch("row-added", row, data, pos, index);
+		this.dispatch("row-added", row, data, pos, index);
 
 		return row;
 	}
@@ -18683,8 +18728,8 @@ class RowManager {
 				rows.push(row);
 			});
 
-			if(this.table.eventBus.subscribed("row-added")){
-				this.table.eventBus.dispatch("row-added", row, data, pos, index);
+			if(this.subscribed("row-added")){
+				this.dispatch("row-added", row, data, pos, index);
 			}else {
 				this.reRenderInPosition();
 			}
@@ -18809,10 +18854,10 @@ class RowManager {
 
 		this.setActiveRows(this.activeRows);
 
-		this.table.externalEvents.dispatch("rowAdded", row.getComponent());
+		this.dispatchExternal("rowAdded", row.getComponent());
 
-		if(this.table.externalEvents.subscribed("dataChanged")){
-			this.table.externalEvents.dispatch("dataChanged", this.table.rowManager.getData());
+		if(this.subscribedExternal("dataChanged")){
+			this.dispatchExternal("dataChanged", this.table.rowManager.getData());
 		}
 
 		if(!blockRedraw){
@@ -18823,14 +18868,14 @@ class RowManager {
 	}
 
 	moveRow(from, to, after){
-		this.table.eventBus.dispatch("row-move", from, to, after);
+		this.dispatch("row-move", from, to, after);
 
 		this.moveRowActual(from, to, after);
 
 		this.regenerateRowNumbers();
 
-		this.table.eventBus.dispatch("row-moved", from, to, after);
-		this.table.externalEvents.dispatch("rowMoved", from.getComponent());
+		this.dispatch("row-moved", from, to, after);
+		this.dispatchExternal("rowMoved", from.getComponent());
 	}
 
 	moveRowActual(from, to, after){
@@ -18841,7 +18886,7 @@ class RowManager {
 			this._moveRowInArray(rows, from, to, after);
 		});
 
-		this.table.eventBus.dispatch("row-moving", from, to, after);
+		this.dispatch("row-moving", from, to, after);
 	}
 
 	_moveRowInArray(rows, from, to, after){
@@ -19060,7 +19105,7 @@ class RowManager {
 		this.scrollLeft = left;
 		this.element.scrollLeft = left;
 
-		this.table.eventBus.dispatch("scroll-horizontal", left);
+		this.dispatch("scroll-horizontal", left);
 	}
 
 	//set active data set
@@ -19381,7 +19426,7 @@ class RowManager {
 			break;
 
 			default:
-			rows = this.table.eventBus.chain("rows-retrieve", type, this.rows) || this.rows;
+			rows = this.chain("rows-retrieve", type, this.rows) || this.rows;
 		}
 
 		return rows;
@@ -19448,13 +19493,13 @@ class RowManager {
 				this.fixedHeight = false;
 			}
 
-			if(!this.table.eventBus.subscribed("scroll-vertical")){
-				this.table.eventBus.subscribe("scroll-vertical", this.scrollVertical.bind(this));
+			if(!this.subscribed("scroll-vertical")){
+				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 
 		}else {
 			this.renderMode = "classic";
-			if(this.table.eventBus.subscribed("scroll-vertical")){
+			if(this.subscribed("scroll-vertical")){
 				this.unsubscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
 		}
@@ -19466,7 +19511,7 @@ class RowManager {
 
 	renderTable(){
 
-		this.table.externalEvents.dispatch("renderStarted");
+		this.dispatchExternal("renderStarted");
 
 		this.element.scrollTop = 0;
 
@@ -19489,7 +19534,7 @@ class RowManager {
 			}
 		}
 
-		this.table.eventBus.dispatch("table-layout");
+		this.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
 			if(this.table.options.placeholder){
@@ -19501,7 +19546,7 @@ class RowManager {
 			}
 		}
 
-		this.table.externalEvents.dispatch("renderComplete");
+		this.dispatchExternal("renderComplete");
 	}
 
 	//simple render on heightless table
@@ -19948,8 +19993,8 @@ class RowManager {
 
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
-				if(this.table.eventBus.subscribed("table-resize")){
-					this.table.eventBus.dispatch("table-resize");
+				if(this.subscribed("table-resize")){
+					this.dispatch("table-resize");
 				}else {
 					this.redraw();
 				}
@@ -20773,7 +20818,7 @@ class Localize extends Module{
 			traverseLang(this.langList[desiredLocale], this.lang);
 		}
 
-		this.table.externalEvents.dispatch("localized", this.locale, this.lang);
+		this.dispatchExternal("localized", this.locale, this.lang);
 
 		this._executeBindings();
 	}

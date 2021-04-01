@@ -173,12 +173,12 @@ class GroupRows extends Module{
 	getRows(rows){
 		if(this.groupIDLookups.length){
 
-			this.table.externalEvents.dispatch("dataGrouping");
+			this.dispatchExternal("dataGrouping");
 
 			this.generateGroups(rows);
 
-			if(this.table.externalEvents.subscribed("dataGrouped")){
-				this.table.externalEvents.dispatch("dataGrouped", this.getGroups(true));
+			if(this.subscribedExternal("dataGrouped")){
+				this.dispatchExternal("dataGrouped", this.getGroups(true));
 			}
 
 			return this.updateGroupRows();

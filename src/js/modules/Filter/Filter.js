@@ -660,8 +660,8 @@ class Filter extends Module{
 		var activeRows = [],
 		activeRowComponents = [];
 
-		if(this.table.externalEvents.subscribed("dataFiltering")){
-			this.table.externalEvents.dispatch("dataFiltering", this.getFilters());
+		if(this.subscribedExternal("dataFiltering")){
+			this.dispatchExternal("dataFiltering", this.getFilters());
 		}
 
 		if(!this.table.options.ajaxFiltering && (this.filterList.length || Object.keys(this.headerFilters).length)){
@@ -676,13 +676,13 @@ class Filter extends Module{
 			activeRows = rowList.slice(0);
 		}
 
-		if(this.table.externalEvents.subscribed("dataFiltered")){
+		if(this.subscribedExternal("dataFiltered")){
 
 			activeRows.forEach((row) => {
 				activeRowComponents.push(row.getComponent());
 			});
 
-			this.table.externalEvents.dispatch("dataFiltered", this.getFilters(), activeRowComponents);
+			this.dispatchExternal("dataFiltered", this.getFilters(), activeRowComponents);
 		}
 
 		return activeRows;

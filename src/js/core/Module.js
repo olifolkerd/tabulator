@@ -1,24 +1,16 @@
-class Module{
+import CoreFeature from './CoreFeature.js';
+
+class Module extends CoreFeature{
 
 	constructor(table, name){
-		this.table = table;
+		super(table);
 	}
 
 	initialize(){
 		// setup module when table is initialized, to be overriden in module
 	}
 
-	subscribe(){
-		this.table.eventBus.subscribe(...arguments);
-	}
 
-	unsubscribe(){
-		this.table.eventBus.unsubscribe(...arguments);
-	}
-
-	module(key){
-		return this.table.module(key);
-	}
 }
 
 export default Module;
