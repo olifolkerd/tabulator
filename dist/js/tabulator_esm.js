@@ -15910,7 +15910,12 @@ class SelectRow extends Module{
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
+			this.subscribe("rows-retrieve", this.clearSelectionData.bind(this));
 		}
+	}
+
+	rowRetrieve(type, prevValue){
+		return type === "selected" ? this.selectedRows : prevValue;
 	}
 
 	rowDeleted(row){
@@ -19385,12 +19390,8 @@ class RowManager {
 			rows = this.getVisibleRows(true);
 			break;
 
-			case "selected":
-			rows = this.table.modules.selectRow.selectedRows;
-			break;
-
 			default:
-			rows = this.rows;
+			rows = this.table.eventBus.chain("rows-retrieve", type, this.rows) || this.rows;
 		}
 
 		return rows;

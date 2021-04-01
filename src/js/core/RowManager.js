@@ -1097,12 +1097,8 @@ export default class RowManager {
 			rows = this.getVisibleRows(true);
 			break;
 
-			case "selected":
-			rows = this.table.modules.selectRow.selectedRows;
-			break;
-
 			default:
-			rows = this.rows;
+			rows = this.table.eventBus.chain("rows-retrieve", type, this.rows) || this.rows;
 		}
 
 		return rows;

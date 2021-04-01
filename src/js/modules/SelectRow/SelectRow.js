@@ -17,7 +17,12 @@ class SelectRow extends Module{
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
+			this.subscribe("rows-retrieve", this.clearSelectionData.bind(this));
 		}
+	}
+
+	rowRetrieve(type, prevValue){
+		return type === "selected" ? this.selectedRows : prevValue;
 	}
 
 	rowDeleted(row){
