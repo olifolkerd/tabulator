@@ -37,11 +37,12 @@ class ColumnCalcs extends Module{
 
 		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
 		this.subscribe("column-init", this.initializeColumnCheck.bind(this));
-		this.subscribe("row-deleted", this.rowDeleted.bind(this));
+		this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("row-added", this.rowsUpdated.bind(this));
 	}
 
-	rowDeleted(row){
+	rowsUpdated(row){
 		if(this.table.options.groupBy){
 			this.recalcRowGroup(this);
 		}else{

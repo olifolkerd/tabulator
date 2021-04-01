@@ -379,9 +379,7 @@ export default class RowManager {
 	addRow(data, pos, index, blockRedraw){
 		var row = this.addRowActual(data, pos, index, blockRedraw);
 
-		if(this.table.options.history && this.table.modExists("history")){
-			this.table.modules.history.action("rowAdd", row, {data:data, pos:pos, index:index});
-		}
+		this.table.eventBus.dispatch("row-added", row, data, pos, index);
 
 		return row;
 	}
@@ -409,20 +407,14 @@ export default class RowManager {
 				rows.push(row);
 			});
 
-			if(this.table.options.groupBy && this.table.modExists("groupRows")){
-				this.table.modules.groupRows.updateGroupRows(true);
-			}else if(this.table.options.pagination && this.table.modExists("page")){
-				this.refreshActiveData(false, false, true);
+			if(this.table.eventBus.subscribed("row-added")){
+				this.table.eventBus.dispatch("row-added", row, data, pos, index);
 			}else{
 				this.reRenderInPosition();
 			}
 
-			//recalc column calculations if present
-			if(this.table.modExists("columnCalcs")){
-				this.table.modules.columnCalcs.recalc(this.table.rowManager.activeRows);
-			}
-
 			this.regenerateRowNumbers();
+
 			resolve(rows);
 		});
 	}

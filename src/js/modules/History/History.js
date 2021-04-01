@@ -18,7 +18,12 @@ class History extends Module{
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clear.bind(this));
+			this.subscribe("row-added", this.clear.bind(this));
 		}
+	}
+
+	rowAdded(row, data, pos, index){
+		this.action("rowAdd", row, {data:data, pos:pos, index:index});
 	}
 
 	rowDeleted(row){

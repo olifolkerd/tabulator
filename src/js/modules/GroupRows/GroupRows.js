@@ -114,13 +114,15 @@ class GroupRows extends Module{
 			}
 
 			this.subscribe("row-deleting", this.rowDeleting.bind(this));
-			this.subscribe("row-deleted", this.rowDeleted.bind(this));
+			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 			this.subscribe("rows-wipe", this.wipe.bind(this));
+			this.subscribe("rows-added", this.rowsUpdated.bind(this));
 
 			this.initialized = true;
 		}
 	}
+
 
 	rowDeleting(row){
 		//remove from group
@@ -130,7 +132,7 @@ class GroupRows extends Module{
 	}
 
 
-	rowDeleted(row){
+	rowsUpdated(row){
 		this.updateGroupRows(true);
 	}
 

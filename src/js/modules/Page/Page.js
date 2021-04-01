@@ -32,12 +32,13 @@ class Page extends Module{
 
 	initialize(){
 		if(this.table.options.pagination){
-			this.subscribe("row-deleted", this.rowDeleted.bind(this));
+			this.subscribe("row-deleted", this.rowsUpdated.bind(this));
+			this.subscribe("row-added", this.rowsUpdated.bind(this));
 		}
 	}
 
-	rowDeleted(){
-		this.table.rowManager.refreshActiveData("page");
+	rowsUpdated(){
+		this.table.rowManager.refreshActiveData(false, false, true);
 	}
 
 	createElements(){
