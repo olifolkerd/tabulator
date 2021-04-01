@@ -299,14 +299,7 @@ export default class RowManager {
 		this._wipeElements();
 
 		if(Array.isArray(data)){
-
-			if(this.table.modExists("selectRow")){
-				this.table.modules.selectRow.clearSelectionData();
-			}
-
-			if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-				this.table.modules.reactiveData.watchData(data);
-			}
+			this.table.eventBus.dispatch("data-loading", data);
 
 			data.forEach((def, i) => {
 				if(def && typeof def === "object"){

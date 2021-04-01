@@ -16,6 +16,7 @@ class SelectRow extends Module{
 		if(this.table.options.selectable !== false){
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
+			this.subscribe("rows-wipe", this.clearSelectionData.bind(this));
 		}
 	}
 
@@ -30,7 +31,7 @@ class SelectRow extends Module{
 		this.selectPrev = [];
 		this.selectedRows = [];
 
-		if(!silent){
+		if(silent !== true){
 			this._rowSelectionChanged();
 		}
 	}
