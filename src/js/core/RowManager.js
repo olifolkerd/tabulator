@@ -1216,6 +1216,10 @@ export default class RowManager extends CoreFeature{
 			this.renderEmptyScroll();
 		}
 
+		if(!this.fixedHeight){
+			this.adjustTableSize();
+		}
+
 		this.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
@@ -1301,128 +1305,128 @@ export default class RowManager extends CoreFeature{
 		}
 	}
 
-	//full virtual render
-	_virtualRenderFill(position, forceMove, offset){
-		var	element = this.tableElement,
-		holder = this.element,
-		topPad = 0,
-		rowsHeight = 0,
-		topPadHeight = 0,
-		i = 0,
-		onlyGroupHeaders = true,
-		rows = this.getDisplayRows();
+	// //full virtual render
+	// _virtualRenderFill(position, forceMove, offset){
+	// 	var	element = this.tableElement,
+	// 	holder = this.element,
+	// 	topPad = 0,
+	// 	rowsHeight = 0,
+	// 	topPadHeight = 0,
+	// 	i = 0,
+	// 	onlyGroupHeaders = true,
+	// 	rows = this.getDisplayRows();
 
-		position = position || 0;
+	// 	position = position || 0;
 
-		offset = offset || 0;
+	// 	offset = offset || 0;
 
-		if(!position){
-			this._clearTable();
-		}else{
-			while(element.firstChild) element.removeChild(element.firstChild);
+	// 	if(!position){
+	// 		this._clearTable();
+	// 	}else{
+	// 		while(element.firstChild) element.removeChild(element.firstChild);
 
-			//check if position is too close to bottom of table
-			let heightOccupied  = (this.displayRowsCount - position + 1) * this.vDomRowHeight;
+	// 		//check if position is too close to bottom of table
+	// 		let heightOccupied  = (this.displayRowsCount - position + 1) * this.vDomRowHeight;
 
-			if(heightOccupied  < this.height){
-				position -= Math.ceil((this.height - heightOccupied ) / this.vDomRowHeight);
+	// 		if(heightOccupied  < this.height){
+	// 			position -= Math.ceil((this.height - heightOccupied ) / this.vDomRowHeight);
 
-				if(position < 0){
-					position = 0;
-				}
-			}
+	// 			if(position < 0){
+	// 				position = 0;
+	// 			}
+	// 		}
 
-			//calculate initial pad
-			topPad = Math.min(Math.max(Math.floor(this.vDomWindowBuffer / this.vDomRowHeight),  this.vDomWindowMinMarginRows), position);
-			position -= topPad;
-		}
+	// 		//calculate initial pad
+	// 		topPad = Math.min(Math.max(Math.floor(this.vDomWindowBuffer / this.vDomRowHeight),  this.vDomWindowMinMarginRows), position);
+	// 		position -= topPad;
+	// 	}
 
-		if(this.displayRowsCount && Helpers.elVisible(this.element)){
-			this.vDomTop = position;
+	// 	if(this.displayRowsCount && Helpers.elVisible(this.element)){
+	// 		this.vDomTop = position;
 
-			this.vDomBottom = position -1;
+	// 		this.vDomBottom = position -1;
 
-			while ((rowsHeight <= this.height + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < this.displayRowsCount -1){
-				var index = this.vDomBottom + 1,
-				row = rows[index],
-				rowHeight = 0;
+	// 		while ((rowsHeight <= this.height + this.vDomWindowBuffer || i < this.vDomWindowMinTotalRows) && this.vDomBottom < this.displayRowsCount -1){
+	// 			var index = this.vDomBottom + 1,
+	// 			row = rows[index],
+	// 			rowHeight = 0;
 
-				this.styleRow(row, index);
+	// 			this.styleRow(row, index);
 
-				element.appendChild(row.getElement());
+	// 			element.appendChild(row.getElement());
 
-				row.initialize();
+	// 			row.initialize();
 
-				if(!row.heightInitialized){
-					row.normalizeHeight(true);
-				}
+	// 			if(!row.heightInitialized){
+	// 				row.normalizeHeight(true);
+	// 			}
 
-				rowHeight = row.getHeight();
+	// 			rowHeight = row.getHeight();
 
-				if(i < topPad){
-					topPadHeight += rowHeight;
-				}else{
-					rowsHeight += rowHeight;
-				}
+	// 			if(i < topPad){
+	// 				topPadHeight += rowHeight;
+	// 			}else{
+	// 				rowsHeight += rowHeight;
+	// 			}
 
-				if(rowHeight > this.vDomWindowBuffer){
-					this.vDomWindowBuffer = rowHeight * 2;
-				}
+	// 			if(rowHeight > this.vDomWindowBuffer){
+	// 				this.vDomWindowBuffer = rowHeight * 2;
+	// 			}
 
-				if(row.type !== "group"){
-					onlyGroupHeaders = false;
-				}
+	// 			if(row.type !== "group"){
+	// 				onlyGroupHeaders = false;
+	// 			}
 
-				this.vDomBottom ++;
-				i++;
-			}
+	// 			this.vDomBottom ++;
+	// 			i++;
+	// 		}
 
-			if(!position){
-				this.vDomTopPad = 0;
-				//adjust rowheight to match average of rendered elements
-				this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
-				this.vDomBottomPad = this.vDomRowHeight * (this.displayRowsCount - this.vDomBottom -1);
+	// 		if(!position){
+	// 			this.vDomTopPad = 0;
+	// 			//adjust rowheight to match average of rendered elements
+	// 			this.vDomRowHeight = Math.floor((rowsHeight + topPadHeight) / i);
+	// 			this.vDomBottomPad = this.vDomRowHeight * (this.displayRowsCount - this.vDomBottom -1);
 
-				this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - this.height;
-			}else{
-				this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
-				this.vDomBottomPad = this.vDomBottom == this.displayRowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
-			}
+	// 			this.vDomScrollHeight = topPadHeight + rowsHeight + this.vDomBottomPad - this.height;
+	// 		}else{
+	// 			this.vDomTopPad = !forceMove ? this.scrollTop - topPadHeight : (this.vDomRowHeight * this.vDomTop) + offset;
+	// 			this.vDomBottomPad = this.vDomBottom == this.displayRowsCount-1 ? 0 : Math.max(this.vDomScrollHeight - this.vDomTopPad - rowsHeight - topPadHeight, 0);
+	// 		}
 
-			element.style.paddingTop = this.vDomTopPad + "px";
-			element.style.paddingBottom = this.vDomBottomPad + "px";
+	// 		element.style.paddingTop = this.vDomTopPad + "px";
+	// 		element.style.paddingBottom = this.vDomBottomPad + "px";
 
-			if(forceMove){
-				this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
-			}
+	// 		if(forceMove){
+	// 			this.scrollTop = this.vDomTopPad + (topPadHeight) + offset - (this.element.scrollWidth > this.element.clientWidth ? this.element.offsetHeight - this.element.clientHeight : 0);
+	// 		}
 
-			this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
+	// 		this.scrollTop = Math.min(this.scrollTop, this.element.scrollHeight - this.height);
 
-			//adjust for horizontal scrollbar if present (and not at top of table)
-			if(this.element.scrollWidth > this.element.offsetWidth && forceMove){
-				this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
-			}
+	// 		//adjust for horizontal scrollbar if present (and not at top of table)
+	// 		if(this.element.scrollWidth > this.element.offsetWidth && forceMove){
+	// 			this.scrollTop += this.element.offsetHeight - this.element.clientHeight;
+	// 		}
 
-			this.vDomScrollPosTop = this.scrollTop;
-			this.vDomScrollPosBottom = this.scrollTop;
+	// 		this.vDomScrollPosTop = this.scrollTop;
+	// 		this.vDomScrollPosBottom = this.scrollTop;
 
-			holder.scrollTop = this.scrollTop;
+	// 		holder.scrollTop = this.scrollTop;
 
-			element.style.minWidth = onlyGroupHeaders ? this.table.columnManager.getWidth() + "px" : "";
+	// 		element.style.minWidth = onlyGroupHeaders ? this.table.columnManager.getWidth() + "px" : "";
 
-			if(this.table.options.groupBy){
-				if(this.table.modules.layout.getMode() != "fitDataFill" && this.displayRowsCount == this.table.modules.groupRows.countGroups()){
-					this.tableElement.style.minWidth = this.table.columnManager.getWidth();
-				}
-			}
-		}else{
-			this.renderEmptyScroll();
-		}
+	// 		if(this.table.options.groupBy){
+	// 			if(this.table.modules.layout.getMode() != "fitDataFill" && this.displayRowsCount == this.table.modules.groupRows.countGroups()){
+	// 				this.tableElement.style.minWidth = this.table.columnManager.getWidth();
+	// 			}
+	// 		}
+	// 	}else{
+	// 		this.renderEmptyScroll();
+	// 	}
 
-		if(!this.fixedHeight){
-			this.adjustTableSize();
-		}
-	}
+	// 	if(!this.fixedHeight){
+	// 		this.adjustTableSize();
+	// 	}
+	// }
 
 	//handle vertical scrolling
 	scrollVertical(top, dir){

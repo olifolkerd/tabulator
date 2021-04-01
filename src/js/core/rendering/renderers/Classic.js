@@ -1,9 +1,8 @@
 import Renderer from '../Renderer.js';
-import Renderer from '../Renderer.js';
 
 export default class Classic extends Renderer{
-	constructor(table, element, tableElement){
-		super(table, element, tableElement);
+	constructor(table){
+		super(table);
 
 		this.scrollTop = 0;
 		this.scrollLeft = 0;

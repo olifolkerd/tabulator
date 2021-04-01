@@ -1,11 +1,11 @@
 import CoreFeature from '../CoreFeature.js';
 
 export default class Renderer extends CoreFeature{
-	constructor(table, element, tableElement){
+	constructor(table){
 		super(table);
 
-		this.element = element;
-		this.tableElement = tableElement;
+		this.element = table.rowManager.element;
+		this.tableElement =  table.rowManager.tableElement;
 	}
 
 	clear(){
