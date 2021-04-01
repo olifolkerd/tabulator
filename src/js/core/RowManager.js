@@ -1188,16 +1188,6 @@ export default class RowManager extends CoreFeature{
 
 		this.element.scrollTop = 0;
 
-		// switch(this.renderMode){
-		// 	case "classic":
-		// 	this._simpleRender();
-		// 	break;
-
-		// 	case "virtual":
-		// 	this._virtualRenderFill();
-		// 	break;
-		// }
-
 		if(this.displayRowsCount){
 			this._clearTable();
 			this.renderer.render(this.getDisplayRows());
@@ -1228,40 +1218,6 @@ export default class RowManager extends CoreFeature{
 
 		this.dispatchExternal("renderComplete");
 	}
-
-	//simple render on heightless table
-	_simpleRender(){
-		// this._clearTable();
-
-		// if(this.displayRowsCount){
-		// 	this.checkClassicModeGroupHeaderWidth();
-		// }else{
-		// 	this.renderEmptyScroll();
-		// }
-
-		console.warn("SIMPLE RENDER, YOU SHOULD BE USING THE BUILT IN RENDERER")
-	}
-
-	// checkClassicModeGroupHeaderWidth(){
-	// 	var element = this.tableElement,
-	// 	onlyGroupHeaders = true;
-
-	// 	this.getDisplayRows().forEach((row, index) => {
-	// 		this.styleRow(row, index);
-	// 		element.appendChild(row.getElement());
-	// 		row.initialize(true);
-
-	// 		if(row.type !== "group"){
-	// 			onlyGroupHeaders = false;
-	// 		}
-	// 	});
-
-	// 	if(onlyGroupHeaders){
-	// 		element.style.minWidth = this.table.columnManager.getWidth() + "px";
-	// 	}else{
-	// 		element.style.minWidth = "";
-	// 	}
-	// }
 
 	//show scrollbars on empty table div
 	renderEmptyScroll(){
