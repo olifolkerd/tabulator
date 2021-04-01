@@ -19,7 +19,12 @@ class History extends Module{
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clear.bind(this));
 			this.subscribe("row-added", this.clear.bind(this));
+			this.subscribe("row-move", this.rowMoved.bind(this));
 		}
+	}
+
+	rowMoved(from, to, after){
+		this.action("rowMove", from, {posFrom:this.table.rowManager.getRowPosition(from), posTo:this.table.rowManager.getRowPosition(to), to:to, after:after});
 	}
 
 	rowAdded(row, data, pos, index){

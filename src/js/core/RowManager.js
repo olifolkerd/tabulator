@@ -547,14 +547,13 @@ export default class RowManager {
 	}
 
 	moveRow(from, to, after){
-		if(this.table.options.history && this.table.modExists("history")){
-			this.table.modules.history.action("rowMove", from, {posFrom:this.getRowPosition(from), posTo:this.getRowPosition(to), to:to, after:after});
-		}
+		this.table.eventBus.dispatch("row-move", from, to, after);
 
 		this.moveRowActual(from, to, after);
 
 		this.regenerateRowNumbers();
 
+		this.table.eventBus.dispatch("row-moved", from, to, after);
 		this.table.externalEvents.dispatch("rowMoved", from.getComponent());
 	}
 
@@ -566,25 +565,7 @@ export default class RowManager {
 			this._moveRowInArray(rows, from, to, after);
 		});
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-
-			if(!after && to instanceof Group){
-				to = this.table.rowManager.prevDisplayRow(from) || to;
-			}
-
-			var toGroup = to.getGroup();
-			var fromGroup = from.getGroup();
-
-			if(toGroup === fromGroup){
-				this._moveRowInArray(toGroup.rows, from, to, after);
-			}else{
-				if(fromGroup){
-					fromGroup.removeRow(from);
-				}
-
-				toGroup.insertRow(from, to, after);
-			}
-		}
+		this.table.eventBus.dispatch("row-moving", from, to, after);
 	}
 
 	_moveRowInArray(rows, from, to, after){

@@ -118,8 +118,28 @@ class GroupRows extends Module{
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 			this.subscribe("rows-wipe", this.wipe.bind(this));
 			this.subscribe("rows-added", this.rowsUpdated.bind(this));
+			this.subscribe("row-moving", this.rowsUpdated.bind(this));
 
 			this.initialized = true;
+		}
+	}
+
+	rowMoving(from, to, after){
+		if(!after && to instanceof Group){
+			to = this.table.rowManager.prevDisplayRow(from) || to;
+		}
+
+		var toGroup = to.getGroup();
+		var fromGroup = from.getGroup();
+
+		if(toGroup === fromGroup){
+			this._moveRowInArray(toGroup.rows, from, to, after);
+		}else{
+			if(fromGroup){
+				fromGroup.removeRow(from);
+			}
+
+			toGroup.insertRow(from, to, after);
 		}
 	}
 

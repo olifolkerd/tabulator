@@ -10353,7 +10353,7 @@ class GroupComponent {
 }
 
 //Group functions
-class Group$1{
+class Group{
 
 	constructor(groupManager, parent, level, key, field, generator, oldGroup){
 		this.groupManager = groupManager;
@@ -10524,7 +10524,7 @@ class Group$1{
 
 	_createGroup(groupID, level){
 		var groupKey = level + "_" + groupID;
-		var group = new Group$1(this.groupManager, this, level, groupID,  this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupKey] : false);
+		var group = new Group(this.groupManager, this, level, groupID,  this.groupManager.groupIDLookups[level].field, this.groupManager.headerGenerator[level] || this.groupManager.headerGenerator[0], this.old ? this.old.groups[groupKey] : false);
 
 		this.groups[groupKey] = group;
 		this.groupList.push(group);
@@ -11132,8 +11132,28 @@ class GroupRows extends Module{
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 			this.subscribe("rows-wipe", this.wipe.bind(this));
 			this.subscribe("rows-added", this.rowsUpdated.bind(this));
+			this.subscribe("row-moving", this.rowsUpdated.bind(this));
 
 			this.initialized = true;
+		}
+	}
+
+	rowMoving(from, to, after){
+		if(!after && to instanceof Group){
+			to = this.table.rowManager.prevDisplayRow(from) || to;
+		}
+
+		var toGroup = to.getGroup();
+		var fromGroup = from.getGroup();
+
+		if(toGroup === fromGroup){
+			this._moveRowInArray(toGroup.rows, from, to, after);
+		}else {
+			if(fromGroup){
+				fromGroup.removeRow(from);
+			}
+
+			toGroup.insertRow(from, to, after);
 		}
 	}
 
@@ -11303,7 +11323,7 @@ class GroupRows extends Module{
 
 		oldGroups = oldGroups || [];
 
-		group = new Group$1(this, false, level, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupKey]);
+		group = new Group(this, false, level, groupID, this.groupIDLookups[0].field, this.headerGenerator[0], oldGroups[groupKey]);
 
 		this.groups[groupKey] = group;
 		this.groupList.push(group);
@@ -11479,7 +11499,12 @@ class History extends Module{
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
 			this.subscribe("rows-wipe", this.clear.bind(this));
 			this.subscribe("row-added", this.clear.bind(this));
+			this.subscribe("row-move", this.rowMoved.bind(this));
 		}
+	}
+
+	rowMoved(from, to, after){
+		this.action("rowMove", from, {posFrom:this.table.rowManager.getRowPosition(from), posTo:this.table.rowManager.getRowPosition(to), to:to, after:after});
 	}
 
 	rowAdded(row, data, pos, index){
@@ -18802,14 +18827,13 @@ class RowManager {
 	}
 
 	moveRow(from, to, after){
-		if(this.table.options.history && this.table.modExists("history")){
-			this.table.modules.history.action("rowMove", from, {posFrom:this.getRowPosition(from), posTo:this.getRowPosition(to), to:to, after:after});
-		}
+		this.table.eventBus.dispatch("row-move", from, to, after);
 
 		this.moveRowActual(from, to, after);
 
 		this.regenerateRowNumbers();
 
+		this.table.eventBus.dispatch("row-moved", from, to, after);
 		this.table.externalEvents.dispatch("rowMoved", from.getComponent());
 	}
 
@@ -18821,25 +18845,7 @@ class RowManager {
 			this._moveRowInArray(rows, from, to, after);
 		});
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-
-			if(!after && to instanceof Group){
-				to = this.table.rowManager.prevDisplayRow(from) || to;
-			}
-
-			var toGroup = to.getGroup();
-			var fromGroup = from.getGroup();
-
-			if(toGroup === fromGroup){
-				this._moveRowInArray(toGroup.rows, from, to, after);
-			}else {
-				if(fromGroup){
-					fromGroup.removeRow(from);
-				}
-
-				toGroup.insertRow(from, to, after);
-			}
-		}
+		this.table.eventBus.dispatch("row-moving", from, to, after);
 	}
 
 	_moveRowInArray(rows, from, to, after){
