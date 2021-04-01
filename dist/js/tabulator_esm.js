@@ -11124,7 +11124,7 @@ class GroupRows extends Module{
 
 			if(this.table.options.groupUpdateOnCellEdit){
 				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
-				this.subscribe("row-data-changed", this.cellUpdated.bind(this), 0);
+				this.subscribe("row-data-changed", this.reassignRowToGroup.bind(this), 0);
 			}
 
 			this.subscribe("row-deleting", this.rowDeleting.bind(this));
@@ -11132,7 +11132,7 @@ class GroupRows extends Module{
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 			this.subscribe("rows-wipe", this.wipe.bind(this));
 			this.subscribe("rows-added", this.rowsUpdated.bind(this));
-			this.subscribe("row-moving", this.rowsUpdated.bind(this));
+			this.subscribe("row-moving", this.rowMoving.bind(this));
 
 			this.initialized = true;
 		}
