@@ -30,6 +30,16 @@ class Page extends Module{
 		this.createElements();
 	}
 
+	initialize(){
+		if(this.table.options.pagination){
+			this.subscribe("row-deleted", this.rowDeleted.bind(this));
+		}
+	}
+
+	rowDeleted(){
+		this.table.rowManager.refreshActiveData("page");
+	}
+
 	createElements(){
 		var button;
 

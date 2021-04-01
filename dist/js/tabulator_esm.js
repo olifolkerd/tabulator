@@ -11126,7 +11126,8 @@ class GroupRows extends Module{
 				this.subscribe("row-data-changed", this.cellUpdated.bind(this), 0);
 			}
 
-			this.subscribe("row-deleting", this.rowDeleted.bind(this));
+			this.subscribe("row-deleting", this.rowDeleting.bind(this));
+			this.subscribe("row-deleted", this.rowDeleted.bind(this));
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 			this.subscribe("rows-wipe", this.wipe.bind(this));
 
@@ -11134,11 +11135,16 @@ class GroupRows extends Module{
 		}
 	}
 
-	rowDeleted(row){
+	rowDeleting(row){
 		//remove from group
 		if(row.modules.group){
 			row.modules.group.removeRow(row);
 		}
+	}
+
+
+	rowDeleted(row){
+		this.updateGroupRows(true);
 	}
 
 	cellUpdated(cell){
@@ -13561,6 +13567,16 @@ class Page extends Module{
 		this.dataSentNames = {};
 
 		this.createElements();
+	}
+
+	initialize(){
+		if(this.table.options.pagination){
+			this.subscribe("row-deleted", this.rowDeleted.bind(this));
+		}
+	}
+
+	rowDeleted(){
+		this.table.rowManager.refreshActiveData("page");
 	}
 
 	createElements(){
@@ -18563,7 +18579,6 @@ class RowManager {
 			row.wipe();
 		});
 
-
 		this.rows = [];
 		this.activeRows = [];
 		this.activeRowsCount = 0;
@@ -18605,16 +18620,6 @@ class RowManager {
 
 		if(this.table.externalEvents.subscribed("dataChanged")){
 			this.table.externalEvents.dispatch("dataChanged", this.getData());
-		}
-
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.updateGroupRows(true);
-		}else if(this.table.options.pagination && this.table.modExists("page")){
-			this.refreshActiveData(false, false, true);
-		}else {
-			if(this.table.options.pagination && this.table.modExists("page")){
-				this.refreshActiveData("page");
-			}
 		}
 	}
 

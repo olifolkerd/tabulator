@@ -332,7 +332,6 @@ export default class RowManager {
 			row.wipe();
 		});
 
-
 		this.rows = [];
 		this.activeRows = [];
 		this.activeRowsCount = 0;
@@ -374,16 +373,6 @@ export default class RowManager {
 
 		if(this.table.externalEvents.subscribed("dataChanged")){
 			this.table.externalEvents.dispatch("dataChanged", this.getData());
-		}
-
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.updateGroupRows(true);
-		}else if(this.table.options.pagination && this.table.modExists("page")){
-			this.refreshActiveData(false, false, true);
-		}else{
-			if(this.table.options.pagination && this.table.modExists("page")){
-				this.refreshActiveData("page");
-			}
 		}
 	}
 
