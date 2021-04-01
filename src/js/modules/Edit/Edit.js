@@ -12,6 +12,8 @@ class Edit extends Module{
 		this.recursionBlock = false; //prevent focus recursion
 		this.invalidEdit = false;
 		this.editedCells = [];
+
+		this.editors = Edit.editors;
 	}
 
 	initialize(){
@@ -53,8 +55,8 @@ class Edit extends Module{
 		//set column editor
 		switch(typeof column.definition.editor){
 			case "string":
-			if(Edit.editors[column.definition.editor]){
-				config.editor = Edit.editors[column.definition.editor];
+			if(this.editors[column.definition.editor]){
+				config.editor = this.editors[column.definition.editor];
 			}else{
 				console.warn("Editor Error - No such editor found: ", column.definition.editor);
 			}
@@ -67,10 +69,10 @@ class Edit extends Module{
 			case "boolean":
 			if(column.definition.editor === true){
 				if(typeof column.definition.formatter !== "function"){
-					if(Edit.editors[column.definition.formatter]){
-						config.editor = Edit.editors[column.definition.formatter];
+					if(this.editors[column.definition.formatter]){
+						config.editor = this.editors[column.definition.formatter];
 					}else{
-						config.editor = Edit.editors["input"];
+						config.editor = this.editors["input"];
 					}
 				}else{
 					console.warn("Editor Error - Cannot auto lookup editor for a custom formatter: ", column.definition.formatter);
