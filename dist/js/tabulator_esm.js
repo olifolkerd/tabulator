@@ -18710,7 +18710,6 @@ class VirtualDomVertical extends Renderer{
 				}
 
 				if(bottomDiff >= 0){
-
 					this._addBottomRow(rows, bottomDiff);
 				}
 			}
@@ -18792,7 +18791,7 @@ class VirtualDomVertical extends Renderer{
 	_addBottomRow(rows, bottomDiff, i=0){
 		var table = this.tableElement;
 
-		if(this.vDomBottom < this.displayRowsCount -1){
+		if(this.vDomBottom < rows.length -1){
 			let index = this.vDomBottom + 1,
 			bottomRow = rows[index],
 			bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
@@ -18814,7 +18813,7 @@ class VirtualDomVertical extends Renderer{
 
 				this.vDomBottomPad -= bottomRowHeight;
 
-				if(this.vDomBottomPad < 0 || index == this.displayRowsCount -1){
+				if(this.vDomBottomPad < 0 || index == rows.length -1){
 					this.vDomBottomPad = 0;
 				}
 
@@ -18829,7 +18828,7 @@ class VirtualDomVertical extends Renderer{
 				this.vDomWindowBuffer = bottomRow.getHeight() * 2;
 			}
 
-			if(i < this.vDomMaxRenderChain && this.vDomBottom < this.displayRowsCount -1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
+			if(i < this.vDomMaxRenderChain && this.vDomBottom < rows.length -1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
 				this._addBottomRow(rows, bottomDiff, i+1);
 			}else {
 				this._quickNormalizeRowHeight(this.vDomBottomNewRows);
@@ -18904,26 +18903,10 @@ class RowManager extends CoreFeature{
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
-		// this.vDomRowHeight = 20; //approximation of row heights for padding
-
 		// this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
 		// this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
 
-		// this.vDomScrollPosTop = 0; //last scroll position of the vDom top;
-		// this.vDomScrollPosBottom = 0; //last scroll position of the vDom bottom;
-
-		// this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
-		// this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
-
-		// this.vDomMaxRenderChain = 90; //the maximum number of dom elements that can be rendered in 1 go
-
 		// this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
-
-		// this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
-		// this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
-
-		// this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
-		// this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 
 		this.rowNumColumn = false; //hold column component for row number column
 

@@ -253,7 +253,6 @@ export default class VirtualDomVertical extends Renderer{
 				}
 
 				if(bottomDiff >= 0){
-
 					this._addBottomRow(rows, bottomDiff);
 				}
 			}
@@ -335,7 +334,7 @@ export default class VirtualDomVertical extends Renderer{
 	_addBottomRow(rows, bottomDiff, i=0){
 		var table = this.tableElement;
 
-		if(this.vDomBottom < this.displayRowsCount -1){
+		if(this.vDomBottom < rows.length -1){
 			let index = this.vDomBottom + 1,
 			bottomRow = rows[index],
 			bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
@@ -357,7 +356,7 @@ export default class VirtualDomVertical extends Renderer{
 
 				this.vDomBottomPad -= bottomRowHeight;
 
-				if(this.vDomBottomPad < 0 || index == this.displayRowsCount -1){
+				if(this.vDomBottomPad < 0 || index == rows.length -1){
 					this.vDomBottomPad = 0;
 				}
 
@@ -372,7 +371,7 @@ export default class VirtualDomVertical extends Renderer{
 				this.vDomWindowBuffer = bottomRow.getHeight() * 2;
 			}
 
-			if(i < this.vDomMaxRenderChain && this.vDomBottom < this.displayRowsCount -1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
+			if(i < this.vDomMaxRenderChain && this.vDomBottom < rows.length -1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
 				this._addBottomRow(rows, bottomDiff, i+1);
 			}else{
 				this._quickNormalizeRowHeight(this.vDomBottomNewRows);
