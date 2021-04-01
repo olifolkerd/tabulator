@@ -16,8 +16,9 @@ export default class Renderer extends CoreFeature{
 		//render from a clean slate
 	}
 
-	rerender(){
+	rerender(callback){
 		// rerender and keep position
+		callback();
 	}
 
 	scrollHorizontal(left, dir){
@@ -35,6 +36,10 @@ export default class Renderer extends CoreFeature{
 	///////////////////////////////////
 	//////// Helper Functions /////////
 	///////////////////////////////////
+
+	rows(){
+		return this.table.rowManager.getDisplayRows();
+	}
 
 	styleRow(row, index){
 		var rowEl = row.getElement();

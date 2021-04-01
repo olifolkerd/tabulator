@@ -27,11 +27,11 @@ export default class Classic extends Renderer{
 		element.style.visibility = "";
 	}
 
-	render(rows){
+	render(){
 		var element = this.tableElement,
 		onlyGroupHeaders = true;
 
-		rows.forEach((row, index) => {
+		this.rows().forEach((row, index) => {
 			this.styleRow(row, index);
 			element.appendChild(row.getElement());
 			row.initialize(true);
@@ -49,8 +49,8 @@ export default class Classic extends Renderer{
 	}
 
 
-	rerender(rows){
-		this.render(rows);
+	rerender(){
+		this.render();
 	}
 
 	scrollToRow(row){

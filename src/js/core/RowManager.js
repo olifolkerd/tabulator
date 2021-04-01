@@ -1190,7 +1190,7 @@ export default class RowManager extends CoreFeature{
 
 		if(this.displayRowsCount){
 			this._clearTable();
-			this.renderer.render(this.getDisplayRows());
+			this.renderer.render();
 
 			if(this.firstRender){
 				this.firstRender = false;
