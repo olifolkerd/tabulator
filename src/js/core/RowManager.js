@@ -784,13 +784,7 @@ export default class RowManager {
 		this.scrollLeft = left;
 		this.element.scrollLeft = left;
 
-		if(this.table.options.groupBy){
-			this.table.modules.groupRows.scrollHeaders(left);
-		}
-
-		if(this.table.modExists("columnCalcs")){
-			this.table.modules.columnCalcs.scrollHorizontal(left);
-		}
+		this.table.eventBus.dispatch("scroll-horizontal", left);
 	}
 
 	//set active data set
@@ -1094,10 +1088,10 @@ export default class RowManager {
 	}
 
 	//return only actual rows (not group headers etc)
-	getRows(active){
+	getRows(type){
 		var rows;
 
-		switch(active){
+		switch(type){
 			case "active":
 			rows = this.activeRows;
 			break;
@@ -1668,7 +1662,6 @@ export default class RowManager {
 		modExists;
 
 		if(this.renderMode === "virtual"){
-
 			let otherHeight =  Math.floor(this.columnManager.getElement().getBoundingClientRect().height + (this.table.footerManager && this.table.footerManager.active && !this.table.footerManager.external ? this.table.footerManager.getElement().getBoundingClientRect().height : 0));
 
 			if(this.fixedHeight){
@@ -1686,13 +1679,12 @@ export default class RowManager {
 
 			//check if the table has changed size when dealing with variable height tables
 			if(!this.fixedHeight && initialHeight != this.element.clientHeight){
-				modExists = this.table.modExists("resizeTable");
-
-				if((modExists && !this.table.modules.resizeTable.autoResize) || !modExists){
+				if(this.table.eventBus.subscribed("table-resize")){
+					this.table.eventBus.dispatch("table-resize");
+				}else{
 					this.redraw();
 				}
 			}
-
 		}
 	}
 

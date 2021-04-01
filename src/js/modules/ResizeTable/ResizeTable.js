@@ -88,6 +88,9 @@ class ResizeTable extends Module{
 
 					this.containerObserver.observe(this.table.element.parentNode);
 				}
+
+				this.subscribe("table-resize", this.tableResized.bind(this));
+
 			}else{
 				this.binding = function(){
 					if(!table.browserMobile || (table.browserMobile && !table.modules.edit.currentCell)){
@@ -102,6 +105,10 @@ class ResizeTable extends Module{
 				window.addEventListener("resize", this.binding);
 			}
 		}
+	}
+
+	tableResized(){
+		this.table.rowManager.redraw();
 	}
 
 	clearBindings(){
