@@ -326,15 +326,9 @@ export default class Row {
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		if(this.table.modExists("mutator")){
-			data = this.table.modules.mutator.transformRow(data, "data");
-		}
+		this.data = this.table.eventBus.chain("row-data-init-before", [this, data], data);
 
-		this.data = data;
-
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-			this.table.modules.reactiveData.watchRow(this);
-		}
+		this.table.eventBus.dispatch("row-data-init-after", this);
 	}
 
 	//update the rows data
@@ -349,29 +343,25 @@ export default class Row {
 				updatedData = JSON.parse(updatedData);
 			}
 
-			if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-				this.table.modules.reactiveData.block();
-			}
+			this.table.eventBus.dispatch("row-data-save-before", this);
 
-			//mutate incomming data if needed
-			if(this.table.modExists("mutator")){
+			val = this.table.eventBus.chain("row-data-changing", this, () => {
+				return this.element.innerHTML = this.value;
+			});
 
+			if(this.table.eventBus.subscribed("row-data-changing")){
 				tempData = Object.assign(tempData, this.data);
 				tempData = Object.assign(tempData, updatedData);
-
-				newRowData = this.table.modules.mutator.transformRow(tempData, "data", updatedData);
-			}else{
-				newRowData = updatedData;
 			}
+
+			newRowData = this.table.eventBus.chain("row-data-changing", [this, tempData, updatedData], updatedData);
 
 			//set data
 			for (var attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 
-			if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-				this.table.modules.reactiveData.unblock();
-			}
+			this.table.eventBus.dispatch("row-data-save-after", this);
 
 			//update affected cells only
 			for (var attrname in updatedData) {
@@ -394,10 +384,6 @@ export default class Row {
 				});
 			}
 
-			if(this.type === "row" && this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.groupRows.reassignRowToGroup(this);
-			}
-
 			//Partial reinitialization if visible
 			if(visible){
 				this.normalizeHeight(true);
@@ -411,14 +397,7 @@ export default class Row {
 				this.heightStyled = "";
 			}
 
-			if(this.table.options.dataTree !== false && this.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(updatedData)){
-				this.table.modules.dataTree.initializeRow(this);
-
-				if(visible){
-					this.table.modules.dataTree.layoutRow(this);
-					this.table.rowManager.refreshActiveData("tree", false, true);
-				}
-			}
+			this.table.eventBus.dispatch("row-data-changed", this, visible, updatedData);
 
 			//this.reinitialize();
 
@@ -434,9 +413,7 @@ export default class Row {
 
 	getData(transform){
 		if(transform){
-			if(this.table.modExists("accessor")){
-				return this.table.modules.accessor.transformRow(this, transform);
-			}
+			return this.table.eventBus.chain("row-data-retrieve", [this, transform], this.data);
 		}
 
 		return this.data;

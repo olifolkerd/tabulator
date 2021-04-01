@@ -65,6 +65,7 @@ class Accessor extends Module{
 
 	initialize(){
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("row-data-retrieve", this.initializeColumn.bind(this));
 	}
 
 	//initialize column accessor
@@ -2540,7 +2541,7 @@ class Column$1 {
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var contents = this.table.eventBus.chain("column-format", {column:this, title:title, el:el}, () => {
+		var contents = this.table.eventBus.chain("column-format", [this, title, el], () => {
 			return title;
 		});
 
@@ -3673,15 +3674,9 @@ class Row$1 {
 
 	//////////////// Data Management /////////////////
 	setData(data){
-		if(this.table.modExists("mutator")){
-			data = this.table.modules.mutator.transformRow(data, "data");
-		}
+		this.data = this.table.eventBus.chain("row-data-init-before", [this, data], data);
 
-		this.data = data;
-
-		if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-			this.table.modules.reactiveData.watchRow(this);
-		}
+		this.table.eventBus.dispatch("row-data-init-after", this);
 	}
 
 	//update the rows data
@@ -3696,29 +3691,25 @@ class Row$1 {
 				updatedData = JSON.parse(updatedData);
 			}
 
-			if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-				this.table.modules.reactiveData.block();
-			}
+			this.table.eventBus.dispatch("row-data-save-before", this);
 
-			//mutate incomming data if needed
-			if(this.table.modExists("mutator")){
+			val = this.table.eventBus.chain("row-data-changing", this, () => {
+				return this.element.innerHTML = this.value;
+			});
 
+			if(this.table.eventBus.subscribed("row-data-changing")){
 				tempData = Object.assign(tempData, this.data);
 				tempData = Object.assign(tempData, updatedData);
-
-				newRowData = this.table.modules.mutator.transformRow(tempData, "data", updatedData);
-			}else {
-				newRowData = updatedData;
 			}
+
+			newRowData = this.table.eventBus.chain("row-data-changing", [this, tempData, updatedData], updatedData);
 
 			//set data
 			for (var attrname in newRowData) {
 				this.data[attrname] = newRowData[attrname];
 			}
 
-			if(this.table.options.reactiveData && this.table.modExists("reactiveData", true)){
-				this.table.modules.reactiveData.unblock();
-			}
+			this.table.eventBus.dispatch("row-data-save-after", this);
 
 			//update affected cells only
 			for (var attrname in updatedData) {
@@ -3741,10 +3732,6 @@ class Row$1 {
 				});
 			}
 
-			if(this.type === "row" && this.table.options.groupUpdateOnCellEdit && this.table.options.groupBy && this.table.modExists("groupRows")) {
-				this.table.modules.groupRows.reassignRowToGroup(this);
-			}
-
 			//Partial reinitialization if visible
 			if(visible){
 				this.normalizeHeight(true);
@@ -3758,14 +3745,7 @@ class Row$1 {
 				this.heightStyled = "";
 			}
 
-			if(this.table.options.dataTree !== false && this.table.modExists("dataTree") && this.table.modules.dataTree.redrawNeeded(updatedData)){
-				this.table.modules.dataTree.initializeRow(this);
-
-				if(visible){
-					this.table.modules.dataTree.layoutRow(this);
-					this.table.rowManager.refreshActiveData("tree", false, true);
-				}
-			}
+			this.table.eventBus.dispatch("row-data-changed", this, visible, updatedData);
 
 			//this.reinitialize();
 
@@ -3781,9 +3761,7 @@ class Row$1 {
 
 	getData(transform){
 		if(transform){
-			if(this.table.modExists("accessor")){
-				return this.table.modules.accessor.transformRow(this, transform);
-			}
+			return this.table.eventBus.chain("row-data-retrieve", [this, transform], this.data);
 		}
 
 		return this.data;
@@ -4615,6 +4593,18 @@ class DataTree extends Module{
 			this.subscribe("row-init", this.layoutRow.bind(this));
 			this.subscribe("row-reinit", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
+			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
+		}
+	}
+
+	rowDataChanged(row, visible, updatedData){
+		if(this.redrawNeeded(updatedData)){
+			this.initializeRow(row);
+
+			if(visible){
+				this.layoutRow(row);
+				this.table.rowManager.refreshActiveData("tree", false, true);
+			}
 		}
 	}
 
@@ -9817,7 +9807,7 @@ class Format extends Module{
 	}
 
 	//return a formatted value for a column header
-	formatHeader({column, title, el}){
+	formatHeader(column, title, el){
 		var formatter, params, onRendered, mockCell;
 
 		if(column.definition.titleFormatter){
@@ -11150,6 +11140,7 @@ class GroupRows extends Module{
 
 			if(this.table.options.groupUpdateOnCellEdit){
 				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
+				this.subscribe("row-data-changed", this.cellUpdated.bind(this), 0);
 			}
 
 
@@ -11339,21 +11330,23 @@ class GroupRows extends Module{
 	}
 
 	reassignRowToGroup(row){
-		var oldRowGroup = row.getGroup(),
-		oldGroupPath = oldRowGroup.getPath(),
-		newGroupPath = this.getExpectedPath(row),
-		samePath = true;
+		if(row.type === "row"){
+			var oldRowGroup = row.getGroup(),
+			oldGroupPath = oldRowGroup.getPath(),
+			newGroupPath = this.getExpectedPath(row),
+			samePath = true;
 
-		// figure out if new group path is the same as old group path
-		var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
-			return element === newGroupPath[index];
-		});
+			// figure out if new group path is the same as old group path
+			var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
+				return element === newGroupPath[index];
+			});
 
-		// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
-		if(!samePath) {
-			oldRowGroup.removeRow(row);
-			this.assignRowToGroup(row, this.groups);
-			this.table.rowManager.refreshActiveData("group", false, true);
+			// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
+			if(!samePath) {
+				oldRowGroup.removeRow(row);
+				this.assignRowToGroup(row, this.groups);
+				this.table.rowManager.refreshActiveData("group", false, true);
+			}
 		}
 	}
 
@@ -13400,6 +13393,12 @@ class Mutator extends Module{
 	initialize(){
 		this.subscribe("cell-value-changing", this.transformCell.bind(this));
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("row-data-init-before", this.rowDataChanged.bind(this));
+		this.subscribe("row-data-changing", this.rowDataChanged.bind(this));
+	}
+
+	rowDataChanged(row, tempData, updatedData){
+		return this.transformRow(tempData, "data", updatedData);
 	}
 
 	//initialize column mutator
@@ -14765,6 +14764,9 @@ class ReactiveData extends Module{
 		if(this.table.options.reactiveData){
 			this.subscribe("cell-value-save-before", this.block.bind(this));
 			this.subscribe("cell-value-save-after", this.unblock.bind(this));
+			this.subscribe("row-data-save-before", this.block.bind(this));
+			this.subscribe("row-data-save-after", this.unblock.bind(this));
+			this.subscribe("row-data-init-after", this.watchRow.bind(this));
 		}
 	}
 

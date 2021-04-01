@@ -13,6 +13,7 @@ class Accessor extends Module{
 
 	initialize(){
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("row-data-retrieve", this.initializeColumn.bind(this));
 	}
 
 	//initialize column accessor

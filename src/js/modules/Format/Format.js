@@ -63,7 +63,7 @@ class Format extends Module{
 	}
 
 	//return a formatted value for a column header
-	formatHeader({column, title, el}){
+	formatHeader(column, title, el){
 		var formatter, params, onRendered, mockCell;
 
 		if(column.definition.titleFormatter){

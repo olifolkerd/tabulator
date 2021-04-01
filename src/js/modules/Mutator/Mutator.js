@@ -14,6 +14,12 @@ class Mutator extends Module{
 	initialize(){
 		this.subscribe("cell-value-changing", this.transformCell.bind(this));
 		this.subscribe("column-layout", this.initializeColumn.bind(this));
+		this.subscribe("row-data-init-before", this.rowDataChanged.bind(this));
+		this.subscribe("row-data-changing", this.rowDataChanged.bind(this));
+	}
+
+	rowDataChanged(row, tempData, updatedData){
+		return this.transformRow(tempData, "data", updatedData);
 	}
 
 	//initialize column mutator

@@ -479,7 +479,7 @@ class Column {
 	}
 
 	_formatColumnHeaderTitle(el, title){
-		var contents = this.table.eventBus.chain("column-format", {column:this, title:title, el:el}, () => {
+		var contents = this.table.eventBus.chain("column-format", [this, title, el], () => {
 			return title;
 		});
 

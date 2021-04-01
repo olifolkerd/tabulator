@@ -98,6 +98,18 @@ class DataTree extends Module{
 			this.subscribe("row-init", this.layoutRow.bind(this));
 			this.subscribe("row-reinit", this.layoutRow.bind(this));
 			this.subscribe("row-deleted", this.rowDelete.bind(this),0);
+			this.subscribe("row-data-changed", this.rowDataChanged.bind(this), 10);
+		}
+	}
+
+	rowDataChanged(row, visible, updatedData){
+		if(this.redrawNeeded(updatedData)){
+			this.initializeRow(row);
+
+			if(visible){
+				this.layoutRow(row);
+				this.table.rowManager.refreshActiveData("tree", false, true);
+			}
 		}
 	}
 

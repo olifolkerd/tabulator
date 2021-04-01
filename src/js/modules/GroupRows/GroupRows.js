@@ -110,6 +110,7 @@ class GroupRows extends Module{
 
 			if(this.table.options.groupUpdateOnCellEdit){
 				this.subscribe("cell-value-updated", this.cellUpdated.bind(this));
+				this.subscribe("row-data-changed", this.cellUpdated.bind(this), 0);
 			}
 
 
@@ -299,21 +300,23 @@ class GroupRows extends Module{
 	}
 
 	reassignRowToGroup(row){
-		var oldRowGroup = row.getGroup(),
-		oldGroupPath = oldRowGroup.getPath(),
-		newGroupPath = this.getExpectedPath(row),
-		samePath = true;
+		if(row.type === "row"){
+			var oldRowGroup = row.getGroup(),
+			oldGroupPath = oldRowGroup.getPath(),
+			newGroupPath = this.getExpectedPath(row),
+			samePath = true;
 
-		// figure out if new group path is the same as old group path
-		var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
-			return element === newGroupPath[index];
-		});
+			// figure out if new group path is the same as old group path
+			var samePath = (oldGroupPath.length == newGroupPath.length) && oldGroupPath.every((element, index) => {
+				return element === newGroupPath[index];
+			});
 
-		// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
-		if(!samePath) {
-			oldRowGroup.removeRow(row);
-			this.assignRowToGroup(row, this.groups);
-			this.table.rowManager.refreshActiveData("group", false, true);
+			// refresh if they new path and old path aren't the same (aka the row's groupings have changed)
+			if(!samePath) {
+				oldRowGroup.removeRow(row);
+				this.assignRowToGroup(row, this.groups);
+				this.table.rowManager.refreshActiveData("group", false, true);
+			}
 		}
 	}
 
