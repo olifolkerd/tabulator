@@ -11128,6 +11128,7 @@ class GroupRows extends Module{
 
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
+			this.subscribe("rows-wipe", this.wipe.bind(this));
 
 			this.initialized = true;
 		}
@@ -11467,6 +11468,7 @@ class History extends Module{
 			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
+			this.subscribe("rows-wipe", this.clear.bind(this));
 		}
 	}
 
@@ -18527,10 +18529,6 @@ class RowManager {
 
 		this._wipeElements();
 
-		if(this.table.options.history && this.table.modExists("history")){
-			this.table.modules.history.clear();
-		}
-
 		if(Array.isArray(data)){
 
 			if(this.table.modExists("selectRow")){
@@ -18559,13 +18557,12 @@ class RowManager {
 	}
 
 	_wipeElements(){
+		this.table.eventBus.dispatch("rows-wipe");
+
 		this.rows.forEach((row) => {
 			row.wipe();
 		});
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.wipe();
-		}
 
 		this.rows = [];
 		this.activeRows = [];

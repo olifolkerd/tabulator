@@ -298,10 +298,6 @@ export default class RowManager {
 
 		this._wipeElements();
 
-		if(this.table.options.history && this.table.modExists("history")){
-			this.table.modules.history.clear();
-		}
-
 		if(Array.isArray(data)){
 
 			if(this.table.modExists("selectRow")){
@@ -330,13 +326,12 @@ export default class RowManager {
 	}
 
 	_wipeElements(){
+		this.table.eventBus.dispatch("rows-wipe");
+
 		this.rows.forEach((row) => {
 			row.wipe();
 		});
 
-		if(this.table.options.groupBy && this.table.modExists("groupRows")){
-			this.table.modules.groupRows.wipe();
-		}
 
 		this.rows = [];
 		this.activeRows = [];

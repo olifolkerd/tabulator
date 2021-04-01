@@ -17,6 +17,7 @@ class History extends Module{
 			this.subscribe("cell-value-updated", this.layoutCell.bind(this));
 			this.subscribe("cell-delete", this.clearComponentHistory.bind(this));
 			this.subscribe("row-delete", this.rowDeleted.bind(this));
+			this.subscribe("rows-wipe", this.clear.bind(this));
 		}
 	}
 
