@@ -18329,6 +18329,174 @@ class ColumnManager extends CoreFeature {
 	}
 }
 
+class Renderer extends CoreFeature{
+	constructor(table, element, tableElement){
+		super(table);
+
+		this.element = element;
+		this.tableElement = tableElement;
+	}
+
+	clear(){
+		//clear down existing layout
+	}
+
+	render(){
+		//render from a clean slate
+	}
+
+	rerender(){
+		// rerender and keep position
+	}
+
+	scrollHorizontal(left, dir){
+		//handle horizontal scrolling
+	}
+
+	scrollVertical(top, dir){
+		//handle vertical scolling
+	}
+
+	scrollToRow(row){
+		//scroll to specific row
+	}
+
+	///////////////////////////////////
+	//////// Helper Functions /////////
+	///////////////////////////////////
+
+	styleRow(row, index){
+		var rowEl = row.getElement();
+
+		if(index % 2){
+			rowEl.classList.add("tabulator-row-even");
+			rowEl.classList.remove("tabulator-row-odd");
+		}else {
+			rowEl.classList.add("tabulator-row-odd");
+			rowEl.classList.remove("tabulator-row-even");
+		}
+	}
+}
+
+class Classic extends Renderer{
+	constructor(table, element, tableElement){
+		super(table, element, tableElement);
+
+		this.scrollTop = 0;
+		this.scrollLeft = 0;
+
+		this.scrollTop = 0;
+		this.scrollLeft = 0;
+
+	}
+
+	clear(){
+		var element = this.tableElement;
+
+		// element.children.detach();
+		while(element.firstChild) element.removeChild(element.firstChild);
+
+		element.scrollTop = 0;
+		element.scrollLeft = 0;
+
+		element.style.minWidth = "";
+		element.style.minHeight = "";
+		element.style.display = "";
+		element.style.visibility = "";
+	}
+
+	render(rows){
+		var element = this.tableElement,
+		onlyGroupHeaders = true;
+
+		rows.forEach((row, index) => {
+			this.styleRow(row, index);
+			element.appendChild(row.getElement());
+			row.initialize(true);
+
+			if(row.type !== "group"){
+				onlyGroupHeaders = false;
+			}
+		});
+
+		if(onlyGroupHeaders){
+			element.style.minWidth = this.table.columnManager.getWidth() + "px";
+		}else {
+			element.style.minWidth = "";
+		}
+	}
+
+
+	rerender(rows){
+		this.render(rows);
+	}
+
+	scrollToRow(row){
+		//scroll to specific row
+	}
+
+}
+
+class VirtualDomVertical extends Renderer{
+	constructor(table, element, tableElement){
+		super(table, element);
+
+		this.scrollTop = 0;
+		this.scrollLeft = 0;
+
+		this.vDomRowHeight = 20; //approximation of row heights for padding
+
+		this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
+		this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
+
+		this.vDomScrollPosTop = 0; //last scroll position of the vDom top;
+		this.vDomScrollPosBottom = 0; //last scroll position of the vDom bottom;
+
+		this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
+		this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
+
+		this.vDomMaxRenderChain = 90; //the maximum number of dom elements that can be rendered in 1 go
+
+		this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
+
+		this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
+		this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
+
+		this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
+		this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
+	}
+
+	clear(){
+
+		var element = this.element;
+
+		// element.children.detach();
+		while(element.firstChild) element.removeChild(element.firstChild);
+
+		element.style.paddingTop = "";
+		element.style.paddingBottom = "";
+		element.style.minWidth = "";
+		element.style.minHeight = "";
+		element.style.display = "";
+		element.style.visibility = "";
+
+		this.element.scrollTop = 0;
+		this.element.scrollLeft = 0;
+
+		this.scrollTop = 0;
+		this.scrollLeft = 0;
+
+		this.vDomTop = 0;
+		this.vDomBottom = 0;
+		this.vDomTopPad = 0;
+		this.vDomBottomPad = 0;
+	}
+
+	render(){
+
+	}
+}
+
 class RowManager extends CoreFeature{
 
 	constructor(table){
@@ -18354,26 +18522,26 @@ class RowManager extends CoreFeature{
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
 
-		this.vDomRowHeight = 20; //approximation of row heights for padding
+		// this.vDomRowHeight = 20; //approximation of row heights for padding
 
-		this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
-		this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
+		// this.vDomTop = 0; //hold position for first rendered row in the virtual DOM
+		// this.vDomBottom = 0; //hold possition for last rendered row in the virtual DOM
 
-		this.vDomScrollPosTop = 0; //last scroll position of the vDom top;
-		this.vDomScrollPosBottom = 0; //last scroll position of the vDom bottom;
+		// this.vDomScrollPosTop = 0; //last scroll position of the vDom top;
+		// this.vDomScrollPosBottom = 0; //last scroll position of the vDom bottom;
 
-		this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
-		this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
+		// this.vDomTopPad = 0; //hold value of padding for top of virtual DOM
+		// this.vDomBottomPad = 0; //hold value of padding for bottom of virtual DOM
 
-		this.vDomMaxRenderChain = 90; //the maximum number of dom elements that can be rendered in 1 go
+		// this.vDomMaxRenderChain = 90; //the maximum number of dom elements that can be rendered in 1 go
 
-		this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
+		// this.vDomWindowBuffer = 0; //window row buffer before removing elements, to smooth scrolling
 
-		this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
-		this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
+		// this.vDomWindowMinTotalRows = 20; //minimum number of rows to be generated in virtual dom (prevent buffering issues on tables with tall rows)
+		// this.vDomWindowMinMarginRows = 5; //minimum number of rows to be generated in virtual dom margin
 
-		this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
-		this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
+		// this.vDomTopNewRows = []; //rows to normalize after appending to optimize render speed
+		// this.vDomBottomNewRows = []; //rows to normalize after appending to optimize render speed
 
 		this.rowNumColumn = false; //hold column component for row number column
 
@@ -19486,6 +19654,7 @@ class RowManager extends CoreFeature{
 	setRenderMode(){
 		if(this.table.options.virtualDom){
 			this.renderMode = "virtual";
+			this.renderer = new VirtualDomVertical(this.table, this.element, this.tableElement);
 
 			if((this.table.element.clientHeight || this.table.options.height)){
 				this.fixedHeight = true;
@@ -19496,9 +19665,10 @@ class RowManager extends CoreFeature{
 			if(!this.subscribed("scroll-vertical")){
 				this.subscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
-
 		}else {
 			this.renderMode = "classic";
+			this.renderer = new Classic(this.table, this.element, this.tableElement);
+
 			if(this.subscribed("scroll-vertical")){
 				this.unsubscribe("scroll-vertical", this.scrollVertical.bind(this));
 			}
@@ -19515,23 +19685,26 @@ class RowManager extends CoreFeature{
 
 		this.element.scrollTop = 0;
 
-		switch(this.renderMode){
-			case "classic":
-			this._simpleRender();
-			break;
+		// switch(this.renderMode){
+		// 	case "classic":
+		// 	this._simpleRender();
+		// 	break;
 
-			case "virtual":
-			this._virtualRenderFill();
-			break;
-		}
+		// 	case "virtual":
+		// 	this._virtualRenderFill();
+		// 	break;
+		// }
 
-		if(this.firstRender){
-			if(this.displayRowsCount){
+		if(this.displayRowsCount){
+			this._clearTable();
+			this.renderer.render(this.getDisplayRows());
+
+			if(this.firstRender){
 				this.firstRender = false;
 				this.table.modules.layout.layout();
-			}else {
-				this.renderEmptyScroll();
 			}
+		}else {
+			this.renderEmptyScroll();
 		}
 
 		this.dispatch("table-layout");
@@ -19551,35 +19724,37 @@ class RowManager extends CoreFeature{
 
 	//simple render on heightless table
 	_simpleRender(){
-		this._clearVirtualDom();
+		// this._clearTable();
 
-		if(this.displayRowsCount){
-			this.checkClassicModeGroupHeaderWidth();
-		}else {
-			this.renderEmptyScroll();
-		}
+		// if(this.displayRowsCount){
+		// 	this.checkClassicModeGroupHeaderWidth();
+		// }else{
+		// 	this.renderEmptyScroll();
+		// }
+
+		console.warn("SIMPLE RENDER, YOU SHOULD BE USING THE BUILT IN RENDERER");
 	}
 
-	checkClassicModeGroupHeaderWidth(){
-		var element = this.tableElement,
-		onlyGroupHeaders = true;
+	// checkClassicModeGroupHeaderWidth(){
+	// 	var element = this.tableElement,
+	// 	onlyGroupHeaders = true;
 
-		this.getDisplayRows().forEach((row, index) => {
-			this.styleRow(row, index);
-			element.appendChild(row.getElement());
-			row.initialize(true);
+	// 	this.getDisplayRows().forEach((row, index) => {
+	// 		this.styleRow(row, index);
+	// 		element.appendChild(row.getElement());
+	// 		row.initialize(true);
 
-			if(row.type !== "group"){
-				onlyGroupHeaders = false;
-			}
-		});
+	// 		if(row.type !== "group"){
+	// 			onlyGroupHeaders = false;
+	// 		}
+	// 	});
 
-		if(onlyGroupHeaders){
-			element.style.minWidth = this.table.columnManager.getWidth() + "px";
-		}else {
-			element.style.minWidth = "";
-		}
-	}
+	// 	if(onlyGroupHeaders){
+	// 		element.style.minWidth = this.table.columnManager.getWidth() + "px";
+	// 	}else{
+	// 		element.style.minWidth = "";
+	// 	}
+	// }
 
 	//show scrollbars on empty table div
 	renderEmptyScroll(){
@@ -19592,29 +19767,17 @@ class RowManager extends CoreFeature{
 		}
 	}
 
-	_clearVirtualDom(){
+	_clearTable(){
 		var element = this.tableElement;
 
 		if(this.table.options.placeholder && this.table.options.placeholder.parentNode){
 			this.table.options.placeholder.parentNode.removeChild(this.table.options.placeholder);
 		}
 
-		// element.children.detach();
-		while(element.firstChild) element.removeChild(element.firstChild);
-
-		element.style.paddingTop = "";
-		element.style.paddingBottom = "";
-		element.style.minWidth = "";
-		element.style.minHeight = "";
-		element.style.display = "";
-		element.style.visibility = "";
-
 		this.scrollTop = 0;
 		this.scrollLeft = 0;
-		this.vDomTop = 0;
-		this.vDomBottom = 0;
-		this.vDomTopPad = 0;
-		this.vDomBottomPad = 0;
+
+		this.renderer.clear();
 	}
 
 	styleRow(row, index){
@@ -19645,7 +19808,7 @@ class RowManager extends CoreFeature{
 		offset = offset || 0;
 
 		if(!position){
-			this._clearVirtualDom();
+			this._clearTable();
 		}else {
 			while(element.firstChild) element.removeChild(element.firstChild);
 
@@ -20046,7 +20209,10 @@ class RowManager extends CoreFeature{
 				if(this.table.options.groupBy){
 					this.refreshActiveData("group", false, false);
 				}else {
-					this._simpleRender();
+					// this._simpleRender();
+
+					//TODO - Refactor this whole function to move responsibiity for rerendering choices into renderer
+					this.renderer.rerender(this.getDisplayRows());
 				}
 
 			}else {
