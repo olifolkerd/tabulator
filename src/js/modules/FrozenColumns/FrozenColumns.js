@@ -36,6 +36,7 @@ class FrozenColumns extends Module{
 		this.subscribe("row-layout-before", this.layoutRow.bind(this));
 		this.subscribe("table-layout", this.layout.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("columns-loading", this.reset.bind(this));
 	}
 
 	layoutCell(cell){

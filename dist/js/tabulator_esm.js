@@ -9956,6 +9956,7 @@ class FrozenColumns extends Module{
 		this.subscribe("row-layout-before", this.layoutRow.bind(this));
 		this.subscribe("table-layout", this.layout.bind(this));
 		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+		this.subscribe("columns-loading", this.reset.bind(this));
 	}
 
 	layoutCell(cell){
@@ -15600,9 +15601,17 @@ class ResponsiveLayout extends Module{
 
 	//generate resposive columns list
 	initialize(){
-		var self = this,
-		columns = [];
 
+		if(this.table.options.responsiveLayout){
+			this.subscribe("column-layout", this.initializeColumn.bind(this));
+			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
+			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
+			this.subscribe("columns-loaded", this.initializeResponsivity.bind(this));
+		}
+
+	}
+
+	initializeResponsivity(){
 		this.mode = this.table.options.responsiveLayout;
 		this.collapseFormatter = this.table.options.responsiveLayoutCollapseFormatter || this.formatCollapsedData;
 		this.collapseStartOpen = this.table.options.responsiveLayoutCollapseStartOpen;
@@ -15635,6 +15644,9 @@ class ResponsiveLayout extends Module{
 			this.generateCollapsedContent();
 			this.subscribe("row-init", this.initializeRow.bind(this));
 			this.subscribe("row-layout", this.layoutRow.bind(this));
+		}else {
+			this.unsubscribe("row-init", this.initializeRow.bind(this));
+			this.unsubscribe("row-layout", this.layoutRow.bind(this));
 		}
 
 		//assign collapse column
@@ -15652,13 +15664,6 @@ class ResponsiveLayout extends Module{
 				this.collapseHandleColumn.hide();
 			}
 		}
-
-		if(this.table.options.responsiveLayout){
-			this.subscribe("column-layout", this.initializeColumn.bind(this));
-			this.subscribe("column-show", this.updateColumnVisibility.bind(this));
-			this.subscribe("column-hide", this.updateColumnVisibility.bind(this));
-		}
-
 	}
 
 	//define layout information
@@ -17764,10 +17769,8 @@ class ColumnManager {
 		this.columnsByIndex = [];
 		this.columnsByField = {};
 
-		//reset frozen columns
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.reset();
-		}
+
+		this.table.eventBus.dispatch("columns-loading");
 
 		cols.forEach((def, i) => {
 			this._addColumn(def);
@@ -17775,9 +17778,7 @@ class ColumnManager {
 
 		this._reIndexColumns();
 
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
-		}
+		this.table.eventBus.dispatch("columns-loaded");
 
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(false, true);

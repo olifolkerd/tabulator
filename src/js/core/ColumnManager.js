@@ -183,10 +183,8 @@ export default class ColumnManager {
 		this.columnsByIndex = [];
 		this.columnsByField = {};
 
-		//reset frozen columns
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.reset();
-		}
+
+		this.table.eventBus.dispatch("columns-loading");
 
 		cols.forEach((def, i) => {
 			this._addColumn(def);
@@ -194,9 +192,7 @@ export default class ColumnManager {
 
 		this._reIndexColumns();
 
-		if(this.table.options.responsiveLayout && this.table.modExists("responsiveLayout", true)){
-			this.table.modules.responsiveLayout.initialize();
-		}
+		this.table.eventBus.dispatch("columns-loaded");
 
 		if(this.table.options.virtualDomHoz){
 			this.table.vdomHoz.reinitialize(false, true);
