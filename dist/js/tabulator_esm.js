@@ -18337,6 +18337,16 @@ class Renderer extends CoreFeature{
 		this.tableElement =  table.rowManager.tableElement;
 	}
 
+	///////////////////////////////////
+	/////// External Triggers /////////
+	//////// DO NOT OVERRIDE //////////
+	///////////////////////////////////
+
+	///////////////////////////////////
+	/////// Internal Bindings /////////
+	///////////////////////////////////
+
+
 	clear(){
 		//clear down existing layout
 	}
@@ -18347,7 +18357,9 @@ class Renderer extends CoreFeature{
 
 	rerender(callback){
 		// rerender and keep position
-		callback();
+		if(callback){
+			callback();
+		}
 	}
 
 	scrollHorizontal(left, dir){
@@ -18432,8 +18444,12 @@ class Classic extends Renderer{
 	}
 
 
-	rerender(){
+	rerender(callback){
 		this.render();
+
+		if(callback){
+			callback();
+		}
 	}
 
 	scrollToRow(row){
@@ -18501,6 +18517,38 @@ class VirtualDomVertical extends Renderer{
 
 	render(){
 		this._virtualRenderFill();
+	}
+
+	rerender(callback){
+		var scrollTop = this.element.scrollTop;
+		var topRow = false;
+		var topOffset = false;
+
+		var left = this.scrollLeft;
+
+		var rows = this.rows();
+
+		for(var i = this.vDomTop; i <= this.vDomBottom; i++){
+
+			if(rows[i]){
+				var diff = scrollTop - rows[i].getElement().offsetTop;
+
+				if(topOffset === false || Math.abs(diff) < topOffset){
+					topOffset = diff;
+					topRow = i;
+				}else {
+					break;
+				}
+			}
+		}
+
+		if(callback){
+			callback();
+		}
+
+		this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
+
+		this.scrollHorizontal(left);
 	}
 
 	//full virtual render
@@ -18722,7 +18770,7 @@ class VirtualDomVertical extends Renderer{
 
 	_removeTopRow(rows, topDiff){
 		var table = this.tableElement,
-		topRow = this.rows()[this.vDomTop],
+		topRow = rows[this.vDomTop],
 		topRowHeight = topRow.getHeight() || this.vDomRowHeight;
 
 		if(topDiff >= topRowHeight){
@@ -18737,13 +18785,12 @@ class VirtualDomVertical extends Renderer{
 
 			topDiff = this.scrollTop - this.vDomScrollPosTop;
 
-			this._removeTopRow(topDiff);
+			this._removeTopRow(rows, topDiff);
 		}
 	}
 
-	_addBottomRow(bottomDiff, i=0){
-		var table = this.tableElement,
-		rows = this.rows();
+	_addBottomRow(rows, bottomDiff, i=0){
+		var table = this.tableElement;
 
 		if(this.vDomBottom < this.displayRowsCount -1){
 			let index = this.vDomBottom + 1,
@@ -18783,16 +18830,16 @@ class VirtualDomVertical extends Renderer{
 			}
 
 			if(i < this.vDomMaxRenderChain && this.vDomBottom < this.displayRowsCount -1 && bottomDiff >= (rows[this.vDomBottom + 1].getHeight() || this.vDomRowHeight)){
-				this._addBottomRow(bottomDiff, i+1);
+				this._addBottomRow(rows, bottomDiff, i+1);
 			}else {
 				this._quickNormalizeRowHeight(this.vDomBottomNewRows);
 			}
 		}
 	}
 
-	_removeBottomRow(bottomDiff){
+	_removeBottomRow(rows, bottomDiff){
 		var table = this.tableElement,
-		bottomRow = this.rows()[this.vDomBottom],
+		bottomRow = rows[this.vDomBottom],
 		bottomRowHeight = bottomRow.getHeight() || this.vDomRowHeight;
 
 		if(bottomDiff >= bottomRowHeight){
@@ -18815,7 +18862,7 @@ class VirtualDomVertical extends Renderer{
 
 			bottomDiff = -(this.scrollTop - this.vDomScrollPosBottom);
 
-			this._removeBottomRow(bottomDiff);
+			this._removeBottomRow(rows, bottomDiff);
 		}
 	}
 
@@ -19940,51 +19987,14 @@ class RowManager extends CoreFeature{
 	///////////////// Table Rendering /////////////////
 	//trigger rerender of table in current position
 	reRenderInPosition(callback){
-		if(this.getRenderMode() == "virtual"){
-
-			if(this.redrawBlock){
-				if(callback){
-					callback();
-				}else {
-					this.redrawBlockRederInPosition = true;
-				}
-			}else {
-				var scrollTop = this.element.scrollTop;
-				var topRow = false;
-				var topOffset = false;
-
-				var left = this.scrollLeft;
-
-				var rows = this.getDisplayRows();
-
-				for(var i = this.vDomTop; i <= this.vDomBottom; i++){
-
-					if(rows[i]){
-						var diff = scrollTop - rows[i].getElement().offsetTop;
-
-						if(topOffset === false || Math.abs(diff) < topOffset){
-							topOffset = diff;
-							topRow = i;
-						}else {
-							break;
-						}
-					}
-				}
-
-				if(callback){
-					callback();
-				}
-
-				this._virtualRenderFill((topRow === false ? this.displayRowsCount - 1 : topRow), true, topOffset || 0);
-
-				this.scrollHorizontal(left);
-			}
-		}else {
-			this.renderTable();
-
+		if(this.redrawBlock){
 			if(callback){
 				callback();
+			}else {
+				this.redrawBlockRederInPosition = true;
 			}
+		}else {
+			this.renderer.rerender(callback);
 		}
 	}
 
@@ -20166,7 +20176,7 @@ class RowManager extends CoreFeature{
 					// this._simpleRender();
 
 					//TODO - Refactor this whole function to move responsibiity for rerendering choices into renderer
-					this.renderer.rerender(this.getDisplayRows());
+					this.renderer.rerender();
 				}
 
 			}else {

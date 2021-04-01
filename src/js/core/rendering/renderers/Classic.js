@@ -49,8 +49,12 @@ export default class Classic extends Renderer{
 	}
 
 
-	rerender(){
+	rerender(callback){
 		this.render();
+
+		if(callback){
+			callback();
+		}
 	}
 
 	scrollToRow(row){

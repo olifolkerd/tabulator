@@ -62,6 +62,38 @@ export default class VirtualDomVertical extends Renderer{
 		this._virtualRenderFill();
 	}
 
+	rerender(callback){
+		var scrollTop = this.element.scrollTop;
+		var topRow = false;
+		var topOffset = false;
+
+		var left = this.scrollLeft;
+
+		var rows = this.rows();
+
+		for(var i = this.vDomTop; i <= this.vDomBottom; i++){
+
+			if(rows[i]){
+				var diff = scrollTop - rows[i].getElement().offsetTop;
+
+				if(topOffset === false || Math.abs(diff) < topOffset){
+					topOffset = diff;
+					topRow = i;
+				}else{
+					break;
+				}
+			}
+		}
+
+		if(callback){
+			callback();
+		}
+
+		this._virtualRenderFill((topRow === false ? this.rows.length - 1 : topRow), true, topOffset || 0);
+
+		this.scrollHorizontal(left);
+	}
+
 	//full virtual render
 	_virtualRenderFill(position, forceMove, offset){
 		var	element = this.tableElement,
@@ -301,7 +333,7 @@ export default class VirtualDomVertical extends Renderer{
 	}
 
 	_addBottomRow(rows, bottomDiff, i=0){
-		var table = this.tableElement,
+		var table = this.tableElement;
 
 		if(this.vDomBottom < this.displayRowsCount -1){
 			let index = this.vDomBottom + 1,

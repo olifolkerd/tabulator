@@ -8,6 +8,16 @@ export default class Renderer extends CoreFeature{
 		this.tableElement =  table.rowManager.tableElement;
 	}
 
+	///////////////////////////////////
+	/////// External Triggers /////////
+	//////// DO NOT OVERRIDE //////////
+	///////////////////////////////////
+
+	///////////////////////////////////
+	/////// Internal Bindings /////////
+	///////////////////////////////////
+
+
 	clear(){
 		//clear down existing layout
 	}
@@ -18,7 +28,9 @@ export default class Renderer extends CoreFeature{
 
 	rerender(callback){
 		// rerender and keep position
-		callback();
+		if(callback){
+			callback();
+		}
 	}
 
 	scrollHorizontal(left, dir){

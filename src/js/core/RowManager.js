@@ -1114,51 +1114,14 @@ export default class RowManager extends CoreFeature{
 	///////////////// Table Rendering /////////////////
 	//trigger rerender of table in current position
 	reRenderInPosition(callback){
-		if(this.getRenderMode() == "virtual"){
-
-			if(this.redrawBlock){
-				if(callback){
-					callback();
-				}else{
-					this.redrawBlockRederInPosition = true;
-				}
-			}else{
-				var scrollTop = this.element.scrollTop;
-				var topRow = false;
-				var topOffset = false;
-
-				var left = this.scrollLeft;
-
-				var rows = this.getDisplayRows();
-
-				for(var i = this.vDomTop; i <= this.vDomBottom; i++){
-
-					if(rows[i]){
-						var diff = scrollTop - rows[i].getElement().offsetTop;
-
-						if(topOffset === false || Math.abs(diff) < topOffset){
-							topOffset = diff;
-							topRow = i;
-						}else{
-							break;
-						}
-					}
-				}
-
-				if(callback){
-					callback();
-				}
-
-				this._virtualRenderFill((topRow === false ? this.displayRowsCount - 1 : topRow), true, topOffset || 0);
-
-				this.scrollHorizontal(left);
-			}
-		}else{
-			this.renderTable();
-
+		if(this.redrawBlock){
 			if(callback){
 				callback();
+			}else{
+				this.redrawBlockRederInPosition = true;
 			}
+		}else{
+			this.renderer.rerender(callback);
 		}
 	}
 
@@ -1342,7 +1305,7 @@ export default class RowManager extends CoreFeature{
 					// this._simpleRender();
 
 					//TODO - Refactor this whole function to move responsibiity for rerendering choices into renderer
-					this.renderer.rerender(this.getDisplayRows());
+					this.renderer.rerender();
 				}
 
 			}else{
