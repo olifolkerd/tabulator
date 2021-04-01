@@ -113,8 +113,16 @@ class GroupRows extends Module{
 				this.subscribe("row-data-changed", this.cellUpdated.bind(this), 0);
 			}
 
+			this.subscribe("row-deleting", this.rowDeleted.bind(this));
 
 			this.initialized = true;
+		}
+	}
+
+	rowDeleted(row){
+		//remove from group
+		if(row.modules.group){
+			row.modules.group.removeRow(row);
 		}
 	}
 

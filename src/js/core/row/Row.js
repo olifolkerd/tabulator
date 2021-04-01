@@ -345,10 +345,6 @@ export default class Row {
 
 			this.table.eventBus.dispatch("row-data-save-before", this);
 
-			val = this.table.eventBus.chain("row-data-changing", this, () => {
-				return this.element.innerHTML = this.value;
-			});
-
 			if(this.table.eventBus.subscribed("row-data-changing")){
 				tempData = Object.assign(tempData, this.data);
 				tempData = Object.assign(tempData, updatedData);
@@ -538,11 +534,6 @@ export default class Row {
 		var index = this.table.rowManager.getRowIndex(this);
 
 		this.detatchModules();
-
-		//remove from group
-		if(this.modules.group){
-			this.modules.group.removeRow(this);
-		}
 
 		this.table.rowManager.deleteRow(this, blockRedraw);
 
