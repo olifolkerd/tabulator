@@ -35,6 +35,7 @@ class FrozenColumns extends Module{
 		this.subscribe("column-width", this.layout.bind(this));
 		this.subscribe("row-layout-before", this.layoutRow.bind(this));
 		this.subscribe("table-layout", this.layout.bind(this));
+		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 	}
 
 	layoutCell(cell){

@@ -81,14 +81,8 @@ export default class ColumnManager {
 			this.element.style.marginLeft = 0;
 		}
 
-		//keep frozen columns fixed in position
-		//this._calcFrozenColumnsPos(hozAdjust + 3);
-
 		this.scrollLeft = left;
 
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.scrollHorizontal();
-		}
 	}
 
 	///////////// Column Setup Functions /////////////
