@@ -1206,9 +1206,7 @@ export default class RowManager {
 			}
 		}
 
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layout();
-		}
+		this.table.eventBus.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
 			if(this.table.options.placeholder){

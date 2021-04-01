@@ -9952,6 +9952,7 @@ class FrozenColumns extends Module{
 		this.subscribe("column-init", this.initializeColumn.bind(this));
 		this.subscribe("column-width", this.layout.bind(this));
 		this.subscribe("row-layout-before", this.layoutRow.bind(this));
+		this.subscribe("table-layout", this.layout.bind(this));
 	}
 
 	layoutCell(cell){
@@ -19499,9 +19500,7 @@ class RowManager {
 			}
 		}
 
-		if(this.table.modExists("frozenColumns")){
-			this.table.modules.frozenColumns.layout();
-		}
+		this.table.eventBus.dispatch("table-layout");
 
 		if(!this.displayRowsCount){
 			if(this.table.options.placeholder){
