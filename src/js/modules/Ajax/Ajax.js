@@ -81,7 +81,18 @@ class Ajax extends Module{
 					console.error("Pagination plugin is required for progressive ajax loading");
 				}
 			}
+
+			if(this.table.options.ajaxProgressiveLoad === "scroll"){
+				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
+			}
+
 		}
+	}
+
+	scrollVertical(top, dir){
+		var el = this.table.rowManager.element;
+
+		this.nextPage(el.scrollHeight - el.clientHeight - top);
 	}
 
 	createLoaderElement(){

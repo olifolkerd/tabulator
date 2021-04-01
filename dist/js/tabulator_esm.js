@@ -360,7 +360,18 @@ class Ajax extends Module{
 					console.error("Pagination plugin is required for progressive ajax loading");
 				}
 			}
+
+			if(this.table.options.ajaxProgressiveLoad === "scroll"){
+				this.subscribe("scroll-vertical", this.cellValueChanged.bind(this));
+			}
+
 		}
+	}
+
+	scrollVertical(top, dir){
+		var el = this.table.rowManager.element;
+
+		this.nextPage(el.scrollHeight - el.clientHeight - top);
 	}
 
 	createLoaderElement(){
@@ -4053,6 +4064,7 @@ class ColumnCalcs extends Module{
 		this.subscribe("cell-value-changed", this.cellValueChanged.bind(this));
 		this.subscribe("column-init", this.initializeColumnCheck.bind(this));
 		this.subscribe("row-deleted", this.rowDeleted.bind(this));
+		this.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
 	}
 
 	rowDeleted(row){
@@ -11115,6 +11127,7 @@ class GroupRows extends Module{
 			}
 
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
+			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 
 			this.initialized = true;
 		}
@@ -17514,9 +17527,19 @@ class ColumnManager {
 		this.scrollLeft = 0;
 
 		this.element.insertBefore(this.headersElement, this.element.firstChild);
+
+		this._bindEvents();
 	}
 
 	////////////// Setup Functions /////////////////
+
+	_bindEvents(){
+		this.table.eventBus.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+	}
+
+	initialize (){
+
+	}
 
 	createHeadersElement (){
 		var el = document.createElement("div");
@@ -17538,14 +17561,6 @@ class ColumnManager {
 		return el;
 	}
 
-	initialize (){
-		//scroll body along with header
-		// this.element.addEventListener("scroll", (e) => {
-		// 	if(!this.blockHozScrollEvent){
-		// 		this.table.rowManager.scrollHorizontal(this.element.scrollLeft);
-		// 	}
-		// });
-	}
 
 	//link to row manager
 	setRowManager(manager){
@@ -18265,9 +18280,16 @@ class RowManager {
 		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
 		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
 		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
+
+		this._bindEvents();
+
 	}
 
 	//////////////// Setup Functions /////////////////
+
+	_bindEvents(){
+
+	}
 
 	createHolderElement (){
 		var el = document.createElement("div");
@@ -18320,48 +18342,27 @@ class RowManager {
 
 		//scroll header along with table body
 		this.element.addEventListener("scroll", () => {
-			var left = this.element.scrollLeft;
+			var left = this.element.scrollLeft,
+			leftDir = this.scrollLeft > left,
+			top = this.element.scrollTop,
+			topDir = this.scrollTop > top;
 
 			//handle horizontal scrolling
 			if(this.scrollLeft != left){
-				this.columnManager.scrollHorizontal(left);
+				this.scrollLeft = left;
 
-				if(this.table.options.groupBy){
-					this.table.modules.groupRows.scrollHeaders(left);
-				}
-
-				if(this.table.modExists("columnCalcs")){
-					this.table.modules.columnCalcs.scrollHorizontal(left);
-				}
-
-				this.table.externalEvents.dispatch("scrollHorizontal", left);
+				this.table.eventBus.dispatch("scroll-horizontal", left, leftDir);
+				this.table.externalEvents.dispatch("scrollHorizontal", left, leftDir);
 			}
 
-			this.scrollLeft = left;
+			//handle verical scrolling
+			if(this.scrollTop != top){
+				this.scrollTop = top;
+
+				this.table.eventBus.dispatch("scroll-vertical", top, topDir);
+				this.table.externalEvents.dispatch("scrollVertical", top, topDir);
+			}
 		});
-
-		//handle virtual dom scrolling
-		if(this.renderMode === "virtual"){
-			this.element.addEventListener("scroll", () => {
-				var top = this.element.scrollTop;
-				var dir = this.scrollTop > top;
-
-				//handle verical scrolling
-				if(this.scrollTop != top){
-					this.scrollTop = top;
-					this.scrollVertical(dir);
-
-					if(this.table.options.ajaxProgressiveLoad == "scroll"){
-						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
-					}
-
-					this.table.externalEvents.dispatch("scrollVertical", top);
-				}else {
-					this.scrollTop = top;
-				}
-
-			});
-		}
 	}
 
 	////////////////// Row Manipulation //////////////////
@@ -19443,9 +19444,7 @@ class RowManager {
 	}
 
 	setRenderMode(){
-
 		if(this.table.options.virtualDom){
-
 			this.renderMode = "virtual";
 
 			if((this.table.element.clientHeight || this.table.options.height)){
@@ -19453,8 +19452,16 @@ class RowManager {
 			}else {
 				this.fixedHeight = false;
 			}
+
+			if(!this.table.eventBus.subscribed("scroll-vertical")){
+				this.table.eventBus.subscribe("scroll-vertical", this.scrollVertical.bind(this));
+			}
+
 		}else {
 			this.renderMode = "classic";
+			if(this.table.eventBus.subscribed("scroll-vertical")){
+				this.unsubscribe("scroll-vertical", this.scrollVertical.bind(this));
+			}
 		}
 	}
 
@@ -19708,7 +19715,7 @@ class RowManager {
 	}
 
 	//handle vertical scrolling
-	scrollVertical(dir){
+	scrollVertical(top, dir){
 		var topDiff = this.scrollTop - this.vDomScrollPosTop;
 		var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 		var margin = this.vDomWindowBuffer * 2;

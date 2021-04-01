@@ -114,6 +114,7 @@ class GroupRows extends Module{
 			}
 
 			this.subscribe("row-deleting", this.rowDeleted.bind(this));
+			this.subscribe("scroll-horizontal", this.scrollHeaders.bind(this));
 
 			this.initialized = true;
 		}

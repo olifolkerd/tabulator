@@ -15,9 +15,19 @@ export default class ColumnManager {
 		this.scrollLeft = 0;
 
 		this.element.insertBefore(this.headersElement, this.element.firstChild);
+
+		this._bindEvents();
 	}
 
 	////////////// Setup Functions /////////////////
+
+	_bindEvents(){
+		this.table.eventBus.subscribe("scroll-horizontal", this.scrollHorizontal.bind(this));
+	}
+
+	initialize (){
+
+	}
 
 	createHeadersElement (){
 		var el = document.createElement("div");
@@ -39,14 +49,6 @@ export default class ColumnManager {
 		return el;
 	}
 
-	initialize (){
-		//scroll body along with header
-		// this.element.addEventListener("scroll", (e) => {
-		// 	if(!this.blockHozScrollEvent){
-		// 		this.table.rowManager.scrollHorizontal(this.element.scrollLeft);
-		// 	}
-		// });
-	}
 
 	//link to row manager
 	setRowManager(manager){

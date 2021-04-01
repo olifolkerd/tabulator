@@ -51,9 +51,16 @@ export default class RowManager {
 		this.redrawBlock = false; //prevent redraws to allow multiple data manipulations becore continuing
 		this.redrawBlockRestoreConfig = false; //store latest redraw function calls for when redraw is needed
 		this.redrawBlockRederInPosition = false; //store latest redraw function calls for when redraw is needed
+
+		this._bindEvents();
+
 	}
 
 	//////////////// Setup Functions /////////////////
+
+	_bindEvents(){
+
+	}
 
 	createHolderElement (){
 		var el = document.createElement("div");
@@ -106,48 +113,27 @@ export default class RowManager {
 
 		//scroll header along with table body
 		this.element.addEventListener("scroll", () => {
-			var left = this.element.scrollLeft;
+			var left = this.element.scrollLeft,
+			leftDir = this.scrollLeft > left,
+			top = this.element.scrollTop,
+			topDir = this.scrollTop > top;
 
 			//handle horizontal scrolling
 			if(this.scrollLeft != left){
-				this.columnManager.scrollHorizontal(left);
+				this.scrollLeft = left;
 
-				if(this.table.options.groupBy){
-					this.table.modules.groupRows.scrollHeaders(left);
-				}
-
-				if(this.table.modExists("columnCalcs")){
-					this.table.modules.columnCalcs.scrollHorizontal(left);
-				}
-
-				this.table.externalEvents.dispatch("scrollHorizontal", left);
+				this.table.eventBus.dispatch("scroll-horizontal", left, leftDir);
+				this.table.externalEvents.dispatch("scrollHorizontal", left, leftDir);
 			}
 
-			this.scrollLeft = left;
+			//handle verical scrolling
+			if(this.scrollTop != top){
+				this.scrollTop = top;
+
+				this.table.eventBus.dispatch("scroll-vertical", top, topDir);
+				this.table.externalEvents.dispatch("scrollVertical", top, topDir);
+			}
 		});
-
-		//handle virtual dom scrolling
-		if(this.renderMode === "virtual"){
-			this.element.addEventListener("scroll", () => {
-				var top = this.element.scrollTop;
-				var dir = this.scrollTop > top;
-
-				//handle verical scrolling
-				if(this.scrollTop != top){
-					this.scrollTop = top;
-					this.scrollVertical(dir);
-
-					if(this.table.options.ajaxProgressiveLoad == "scroll"){
-						this.table.modules.ajax.nextPage(this.element.scrollHeight - this.element.clientHeight - top);
-					}
-
-					this.table.externalEvents.dispatch("scrollVertical", top);
-				}else{
-					this.scrollTop = top;
-				}
-
-			});
-		}
 	}
 
 	////////////////// Row Manipulation //////////////////
@@ -1230,9 +1216,7 @@ export default class RowManager {
 	}
 
 	setRenderMode(){
-
 		if(this.table.options.virtualDom){
-
 			this.renderMode = "virtual";
 
 			if((this.table.element.clientHeight || this.table.options.height)){
@@ -1240,8 +1224,16 @@ export default class RowManager {
 			}else{
 				this.fixedHeight = false;
 			}
+
+			if(!this.table.eventBus.subscribed("scroll-vertical")){
+				this.table.eventBus.subscribe("scroll-vertical", this.scrollVertical.bind(this));
+			}
+
 		}else{
 			this.renderMode = "classic";
+			if(this.table.eventBus.subscribed("scroll-vertical")){
+				this.unsubscribe("scroll-vertical", this.scrollVertical.bind(this));
+			}
 		}
 	}
 
@@ -1495,7 +1487,7 @@ export default class RowManager {
 	}
 
 	//handle vertical scrolling
-	scrollVertical(dir){
+	scrollVertical(top, dir){
 		var topDiff = this.scrollTop - this.vDomScrollPosTop;
 		var bottomDiff = this.scrollTop - this.vDomScrollPosBottom;
 		var margin = this.vDomWindowBuffer * 2;
